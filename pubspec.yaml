@@ -1,0 +1,92 @@
+name: probrab_ai
+description: |
+  Прораб AI — это профессиональное приложение‑калькулятор для строителей,
+  которое позволяет рассчитывать материалы для фундамента, стен, крыши и
+  отделки с учётом актуальных цен по регионам России. Оно поддерживает
+  тёмную тему в стилистике Material You 3 и позволяет переключаться
+  между упрощённым режимом «Новичок» и экспертным режимом «Профи».
+
+# Публикация в Pub.dev отключена, потому что это внутренний проект
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.10.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Классические иконки iOS/Android
+  cupertino_icons: ^1.0.6
+  # Поддержка локализации и форматов даты/чисел
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
+  # State‑management библиотека Riverpod 3
+  flutter_riverpod: ^2.6.1
+  # База данных Isar для оффлайн хранения проектов
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  # Запрос разрешений
+  permission_handler: ^11.3.0
+  # Распознавание речи для голосового ввода
+  speech_to_text: ^7.3.0
+  # Съёмка и выбор фотографий
+  image_picker: ^1.2.1
+  # Путь к локальным директориям
+  path_provider: ^2.1.5
+  # Режимы и настройки приложения
+  shared_preferences: ^2.5.3
+  # Открытие deep‑links (например, корзины Леруа)
+  url_launcher: ^6.3.2
+  # Поделиться результатом расчёта
+  share_plus: ^12.0.1
+  # Реклама Google AdMob (баннеры и межстраничная)
+  # Покупки внутри приложения (PRO версия без рекламы)
+  # Генерация PDF отчётов
+  pdf: ^3.11.3
+  # Простой 3D‑рендерер для визуализации
+  flutter_cube: ^0.1.1
+  # Воспроизведение видеороликов для инструкций
+  video_player: ^2.10.1 # версию уточнили по pub.dev【751763649705953†L37-L44】
+  # Выбор файлов (планы/чертежи)
+  # Утилиты для работы с путями
+  path: ^1.8.3
+  # Сериализация/десериализация JSON
+  json_annotation: ^4.8.1
+  # Пакет для работы с цветами Material You
+  # Для работы с векторами 3D (Vector3)
+  vector_math: ^2.1.4
+  printing: ^5.14.2
+  camera: ^0.11.3
+  package_info_plus: ^9.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  # Правила линтинга (жёсткие)
+  flutter_lints: ^6.0.0
+  # Генерация кода для Isar
+  isar_generator: ^3.1.0+1
+  build_runner: ^2.4.6
+  # Генерация адаптивных иконок
+  flutter_launcher_icons: ^0.14.4
+
+flutter_icons:
+  android: true
+  ios: false
+  image_path: "assets/icons/app_icon.png"
+  adaptive_icon_background: "#121212"
+  adaptive_icon_foreground: "assets/icons/app_icon.png"
+
+flutter:
+  uses-material-design: true
+  # Локализационные ресурсы
+  generate: true
+  assets:
+    - assets/icons/
+    - assets/videos/
+    - assets/json/
+    - assets/lang/
+    - assets/obj/

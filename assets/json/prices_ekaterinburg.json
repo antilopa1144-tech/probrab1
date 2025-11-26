@@ -1,0 +1,16 @@
+[
+  {
+    "sku": "concrete",
+    "name": "Бетон М300",
+    "price": 6000,
+    "unit": "м³",
+    "imageUrl": ""
+  },
+  {
+    "sku": "rebar12",
+    "name": "Арматура A500C Ø12мм, 1 м",
+    "price": 90,
+    "unit": "м",
+    "imageUrl": ""
+  }
+]
