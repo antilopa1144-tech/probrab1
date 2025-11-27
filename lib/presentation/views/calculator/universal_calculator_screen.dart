@@ -212,6 +212,53 @@ class _UniversalCalculatorScreenState
     }
   }
 
+  /// Получить подсказку для поля ввода
+  String? _getHintForField(InputFieldDefinition field) {
+    if (field.key.contains('area')) return 'Введите площадь';
+    if (field.key.contains('length')) return 'Введите длину';
+    if (field.key.contains('width')) return 'Введите ширину';
+    if (field.key.contains('height')) return 'Введите высоту';
+    if (field.key.contains('thickness')) return 'Введите толщину';
+    if (field.key.contains('perimeter')) return 'Введите периметр';
+    if (field.key.contains('volume')) return 'Введите объём';
+    return null;
+  }
+
+  /// Получить единицы измерения для поля
+  String? _getUnitForField(InputFieldDefinition field) {
+    if (field.key.contains('area')) return 'м²';
+    if (field.key.contains('length') || field.key.contains('perimeter') || field.key.contains('height')) {
+      return 'м';
+    }
+    if (field.key.contains('width') && (field.key.contains('tile') || field.key.contains('panel') || field.key.contains('board'))) {
+      return 'см';
+    }
+    if (field.key.contains('width')) return 'м';
+    if (field.key.contains('thickness')) return 'мм';
+    if (field.key.contains('volume')) return 'м³';
+    if (field.key.contains('layers') || field.key.contains('count')) return 'шт';
+    if (field.key.contains('consumption')) return 'л/м²';
+    if (field.key.contains('power')) return 'Вт/м²';
+    return null;
+  }
+
+  /// Получить иконку для поля
+  Icon? _getIconForField(InputFieldDefinition field) {
+    if (field.key.contains('area')) return const Icon(Icons.square_foot, size: 20);
+    if (field.key.contains('length') || field.key.contains('perimeter')) {
+      return const Icon(Icons.straighten, size: 20);
+    }
+    if (field.key.contains('height')) return const Icon(Icons.height, size: 20);
+    if (field.key.contains('width')) return const Icon(Icons.width_normal, size: 20);
+    if (field.key.contains('thickness')) return const Icon(Icons.layers, size: 20);
+    if (field.key.contains('volume')) return const Icon(Icons.view_in_ar, size: 20);
+    if (field.key.contains('window')) return const Icon(Icons.window, size: 20);
+    if (field.key.contains('door')) return const Icon(Icons.door_front_door, size: 20);
+    if (field.key.contains('power')) return const Icon(Icons.power, size: 20);
+    if (field.key.contains('temperature')) return const Icon(Icons.thermostat, size: 20);
+    return const Icon(Icons.edit, size: 20);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -266,21 +313,40 @@ class _UniversalCalculatorScreenState
                   padding: const EdgeInsets.only(bottom: 16),
                   child: TextFormField(
                     controller: _controllers[field.key],
-                    keyboardType: TextInputType.numberWithOptions(
+                    keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                       signed: false,
                     ),
                     decoration: InputDecoration(
                       labelText: loc.translate(field.labelKey),
+                      hintText: _getHintForField(field),
+                      suffixText: _getUnitForField(field),
+                      helperText: field.defaultValue != 0 
+                          ? 'По умолчанию: ${field.defaultValue}'
+                          : null,
+                      helperMaxLines: 2,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       filled: true,
+                      prefixIcon: _getIconForField(field),
                     ),
+                    onChanged: (value) {
+                      // Автоматическая замена запятой на точку
+                      if (value.contains(',')) {
+                        final newValue = value.replaceAll(',', '.');
+                        _controllers[field.key]!.value = TextEditingValue(
+                          text: newValue,
+                          selection: TextSelection.collapsed(
+                            offset: newValue.length,
+                          ),
+                        );
+                      }
+                    },
                     validator: (value) {
                       // Проверка обязательности
                       if (field.required && (value == null || value.isEmpty)) {
-                        return loc.translate('input.required');
+                        return 'Это поле обязательно';
                       }
                       
                       // Если поле не обязательное и пустое, используем значение по умолчанию
@@ -288,34 +354,52 @@ class _UniversalCalculatorScreenState
                         return null;
                       }
                       
-                      // Проверка формата числа
-                      final num = double.tryParse(value!);
+                      // Проверка формата числа (поддержка как точки, так и запятой)
+                      final sanitizedValue = value!.replaceAll(',', '.');
+                      final num = double.tryParse(sanitizedValue);
                       if (num == null) {
                         return 'Введите корректное число';
                       }
                       
                       // Проверка на отрицательные числа (для большинства полей)
                       if (num < 0) {
-                        return 'Введите положительное число';
+                        return 'Число должно быть положительным';
+                      }
+                      
+                      // Проверка на ноль для обязательных полей
+                      if (field.required && num == 0 && !field.key.contains('rapport') && !field.key.contains('windows') && !field.key.contains('doors')) {
+                        return 'Значение должно быть больше нуля';
                       }
                       
                       // Проверка минимального значения
                       if (field.minValue != null && num < field.minValue!) {
-                        return 'Минимальное значение: ${field.minValue}';
+                        return 'Минимум: ${field.minValue}';
                       }
                       
                       // Проверка максимального значения
                       if (field.maxValue != null && num > field.maxValue!) {
-                        return 'Максимальное значение: ${field.maxValue}';
+                        return 'Максимум: ${field.maxValue}';
                       }
                       
-                      // Проверка разумных значений для площади/объёма
+                      // Проверка разумных значений для различных типов полей
                       if (field.key.contains('area') && num > 10000) {
-                        return 'Проверьте значение. Слишком большое число для площади.';
+                        return 'Площадь слишком большая (макс. 10000 м²)';
                       }
                       
                       if (field.key.contains('volume') && num > 1000) {
-                        return 'Проверьте значение. Слишком большое число для объёма.';
+                        return 'Объём слишком большой (макс. 1000 м³)';
+                      }
+                      
+                      if (field.key.contains('height') && num > 10) {
+                        return 'Высота слишком большая (макс. 10 м)';
+                      }
+                      
+                      if (field.key.contains('thickness') && num > 500) {
+                        return 'Толщина слишком большая (макс. 500 мм)';
+                      }
+                      
+                      if (field.key.contains('width') && num > 100 && !field.key.contains('tile') && !field.key.contains('panel')) {
+                        return 'Ширина слишком большая (макс. 100 м)';
                       }
                       
                       return null;
