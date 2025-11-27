@@ -65,7 +65,7 @@ class CalculateSoftRoofing extends BaseCalculator {
     final masticNeeded = realArea * 0.5;
 
     // ОSB/фанера для основания: площадь кровли
-    final decking Area = realArea * 1.05;
+    final deckingArea = realArea * 1.05;
 
     // Капельники (карнизные/фронтонные планки): периметр
     final dripEdgeLength = perimeter;

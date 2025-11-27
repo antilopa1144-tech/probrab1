@@ -55,6 +55,8 @@ import 'package:probrab_ai/domain/usecases/calculate_slopes.dart';
 import 'package:probrab_ai/domain/usecases/calculate_sound_insulation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_ventilation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_cassette_ceiling.dart';
+import 'package:probrab_ai/domain/usecases/calculate_soft_roofing.dart';
+import 'package:probrab_ai/domain/usecases/calculate_slab.dart';
 
 
 /// Описание поля ввода (одно поле формы: периметр, ширина и т.п.)
@@ -156,8 +158,6 @@ class CalculatorDefinition {
 
 /// ===== КАЛЬКУЛЯТОРЫ ФУНДАМЕНТА =====
 
-/// Пока для примера только один — ленточный фундамент.
-/// Остальные по этому же шаблону потом добавим.
 final List<CalculatorDefinition> foundationCalculators = [
   CalculatorDefinition(
     id: 'calculator.stripTitle',
@@ -189,6 +189,55 @@ final List<CalculatorDefinition> foundationCalculators = [
       'Заранее подготовьте закладные гильзы для инженерных коммуникаций.',
     ],
     useCase: CalculateStripFoundation(),
+  ),
+  CalculatorDefinition(
+    id: 'foundation_slab',
+    titleKey: 'calculator.slab',
+    category: 'Фундамент',
+    subCategory: 'Монолитная плита',
+    fields: [
+      InputFieldDefinition(
+        key: 'area',
+        labelKey: 'input.area',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'thickness',
+        labelKey: 'input.thickness',
+        defaultValue: 0.2,
+      ),
+      InputFieldDefinition(
+        key: 'insulation',
+        labelKey: 'input.insulationThickness',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'perimeter',
+        labelKey: 'input.perimeter',
+        defaultValue: 0.0,
+      ),
+    ],
+    resultLabels: {
+      'area': 'result.area',
+      'thickness': 'result.thickness',
+      'concreteVolume': 'result.volume',
+      'rebarWeight': 'result.rebar',
+      'sandVolume': 'result.sand',
+      'gravelVolume': 'result.gravel',
+      'waterproofingArea': 'result.waterproofing',
+      'insulationVolume': 'result.insulation',
+      'formworkArea': 'result.formwork',
+      'wireNeeded': 'result.wire',
+      'plasticizerNeeded': 'result.plasticizer',
+    },
+    tips: const [
+      'Плита толщиной минимум 200 мм для жилого дома.',
+      'Обязательна песчано-гравийная подготовка.',
+      'Гидроизоляция снизу и по периметру.',
+      'Армирование двумя сетками в верхней и нижней зонах.',
+      'Утеплитель (ЭППС) под плитой для теплого пола.',
+    ],
+    useCase: CalculateSlab(),
   ),
 ];
 
@@ -1637,10 +1686,63 @@ final List<CalculatorDefinition> roofingCalculators = [
     useCase: CalculateRoofingMetal(),
   ),
   CalculatorDefinition(
+    id: 'roofing_soft',
+    titleKey: 'calculator.softRoofing',
+    category: 'Наружная отделка',
+    subCategory: 'Кровля',
+    fields: [
+      InputFieldDefinition(
+        key: 'area',
+        labelKey: 'input.area',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'slope',
+        labelKey: 'input.slope',
+        defaultValue: 30.0,
+      ),
+      InputFieldDefinition(
+        key: 'ridgeLength',
+        labelKey: 'input.ridgeLength',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'valleyLength',
+        labelKey: 'input.valleyLength',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'perimeter',
+        labelKey: 'input.perimeter',
+        defaultValue: 0.0,
+      ),
+    ],
+    resultLabels: {
+      'area': 'result.area',
+      'realArea': 'result.realArea',
+      'packsNeeded': 'result.packs',
+      'underlaymentArea': 'result.underlayment',
+      'ridgeStripLength': 'result.ridge',
+      'valleyCarpetLength': 'result.valley',
+      'nailsNeeded': 'result.nails',
+      'masticNeeded': 'result.mastic',
+      'deckingArea': 'result.decking',
+      'dripEdgeLength': 'result.dripEdge',
+      'ventilationsNeeded': 'result.ventilation',
+    },
+    tips: const [
+      'Битумная черепица подходит для крыш с уклоном от 12°.',
+      'Обязательно используйте подкладочный ковёр.',
+      'Монтаж при температуре выше +5°C.',
+      'Укладывайте снизу вверх с перекрытием.',
+    ],
+    useCase: CalculateSoftRoofing(),
+  ),
+  CalculatorDefinition(
     id: 'roofing_gutters',
     titleKey: 'calculator.gutters',
-    category: 'Кровля',
-    subCategory: 'Водостоки',
+    category: 'Наружная отделка',
+    subCategory: 'Кровля',
     fields: [
       InputFieldDefinition(
         key: 'roofLength',
@@ -2221,7 +2323,7 @@ final List<CalculatorDefinition> soundInsulationCalculators = [
     id: 'insulation_sound',
     titleKey: 'calculator.soundInsulation',
     category: 'Внутренняя отделка',
-    subCategory: 'Утепление',
+    subCategory: 'Шумоизоляция',
     fields: [
       InputFieldDefinition(
         key: 'area',
