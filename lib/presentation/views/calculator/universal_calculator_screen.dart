@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/utils/input_field_metadata.dart';
+import '../../../core/utils/number_parser.dart';
 import '../../../domain/calculators/definitions.dart';
 import '../../../domain/usecases/calculator_usecase.dart';
 import '../../providers/price_provider.dart';
@@ -45,6 +48,7 @@ class _UniversalCalculatorScreenState
     extends ConsumerState<UniversalCalculatorScreen> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
+  final Map<String, FocusNode> _focusNodes = {};
   CalculatorResult? _result;
   Map<String, double>? _inputs;
   bool _isCalculating = false;
@@ -55,10 +59,9 @@ class _UniversalCalculatorScreenState
     // Инициализируем контроллеры для всех полей
     for (final field in widget.definition.fields) {
       _controllers[field.key] = TextEditingController(
-        text: field.defaultValue != 0
-            ? field.defaultValue.toString()
-            : '',
+        text: _formatInitialValue(field.defaultValue),
       );
+      _focusNodes[field.key] = FocusNode();
     }
   }
 
@@ -67,7 +70,81 @@ class _UniversalCalculatorScreenState
     for (final controller in _controllers.values) {
       controller.dispose();
     }
+    for (final node in _focusNodes.values) {
+      node.dispose();
+    }
     super.dispose();
+  }
+
+  static final _numericInputFormatter =
+      FilteringTextInputFormatter.allow(RegExp(r'[0-9,\\. ]'));
+
+  String _formatInitialValue(double value) {
+    if (value == 0) return '';
+    return NumberParser.format(value);
+  }
+
+  List<String> get _orderedFieldKeys =>
+      widget.definition.fields.map((f) => f.key).toList();
+
+  void _focusNext(String currentKey) {
+    final keys = _orderedFieldKeys;
+    final currentIndex = keys.indexOf(currentKey);
+    if (currentIndex == -1) return;
+    if (currentIndex + 1 < keys.length) {
+      _focusNodes[keys[currentIndex + 1]]?.requestFocus();
+    } else {
+      _focusNodes[currentKey]?.unfocus();
+    }
+  }
+
+  double _extractValue(InputFieldDefinition field) {
+    final rawValue = _controllers[field.key]?.text;
+    final parsed = NumberParser.parse(rawValue);
+    return parsed ?? field.defaultValue;
+  }
+
+  String? _validateField(
+    String? value,
+    InputFieldDefinition field,
+    AppLocalizations loc,
+  ) {
+    final trimmed = value?.trim() ?? '';
+
+    if (field.required && trimmed.isEmpty) {
+      return loc.translate('input.required');
+    }
+
+    if (!field.required && trimmed.isEmpty) {
+      return null;
+    }
+
+    final parsed = NumberParser.parse(trimmed);
+    if (parsed == null) {
+      return 'Введите корректное число';
+    }
+
+    if (parsed < 0 && (field.minValue ?? 0) >= 0) {
+      return 'Введите положительное число';
+    }
+
+    if (field.minValue != null && parsed < field.minValue!) {
+      return 'Минимальное значение: ${NumberParser.format(field.minValue!)}';
+    }
+
+    if (field.maxValue != null && parsed > field.maxValue!) {
+      return 'Максимальное значение: ${NumberParser.format(field.maxValue!)}';
+    }
+
+    if (field.key.contains('area') && parsed > 10000) {
+      return 'Проверьте значение. Слишком большое число для площади.';
+    }
+
+    if (field.key.contains('volume') && parsed > 1000) {
+      return 'Проверьте значение. Слишком большое число для объёма.';
+    }
+
+    return null;
   }
 
   void _calculate() {
@@ -80,12 +157,10 @@ class _UniversalCalculatorScreenState
       data: (prices) {
         if (!mounted) return;
         // Собираем входные данные
-        final inputs = <String, double>{};
-        for (final field in widget.definition.fields) {
-          final value = double.tryParse(_controllers[field.key]!.text) ??
-              field.defaultValue;
-          inputs[field.key] = value;
-        }
+        final inputs = <String, double>{
+          for (final field in widget.definition.fields)
+            field.key: _extractValue(field),
+        };
 
         // Выполняем расчёт
         final result = widget.definition.run(inputs, prices);
@@ -254,74 +329,60 @@ class _UniversalCalculatorScreenState
 
   Widget _buildForm(BuildContext context, ThemeData theme) {
     final loc = AppLocalizations.of(context);
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Поля ввода
-            ...widget.definition.fields.map((field) => Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: TextFormField(
-                    controller: _controllers[field.key],
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                      signed: false,
-                    ),
-                    decoration: InputDecoration(
-                      labelText: loc.translate(field.labelKey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: FocusTraversalGroup(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Поля ввода
+                ...widget.definition.fields.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final field = entry.value;
+                  final isLast =
+                      index == widget.definition.fields.length - 1;
+                  final meta = InputFieldMetadata.fromField(field);
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: TextFormField(
+                      controller: _controllers[field.key],
+                      focusNode: _focusNodes[field.key],
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
                       ),
-                      filled: true,
+                      textInputAction:
+                          isLast ? TextInputAction.done : TextInputAction.next,
+                      inputFormatters: [_numericInputFormatter],
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration: InputDecoration(
+                        labelText: loc.translate(field.labelKey),
+                        prefixIcon:
+                            meta.icon != null ? Icon(meta.icon) : null,
+                        helperText: meta.helperText,
+                        suffixText: meta.unit,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                      ),
+                      validator: (value) =>
+                          _validateField(value, field, loc),
+                      onFieldSubmitted: (_) {
+                        if (isLast) {
+                          _calculate();
+                        } else {
+                          _focusNext(field.key);
+                        }
+                      },
+                      onTapOutside: (_) => FocusScope.of(context).unfocus(),
                     ),
-                    validator: (value) {
-                      // Проверка обязательности
-                      if (field.required && (value == null || value.isEmpty)) {
-                        return loc.translate('input.required');
-                      }
-                      
-                      // Если поле не обязательное и пустое, используем значение по умолчанию
-                      if (!field.required && (value == null || value.isEmpty)) {
-                        return null;
-                      }
-                      
-                      // Проверка формата числа
-                      final num = double.tryParse(value!);
-                      if (num == null) {
-                        return 'Введите корректное число';
-                      }
-                      
-                      // Проверка на отрицательные числа (для большинства полей)
-                      if (num < 0) {
-                        return 'Введите положительное число';
-                      }
-                      
-                      // Проверка минимального значения
-                      if (field.minValue != null && num < field.minValue!) {
-                        return 'Минимальное значение: ${field.minValue}';
-                      }
-                      
-                      // Проверка максимального значения
-                      if (field.maxValue != null && num > field.maxValue!) {
-                        return 'Максимальное значение: ${field.maxValue}';
-                      }
-                      
-                      // Проверка разумных значений для площади/объёма
-                      if (field.key.contains('area') && num > 10000) {
-                        return 'Проверьте значение. Слишком большое число для площади.';
-                      }
-                      
-                      if (field.key.contains('volume') && num > 1000) {
-                        return 'Проверьте значение. Слишком большое число для объёма.';
-                      }
-                      
-                      return null;
-                    },
-                  ),
-                )),
+                  );
+                }),
 
             const SizedBox(height: 24),
 
