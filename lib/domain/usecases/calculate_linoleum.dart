@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор линолеума.
 ///
@@ -11,71 +11,83 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// Поля:
 /// - area: площадь пола (м²)
 /// - rollWidth: ширина рулона (м), по умолчанию 3.0
+/// - rollLength: длина рулона (м), по умолчанию 30.0
 /// - overlap: нахлёст (см), по умолчанию 5
-class CalculateLinoleum implements CalculatorUseCase {
+/// - perimeter: периметр комнаты (м), опционально
+class CalculateLinoleum extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final rollWidth = inputs['rollWidth'] ?? 3.0; // м
-    final overlap = inputs['overlap'] ?? 5.0; // см
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final rollWidth = getInput(inputs, 'rollWidth', defaultValue: 3.0, minValue: 1.5, maxValue: 5.0);
+    final rollLength = getInput(inputs, 'rollLength', defaultValue: 30.0, minValue: 10.0, maxValue: 50.0);
+    final overlap = getInput(inputs, 'overlap', defaultValue: 5.0, minValue: 0.0, maxValue: 15.0);
+    
+    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
-    // Площадь с учётом нахлёста и запаса 10%
-    final areaWithOverlap = area * (1 + overlap / 100) * 1.1;
-
-    // Длина рулона (если рулон стандартный 30 м)
-    final rollLength = inputs['rollLength'] ?? 30.0; // м
+    // Площадь рулона
     final rollArea = rollWidth * rollLength;
 
-    // Количество рулонов
-    final rollsNeeded = (areaWithOverlap / rollArea).ceil();
+    // Количество рулонов с учётом нахлёста и запаса
+    final areaWithOverlap = addMargin(area, overlap + 10.0);
+    final rollsNeeded = calculateUnitsNeeded(areaWithOverlap, rollArea, marginPercent: 0.0);
 
-    // Плинтус: примерный периметр
-    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area / 4));
-    final plinthLength = perimeter;
+    // Плинтус: периметр + 5% на подрезку
+    final plinthLength = addMargin(perimeter, 5.0);
 
-    // Клей (если нужен): ~0.3 кг/м²
-    final glueNeeded = area * 0.3;
+    // Клей (если используется): ~0.3-0.5 кг/м²
+    final glueNeeded = area * 0.4;
 
-    // Цены
-    final linoleumPrice = _findPrice(priceList, ['linoleum', 'linoleum_pvc'])?.price;
-    final plinthPrice = _findPrice(priceList, ['plinth', 'plinth_linoleum'])?.price;
-    final gluePrice = _findPrice(priceList, ['glue_linoleum', 'glue'])?.price;
+    // Двухсторонний скотч (альтернатива клею): периметр + диагонали
+    final tapeNeeded = perimeter * 1.3;
 
-    double? totalPrice;
-    if (linoleumPrice != null && plinthPrice != null) {
-      final basePrice = rollsNeeded * linoleumPrice + plinthLength * plinthPrice;
-      if (gluePrice != null) {
-        totalPrice = basePrice + glueNeeded * gluePrice;
-      } else {
-        totalPrice = basePrice;
-      }
-    } else if (linoleumPrice != null) {
-      totalPrice = rollsNeeded * linoleumPrice;
-    }
+    // Грунтовка для основания: ~0.1 л/м²
+    final primerNeeded = area * 0.1;
 
-    return CalculatorResult(
+    // Фанера для выравнивания (если нужна): площадь пола
+    final plywoodArea = getInput(inputs, 'plywoodNeeded', defaultValue: 0.0);
+
+    // Расчёт стоимости
+    final linoleumPrice = findPrice(priceList, ['linoleum', 'linoleum_pvc', 'vinyl_flooring']);
+    final plinthPrice = findPrice(priceList, ['plinth', 'plinth_linoleum', 'baseboard']);
+    final gluePrice = findPrice(priceList, ['glue_linoleum', 'glue', 'flooring_adhesive']);
+    final tapePrice = findPrice(priceList, ['tape_double', 'double_sided_tape']);
+    final primerPrice = findPrice(priceList, ['primer', 'primer_deep']);
+    final plywoodPrice = findPrice(priceList, ['plywood', 'plywood_sheet']);
+
+    final costs = [
+      calculateCost(rollsNeeded.toDouble(), linoleumPrice?.price),
+      calculateCost(plinthLength, plinthPrice?.price),
+      calculateCost(glueNeeded, gluePrice?.price),
+      calculateCost(tapeNeeded, tapePrice?.price),
+      calculateCost(primerNeeded, primerPrice?.price),
+      plywoodArea > 0 ? calculateCost(plywoodArea, plywoodPrice?.price) : null,
+    ];
+
+    return createResult(
       values: {
         'area': area,
         'rollsNeeded': rollsNeeded.toDouble(),
         'plinthLength': plinthLength,
         'glueNeeded': glueNeeded,
+        'tapeNeeded': tapeNeeded,
+        'primerNeeded': primerNeeded,
+        if (plywoodArea > 0) 'plywoodArea': plywoodArea,
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-

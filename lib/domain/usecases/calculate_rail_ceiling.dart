@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор реечного потолка.
 ///
@@ -11,74 +11,74 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// - area: площадь потолка (м²)
 /// - railWidth: ширина рейки (см), по умолчанию 10
 /// - railLength: длина рейки (см), по умолчанию 300
-/// - perimeter: периметр комнаты (м)
-class CalculateRailCeiling implements CalculatorUseCase {
+/// - perimeter: периметр комнаты (м), опционально
+class CalculateRailCeiling extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final railWidth = inputs['railWidth'] ?? 10.0; // см
-    final railLength = inputs['railLength'] ?? 300.0; // см
-    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area / 4));
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final railWidth = getInput(inputs, 'railWidth', defaultValue: 10.0, minValue: 5.0, maxValue: 20.0);
+    final railLength = getInput(inputs, 'railLength', defaultValue: 300.0, minValue: 200.0, maxValue: 400.0);
+    
+    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
     // Площадь одной рейки в м²
-    final railArea = (railWidth / 100) * (railLength / 100);
+    final railArea = calculateTileArea(railWidth, railLength);
 
     // Количество реек с запасом 5%
-    final railsNeeded = (area / railArea * 1.05).ceil();
+    final railsNeeded = calculateUnitsNeeded(area, railArea, marginPercent: 5.0);
 
-    // Направляющие: периметр
-    final guideLength = perimeter;
+    // Направляющие (траверсы, гребенки): по длине комнаты с шагом 120 см
+    final guideCount = ceilToInt((perimeter / 4) / 1.2); // примерно
+    final guideLength = guideCount * (perimeter / 4);
 
-    // Подвесы: шаг 60 см
-    final hangersNeeded = (perimeter / 0.6).ceil();
+    // Подвесы: шаг 60-80 см вдоль направляющих
+    final hangersNeeded = ceilToInt(guideLength / 0.7);
 
-    // Уголки: периметр
-    final cornerLength = perimeter;
+    // П-образный профиль (периметр): по периметру комнаты + 3%
+    final cornerLength = addMargin(perimeter, 3.0);
 
-    // Цены
-    final railPrice = _findPrice(priceList, ['rail_ceiling', 'ceiling_rail'])?.price;
-    final guidePrice = _findPrice(priceList, ['guide_rail', 'rail_guide'])?.price;
-    final hangerPrice = _findPrice(priceList, ['hanger_rail', 'hanger'])?.price;
-    final cornerPrice = _findPrice(priceList, ['corner_rail', 'corner'])?.price;
+    // Декоративные вставки (между рейками): зависит от типа
+    final insertsLength = railsNeeded * (railLength / 100);
 
-    double? totalPrice;
-    if (railPrice != null) {
-      totalPrice = railsNeeded * railPrice;
-      if (guidePrice != null) {
-        totalPrice = totalPrice + guideLength * guidePrice;
-      }
-      if (hangerPrice != null) {
-        totalPrice = totalPrice + hangersNeeded * hangerPrice;
-      }
-      if (cornerPrice != null) {
-        totalPrice = totalPrice + cornerLength * cornerPrice;
-      }
-    }
+    // Расчёт стоимости
+    final railPrice = findPrice(priceList, ['rail_ceiling', 'ceiling_rail', 'rail_panel']);
+    final guidePrice = findPrice(priceList, ['guide_rail', 'rail_guide', 'stringer']);
+    final hangerPrice = findPrice(priceList, ['hanger_rail', 'hanger', 'suspension']);
+    final cornerPrice = findPrice(priceList, ['corner_rail', 'corner', 'trim_angle']);
+    final insertPrice = findPrice(priceList, ['insert', 'decorative_insert']);
 
-    return CalculatorResult(
+    final costs = [
+      calculateCost(railsNeeded.toDouble(), railPrice?.price),
+      calculateCost(guideLength, guidePrice?.price),
+      calculateCost(hangersNeeded.toDouble(), hangerPrice?.price),
+      calculateCost(cornerLength, cornerPrice?.price),
+      calculateCost(insertsLength, insertPrice?.price),
+    ];
+
+    return createResult(
       values: {
         'area': area,
         'railsNeeded': railsNeeded.toDouble(),
         'guideLength': guideLength,
         'hangersNeeded': hangersNeeded.toDouble(),
         'cornerLength': cornerLength,
+        'insertsLength': insertsLength,
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-

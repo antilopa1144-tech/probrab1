@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор панелей ПВХ.
 ///
@@ -11,71 +11,88 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// - area: площадь стен (м²)
 /// - panelWidth: ширина панели (см), по умолчанию 25
 /// - panelLength: длина панели (см), по умолчанию 300
-/// - perimeter: периметр комнаты (м)
-class CalculatePvcPanels implements CalculatorUseCase {
+/// - perimeter: периметр комнаты (м), опционально
+class CalculatePvcPanels extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final panelWidth = inputs['panelWidth'] ?? 25.0; // см
-    final panelLength = inputs['panelLength'] ?? 300.0; // см
-    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area / 4));
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final panelWidth = getInput(inputs, 'panelWidth', defaultValue: 25.0, minValue: 10.0, maxValue: 50.0);
+    final panelLength = getInput(inputs, 'panelLength', defaultValue: 300.0, minValue: 200.0, maxValue: 600.0);
+    
+    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
     // Площадь одной панели в м²
-    final panelArea = (panelWidth / 100) * (panelLength / 100);
+    final panelArea = calculateTileArea(panelWidth, panelLength);
 
     // Количество панелей с запасом 10%
-    final panelsNeeded = (area / panelArea * 1.1).ceil();
+    final panelsNeeded = calculateUnitsNeeded(area, panelArea, marginPercent: 10.0);
 
-    // Профили: стартовый, финишный, угловой
-    final startProfileLength = perimeter;
-    final finishProfileLength = perimeter;
-    final cornerLength = perimeter;
+    // Профили: стартовый, финишный, универсальный
+    final startProfileLength = addMargin(perimeter, 3.0);
+    final finishProfileLength = addMargin(perimeter, 3.0);
+    
+    // Обрешётка (деревянная или металлическая): шаг 40-50 см
+    final battensCount = ceilToInt((perimeter / 4) / 0.45);
+    final battensLength = battensCount * (perimeter / 4);
 
-    // Саморезы: ~6 шт на панель
-    final screwsNeeded = panelsNeeded * 6;
+    // Угловые профили (внутренние и наружные): по факту
+    final cornerLength = getInput(inputs, 'corners', defaultValue: perimeter * 0.2);
 
-    // Цены
-    final panelPrice = _findPrice(priceList, ['pvc_panel', 'panel_pvc'])?.price;
-    final startProfilePrice = _findPrice(priceList, ['profile_start_pvc', 'profile_start'])?.price;
-    final finishProfilePrice = _findPrice(priceList, ['profile_finish_pvc', 'profile_finish'])?.price;
-    final cornerPrice = _findPrice(priceList, ['corner_pvc', 'corner'])?.price;
+    // F-профиль (для стыка с откосами): по факту
+    final fProfileLength = getInput(inputs, 'fProfile', defaultValue: 0.0);
 
-    double? totalPrice;
-    if (panelPrice != null) {
-      totalPrice = panelsNeeded * panelPrice;
-      if (startProfilePrice != null && finishProfilePrice != null) {
-        totalPrice = totalPrice + (startProfileLength + finishProfileLength) * startProfilePrice;
-      }
-      if (cornerPrice != null) {
-        totalPrice = totalPrice + cornerLength * cornerPrice;
-      }
-    }
+    // Крепёж: саморезы/кляймеры ~6 шт на панель
+    final fastenersNeeded = ceilToInt(panelsNeeded * 6);
 
-    return CalculatorResult(
+    // Потолочный плинтус/молдинг: по периметру
+    final moldingLength = perimeter;
+
+    // Расчёт стоимости
+    final panelPrice = findPrice(priceList, ['pvc_panel', 'panel_pvc', 'plastic_panel']);
+    final startProfilePrice = findPrice(priceList, ['profile_start_pvc', 'profile_start']);
+    final finishProfilePrice = findPrice(priceList, ['profile_finish_pvc', 'profile_finish']);
+    final battensPrice = findPrice(priceList, ['battens', 'timber', 'profile_metal']);
+    final cornerPrice = findPrice(priceList, ['corner_pvc', 'corner', 'corner_profile']);
+    final fProfilePrice = findPrice(priceList, ['profile_f', 'f_profile']);
+    final moldingPrice = findPrice(priceList, ['molding', 'ceiling_molding']);
+
+    final costs = [
+      calculateCost(panelsNeeded.toDouble(), panelPrice?.price),
+      calculateCost(startProfileLength, startProfilePrice?.price),
+      calculateCost(finishProfileLength, finishProfilePrice?.price),
+      calculateCost(battensLength, battensPrice?.price),
+      calculateCost(cornerLength, cornerPrice?.price),
+      if (fProfileLength > 0) calculateCost(fProfileLength, fProfilePrice?.price),
+      calculateCost(moldingLength, moldingPrice?.price),
+    ];
+
+    return createResult(
       values: {
         'area': area,
         'panelsNeeded': panelsNeeded.toDouble(),
         'startProfileLength': startProfileLength,
         'finishProfileLength': finishProfileLength,
+        'battensLength': battensLength,
         'cornerLength': cornerLength,
-        'screwsNeeded': screwsNeeded.toDouble(),
+        if (fProfileLength > 0) 'fProfileLength': fProfileLength,
+        'moldingLength': moldingLength,
+        'fastenersNeeded': fastenersNeeded.toDouble(),
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-

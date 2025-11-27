@@ -1,5 +1,6 @@
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор плитки для ванной комнаты.
 ///
@@ -13,83 +14,107 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// - tileWidth: ширина плитки (см), по умолчанию 30
 /// - tileHeight: высота плитки (см), по умолчанию 30
 /// - jointWidth: ширина шва (мм), по умолчанию 3
-class CalculateBathroomTile implements CalculatorUseCase {
+class CalculateBathroomTile extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final wallArea = inputs['wallArea'] ?? 0;
+    final floorArea = inputs['floorArea'] ?? 0;
+
+    if (wallArea <= 0 && floorArea <= 0) {
+      return 'Должна быть указана площадь стен или пола';
+    }
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final wallArea = inputs['wallArea'] ?? 0;
-    final floorArea = inputs['floorArea'] ?? 0;
-    final tileWidth = inputs['tileWidth'] ?? 30.0; // см
-    final tileHeight = inputs['tileHeight'] ?? 30.0; // см
-    final jointWidth = inputs['jointWidth'] ?? 3.0; // мм
+    final wallArea = getInput(inputs, 'wallArea', defaultValue: 0.0, minValue: 0.0);
+    final floorArea = getInput(inputs, 'floorArea', defaultValue: 0.0, minValue: 0.0);
+    final tileWidth = getInput(inputs, 'tileWidth', defaultValue: 30.0, minValue: 10.0, maxValue: 120.0);
+    final tileHeight = getInput(inputs, 'tileHeight', defaultValue: 30.0, minValue: 10.0, maxValue: 120.0);
+    final jointWidth = getInput(inputs, 'jointWidth', defaultValue: 3.0, minValue: 1.0, maxValue: 10.0);
 
     final totalArea = wallArea + floorArea;
 
     // Площадь одной плитки в м²
-    final tileArea = (tileWidth / 100) * (tileHeight / 100);
+    final tileArea = calculateTileArea(tileWidth, tileHeight);
 
-    // Количество плиток с запасом 10%
-    final wallTiles = (wallArea / tileArea * 1.1).ceil();
-    final floorTiles = (floorArea / tileArea * 1.1).ceil();
+    // Количество плиток с запасом 10% для стен, 12% для пола (больше обрезков)
+    final wallTiles = wallArea > 0 
+        ? calculateUnitsNeeded(wallArea, tileArea, marginPercent: 10.0)
+        : 0;
+    final floorTiles = floorArea > 0 
+        ? calculateUnitsNeeded(floorArea, tileArea, marginPercent: 12.0)
+        : 0;
     final totalTiles = wallTiles + floorTiles;
 
-    // Затирка: расход ~1.5 кг/м² на 1 мм шва
-    final groutNeeded = totalArea * 1.5 * (jointWidth / 10);
+    // Затирка: расход зависит от размера плитки и шва
+    // Формула: (длина + ширина) / (длина × ширина) × ширина_шва × глубина × плотность
+    final groutConsumption = ((tileWidth + tileHeight) / (tileWidth * tileHeight)) * 
+                            jointWidth * 10 * 1.6; // глубина 10 мм, плотность 1.6
+    final groutNeeded = totalArea * groutConsumption * 1.05;
 
-    // Клей: расход ~4 кг/м² для плитки
-    final glueNeeded = totalArea * 4.0;
+    // Клей: расход 3-5 кг/м² (в среднем 4.2 кг/м²)
+    final glueNeeded = totalArea * 4.2;
 
-    // Крестики: ~4 шт на плитку
-    final crossesNeeded = totalTiles * 4;
+    // Грунтовка: ~0.15 л/м²
+    final primerNeeded = totalArea * 0.15;
 
-    // Гидроизоляция: площадь пола + 30 см на стены
-    final waterproofingArea = floorArea + (wallArea * 0.3);
+    // Крестики/СВП: ~4-6 шт на плитку
+    final crossesNeeded = ceilToInt(totalTiles * 5);
 
-    // Цены
-    final tilePrice = _findPrice(priceList, ['tile_bathroom', 'tile', 'tile_ceramic'])?.price;
-    final groutPrice = _findPrice(priceList, ['grout', 'grout_tile'])?.price;
-    final gluePrice = _findPrice(priceList, ['glue_tile', 'glue'])?.price;
-    final waterproofingPrice = _findPrice(priceList, ['waterproofing', 'waterproofing_bathroom'])?.price;
+    // Гидроизоляция: пол полностью + 30 см на стены
+    final perimeter = inputs['perimeter'] ?? (floorArea > 0 ? estimatePerimeter(floorArea) : 0);
+    final waterproofingArea = floorArea + (perimeter * 0.3);
 
-    double? totalPrice;
-    if (tilePrice != null) {
-      totalPrice = totalTiles * tilePrice;
-      if (groutPrice != null) {
-        totalPrice = totalPrice + groutNeeded * groutPrice;
-      }
-      if (gluePrice != null) {
-        totalPrice = totalPrice + glueNeeded * gluePrice;
-      }
-      if (waterproofingPrice != null) {
-        totalPrice = totalPrice + waterproofingArea * waterproofingPrice;
-      }
-    }
+    // Угловые профили (для внешних углов): по факту
+    final cornerProfileLength = getInput(inputs, 'corners', defaultValue: 0.0);
 
-    return CalculatorResult(
+    // Герметик (силиконовый): для швов в мокрых зонах
+    final sealantTubes = ceilToInt(perimeter / 12); // 1 туба на ~12 м.п.
+
+    // Расчёт стоимости
+    final wallTilePrice = findPrice(priceList, ['tile_bathroom_wall', 'tile_wall', 'tile_ceramic']);
+    final floorTilePrice = findPrice(priceList, ['tile_bathroom_floor', 'tile_floor', 'tile_ceramic_floor']);
+    final groutPrice = findPrice(priceList, ['grout', 'grout_tile', 'joint_filler']);
+    final gluePrice = findPrice(priceList, ['glue_tile', 'tile_adhesive', 'glue']);
+    final primerPrice = findPrice(priceList, ['primer', 'primer_adhesion']);
+    final waterproofingPrice = findPrice(priceList, ['waterproofing', 'waterproofing_bathroom']);
+    final sealantPrice = findPrice(priceList, ['sealant', 'silicone', 'bathroom_sealant']);
+
+    final costs = [
+      calculateCost(wallTiles.toDouble(), wallTilePrice?.price ?? floorTilePrice?.price),
+      calculateCost(floorTiles.toDouble(), floorTilePrice?.price ?? wallTilePrice?.price),
+      calculateCost(groutNeeded, groutPrice?.price),
+      calculateCost(glueNeeded, gluePrice?.price),
+      calculateCost(primerNeeded, primerPrice?.price),
+      calculateCost(waterproofingArea, waterproofingPrice?.price),
+      calculateCost(sealantTubes.toDouble(), sealantPrice?.price),
+    ];
+
+    return createResult(
       values: {
         'wallArea': wallArea,
         'floorArea': floorArea,
+        'totalArea': totalArea,
+        'wallTiles': wallTiles.toDouble(),
+        'floorTiles': floorTiles.toDouble(),
         'totalTiles': totalTiles.toDouble(),
         'groutNeeded': groutNeeded,
         'glueNeeded': glueNeeded,
+        'primerNeeded': primerNeeded,
         'crossesNeeded': crossesNeeded.toDouble(),
         'waterproofingArea': waterproofingArea,
+        'sealantTubes': sealantTubes.toDouble(),
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-

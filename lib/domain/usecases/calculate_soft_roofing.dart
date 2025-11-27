@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор мягкой кровли (битумная черепица).
 ///
@@ -9,93 +10,105 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// - ГОСТ 30547-97 "Рулонные кровельные и гидроизоляционные материалы"
 ///
 /// Поля:
-/// - area: площадь кровли (м²)
+/// - area: площадь кровли (м²) - проекционная
 /// - slope: уклон крыши (градусы), по умолчанию 30
-/// - ridgeLength: длина конька (м)
-class CalculateSoftRoofing implements CalculatorUseCase {
+/// - ridgeLength: длина конька (м), опционально
+/// - valleyLength: длина ендов (м), опционально
+/// - perimeter: периметр кровли (м), опционально
+class CalculateSoftRoofing extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final slope = inputs['slope'] ?? 30.0; // градусы
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final slope = getInput(inputs, 'slope', defaultValue: 30.0, minValue: 12.0, maxValue: 60.0);
+    
     final ridgeLength = inputs['ridgeLength'] ?? sqrt(area);
+    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area));
+    final valleyLength = inputs['valleyLength'] ?? (perimeter * 0.1);
 
     // Учитываем уклон
     final slopeFactor = 1 / cos(slope * pi / 180);
     final realArea = area * slopeFactor;
 
-    // Площадь одного рулона (стандарт: 1×10 м = 10 м²)
-    final rollArea = 10.0; // м²
+    // Площадь упаковки черепицы (стандарт: 3 м² полезной площади на упаковку)
+    final packArea = 3.0;
 
-    // Количество рулонов с запасом 10%
-    final rollsNeeded = (realArea / rollArea * 1.1).ceil();
+    // Количество упаковок с запасом 10%
+    final packsNeeded = calculateUnitsNeeded(realArea, packArea, marginPercent: 10.0);
 
-    // Подкладочный ковёр: площадь кровли
-    final underlaymentArea = realArea * 1.1;
+    // Подкладочный ковёр: полная площадь кровли + 10% нахлёст
+    final underlaymentArea = addMargin(realArea, 10.0);
 
-    // Коньково-карнизная полоса: длина конька
-    final ridgeStripLength = ridgeLength;
+    // Коньково-карнизная черепица: конёк + карнизы
+    final ridgeStripLength = ridgeLength + perimeter;
 
-    // Ендовый ковёр: если не указан, считаем 10% от периметра
-    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area / 4));
-    final valleyLength = inputs['valleyLength'] ?? (perimeter * 0.1);
+    // Ендовый ковёр: длина ендов + 10%
+    final valleyCarpetLength = addMargin(valleyLength, 10.0);
 
-    // Гвозди: ~10 шт на м²
-    final nailsNeeded = (realArea * 10).ceil();
+    // Кровельные гвозди: ~10-15 шт на м²
+    final nailsNeeded = ceilToInt(realArea * 12);
 
-    // Мастика: ~0.5 кг/м²
+    // Битумная мастика: ~0.5 кг/м² (для проклейки)
     final masticNeeded = realArea * 0.5;
 
-    // Цены
-    final roofingPrice = _findPrice(priceList, ['soft_roofing', 'bitumen_tile', 'roofing_soft'])?.price;
-    final underlaymentPrice = _findPrice(priceList, ['underlayment_roof', 'roof_underlayment'])?.price;
-    final ridgeStripPrice = _findPrice(priceList, ['ridge_strip', 'ridge_soft'])?.price;
-    final valleyPrice = _findPrice(priceList, ['valley_soft', 'valley'])?.price;
-    final masticPrice = _findPrice(priceList, ['mastic_roof', 'mastic'])?.price;
+    // ОSB/фанера для основания: площадь кровли
+    final decking Area = realArea * 1.05;
 
-    double? totalPrice;
-    if (roofingPrice != null) {
-      totalPrice = rollsNeeded * roofingPrice;
-      if (underlaymentPrice != null) {
-        totalPrice = totalPrice + underlaymentArea * underlaymentPrice;
-      }
-      if (ridgeStripPrice != null) {
-        totalPrice = totalPrice + ridgeStripLength * ridgeStripPrice;
-      }
-      if (valleyPrice != null && valleyLength > 0) {
-        totalPrice = totalPrice + valleyLength * valleyPrice;
-      }
-      if (masticPrice != null) {
-        totalPrice = totalPrice + masticNeeded * masticPrice;
-      }
-    }
+    // Капельники (карнизные/фронтонные планки): периметр
+    final dripEdgeLength = perimeter;
 
-    return CalculatorResult(
+    // Вентиляционные элементы: 1 шт на 50-60 м²
+    final ventilationsNeeded = ceilToInt(realArea / 55);
+
+    // Расчёт стоимости
+    final roofingPrice = findPrice(priceList, ['soft_roofing', 'bitumen_tile', 'roofing_soft', 'shingles']);
+    final underlaymentPrice = findPrice(priceList, ['underlayment_roof', 'roof_underlayment', 'roofing_felt']);
+    final ridgeStripPrice = findPrice(priceList, ['ridge_strip', 'ridge_soft', 'starter_strip']);
+    final valleyPrice = findPrice(priceList, ['valley_soft', 'valley_carpet', 'valley']);
+    final masticPrice = findPrice(priceList, ['mastic_roof', 'mastic', 'bitumen_adhesive']);
+    final deckingPrice = findPrice(priceList, ['osb', 'plywood', 'roof_deck']);
+    final dripEdgePrice = findPrice(priceList, ['drip_edge', 'eave_strip']);
+    final ventilationPrice = findPrice(priceList, ['ventilation', 'roof_vent']);
+
+    final costs = [
+      calculateCost(packsNeeded.toDouble(), roofingPrice?.price),
+      calculateCost(underlaymentArea, underlaymentPrice?.price),
+      calculateCost(ridgeStripLength, ridgeStripPrice?.price),
+      if (valleyCarpetLength > 0) calculateCost(valleyCarpetLength, valleyPrice?.price),
+      calculateCost(masticNeeded, masticPrice?.price),
+      calculateCost(deckingArea, deckingPrice?.price),
+      calculateCost(dripEdgeLength, dripEdgePrice?.price),
+      calculateCost(ventilationsNeeded.toDouble(), ventilationPrice?.price),
+    ];
+
+    return createResult(
       values: {
         'area': area,
         'realArea': realArea,
-        'rollsNeeded': rollsNeeded.toDouble(),
+        'packsNeeded': packsNeeded.toDouble(),
         'underlaymentArea': underlaymentArea,
         'ridgeStripLength': ridgeStripLength,
-        'valleyLength': valleyLength,
+        if (valleyCarpetLength > 0) 'valleyCarpetLength': valleyCarpetLength,
         'nailsNeeded': nailsNeeded.toDouble(),
         'masticNeeded': masticNeeded,
+        'deckingArea': deckingArea,
+        'dripEdgeLength': dripEdgeLength,
+        'ventilationsNeeded': ventilationsNeeded.toDouble(),
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-
