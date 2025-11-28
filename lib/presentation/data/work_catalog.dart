@@ -317,6 +317,18 @@ const List<WorkAreaDefinition> _houseAreas = [
             icon: Icons.waves,
             calculatorId: 'floors_warm',
           ),
+          WorkItemDefinition(
+            id: 'floors_insulation',
+            title: 'Утепление пола',
+            icon: Icons.ac_unit,
+            calculatorId: 'floors_insulation',
+            tips: [
+              'Утепление пола особенно важно для первого этажа.',
+              'Для минваты обязательна гидроизоляция снизу.',
+              'Пароизоляция укладывается сверху утеплителя.',
+              'Оставляйте зазор 2-3 см для вентиляции.',
+            ],
+          ),
         ],
       ),
       WorkSectionDefinition(
@@ -426,6 +438,39 @@ const List<WorkAreaDefinition> _houseAreas = [
             title: 'Штукатурка',
             icon: Icons.view_day_outlined,
             calculatorId: 'mixes_plaster',
+          ),
+        ],
+      ),
+      WorkSectionDefinition(
+        id: 'structures',
+        title: 'Конструкции',
+        icon: Icons.stairs,
+        items: [
+          WorkItemDefinition(
+            id: 'stairs',
+            title: 'Лестница',
+            icon: Icons.stairs,
+            calculatorId: 'stairs',
+            tips: [
+              'Высота ступени должна быть 15-20 см для комфортного подъёма.',
+              'Ширина проступи (ступени) должна быть не менее 28 см.',
+              'Ширина лестницы для жилых домов - минимум 90 см.',
+              'Для деревянной лестницы используйте твёрдые породы дерева.',
+              'Перила должны быть на высоте 90-100 см от ступени.',
+            ],
+          ),
+          WorkItemDefinition(
+            id: 'fence',
+            title: 'Забор',
+            icon: Icons.fence,
+            calculatorId: 'fence',
+            tips: [
+              'Столбы устанавливаются на глубину 1/3 от высоты забора.',
+              'Для профлиста используйте оцинкованные саморезы.',
+              'Деревянный забор требует обработки антисептиком.',
+              'Кирпичный забор нуждается в фундаменте.',
+              'Расстояние между столбами: 2-3 метра.',
+            ],
           ),
         ],
       ),

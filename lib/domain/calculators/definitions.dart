@@ -55,6 +55,9 @@ import 'package:probrab_ai/domain/usecases/calculate_slopes.dart';
 import 'package:probrab_ai/domain/usecases/calculate_sound_insulation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_ventilation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_cassette_ceiling.dart';
+import 'package:probrab_ai/domain/usecases/calculate_floor_insulation.dart';
+import 'package:probrab_ai/domain/usecases/calculate_stairs.dart';
+import 'package:probrab_ai/domain/usecases/calculate_fence.dart';
 
 
 /// Описание поля ввода (одно поле формы: периметр, ширина и т.п.)
@@ -859,6 +862,53 @@ final List<CalculatorDefinition> floorCalculators = [
       'Укладывайте в одном направлении ворса.',
     ],
     useCase: CalculateCarpet(),
+  ),
+  CalculatorDefinition(
+    id: 'floors_insulation',
+    titleKey: 'calculator.floorInsulation',
+    category: 'Внутренняя отделка',
+    subCategory: 'Полы',
+    fields: [
+      InputFieldDefinition(
+        key: 'area',
+        labelKey: 'input.floorArea',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'insulationThickness',
+        labelKey: 'input.insulationThickness',
+        defaultValue: 100.0,
+      ),
+      InputFieldDefinition(
+        key: 'insulationType',
+        labelKey: 'input.insulationType',
+        defaultValue: 1.0,
+      ),
+      InputFieldDefinition(
+        key: 'perimeter',
+        labelKey: 'input.perimeter',
+        defaultValue: 0.0,
+        required: false,
+      ),
+    ],
+    resultLabels: {
+      'area': 'result.area',
+      'volume': 'result.volume',
+      'sheetsNeeded': 'result.sheets',
+      'weight': 'result.weight',
+      'vaporBarrierArea': 'result.vaporBarrier',
+      'waterproofingArea': 'result.waterproofing',
+      'plinthLength': 'result.plinth',
+      'fastenersNeeded': 'result.fasteners',
+    },
+    tips: const [
+      'Утепление пола особенно важно для первого этажа и над неотапливаемыми помещениями.',
+      'Для минваты обязательна гидроизоляция снизу.',
+      'Пароизоляция укладывается сверху утеплителя (со стороны тёплого помещения).',
+      'Пенопласт и ЭППС не требуют гидроизоляции, но нужна пароизоляция.',
+      'Оставляйте зазор 2-3 см между утеплителем и финишным покрытием для вентиляции.',
+    ],
+    useCase: CalculateFloorInsulation(),
   ),
 ];
 
@@ -2255,6 +2305,133 @@ final List<CalculatorDefinition> soundInsulationCalculators = [
   ),
 ];
 
+/// ===== КАЛЬКУЛЯТОРЫ КОНСТРУКЦИЙ =====
+
+final List<CalculatorDefinition> structureCalculators = [
+  CalculatorDefinition(
+    id: 'stairs',
+    titleKey: 'calculator.stairs',
+    category: 'Конструкции',
+    subCategory: 'Лестницы',
+    fields: [
+      InputFieldDefinition(
+        key: 'floorHeight',
+        labelKey: 'input.floorHeight',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'stepHeight',
+        labelKey: 'input.stepHeight',
+        defaultValue: 0.18,
+      ),
+      InputFieldDefinition(
+        key: 'stepWidth',
+        labelKey: 'input.stepWidth',
+        defaultValue: 0.28,
+      ),
+      InputFieldDefinition(
+        key: 'stepCount',
+        labelKey: 'input.stepCount',
+        defaultValue: 0.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'width',
+        labelKey: 'input.width',
+        defaultValue: 1.0,
+      ),
+      InputFieldDefinition(
+        key: 'materialType',
+        labelKey: 'input.type',
+        defaultValue: 1.0,
+      ),
+    ],
+    resultLabels: {
+      'floorHeight': 'result.height',
+      'stepCount': 'result.steps',
+      'stepHeight': 'result.stepHeight',
+      'stepWidth': 'result.stepWidth',
+      'flightLength': 'result.length',
+      'stepArea': 'result.area',
+      'totalArea': 'result.totalArea',
+      'railingLength': 'result.railing',
+      'balustersNeeded': 'result.balusters',
+      'supportPosts': 'result.posts',
+      'stringersNeeded': 'result.stringers',
+      'concreteVolume': 'result.volume',
+    },
+    tips: const [
+      'Высота ступени должна быть 15-20 см для комфортного подъёма.',
+      'Ширина проступи (ступени) должна быть не менее 28 см.',
+      'Ширина лестницы для жилых домов - минимум 90 см.',
+      'Для деревянной лестницы используйте твёрдые породы дерева (дуб, ясень).',
+      'Бетонная лестница требует армирования и опалубки.',
+      'Перила должны быть на высоте 90-100 см от ступени.',
+      'Балясины устанавливаются с шагом 10-15 см для безопасности детей.',
+    ],
+    useCase: CalculateStairs(),
+  ),
+  CalculatorDefinition(
+    id: 'fence',
+    titleKey: 'calculator.fence',
+    category: 'Конструкции',
+    subCategory: 'Заборы',
+    fields: [
+      InputFieldDefinition(
+        key: 'length',
+        labelKey: 'input.length',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'height',
+        labelKey: 'input.height',
+        defaultValue: 2.0,
+      ),
+      InputFieldDefinition(
+        key: 'materialType',
+        labelKey: 'input.type',
+        defaultValue: 1.0,
+      ),
+      InputFieldDefinition(
+        key: 'gates',
+        labelKey: 'input.gates',
+        defaultValue: 1.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'wickets',
+        labelKey: 'input.wickets',
+        defaultValue: 1.0,
+        required: false,
+      ),
+    ],
+    resultLabels: {
+      'length': 'result.length',
+      'height': 'result.height',
+      'fenceArea': 'result.area',
+      'postsNeeded': 'result.posts',
+      'lagCount': 'result.lags',
+      'lagLength': 'result.lagLength',
+      'materialArea': 'result.material',
+      'bricksNeeded': 'result.bricks',
+      'mortarNeeded': 'result.mortar',
+      'foundationVolume': 'result.volume',
+      'gates': 'result.gates',
+      'wickets': 'result.wickets',
+      'fastenersNeeded': 'result.fasteners',
+    },
+    tips: const [
+      'Столбы устанавливаются на глубину 1/3 от высоты забора.',
+      'Для профлиста используйте оцинкованные саморезы с уплотнителями.',
+      'Деревянный забор требует обработки антисептиком.',
+      'Кирпичный забор нуждается в фундаменте.',
+      'Расстояние между столбами: 2-3 метра в зависимости от материала.',
+      'Ворота и калитки должны быть на 5-10 см выше уровня земли.',
+    ],
+    useCase: CalculateFence(),
+  ),
+];
+
 /// Общий список всех калькуляторов приложения.
 final List<CalculatorDefinition> finishCalculators = [];
 
@@ -2272,6 +2449,7 @@ final List<CalculatorDefinition> calculators = [
   ...engineeringCalculators,
   ...mixCalculators,
   ...windowsDoorsCalculators,
+  ...structureCalculators,
   ...finishCalculators,
 ];
 
