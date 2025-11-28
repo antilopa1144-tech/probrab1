@@ -70,11 +70,13 @@ void main() {
         'height': 0.8,
       };
       final priceList = [
-        PriceItem()
-          ..sku = 'concrete'
-          ..name = 'Бетон М300'
-          ..price = 6500
-          ..unit = 'м³',
+        PriceItem(
+          sku: 'concrete',
+          name: 'Бетон М300',
+          price: 6500,
+          unit: 'м³',
+          imageUrl: '',
+        ),
       ];
 
       final result = calculator(inputs, priceList);

@@ -136,11 +136,13 @@ void main() {
         'layers': 2.0,
       };
       final priceList = [
-        PriceItem()
-          ..sku = 'gkl'
-          ..name = 'Гипсокартон'
-          ..price = 400
-          ..unit = 'лист',
+        PriceItem(
+          sku: 'gkl',
+          name: 'Гипсокартон',
+          price: 400,
+          unit: 'лист',
+          imageUrl: '',
+        ),
       ];
 
       final result = calculator(inputs, priceList);

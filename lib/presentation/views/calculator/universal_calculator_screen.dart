@@ -313,51 +313,47 @@ class _UniversalCalculatorScreenState
                       // Проверка формата числа
                       final num = double.tryParse(value!);
                       if (num == null) {
-                        return loc.translate('input.invalid_number') ?? 'Введите корректное число';
+                        return loc.translate('input.invalid_number');
                       }
                       
                       // Проверка на отрицательные числа (для большинства полей)
                       if (num < 0) {
-                        return loc.translate('input.positive_number') ?? 'Введите положительное число';
+                        return loc.translate('input.positive_number');
                       }
                       
                       // Проверка на ноль для обязательных полей
                       if (field.required && num == 0) {
-                        return loc.translate('input.cannot_be_zero') ?? 'Значение не может быть нулём';
+                        return loc.translate('input.cannot_be_zero');
                       }
                       
                       // Проверка минимального значения
                       if (field.minValue != null && num < field.minValue!) {
-                        return '${loc.translate('input.min_value') ?? 'Минимальное значение'}: ${field.minValue}';
+                        return '${loc.translate('input.min_value')}: ${field.minValue}';
                       }
                       
                       // Проверка максимального значения
                       if (field.maxValue != null && num > field.maxValue!) {
-                        return '${loc.translate('input.max_value') ?? 'Максимальное значение'}: ${field.maxValue}';
+                        return '${loc.translate('input.max_value')}: ${field.maxValue}';
                       }
                       
                       // Проверка разумных значений для площади
                       if (field.key.contains('area') && num > 10000) {
-                        return loc.translate('input.area_too_large') ?? 
-                               'Проверьте значение. Слишком большое число для площади (макс. 10000 м²)';
+                        return loc.translate('input.area_too_large');
                       }
                       
                       // Проверка разумных значений для объёма
                       if (field.key.contains('volume') && num > 1000) {
-                        return loc.translate('input.volume_too_large') ?? 
-                               'Проверьте значение. Слишком большое число для объёма (макс. 1000 м³)';
+                        return loc.translate('input.volume_too_large');
                       }
                       
                       // Проверка разумных значений для толщины
                       if (field.key.contains('thickness') && num > 500) {
-                        return loc.translate('input.thickness_too_large') ?? 
-                               'Проверьте значение. Слишком большая толщина (макс. 500 мм)';
+                        return loc.translate('input.thickness_too_large');
                       }
                       
                       // Проверка разумных значений для периметра
                       if (field.key.contains('perimeter') && num > 1000) {
-                        return loc.translate('input.perimeter_too_large') ?? 
-                               'Проверьте значение. Слишком большой периметр (макс. 1000 м)';
+                        return loc.translate('input.perimeter_too_large');
                       }
                       
                       return null;

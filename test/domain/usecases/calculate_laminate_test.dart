@@ -109,11 +109,13 @@ void main() {
         'perimeter': 18.0,
       };
       final priceList = [
-        PriceItem()
-          ..sku = 'laminate'
-          ..name = 'Ламинат'
-          ..price = 1000
-          ..unit = 'м²',
+        PriceItem(
+          sku: 'laminate',
+          name: 'Ламинат',
+          price: 1000,
+          unit: 'м²',
+          imageUrl: '',
+        ),
       ];
 
       final result = calculator(inputs, priceList);

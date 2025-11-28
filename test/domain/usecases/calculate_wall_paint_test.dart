@@ -126,11 +126,13 @@ void main() {
         'layers': 2.0,
       };
       final priceList = [
-        PriceItem()
-          ..sku = 'paint'
-          ..name = 'Краска'
-          ..price = 500
-          ..unit = 'л',
+        PriceItem(
+          sku: 'paint',
+          name: 'Краска',
+          price: 500,
+          unit: 'л',
+          imageUrl: '',
+        ),
       ];
 
       final result = calculator(inputs, priceList);

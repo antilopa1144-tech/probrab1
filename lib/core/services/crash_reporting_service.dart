@@ -40,7 +40,7 @@ class DebugCrashReportingService implements CrashReportingService {
   factory DebugCrashReportingService() => _instance;
   DebugCrashReportingService._internal();
 
-  final List<_ErrorRecord> _errorHistory = [];
+  final List<ErrorRecord> _errorHistory = [];
   static const int _maxHistorySize = 100;
 
   @override
@@ -55,7 +55,7 @@ class DebugCrashReportingService implements CrashReportingService {
     String? reason,
     bool fatal = false,
   }) async {
-    final record = _ErrorRecord(
+    final record = ErrorRecord(
       error: error,
       stackTrace: stackTrace,
       reason: reason,
@@ -97,21 +97,21 @@ class DebugCrashReportingService implements CrashReportingService {
   }
 
   /// Получить историю ошибок (для отладки)
-  List<_ErrorRecord> get errorHistory => List.unmodifiable(_errorHistory);
+  List<ErrorRecord> get errorHistory => List.unmodifiable(_errorHistory);
 
   /// Очистить историю ошибок
   void clearHistory() => _errorHistory.clear();
 }
 
 /// Запись об ошибке
-class _ErrorRecord {
+class ErrorRecord {
   final dynamic error;
   final StackTrace? stackTrace;
   final String? reason;
   final bool fatal;
   final DateTime timestamp;
 
-  _ErrorRecord({
+  ErrorRecord({
     required this.error,
     this.stackTrace,
     this.reason,
@@ -121,7 +121,7 @@ class _ErrorRecord {
 
   @override
   String toString() {
-    return '_ErrorRecord(error: $error, reason: $reason, '
+    return 'ErrorRecord(error: $error, reason: $reason, '
            'fatal: $fatal, timestamp: $timestamp)';
   }
 }

@@ -1,13 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:probrab_ai/presentation/services/pdf_export_service.dart';
 import 'package:probrab_ai/data/models/calculation.dart';
 import 'dart:convert';
 
 void main() {
   group('PdfExportService', () {
     test('_parseJson parses valid JSON correctly', () {
-      final json = jsonEncode({'area': 20.5, 'thickness': 2.0, 'windowsArea': 5.0});
-      
       // Используем рефлексию для доступа к приватному методу
       // В реальном тесте можно сделать метод публичным или использовать тестовый класс
       // Для простоты проверяем через публичный интерфейс

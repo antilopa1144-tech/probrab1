@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_plaster.dart';
 import 'package:probrab_ai/domain/usecases/calculate_tile.dart';
 import 'package:probrab_ai/domain/usecases/calculate_screed.dart';
-import 'package:probrab_ai/data/models/price_item.dart';
 import '../helpers/test_helpers.dart';
 
 void main() {

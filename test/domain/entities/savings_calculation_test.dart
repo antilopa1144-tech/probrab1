@@ -132,18 +132,6 @@ void main() {
     });
 
     test('getRecommendation returns appropriate message', () {
-      final payback1 = MaterialPayback.calculate(
-        materialId: 'mat1',
-        materialName: 'Fast Payback',
-        initialCost: 10000.0,
-        alternativeCost: 5000.0,
-        durabilityYears: 20,
-        alternativeDurabilityYears: 5,
-      );
-
-      // annualSavings = 1000 - 500 = 500
-      // paybackYears = 5000 / 500 = 10
-      // Но нужно пересчитать правильно
       final payback2 = MaterialPayback(
         materialId: 'mat2',
         materialName: 'Test',

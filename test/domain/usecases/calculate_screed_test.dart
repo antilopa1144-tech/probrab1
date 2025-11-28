@@ -135,16 +135,20 @@ void main() {
         'thickness': 50.0,
       };
       final priceList = [
-        PriceItem()
-          ..sku = 'cement'
-          ..name = 'Цемент М400'
-          ..price = 350
-          ..unit = 'мешок',
-        PriceItem()
-          ..sku = 'sand'
-          ..name = 'Песок'
-          ..price = 500
-          ..unit = 'м³',
+        PriceItem(
+          sku: 'cement',
+          name: 'Цемент М400',
+          price: 350,
+          unit: 'мешок',
+          imageUrl: '',
+        ),
+        PriceItem(
+          sku: 'sand',
+          name: 'Песок',
+          price: 500,
+          unit: 'м³',
+          imageUrl: '',
+        ),
       ];
 
       final result = calculator(inputs, priceList);

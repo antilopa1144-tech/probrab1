@@ -135,11 +135,13 @@ void main() {
         'rollLength': 10.05,
       };
       final priceList = [
-        PriceItem()
-          ..sku = 'wallpaper'
-          ..name = 'Обои'
-          ..price = 600
-          ..unit = 'рул',
+        PriceItem(
+          sku: 'wallpaper',
+          name: 'Обои',
+          price: 600,
+          unit: 'рул',
+          imageUrl: '',
+        ),
       ];
 
       final result = calculator(inputs, priceList);
