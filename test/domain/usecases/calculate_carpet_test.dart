@@ -1,0 +1,104 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:probrab_ai/domain/usecases/calculate_carpet.dart';
+import 'package:probrab_ai/data/models/price_item.dart';
+
+void main() {
+  group('CalculateCarpet', () {
+    test('calculates rolls needed correctly', () {
+      final calculator = CalculateCarpet();
+      final inputs = {
+        'area': 25.0, // 25 м²
+        'rollWidth': 4.0, // 4 м
+        'rollLength': 25.0, // 25 м
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Площадь рулона: 4 * 25 = 100 м²
+      // Количество: 25 / 100 * 1.1 = 1 рулон
+      expect(result.values['rollsNeeded'], equals(1.0));
+      expect(result.values['area'], equals(25.0));
+    });
+
+    test('calculates tape length', () {
+      final calculator = CalculateCarpet();
+      final inputs = {
+        'area': 25.0,
+        'perimeter': 20.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Скотч: 20 * 1.2 = 24 м
+      expect(result.values['tapeLength'], equals(24.0));
+    });
+
+    test('calculates underlay area', () {
+      final calculator = CalculateCarpet();
+      final inputs = {
+        'area': 25.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Подложка: равна площади пола
+      expect(result.values['underlayArea'], equals(25.0));
+    });
+
+    test('estimates perimeter when missing', () {
+      final calculator = CalculateCarpet();
+      final inputs = {
+        'area': 25.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Периметр должен быть рассчитан
+      expect(result.values['plinthLength'], greaterThan(0));
+      expect(result.values['tapeLength'], greaterThan(0));
+    });
+
+    test('uses provided perimeter', () {
+      final calculator = CalculateCarpet();
+      final inputs = {
+        'area': 25.0,
+        'perimeter': 20.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['plinthLength'], equals(20.0));
+    });
+
+    test('uses default roll dimensions when missing', () {
+      final calculator = CalculateCarpet();
+      final inputs = {
+        'area': 25.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // По умолчанию: ширина 4 м, длина 25 м
+      expect(result.values['rollsNeeded'], greaterThan(0));
+    });
+
+    test('handles zero area', () {
+      final calculator = CalculateCarpet();
+      final inputs = {
+        'area': 0.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['rollsNeeded'], equals(0.0));
+      expect(result.values['underlayArea'], equals(0.0));
+    });
+  });
+}
