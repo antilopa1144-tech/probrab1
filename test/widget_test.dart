@@ -7,10 +7,15 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:probrab_ai/main.dart';
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
   testWidgets('renders home screen', (WidgetTester tester) async {
     await tester.pumpWidget(const ProviderScope(child: ProbuilderApp()));
     await tester.pumpAndSettle();
