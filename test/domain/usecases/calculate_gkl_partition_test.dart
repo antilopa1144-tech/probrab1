@@ -100,7 +100,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // По умолчанию layers=2, height=2.5
+      // По умолчанию layers = 2, height = 2.5
       expect(result.values['sheetsNeeded'], equals(9.0));
     });
 

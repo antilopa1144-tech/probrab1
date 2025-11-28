@@ -105,6 +105,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // По умолчанию: power=150, type=2 (мат), thermostats=1
+      // Полезная площадь = 14 м²
       expect(result.values['totalPower'], equals(2100.0)); // 14 * 150
       expect(result.values['matArea'], equals(14.0));
       expect(result.values['thermostats'], equals(1.0));
@@ -143,7 +144,7 @@ void main() {
 
       // 100 Вт/м²: 14 * 100 = 1400 Вт
       expect(result100.values['totalPower'], equals(1400.0));
-      
+
       // 200 Вт/м²: 14 * 200 = 2800 Вт
       expect(result200.values['totalPower'], equals(2800.0));
     });

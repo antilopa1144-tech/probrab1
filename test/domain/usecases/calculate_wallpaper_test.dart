@@ -117,7 +117,7 @@ void main() {
     test('does not allow negative useful area', () {
       final inputs = {
         'area': 10.0,
-        'windowsArea': 20.0, // больше чем общая площадь
+        'windowsArea': 20.0, // больше, чем общая площадь
         'doorsArea': 5.0,
       };
       final emptyPriceList = <PriceItem>[];

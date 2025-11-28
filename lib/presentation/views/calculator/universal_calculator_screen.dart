@@ -11,6 +11,7 @@ import '../weather/weather_advisor_screen.dart';
 import '../savings/savings_calculator_screen.dart';
 import '../expert/expert_recommendations_screen.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../core/errors/error_handler.dart';
 
 /// Универсальный экран калькулятора.
 ///
@@ -99,13 +100,22 @@ class _UniversalCalculatorScreenState
         }
       },
       loading: () {},
-      error: (error, _) {
+      error: (error, stackTrace) {
         if (!mounted) return;
         setState(() => _isCalculating = false);
+        
+        // Используем улучшенный ErrorHandler
+        ErrorHandler.logError(error, stackTrace, 'UniversalCalculatorScreen._calculate');
+        final message = ErrorHandler.getUserFriendlyMessage(error);
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка загрузки цен: $error'),
+            content: Text(message),
             backgroundColor: Colors.red,
+            action: SnackBarAction(
+              label: 'Повторить',
+              onPressed: () => _calculate(),
+            ),
           ),
         );
       },
@@ -199,11 +209,13 @@ class _UniversalCalculatorScreenState
           );
           ref.invalidate(calculationsProvider);
         }
-      } catch (e) {
+      } catch (e, stackTrace) {
         if (mounted) {
+          ErrorHandler.logError(e, stackTrace, 'UniversalCalculatorScreen._saveCalculation');
+          final message = ErrorHandler.getUserFriendlyMessage(e);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Ошибка сохранения: $e'),
+              content: Text(message),
               backgroundColor: Colors.red,
             ),
           );
@@ -233,21 +245,31 @@ class _UniversalCalculatorScreenState
       body: priceAsync.when(
         data: (_) => _buildForm(context, theme),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text('Ошибка загрузки цен: $error'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.invalidate(priceListProvider),
-                child: const Text('Повторить'),
-              ),
-            ],
-          ),
-        ),
+        error: (error, stackTrace) {
+          ErrorHandler.logError(error, stackTrace, 'UniversalCalculatorScreen.build');
+          final message = ErrorHandler.getUserFriendlyMessage(error);
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Text(
+                    message,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => ref.invalidate(priceListProvider),
+                  child: const Text('Повторить'),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -291,31 +313,51 @@ class _UniversalCalculatorScreenState
                       // Проверка формата числа
                       final num = double.tryParse(value!);
                       if (num == null) {
-                        return 'Введите корректное число';
+                        return loc.translate('input.invalid_number') ?? 'Введите корректное число';
                       }
                       
                       // Проверка на отрицательные числа (для большинства полей)
                       if (num < 0) {
-                        return 'Введите положительное число';
+                        return loc.translate('input.positive_number') ?? 'Введите положительное число';
+                      }
+                      
+                      // Проверка на ноль для обязательных полей
+                      if (field.required && num == 0) {
+                        return loc.translate('input.cannot_be_zero') ?? 'Значение не может быть нулём';
                       }
                       
                       // Проверка минимального значения
                       if (field.minValue != null && num < field.minValue!) {
-                        return 'Минимальное значение: ${field.minValue}';
+                        return '${loc.translate('input.min_value') ?? 'Минимальное значение'}: ${field.minValue}';
                       }
                       
                       // Проверка максимального значения
                       if (field.maxValue != null && num > field.maxValue!) {
-                        return 'Максимальное значение: ${field.maxValue}';
+                        return '${loc.translate('input.max_value') ?? 'Максимальное значение'}: ${field.maxValue}';
                       }
                       
-                      // Проверка разумных значений для площади/объёма
+                      // Проверка разумных значений для площади
                       if (field.key.contains('area') && num > 10000) {
-                        return 'Проверьте значение. Слишком большое число для площади.';
+                        return loc.translate('input.area_too_large') ?? 
+                               'Проверьте значение. Слишком большое число для площади (макс. 10000 м²)';
                       }
                       
+                      // Проверка разумных значений для объёма
                       if (field.key.contains('volume') && num > 1000) {
-                        return 'Проверьте значение. Слишком большое число для объёма.';
+                        return loc.translate('input.volume_too_large') ?? 
+                               'Проверьте значение. Слишком большое число для объёма (макс. 1000 м³)';
+                      }
+                      
+                      // Проверка разумных значений для толщины
+                      if (field.key.contains('thickness') && num > 500) {
+                        return loc.translate('input.thickness_too_large') ?? 
+                               'Проверьте значение. Слишком большая толщина (макс. 500 мм)';
+                      }
+                      
+                      // Проверка разумных значений для периметра
+                      if (field.key.contains('perimeter') && num > 1000) {
+                        return loc.translate('input.perimeter_too_large') ?? 
+                               'Проверьте значение. Слишком большой периметр (макс. 1000 м)';
                       }
                       
                       return null;

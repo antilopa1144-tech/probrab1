@@ -132,8 +132,10 @@ void main() {
       final resultLarge = calculator(inputsLarge, emptyPriceList);
 
       // Маленькая плитка требует больше штук
-      expect(resultSmall.values['totalTiles']!, 
-             greaterThan(resultLarge.values['totalTiles']!));
+      expect(
+        resultSmall.values['totalTiles']!,
+        greaterThan(resultLarge.values['totalTiles']!),
+      );
     });
 
     test('uses default values when not provided', () {

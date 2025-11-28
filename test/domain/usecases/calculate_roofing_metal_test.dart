@@ -24,7 +24,7 @@ void main() {
 
       // Площадь листа = 1.18 * 2.5 = 2.95 м²
       // Реальная площадь = 100 / cos(30°) ≈ 115.5 м²
-      // Листов = ceil(115.5 / 2.95 * 1.1) ≈ 44
+      // Листов = ceil(115.5 / 2.95 * 1.1) ≈ от 40 до 50
       expect(result.values['sheetsNeeded'], greaterThanOrEqualTo(40));
       expect(result.values['sheetsNeeded'], lessThanOrEqualTo(50));
     });

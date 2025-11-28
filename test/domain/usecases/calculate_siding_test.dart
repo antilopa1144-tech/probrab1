@@ -21,7 +21,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Площадь панели = 0.2 * 3.0 = 0.6 м²
-      // Панели = ceil(100 / 0.6 * 1.1) = ceil(183.3) = 184
+      // Панели = ceil(100 / 0.6 * 1.1) ≈ 184
       expect(result.values['panelsNeeded'], greaterThanOrEqualTo(180));
       expect(result.values['panelsNeeded'], lessThanOrEqualTo(190));
     });
@@ -133,8 +133,10 @@ void main() {
       final resultWide = calculator(inputsWide, emptyPriceList);
 
       // Узкие панели требуют больше штук
-      expect(resultSmall.values['panelsNeeded']!, 
-             greaterThan(resultWide.values['panelsNeeded']!));
+      expect(
+        resultSmall.values['panelsNeeded']!,
+        greaterThan(resultWide.values['panelsNeeded']!),
+      );
     });
 
     test('uses default values when not provided', () {

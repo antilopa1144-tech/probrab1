@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/workflow_step.dart';
+import '../../core/errors/error_handler.dart';
 
 /// Провайдер для управления планами работ.
 class WorkflowNotifier extends StateNotifier<List<WorkflowPlan>> {
@@ -20,7 +21,8 @@ class WorkflowNotifier extends StateNotifier<List<WorkflowPlan>> {
   WorkflowPlan? getPlan(String planId) {
     try {
       return state.firstWhere((plan) => plan.id == planId);
-    } catch (_) {
+    } catch (e, stackTrace) {
+      ErrorHandler.logError(e, stackTrace, 'WorkflowNotifier.getPlan');
       return null;
     }
   }

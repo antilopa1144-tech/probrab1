@@ -97,12 +97,13 @@ void main() {
       final inputs = {
         'area': 20.0,
         'windowsArea': 15.0,
-        'doorsArea': 10.0, // больше чем площадь
+        'doorsArea': 10.0, // больше, чем площадь стен
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
+      // Полезная площадь не может быть отрицательной
       expect(result.values['usefulArea'], equals(0.0));
     });
 

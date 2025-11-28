@@ -37,7 +37,7 @@ void main() {
       // Плотность раствора = 2000 кг/м³
       // Общий вес = 2000 кг
       // Цемент М400: 33% = 660 кг
-      // Мешки = ceil(660 / 50) = 14 мешков
+      // Мешки = ceil(660 / 50) ≈ 14 мешков
       expect(result.values['cementBags'], closeTo(14.0, 1.0));
     });
 
@@ -51,8 +51,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Цемент М500: 25% = 500 кг
-      // Мешки = ceil(500 / 50) = 10 мешков
+      // Цемент М500: 25% ≈ 500 кг
+      // Мешки = ceil(500 / 50) ≈ 10 мешков
       expect(result.values['cementBags'], closeTo(10.0, 1.0));
     });
 
@@ -87,7 +87,7 @@ void main() {
 
       // 30 мм: объём = 0.6 м³
       expect(result30.values['volume'], equals(0.6));
-      
+
       // 100 мм: объём = 2.0 м³
       expect(result100.values['volume'], equals(2.0));
     });
