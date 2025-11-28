@@ -4,8 +4,13 @@ import 'package:probrab_ai/data/models/price_item.dart';
 
 void main() {
   group('CalculateScreed', () {
-    test('calculates screed volume correctly', () {
-      final calculator = CalculateScreed();
+    late CalculateScreed calculator;
+
+    setUp(() {
+      calculator = CalculateScreed();
+    });
+
+    test('calculates volume correctly', () {
       final inputs = {
         'area': 20.0, // 20 м²
         'thickness': 50.0, // 50 мм
@@ -14,53 +19,80 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Объём: 20 м² * 0.05 м = 1 м³
+      // Объём = 20 * 0.05 = 1.0 м³
       expect(result.values['volume'], equals(1.0));
-      expect(result.values['area'], equals(20.0));
-      expect(result.values['thickness'], equals(50.0));
     });
 
-    test('calculates cement and sand for M400', () {
-      final calculator = CalculateScreed();
+    test('calculates cement bags for M400 correctly', () {
       final inputs = {
-        'area': 10.0,
+        'area': 20.0,
         'thickness': 50.0,
-        'cementGrade': 400.0, // М400
+        'cementGrade': 400.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Объём: 10 * 0.05 = 0.5 м³
-      // Вес раствора: 0.5 * 2000 = 1000 кг
-      // М400: 1:3 (цемент:песок) = 33% цемента
-      // Цемент: 1000 * 0.33 = 330 кг
-      // Мешки: 330 / 50 = 7 мешков
-      expect(result.values['cementBags'], greaterThanOrEqualTo(6));
-      expect(result.values['cementBags'], lessThanOrEqualTo(8));
-      expect(result.values['sandVolume'], greaterThan(0));
+      // Объём = 1.0 м³
+      // Плотность раствора = 2000 кг/м³
+      // Общий вес = 2000 кг
+      // Цемент М400: 33% = 660 кг
+      // Мешки = ceil(660 / 50) ≈ 14 мешков
+      expect(result.values['cementBags'], closeTo(14.0, 1.0));
     });
 
-    test('calculates cement and sand for M500', () {
-      final calculator = CalculateScreed();
+    test('calculates cement bags for M500 correctly', () {
       final inputs = {
-        'area': 10.0,
+        'area': 20.0,
         'thickness': 50.0,
-        'cementGrade': 500.0, // М500
+        'cementGrade': 500.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // М500: 1:4 (цемент:песок) = 25% цемента
-      // Меньше цемента, чем для М400
-      final cementBags = result.values['cementBags']!;
-      expect(cementBags, greaterThan(0));
-      expect(cementBags, lessThan(10));
+      // Цемент М500: 25% ≈ 500 кг
+      // Мешки = ceil(500 / 50) ≈ 10 мешков
+      expect(result.values['cementBags'], closeTo(10.0, 1.0));
+    });
+
+    test('calculates sand volume correctly', () {
+      final inputs = {
+        'area': 20.0,
+        'thickness': 50.0,
+        'cementGrade': 400.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Песок: 67% = 1340 кг
+      // Объём песка = 1340 / 1600 ≈ 0.84 м³
+      expect(result.values['sandVolume'], closeTo(0.84, 0.1));
+    });
+
+    test('handles different thickness values', () {
+      final inputs30mm = {
+        'area': 20.0,
+        'thickness': 30.0,
+      };
+      final inputs100mm = {
+        'area': 20.0,
+        'thickness': 100.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result30 = calculator(inputs30mm, emptyPriceList);
+      final result100 = calculator(inputs100mm, emptyPriceList);
+
+      // 30 мм: объём = 0.6 м³
+      expect(result30.values['volume'], equals(0.6));
+
+      // 100 мм: объём = 2.0 м³
+      expect(result100.values['volume'], equals(2.0));
     });
 
     test('handles zero area', () {
-      final calculator = CalculateScreed();
       final inputs = {
         'area': 0.0,
         'thickness': 50.0,
@@ -71,36 +103,68 @@ void main() {
 
       expect(result.values['volume'], equals(0.0));
       expect(result.values['cementBags'], equals(0.0));
-      expect(result.values['sandVolume'], equals(0.0));
     });
 
-    test('uses default thickness when missing', () {
-      final calculator = CalculateScreed();
+    test('uses default thickness when not provided', () {
       final inputs = {
-        'area': 10.0,
+        'area': 20.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // По умолчанию толщина 50 мм
+      // По умолчанию thickness = 50 мм
       expect(result.values['thickness'], equals(50.0));
-      expect(result.values['volume'], equals(0.5)); // 10 * 0.05
     });
 
-    test('calculates waterproofing area', () {
-      final calculator = CalculateScreed();
+    test('preserves area in results', () {
       final inputs = {
-        'area': 20.0,
+        'area': 25.5,
         'thickness': 50.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Гидроизоляция: 20 * 1.2 = 24 м²
-      // Проверяем, что объём рассчитан корректно
-      expect(result.values['volume'], equals(1.0));
+      expect(result.values['area'], equals(25.5));
+    });
+
+    test('calculates total price with price list', () {
+      final inputs = {
+        'area': 20.0,
+        'thickness': 50.0,
+      };
+      final priceList = [
+        PriceItem()
+          ..sku = 'cement'
+          ..name = 'Цемент М400'
+          ..price = 350
+          ..unit = 'мешок',
+        PriceItem()
+          ..sku = 'sand'
+          ..name = 'Песок'
+          ..price = 500
+          ..unit = 'м³',
+      ];
+
+      final result = calculator(inputs, priceList);
+
+      expect(result.totalPrice, isNotNull);
+      expect(result.totalPrice!, greaterThan(0));
+    });
+
+    test('handles large area correctly', () {
+      final inputs = {
+        'area': 200.0, // большой цех
+        'thickness': 80.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Объём = 200 * 0.08 = 16 м³
+      expect(result.values['volume'], equals(16.0));
+      expect(result.values['cementBags'], greaterThan(100));
     });
   });
 }

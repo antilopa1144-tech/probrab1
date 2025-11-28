@@ -4,59 +4,56 @@ import 'package:probrab_ai/data/models/price_item.dart';
 
 void main() {
   group('CalculateStripFoundation', () {
+    late CalculateStripFoundation calculator;
+
+    setUp(() {
+      calculator = CalculateStripFoundation();
+    });
+
     test('calculates concrete volume correctly', () {
-      final calculator = CalculateStripFoundation();
       final inputs = {
-        'perimeter': 40.0, // 40 м периметр
-        'width': 0.5, // 50 см ширина
-        'height': 0.6, // 60 см высота
+        'perimeter': 40.0, // 10x10 м дом
+        'width': 0.4, // 40 см
+        'height': 0.8, // 80 см
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Объём: 40 * 0.5 * 0.6 = 12 м³
-      expect(result.values['concreteVolume'], equals(12.0));
+      // Объём = 40 * 0.4 * 0.8 = 12.8 м³
+      expect(result.values['concreteVolume'], equals(12.8));
     });
 
-    test('calculates rebar weight', () {
-      final calculator = CalculateStripFoundation();
+    test('calculates rebar weight correctly', () {
       final inputs = {
         'perimeter': 40.0,
-        'width': 0.5,
-        'height': 0.6,
+        'width': 0.4,
+        'height': 0.8,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Объём: 12 м³
-      // Арматура: 12 * 0.01 * 7850 = 942 кг
-      expect(result.values['rebarWeight'], closeTo(942, 10));
+      // Вес арматуры = 12.8 * 0.01 * 7850 = 1004.8 кг
+      expect(result.values['rebarWeight'], closeTo(1004.8, 0.1));
     });
 
-    test('calculates cement bags', () {
-      final calculator = CalculateStripFoundation();
+    test('calculates cement bags correctly', () {
       final inputs = {
         'perimeter': 40.0,
-        'width': 0.5,
-        'height': 0.6,
+        'width': 0.4,
+        'height': 0.8,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Мешки: 12 * 7 = 84 мешка
-      expect(result.values['bagsCement'], equals(84.0));
+      // Мешки цемента = 12.8 * 7 = 89.6
+      expect(result.values['bagsCement'], closeTo(89.6, 0.1));
     });
 
-    test('handles zero inputs', () {
-      final calculator = CalculateStripFoundation();
-      final inputs = {
-        'perimeter': 0.0,
-        'width': 0.0,
-        'height': 0.0,
-      };
+    test('handles zero inputs gracefully', () {
+      final inputs = <String, double>{};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -66,33 +63,65 @@ void main() {
       expect(result.values['bagsCement'], equals(0.0));
     });
 
-    test('uses default values when missing', () {
-      final calculator = CalculateStripFoundation();
+    test('calculates total price with price list', () {
       final inputs = {
         'perimeter': 40.0,
+        'width': 0.4,
+        'height': 0.8,
       };
-      final emptyPriceList = <PriceItem>[];
+      final priceList = [
+        PriceItem()
+          ..sku = 'concrete'
+          ..name = 'Бетон М300'
+          ..price = 6500
+          ..unit = 'м³',
+      ];
 
-      final result = calculator(inputs, emptyPriceList);
+      final result = calculator(inputs, priceList);
 
-      // По умолчанию width и height = 0, объём = 0
-      expect(result.values['concreteVolume'], equals(0.0));
+      // Цена = 12.8 м³ * 6500 руб = 83200 руб
+      expect(result.totalPrice, equals(83200.0));
     });
 
-    test('handles different foundation sizes', () {
-      final calculator = CalculateStripFoundation();
+    test('returns null price when price list is empty', () {
       final inputs = {
-        'perimeter': 30.0,
+        'perimeter': 40.0,
         'width': 0.4,
-        'height': 0.5,
+        'height': 0.8,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Объём: 30 * 0.4 * 0.5 = 6 м³
-      expect(result.values['concreteVolume'], equals(6.0));
-      expect(result.values['bagsCement'], equals(42.0)); // 6 * 7
+      expect(result.totalPrice, isNull);
+    });
+
+    test('handles small foundation correctly', () {
+      final inputs = {
+        'perimeter': 16.0, // 4x4 м
+        'width': 0.3,
+        'height': 0.6,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Объём = 16 * 0.3 * 0.6 = 2.88 м³
+      expect(result.values['concreteVolume'], closeTo(2.88, 0.01));
+    });
+
+    test('handles large foundation correctly', () {
+      final inputs = {
+        'perimeter': 100.0, // большой дом
+        'width': 0.5,
+        'height': 1.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Объём = 100 * 0.5 * 1.0 = 50 м³
+      expect(result.values['concreteVolume'], equals(50.0));
     });
   });
 }

@@ -3,6 +3,7 @@
 
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/core/cache/calculation_cache.dart';
 import 'package:probrab_ai/domain/usecases/calculate_strip_foundation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_wall_paint.dart';
 import 'package:probrab_ai/domain/usecases/calculate_wallpaper.dart';
@@ -128,29 +129,71 @@ class CalculatorDefinition {
     this.tips = const [],
   });
 
+  /// Кэш для результатов расчётов
+  static final _cache = CalculationCache();
+
   /// Возвращает полный CalculatorResult (значения + цена).
+  /// Использует кэширование для повторных расчётов с теми же параметрами.
   CalculatorResult run(
     Map<String, double> inputs,
-    List<PriceItem> priceList,
-  ) {
-    return useCase.call(inputs, priceList);
+    List<PriceItem> priceList, {
+    bool useCache = true,
+  }) {
+    // Попытка получить из кэша
+    if (useCache) {
+      final cachedValues = _cache.get(id, inputs);
+      if (cachedValues != null) {
+        // Возвращаем кэшированный результат (без цены, т.к. цены могут измениться)
+        return CalculatorResult(
+          values: cachedValues,
+          totalPrice: null,
+        );
+      }
+    }
+
+    // Выполняем расчёт
+    final result = useCase.call(inputs, priceList);
+
+    // Сохраняем в кэш
+    if (useCache) {
+      _cache.set(id, inputs, result.values);
+    }
+
+    return result;
   }
 
   /// Адаптер под старый код, который ожидает просто `Map<String, double>`.
   Map<String, double> compute(
     Map<String, double> inputs,
-    List<PriceItem> priceList,
-  ) {
-    final result = run(inputs, priceList);
+    List<PriceItem> priceList, {
+    bool useCache = true,
+  }) {
+    final result = run(inputs, priceList, useCache: useCache);
     return result.values;
   }
 
   /// Alias для совместимости (некоторые экраны ожидают calculate()).
   Map<String, double> calculate(
     Map<String, double> inputs,
-    List<PriceItem> priceList,
-  ) {
-    return compute(inputs, priceList);
+    List<PriceItem> priceList, {
+    bool useCache = true,
+  }) {
+    return compute(inputs, priceList, useCache: useCache);
+  }
+
+  /// Очистить кэш для этого калькулятора
+  void clearCache() {
+    _cache.clearForCalculator(id);
+  }
+
+  /// Получить статистику кэша
+  static CacheStats getCacheStats() {
+    return _cache.getStats();
+  }
+
+  /// Очистить весь кэш
+  static void clearAllCache() {
+    _cache.clear();
   }
 }
 
@@ -168,14 +211,22 @@ final List<CalculatorDefinition> foundationCalculators = [
       InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
+        minValue: 4.0,
+        maxValue: 500.0,
       ),
       InputFieldDefinition(
         key: 'width',
         labelKey: 'input.width',
+        minValue: 0.2,
+        maxValue: 2.0,
+        defaultValue: 0.4,
       ),
       InputFieldDefinition(
         key: 'height',
         labelKey: 'input.height',
+        minValue: 0.3,
+        maxValue: 3.0,
+        defaultValue: 0.8,
       ),
     ],
     resultLabels: {
@@ -204,27 +255,38 @@ final List<CalculatorDefinition> wallCalculators = [
       InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
-        defaultValue: 0.0,
+        minValue: 1.0,
+        maxValue: 1000.0,
       ),
       InputFieldDefinition(
         key: 'layers',
         labelKey: 'input.layers',
         defaultValue: 2.0,
+        minValue: 1.0,
+        maxValue: 5.0,
       ),
       InputFieldDefinition(
         key: 'consumption',
         labelKey: 'input.consumption',
         defaultValue: 0.15,
+        minValue: 0.05,
+        maxValue: 1.0,
       ),
       InputFieldDefinition(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 100.0,
+        required: false,
       ),
       InputFieldDefinition(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 50.0,
+        required: false,
       ),
     ],
     resultLabels: {
@@ -250,37 +312,53 @@ final List<CalculatorDefinition> wallCalculators = [
       InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
-        defaultValue: 0.0,
+        minValue: 1.0,
+        maxValue: 500.0,
       ),
       InputFieldDefinition(
         key: 'rollWidth',
         labelKey: 'input.rollWidth',
         defaultValue: 0.53,
+        minValue: 0.3,
+        maxValue: 1.5,
       ),
       InputFieldDefinition(
         key: 'rollLength',
         labelKey: 'input.rollLength',
         defaultValue: 10.05,
+        minValue: 5.0,
+        maxValue: 25.0,
       ),
       InputFieldDefinition(
         key: 'rapport',
         labelKey: 'input.rapport',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 1.0,
+        required: false,
       ),
       InputFieldDefinition(
         key: 'wallHeight',
         labelKey: 'input.wallHeight',
         defaultValue: 2.5,
+        minValue: 2.0,
+        maxValue: 5.0,
       ),
       InputFieldDefinition(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 100.0,
+        required: false,
       ),
       InputFieldDefinition(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 50.0,
+        required: false,
       ),
     ],
     resultLabels: {
@@ -556,22 +634,30 @@ final List<CalculatorDefinition> floorCalculators = [
       InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
-        defaultValue: 0.0,
+        minValue: 1.0,
+        maxValue: 500.0,
       ),
       InputFieldDefinition(
         key: 'packArea',
         labelKey: 'input.packArea',
         defaultValue: 2.0,
+        minValue: 1.0,
+        maxValue: 5.0,
       ),
       InputFieldDefinition(
         key: 'underlayThickness',
         labelKey: 'input.underlayThickness',
         defaultValue: 3.0,
+        minValue: 2.0,
+        maxValue: 10.0,
       ),
       InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 200.0,
+        required: false,
       ),
     ],
     resultLabels: {
@@ -598,17 +684,22 @@ final List<CalculatorDefinition> floorCalculators = [
       InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
-        defaultValue: 0.0,
+        minValue: 1.0,
+        maxValue: 1000.0,
       ),
       InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 50.0,
+        minValue: 20.0,
+        maxValue: 200.0,
       ),
       InputFieldDefinition(
         key: 'cementGrade',
         labelKey: 'input.cementGrade',
         defaultValue: 400.0,
+        minValue: 300.0,
+        maxValue: 600.0,
       ),
     ],
     resultLabels: {
@@ -634,22 +725,29 @@ final List<CalculatorDefinition> floorCalculators = [
       InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
-        defaultValue: 0.0,
+        minValue: 0.5,
+        maxValue: 500.0,
       ),
       InputFieldDefinition(
         key: 'tileWidth',
         labelKey: 'input.tileWidth',
         defaultValue: 30.0,
+        minValue: 10.0,
+        maxValue: 120.0,
       ),
       InputFieldDefinition(
         key: 'tileHeight',
         labelKey: 'input.tileHeight',
         defaultValue: 30.0,
+        minValue: 10.0,
+        maxValue: 120.0,
       ),
       InputFieldDefinition(
         key: 'jointWidth',
         labelKey: 'input.jointWidth',
         defaultValue: 3.0,
+        minValue: 1.0,
+        maxValue: 10.0,
       ),
     ],
     resultLabels: {
@@ -721,22 +819,29 @@ final List<CalculatorDefinition> floorCalculators = [
       InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
-        defaultValue: 0.0,
+        minValue: 1.0,
+        maxValue: 200.0,
       ),
       InputFieldDefinition(
         key: 'power',
         labelKey: 'input.power',
         defaultValue: 150.0,
+        minValue: 80.0,
+        maxValue: 250.0,
       ),
       InputFieldDefinition(
         key: 'type',
         labelKey: 'input.type',
         defaultValue: 2.0,
+        minValue: 1.0,
+        maxValue: 2.0,
       ),
       InputFieldDefinition(
         key: 'thermostats',
         labelKey: 'input.thermostats',
         defaultValue: 1.0,
+        minValue: 1.0,
+        maxValue: 10.0,
       ),
     ],
     resultLabels: {
@@ -1144,22 +1249,30 @@ final List<CalculatorDefinition> partitionCalculators = [
       InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
-        defaultValue: 0.0,
+        minValue: 1.0,
+        maxValue: 500.0,
       ),
       InputFieldDefinition(
         key: 'layers',
         labelKey: 'input.layers',
         defaultValue: 2.0,
+        minValue: 1.0,
+        maxValue: 3.0,
       ),
       InputFieldDefinition(
         key: 'height',
         labelKey: 'input.height',
         defaultValue: 2.5,
+        minValue: 2.0,
+        maxValue: 4.5,
       ),
       InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 100.0,
+        required: false,
       ),
     ],
     resultLabels: {
@@ -1342,32 +1455,45 @@ final List<CalculatorDefinition> exteriorCalculators = [
       InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
-        defaultValue: 0.0,
+        minValue: 10.0,
+        maxValue: 1000.0,
       ),
       InputFieldDefinition(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         defaultValue: 20.0,
+        minValue: 10.0,
+        maxValue: 50.0,
       ),
       InputFieldDefinition(
         key: 'panelLength',
         labelKey: 'input.panelLength',
         defaultValue: 300.0,
+        minValue: 200.0,
+        maxValue: 600.0,
       ),
       InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 200.0,
+        required: false,
       ),
       InputFieldDefinition(
         key: 'corners',
         labelKey: 'input.corners',
         defaultValue: 4.0,
+        minValue: 4.0,
+        maxValue: 20.0,
       ),
       InputFieldDefinition(
         key: 'soffitLength',
         labelKey: 'input.soffitLength',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 100.0,
+        required: false,
       ),
     ],
     resultLabels: {
@@ -1579,42 +1705,61 @@ final List<CalculatorDefinition> roofingCalculators = [
       InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
-        defaultValue: 0.0,
+        minValue: 10.0,
+        maxValue: 1000.0,
       ),
       InputFieldDefinition(
         key: 'slope',
         labelKey: 'input.slope',
         defaultValue: 30.0,
+        minValue: 5.0,
+        maxValue: 60.0,
       ),
       InputFieldDefinition(
         key: 'sheetWidth',
         labelKey: 'input.sheetWidth',
         defaultValue: 1.18,
+        minValue: 0.5,
+        maxValue: 2.0,
       ),
       InputFieldDefinition(
         key: 'sheetLength',
         labelKey: 'input.sheetLength',
         defaultValue: 2.5,
+        minValue: 1.0,
+        maxValue: 8.0,
       ),
       InputFieldDefinition(
         key: 'ridgeLength',
         labelKey: 'input.ridgeLength',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 100.0,
+        required: false,
       ),
       InputFieldDefinition(
         key: 'valleyLength',
         labelKey: 'input.valleyLength',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 100.0,
+        required: false,
       ),
       InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 200.0,
+        required: false,
       ),
       InputFieldDefinition(
         key: 'endLength',
         labelKey: 'input.endLength',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 100.0,
+        required: false,
       ),
     ],
     resultLabels: {
@@ -1690,22 +1835,31 @@ final List<CalculatorDefinition> engineeringCalculators = [
       InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
-        defaultValue: 0.0,
+        minValue: 5.0,
+        maxValue: 1000.0,
       ),
       InputFieldDefinition(
         key: 'rooms',
         labelKey: 'input.rooms',
         defaultValue: 1.0,
+        minValue: 1.0,
+        maxValue: 50.0,
       ),
       InputFieldDefinition(
         key: 'sockets',
         labelKey: 'input.sockets',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 200.0,
+        required: false,
       ),
       InputFieldDefinition(
         key: 'switches',
         labelKey: 'input.switches',
         defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 100.0,
+        required: false,
       ),
     ],
     resultLabels: {
@@ -1776,17 +1930,22 @@ final List<CalculatorDefinition> engineeringCalculators = [
       InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
-        defaultValue: 0.0,
+        minValue: 10.0,
+        maxValue: 1000.0,
       ),
       InputFieldDefinition(
         key: 'rooms',
         labelKey: 'input.rooms',
         defaultValue: 1.0,
+        minValue: 1.0,
+        maxValue: 50.0,
       ),
       InputFieldDefinition(
         key: 'ceilingHeight',
         labelKey: 'input.ceilingHeight',
         defaultValue: 2.5,
+        minValue: 2.2,
+        maxValue: 5.0,
       ),
     ],
     resultLabels: {
@@ -1859,27 +2018,35 @@ final List<CalculatorDefinition> bathroomCalculators = [
       InputFieldDefinition(
         key: 'wallArea',
         labelKey: 'input.wallArea',
-        defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 100.0,
       ),
       InputFieldDefinition(
         key: 'floorArea',
         labelKey: 'input.floorArea',
-        defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 50.0,
       ),
       InputFieldDefinition(
         key: 'tileWidth',
         labelKey: 'input.tileWidth',
         defaultValue: 30.0,
+        minValue: 10.0,
+        maxValue: 120.0,
       ),
       InputFieldDefinition(
         key: 'tileHeight',
         labelKey: 'input.tileHeight',
         defaultValue: 30.0,
+        minValue: 10.0,
+        maxValue: 120.0,
       ),
       InputFieldDefinition(
         key: 'jointWidth',
         labelKey: 'input.jointWidth',
         defaultValue: 3.0,
+        minValue: 1.0,
+        maxValue: 10.0,
       ),
     ],
     resultLabels: {
