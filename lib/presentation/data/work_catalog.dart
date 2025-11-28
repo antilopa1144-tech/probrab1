@@ -405,6 +405,18 @@ const List<WorkAreaDefinition> _houseAreas = [
             calculatorId: 'mixes_putty',
           ),
           WorkItemDefinition(
+            id: 'mixes_primer',
+            title: 'Грунтовка',
+            icon: Icons.format_paint,
+            calculatorId: 'mixes_primer',
+          ),
+          WorkItemDefinition(
+            id: 'mixes_tile_glue',
+            title: 'Клей для плитки',
+            icon: Icons.construction,
+            calculatorId: 'mixes_tile_glue',
+          ),
+          WorkItemDefinition(
             id: 'mixes_self_level',
             title: 'Наливной раствор',
             icon: Icons.format_line_spacing,

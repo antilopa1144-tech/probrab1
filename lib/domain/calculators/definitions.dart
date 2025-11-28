@@ -287,6 +287,7 @@ final List<CalculatorDefinition> wallCalculators = [
       'usefulArea': 'result.area',
       'rollsNeeded': 'result.rolls',
       'glueNeeded': 'result.glue',
+      'effectiveRollArea': 'result.area',
     },
     tips: const [
       'Проверьте совпадение рисунка (раппорта) перед поклейкой.',
@@ -522,12 +523,12 @@ final List<CalculatorDefinition> wallCalculators = [
       InputFieldDefinition(
         key: 'tileWidth',
         labelKey: 'input.tileWidth',
-        defaultValue: 0.30,
+        defaultValue: 30.0,
       ),
       InputFieldDefinition(
         key: 'tileHeight',
         labelKey: 'input.tileHeight',
-        defaultValue: 0.60,
+        defaultValue: 60.0,
       ),
     ],
     resultLabels: {
