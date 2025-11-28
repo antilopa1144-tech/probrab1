@@ -56,6 +56,14 @@ import 'package:probrab_ai/domain/usecases/calculate_slopes.dart';
 import 'package:probrab_ai/domain/usecases/calculate_sound_insulation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_ventilation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_cassette_ceiling.dart';
+import 'package:probrab_ai/domain/usecases/calculate_floor_insulation.dart';
+import 'package:probrab_ai/domain/usecases/calculate_stairs.dart';
+import 'package:probrab_ai/domain/usecases/calculate_fence.dart';
+import 'package:probrab_ai/domain/usecases/calculate_blind_area.dart';
+import 'package:probrab_ai/domain/usecases/calculate_basement.dart';
+import 'package:probrab_ai/domain/usecases/calculate_balcony.dart';
+import 'package:probrab_ai/domain/usecases/calculate_attic.dart';
+import 'package:probrab_ai/domain/usecases/calculate_terrace.dart';
 
 
 /// Описание поля ввода (одно поле формы: периметр, ширина и т.п.)
@@ -365,6 +373,7 @@ final List<CalculatorDefinition> wallCalculators = [
       'usefulArea': 'result.area',
       'rollsNeeded': 'result.rolls',
       'glueNeeded': 'result.glue',
+      'effectiveRollArea': 'result.area',
     },
     tips: const [
       'Проверьте совпадение рисунка (раппорта) перед поклейкой.',
@@ -600,12 +609,12 @@ final List<CalculatorDefinition> wallCalculators = [
       InputFieldDefinition(
         key: 'tileWidth',
         labelKey: 'input.tileWidth',
-        defaultValue: 0.30,
+        defaultValue: 30.0,
       ),
       InputFieldDefinition(
         key: 'tileHeight',
         labelKey: 'input.tileHeight',
-        defaultValue: 0.60,
+        defaultValue: 60.0,
       ),
     ],
     resultLabels: {
@@ -963,6 +972,53 @@ final List<CalculatorDefinition> floorCalculators = [
       'Укладывайте в одном направлении ворса.',
     ],
     useCase: CalculateCarpet(),
+  ),
+  CalculatorDefinition(
+    id: 'floors_insulation',
+    titleKey: 'calculator.floorInsulation',
+    category: 'Внутренняя отделка',
+    subCategory: 'Полы',
+    fields: [
+      InputFieldDefinition(
+        key: 'area',
+        labelKey: 'input.floorArea',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'insulationThickness',
+        labelKey: 'input.insulationThickness',
+        defaultValue: 100.0,
+      ),
+      InputFieldDefinition(
+        key: 'insulationType',
+        labelKey: 'input.insulationType',
+        defaultValue: 1.0,
+      ),
+      InputFieldDefinition(
+        key: 'perimeter',
+        labelKey: 'input.perimeter',
+        defaultValue: 0.0,
+        required: false,
+      ),
+    ],
+    resultLabels: {
+      'area': 'result.area',
+      'volume': 'result.volume',
+      'sheetsNeeded': 'result.sheets',
+      'weight': 'result.weight',
+      'vaporBarrierArea': 'result.vaporBarrier',
+      'waterproofingArea': 'result.waterproofing',
+      'plinthLength': 'result.plinth',
+      'fastenersNeeded': 'result.fasteners',
+    },
+    tips: const [
+      'Утепление пола особенно важно для первого этажа и над неотапливаемыми помещениями.',
+      'Для минваты обязательна гидроизоляция снизу.',
+      'Пароизоляция укладывается сверху утеплителя (со стороны тёплого помещения).',
+      'Пенопласт и ЭППС не требуют гидроизоляции, но нужна пароизоляция.',
+      'Оставляйте зазор 2-3 см между утеплителем и финишным покрытием для вентиляции.',
+    ],
+    useCase: CalculateFloorInsulation(),
   ),
 ];
 
@@ -2421,6 +2477,496 @@ final List<CalculatorDefinition> soundInsulationCalculators = [
   ),
 ];
 
+/// ===== КАЛЬКУЛЯТОРЫ КОНСТРУКЦИЙ =====
+
+final List<CalculatorDefinition> structureCalculators = [
+  CalculatorDefinition(
+    id: 'stairs',
+    titleKey: 'calculator.stairs',
+    category: 'Конструкции',
+    subCategory: 'Лестницы',
+    fields: [
+      InputFieldDefinition(
+        key: 'floorHeight',
+        labelKey: 'input.floorHeight',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'stepHeight',
+        labelKey: 'input.stepHeight',
+        defaultValue: 0.18,
+      ),
+      InputFieldDefinition(
+        key: 'stepWidth',
+        labelKey: 'input.stepWidth',
+        defaultValue: 0.28,
+      ),
+      InputFieldDefinition(
+        key: 'stepCount',
+        labelKey: 'input.stepCount',
+        defaultValue: 0.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'width',
+        labelKey: 'input.width',
+        defaultValue: 1.0,
+      ),
+      InputFieldDefinition(
+        key: 'materialType',
+        labelKey: 'input.type',
+        defaultValue: 1.0,
+      ),
+    ],
+    resultLabels: {
+      'floorHeight': 'result.height',
+      'stepCount': 'result.steps',
+      'stepHeight': 'result.stepHeight',
+      'stepWidth': 'result.stepWidth',
+      'flightLength': 'result.length',
+      'stepArea': 'result.area',
+      'totalArea': 'result.totalArea',
+      'railingLength': 'result.railing',
+      'balustersNeeded': 'result.balusters',
+      'supportPosts': 'result.posts',
+      'stringersNeeded': 'result.stringers',
+      'concreteVolume': 'result.volume',
+    },
+    tips: const [
+      'Высота ступени должна быть 15-20 см для комфортного подъёма.',
+      'Ширина проступи (ступени) должна быть не менее 28 см.',
+      'Ширина лестницы для жилых домов - минимум 90 см.',
+      'Для деревянной лестницы используйте твёрдые породы дерева (дуб, ясень).',
+      'Бетонная лестница требует армирования и опалубки.',
+      'Перила должны быть на высоте 90-100 см от ступени.',
+      'Балясины устанавливаются с шагом 10-15 см для безопасности детей.',
+    ],
+    useCase: CalculateStairs(),
+  ),
+  CalculatorDefinition(
+    id: 'fence',
+    titleKey: 'calculator.fence',
+    category: 'Конструкции',
+    subCategory: 'Заборы',
+    fields: [
+      InputFieldDefinition(
+        key: 'length',
+        labelKey: 'input.length',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'height',
+        labelKey: 'input.height',
+        defaultValue: 2.0,
+      ),
+      InputFieldDefinition(
+        key: 'materialType',
+        labelKey: 'input.type',
+        defaultValue: 1.0,
+      ),
+      InputFieldDefinition(
+        key: 'gates',
+        labelKey: 'input.gates',
+        defaultValue: 1.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'wickets',
+        labelKey: 'input.wickets',
+        defaultValue: 1.0,
+        required: false,
+      ),
+    ],
+    resultLabels: {
+      'length': 'result.length',
+      'height': 'result.height',
+      'fenceArea': 'result.area',
+      'postsNeeded': 'result.posts',
+      'lagCount': 'result.lags',
+      'lagLength': 'result.lagLength',
+      'materialArea': 'result.material',
+      'bricksNeeded': 'result.bricks',
+      'mortarNeeded': 'result.mortar',
+      'foundationVolume': 'result.volume',
+      'gates': 'result.gates',
+      'wickets': 'result.wickets',
+      'fastenersNeeded': 'result.fasteners',
+    },
+    tips: const [
+      'Столбы устанавливаются на глубину 1/3 от высоты забора.',
+      'Для профлиста используйте оцинкованные саморезы с уплотнителями.',
+      'Деревянный забор требует обработки антисептиком.',
+      'Кирпичный забор нуждается в фундаменте.',
+      'Расстояние между столбами: 2-3 метра в зависимости от материала.',
+      'Ворота и калитки должны быть на 5-10 см выше уровня земли.',
+    ],
+    useCase: CalculateFence(),
+  ),
+  CalculatorDefinition(
+    id: 'blind_area',
+    titleKey: 'calculator.blindArea',
+    category: 'Конструкции',
+    subCategory: 'Отмостка',
+    fields: [
+      InputFieldDefinition(
+        key: 'perimeter',
+        labelKey: 'input.perimeter',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'width',
+        labelKey: 'input.width',
+        defaultValue: 1.0,
+      ),
+      InputFieldDefinition(
+        key: 'thickness',
+        labelKey: 'input.thickness',
+        defaultValue: 100.0,
+      ),
+      InputFieldDefinition(
+        key: 'materialType',
+        labelKey: 'input.type',
+        defaultValue: 1.0,
+      ),
+      InputFieldDefinition(
+        key: 'insulation',
+        labelKey: 'input.insulation',
+        defaultValue: 0.0,
+        required: false,
+      ),
+    ],
+    resultLabels: {
+      'perimeter': 'result.perimeter',
+      'width': 'result.width',
+      'area': 'result.area',
+      'thickness': 'result.thickness',
+      'volume': 'result.volume',
+      'sandVolume': 'result.sand',
+      'gravelVolume': 'result.gravel',
+      'insulationVolume': 'result.insulationVolume',
+      'insulationArea': 'result.insulationArea',
+      'tilesNeeded': 'result.tiles',
+      'curbLength': 'result.curb',
+      'rebarNeeded': 'result.reinforcement',
+      'jointsCount': 'result.joints',
+    },
+    tips: const [
+      'Ширина отмостки должна быть не менее 1 метра.',
+      'Отмостка должна иметь уклон 2-3% от стены для отвода воды.',
+      'Бетонная отмостка требует деформационных швов каждые 2-3 метра.',
+      'Утепление отмостки особенно важно для домов с цокольным этажом.',
+      'Песчаная подушка должна быть утрамбована.',
+      'Бордюр защищает отмостку от разрушения краёв.',
+    ],
+    useCase: CalculateBlindArea(),
+  ),
+  CalculatorDefinition(
+    id: 'basement',
+    titleKey: 'calculator.basement',
+    category: 'Конструкции',
+    subCategory: 'Подвал / Погреб',
+    fields: [
+      InputFieldDefinition(
+        key: 'area',
+        labelKey: 'input.area',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'height',
+        labelKey: 'input.height',
+        defaultValue: 2.5,
+      ),
+      InputFieldDefinition(
+        key: 'wallThickness',
+        labelKey: 'input.thickness',
+        defaultValue: 0.4,
+      ),
+      InputFieldDefinition(
+        key: 'materialType',
+        labelKey: 'input.type',
+        defaultValue: 1.0,
+      ),
+      InputFieldDefinition(
+        key: 'waterproofing',
+        labelKey: 'input.waterproofing',
+        defaultValue: 1.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'insulation',
+        labelKey: 'input.insulation',
+        defaultValue: 0.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'ventilation',
+        labelKey: 'input.ventilation',
+        defaultValue: 1.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'perimeter',
+        labelKey: 'input.perimeter',
+        defaultValue: 0.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'stairs',
+        labelKey: 'input.stairs',
+        defaultValue: 1.0,
+        required: false,
+      ),
+    ],
+    resultLabels: {
+      'area': 'result.area',
+      'height': 'result.height',
+      'volume': 'result.volume',
+      'perimeter': 'result.perimeter',
+      'wallArea': 'result.wallArea',
+      'wallVolume': 'result.wallVolume',
+      'floorArea': 'result.floorArea',
+      'concreteVolume': 'result.volume',
+      'bricksNeeded': 'result.bricks',
+      'blocksNeeded': 'result.blocks',
+      'mortarNeeded': 'result.mortar',
+      'waterproofingArea': 'result.waterproofing',
+      'insulationArea': 'result.insulationArea',
+      'insulationVolume': 'result.insulationVolume',
+      'rebarNeeded': 'result.reinforcement',
+      'ventilationPipes': 'result.pipes',
+      'ventilationGrilles': 'result.grilles',
+      'stairsNeeded': 'result.stairs',
+    },
+    tips: const [
+      'Гидроизоляция обязательна для подвалов и погребов.',
+      'Вентиляция необходима для предотвращения сырости.',
+      'Утепление стен снижает теплопотери и предотвращает промерзание.',
+      'Бетонные стены требуют армирования.',
+      'Пол должен иметь уклон к дренажному отверстию.',
+      'Лестница должна быть удобной и безопасной.',
+    ],
+    useCase: CalculateBasement(),
+  ),
+  CalculatorDefinition(
+    id: 'balcony',
+    titleKey: 'calculator.balcony',
+    category: 'Внутренняя отделка',
+    subCategory: 'Балкон / Лоджия',
+    fields: [
+      InputFieldDefinition(
+        key: 'area',
+        labelKey: 'input.area',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'perimeter',
+        labelKey: 'input.perimeter',
+        defaultValue: 0.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'height',
+        labelKey: 'input.height',
+        defaultValue: 1.1,
+      ),
+      InputFieldDefinition(
+        key: 'glazing',
+        labelKey: 'input.glazing',
+        defaultValue: 0.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'insulation',
+        labelKey: 'input.insulation',
+        defaultValue: 0.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'floorType',
+        labelKey: 'input.floorType',
+        defaultValue: 1.0,
+      ),
+      InputFieldDefinition(
+        key: 'wallFinish',
+        labelKey: 'input.wallFinish',
+        defaultValue: 1.0,
+      ),
+    ],
+    resultLabels: {
+      'area': 'result.area',
+      'floorArea': 'result.floorArea',
+      'wallArea': 'result.wallArea',
+      'ceilingArea': 'result.ceilingArea',
+      'glazingArea': 'result.glazing',
+      'glazingLength': 'result.glazingLength',
+      'insulationArea': 'result.insulationArea',
+      'insulationVolume': 'result.insulationVolume',
+      'vaporBarrierArea': 'result.vaporBarrier',
+      'tilesNeeded': 'result.tiles',
+      'selfLevelingMix': 'result.mix',
+      'woodArea': 'result.wood',
+      'paintNeeded': 'result.paint',
+      'panelsNeeded': 'result.panels',
+      'wallTilesNeeded': 'result.tiles',
+      'ceilingPaintNeeded': 'result.paint',
+      'railingLength': 'result.railing',
+    },
+    tips: const [
+      'Остекление балкона значительно увеличивает полезную площадь.',
+      'Тёплое остекление позволяет использовать балкон круглый год.',
+      'Утепление обязательно для тёплого остекления.',
+      'Пароизоляция защищает утеплитель от влаги.',
+      'Для пола на открытом балконе используйте морозостойкую плитку.',
+      'Террасная доска подходит для открытых балконов.',
+    ],
+    useCase: CalculateBalcony(),
+  ),
+  CalculatorDefinition(
+    id: 'attic',
+    titleKey: 'calculator.attic',
+    category: 'Внутренняя отделка',
+    subCategory: 'Мансарда',
+    fields: [
+      InputFieldDefinition(
+        key: 'area',
+        labelKey: 'input.area',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'roofArea',
+        labelKey: 'input.roofArea',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'wallArea',
+        labelKey: 'input.wallArea',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'floorArea',
+        labelKey: 'input.floorArea',
+        defaultValue: 0.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'windows',
+        labelKey: 'input.windows',
+        defaultValue: 0.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'insulation',
+        labelKey: 'input.insulation',
+        defaultValue: 1.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'wallFinish',
+        labelKey: 'input.wallFinish',
+        defaultValue: 1.0,
+      ),
+      InputFieldDefinition(
+        key: 'floorType',
+        labelKey: 'input.floorType',
+        defaultValue: 1.0,
+      ),
+    ],
+    resultLabels: {
+      'area': 'result.area',
+      'roofArea': 'result.roofArea',
+      'wallArea': 'result.wallArea',
+      'floorArea': 'result.floorArea',
+      'insulationArea': 'result.insulationArea',
+      'insulationVolume': 'result.insulationVolume',
+      'vaporBarrierArea': 'result.vaporBarrier',
+      'woodArea': 'result.wood',
+      'gklSheets': 'result.sheets',
+      'panelsNeeded': 'result.panels',
+      'laminatePacks': 'result.packs',
+      'parquetPlanks': 'result.planks',
+      'linoleumRolls': 'result.rolls',
+      'windows': 'result.windows',
+      'windowArea': 'result.windowArea',
+      'fixturesNeeded': 'result.fixtures',
+    },
+    tips: const [
+      'Утепление мансарды обязательно для комфортного проживания.',
+      'Толщина утеплителя должна быть не менее 15-20 см.',
+      'Пароизоляция защищает утеплитель от влаги изнутри.',
+      'Мансардные окна обеспечивают естественное освещение.',
+      'Вагонка создаёт уютную атмосферу в мансарде.',
+      'Проверьте несущую способность перекрытия перед укладкой пола.',
+    ],
+    useCase: CalculateAttic(),
+  ),
+  CalculatorDefinition(
+    id: 'terrace',
+    titleKey: 'calculator.terrace',
+    category: 'Конструкции',
+    subCategory: 'Терраса / Веранда',
+    fields: [
+      InputFieldDefinition(
+        key: 'area',
+        labelKey: 'input.area',
+        defaultValue: 0.0,
+      ),
+      InputFieldDefinition(
+        key: 'perimeter',
+        labelKey: 'input.perimeter',
+        defaultValue: 0.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'floorType',
+        labelKey: 'input.floorType',
+        defaultValue: 1.0,
+      ),
+      InputFieldDefinition(
+        key: 'railing',
+        labelKey: 'input.railing',
+        defaultValue: 1.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'roof',
+        labelKey: 'input.roof',
+        defaultValue: 0.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'roofType',
+        labelKey: 'input.roofType',
+        defaultValue: 1.0,
+        required: false,
+      ),
+    ],
+    resultLabels: {
+      'area': 'result.area',
+      'floorArea': 'result.floorArea',
+      'deckingArea': 'result.decking',
+      'tilesNeeded': 'result.tiles',
+      'deckingBoards': 'result.boards',
+      'railingLength': 'result.railing',
+      'railingPosts': 'result.posts',
+      'roofArea': 'result.roofArea',
+      'polycarbonateSheets': 'result.sheets',
+      'profiledSheets': 'result.sheets',
+      'roofingMaterial': 'result.roofing',
+      'roofPosts': 'result.posts',
+      'foundationVolume': 'result.volume',
+    },
+    tips: const [
+      'Террасная доска (декинг) устойчива к влаге и перепадам температур.',
+      'Плитка для террасы должна быть морозостойкой и нескользкой.',
+      'Ограждение обеспечивает безопасность, особенно если есть дети.',
+      'Кровля защищает от дождя и солнца.',
+      'Поликарбонат пропускает свет и создаёт лёгкую конструкцию.',
+      'Столбы для кровли должны быть установлены на фундамент.',
+    ],
+    useCase: CalculateTerrace(),
+  ),
+];
+
 /// Общий список всех калькуляторов приложения.
 final List<CalculatorDefinition> finishCalculators = [];
 
@@ -2438,6 +2984,7 @@ final List<CalculatorDefinition> calculators = [
   ...engineeringCalculators,
   ...mixCalculators,
   ...windowsDoorsCalculators,
+  ...structureCalculators,
   ...finishCalculators,
 ];
 
