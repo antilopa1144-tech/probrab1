@@ -25,7 +25,7 @@ class ProbuilderApp extends ConsumerWidget {
     final isDarkMode = settings.darkMode;
 
     return MaterialApp(
-      key: ValueKey('${settings.language}_${isDarkMode}_${accent.toARGB32()}'),
+      key: ValueKey('${settings.language}_${isDarkMode}_${accent.value}'),
       title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
       theme: isDarkMode ? AppTheme.darkTheme(accent) : AppTheme.lightTheme(accent),

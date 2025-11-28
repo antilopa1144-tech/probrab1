@@ -27,16 +27,30 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
       unit: 'м²',
       minPrice: 5000,
     ),
-    'СПб': const LaborRate(
+    'Санкт‑Петербург': const LaborRate(
       category: 'Отделка',
-      region: 'СПб',
-      pricePerUnit: 450,
+      region: 'Санкт‑Петербург',
+      pricePerUnit: 470,
       unit: 'м²',
-      minPrice: 4000,
+      minPrice: 4200,
     ),
-    'Регион': const LaborRate(
+    'Екатеринбург': const LaborRate(
       category: 'Отделка',
-      region: 'Регион',
+      region: 'Екатеринбург',
+      pricePerUnit: 420,
+      unit: 'м²',
+      minPrice: 3600,
+    ),
+    'Краснодар': const LaborRate(
+      category: 'Отделка',
+      region: 'Краснодар',
+      pricePerUnit: 390,
+      unit: 'м²',
+      minPrice: 3300,
+    ),
+    'Регионы РФ': const LaborRate(
+      category: 'Отделка',
+      region: 'Регионы РФ',
       pricePerUnit: 350,
       unit: 'м²',
       minPrice: 3000,
