@@ -4,8 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:probrab_ai/presentation/views/settings_page.dart';
 import 'package:probrab_ai/core/localization/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+    PackageInfo.setMockInitialValues(
+      appName: 'Probrab',
+      packageName: 'ru.probrab.app',
+      version: '1.0.0',
+      buildNumber: '1',
+    );
+  });
+
   group('SettingsPage', () {
     Widget createTestWidget() {
       return ProviderScope(

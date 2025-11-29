@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор штукатурки.
 ///
@@ -12,68 +12,97 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// - area: площадь стен (м²)
 /// - thickness: толщина слоя (мм), по умолчанию 10
 /// - type: тип (1=гипсовая, 2=цементная), по умолчанию 1
-class CalculatePlaster implements CalculatorUseCase {
+/// - perimeter: периметр комнаты (м), опционально
+class CalculatePlaster extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    final thickness = inputs['thickness'] ?? 10;
+
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (thickness < 5 || thickness > 50) return 'Толщина должна быть от 5 до 50 мм';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final thickness = inputs['thickness'] ?? 10.0; // мм
-    final type = (inputs['type'] ?? 1).round(); // 1=гипсовая, 2=цементная
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final thickness = getInput(inputs, 'thickness', defaultValue: 10.0, minValue: 5.0, maxValue: 50.0);
+    final type = getIntInput(inputs, 'type', defaultValue: 1, minValue: 1, maxValue: 2);
+    
+    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
-    // Расход штукатурки: ~8-10 кг/м² на 1 мм толщины
-    final consumptionPerMm = type == 1 ? 8.5 : 10.0; // кг/м²·мм
+    // Расход штукатурки на 10 мм слоя:
+    // - Гипсовая: 8-9 кг/м²
+    // - Цементная: 14-17 кг/м²
+    final consumptionPer10mm = type == 1 ? 8.5 : 15.5; // кг/м²
 
-    // Общий расход с запасом 10%
-    final plasterNeeded = area * consumptionPerMm * (thickness / 10) * 1.1;
+    // Общий расход с учётом толщины и запаса 10%
+    final plasterNeeded = area * consumptionPer10mm * (thickness / 10) * 1.1;
 
-    // Грунтовка: ~0.2 кг/м²
-    final primerNeeded = area * 0.2 * 1.1;
+    // Грунтовка глубокого проникновения: ~0.2 л/м²
+    final primerNeeded = area * 0.2;
 
-    // Маяки: ~1 шт на 1.5 м ширины стены
-    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area / 4));
-    final beaconsNeeded = (perimeter / 1.5).ceil();
+    // Штукатурная сетка (при толщине > 20 мм): площадь покрытия
+    final meshArea = thickness > 20 ? area : 0.0;
 
-    // Цены
+    // Маяки профильные: шаг установки 1.2-1.5 м
+    // Количество зависит от периметра и высоты стен
+    final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 2.7, minValue: 2.0, maxValue: 4.0);
+    final beaconsCount = ceilToInt(perimeter / 1.5);
+    final beaconsLength = beaconsCount * wallHeight;
+
+    // Угловой профиль (для наружных углов): по факту
+    final cornerProfileLength = getInput(inputs, 'corners', defaultValue: 0.0);
+
+    // Правило алюминиевое: 1-2 шт
+    final rulesNeeded = 1;
+
+    // Инструменты: тёрка, шпатели, ведра
+    final toolSets = 1;
+
+    // Вода для замешивания (информативно): ~0.6 л на кг для гипсовой, ~0.2 л для цементной
+    final waterPerKg = type == 1 ? 0.6 : 0.2;
+    final waterNeeded = plasterNeeded * waterPerKg;
+
+    // Расчёт стоимости
     final plasterPrice = type == 1
-        ? _findPrice(priceList, ['plaster_gypsum', 'plaster'])?.price
-        : _findPrice(priceList, ['plaster_cement', 'plaster'])?.price;
-    final primerPrice = _findPrice(priceList, ['primer', 'primer_deep'])?.price;
-    final beaconPrice = _findPrice(priceList, ['beacon', 'beacon_plaster'])?.price;
+        ? findPrice(priceList, ['plaster_gypsum', 'plaster', 'gypsum_plaster'])
+        : findPrice(priceList, ['plaster_cement', 'cement_plaster', 'plaster']);
+    final primerPrice = findPrice(priceList, ['primer', 'primer_deep', 'primer_penetrating']);
+    final meshPrice = findPrice(priceList, ['mesh', 'plaster_mesh', 'reinforcement_mesh']);
+    final beaconPrice = findPrice(priceList, ['beacon', 'beacon_plaster', 'profile_beacon']);
+    final cornerProfilePrice = findPrice(priceList, ['profile_corner', 'corner_bead']);
 
-    double? totalPrice;
-    if (plasterPrice != null) {
-      totalPrice = plasterNeeded * plasterPrice;
-      if (primerPrice != null) {
-        totalPrice = totalPrice + primerNeeded * primerPrice;
-      }
-      if (beaconPrice != null) {
-        totalPrice = totalPrice + beaconsNeeded * beaconPrice;
-      }
-    }
+    final costs = [
+      calculateCost(plasterNeeded, plasterPrice?.price),
+      calculateCost(primerNeeded, primerPrice?.price),
+      if (meshArea > 0) calculateCost(meshArea, meshPrice?.price),
+      calculateCost(beaconsLength, beaconPrice?.price),
+      if (cornerProfileLength > 0) calculateCost(cornerProfileLength, cornerProfilePrice?.price),
+    ];
 
-    return CalculatorResult(
+    return createResult(
       values: {
         'area': area,
         'plasterNeeded': plasterNeeded,
         'primerNeeded': primerNeeded,
         'thickness': thickness,
-        'beaconsNeeded': beaconsNeeded.toDouble(),
+        if (meshArea > 0) 'meshArea': meshArea,
+        'beaconsCount': beaconsCount.toDouble(),
+        'beaconsLength': beaconsLength,
+        if (cornerProfileLength > 0) 'cornerProfileLength': cornerProfileLength,
+        'rulesNeeded': rulesNeeded.toDouble(),
+        'waterNeeded': waterNeeded,
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-

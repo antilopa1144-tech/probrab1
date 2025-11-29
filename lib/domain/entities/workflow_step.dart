@@ -25,6 +25,38 @@ class WorkflowStep {
     this.checklist = const [],
     this.isCritical = false,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'category': category,
+      'order': order,
+      'prerequisites': prerequisites,
+      'estimatedDays': estimatedDays,
+      'requiredMaterials': requiredMaterials,
+      'requiredTools': requiredTools,
+      'checklist': checklist,
+      'isCritical': isCritical,
+    };
+  }
+
+  factory WorkflowStep.fromJson(Map<String, dynamic> json) {
+    return WorkflowStep(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      description: json['description'] as String,
+      category: json['category'] as String,
+      order: json['order'] as int,
+      prerequisites: (json['prerequisites'] as List?)?.cast<String>() ?? [],
+      estimatedDays: json['estimatedDays'] as int? ?? 1,
+      requiredMaterials: (json['requiredMaterials'] as List?)?.cast<String>() ?? [],
+      requiredTools: (json['requiredTools'] as List?)?.cast<String>() ?? [],
+      checklist: (json['checklist'] as List?)?.cast<String>() ?? [],
+      isCritical: json['isCritical'] as bool? ?? false,
+    );
+  }
 }
 
 /// План работ для проекта.
@@ -34,6 +66,7 @@ class WorkflowPlan {
   final List<WorkflowStep> steps;
   final DateTime createdAt;
   final DateTime? startDate;
+  final List<String> completedSteps;
 
   const WorkflowPlan({
     required this.id,
@@ -41,6 +74,7 @@ class WorkflowPlan {
     required this.steps,
     required this.createdAt,
     this.startDate,
+    this.completedSteps = const [],
   });
 
   /// Получить общее количество дней.
@@ -78,6 +112,51 @@ class WorkflowPlan {
       return !completedStepIds.contains(step.id) &&
           step.prerequisites.every((prereq) => completedStepIds.contains(prereq));
     }).toList();
+  }
+
+  /// Создать копию с изменениями.
+  WorkflowPlan copyWith({
+    String? id,
+    String? name,
+    List<WorkflowStep>? steps,
+    DateTime? createdAt,
+    DateTime? startDate,
+    List<String>? completedSteps,
+  }) {
+    return WorkflowPlan(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      steps: steps ?? this.steps,
+      createdAt: createdAt ?? this.createdAt,
+      startDate: startDate ?? this.startDate,
+      completedSteps: completedSteps ?? this.completedSteps,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'steps': steps.map((s) => s.toJson()).toList(),
+      'createdAt': createdAt.toIso8601String(),
+      'startDate': startDate?.toIso8601String(),
+      'completedSteps': completedSteps,
+    };
+  }
+
+  factory WorkflowPlan.fromJson(Map<String, dynamic> json) {
+    return WorkflowPlan(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      steps: (json['steps'] as List)
+          .map((s) => WorkflowStep.fromJson(s as Map<String, dynamic>))
+          .toList(),
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      startDate: json['startDate'] != null 
+          ? DateTime.parse(json['startDate'] as String)
+          : null,
+      completedSteps: (json['completedSteps'] as List?)?.cast<String>() ?? [],
+    );
   }
 }
 

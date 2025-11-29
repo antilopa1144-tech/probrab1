@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор паркета / массива.
 ///
@@ -13,82 +13,92 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// - plankWidth: ширина планки (см), по умолчанию 7
 /// - plankLength: длина планки (см), по умолчанию 40
 /// - thickness: толщина (мм), по умолчанию 15
-class CalculateParquet implements CalculatorUseCase {
+/// - perimeter: периметр комнаты (м), опционально
+class CalculateParquet extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final plankWidth = inputs['plankWidth'] ?? 7.0; // см
-    final plankLength = inputs['plankLength'] ?? 40.0; // см
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final plankWidth = getInput(inputs, 'plankWidth', defaultValue: 7.0, minValue: 5.0, maxValue: 20.0);
+    final plankLength = getInput(inputs, 'plankLength', defaultValue: 40.0, minValue: 20.0, maxValue: 100.0);
+    final thickness = getInput(inputs, 'thickness', defaultValue: 15.0, minValue: 10.0, maxValue: 22.0);
+    
+    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
-    // Площадь одной планки в м²
-    final plankArea = (plankWidth / 100) * (plankLength / 100);
+    // Площадь одной планки
+    final plankArea = calculateTileArea(plankWidth, plankLength);
 
-    // Количество планок с запасом 5% (для паркета меньше, чем для ламината)
-    final planksNeeded = (area / plankArea * 1.05).ceil();
+    // Количество планок с запасом 5-7% (для паркета)
+    final planksNeeded = calculateUnitsNeeded(area, plankArea, marginPercent: 7.0);
 
-    // Лак: расход зависит от толщины, ~0.1 л/м² на слой (обычно 3 слоя)
-    final varnishNeeded = area * 0.1 * 3;
+    // Лак: расход ~0.1 л/м² на слой, обычно 3 слоя
+    final varnishLayers = 3;
+    final varnishNeeded = area * 0.1 * varnishLayers * 1.05;
 
     // Грунтовка для паркета: ~0.08 л/м²
-    final primerNeeded = area * 0.08;
+    final primerNeeded = area * 0.08 * 1.05;
 
-    // Плинтус: периметр
-    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area / 4));
-    final plinthLength = perimeter;
+    // Плинтус: периметр + 5%
+    final plinthLength = addMargin(perimeter, 5.0);
 
-    // Клей для паркета: ~1.5 кг/м²
-    final glueNeeded = area * 1.5;
+    // Клей для паркета: ~1.2-1.5 кг/м²
+    final glueNeeded = area * 1.4;
 
-    // Цены
-    final parquetPrice = _findPrice(priceList, ['parquet', 'parquet_plank', 'wood_floor'])?.price;
-    final varnishPrice = _findPrice(priceList, ['varnish', 'varnish_parquet'])?.price;
-    final primerPrice = _findPrice(priceList, ['primer_parquet', 'primer'])?.price;
-    final plinthPrice = _findPrice(priceList, ['plinth_parquet', 'plinth'])?.price;
-    final gluePrice = _findPrice(priceList, ['glue_parquet', 'glue'])?.price;
+    // Подложка (фанера): площадь пола (для массивной доски)
+    final plywoodArea = area;
 
-    double? totalPrice;
-    if (parquetPrice != null) {
-      var basePrice = planksNeeded * parquetPrice;
-      if (varnishPrice != null) {
-        basePrice = basePrice + varnishNeeded * varnishPrice;
-      }
-      if (primerPrice != null) {
-        basePrice = basePrice + primerNeeded * primerPrice;
-      }
-      if (plinthPrice != null) {
-        basePrice = basePrice + plinthLength * plinthPrice;
-      }
-      if (gluePrice != null) {
-        basePrice = basePrice + glueNeeded * gluePrice;
-      }
-      totalPrice = basePrice;
-    }
+    // Шпатлёвка для швов: ~0.3 кг/м²
+    final fillerNeeded = area * 0.3;
 
-    return CalculatorResult(
+    // Шлифовальная бумага: комплект на комнату
+    final sandpaperSets = ceilToInt(area / 20); // 1 комплект на 20 м²
+
+    // Расчёт стоимости
+    final parquetPrice = findPrice(priceList, ['parquet', 'parquet_plank', 'wood_floor', 'hardwood']);
+    final varnishPrice = findPrice(priceList, ['varnish', 'varnish_parquet', 'floor_finish']);
+    final primerPrice = findPrice(priceList, ['primer_parquet', 'primer', 'wood_primer']);
+    final plinthPrice = findPrice(priceList, ['plinth_parquet', 'plinth', 'wood_baseboard']);
+    final gluePrice = findPrice(priceList, ['glue_parquet', 'glue', 'wood_adhesive']);
+    final plywoodPrice = findPrice(priceList, ['plywood', 'plywood_sheet']);
+    final fillerPrice = findPrice(priceList, ['filler', 'wood_filler', 'putty']);
+
+    final costs = [
+      calculateCost(planksNeeded.toDouble(), parquetPrice?.price),
+      calculateCost(varnishNeeded, varnishPrice?.price),
+      calculateCost(primerNeeded, primerPrice?.price),
+      calculateCost(plinthLength, plinthPrice?.price),
+      calculateCost(glueNeeded, gluePrice?.price),
+      calculateCost(plywoodArea, plywoodPrice?.price),
+      calculateCost(fillerNeeded, fillerPrice?.price),
+    ];
+
+    return createResult(
       values: {
         'area': area,
         'planksNeeded': planksNeeded.toDouble(),
         'varnishNeeded': varnishNeeded,
+        'varnishLayers': varnishLayers.toDouble(),
         'primerNeeded': primerNeeded,
         'plinthLength': plinthLength,
         'glueNeeded': glueNeeded,
+        'plywoodArea': plywoodArea,
+        'fillerNeeded': fillerNeeded,
+        'sandpaperSets': sandpaperSets.toDouble(),
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-

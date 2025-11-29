@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор перегородок из газоблока / пеноблока.
 ///
@@ -10,75 +10,96 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 ///
 /// Поля:
 /// - area: площадь перегородки (м²)
-/// - blockWidth: ширина блока (см), по умолчанию 20
+/// - blockWidth: ширина блока (см), по умолчанию 10
 /// - blockLength: длина блока (см), по умолчанию 60
 /// - blockHeight: высота блока (см), по умолчанию 25
 /// - height: высота перегородки (м), по умолчанию 2.5
-class CalculateGasblockPartition implements CalculatorUseCase {
+/// - perimeter: периметр перегородки (м), опционально
+class CalculateGasblockPartition extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final blockWidth = inputs['blockWidth'] ?? 20.0; // см
-    final blockLength = inputs['blockLength'] ?? 60.0; // см
-    final blockHeight = inputs['blockHeight'] ?? 25.0; // см
-    final wallHeight = inputs['height'] ?? 2.5; // м
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final blockWidth = getInput(inputs, 'blockWidth', defaultValue: 10.0, minValue: 7.5, maxValue: 20.0);
+    final blockLength = getInput(inputs, 'blockLength', defaultValue: 60.0, minValue: 50.0, maxValue: 62.5);
+    final blockHeight = getInput(inputs, 'blockHeight', defaultValue: 25.0, minValue: 20.0, maxValue: 30.0);
+    final wallHeight = getInput(inputs, 'height', defaultValue: 2.5, minValue: 2.0, maxValue: 4.0);
 
-    // Площадь одного блока в м²
-    final blockArea = (blockLength / 100) * (blockHeight / 100);
+    // Площадь одного блока (по фасаду) в м²
+    final blockFaceArea = (blockLength / 100) * (blockHeight / 100);
 
     // Количество блоков с запасом 5%
-    final blocksNeeded = (area / blockArea * 1.05).ceil();
+    final blocksNeeded = calculateUnitsNeeded(area, blockFaceArea, marginPercent: 5.0);
 
-    // Клей для газоблока: ~25 кг/м³
-    final volume = area * (blockWidth / 100);
-    final glueNeeded = volume * 25.0 * 1.1; // +10% запас
+    // Объём кладки в м³
+    final volume = calculateVolume(area, blockWidth / 100);
 
-    // Армирование: арматура через каждые 3 ряда
-    final rows = (wallHeight / (blockHeight / 100)).ceil();
-    final reinforcementRows = (rows / 3).ceil();
-    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area / 4));
-    final reinforcementLength = reinforcementRows * perimeter;
+    // Клей для газоблока: ~25-30 кг/м³ (или ~1.5 кг/м² при толщине шва 2-3 мм)
+    final glueNeeded = volume * 27 * 1.05; // +5%
 
-    // Цены
-    final blockPrice = _findPrice(priceList, ['gasblock', 'gas_block', 'foam_block'])?.price;
-    final gluePrice = _findPrice(priceList, ['glue_gasblock', 'glue_block'])?.price;
-    final reinforcementPrice = _findPrice(priceList, ['rebar', 'rebar_6mm'])?.price;
+    // Армирование: арматура через каждые 2-3 ряда (или каждый метр высоты)
+    final rows = ceilToInt(wallHeight / (blockHeight / 100));
+    final reinforcementRows = ceilToInt(rows / 3);
+    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final reinforcementLength = reinforcementRows * perimeter * 2; // 2 прута
 
-    double? totalPrice;
-    if (blockPrice != null) {
-      totalPrice = blocksNeeded * blockPrice;
-      if (gluePrice != null) {
-        totalPrice = totalPrice + glueNeeded * gluePrice;
-      }
-      if (reinforcementPrice != null) {
-        totalPrice = totalPrice + reinforcementLength * reinforcementPrice;
-      }
-    }
+    // Грунтовка для газоблока (перед финишной отделкой): ~0.2 л/м² на 2 стороны
+    final primerNeeded = area * 0.2 * 2;
 
-    return CalculatorResult(
+    // Штукатурка: ~10 кг/м² с двух сторон (по 5 мм на сторону)
+    final plasterNeeded = area * 10 * 2;
+
+    // Сетка штукатурная: площадь с двух сторон
+    final meshArea = area * 2 * 1.05;
+
+    // Перемычки над проёмами: по факту
+    final lintelsNeeded = getIntInput(inputs, 'lintels', defaultValue: 0, minValue: 0, maxValue: 20);
+
+    // Расчёт стоимости
+    final blockPrice = findPrice(priceList, ['gasblock', 'gas_block', 'foam_block', 'aerated_concrete']);
+    final gluePrice = findPrice(priceList, ['glue_gasblock', 'glue_block', 'thin_bed_mortar']);
+    final reinforcementPrice = findPrice(priceList, ['rebar', 'rebar_6mm', 'reinforcement_bar']);
+    final primerPrice = findPrice(priceList, ['primer', 'primer_deep']);
+    final plasterPrice = findPrice(priceList, ['plaster', 'plaster_gypsum']);
+    final meshPrice = findPrice(priceList, ['mesh', 'plaster_mesh']);
+    final lintelPrice = findPrice(priceList, ['lintel', 'concrete_lintel']);
+
+    final costs = [
+      calculateCost(blocksNeeded.toDouble(), blockPrice?.price),
+      calculateCost(glueNeeded, gluePrice?.price),
+      calculateCost(reinforcementLength, reinforcementPrice?.price),
+      calculateCost(primerNeeded, primerPrice?.price),
+      calculateCost(plasterNeeded, plasterPrice?.price),
+      calculateCost(meshArea, meshPrice?.price),
+      if (lintelsNeeded > 0) calculateCost(lintelsNeeded.toDouble(), lintelPrice?.price),
+    ];
+
+    return createResult(
       values: {
         'area': area,
         'blocksNeeded': blocksNeeded.toDouble(),
         'volume': volume,
         'glueNeeded': glueNeeded,
         'reinforcementLength': reinforcementLength,
+        'primerNeeded': primerNeeded,
+        'plasterNeeded': plasterNeeded,
+        'meshArea': meshArea,
+        if (lintelsNeeded > 0) 'lintelsNeeded': lintelsNeeded.toDouble(),
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-

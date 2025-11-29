@@ -1,5 +1,6 @@
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор плитки на стены (не ванная).
 ///
@@ -14,74 +15,96 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// - jointWidth: ширина шва (мм), по умолчанию 3
 /// - windowsArea: площадь окон (м²)
 /// - doorsArea: площадь дверей (м²)
-class CalculateWallTile implements CalculatorUseCase {
+class CalculateWallTile extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final tileWidth = inputs['tileWidth'] ?? 30.0; // см
-    final tileHeight = inputs['tileHeight'] ?? 30.0; // см
-    final jointWidth = inputs['jointWidth'] ?? 3.0; // мм
-    final windowsArea = inputs['windowsArea'] ?? 0;
-    final doorsArea = inputs['doorsArea'] ?? 0;
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final tileWidth = getInput(inputs, 'tileWidth', defaultValue: 30.0, minValue: 10.0, maxValue: 120.0);
+    final tileHeight = getInput(inputs, 'tileHeight', defaultValue: 30.0, minValue: 10.0, maxValue: 120.0);
+    final jointWidth = getInput(inputs, 'jointWidth', defaultValue: 3.0, minValue: 1.0, maxValue: 10.0);
+    final windowsArea = getInput(inputs, 'windowsArea', defaultValue: 0.0, minValue: 0.0);
+    final doorsArea = getInput(inputs, 'doorsArea', defaultValue: 0.0, minValue: 0.0);
 
-    final usefulArea = area - windowsArea - doorsArea;
+    final usefulArea = safeDivide(area - windowsArea - doorsArea, 1.0, defaultValue: area);
 
     // Площадь одной плитки в м²
-    final tileArea = (tileWidth / 100) * (tileHeight / 100);
+    final tileArea = calculateTileArea(tileWidth, tileHeight);
 
     // Количество плиток с запасом 10%
-    final tilesNeeded = (usefulArea / tileArea * 1.1).ceil();
+    final tilesNeeded = calculateUnitsNeeded(usefulArea, tileArea, marginPercent: 10.0);
 
-    // Затирка: расход ~1.5 кг/м² на 1 мм шва
-    final groutNeeded = usefulArea * 1.5 * (jointWidth / 10);
+    // Затирка: формула расчёта с учётом размера плитки
+    final groutConsumption = ((tileWidth + tileHeight) / (tileWidth * tileHeight)) * 
+                            jointWidth * 10 * 1.6;
+    final groutNeeded = usefulArea * groutConsumption * 1.05;
 
-    // Клей: расход ~4 кг/м² для плитки
-    final glueNeeded = usefulArea * 4.0;
+    // Клей: расход 3-5 кг/м² (зависит от размера плитки)
+    final glueConsumption = tileWidth > 60 || tileHeight > 60 ? 5.0 : 4.0;
+    final glueNeeded = usefulArea * glueConsumption;
 
-    // Крестики: ~4 шт на плитку
-    final crossesNeeded = tilesNeeded * 4;
+    // Грунтовка: ~0.15 л/м²
+    final primerNeeded = usefulArea * 0.15;
 
-    // Цены
-    final tilePrice = _findPrice(priceList, ['tile', 'tile_ceramic', 'tile_wall'])?.price;
-    final groutPrice = _findPrice(priceList, ['grout', 'grout_tile'])?.price;
-    final gluePrice = _findPrice(priceList, ['glue_tile', 'glue'])?.price;
+    // Крестики/СВП: ~4-5 шт на плитку
+    final crossesNeeded = ceilToInt(tilesNeeded * 5);
 
-    double? totalPrice;
-    if (tilePrice != null) {
-      totalPrice = tilesNeeded * tilePrice;
-      if (groutPrice != null) {
-        totalPrice = totalPrice + groutNeeded * groutPrice;
-      }
-      if (gluePrice != null) {
-        totalPrice = totalPrice + glueNeeded * gluePrice;
-      }
-    }
+    // Профили для углов: по факту
+    final cornerProfileLength = getInput(inputs, 'cornerProfile', defaultValue: 0.0);
 
-    return CalculatorResult(
+    // Затирка-герметик для углов: 1 туба на ~12 м.п.
+    final sealantTubes = cornerProfileLength > 0 
+        ? ceilToInt(cornerProfileLength / 12) 
+        : 0;
+
+    // Расчёт стоимости
+    final tilePrice = findPrice(priceList, [
+      'tile', 
+      'tile_ceramic', 
+      'tile_wall',
+      'ceramic_tile'
+    ]);
+    final groutPrice = findPrice(priceList, ['grout', 'grout_tile', 'joint_filler']);
+    final gluePrice = findPrice(priceList, ['glue_tile', 'tile_adhesive', 'glue']);
+    final primerPrice = findPrice(priceList, ['primer', 'primer_adhesion']);
+    final cornerProfilePrice = findPrice(priceList, ['profile_corner', 'trim_profile']);
+    final sealantPrice = findPrice(priceList, ['sealant', 'silicone']);
+
+    final costs = [
+      calculateCost(tilesNeeded.toDouble(), tilePrice?.price),
+      calculateCost(groutNeeded, groutPrice?.price),
+      calculateCost(glueNeeded, gluePrice?.price),
+      calculateCost(primerNeeded, primerPrice?.price),
+      if (cornerProfileLength > 0) calculateCost(cornerProfileLength, cornerProfilePrice?.price),
+      if (sealantTubes > 0) calculateCost(sealantTubes.toDouble(), sealantPrice?.price),
+    ];
+
+    return createResult(
       values: {
         'area': area,
         'usefulArea': usefulArea,
         'tilesNeeded': tilesNeeded.toDouble(),
         'groutNeeded': groutNeeded,
         'glueNeeded': glueNeeded,
+        'primerNeeded': primerNeeded,
         'crossesNeeded': crossesNeeded.toDouble(),
+        if (cornerProfileLength > 0) 'cornerProfileLength': cornerProfileLength,
+        if (sealantTubes > 0) 'sealantTubes': sealantTubes.toDouble(),
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-

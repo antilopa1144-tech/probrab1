@@ -1,34 +1,100 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../../domain/entities/workflow_step.dart';
 import '../../core/errors/error_handler.dart';
 
-/// Провайдер для управления планами работ.
-class WorkflowNotifier extends StateNotifier<List<WorkflowPlan>> {
-  WorkflowNotifier() : super([]);
-
-  void addPlan(WorkflowPlan plan) {
-    state = [...state, plan];
+/// Провайдер для управления планами работ с персистентным хранением.
+class WorkflowNotifier extends StateNotifier<AsyncValue<List<WorkflowPlan>>> {
+  WorkflowNotifier() : super(const AsyncValue.loading()) {
+    _loadPlans();
   }
 
-  void updatePlan(String planId, WorkflowPlan updated) {
-    state = state.map((plan) => plan.id == planId ? updated : plan).toList();
+  Future<void> _loadPlans() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final plansJson = prefs.getStringList('workflow_plans') ?? [];
+      
+      final plans = plansJson
+          .map((json) => WorkflowPlan.fromJson(jsonDecode(json)))
+          .toList();
+      
+      state = AsyncValue.data(plans);
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
   }
 
-  void deletePlan(String planId) {
-    state = state.where((plan) => plan.id != planId).toList();
+  Future<void> _savePlans(List<WorkflowPlan> plans) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final plansJson = plans.map((plan) => jsonEncode(plan.toJson())).toList();
+      await prefs.setStringList('workflow_plans', plansJson);
+    } catch (_) {
+      // Игнорируем ошибки сохранения
+    }
+  }
+
+  Future<void> addPlan(WorkflowPlan plan) async {
+    state.whenData((plans) async {
+      final updated = [...plans, plan];
+      state = AsyncValue.data(updated);
+      await _savePlans(updated);
+    });
+  }
+
+  Future<void> updatePlan(String planId, WorkflowPlan updated) async {
+    state.whenData((plans) async {
+      final updatedPlans =
+          plans.map((plan) => plan.id == planId ? updated : plan).toList();
+      state = AsyncValue.data(updatedPlans);
+      await _savePlans(updatedPlans);
+    });
+  }
+
+  Future<void> deletePlan(String planId) async {
+    state.whenData((plans) async {
+      final updatedPlans =
+          plans.where((plan) => plan.id != planId).toList();
+      state = AsyncValue.data(updatedPlans);
+      await _savePlans(updatedPlans);
+    });
   }
 
   WorkflowPlan? getPlan(String planId) {
-    try {
-      return state.firstWhere((plan) => plan.id == planId);
-    } catch (e, stackTrace) {
-      ErrorHandler.logError(e, stackTrace, 'WorkflowNotifier.getPlan');
-      return null;
-    }
+    return state.whenOrNull(
+      data: (plans) {
+        try {
+          return plans.firstWhere((plan) => plan.id == planId);
+        } catch (e, stackTrace) {
+          ErrorHandler.logError(e, stackTrace, 'WorkflowNotifier.getPlan');
+          return null;
+        }
+      },
+    );
   }
+
+  /// Обновить прогресс выполнения плана
+  Future<void> updateProgress(String planId, Set<String> completedSteps) async {
+    state.whenData((plans) async {
+      final planIndex = plans.indexWhere((p) => p.id == planId);
+      if (planIndex != -1) {
+        final updated = plans[planIndex].copyWith(
+          completedSteps: completedSteps.toList(),
+        );
+        final updatedPlans = List<WorkflowPlan>.from(plans);
+        updatedPlans[planIndex] = updated;
+        state = AsyncValue.data(updatedPlans);
+        await _savePlans(updatedPlans);
+      }
+    });
+  }
+
+  Future<void> refresh() => _loadPlans();
 }
 
-final workflowProvider = StateNotifierProvider<WorkflowNotifier, List<WorkflowPlan>>(
+final workflowProvider =
+    StateNotifierProvider<WorkflowNotifier, AsyncValue<List<WorkflowPlan>>>(
   (ref) => WorkflowNotifier(),
 );
 
@@ -162,13 +228,66 @@ WorkflowPlan createStandardWorkflow(String objectType) {
         isCritical: true,
       ),
     ]);
+  } else if (objectType == 'гараж' || objectType == 'garage') {
+    steps.addAll([
+      const WorkflowStep(
+        id: 'foundation_garage',
+        title: 'Плита основания',
+        description: 'Бетонная плита для гаража',
+        category: 'Фундамент',
+        order: 1,
+        estimatedDays: 5,
+        requiredMaterials: ['Бетон', 'Арматурная сетка', 'Песок', 'Щебень'],
+        requiredTools: ['Бетономешалка', 'Виброрейка'],
+        checklist: [
+          'Подготовить основание',
+          'Уложить песчаную подушку',
+          'Установить арматуру',
+          'Залить бетон',
+        ],
+        isCritical: true,
+      ),
+      const WorkflowStep(
+        id: 'walls_garage',
+        title: 'Стены гаража',
+        description: 'Возведение стен',
+        category: 'Стены',
+        order: 2,
+        prerequisites: ['foundation_garage'],
+        estimatedDays: 7,
+        requiredMaterials: ['Блоки/кирпич', 'Раствор'],
+        requiredTools: ['Кельма', 'Уровень'],
+        checklist: [
+          'Кладка стен',
+          'Контроль вертикальности',
+          'Подготовка под ворота',
+        ],
+        isCritical: true,
+      ),
+      const WorkflowStep(
+        id: 'roof_garage',
+        title: 'Крыша гаража',
+        description: 'Устройство кровли',
+        category: 'Кровля',
+        order: 3,
+        prerequisites: ['walls_garage'],
+        estimatedDays: 3,
+        requiredMaterials: ['Профнастил', 'Брус', 'Гидроизоляция'],
+        requiredTools: ['Шуруповёрт', 'Ножницы по металлу'],
+        checklist: [
+          'Установить балки перекрытия',
+          'Уложить гидроизоляцию',
+          'Смонтировать кровлю',
+        ],
+        isCritical: true,
+      ),
+    ]);
   }
   
   return WorkflowPlan(
     id: DateTime.now().millisecondsSinceEpoch.toString(),
-    name: 'План работ для $objectType',
+    name: 'План работ: $objectType',
     steps: steps,
     createdAt: DateTime.now(),
   );
 }
-

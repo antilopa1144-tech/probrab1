@@ -1,5 +1,6 @@
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор установки окон.
 ///
@@ -11,80 +12,98 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// - windows: количество окон, по умолчанию 1
 /// - windowWidth: ширина окна (м), по умолчанию 1.5
 /// - windowHeight: высота окна (м), по умолчанию 1.4
-class CalculateWindowInstallation implements CalculatorUseCase {
+class CalculateWindowInstallation extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final windows = inputs['windows'] ?? 1;
+    if (windows < 1) return 'Количество окон должно быть больше нуля';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final windows = (inputs['windows'] ?? 1).round();
-    final windowWidth = inputs['windowWidth'] ?? 1.5; // м
-    final windowHeight = inputs['windowHeight'] ?? 1.4; // м
+    final windows = getIntInput(inputs, 'windows', defaultValue: 1, minValue: 1, maxValue: 50);
+    final windowWidth = getInput(inputs, 'windowWidth', defaultValue: 1.5, minValue: 0.5, maxValue: 4.0);
+    final windowHeight = getInput(inputs, 'windowHeight', defaultValue: 1.4, minValue: 0.5, maxValue: 3.0);
 
     // Площадь одного окна
     final windowArea = windowWidth * windowHeight;
+    final totalArea = windowArea * windows;
 
-    // Монтажная пена: ~1 баллон на окно
-    final foamNeeded = windows;
+    // Периметр одного окна
+    final windowPerimeter = (windowWidth + windowHeight) * 2;
 
-    // Подоконники: по количеству окон
+    // Монтажная пена: 1-2 баллона на окно (зависит от размера)
+    final foamPerWindow = windowArea > 2.5 ? 2 : 1;
+    final foamNeeded = windows * foamPerWindow;
+
+    // Подоконники: длина окна + 5 см с каждой стороны
+    final sillLength = (windowWidth + 0.1) * windows;
     final sillsNeeded = windows;
-    final sillLength = windowWidth * windows;
 
-    // Откосы: периметр окна × количество
-    final slopePerimeter = (windowWidth + windowHeight) * 2;
-    final slopeArea = slopePerimeter * 0.3 * windows; // ширина откоса 30 см
+    // Откосы: периметр окна × ширина откоса (30 см)
+    final slopeWidth = getInput(inputs, 'slopeWidth', defaultValue: 0.3, minValue: 0.2, maxValue: 0.5);
+    final slopeArea = windowPerimeter * slopeWidth * windows;
 
-    // Отливы: по ширине окна
-    final dripLength = windowWidth * windows;
+    // Отливы: ширина окна + 5 см с каждой стороны
+    final dripLength = (windowWidth + 0.1) * windows;
 
-    // Цены
-    final windowPrice = _findPrice(priceList, ['window', 'window_pvc'])?.price;
-    final foamPrice = _findPrice(priceList, ['foam_mounting', 'foam'])?.price;
-    final sillPrice = _findPrice(priceList, ['sill', 'window_sill'])?.price;
-    final slopePrice = _findPrice(priceList, ['slope', 'slope_material'])?.price;
-    final dripPrice = _findPrice(priceList, ['drip', 'drip_window'])?.price;
+    // Уплотнительная лента ПСУЛ: периметр окон
+    final sealantTapeLength = windowPerimeter * windows;
 
-    double? totalPrice;
-    if (windowPrice != null) {
-      totalPrice = windows * windowPrice;
-      if (foamPrice != null) {
-        totalPrice = totalPrice + foamNeeded * foamPrice;
-      }
-      if (sillPrice != null) {
-        totalPrice = totalPrice + sillLength * sillPrice;
-      }
-      if (slopePrice != null) {
-        totalPrice = totalPrice + slopeArea * slopePrice;
-      }
-      if (dripPrice != null) {
-        totalPrice = totalPrice + dripLength * dripPrice;
-      }
-    }
+    // Анкера/крепёж: ~6-8 шт на окно
+    final anchorsNeeded = windows * 7;
 
-    return CalculatorResult(
+    // Силиконовый герметик: 1 туба на 2 окна
+    final sealantTubes = ceilToInt(windows / 2);
+
+    // Пароизоляционная лента: периметр окон
+    final vaporTapeLength = windowPerimeter * windows;
+
+    // Расчёт стоимости
+    final windowPrice = findPrice(priceList, ['window', 'window_pvc', 'plastic_window']);
+    final foamPrice = findPrice(priceList, ['foam_mounting', 'foam', 'polyurethane_foam']);
+    final sillPrice = findPrice(priceList, ['sill', 'window_sill', 'windowsill']);
+    final slopePrice = findPrice(priceList, ['slope', 'slope_material', 'slope_panel']);
+    final dripPrice = findPrice(priceList, ['drip', 'drip_window', 'window_sill_exterior']);
+    final sealantTapePrice = findPrice(priceList, ['tape_psul', 'sealing_tape']);
+    final sealantPrice = findPrice(priceList, ['sealant', 'silicone', 'window_sealant']);
+    final vaporTapePrice = findPrice(priceList, ['tape_vapor', 'vapor_barrier_tape']);
+
+    final costs = [
+      calculateCost(windows.toDouble(), windowPrice?.price),
+      calculateCost(foamNeeded.toDouble(), foamPrice?.price),
+      calculateCost(sillLength, sillPrice?.price),
+      calculateCost(slopeArea, slopePrice?.price),
+      calculateCost(dripLength, dripPrice?.price),
+      calculateCost(sealantTapeLength, sealantTapePrice?.price),
+      calculateCost(sealantTubes.toDouble(), sealantPrice?.price),
+      calculateCost(vaporTapeLength, vaporTapePrice?.price),
+    ];
+
+    return createResult(
       values: {
         'windows': windows.toDouble(),
         'windowArea': windowArea,
+        'totalArea': totalArea,
         'foamNeeded': foamNeeded.toDouble(),
         'sillsNeeded': sillsNeeded.toDouble(),
         'sillLength': sillLength,
         'slopeArea': slopeArea,
         'dripLength': dripLength,
+        'sealantTapeLength': sealantTapeLength,
+        'anchorsNeeded': anchorsNeeded.toDouble(),
+        'sealantTubes': sealantTubes.toDouble(),
+        'vaporTapeLength': vaporTapeLength,
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-

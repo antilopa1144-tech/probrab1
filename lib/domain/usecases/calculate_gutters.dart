@@ -1,5 +1,6 @@
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор водостоков.
 ///
@@ -11,95 +12,109 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// - perimeter: периметр крыши (м)
 /// - downpipes: количество водосточных труб, по умолчанию 0 (автоматически)
 /// - pipeHeight: высота трубы (м), по умолчанию 3.0
-class CalculateGutters implements CalculatorUseCase {
+/// - corners: количество углов, опционально
+class CalculateGutters extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final perimeter = inputs['perimeter'] ?? 0;
+    if (perimeter <= 0) return 'Периметр должен быть больше нуля';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final perimeter = inputs['perimeter'] ?? 0;
-    final pipeHeight = inputs['pipeHeight'] ?? 3.0; // м
+    final perimeter = getInput(inputs, 'perimeter', minValue: 0.1);
+    final pipeHeight = getInput(inputs, 'pipeHeight', defaultValue: 3.0, minValue: 2.0, maxValue: 10.0);
 
-    // Желоб: периметр крыши
-    final gutterLength = perimeter;
+    // Желоб: периметр крыши + 3% на подрезку
+    final gutterLength = addMargin(perimeter, 3.0);
 
-    // Водосточные трубы: если не указано, считаем 1 труба на 10 м периметра
-    final downpipesCount = (inputs['downpipes'] ?? (perimeter / 10).ceil()).round();
+    // Водосточные трубы: 1 труба на 10-12 м периметра
+    final downpipesCount = getIntInput(inputs, 'downpipes', 
+        defaultValue: ceilToInt(perimeter / 11), 
+        minValue: 1, 
+        maxValue: 20);
     final downpipeLength = downpipesCount * pipeHeight;
 
-    // Углы желоба: обычно 4 угла на дом
-    final corners = (inputs['corners'] ?? 4).round();
+    // Углы желоба: обычно 4-8 углов на дом
+    final corners = getIntInput(inputs, 'corners', defaultValue: 4, minValue: 0, maxValue: 20);
 
-    // Заглушки: 2 на каждый желоб
+    // Соединители желоба: 1 шт на 3 м.п.
+    final connectorsNeeded = ceilToInt(gutterLength / 3);
+
+    // Заглушки желоба: обычно 2 (левая и правая)
     final endCaps = 2;
 
-    // Воронки: по количеству труб
+    // Воронки (приемники воды): по количеству труб
     final funnels = downpipesCount;
 
-    // Колена: обычно 2 на трубу (верх и низ)
+    // Колена трубы: обычно 2-3 на трубу (верх и низ)
     final elbows = downpipesCount * 2;
 
-    // Крепления: ~1 шт на 0.6 м желоба, ~1 шт на 1 м трубы
-    final gutterBrackets = (gutterLength / 0.6).ceil();
-    final pipeBrackets = downpipeLength.ceil();
+    // Тройники/отводы: если нужны, по факту
+    final teesNeeded = getIntInput(inputs, 'tees', defaultValue: 0, minValue: 0, maxValue: 10);
 
-    // Цены
-    final gutterPrice = _findPrice(priceList, ['gutter', 'gutter_metal'])?.price;
-    final downpipePrice = _findPrice(priceList, ['downpipe', 'pipe_water'])?.price;
-    final cornerPrice = _findPrice(priceList, ['gutter_corner', 'corner_gutter'])?.price;
-    final endCapPrice = _findPrice(priceList, ['end_cap', 'cap_gutter'])?.price;
-    final funnelPrice = _findPrice(priceList, ['funnel', 'funnel_water'])?.price;
-    final elbowPrice = _findPrice(priceList, ['elbow', 'elbow_pipe'])?.price;
-    final bracketPrice = _findPrice(priceList, ['bracket_gutter', 'bracket'])?.price;
+    // Крепления желоба: ~1 шт на 50-60 см
+    final gutterBrackets = ceilToInt(gutterLength / 0.55);
 
-    double? totalPrice;
-    if (gutterPrice != null) {
-      totalPrice = gutterLength * gutterPrice;
-      if (downpipePrice != null) {
-        totalPrice = totalPrice + downpipeLength * downpipePrice;
-      }
-      if (cornerPrice != null) {
-        totalPrice = totalPrice + corners * cornerPrice;
-      }
-      if (endCapPrice != null) {
-        totalPrice = totalPrice + endCaps * endCapPrice;
-      }
-      if (funnelPrice != null) {
-        totalPrice = totalPrice + funnels * funnelPrice;
-      }
-      if (elbowPrice != null) {
-        totalPrice = totalPrice + elbows * elbowPrice;
-      }
-      if (bracketPrice != null) {
-        totalPrice = totalPrice + (gutterBrackets + pipeBrackets) * bracketPrice;
-      }
-    }
+    // Крепления трубы: ~1 шт на 1-1.5 м
+    final pipeBrackets = ceilToInt(downpipeLength / 1.2);
 
-    return CalculatorResult(
+    // Ревизии (для прочистки): 1 шт на трубу
+    final revisionsNeeded = downpipesCount;
+
+    // Сливные отводы: по количеству труб
+    final drainsNeeded = downpipesCount;
+
+    // Расчёт стоимости
+    final gutterPrice = findPrice(priceList, ['gutter', 'gutter_metal', 'rain_gutter']);
+    final downpipePrice = findPrice(priceList, ['downpipe', 'pipe_water', 'downspout']);
+    final cornerPrice = findPrice(priceList, ['gutter_corner', 'corner_gutter', 'gutter_angle']);
+    final connectorPrice = findPrice(priceList, ['connector_gutter', 'gutter_joiner']);
+    final endCapPrice = findPrice(priceList, ['end_cap', 'cap_gutter', 'gutter_stopper']);
+    final funnelPrice = findPrice(priceList, ['funnel', 'funnel_water', 'outlet']);
+    final elbowPrice = findPrice(priceList, ['elbow', 'elbow_pipe', 'pipe_bend']);
+    final gutterBracketPrice = findPrice(priceList, ['bracket_gutter', 'bracket', 'gutter_hanger']);
+    final pipeBracketPrice = findPrice(priceList, ['bracket_pipe', 'pipe_clip']);
+    final drainPrice = findPrice(priceList, ['drain', 'drain_outlet']);
+
+    final costs = [
+      calculateCost(gutterLength, gutterPrice?.price),
+      calculateCost(downpipeLength, downpipePrice?.price),
+      if (corners > 0) calculateCost(corners.toDouble(), cornerPrice?.price),
+      calculateCost(connectorsNeeded.toDouble(), connectorPrice?.price),
+      calculateCost(endCaps.toDouble(), endCapPrice?.price),
+      calculateCost(funnels.toDouble(), funnelPrice?.price),
+      calculateCost(elbows.toDouble(), elbowPrice?.price),
+      calculateCost(gutterBrackets.toDouble(), gutterBracketPrice?.price),
+      calculateCost(pipeBrackets.toDouble(), pipeBracketPrice?.price),
+      calculateCost(drainsNeeded.toDouble(), drainPrice?.price),
+    ];
+
+    return createResult(
       values: {
         'gutterLength': gutterLength,
         'downpipesCount': downpipesCount.toDouble(),
         'downpipeLength': downpipeLength,
-        'corners': corners.toDouble(),
+        if (corners > 0) 'corners': corners.toDouble(),
+        'connectorsNeeded': connectorsNeeded.toDouble(),
         'endCaps': endCaps.toDouble(),
         'funnels': funnels.toDouble(),
         'elbows': elbows.toDouble(),
+        if (teesNeeded > 0) 'teesNeeded': teesNeeded.toDouble(),
         'gutterBrackets': gutterBrackets.toDouble(),
         'pipeBrackets': pipeBrackets.toDouble(),
+        'revisionsNeeded': revisionsNeeded.toDouble(),
+        'drainsNeeded': drainsNeeded.toDouble(),
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-

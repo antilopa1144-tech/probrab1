@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор ламината.
 ///
@@ -12,66 +12,81 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// - area: площадь пола (м²)
 /// - packArea: площадь в упаковке (м²), по умолчанию 2.0
 /// - underlayThickness: толщина подложки (мм), по умолчанию 3
-class CalculateLaminate implements CalculatorUseCase {
+/// - perimeter: периметр комнаты (м), опционально
+class CalculateLaminate extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    final packArea = inputs['packArea'] ?? 2.0;
+
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (packArea <= 0 || packArea > 10) return 'Площадь упаковки должна быть от 0.1 до 10 м²';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final packArea = inputs['packArea'] ?? 2.0; // стандартная упаковка
+    // Получаем валидированные входные данные
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final packArea = getInput(inputs, 'packArea', defaultValue: 2.0, minValue: 0.1, maxValue: 10.0);
+    final underlayThickness = getInput(inputs, 'underlayThickness', defaultValue: 3.0, minValue: 2.0, maxValue: 5.0);
 
-    // Количество упаковок ламината с запасом 5% (ГОСТ 32304-2013)
-    final packsNeeded = (area / packArea * 1.05).ceil();
+    // Периметр: если указан - используем, иначе оцениваем
+    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
-    // Подложка: площадь = площадь пола + 10% на подрезку
-    final underlayArea = area * 1.1;
+    // Количество упаковок ламината с запасом 5-7% (ГОСТ 32304-2013)
+    // Для прямой укладки - 5%, для диагональной - 7-10%
+    final packsNeeded = calculateUnitsNeeded(area, packArea, marginPercent: 7.0);
 
-    // Плинтус: примерный периметр комнаты (приблизительно)
-    // Если периметр не указан, оцениваем как 4 * sqrt(area)
-    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area / 4));
-    final plinthLength = perimeter;
+    // Подложка: площадь = площадь пола + 5% на подрезку и нахлёсты
+    final underlayArea = addMargin(area, 5.0);
 
-    // Клинья для зазора: ~4 шт на метр плинтуса
-    final wedgesNeeded = (plinthLength * 4).ceil();
+    // Плинтус: периметр + 5% на подрезку
+    final plinthLength = addMargin(perimeter, 5.0);
 
-    // Цены
-    final laminatePrice = _findPrice(priceList, ['laminate', 'laminate_pack'])?.price;
-    final underlayPrice = _findPrice(priceList, ['underlay', 'underlay_3mm'])?.price;
-    final plinthPrice = _findPrice(priceList, ['plinth', 'plinth_laminate'])?.price;
+    // Компенсационные клинья: ~8-10 шт на комнату (по периметру через каждые 50 см)
+    final wedgesNeeded = ceilToInt(perimeter / 0.5);
 
-    double? totalPrice;
-    if (laminatePrice != null && underlayPrice != null && plinthPrice != null) {
-      totalPrice = packsNeeded * laminatePrice +
-          underlayArea * underlayPrice +
-          plinthLength * plinthPrice;
-    } else if (laminatePrice != null && underlayPrice != null) {
-      totalPrice = packsNeeded * laminatePrice + underlayArea * underlayPrice;
-    } else if (laminatePrice != null) {
-      totalPrice = packsNeeded * laminatePrice;
-    }
+    // Пароизоляционная плёнка (если нужна): площадь + 10% на нахлёсты
+    final vaporBarrierArea = addMargin(area, 10.0);
 
-    return CalculatorResult(
+    // Соединительная фурнитура: переходы, пороги (1 шт на дверной проём)
+    final doorThresholds = getIntInput(inputs, 'doorThresholds', defaultValue: 1, minValue: 0, maxValue: 10);
+
+    // Расчёт стоимости
+    final laminatePrice = findPrice(priceList, ['laminate', 'laminate_pack']);
+    final underlayPrice = findPrice(priceList, ['underlay', 'underlay_${underlayThickness.round()}mm', 'underlay']);
+    final plinthPrice = findPrice(priceList, ['plinth', 'plinth_laminate']);
+    final vaporBarrierPrice = findPrice(priceList, ['vapor_barrier', 'film_pe']);
+    final thresholdPrice = findPrice(priceList, ['threshold', 'threshold_laminate']);
+
+    final costs = [
+      calculateCost(packsNeeded.toDouble(), laminatePrice?.price),
+      calculateCost(underlayArea, underlayPrice?.price),
+      calculateCost(plinthLength, plinthPrice?.price),
+      calculateCost(vaporBarrierArea, vaporBarrierPrice?.price),
+      calculateCost(doorThresholds.toDouble(), thresholdPrice?.price),
+    ];
+
+    return createResult(
       values: {
         'area': area,
         'packsNeeded': packsNeeded.toDouble(),
         'underlayArea': underlayArea,
         'plinthLength': plinthLength,
         'wedgesNeeded': wedgesNeeded.toDouble(),
+        'vaporBarrierArea': vaporBarrierArea,
+        'doorThresholds': doorThresholds.toDouble(),
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
-  }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
   }
 }
 
