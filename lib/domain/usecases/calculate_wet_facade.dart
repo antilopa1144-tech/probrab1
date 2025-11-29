@@ -1,5 +1,6 @@
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор мокрого фасада (утепление + штукатурка).
 ///
@@ -10,78 +11,95 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// Поля:
 /// - area: площадь фасада (м²)
 /// - insulationThickness: толщина утеплителя (мм), по умолчанию 100
-/// - insulationType: тип утеплителя (1=минвата, 2=пенопласт), по умолчанию 2
-class CalculateWetFacade implements CalculatorUseCase {
+/// - insulationType: тип утеплителя (1=минвата, 2=пенопласт, 3=ЭППС), по умолчанию 2
+class CalculateWetFacade extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final insulationThickness = inputs['insulationThickness'] ?? 100.0; // мм
-    final insulationType = (inputs['insulationType'] ?? 2).round();
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final insulationThickness = getInput(inputs, 'insulationThickness', defaultValue: 100.0, minValue: 50.0, maxValue: 200.0);
+    final insulationType = getIntInput(inputs, 'insulationType', defaultValue: 2, minValue: 1, maxValue: 3);
 
-    // Утеплитель
-    final insulationArea = area;
-    final insulationVolume = area * (insulationThickness / 1000);
+    // Объём утеплителя
+    final insulationVolume = calculateVolume(area, insulationThickness / 1000);
 
-    // Площадь одного листа утеплителя (стандарт: 0.5 м² для пенопласта, 0.72 м² для минваты)
-    final sheetArea = insulationType == 1 ? 0.72 : 0.5;
-    final sheetsNeeded = (insulationArea / sheetArea * 1.05).ceil();
+    // Площадь одного листа утеплителя
+    final sheetArea = insulationType == 1 ? 0.72 : (insulationType == 2 ? 0.5 : 0.72);
+    final sheetsNeeded = calculateUnitsNeeded(area, sheetArea, marginPercent: 5.0);
 
-    // Клей для утеплителя: ~5 кг/м²
-    final glueNeeded = area * 5.0;
+    // Клей для утеплителя: 5-6 кг/м²
+    final glueNeeded = area * 5.5;
 
-    // Крепёж: дюбели-грибки, ~5 шт/м²
-    final fastenersNeeded = (area * 5).ceil();
+    // Крепёж: дюбели-грибки, ~5-6 шт/м²
+    final fastenersNeeded = ceilToInt(area * 5.5);
 
-    // Армирующая сетка: площадь + 10%
-    final meshArea = area * 1.1;
+    // Армирующая сетка: площадь + 10% на нахлёсты
+    final meshArea = addMargin(area, 10.0);
 
-    // Штукатурка: ~5 кг/м²
-    final plasterNeeded = area * 5.0;
+    // Базовый армирующий слой: ~3-4 кг/м²
+    final baseCoatNeeded = area * 3.5;
 
-    // Грунтовка: ~0.2 кг/м²
+    // Грунтовка: ~0.2 л/м²
     final primerNeeded = area * 0.2;
 
-    // Декоративная штукатурка/краска: ~0.5 кг/м²
-    final finishNeeded = area * 0.5;
+    // Декоративная штукатурка (короед/барашек): ~3 кг/м²
+    final finishPlasterNeeded = area * 3.0;
 
-    // Цены
+    // Краска фасадная (при необходимости): ~0.15 л/м² в 2 слоя
+    final paintNeeded = area * 0.15 * 2;
+
+    // Угловые профили с сеткой: по факту
+    final cornerProfileLength = getInput(inputs, 'corners', defaultValue: 0.0);
+
+    // Стартовый профиль (цокольный): по периметру
+    final startProfileLength = getInput(inputs, 'startProfile', defaultValue: 0.0);
+
+    // Деформационный профиль: по факту
+    final expansionProfileLength = getInput(inputs, 'expansion', defaultValue: 0.0);
+
+    // Расчёт стоимости
     final insulationPrice = insulationType == 1
-        ? _findPrice(priceList, ['mineral_wool', 'wool_insulation'])?.price
-        : _findPrice(priceList, ['foam', 'foam_insulation', 'eps'])?.price;
-    final gluePrice = _findPrice(priceList, ['glue_insulation', 'glue_foam'])?.price;
-    final fastenerPrice = _findPrice(priceList, ['fastener_insulation', 'dowel_umbrella'])?.price;
-    final meshPrice = _findPrice(priceList, ['mesh_armor', 'mesh_facade'])?.price;
-    final plasterPrice = _findPrice(priceList, ['plaster_facade', 'plaster'])?.price;
-    final primerPrice = _findPrice(priceList, ['primer', 'primer_facade'])?.price;
-    final finishPrice = _findPrice(priceList, ['finish_plaster', 'paint_facade'])?.price;
+        ? findPrice(priceList, ['mineral_wool', 'wool_insulation', 'facade_wool'])
+        : (insulationType == 2 
+            ? findPrice(priceList, ['foam', 'foam_insulation', 'eps', 'polystyrene'])
+            : findPrice(priceList, ['xps', 'extruded_polystyrene', 'epps']));
+    final gluePrice = findPrice(priceList, ['glue_insulation', 'glue_foam', 'facade_adhesive']);
+    final fastenerPrice = findPrice(priceList, ['fastener_insulation', 'dowel_umbrella']);
+    final meshPrice = findPrice(priceList, ['mesh_armor', 'mesh_facade', 'fiberglass_mesh']);
+    final baseCoatPrice = findPrice(priceList, ['base_coat', 'adhesive_layer']);
+    final primerPrice = findPrice(priceList, ['primer', 'primer_facade']);
+    final finishPlasterPrice = findPrice(priceList, ['plaster_decorative', 'plaster_facade']);
+    final paintPrice = findPrice(priceList, ['paint_facade', 'facade_paint']);
+    final cornerProfilePrice = findPrice(priceList, ['profile_corner', 'corner_bead']);
+    final startProfilePrice = findPrice(priceList, ['profile_start', 'base_profile']);
 
-    double? totalPrice;
-    if (insulationPrice != null) {
-      totalPrice = sheetsNeeded * insulationPrice;
-      if (gluePrice != null) {
-        totalPrice = totalPrice + glueNeeded * gluePrice;
-      }
-      if (fastenerPrice != null) {
-        totalPrice = totalPrice + fastenersNeeded * fastenerPrice;
-      }
-      if (meshPrice != null) {
-        totalPrice = totalPrice + meshArea * meshPrice;
-      }
-      if (plasterPrice != null) {
-        totalPrice = totalPrice + plasterNeeded * plasterPrice;
-      }
-      if (primerPrice != null) {
-        totalPrice = totalPrice + primerNeeded * primerPrice;
-      }
-      if (finishPrice != null) {
-        totalPrice = totalPrice + finishNeeded * finishPrice;
-      }
-    }
+    final costs = [
+      calculateCost(sheetsNeeded.toDouble(), insulationPrice?.price),
+      calculateCost(glueNeeded, gluePrice?.price),
+      calculateCost(fastenersNeeded.toDouble(), fastenerPrice?.price),
+      calculateCost(meshArea, meshPrice?.price),
+      calculateCost(baseCoatNeeded, baseCoatPrice?.price),
+      calculateCost(primerNeeded, primerPrice?.price),
+      calculateCost(finishPlasterNeeded, finishPlasterPrice?.price),
+      calculateCost(paintNeeded, paintPrice?.price),
+      if (cornerProfileLength > 0) calculateCost(cornerProfileLength, cornerProfilePrice?.price),
+      if (startProfileLength > 0) calculateCost(startProfileLength, startProfilePrice?.price),
+    ];
 
-    return CalculatorResult(
+    return createResult(
       values: {
         'area': area,
         'insulationVolume': insulationVolume,
@@ -89,23 +107,14 @@ class CalculateWetFacade implements CalculatorUseCase {
         'glueNeeded': glueNeeded,
         'fastenersNeeded': fastenersNeeded.toDouble(),
         'meshArea': meshArea,
-        'plasterNeeded': plasterNeeded,
+        'baseCoatNeeded': baseCoatNeeded,
         'primerNeeded': primerNeeded,
-        'finishNeeded': finishNeeded,
+        'finishPlasterNeeded': finishPlasterNeeded,
+        'paintNeeded': paintNeeded,
+        if (cornerProfileLength > 0) 'cornerProfileLength': cornerProfileLength,
+        if (startProfileLength > 0) 'startProfileLength': startProfileLength,
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-

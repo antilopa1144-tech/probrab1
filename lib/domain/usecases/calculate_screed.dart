@@ -1,5 +1,6 @@
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор стяжки пола.
 ///
@@ -11,77 +12,104 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// - area: площадь пола (м²)
 /// - thickness: толщина стяжки (мм), по умолчанию 50
 /// - cementGrade: марка цемента (М400/М500), влияет на пропорции
-class CalculateScreed implements CalculatorUseCase {
+class CalculateScreed extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    final thickness = inputs['thickness'] ?? 50.0;
+
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (thickness < 30 || thickness > 150) return 'Толщина стяжки должна быть от 30 до 150 мм';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final thickness = inputs['thickness'] ?? 50.0; // мм
-    final cementGrade = inputs['cementGrade'] ?? 400.0; // М400 или М500
+    // Получаем валидированные входные данные
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final thickness = getInput(inputs, 'thickness', defaultValue: 50.0, minValue: 30.0, maxValue: 150.0);
+    final cementGrade = getInput(inputs, 'cementGrade', defaultValue: 400.0);
 
     // Объём стяжки в м³
-    final volume = area * (thickness / 1000);
+    final volume = calculateVolume(area, thickness);
 
     // Пропорции цементно-песчаной смеси по СНиП 2.03.13-88:
     // М400: 1:3 (цемент:песок), М500: 1:4
-    final cementRatio = cementGrade >= 500 ? 0.25 : 0.33; // доля цемента
+    // Для стяжки М150-М200 используется соотношение цемента к песку
+    final cementRatio = cementGrade >= 500 ? 0.20 : 0.25; // доля цемента (с учётом потерь)
     final sandRatio = 1.0 - cementRatio;
 
-    // Плотность раствора ~2000 кг/м³
-    final solutionDensity = 2000.0; // кг/м³
+    // Плотность раствора ~2100 кг/м³ (с учётом уплотнения)
+    final solutionDensity = 2100.0; // кг/м³
     final totalWeight = volume * solutionDensity;
 
-    // Количество цемента и песка
-    final cementNeeded = totalWeight * cementRatio;
-    final sandNeeded = totalWeight * sandRatio;
+    // Количество цемента и песка с учётом потерь (+3%)
+    final cementNeeded = totalWeight * cementRatio * 1.03;
+    final sandNeeded = totalWeight * sandRatio * 1.03;
 
-    // Мешки цемента (50 кг)
-    final cementBags = (cementNeeded / 50).ceil();
+    // Мешки цемента (50 кг стандартный мешок)
+    final cementBags = ceilToInt(cementNeeded / 50);
 
     // Песок в м³ (плотность ~1600 кг/м³)
     final sandVolume = sandNeeded / 1600;
 
-    // Гидроизоляция (если нужна): ~1.2 м² на 1 м² пола (с нахлёстом)
-    final waterproofingArea = area * 1.2;
+    // Гидроизоляция (пленка под стяжку): площадь + 20% на нахлёсты
+    final waterproofingArea = addMargin(area, 20.0);
 
-    // Цены
-    final cementPrice = _findPrice(priceList, ['cement_m400', 'cement_m500', 'cement'])?.price;
-    final sandPrice = _findPrice(priceList, ['sand', 'sand_construction'])?.price;
-    final waterproofingPrice = _findPrice(priceList, ['waterproofing', 'film_pe'])?.price;
+    // Демпферная лента (по периметру): периметр + 5%
+    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final damperTapeLength = addMargin(perimeter, 5.0);
 
-    double? totalPrice;
-    if (cementPrice != null && sandPrice != null) {
-      final basePrice = cementBags * cementPrice + sandVolume * sandPrice;
-      if (waterproofingPrice != null) {
-        totalPrice = basePrice + waterproofingArea * waterproofingPrice;
-      } else {
-        totalPrice = basePrice;
-      }
-    }
+    // Армирующая сетка (при толщине > 40 мм): площадь + 10%
+    final meshArea = thickness > 40 ? addMargin(area, 10.0) : 0.0;
 
-    return CalculatorResult(
+    // Маяки (профиль): примерно каждые 1-1.5 м
+    final beaconsLength = ceilToInt(area / 1.2) * 3.0; // м
+
+    // Пластификатор (для улучшения текучести): ~0.5-1% от массы цемента
+    final plasticizerNeeded = cementNeeded * 0.007; // кг
+
+    // Расчёт стоимости
+    final cementPrice = findPrice(priceList, ['cement_m${cementGrade.round()}', 'cement_m400', 'cement_m500', 'cement']);
+    final sandPrice = findPrice(priceList, ['sand', 'sand_construction', 'sand_river']);
+    final waterproofingPrice = findPrice(priceList, ['waterproofing', 'film_pe']);
+    final damperTapePrice = findPrice(priceList, ['damper_tape', 'tape_edge']);
+    final meshPrice = findPrice(priceList, ['mesh', 'mesh_reinforcement']);
+    final beaconPrice = findPrice(priceList, ['beacon', 'profile_beacon']);
+    final plasticizerPrice = findPrice(priceList, ['plasticizer', 'additive_plasticizer']);
+
+    final costs = [
+      calculateCost(cementBags.toDouble(), cementPrice?.price),
+      calculateCost(sandVolume, sandPrice?.price),
+      calculateCost(waterproofingArea, waterproofingPrice?.price),
+      calculateCost(damperTapeLength, damperTapePrice?.price),
+      calculateCost(meshArea, meshPrice?.price),
+      calculateCost(beaconsLength, beaconPrice?.price),
+      calculateCost(plasticizerNeeded, plasticizerPrice?.price),
+    ];
+
+    return createResult(
       values: {
         'area': area,
         'volume': volume,
         'cementBags': cementBags.toDouble(),
         'sandVolume': sandVolume,
         'thickness': thickness,
+        'waterproofingArea': waterproofingArea,
+        'damperTapeLength': damperTapeLength,
+        'meshArea': meshArea,
+        'beaconsLength': beaconsLength,
+        'plasticizerNeeded': plasticizerNeeded,
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
-  }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
   }
 }
 

@@ -56,9 +56,7 @@ class _UniversalCalculatorScreenState
     // Инициализируем контроллеры для всех полей
     for (final field in widget.definition.fields) {
       _controllers[field.key] = TextEditingController(
-        text: field.defaultValue != 0
-            ? field.defaultValue.toString()
-            : '',
+        text: field.defaultValue != 0 ? field.defaultValue.toString() : '',
       );
     }
   }
@@ -103,11 +101,12 @@ class _UniversalCalculatorScreenState
       error: (error, stackTrace) {
         if (!mounted) return;
         setState(() => _isCalculating = false);
-        
+
         // Используем улучшенный ErrorHandler
-        ErrorHandler.logError(error, stackTrace, 'UniversalCalculatorScreen._calculate');
+        ErrorHandler.logError(
+            error, stackTrace, 'UniversalCalculatorScreen._calculate');
         final message = ErrorHandler.getUserFriendlyMessage(error);
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(message),
@@ -211,7 +210,8 @@ class _UniversalCalculatorScreenState
         }
       } catch (e, stackTrace) {
         if (mounted) {
-          ErrorHandler.logError(e, stackTrace, 'UniversalCalculatorScreen._saveCalculation');
+          ErrorHandler.logError(
+              e, stackTrace, 'UniversalCalculatorScreen._saveCalculation');
           final message = ErrorHandler.getUserFriendlyMessage(e);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -222,6 +222,76 @@ class _UniversalCalculatorScreenState
         }
       }
     }
+  }
+
+  /// Получить подсказку для поля ввода
+  String? _getHintForField(InputFieldDefinition field) {
+    if (field.key.contains('area')) return 'Введите площадь';
+    if (field.key.contains('length')) return 'Введите длину';
+    if (field.key.contains('width')) return 'Введите ширину';
+    if (field.key.contains('height')) return 'Введите высоту';
+    if (field.key.contains('thickness')) return 'Введите толщину';
+    if (field.key.contains('perimeter')) return 'Введите периметр';
+    if (field.key.contains('volume')) return 'Введите объём';
+    return null;
+  }
+
+  /// Получить единицы измерения для поля
+  String? _getUnitForField(InputFieldDefinition field) {
+    if (field.key.contains('area')) return 'м²';
+    if (field.key.contains('length') ||
+        field.key.contains('perimeter') ||
+        field.key.contains('height')) {
+      return 'м';
+    }
+    if (field.key.contains('width') &&
+        (field.key.contains('tile') ||
+            field.key.contains('panel') ||
+            field.key.contains('board'))) {
+      return 'см';
+    }
+    if (field.key.contains('width')) return 'м';
+    if (field.key.contains('thickness')) return 'мм';
+    if (field.key.contains('volume')) return 'м³';
+    if (field.key.contains('layers') || field.key.contains('count')) return 'шт';
+    if (field.key.contains('consumption')) return 'л/м²';
+    if (field.key.contains('power')) return 'Вт/м²';
+    return null;
+  }
+
+  /// Получить иконку для поля
+  Icon? _getIconForField(InputFieldDefinition field) {
+    if (field.key.contains('area')) {
+      return const Icon(Icons.square_foot, size: 20);
+    }
+    if (field.key.contains('length') || field.key.contains('perimeter')) {
+      return const Icon(Icons.straighten, size: 20);
+    }
+    if (field.key.contains('height')) {
+      return const Icon(Icons.height, size: 20);
+    }
+    if (field.key.contains('width')) {
+      return const Icon(Icons.width_normal, size: 20);
+    }
+    if (field.key.contains('thickness')) {
+      return const Icon(Icons.layers, size: 20);
+    }
+    if (field.key.contains('volume')) {
+      return const Icon(Icons.view_in_ar, size: 20);
+    }
+    if (field.key.contains('window')) {
+      return const Icon(Icons.window, size: 20);
+    }
+    if (field.key.contains('door')) {
+      return const Icon(Icons.door_front_door, size: 20);
+    }
+    if (field.key.contains('power')) {
+      return const Icon(Icons.power, size: 20);
+    }
+    if (field.key.contains('temperature')) {
+      return const Icon(Icons.thermostat, size: 20);
+    }
+    return const Icon(Icons.edit, size: 20);
   }
 
   @override
@@ -246,7 +316,8 @@ class _UniversalCalculatorScreenState
         data: (_) => _buildForm(context, theme),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) {
-          ErrorHandler.logError(error, stackTrace, 'UniversalCalculatorScreen.build');
+          ErrorHandler.logError(
+              error, stackTrace, 'UniversalCalculatorScreen.build');
           final message = ErrorHandler.getUserFriendlyMessage(error);
           return Center(
             child: Column(
@@ -284,86 +355,132 @@ class _UniversalCalculatorScreenState
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Поля ввода
-            ...widget.definition.fields.map((field) => Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: TextFormField(
-                    controller: _controllers[field.key],
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                      signed: false,
-                    ),
-                    decoration: InputDecoration(
-                      labelText: loc.translate(field.labelKey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                    ),
-                    validator: (value) {
-                      // Проверка обязательности
-                      if (field.required && (value == null || value.isEmpty)) {
-                        return loc.translate('input.required');
-                      }
-                      
-                      // Если поле не обязательное и пустое, используем значение по умолчанию
-                      if (!field.required && (value == null || value.isEmpty)) {
-                        return null;
-                      }
-                      
-                      // Проверка формата числа
-                      final num = double.tryParse(value!);
-                      if (num == null) {
-                        return loc.translate('input.invalid_number') ?? 'Введите корректное число';
-                      }
-                      
-                      // Проверка на отрицательные числа (для большинства полей)
-                      if (num < 0) {
-                        return loc.translate('input.positive_number') ?? 'Введите положительное число';
-                      }
-                      
-                      // Проверка на ноль для обязательных полей
-                      if (field.required && num == 0) {
-                        return loc.translate('input.cannot_be_zero') ?? 'Значение не может быть нулём';
-                      }
-                      
-                      // Проверка минимального значения
-                      if (field.minValue != null && num < field.minValue!) {
-                        return '${loc.translate('input.min_value') ?? 'Минимальное значение'}: ${field.minValue}';
-                      }
-                      
-                      // Проверка максимального значения
-                      if (field.maxValue != null && num > field.maxValue!) {
-                        return '${loc.translate('input.max_value') ?? 'Максимальное значение'}: ${field.maxValue}';
-                      }
-                      
-                      // Проверка разумных значений для площади
-                      if (field.key.contains('area') && num > 10000) {
-                        return loc.translate('input.area_too_large') ?? 
-                               'Проверьте значение. Слишком большое число для площади (макс. 10000 м²)';
-                      }
-                      
-                      // Проверка разумных значений для объёма
-                      if (field.key.contains('volume') && num > 1000) {
-                        return loc.translate('input.volume_too_large') ?? 
-                               'Проверьте значение. Слишком большое число для объёма (макс. 1000 м³)';
-                      }
-                      
-                      // Проверка разумных значений для толщины
-                      if (field.key.contains('thickness') && num > 500) {
-                        return loc.translate('input.thickness_too_large') ?? 
-                               'Проверьте значение. Слишком большая толщина (макс. 500 мм)';
-                      }
-                      
-                      // Проверка разумных значений для периметра
-                      if (field.key.contains('perimeter') && num > 1000) {
-                        return loc.translate('input.perimeter_too_large') ?? 
-                               'Проверьте значение. Слишком большой периметр (макс. 1000 м)';
-                      }
-                      
-                      return null;
-                    },
+            ...widget.definition.fields.map(
+              (field) => Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: TextFormField(
+                  controller: _controllers[field.key],
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: false,
                   ),
-                )),
+                  decoration: InputDecoration(
+                    labelText: loc.translate(field.labelKey),
+                    hintText: _getHintForField(field),
+                    suffixText: _getUnitForField(field),
+                    helperText: field.defaultValue != 0
+                        ? 'По умолчанию: ${field.defaultValue}'
+                        : null,
+                    helperMaxLines: 2,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    prefixIcon: _getIconForField(field),
+                  ),
+                  onChanged: (value) {
+                    // Автоматическая замена запятой на точку
+                    if (value.contains(',')) {
+                      final newValue = value.replaceAll(',', '.');
+                      _controllers[field.key]!.value = TextEditingValue(
+                        text: newValue,
+                        selection: TextSelection.collapsed(
+                          offset: newValue.length,
+                        ),
+                      );
+                    }
+                  },
+                  validator: (value) {
+                    // Проверка обязательности
+                    if (field.required && (value == null || value.isEmpty)) {
+                      return loc.translate('input.required') ??
+                          'Это поле обязательно';
+                    }
+
+                    // Если поле не обязательное и пустое, используем значение по умолчанию
+                    if (!field.required && (value == null || value.isEmpty)) {
+                      return null;
+                    }
+
+                    // Проверка формата числа (поддержка как точки, так и запятой)
+                    final sanitizedValue = value!.replaceAll(',', '.');
+                    final num = double.tryParse(sanitizedValue);
+                    if (num == null) {
+                      return loc.translate('input.invalid_number') ??
+                          'Введите корректное число';
+                    }
+
+                    // Проверка на отрицательные числа (для большинства полей)
+                    if (num < 0) {
+                      return loc.translate('input.positive_number') ??
+                          'Введите положительное число';
+                    }
+
+                    // Проверка на ноль для обязательных полей
+                    // Исключения: rapport, окна, двери — там ноль может быть валидным.
+                    if (field.required &&
+                        num == 0 &&
+                        !field.key.contains('rapport') &&
+                        !field.key.contains('windows') &&
+                        !field.key.contains('doors')) {
+                      return loc.translate('input.cannot_be_zero') ??
+                          'Значение должно быть больше нуля';
+                    }
+
+                    // Проверка минимального значения
+                    if (field.minValue != null && num < field.minValue!) {
+                      return '${loc.translate('input.min_value') ?? 'Минимальное значение'}: ${field.minValue}';
+                    }
+
+                    // Проверка максимального значения
+                    if (field.maxValue != null && num > field.maxValue!) {
+                      return '${loc.translate('input.max_value') ?? 'Максимальное значение'}: ${field.maxValue}';
+                    }
+
+                    // Проверка разумных значений для площади
+                    if (field.key.contains('area') && num > 10000) {
+                      return loc.translate('input.area_too_large') ??
+                          'Проверьте значение. Слишком большое число для площади (макс. 10000 м²)';
+                    }
+
+                    // Проверка разумных значений для объёма
+                    if (field.key.contains('volume') && num > 1000) {
+                      return loc.translate('input.volume_too_large') ??
+                          'Проверьте значение. Слишком большое число для объёма (макс. 1000 м³)';
+                    }
+
+                    // Проверка разумных значений для высоты
+                    if (field.key.contains('height') && num > 10) {
+                      return loc.translate('input.height_too_large') ??
+                          'Проверьте значение. Слишком большая высота (макс. 10 м)';
+                    }
+
+                    // Проверка разумных значений для толщины
+                    if (field.key.contains('thickness') && num > 500) {
+                      return loc.translate('input.thickness_too_large') ??
+                          'Проверьте значение. Слишком большая толщина (макс. 500 мм)';
+                    }
+
+                    // Проверка разумных значений для ширины (в метрах, если не плитка/панель)
+                    if (field.key.contains('width') &&
+                        !field.key.contains('tile') &&
+                        !field.key.contains('panel') &&
+                        num > 100) {
+                      return loc.translate('input.width_too_large') ??
+                          'Проверьте значение. Слишком большая ширина (макс. 100 м)';
+                    }
+
+                    // Проверка разумных значений для периметра
+                    if (field.key.contains('perimeter') && num > 1000) {
+                      return loc.translate('input.perimeter_too_large') ??
+                          'Проверьте значение. Слишком большой периметр (макс. 1000 м)';
+                    }
+
+                    return null;
+                  },
+                ),
+              ),
+            ),
 
             const SizedBox(height: 24),
 
@@ -377,7 +494,11 @@ class _UniversalCalculatorScreenState
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.calculate),
-              label: Text(_isCalculating ? 'Расчёт...' : loc.translate('button.calculate')),
+              label: Text(
+                _isCalculating
+                    ? 'Расчёт...'
+                    : loc.translate('button.calculate'),
+              ),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -415,7 +536,8 @@ class _UniversalCalculatorScreenState
           children: [
             Row(
               children: [
-                Icon(Icons.check_circle_outline, color: theme.colorScheme.primary),
+                Icon(Icons.check_circle_outline,
+                    color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   'Результаты',
@@ -428,8 +550,8 @@ class _UniversalCalculatorScreenState
             const SizedBox(height: 16),
             ..._result!.values.entries.map((entry) {
               // Пытаемся найти локализованную метку
-              final labelKey = widget.definition.resultLabels[entry.key] ??
-                  entry.key;
+              final labelKey =
+                  widget.definition.resultLabels[entry.key] ?? entry.key;
               final label = loc.translate(labelKey);
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
@@ -519,57 +641,57 @@ class _UniversalCalculatorScreenState
             width: 1.5,
           ),
         ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.lightbulb_outline,
-                color: theme.colorScheme.primary,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Советы мастера',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.lightbulb_outline,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Советы мастера',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ...widget.definition.tips.map(
+              (tip) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '• ',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        tip,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ...widget.definition.tips.map(
-            (tip) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '• ',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      tip,
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildAdditionalFeatures(BuildContext context, ThemeData theme) {
     final firstValue = _result!.values.values.firstOrNull ?? 0.0;
-    
+
     return Card(
       color: theme.colorScheme.surfaceContainerHighest,
       child: Padding(
@@ -679,4 +801,3 @@ class _UniversalCalculatorScreenState
     );
   }
 }
-
