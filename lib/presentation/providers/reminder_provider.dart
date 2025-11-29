@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../domain/entities/reminder.dart';
+import '../../core/errors/error_handler.dart';
 
 /// Провайдер для управления напоминаниями.
 class ReminderNotifier extends StateNotifier<List<Reminder>> {
@@ -12,22 +13,33 @@ class ReminderNotifier extends StateNotifier<List<Reminder>> {
   static const String _key = 'reminders';
 
   Future<void> _loadReminders() async {
-    final prefs = await SharedPreferences.getInstance();
-    final json = prefs.getString(_key);
-    if (json != null) {
-      try {
-        final list = jsonDecode(json) as List;
-        state = list.map((e) => _reminderFromJson(e)).toList();
-      } catch (_) {
-        state = [];
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final json = prefs.getString(_key);
+      if (json != null) {
+        try {
+          final list = jsonDecode(json) as List;
+          state = list.map((e) => _reminderFromJson(e)).toList();
+        } catch (e, stackTrace) {
+          ErrorHandler.logError(e, stackTrace, 'ReminderNotifier._loadReminders (parse)');
+          state = [];
+        }
       }
+    } catch (e, stackTrace) {
+      ErrorHandler.logError(e, stackTrace, 'ReminderNotifier._loadReminders');
+      state = [];
     }
   }
 
   Future<void> _saveReminders() async {
-    final prefs = await SharedPreferences.getInstance();
-    final json = jsonEncode(state.map((r) => r.toJson()).toList());
-    await prefs.setString(_key, json);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final json = jsonEncode(state.map((r) => r.toJson()).toList());
+      await prefs.setString(_key, json);
+    } catch (e, stackTrace) {
+      ErrorHandler.logError(e, stackTrace, 'ReminderNotifier._saveReminders');
+      // Не меняем состояние при ошибке сохранения
+    }
   }
 
   Future<void> addReminder(Reminder reminder) async {

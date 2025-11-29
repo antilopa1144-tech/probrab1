@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../models/price_item.dart';
+import '../../core/errors/error_handler.dart';
 
 /// Источник данных цен, загружающий JSON файлы из assets.
 class LocalPriceDataSource {
@@ -13,10 +14,17 @@ class LocalPriceDataSource {
       final data = await rootBundle.loadString(assetPath);
       final list = json.decode(data) as List<dynamic>;
       return list.map((e) => PriceItem.fromJson(e)).toList();
-    } catch (e) {
-      // Если файл не найден или повреждён, возвращаем пустой список
-      // с дефолтными ценами (можно улучшить, добавив fallback)
-      debugPrint('Ошибка загрузки цен для региона $regionCode: $e');
+    } on FormatException catch (e, stackTrace) {
+      // Ошибка парсинга JSON
+      ErrorHandler.logError(e, stackTrace, 'LocalPriceDataSource.getPriceList');
+      return [];
+    } on MissingPluginException catch (e, stackTrace) {
+      // Файл не найден
+      ErrorHandler.logError(e, stackTrace, 'LocalPriceDataSource.getPriceList');
+      return [];
+    } catch (e, stackTrace) {
+      // Другие ошибки
+      ErrorHandler.logError(e, stackTrace, 'LocalPriceDataSource.getPriceList');
       return [];
     }
   }

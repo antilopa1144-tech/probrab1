@@ -1,39 +1,61 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/calculation.dart';
 import '../../data/repositories/calculation_repository.dart';
+import '../../core/errors/error_handler.dart';
 
 final calculationRepositoryProvider = Provider<CalculationRepository>((ref) {
   return CalculationRepository();
 });
 
 /// Провайдер для всех расчётов с кэшированием
-final calculationsProvider = FutureProvider.autoDispose<List<Calculation>>((ref) async {
-  final repo = ref.watch(calculationRepositoryProvider);
-  final calculations = await repo.getAllCalculations();
-  // Сортируем по дате (новые первые)
-  calculations.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-  return calculations;
+final calculationsProvider =
+    FutureProvider.autoDispose<List<Calculation>>((ref) async {
+  try {
+    final repo = ref.watch(calculationRepositoryProvider);
+    final calculations = await repo.getAllCalculations();
+    // Сортируем по дате (новые первые)
+    calculations.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    return calculations;
+  } catch (e, stackTrace) {
+    ErrorHandler.logError(e, stackTrace, 'calculationsProvider');
+    // Возвращаем пустой список вместо ошибки
+    return [];
+  }
 });
 
 /// Провайдер для расчётов по категории с кэшированием
-final calculationsByCategoryProvider = FutureProvider.autoDispose.family<List<Calculation>, String>(
-  (ref, category) async {
+final calculationsByCategoryProvider = FutureProvider.autoDispose
+    .family<List<Calculation>, String>((ref, category) async {
+  try {
     final repo = ref.watch(calculationRepositoryProvider);
     final calculations = await repo.getCalculationsByCategory(category);
     calculations.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     return calculations;
-  },
-);
+  } catch (e, stackTrace) {
+    ErrorHandler.logError(e, stackTrace, 'calculationsByCategoryProvider');
+    // Возвращаем пустой список вместо ошибки
+    return [];
+  }
+});
 
 /// Провайдер для статистики с кэшированием
-final statisticsProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
-  final repo = ref.watch(calculationRepositoryProvider);
-  return await repo.getStatistics();
+final statisticsProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+  try {
+    final repo = ref.watch(calculationRepositoryProvider);
+    return await repo.getStatistics();
+  } catch (e, stackTrace) {
+    ErrorHandler.logError(e, stackTrace, 'statisticsProvider');
+    // Возвращаем пустую карту вместо ошибки
+    return {};
+  }
 });
 
 /// Провайдер для пагинации расчётов
-class PaginatedCalculationsNotifier extends StateNotifier<AsyncValue<List<Calculation>>> {
-  PaginatedCalculationsNotifier(this._repository) : super(const AsyncValue.loading()) {
+class PaginatedCalculationsNotifier
+    extends StateNotifier<AsyncValue<List<Calculation>>> {
+  PaginatedCalculationsNotifier(this._repository)
+      : super(const AsyncValue.loading()) {
     _loadMore();
   }
 
@@ -48,10 +70,11 @@ class PaginatedCalculationsNotifier extends StateNotifier<AsyncValue<List<Calcul
     try {
       final allCalculations = await _repository.getAllCalculations();
       allCalculations.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-      
+
       final startIndex = _currentPage * _pageSize;
-      final endIndex = (startIndex + _pageSize).clamp(0, allCalculations.length);
-      
+      final endIndex =
+          (startIndex + _pageSize).clamp(0, allCalculations.length);
+
       if (startIndex >= allCalculations.length) {
         _hasMore = false;
         return;
@@ -59,7 +82,7 @@ class PaginatedCalculationsNotifier extends StateNotifier<AsyncValue<List<Calcul
 
       final currentData = state.valueOrNull ?? [];
       final newData = allCalculations.sublist(startIndex, endIndex);
-      
+
       state = AsyncValue.data([...currentData, ...newData]);
       _currentPage++;
       _hasMore = endIndex < allCalculations.length;

@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../providers/accent_color_provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/region_provider.dart';
+import '../../core/constants.dart';
 
 /// Расширенная страница настроек.
 class SettingsPage extends ConsumerStatefulWidget {
@@ -46,10 +47,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Future<void> _loadAppVersion() async {
     try {
       final info = await PackageInfo.fromPlatform();
+      if (!mounted) return;
       setState(() {
         _appVersion = '${info.version} (${info.buildNumber})';
       });
     } catch (_) {
+      if (!mounted) return;
       setState(() {
         _appVersion = '1.0.0';
       });
@@ -330,7 +333,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   void _showRegionDialog(BuildContext context, WidgetRef ref) {
-    final regions = ['Москва', 'СПб', 'Регион'];
+    final regions = AppConstants.regions;
     final currentRegion = ref.watch(settingsProvider).region;
 
     showDialog(

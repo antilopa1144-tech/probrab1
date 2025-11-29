@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../domain/entities/workflow_step.dart';
+import '../../core/errors/error_handler.dart';
 
 /// Провайдер для управления планами работ с персистентным хранением.
 class WorkflowNotifier extends StateNotifier<AsyncValue<List<WorkflowPlan>>> {
@@ -44,7 +45,8 @@ class WorkflowNotifier extends StateNotifier<AsyncValue<List<WorkflowPlan>>> {
 
   Future<void> updatePlan(String planId, WorkflowPlan updated) async {
     state.whenData((plans) async {
-      final updatedPlans = plans.map((plan) => plan.id == planId ? updated : plan).toList();
+      final updatedPlans =
+          plans.map((plan) => plan.id == planId ? updated : plan).toList();
       state = AsyncValue.data(updatedPlans);
       await _savePlans(updatedPlans);
     });
@@ -52,7 +54,8 @@ class WorkflowNotifier extends StateNotifier<AsyncValue<List<WorkflowPlan>>> {
 
   Future<void> deletePlan(String planId) async {
     state.whenData((plans) async {
-      final updatedPlans = plans.where((plan) => plan.id != planId).toList();
+      final updatedPlans =
+          plans.where((plan) => plan.id != planId).toList();
       state = AsyncValue.data(updatedPlans);
       await _savePlans(updatedPlans);
     });
@@ -63,7 +66,8 @@ class WorkflowNotifier extends StateNotifier<AsyncValue<List<WorkflowPlan>>> {
       data: (plans) {
         try {
           return plans.firstWhere((plan) => plan.id == planId);
-        } catch (_) {
+        } catch (e, stackTrace) {
+          ErrorHandler.logError(e, stackTrace, 'WorkflowNotifier.getPlan');
           return null;
         }
       },
@@ -89,7 +93,8 @@ class WorkflowNotifier extends StateNotifier<AsyncValue<List<WorkflowPlan>>> {
   Future<void> refresh() => _loadPlans();
 }
 
-final workflowProvider = StateNotifierProvider<WorkflowNotifier, AsyncValue<List<WorkflowPlan>>>(
+final workflowProvider =
+    StateNotifierProvider<WorkflowNotifier, AsyncValue<List<WorkflowPlan>>>(
   (ref) => WorkflowNotifier(),
 );
 
@@ -286,4 +291,3 @@ WorkflowPlan createStandardWorkflow(String objectType) {
     createdAt: DateTime.now(),
   );
 }
-

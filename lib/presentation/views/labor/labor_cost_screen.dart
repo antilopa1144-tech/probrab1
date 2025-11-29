@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/entities/labor_cost.dart';
+import '../../providers/region_provider.dart';
+import '../../providers/settings_provider.dart';
 
 /// Экран расчёта трудозатрат.
 class LaborCostScreen extends ConsumerStatefulWidget {
@@ -18,7 +20,7 @@ class LaborCostScreen extends ConsumerStatefulWidget {
 }
 
 class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
-  String _selectedRegion = 'Москва';
+  late String _selectedRegion;
   final Map<String, LaborRate> _rates = {
     'Москва': const LaborRate(
       category: 'Отделка',
@@ -27,16 +29,30 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
       unit: 'м²',
       minPrice: 5000,
     ),
-    'СПб': const LaborRate(
+    'Санкт‑Петербург': const LaborRate(
       category: 'Отделка',
-      region: 'СПб',
-      pricePerUnit: 450,
+      region: 'Санкт‑Петербург',
+      pricePerUnit: 470,
       unit: 'м²',
-      minPrice: 4000,
+      minPrice: 4200,
     ),
-    'Регион': const LaborRate(
+    'Екатеринбург': const LaborRate(
       category: 'Отделка',
-      region: 'Регион',
+      region: 'Екатеринбург',
+      pricePerUnit: 420,
+      unit: 'м²',
+      minPrice: 3600,
+    ),
+    'Краснодар': const LaborRate(
+      category: 'Отделка',
+      region: 'Краснодар',
+      pricePerUnit: 390,
+      unit: 'м²',
+      minPrice: 3300,
+    ),
+    'Регионы РФ': const LaborRate(
+      category: 'Отделка',
+      region: 'Регионы РФ',
       pricePerUnit: 350,
       unit: 'м²',
       minPrice: 3000,
@@ -44,7 +60,20 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
   };
 
   @override
+  void initState() {
+    super.initState();
+    final preferredRegion = ref.read(regionProvider);
+    _selectedRegion =
+        _rates.containsKey(preferredRegion) ? preferredRegion : _rates.keys.first;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final syncedRegion = ref.watch(regionProvider);
+    if (_rates.containsKey(syncedRegion) && syncedRegion != _selectedRegion) {
+      _selectedRegion = syncedRegion;
+    }
+
     final theme = Theme.of(context);
     final rate = _rates[_selectedRegion]!;
     final calculation = LaborCostCalculation.fromCalculator(
@@ -82,9 +111,12 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
                         );
                       }).toList(),
                       onChanged: (value) {
+                        if (value == null) return;
                         setState(() {
-                          _selectedRegion = value!;
+                          _selectedRegion = value;
                         });
+                        ref.read(regionProvider.notifier).setRegion(value);
+                        ref.read(settingsProvider.notifier).updateRegion(value);
                       },
                     ),
                   ],
