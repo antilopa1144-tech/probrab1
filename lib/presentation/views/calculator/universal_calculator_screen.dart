@@ -455,7 +455,10 @@ class _UniversalCalculatorScreenState
           const SizedBox(width: 10),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start, codex/evaluate-project-and-suggest-improvements-2z4qgi
+              children: [
+                const Text(
+                  'Как сохранить изменения и результаты
               children: const [
                 Text(
                   'Как сохранить всё',
@@ -463,12 +466,51 @@ class _UniversalCalculatorScreenState
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+                codex/evaluate-project-and-suggest-improvements-2z4qgi
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('• '),
+                    Expanded(
+                      child: Text(
+                        'Внесите данные и нажмите «Рассчитать», чтобы получить актуальные значения.',
+                        style: TextStyle(height: 1.35),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('• '),
+                    Expanded(
+                      child: Text(
+                        'После расчёта нажмите «Сохранить все данные расчёта» (или иконку дискеты в шапке).',
+                        style: TextStyle(height: 1.35),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('• '),
+                    Expanded(
+                      child: Text(
+                        'Мы сохраняем введённые параметры, результаты, общую стоимость и заметки, чтобы вы могли вернуться к ним позже.',
+                        style: TextStyle(height: 1.35),
+                      ),
+                    ),
+                  ],
                 SizedBox(height: 6),
                 Text(
                   '1) Заполните поля и нажмите «Рассчитать».\n'
                   '2) После появления результатов нажмите «Сохранить все данные расчёта».\n'
                   'Мы сохраним входные значения, результаты, цену и ваши заметки.',
-                  style: TextStyle(height: 1.35),
+                  style: TextStyle(height: 1.35
                 ),
               ],
             ),
