@@ -12,6 +12,7 @@ import '../savings/savings_calculator_screen.dart';
 import '../expert/expert_recommendations_screen.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../core/errors/error_handler.dart';
+import '../../components/calculator/calculator_input_field.dart';
 
 /// Универсальный экран калькулятора.
 ///
@@ -224,76 +225,6 @@ class _UniversalCalculatorScreenState
     }
   }
 
-  /// Получить подсказку для поля ввода
-  String? _getHintForField(InputFieldDefinition field) {
-    if (field.key.contains('area')) return 'Введите площадь';
-    if (field.key.contains('length')) return 'Введите длину';
-    if (field.key.contains('width')) return 'Введите ширину';
-    if (field.key.contains('height')) return 'Введите высоту';
-    if (field.key.contains('thickness')) return 'Введите толщину';
-    if (field.key.contains('perimeter')) return 'Введите периметр';
-    if (field.key.contains('volume')) return 'Введите объём';
-    return null;
-  }
-
-  /// Получить единицы измерения для поля
-  String? _getUnitForField(InputFieldDefinition field) {
-    if (field.key.contains('area')) return 'м²';
-    if (field.key.contains('length') ||
-        field.key.contains('perimeter') ||
-        field.key.contains('height')) {
-      return 'м';
-    }
-    if (field.key.contains('width') &&
-        (field.key.contains('tile') ||
-            field.key.contains('panel') ||
-            field.key.contains('board'))) {
-      return 'см';
-    }
-    if (field.key.contains('width')) return 'м';
-    if (field.key.contains('thickness')) return 'мм';
-    if (field.key.contains('volume')) return 'м³';
-    if (field.key.contains('layers') || field.key.contains('count')) return 'шт';
-    if (field.key.contains('consumption')) return 'л/м²';
-    if (field.key.contains('power')) return 'Вт/м²';
-    return null;
-  }
-
-  /// Получить иконку для поля
-  Icon? _getIconForField(InputFieldDefinition field) {
-    if (field.key.contains('area')) {
-      return const Icon(Icons.square_foot, size: 20);
-    }
-    if (field.key.contains('length') || field.key.contains('perimeter')) {
-      return const Icon(Icons.straighten, size: 20);
-    }
-    if (field.key.contains('height')) {
-      return const Icon(Icons.height, size: 20);
-    }
-    if (field.key.contains('width')) {
-      return const Icon(Icons.width_normal, size: 20);
-    }
-    if (field.key.contains('thickness')) {
-      return const Icon(Icons.layers, size: 20);
-    }
-    if (field.key.contains('volume')) {
-      return const Icon(Icons.view_in_ar, size: 20);
-    }
-    if (field.key.contains('window')) {
-      return const Icon(Icons.window, size: 20);
-    }
-    if (field.key.contains('door')) {
-      return const Icon(Icons.door_front_door, size: 20);
-    }
-    if (field.key.contains('power')) {
-      return const Icon(Icons.power, size: 20);
-    }
-    if (field.key.contains('temperature')) {
-      return const Icon(Icons.thermostat, size: 20);
-    }
-    return const Icon(Icons.edit, size: 20);
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -358,126 +289,10 @@ class _UniversalCalculatorScreenState
             ...widget.definition.fields.map(
               (field) => Padding(
                 padding: const EdgeInsets.only(bottom: 16),
-                child: TextFormField(
-                  controller: _controllers[field.key],
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                    signed: false,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: loc.translate(field.labelKey),
-                    hintText: _getHintForField(field),
-                    suffixText: _getUnitForField(field),
-                    helperText: field.defaultValue != 0
-                        ? 'По умолчанию: ${field.defaultValue}'
-                        : null,
-                    helperMaxLines: 2,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    prefixIcon: _getIconForField(field),
-                  ),
-                  onChanged: (value) {
-                    // Автоматическая замена запятой на точку
-                    if (value.contains(',')) {
-                      final newValue = value.replaceAll(',', '.');
-                      _controllers[field.key]!.value = TextEditingValue(
-                        text: newValue,
-                        selection: TextSelection.collapsed(
-                          offset: newValue.length,
-                        ),
-                      );
-                    }
-                  },
-                  validator: (value) {
-                    // Проверка обязательности
-                    if (field.required && (value == null || value.isEmpty)) {
-                      return loc.translate('input.required') ??
-                          'Это поле обязательно';
-                    }
-
-                    // Если поле не обязательное и пустое, используем значение по умолчанию
-                    if (!field.required && (value == null || value.isEmpty)) {
-                      return null;
-                    }
-
-                    // Проверка формата числа (поддержка как точки, так и запятой)
-                    final sanitizedValue = value!.replaceAll(',', '.');
-                    final num = double.tryParse(sanitizedValue);
-                    if (num == null) {
-                      return loc.translate('input.invalid_number') ??
-                          'Введите корректное число';
-                    }
-
-                    // Проверка на отрицательные числа (для большинства полей)
-                    if (num < 0) {
-                      return loc.translate('input.positive_number') ??
-                          'Введите положительное число';
-                    }
-
-                    // Проверка на ноль для обязательных полей
-                    // Исключения: rapport, окна, двери — там ноль может быть валидным.
-                    if (field.required &&
-                        num == 0 &&
-                        !field.key.contains('rapport') &&
-                        !field.key.contains('windows') &&
-                        !field.key.contains('doors')) {
-                      return loc.translate('input.cannot_be_zero') ??
-                          'Значение должно быть больше нуля';
-                    }
-
-                    // Проверка минимального значения
-                    if (field.minValue != null && num < field.minValue!) {
-                      return '${loc.translate('input.min_value') ?? 'Минимальное значение'}: ${field.minValue}';
-                    }
-
-                    // Проверка максимального значения
-                    if (field.maxValue != null && num > field.maxValue!) {
-                      return '${loc.translate('input.max_value') ?? 'Максимальное значение'}: ${field.maxValue}';
-                    }
-
-                    // Проверка разумных значений для площади
-                    if (field.key.contains('area') && num > 10000) {
-                      return loc.translate('input.area_too_large') ??
-                          'Проверьте значение. Слишком большое число для площади (макс. 10000 м²)';
-                    }
-
-                    // Проверка разумных значений для объёма
-                    if (field.key.contains('volume') && num > 1000) {
-                      return loc.translate('input.volume_too_large') ??
-                          'Проверьте значение. Слишком большое число для объёма (макс. 1000 м³)';
-                    }
-
-                    // Проверка разумных значений для высоты
-                    if (field.key.contains('height') && num > 10) {
-                      return loc.translate('input.height_too_large') ??
-                          'Проверьте значение. Слишком большая высота (макс. 10 м)';
-                    }
-
-                    // Проверка разумных значений для толщины
-                    if (field.key.contains('thickness') && num > 500) {
-                      return loc.translate('input.thickness_too_large') ??
-                          'Проверьте значение. Слишком большая толщина (макс. 500 мм)';
-                    }
-
-                    // Проверка разумных значений для ширины (в метрах, если не плитка/панель)
-                    if (field.key.contains('width') &&
-                        !field.key.contains('tile') &&
-                        !field.key.contains('panel') &&
-                        num > 100) {
-                      return loc.translate('input.width_too_large') ??
-                          'Проверьте значение. Слишком большая ширина (макс. 100 м)';
-                    }
-
-                    // Проверка разумных значений для периметра
-                    if (field.key.contains('perimeter') && num > 1000) {
-                      return loc.translate('input.perimeter_too_large') ??
-                          'Проверьте значение. Слишком большой периметр (макс. 1000 м)';
-                    }
-
-                    return null;
-                  },
+                child: CalculatorInputField(
+                  field: field,
+                  controller: _controllers[field.key]!,
+                  localization: loc,
                 ),
               ),
             ),
@@ -506,6 +321,8 @@ class _UniversalCalculatorScreenState
                 ),
               ),
             ),
+            const SizedBox(height: 12),
+            _buildSaveHelper(theme),
 
             if (_result != null) ...[
               const SizedBox(height: 32),
@@ -603,8 +420,92 @@ class _UniversalCalculatorScreenState
                 ),
               ),
             ],
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: _saveCalculation,
+              icon: const Icon(Icons.save_alt),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(48),
+              ),
+              label: const Text('Сохранить все данные расчёта'),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSaveHelper(ThemeData theme) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant,
+        ),
+      ),
+      padding: const EdgeInsets.all(14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 2),
+            child: Icon(Icons.info_outline, size: 20),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Как сохранить изменения и результаты',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('• '),
+                    Expanded(
+                      child: Text(
+                        'Внесите данные и нажмите «Рассчитать», чтобы получить актуальные значения.',
+                        style: TextStyle(height: 1.35),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('• '),
+                    Expanded(
+                      child: Text(
+                        'После расчёта нажмите «Сохранить все данные расчёта» (или иконку дискеты в шапке).',
+                        style: TextStyle(height: 1.35),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('• '),
+                    Expanded(
+                      child: Text(
+                        'Мы сохраняем введённые параметры, результаты, общую стоимость и заметки, чтобы вы могли вернуться к ним позже.',
+                        style: TextStyle(height: 1.35),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
