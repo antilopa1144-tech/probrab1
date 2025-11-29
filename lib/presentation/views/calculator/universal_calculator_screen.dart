@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/utils/input_field_metadata.dart';
+import '../../../core/utils/number_parser.dart';
 import '../../../domain/calculators/definitions.dart';
 import '../../../domain/usecases/calculator_usecase.dart';
 import '../../providers/price_provider.dart';
@@ -47,6 +50,7 @@ class _UniversalCalculatorScreenState
     extends ConsumerState<UniversalCalculatorScreen> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
+  final Map<String, FocusNode> _focusNodes = {};
   CalculatorResult? _result;
   Map<String, double>? _inputs;
   bool _isCalculating = false;
@@ -57,8 +61,10 @@ class _UniversalCalculatorScreenState
     // Инициализируем контроллеры для всех полей
     for (final field in widget.definition.fields) {
       _controllers[field.key] = TextEditingController(
+        text: _formatInitialValue(field.defaultValue),
         text: field.defaultValue != 0 ? field.defaultValue.toString() : '',
       );
+      _focusNodes[field.key] = FocusNode();
     }
   }
 
@@ -67,7 +73,81 @@ class _UniversalCalculatorScreenState
     for (final controller in _controllers.values) {
       controller.dispose();
     }
+    for (final node in _focusNodes.values) {
+      node.dispose();
+    }
     super.dispose();
+  }
+
+  static final _numericInputFormatter =
+      FilteringTextInputFormatter.allow(RegExp(r'[0-9,\\. ]'));
+
+  String _formatInitialValue(double value) {
+    if (value == 0) return '';
+    return NumberParser.format(value);
+  }
+
+  List<String> get _orderedFieldKeys =>
+      widget.definition.fields.map((f) => f.key).toList();
+
+  void _focusNext(String currentKey) {
+    final keys = _orderedFieldKeys;
+    final currentIndex = keys.indexOf(currentKey);
+    if (currentIndex == -1) return;
+    if (currentIndex + 1 < keys.length) {
+      _focusNodes[keys[currentIndex + 1]]?.requestFocus();
+    } else {
+      _focusNodes[currentKey]?.unfocus();
+    }
+  }
+
+  double _extractValue(InputFieldDefinition field) {
+    final rawValue = _controllers[field.key]?.text;
+    final parsed = NumberParser.parse(rawValue);
+    return parsed ?? field.defaultValue;
+  }
+
+  String? _validateField(
+    String? value,
+    InputFieldDefinition field,
+    AppLocalizations loc,
+  ) {
+    final trimmed = value?.trim() ?? '';
+
+    if (field.required && trimmed.isEmpty) {
+      return loc.translate('input.required');
+    }
+
+    if (!field.required && trimmed.isEmpty) {
+      return null;
+    }
+
+    final parsed = NumberParser.parse(trimmed);
+    if (parsed == null) {
+      return 'Введите корректное число';
+    }
+
+    if (parsed < 0 && (field.minValue ?? 0) >= 0) {
+      return 'Введите положительное число';
+    }
+
+    if (field.minValue != null && parsed < field.minValue!) {
+      return 'Минимальное значение: ${NumberParser.format(field.minValue!)}';
+    }
+
+    if (field.maxValue != null && parsed > field.maxValue!) {
+      return 'Максимальное значение: ${NumberParser.format(field.maxValue!)}';
+    }
+
+    if (field.key.contains('area') && parsed > 10000) {
+      return 'Проверьте значение. Слишком большое число для площади.';
+    }
+
+    if (field.key.contains('volume') && parsed > 1000) {
+      return 'Проверьте значение. Слишком большое число для объёма.';
+    }
+
+    return null;
   }
 
   void _calculate() {
@@ -80,12 +160,10 @@ class _UniversalCalculatorScreenState
       data: (prices) {
         if (!mounted) return;
         // Собираем входные данные
-        final inputs = <String, double>{};
-        for (final field in widget.definition.fields) {
-          final value = double.tryParse(_controllers[field.key]!.text) ??
-              field.defaultValue;
-          inputs[field.key] = value;
-        }
+        final inputs = <String, double>{
+          for (final field in widget.definition.fields)
+            field.key: _extractValue(field),
+        };
 
         // Выполняем расчёт
         final result = widget.definition.run(inputs, prices);
@@ -278,24 +356,6 @@ class _UniversalCalculatorScreenState
 
   Widget _buildForm(BuildContext context, ThemeData theme) {
     final loc = AppLocalizations.of(context);
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Поля ввода
-            ...widget.definition.fields.map(
-              (field) => Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: CalculatorInputField(
-                  field: field,
-                  controller: _controllers[field.key]!,
-                  localization: loc,
-                ),
-              ),
-            ),
 
             const SizedBox(height: 24),
 
