@@ -455,14 +455,18 @@ class _UniversalCalculatorScreenState
           const SizedBox(width: 10),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start, codex/evaluate-project-and-suggest-improvements-2z4qgi
               children: [
                 const Text(
-                  'Как сохранить изменения и результаты',
+                  'Как сохранить изменения и результаты
+              children: const [
+                Text(
+                  'Как сохранить всё',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+                codex/evaluate-project-and-suggest-improvements-2z4qgi
                 const SizedBox(height: 8),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -501,6 +505,12 @@ class _UniversalCalculatorScreenState
                       ),
                     ),
                   ],
+                SizedBox(height: 6),
+                Text(
+                  '1) Заполните поля и нажмите «Рассчитать».\n'
+                  '2) После появления результатов нажмите «Сохранить все данные расчёта».\n'
+                  'Мы сохраним входные значения, результаты, цену и ваши заметки.',
+                  style: TextStyle(height: 1.35
                 ),
               ],
             ),
