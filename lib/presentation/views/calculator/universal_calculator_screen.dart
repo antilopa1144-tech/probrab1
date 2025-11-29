@@ -14,6 +14,8 @@ import '../weather/weather_advisor_screen.dart';
 import '../savings/savings_calculator_screen.dart';
 import '../expert/expert_recommendations_screen.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../core/errors/error_handler.dart';
+import '../../components/calculator/calculator_input_field.dart';
 
 /// Универсальный экран калькулятора.
 ///
@@ -60,6 +62,7 @@ class _UniversalCalculatorScreenState
     for (final field in widget.definition.fields) {
       _controllers[field.key] = TextEditingController(
         text: _formatInitialValue(field.defaultValue),
+        text: field.defaultValue != 0 ? field.defaultValue.toString() : '',
       );
       _focusNodes[field.key] = FocusNode();
     }
@@ -174,13 +177,23 @@ class _UniversalCalculatorScreenState
         }
       },
       loading: () {},
-      error: (error, _) {
+      error: (error, stackTrace) {
         if (!mounted) return;
         setState(() => _isCalculating = false);
+
+        // Используем улучшенный ErrorHandler
+        ErrorHandler.logError(
+            error, stackTrace, 'UniversalCalculatorScreen._calculate');
+        final message = ErrorHandler.getUserFriendlyMessage(error);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка загрузки цен: $error'),
+            content: Text(message),
             backgroundColor: Colors.red,
+            action: SnackBarAction(
+              label: 'Повторить',
+              onPressed: () => _calculate(),
+            ),
           ),
         );
       },
@@ -274,11 +287,14 @@ class _UniversalCalculatorScreenState
           );
           ref.invalidate(calculationsProvider);
         }
-      } catch (e) {
+      } catch (e, stackTrace) {
         if (mounted) {
+          ErrorHandler.logError(
+              e, stackTrace, 'UniversalCalculatorScreen._saveCalculation');
+          final message = ErrorHandler.getUserFriendlyMessage(e);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Ошибка сохранения: $e'),
+              content: Text(message),
               backgroundColor: Colors.red,
             ),
           );
@@ -308,81 +324,38 @@ class _UniversalCalculatorScreenState
       body: priceAsync.when(
         data: (_) => _buildForm(context, theme),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text('Ошибка загрузки цен: $error'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.invalidate(priceListProvider),
-                child: const Text('Повторить'),
-              ),
-            ],
-          ),
-        ),
+        error: (error, stackTrace) {
+          ErrorHandler.logError(
+              error, stackTrace, 'UniversalCalculatorScreen.build');
+          final message = ErrorHandler.getUserFriendlyMessage(error);
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Text(
+                    message,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => ref.invalidate(priceListProvider),
+                  child: const Text('Повторить'),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
   Widget _buildForm(BuildContext context, ThemeData theme) {
     final loc = AppLocalizations.of(context);
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: FocusTraversalGroup(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Поля ввода
-                ...widget.definition.fields.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final field = entry.value;
-                  final isLast =
-                      index == widget.definition.fields.length - 1;
-                  final meta = InputFieldMetadata.fromField(field);
-
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: TextFormField(
-                      controller: _controllers[field.key],
-                      focusNode: _focusNodes[field.key],
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      textInputAction:
-                          isLast ? TextInputAction.done : TextInputAction.next,
-                      inputFormatters: [_numericInputFormatter],
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      decoration: InputDecoration(
-                        labelText: loc.translate(field.labelKey),
-                        prefixIcon:
-                            meta.icon != null ? Icon(meta.icon) : null,
-                        helperText: meta.helperText,
-                        suffixText: meta.unit,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        filled: true,
-                      ),
-                      validator: (value) =>
-                          _validateField(value, field, loc),
-                      onFieldSubmitted: (_) {
-                        if (isLast) {
-                          _calculate();
-                        } else {
-                          _focusNext(field.key);
-                        }
-                      },
-                      onTapOutside: (_) => FocusScope.of(context).unfocus(),
-                    ),
-                  );
-                }),
 
             const SizedBox(height: 24),
 
@@ -396,7 +369,11 @@ class _UniversalCalculatorScreenState
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.calculate),
-              label: Text(_isCalculating ? 'Расчёт...' : loc.translate('button.calculate')),
+              label: Text(
+                _isCalculating
+                    ? 'Расчёт...'
+                    : loc.translate('button.calculate'),
+              ),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -404,6 +381,8 @@ class _UniversalCalculatorScreenState
                 ),
               ),
             ),
+            const SizedBox(height: 12),
+            _buildSaveHelper(theme),
 
             if (_result != null) ...[
               const SizedBox(height: 32),
@@ -434,7 +413,8 @@ class _UniversalCalculatorScreenState
           children: [
             Row(
               children: [
-                Icon(Icons.check_circle_outline, color: theme.colorScheme.primary),
+                Icon(Icons.check_circle_outline,
+                    color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   'Результаты',
@@ -447,8 +427,8 @@ class _UniversalCalculatorScreenState
             const SizedBox(height: 16),
             ..._result!.values.entries.map((entry) {
               // Пытаемся найти локализованную метку
-              final labelKey = widget.definition.resultLabels[entry.key] ??
-                  entry.key;
+              final labelKey =
+                  widget.definition.resultLabels[entry.key] ?? entry.key;
               final label = loc.translate(labelKey);
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
@@ -500,8 +480,102 @@ class _UniversalCalculatorScreenState
                 ),
               ),
             ],
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: _saveCalculation,
+              icon: const Icon(Icons.save_alt),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(48),
+              ),
+              label: const Text('Сохранить все данные расчёта'),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSaveHelper(ThemeData theme) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant,
+        ),
+      ),
+      padding: const EdgeInsets.all(14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 2),
+            child: Icon(Icons.info_outline, size: 20),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, codex/evaluate-project-and-suggest-improvements-2z4qgi
+              children: [
+                const Text(
+                  'Как сохранить изменения и результаты
+              children: const [
+                Text(
+                  'Как сохранить всё',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                codex/evaluate-project-and-suggest-improvements-2z4qgi
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('• '),
+                    Expanded(
+                      child: Text(
+                        'Внесите данные и нажмите «Рассчитать», чтобы получить актуальные значения.',
+                        style: TextStyle(height: 1.35),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('• '),
+                    Expanded(
+                      child: Text(
+                        'После расчёта нажмите «Сохранить все данные расчёта» (или иконку дискеты в шапке).',
+                        style: TextStyle(height: 1.35),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('• '),
+                    Expanded(
+                      child: Text(
+                        'Мы сохраняем введённые параметры, результаты, общую стоимость и заметки, чтобы вы могли вернуться к ним позже.',
+                        style: TextStyle(height: 1.35),
+                      ),
+                    ),
+                  ],
+                SizedBox(height: 6),
+                Text(
+                  '1) Заполните поля и нажмите «Рассчитать».\n'
+                  '2) После появления результатов нажмите «Сохранить все данные расчёта».\n'
+                  'Мы сохраним входные значения, результаты, цену и ваши заметки.',
+                  style: TextStyle(height: 1.35
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -538,57 +612,57 @@ class _UniversalCalculatorScreenState
             width: 1.5,
           ),
         ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.lightbulb_outline,
-                color: theme.colorScheme.primary,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Советы мастера',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.lightbulb_outline,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Советы мастера',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ...widget.definition.tips.map(
+              (tip) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '• ',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        tip,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ...widget.definition.tips.map(
-            (tip) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '• ',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      tip,
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildAdditionalFeatures(BuildContext context, ThemeData theme) {
     final firstValue = _result!.values.values.firstOrNull ?? 0.0;
-    
+
     return Card(
       color: theme.colorScheme.surfaceContainerHighest,
       child: Padding(
@@ -698,4 +772,3 @@ class _UniversalCalculatorScreenState
     );
   }
 }
-

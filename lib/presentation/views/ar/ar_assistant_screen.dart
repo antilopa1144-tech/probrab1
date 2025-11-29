@@ -49,8 +49,9 @@ class _ArAssistantScreenState extends State<ArAssistantScreen> {
   }
 
   Future<void> _takePicture() async {
-    if (_controller == null || !_controller!.value.isInitialized || !mounted)
+    if (_controller == null || !_controller!.value.isInitialized || !mounted) {
       return;
+    }
 
     try {
       await _controller!.takePicture();

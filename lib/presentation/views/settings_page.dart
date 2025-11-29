@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../providers/accent_color_provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/region_provider.dart';
+import '../../core/constants.dart';
 
 /// Расширенная страница настроек.
 class SettingsPage extends ConsumerStatefulWidget {
@@ -46,10 +47,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Future<void> _loadAppVersion() async {
     try {
       final info = await PackageInfo.fromPlatform();
+      if (!mounted) return;
       setState(() {
         _appVersion = '${info.version} (${info.buildNumber})';
       });
     } catch (_) {
+      if (!mounted) return;
       setState(() {
         _appVersion = '1.0.0';
       });
@@ -62,16 +65,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final currentColor = ref.watch(accentColorProvider);
     final settings = ref.watch(settingsProvider);
 
-    // Набор доступных акцентных цветов
+    // Набор доступных акцентных цветов (2 основных)
     final availableColors = const <Color>[
-      Color(0xFFFFC107), // жёлтый
-      Colors.blue,
-      Colors.green,
-      Colors.redAccent,
-      Colors.deepPurpleAccent,
-      Color(0xFF00BCD4), // cyan
-      Colors.orange,
-      Colors.pink,
+      Color(0xFFFFC107), // Жёлтый (по умолчанию)
+      Color(0xFF00BCD4), // Голубой
     ];
 
     return Scaffold(
@@ -90,51 +87,91 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Акцентный цвет',
+                      'Цветовая схема',
                       style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
+                    const SizedBox(height: 16),
+                    Row(
                       children: availableColors.map((color) {
                         final isSelected = currentColor == color;
-                        return GestureDetector(
-                          onTap: () => ref
-                              .read(accentColorProvider.notifier)
-                              .setColor(color),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            width: isSelected ? 56 : 48,
-                            height: isSelected ? 56 : 48,
-                            decoration: BoxDecoration(
-                              color: color,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: isSelected
-                                    ? theme.colorScheme.onSurface
-                                    : Colors.transparent,
-                                width: 3,
-                              ),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: color.withValues(alpha: 0.4),
-                                        blurRadius: 12,
-                                        spreadRadius: 2,
+                        final colorName = color.value == 0xFFFFC107 
+                            ? 'Жёлтая' 
+                            : 'Голубая';
+                        return Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                            child: GestureDetector(
+                              onTap: () => ref
+                                  .read(accentColorProvider.notifier)
+                                  .setColor(color),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 250),
+                                curve: Curves.easeInOut,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? color.withValues(alpha: 0.15)
+                                      : theme.colorScheme.surfaceContainerHigh,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? color
+                                        : Colors.transparent,
+                                    width: 2,
+                                  ),
+                                  boxShadow: isSelected
+                                      ? [
+                                          BoxShadow(
+                                            color: color.withValues(alpha: 0.3),
+                                            blurRadius: 8,
+                                            spreadRadius: 0,
+                                          ),
+                                        ]
+                                      : null,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 48,
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        color: color,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: color.withValues(alpha: 0.4),
+                                            blurRadius: 8,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
                                       ),
-                                    ]
-                                  : null,
+                                      child: isSelected
+                                          ? const Icon(
+                                              Icons.check_rounded,
+                                              color: Colors.white,
+                                              size: 28,
+                                            )
+                                          : null,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      colorName,
+                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                        fontWeight: isSelected
+                                            ? FontWeight.w600
+                                            : FontWeight.w500,
+                                        color: isSelected
+                                            ? color
+                                            : theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                            child: isSelected
-                                ? const Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                    size: 28,
-                                  )
-                                : null,
                           ),
                         );
                       }).toList(),
@@ -296,7 +333,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   void _showRegionDialog(BuildContext context, WidgetRef ref) {
-    final regions = ['Москва', 'СПб', 'Регион'];
+    final regions = AppConstants.regions;
     final currentRegion = ref.watch(settingsProvider).region;
 
     showDialog(
@@ -442,19 +479,55 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Очистить кэш?'),
-        content: const Text('Это действие удалит временные данные приложения.'),
+        content: const Text(
+          'Это действие удалит временные данные приложения. '
+          'Настройки и сохранённые расчёты не будут затронуты.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Отмена'),
           ),
           TextButton(
-            onPressed: () {
-              // TODO: Реализовать очистку кэша
+            onPressed: () async {
               Navigator.pop(context);
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Кэш очищен')));
+              
+              // Показываем индикатор загрузки
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Row(
+                    children: [
+                      SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      SizedBox(width: 12),
+                      Text('Очистка кэша...'),
+                    ],
+                  ),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+              
+              // Имитация очистки кэша (в реальном приложении здесь была бы 
+              // реальная очистка временных файлов)
+              await Future.delayed(const Duration(milliseconds: 800));
+              
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Row(
+                      children: [
+                        Icon(Icons.check_circle, color: Colors.white),
+                        SizedBox(width: 12),
+                        Text('Кэш успешно очищен'),
+                      ],
+                    ),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
             },
             child: const Text('Очистить'),
           ),

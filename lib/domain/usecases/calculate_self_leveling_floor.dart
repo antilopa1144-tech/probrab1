@@ -1,5 +1,6 @@
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор наливного пола.
 ///
@@ -10,57 +11,79 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// Поля:
 /// - area: площадь пола (м²)
 /// - thickness: толщина слоя (мм), по умолчанию 5
-class CalculateSelfLevelingFloor implements CalculatorUseCase {
+class CalculateSelfLevelingFloor extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    final thickness = inputs['thickness'] ?? 5.0;
+
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (thickness < 1 || thickness > 50) return 'Толщина должна быть от 1 до 50 мм';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final thickness = inputs['thickness'] ?? 5.0; // мм
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final thickness = getInput(inputs, 'thickness', defaultValue: 5.0, minValue: 1.0, maxValue: 50.0);
 
     // Расход наливного пола: ~1.5 кг/м² на 1 мм толщины
     final consumptionPerMm = 1.5; // кг/м²·мм
     final mixNeeded = area * consumptionPerMm * thickness * 1.1; // +10% запас
 
-    // Грунтовка: 0.2 кг/м²
-    final primerNeeded = area * 0.2 * 1.1;
+    // Грунтовка глубокого проникновения: 2 слоя по ~0.15 л/м²
+    final primerNeeded = area * 0.15 * 2;
 
-    // Игольчатый валик для раскатки (обычно 1 шт)
-    final rollersNeeded = 1;
+    // Демпферная лента по периметру: периметр + 5%
+    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final damperTapeLength = addMargin(perimeter, 5.0);
 
-    // Цены
-    final mixPrice = _findPrice(priceList, ['self_leveling', 'self_leveling_floor', 'leveling_compound'])?.price;
-    final primerPrice = _findPrice(priceList, ['primer', 'primer_deep'])?.price;
+    // Игольчатые валики для раскатки: 1-2 шт в зависимости от площади
+    final rollersNeeded = ceilToInt(area / 50); // 1 валик на 50 м²
 
-    double? totalPrice;
-    if (mixPrice != null && primerPrice != null) {
-      totalPrice = mixNeeded * mixPrice + primerNeeded * primerPrice;
-    } else if (mixPrice != null) {
-      totalPrice = mixNeeded * mixPrice;
-    }
+    // Краскоступы (для хождения по свежему полу): 1 пара
+    final shoesNeeded = 1;
 
-    return CalculatorResult(
+    // Миксер для замешивания (если нет)
+    final mixerNeeded = 1;
+
+    // Расход воды (информативно): ~0.15-0.2 л на кг смеси
+    final waterNeeded = mixNeeded * 0.175; // л
+
+    // Расчёт стоимости
+    final mixPrice = findPrice(priceList, ['self_leveling', 'self_leveling_floor', 'leveling_compound', 'floor_leveler']);
+    final primerPrice = findPrice(priceList, ['primer', 'primer_deep', 'primer_penetrating']);
+    final damperTapePrice = findPrice(priceList, ['damper_tape', 'tape_edge', 'expansion_tape']);
+    final rollerPrice = findPrice(priceList, ['roller_spiked', 'needle_roller']);
+    final shoesPrice = findPrice(priceList, ['shoes_spiked', 'cleats']);
+
+    final costs = [
+      calculateCost(mixNeeded, mixPrice?.price),
+      calculateCost(primerNeeded, primerPrice?.price),
+      calculateCost(damperTapeLength, damperTapePrice?.price),
+      calculateCost(rollersNeeded.toDouble(), rollerPrice?.price),
+      calculateCost(shoesNeeded.toDouble(), shoesPrice?.price),
+    ];
+
+    return createResult(
       values: {
         'area': area,
+        'thickness': thickness,
         'mixNeeded': mixNeeded,
         'primerNeeded': primerNeeded,
-        'thickness': thickness,
+        'damperTapeLength': damperTapeLength,
         'rollersNeeded': rollersNeeded.toDouble(),
+        'shoesNeeded': shoesNeeded.toDouble(),
+        'waterNeeded': waterNeeded,
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-

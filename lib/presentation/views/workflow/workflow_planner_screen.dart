@@ -199,6 +199,14 @@ class _WorkflowPlannerScreenState extends ConsumerState<WorkflowPlannerScreen> {
     setState(() {
       _completedSteps.add(stepId);
     });
+    
+    // Сохраняем прогресс
+    if (_currentPlan != null) {
+      ref.read(workflowProvider.notifier).updateProgress(
+        _currentPlan!.id,
+        _completedSteps,
+      );
+    }
   }
 
   void _showObjectTypeDialog(BuildContext context) {

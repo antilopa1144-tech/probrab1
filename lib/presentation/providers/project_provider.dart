@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/project.dart';
 import '../../data/repositories/project_repository.dart';
+import '../../core/errors/error_handler.dart';
 
 /// Провайдер репозитория проектов
 final projectRepositoryProvider = Provider<ProjectRepository>((ref) {
@@ -21,6 +22,7 @@ class ProjectNotifier extends StateNotifier<AsyncValue<List<Project>>> {
       final projects = await _repository.getAllProjects();
       state = AsyncValue.data(projects);
     } catch (error, stackTrace) {
+      ErrorHandler.logError(error, stackTrace, 'ProjectNotifier._loadProjects');
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -30,6 +32,7 @@ class ProjectNotifier extends StateNotifier<AsyncValue<List<Project>>> {
       await _repository.saveProject(project);
       await _loadProjects(); // Перезагружаем список
     } catch (error, stackTrace) {
+      ErrorHandler.logError(error, stackTrace, 'ProjectNotifier.addProject');
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -39,6 +42,7 @@ class ProjectNotifier extends StateNotifier<AsyncValue<List<Project>>> {
       await _repository.updateProject(project);
       await _loadProjects();
     } catch (error, stackTrace) {
+      ErrorHandler.logError(error, stackTrace, 'ProjectNotifier.updateProject');
       state = AsyncValue.error(error, stackTrace);
     }
   }
@@ -48,6 +52,7 @@ class ProjectNotifier extends StateNotifier<AsyncValue<List<Project>>> {
       await _repository.deleteProject(id);
       await _loadProjects();
     } catch (error, stackTrace) {
+      ErrorHandler.logError(error, stackTrace, 'ProjectNotifier.deleteProject');
       state = AsyncValue.error(error, stackTrace);
     }
   }

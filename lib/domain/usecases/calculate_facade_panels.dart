@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import 'package:probrab_ai/domain/usecases/base_calculator.dart';
 
 /// Калькулятор фасадных панелей.
 ///
@@ -12,74 +12,88 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 /// - area: площадь фасада (м²)
 /// - panelWidth: ширина панели (см), по умолчанию 50
 /// - panelHeight: высота панели (см), по умолчанию 100
-/// - perimeter: периметр здания (м)
-class CalculateFacadePanels implements CalculatorUseCase {
+/// - perimeter: периметр здания (м), опционально
+class CalculateFacadePanels extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final area = inputs['area'] ?? 0;
+    if (area <= 0) return 'Площадь должна быть больше нуля';
+
+    return null;
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
-    final panelWidth = inputs['panelWidth'] ?? 50.0; // см
-    final panelHeight = inputs['panelHeight'] ?? 100.0; // см
-    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area / 4));
+    final area = getInput(inputs, 'area', minValue: 0.1);
+    final panelWidth = getInput(inputs, 'panelWidth', defaultValue: 50.0, minValue: 20.0, maxValue: 150.0);
+    final panelHeight = getInput(inputs, 'panelHeight', defaultValue: 100.0, minValue: 50.0, maxValue: 300.0);
+    
+    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
     // Площадь одной панели в м²
-    final panelArea = (panelWidth / 100) * (panelHeight / 100);
+    final panelArea = calculateTileArea(panelWidth, panelHeight);
 
     // Количество панелей с запасом 10%
-    final panelsNeeded = (area / panelArea * 1.1).ceil();
+    final panelsNeeded = calculateUnitsNeeded(area, panelArea, marginPercent: 10.0);
 
-    // Крепления: ~4 шт на панель
-    final fastenersNeeded = panelsNeeded * 4;
+    // Обрешётка (металлический профиль или деревянные бруски)
+    final battensCount = ceilToInt((perimeter / 4) / 0.6);
+    final wallHeight = getInput(inputs, 'height', defaultValue: 2.5);
+    final battensLength = battensCount * wallHeight;
 
-    // Уголки: периметр
-    final cornersLength = perimeter;
+    // Крепления: ~4-6 шт на панель
+    final fastenersNeeded = ceilToInt(panelsNeeded * 5);
 
-    // Стартовая планка: периметр
-    final startStripLength = perimeter;
+    // Угловые элементы: внешние и внутренние
+    final cornersLength = addMargin(perimeter * 0.25, 5.0);
 
-    // Цены
-    final panelPrice = _findPrice(priceList, ['facade_panel', 'panel_facade'])?.price;
-    final fastenerPrice = _findPrice(priceList, ['fastener_facade', 'fastener'])?.price;
-    final cornerPrice = _findPrice(priceList, ['corner_facade', 'corner'])?.price;
-    final startStripPrice = _findPrice(priceList, ['start_strip_facade', 'start_strip'])?.price;
+    // Стартовая планка: по периметру + 3%
+    final startStripLength = addMargin(perimeter, 3.0);
 
-    double? totalPrice;
-    if (panelPrice != null) {
-      totalPrice = panelsNeeded * panelPrice;
-      if (fastenerPrice != null) {
-        totalPrice = totalPrice + fastenersNeeded * fastenerPrice;
-      }
-      if (cornerPrice != null) {
-        totalPrice = totalPrice + cornersLength * cornerPrice;
-      }
-      if (startStripPrice != null) {
-        totalPrice = totalPrice + startStripLength * startStripPrice;
-      }
-    }
+    // J-профиль (для обрамления проёмов): по факту
+    final jProfileLength = getInput(inputs, 'jProfile', defaultValue: 0.0);
 
-    return CalculatorResult(
+    // Н-профиль (соединительный): вертикальные стыки
+    final hProfileCount = ceilToInt((perimeter / 4) / 3); // каждые 3 м
+    final hProfileLength = hProfileCount * wallHeight;
+
+    // Расчёт стоимости
+    final panelPrice = findPrice(priceList, ['facade_panel', 'panel_facade', 'siding_panel']);
+    final battensPrice = findPrice(priceList, ['battens', 'metal_profile', 'facade_profile']);
+    final fastenerPrice = findPrice(priceList, ['fastener_facade', 'fastener', 'panel_fastener']);
+    final cornerPrice = findPrice(priceList, ['corner_facade', 'corner', 'corner_panel']);
+    final startStripPrice = findPrice(priceList, ['start_strip_facade', 'start_strip', 'base_strip']);
+    final jProfilePrice = findPrice(priceList, ['profile_j', 'j_trim']);
+    final hProfilePrice = findPrice(priceList, ['profile_h', 'h_trim', 'joiner']);
+
+    final costs = [
+      calculateCost(panelsNeeded.toDouble(), panelPrice?.price),
+      calculateCost(battensLength, battensPrice?.price),
+      calculateCost(fastenersNeeded.toDouble(), fastenerPrice?.price),
+      calculateCost(cornersLength, cornerPrice?.price),
+      calculateCost(startStripLength, startStripPrice?.price),
+      if (jProfileLength > 0) calculateCost(jProfileLength, jProfilePrice?.price),
+      calculateCost(hProfileLength, hProfilePrice?.price),
+    ];
+
+    return createResult(
       values: {
         'area': area,
         'panelsNeeded': panelsNeeded.toDouble(),
+        'battensLength': battensLength,
         'fastenersNeeded': fastenersNeeded.toDouble(),
         'cornersLength': cornersLength,
         'startStripLength': startStripLength,
+        if (jProfileLength > 0) 'jProfileLength': jProfileLength,
+        'hProfileLength': hProfileLength,
       },
-      totalPrice: totalPrice,
+      totalPrice: sumCosts(costs),
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
-
