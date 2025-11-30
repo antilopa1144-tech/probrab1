@@ -118,7 +118,8 @@ class _UniversalCalculatorV2ScreenState
   void _initializeControllers() {
     for (final field in widget.definition.fields) {
       // Используем initialInputs, если они есть, иначе defaultValue
-      final initialValue = widget.initialInputs?[field.key] ?? field.defaultValue;
+      final initialValue =
+          widget.initialInputs?[field.key] ?? field.defaultValue;
       final controller = TextEditingController(
         text: initialValue != 0
             ? InputSanitizer.formatNumber(initialValue)
@@ -255,10 +256,7 @@ class _UniversalCalculatorV2ScreenState
     }
 
     try {
-      await Share.share(
-        buffer.toString(),
-        subject: calculatorName,
-      );
+      await Share.share(buffer.toString(), subject: calculatorName);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -283,13 +281,8 @@ class _UniversalCalculatorV2ScreenState
     }
 
     try {
-      // Получаем список проектов
-      final projectsAsync = ref.read(allProjectsProvider);
-      final projects = projectsAsync.when(
-        data: (data) => data,
-        loading: () => <ProjectV2>[],
-        error: (_, __) => <ProjectV2>[],
-      );
+      // Получаем список проектов (ждём загрузки данных)
+      final projects = await ref.read(allProjectsProvider.future);
 
       // Показываем диалог выбора/создания проекта
       final selectedProject = await _showProjectSelectionDialog(projects);
@@ -316,15 +309,14 @@ class _UniversalCalculatorV2ScreenState
           SnackBar(
             content: Text('Расчёт сохранён в проект "${selectedProject.name}"'),
             backgroundColor: Colors.green,
-              action: SnackBarAction(
+            action: SnackBarAction(
               label: loc.translate('common.open'),
               onPressed: () {
                 Navigator.of(context).pop(); // Закрываем текущий экран
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => ProjectDetailsScreen(
-                      projectId: selectedProject.id,
-                    ),
+                    builder: (context) =>
+                        ProjectDetailsScreen(projectId: selectedProject.id),
                   ),
                 );
               },
@@ -354,19 +346,27 @@ class _UniversalCalculatorV2ScreenState
   double? _getTotalPrice() {
     // Пытаемся найти общую стоимость в результатах
     if (_results == null) return null;
-    
+
     // Ищем ключи, которые могут содержать цену
-    final priceKeys = ['totalPrice', 'totalCost', 'cost', 'price', 'materialCost'];
+    final priceKeys = [
+      'totalPrice',
+      'totalCost',
+      'cost',
+      'price',
+      'materialCost',
+    ];
     for (final key in priceKeys) {
       if (_results!.containsKey(key)) {
         return _results![key];
       }
     }
-    
+
     return null;
   }
 
-  Future<ProjectV2?> _showProjectSelectionDialog(List<ProjectV2> projects) async {
+  Future<ProjectV2?> _showProjectSelectionDialog(
+    List<ProjectV2> projects,
+  ) async {
     return showDialog<ProjectV2>(
       context: context,
       builder: (context) => _ProjectSelectionDialog(projects: projects),
@@ -519,8 +519,35 @@ class _UniversalCalculatorV2ScreenState
     return widgets;
   }
 
-  List<Widget> _buildFieldGroup(String groupName, List<CalculatorField> fields) {
+  List<Widget> _buildFieldGroup(
+    String groupName,
+    List<CalculatorField> fields,
+  ) {
     final widgets = <Widget>[];
+
+    // Для группы "advanced" делаем сворачиваемую секцию
+    if (groupName == 'advanced' || groupName == 'additional') {
+      return [
+        ExpansionTile(
+          title: Text(
+            _getGroupTitle(groupName),
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          initiallyExpanded: false, // Свёрнуто по умолчанию
+          children: [
+            ...fields.map(
+              (field) => Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: _buildInputField(field),
+              ),
+            ),
+          ],
+        ),
+      ];
+    }
 
     // Заголовок группы (кроме main)
     if (groupName != 'main') {
@@ -567,9 +594,7 @@ class _UniversalCalculatorV2ScreenState
     return TextFormField(
       controller: controller,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
-      ],
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         labelText: loc.translate(field.labelKey),
@@ -580,13 +605,19 @@ class _UniversalCalculatorV2ScreenState
             : null,
         filled: true,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(CalculatorStyles.borderRadiusMedium),
+          borderRadius: BorderRadius.circular(
+            CalculatorStyles.borderRadiusMedium,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(CalculatorStyles.borderRadiusMedium),
+          borderRadius: BorderRadius.circular(
+            CalculatorStyles.borderRadiusMedium,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(CalculatorStyles.borderRadiusMedium),
+          borderRadius: BorderRadius.circular(
+            CalculatorStyles.borderRadiusMedium,
+          ),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: CalculatorStyles.paddingLarge,
@@ -660,8 +691,9 @@ class _UniversalCalculatorV2ScreenState
       onChanged: (value) {
         setState(() {
           _currentInputs[field.key] = (value ?? false) ? 1.0 : 0.0;
-          _controllers[field.key]?.text =
-              InputSanitizer.formatNumber(_currentInputs[field.key]!);
+          _controllers[field.key]?.text = InputSanitizer.formatNumber(
+            _currentInputs[field.key]!,
+          );
         });
       },
       secondary: field.iconName != null
@@ -684,8 +716,9 @@ class _UniversalCalculatorV2ScreenState
       onChanged: (value) {
         setState(() {
           _currentInputs[field.key] = value ? 1.0 : 0.0;
-          _controllers[field.key]?.text =
-              InputSanitizer.formatNumber(_currentInputs[field.key]!);
+          _controllers[field.key]?.text = InputSanitizer.formatNumber(
+            _currentInputs[field.key]!,
+          );
         });
       },
       secondary: field.iconName != null
@@ -732,8 +765,9 @@ class _UniversalCalculatorV2ScreenState
               if (value != null) {
                 setState(() {
                   _currentInputs[field.key] = value;
-                  _controllers[field.key]?.text =
-                      InputSanitizer.formatNumber(value);
+                  _controllers[field.key]?.text = InputSanitizer.formatNumber(
+                    value,
+                  );
                 });
               }
             },
@@ -762,7 +796,8 @@ class _UniversalCalculatorV2ScreenState
       widgets.add(
         ResultsList(
           results: resultsData,
-          primaryResultKey: resultsData.keys.first, // Первый результат - главный
+          primaryResultKey:
+              resultsData.keys.first, // Первый результат - главный
         ),
       );
     }
@@ -773,20 +808,25 @@ class _UniversalCalculatorV2ScreenState
   (UnitType, String) _inferUnitAndLabel(String key) {
     final loc = AppLocalizations.of(context);
     // Определяем единицу измерения по ключу результата
-    if (key.contains('area')) return (UnitType.squareMeters, loc.translate('result.area'));
-    if (key.contains('volume')) return (UnitType.cubicMeters, loc.translate('result.volume'));
-    if (key.contains('length')) return (UnitType.meters, loc.translate('result.length'));
+    if (key.contains('area'))
+      return (UnitType.squareMeters, loc.translate('result.area'));
+    if (key.contains('volume'))
+      return (UnitType.cubicMeters, loc.translate('result.volume'));
+    if (key.contains('length'))
+      return (UnitType.meters, loc.translate('result.length'));
     if (key.contains('liters') || key.endsWith('_l')) {
       return (UnitType.liters, loc.translate('result.quantity'));
     }
     if (key.contains('kg') || key.endsWith('_kg')) {
       return (UnitType.kilograms, loc.translate('result.weight'));
     }
-    if (key.contains('bags')) return (UnitType.bags, loc.translate('result.bags'));
+    if (key.contains('bags'))
+      return (UnitType.bags, loc.translate('result.bags'));
     if (key.contains('packages') || key.contains('packs')) {
       return (UnitType.packages, loc.translate('result.packages'));
     }
-    if (key.contains('rolls')) return (UnitType.rolls, loc.translate('result.rolls'));
+    if (key.contains('rolls'))
+      return (UnitType.rolls, loc.translate('result.rolls'));
     if (key.contains('pieces') || key.endsWith('_pcs')) {
       return (UnitType.pieces, loc.translate('result.pieces'));
     }
@@ -853,12 +893,11 @@ class _UniversalCalculatorV2ScreenState
 class _ProjectSelectionDialog extends StatefulWidget {
   final List<ProjectV2> projects;
 
-  const _ProjectSelectionDialog({
-    required this.projects,
-  });
+  const _ProjectSelectionDialog({required this.projects});
 
   @override
-  State<_ProjectSelectionDialog> createState() => _ProjectSelectionDialogState();
+  State<_ProjectSelectionDialog> createState() =>
+      _ProjectSelectionDialogState();
 }
 
 class _ProjectSelectionDialogState extends State<_ProjectSelectionDialog> {
@@ -994,7 +1033,9 @@ class _ProjectSelectionDialogState extends State<_ProjectSelectionDialog> {
 
   Future<void> _handleSave() async {
     if (!_isCreatingNew && _selectedProjectId != null) {
-      final project = widget.projects.firstWhere((p) => p.id == _selectedProjectId);
+      final project = widget.projects.firstWhere(
+        (p) => p.id == _selectedProjectId,
+      );
       if (mounted) {
         Navigator.of(context).pop(project);
       }
@@ -1009,10 +1050,11 @@ class _ProjectSelectionDialogState extends State<_ProjectSelectionDialog> {
         ..updatedAt = DateTime.now();
 
       // Сохраняем проект через репозиторий
-      final repository = ProviderScope.containerOf(context)
-          .read(projectRepositoryV2Provider);
+      final repository = ProviderScope.containerOf(
+        context,
+      ).read(projectRepositoryV2Provider);
       final projectId = await repository.createProject(newProject);
-      
+
       // Загружаем созданный проект
       final createdProject = await repository.getProjectById(projectId);
       if (createdProject != null && mounted) {

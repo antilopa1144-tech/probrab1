@@ -12,7 +12,7 @@ const _legacyToV2IdMap = {
   'floors_laminate': 'floors_laminate',
   'floors_screed': 'floors_screed',
   'floors_tile': 'floors_tile',
-  'calculator.stripTitle': 'foundation_strip',
+  'foundation_strip': 'foundation_strip',
   'foundation_slab': 'foundation_slab',
   'roofing_metal': 'roofing_metal',
   'roofing_soft': 'roofing_soft',
