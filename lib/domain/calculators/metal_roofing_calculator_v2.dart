@@ -13,7 +13,7 @@ final metalRoofingCalculatorV2 = CalculatorDefinitionV2(
   category: CalculatorCategory.roofing,
   subCategory: 'metal',
   iconName: 'roof',
-  accentColor: 0xFF607D8B,
+  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
   complexity: 2,
   popularity: 85,
   tags: ['кровля', 'металл', 'профлист', 'roofing', 'metal'],

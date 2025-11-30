@@ -15,6 +15,19 @@
     "back": "Назад",
     "retry": "Повторить"
   },
+  "share": {
+    "date": "Дата расчёта",
+    "inputs": "Входные данные",
+    "results": "Результаты",
+    "error": "Ошибка при отправке"
+  },
+  "snackbar": {
+    "calculate_first": "Сначала выполните расчёт",
+    "calculation_saved": "Расчёт сохранён в проект"
+  },
+  "error": {
+    "save_calculation": "Ошибка сохранения расчёта в проект"
+  },
   "result": {
     "title": "Результаты расчёта",
     "area": "Площадь",
@@ -167,6 +180,130 @@
     "project_name.hint": "Например: Ремонт квартиры",
     "project_description": "Описание (необязательно)",
     "project_description.hint": "Дополнительная информация о проекте"
+  },
+  "calculator": {
+    "laminate": "Ламинат",
+    "laminate.description": "Расчёт количества ламината, подложки и плинтуса",
+    "paint": "Покраска стен",
+    "paint.description": "Расчёт краски, грунтовки и расходных материалов",
+    "wall_paint": {
+      "title": "Покраска стен",
+      "description": "Расчёт краски, грунтовки и расходных материалов для покраски стен"
+    },
+    "warm_floor": {
+      "title": "Тёплый пол",
+      "description": "Расчёт электрического тёплого пола: кабель или мат"
+    },
+    "parquet": {
+      "title": "Паркет",
+      "description": "Расчёт паркетных планок, лака и клея"
+    },
+    "gkl_ceiling": {
+      "title": "Потолок из ГКЛ",
+      "description": "Расчёт гипсокартонных листов, профилей и крепежа для потолка"
+    },
+    "bathroom_tile": {
+      "title": "Плитка в ванной",
+      "description": "Расчёт плитки для стен и пола ванной комнаты"
+    },
+    "strip_foundation": {
+      "title": "Ленточный фундамент",
+      "description": "Расчёт бетона, арматуры и опалубки для ленточного фундамента"
+    },
+    "slab": {
+      "title": "Плитный фундамент",
+      "description": "Расчёт плитного фундамента: бетон, арматура, утеплитель"
+    },
+    "slab_foundation": {
+      "title": "Плитный фундамент",
+      "description": "Расчёт плитного фундамента: бетон, арматура, утеплитель"
+    },
+    "metal_roofing": {
+      "title": "Металлочерепица",
+      "description": "Расчёт металлочерепицы, доборных элементов и крепежа"
+    },
+    "soft_roofing": {
+      "title": "Мягкая кровля",
+      "description": "Расчёт мягкой кровли, подкладочного ковра и крепежа"
+    },
+    "screed": {
+      "title": "Стяжка пола",
+      "description": "Расчёт цементно-песчаной стяжки для пола"
+    },
+    "tile": {
+      "title": "Плитка на пол",
+      "description": "Расчёт керамической плитки для пола"
+    },
+    "wallpaper": {
+      "title": "Обои",
+      "description": "Расчёт обоев, клея и расходных материалов"
+    }
+  },
+  "result": {
+    "title": "Результаты расчёта",
+    "area": "Площадь",
+    "volume": "Объём",
+    "length": "Длина",
+    "quantity": "Количество",
+    "weight": "Вес",
+    "bags": "Мешков",
+    "packages": "Упаковок",
+    "rolls": "Рулонов",
+    "pieces": "Штук",
+    "cost": "Стоимость",
+    "packsNeeded": "Упаковок ламината",
+    "underlayArea": "Площадь подложки",
+    "plinthLength": "Длина плинтуса",
+    "wedgesNeeded": "Клиньев",
+    "vaporBarrierArea": "Площадь пароизоляции",
+    "doorThresholds": "Порогов",
+    "paintNeeded": "Краски",
+    "primerNeeded": "Грунтовки",
+    "puttyNeeded": "Шпаклёвки",
+    "tapeNeeded": "Скотча",
+    "rollersNeeded": "Валиков",
+    "brushesNeeded": "Кистей",
+    "totalPower": "Общая мощность",
+    "cableLength": "Длина кабеля",
+    "matArea": "Площадь мата",
+    "thermostats": "Терморегуляторов",
+    "insulationArea": "Площадь утеплителя",
+    "montageTapeLength": "Длина монтажной ленты",
+    "corrugatedTubeLength": "Длина гофротрубы",
+    "damperTapeLength": "Длина демпферной ленты",
+    "rcdNeeded": "УЗО",
+    "planksNeeded": "Планок паркета",
+    "varnishNeeded": "Лака",
+    "glueNeeded": "Клея",
+    "sheetsNeeded": "Листов ГКЛ",
+    "guideLength": "Длина направляющих",
+    "ceilingProfileLength": "Длина потолочных профилей",
+    "hangerPieces": "Подвесов",
+    "screwsNeeded": "Саморезов",
+    "puttyNeeded": "Шпаклёвки",
+    "tapeNeeded": "Серпянки",
+    "primerNeeded": "Грунтовки",
+    "wallTiles": "Плитки на стены",
+    "floorTiles": "Плитки на пол",
+    "tileGlue": "Клея для плитки",
+    "grout": "Затирки",
+    "cornerProfile": "Угловых профилей",
+    "concreteVolume": "Объём бетона",
+    "rebarWeight": "Вес арматуры",
+    "formworkArea": "Площадь опалубки",
+    "waterproofingArea": "Площадь гидроизоляции",
+    "insulationVolume": "Объём утеплителя",
+    "sheetsNeeded": "Листов",
+    "ridgeLength": "Длина конька",
+    "valleyLength": "Длина ендовы",
+    "endLength": "Длина торца",
+    "rollsNeeded": "Рулонов",
+    "underlayment": "Подкладочного ковра",
+    "nails": "Гвоздей",
+    "mastic": "Мастики",
+    "decking": "Обрешётки",
+    "dripEdge": "Капельников",
+    "ventilation": "Вентиляционных элементов"
   },
   "hint": {
     "paint": {

@@ -15,6 +15,19 @@
     "back": "Back",
     "retry": "Retry"
   },
+  "share": {
+    "date": "Calculation date",
+    "inputs": "Input data",
+    "results": "Results",
+    "error": "Error sending"
+  },
+  "snackbar": {
+    "calculate_first": "Please calculate first",
+    "calculation_saved": "Calculation saved to project"
+  },
+  "error": {
+    "save_calculation": "Error saving calculation to project"
+  },
   "result": {
     "title": "Calculation Results",
     "area": "Area",
@@ -165,6 +178,126 @@
     "project_name.hint": "e.g., Apartment Renovation",
     "project_description": "Description (optional)",
     "project_description.hint": "Additional information about the project"
+  },
+  "calculator": {
+    "laminate": "Laminate",
+    "laminate.description": "Calculate laminate, underlay and plinth quantity",
+    "paint": "Wall Paint",
+    "paint.description": "Calculate paint, primer and consumables",
+    "wall_paint": {
+      "title": "Wall Paint",
+      "description": "Calculate paint, primer and consumables for wall painting"
+    },
+    "warm_floor": {
+      "title": "Warm Floor",
+      "description": "Calculate electric warm floor: cable or mat"
+    },
+    "parquet": {
+      "title": "Parquet",
+      "description": "Calculate parquet planks, varnish and glue"
+    },
+    "gkl_ceiling": {
+      "title": "GKL Ceiling",
+      "description": "Calculate drywall sheets, profiles and fasteners for ceiling"
+    },
+    "bathroom_tile": {
+      "title": "Bathroom Tile",
+      "description": "Calculate tiles for bathroom walls and floor"
+    },
+    "strip_foundation": {
+      "title": "Strip Foundation",
+      "description": "Calculate concrete, rebar and formwork for strip foundation"
+    },
+    "slab": {
+      "title": "Slab Foundation",
+      "description": "Calculate slab foundation: concrete, rebar, insulation"
+    },
+    "slab_foundation": {
+      "title": "Slab Foundation",
+      "description": "Calculate slab foundation: concrete, rebar, insulation"
+    },
+    "metal_roofing": {
+      "title": "Metal Roofing",
+      "description": "Calculate metal roofing, accessories and fasteners"
+    },
+    "soft_roofing": {
+      "title": "Soft Roofing",
+      "description": "Calculate soft roofing, underlayment and fasteners"
+    },
+    "screed": {
+      "title": "Floor Screed",
+      "description": "Calculate cement-sand screed for floor"
+    },
+    "tile": {
+      "title": "Floor Tile",
+      "description": "Calculate ceramic tiles for floor"
+    },
+    "wallpaper": {
+      "title": "Wallpaper",
+      "description": "Calculate wallpaper, glue and consumables"
+    }
+  },
+  "result": {
+    "title": "Calculation Results",
+    "area": "Area",
+    "volume": "Volume",
+    "length": "Length",
+    "quantity": "Quantity",
+    "weight": "Weight",
+    "bags": "Bags",
+    "packages": "Packages",
+    "rolls": "Rolls",
+    "pieces": "Pieces",
+    "cost": "Cost",
+    "packsNeeded": "Laminate packs",
+    "underlayArea": "Underlay area",
+    "plinthLength": "Plinth length",
+    "wedgesNeeded": "Wedges",
+    "vaporBarrierArea": "Vapor barrier area",
+    "doorThresholds": "Thresholds",
+    "paintNeeded": "Paint",
+    "primerNeeded": "Primer",
+    "puttyNeeded": "Putty",
+    "tapeNeeded": "Tape",
+    "rollersNeeded": "Rollers",
+    "brushesNeeded": "Brushes",
+    "totalPower": "Total power",
+    "cableLength": "Cable length",
+    "matArea": "Mat area",
+    "thermostats": "Thermostats",
+    "insulationArea": "Insulation area",
+    "montageTapeLength": "Mounting tape length",
+    "corrugatedTubeLength": "Corrugated tube length",
+    "damperTapeLength": "Damper tape length",
+    "rcdNeeded": "RCD",
+    "planksNeeded": "Parquet planks",
+    "varnishNeeded": "Varnish",
+    "glueNeeded": "Glue",
+    "sheetsNeeded": "GKL sheets",
+    "guideLength": "Guide length",
+    "ceilingProfileLength": "Ceiling profile length",
+    "hangerPieces": "Hangers",
+    "screwsNeeded": "Screws",
+    "wallTiles": "Wall tiles",
+    "floorTiles": "Floor tiles",
+    "tileGlue": "Tile glue",
+    "grout": "Grout",
+    "cornerProfile": "Corner profiles",
+    "concreteVolume": "Concrete volume",
+    "rebarWeight": "Rebar weight",
+    "formworkArea": "Formwork area",
+    "waterproofingArea": "Waterproofing area",
+    "insulationVolume": "Insulation volume",
+    "ridgeLength": "Ridge length",
+    "valleyLength": "Valley length",
+    "endLength": "End length",
+    "rollsNeeded": "Rolls",
+    "underlayment": "Underlayment",
+    "nails": "Nails",
+    "mastic": "Mastic",
+    "decking": "Decking",
+    "dripEdge": "Drip edge",
+    "ventilation": "Ventilation elements"
   },
   "hint": {
     "paint": {

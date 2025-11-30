@@ -13,7 +13,7 @@ final slabFoundationCalculatorV2 = CalculatorDefinitionV2(
   category: CalculatorCategory.foundation,
   subCategory: 'slab',
   iconName: 'foundation',
-  accentColor: 0xFF795548,
+  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
   complexity: 3,
   popularity: 85,
   tags: ['фундамент', 'плита', 'монолит', 'бетон', 'foundation', 'slab'],

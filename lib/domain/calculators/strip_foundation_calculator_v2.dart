@@ -13,7 +13,7 @@ final stripFoundationCalculatorV2 = CalculatorDefinitionV2(
   category: CalculatorCategory.foundation,
   subCategory: 'strip',
   iconName: 'foundation',
-  accentColor: 0xFF795548,
+  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
   complexity: 2,
   popularity: 90,
   tags: ['фундамент', 'ленточный', 'бетон', 'арматура', 'foundation', 'strip'],

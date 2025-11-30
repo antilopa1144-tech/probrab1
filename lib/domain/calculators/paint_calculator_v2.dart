@@ -13,7 +13,7 @@ final paintCalculatorV2 = CalculatorDefinitionV2(
   category: CalculatorCategory.wallFinishing,
   subCategory: 'paint',
   iconName: 'paint',
-  accentColor: 0xFF4CAF50,
+  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
   complexity: 1,
   popularity: 100,
   tags: ['краска', 'стены', 'отделка', 'paint', 'walls'],

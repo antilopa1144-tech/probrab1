@@ -13,7 +13,7 @@ final bathroomTileCalculatorV2 = CalculatorDefinitionV2(
   category: CalculatorCategory.wallFinishing,
   subCategory: 'tile',
   iconName: 'bathtub',
-  accentColor: 0xFF00BCD4,
+  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
   complexity: 2,
   popularity: 95,
   tags: ['плитка', 'ванная', 'кафель', 'tile', 'bathroom'],

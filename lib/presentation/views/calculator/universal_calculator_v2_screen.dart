@@ -220,26 +220,27 @@ class _UniversalCalculatorV2ScreenState
   }
 
   Future<void> _shareResults() async {
+    final loc = AppLocalizations.of(context);
+    
     if (_results == null || !_hasCalculated) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Сначала выполните расчёт'),
+          content: Text(loc.translate('snackbar.calculate_first')),
           backgroundColor: Colors.orange,
         ),
       );
       return;
     }
 
-    final loc = AppLocalizations.of(context);
     final calculatorName = loc.translate(widget.definition.titleKey);
     final date = DateFormat('dd.MM.yyyy HH:mm').format(DateTime.now());
 
     // Формируем текст для шаринга
     final buffer = StringBuffer();
     buffer.writeln('$calculatorName');
-    buffer.writeln('Дата расчёта: $date');
+    buffer.writeln('${loc.translate('share.date')}: $date');
     buffer.writeln('');
-    buffer.writeln('Входные данные:');
+    buffer.writeln('${loc.translate('share.inputs')}:');
     for (final entry in _currentInputs.entries) {
       final field = widget.definition.fields.firstWhere(
         (f) => f.key == entry.key,
@@ -249,7 +250,7 @@ class _UniversalCalculatorV2ScreenState
       buffer.writeln('$label: ${entry.value} ${field.unitType.symbol}');
     }
     buffer.writeln('');
-    buffer.writeln('Результаты:');
+    buffer.writeln('${loc.translate('share.results')}:');
     for (final entry in _results!.entries) {
       final (unit, label) = _inferUnitAndLabel(entry.key);
       buffer.writeln('$label: ${entry.value} ${unit.symbol}');
@@ -261,7 +262,7 @@ class _UniversalCalculatorV2ScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка при отправке: $e'),
+            content: Text('${loc.translate('share.error')}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -270,10 +271,12 @@ class _UniversalCalculatorV2ScreenState
   }
 
   Future<void> _saveToProject() async {
+    final loc = AppLocalizations.of(context);
+    
     if (_results == null || !_hasCalculated) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Сначала выполните расчёт'),
+          content: Text(loc.translate('snackbar.calculate_first')),
           backgroundColor: Colors.orange,
         ),
       );
@@ -304,10 +307,9 @@ class _UniversalCalculatorV2ScreenState
       await repository.addCalculationToProject(selectedProject.id, calculation);
 
       if (mounted) {
-        final loc = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Расчёт сохранён в проект "${selectedProject.name}"'),
+            content: Text('${loc.translate('snackbar.calculation_saved')} "${selectedProject.name}"'),
             backgroundColor: Colors.green,
             action: SnackBarAction(
               label: loc.translate('common.open'),
@@ -330,7 +332,7 @@ class _UniversalCalculatorV2ScreenState
           context,
           e,
           stackTrace: stack,
-          contextMessage: 'Save calculation to project',
+          contextMessage: loc.translate('error.save_calculation'),
         );
       }
     }
@@ -807,7 +809,40 @@ class _UniversalCalculatorV2ScreenState
 
   (UnitType, String) _inferUnitAndLabel(String key) {
     final loc = AppLocalizations.of(context);
-    // Определяем единицу измерения по ключу результата
+    
+    // Сначала пробуем найти точное совпадение ключа результата
+    final resultKey = 'result.$key';
+    final translated = loc.translate(resultKey);
+    if (translated != resultKey) {
+      // Нашли перевод, теперь определяем единицу измерения
+      if (key.contains('area') || key.contains('Area')) {
+        return (UnitType.squareMeters, translated);
+      }
+      if (key.contains('volume') || key.contains('Volume')) {
+        return (UnitType.cubicMeters, translated);
+      }
+      if (key.contains('length') || key.contains('Length')) {
+        return (UnitType.meters, translated);
+      }
+      if (key.contains('weight') || key.contains('Weight') || key.contains('kg')) {
+        return (UnitType.kilograms, translated);
+      }
+      if (key.contains('price') || key.contains('cost') || key.contains('Cost')) {
+        return (UnitType.rubles, translated);
+      }
+      if (key.contains('packs') || key.contains('Packs')) {
+        return (UnitType.packages, translated);
+      }
+      if (key.contains('rolls') || key.contains('Rolls')) {
+        return (UnitType.rolls, translated);
+      }
+      if (key.contains('pieces') || key.contains('Pieces') || key.contains('Needed')) {
+        return (UnitType.pieces, translated);
+      }
+      return (UnitType.pieces, translated);
+    }
+    
+    // Если точного перевода нет, используем общие правила
     if (key.contains('area'))
       return (UnitType.squareMeters, loc.translate('result.area'));
     if (key.contains('volume'))
@@ -834,7 +869,8 @@ class _UniversalCalculatorV2ScreenState
       return (UnitType.rubles, loc.translate('result.cost'));
     }
 
-    return (UnitType.pieces, key); // По умолчанию
+    // Если ничего не подошло, возвращаем ключ (будет видно, что не переведено)
+    return (UnitType.pieces, key);
   }
 
   IconData _getIconForField(String iconName) {

@@ -13,7 +13,7 @@ final tileCalculatorV2 = CalculatorDefinitionV2(
   category: CalculatorCategory.flooring,
   subCategory: 'Полы',
   iconName: 'grid_view',
-  accentColor: 0xFF2196F3,
+  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
   complexity: 2,
   popularity: 95,
   tags: ['плитка', 'полы', 'кафель', 'tile', 'flooring', 'ceramic'],

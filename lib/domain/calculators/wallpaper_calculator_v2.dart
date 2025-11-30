@@ -13,7 +13,7 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
   category: CalculatorCategory.wallFinishing,
   subCategory: 'Стены',
   iconName: 'wallpaper',
-  accentColor: 0xFF9C27B0,
+  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
   complexity: 2,
   popularity: 100,
   tags: ['обои', 'стены', 'отделка', 'wallpaper', 'walls', 'decoration'],

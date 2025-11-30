@@ -13,7 +13,7 @@ final laminateCalculatorV2 = CalculatorDefinitionV2(
   category: CalculatorCategory.flooring,
   subCategory: 'Полы',
   iconName: 'flooring',
-  accentColor: 0xFF8B4513,
+  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
   complexity: 1,
   popularity: 90,
   tags: ['ламинат', 'полы', 'напольное покрытие', 'laminate', 'flooring'],

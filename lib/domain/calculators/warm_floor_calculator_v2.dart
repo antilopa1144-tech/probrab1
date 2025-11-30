@@ -14,7 +14,7 @@ final warmFloorCalculatorV2 = CalculatorDefinitionV2(
   category: CalculatorCategory.engineering,
   subCategory: 'heating',
   iconName: 'radiator',
-  accentColor: 0xFFE91E63,
+  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
   complexity: 2,
   popularity: 90,
   tags: ['тёплый пол', 'отопление', 'электричество', 'heating', 'floor'],

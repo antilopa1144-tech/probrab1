@@ -13,7 +13,7 @@ final parquetCalculatorV2 = CalculatorDefinitionV2(
   category: CalculatorCategory.flooring,
   subCategory: 'wood',
   iconName: 'park',
-  accentColor: 0xFF8B4513,
+  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
   complexity: 2,
   popularity: 75,
   tags: ['паркет', 'массив', 'дерево', 'parquet', 'wood'],

@@ -13,7 +13,7 @@ final softRoofingCalculatorV2 = CalculatorDefinitionV2(
   category: CalculatorCategory.roofing,
   subCategory: 'soft',
   iconName: 'roof',
-  accentColor: 0xFF607D8B,
+  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
   complexity: 2,
   popularity: 80,
   tags: ['кровля', 'мягкая', 'битум', 'рулонная', 'roofing', 'soft'],
