@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_bathroom_tile.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateBathroomTile', () {
@@ -39,8 +40,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Затирка = 25 м² * 1.5 * 0.3 = 11.25 кг
-      expect(result.values['groutNeeded'], closeTo(11.25, 0.5));
+      // Новая формула: ((30+30)/(30*30)) * 3 * 10 * 1.6 * 25 * 1.05 ≈ 84 кг
+      expect(result.values['groutNeeded'], closeTo(84.0, 5.0));
     });
 
     test('calculates glue needed correctly', () {
@@ -52,8 +53,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Клей = 25 м² * 4 = 100 кг
-      expect(result.values['glueNeeded'], equals(100.0));
+      // Клей = 25 м² * 4.2 = 105 кг
+      expect(result.values['glueNeeded'], equals(105.0));
     });
 
     test('calculates crosses needed correctly', () {
@@ -67,9 +68,9 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Крестики = totalTiles * 4
+      // Крестики = totalTiles * 5 (обновлено с 4 до 5)
       final tiles = result.values['totalTiles']!;
-      expect(result.values['crossesNeeded'], equals(tiles * 4));
+      expect(result.values['crossesNeeded'], equals(tiles * 5));
     });
 
     test('calculates waterproofing area correctly', () {
@@ -81,8 +82,9 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Гидроизоляция = пол + 30% стен = 5 + 20*0.3 = 11 м²
-      expect(result.values['waterproofingArea'], equals(11.0));
+      // Гидроизоляция = пол + периметр * 0.3
+      // Периметр ≈ √5 * 4 ≈ 8.94, floor + perimeter*0.3 ≈ 5 + 2.68 ≈ 7.68
+      expect(result.values['waterproofingArea'], closeTo(7.68, 0.5));
     });
 
     test('handles only wall area', () {
@@ -159,10 +161,11 @@ void main() {
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['totalTiles'], equals(0.0));
-      expect(result.values['glueNeeded'], equals(0.0));
+      // Должно выбрасываться исключение
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
 
     test('preserves areas in results', () {
