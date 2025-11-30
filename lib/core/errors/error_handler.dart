@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 /// Категории ошибок для аналитики и мониторинга.
 enum ErrorCategory {
@@ -70,11 +72,8 @@ class ErrorHandler {
   }
 
   /// Логировать ошибку с категоризацией.
-  /// 
-  /// В production можно расширить для отправки в:
-  /// - Firebase Crashlytics
-  /// - Sentry
-  /// - Custom analytics
+  ///
+  /// Отправляет ошибки в Firebase Crashlytics и Analytics
   static void logError(
     Object error, [
     StackTrace? stackTrace,
@@ -82,7 +81,7 @@ class ErrorHandler {
   ]) {
     final category = getErrorCategory(error);
     final timestamp = DateTime.now().toIso8601String();
-    
+
     // Логирование в debug режиме
     if (kDebugMode) {
       final contextStr = context != null ? '[$context]' : '';
@@ -91,22 +90,31 @@ class ErrorHandler {
         debugPrint('Stack trace: $stackTrace');
       }
     }
-    
-    // TODO: В production добавить отправку в аналитику
-    // Пример для Firebase Crashlytics:
-    // FirebaseCrashlytics.instance.recordError(
-    //   error,
-    //   stackTrace,
-    //   reason: 'Error in $context',
-    //   fatal: false,
-    // );
-    //
-    // Пример для Sentry:
-    // Sentry.captureException(
-    //   error,
-    //   stackTrace: stackTrace,
-    //   hint: Hint.withMap({'context': context ?? 'unknown'}),
-    // );
+
+    // Отправка в Firebase Crashlytics
+    try {
+      FirebaseCrashlytics.instance.recordError(
+        error,
+        stackTrace,
+        reason: context != null ? 'Error in $context' : null,
+        fatal: false,
+      );
+
+      // Отправка события в Analytics
+      FirebaseAnalytics.instance.logEvent(
+        name: 'error_occurred',
+        parameters: {
+          'error_category': category.name,
+          'error_type': error.runtimeType.toString(),
+          'context': context ?? 'unknown',
+        },
+      );
+    } catch (e) {
+      // Игнорируем ошибки при отправке в Firebase
+      if (kDebugMode) {
+        debugPrint('Failed to send error to Firebase: $e');
+      }
+    }
   }
 
   /// Логировать критическую ошибку (fatal).
@@ -115,15 +123,38 @@ class ErrorHandler {
     StackTrace stackTrace, [
     String? context,
   ]) {
-    logError(error, stackTrace, context);
-    
-    // TODO: В production пометить как fatal для аналитики
-    // FirebaseCrashlytics.instance.recordError(
-    //   error,
-    //   stackTrace,
-    //   reason: 'Fatal error in $context',
-    //   fatal: true,
-    // );
+    final category = getErrorCategory(error);
+
+    if (kDebugMode) {
+      final contextStr = context != null ? '[$context]' : '';
+      debugPrint('[FATAL] $contextStr [${category.name.toUpperCase()}] Error: $error');
+      debugPrint('Stack trace: $stackTrace');
+    }
+
+    // Отправка в Firebase Crashlytics как fatal
+    try {
+      FirebaseCrashlytics.instance.recordError(
+        error,
+        stackTrace,
+        reason: context != null ? 'Fatal error in $context' : 'Fatal error',
+        fatal: true,
+      );
+
+      // Отправка события в Analytics
+      FirebaseAnalytics.instance.logEvent(
+        name: 'fatal_error_occurred',
+        parameters: {
+          'error_category': category.name,
+          'error_type': error.runtimeType.toString(),
+          'context': context ?? 'unknown',
+        },
+      );
+    } catch (e) {
+      // Игнорируем ошибки при отправке в Firebase
+      if (kDebugMode) {
+        debugPrint('Failed to send fatal error to Firebase: $e');
+      }
+    }
   }
 }
 
