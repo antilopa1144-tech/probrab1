@@ -6,6 +6,7 @@ import '../../../domain/models/export_data.dart';
 import '../../../domain/services/csv_export_service.dart';
 import '../../../domain/calculators/calculator_registry.dart';
 import '../../../core/errors/global_error_handler.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../providers/project_v2_provider.dart';
 import '../calculator/universal_calculator_v2_screen.dart';
 
@@ -41,9 +42,17 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
   }
 
   void _loadProject() {
-    _projectFuture = ref
-        .read(projectRepositoryV2Provider)
-        .getProjectById(widget.projectId);
+    _projectFuture = _loadProjectWithCalculations();
+  }
+
+  Future<ProjectV2?> _loadProjectWithCalculations() async {
+    final repository = ref.read(projectRepositoryV2Provider);
+    final project = await repository.getProjectById(widget.projectId);
+    if (project != null) {
+      // Загружаем расчёты проекта
+      await project.calculations.load();
+    }
+    return project;
   }
 
   void _refreshProject() {
@@ -240,6 +249,40 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
           ),
         );
       }
+    }
+  }
+
+  void _openCalculation(ProjectCalculation calculation) async {
+    // Получаем определение калькулятора
+    final calcDef = CalculatorRegistry.getById(calculation.calculatorId);
+    if (calcDef == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Калькулятор "${calculation.calculatorId}" не найден'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Открываем калькулятор с предзаполненными данными
+    if (mounted) {
+      final initialInputs = <String, double>{};
+      for (final pair in calculation.inputs) {
+        initialInputs[pair.key] = pair.value;
+      }
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UniversalCalculatorV2Screen(
+            definition: calcDef,
+            initialInputs: initialInputs,
+          ),
+        ),
+      );
     }
   }
 
@@ -532,6 +575,7 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
                         final calc = project.calculations.toList()[index];
                         return _CalculationCard(
                           calculation: calc,
+                          onTap: () => _openCalculation(calc),
                           onDelete: () => _deleteCalculation(calc),
                         );
                       },
@@ -844,10 +888,12 @@ class _CostColumn extends StatelessWidget {
 /// Карточка расчёта.
 class _CalculationCard extends StatelessWidget {
   final ProjectCalculation calculation;
+  final VoidCallback? onTap;
   final VoidCallback onDelete;
 
   const _CalculationCard({
     required this.calculation,
+    this.onTap,
     required this.onDelete,
   });
 
@@ -855,16 +901,20 @@ class _CalculationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final dateFormat = DateFormat('dd.MM.yyyy HH:mm');
+    final results = calculation.resultsMap;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Заголовок
-            Row(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Заголовок
+              Row(
               children: [
                 Expanded(
                   child: Column(
@@ -892,12 +942,12 @@ class _CalculationCard extends StatelessWidget {
                   tooltip: 'Удалить',
                 ),
               ],
-            ),
+              ),
 
-            const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-            // Дата
-            Row(
+              // Дата
+              Row(
               children: [
                 Icon(
                   Icons.access_time_rounded,
@@ -912,11 +962,42 @@ class _CalculationCard extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
+              ),
 
-            // Стоимости
-            if (calculation.materialCost != null || calculation.laborCost != null) ...[
+              // Основные результаты (первые 3)
+              if (results.isNotEmpty) ...[
               const SizedBox(height: 12),
+              const Divider(),
+              const SizedBox(height: 8),
+              ...results.entries.take(3).map((entry) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _formatResultKey(entry.key),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      Text(
+                        _formatResultValue(entry.key, entry.value),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+              ],
+
+              // Стоимости
+              if (calculation.materialCost != null || calculation.laborCost != null) ...[
+              const SizedBox(height: 12),
+              const Divider(),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   if (calculation.materialCost != null)
@@ -939,10 +1020,10 @@ class _CalculationCard extends StatelessWidget {
                     ),
                 ],
               ),
-            ],
+              ],
 
-            // Заметки
-            if (calculation.notes != null && calculation.notes!.isNotEmpty) ...[
+              // Заметки
+              if (calculation.notes != null && calculation.notes!.isNotEmpty) ...[
               const SizedBox(height: 12),
               Text(
                 calculation.notes!,
@@ -953,11 +1034,65 @@ class _CalculationCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
+              ],
+
+              // Кнопка открыть
+              if (onTap != null) ...[
+              const SizedBox(height: 12),
+              const Divider(),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton.icon(
+                    onPressed: onTap,
+                    icon: const Icon(Icons.open_in_new, size: 18),
+                    label: Text(AppLocalizations.of(context).translate('button.open_for_recalculation')),
+                  ),
+                ],
+              ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
+  }
+
+  String _formatResultKey(String key) {
+    // Преобразуем ключ в читаемый формат
+    return key
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((word) => word.isEmpty
+            ? ''
+            : word[0].toUpperCase() + word.substring(1))
+        .join(' ');
+  }
+
+  String _formatResultValue(String key, double value) {
+    final format = NumberFormat('#,##0.00', 'ru_RU');
+    
+    // Определяем единицу измерения по ключу
+    if (key.contains('area')) return '${format.format(value)} м²';
+    if (key.contains('volume')) return '${format.format(value)} м³';
+    if (key.contains('length') || key.contains('perimeter')) {
+      return '${format.format(value)} м';
+    }
+    if (key.contains('kg') || key.contains('weight')) {
+      return '${format.format(value)} кг';
+    }
+    if (key.contains('liters') || key.contains('l')) {
+      return '${format.format(value)} л';
+    }
+    if (key.contains('pieces') || key.contains('pcs') || key.contains('needed')) {
+      return '${format.format(value)} шт.';
+    }
+    if (key.contains('price') || key.contains('cost')) {
+      return '${format.format(value)} ₽';
+    }
+    
+    return format.format(value);
   }
 }
 

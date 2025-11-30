@@ -7,7 +7,7 @@ import '../components/mat_card.dart';
 import '../providers/calculation_provider.dart';
 import '../providers/favorites_provider.dart';
 import '../views/history_page.dart';
-import '../views/calculator/universal_calculator_screen.dart';
+import '../utils/calculator_navigation_helper.dart';
 import '../views/workflow/workflow_planner_screen.dart';
 import '../views/project/project_history_screen.dart';
 import '../views/reminders/reminders_screen.dart';
@@ -445,11 +445,7 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
               color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             ),
             onTap: () {
-              Navigator.of(context).push(
-                ModernPageTransitions.scale(
-                  UniversalCalculatorScreen(definition: calc),
-                ),
-              );
+              CalculatorNavigationHelper.navigateToCalculator(context, calc);
             },
           ),
         );
@@ -735,11 +731,7 @@ extension _HomeMainScreenStateExtension on _HomeMainScreenState {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => UniversalCalculatorScreen(definition: calculator),
-                    ),
-                  );
+                  CalculatorNavigationHelper.navigateToCalculator(context, calculator);
                 },
               );
             },

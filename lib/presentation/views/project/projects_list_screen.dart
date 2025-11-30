@@ -189,6 +189,10 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen> {
     }
   }
 
+  bool _hasActiveFilters() {
+    return _showFavoritesOnly || _filterStatus != null || _searchQuery.isNotEmpty;
+  }
+
   List<ProjectV2> _filterProjects(List<ProjectV2> projects) {
     var filtered = projects;
 
@@ -307,18 +311,82 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen> {
             return _buildEmptyState();
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: filtered.length,
-            itemBuilder: (context, index) {
-              final project = filtered[index];
-              return _ProjectCard(
-                project: project,
-                onTap: () => _navigateToDetails(project),
-                onDelete: () => _deleteProject(project),
-                onToggleFavorite: () => _toggleFavorite(project),
-              );
-            },
+          return Column(
+            children: [
+              // Индикаторы активных фильтров
+              if (_hasActiveFilters())
+                Container(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      if (_showFavoritesOnly)
+                        Chip(
+                          label: const Text('Только избранные'),
+                          avatar: const Icon(Icons.star, size: 16),
+                          onDeleted: () {
+                            setState(() {
+                              _showFavoritesOnly = false;
+                            });
+                          },
+                        ),
+                      if (_filterStatus != null)
+                        Chip(
+                          label: Text(_getStatusLabel(_filterStatus!)),
+                          avatar: Icon(
+                            _getStatusIcon(_filterStatus!),
+                            size: 16,
+                            color: _getStatusColor(_filterStatus!),
+                          ),
+                          onDeleted: () {
+                            setState(() {
+                              _filterStatus = null;
+                            });
+                          },
+                        ),
+                      if (_searchQuery.isNotEmpty)
+                        Chip(
+                          label: Text('Поиск: "$_searchQuery"'),
+                          avatar: const Icon(Icons.search, size: 16),
+                          onDeleted: () {
+                            _searchController.clear();
+                            setState(() {
+                              _searchQuery = '';
+                            });
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+              // Счетчик результатов
+              if (_hasActiveFilters())
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Text(
+                    'Найдено: ${filtered.length} из ${projects.length}',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              // Список проектов
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: filtered.length,
+                  itemBuilder: (context, index) {
+                    final project = filtered[index];
+                    return _ProjectCard(
+                      project: project,
+                      onTap: () => _navigateToDetails(project),
+                      onDelete: () => _deleteProject(project),
+                      onToggleFavorite: () => _toggleFavorite(project),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

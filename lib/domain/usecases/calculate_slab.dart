@@ -31,8 +31,8 @@ class CalculateSlab extends BaseCalculator {
     final area = getInput(inputs, 'area', minValue: 0.1);
     final thickness = getInput(inputs, 'thickness', defaultValue: 0.2, minValue: 0.1, maxValue: 0.5);
 
-    // Объём бетона
-    final concreteVolume = calculateVolume(area, thickness);
+    // Объём бетона (thickness уже в метрах, не нужно конвертировать)
+    final concreteVolume = area * thickness;
 
     // Арматура: обычно 1-1.5% от объёма бетона (две сетки)
     // Арматура Ø12 с шагом 200×200 мм в двух направлениях, в 2 слоя
@@ -52,9 +52,9 @@ class CalculateSlab extends BaseCalculator {
     // Гидроизоляция: площадь + 10% на нахлёсты и загибы
     final waterproofingArea = addMargin(area, 10.0);
 
-    // Утеплитель (ЭППС): опционально, под плитой
-    final insulationNeeded = getInput(inputs, 'insulation', defaultValue: 0.0);
-    final insulationVolume = insulationNeeded > 0 ? area * (insulationNeeded / 1000) : 0.0;
+    // Утеплитель (ЭППС): опционально, под плитой (толщина в метрах)
+    final insulationThickness = getInput(inputs, 'insulation', defaultValue: 0.0);
+    final insulationVolume = insulationThickness > 0 ? area * insulationThickness : 0.0;
 
     // Опалубка: по периметру плиты
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);

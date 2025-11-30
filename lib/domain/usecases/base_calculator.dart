@@ -1,14 +1,70 @@
 import 'dart:math';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import '../../core/exceptions/calculation_exception.dart';
 
 /// Базовый класс для всех калькуляторов с общими утилитами.
-/// 
-/// Предоставляет:
-/// - Стандартизированный поиск цен
-/// - Валидацию входных данных
-/// - Общие вычислительные функции
-/// - Обработку ошибок
+///
+/// Этот класс предоставляет общую функциональность для всех калькуляторов,
+/// что позволяет избежать дублирования кода и обеспечить единообразие.
+///
+/// ## Основные возможности:
+///
+/// ### 1. Поиск цен
+/// - `findPrice(List<PriceItem> priceList, List<String> skus)` - поиск цены по SKU
+///
+/// ### 2. Валидация входных данных
+/// - `validateInputs(Map<String, double> inputs)` - базовая валидация (можно переопределить)
+/// - `getInput(...)` - безопасное получение значения с ограничениями
+/// - `getIntInput(...)` - получение целочисленного значения
+///
+/// ### 3. Математические утилиты
+/// - `safeDivide(...)` - безопасное деление с проверкой на ноль и переполнение
+/// - `calculateVolume(...)` - расчёт объёма по площади и толщине
+/// - `addMargin(...)` - добавление процентного запаса
+/// - `calculateUnitsNeeded(...)` - расчёт количества единиц с запасом
+/// - `calculateTileArea(...)` - расчёт площади плитки/панели
+///
+/// ### 4. Обработка ошибок
+/// - Автоматическая обёртка неожиданных ошибок в `CalculationException`
+/// - Проверка на переполнение и некорректные значения в `createResult`
+/// - Валидация входных данных с выбрасыванием исключений
+///
+/// ## Пример создания калькулятора:
+///
+/// ```dart
+/// class CalculatePlaster extends BaseCalculator {
+///   @override
+///   CalculatorResult calculate(
+///     Map<String, double> inputs,
+///     List<PriceItem> priceList,
+///   ) {
+///     final area = getInput(inputs, 'area', minValue: 0.1);
+///     final thickness = getInput(inputs, 'thickness', defaultValue: 10.0);
+///
+///     final volume = calculateVolume(area, thickness);
+///     final plasterNeeded = addMargin(volume, 10.0);
+///
+///     final price = findPrice(priceList, ['plaster', 'gypsum_plaster']);
+///     final totalPrice = calculateCost(plasterNeeded, price?.price);
+///
+///     return createResult(
+///       values: {'plasterNeeded': plasterNeeded, 'volume': volume},
+///       totalPrice: totalPrice,
+///     );
+///   }
+/// }
+/// ```
+///
+/// ## Обработка ошибок:
+///
+/// Класс автоматически:
+/// - Валидирует входные данные через `validateInputs()`
+/// - Оборачивает ошибки в `CalculationException`
+/// - Проверяет результаты на переполнение в `createResult()`
+///
+/// Если нужно кастомное поведение, переопределите `validateInputs()` или
+/// используйте `safeDivide(..., throwOnZero: true)` для явной обработки ошибок.
 abstract class BaseCalculator implements CalculatorUseCase {
   /// Поиск цены по списку возможных SKU.
   /// 
@@ -106,12 +162,30 @@ abstract class BaseCalculator implements CalculatorUseCase {
   }
 
   /// Безопасное деление с проверкой на ноль.
-  double safeDivide(double numerator, double denominator, {double defaultValue = 0.0}) {
+  /// 
+  /// Выбрасывает CalculationException при делении на ноль, если [throwOnZero] = true.
+  double safeDivide(
+    double numerator,
+    double denominator, {
+    double defaultValue = 0.0,
+    bool throwOnZero = false,
+    String? context,
+  }) {
     if (denominator == 0 || denominator.isNaN || denominator.isInfinite) {
+      if (throwOnZero && denominator == 0) {
+        throw CalculationException.divisionByZero(
+          context ?? 'safeDivide($numerator, $denominator)',
+        );
+      }
       return defaultValue;
     }
     final result = numerator / denominator;
     if (result.isNaN || result.isInfinite) {
+      if (throwOnZero) {
+        throw CalculationException.overflow(
+          context ?? 'safeDivide($numerator, $denominator) = $result',
+        );
+      }
       return defaultValue;
     }
     return result;
@@ -184,19 +258,55 @@ abstract class BaseCalculator implements CalculatorUseCase {
   /// Создать результат с автоматическим округлением.
   /// 
   /// Округляет все значения до 2 знаков после запятой для читаемости.
+  /// Проверяет на переполнение и некорректные значения.
   CalculatorResult createResult({
     required Map<String, double> values,
     double? totalPrice,
     int decimals = 2,
+    String? calculatorId,
   }) {
     final roundedValues = <String, double>{};
+    
     for (final entry in values.entries) {
-      roundedValues[entry.key] = _roundToDecimals(entry.value, decimals);
+      final value = entry.value;
+      
+      // Проверка на переполнение
+      if (value.isInfinite || value.isNaN) {
+        throw CalculationException.overflow(
+          'Значение ${entry.key} = $value в калькуляторе ${calculatorId ?? "unknown"}',
+        );
+      }
+      
+      // Проверка на разумные пределы (предотвращение ошибок ввода)
+      if (value.abs() > 1e10) {
+        throw CalculationException.custom(
+          'Значение ${entry.key} слишком большое: $value',
+          calculatorId: calculatorId,
+        );
+      }
+      
+      roundedValues[entry.key] = _roundToDecimals(value, decimals);
+    }
+
+    double? roundedPrice;
+    if (totalPrice != null) {
+      if (totalPrice.isInfinite || totalPrice.isNaN) {
+        throw CalculationException.overflow(
+          'Итоговая стоимость некорректна: $totalPrice',
+        );
+      }
+      if (totalPrice.abs() > 1e10) {
+        throw CalculationException.custom(
+          'Итоговая стоимость слишком большая: $totalPrice',
+          calculatorId: calculatorId,
+        );
+      }
+      roundedPrice = _roundToDecimals(totalPrice, decimals);
     }
 
     return CalculatorResult(
       values: roundedValues,
-      totalPrice: totalPrice != null ? _roundToDecimals(totalPrice, decimals) : null,
+      totalPrice: roundedPrice,
     );
   }
 
@@ -225,17 +335,29 @@ abstract class BaseCalculator implements CalculatorUseCase {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    // Валидация входных данных
-    final validationError = validateInputs(inputs);
-    if (validationError != null) {
-      return createResult(
-        values: {'error': 1.0},
-        totalPrice: null,
+    try {
+      // Валидация входных данных
+      final validationError = validateInputs(inputs);
+      if (validationError != null) {
+        throw CalculationException.invalidInput(
+          runtimeType.toString(),
+          validationError,
+        );
+      }
+
+      // Вызов конкретной реализации
+      return calculate(inputs, priceList);
+    } on CalculationException {
+      // Пробрасываем CalculationException дальше
+      rethrow;
+    } catch (e, stackTrace) {
+      // Оборачиваем неожиданные ошибки в CalculationException
+      throw CalculationException(
+        'Неожиданная ошибка в калькуляторе ${runtimeType.toString()}: $e',
+        code: 'UNEXPECTED_ERROR',
+        details: stackTrace.toString(),
       );
     }
-
-    // Вызов конкретной реализации
-    return calculate(inputs, priceList);
   }
 
   /// Конкретная реализация расчёта (должна быть переопределена в подклассе).

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/entities/object_type.dart';
-import '../../domain/calculators/definitions.dart';
 import '../data/work_catalog.dart';
-import '../views/calculator/universal_calculator_screen.dart';
-import '../../core/animations/page_transitions.dart';
+import '../utils/calculator_navigation_helper.dart';
 
 class WorkItemsScreen extends StatelessWidget {
   final ObjectType objectType;
@@ -122,24 +120,10 @@ class _WorkItemCard extends StatelessWidget {
                 onPressed: item.calculatorId == null
                     ? null
                     : () {
-                        final calculator = findCalculatorById(item.calculatorId!);
-                        if (calculator != null) {
-                          Navigator.of(context).push(
-                            ModernPageTransitions.scale(
-                              UniversalCalculatorScreen(
-                                definition: calculator,
-                              ),
-                            ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Калькулятор "${item.title}" не найден.',
-                              ),
-                            ),
-                          );
-                        }
+                        CalculatorNavigationHelper.navigateToCalculatorById(
+                          context,
+                          item.calculatorId!,
+                        );
                       },
                 icon: Icon(
                   item.calculatorId == null

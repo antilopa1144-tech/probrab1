@@ -1,4 +1,18 @@
 import '../../core/enums/unit_type.dart';
+import '../../core/enums/field_input_type.dart';
+
+/// Опция для селекта или радио-кнопок
+class FieldOption {
+  final double value;
+  final String labelKey;
+  final String? descriptionKey;
+
+  const FieldOption({
+    required this.value,
+    required this.labelKey,
+    this.descriptionKey,
+  });
+}
 
 /// Модель поля ввода калькулятора.
 class CalculatorField {
@@ -13,6 +27,9 @@ class CalculatorField {
 
   /// Тип единицы измерения
   final UnitType unitType;
+
+  /// Тип поля ввода (по умолчанию number)
+  final FieldInputType inputType;
 
   /// Значение по умолчанию
   final double defaultValue;
@@ -41,11 +58,15 @@ class CalculatorField {
   /// Зависимость от других полей (показывать только если условие выполнено)
   final FieldDependency? dependency;
 
+  /// Опции для селекта/радио (только для inputType == select или radio)
+  final List<FieldOption>? options;
+
   const CalculatorField({
     required this.key,
     required this.labelKey,
     this.hintKey,
     required this.unitType,
+    this.inputType = FieldInputType.number,
     this.defaultValue = 0.0,
     this.minValue,
     this.maxValue,
@@ -55,6 +76,7 @@ class CalculatorField {
     this.group,
     this.order = 0,
     this.dependency,
+    this.options,
   });
 
   /// Создать копию с изменениями
@@ -63,6 +85,7 @@ class CalculatorField {
     String? labelKey,
     String? hintKey,
     UnitType? unitType,
+    FieldInputType? inputType,
     double? defaultValue,
     double? minValue,
     double? maxValue,
@@ -72,12 +95,14 @@ class CalculatorField {
     String? group,
     int? order,
     FieldDependency? dependency,
+    List<FieldOption>? options,
   }) {
     return CalculatorField(
       key: key ?? this.key,
       labelKey: labelKey ?? this.labelKey,
       hintKey: hintKey ?? this.hintKey,
       unitType: unitType ?? this.unitType,
+      inputType: inputType ?? this.inputType,
       defaultValue: defaultValue ?? this.defaultValue,
       minValue: minValue ?? this.minValue,
       maxValue: maxValue ?? this.maxValue,
@@ -87,6 +112,7 @@ class CalculatorField {
       group: group ?? this.group,
       order: order ?? this.order,
       dependency: dependency ?? this.dependency,
+      options: options ?? this.options,
     );
   }
 }

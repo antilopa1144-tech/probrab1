@@ -4,22 +4,184 @@
   },
   "common": {
     "calculate": "Calculate",
-    "clear": "Clear"
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "save": "Save",
+    "open": "Open",
+    "share": "Share",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "back": "Back",
+    "retry": "Retry"
+  },
+  "result": {
+    "title": "Calculation Results",
+    "area": "Area",
+    "volume": "Volume",
+    "length": "Length",
+    "quantity": "Quantity",
+    "weight": "Weight",
+    "bags": "Bags",
+    "packages": "Packages",
+    "rolls": "Rolls",
+    "pieces": "Pieces",
+    "cost": "Cost"
+  },
+  "field": {
+    "group": {
+      "openings": "Openings",
+      "advanced": "Advanced",
+      "dimensions": "Dimensions",
+      "materials": "Materials"
+    }
+  },
+  "button": {
+    "save_to_project": "Save to Project",
+    "open_for_recalculation": "Open for Recalculation"
+  },
+  "dialog": {
+    "save_to_project": {
+      "title": "Save to Project",
+      "existing": "Select",
+      "new": "Create",
+      "no_projects": "No projects. Create a new one."
+    }
+  },
+  "project": {
+    "calculations": "Calculations",
+    "materials": "Materials",
+    "labor": "Labor",
+    "total": "Total",
+    "created": "Created",
+    "updated": "Updated",
+    "notes": "Notes",
+    "export": "Export",
+    "status": {
+      "planning": "Planning",
+      "in_progress": "In Progress",
+      "on_hold": "On Hold",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
   },
   "input": {
     "required": "Required field",
     "area": "Area",
-    "area.hint": "Enter area in m²"
+    "area.hint": "Enter area in m²",
+    "project_name": "Project Name",
+    "project_name.hint": "e.g., Apartment Renovation",
+    "project_description": "Description (optional)",
+    "project_description.hint": "Additional information about the project"
   },
   "calculator": {
     "wall_paint": {
       "title": "Wall Paint"
+    },
+    "warm_floor": {
+      "title": "Warm Floor",
+      "description": "Electric underfloor heating calculation"
+    },
+    "parquet": {
+      "title": "Parquet",
+      "description": "Parquet and solid wood flooring calculation"
+    },
+    "gkl_ceiling": {
+      "title": "Drywall Ceiling",
+      "description": "Suspended drywall ceiling calculation"
+    },
+    "bathroom_tile": {
+      "title": "Bathroom Tile",
+      "description": "Ceramic tile calculation for bathroom"
     }
+  },
+  "input": {
+    "required": "Required field",
+    "area": "Area",
+    "area.hint": "Enter area in m²",
+    "power": "Power",
+    "power.hint": "Power per m² (W/m²)",
+    "type": "Type",
+    "type.hint": "Select warm floor type",
+    "type.cable": "Cable",
+    "type.mat": "Mat",
+    "thermostats": "Thermostats",
+    "thermostats.hint": "Number of thermostats",
+    "plankWidth": "Plank Width",
+    "plankWidth.hint": "Parquet plank width (cm)",
+    "plankLength": "Plank Length",
+    "plankLength.hint": "Parquet plank length (cm)",
+    "thickness": "Thickness",
+    "thickness.hint": "Material thickness (mm)",
+    "perimeter": "Perimeter",
+    "perimeter.hint": "Room perimeter (m)",
+    "layers": "Layers",
+    "layers.hint": "Number of material layers",
+    "ceilingHeight": "Ceiling Height",
+    "ceilingHeight.hint": "Ceiling height (m)",
+    "dropHeight": "Drop Height",
+    "dropHeight.hint": "How much the ceiling drops (m)",
+    "wallArea": "Wall Area",
+    "wallArea.hint": "Wall area for tiling (m²)",
+    "floorArea": "Floor Area",
+    "floorArea.hint": "Floor area for tiling (m²)",
+    "tileWidth": "Tile Width",
+    "tileWidth.hint": "Tile width (cm)",
+    "tileHeight": "Tile Height",
+    "tileHeight.hint": "Tile height (cm)",
+    "jointWidth": "Joint Width",
+    "jointWidth.hint": "Width of joint between tiles (mm)",
+    "project_name": "Project Name",
+    "project_name.hint": "e.g., Apartment Renovation",
+    "project_description": "Description (optional)",
+    "project_description.hint": "Additional information about the project"
   },
   "hint": {
     "paint": {
       "before": {
         "measure": "Carefully measure wall area"
+      }
+    },
+    "warm_floor": {
+      "before": {
+        "power": "Power depends on room type: bathroom 150-180 W/m², kitchen 120-150 W/m²",
+        "area": "Note that warm floor is not installed under furniture and stationary appliances",
+        "installation": "Installation must be performed by a qualified electrician"
+      },
+      "after": {
+        "thermostat": "It is recommended to install a programmable thermostat to save energy",
+        "electricity": "Check that the electrical wiring can handle the load. A separate line may be required"
+      }
+    },
+    "parquet": {
+      "before": {
+        "acclimatization": "Parquet must acclimate in the room for 48 hours before installation",
+        "installation": "It is better to entrust installation to professionals for quality guarantee"
+      },
+      "after": {
+        "varnish": "Varnish is applied in 3 layers with intermediate sanding",
+        "care": "After installation, avoid wet cleaning for the first 2 weeks"
+      }
+    },
+    "gkl_ceiling": {
+      "before": {
+        "profiles": "Profiles are installed with 40-60 cm spacing for structural reliability",
+        "layers": "Two layers of drywall improve sound insulation and strength"
+      },
+      "after": {
+        "installation": "Joints between sheets must be puttied and taped with mesh tape",
+        "joints": "Corners are reinforced with perforated corner beads"
+      }
+    },
+    "bathroom_tile": {
+      "before": {
+        "preparation": "Walls must be level and treated with primer",
+        "layout": "Make a preliminary tile layout for optimal use",
+        "waterproofing": "Waterproofing is mandatory in areas in contact with water"
+      },
+      "after": {
+        "grout": "Grout joints 24 hours after installation",
+        "care": "Avoid using aggressive cleaning agents for the first 2 weeks"
       }
     }
   }
