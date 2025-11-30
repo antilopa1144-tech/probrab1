@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'core/constants.dart';
+import 'core/constants/app_constants.dart';
 import 'presentation/providers/accent_color_provider.dart';
 import 'core/theme.dart';
 import 'core/localization/app_localizations.dart';
 import 'presentation/app/home_main.dart';
 import 'presentation/providers/settings_provider.dart';
+import 'core/errors/global_error_handler.dart';
 
 void main() {
+  // Глобальная обработка ошибок
+  FlutterError.onError = (details) {
+    GlobalErrorHandler.logFatalError(
+      details.exception,
+      details.stack ?? StackTrace.current,
+      'FlutterError',
+    );
+  };
+
   runApp(const ProviderScope(child: ProbuilderApp()));
 }
 

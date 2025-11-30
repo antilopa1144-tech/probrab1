@@ -101,26 +101,26 @@ class CalculateStairs implements CalculatorUseCase {
       // Деревянная лестница
       totalPrice = totalArea * materialPrice;
       if (railingPrice != null) {
-        totalPrice = totalPrice! + railingLength * railingPrice;
+        totalPrice = totalPrice + railingLength * railingPrice;
       }
       if (balusterPrice != null) {
-        totalPrice = totalPrice! + balustersNeeded * balusterPrice;
+        totalPrice = totalPrice + balustersNeeded * balusterPrice;
       }
       if (postPrice != null) {
-        totalPrice = totalPrice! + supportPosts * postPrice;
+        totalPrice = totalPrice + supportPosts * postPrice;
       }
     } else if (materialType == 2 && concretePrice != null) {
       // Бетонная лестница
       totalPrice = concreteVolume * concretePrice;
       if (materialPrice != null) {
         // Отделка бетонной лестницы
-        totalPrice = totalPrice! + totalArea * materialPrice;
+        totalPrice = totalPrice + totalArea * materialPrice;
       }
     } else if (materialType == 3 && materialPrice != null) {
       // Металлическая лестница
       totalPrice = totalArea * materialPrice * 1.5; // металл дороже
       if (railingPrice != null) {
-        totalPrice = totalPrice! + railingLength * railingPrice;
+        totalPrice = totalPrice + railingLength * railingPrice;
       }
     }
 

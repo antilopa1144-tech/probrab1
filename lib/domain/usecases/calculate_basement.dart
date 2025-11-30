@@ -135,13 +135,13 @@ class CalculateBasement implements CalculatorUseCase {
       // Бетонные стены
       totalPrice = concreteVolume * concretePrice;
       if (rebarPrice != null) {
-        totalPrice = totalPrice! + rebarNeeded * rebarPrice;
+        totalPrice = totalPrice + rebarNeeded * rebarPrice;
       }
     } else if (materialType == 2 && brickPrice != null) {
       // Кирпичные стены
       totalPrice = bricksNeeded * brickPrice;
       if (mortarPrice != null) {
-        totalPrice = totalPrice! + mortarNeeded * mortarPrice;
+        totalPrice = totalPrice + mortarNeeded * mortarPrice;
       }
     } else if (materialType == 3 && blockPrice != null) {
       // Блочные стены

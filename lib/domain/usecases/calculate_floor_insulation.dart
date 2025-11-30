@@ -98,15 +98,15 @@ class CalculateFloorInsulation implements CalculatorUseCase {
       totalPrice = sheetsNeeded * insulationPrice;
       
       if (vaporBarrierPrice != null) {
-        totalPrice = totalPrice! + vaporBarrierArea * vaporBarrierPrice;
+        totalPrice = totalPrice + vaporBarrierArea * vaporBarrierPrice;
       }
       
       if (waterproofingPrice != null && waterproofingArea > 0) {
-        totalPrice = totalPrice! + waterproofingArea * waterproofingPrice;
+        totalPrice = totalPrice + waterproofingArea * waterproofingPrice;
       }
       
       if (plinthPrice != null && plinthLength > 0) {
-        totalPrice = totalPrice! + plinthLength * plinthPrice;
+        totalPrice = totalPrice + plinthLength * plinthPrice;
       }
     }
 

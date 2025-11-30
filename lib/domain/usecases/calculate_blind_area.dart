@@ -118,7 +118,7 @@ class CalculateBlindArea implements CalculatorUseCase {
       // Бетонная отмостка
       totalPrice = (totalPrice ?? 0) + volume * concretePrice;
       if (rebarPrice != null) {
-        totalPrice = totalPrice! + rebarNeeded * rebarPrice;
+        totalPrice = totalPrice + rebarNeeded * rebarPrice;
       }
     } else if (materialType == 2 && asphaltPrice != null) {
       // Асфальтовая отмостка

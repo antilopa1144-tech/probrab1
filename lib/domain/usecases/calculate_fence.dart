@@ -144,34 +144,34 @@ class CalculateFence implements CalculatorUseCase {
       // Профлист
       totalPrice = materialArea * materialPrice;
       if (postPrice != null) {
-        totalPrice = totalPrice! + postsNeeded * postPrice;
+        totalPrice = totalPrice + postsNeeded * postPrice;
       }
       if (lagPrice != null) {
-        totalPrice = totalPrice! + lagCount * lagPrice;
+        totalPrice = totalPrice + lagCount * lagPrice;
       }
     } else if (materialType == 2 && materialPrice != null) {
       // Дерево
       totalPrice = materialArea * materialPrice;
       if (postPrice != null) {
-        totalPrice = totalPrice! + postsNeeded * postPrice;
+        totalPrice = totalPrice + postsNeeded * postPrice;
       }
       if (lagPrice != null) {
-        totalPrice = totalPrice! + lagCount * lagPrice;
+        totalPrice = totalPrice + lagCount * lagPrice;
       }
     } else if (materialType == 3 && brickPrice != null) {
       // Кирпич
       totalPrice = bricksNeeded * brickPrice;
       if (mortarPrice != null) {
-        totalPrice = totalPrice! + mortarNeeded * mortarPrice;
+        totalPrice = totalPrice + mortarNeeded * mortarPrice;
       }
       if (concretePrice != null && foundationVolume > 0) {
-        totalPrice = totalPrice! + foundationVolume * concretePrice;
+        totalPrice = totalPrice + foundationVolume * concretePrice;
       }
     } else if (materialType == 4 && materialPrice != null) {
       // Сетка
       totalPrice = materialArea * materialPrice;
       if (postPrice != null) {
-        totalPrice = totalPrice! + postsNeeded * postPrice;
+        totalPrice = totalPrice + postsNeeded * postPrice;
       }
     }
 

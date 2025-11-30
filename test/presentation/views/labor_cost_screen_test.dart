@@ -6,7 +6,7 @@ import 'package:probrab_ai/presentation/providers/region_provider.dart';
 import 'package:probrab_ai/presentation/providers/settings_provider.dart';
 
 class _TestRegionNotifier extends StateNotifier<String> {
-  _TestRegionNotifier(String region) : super(region);
+  _TestRegionNotifier(super.region);
 
   Future<void> setRegion(String region) async {
     state = region;
@@ -14,7 +14,7 @@ class _TestRegionNotifier extends StateNotifier<String> {
 }
 
 class _TestSettingsNotifier extends StateNotifier<AppSettings> {
-  _TestSettingsNotifier(AppSettings initial) : super(initial);
+  _TestSettingsNotifier(super.initial);
 
   Future<void> updateRegion(String region) async {
     state = state.copyWith(region: region);

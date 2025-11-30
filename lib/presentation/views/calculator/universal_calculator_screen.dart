@@ -384,7 +384,8 @@ class _UniversalCalculatorScreenState
             const SizedBox(height: 12),
             _buildSaveHelper(theme),
 
-            if (_result != null) ...[
+            if (_result != null) {
+              [
               const SizedBox(height: 32),
               _buildResults(theme),
               const SizedBox(height: 16),
@@ -393,11 +394,12 @@ class _UniversalCalculatorScreenState
                 const SizedBox(height: 24),
                 _buildTips(theme),
               ],
-            ],
+            ]
+            },
           ],
         ),
       ),
-    );
+    )
   }
 
   Widget _buildResults(ThemeData theme) {
@@ -519,18 +521,18 @@ class _UniversalCalculatorScreenState
               children: [
                 const Text(
                   'Как сохранить изменения и результаты
-              children: const [
-                Text(
+              children: [
+                const Text(
                   'Как сохранить всё',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 codex/evaluate-project-and-suggest-improvements-2z4qgi
-                const SizedBox(height: 8),
-                Row(
+                SizedBox(height: 8),
+                const Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text('• '),
                     Expanded(
                       child: Text(
@@ -540,10 +542,10 @@ class _UniversalCalculatorScreenState
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                Row(
+                SizedBox(height: 4),
+                const Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text('• '),
                     Expanded(
                       child: Text(
@@ -553,10 +555,10 @@ class _UniversalCalculatorScreenState
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                Row(
+                SizedBox(height: 4),
+                const Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text('• '),
                     Expanded(
                       child: Text(
