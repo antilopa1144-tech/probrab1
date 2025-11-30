@@ -10,8 +10,18 @@ final slabResultProvider = FutureProvider.family<FoundationResult, FoundationInp
     (ref, input) async {
   try {
     final priceList = await ref.watch(priceListProvider.future);
-    final usecase = CalculateSlab(priceList: priceList);
-    return usecase(input);
+    final usecase = CalculateSlab();
+    final inputs = {
+      'area': input.width * input.height,
+      'thickness': input.thickness,
+    };
+    final result = usecase.calculate(inputs, priceList);
+    
+    return FoundationResult(
+      concreteVolume: result.values['concreteVolume'] ?? 0.0,
+      rebarWeight: result.values['rebarWeight'] ?? 0.0,
+      cost: result.totalPrice ?? 0.0,
+    );
   } catch (e, stackTrace) {
     ErrorHandler.logError(e, stackTrace, 'slabResultProvider');
     // Возвращаем пустой результат вместо ошибки для graceful degradation

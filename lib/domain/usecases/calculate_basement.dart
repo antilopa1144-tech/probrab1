@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 
@@ -33,7 +35,7 @@ class CalculateBasement implements CalculatorUseCase {
     final volume = area * height;
 
     // Периметр (приблизительно, если не указан)
-    final perimeter = inputs['perimeter'] ?? (4 * (area / 4).sqrt());
+    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area / 4));
 
     // Площадь стен
     final wallArea = perimeter * height;

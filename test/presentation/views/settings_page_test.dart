@@ -15,6 +15,7 @@ void main() {
       packageName: 'ru.probrab.app',
       version: '1.0.0',
       buildNumber: '1',
+      buildSignature: 'test-signature',
     );
   });
 

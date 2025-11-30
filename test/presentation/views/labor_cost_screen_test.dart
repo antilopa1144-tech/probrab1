@@ -5,37 +5,25 @@ import 'package:probrab_ai/presentation/views/labor/labor_cost_screen.dart';
 import 'package:probrab_ai/presentation/providers/region_provider.dart';
 import 'package:probrab_ai/presentation/providers/settings_provider.dart';
 
-class _TestRegionNotifier extends StateNotifier<String> {
-  _TestRegionNotifier(super.region);
-
-  Future<void> setRegion(String region) async {
+class _TestRegionNotifier extends RegionNotifier {
+  _TestRegionNotifier(String region) : super() {
     state = region;
   }
 }
 
-class _TestSettingsNotifier extends StateNotifier<AppSettings> {
-  _TestSettingsNotifier(super.initial);
-
-  Future<void> updateRegion(String region) async {
-    state = state.copyWith(region: region);
+class _TestSettingsNotifier extends SettingsNotifier {
+  _TestSettingsNotifier(AppSettings initial) : super() {
+    state = initial;
   }
-
-  // Other update methods are unused in this test but kept for compatibility.
-  Future<void> updateDarkMode(bool _) async {}
-  Future<void> updateLanguage(String _) async {}
-  Future<void> updateAutoSave(bool _) async {}
-  Future<void> updateNotifications(bool _) async {}
-  Future<void> updateUnitSystem(String _) async {}
-  Future<void> updateShowTips(bool _) async {}
 }
 
 void main() {
   testWidgets('LaborCostScreen syncs with region provider', (tester) async {
     final container = ProviderContainer(
       overrides: [
-        regionProvider.overrideWith(() => _TestRegionNotifier('Краснодар')),
+        regionProvider.overrideWith((ref) => _TestRegionNotifier('Краснодар')),
         settingsProvider.overrideWith(
-          () => _TestSettingsNotifier(const AppSettings(region: 'Краснодар')),
+          (ref) => _TestSettingsNotifier(const AppSettings(region: 'Краснодар')),
         ),
       ],
     );

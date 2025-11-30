@@ -50,9 +50,9 @@ class CalculateTerrace implements CalculatorUseCase {
 
     // Ограждение
     final railingLength = railing == 1 && perimeter > 0 ? perimeter : 0.0;
-    final railingPosts = railing == 1 && perimeter > 0
+    final railingPosts = (railing == 1 && perimeter > 0
         ? (perimeter / 2.0).ceil() // столбы через каждые 2 метра
-        : 0.0;
+        : 0).toDouble();
 
     // Кровля
     double roofArea = 0.0;
@@ -79,7 +79,7 @@ class CalculateTerrace implements CalculatorUseCase {
     }
 
     // Опорные столбы для кровли
-    final roofPosts = roof == 1 ? (area / 9.0).ceil() : 0.0; // один столб на 9 м²
+    final roofPosts = (roof == 1 ? (area / 9.0).ceil() : 0).toDouble(); // один столб на 9 м²
 
     // Фундамент для столбов (если кровля)
     final foundationVolume = roof == 1

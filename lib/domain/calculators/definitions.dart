@@ -1,4 +1,3 @@
-
 // Репозиторий расчётов (цены и прочее)
 
 import 'package:probrab_ai/data/models/price_item.dart';
@@ -56,7 +55,6 @@ import 'package:probrab_ai/domain/usecases/calculate_slopes.dart';
 import 'package:probrab_ai/domain/usecases/calculate_sound_insulation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_ventilation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_cassette_ceiling.dart';
-cursor/optimize-all-calculators-for-ideal-performance-claude-4.5-sonnet-thinking-b889
 import 'package:probrab_ai/domain/usecases/calculate_soft_roofing.dart';
 import 'package:probrab_ai/domain/usecases/calculate_slab.dart';
 import 'package:probrab_ai/domain/usecases/calculate_floor_insulation.dart';
@@ -67,8 +65,6 @@ import 'package:probrab_ai/domain/usecases/calculate_basement.dart';
 import 'package:probrab_ai/domain/usecases/calculate_balcony.dart';
 import 'package:probrab_ai/domain/usecases/calculate_attic.dart';
 import 'package:probrab_ai/domain/usecases/calculate_terrace.dart';
-main
-
 
 /// Описание поля ввода (одно поле формы: периметр, ширина и т.п.)
 class InputFieldDefinition {
@@ -156,10 +152,7 @@ class CalculatorDefinition {
       final cachedValues = _cache.get(id, inputs);
       if (cachedValues != null) {
         // Возвращаем кэшированный результат (без цены, т.к. цены могут измениться)
-        return CalculatorResult(
-          values: cachedValues,
-          totalPrice: null,
-        );
+        return CalculatorResult(values: cachedValues, totalPrice: null);
       }
     }
 

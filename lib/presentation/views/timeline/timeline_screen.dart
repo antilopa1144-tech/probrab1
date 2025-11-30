@@ -18,21 +18,39 @@ class TimelineScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     
     // Получаем план работ
-    final plans = ref.watch(workflowProvider);
-    WorkflowPlan? plan;
+    final plansAsync = ref.watch(workflowProvider);
     
-    if (projectId != null) {
-      plan = ref.read(workflowProvider.notifier).getPlan(projectId!);
-    } else if (plans.isNotEmpty) {
-      plan = plans.first;
-    }
+    return plansAsync.when(
+      data: (plans) {
+        WorkflowPlan? plan;
+        
+        if (projectId != null) {
+          plan = ref.read(workflowProvider.notifier).getPlan(projectId!);
+        } else if (plans.isNotEmpty) {
+          plan = plans.first;
+        }
 
-    if (plan == null) {
-      return Scaffold(
+        if (plan == null) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Временная линия')),
+            body: const Center(child: Text('Нет плана работ')),
+          );
+        }
+        
+        return _buildTimeline(context, theme, plan);
+      },
+      loading: () => Scaffold(
         appBar: AppBar(title: const Text('Временная линия')),
-        body: const Center(child: Text('Нет плана работ')),
-      );
-    }
+        body: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stackTrace) => Scaffold(
+        appBar: AppBar(title: const Text('Временная линия')),
+        body: Center(child: Text('Ошибка: $error')),
+      ),
+    );
+  }
+
+  Widget _buildTimeline(BuildContext context, ThemeData theme, WorkflowPlan plan) {
 
     final startDate = DateTime.now();
     final timeline = Timeline.fromWorkflowPlan(plan, startDate);

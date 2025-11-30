@@ -528,7 +528,7 @@ const List<WorkAreaDefinition> _houseAreas = [
           WorkItemDefinition(
             id: 'basement',
             title: 'Подвал / Погреб',
-            icon: Icons.basement,
+            icon: Icons.storage,
             calculatorId: 'basement',
             tips: [
               'Гидроизоляция обязательна для подвалов и погребов.',

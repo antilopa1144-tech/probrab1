@@ -69,7 +69,7 @@ class CalculateWarmFloor extends BaseCalculator {
 
     // Монтажная лента (для кабеля): крепление кабеля к полу
     // ~20-25 м на комнату среднего размера
-    final montageТаpeLength = type == 1 ? (area * 1.5) : 0.0;
+    final montageTapeLength = type == 1 ? (area * 1.5) : 0.0;
 
     // Гофрированная труба для датчика температуры: ~2-3 м на терморегулятор
     final corrugatedTubeLength = thermostats * 2.5;
@@ -96,7 +96,7 @@ class CalculateWarmFloor extends BaseCalculator {
       type == 2 ? calculateCost(matArea, matPrice?.price) : null,
       calculateCost(thermostats.toDouble(), thermostatPrice?.price),
       calculateCost(insulationArea, insulationPrice?.price),
-      calculateCost(montageТаpeLength, montTapePrice?.price),
+      calculateCost(montageTapeLength, montTapePrice?.price),
       calculateCost(corrugatedTubeLength, corrTubePrice?.price),
       calculateCost(damperTapeLength, damperTapePrice?.price),
       calculateCost(rcdNeeded.toDouble(), rcdPrice?.price),
@@ -111,7 +111,7 @@ class CalculateWarmFloor extends BaseCalculator {
         'matArea': matArea,
         'thermostats': thermostats.toDouble(),
         'insulationArea': insulationArea,
-        'montageТаpeLength': montageТаpeLength,
+        'montageTapeLength': montageTapeLength,
         'corrugatedTubeLength': corrugatedTubeLength,
         'damperTapeLength': damperTapeLength,
         'rcdNeeded': rcdNeeded.toDouble(),

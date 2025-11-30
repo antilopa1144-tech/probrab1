@@ -61,7 +61,6 @@ class _UniversalCalculatorScreenState
     // Инициализируем контроллеры для всех полей
     for (final field in widget.definition.fields) {
       _controllers[field.key] = TextEditingController(
-        text: _formatInitialValue(field.defaultValue),
         text: field.defaultValue != 0 ? field.defaultValue.toString() : '',
       );
       _focusNodes[field.key] = FocusNode();
@@ -357,49 +356,63 @@ class _UniversalCalculatorScreenState
   Widget _buildForm(BuildContext context, ThemeData theme) {
     final loc = AppLocalizations.of(context);
 
-            const SizedBox(height: 24),
-
-            // Кнопка расчёта
-            ElevatedButton.icon(
-              onPressed: _isCalculating ? null : _calculate,
-              icon: _isCalculating
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.calculate),
-              label: Text(
-                _isCalculating
-                    ? 'Расчёт...'
-                    : loc.translate('button.calculate'),
+    return Form(
+      key: _formKey,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // Поля ввода
+          ...widget.definition.fields.map((field) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: CalculatorInputField(
+                field: field,
+                controller: _controllers[field.key]!,
+                localization: loc,
               ),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+            );
+          }),
+
+          const SizedBox(height: 24),
+
+          // Кнопка расчёта
+          ElevatedButton.icon(
+            onPressed: _isCalculating ? null : _calculate,
+            icon: _isCalculating
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.calculate),
+            label: Text(
+              _isCalculating
+                  ? 'Расчёт...'
+                  : loc.translate('button.calculate'),
+            ),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
-            const SizedBox(height: 12),
-            _buildSaveHelper(theme),
+          ),
+          const SizedBox(height: 12),
+          _buildSaveHelper(theme),
 
-            if (_result != null) {
-              [
-              const SizedBox(height: 32),
-              _buildResults(theme),
-              const SizedBox(height: 16),
-              _buildAdditionalFeatures(context, theme),
-              if (widget.definition.tips.isNotEmpty) ...[
-                const SizedBox(height: 24),
-                _buildTips(theme),
-              ],
-            ]
-            },
+          if (_result != null) ...[
+            const SizedBox(height: 32),
+            _buildResults(theme),
+            const SizedBox(height: 16),
+            _buildAdditionalFeatures(context, theme),
+            if (widget.definition.tips.isNotEmpty) ...[
+              const SizedBox(height: 24),
+              _buildTips(theme),
+            ],
           ],
-        ),
+        ],
       ),
-    )
+    );
   }
 
   Widget _buildResults(ThemeData theme) {
@@ -517,10 +530,7 @@ class _UniversalCalculatorScreenState
           const SizedBox(width: 10),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, codex/evaluate-project-and-suggest-improvements-2z4qgi
-              children: [
-                const Text(
-                  'Как сохранить изменения и результаты
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'Как сохранить всё',
@@ -528,7 +538,6 @@ class _UniversalCalculatorScreenState
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                codex/evaluate-project-and-suggest-improvements-2z4qgi
                 SizedBox(height: 8),
                 const Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -555,7 +564,7 @@ class _UniversalCalculatorScreenState
                     ),
                   ],
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 const Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -567,12 +576,13 @@ class _UniversalCalculatorScreenState
                       ),
                     ),
                   ],
-                SizedBox(height: 6),
-                Text(
+                ),
+                const SizedBox(height: 6),
+                const Text(
                   '1) Заполните поля и нажмите «Рассчитать».\n'
                   '2) После появления результатов нажмите «Сохранить все данные расчёта».\n'
                   'Мы сохраним входные значения, результаты, цену и ваши заметки.',
-                  style: TextStyle(height: 1.35
+                  style: TextStyle(height: 1.35),
                 ),
               ],
             ),

@@ -16,6 +16,15 @@ class AppConstants {
   static const bool defaultDarkMode = true;
   static const String defaultRegion = 'Москва';
 
+  // Регионы для цен
+  static const List<String> regions = [
+    'Москва',
+    'Санкт-Петербург',
+    'Екатеринбург',
+    'Краснодар',
+    'Регионы РФ',
+  ];
+
   // Лимиты и ограничения
   static const int maxProjectNameLength = 100;
   static const int maxCalculationsPerProject = 50;

@@ -84,7 +84,6 @@ class CalculateWallpaper extends BaseCalculator {
     final primerNeeded = usefulArea * 0.1;
 
     // Расходные материалы
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
     // Угловой профиль/армирующая лента для углов
     final cornerTapeLength = perimeter * 0.5; // м (примерно на углы)
 
