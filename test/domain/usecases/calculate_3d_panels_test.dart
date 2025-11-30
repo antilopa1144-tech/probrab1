@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_3d_panels.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('Calculate3dPanels', () {
@@ -42,8 +43,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Грунтовка: 20 * 0.2 = 4 кг
-      expect(result.values['primerNeeded'], equals(4.0));
+      // Грунтовка: 20 * 0.18 = 3.6 л
+      expect(result.values['primerNeeded'], equals(3.6));
     });
 
     test('uses default panel size when missing', () {
@@ -82,10 +83,11 @@ void main() {
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['panelsNeeded'], equals(0.0));
-      expect(result.values['glueNeeded'], equals(0.0));
+      // Теперь должно выбрасываться исключение при нулевой площади
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
   });
 }
