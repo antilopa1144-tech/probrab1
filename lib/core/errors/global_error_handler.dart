@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import '../exceptions/app_exception.dart';
 import '../exceptions/validation_exception.dart';
 import '../exceptions/calculation_exception.dart';
@@ -87,9 +89,24 @@ class GlobalErrorHandler {
       }
     }
 
-    // TODO: В production добавить отправку в аналитику
-    // FirebaseCrashlytics.instance.recordError(error, stackTrace, ...);
-    // Sentry.captureException(error, stackTrace: stackTrace, ...);
+    // Отправка ошибки в Firebase Crashlytics
+    FirebaseCrashlytics.instance.recordError(
+      error,
+      stackTrace,
+      reason: contextMessage,
+      fatal: false,
+    );
+
+    // Отправка события в Firebase Analytics
+    FirebaseAnalytics.instance.logEvent(
+      name: 'error_occurred',
+      parameters: {
+        'error_category': category.name,
+        'error_type': error.runtimeType.toString(),
+        'context': contextMessage ?? 'unknown',
+        'timestamp': timestamp,
+      },
+    );
   }
 
   /// Логировать критическую ошибку.
@@ -98,8 +115,35 @@ class GlobalErrorHandler {
     StackTrace stackTrace, [
     String? contextMessage,
   ]) {
-    logError(error, stackTrace, contextMessage);
-    // TODO: Отметить как fatal в аналитике
+    final category = getErrorCategory(error);
+    final timestamp = DateTime.now().toIso8601String();
+
+    if (kDebugMode) {
+      final contextStr = contextMessage != null ? '[$contextMessage]' : '';
+      debugPrint(
+        '[$timestamp] $contextStr [${category.name.toUpperCase()}] FATAL Error: $error',
+      );
+      debugPrint('Stack trace: $stackTrace');
+    }
+
+    // Отправка критической ошибки в Firebase Crashlytics
+    FirebaseCrashlytics.instance.recordError(
+      error,
+      stackTrace,
+      reason: contextMessage,
+      fatal: true,
+    );
+
+    // Отправка критического события в Firebase Analytics
+    FirebaseAnalytics.instance.logEvent(
+      name: 'fatal_error',
+      parameters: {
+        'error_category': category.name,
+        'error_type': error.runtimeType.toString(),
+        'context': contextMessage ?? 'unknown',
+        'timestamp': timestamp,
+      },
+    );
   }
 
   /// Показать ошибку через SnackBar.

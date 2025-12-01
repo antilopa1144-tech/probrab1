@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import '../../core/enums/calculator_category.dart';
 import '../../data/models/price_item.dart';
 import '../usecases/calculator_usecase.dart';
@@ -111,6 +112,17 @@ class CalculatorDefinitionV2 {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
+    // Логирование использования калькулятора в Firebase Analytics
+    FirebaseAnalytics.instance.logEvent(
+      name: 'calculator_used_v2',
+      parameters: {
+        'calculator_id': id,
+        'calculator_category': category.name,
+        'calculator_subcategory': subCategory,
+        'complexity': complexity.toString(),
+      },
+    );
+
     return useCase.call(inputs, priceList);
   }
 

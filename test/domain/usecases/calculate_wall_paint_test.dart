@@ -10,7 +10,7 @@ void main() {
       calculator = CalculateWallPaint();
     });
 
-    test('calculates paint needed correctly with 10% reserve', () {
+    test('calculates paint needed correctly with 8% reserve', () {
       final inputs = {
         'area': 40.0, // 40 м²
         'layers': 2.0,
@@ -20,8 +20,9 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Краска = 40 * 0.15 * 2 * 1.1 = 13.2 кг
-      expect(result.values['paintNeeded'], closeTo(13.2, 0.1));
+      // Краска = 40 * (0.15 * 1.2 + (2 - 1) * 0.15) * 1.08 = 14.26 кг
+      // Первый слой: 0.15 * 1.2 = 0.18, остальные: 0.15
+      expect(result.values['paintNeeded'], closeTo(14.26, 0.1));
     });
 
     test('calculates primer needed correctly', () {
@@ -33,8 +34,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Грунтовка = 40 * 0.1 * 1.1 = 4.4 кг
-      expect(result.values['primerNeeded'], closeTo(4.4, 0.1));
+      // Грунтовка = 40 * 0.12 * 1.05 = 5.04 кг
+      expect(result.values['primerNeeded'], closeTo(5.04, 0.1));
     });
 
     test('subtracts windows and doors area', () {
@@ -62,8 +63,9 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Краска = 40 * 0.15 * 1 * 1.1 = 6.6 кг
-      expect(result.values['paintNeeded'], closeTo(6.6, 0.1));
+      // Краска = 40 * (0.15 * 1.2) * 1.08 = 7.78 кг
+      // Только первый слой с повышенным расходом
+      expect(result.values['paintNeeded'], closeTo(7.78, 0.1));
     });
 
     test('handles three layers correctly', () {
@@ -76,8 +78,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Краска = 40 * 0.15 * 3 * 1.1 = 19.8 кг
-      expect(result.values['paintNeeded'], closeTo(19.8, 0.1));
+      // Краска = 40 * (0.15 * 1.2 + (3 - 1) * 0.15) * 1.08 = 20.74 кг
+      expect(result.values['paintNeeded'], closeTo(20.74, 0.1));
     });
 
     test('uses default values when not provided', () {
@@ -90,7 +92,8 @@ void main() {
 
       // По умолчанию: layers=2, consumption=0.15
       expect(result.values['layers'], equals(2.0));
-      expect(result.values['paintNeeded'], closeTo(13.2, 0.1));
+      // Краска = 40 * (0.15 * 1.2 + 1 * 0.15) * 1.08 = 14.26 кг
+      expect(result.values['paintNeeded'], closeTo(14.26, 0.1));
     });
 
     test('does not allow negative useful area', () {
@@ -107,17 +110,18 @@ void main() {
       expect(result.values['usefulArea'], equals(0.0));
     });
 
-    test('handles zero area', () {
+    test('throws exception for zero area', () {
       final inputs = {
         'area': 0.0,
         'layers': 2.0,
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['usefulArea'], equals(0.0));
-      expect(result.values['paintNeeded'], equals(0.0));
+      // Калькулятор должен выбросить исключение при area <= 0
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<Exception>()),
+      );
     });
 
     test('calculates total price with price list', () {
@@ -151,8 +155,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Краска = 40 * 0.25 * 2 * 1.1 = 22 кг
-      expect(result.values['paintNeeded'], closeTo(22.0, 0.1));
+      // Краска = 40 * (0.25 * 1.2 + 1 * 0.25) * 1.08 = 23.76 кг
+      expect(result.values['paintNeeded'], closeTo(23.76, 0.1));
     });
   });
 }

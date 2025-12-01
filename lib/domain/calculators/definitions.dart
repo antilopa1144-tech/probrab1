@@ -1,5 +1,6 @@
 // Репозиторий расчётов (цены и прочее)
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 import 'package:probrab_ai/core/cache/calculation_cache.dart';
@@ -158,6 +159,17 @@ class CalculatorDefinition {
 
     // Выполняем расчёт
     final result = useCase.call(inputs, priceList);
+
+    // Логирование использования калькулятора в Firebase Analytics
+    FirebaseAnalytics.instance.logEvent(
+      name: 'calculator_used',
+      parameters: {
+        'calculator_id': id,
+        'calculator_category': category,
+        'calculator_subcategory': subCategory,
+        'from_cache': useCache && _cache.get(id, inputs) != null ? 'true' : 'false',
+      },
+    );
 
     // Сохраняем в кэш
     if (useCache) {

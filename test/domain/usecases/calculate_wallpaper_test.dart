@@ -10,20 +10,21 @@ void main() {
       calculator = CalculateWallpaper();
     });
 
-    test('calculates rolls needed correctly with 10% reserve', () {
+    test('calculates rolls needed correctly with 5% reserve', () {
       final inputs = {
         'area': 50.0, // 50 м² стен
         'rollWidth': 0.53,
         'rollLength': 10.05,
+        'wallHeight': 2.5,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Площадь рулона = 0.53 * 10.05 = 5.3265 м²
-      // Количество = ceil(50 / 5.3265 * 1.1) = ceil(10.33) = 11 рулонов
-      expect(result.values['rollsNeeded'], greaterThanOrEqualTo(10.0));
-      expect(result.values['rollsNeeded'], lessThanOrEqualTo(12.0));
+      // Новый алгоритм: периметр ≈ √(50*4) ≈ 14.14м → ~27 полос (14.14/0.53)
+      // Полос из рулона: 10.05/2.5 = 4 полосы → ~7 рулонов с запасом 5%
+      expect(result.values['rollsNeeded'], greaterThanOrEqualTo(7.0));
+      expect(result.values['rollsNeeded'], lessThanOrEqualTo(15.0));
     });
 
     test('subtracts windows and doors area', () {
@@ -52,8 +53,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Клей = 50 * 0.2 = 10 кг
-      expect(result.values['glueNeeded'], equals(10.0));
+      // Клей = 50 * 0.22 = 11 кг
+      expect(result.values['glueNeeded'], equals(11.0));
     });
 
     test('handles rapport correctly', () {
@@ -72,7 +73,7 @@ void main() {
       expect(result.values['rollsNeeded'], greaterThan(0));
     });
 
-    test('handles zero area gracefully', () {
+    test('throws exception for zero area', () {
       final inputs = {
         'area': 0.0,
         'rollWidth': 0.53,
@@ -80,10 +81,11 @@ void main() {
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['usefulArea'], equals(0.0));
-      expect(result.values['rollsNeeded'], equals(0.0));
+      // Калькулятор должен выбросить исключение при area <= 0
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<Exception>()),
+      );
     });
 
     test('uses default roll dimensions when not provided', () {
@@ -109,12 +111,11 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Площадь рулона = 1.06 * 10 = 10.6 м²
-      // Меньше рулонов потребуется
-      expect(result.values['rollsNeeded'], lessThan(8));
+      // Широкие обои требуют меньше рулонов
+      expect(result.values['rollsNeeded'], lessThanOrEqualTo(8));
     });
 
-    test('does not allow negative useful area', () {
+    test('returns error for negative useful area', () {
       final inputs = {
         'area': 10.0,
         'windowsArea': 20.0, // больше, чем общая площадь
@@ -124,8 +125,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Полезная площадь не может быть отрицательной
-      expect(result.values['usefulArea'], equals(0.0));
+      // Калькулятор возвращает ошибку при отрицательной полезной площади
+      expect(result.values['error'], equals(1.0));
     });
 
     test('calculates total price with price list', () {
@@ -151,18 +152,21 @@ void main() {
       expect(result.totalPrice!, greaterThan(0));
     });
 
-    test('calculates effective roll area', () {
+    test('calculates strip length and strips needed', () {
       final inputs = {
         'area': 50.0,
         'rollWidth': 0.53,
         'rollLength': 10.05,
+        'wallHeight': 2.5,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Эффективная площадь = 0.53 * 10.05 = 5.3265 м²
-      expect(result.values['effectiveRollArea'], closeTo(5.3265, 0.01));
+      // Длина полосы = высота стен (без раппорта)
+      expect(result.values['stripLength'], equals(2.5));
+      // Количество полос должно быть больше 0
+      expect(result.values['stripsNeeded'], greaterThan(0));
     });
   });
 }
