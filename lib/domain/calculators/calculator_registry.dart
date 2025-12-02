@@ -55,54 +55,74 @@ class CalculatorRegistry {
     // Фундамент
     stripFoundationCalculatorV2,
     slabFoundationCalculatorV2,
-    
+
     // Отделка стен
     paintCalculatorV2,
     wallpaperCalculatorV2,
-    
+
     // Полы
     laminateCalculatorV2,
     screedCalculatorV2,
     tileCalculatorV2,
-    
+
     // Кровля
     metalRoofingCalculatorV2,
     softRoofingCalculatorV2,
-    
+
     // Инженерные системы
     warmFloorCalculatorV2,
-    
+
     // Полы (дополнительные)
     parquetCalculatorV2,
-    
+
     // Потолки
     gklCeilingCalculatorV2,
-    
+
     // Отделка (дополнительные)
     bathroomTileCalculatorV2,
-    
+
     // Здесь будут добавляться другие калькуляторы по мере миграции
   ];
 
-  /// Получить калькулятор по ID
+  /// Кэш для быстрого поиска по ID (O(1) вместо O(n))
+  static final Map<String, CalculatorDefinitionV2> _idCache = {
+    for (var calc in allCalculators) calc.id: calc,
+  };
+
+  /// Кэш для популярных калькуляторов
+  static List<CalculatorDefinitionV2>? _popularCache;
+
+  /// Кэш для поиска по категориям
+  static final Map<dynamic, List<CalculatorDefinitionV2>> _categoryCache = {};
+
+  /// Получить калькулятор по ID (O(1) - оптимизировано с Map)
   static CalculatorDefinitionV2? getById(String id) {
-    try {
-      return allCalculators.firstWhere((calc) => calc.id == id);
-    } catch (_) {
-      return null;
-    }
+    return _idCache[id];
   }
 
-  /// Получить калькуляторы по категории
+  /// Получить калькуляторы по категории (с кэшированием)
   static List<CalculatorDefinitionV2> getByCategory(dynamic category) {
-    return allCalculators.where((calc) => calc.category == category).toList();
+    // Проверяем кэш
+    if (_categoryCache.containsKey(category)) {
+      return _categoryCache[category]!;
+    }
+
+    // Вычисляем и кэшируем
+    final result = allCalculators.where((calc) => calc.category == category).toList();
+    _categoryCache[category] = result;
+    return result;
   }
 
-  /// Получить популярные калькуляторы
+  /// Получить популярные калькуляторы (с кэшированием)
   static List<CalculatorDefinitionV2> getPopular({int limit = 10}) {
-    final sorted = List<CalculatorDefinitionV2>.from(allCalculators);
-    sorted.sort((a, b) => b.popularity.compareTo(a.popularity));
-    return sorted.take(limit).toList();
+    // Проверяем кэш
+    if (_popularCache == null) {
+      final sorted = List<CalculatorDefinitionV2>.from(allCalculators);
+      sorted.sort((a, b) => b.popularity.compareTo(a.popularity));
+      _popularCache = sorted;
+    }
+
+    return _popularCache!.take(limit).toList();
   }
 
   /// Поиск калькуляторов по запросу
@@ -130,8 +150,32 @@ class CalculatorRegistry {
   /// Количество калькуляторов
   static int get count => allCalculators.length;
 
-  /// Проверить существование калькулятора
+  /// Проверить существование калькулятора (O(1) через кэш)
   static bool exists(String id) {
-    return allCalculators.any((calc) => calc.id == id);
+    return _idCache.containsKey(id);
+  }
+
+  /// Очистить все кэши (используйте при добавлении калькуляторов динамически)
+  static void clearCache() {
+    _idCache.clear();
+    _popularCache = null;
+    _categoryCache.clear();
+
+    // Пересоздаём кэш ID
+    for (var calc in allCalculators) {
+      _idCache[calc.id] = calc;
+    }
+  }
+
+  /// Добавить калькулятор динамически (для плагинов/расширений)
+  static void register(CalculatorDefinitionV2 calculator) {
+    if (!_idCache.containsKey(calculator.id)) {
+      allCalculators.add(calculator);
+      _idCache[calculator.id] = calculator;
+
+      // Инвалидируем кэши
+      _popularCache = null;
+      _categoryCache.remove(calculator.category);
+    }
   }
 }

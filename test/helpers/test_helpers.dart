@@ -1,6 +1,18 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:probrab_ai/core/localization/app_localizations.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/presentation/providers/accent_color_provider.dart';
+import 'package:probrab_ai/presentation/providers/region_provider.dart';
+import 'package:probrab_ai/presentation/providers/settings_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-/// Вспомогательные функции для тестирования калькуляторов
+// ============================================================================
+// Price Test Helpers
+// ============================================================================
 
 /// Создать тестовый прайс-лист с указанными SKU и ценами
 List<PriceItem> createTestPriceList(Map<String, double> prices) {
@@ -45,4 +57,60 @@ bool allValuesPositive(Map<String, double> values) {
 /// Проверить, что результат содержит все значения больше указанного минимума
 bool allValuesGreaterThan(Map<String, double> values, double min) {
   return values.values.every((value) => value > min);
+}
+
+// ============================================================================
+// Widget Test Helpers
+// ============================================================================
+
+/// Создаёт тестовый widget с полной настройкой providers и localization
+Widget createTestApp({
+  required Widget child,
+  List<Override>? overrides,
+}) {
+  return ProviderScope(
+    overrides: overrides ?? [],
+    child: MaterialApp(
+      locale: const Locale('ru'),
+      localizationsDelegates: const [
+        AppLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: child,
+    ),
+  );
+}
+
+/// Настраивает mock для SharedPreferences и PackageInfo
+void setupMocks({
+  Map<String, Object>? sharedPreferencesValues,
+  String appVersion = '1.0.0',
+  String buildNumber = '1',
+}) {
+  SharedPreferences.setMockInitialValues(sharedPreferencesValues ?? {});
+
+  PackageInfo.setMockInitialValues(
+    appName: 'Probrab AI',
+    packageName: 'ru.probrab.app',
+    version: appVersion,
+    buildNumber: buildNumber,
+    buildSignature: 'test-signature',
+  );
+}
+
+/// Pumps widget и ждёт завершения анимаций (с таймаутом для избежания зависаний)
+Future<void> pumpAndSettleWithTimeout(
+  WidgetTester tester, {
+  Duration timeout = const Duration(seconds: 2),
+}) async {
+  await tester.pump();
+
+  // Вместо pumpAndSettle используем фиксированное количество pump
+  // для избежания таймаутов при бесконечных анимациях
+  for (int i = 0; i < 10; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
 }

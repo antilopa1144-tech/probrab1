@@ -40,11 +40,15 @@ class CalculationCache {
     // Проверка TTL
     if (DateTime.now().difference(entry.createdAt) > _cacheTTL) {
       _cache.remove(key);
-      debugPrint('[CalculationCache] Cache expired for $calculatorId');
+      if (kDebugMode) {
+        debugPrint('[CalculationCache] Cache expired for $calculatorId');
+      }
       return null;
     }
 
-    debugPrint('[CalculationCache] Cache hit for $calculatorId');
+    if (kDebugMode) {
+      debugPrint('[CalculationCache] Cache hit for $calculatorId');
+    }
     return Map.from(entry.values);
   }
 
@@ -66,7 +70,9 @@ class CalculationCache {
       createdAt: DateTime.now(),
     );
 
-    debugPrint('[CalculationCache] Cached result for $calculatorId');
+    if (kDebugMode) {
+      debugPrint('[CalculationCache] Cached result for $calculatorId');
+    }
   }
 
   /// Удалить самую старую запись
@@ -85,20 +91,26 @@ class CalculationCache {
 
     if (oldestKey != null) {
       _cache.remove(oldestKey);
-      debugPrint('[CalculationCache] Evicted oldest entry');
+      if (kDebugMode) {
+        debugPrint('[CalculationCache] Evicted oldest entry');
+      }
     }
   }
 
   /// Очистить весь кэш
   void clear() {
     _cache.clear();
-    debugPrint('[CalculationCache] Cache cleared');
+    if (kDebugMode) {
+      debugPrint('[CalculationCache] Cache cleared');
+    }
   }
 
   /// Очистить кэш для конкретного калькулятора
   void clearForCalculator(String calculatorId) {
     _cache.removeWhere((key, _) => key.startsWith('$calculatorId:'));
-    debugPrint('[CalculationCache] Cache cleared for $calculatorId');
+    if (kDebugMode) {
+      debugPrint('[CalculationCache] Cache cleared for $calculatorId');
+    }
   }
 
   /// Получить статистику кэша
@@ -138,7 +150,7 @@ class CalculationCache {
       _cache.remove(key);
     }
 
-    if (keysToRemove.isNotEmpty) {
+    if (keysToRemove.isNotEmpty && kDebugMode) {
       debugPrint('[CalculationCache] Cleaned up ${keysToRemove.length} expired entries');
     }
   }

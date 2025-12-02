@@ -1,5 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import '../../core/enums/calculator_category.dart';
+import '../../core/cache/calculation_cache.dart';
 import '../../data/models/price_item.dart';
 import '../usecases/calculator_usecase.dart';
 import 'calculator_field.dart';
@@ -107,12 +108,30 @@ class CalculatorDefinitionV2 {
     this.tags = const [],
   });
 
-  /// Выполнить расчёт
+  /// Кэш для результатов расчётов
+  static final _cache = CalculationCache();
+
+  /// Выполнить расчёт с кэшированием
   CalculatorResult calculate(
     Map<String, double> inputs,
-    List<PriceItem> priceList,
-  ) {
+    List<PriceItem> priceList, {
+    bool useCache = true,
+  }) {
+    // Попытка получить из кэша
+    if (useCache) {
+      final cachedValues = _cache.get(id, inputs);
+      if (cachedValues != null) {
+        // Возвращаем кэшированный результат
+        // НЕ логируем в Analytics для кэшированных результатов
+        return CalculatorResult(values: cachedValues, totalPrice: null);
+      }
+    }
+
+    // Выполняем расчёт
+    final result = useCase.call(inputs, priceList);
+
     // Логирование использования калькулятора в Firebase Analytics
+    // ТОЛЬКО для новых расчётов (не из кэша)
     FirebaseAnalytics.instance.logEvent(
       name: 'calculator_used_v2',
       parameters: {
@@ -123,7 +142,12 @@ class CalculatorDefinitionV2 {
       },
     );
 
-    return useCase.call(inputs, priceList);
+    // Сохраняем в кэш
+    if (useCache) {
+      _cache.set(id, inputs, result.values);
+    }
+
+    return result;
   }
 
   /// Получить отсортированные поля

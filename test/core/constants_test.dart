@@ -15,7 +15,7 @@ void main() {
     test('has all required regions', () {
       expect(AppConstants.regions.length, greaterThan(0));
       expect(AppConstants.regions, contains('Москва'));
-      expect(AppConstants.regions, contains('Санкт‑Петербург'));
+      expect(AppConstants.regions, contains('Санкт-Петербург'));
       expect(AppConstants.regions, contains('Екатеринбург'));
       expect(AppConstants.regions, contains('Краснодар'));
       expect(AppConstants.regions, contains('Регионы РФ'));

@@ -153,6 +153,7 @@ class CalculatorDefinition {
       final cachedValues = _cache.get(id, inputs);
       if (cachedValues != null) {
         // Возвращаем кэшированный результат (без цены, т.к. цены могут измениться)
+        // НЕ логируем в Analytics для кэшированных результатов
         return CalculatorResult(values: cachedValues, totalPrice: null);
       }
     }
@@ -161,13 +162,13 @@ class CalculatorDefinition {
     final result = useCase.call(inputs, priceList);
 
     // Логирование использования калькулятора в Firebase Analytics
+    // ТОЛЬКО для новых расчётов (не из кэша)
     FirebaseAnalytics.instance.logEvent(
       name: 'calculator_used',
       parameters: {
         'calculator_id': id,
         'calculator_category': category,
         'calculator_subcategory': subCategory,
-        'from_cache': useCache && _cache.get(id, inputs) != null ? 'true' : 'false',
       },
     );
 

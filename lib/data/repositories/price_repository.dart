@@ -1,17 +1,21 @@
 import '../datasources/local_price_data_source.dart';
 import '../models/price_item.dart';
+import '../models/price_map.dart';
 
 /// Репозиторий цен, который оборачивает источник данных и предоставляет
 /// абстракцию для получения прайса по региону с кешированием.
 class PriceRepository {
   final LocalPriceDataSource _localDataSource;
-  
-  // Кеш для загруженных цен по регионам
+
+  // Кеш для загруженных цен по регионам (списки)
   final Map<String, List<PriceItem>> _cache = {};
-  
+
+  // Кеш для оптимизированного поиска (Map структуры)
+  final Map<String, PriceMap> _priceMapCache = {};
+
   // Время последней загрузки для каждого региона
   final Map<String, DateTime> _cacheTimestamps = {};
-  
+
   // Время жизни кеша: 1 час
   static const Duration _cacheLifetime = Duration(hours: 1);
 
@@ -40,14 +44,44 @@ class PriceRepository {
     
     // Загружаем данные
     final prices = await _localDataSource.getPriceList(code);
-    
+
     // Сохраняем в кеш
     _cache[code] = prices;
+    _priceMapCache[code] = PriceMap.fromList(prices); // Создаём оптимизированную Map
     _cacheTimestamps[code] = DateTime.now();
-    
+
     return prices;
   }
-  
+
+  /// Получить оптимизированный PriceMap для региона (O(1) поиск).
+  ///
+  /// Используйте это вместо getPrices для калькуляторов с частыми поисками цен.
+  /// PriceMap обеспечивает O(1) поиск по SKU вместо O(n).
+  Future<PriceMap> getPriceMap(String region, {bool forceRefresh = false}) async {
+    final Map<String, String> mapping = {
+      'Москва': 'moscow',
+      'Санкт‑Петербург': 'spb',
+      'Екатеринбург': 'ekaterinburg',
+      'Краснодар': 'krasnodar',
+      'Регионы РФ': 'regions',
+    };
+    final code = mapping[region] ?? region.toLowerCase().replaceAll(' ', '');
+
+    // Проверяем кеш, если не требуется принудительное обновление
+    if (!forceRefresh && _priceMapCache.containsKey(code)) {
+      final timestamp = _cacheTimestamps[code];
+      if (timestamp != null &&
+          DateTime.now().difference(timestamp) < _cacheLifetime) {
+        return _priceMapCache[code]!;
+      }
+    }
+
+    // Загружаем через обычный метод (который создаст оба кэша)
+    await getPrices(region, forceRefresh: forceRefresh);
+
+    return _priceMapCache[code]!;
+  }
+
   /// Очистить кеш для конкретного региона или всего кеша.
   void clearCache([String? region]) {
     if (region != null) {
@@ -60,9 +94,11 @@ class PriceRepository {
       };
       final code = mapping[region] ?? region.toLowerCase().replaceAll(' ', '');
       _cache.remove(code);
+      _priceMapCache.remove(code);
       _cacheTimestamps.remove(code);
     } else {
       _cache.clear();
+      _priceMapCache.clear();
       _cacheTimestamps.clear();
     }
   }

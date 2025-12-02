@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import '../../domain/calculators/definitions.dart';
 import '../../domain/calculators/calculator_registry.dart';
 import '../views/calculator/universal_calculator_screen.dart';
@@ -81,6 +82,14 @@ class CalculatorNavigationHelper {
     }
 
     // Калькулятор не найден
+    // Логируем ошибку в Crashlytics
+    FirebaseCrashlytics.instance.recordError(
+      Exception('Calculator not found: $calculatorId'),
+      StackTrace.current,
+      reason: 'User attempted to open non-existent calculator',
+      information: ['calculatorId: $calculatorId'],
+    );
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Калькулятор "$calculatorId" не найден'),

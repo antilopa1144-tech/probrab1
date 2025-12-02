@@ -44,3 +44,10 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .claude/
+
+# Firebase sensitive files
+lib/firebase_options_generated.dart
+google-services.json
+GoogleService-Info.plist
+.env
+firebase-debug.log
