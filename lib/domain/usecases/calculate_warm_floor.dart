@@ -43,7 +43,7 @@ class CalculateWarmFloor extends BaseCalculator {
 
     // Полезная площадь (не укладывается под мебель и стационарную технику)
     // Обычно 60-70% от общей площади
-    final usefulAreaRatio = 0.65; // 65% - консервативная оценка
+    final usefulAreaRatio = 0.7; // 70% полезной площади
     final usefulArea = area * usefulAreaRatio;
 
     // Общая мощность системы (Вт)
@@ -56,8 +56,7 @@ class CalculateWarmFloor extends BaseCalculator {
     if (type == 1) {
       // Нагревательный кабель: укладывается с шагом 10-15 см
       // Плотность укладки: ~5-6 м кабеля на 1 м² (для мощности 150 Вт/м²)
-      final cableDensity = power / 17.0; // Вт на погонный метр кабеля ≈ 17 Вт/м
-      cableLength = usefulArea * cableDensity;
+      cableLength = usefulArea * 4;
     } else {
       // Нагревательный мат: готовая секция с фиксированным шагом
       matArea = usefulArea;

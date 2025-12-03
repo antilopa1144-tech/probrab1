@@ -60,7 +60,7 @@ class CalculateTile extends BaseCalculator {
     // Средняя (20-40): 4-5 кг/м²
     // Крупная (> 40): 5-6 кг/м²
     final avgSize = (tileWidth + tileHeight) / 2;
-    final glueConsumption = avgSize < 20 ? 3.5 : (avgSize < 40 ? 4.5 : 5.5);
+    final glueConsumption = avgSize < 20 ? 3.5 : (avgSize < 40 ? 4.0 : 5.5);
     final glueNeeded = area * glueConsumption;
 
     // Крестики: ~4 шт на плитку (по углам)

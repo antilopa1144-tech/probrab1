@@ -48,13 +48,13 @@ class CalculateFacadePanels extends BaseCalculator {
     final battensLength = battensCount * wallHeight;
 
     // Крепления: ~4-6 шт на панель
-    final fastenersNeeded = ceilToInt(panelsNeeded * 5);
+    final fastenersNeeded = panelsNeeded * 4;
 
     // Угловые элементы: внешние и внутренние
-    final cornersLength = addMargin(perimeter * 0.25, 5.0);
+    final cornersLength = perimeter;
 
-    // Стартовая планка: по периметру + 3%
-    final startStripLength = addMargin(perimeter, 3.0);
+    // Стартовая планка: по периметру
+    final startStripLength = perimeter;
 
     // J-профиль (для обрамления проёмов): по факту
     final jProfileLength = getInput(inputs, 'jProfile', defaultValue: 0.0);

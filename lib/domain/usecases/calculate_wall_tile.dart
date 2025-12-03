@@ -39,7 +39,7 @@ class CalculateWallTile extends BaseCalculator {
     final windowsArea = getInput(inputs, 'windowsArea', defaultValue: 0.0, minValue: 0.0);
     final doorsArea = getInput(inputs, 'doorsArea', defaultValue: 0.0, minValue: 0.0);
 
-    final usefulArea = safeDivide(area - windowsArea - doorsArea, 1.0, defaultValue: area);
+    final usefulArea = [area - windowsArea - doorsArea, 0].reduce((a, b) => a > b ? a : b);
 
     // Площадь одной плитки в м²
     final tileArea = calculateTileArea(tileWidth, tileHeight);
@@ -48,9 +48,8 @@ class CalculateWallTile extends BaseCalculator {
     final tilesNeeded = calculateUnitsNeeded(usefulArea, tileArea, marginPercent: 10.0);
 
     // Затирка: формула расчёта с учётом размера плитки
-    final groutConsumption = ((tileWidth + tileHeight) / (tileWidth * tileHeight)) * 
-                            jointWidth * 10 * 1.6;
-    final groutNeeded = usefulArea * groutConsumption * 1.05;
+    final groutConsumption = 1.5 * (jointWidth / 10);
+    final groutNeeded = usefulArea * groutConsumption;
 
     // Клей: расход 3-5 кг/м² (зависит от размера плитки)
     final glueConsumption = tileWidth > 60 || tileHeight > 60 ? 5.0 : 4.0;
@@ -60,7 +59,7 @@ class CalculateWallTile extends BaseCalculator {
     final primerNeeded = usefulArea * 0.15;
 
     // Крестики/СВП: ~4-5 шт на плитку
-    final crossesNeeded = ceilToInt(tilesNeeded * 5);
+    final crossesNeeded = tilesNeeded * 4;
 
     // Профили для углов: по факту
     final cornerProfileLength = getInput(inputs, 'cornerProfile', defaultValue: 0.0);

@@ -48,7 +48,7 @@ class CalculateElectrics extends BaseCalculator {
     final cableChannelLength = wireLength * 0.5;
 
     // Автоматы (выключатели): 1 на группу (освещение, розетки, крупные потребители)
-    final circuitBreakersNeeded = rooms + ceilToInt(sockets / 10) + 1;
+    final circuitBreakersNeeded = rooms + 1;
 
     // Распределительная коробка: 1 на комнату
     final junctionBoxesNeeded = rooms;
@@ -93,6 +93,8 @@ class CalculateElectrics extends BaseCalculator {
         'cableChannelLength': cableChannelLength,
         'circuitBreakersNeeded': circuitBreakersNeeded.toDouble(),
         'junctionBoxesNeeded': junctionBoxesNeeded.toDouble(),
+        'circuitBreakers': circuitBreakersNeeded.toDouble(),
+        'junctionBoxes': junctionBoxesNeeded.toDouble(),
         'electricalPanelsNeeded': electricalPanelsNeeded.toDouble(),
         'rcdNeeded': rcdNeeded.toDouble(),
         'lightsNeeded': lightsNeeded.toDouble(),

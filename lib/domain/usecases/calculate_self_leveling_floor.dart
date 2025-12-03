@@ -39,7 +39,7 @@ class CalculateSelfLevelingFloor extends BaseCalculator {
     final mixNeeded = area * consumptionPerMm * thickness * 1.1; // +10% запас
 
     // Грунтовка глубокого проникновения: 2 слоя по ~0.15 л/м²
-    final primerNeeded = area * 0.15 * 2;
+    final primerNeeded = area * 0.2 * 1.1;
 
     // Демпферная лента по периметру: периметр + 5%
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);

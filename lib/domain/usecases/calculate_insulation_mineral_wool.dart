@@ -37,7 +37,7 @@ class CalculateInsulationMineralWool extends BaseCalculator {
     final density = getInput(inputs, 'density', defaultValue: 50.0, minValue: 30.0, maxValue: 200.0);
 
     // Объём утеплителя в м³
-    final volume = calculateVolume(area, thickness / 1000);
+    final volume = calculateVolume(area, thickness);
 
     // Площадь одного рулона/плиты (стандарт: 0.6×1.2 м = 0.72 м²)
     final sheetArea = 0.72;
@@ -55,7 +55,7 @@ class CalculateInsulationMineralWool extends BaseCalculator {
     final windBarrierArea = addMargin(area, 10.0);
 
     // Крепёж: дюбели-грибки, ~5-6 шт/м²
-    final fastenersNeeded = ceilToInt(area * 5.5);
+    final fastenersNeeded = ceilToInt(area * 5);
 
     // Соединительная лента для пароизоляции: по швам
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);

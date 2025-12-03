@@ -65,9 +65,8 @@ class CalculateGklPartition extends BaseCalculator {
     // Саморезы:
     // - Для крепления ГКЛ к каркасу: ~25-30 шт на лист
     // - Для крепления профиля: ~5-6 шт на м.п.
-    final gklScrewsNeeded = sheetsNeeded * 28;
-    final profileScrewsNeeded = ceilToInt((studsLength + guideLength) * 5.5);
-    final screwsNeeded = gklScrewsNeeded + profileScrewsNeeded;
+    final gklScrewsNeeded = sheetsNeeded * 30;
+    final screwsNeeded = gklScrewsNeeded.toDouble();
 
     // Шпаклёвка:
     // - Стартовая (для швов): ~0.8-1.0 кг/м² на слой
@@ -118,6 +117,7 @@ class CalculateGklPartition extends BaseCalculator {
         'insulationArea': insulationArea,
         'primerNeeded': primerNeeded,
         'dowelsNeeded': dowelsNeeded.toDouble(),
+        'layers': layers.toDouble(),
       },
       totalPrice: sumCosts(costs),
     );

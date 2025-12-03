@@ -19,7 +19,7 @@ class CalculatePlumbing extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final rooms = inputs['rooms'] ?? 1;
-    if (rooms < 1) return 'Количество санузлов должно быть больше нуля';
+    if (rooms < 0) return 'Количество санузлов не может быть отрицательным';
 
     return null;
   }
@@ -29,15 +29,15 @@ class CalculatePlumbing extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final rooms = getIntInput(inputs, 'rooms', defaultValue: 1, minValue: 1, maxValue: 10);
+    final rooms = getIntInput(inputs, 'rooms', defaultValue: 1, minValue: 0, maxValue: 10);
     
     // Точки подключения: раковина, унитаз, душ/ванна на санузел
     final pointsDefault = rooms * 3;
-    final points = getIntInput(inputs, 'points', defaultValue: pointsDefault, minValue: 1, maxValue: 50);
+    final points = getIntInput(inputs, 'points', defaultValue: pointsDefault, minValue: 0, maxValue: 50);
 
     // Трубы: ~5 м на точку (холодная + горячая вода + канализация)
     final pipeLengthDefault = points * 5.0;
-    final pipeLength = getInput(inputs, 'pipeLength', defaultValue: pipeLengthDefault, minValue: 1.0);
+    final pipeLength = getInput(inputs, 'pipeLength', defaultValue: pipeLengthDefault, minValue: 0.0);
 
     // Труба холодной воды: 50% от общей
     final coldWaterLength = pipeLength * 0.5;
@@ -49,7 +49,7 @@ class CalculatePlumbing extends BaseCalculator {
     final sewerLength = pipeLength * 0.15;
 
     // Фитинги (уголки, тройники, муфты): ~3-4 шт на точку
-    final fittingsNeeded = ceilToInt(points * 3.5);
+    final fittingsNeeded = points * 3;
 
     // Краны шаровые: по количеству точек
     final ballValvesNeeded = points;
@@ -104,6 +104,7 @@ class CalculatePlumbing extends BaseCalculator {
         'sewerLength': sewerLength,
         'fittingsNeeded': fittingsNeeded.toDouble(),
         'ballValvesNeeded': ballValvesNeeded.toDouble(),
+        'tapsNeeded': ballValvesNeeded.toDouble(),
         'mixersNeeded': mixersNeeded.toDouble(),
         'toiletsNeeded': toiletsNeeded.toDouble(),
         'sinksNeeded': sinksNeeded.toDouble(),

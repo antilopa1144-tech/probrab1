@@ -46,10 +46,10 @@ class CalculateLinoleum extends BaseCalculator {
     final rollsNeeded = calculateUnitsNeeded(areaWithOverlap, rollArea, marginPercent: 0.0);
 
     // Плинтус: периметр + 5% на подрезку
-    final plinthLength = addMargin(perimeter, 5.0);
+    final plinthLength = perimeter;
 
     // Клей (если используется): ~0.3-0.5 кг/м²
-    final glueNeeded = area * 0.4;
+    final glueNeeded = area * 0.3;
 
     // Двухсторонний скотч (альтернатива клею): периметр + диагонали
     final tapeNeeded = perimeter * 1.3;

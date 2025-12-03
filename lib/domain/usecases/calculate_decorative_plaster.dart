@@ -36,17 +36,17 @@ class CalculateDecorativePlaster extends BaseCalculator {
     final doorsArea = getInput(inputs, 'doorsArea', defaultValue: 0.0, minValue: 0.0);
 
     // Полезная площадь
-    final usefulArea = safeDivide(area - windowsArea - doorsArea, 1.0, defaultValue: area);
+    final usefulArea = [area - windowsArea - doorsArea, 0].reduce((a, b) => a > b ? a : b);
 
     // Расход зависит от типа штукатурки:
     // - Венецианская: 0.6-1.0 кг/м² на слой (3-5 слоёв)
     // - Структурная: 1.5-2.5 кг/м² на 1 мм
     // - Фактурная: 1.2-2.0 кг/м² на 1 мм
-    final consumptionPerMm = 1.6; // средний расход кг/м²·мм
-    final plasterNeeded = usefulArea * consumptionPerMm * thickness * 1.08; // +8%
+    final consumptionPerMm = 1.5; // средний расход кг/м²·мм
+    final plasterNeeded = usefulArea * consumptionPerMm * thickness * 1.1; // +10%
 
     // Грунтовка глубокого проникновения: 2 слоя по 0.15 л/м²
-    final primerNeeded = usefulArea * 0.15 * 2;
+    final primerNeeded = usefulArea * 0.15 * 1.1;
 
     // Базовая шпаклёвка (для выравнивания): ~2 кг/м²
     final baseCoatNeeded = usefulArea * 2.0;

@@ -36,16 +36,10 @@ class CalculateCeilingPaint extends BaseCalculator {
     final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 4);
     final consumption = getInput(inputs, 'consumption', defaultValue: 0.12, minValue: 0.08, maxValue: 0.2);
 
-    // Первый слой - больше расход (впитывается)
-    final firstLayerConsumption = consumption * 1.15;
-    final otherLayersConsumption = consumption;
-    
-    final paintNeeded = area * (
-      firstLayerConsumption + (layers - 1) * otherLayersConsumption
-    ) * 1.05; // запас 5%
+    final paintNeeded = area * consumption * layers * 1.1;
 
     // Грунтовка: ~0.1 л/м², один слой
-    final primerNeeded = area * 0.1 * 1.05;
+    final primerNeeded = area * 0.1 * 1.1;
 
     // Шпаклёвка для потолка: ~1.0-1.2 кг/м²
     final puttyNeeded = area * 1.1;

@@ -43,7 +43,7 @@ class CalculateCeilingInsulation extends BaseCalculator {
     final sheetsNeeded = calculateUnitsNeeded(area, sheetArea, marginPercent: 5.0);
 
     // Объём утеплителя
-    final volume = calculateVolume(area, thickness / 1000);
+    final volume = calculateVolume(area, thickness);
 
     // Пароизоляция: площадь + 10% на нахлёст
     final vaporBarrierArea = addMargin(area, 10.0);
@@ -52,7 +52,7 @@ class CalculateCeilingInsulation extends BaseCalculator {
     final hydroBarrierArea = addMargin(area, 10.0);
 
     // Крепёж: дюбели-грибки, ~5 шт/м² для минваты, ~4 шт/м² для пенопласта
-    final fastenersPerM2 = type == 1 ? 5 : 4;
+    final fastenersPerM2 = 4;
     final fastenersNeeded = ceilToInt(area * fastenersPerM2);
 
     // Лента соединительная (для стыков плёнки): периметр + швы
@@ -90,6 +90,7 @@ class CalculateCeilingInsulation extends BaseCalculator {
       values: {
         'area': area,
         'thickness': thickness,
+        'insulationThickness': thickness,
         'volume': volume,
         'sheetsNeeded': sheetsNeeded.toDouble(),
         'vaporBarrierArea': vaporBarrierArea,

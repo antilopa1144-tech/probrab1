@@ -42,13 +42,13 @@ class CalculateGasblockPartition extends BaseCalculator {
     final blockFaceArea = (blockLength / 100) * (blockHeight / 100);
 
     // Количество блоков с запасом 5%
-    final blocksNeeded = calculateUnitsNeeded(area, blockFaceArea, marginPercent: 5.0);
+    final blocksNeeded = ceilToInt((area / blockFaceArea) * 1.05);
 
     // Объём кладки в м³
-    final volume = calculateVolume(area, blockWidth / 100);
+    final volume = calculateVolume(area, blockWidth * 10);
 
     // Клей для газоблока: ~25-30 кг/м³ (или ~1.5 кг/м² при толщине шва 2-3 мм)
-    final glueNeeded = volume * 27 * 1.05; // +5%
+    final glueNeeded = volume * 25 * 1.1; // +10%
 
     // Армирование: арматура через каждые 2-3 ряда (или каждый метр высоты)
     final rows = ceilToInt(wallHeight / (blockHeight / 100));

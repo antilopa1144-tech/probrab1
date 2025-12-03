@@ -39,7 +39,7 @@ class CalculateInsulationFoam extends BaseCalculator {
     final type = getIntInput(inputs, 'type', defaultValue: 1, minValue: 1, maxValue: 2);
 
     // Объём утеплителя в м³
-    final volume = calculateVolume(area, thickness / 1000);
+    final volume = calculateVolume(area, thickness);
 
     // Площадь одного листа (стандарт: 1×0.5 м = 0.5 м² или 1.2×0.6 м = 0.72 м²)
     final sheetArea = type == 1 ? 0.5 : 0.72;

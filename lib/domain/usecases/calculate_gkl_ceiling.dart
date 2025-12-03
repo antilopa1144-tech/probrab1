@@ -42,7 +42,7 @@ class CalculateGklCeiling extends BaseCalculator {
     final sheetArea = 3.0;
 
     // Количество листов с запасом 8%
-    final sheetsNeeded = calculateUnitsNeeded(area * layers, sheetArea, marginPercent: 8.0);
+    final sheetsNeeded = calculateUnitsNeeded(area * layers, sheetArea, marginPercent: 10.0);
 
     // Направляющий профиль (UD): периметр + 5%
     final guideLength = addMargin(perimeter, 5.0);
@@ -63,13 +63,13 @@ class CalculateGklCeiling extends BaseCalculator {
     // - Для профиля между собой: ~8 шт/м.п.
     final gklScrewsNeeded = sheetsNeeded * 25;
     final profileScrewsNeeded = ceilToInt((guideLength + ceilingProfileLength) * 8);
-    final screwsNeeded = gklScrewsNeeded + profileScrewsNeeded;
+    final screwsNeeded = sheetsNeeded * 30;
 
     // Дюбели для крепления профиля: ~3 шт/м.п.
     final dowelsNeeded = ceilToInt(guideLength * 3);
 
     // Шпаклёвка: ~1.2 кг/м² на слой
-    final puttyNeeded = area * layers * 1.2;
+    final puttyNeeded = area * layers * 1.5;
 
     // Серпянка: длина швов
     final tapeNeeded = area / 1.2 * 2; // примерно 2 м швов на 1.2 м² листа
@@ -111,6 +111,7 @@ class CalculateGklCeiling extends BaseCalculator {
         'puttyNeeded': puttyNeeded,
         'tapeNeeded': tapeNeeded,
         'primerNeeded': primerNeeded,
+        'layers': layers.toDouble(),
       },
       totalPrice: sumCosts(costs),
     );

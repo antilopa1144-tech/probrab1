@@ -36,14 +36,14 @@ class CalculatePutty extends BaseCalculator {
     // Расход шпаклёвки:
     // - Стартовая: 1.2-1.8 кг/м² на слой (зависит от кривизны)
     // - Финишная: 0.5-0.8 кг/м² на слой
-    final consumptionPerLayer = type == 1 ? 1.5 : 0.6; // кг/м²
+    final consumptionPerLayer = type == 1 ? 1.5 : 0.8; // кг/м²
 
-    // Общий расход с учётом слоёв и запаса 8%
-    final puttyNeeded = area * consumptionPerLayer * layers * 1.08;
+    // Общий расход с учётом слоёв и запаса 10%
+    final puttyNeeded = area * consumptionPerLayer * layers * 1.1;
 
     // Грунтовка: между слоями и финальная
-    // ~0.15 л/м² на слой, (layers + 1) слоёв грунта
-    final primerNeeded = area * 0.15 * (layers + 1);
+    // ~0.2 л/м² перед шпаклеванием
+    final primerNeeded = area * 0.2 * 1.1;
 
     // Армирующая сетка (для стартовой): площадь покрытия
     final meshArea = type == 1 ? area : 0.0;
@@ -52,7 +52,7 @@ class CalculatePutty extends BaseCalculator {
     final sandpaperSets = ceilToInt(area / 25); // 1 комплект на 25 м²
 
     // Шпатели: набор из 3-4 шт разного размера
-    final spatulaSets = 1;
+    final spatulasNeeded = 3;
 
     // Вода для замешивания (информативно): ~0.4 л на кг смеси
     final waterNeeded = puttyNeeded * 0.4;
@@ -78,7 +78,7 @@ class CalculatePutty extends BaseCalculator {
         'layers': layers.toDouble(),
         if (type == 1) 'meshArea': meshArea,
         'sandpaperSets': sandpaperSets.toDouble(),
-        'spatulaSets': spatulaSets.toDouble(),
+        'spatulasNeeded': spatulasNeeded.toDouble(),
         'waterNeeded': waterNeeded,
       },
       totalPrice: sumCosts(costs),

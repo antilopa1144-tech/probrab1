@@ -34,7 +34,7 @@ class CalculateHeating extends BaseCalculator {
     final ceilingHeight = getInput(inputs, 'ceilingHeight', defaultValue: 2.5, minValue: 2.0, maxValue: 4.0);
 
     // Объём помещения
-    final volume = calculateVolume(area, ceilingHeight);
+    final volume = area * ceilingHeight;
 
     // Тепловая мощность: 100 Вт/м² (средняя полоса России)
     final totalPower = area * 100; // Вт
@@ -46,7 +46,7 @@ class CalculateHeating extends BaseCalculator {
     final sectionsPerRadiator = ceilToInt(totalSections / rooms);
 
     // Трубы подачи и обратки: ~10-12 м на комнату
-    final pipeLength = rooms * 11.0;
+    final pipeLength = rooms * 10.0;
 
     // Фитинги (уголки, тройники, муфты): ~5 шт на комнату
     final fittingsNeeded = rooms * 5;
@@ -103,11 +103,14 @@ class CalculateHeating extends BaseCalculator {
         'pipeLength': pipeLength,
         'fittingsNeeded': fittingsNeeded.toDouble(),
         'ballValvesNeeded': ballValvesNeeded.toDouble(),
+        'valvesNeeded': ballValvesNeeded.toDouble(),
         'thermostatsNeeded': thermostatsNeeded.toDouble(),
         'bracketsNeeded': bracketsNeeded.toDouble(),
         if (boilerNeeded > 0) 'boilerNeeded': boilerNeeded.toDouble(),
         if (expansionTankNeeded > 0) 'expansionTankNeeded': expansionTankNeeded.toDouble(),
         if (pumpNeeded > 0) 'pumpNeeded': pumpNeeded.toDouble(),
+        'rooms': rooms.toDouble(),
+        'ceilingHeight': ceilingHeight,
       },
       totalPrice: sumCosts(costs),
     );

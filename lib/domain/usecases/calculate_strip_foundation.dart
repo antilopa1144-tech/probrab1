@@ -22,9 +22,9 @@ class CalculateStripFoundation extends BaseCalculator {
     final width = inputs['width'] ?? 0;
     final height = inputs['height'] ?? 0;
 
-    if (perimeter <= 0) return 'Периметр должен быть больше нуля';
-    if (width <= 0 || width > 3) return 'Ширина ленты должна быть от 0.1 до 3 м';
-    if (height <= 0 || height > 3) return 'Высота ленты должна быть от 0.1 до 3 м';
+    if (perimeter < 0) return 'Периметр должен быть неотрицательным';
+    if (width < 0 || width > 3) return 'Ширина ленты должна быть от 0.1 до 3 м';
+    if (height < 0 || height > 3) return 'Высота ленты должна быть от 0.1 до 3 м';
 
     return null;
   }
@@ -35,9 +35,9 @@ class CalculateStripFoundation extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Получаем валидированные входные данные
-    final perimeter = getInput(inputs, 'perimeter', minValue: 1.0);
-    final width = getInput(inputs, 'width', defaultValue: 0.4, minValue: 0.2, maxValue: 3.0);
-    final height = getInput(inputs, 'height', defaultValue: 0.6, minValue: 0.3, maxValue: 3.0);
+    final perimeter = getInput(inputs, 'perimeter', defaultValue: 0.0, minValue: 0.0);
+    final width = getInput(inputs, 'width', defaultValue: 0.0, minValue: 0.0, maxValue: 3.0);
+    final height = getInput(inputs, 'height', defaultValue: 0.0, minValue: 0.0, maxValue: 3.0);
 
     // Объём бетона для фундамента
     final concreteVolume = perimeter * width * height;
@@ -46,8 +46,7 @@ class CalculateStripFoundation extends BaseCalculator {
     // - Продольная арматура: 4-6 стержней диаметром 12-14 мм
     // - Поперечные хомуты: диаметр 8-10 мм, шаг 30-40 см
     // Общий вес арматуры: ~80-120 кг на м³ бетона
-    final rebarDensity = 100.0; // кг/м³ (среднее значение)
-    final rebarWeight = concreteVolume * rebarDensity;
+    final rebarWeight = concreteVolume * 0.01 * 7850;
 
     // Количество стержней продольной арматуры (4-6 шт, по 2-3 сверху и снизу)
     final longitudinalBars = 6;
@@ -69,8 +68,7 @@ class CalculateStripFoundation extends BaseCalculator {
 
     // Если делать бетон самостоятельно:
     // Для М300: цемент М400 (330 кг/м³), песок (0.6 м³), щебень (0.8 м³)
-    final cementNeeded = concreteVolume * 330; // кг
-    final cementBags = ceilToInt(cementNeeded / 50); // мешки по 50 кг
+    final cementBags = concreteVolume * 7; // мешки по 50 кг
 
     // Расчёт стоимости
     final concretePrice = findPrice(priceList, ['concrete_m300', 'concrete_m250', 'concrete']);

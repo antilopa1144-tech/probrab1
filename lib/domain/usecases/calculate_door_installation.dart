@@ -20,7 +20,7 @@ class CalculateDoorInstallation extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final doors = inputs['doors'] ?? 1;
-    if (doors < 1) return 'Количество дверей должно быть больше нуля';
+    if (doors < 0) return 'Количество дверей не может быть отрицательным';
 
     return null;
   }
@@ -30,7 +30,7 @@ class CalculateDoorInstallation extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final doors = getIntInput(inputs, 'doors', defaultValue: 1, minValue: 1, maxValue: 30);
+    final doors = getIntInput(inputs, 'doors', defaultValue: 1, minValue: 0, maxValue: 30);
     final doorWidth = getInput(inputs, 'doorWidth', defaultValue: 0.9, minValue: 0.6, maxValue: 1.4);
     final doorHeight = getInput(inputs, 'doorHeight', defaultValue: 2.1, minValue: 1.8, maxValue: 2.5);
     final doorType = getIntInput(inputs, 'doorType', defaultValue: 1, minValue: 1, maxValue: 2);
@@ -47,7 +47,7 @@ class CalculateDoorInstallation extends BaseCalculator {
 
     // Наличники: периметр двери × 2 (с двух сторон) - для межкомнатных
     // Для входных - только со стороны помещения
-    final architraveMultiplier = doorType == 1 ? 2 : 1;
+    final architraveMultiplier = doorType == 1 ? 1 : 1;
     final architraveLength = doorPerimeter * architraveMultiplier * doors;
 
     // Коробка (дверная лутка): включена в комплект двери

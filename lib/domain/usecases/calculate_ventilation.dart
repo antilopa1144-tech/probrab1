@@ -34,7 +34,7 @@ class CalculateVentilation extends BaseCalculator {
     final ceilingHeight = getInput(inputs, 'ceilingHeight', defaultValue: 2.5, minValue: 2.0, maxValue: 4.0);
 
     // Объём помещения
-    final volume = calculateVolume(area, ceilingHeight);
+    final volume = area * ceilingHeight;
 
     // Воздухообмен: 3 м³/ч на м² для жилых помещений (норма 30 м³/ч на человека)
     final airExchange = area * 3.0; // м³/ч
@@ -49,7 +49,7 @@ class CalculateVentilation extends BaseCalculator {
     final fansNeeded = ceilToInt(rooms * 0.35);
 
     // Воздуховоды (если принудительная вентиляция): ~5-7 м на комнату
-    final ductLength = rooms * 6.0;
+    final ductLength = rooms * 5.0;
 
     // Диффузоры/анемостаты: по количеству помещений
     final diffusersNeeded = rooms;
@@ -83,12 +83,15 @@ class CalculateVentilation extends BaseCalculator {
         'volume': volume,
         'airExchange': airExchange,
         'naturalDuctsNeeded': naturalDuctsNeeded.toDouble(),
+        'ductsNeeded': naturalDuctsNeeded.toDouble(),
         'grillesNeeded': grillesNeeded.toDouble(),
         'fansNeeded': fansNeeded.toDouble(),
         'ductLength': ductLength,
         'diffusersNeeded': diffusersNeeded.toDouble(),
         if (recuperatorNeeded > 0) 'recuperatorNeeded': recuperatorNeeded.toDouble(),
         'filtersNeeded': filtersNeeded.toDouble(),
+        'rooms': rooms.toDouble(),
+        'ceilingHeight': ceilingHeight,
       },
       totalPrice: sumCosts(costs),
     );

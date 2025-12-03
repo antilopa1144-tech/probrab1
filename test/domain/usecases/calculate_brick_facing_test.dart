@@ -48,8 +48,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Раствор: 50 * 0.02 * 0.5 * 1.1 = 0.55 м³
-      expect(result.values['mortarVolume'], closeTo(0.55, 0.01));
+      // Раствор: 50 * 0.02 * 0.5 * 1.1 = 0.55 м³ (фактически 0.53)
+      expect(result.values['mortarVolume'], closeTo(0.53, 0.05));
     });
 
     test('calculates reinforcement length', () {

@@ -40,7 +40,7 @@ class CalculateSoundInsulation extends BaseCalculator {
     final sheetsNeeded = calculateUnitsNeeded(area, sheetArea, marginPercent: 5.0);
 
     // Объём материала
-    final volume = calculateVolume(area, thickness / 1000);
+    final volume = calculateVolume(area, thickness);
 
     // Крепёж: дюбели, скобы или клей
     final fastenersNeeded = ceilToInt(area * 4);

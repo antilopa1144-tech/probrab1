@@ -46,10 +46,10 @@ class CalculateRailCeiling extends BaseCalculator {
     final guideLength = guideCount * (perimeter / 4);
 
     // Подвесы: шаг 60-80 см вдоль направляющих
-    final hangersNeeded = ceilToInt(guideLength / 0.7);
+    final hangersNeeded = ceilToInt(perimeter / 0.6);
 
     // П-образный профиль (периметр): по периметру комнаты + 3%
-    final cornerLength = addMargin(perimeter, 3.0);
+    final cornerLength = perimeter;
 
     // Декоративные вставки (между рейками): зависит от типа
     final insertsLength = railsNeeded * (railLength / 100);

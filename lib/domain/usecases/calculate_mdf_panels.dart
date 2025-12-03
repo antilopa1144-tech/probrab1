@@ -48,16 +48,16 @@ class CalculateMdfPanels extends BaseCalculator {
     final battensLength = battensCount * wallHeight;
 
     // Кляймеры (крепёж для МДФ): ~4-5 шт на панель
-    final clampsNeeded = ceilToInt(panelsNeeded * 4.5);
+    final clampsNeeded = panelsNeeded * 4;
 
     // Уголки (декоративные): внутренние и наружные
-    final cornersLength = addMargin(perimeter * 0.3, 5.0);
+    final cornersLength = perimeter;
 
     // Плинтус напольный: по периметру
-    final plinthLength = addMargin(perimeter, 3.0);
+    final plinthLength = perimeter;
 
     // Потолочный плинтус: по периметру
-    final ceilingPlinthLength = addMargin(perimeter, 3.0);
+    final ceilingPlinthLength = perimeter;
 
     // Соединительные планки (при наборной панели): по факту
     final connectorsLength = getInput(inputs, 'connectors', defaultValue: 0.0);

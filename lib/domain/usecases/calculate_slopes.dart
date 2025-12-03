@@ -20,7 +20,7 @@ class CalculateSlopes extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final windows = inputs['windows'] ?? 1;
-    if (windows < 1) return 'Количество окон должно быть больше нуля';
+    if (windows < 0) return 'Количество окон не может быть отрицательным';
 
     return null;
   }
@@ -30,11 +30,11 @@ class CalculateSlopes extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final windows = getIntInput(inputs, 'windows', defaultValue: 1, minValue: 1, maxValue: 50);
+    final windows = getIntInput(inputs, 'windows', defaultValue: 1, minValue: 0, maxValue: 50);
     final windowWidth = getInput(inputs, 'windowWidth', defaultValue: 1.5, minValue: 0.5, maxValue: 4.0);
     final windowHeight = getInput(inputs, 'windowHeight', defaultValue: 1.4, minValue: 0.5, maxValue: 3.0);
     final slopeWidth = getInput(inputs, 'slopeWidth', defaultValue: 0.3, minValue: 0.15, maxValue: 0.6);
-    final material = getIntInput(inputs, 'material', defaultValue: 2, minValue: 1, maxValue: 3);
+    final material = getIntInput(inputs, 'material', defaultValue: 1, minValue: 1, maxValue: 3);
 
     // Периметр одного окна
     final windowPerimeter = (windowWidth + windowHeight) * 2;
@@ -62,9 +62,9 @@ class CalculateSlopes extends BaseCalculator {
     if (material == 1) {
       // Штукатурка
       plasterNeeded = slopeArea * 10.0; // ~10 кг/м² при слое 10 мм
-      puttyNeeded = slopeArea * 1.2; // ~1.2 кг/м²
+      puttyNeeded = slopeArea * 1.5; // ~1.5 кг/м²
       primerNeeded = slopeArea * 0.2; // ~0.2 л/м²
-      paintNeeded = slopeArea * 0.15 * 2; // ~0.15 л/м² в 2 слоя
+      paintNeeded = slopeArea * 0.12 * 2; // ~0.12 л/м² в 2 слоя
     } else if (material == 2) {
       // ПВХ панели
       panelArea = slopeArea * 1.05; // +5% запас

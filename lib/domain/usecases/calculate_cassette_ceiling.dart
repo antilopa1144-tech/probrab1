@@ -51,7 +51,7 @@ class CalculateCassetteCeiling extends BaseCalculator {
     final angleLength = addMargin(perimeter, 3.0);
 
     // Подвесы: шаг 120 см вдоль несущего профиля
-    final hangersNeeded = ceilToInt(mainProfileLength / 1.2);
+    final hangersNeeded = ceilToInt(area / (1.2 * 1.2));
 
     // Светильники встраиваемые (опционально): 1 на 8-10 м²
     final lightsNeeded = getIntInput(inputs, 'lights', defaultValue: 0, minValue: 0, maxValue: 50);
@@ -76,6 +76,7 @@ class CalculateCassetteCeiling extends BaseCalculator {
     return createResult(
       values: {
         'area': area,
+        'guideLength': perimeter,
         'cassettesNeeded': cassettesNeeded.toDouble(),
         'mainProfileLength': mainProfileLength,
         'crossProfileLength': crossProfileLength,

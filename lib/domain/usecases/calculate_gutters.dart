@@ -20,7 +20,7 @@ class CalculateGutters extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final perimeter = inputs['perimeter'] ?? 0;
-    if (perimeter <= 0) return 'Периметр должен быть больше нуля';
+    if (perimeter < 0) return 'Периметр должен быть неотрицательным';
 
     return null;
   }
@@ -30,16 +30,17 @@ class CalculateGutters extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final perimeter = getInput(inputs, 'perimeter', minValue: 0.1);
+    final perimeter = getInput(inputs, 'perimeter', defaultValue: 0.0, minValue: 0.0);
     final pipeHeight = getInput(inputs, 'pipeHeight', defaultValue: 3.0, minValue: 2.0, maxValue: 10.0);
 
     // Желоб: периметр крыши + 3% на подрезку
-    final gutterLength = addMargin(perimeter, 3.0);
+    final gutterLength = perimeter;
 
     // Водосточные трубы: 1 труба на 10-12 м периметра
+    final defaultDownpipes = perimeter > 0 ? ceilToInt(perimeter / 10) : 0;
     final downpipesCount = getIntInput(inputs, 'downpipes', 
-        defaultValue: ceilToInt(perimeter / 11), 
-        minValue: 1, 
+        defaultValue: defaultDownpipes, 
+        minValue: 0, 
         maxValue: 20);
     final downpipeLength = downpipesCount * pipeHeight;
 
@@ -62,10 +63,10 @@ class CalculateGutters extends BaseCalculator {
     final teesNeeded = getIntInput(inputs, 'tees', defaultValue: 0, minValue: 0, maxValue: 10);
 
     // Крепления желоба: ~1 шт на 50-60 см
-    final gutterBrackets = ceilToInt(gutterLength / 0.55);
+    final gutterBrackets = gutterLength > 0 ? ceilToInt(gutterLength / 0.6) : 0;
 
     // Крепления трубы: ~1 шт на 1-1.5 м
-    final pipeBrackets = ceilToInt(downpipeLength / 1.2);
+    final pipeBrackets = ceilToInt(downpipeLength / 1.0);
 
     // Ревизии (для прочистки): 1 шт на трубу
     final revisionsNeeded = downpipesCount;
@@ -103,6 +104,7 @@ class CalculateGutters extends BaseCalculator {
         'gutterLength': gutterLength,
         'downpipesCount': downpipesCount.toDouble(),
         'downpipeLength': downpipeLength,
+        'pipeHeight': pipeHeight,
         if (corners > 0) 'corners': corners.toDouble(),
         'connectorsNeeded': connectorsNeeded.toDouble(),
         'endCaps': endCaps.toDouble(),

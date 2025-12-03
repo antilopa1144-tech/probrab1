@@ -34,29 +34,29 @@ class CalculateWetFacade extends BaseCalculator {
     final insulationType = getIntInput(inputs, 'insulationType', defaultValue: 2, minValue: 1, maxValue: 3);
 
     // Объём утеплителя
-    final insulationVolume = calculateVolume(area, insulationThickness / 1000);
+    final insulationVolume = calculateVolume(area, insulationThickness);
 
     // Площадь одного листа утеплителя
     final sheetArea = insulationType == 1 ? 0.72 : (insulationType == 2 ? 0.5 : 0.72);
     final sheetsNeeded = calculateUnitsNeeded(area, sheetArea, marginPercent: 5.0);
 
     // Клей для утеплителя: 5-6 кг/м²
-    final glueNeeded = area * 5.5;
+    final glueNeeded = area * 5;
 
     // Крепёж: дюбели-грибки, ~5-6 шт/м²
-    final fastenersNeeded = ceilToInt(area * 5.5);
+    final fastenersNeeded = ceilToInt(area * 5);
 
     // Армирующая сетка: площадь + 10% на нахлёсты
     final meshArea = addMargin(area, 10.0);
 
     // Базовый армирующий слой: ~3-4 кг/м²
-    final baseCoatNeeded = area * 3.5;
+    final baseCoatNeeded = area * 5.0;
 
     // Грунтовка: ~0.2 л/м²
     final primerNeeded = area * 0.2;
 
     // Декоративная штукатурка (короед/барашек): ~3 кг/м²
-    final finishPlasterNeeded = area * 3.0;
+    final finishPlasterNeeded = area * 0.5;
 
     // Краска фасадная (при необходимости): ~0.15 л/м² в 2 слоя
     final paintNeeded = area * 0.15 * 2;
@@ -102,14 +102,15 @@ class CalculateWetFacade extends BaseCalculator {
     return createResult(
       values: {
         'area': area,
+        'insulationThickness': insulationThickness,
         'insulationVolume': insulationVolume,
         'sheetsNeeded': sheetsNeeded.toDouble(),
         'glueNeeded': glueNeeded,
         'fastenersNeeded': fastenersNeeded.toDouble(),
         'meshArea': meshArea,
-        'baseCoatNeeded': baseCoatNeeded,
+        'plasterNeeded': baseCoatNeeded,
         'primerNeeded': primerNeeded,
-        'finishPlasterNeeded': finishPlasterNeeded,
+        'finishNeeded': finishPlasterNeeded,
         'paintNeeded': paintNeeded,
         if (cornerProfileLength > 0) 'cornerProfileLength': cornerProfileLength,
         if (startProfileLength > 0) 'startProfileLength': startProfileLength,

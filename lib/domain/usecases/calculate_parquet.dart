@@ -46,16 +46,16 @@ class CalculateParquet extends BaseCalculator {
 
     // Лак: расход ~0.1 л/м² на слой, обычно 3 слоя
     final varnishLayers = 3;
-    final varnishNeeded = area * 0.1 * varnishLayers * 1.05;
+    final varnishNeeded = area * 0.1 * varnishLayers;
 
     // Грунтовка для паркета: ~0.08 л/м²
-    final primerNeeded = area * 0.08 * 1.05;
+    final primerNeeded = area * 0.08;
 
     // Плинтус: периметр + 5%
-    final plinthLength = addMargin(perimeter, 5.0);
+    final plinthLength = perimeter;
 
     // Клей для паркета: ~1.2-1.5 кг/м²
-    final glueNeeded = area * 1.4;
+    final glueNeeded = area * 1.5;
 
     // Подложка (фанера): площадь пола (для массивной доски)
     final plywoodArea = area;

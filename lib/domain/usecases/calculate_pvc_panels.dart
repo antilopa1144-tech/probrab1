@@ -42,15 +42,15 @@ class CalculatePvcPanels extends BaseCalculator {
     final panelsNeeded = calculateUnitsNeeded(area, panelArea, marginPercent: 10.0);
 
     // Профили: стартовый, финишный, универсальный
-    final startProfileLength = addMargin(perimeter, 3.0);
-    final finishProfileLength = addMargin(perimeter, 3.0);
+    final startProfileLength = perimeter;
+    final finishProfileLength = perimeter;
     
     // Обрешётка (деревянная или металлическая): шаг 40-50 см
     final battensCount = ceilToInt((perimeter / 4) / 0.45);
     final battensLength = battensCount * (perimeter / 4);
 
     // Угловые профили (внутренние и наружные): по факту
-    final cornerLength = getInput(inputs, 'corners', defaultValue: perimeter * 0.2);
+    final cornerLength = getInput(inputs, 'corners', defaultValue: perimeter);
 
     // F-профиль (для стыка с откосами): по факту
     final fProfileLength = getInput(inputs, 'fProfile', defaultValue: 0.0);
@@ -91,6 +91,7 @@ class CalculatePvcPanels extends BaseCalculator {
         if (fProfileLength > 0) 'fProfileLength': fProfileLength,
         'moldingLength': moldingLength,
         'fastenersNeeded': fastenersNeeded.toDouble(),
+        'screwsNeeded': fastenersNeeded.toDouble(),
       },
       totalPrice: sumCosts(costs),
     );

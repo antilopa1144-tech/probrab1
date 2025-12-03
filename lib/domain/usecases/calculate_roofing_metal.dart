@@ -35,7 +35,7 @@ class CalculateRoofingMetal extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final slope = getInput(inputs, 'slope', defaultValue: 30.0, minValue: 12.0, maxValue: 60.0);
+    final slope = getInput(inputs, 'slope', defaultValue: 30.0, minValue: 0.0, maxValue: 60.0);
     final sheetWidth = getInput(inputs, 'sheetWidth', defaultValue: 1.18, minValue: 0.5, maxValue: 1.5);
     final sheetLength = getInput(inputs, 'sheetLength', defaultValue: 2.5, minValue: 0.5, maxValue: 8.0);
 
@@ -67,7 +67,7 @@ class CalculateRoofingMetal extends BaseCalculator {
     final snowGuardsNeeded = ceilToInt(perimeter / 3.5);
 
     // Саморезы кровельные: ~8-10 шт на м²
-    final screwsNeeded = ceilToInt(realArea * 9);
+    final screwsNeeded = realArea * 8;
 
     // Гидроизоляция (супердиффузионная мембрана): площадь кровли + 10% нахлёст
     final waterproofingArea = addMargin(realArea, 10.0);

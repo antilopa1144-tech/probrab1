@@ -96,6 +96,8 @@ class CalculateTileGlue extends BaseCalculator {
     return createResult(
       values: {
         'area': area,
+        'tileSize': tileSize,
+        'layerThickness': layerThickness,
         'glueNeeded': glueNeeded,
         'consumptionPerM2': consumptionPerM2,
         'primerNeeded': primerNeeded,

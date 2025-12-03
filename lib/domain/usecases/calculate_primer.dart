@@ -38,11 +38,11 @@ class CalculatePrimer extends BaseCalculator {
     // - Адгезионная (бетоноконтакт): 0.25-0.35 л/м²
     final consumptionPerLayer = type == 1 ? 0.1 : (type == 2 ? 0.15 : 0.3);
 
-    // Общий расход с учётом слоёв и запаса 5%
-    final primerNeeded = area * consumptionPerLayer * layers * 1.05;
+    // Общий расход с учётом слоёв и запаса 10%
+    final primerNeeded = area * consumptionPerLayer * layers * 1.1;
 
     // Валики: 1-2 шт в зависимости от площади
-    final rollersNeeded = ceilToInt(area / 50); // 1 валик на 50 м²
+    final rollersNeeded = ceilToInt(area / 30); // 1 валик на ~30-50 м²
 
     // Кисти для углов: 1-2 шт
     final brushesNeeded = 2;

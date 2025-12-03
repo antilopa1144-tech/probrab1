@@ -1,0 +1,1585 @@
+00:00 +0: loading c:/probrab1/test/domain/usecases/calculate_3d_panels_test.dart
+00:00 +0: c:/probrab1/test/domain/usecases/calculate_3d_panels_test.dart: Calculate3dPanels calculates panels needed correctly
+00:00 +1: c:/probrab1/test/domain/usecases/calculate_3d_panels_test.dart: Calculate3dPanels calculates glue needed
+00:00 +2: c:/probrab1/test/domain/usecases/calculate_3d_panels_test.dart: Calculate3dPanels calculates primer needed
+00:00 +3: c:/probrab1/test/domain/usecases/calculate_3d_panels_test.dart: Calculate3dPanels uses default panel size when missing
+00:00 +4: c:/probrab1/test/domain/usecases/calculate_3d_panels_test.dart: Calculate3dPanels handles different panel sizes
+00:00 +5: c:/probrab1/test/domain/usecases/calculate_3d_panels_test.dart: Calculate3dPanels throws exception for zero area
+00:00 +6: c:/probrab1/test/domain/usecases/calculate_bathroom_tile_test.dart: CalculateBathroomTile calculates total tiles for walls and floor
+00:00 +7: c:/probrab1/test/domain/usecases/calculate_bathroom_tile_test.dart: CalculateBathroomTile calculates grout needed correctly
+00:00 +8: c:/probrab1/test/domain/usecases/calculate_bathroom_tile_test.dart: CalculateBathroomTile calculates glue needed correctly
+00:00 +9: c:/probrab1/test/domain/usecases/calculate_bathroom_tile_test.dart: CalculateBathroomTile calculates crosses needed correctly
+00:00 +10: c:/probrab1/test/domain/usecases/calculate_bathroom_tile_test.dart: CalculateBathroomTile calculates waterproofing area correctly
+00:00 +11: c:/probrab1/test/domain/usecases/calculate_bathroom_tile_test.dart: CalculateBathroomTile handles only wall area
+00:00 +12: c:/probrab1/test/domain/usecases/calculate_bathroom_tile_test.dart: CalculateBathroomTile handles only floor area
+00:00 +13: c:/probrab1/test/domain/usecases/calculate_bathroom_tile_test.dart: CalculateBathroomTile handles different tile sizes
+00:00 +14: c:/probrab1/test/domain/usecases/calculate_bathroom_tile_test.dart: CalculateBathroomTile uses default values when not provided
+00:00 +15: c:/probrab1/test/domain/usecases/calculate_bathroom_tile_test.dart: CalculateBathroomTile handles zero areas
+00:00 +16: c:/probrab1/test/domain/usecases/calculate_bathroom_tile_test.dart: CalculateBathroomTile preserves areas in results
+00:00 +17: c:/probrab1/test/domain/usecases/calculate_brick_facing_test.dart: CalculateBrickFacing calculates bricks needed for half-brick
+00:00 +18: c:/probrab1/test/domain/usecases/calculate_brick_facing_test.dart: CalculateBrickFacing subtracts windows and doors area
+00:00 +19: c:/probrab1/test/domain/usecases/calculate_brick_facing_test.dart: CalculateBrickFacing calculates mortar volume
+00:00 +20: c:/probrab1/test/domain/usecases/calculate_brick_facing_test.dart: CalculateBrickFacing calculates reinforcement length
+00:00 +21: c:/probrab1/test/domain/usecases/calculate_brick_facing_test.dart: CalculateBrickFacing uses default values when missing
+00:00 +22: c:/probrab1/test/domain/usecases/calculate_brick_facing_test.dart: CalculateBrickFacing throws exception for zero area
+00:00 +23: c:/probrab1/test/domain/usecases/calculate_brick_partition_test.dart: CalculateBrickPartition calculates bricks needed for half-brick wall
+00:00 +24: c:/probrab1/test/domain/usecases/calculate_brick_partition_test.dart: CalculateBrickPartition calculates bricks needed for full brick wall
+00:00 +25: c:/probrab1/test/domain/usecases/calculate_brick_partition_test.dart: CalculateBrickPartition calculates mortar volume
+00:00 +25 -1: c:/probrab1/test/domain/usecases/calculate_brick_partition_test.dart: CalculateBrickPartition calculates mortar volume [E]
+  Expected: a numeric value within <0.01> of <0.11>
+    Actual: <0.23>
+     Which:  differs by <0.12000000000000001>
+  
+  package:matcher                                                expect
+  package:flutter_test/src/widget_tester.dart 473:18             expect
+  test\domain\usecases\calculate_brick_partition_test.dart 52:7  main.<fn>.<fn>
+  
+00:00 +25 -1: c:/probrab1/test/domain/usecases/calculate_brick_partition_test.dart: CalculateBrickPartition calculates cement and sand needed
+00:00 +26 -1: c:/probrab1/test/domain/usecases/calculate_brick_partition_test.dart: CalculateBrickPartition uses default thickness when missing
+00:00 +27 -1: c:/probrab1/test/domain/usecases/calculate_brick_partition_test.dart: CalculateBrickPartition throws exception for zero area
+00:00 +28 -1: c:/probrab1/test/domain/usecases/calculate_carpet_test.dart: CalculateCarpet calculates rolls needed correctly
+00:00 +29 -1: c:/probrab1/test/domain/usecases/calculate_carpet_test.dart: CalculateCarpet calculates tape length
+00:00 +29 -2: c:/probrab1/test/domain/usecases/calculate_carpet_test.dart: CalculateCarpet calculates tape length [E]
+  Expected: <24.0>
+    Actual: <null>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_carpet_test.dart 36:7  main.<fn>.<fn>
+  
+00:00 +29 -2: c:/probrab1/test/domain/usecases/calculate_carpet_test.dart: CalculateCarpet calculates underlay area
+00:00 +29 -3: c:/probrab1/test/domain/usecases/calculate_carpet_test.dart: CalculateCarpet calculates underlay area [E]
+  Expected: <25.0>
+    Actual: <26.25>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_carpet_test.dart 49:7  main.<fn>.<fn>
+  
+00:00 +29 -3: c:/probrab1/test/domain/usecases/calculate_carpet_test.dart: CalculateCarpet estimates perimeter when missing
+00:00 +29 -4: c:/probrab1/test/domain/usecases/calculate_carpet_test.dart: CalculateCarpet estimates perimeter when missing [E]
+  Expected: a value greater than <0>
+    Actual: <null>
+     Which: is not a value greater than <0>
+  NoSuchMethodError: The method '<' was called on null.
+  Receiver: null
+  Tried calling: <(0) at #0      Object.noSuchMethod (dart:core-patch/object_patch.dart:38:5)
+  #1      _OrderingMatcher.matches (package:matcher/src/order_matchers.dart:81:34)
+  #2      _expect (package:matcher/src/expect/expect.dart:138:30)
+  #3      expect (package:matcher/src/expect/expect.dart:56:3)
+  #4      expect (package:flutter_test/src/widget_tester.dart:473:18)
+  #5      main.<anonymous closure>.<anonymous closure> (file:///c:/probrab1/test/domain/usecases/calculate_carpet_test.dart:63:7)
+  #6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:242:19)
+  <asynchronous suspension>
+  #7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:240:7)
+  <asynchronous suspension>
+  #8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:282:9)
+  <asynchronous suspension>
+  
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_carpet_test.dart 63:7  main.<fn>.<fn>
+  
+00:00 +29 -4: c:/probrab1/test/domain/usecases/calculate_carpet_test.dart: CalculateCarpet uses provided perimeter
+00:00 +29 -5: c:/probrab1/test/domain/usecases/calculate_carpet_test.dart: CalculateCarpet uses provided perimeter [E]
+  Expected: <20.0>
+    Actual: <21.0>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_carpet_test.dart 76:7  main.<fn>.<fn>
+  
+00:00 +29 -5: c:/probrab1/test/domain/usecases/calculate_carpet_test.dart: CalculateCarpet uses default roll dimensions when missing
+00:00 +30 -5: c:/probrab1/test/domain/usecases/calculate_carpet_test.dart: CalculateCarpet throws exception for zero area
+00:00 +31 -5: c:/probrab1/test/domain/usecases/calculate_cassette_ceiling_test.dart: CalculateCassetteCeiling calculates cassettes needed correctly
+00:00 +32 -5: c:/probrab1/test/domain/usecases/calculate_cassette_ceiling_test.dart: CalculateCassetteCeiling calculates guide length
+00:00 +32 -6: c:/probrab1/test/domain/usecases/calculate_cassette_ceiling_test.dart: CalculateCassetteCeiling calculates guide length [E]
+  Expected: <18.0>
+    Actual: <null>
+  
+  package:matcher                                                 expect
+  package:flutter_test/src/widget_tester.dart 473:18              expect
+  test\domain\usecases\calculate_cassette_ceiling_test.dart 36:7  main.<fn>.<fn>
+  
+00:00 +32 -6: c:/probrab1/test/domain/usecases/calculate_cassette_ceiling_test.dart: CalculateCassetteCeiling calculates hangers needed
+00:00 +32 -7: c:/probrab1/test/domain/usecases/calculate_cassette_ceiling_test.dart: CalculateCassetteCeiling calculates hangers needed [E]
+  Expected: a value less than <20>
+    Actual: <30.0>
+     Which: is not a value less than <20>
+  
+  package:matcher                                                 expect
+  package:flutter_test/src/widget_tester.dart 473:18              expect
+  test\domain\usecases\calculate_cassette_ceiling_test.dart 50:7  main.<fn>.<fn>
+  
+00:00 +32 -7: c:/probrab1/test/domain/usecases/calculate_cassette_ceiling_test.dart: CalculateCassetteCeiling estimates perimeter when missing
+00:00 +32 -8: c:/probrab1/test/domain/usecases/calculate_cassette_ceiling_test.dart: CalculateCassetteCeiling estimates perimeter when missing [E]
+  Expected: a value greater than <0>
+    Actual: <null>
+     Which: is not a value greater than <0>
+  NoSuchMethodError: The method '<' was called on null.
+  Receiver: null
+  Tried calling: <(0) at #0      Object.noSuchMethod (dart:core-patch/object_patch.dart:38:5)
+  #1      _OrderingMatcher.matches (package:matcher/src/order_matchers.dart:81:34)
+  #2      _expect (package:matcher/src/expect/expect.dart:138:30)
+  #3      expect (package:matcher/src/expect/expect.dart:56:3)
+  #4      expect (package:flutter_test/src/widget_tester.dart:473:18)
+  #5      main.<anonymous closure>.<anonymous closure> (file:///c:/probrab1/test/domain/usecases/calculate_cassette_ceiling_test.dart:63:7)
+  #6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:242:19)
+  <asynchronous suspension>
+  #7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:240:7)
+  <asynchronous suspension>
+  #8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:282:9)
+  <asynchronous suspension>
+  
+  
+  package:matcher                                                 expect
+  package:flutter_test/src/widget_tester.dart 473:18              expect
+  test\domain\usecases\calculate_cassette_ceiling_test.dart 63:7  main.<fn>.<fn>
+  
+00:00 +32 -8: c:/probrab1/test/domain/usecases/calculate_cassette_ceiling_test.dart: CalculateCassetteCeiling uses default cassette size when missing
+00:00 +33 -8: c:/probrab1/test/domain/usecases/calculate_cassette_ceiling_test.dart: CalculateCassetteCeiling throws exception for zero area
+00:00 +34 -8: c:/probrab1/test/domain/usecases/calculate_ceiling_insulation_test.dart: CalculateCeilingInsulation calculates sheets needed for mineral wool
+00:00 +35 -8: c:/probrab1/test/domain/usecases/calculate_ceiling_insulation_test.dart: CalculateCeilingInsulation calculates sheets needed for foam
+00:00 +36 -8: c:/probrab1/test/domain/usecases/calculate_ceiling_insulation_test.dart: CalculateCeilingInsulation calculates volume
+00:00 +36 -9: c:/probrab1/test/domain/usecases/calculate_ceiling_insulation_test.dart: CalculateCeilingInsulation calculates volume [E]
+  Expected: <2.0>
+    Actual: <0.0>
+  
+  package:matcher                                                   expect
+  package:flutter_test/src/widget_tester.dart 473:18                expect
+  test\domain\usecases\calculate_ceiling_insulation_test.dart 52:7  main.<fn>.<fn>
+  
+00:00 +36 -9: c:/probrab1/test/domain/usecases/calculate_ceiling_insulation_test.dart: CalculateCeilingInsulation calculates vapor barrier area
+00:00 +37 -9: c:/probrab1/test/domain/usecases/calculate_ceiling_insulation_test.dart: CalculateCeilingInsulation calculates fasteners needed
+00:00 +37 -10: c:/probrab1/test/domain/usecases/calculate_ceiling_insulation_test.dart: CalculateCeilingInsulation calculates fasteners needed [E]
+  Expected: <80.0>
+    Actual: <100.0>
+  
+  package:matcher                                                   expect
+  package:flutter_test/src/widget_tester.dart 473:18                expect
+  test\domain\usecases\calculate_ceiling_insulation_test.dart 78:7  main.<fn>.<fn>
+  
+00:00 +37 -10: c:/probrab1/test/domain/usecases/calculate_ceiling_insulation_test.dart: CalculateCeilingInsulation uses default values when missing
+00:00 +37 -11: c:/probrab1/test/domain/usecases/calculate_ceiling_insulation_test.dart: CalculateCeilingInsulation uses default values when missing [E]
+  Expected: <100.0>
+    Actual: <null>
+  
+  package:matcher                                                   expect
+  package:flutter_test/src/widget_tester.dart 473:18                expect
+  test\domain\usecases\calculate_ceiling_insulation_test.dart 91:7  main.<fn>.<fn>
+  
+00:00 +37 -11: c:/probrab1/test/domain/usecases/calculate_ceiling_insulation_test.dart: CalculateCeilingInsulation throws exception for zero area
+00:01 +38 -11: c:/probrab1/test/domain/usecases/calculate_ceiling_paint_test.dart: CalculateCeilingPaint calculates paint needed correctly
+00:01 +38 -12: c:/probrab1/test/domain/usecases/calculate_ceiling_paint_test.dart: CalculateCeilingPaint calculates paint needed correctly [E]
+  Expected: <7.92>
+    Actual: <8.13>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_ceiling_paint_test.dart 20:7  main.<fn>.<fn>
+  
+00:01 +38 -12: c:/probrab1/test/domain/usecases/calculate_ceiling_paint_test.dart: CalculateCeilingPaint calculates primer needed
+00:01 +38 -13: c:/probrab1/test/domain/usecases/calculate_ceiling_paint_test.dart: CalculateCeilingPaint calculates primer needed [E]
+  Expected: <3.3>
+    Actual: <3.15>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_ceiling_paint_test.dart 35:7  main.<fn>.<fn>
+  
+00:01 +38 -13: c:/probrab1/test/domain/usecases/calculate_ceiling_paint_test.dart: CalculateCeilingPaint uses default consumption when missing
+00:01 +38 -14: c:/probrab1/test/domain/usecases/calculate_ceiling_paint_test.dart: CalculateCeilingPaint uses default consumption when missing [E]
+  Expected: <7.92>
+    Actual: <8.13>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_ceiling_paint_test.dart 50:7  main.<fn>.<fn>
+  
+00:01 +38 -14: c:/probrab1/test/domain/usecases/calculate_ceiling_paint_test.dart: CalculateCeilingPaint uses default layers when missing
+00:01 +39 -14: c:/probrab1/test/domain/usecases/calculate_ceiling_paint_test.dart: CalculateCeilingPaint handles different consumption rates
+00:01 +39 -15: c:/probrab1/test/domain/usecases/calculate_ceiling_paint_test.dart: CalculateCeilingPaint handles different consumption rates [E]
+  Expected: <9.9>
+    Actual: <10.16>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_ceiling_paint_test.dart 79:7  main.<fn>.<fn>
+  
+00:01 +39 -15: c:/probrab1/test/domain/usecases/calculate_ceiling_paint_test.dart: CalculateCeilingPaint throws exception for zero area
+00:01 +40 -15: c:/probrab1/test/domain/usecases/calculate_ceiling_tiles_test.dart: CalculateCeilingTiles calculates tiles needed correctly
+00:01 +41 -15: c:/probrab1/test/domain/usecases/calculate_ceiling_tiles_test.dart: CalculateCeilingTiles calculates glue needed
+00:01 +41 -16: c:/probrab1/test/domain/usecases/calculate_ceiling_tiles_test.dart: CalculateCeilingTiles calculates glue needed [E]
+  Expected: <10.0>
+    Actual: <9.0>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_ceiling_tiles_test.dart 34:7  main.<fn>.<fn>
+  
+00:01 +41 -16: c:/probrab1/test/domain/usecases/calculate_ceiling_tiles_test.dart: CalculateCeilingTiles calculates primer needed
+00:01 +42 -16: c:/probrab1/test/domain/usecases/calculate_ceiling_tiles_test.dart: CalculateCeilingTiles uses default tile size when missing
+00:01 +43 -16: c:/probrab1/test/domain/usecases/calculate_ceiling_tiles_test.dart: CalculateCeilingTiles handles different tile sizes
+00:01 +44 -16: c:/probrab1/test/domain/usecases/calculate_ceiling_tiles_test.dart: CalculateCeilingTiles throws exception for zero area
+00:01 +45 -16: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster calculates plaster needed correctly
+00:01 +45 -17: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster calculates plaster needed correctly [E]
+  Expected: <165.0>
+    Actual: <172.8>
+  
+  package:matcher                                                   expect
+  package:flutter_test/src/widget_tester.dart 473:18                expect
+  test\domain\usecases\calculate_decorative_plaster_test.dart 19:7  main.<fn>.<fn>
+  
+00:01 +45 -17: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster subtracts windows and doors area
+00:01 +45 -18: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster subtracts windows and doors area [E]
+  Expected: a numeric value within <0.1> of <141.9>
+    Actual: <148.61>
+     Which:  differs by <6.710000000000008>
+  
+  package:matcher                                                   expect
+  package:flutter_test/src/widget_tester.dart 473:18                expect
+  test\domain\usecases\calculate_decorative_plaster_test.dart 38:7  main.<fn>.<fn>
+  
+00:01 +45 -18: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster calculates primer needed
+00:01 +45 -19: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster calculates primer needed [E]
+  Expected: <8.25>
+    Actual: <15.0>
+  
+  package:matcher                                                   expect
+  package:flutter_test/src/widget_tester.dart 473:18                expect
+  test\domain\usecases\calculate_decorative_plaster_test.dart 52:7  main.<fn>.<fn>
+  
+00:01 +45 -19: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster uses default thickness when missing
+00:01 +45 -20: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster uses default thickness when missing [E]
+  Expected: <165.0>
+    Actual: <172.8>
+  
+  package:matcher                                                   expect
+  package:flutter_test/src/widget_tester.dart 473:18                expect
+  test\domain\usecases\calculate_decorative_plaster_test.dart 67:7  main.<fn>.<fn>
+  
+00:01 +45 -20: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster handles different thickness values
+00:01 +45 -21: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster handles different thickness values [E]
+  Expected: <247.5>
+    Actual: <259.2>
+  
+  package:matcher                                                   expect
+  package:flutter_test/src/widget_tester.dart 473:18                expect
+  test\domain\usecases\calculate_decorative_plaster_test.dart 81:7  main.<fn>.<fn>
+  
+00:01 +45 -21: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster throws exception for zero area
+00:01 +46 -21: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster handles negative useful area
+00:01 +46 -22: c:/probrab1/test/domain/usecases/calculate_decorative_plaster_test.dart: CalculateDecorativePlaster handles negative useful area [E]
+  Expected: <0.0>
+    Actual: <-5.0>
+  
+  package:matcher                                                    expect
+  package:flutter_test/src/widget_tester.dart 473:18                 expect
+  test\domain\usecases\calculate_decorative_plaster_test.dart 108:7  main.<fn>.<fn>
+  
+00:01 +46 -22: c:/probrab1/test/domain/usecases/calculate_decorative_stone_test.dart: CalculateDecorativeStone calculates stones needed correctly
+00:01 +47 -22: c:/probrab1/test/domain/usecases/calculate_decorative_stone_test.dart: CalculateDecorativeStone calculates glue needed
+00:01 +48 -22: c:/probrab1/test/domain/usecases/calculate_decorative_stone_test.dart: CalculateDecorativeStone calculates grout needed
+00:01 +49 -22: c:/probrab1/test/domain/usecases/calculate_decorative_stone_test.dart: CalculateDecorativeStone calculates primer needed
+00:01 +50 -22: c:/probrab1/test/domain/usecases/calculate_decorative_stone_test.dart: CalculateDecorativeStone uses default stone dimensions when missing
+00:01 +51 -22: c:/probrab1/test/domain/usecases/calculate_decorative_stone_test.dart: CalculateDecorativeStone throws exception for zero area
+00:01 +52 -22: c:/probrab1/test/domain/usecases/calculate_door_installation_test.dart: CalculateDoorInstallation calculates foam needed correctly
+00:01 +53 -22: c:/probrab1/test/domain/usecases/calculate_door_installation_test.dart: CalculateDoorInstallation calculates architrave length
+00:01 +53 -23: c:/probrab1/test/domain/usecases/calculate_door_installation_test.dart: CalculateDoorInstallation calculates architrave length [E]
+  Expected: <12.0>
+    Actual: <24.0>
+  
+  package:matcher                                                  expect
+  package:flutter_test/src/widget_tester.dart 473:18               expect
+  test\domain\usecases\calculate_door_installation_test.dart 34:7  main.<fn>.<fn>
+  
+00:01 +53 -23: c:/probrab1/test/domain/usecases/calculate_door_installation_test.dart: CalculateDoorInstallation calculates frames needed
+00:01 +54 -23: c:/probrab1/test/domain/usecases/calculate_door_installation_test.dart: CalculateDoorInstallation calculates hinges needed
+00:01 +55 -23: c:/probrab1/test/domain/usecases/calculate_door_installation_test.dart: CalculateDoorInstallation calculates locks needed
+00:01 +56 -23: c:/probrab1/test/domain/usecases/calculate_door_installation_test.dart: CalculateDoorInstallation uses default values when missing
+00:01 +57 -23: c:/probrab1/test/domain/usecases/calculate_door_installation_test.dart: CalculateDoorInstallation handles zero doors
+00:01 +57 -24: c:/probrab1/test/domain/usecases/calculate_door_installation_test.dart: CalculateDoorInstallation handles zero doors [E]
+  CalculationException: [INVALID_INPUT] Некорректные входные данные для калькулятора "CalculateDoorInstallation": Количество дверей должно быть больше нуля Details: Количество дверей должно быть больше нуля
+  package:probrab_ai/domain/usecases/base_calculator.dart 342:9     BaseCalculator.call
+  test\domain\usecases\calculate_door_installation_test.dart 95:32  main.<fn>.<fn>
+  
+00:01 +57 -24: c:/probrab1/test/domain/usecases/calculate_electrics_test.dart: CalculateElectrics calculates sockets automatically
+00:01 +58 -24: c:/probrab1/test/domain/usecases/calculate_electrics_test.dart: CalculateElectrics calculates switches automatically
+00:01 +59 -24: c:/probrab1/test/domain/usecases/calculate_electrics_test.dart: CalculateElectrics uses provided sockets and switches
+00:01 +60 -24: c:/probrab1/test/domain/usecases/calculate_electrics_test.dart: CalculateElectrics calculates wire length
+00:01 +61 -24: c:/probrab1/test/domain/usecases/calculate_electrics_test.dart: CalculateElectrics calculates cable channel length
+00:01 +62 -24: c:/probrab1/test/domain/usecases/calculate_electrics_test.dart: CalculateElectrics calculates circuit breakers
+00:01 +62 -25: c:/probrab1/test/domain/usecases/calculate_electrics_test.dart: CalculateElectrics calculates circuit breakers [E]
+  Expected: <4.0>
+    Actual: <null>
+  
+  package:matcher                                          expect
+  package:flutter_test/src/widget_tester.dart 473:18       expect
+  test\domain\usecases\calculate_electrics_test.dart 92:7  main.<fn>.<fn>
+  
+00:01 +62 -25: c:/probrab1/test/domain/usecases/calculate_electrics_test.dart: CalculateElectrics calculates junction boxes
+00:01 +62 -26: c:/probrab1/test/domain/usecases/calculate_electrics_test.dart: CalculateElectrics calculates junction boxes [E]
+  Expected: <3.0>
+    Actual: <null>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 473:18        expect
+  test\domain\usecases\calculate_electrics_test.dart 106:7  main.<fn>.<fn>
+  
+00:01 +62 -26: c:/probrab1/test/domain/usecases/calculate_electrics_test.dart: CalculateElectrics uses default values when missing
+00:01 +63 -26: c:/probrab1/test/domain/usecases/calculate_electrics_test.dart: CalculateElectrics throws exception for zero area
+00:01 +64 -26: c:/probrab1/test/domain/usecases/calculate_facade_panels_test.dart: CalculateFacadePanels calculates panels needed correctly
+00:01 +64 -27: c:/probrab1/test/domain/usecases/calculate_facade_panels_test.dart: CalculateFacadePanels calculates panels needed correctly [E]
+  Expected: <220.0>
+    Actual: <221.0>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_facade_panels_test.dart 21:7  main.<fn>.<fn>
+  
+00:01 +64 -27: c:/probrab1/test/domain/usecases/calculate_facade_panels_test.dart: CalculateFacadePanels calculates fasteners needed
+00:01 +64 -28: c:/probrab1/test/domain/usecases/calculate_facade_panels_test.dart: CalculateFacadePanels calculates fasteners needed [E]
+  Expected: <884.0>
+    Actual: <1105.0>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_facade_panels_test.dart 38:7  main.<fn>.<fn>
+  
+00:01 +64 -28: c:/probrab1/test/domain/usecases/calculate_facade_panels_test.dart: CalculateFacadePanels calculates corners and start strip length
+00:01 +64 -29: c:/probrab1/test/domain/usecases/calculate_facade_panels_test.dart: CalculateFacadePanels calculates corners and start strip length [E]
+  Expected: <40.0>
+    Actual: <10.5>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_facade_panels_test.dart 52:7  main.<fn>.<fn>
+  
+00:01 +64 -29: c:/probrab1/test/domain/usecases/calculate_facade_panels_test.dart: CalculateFacadePanels estimates perimeter when missing
+00:01 +65 -29: c:/probrab1/test/domain/usecases/calculate_facade_panels_test.dart: CalculateFacadePanels uses default panel dimensions when missing
+00:01 +66 -29: c:/probrab1/test/domain/usecases/calculate_facade_panels_test.dart: CalculateFacadePanels throws exception for zero area
+00:01 +67 -29: c:/probrab1/test/domain/usecases/calculate_gasblock_partition_test.dart: CalculateGasblockPartition calculates blocks needed correctly
+00:02 +67 -30: c:/probrab1/test/domain/usecases/calculate_gasblock_partition_test.dart: CalculateGasblockPartition calculates blocks needed correctly [E]
+  Expected: <84.0>
+    Actual: <85.0>
+  
+  package:matcher                                                   expect
+  package:flutter_test/src/widget_tester.dart 473:18                expect
+  test\domain\usecases\calculate_gasblock_partition_test.dart 22:7  main.<fn>.<fn>
+  
+00:02 +67 -30: c:/probrab1/test/domain/usecases/calculate_gasblock_partition_test.dart: CalculateGasblockPartition calculates glue needed
+00:02 +67 -31: c:/probrab1/test/domain/usecases/calculate_gasblock_partition_test.dart: CalculateGasblockPartition calculates glue needed [E]
+  Expected: <66.0>
+    Actual: <0.07>
+  
+  package:matcher                                                   expect
+  package:flutter_test/src/widget_tester.dart 473:18                expect
+  test\domain\usecases\calculate_gasblock_partition_test.dart 38:7  main.<fn>.<fn>
+  
+00:02 +67 -31: c:/probrab1/test/domain/usecases/calculate_gasblock_partition_test.dart: CalculateGasblockPartition calculates reinforcement length
+00:02 +68 -31: c:/probrab1/test/domain/usecases/calculate_gasblock_partition_test.dart: CalculateGasblockPartition uses default block dimensions when missing
+00:02 +69 -31: c:/probrab1/test/domain/usecases/calculate_gasblock_partition_test.dart: CalculateGasblockPartition estimates perimeter when missing
+00:02 +70 -31: c:/probrab1/test/domain/usecases/calculate_gasblock_partition_test.dart: CalculateGasblockPartition throws exception for zero area
+00:02 +71 -31: c:/probrab1/test/domain/usecases/calculate_gkl_ceiling_test.dart: CalculateGklCeiling calculates sheets needed correctly
+00:02 +72 -31: c:/probrab1/test/domain/usecases/calculate_gkl_ceiling_test.dart: CalculateGklCeiling calculates with multiple layers
+00:02 +72 -32: c:/probrab1/test/domain/usecases/calculate_gkl_ceiling_test.dart: CalculateGklCeiling calculates with multiple layers [E]
+  Expected: <2.0>
+    Actual: <null>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_gkl_ceiling_test.dart 36:7  main.<fn>.<fn>
+  
+00:02 +72 -32: c:/probrab1/test/domain/usecases/calculate_gkl_ceiling_test.dart: CalculateGklCeiling calculates screws needed
+00:02 +72 -33: c:/probrab1/test/domain/usecases/calculate_gkl_ceiling_test.dart: CalculateGklCeiling calculates screws needed [E]
+  Expected: <180.0>
+    Actual: <498.0>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_gkl_ceiling_test.dart 51:7  main.<fn>.<fn>
+  
+00:02 +72 -33: c:/probrab1/test/domain/usecases/calculate_gkl_ceiling_test.dart: CalculateGklCeiling calculates putty needed
+00:02 +72 -34: c:/probrab1/test/domain/usecases/calculate_gkl_ceiling_test.dart: CalculateGklCeiling calculates putty needed [E]
+  Expected: <22.5>
+    Actual: <18.0>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_gkl_ceiling_test.dart 65:7  main.<fn>.<fn>
+  
+00:02 +72 -34: c:/probrab1/test/domain/usecases/calculate_gkl_ceiling_test.dart: CalculateGklCeiling estimates perimeter when missing
+00:02 +73 -34: c:/probrab1/test/domain/usecases/calculate_gkl_ceiling_test.dart: CalculateGklCeiling calculates hangers needed
+00:02 +74 -34: c:/probrab1/test/domain/usecases/calculate_gkl_ceiling_test.dart: CalculateGklCeiling uses default values when missing
+00:02 +74 -35: c:/probrab1/test/domain/usecases/calculate_gkl_ceiling_test.dart: CalculateGklCeiling uses default values when missing [E]
+  Expected: <1.0>
+    Actual: <null>
+  
+  package:matcher                                             expect
+  package:flutter_test/src/widget_tester.dart 473:18          expect
+  test\domain\usecases\calculate_gkl_ceiling_test.dart 106:7  main.<fn>.<fn>
+  
+00:02 +74 -35: c:/probrab1/test/domain/usecases/calculate_gkl_ceiling_test.dart: CalculateGklCeiling throws exception for zero area
+00:02 +75 -35: c:/probrab1/test/domain/usecases/calculate_gkl_partition_test.dart: CalculateGklPartition calculates sheets needed correctly with 10% reserve
+00:02 +76 -35: c:/probrab1/test/domain/usecases/calculate_gkl_partition_test.dart: CalculateGklPartition calculates screws needed correctly
+00:02 +76 -36: c:/probrab1/test/domain/usecases/calculate_gkl_partition_test.dart: CalculateGklPartition calculates screws needed correctly [E]
+  Expected: <270.0>
+    Actual: <735.0>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_gkl_partition_test.dart 38:7  main.<fn>.<fn>
+  
+00:02 +76 -36: c:/probrab1/test/domain/usecases/calculate_gkl_partition_test.dart: CalculateGklPartition calculates putty needed correctly
+00:02 +77 -36: c:/probrab1/test/domain/usecases/calculate_gkl_partition_test.dart: CalculateGklPartition calculates guide length correctly with perimeter
+00:02 +78 -36: c:/probrab1/test/domain/usecases/calculate_gkl_partition_test.dart: CalculateGklPartition calculates studs length correctly
+00:02 +79 -36: c:/probrab1/test/domain/usecases/calculate_gkl_partition_test.dart: CalculateGklPartition handles single layer correctly
+00:02 +80 -36: c:/probrab1/test/domain/usecases/calculate_gkl_partition_test.dart: CalculateGklPartition uses default values when not provided
+00:02 +81 -36: c:/probrab1/test/domain/usecases/calculate_gkl_partition_test.dart: CalculateGklPartition throws exception for zero area
+00:02 +82 -36: c:/probrab1/test/domain/usecases/calculate_gkl_partition_test.dart: CalculateGklPartition handles large partition
+00:02 +83 -36: c:/probrab1/test/domain/usecases/calculate_gkl_partition_test.dart: CalculateGklPartition calculates total price with price list
+00:02 +84 -36: c:/probrab1/test/domain/usecases/calculate_gkl_partition_test.dart: CalculateGklPartition preserves area in results
+00:02 +85 -36: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters calculates gutter length correctly
+00:02 +85 -37: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters calculates gutter length correctly [E]
+  Expected: <40.0>
+    Actual: <41.2>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18     expect
+  test\domain\usecases\calculate_gutters_test.dart 17:7  main.<fn>.<fn>
+  
+00:02 +85 -37: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters calculates downpipes automatically
+00:02 +86 -37: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters uses provided downpipes count
+00:02 +87 -37: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters calculates corners
+00:02 +88 -37: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters calculates funnels
+00:02 +89 -37: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters calculates elbows
+00:02 +90 -37: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters calculates brackets
+00:02 +90 -38: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters calculates brackets [E]
+  Expected: <12.0>
+    Actual: <10.0>
+  
+  package:matcher                                         expect
+  package:flutter_test/src/widget_tester.dart 473:18      expect
+  test\domain\usecases\calculate_gutters_test.dart 103:7  main.<fn>.<fn>
+  
+00:02 +90 -38: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters uses default values when missing
+00:02 +90 -39: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters uses default values when missing [E]
+  Expected: <3.0>
+    Actual: <null>
+  
+  package:matcher                                         expect
+  package:flutter_test/src/widget_tester.dart 473:18      expect
+  test\domain\usecases\calculate_gutters_test.dart 116:7  main.<fn>.<fn>
+  
+00:02 +90 -39: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters handles zero perimeter
+00:02 +90 -40: c:/probrab1/test/domain/usecases/calculate_gutters_test.dart: CalculateGutters handles zero perimeter [E]
+  CalculationException: [INVALID_INPUT] Некорректные входные данные для калькулятора "CalculateGutters": Периметр должен быть больше нуля Details: Периметр должен быть больше нуля
+  package:probrab_ai/domain/usecases/base_calculator.dart 342:9  BaseCalculator.call
+  test\domain\usecases\calculate_gutters_test.dart 127:32        main.<fn>.<fn>
+  
+00:02 +90 -40: c:/probrab1/test/domain/usecases/calculate_gvl_wall_test.dart: CalculateGvlWall calculates sheets needed correctly
+00:02 +91 -40: c:/probrab1/test/domain/usecases/calculate_gvl_wall_test.dart: CalculateGvlWall calculates with multiple layers
+00:02 +91 -41: c:/probrab1/test/domain/usecases/calculate_gvl_wall_test.dart: CalculateGvlWall calculates with multiple layers [E]
+  Expected: <2.0>
+    Actual: <null>
+  
+  package:matcher                                         expect
+  package:flutter_test/src/widget_tester.dart 473:18      expect
+  test\domain\usecases\calculate_gvl_wall_test.dart 36:7  main.<fn>.<fn>
+  
+00:02 +91 -41: c:/probrab1/test/domain/usecases/calculate_gvl_wall_test.dart: CalculateGvlWall calculates screws needed
+00:02 +91 -42: c:/probrab1/test/domain/usecases/calculate_gvl_wall_test.dart: CalculateGvlWall calculates screws needed [E]
+  Expected: <180.0>
+    Actual: <568.0>
+  
+  package:matcher                                         expect
+  package:flutter_test/src/widget_tester.dart 473:18      expect
+  test\domain\usecases\calculate_gvl_wall_test.dart 51:7  main.<fn>.<fn>
+  
+00:02 +91 -42: c:/probrab1/test/domain/usecases/calculate_gvl_wall_test.dart: CalculateGvlWall calculates putty needed
+00:02 +91 -43: c:/probrab1/test/domain/usecases/calculate_gvl_wall_test.dart: CalculateGvlWall calculates putty needed [E]
+  Expected: <22.5>
+    Actual: <16.5>
+  
+  package:matcher                                         expect
+  package:flutter_test/src/widget_tester.dart 473:18      expect
+  test\domain\usecases\calculate_gvl_wall_test.dart 65:7  main.<fn>.<fn>
+  
+00:02 +91 -43: c:/probrab1/test/domain/usecases/calculate_gvl_wall_test.dart: CalculateGvlWall estimates perimeter when missing
+00:02 +92 -43: c:/probrab1/test/domain/usecases/calculate_gvl_wall_test.dart: CalculateGvlWall uses default values when missing
+00:02 +92 -44: c:/probrab1/test/domain/usecases/calculate_gvl_wall_test.dart: CalculateGvlWall uses default values when missing [E]
+  Expected: <1.0>
+    Actual: <null>
+  
+  package:matcher                                         expect
+  package:flutter_test/src/widget_tester.dart 473:18      expect
+  test\domain\usecases\calculate_gvl_wall_test.dart 92:7  main.<fn>.<fn>
+  
+00:02 +92 -44: c:/probrab1/test/domain/usecases/calculate_gvl_wall_test.dart: CalculateGvlWall throws exception for zero area
+00:02 +93 -44: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating calculates volume correctly
+00:02 +93 -45: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating calculates volume correctly [E]
+  Expected: <125.0>
+    Actual: <0.13>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18     expect
+  test\domain\usecases\calculate_heating_test.dart 19:7  main.<fn>.<fn>
+  
+00:02 +93 -45: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating calculates total power
+00:02 +94 -45: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating calculates total sections
+00:02 +95 -45: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating calculates pipe length
+00:02 +95 -46: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating calculates pipe length [E]
+  Expected: <20.0>
+    Actual: <22.0>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18     expect
+  test\domain\usecases\calculate_heating_test.dart 63:7  main.<fn>.<fn>
+  
+00:02 +95 -46: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating calculates fittings needed
+00:02 +96 -46: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating calculates valves needed
+00:02 +96 -47: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating calculates valves needed [E]
+  Expected: <4.0>
+    Actual: <null>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18     expect
+  test\domain\usecases\calculate_heating_test.dart 91:7  main.<fn>.<fn>
+  
+00:02 +96 -47: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating calculates thermostats needed
+00:02 +97 -47: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating uses default values when missing
+00:02 +97 -48: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating uses default values when missing [E]
+  Expected: <1.0>
+    Actual: <null>
+  
+  package:matcher                                         expect
+  package:flutter_test/src/widget_tester.dart 473:18      expect
+  test\domain\usecases\calculate_heating_test.dart 118:7  main.<fn>.<fn>
+  
+00:02 +97 -48: c:/probrab1/test/domain/usecases/calculate_heating_test.dart: CalculateHeating throws exception for zero area
+00:02 +98 -48: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam calculates volume correctly
+00:02 +98 -49: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam calculates volume correctly [E]
+  Expected: <1.0>
+    Actual: <0.0>
+  
+  package:matcher                                                expect
+  package:flutter_test/src/widget_tester.dart 473:18             expect
+  test\domain\usecases\calculate_insulation_foam_test.dart 19:7  main.<fn>.<fn>
+  
+00:02 +98 -49: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam calculates sheets needed
+00:02 +99 -49: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam calculates weight
+00:02 +99 -50: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam calculates weight [E]
+  Expected: <25.0>
+    Actual: <0.03>
+  
+  package:matcher                                                expect
+  package:flutter_test/src/widget_tester.dart 473:18             expect
+  test\domain\usecases\calculate_insulation_foam_test.dart 50:7  main.<fn>.<fn>
+  
+00:02 +99 -50: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam calculates glue needed
+00:02 +100 -50: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam calculates fasteners needed
+00:02 +101 -50: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam calculates mesh area
+00:02 +102 -50: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam uses default thickness when missing
+00:02 +102 -51: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam uses default thickness when missing [E]
+  Expected: <1.0>
+    Actual: <0.0>
+  
+  package:matcher                                                 expect
+  package:flutter_test/src/widget_tester.dart 473:18              expect
+  test\domain\usecases\calculate_insulation_foam_test.dart 103:7  main.<fn>.<fn>
+  
+00:02 +102 -51: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam uses default density when missing
+00:02 +102 -52: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam uses default density when missing [E]
+  Expected: <25.0>
+    Actual: <0.03>
+  
+  package:matcher                                                 expect
+  package:flutter_test/src/widget_tester.dart 473:18              expect
+  test\domain\usecases\calculate_insulation_foam_test.dart 117:7  main.<fn>.<fn>
+  
+00:02 +102 -52: c:/probrab1/test/domain/usecases/calculate_insulation_foam_test.dart: CalculateInsulationFoam throws exception for zero area
+00:02 +103 -52: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool calculates volume correctly
+00:02 +103 -53: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool calculates volume correctly [E]
+  Expected: <2.0>
+    Actual: <0.0>
+  
+  package:matcher                                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18                     expect
+  test\domain\usecases\calculate_insulation_mineral_wool_test.dart 19:7  main.<fn>.<fn>
+  
+00:02 +103 -53: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool calculates sheets needed
+00:02 +104 -53: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool calculates weight
+00:02 +104 -54: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool calculates weight [E]
+  Expected: <100.0>
+    Actual: <0.1>
+  
+  package:matcher                                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18                     expect
+  test\domain\usecases\calculate_insulation_mineral_wool_test.dart 50:7  main.<fn>.<fn>
+  
+00:02 +104 -54: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool calculates vapor barrier area
+00:02 +105 -54: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool calculates fasteners needed
+00:02 +105 -55: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool calculates fasteners needed [E]
+  Expected: <100.0>
+    Actual: <110.0>
+  
+  package:matcher                                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18                     expect
+  test\domain\usecases\calculate_insulation_mineral_wool_test.dart 78:7  main.<fn>.<fn>
+  
+00:02 +105 -55: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool uses default thickness when missing
+00:02 +105 -56: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool uses default thickness when missing [E]
+  Expected: <2.0>
+    Actual: <0.0>
+  
+  package:matcher                                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18                     expect
+  test\domain\usecases\calculate_insulation_mineral_wool_test.dart 92:7  main.<fn>.<fn>
+  
+00:02 +105 -56: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool uses default density when missing
+00:02 +105 -57: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool uses default density when missing [E]
+  Expected: <100.0>
+    Actual: <0.1>
+  
+  package:matcher                                                         expect
+  package:flutter_test/src/widget_tester.dart 473:18                      expect
+  test\domain\usecases\calculate_insulation_mineral_wool_test.dart 107:7  main.<fn>.<fn>
+  
+00:02 +105 -57: c:/probrab1/test/domain/usecases/calculate_insulation_mineral_wool_test.dart: CalculateInsulationMineralWool throws exception for zero area
+00:03 +106 -57: c:/probrab1/test/domain/usecases/calculate_laminate_test.dart: CalculateLaminate calculates packs needed correctly with 7% reserve
+00:03 +107 -57: c:/probrab1/test/domain/usecases/calculate_laminate_test.dart: CalculateLaminate calculates underlay area with 5% reserve
+00:03 +108 -57: c:/probrab1/test/domain/usecases/calculate_laminate_test.dart: CalculateLaminate calculates plinth length from perimeter with 5% reserve
+00:03 +109 -57: c:/probrab1/test/domain/usecases/calculate_laminate_test.dart: CalculateLaminate estimates plinth length when perimeter not provided
+00:03 +110 -57: c:/probrab1/test/domain/usecases/calculate_laminate_test.dart: CalculateLaminate calculates wedges needed
+00:03 +111 -57: c:/probrab1/test/domain/usecases/calculate_laminate_test.dart: CalculateLaminate handles small room correctly
+00:03 +112 -57: c:/probrab1/test/domain/usecases/calculate_laminate_test.dart: CalculateLaminate handles large room correctly
+00:03 +113 -57: c:/probrab1/test/domain/usecases/calculate_laminate_test.dart: CalculateLaminate calculates total price with price list
+00:03 +114 -57: c:/probrab1/test/domain/usecases/calculate_laminate_test.dart: CalculateLaminate throws exception for zero area
+00:03 +115 -57: c:/probrab1/test/domain/usecases/calculate_laminate_test.dart: CalculateLaminate uses default pack area when not provided
+00:03 +116 -57: c:/probrab1/test/domain/usecases/calculate_linoleum_test.dart: CalculateLinoleum calculates rolls needed correctly
+00:03 +117 -57: c:/probrab1/test/domain/usecases/calculate_linoleum_test.dart: CalculateLinoleum calculates glue needed
+00:03 +117 -58: c:/probrab1/test/domain/usecases/calculate_linoleum_test.dart: CalculateLinoleum calculates glue needed [E]
+  Expected: <9.0>
+    Actual: <12.0>
+  
+  package:matcher                                         expect
+  package:flutter_test/src/widget_tester.dart 473:18      expect
+  test\domain\usecases\calculate_linoleum_test.dart 36:7  main.<fn>.<fn>
+  
+00:03 +117 -58: c:/probrab1/test/domain/usecases/calculate_linoleum_test.dart: CalculateLinoleum estimates perimeter when missing
+00:03 +118 -58: c:/probrab1/test/domain/usecases/calculate_linoleum_test.dart: CalculateLinoleum uses provided perimeter
+00:03 +118 -59: c:/probrab1/test/domain/usecases/calculate_linoleum_test.dart: CalculateLinoleum uses provided perimeter [E]
+  Expected: <22.0>
+    Actual: <23.1>
+  
+  package:matcher                                         expect
+  package:flutter_test/src/widget_tester.dart 473:18      expect
+  test\domain\usecases\calculate_linoleum_test.dart 62:7  main.<fn>.<fn>
+  
+00:03 +118 -59: c:/probrab1/test/domain/usecases/calculate_linoleum_test.dart: CalculateLinoleum uses default roll dimensions when missing
+00:03 +119 -59: c:/probrab1/test/domain/usecases/calculate_linoleum_test.dart: CalculateLinoleum handles overlap correctly
+00:03 +120 -59: c:/probrab1/test/domain/usecases/calculate_linoleum_test.dart: CalculateLinoleum throws exception for zero area
+00:03 +121 -59: c:/probrab1/test/domain/usecases/calculate_mdf_panels_test.dart: CalculateMdfPanels calculates panels needed correctly
+00:03 +122 -59: c:/probrab1/test/domain/usecases/calculate_mdf_panels_test.dart: CalculateMdfPanels calculates clamps needed
+00:03 +122 -60: c:/probrab1/test/domain/usecases/calculate_mdf_panels_test.dart: CalculateMdfPanels calculates clamps needed [E]
+  Expected: <256.0>
+    Actual: <288.0>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 473:18        expect
+  test\domain\usecases\calculate_mdf_panels_test.dart 39:7  main.<fn>.<fn>
+  
+00:03 +122 -60: c:/probrab1/test/domain/usecases/calculate_mdf_panels_test.dart: CalculateMdfPanels calculates corners and plinth length
+00:03 +122 -61: c:/probrab1/test/domain/usecases/calculate_mdf_panels_test.dart: CalculateMdfPanels calculates corners and plinth length [E]
+  Expected: <22.0>
+    Actual: <6.93>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 473:18        expect
+  test\domain\usecases\calculate_mdf_panels_test.dart 53:7  main.<fn>.<fn>
+  
+00:03 +122 -61: c:/probrab1/test/domain/usecases/calculate_mdf_panels_test.dart: CalculateMdfPanels estimates perimeter when missing
+00:03 +123 -61: c:/probrab1/test/domain/usecases/calculate_mdf_panels_test.dart: CalculateMdfPanels uses default panel dimensions when missing
+00:03 +124 -61: c:/probrab1/test/domain/usecases/calculate_mdf_panels_test.dart: CalculateMdfPanels throws exception for zero area
+00:03 +125 -61: c:/probrab1/test/domain/usecases/calculate_parquet_test.dart: CalculateParquet calculates planks needed correctly
+00:03 +126 -61: c:/probrab1/test/domain/usecases/calculate_parquet_test.dart: CalculateParquet calculates varnish needed
+00:03 +126 -62: c:/probrab1/test/domain/usecases/calculate_parquet_test.dart: CalculateParquet calculates varnish needed [E]
+  Expected: <6.0>
+    Actual: <6.3>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18     expect
+  test\domain\usecases\calculate_parquet_test.dart 36:7  main.<fn>.<fn>
+  
+00:03 +126 -62: c:/probrab1/test/domain/usecases/calculate_parquet_test.dart: CalculateParquet calculates primer needed
+00:03 +126 -63: c:/probrab1/test/domain/usecases/calculate_parquet_test.dart: CalculateParquet calculates primer needed [E]
+  Expected: <1.6>
+    Actual: <1.68>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18     expect
+  test\domain\usecases\calculate_parquet_test.dart 49:7  main.<fn>.<fn>
+  
+00:03 +126 -63: c:/probrab1/test/domain/usecases/calculate_parquet_test.dart: CalculateParquet calculates glue needed
+00:03 +126 -64: c:/probrab1/test/domain/usecases/calculate_parquet_test.dart: CalculateParquet calculates glue needed [E]
+  Expected: <30.0>
+    Actual: <28.0>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18     expect
+  test\domain\usecases\calculate_parquet_test.dart 62:7  main.<fn>.<fn>
+  
+00:03 +126 -64: c:/probrab1/test/domain/usecases/calculate_parquet_test.dart: CalculateParquet estimates perimeter when missing
+00:03 +127 -64: c:/probrab1/test/domain/usecases/calculate_parquet_test.dart: CalculateParquet uses provided perimeter
+00:03 +127 -65: c:/probrab1/test/domain/usecases/calculate_parquet_test.dart: CalculateParquet uses provided perimeter [E]
+  Expected: <18.0>
+    Actual: <18.9>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18     expect
+  test\domain\usecases\calculate_parquet_test.dart 88:7  main.<fn>.<fn>
+  
+00:03 +127 -65: c:/probrab1/test/domain/usecases/calculate_parquet_test.dart: CalculateParquet uses default plank dimensions when missing
+00:03 +128 -65: c:/probrab1/test/domain/usecases/calculate_parquet_test.dart: CalculateParquet throws exception for zero area
+00:03 +129 -65: c:/probrab1/test/domain/usecases/calculate_plaster_test.dart: CalculatePlaster calculates plaster needed correctly
+00:03 +130 -65: c:/probrab1/test/domain/usecases/calculate_plaster_test.dart: CalculatePlaster calculates cement plaster correctly
+00:03 +131 -65: c:/probrab1/test/domain/usecases/calculate_plaster_test.dart: CalculatePlaster throws exception for zero area
+00:03 +132 -65: c:/probrab1/test/domain/usecases/calculate_plaster_test.dart: CalculatePlaster uses default values when missing
+00:03 +133 -65: c:/probrab1/test/domain/usecases/calculate_plaster_test.dart: CalculatePlaster calculates beacons needed
+00:03 +134 -65: c:/probrab1/test/domain/usecases/calculate_plumbing_test.dart: CalculatePlumbing calculates points automatically
+00:03 +135 -65: c:/probrab1/test/domain/usecases/calculate_plumbing_test.dart: CalculatePlumbing calculates pipe length automatically
+00:03 +136 -65: c:/probrab1/test/domain/usecases/calculate_plumbing_test.dart: CalculatePlumbing uses provided pipe length
+00:03 +137 -65: c:/probrab1/test/domain/usecases/calculate_plumbing_test.dart: CalculatePlumbing calculates fittings needed
+00:03 +137 -66: c:/probrab1/test/domain/usecases/calculate_plumbing_test.dart: CalculatePlumbing calculates fittings needed [E]
+  Expected: <18.0>
+    Actual: <21.0>
+  
+  package:matcher                                         expect
+  package:flutter_test/src/widget_tester.dart 473:18      expect
+  test\domain\usecases\calculate_plumbing_test.dart 57:7  main.<fn>.<fn>
+  
+00:03 +137 -66: c:/probrab1/test/domain/usecases/calculate_plumbing_test.dart: CalculatePlumbing calculates taps needed
+00:03 +137 -67: c:/probrab1/test/domain/usecases/calculate_plumbing_test.dart: CalculatePlumbing calculates taps needed [E]
+  Expected: <6.0>
+    Actual: <null>
+  
+  package:matcher                                         expect
+  package:flutter_test/src/widget_tester.dart 473:18      expect
+  test\domain\usecases\calculate_plumbing_test.dart 70:7  main.<fn>.<fn>
+  
+00:03 +137 -67: c:/probrab1/test/domain/usecases/calculate_plumbing_test.dart: CalculatePlumbing calculates mixers needed
+00:03 +138 -67: c:/probrab1/test/domain/usecases/calculate_plumbing_test.dart: CalculatePlumbing calculates toilets, sinks, showers
+00:03 +139 -67: c:/probrab1/test/domain/usecases/calculate_plumbing_test.dart: CalculatePlumbing uses default values when missing
+00:03 +140 -67: c:/probrab1/test/domain/usecases/calculate_plumbing_test.dart: CalculatePlumbing handles zero rooms
+00:03 +140 -68: c:/probrab1/test/domain/usecases/calculate_plumbing_test.dart: CalculatePlumbing handles zero rooms [E]
+  CalculationException: [INVALID_INPUT] Некорректные входные данные для калькулятора "CalculatePlumbing": Количество санузлов должно быть больше нуля Details: Количество санузлов должно быть больше нуля
+  package:probrab_ai/domain/usecases/base_calculator.dart 342:9  BaseCalculator.call
+  test\domain\usecases\calculate_plumbing_test.dart 120:32       main.<fn>.<fn>
+  
+00:03 +140 -68: c:/probrab1/test/domain/usecases/calculate_primer_test.dart: CalculatePrimer calculates standard primer correctly
+00:03 +140 -69: c:/probrab1/test/domain/usecases/calculate_primer_test.dart: CalculatePrimer calculates standard primer correctly [E]
+  Expected: <5.5>
+    Actual: <5.25>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_primer_test.dart 21:7  main.<fn>.<fn>
+  
+00:03 +140 -69: c:/probrab1/test/domain/usecases/calculate_primer_test.dart: CalculatePrimer calculates deep penetration primer correctly
+00:03 +140 -70: c:/probrab1/test/domain/usecases/calculate_primer_test.dart: CalculatePrimer calculates deep penetration primer correctly [E]
+  Expected: <8.25>
+    Actual: <7.88>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_primer_test.dart 38:7  main.<fn>.<fn>
+  
+00:03 +140 -70: c:/probrab1/test/domain/usecases/calculate_primer_test.dart: CalculatePrimer calculates with multiple layers
+00:03 +140 -71: c:/probrab1/test/domain/usecases/calculate_primer_test.dart: CalculatePrimer calculates with multiple layers [E]
+  Expected: <11.0>
+    Actual: <10.5>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_primer_test.dart 53:7  main.<fn>.<fn>
+  
+00:03 +140 -71: c:/probrab1/test/domain/usecases/calculate_primer_test.dart: CalculatePrimer calculates rollers and trays needed
+00:03 +140 -72: c:/probrab1/test/domain/usecases/calculate_primer_test.dart: CalculatePrimer calculates rollers and trays needed [E]
+  Expected: <2.0>
+    Actual: <1.0>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_primer_test.dart 67:7  main.<fn>.<fn>
+  
+00:03 +140 -72: c:/probrab1/test/domain/usecases/calculate_primer_test.dart: CalculatePrimer uses default values when missing
+00:03 +141 -72: c:/probrab1/test/domain/usecases/calculate_primer_test.dart: CalculatePrimer throws exception for zero area
+00:03 +142 -72: c:/probrab1/test/domain/usecases/calculate_putty_test.dart: CalculatePutty calculates start putty correctly
+00:03 +142 -73: c:/probrab1/test/domain/usecases/calculate_putty_test.dart: CalculatePutty calculates start putty correctly [E]
+  Expected: <165.0>
+    Actual: <162.0>
+  
+  package:matcher                                      expect
+  package:flutter_test/src/widget_tester.dart 473:18   expect
+  test\domain\usecases\calculate_putty_test.dart 21:7  main.<fn>.<fn>
+  
+00:03 +142 -73: c:/probrab1/test/domain/usecases/calculate_putty_test.dart: CalculatePutty calculates finish putty correctly
+00:03 +142 -74: c:/probrab1/test/domain/usecases/calculate_putty_test.dart: CalculatePutty calculates finish putty correctly [E]
+  Expected: <88.0>
+    Actual: <64.8>
+  
+  package:matcher                                      expect
+  package:flutter_test/src/widget_tester.dart 473:18   expect
+  test\domain\usecases\calculate_putty_test.dart 39:7  main.<fn>.<fn>
+  
+00:03 +142 -74: c:/probrab1/test/domain/usecases/calculate_putty_test.dart: CalculatePutty calculates primer needed
+00:04 +142 -75: c:/probrab1/test/domain/usecases/calculate_putty_test.dart: CalculatePutty calculates primer needed [E]
+  Expected: <11.0>
+    Actual: <22.5>
+  
+  package:matcher                                      expect
+  package:flutter_test/src/widget_tester.dart 473:18   expect
+  test\domain\usecases\calculate_putty_test.dart 53:7  main.<fn>.<fn>
+  
+00:04 +142 -75: c:/probrab1/test/domain/usecases/calculate_putty_test.dart: CalculatePutty calculates spatulas needed
+00:04 +142 -76: c:/probrab1/test/domain/usecases/calculate_putty_test.dart: CalculatePutty calculates spatulas needed [E]
+  Expected: <3.0>
+    Actual: <null>
+  
+  package:matcher                                      expect
+  package:flutter_test/src/widget_tester.dart 473:18   expect
+  test\domain\usecases\calculate_putty_test.dart 66:7  main.<fn>.<fn>
+  
+00:04 +142 -76: c:/probrab1/test/domain/usecases/calculate_putty_test.dart: CalculatePutty uses default values when missing
+00:04 +143 -76: c:/probrab1/test/domain/usecases/calculate_putty_test.dart: CalculatePutty throws exception for zero area
+00:04 +144 -76: c:/probrab1/test/domain/usecases/calculate_pvc_panels_test.dart: CalculatePvcPanels calculates panels needed correctly
+00:04 +145 -76: c:/probrab1/test/domain/usecases/calculate_pvc_panels_test.dart: CalculatePvcPanels calculates screws needed
+00:04 +145 -77: c:/probrab1/test/domain/usecases/calculate_pvc_panels_test.dart: CalculatePvcPanels calculates screws needed [E]
+  Expected: <264.0>
+    Actual: <null>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 473:18        expect
+  test\domain\usecases\calculate_pvc_panels_test.dart 38:7  main.<fn>.<fn>
+  
+00:04 +145 -77: c:/probrab1/test/domain/usecases/calculate_pvc_panels_test.dart: CalculatePvcPanels calculates profile lengths
+00:04 +145 -78: c:/probrab1/test/domain/usecases/calculate_pvc_panels_test.dart: CalculatePvcPanels calculates profile lengths [E]
+  Expected: <22.0>
+    Actual: <22.66>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 473:18        expect
+  test\domain\usecases\calculate_pvc_panels_test.dart 52:7  main.<fn>.<fn>
+  
+00:04 +145 -78: c:/probrab1/test/domain/usecases/calculate_pvc_panels_test.dart: CalculatePvcPanels estimates perimeter when missing
+00:04 +146 -78: c:/probrab1/test/domain/usecases/calculate_pvc_panels_test.dart: CalculatePvcPanels uses default panel dimensions when missing
+00:04 +147 -78: c:/probrab1/test/domain/usecases/calculate_pvc_panels_test.dart: CalculatePvcPanels throws exception for zero area
+00:04 +148 -78: c:/probrab1/test/domain/usecases/calculate_rail_ceiling_test.dart: CalculateRailCeiling calculates rails needed correctly
+00:04 +149 -78: c:/probrab1/test/domain/usecases/calculate_rail_ceiling_test.dart: CalculateRailCeiling calculates guide length
+00:04 +150 -78: c:/probrab1/test/domain/usecases/calculate_rail_ceiling_test.dart: CalculateRailCeiling calculates hangers needed
+00:04 +150 -79: c:/probrab1/test/domain/usecases/calculate_rail_ceiling_test.dart: CalculateRailCeiling calculates hangers needed [E]
+  Expected: <30.0>
+    Actual: <26.0>
+  
+  package:matcher                                             expect
+  package:flutter_test/src/widget_tester.dart 473:18          expect
+  test\domain\usecases\calculate_rail_ceiling_test.dart 51:7  main.<fn>.<fn>
+  
+00:04 +150 -79: c:/probrab1/test/domain/usecases/calculate_rail_ceiling_test.dart: CalculateRailCeiling calculates corner length
+00:04 +150 -80: c:/probrab1/test/domain/usecases/calculate_rail_ceiling_test.dart: CalculateRailCeiling calculates corner length [E]
+  Expected: <18.0>
+    Actual: <18.54>
+  
+  package:matcher                                             expect
+  package:flutter_test/src/widget_tester.dart 473:18          expect
+  test\domain\usecases\calculate_rail_ceiling_test.dart 65:7  main.<fn>.<fn>
+  
+00:04 +150 -80: c:/probrab1/test/domain/usecases/calculate_rail_ceiling_test.dart: CalculateRailCeiling estimates perimeter when missing
+00:04 +151 -80: c:/probrab1/test/domain/usecases/calculate_rail_ceiling_test.dart: CalculateRailCeiling uses default rail dimensions when missing
+00:04 +152 -80: c:/probrab1/test/domain/usecases/calculate_rail_ceiling_test.dart: CalculateRailCeiling throws exception for zero area
+00:04 +153 -80: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal calculates sheets needed correctly with 10% reserve
+00:04 +154 -80: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal calculates real area with slope factor
+00:04 +155 -80: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal calculates screws needed (8 per m²)
+00:04 +155 -81: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal calculates screws needed (8 per m²) [E]
+  Expected: a numeric value within <10> of <923.76>
+    Actual: <1040.0>
+     Which:  differs by <116.24000000000001>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_roofing_metal_test.dart 58:7  main.<fn>.<fn>
+  
+00:04 +155 -81: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal calculates waterproofing area with 10% overlap
+00:04 +156 -81: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal uses provided ridge length
+00:04 +157 -81: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal estimates ridge length when not provided
+00:04 +158 -81: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal handles valley length
+00:04 +159 -81: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal handles flat slope correctly
+00:04 +159 -82: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal handles flat slope correctly [E]
+  Expected: <100.0>
+    Actual: <102.23>
+  
+  package:matcher                                               expect
+  package:flutter_test/src/widget_tester.dart 473:18            expect
+  test\domain\usecases\calculate_roofing_metal_test.dart 124:7  main.<fn>.<fn>
+  
+00:04 +159 -82: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal handles steep slope correctly
+00:04 +160 -82: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal uses default values when not provided
+00:04 +161 -82: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal throws exception for zero area
+00:04 +162 -82: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal preserves area in results
+00:04 +163 -82: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal calculates eave length from perimeter
+00:04 +164 -82: c:/probrab1/test/domain/usecases/calculate_roofing_metal_test.dart: CalculateRoofingMetal estimates perimeter when not provided
+00:04 +165 -82: c:/probrab1/test/domain/usecases/calculate_screed_test.dart: CalculateScreed calculates volume correctly
+00:04 +166 -82: c:/probrab1/test/domain/usecases/calculate_screed_test.dart: CalculateScreed calculates cement bags for M400 correctly
+00:04 +166 -83: c:/probrab1/test/domain/usecases/calculate_screed_test.dart: CalculateScreed calculates cement bags for M400 correctly [E]
+  Expected: a numeric value within <1.0> of <14.0>
+    Actual: <11.0>
+     Which:  differs by <3.0>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_screed_test.dart 42:7  main.<fn>.<fn>
+  
+00:04 +166 -83: c:/probrab1/test/domain/usecases/calculate_screed_test.dart: CalculateScreed calculates cement bags for M500 correctly
+00:04 +167 -83: c:/probrab1/test/domain/usecases/calculate_screed_test.dart: CalculateScreed calculates sand volume correctly
+00:04 +167 -84: c:/probrab1/test/domain/usecases/calculate_screed_test.dart: CalculateScreed calculates sand volume correctly [E]
+  Expected: a numeric value within <0.1> of <0.84>
+    Actual: <1.01>
+     Which:  differs by <0.17000000000000004>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_screed_test.dart 72:7  main.<fn>.<fn>
+  
+00:04 +167 -84: c:/probrab1/test/domain/usecases/calculate_screed_test.dart: CalculateScreed handles different thickness values
+00:04 +168 -84: c:/probrab1/test/domain/usecases/calculate_screed_test.dart: CalculateScreed throws exception for zero area
+00:04 +169 -84: c:/probrab1/test/domain/usecases/calculate_screed_test.dart: CalculateScreed uses default thickness when not provided
+00:04 +170 -84: c:/probrab1/test/domain/usecases/calculate_screed_test.dart: CalculateScreed preserves area in results
+00:04 +171 -84: c:/probrab1/test/domain/usecases/calculate_screed_test.dart: CalculateScreed calculates total price with price list
+00:04 +172 -84: c:/probrab1/test/domain/usecases/calculate_screed_test.dart: CalculateScreed handles large area correctly
+00:04 +173 -84: c:/probrab1/test/domain/usecases/calculate_self_leveling_floor_test.dart: CalculateSelfLevelingFloor calculates mix needed correctly
+00:04 +174 -84: c:/probrab1/test/domain/usecases/calculate_self_leveling_floor_test.dart: CalculateSelfLevelingFloor calculates primer needed
+00:04 +174 -85: c:/probrab1/test/domain/usecases/calculate_self_leveling_floor_test.dart: CalculateSelfLevelingFloor calculates primer needed [E]
+  Expected: <4.4>
+    Actual: <6.0>
+  
+  package:matcher                                                    expect
+  package:flutter_test/src/widget_tester.dart 473:18                 expect
+  test\domain\usecases\calculate_self_leveling_floor_test.dart 36:7  main.<fn>.<fn>
+  
+00:04 +174 -85: c:/probrab1/test/domain/usecases/calculate_self_leveling_floor_test.dart: CalculateSelfLevelingFloor calculates rollers needed
+00:04 +175 -85: c:/probrab1/test/domain/usecases/calculate_self_leveling_floor_test.dart: CalculateSelfLevelingFloor uses default thickness when missing
+00:04 +176 -85: c:/probrab1/test/domain/usecases/calculate_self_leveling_floor_test.dart: CalculateSelfLevelingFloor handles different thickness values
+00:04 +177 -85: c:/probrab1/test/domain/usecases/calculate_self_leveling_floor_test.dart: CalculateSelfLevelingFloor throws exception for zero area
+00:04 +178 -85: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding calculates panels needed correctly with 10% reserve
+00:04 +179 -85: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding calculates j-profile length from perimeter
+00:04 +179 -86: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding calculates j-profile length from perimeter [E]
+  Expected: <40.0>
+    Actual: <48.0>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_siding_test.dart 39:7  main.<fn>.<fn>
+  
+00:04 +179 -86: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding calculates corner length correctly
+00:04 +179 -87: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding calculates corner length correctly [E]
+  Expected: <10.0>
+    Actual: <24.0>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_siding_test.dart 52:7  main.<fn>.<fn>
+  
+00:04 +179 -87: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding calculates start and finish strips from perimeter
+00:04 +179 -88: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding calculates start and finish strips from perimeter [E]
+  Expected: <40.0>
+    Actual: <42.0>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_siding_test.dart 64:7  main.<fn>.<fn>
+  
+00:04 +179 -88: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding calculates screws needed (8 per panel)
+00:04 +179 -89: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding calculates screws needed (8 per panel) [E]
+  Expected: <896.0>
+    Actual: <1008.0>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_siding_test.dart 80:7  main.<fn>.<fn>
+  
+00:04 +179 -89: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding uses provided soffit length
+00:04 +180 -89: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding estimates soffit length when not provided
+00:04 +181 -89: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding estimates perimeter when not provided
+00:04 +181 -90: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding estimates perimeter when not provided [E]
+  Expected: a numeric value within <1.0> of <20.0>
+    Actual: <48.0>
+     Which:  differs by <28.0>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18     expect
+  test\domain\usecases\calculate_siding_test.dart 117:7  main.<fn>.<fn>
+  
+00:04 +181 -90: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding handles different panel sizes
+00:04 +182 -90: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding uses default values when not provided
+00:04 +182 -91: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding uses default values when not provided [E]
+  Expected: <10.0>
+    Actual: <24.0>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18     expect
+  test\domain\usecases\calculate_siding_test.dart 153:7  main.<fn>.<fn>
+  
+00:04 +182 -91: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding throws exception for zero area
+00:04 +183 -91: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding preserves area in results
+00:04 +184 -91: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding handles multiple corners
+00:04 +184 -92: c:/probrab1/test/domain/usecases/calculate_siding_test.dart: CalculateSiding handles multiple corners [E]
+  Expected: <20.0>
+    Actual: <48.0>
+  
+  package:matcher                                        expect
+  package:flutter_test/src/widget_tester.dart 473:18     expect
+  test\domain\usecases\calculate_siding_test.dart 189:7  main.<fn>.<fn>
+  
+00:04 +184 -92: c:/probrab1/test/domain/usecases/calculate_slopes_test.dart: CalculateSlopes calculates slope area correctly
+00:04 +185 -92: c:/probrab1/test/domain/usecases/calculate_slopes_test.dart: CalculateSlopes calculates putty needed
+00:04 +185 -93: c:/probrab1/test/domain/usecases/calculate_slopes_test.dart: CalculateSlopes calculates putty needed [E]
+  Expected: a numeric value within <0.1> of <5.22>
+    Actual: <null>
+     Which: not an <Instance of 'num'>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_slopes_test.dart 38:7  main.<fn>.<fn>
+  
+00:04 +185 -93: c:/probrab1/test/domain/usecases/calculate_slopes_test.dart: CalculateSlopes calculates primer needed
+00:05 +185 -94: c:/probrab1/test/domain/usecases/calculate_slopes_test.dart: CalculateSlopes calculates primer needed [E]
+  Expected: a numeric value within <0.1> of <0.6960000000000001>
+    Actual: <null>
+     Which: not an <Instance of 'num'>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_slopes_test.dart 54:7  main.<fn>.<fn>
+  
+00:05 +185 -94: c:/probrab1/test/domain/usecases/calculate_slopes_test.dart: CalculateSlopes calculates paint needed
+00:05 +185 -95: c:/probrab1/test/domain/usecases/calculate_slopes_test.dart: CalculateSlopes calculates paint needed [E]
+  Expected: a numeric value within <0.1> of <0.8351999999999999>
+    Actual: <null>
+     Which: not an <Instance of 'num'>
+  
+  package:matcher                                       expect
+  package:flutter_test/src/widget_tester.dart 473:18    expect
+  test\domain\usecases\calculate_slopes_test.dart 70:7  main.<fn>.<fn>
+  
+00:05 +185 -95: c:/probrab1/test/domain/usecases/calculate_slopes_test.dart: CalculateSlopes calculates corner length
+00:05 +186 -95: c:/probrab1/test/domain/usecases/calculate_slopes_test.dart: CalculateSlopes uses default values when missing
+00:05 +187 -95: c:/probrab1/test/domain/usecases/calculate_slopes_test.dart: CalculateSlopes handles zero windows
+00:05 +187 -96: c:/probrab1/test/domain/usecases/calculate_slopes_test.dart: CalculateSlopes handles zero windows [E]
+  CalculationException: [INVALID_INPUT] Некорректные входные данные для калькулятора "CalculateSlopes": Количество окон должно быть больше нуля Details: Количество окон должно быть больше нуля
+  package:probrab_ai/domain/usecases/base_calculator.dart 342:9  BaseCalculator.call
+  test\domain\usecases\calculate_slopes_test.dart 108:32         main.<fn>.<fn>
+  
+00:05 +187 -96: c:/probrab1/test/domain/usecases/calculate_soft_roofing_test.dart: CalculateSoftRoofing calculates rolls needed correctly
+00:05 +187 -97: c:/probrab1/test/domain/usecases/calculate_soft_roofing_test.dart: CalculateSoftRoofing calculates rolls needed correctly [E]
+  Expected: a value greater than <0>
+    Actual: <null>
+     Which: is not a value greater than <0>
+  NoSuchMethodError: The method '<' was called on null.
+  Receiver: null
+  Tried calling: <(0) at #0      Object.noSuchMethod (dart:core-patch/object_patch.dart:38:5)
+  #1      _OrderingMatcher.matches (package:matcher/src/order_matchers.dart:81:34)
+  #2      _expect (package:matcher/src/expect/expect.dart:138:30)
+  #3      expect (package:matcher/src/expect/expect.dart:56:3)
+  #4      expect (package:flutter_test/src/widget_tester.dart:473:18)
+  #5      main.<anonymous closure>.<anonymous closure> (file:///c:/probrab1/test/domain/usecases/calculate_soft_roofing_test.dart:20:7)
+  #6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:242:19)
+  <asynchronous suspension>
+  #7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:240:7)
+  <asynchronous suspension>
+  #8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:282:9)
+  <asynchronous suspension>
+  
+  
+  package:matcher                                             expect
+  package:flutter_test/src/widget_tester.dart 473:18          expect
+  test\domain\usecases\calculate_soft_roofing_test.dart 20:7  main.<fn>.<fn>
+  
+00:05 +187 -97: c:/probrab1/test/domain/usecases/calculate_soft_roofing_test.dart: CalculateSoftRoofing calculates real area with slope
+00:05 +188 -97: c:/probrab1/test/domain/usecases/calculate_soft_roofing_test.dart: CalculateSoftRoofing calculates underlayment area
+00:05 +189 -97: c:/probrab1/test/domain/usecases/calculate_soft_roofing_test.dart: CalculateSoftRoofing calculates nails needed
+00:05 +190 -97: c:/probrab1/test/domain/usecases/calculate_soft_roofing_test.dart: CalculateSoftRoofing calculates mastic needed
+00:05 +191 -97: c:/probrab1/test/domain/usecases/calculate_soft_roofing_test.dart: CalculateSoftRoofing estimates ridge length when missing
+00:05 +192 -97: c:/probrab1/test/domain/usecases/calculate_soft_roofing_test.dart: CalculateSoftRoofing uses default values when missing
+00:05 +192 -98: c:/probrab1/test/domain/usecases/calculate_soft_roofing_test.dart: CalculateSoftRoofing uses default values when missing [E]
+  Expected: a value greater than <0>
+    Actual: <null>
+     Which: is not a value greater than <0>
+  NoSuchMethodError: The method '<' was called on null.
+  Receiver: null
+  Tried calling: <(0) at #0      Object.noSuchMethod (dart:core-patch/object_patch.dart:38:5)
+  #1      _OrderingMatcher.matches (package:matcher/src/order_matchers.dart:81:34)
+  #2      _expect (package:matcher/src/expect/expect.dart:138:30)
+  #3      expect (package:matcher/src/expect/expect.dart:56:3)
+  #4      expect (package:flutter_test/src/widget_tester.dart:473:18)
+  #5      main.<anonymous closure>.<anonymous closure> (file:///c:/probrab1/test/domain/usecases/calculate_soft_roofing_test.dart:105:7)
+  #6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:242:19)
+  <asynchronous suspension>
+  #7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:240:7)
+  <asynchronous suspension>
+  #8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:282:9)
+  <asynchronous suspension>
+  
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_soft_roofing_test.dart 105:7  main.<fn>.<fn>
+  
+00:05 +192 -98: c:/probrab1/test/domain/usecases/calculate_soft_roofing_test.dart: CalculateSoftRoofing throws exception for zero area
+00:05 +193 -98: c:/probrab1/test/domain/usecases/calculate_sound_insulation_test.dart: CalculateSoundInsulation calculates sheets needed for mineral wool
+00:05 +194 -98: c:/probrab1/test/domain/usecases/calculate_sound_insulation_test.dart: CalculateSoundInsulation calculates volume
+00:05 +194 -99: c:/probrab1/test/domain/usecases/calculate_sound_insulation_test.dart: CalculateSoundInsulation calculates volume [E]
+  Expected: <0.75>
+    Actual: <0.0>
+  
+  package:matcher                                                 expect
+  package:flutter_test/src/widget_tester.dart 473:18              expect
+  test\domain\usecases\calculate_sound_insulation_test.dart 36:7  main.<fn>.<fn>
+  
+00:05 +194 -99: c:/probrab1/test/domain/usecases/calculate_sound_insulation_test.dart: CalculateSoundInsulation calculates fasteners needed
+00:05 +195 -99: c:/probrab1/test/domain/usecases/calculate_sound_insulation_test.dart: CalculateSoundInsulation uses default values when missing
+00:05 +196 -99: c:/probrab1/test/domain/usecases/calculate_sound_insulation_test.dart: CalculateSoundInsulation throws exception for zero area
+00:05 +197 -99: c:/probrab1/test/domain/usecases/calculate_stretch_ceiling_test.dart: CalculateStretchCeiling calculates canvas area correctly
+00:05 +197 -100: c:/probrab1/test/domain/usecases/calculate_stretch_ceiling_test.dart: CalculateStretchCeiling calculates canvas area correctly [E]
+  Expected: <22.0>
+    Actual: <20.6>
+  
+  package:matcher                                                expect
+  package:flutter_test/src/widget_tester.dart 473:18             expect
+  test\domain\usecases\calculate_stretch_ceiling_test.dart 18:7  main.<fn>.<fn>
+  
+00:05 +197 -100: c:/probrab1/test/domain/usecases/calculate_stretch_ceiling_test.dart: CalculateStretchCeiling calculates baguette length
+00:05 +197 -101: c:/probrab1/test/domain/usecases/calculate_stretch_ceiling_test.dart: CalculateStretchCeiling calculates baguette length [E]
+  Expected: <18.9>
+    Actual: <18.54>
+  
+  package:matcher                                                expect
+  package:flutter_test/src/widget_tester.dart 473:18             expect
+  test\domain\usecases\calculate_stretch_ceiling_test.dart 33:7  main.<fn>.<fn>
+  
+00:05 +197 -101: c:/probrab1/test/domain/usecases/calculate_stretch_ceiling_test.dart: CalculateStretchCeiling calculates corners needed
+00:05 +198 -101: c:/probrab1/test/domain/usecases/calculate_stretch_ceiling_test.dart: CalculateStretchCeiling calculates fixtures
+00:05 +199 -101: c:/probrab1/test/domain/usecases/calculate_stretch_ceiling_test.dart: CalculateStretchCeiling estimates perimeter when missing
+00:05 +200 -101: c:/probrab1/test/domain/usecases/calculate_stretch_ceiling_test.dart: CalculateStretchCeiling uses default values when missing
+00:05 +201 -101: c:/probrab1/test/domain/usecases/calculate_stretch_ceiling_test.dart: CalculateStretchCeiling throws exception for zero area
+00:05 +202 -101: c:/probrab1/test/domain/usecases/calculate_strip_foundation_test.dart: CalculateStripFoundation calculates concrete volume correctly
+00:05 +203 -101: c:/probrab1/test/domain/usecases/calculate_strip_foundation_test.dart: CalculateStripFoundation calculates rebar weight correctly
+00:05 +203 -102: c:/probrab1/test/domain/usecases/calculate_strip_foundation_test.dart: CalculateStripFoundation calculates rebar weight correctly [E]
+  Expected: a numeric value within <0.1> of <1004.8>
+    Actual: <1280.0>
+     Which:  differs by <275.20000000000005>
+  
+  package:matcher                                                 expect
+  package:flutter_test/src/widget_tester.dart 473:18              expect
+  test\domain\usecases\calculate_strip_foundation_test.dart 38:7  main.<fn>.<fn>
+  
+00:05 +203 -102: c:/probrab1/test/domain/usecases/calculate_strip_foundation_test.dart: CalculateStripFoundation calculates cement bags correctly
+00:05 +203 -103: c:/probrab1/test/domain/usecases/calculate_strip_foundation_test.dart: CalculateStripFoundation calculates cement bags correctly [E]
+  Expected: a numeric value within <0.1> of <89.6>
+    Actual: <null>
+     Which: not an <Instance of 'num'>
+  
+  package:matcher                                                 expect
+  package:flutter_test/src/widget_tester.dart 473:18              expect
+  test\domain\usecases\calculate_strip_foundation_test.dart 52:7  main.<fn>.<fn>
+  
+00:05 +203 -103: c:/probrab1/test/domain/usecases/calculate_strip_foundation_test.dart: CalculateStripFoundation handles zero inputs gracefully
+00:05 +203 -104: c:/probrab1/test/domain/usecases/calculate_strip_foundation_test.dart: CalculateStripFoundation handles zero inputs gracefully [E]
+  CalculationException: [INVALID_INPUT] Некорректные входные данные для калькулятора "CalculateStripFoundation": Периметр должен быть больше нуля Details: Периметр должен быть больше нуля
+  package:probrab_ai/domain/usecases/base_calculator.dart 342:9    BaseCalculator.call
+  test\domain\usecases\calculate_strip_foundation_test.dart 59:32  main.<fn>.<fn>
+  
+00:05 +203 -104: c:/probrab1/test/domain/usecases/calculate_strip_foundation_test.dart: CalculateStripFoundation calculates total price with price list
+00:05 +204 -104: c:/probrab1/test/domain/usecases/calculate_strip_foundation_test.dart: CalculateStripFoundation returns null price when price list is empty
+00:05 +205 -104: c:/probrab1/test/domain/usecases/calculate_strip_foundation_test.dart: CalculateStripFoundation handles small foundation correctly
+00:05 +206 -104: c:/probrab1/test/domain/usecases/calculate_strip_foundation_test.dart: CalculateStripFoundation handles large foundation correctly
+00:05 +207 -104: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue calculates glue needed for standard tile
+00:05 +207 -105: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue calculates glue needed for standard tile [E]
+  Expected: <44.0>
+    Actual: <45.36>
+  
+  package:matcher                                          expect
+  package:flutter_test/src/widget_tester.dart 473:18       expect
+  test\domain\usecases\calculate_tile_glue_test.dart 21:7  main.<fn>.<fn>
+  
+00:05 +207 -105: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue calculates glue for large tile
+00:05 +207 -106: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue calculates glue for large tile [E]
+  Expected: a numeric value within <0.1> of <39.6>
+    Actual: <45.36>
+     Which:  differs by <5.759999999999998>
+  
+  package:matcher                                          expect
+  package:flutter_test/src/widget_tester.dart 473:18       expect
+  test\domain\usecases\calculate_tile_glue_test.dart 38:7  main.<fn>.<fn>
+  
+00:05 +207 -106: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue calculates glue for small tile
+00:05 +207 -107: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue calculates glue for small tile [E]
+  Expected: a numeric value within <0.1> of <48.4>
+    Actual: <52.16>
+     Which:  differs by <3.759999999999998>
+  
+  package:matcher                                          expect
+  package:flutter_test/src/widget_tester.dart 473:18       expect
+  test\domain\usecases\calculate_tile_glue_test.dart 54:7  main.<fn>.<fn>
+  
+00:05 +207 -107: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue calculates glue for thick layer
+00:05 +207 -108: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue calculates glue for thick layer [E]
+  Expected: <88.0>
+    Actual: <90.72>
+  
+  package:matcher                                          expect
+  package:flutter_test/src/widget_tester.dart 473:18       expect
+  test\domain\usecases\calculate_tile_glue_test.dart 70:7  main.<fn>.<fn>
+  
+00:05 +207 -108: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue calculates spatulas needed
+00:05 +207 -109: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue calculates spatulas needed [E]
+  Expected: <2.0>
+    Actual: <1.0>
+  
+  package:matcher                                          expect
+  package:flutter_test/src/widget_tester.dart 473:18       expect
+  test\domain\usecases\calculate_tile_glue_test.dart 83:7  main.<fn>.<fn>
+  
+00:05 +207 -109: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue uses default values when missing
+00:05 +207 -110: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue uses default values when missing [E]
+  Expected: <30.0>
+    Actual: <null>
+  
+  package:matcher                                          expect
+  package:flutter_test/src/widget_tester.dart 473:18       expect
+  test\domain\usecases\calculate_tile_glue_test.dart 96:7  main.<fn>.<fn>
+  
+00:05 +207 -110: c:/probrab1/test/domain/usecases/calculate_tile_glue_test.dart: CalculateTileGlue throws exception for zero area
+00:05 +208 -110: c:/probrab1/test/domain/usecases/calculate_tile_test.dart: CalculateTile calculates tiles needed correctly
+00:05 +209 -110: c:/probrab1/test/domain/usecases/calculate_tile_test.dart: CalculateTile calculates grout and glue needed
+00:05 +209 -111: c:/probrab1/test/domain/usecases/calculate_tile_test.dart: CalculateTile calculates grout and glue needed [E]
+  Expected: <40.0>
+    Actual: <45.0>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\domain\usecases\calculate_tile_test.dart 40:7  main.<fn>.<fn>
+  
+00:05 +209 -111: c:/probrab1/test/domain/usecases/calculate_tile_test.dart: CalculateTile handles different tile sizes
+00:05 +210 -111: c:/probrab1/test/domain/usecases/calculate_tile_test.dart: CalculateTile calculates crosses needed
+00:05 +211 -111: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation calculates volume correctly
+00:05 +211 -112: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation calculates volume correctly [E]
+  Expected: <75.0>
+    Actual: <0.08>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_ventilation_test.dart 19:7  main.<fn>.<fn>
+  
+00:05 +211 -112: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation calculates air exchange
+00:05 +212 -112: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation calculates ducts needed
+00:05 +212 -113: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation calculates ducts needed [E]
+  Expected: <3.0>
+    Actual: <null>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_ventilation_test.dart 47:7  main.<fn>.<fn>
+  
+00:05 +212 -113: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation calculates grilles needed
+00:05 +213 -113: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation calculates fans needed
+00:05 +213 -114: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation calculates fans needed [E]
+  Expected: <1.0>
+    Actual: <2.0>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_ventilation_test.dart 75:7  main.<fn>.<fn>
+  
+00:05 +213 -114: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation calculates duct length
+00:05 +213 -115: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation calculates duct length [E]
+  Expected: <15.0>
+    Actual: <18.0>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_ventilation_test.dart 89:7  main.<fn>.<fn>
+  
+00:05 +213 -115: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation uses default values when missing
+00:05 +213 -116: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation uses default values when missing [E]
+  Expected: <1.0>
+    Actual: <null>
+  
+  package:matcher                                             expect
+  package:flutter_test/src/widget_tester.dart 473:18          expect
+  test\domain\usecases\calculate_ventilation_test.dart 102:7  main.<fn>.<fn>
+  
+00:05 +213 -116: c:/probrab1/test/domain/usecases/calculate_ventilation_test.dart: CalculateVentilation throws exception for zero area
+00:05 +214 -116: c:/probrab1/test/domain/usecases/calculate_wallpaper_test.dart: CalculateWallpaper calculates rolls needed correctly with 5% reserve
+00:05 +215 -116: c:/probrab1/test/domain/usecases/calculate_wallpaper_test.dart: CalculateWallpaper subtracts windows and doors area
+00:05 +216 -116: c:/probrab1/test/domain/usecases/calculate_wallpaper_test.dart: CalculateWallpaper calculates glue needed correctly
+00:05 +217 -116: c:/probrab1/test/domain/usecases/calculate_wallpaper_test.dart: CalculateWallpaper handles rapport correctly
+00:05 +218 -116: c:/probrab1/test/domain/usecases/calculate_wallpaper_test.dart: CalculateWallpaper throws exception for zero area
+00:05 +219 -116: c:/probrab1/test/domain/usecases/calculate_wallpaper_test.dart: CalculateWallpaper uses default roll dimensions when not provided
+00:05 +220 -116: c:/probrab1/test/domain/usecases/calculate_wallpaper_test.dart: CalculateWallpaper handles wide wallpaper rolls
+00:05 +221 -116: c:/probrab1/test/domain/usecases/calculate_wallpaper_test.dart: CalculateWallpaper returns error for negative useful area
+00:05 +222 -116: c:/probrab1/test/domain/usecases/calculate_wallpaper_test.dart: CalculateWallpaper calculates total price with price list
+00:05 +223 -116: c:/probrab1/test/domain/usecases/calculate_wallpaper_test.dart: CalculateWallpaper calculates strip length and strips needed
+00:06 +224 -116: c:/probrab1/test/domain/usecases/calculate_wall_paint_test.dart: CalculateWallPaint calculates paint needed correctly with 8% reserve
+00:06 +225 -116: c:/probrab1/test/domain/usecases/calculate_wall_paint_test.dart: CalculateWallPaint calculates primer needed correctly
+00:06 +226 -116: c:/probrab1/test/domain/usecases/calculate_wall_paint_test.dart: CalculateWallPaint subtracts windows and doors area
+00:06 +227 -116: c:/probrab1/test/domain/usecases/calculate_wall_paint_test.dart: CalculateWallPaint handles single layer correctly
+00:06 +228 -116: c:/probrab1/test/domain/usecases/calculate_wall_paint_test.dart: CalculateWallPaint handles three layers correctly
+00:06 +229 -116: c:/probrab1/test/domain/usecases/calculate_wall_paint_test.dart: CalculateWallPaint uses default values when not provided
+00:06 +230 -116: c:/probrab1/test/domain/usecases/calculate_wall_paint_test.dart: CalculateWallPaint does not allow negative useful area
+00:06 +231 -116: c:/probrab1/test/domain/usecases/calculate_wall_paint_test.dart: CalculateWallPaint throws exception for zero area
+00:06 +232 -116: c:/probrab1/test/domain/usecases/calculate_wall_paint_test.dart: CalculateWallPaint calculates total price with price list
+00:06 +233 -116: c:/probrab1/test/domain/usecases/calculate_wall_paint_test.dart: CalculateWallPaint handles high consumption rate
+00:06 +234 -116: c:/probrab1/test/domain/usecases/calculate_wall_tile_test.dart: CalculateWallTile calculates tiles needed correctly
+00:06 +235 -116: c:/probrab1/test/domain/usecases/calculate_wall_tile_test.dart: CalculateWallTile subtracts windows and doors area
+00:06 +236 -116: c:/probrab1/test/domain/usecases/calculate_wall_tile_test.dart: CalculateWallTile calculates grout needed
+00:06 +236 -117: c:/probrab1/test/domain/usecases/calculate_wall_tile_test.dart: CalculateWallTile calculates grout needed [E]
+  Expected: <13.5>
+    Actual: <100.8>
+  
+  package:matcher                                          expect
+  package:flutter_test/src/widget_tester.dart 473:18       expect
+  test\domain\usecases\calculate_wall_tile_test.dart 54:7  main.<fn>.<fn>
+  
+00:06 +236 -117: c:/probrab1/test/domain/usecases/calculate_wall_tile_test.dart: CalculateWallTile calculates glue needed
+00:06 +237 -117: c:/probrab1/test/domain/usecases/calculate_wall_tile_test.dart: CalculateWallTile calculates crosses needed
+00:06 +237 -118: c:/probrab1/test/domain/usecases/calculate_wall_tile_test.dart: CalculateWallTile calculates crosses needed [E]
+  Expected: <1468.0>
+    Actual: <1835.0>
+  
+  package:matcher                                          expect
+  package:flutter_test/src/widget_tester.dart 473:18       expect
+  test\domain\usecases\calculate_wall_tile_test.dart 83:7  main.<fn>.<fn>
+  
+00:06 +237 -118: c:/probrab1/test/domain/usecases/calculate_wall_tile_test.dart: CalculateWallTile uses default values when missing
+00:06 +238 -118: c:/probrab1/test/domain/usecases/calculate_wall_tile_test.dart: CalculateWallTile throws exception for zero area
+00:06 +239 -118: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor calculates useful area correctly (70% of total)
+00:06 +239 -119: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor calculates useful area correctly (70% of total) [E]
+  Expected: <14.0>
+    Actual: <13.0>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 473:18        expect
+  test\domain\usecases\calculate_warm_floor_test.dart 25:7  main.<fn>.<fn>
+  
+00:06 +239 -119: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor calculates total power correctly
+00:06 +239 -120: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor calculates total power correctly [E]
+  Expected: <2100.0>
+    Actual: <1950.0>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 473:18        expect
+  test\domain\usecases\calculate_warm_floor_test.dart 39:7  main.<fn>.<fn>
+  
+00:06 +239 -120: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor calculates cable length for cable type
+00:06 +239 -121: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor calculates cable length for cable type [E]
+  Expected: <56.0>
+    Actual: <114.71>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 473:18        expect
+  test\domain\usecases\calculate_warm_floor_test.dart 53:7  main.<fn>.<fn>
+  
+00:06 +239 -121: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor calculates mat area for mat type
+00:06 +239 -122: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor calculates mat area for mat type [E]
+  Expected: <14.0>
+    Actual: <13.0>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 473:18        expect
+  test\domain\usecases\calculate_warm_floor_test.dart 68:7  main.<fn>.<fn>
+  
+00:06 +239 -122: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor handles thermostats correctly
+00:06 +240 -122: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor calculates insulation area equal to total area
+00:06 +241 -122: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor uses default values when not provided
+00:06 +241 -123: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor uses default values when not provided [E]
+  Expected: <2100.0>
+    Actual: <1950.0>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_warm_floor_test.dart 110:7  main.<fn>.<fn>
+  
+00:06 +241 -123: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor throws exception for zero area
+00:06 +242 -123: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor handles different power values
+00:06 +242 -124: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor handles different power values [E]
+  Expected: <1400.0>
+    Actual: <1300.0>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_warm_floor_test.dart 146:7  main.<fn>.<fn>
+  
+00:06 +242 -124: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor preserves area in results
+00:06 +243 -124: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor handles large room
+00:06 +243 -125: c:/probrab1/test/domain/usecases/calculate_warm_floor_test.dart: CalculateWarmFloor handles large room [E]
+  Expected: <70.0>
+    Actual: <65.0>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_warm_floor_test.dart 177:7  main.<fn>.<fn>
+  
+00:06 +243 -125: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing calculates total area correctly
+00:06 +244 -125: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing calculates material needed
+00:06 +244 -126: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing calculates material needed [E]
+  Expected: <17.6>
+    Actual: <30.24>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_waterproofing_test.dart 37:7  main.<fn>.<fn>
+  
+00:06 +244 -126: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing calculates primer needed
+00:06 +245 -126: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing calculates tape length
+00:06 +245 -127: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing calculates tape length [E]
+  Expected: <10.0>
+    Actual: <13.0>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_waterproofing_test.dart 66:7  main.<fn>.<fn>
+  
+00:06 +245 -127: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing uses default wall height when missing
+00:06 +245 -128: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing uses default wall height when missing [E]
+  Expected: <0.3>
+    Actual: <null>
+  
+  package:matcher                                              expect
+  package:flutter_test/src/widget_tester.dart 473:18           expect
+  test\domain\usecases\calculate_waterproofing_test.dart 80:7  main.<fn>.<fn>
+  
+00:06 +245 -128: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing handles different wall heights
+00:06 +246 -128: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing handles zero floor area
+00:06 +246 -129: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing handles zero floor area [E]
+  CalculationException: [INVALID_INPUT] Некорректные входные данные для калькулятора "CalculateWaterproofing": Площадь пола должна быть больше нуля Details: Площадь пола должна быть больше нуля
+  package:probrab_ai/domain/usecases/base_calculator.dart 342:9  BaseCalculator.call
+  test\domain\usecases\calculate_waterproofing_test.dart 109:32  main.<fn>.<fn>
+  
+00:06 +246 -129: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing handles zero perimeter
+00:06 +246 -130: c:/probrab1/test/domain/usecases/calculate_waterproofing_test.dart: CalculateWaterproofing handles zero perimeter [E]
+  CalculationException: [INVALID_INPUT] Некорректные входные данные для калькулятора "CalculateWaterproofing": Периметр должен быть больше нуля Details: Периметр должен быть больше нуля
+  package:probrab_ai/domain/usecases/base_calculator.dart 342:9  BaseCalculator.call
+  test\domain\usecases\calculate_waterproofing_test.dart 123:32  main.<fn>.<fn>
+  
+00:06 +246 -130: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade calculates insulation volume correctly
+00:06 +246 -131: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade calculates insulation volume correctly [E]
+  Expected: <10.0>
+    Actual: <0.01>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 473:18        expect
+  test\domain\usecases\calculate_wet_facade_test.dart 19:7  main.<fn>.<fn>
+  
+00:06 +246 -131: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade calculates sheets needed for foam
+00:06 +247 -131: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade calculates sheets needed for mineral wool
+00:06 +248 -131: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade calculates glue needed
+00:06 +248 -132: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade calculates glue needed [E]
+  Expected: <500.0>
+    Actual: <550.0>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 473:18        expect
+  test\domain\usecases\calculate_wet_facade_test.dart 66:7  main.<fn>.<fn>
+  
+00:06 +248 -132: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade calculates fasteners needed
+00:06 +248 -133: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade calculates fasteners needed [E]
+  Expected: <500.0>
+    Actual: <550.0>
+  
+  package:matcher                                           expect
+  package:flutter_test/src/widget_tester.dart 473:18        expect
+  test\domain\usecases\calculate_wet_facade_test.dart 79:7  main.<fn>.<fn>
+  
+00:06 +248 -133: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade calculates mesh area
+00:06 +249 -133: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade calculates plaster and finish needed
+00:06 +249 -134: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade calculates plaster and finish needed [E]
+  Expected: <500.0>
+    Actual: <null>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_wet_facade_test.dart 105:7  main.<fn>.<fn>
+  
+00:06 +249 -134: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade uses default values when missing
+00:06 +249 -135: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade uses default values when missing [E]
+  Expected: <100.0>
+    Actual: <null>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_wet_facade_test.dart 120:7  main.<fn>.<fn>
+  
+00:06 +249 -135: c:/probrab1/test/domain/usecases/calculate_wet_facade_test.dart: CalculateWetFacade throws exception for zero area
+00:06 +250 -135: c:/probrab1/test/domain/usecases/calculate_window_installation_test.dart: CalculateWindowInstallation calculates window area correctly
+00:06 +251 -135: c:/probrab1/test/domain/usecases/calculate_window_installation_test.dart: CalculateWindowInstallation calculates foam needed
+00:06 +252 -135: c:/probrab1/test/domain/usecases/calculate_window_installation_test.dart: CalculateWindowInstallation calculates sills needed
+00:06 +252 -136: c:/probrab1/test/domain/usecases/calculate_window_installation_test.dart: CalculateWindowInstallation calculates sills needed [E]
+  Expected: <3.0>
+    Actual: <3.2>
+  
+  package:matcher                                                    expect
+  package:flutter_test/src/widget_tester.dart 473:18                 expect
+  test\domain\usecases\calculate_window_installation_test.dart 49:7  main.<fn>.<fn>
+  
+00:06 +252 -136: c:/probrab1/test/domain/usecases/calculate_window_installation_test.dart: CalculateWindowInstallation calculates slope area
+00:06 +253 -136: c:/probrab1/test/domain/usecases/calculate_window_installation_test.dart: CalculateWindowInstallation calculates drip length
+00:06 +253 -137: c:/probrab1/test/domain/usecases/calculate_window_installation_test.dart: CalculateWindowInstallation calculates drip length [E]
+  Expected: <3.0>
+    Actual: <3.2>
+  
+  package:matcher                                                    expect
+  package:flutter_test/src/widget_tester.dart 473:18                 expect
+  test\domain\usecases\calculate_window_installation_test.dart 79:7  main.<fn>.<fn>
+  
+00:06 +253 -137: c:/probrab1/test/domain/usecases/calculate_window_installation_test.dart: CalculateWindowInstallation uses default values when missing
+00:06 +254 -137: c:/probrab1/test/domain/usecases/calculate_window_installation_test.dart: CalculateWindowInstallation handles zero windows
+00:06 +254 -138: c:/probrab1/test/domain/usecases/calculate_window_installation_test.dart: CalculateWindowInstallation handles zero windows [E]
+  CalculationException: [INVALID_INPUT] Некорректные входные данные для калькулятора "CalculateWindowInstallation": Количество окон должно быть больше нуля Details: Количество окон должно быть больше нуля
+  package:probrab_ai/domain/usecases/base_calculator.dart 342:9        BaseCalculator.call
+  test\domain\usecases\calculate_window_installation_test.dart 101:32  main.<fn>.<fn>
+  
+00:06 +254 -138: c:/probrab1/test/domain/usecases/calculate_wood_facade_test.dart: CalculateWoodFacade calculates boards needed correctly
+00:06 +255 -138: c:/probrab1/test/domain/usecases/calculate_wood_facade_test.dart: CalculateWoodFacade calculates corners length
+00:06 +255 -139: c:/probrab1/test/domain/usecases/calculate_wood_facade_test.dart: CalculateWoodFacade calculates corners length [E]
+  Expected: <25.0>
+    Actual: <6.56>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_wood_facade_test.dart 37:7  main.<fn>.<fn>
+  
+00:06 +255 -139: c:/probrab1/test/domain/usecases/calculate_wood_facade_test.dart: CalculateWoodFacade calculates finish needed
+00:06 +256 -139: c:/probrab1/test/domain/usecases/calculate_wood_facade_test.dart: CalculateWoodFacade calculates fasteners needed
+00:06 +256 -140: c:/probrab1/test/domain/usecases/calculate_wood_facade_test.dart: CalculateWoodFacade calculates fasteners needed [E]
+  Expected: <632.0>
+    Actual: <711.0>
+  
+  package:matcher                                            expect
+  package:flutter_test/src/widget_tester.dart 473:18         expect
+  test\domain\usecases\calculate_wood_facade_test.dart 64:7  main.<fn>.<fn>
+  
+00:06 +256 -140: c:/probrab1/test/domain/usecases/calculate_wood_facade_test.dart: CalculateWoodFacade estimates perimeter when missing
+00:06 +257 -140: c:/probrab1/test/domain/usecases/calculate_wood_facade_test.dart: CalculateWoodFacade uses default values when missing
+00:06 +258 -140: c:/probrab1/test/domain/usecases/calculate_wood_facade_test.dart: CalculateWoodFacade handles different board dimensions
+00:06 +259 -140: c:/probrab1/test/domain/usecases/calculate_wood_facade_test.dart: CalculateWoodFacade throws exception for zero area
+00:06 +260 -140: c:/probrab1/test/domain/usecases/calculate_wood_wall_test.dart: CalculateWoodWall calculates boards needed correctly
+00:07 +261 -140: c:/probrab1/test/domain/usecases/calculate_wood_wall_test.dart: CalculateWoodWall calculates plinth length
+00:07 +262 -140: c:/probrab1/test/domain/usecases/calculate_wood_wall_test.dart: CalculateWoodWall calculates corners length
+00:07 +263 -140: c:/probrab1/test/domain/usecases/calculate_wood_wall_test.dart: CalculateWoodWall calculates finish needed
+00:07 +264 -140: c:/probrab1/test/domain/usecases/calculate_wood_wall_test.dart: CalculateWoodWall calculates fasteners needed
+00:07 +265 -140: c:/probrab1/test/domain/usecases/calculate_wood_wall_test.dart: CalculateWoodWall estimates perimeter when missing
+00:07 +266 -140: c:/probrab1/test/domain/usecases/calculate_wood_wall_test.dart: CalculateWoodWall uses default values when missing
+00:07 +267 -140: c:/probrab1/test/domain/usecases/calculate_wood_wall_test.dart: CalculateWoodWall handles different board dimensions
+00:07 +268 -140: c:/probrab1/test/domain/usecases/calculate_wood_wall_test.dart: CalculateWoodWall throws exception for zero area
+00:07 +269 -140: Some tests failed.

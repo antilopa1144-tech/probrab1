@@ -33,7 +33,7 @@ class CalculateSoftRoofing extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final slope = getInput(inputs, 'slope', defaultValue: 30.0, minValue: 12.0, maxValue: 60.0);
+    final slope = getInput(inputs, 'slope', defaultValue: 30.0, minValue: 0.0, maxValue: 60.0);
     
     final ridgeLength = inputs['ridgeLength'] ?? sqrt(area);
     final perimeter = inputs['perimeter'] ?? (4 * sqrt(area));
@@ -99,6 +99,7 @@ class CalculateSoftRoofing extends BaseCalculator {
         'area': area,
         'realArea': realArea,
         'packsNeeded': packsNeeded.toDouble(),
+        'rollsNeeded': packsNeeded.toDouble(),
         'underlaymentArea': underlaymentArea,
         'ridgeStripLength': ridgeStripLength,
         if (valleyCarpetLength > 0) 'valleyCarpetLength': valleyCarpetLength,

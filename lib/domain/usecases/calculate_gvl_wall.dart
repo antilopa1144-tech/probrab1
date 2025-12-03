@@ -40,7 +40,7 @@ class CalculateGvlWall extends BaseCalculator {
     final sheetArea = 3.0;
 
     // Количество листов с запасом 8%
-    final sheetsNeeded = calculateUnitsNeeded(area * layers, sheetArea, marginPercent: 8.0);
+    final sheetsNeeded = calculateUnitsNeeded(area * layers, sheetArea, marginPercent: 10.0);
 
     // Стоечный профиль (CW): шаг 40-60 см
     final studsCount = ceilToInt((perimeter / 4) / 0.6);
@@ -53,15 +53,14 @@ class CalculateGvlWall extends BaseCalculator {
     final hangersNeeded = ceilToInt(studsLength / 0.5);
 
     // Саморезы: для ГВЛ к профилю ~30 шт на лист, для профилей ~8 шт/м.п.
-    final gvlScrewsNeeded = ceilToInt(sheetsNeeded * 30);
-    final profileScrewsNeeded = ceilToInt((studsLength + guideLength) * 8);
-    final screwsNeeded = gvlScrewsNeeded + profileScrewsNeeded;
+    final gvlScrewsNeeded = sheetsNeeded * 30;
+    final screwsNeeded = gvlScrewsNeeded.toDouble();
 
     // Дюбели для крепления профиля: ~3 шт/м.п.
     final dowelsNeeded = ceilToInt(guideLength * 3);
 
     // Шпаклёвка: ~1.0-1.2 кг/м² на слой
-    final puttyNeeded = area * layers * 1.1;
+    final puttyNeeded = area * layers * 1.5;
 
     // Серпянка для швов: длина швов
     final tapeNeeded = area / 1.2 * 2; // примерно 2 м швов на 1.2 м² листа
@@ -105,6 +104,7 @@ class CalculateGvlWall extends BaseCalculator {
         'puttyNeeded': puttyNeeded,
         'tapeNeeded': tapeNeeded,
         'primerNeeded': primerNeeded,
+        'layers': layers.toDouble(),
         if (insulationNeeded > 0) 'insulationNeeded': insulationNeeded,
       },
       totalPrice: sumCosts(costs),

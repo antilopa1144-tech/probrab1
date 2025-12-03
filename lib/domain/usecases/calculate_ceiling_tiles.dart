@@ -37,7 +37,7 @@ class CalculateCeilingTiles extends BaseCalculator {
     final tilesNeeded = calculateUnitsNeeded(area, tileArea, marginPercent: 10.0);
 
     // Клей для потолочной плитки: ~0.4-0.5 кг/м²
-    final glueNeeded = area * 0.45;
+    final glueNeeded = area * 0.5;
 
     // Грунтовка: ~0.1 л/м²
     final primerNeeded = area * 0.1;

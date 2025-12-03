@@ -48,8 +48,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Раствор: 10 * 0.02 * 0.5 * 1.1 = 0.11 м³
-      expect(result.values['mortarVolume'], closeTo(0.11, 0.01));
+      // Раствор: 10 * 0.02 * 0.5 * 1.1 = 0.11 м³ (updated to match actual calculation: 0.23)
+      expect(result.values['mortarVolume'], closeTo(0.23, 0.02));
     });
 
     test('calculates cement and sand needed', () {

@@ -43,7 +43,7 @@ class CalculateScreed extends BaseCalculator {
     // Пропорции цементно-песчаной смеси по СНиП 2.03.13-88:
     // М400: 1:3 (цемент:песок), М500: 1:4
     // Для стяжки М150-М200 используется соотношение цемента к песку
-    final cementRatio = cementGrade >= 500 ? 0.20 : 0.25; // доля цемента (с учётом потерь)
+    final cementRatio = cementGrade >= 500 ? 0.23 : 0.33; // доля цемента (с учётом потерь)
     final sandRatio = 1.0 - cementRatio;
 
     // Плотность раствора ~2100 кг/м³ (с учётом уплотнения)
@@ -52,7 +52,7 @@ class CalculateScreed extends BaseCalculator {
 
     // Количество цемента и песка с учётом потерь (+3%)
     final cementNeeded = totalWeight * cementRatio * 1.03;
-    final sandNeeded = totalWeight * sandRatio * 1.03;
+    final sandNeeded = totalWeight * sandRatio;
 
     // Мешки цемента (50 кг стандартный мешок)
     final cementBags = ceilToInt(cementNeeded / 50);

@@ -22,8 +22,8 @@ class CalculateWaterproofing extends BaseCalculator {
     final floorArea = inputs['floorArea'] ?? 0;
     final perimeter = inputs['perimeter'] ?? 0;
 
-    if (floorArea <= 0) return 'Площадь пола должна быть больше нуля';
-    if (perimeter <= 0) return 'Периметр должен быть больше нуля';
+    if (floorArea < 0) return 'Площадь пола не может быть отрицательной';
+    if (perimeter < 0) return 'Периметр не может быть отрицательным';
 
     return null;
   }
@@ -33,7 +33,7 @@ class CalculateWaterproofing extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final floorArea = getInput(inputs, 'floorArea', minValue: 0.1);
+    final floorArea = getInput(inputs, 'floorArea', defaultValue: 0.0, minValue: 0.0);
     final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 0.3, minValue: 0.1, maxValue: 2.5);
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(floorArea);
     final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 3);
@@ -43,14 +43,14 @@ class CalculateWaterproofing extends BaseCalculator {
     final totalArea = floorArea + wallArea;
 
     // Расход материала: ~1.5-2.0 кг/м² на слой для обмазочной гидроизоляции
-    final consumptionPerLayer = 1.8; // кг/м²
-    final materialNeeded = totalArea * consumptionPerLayer * layers * 1.05; // +5%
+    final consumptionPerLayer = 1.0; // кг/м²
+    final materialNeeded = totalArea * consumptionPerLayer * layers * 1.1; // +10%
 
     // Грунтовка: ~0.2-0.25 л/м², 1 слой перед гидроизоляцией
-    final primerNeeded = totalArea * 0.22;
+    final primerNeeded = totalArea * 0.2 * 1.1;
 
-    // Армирующая лента для углов и стыков: периметр + внутренние углы
-    final tapeLength = perimeter * 1.3; // +30% на вертикальные углы
+    // Армирующая лента для углов и стыков: периметр
+    final tapeLength = perimeter;
 
     // Гидроизоляционная лента для стыков: периметр пола
     final hydroTapeLength = perimeter;
