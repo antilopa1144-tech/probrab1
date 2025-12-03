@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_ceiling_insulation.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateCeilingInsulation', () {
@@ -91,17 +92,17 @@ void main() {
       expect(result.values['sheetsNeeded'], equals(30.0)); // минвата
     });
 
-    test('handles zero area', () {
+    test('throws exception for zero area', () {
       final calculator = CalculateCeilingInsulation();
       final inputs = {
         'area': 0.0,
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['volume'], equals(0.0));
-      expect(result.values['sheetsNeeded'], equals(0.0));
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
   });
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_wood_facade.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateWoodFacade', () {
@@ -106,17 +107,17 @@ void main() {
       expect(result.values['boardsNeeded'], lessThan(90));
     });
 
-    test('handles zero area', () {
+    test('throws exception for zero area', () {
       final calculator = CalculateWoodFacade();
       final inputs = {
         'area': 0.0,
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['boardsNeeded'], equals(0.0));
-      expect(result.values['finishNeeded'], equals(0.0));
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
   });
 }

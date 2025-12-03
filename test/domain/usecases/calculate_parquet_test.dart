@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_parquet.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateParquet', () {
@@ -100,18 +101,17 @@ void main() {
       expect(result.values['planksNeeded'], greaterThan(0));
     });
 
-    test('handles zero area', () {
+    test('throws exception for zero area', () {
       final calculator = CalculateParquet();
       final inputs = {
         'area': 0.0,
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['planksNeeded'], equals(0.0));
-      expect(result.values['varnishNeeded'], equals(0.0));
-      expect(result.values['glueNeeded'], equals(0.0));
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
   });
 }

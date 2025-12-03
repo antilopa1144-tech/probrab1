@@ -76,7 +76,7 @@ void main() {
       expect(result.values['panelsNeeded'], lessThan(65));
     });
 
-    test('handles zero area', () {
+    test('throws exception for zero area', () {
       final calculator = Calculate3dPanels();
       final inputs = {
         'area': 0.0,

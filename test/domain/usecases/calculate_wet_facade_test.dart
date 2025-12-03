@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_wet_facade.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateWetFacade', () {
@@ -120,17 +121,17 @@ void main() {
       expect(result.values['sheetsNeeded'], equals(210.0)); // пенопласт
     });
 
-    test('handles zero area', () {
+    test('throws exception for zero area', () {
       final calculator = CalculateWetFacade();
       final inputs = {
         'area': 0.0,
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['insulationVolume'], equals(0.0));
-      expect(result.values['sheetsNeeded'], equals(0.0));
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
   });
 }

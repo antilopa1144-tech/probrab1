@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_decorative_stone.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateDecorativeStone', () {
@@ -73,17 +74,17 @@ void main() {
       expect(result.values['stonesNeeded'], equals(1150.0));
     });
 
-    test('handles zero area', () {
+    test('throws exception for zero area', () {
       final calculator = CalculateDecorativeStone();
       final inputs = {
         'area': 0.0,
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['stonesNeeded'], equals(0.0));
-      expect(result.values['glueNeeded'], equals(0.0));
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
   });
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_screed.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateScreed', () {
@@ -92,17 +93,17 @@ void main() {
       expect(result100.values['volume'], equals(2.0));
     });
 
-    test('handles zero area', () {
+    test('throws exception for zero area', () {
       final inputs = {
         'area': 0.0,
         'thickness': 50.0,
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['volume'], equals(0.0));
-      expect(result.values['cementBags'], equals(0.0));
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
 
     test('uses default thickness when not provided', () {

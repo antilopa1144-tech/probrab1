@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_siding.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateSiding', () {
@@ -152,16 +153,16 @@ void main() {
       expect(result.values['cornerLength'], equals(10.0)); // 4 * 2.5
     });
 
-    test('handles zero area', () {
+    test('throws exception for zero area', () {
       final inputs = {
         'area': 0.0,
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['area'], equals(0.0));
-      expect(result.values['panelsNeeded'], equals(0.0));
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
 
     test('preserves area in results', () {
