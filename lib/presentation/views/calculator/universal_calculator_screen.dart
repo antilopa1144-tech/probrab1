@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/utils/input_field_metadata.dart';
 import '../../../core/utils/number_parser.dart';
 import '../../../domain/calculators/definitions.dart';
 import '../../../domain/usecases/calculator_usecase.dart';

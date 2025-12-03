@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:intl/intl.dart';
 import '../../../domain/models/project_v2.dart';
 import '../../../domain/models/export_data.dart';
@@ -256,6 +257,17 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
     // Получаем определение калькулятора
     final calcDef = CalculatorRegistry.getById(calculation.calculatorId);
     if (calcDef == null) {
+      // Логируем ошибку в Crashlytics
+      FirebaseCrashlytics.instance.recordError(
+        Exception('Calculator not found: ${calculation.calculatorId}'),
+        StackTrace.current,
+        reason: 'User attempted to open saved calculation with non-existent calculator',
+        information: [
+          'calculatorId: ${calculation.calculatorId}',
+          'projectId: ${widget.projectId}',
+        ],
+      );
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

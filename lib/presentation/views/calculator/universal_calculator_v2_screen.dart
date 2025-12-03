@@ -237,7 +237,7 @@ class _UniversalCalculatorV2ScreenState
 
     // Формируем текст для шаринга
     final buffer = StringBuffer();
-    buffer.writeln('$calculatorName');
+    buffer.writeln(calculatorName);
     buffer.writeln('${loc.translate('share.date')}: $date');
     buffer.writeln('');
     buffer.writeln('${loc.translate('share.inputs')}:');
@@ -644,7 +644,7 @@ class _UniversalCalculatorV2ScreenState
     }
 
     return DropdownButtonFormField<double>(
-      value: currentValue,
+      initialValue: currentValue,
       decoration: InputDecoration(
         labelText: loc.translate(field.labelKey),
         hintText: field.hintKey != null ? loc.translate(field.hintKey!) : null,
@@ -843,25 +843,30 @@ class _UniversalCalculatorV2ScreenState
     }
     
     // Если точного перевода нет, используем общие правила
-    if (key.contains('area'))
+    if (key.contains('area')) {
       return (UnitType.squareMeters, loc.translate('result.area'));
-    if (key.contains('volume'))
+    }
+    if (key.contains('volume')) {
       return (UnitType.cubicMeters, loc.translate('result.volume'));
-    if (key.contains('length'))
+    }
+    if (key.contains('length')) {
       return (UnitType.meters, loc.translate('result.length'));
+    }
     if (key.contains('liters') || key.endsWith('_l')) {
       return (UnitType.liters, loc.translate('result.quantity'));
     }
     if (key.contains('kg') || key.endsWith('_kg')) {
       return (UnitType.kilograms, loc.translate('result.weight'));
     }
-    if (key.contains('bags'))
+    if (key.contains('bags')) {
       return (UnitType.bags, loc.translate('result.bags'));
+    }
     if (key.contains('packages') || key.contains('packs')) {
       return (UnitType.packages, loc.translate('result.packages'));
     }
-    if (key.contains('rolls'))
+    if (key.contains('rolls')) {
       return (UnitType.rolls, loc.translate('result.rolls'));
+    }
     if (key.contains('pieces') || key.endsWith('_pcs')) {
       return (UnitType.pieces, loc.translate('result.pieces'));
     }
