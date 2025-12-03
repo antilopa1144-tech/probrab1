@@ -1,6 +1,5 @@
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
-import 'dart:math';
 
 /// Калькулятор лестницы.
 ///
