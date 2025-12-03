@@ -1,6 +1,7 @@
 /// Оптимизированное хранилище цен с O(1) поиском.
 ///
 /// Преобразует List<PriceItem> в Map<String, PriceItem> для мгновенного поиска по SKU.
+library;
 
 import 'price_item.dart';
 

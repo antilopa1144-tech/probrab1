@@ -5,9 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:probrab_ai/core/localization/app_localizations.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/presentation/providers/accent_color_provider.dart';
-import 'package:probrab_ai/presentation/providers/region_provider.dart';
-import 'package:probrab_ai/presentation/providers/settings_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ============================================================================

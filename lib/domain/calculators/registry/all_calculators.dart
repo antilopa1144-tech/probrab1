@@ -6,6 +6,7 @@
 /// ```dart
 /// import 'package:probrab_ai/domain/calculators/registry/all_calculators.dart';
 /// ```
+library;
 
 // Экспортируем базовые классы
 export 'calculator_definitions_base.dart';

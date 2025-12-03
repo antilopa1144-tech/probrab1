@@ -1,6 +1,7 @@
 /// Базовые классы для определений калькуляторов.
 ///
 /// Этот файл содержит общие модели данных, используемые всеми калькуляторами.
+library;
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import '../../../data/models/price_item.dart';
