@@ -3110,3 +3110,166 @@ CalculatorDefinition? findCalculatorById(String id) {
     return null;
   }
 }
+
+/// Централизованный реестр всех калькуляторов приложения.
+/// Предоставляет оптимизированный доступ к калькуляторам через индексы.
+///
+/// Использование:
+/// ```dart
+/// final calc = CalculatorRegistryV1.instance.getById('laminate');
+/// final floors = CalculatorRegistryV1.instance.getByCategory('Полы');
+/// final results = CalculatorRegistryV1.instance.search('ламинат');
+/// ```
+class CalculatorRegistryV1 {
+  // Singleton pattern
+  static final CalculatorRegistryV1 _instance = CalculatorRegistryV1._internal();
+  static CalculatorRegistryV1 get instance => _instance;
+
+  CalculatorRegistryV1._internal() {
+    _buildIndices();
+  }
+
+  /// Индекс для быстрого поиска по ID (O(1))
+  final Map<String, CalculatorDefinition> _idIndex = {};
+
+  /// Индекс для быстрого поиска по категории (O(1))
+  final Map<String, List<CalculatorDefinition>> _categoryIndex = {};
+
+  /// Индекс для быстрого поиска по подкатегории (O(1))
+  final Map<String, List<CalculatorDefinition>> _subCategoryIndex = {};
+
+  /// Построить все индексы из существующего списка calculators
+  void _buildIndices() {
+    _idIndex.clear();
+    _categoryIndex.clear();
+    _subCategoryIndex.clear();
+
+    for (final calc in calculators) {
+      // Индекс по ID
+      _idIndex[calc.id] = calc;
+
+      // Индекс по категории
+      _categoryIndex.putIfAbsent(calc.category, () => []).add(calc);
+
+      // Индекс по подкатегории
+      if (calc.subCategory.isNotEmpty) {
+        _subCategoryIndex.putIfAbsent(calc.subCategory, () => []).add(calc);
+      }
+    }
+  }
+
+  /// Получить калькулятор по ID (O(1))
+  CalculatorDefinition? getById(String id) {
+    return _idIndex[id];
+  }
+
+  /// Получить все калькуляторы категории (O(1))
+  List<CalculatorDefinition> getByCategory(String category) {
+    return _categoryIndex[category] ?? [];
+  }
+
+  /// Получить все калькуляторы подкатегории (O(1))
+  List<CalculatorDefinition> getBySubCategory(String subCategory) {
+    return _subCategoryIndex[subCategory] ?? [];
+  }
+
+  /// Получить все уникальные категории
+  List<String> getAllCategories() {
+    return _categoryIndex.keys.toList()..sort();
+  }
+
+  /// Получить все подкатегории для категории
+  List<String> getSubCategories(String category) {
+    final calculators = getByCategory(category);
+    final subCategories = calculators
+        .map((c) => c.subCategory)
+        .where((s) => s.isNotEmpty)
+        .toSet()
+        .toList();
+    return subCategories..sort();
+  }
+
+  /// Поиск калькуляторов по запросу
+  /// Возвращает список калькуляторов, отсортированных по релевантности
+  List<CalculatorDefinition> search(String query) {
+    if (query.isEmpty) {
+      return [];
+    }
+
+    final normalizedQuery = query.toLowerCase().trim();
+    final results = <_SearchResultV1>[];
+
+    for (final calculator in calculators) {
+      int relevance = 0;
+
+      // Поиск в ID (наивысший приоритет)
+      if (calculator.id.toLowerCase().contains(normalizedQuery)) {
+        relevance += 100;
+      }
+
+      // Поиск в titleKey
+      if (calculator.titleKey.toLowerCase().contains(normalizedQuery)) {
+        relevance += 50;
+      }
+
+      // Поиск в категории
+      if (calculator.category.toLowerCase().contains(normalizedQuery)) {
+        relevance += 30;
+      }
+
+      // Поиск в подкатегории
+      if (calculator.subCategory.toLowerCase().contains(normalizedQuery)) {
+        relevance += 20;
+      }
+
+      if (relevance > 0) {
+        results.add(_SearchResultV1(calculator, relevance));
+      }
+    }
+
+    // Сортировка по релевантности
+    results.sort((a, b) => b.relevance.compareTo(a.relevance));
+
+    return results.map((r) => r.calculator).toList();
+  }
+
+  /// Получить все калькуляторы
+  List<CalculatorDefinition> getAll() {
+    return List.unmodifiable(calculators);
+  }
+
+  /// Получить количество калькуляторов
+  int get count => calculators.length;
+
+  /// Проверить, существует ли калькулятор с данным ID
+  bool contains(String id) {
+    return _idIndex.containsKey(id);
+  }
+
+  /// Получить статистику по категориям
+  Map<String, int> getCategoryStats() {
+    return _categoryIndex.map((category, calculators) {
+      return MapEntry(category, calculators.length);
+    });
+  }
+
+  /// Фильтровать калькуляторы по условию
+  List<CalculatorDefinition> filter(
+    bool Function(CalculatorDefinition) predicate,
+  ) {
+    return calculators.where(predicate).toList();
+  }
+
+  /// Пересоздать индексы (используется при динамическом обновлении списка)
+  void rebuildIndices() {
+    _buildIndices();
+  }
+}
+
+/// Внутренний класс для хранения результатов поиска с релевантностью
+class _SearchResultV1 {
+  final CalculatorDefinition calculator;
+  final int relevance;
+
+  _SearchResultV1(this.calculator, this.relevance);
+}
