@@ -4,7 +4,8 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 import 'package:probrab_ai/core/cache/calculation_cache.dart';
-import 'package:probrab_ai/domain/usecases/calculate_strip_foundation.dart';
+// Модульные калькуляторы
+import 'modules/all_modules.dart' as modules;
 import 'package:probrab_ai/domain/usecases/calculate_wall_paint.dart';
 import 'package:probrab_ai/domain/usecases/calculate_wallpaper.dart';
 import 'package:probrab_ai/domain/usecases/calculate_decorative_plaster.dart';
@@ -57,7 +58,6 @@ import 'package:probrab_ai/domain/usecases/calculate_sound_insulation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_ventilation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_cassette_ceiling.dart';
 import 'package:probrab_ai/domain/usecases/calculate_soft_roofing.dart';
-import 'package:probrab_ai/domain/usecases/calculate_slab.dart';
 import 'package:probrab_ai/domain/usecases/calculate_floor_insulation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_stairs.dart';
 import 'package:probrab_ai/domain/usecases/calculate_fence.dart';
@@ -220,97 +220,8 @@ class CalculatorDefinition {
 }
 
 /// ===== КАЛЬКУЛЯТОРЫ ФУНДАМЕНТА =====
-
-final List<CalculatorDefinition> foundationCalculators = [
-  CalculatorDefinition(
-    id: 'calculator.stripTitle',
-    titleKey: 'calculator.stripTitle',
-    category: 'Фундамент',
-    subCategory: 'Ленточный фундамент',
-    fields: [
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        minValue: 4.0,
-        maxValue: 500.0,
-      ),
-      InputFieldDefinition(
-        key: 'width',
-        labelKey: 'input.width',
-        minValue: 0.2,
-        maxValue: 2.0,
-        defaultValue: 0.4,
-      ),
-      InputFieldDefinition(
-        key: 'height',
-        labelKey: 'input.height',
-        minValue: 0.3,
-        maxValue: 3.0,
-        defaultValue: 0.8,
-      ),
-    ],
-    resultLabels: {
-      'concreteVolume': 'result.volume',
-      'rebarWeight': 'result.rebar',
-    },
-    tips: const [
-      'Снимите плодородный слой и утрамбуйте основание перед заливкой.',
-      'Используйте песчано-щебёночную подушку не менее 200 мм.',
-      'Контролируйте диагонали опалубки — от этого зависит геометрия стен.',
-      'Заранее подготовьте закладные гильзы для инженерных коммуникаций.',
-    ],
-    useCase: CalculateStripFoundation(),
-  ),
-  CalculatorDefinition(
-    id: 'foundation_slab',
-    titleKey: 'calculator.slab',
-    category: 'Фундамент',
-    subCategory: 'Монолитная плита',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'thickness',
-        labelKey: 'input.thickness',
-        defaultValue: 0.2,
-      ),
-      InputFieldDefinition(
-        key: 'insulation',
-        labelKey: 'input.insulationThickness',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'thickness': 'result.thickness',
-      'concreteVolume': 'result.volume',
-      'rebarWeight': 'result.rebar',
-      'sandVolume': 'result.sand',
-      'gravelVolume': 'result.gravel',
-      'waterproofingArea': 'result.waterproofing',
-      'insulationVolume': 'result.insulation',
-      'formworkArea': 'result.formwork',
-      'wireNeeded': 'result.wire',
-      'plasticizerNeeded': 'result.plasticizer',
-    },
-    tips: const [
-      'Плита толщиной минимум 200 мм для жилого дома.',
-      'Обязательна песчано-гравийная подготовка.',
-      'Гидроизоляция снизу и по периметру.',
-      'Армирование двумя сетками в верхней и нижней зонах.',
-      'Утеплитель (ЭППС) под плитой для теплого пола.',
-    ],
-    useCase: CalculateSlab(),
-  ),
-];
+/// Импортированы из модуля modules/foundation/
+final List<CalculatorDefinition> foundationCalculators = modules.foundationCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ СТЕН =====
 
