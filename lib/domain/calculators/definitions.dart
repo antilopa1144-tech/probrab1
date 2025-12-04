@@ -15,19 +15,12 @@ import 'package:probrab_ai/domain/usecases/calculate_tile.dart';
 import 'package:probrab_ai/domain/usecases/calculate_linoleum.dart';
 import 'package:probrab_ai/domain/usecases/calculate_stretch_ceiling.dart';
 import 'package:probrab_ai/domain/usecases/calculate_warm_floor.dart';
-import 'package:probrab_ai/domain/usecases/calculate_gkl_partition.dart';
 import 'package:probrab_ai/domain/usecases/calculate_ceiling_paint.dart';
 import 'package:probrab_ai/domain/usecases/calculate_gkl_ceiling.dart';
 import 'package:probrab_ai/domain/usecases/calculate_parquet.dart';
 import 'package:probrab_ai/domain/usecases/calculate_self_leveling_floor.dart';
-import 'package:probrab_ai/domain/usecases/calculate_insulation_mineral_wool.dart';
-import 'package:probrab_ai/domain/usecases/calculate_insulation_foam.dart';
 import 'package:probrab_ai/domain/usecases/calculate_siding.dart';
 import 'package:probrab_ai/domain/usecases/calculate_rail_ceiling.dart';
-import 'package:probrab_ai/domain/usecases/calculate_bathroom_tile.dart';
-import 'package:probrab_ai/domain/usecases/calculate_waterproofing.dart';
-import 'package:probrab_ai/domain/usecases/calculate_gasblock_partition.dart';
-import 'package:probrab_ai/domain/usecases/calculate_brick_partition.dart';
 import 'package:probrab_ai/domain/usecases/calculate_roofing_metal.dart';
 import 'package:probrab_ai/domain/usecases/calculate_wet_facade.dart';
 import 'package:probrab_ai/domain/usecases/calculate_carpet.dart';
@@ -1266,210 +1259,12 @@ final List<CalculatorDefinition> ceilingCalculators = [
 ];
 
 /// ===== КАЛЬКУЛЯТОРЫ ПЕРЕГОРОДОК =====
-
-final List<CalculatorDefinition> partitionCalculators = [
-  CalculatorDefinition(
-    id: 'partitions_gkl',
-    titleKey: 'calculator.gklPartition',
-    category: 'Внутренняя отделка',
-    subCategory: 'Перегородки',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        minValue: 1.0,
-        maxValue: 500.0,
-      ),
-      InputFieldDefinition(
-        key: 'layers',
-        labelKey: 'input.layers',
-        defaultValue: 2.0,
-        minValue: 1.0,
-        maxValue: 3.0,
-      ),
-      InputFieldDefinition(
-        key: 'height',
-        labelKey: 'input.height',
-        defaultValue: 2.5,
-        minValue: 2.0,
-        maxValue: 4.5,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-        minValue: 0.0,
-        maxValue: 100.0,
-        required: false,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'sheetsNeeded': 'result.sheets',
-      'studsLength': 'result.studs',
-      'guideLength': 'result.guide',
-      'screwsNeeded': 'result.screws',
-      'puttyNeeded': 'result.putty',
-    },
-    tips: const [
-      'Шаг стоек — 60 см для прочности.',
-      'Используйте звукоизоляцию между листами.',
-      'Проверьте вертикальность стоек уровнем.',
-      'Шпаклёвку наносите в два слоя.',
-    ],
-    useCase: CalculateGklPartition(),
-  ),
-  CalculatorDefinition(
-    id: 'partitions_blocks',
-    titleKey: 'calculator.gasBlockPartition',
-    category: 'Внутренняя отделка',
-    subCategory: 'Перегородки',
-    fields: [
-      InputFieldDefinition(
-        key: 'length',
-        labelKey: 'input.length',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'height',
-        labelKey: 'input.height',
-        defaultValue: 2.7,
-      ),
-      InputFieldDefinition(
-        key: 'thickness',
-        labelKey: 'input.thickness',
-        defaultValue: 100.0,
-      ),
-    ],
-    resultLabels: {
-      'blocksNeeded': 'result.sheets',
-      'glueNeeded': 'result.glue',
-      'reinforcementLength': 'result.reinforcement',
-    },
-    tips: const [
-      'Используйте специальный клей для газобетона.',
-      'Армируйте каждый 3-4 ряд.',
-      'Первый ряд укладывайте на раствор.',
-      'Проверяйте геометрию уровнем.',
-    ],
-    useCase: CalculateGasblockPartition(),
-  ),
-  CalculatorDefinition(
-    id: 'partitions_brick',
-    titleKey: 'calculator.brickPartition',
-    category: 'Внутренняя отделка',
-    subCategory: 'Перегородки',
-    fields: [
-      InputFieldDefinition(
-        key: 'length',
-        labelKey: 'input.length',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'height',
-        labelKey: 'input.height',
-        defaultValue: 2.7,
-      ),
-      InputFieldDefinition(
-        key: 'brickType',
-        labelKey: 'input.type',
-        defaultValue: 0.5,
-      ),
-    ],
-    resultLabels: {
-      'bricksNeeded': 'result.bricks',
-      'mortarNeeded': 'result.mortar',
-      'reinforcementLength': 'result.reinforcement',
-    },
-    tips: const [
-      'Кладку в полкирпича армируйте каждые 5 рядов.',
-      'Используйте цементно-песчаный раствор М100.',
-      'Проверяйте вертикальность отвесом.',
-      'Связывайте с несущими стенами анкерами.',
-    ],
-    useCase: CalculateBrickPartition(),
-  ),
-];
+/// Перенесено в modules/partitions/partition_calculators.dart
+final List<CalculatorDefinition> partitionCalculators = modules.partitionCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ УТЕПЛЕНИЯ =====
-
-final List<CalculatorDefinition> insulationCalculators = [
-  CalculatorDefinition(
-    id: 'insulation_mineral',
-    titleKey: 'calculator.mineralWool',
-    category: 'Внутренняя отделка',
-    subCategory: 'Утепление',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'thickness',
-        labelKey: 'input.thickness',
-        defaultValue: 100.0,
-      ),
-      InputFieldDefinition(
-        key: 'density',
-        labelKey: 'input.density',
-        defaultValue: 50.0,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'volume': 'result.volume',
-      'sheetsNeeded': 'result.sheets',
-      'weight': 'result.weight',
-      'vaporBarrierArea': 'result.vaporBarrier',
-      'fastenersNeeded': 'result.fasteners',
-    },
-    tips: const [
-      'Используйте пароизоляцию с внутренней стороны.',
-      'Не сжимайте вату при укладке — это снижает эффективность.',
-      'Защитите руки и дыхательные пути при работе.',
-    ],
-    useCase: CalculateInsulationMineralWool(),
-  ),
-  CalculatorDefinition(
-    id: 'insulation_foam',
-    titleKey: 'calculator.foamInsulation',
-    category: 'Внутренняя отделка',
-    subCategory: 'Утепление',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'thickness',
-        labelKey: 'input.thickness',
-        defaultValue: 50.0,
-      ),
-      InputFieldDefinition(
-        key: 'density',
-        labelKey: 'input.density',
-        defaultValue: 25.0,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'volume': 'result.volume',
-      'sheetsNeeded': 'result.sheets',
-      'weight': 'result.weight',
-      'glueNeeded': 'result.glue',
-      'fastenersNeeded': 'result.fasteners',
-      'meshArea': 'result.mesh',
-    },
-    tips: const [
-      'Используйте специальный клей для пенопласта.',
-      'Крепите дюбелями после высыхания клея.',
-      'Для фасада обязательна армирующая сетка.',
-    ],
-    useCase: CalculateInsulationFoam(),
-  ),
-];
+/// Перенесено в modules/insulation/insulation_calculators.dart
+final List<CalculatorDefinition> insulationCalculators = modules.insulationCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ НАРУЖНОЙ ОТДЕЛКИ =====
 
@@ -2089,103 +1884,8 @@ final List<CalculatorDefinition> engineeringCalculators = [
 
 /// ===== КАЛЬКУЛЯТОРЫ ВАННОЙ =====
 
-final List<CalculatorDefinition> bathroomCalculators = [
-  CalculatorDefinition(
-    id: 'bathroom_tile',
-    titleKey: 'calculator.bathroomTile',
-    category: 'Внутренняя отделка',
-    subCategory: 'Ванная / туалет',
-    fields: [
-      InputFieldDefinition(
-        key: 'wallArea',
-        labelKey: 'input.wallArea',
-        minValue: 0.0,
-        maxValue: 100.0,
-      ),
-      InputFieldDefinition(
-        key: 'floorArea',
-        labelKey: 'input.floorArea',
-        minValue: 0.0,
-        maxValue: 50.0,
-      ),
-      InputFieldDefinition(
-        key: 'tileWidth',
-        labelKey: 'input.tileWidth',
-        defaultValue: 30.0,
-        minValue: 10.0,
-        maxValue: 120.0,
-      ),
-      InputFieldDefinition(
-        key: 'tileHeight',
-        labelKey: 'input.tileHeight',
-        defaultValue: 30.0,
-        minValue: 10.0,
-        maxValue: 120.0,
-      ),
-      InputFieldDefinition(
-        key: 'jointWidth',
-        labelKey: 'input.jointWidth',
-        defaultValue: 3.0,
-        minValue: 1.0,
-        maxValue: 10.0,
-      ),
-    ],
-    resultLabels: {
-      'wallArea': 'result.wallArea',
-      'floorArea': 'result.floorArea',
-      'totalTiles': 'result.tiles',
-      'groutNeeded': 'result.grout',
-      'glueNeeded': 'result.glue',
-      'crossesNeeded': 'result.crosses',
-      'waterproofingArea': 'result.waterproofing',
-    },
-    tips: const [
-      'Используйте влагостойкий клей и затирку.',
-      'Гидроизоляция обязательна для пола и нижней части стен.',
-      'Проверьте ровность основания перед укладкой.',
-      'Используйте крестики для равномерного шва.',
-    ],
-    useCase: CalculateBathroomTile(),
-  ),
-  CalculatorDefinition(
-    id: 'bathroom_waterproof',
-    titleKey: 'calculator.waterproofing',
-    category: 'Внутренняя отделка',
-    subCategory: 'Ванная / туалет',
-    fields: [
-      InputFieldDefinition(
-        key: 'floorArea',
-        labelKey: 'input.floorArea',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'wallHeight',
-        labelKey: 'input.wallHeight',
-        defaultValue: 0.3,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
-    ],
-    resultLabels: {
-      'floorArea': 'result.floorArea',
-      'wallArea': 'result.wallArea',
-      'totalArea': 'result.totalArea',
-      'materialNeeded': 'result.material',
-      'primerNeeded': 'result.primer',
-      'tapeLength': 'result.tape',
-    },
-    tips: const [
-      'Гидроизоляция обязательна для пола и стен на высоту 30 см.',
-      'Используйте армирующую ленту для углов и стыков.',
-      'Наносите материал в два слоя перпендикулярно.',
-      'Проверьте целостность покрытия перед укладкой плитки.',
-    ],
-    useCase: CalculateWaterproofing(),
-  ),
-];
+/// Перенесено в modules/bathroom/bathroom_calculators.dart
+final List<CalculatorDefinition> bathroomCalculators = modules.bathroomCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ СМЕСЕЙ =====
 
