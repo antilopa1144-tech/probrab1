@@ -36,7 +36,7 @@ class CalculateDecorativePlaster extends BaseCalculator {
     final doorsArea = getInput(inputs, 'doorsArea', defaultValue: 0.0, minValue: 0.0);
 
     // Полезная площадь
-    final usefulArea = [area - windowsArea - doorsArea, 0].reduce((a, b) => a > b ? a : b);
+    final usefulArea = [area - windowsArea - doorsArea, 0.0].reduce((a, b) => a > b ? a : b).toDouble();
 
     // Расход зависит от типа штукатурки:
     // - Венецианская: 0.6-1.0 кг/м² на слой (3-5 слоёв)

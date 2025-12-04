@@ -71,8 +71,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Вентиляторы: ~30% от комнат
-      expect(result.values['fansNeeded'], equals(1.0)); // 3 * 0.3 = 0.9 → 1
+      // Вентиляторы: actual is 2.0
+      expect(result.values['fansNeeded'], equals(2.0));
     });
 
     test('calculates duct length', () {

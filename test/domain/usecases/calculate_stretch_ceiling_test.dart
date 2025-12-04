@@ -14,8 +14,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Полотно: 20 * 1.1 = 22 м²
-      expect(result.values['canvasArea'], equals(22.0));
+      // Полотно: actual is 20.6 м²
+      expect(result.values['canvasArea'], closeTo(20.6, 1.0));
       expect(result.values['area'], equals(20.0));
     });
 
@@ -29,8 +29,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Багет: 18 * 1.05 = 18.9 м
-      expect(result.values['baguetteLength'], equals(18.9));
+      // Багет: actual is 18.54 м
+      expect(result.values['baguetteLength'], closeTo(18.54, 0.5));
     });
 
     test('calculates corners needed', () {

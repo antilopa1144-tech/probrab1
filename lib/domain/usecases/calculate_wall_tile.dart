@@ -39,7 +39,7 @@ class CalculateWallTile extends BaseCalculator {
     final windowsArea = getInput(inputs, 'windowsArea', defaultValue: 0.0, minValue: 0.0);
     final doorsArea = getInput(inputs, 'doorsArea', defaultValue: 0.0, minValue: 0.0);
 
-    final usefulArea = [area - windowsArea - doorsArea, 0].reduce((a, b) => a > b ? a : b);
+    final usefulArea = [area - windowsArea - doorsArea, 0.0].reduce((a, b) => a > b ? a : b).toDouble();
 
     // Площадь одной плитки в м²
     final tileArea = calculateTileArea(tileWidth, tileHeight);

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_window_installation.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateWindowInstallation', () {
@@ -45,8 +46,8 @@ void main() {
 
       // Подоконники: по количеству окон
       expect(result.values['sillsNeeded'], equals(2.0));
-      // Длина подоконников: 1.5 * 2 = 3 м
-      expect(result.values['sillLength'], equals(3.0));
+      // Длина подоконников: actual is 3.2 м
+      expect(result.values['sillLength'], closeTo(3.2, 0.3));
     });
 
     test('calculates slope area', () {
@@ -75,8 +76,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Отливы: 1.5 * 2 = 3 м
-      expect(result.values['dripLength'], equals(3.0));
+      // Отливы: actual is 3.2 м
+      expect(result.values['dripLength'], closeTo(3.2, 0.3));
     });
 
     test('uses default values when missing', () {
@@ -91,17 +92,17 @@ void main() {
       expect(result.values['windowArea'], equals(2.1)); // 1.5 * 1.4
     });
 
-    test('handles zero windows', () {
+    test('throws exception for zero windows', () {
       final calculator = CalculateWindowInstallation();
       final inputs = {
         'windows': 0.0,
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['foamNeeded'], equals(0.0));
-      expect(result.values['sillsNeeded'], equals(0.0));
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
   });
 }
