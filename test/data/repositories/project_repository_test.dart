@@ -3,6 +3,8 @@ import 'package:probrab_ai/data/repositories/project_repository.dart';
 import 'package:probrab_ai/domain/entities/project.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late ProjectRepository repository;
 
   setUp(() {

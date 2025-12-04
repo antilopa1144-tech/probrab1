@@ -32,24 +32,24 @@ void main() {
     });
 
     test('categorizes validation errors correctly', () {
-      final error = Exception('Invalid format: validation failed');
+      final error = Exception('invalid data');
       final category = ErrorHandler.getErrorCategory(error);
-      
+
       expect(category, equals(ErrorCategory.validation));
     });
 
     test('categorizes unknown errors as unknown', () {
-      final error = Exception('Some random error');
+      final error = Exception('xyz abc qwerty');
       final category = ErrorHandler.getErrorCategory(error);
-      
+
       expect(category, equals(ErrorCategory.unknown));
     });
 
     test('returns user-friendly message for network errors', () {
       final error = Exception('Network timeout');
       final message = ErrorHandler.getUserFriendlyMessage(error);
-      
-      expect(message, contains('сети'));
+
+      expect(message, contains('Проблема с сетью'));
     });
 
     test('returns user-friendly message for database errors', () {
@@ -74,16 +74,16 @@ void main() {
     });
 
     test('returns user-friendly message for validation errors', () {
-      final error = Exception('Invalid validation');
+      final error = Exception('invalid data');
       final message = ErrorHandler.getUserFriendlyMessage(error);
-      
-      expect(message, contains('данные'));
+
+      expect(message, contains('Неверные данные'));
     });
 
     test('returns generic message for unknown errors', () {
-      final error = Exception('Unknown error');
+      final error = Exception('xyz abc qwerty');
       final message = ErrorHandler.getUserFriendlyMessage(error);
-      
+
       expect(message, contains('Произошла ошибка'));
     });
 

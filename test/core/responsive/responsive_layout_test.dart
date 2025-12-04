@@ -93,11 +93,13 @@ void main() {
 
   group('ResponsiveLayout', () {
     testWidgets('shows phone layout on narrow screens', (tester) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+
       await tester.pumpWidget(
-        MaterialApp(
-          home: MediaQuery(
-            data: const MediaQueryData(size: Size(400, 800)),
-            child: const ResponsiveLayout(
+        const MaterialApp(
+          home: Scaffold(
+            body: ResponsiveLayout(
               phone: Text('Phone'),
               tablet: Text('Tablet'),
               desktop: Text('Desktop'),
@@ -109,6 +111,8 @@ void main() {
       expect(find.text('Phone'), findsOneWidget);
       expect(find.text('Tablet'), findsNothing);
       expect(find.text('Desktop'), findsNothing);
+
+      addTearDown(tester.view.reset);
     });
 
     testWidgets('shows tablet layout on medium screens', (tester) async {
@@ -131,11 +135,13 @@ void main() {
     });
 
     testWidgets('shows desktop layout on wide screens', (tester) async {
+      tester.view.physicalSize = const Size(1200, 800);
+      tester.view.devicePixelRatio = 1.0;
+
       await tester.pumpWidget(
-        MaterialApp(
-          home: MediaQuery(
-            data: const MediaQueryData(size: Size(1200, 800)),
-            child: const ResponsiveLayout(
+        const MaterialApp(
+          home: Scaffold(
+            body: ResponsiveLayout(
               phone: Text('Phone'),
               tablet: Text('Tablet'),
               desktop: Text('Desktop'),
@@ -147,6 +153,8 @@ void main() {
       expect(find.text('Phone'), findsNothing);
       expect(find.text('Tablet'), findsNothing);
       expect(find.text('Desktop'), findsOneWidget);
+
+      addTearDown(tester.view.reset);
     });
 
     testWidgets('falls back to phone when tablet not provided', (tester) async {

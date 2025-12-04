@@ -16,7 +16,11 @@ enum ErrorCategory {
 class ErrorHandler {
   /// Получить категорию ошибки для аналитики.
   static ErrorCategory getErrorCategory(Object error) {
-    final errorMessage = error.toString().toLowerCase();
+    String errorMessage = error.toString().toLowerCase();
+    // Remove "Exception: " prefix to avoid false matches (e.g., "exception" contains "io")
+    if (errorMessage.startsWith('exception: ')) {
+      errorMessage = errorMessage.substring('exception: '.length);
+    }
     
     if (errorMessage.contains('network') || 
         errorMessage.contains('socket') || 

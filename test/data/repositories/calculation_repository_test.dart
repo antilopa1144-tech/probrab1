@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/data/repositories/calculation_repository.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late CalculationRepository repository;
 
   setUp(() {
