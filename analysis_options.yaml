@@ -9,20 +9,86 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+  errors:
+    # Treat missing required parameters as errors
+    missing_required_param: error
+    # Treat missing return types as errors
+    always_declare_return_types: error
+
 linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
+  # Строгие правила для улучшения качества кода
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # === Стиль кода ===
+    # Всегда объявлять типы возвращаемых значений
+    always_declare_return_types: true
+    # Использовать const конструкторы где возможно
+    prefer_const_constructors: true
+    prefer_const_constructors_in_immutables: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true
+    # Использовать одинарные кавычки
+    prefer_single_quotes: true
+    # Использовать trailing commas для лучшего форматирования
+    require_trailing_commas: true
+
+    # === Безопасность и правильность ===
+    # Избегать print в продакшене
+    avoid_print: true
+    # Избегать динамических вызовов
+    avoid_dynamic_calls: true
+    # Избегать пустых catch блоков
+    avoid_catching_errors: true
+    # Избегать возвращения null из non-nullable функций
+    avoid_returning_null_for_void: true
+    # Использовать super parameters где возможно
+    use_super_parameters: true
+
+    # === Производительность ===
+    # Избегать медленных async операций в синхронных функциях
+    avoid_slow_async_io: true
+    # Использовать коллекции вместо литералов
+    prefer_collection_literals: true
+    # Использовать spread collections
+    prefer_spread_collections: true
+    # Использовать if null operators
+    prefer_if_null_operators: true
+
+    # === Читаемость ===
+    # Использовать raw strings для регулярных выражений
+    use_raw_strings: true
+    # Избегать пустых else блоков
+    avoid_empty_else: true
+    # Избегать ненужных null checks
+    unnecessary_null_checks: true
+    # Использовать is empty для проверки пустоты
+    prefer_is_empty: true
+    prefer_is_not_empty: true
+
+    # === Документация ===
+    # Документировать публичные API
+    # public_member_api_docs: true  # Раскомментируйте когда будете готовы
+
+    # === Immutability ===
+    # Предпочитать final для локальных переменных
+    prefer_final_locals: true
+    prefer_final_fields: true
+    prefer_final_in_for_each: true
+
+    # === Обработка ошибок ===
+    # Избегать catch блоков без on
+    avoid_catches_without_on_clauses: false  # Слишком строго для начала
+    # Использовать rethrow вместо throw в catch
+    use_rethrow_when_possible: true
+
+    # === Null safety ===
+    # Избегать null checks на non-nullable переменных
+    unnecessary_null_in_if_null_operators: true
+    # Использовать ?. вместо != null
+    prefer_null_aware_operators: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

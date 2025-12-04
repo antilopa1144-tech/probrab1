@@ -70,8 +70,8 @@ class CalculatorNavigationHelper {
       return;
     }
 
-    // Пытаемся найти старую версию
-    final legacyDefinition = findCalculatorById(calculatorId);
+    // Пытаемся найти старую версию через Registry (O(1) lookup)
+    final legacyDefinition = CalculatorRegistryV1.instance.getById(calculatorId);
     if (legacyDefinition != null) {
       Navigator.of(context).push(
         ModernPageTransitions.scale(

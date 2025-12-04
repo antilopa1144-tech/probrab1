@@ -717,7 +717,7 @@ extension _HomeMainScreenStateExtension on _HomeMainScreenState {
             itemCount: favorites.length,
             itemBuilder: (context, index) {
               final calculatorId = favorites[index];
-              final calculator = findCalculatorById(calculatorId);
+              final calculator = CalculatorRegistryV1.instance.getById(calculatorId);
               if (calculator == null) return const SizedBox.shrink();
               
               return ListTile(
