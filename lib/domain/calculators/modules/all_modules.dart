@@ -40,5 +40,5 @@ export 'floors/floor_calculators.dart';
 // Наружная отделка
 export 'exterior/exterior_calculators.dart';
 
-// В будущем здесь будут экспортированы другие модули:
-// export 'structure/structure_calculators.dart';
+// Конструкции
+export 'structure/structure_calculators.dart';
