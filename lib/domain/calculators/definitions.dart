@@ -13,30 +13,19 @@ import 'package:probrab_ai/domain/usecases/calculate_laminate.dart';
 import 'package:probrab_ai/domain/usecases/calculate_screed.dart';
 import 'package:probrab_ai/domain/usecases/calculate_tile.dart';
 import 'package:probrab_ai/domain/usecases/calculate_linoleum.dart';
-import 'package:probrab_ai/domain/usecases/calculate_stretch_ceiling.dart';
 import 'package:probrab_ai/domain/usecases/calculate_warm_floor.dart';
-import 'package:probrab_ai/domain/usecases/calculate_ceiling_paint.dart';
-import 'package:probrab_ai/domain/usecases/calculate_gkl_ceiling.dart';
 import 'package:probrab_ai/domain/usecases/calculate_parquet.dart';
 import 'package:probrab_ai/domain/usecases/calculate_self_leveling_floor.dart';
 import 'package:probrab_ai/domain/usecases/calculate_siding.dart';
-import 'package:probrab_ai/domain/usecases/calculate_rail_ceiling.dart';
-import 'package:probrab_ai/domain/usecases/calculate_roofing_metal.dart';
 import 'package:probrab_ai/domain/usecases/calculate_wet_facade.dart';
 import 'package:probrab_ai/domain/usecases/calculate_carpet.dart';
-import 'package:probrab_ai/domain/usecases/calculate_ceiling_tiles.dart';
-import 'package:probrab_ai/domain/usecases/calculate_ceiling_insulation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_brick_facing.dart';
-import 'package:probrab_ai/domain/usecases/calculate_gutters.dart';
-import 'package:probrab_ai/domain/usecases/calculate_electrics.dart';
 import 'package:probrab_ai/domain/usecases/calculate_wall_tile.dart';
 import 'package:probrab_ai/domain/usecases/calculate_mdf_panels.dart';
 import 'package:probrab_ai/domain/usecases/calculate_pvc_panels.dart';
 import 'package:probrab_ai/domain/usecases/calculate_decorative_stone.dart';
 import 'package:probrab_ai/domain/usecases/calculate_wood_wall.dart';
 import 'package:probrab_ai/domain/usecases/calculate_gvl_wall.dart';
-import 'package:probrab_ai/domain/usecases/calculate_plumbing.dart';
-import 'package:probrab_ai/domain/usecases/calculate_heating.dart';
 import 'package:probrab_ai/domain/usecases/calculate_putty.dart';
 import 'package:probrab_ai/domain/usecases/calculate_primer.dart';
 import 'package:probrab_ai/domain/usecases/calculate_tile_glue.dart';
@@ -48,9 +37,6 @@ import 'package:probrab_ai/domain/usecases/calculate_window_installation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_door_installation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_slopes.dart';
 import 'package:probrab_ai/domain/usecases/calculate_sound_insulation.dart';
-import 'package:probrab_ai/domain/usecases/calculate_ventilation.dart';
-import 'package:probrab_ai/domain/usecases/calculate_cassette_ceiling.dart';
-import 'package:probrab_ai/domain/usecases/calculate_soft_roofing.dart';
 import 'package:probrab_ai/domain/usecases/calculate_floor_insulation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_stairs.dart';
 import 'package:probrab_ai/domain/usecases/calculate_fence.dart';
@@ -225,27 +211,27 @@ final List<CalculatorDefinition> wallCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 1.0,
         maxValue: 1000.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'layers',
         labelKey: 'input.layers',
         defaultValue: 2.0,
         minValue: 1.0,
         maxValue: 5.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'consumption',
         labelKey: 'input.consumption',
         defaultValue: 0.15,
         minValue: 0.05,
         maxValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         defaultValue: 0.0,
@@ -253,7 +239,7 @@ final List<CalculatorDefinition> wallCalculators = [
         maxValue: 100.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         defaultValue: 0.0,
@@ -282,27 +268,27 @@ final List<CalculatorDefinition> wallCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 1.0,
         maxValue: 500.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'rollWidth',
         labelKey: 'input.rollWidth',
         defaultValue: 0.53,
         minValue: 0.3,
         maxValue: 1.5,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'rollLength',
         labelKey: 'input.rollLength',
         defaultValue: 10.05,
         minValue: 5.0,
         maxValue: 25.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'rapport',
         labelKey: 'input.rapport',
         defaultValue: 0.0,
@@ -310,14 +296,14 @@ final List<CalculatorDefinition> wallCalculators = [
         maxValue: 1.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'wallHeight',
         labelKey: 'input.wallHeight',
         defaultValue: 2.5,
         minValue: 2.0,
         maxValue: 5.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         defaultValue: 0.0,
@@ -325,7 +311,7 @@ final List<CalculatorDefinition> wallCalculators = [
         maxValue: 100.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         defaultValue: 0.0,
@@ -354,22 +340,22 @@ final List<CalculatorDefinition> wallCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 2.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         defaultValue: 0.0,
@@ -393,12 +379,12 @@ final List<CalculatorDefinition> wallCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 15.0,
@@ -422,12 +408,12 @@ final List<CalculatorDefinition> wallCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         defaultValue: 0.25,
@@ -451,12 +437,12 @@ final List<CalculatorDefinition> wallCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         defaultValue: 0.20,
@@ -480,12 +466,12 @@ final List<CalculatorDefinition> wallCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'panelSize',
         labelKey: 'input.packArea',
         defaultValue: 0.5,
@@ -508,12 +494,12 @@ final List<CalculatorDefinition> wallCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'boardWidth',
         labelKey: 'input.boardWidth',
         defaultValue: 0.10,
@@ -537,12 +523,12 @@ final List<CalculatorDefinition> wallCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'layers',
         labelKey: 'input.layers',
         defaultValue: 1.0,
@@ -566,17 +552,17 @@ final List<CalculatorDefinition> wallCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'tileWidth',
         labelKey: 'input.tileWidth',
         defaultValue: 30.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'tileHeight',
         labelKey: 'input.tileHeight',
         defaultValue: 60.0,
@@ -605,27 +591,27 @@ final List<CalculatorDefinition> floorCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 1.0,
         maxValue: 500.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'packArea',
         labelKey: 'input.packArea',
         defaultValue: 2.0,
         minValue: 1.0,
         maxValue: 5.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'underlayThickness',
         labelKey: 'input.underlayThickness',
         defaultValue: 3.0,
         minValue: 2.0,
         maxValue: 10.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
@@ -655,20 +641,20 @@ final List<CalculatorDefinition> floorCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 1.0,
         maxValue: 1000.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 50.0,
         minValue: 20.0,
         maxValue: 200.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'cementGrade',
         labelKey: 'input.cementGrade',
         defaultValue: 400.0,
@@ -696,27 +682,27 @@ final List<CalculatorDefinition> floorCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 0.5,
         maxValue: 500.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'tileWidth',
         labelKey: 'input.tileWidth',
         defaultValue: 30.0,
         minValue: 10.0,
         maxValue: 120.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'tileHeight',
         labelKey: 'input.tileHeight',
         defaultValue: 30.0,
         minValue: 10.0,
         maxValue: 120.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'jointWidth',
         labelKey: 'input.jointWidth',
         defaultValue: 3.0,
@@ -745,27 +731,27 @@ final List<CalculatorDefinition> floorCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'rollWidth',
         labelKey: 'input.rollWidth',
         defaultValue: 3.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'rollLength',
         labelKey: 'input.rollLength',
         defaultValue: 30.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'overlap',
         labelKey: 'input.overlap',
         defaultValue: 5.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
@@ -790,27 +776,27 @@ final List<CalculatorDefinition> floorCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 1.0,
         maxValue: 200.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'power',
         labelKey: 'input.power',
         defaultValue: 150.0,
         minValue: 80.0,
         maxValue: 250.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'type',
         labelKey: 'input.type',
         defaultValue: 2.0,
         minValue: 1.0,
         maxValue: 2.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'thermostats',
         labelKey: 'input.thermostats',
         defaultValue: 1.0,
@@ -840,22 +826,22 @@ final List<CalculatorDefinition> floorCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'plankWidth',
         labelKey: 'input.plankWidth',
         defaultValue: 7.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'plankLength',
         labelKey: 'input.plankLength',
         defaultValue: 40.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
@@ -882,12 +868,12 @@ final List<CalculatorDefinition> floorCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 5.0,
@@ -914,12 +900,12 @@ final List<CalculatorDefinition> floorCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.floorArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'rollWidth',
         labelKey: 'input.rollWidth',
         defaultValue: 4.0,
@@ -944,22 +930,22 @@ final List<CalculatorDefinition> floorCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.floorArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'insulationThickness',
         labelKey: 'input.insulationThickness',
         defaultValue: 100.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'insulationType',
         labelKey: 'input.insulationType',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
@@ -988,275 +974,8 @@ final List<CalculatorDefinition> floorCalculators = [
 ];
 
 /// ===== КАЛЬКУЛЯТОРЫ ПОТОЛКОВ =====
-
-final List<CalculatorDefinition> ceilingCalculators = [
-  CalculatorDefinition(
-    id: 'ceilings_paint',
-    titleKey: 'calculator.ceilingPaint',
-    category: 'Внутренняя отделка',
-    subCategory: 'Потолки',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'layers',
-        labelKey: 'input.layers',
-        defaultValue: 2.0,
-      ),
-      InputFieldDefinition(
-        key: 'consumption',
-        labelKey: 'input.consumption',
-        defaultValue: 0.12,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'paintNeeded': 'result.paint',
-      'primerNeeded': 'result.primer',
-      'layers': 'result.layers',
-    },
-    tips: const [
-      'Используйте валик с длинным ворсом для потолка.',
-      'Красьте перпендикулярно окну для равномерного покрытия.',
-      'Не забудьте защитить стены и пол плёнкой.',
-    ],
-    useCase: CalculateCeilingPaint(),
-  ),
-  CalculatorDefinition(
-    id: 'ceilings_stretch',
-    titleKey: 'calculator.stretchCeiling',
-    category: 'Внутренняя отделка',
-    subCategory: 'Потолки',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'corners',
-        labelKey: 'input.corners',
-        defaultValue: 4.0,
-      ),
-      InputFieldDefinition(
-        key: 'fixtures',
-        labelKey: 'input.fixtures',
-        defaultValue: 1.0,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'canvasArea': 'result.canvas',
-      'baguetteLength': 'result.baguette',
-      'cornersNeeded': 'result.corners',
-      'fixtures': 'result.fixtures',
-    },
-    tips: const [
-      'Монтаж выполняют специалисты с опытом.',
-      'Заранее определите места для светильников.',
-      'Учитывайте высоту потолка — натяжной потолок опускает его на 3–5 см.',
-    ],
-    useCase: CalculateStretchCeiling(),
-  ),
-  CalculatorDefinition(
-    id: 'ceilings_gkl',
-    titleKey: 'calculator.gklCeiling',
-    category: 'Внутренняя отделка',
-    subCategory: 'Потолки',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'layers',
-        labelKey: 'input.layers',
-        defaultValue: 1.0,
-      ),
-      InputFieldDefinition(
-        key: 'ceilingHeight',
-        labelKey: 'input.ceilingHeight',
-        defaultValue: 2.5,
-      ),
-      InputFieldDefinition(
-        key: 'dropHeight',
-        labelKey: 'input.dropHeight',
-        defaultValue: 0.1,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'sheetsNeeded': 'result.sheets',
-      'guideLength': 'result.guide',
-      'ceilingProfileLength': 'result.ceilingProfile',
-      'hangersNeeded': 'result.hangers',
-      'screwsNeeded': 'result.screws',
-      'puttyNeeded': 'result.putty',
-    },
-    tips: const [
-      'Шаг подвесов — 60 см для надёжности.',
-      'Проверьте уровень всех профилей.',
-      'Используйте армирующую ленту на стыках листов.',
-    ],
-    useCase: CalculateGklCeiling(),
-  ),
-  CalculatorDefinition(
-    id: 'ceilings_rail',
-    titleKey: 'calculator.railCeiling',
-    category: 'Внутренняя отделка',
-    subCategory: 'Потолки',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'railWidth',
-        labelKey: 'input.railWidth',
-        defaultValue: 10.0,
-      ),
-      InputFieldDefinition(
-        key: 'railLength',
-        labelKey: 'input.railLength',
-        defaultValue: 300.0,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'railsNeeded': 'result.rails',
-      'guideLength': 'result.guide',
-      'hangersNeeded': 'result.hangers',
-      'cornerLength': 'result.corner',
-    },
-    tips: const [
-      'Монтируйте рейки перпендикулярно направляющим.',
-      'Оставляйте зазор для вентиляции.',
-      'Используйте уровень для контроля плоскости.',
-    ],
-    useCase: CalculateRailCeiling(),
-  ),
-  CalculatorDefinition(
-    id: 'ceilings_cassette',
-    titleKey: 'calculator.cassetteCeiling',
-    category: 'Внутренняя отделка',
-    subCategory: 'Потолки',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'cassetteSize',
-        labelKey: 'input.tileSize',
-        defaultValue: 60.0,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'cassettesNeeded': 'result.panels',
-      'guideLength': 'result.guide',
-      'hangersNeeded': 'result.hangers',
-    },
-    tips: const [
-      'Кассеты легко заменяются при повреждении.',
-      'Обеспечьте доступ к коммуникациям над потолком.',
-      'Используйте уровень для монтажа направляющих.',
-    ],
-    useCase: CalculateCassetteCeiling(),
-  ),
-  CalculatorDefinition(
-    id: 'ceilings_tiles',
-    titleKey: 'calculator.ceilingTiles',
-    category: 'Внутренняя отделка',
-    subCategory: 'Потолки',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'tileSize',
-        labelKey: 'input.tileSize',
-        defaultValue: 50.0,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'tilesNeeded': 'result.tiles',
-      'glueNeeded': 'result.glue',
-      'primerNeeded': 'result.primer',
-    },
-    tips: const [
-      'Проверьте ровность потолка перед укладкой.',
-      'Используйте специальный клей для потолочной плитки.',
-      'Начинайте укладку от центра комнаты.',
-    ],
-    useCase: CalculateCeilingTiles(),
-  ),
-  CalculatorDefinition(
-    id: 'ceilings_insulation',
-    titleKey: 'calculator.ceilingInsulation',
-    category: 'Внутренняя отделка',
-    subCategory: 'Потолки',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'insulationThickness',
-        labelKey: 'input.insulationThickness',
-        defaultValue: 100.0,
-      ),
-      InputFieldDefinition(
-        key: 'insulationType',
-        labelKey: 'input.insulationType',
-        defaultValue: 1.0,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'volume': 'result.volume',
-      'sheetsNeeded': 'result.sheets',
-      'vaporBarrierArea': 'result.vaporBarrier',
-      'fastenersNeeded': 'result.fasteners',
-    },
-    tips: const [
-      'Используйте пароизоляцию с внутренней стороны.',
-      'Не сжимайте утеплитель при укладке.',
-      'Обеспечьте вентиляцию подкровельного пространства.',
-    ],
-    useCase: CalculateCeilingInsulation(),
-  ),
-];
+/// Перенесено в modules/ceilings/ceiling_calculators.dart
+final List<CalculatorDefinition> ceilingCalculators = modules.ceilingCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ ПЕРЕГОРОДОК =====
 /// Перенесено в modules/partitions/partition_calculators.dart
@@ -1275,27 +994,27 @@ final List<CalculatorDefinition> exteriorCalculators = [
     category: 'Наружная отделка',
     subCategory: 'Сайдинг',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 10.0,
         maxValue: 1000.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         defaultValue: 20.0,
         minValue: 10.0,
         maxValue: 50.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'panelLength',
         labelKey: 'input.panelLength',
         defaultValue: 300.0,
         minValue: 200.0,
         maxValue: 600.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
@@ -1303,14 +1022,14 @@ final List<CalculatorDefinition> exteriorCalculators = [
         maxValue: 200.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'corners',
         labelKey: 'input.corners',
         defaultValue: 4.0,
         minValue: 4.0,
         maxValue: 20.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'soffitLength',
         labelKey: 'input.soffitLength',
         defaultValue: 0.0,
@@ -1343,22 +1062,22 @@ final List<CalculatorDefinition> exteriorCalculators = [
     category: 'Наружная отделка',
     subCategory: 'Фасадные панели',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         defaultValue: 50.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'panelHeight',
         labelKey: 'input.panelHeight',
         defaultValue: 100.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
@@ -1384,22 +1103,22 @@ final List<CalculatorDefinition> exteriorCalculators = [
     category: 'Наружная отделка',
     subCategory: 'Дерево',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'boardWidth',
         labelKey: 'input.boardWidth',
         defaultValue: 14.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'boardLength',
         labelKey: 'input.boardLength',
         defaultValue: 3.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
@@ -1425,32 +1144,32 @@ final List<CalculatorDefinition> exteriorCalculators = [
     category: 'Наружная отделка',
     subCategory: 'Облицовочный кирпич',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 0.5,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'wallHeight',
         labelKey: 'input.wallHeight',
         defaultValue: 2.5,
@@ -1479,17 +1198,17 @@ final List<CalculatorDefinition> exteriorCalculators = [
     category: 'Наружная отделка',
     subCategory: 'Мокрый фасад',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'insulationThickness',
         labelKey: 'input.insulationThickness',
         defaultValue: 100.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'insulationType',
         labelKey: 'input.insulationType',
         defaultValue: 2.0,
@@ -1517,370 +1236,12 @@ final List<CalculatorDefinition> exteriorCalculators = [
 ];
 
 /// ===== КАЛЬКУЛЯТОРЫ КРОВЛИ =====
-
-final List<CalculatorDefinition> roofingCalculators = [
-  CalculatorDefinition(
-    id: 'roofing_metal',
-    titleKey: 'calculator.metalRoofing',
-    category: 'Наружная отделка',
-    subCategory: 'Кровля',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        minValue: 10.0,
-        maxValue: 1000.0,
-      ),
-      InputFieldDefinition(
-        key: 'slope',
-        labelKey: 'input.slope',
-        defaultValue: 30.0,
-        minValue: 5.0,
-        maxValue: 60.0,
-      ),
-      InputFieldDefinition(
-        key: 'sheetWidth',
-        labelKey: 'input.sheetWidth',
-        defaultValue: 1.18,
-        minValue: 0.5,
-        maxValue: 2.0,
-      ),
-      InputFieldDefinition(
-        key: 'sheetLength',
-        labelKey: 'input.sheetLength',
-        defaultValue: 2.5,
-        minValue: 1.0,
-        maxValue: 8.0,
-      ),
-      InputFieldDefinition(
-        key: 'ridgeLength',
-        labelKey: 'input.ridgeLength',
-        defaultValue: 0.0,
-        minValue: 0.0,
-        maxValue: 100.0,
-        required: false,
-      ),
-      InputFieldDefinition(
-        key: 'valleyLength',
-        labelKey: 'input.valleyLength',
-        defaultValue: 0.0,
-        minValue: 0.0,
-        maxValue: 100.0,
-        required: false,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-        minValue: 0.0,
-        maxValue: 200.0,
-        required: false,
-      ),
-      InputFieldDefinition(
-        key: 'endLength',
-        labelKey: 'input.endLength',
-        defaultValue: 0.0,
-        minValue: 0.0,
-        maxValue: 100.0,
-        required: false,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'realArea': 'result.realArea',
-      'sheetsNeeded': 'result.sheets',
-      'ridgeLength': 'result.ridge',
-      'valleyLength': 'result.valley',
-      'eaveLength': 'result.eave',
-      'endLength': 'result.end',
-      'screwsNeeded': 'result.screws',
-      'waterproofingArea': 'result.waterproofing',
-    },
-    tips: const [
-      'Учитывайте уклон крыши при расчёте площади.',
-      'Используйте специальные саморезы с уплотнителями.',
-      'Укладывайте листы с нахлёстом 15-20 см.',
-      'Не забудьте про гидроизоляцию под кровлей.',
-    ],
-    useCase: CalculateRoofingMetal(),
-  ),
-  CalculatorDefinition(
-    id: 'roofing_soft',
-    titleKey: 'calculator.softRoofing',
-    category: 'Наружная отделка',
-    subCategory: 'Кровля',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'slope',
-        labelKey: 'input.slope',
-        defaultValue: 30.0,
-      ),
-      InputFieldDefinition(
-        key: 'ridgeLength',
-        labelKey: 'input.ridgeLength',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'valleyLength',
-        labelKey: 'input.valleyLength',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'realArea': 'result.realArea',
-      'packsNeeded': 'result.packs',
-      'underlaymentArea': 'result.underlayment',
-      'ridgeStripLength': 'result.ridge',
-      'valleyCarpetLength': 'result.valley',
-      'nailsNeeded': 'result.nails',
-      'masticNeeded': 'result.mastic',
-      'deckingArea': 'result.decking',
-      'dripEdgeLength': 'result.dripEdge',
-      'ventilationsNeeded': 'result.ventilation',
-    },
-    tips: const [
-      'Битумная черепица подходит для крыш с уклоном от 12°.',
-      'Обязательно используйте подкладочный ковёр.',
-      'Монтаж при температуре выше +5°C.',
-      'Укладывайте снизу вверх с перекрытием.',
-    ],
-    useCase: CalculateSoftRoofing(),
-  ),
-  CalculatorDefinition(
-    id: 'roofing_gutters',
-    titleKey: 'calculator.gutters',
-    category: 'Наружная отделка',
-    subCategory: 'Кровля',
-    fields: [
-      InputFieldDefinition(
-        key: 'roofLength',
-        labelKey: 'input.roofLength',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'roofArea',
-        labelKey: 'input.roofArea',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'gutterLength',
-        labelKey: 'input.gutterLength',
-        defaultValue: 3.0,
-      ),
-    ],
-    resultLabels: {
-      'gutterLength': 'result.guide',
-      'downpipeLength': 'result.pipeLength',
-      'gutterBrackets': 'result.fasteners',
-      'pipeBrackets': 'result.fasteners',
-      'corners': 'result.corners',
-      'endCaps': 'result.corners',
-      'funnels': 'result.boxes',
-      'elbows': 'result.fittings',
-    },
-    tips: const [
-      'Устанавливайте желоба с уклоном 3-5 мм на 1 м.',
-      'Кронштейны монтируются через каждые 50-60 см.',
-      'На каждые 10 м² крыши — 1 водосточная труба.',
-      'Используйте герметик для соединений.',
-    ],
-    useCase: CalculateGutters(),
-  ),
-];
+/// Перенесено в modules/roofing/roofing_calculators.dart
+final List<CalculatorDefinition> roofingCalculators = modules.roofingCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ ИНЖЕНЕРНЫХ РАБОТ =====
-
-final List<CalculatorDefinition> engineeringCalculators = [
-  CalculatorDefinition(
-    id: 'engineering_electrics',
-    titleKey: 'calculator.electrics',
-    category: 'Инженерные работы',
-    subCategory: 'Электрика',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        minValue: 5.0,
-        maxValue: 1000.0,
-      ),
-      InputFieldDefinition(
-        key: 'rooms',
-        labelKey: 'input.rooms',
-        defaultValue: 1.0,
-        minValue: 1.0,
-        maxValue: 50.0,
-      ),
-      InputFieldDefinition(
-        key: 'sockets',
-        labelKey: 'input.sockets',
-        defaultValue: 0.0,
-        minValue: 0.0,
-        maxValue: 200.0,
-        required: false,
-      ),
-      InputFieldDefinition(
-        key: 'switches',
-        labelKey: 'input.switches',
-        defaultValue: 0.0,
-        minValue: 0.0,
-        maxValue: 100.0,
-        required: false,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'rooms': 'result.rooms',
-      'sockets': 'result.sockets',
-      'switches': 'result.switches',
-      'wireLength': 'result.wire',
-      'cableChannelLength': 'result.cableChannel',
-      'circuitBreakers': 'result.breakers',
-      'junctionBoxes': 'result.boxes',
-    },
-    tips: const [
-      'Работы должен выполнять квалифицированный электрик.',
-      'Используйте кабель сечением не менее 2.5 мм² для розеток.',
-      'Установите УЗО для защиты от утечек тока.',
-      'Проверьте все соединения перед включением.',
-    ],
-    useCase: CalculateElectrics(),
-  ),
-  CalculatorDefinition(
-    id: 'engineering_plumbing',
-    titleKey: 'calculator.plumbing',
-    category: 'Инженерные работы',
-    subCategory: 'Сантехника',
-    fields: [
-      InputFieldDefinition(
-        key: 'rooms',
-        labelKey: 'input.rooms',
-        defaultValue: 1.0,
-      ),
-      InputFieldDefinition(
-        key: 'points',
-        labelKey: 'input.points',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'pipeLength',
-        labelKey: 'input.pipeLength',
-        defaultValue: 0.0,
-      ),
-    ],
-    resultLabels: {
-      'rooms': 'result.rooms',
-      'points': 'result.points',
-      'pipeLength': 'result.pipeLength',
-      'fittingsNeeded': 'result.fittings',
-      'tapsNeeded': 'result.taps',
-      'mixersNeeded': 'result.mixers',
-      'toiletsNeeded': 'result.toilets',
-      'sinksNeeded': 'result.sinks',
-      'showersNeeded': 'result.showers',
-    },
-    tips: const [
-      'Используйте качественные фитинги для надёжности.',
-      'Проверьте все соединения на герметичность.',
-      'Установите запорные краны на каждую точку.',
-      'Работы должен выполнять квалифицированный сантехник.',
-    ],
-    useCase: CalculatePlumbing(),
-  ),
-  CalculatorDefinition(
-    id: 'engineering_heating',
-    titleKey: 'calculator.heating',
-    category: 'Инженерные работы',
-    subCategory: 'Отопление',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        minValue: 10.0,
-        maxValue: 1000.0,
-      ),
-      InputFieldDefinition(
-        key: 'rooms',
-        labelKey: 'input.rooms',
-        defaultValue: 1.0,
-        minValue: 1.0,
-        maxValue: 50.0,
-      ),
-      InputFieldDefinition(
-        key: 'ceilingHeight',
-        labelKey: 'input.ceilingHeight',
-        defaultValue: 2.5,
-        minValue: 2.2,
-        maxValue: 5.0,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'volume': 'result.volume',
-      'totalPower': 'result.power',
-      'totalSections': 'result.sections',
-      'pipeLength': 'result.pipeLength',
-      'fittingsNeeded': 'result.fittings',
-      'valvesNeeded': 'result.valves',
-      'thermostatsNeeded': 'result.thermostats',
-    },
-    tips: const [
-      'Расчёт мощности: 100 Вт на м² для средней полосы.',
-      'Установите терморегуляторы для экономии.',
-      'Используйте балансировочные краны.',
-      'Работы должен выполнять квалифицированный специалист.',
-    ],
-    useCase: CalculateHeating(),
-  ),
-  CalculatorDefinition(
-    id: 'engineering_ventilation',
-    titleKey: 'calculator.ventilation',
-    category: 'Инженерные работы',
-    subCategory: 'Вентиляция',
-    fields: [
-      InputFieldDefinition(
-        key: 'area',
-        labelKey: 'input.area',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'rooms',
-        labelKey: 'input.rooms',
-        defaultValue: 1.0,
-      ),
-      InputFieldDefinition(
-        key: 'ceilingHeight',
-        labelKey: 'input.ceilingHeight',
-        defaultValue: 2.5,
-      ),
-    ],
-    resultLabels: {
-      'area': 'result.area',
-      'volume': 'result.volume',
-      'airExchange': 'result.power',
-      'ductsNeeded': 'result.boxes',
-      'grillesNeeded': 'result.boxes',
-      'fansNeeded': 'result.boxes',
-      'ductLength': 'result.pipeLength',
-    },
-    tips: const [
-      'Воздухообмен: минимум 3 м³/ч на м².',
-      'Устанавливайте решётки вверху для вытяжки, внизу для притока.',
-      'Проверьте тягу перед монтажом вентиляторов.',
-    ],
-    useCase: CalculateVentilation(),
-  ),
-];
+/// Перенесено в modules/engineering/engineering_calculators.dart
+final List<CalculatorDefinition> engineeringCalculators = modules.engineeringCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ ВАННОЙ =====
 
@@ -1896,17 +1257,17 @@ final List<CalculatorDefinition> mixCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Ровнители / смеси',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'layers',
         labelKey: 'input.layers',
         defaultValue: 2.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'type',
         labelKey: 'input.type',
         defaultValue: 1.0,
@@ -1932,17 +1293,17 @@ final List<CalculatorDefinition> mixCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Ровнители / смеси',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'layers',
         labelKey: 'input.layers',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'type',
         labelKey: 'input.type',
         defaultValue: 1.0,
@@ -1968,17 +1329,17 @@ final List<CalculatorDefinition> mixCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Ровнители / смеси',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'tileSize',
         labelKey: 'input.tileSize',
         defaultValue: 30.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'layerThickness',
         labelKey: 'input.layerThickness',
         defaultValue: 5.0,
@@ -2003,22 +1364,22 @@ final List<CalculatorDefinition> mixCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Ровнители / смеси',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 10.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'type',
         labelKey: 'input.type',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
@@ -2049,17 +1410,17 @@ final List<CalculatorDefinition> windowsDoorsCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Окна / двери',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'windows',
         labelKey: 'input.windows',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'windowWidth',
         labelKey: 'input.windowWidth',
         defaultValue: 1.5,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'windowHeight',
         labelKey: 'input.windowHeight',
         defaultValue: 1.4,
@@ -2087,17 +1448,17 @@ final List<CalculatorDefinition> windowsDoorsCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Окна / двери',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'doors',
         labelKey: 'input.doors',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'doorWidth',
         labelKey: 'input.doorWidth',
         defaultValue: 0.9,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'doorHeight',
         labelKey: 'input.doorHeight',
         defaultValue: 2.1,
@@ -2124,22 +1485,22 @@ final List<CalculatorDefinition> windowsDoorsCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Окна / двери',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'windows',
         labelKey: 'input.windows',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'windowWidth',
         labelKey: 'input.windowWidth',
         defaultValue: 1.5,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'windowHeight',
         labelKey: 'input.windowHeight',
         defaultValue: 1.4,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'slopeWidth',
         labelKey: 'input.slopeWidth',
         defaultValue: 0.3,
@@ -2171,17 +1532,17 @@ final List<CalculatorDefinition> soundInsulationCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Шумоизоляция',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 50.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'insulationType',
         labelKey: 'input.insulationType',
         defaultValue: 1.0,
@@ -2211,33 +1572,33 @@ final List<CalculatorDefinition> structureCalculators = [
     category: 'Конструкции',
     subCategory: 'Лестницы',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'floorHeight',
         labelKey: 'input.floorHeight',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'stepHeight',
         labelKey: 'input.stepHeight',
         defaultValue: 0.18,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'stepWidth',
         labelKey: 'input.stepWidth',
         defaultValue: 0.28,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'stepCount',
         labelKey: 'input.stepCount',
         defaultValue: 0.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'width',
         labelKey: 'input.width',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'materialType',
         labelKey: 'input.type',
         defaultValue: 1.0,
@@ -2274,28 +1635,28 @@ final List<CalculatorDefinition> structureCalculators = [
     category: 'Конструкции',
     subCategory: 'Заборы',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'length',
         labelKey: 'input.length',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'height',
         labelKey: 'input.height',
         defaultValue: 2.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'materialType',
         labelKey: 'input.type',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'gates',
         labelKey: 'input.gates',
         defaultValue: 1.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'wickets',
         labelKey: 'input.wickets',
         defaultValue: 1.0,
@@ -2333,27 +1694,27 @@ final List<CalculatorDefinition> structureCalculators = [
     category: 'Конструкции',
     subCategory: 'Отмостка',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'width',
         labelKey: 'input.width',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 100.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'materialType',
         labelKey: 'input.type',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'insulation',
         labelKey: 'input.insulation',
         defaultValue: 0.0,
@@ -2391,51 +1752,51 @@ final List<CalculatorDefinition> structureCalculators = [
     category: 'Конструкции',
     subCategory: 'Подвал / Погреб',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'height',
         labelKey: 'input.height',
         defaultValue: 2.5,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'wallThickness',
         labelKey: 'input.thickness',
         defaultValue: 0.4,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'materialType',
         labelKey: 'input.type',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'waterproofing',
         labelKey: 'input.waterproofing',
         defaultValue: 1.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'insulation',
         labelKey: 'input.insulation',
         defaultValue: 0.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'ventilation',
         labelKey: 'input.ventilation',
         defaultValue: 1.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'stairs',
         labelKey: 'input.stairs',
         defaultValue: 1.0,
@@ -2478,40 +1839,40 @@ final List<CalculatorDefinition> structureCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Балкон / Лоджия',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'height',
         labelKey: 'input.height',
         defaultValue: 1.1,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'glazing',
         labelKey: 'input.glazing',
         defaultValue: 0.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'insulation',
         labelKey: 'input.insulation',
         defaultValue: 0.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'floorType',
         labelKey: 'input.floorType',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'wallFinish',
         labelKey: 'input.wallFinish',
         defaultValue: 1.0,
@@ -2552,45 +1913,45 @@ final List<CalculatorDefinition> structureCalculators = [
     category: 'Внутренняя отделка',
     subCategory: 'Мансарда',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'roofArea',
         labelKey: 'input.roofArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'wallArea',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'floorArea',
         labelKey: 'input.floorArea',
         defaultValue: 0.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'windows',
         labelKey: 'input.windows',
         defaultValue: 0.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'insulation',
         labelKey: 'input.insulation',
         defaultValue: 1.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'wallFinish',
         labelKey: 'input.wallFinish',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'floorType',
         labelKey: 'input.floorType',
         defaultValue: 1.0,
@@ -2630,35 +1991,35 @@ final List<CalculatorDefinition> structureCalculators = [
     category: 'Конструкции',
     subCategory: 'Терраса / Веранда',
     fields: [
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'floorType',
         labelKey: 'input.floorType',
         defaultValue: 1.0,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'railing',
         labelKey: 'input.railing',
         defaultValue: 1.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'roof',
         labelKey: 'input.roof',
         defaultValue: 0.0,
         required: false,
       ),
-      InputFieldDefinition(
+      const InputFieldDefinition(
         key: 'roofType',
         labelKey: 'input.roofType',
         defaultValue: 1.0,
