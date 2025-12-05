@@ -31,8 +31,10 @@ export 'mix/mix_calculators.dart';
 // Окна и двери
 export 'windows_doors/windows_doors_calculators.dart';
 
+// Стены
+export 'walls/wall_calculators.dart';
+
 // В будущем здесь будут экспортированы другие модули:
-// export 'walls/wall_calculators.dart';
 // export 'floors/floor_calculators.dart';
 // export 'exterior/exterior_calculators.dart';
 // export 'structure/structure_calculators.dart';
