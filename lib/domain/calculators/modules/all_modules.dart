@@ -37,6 +37,8 @@ export 'walls/wall_calculators.dart';
 // Полы
 export 'floors/floor_calculators.dart';
 
+// Наружная отделка
+export 'exterior/exterior_calculators.dart';
+
 // В будущем здесь будут экспортированы другие модули:
-// export 'exterior/exterior_calculators.dart';
 // export 'structure/structure_calculators.dart';
