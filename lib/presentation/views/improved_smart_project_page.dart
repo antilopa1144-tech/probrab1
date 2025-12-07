@@ -359,46 +359,54 @@ class _ImprovedSmartProjectPageState
                       ),
                       const SizedBox(height: 24),
                       ..._results!.entries.map((e) {
-                        final isTotal = e.key.contains('ИТОГО');
                         final isSubItem = e.key.startsWith('  ');
 
-                        if (isTotal) {
-                          return Container(
-                            margin: const EdgeInsets.only(top: 16),
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.primary.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: Theme.of(context).colorScheme.primary,
-                                width: 2,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  'ИТОГО:',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  '${e.value.toStringAsFixed(0)} ₽',
-                                  style: TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
+                        // Цены временно скрыты до интеграции с магазинами
+                        // if (isTotal) {
+                        //   return Container(
+                        //     margin: const EdgeInsets.only(top: 16),
+                        //     padding: const EdgeInsets.all(20),
+                        //     decoration: BoxDecoration(
+                        //       color: Theme.of(
+                        //         context,
+                        //       ).colorScheme.primary.withValues(alpha: 0.2),
+                        //       borderRadius: BorderRadius.circular(12),
+                        //       border: Border.all(
+                        //         color: Theme.of(context).colorScheme.primary,
+                        //         width: 2,
+                        //       ),
+                        //     ),
+                        //     child: Row(
+                        //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //       children: [
+                        //         const Text(
+                        //           'ИТОГО:',
+                        //           style: TextStyle(
+                        //             fontSize: 22,
+                        //             fontWeight: FontWeight.bold,
+                        //           ),
+                        //         ),
+                        //         Text(
+                        //           '${e.value.toStringAsFixed(0)} ₽',
+                        //           style: TextStyle(
+                        //             fontSize: 26,
+                        //             fontWeight: FontWeight.bold,
+                        //             color: Theme.of(
+                        //               context,
+                        //             ).colorScheme.primary,
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   );
+                        // }
+
+                        // Скрыть элементы с ценами (все основные разделы кроме подпунктов с единицами измерения)
+                        final isCostItem = !isSubItem && !e.key.contains('Площадь') &&
+                                          !e.key.contains('Блоков') && !e.key.contains('Листов') &&
+                                          !e.key.contains('Бетон') && !e.key.contains('Арматура');
+                        if (isCostItem) {
+                          return const SizedBox.shrink(); // Скрыть элемент с ценой
                         }
 
                         return Padding(
@@ -424,9 +432,7 @@ class _ImprovedSmartProjectPageState
                                 ),
                               ),
                               Text(
-                                e.key.contains('(') && !e.key.contains('₽')
-                                    ? e.value.toStringAsFixed(0)
-                                    : '${e.value.toStringAsFixed(0)} ${e.key.contains('Площадь') || e.key.contains('Блоков') || e.key.contains('Листов') || e.key.contains('Бетон') || e.key.contains('Арматура') ? '' : '₽'}',
+                                e.value.toStringAsFixed(0),
                                 style: TextStyle(
                                   fontSize: isSubItem ? 14 : 18,
                                   fontWeight: FontWeight.bold,

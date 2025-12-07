@@ -995,36 +995,36 @@ class _CalculationCard extends StatelessWidget {
                 }),
               ],
 
-              // Стоимости
-              if (calculation.materialCost != null ||
-                  calculation.laborCost != null) ...[
-                const SizedBox(height: 12),
-                const Divider(),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    if (calculation.materialCost != null)
-                      Expanded(
-                        child: _CostInfo(
-                          label: 'Материалы',
-                          value: calculation.materialCost!,
-                          icon: Icons.shopping_cart_outlined,
-                        ),
-                      ),
-                    if (calculation.materialCost != null &&
-                        calculation.laborCost != null)
-                      const SizedBox(width: 16),
-                    if (calculation.laborCost != null)
-                      Expanded(
-                        child: _CostInfo(
-                          label: 'Работы',
-                          value: calculation.laborCost!,
-                          icon: Icons.handyman_outlined,
-                        ),
-                      ),
-                  ],
-                ),
-              ],
+              // Стоимости (скрыты до интеграции с магазинами)
+              // if (calculation.materialCost != null ||
+              //     calculation.laborCost != null) ...[
+              //   const SizedBox(height: 12),
+              //   const Divider(),
+              //   const SizedBox(height: 8),
+              //   Row(
+              //     children: [
+              //       if (calculation.materialCost != null)
+              //         Expanded(
+              //           child: _CostInfo(
+              //             label: 'Материалы',
+              //             value: calculation.materialCost!,
+              //             icon: Icons.shopping_cart_outlined,
+              //           ),
+              //         ),
+              //       if (calculation.materialCost != null &&
+              //           calculation.laborCost != null)
+              //         const SizedBox(width: 16),
+              //       if (calculation.laborCost != null)
+              //         Expanded(
+              //           child: _CostInfo(
+              //             label: 'Работы',
+              //             value: calculation.laborCost!,
+              //             icon: Icons.handyman_outlined,
+              //           ),
+              //         ),
+              //     ],
+              //   ),
+              // ],
 
               // Заметки
               if (calculation.notes != null &&
@@ -1108,41 +1108,41 @@ class _CalculationCard extends StatelessWidget {
   }
 }
 
-/// Информация о стоимости для расчёта.
-class _CostInfo extends StatelessWidget {
-  final String label;
-  final double value;
-  final IconData icon;
-
-  const _CostInfo({
-    required this.label,
-    required this.value,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final format = NumberFormat('#,##0', 'ru_RU');
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
-        const SizedBox(width: 4),
-        Text(
-          '$label: ',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-        Text(
-          '${format.format(value)} ₽',
-          style: theme.textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-}
+/// Информация о стоимости для расчёта (скрыта до интеграции с магазинами).
+// class _CostInfo extends StatelessWidget {
+//   final String label;
+//   final double value;
+//   final IconData icon;
+//
+//   const _CostInfo({
+//     required this.label,
+//     required this.value,
+//     required this.icon,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final theme = Theme.of(context);
+//     final format = NumberFormat('#,##0', 'ru_RU');
+//
+//     return Row(
+//       mainAxisSize: MainAxisSize.min,
+//       children: [
+//         Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
+//         const SizedBox(width: 4),
+//         Text(
+//           '$label: ',
+//           style: theme.textTheme.bodySmall?.copyWith(
+//             color: theme.colorScheme.onSurfaceVariant,
+//           ),
+//         ),
+//         Text(
+//           '${format.format(value)} ₽',
+//           style: theme.textTheme.bodySmall?.copyWith(
+//             fontWeight: FontWeight.w600,
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }

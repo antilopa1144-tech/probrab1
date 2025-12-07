@@ -630,28 +630,28 @@ class _ProjectCard extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              // Стоимости
-              Row(
-                children: [
-                  Expanded(
-                    child: _CostInfo(
-                      label: 'Материалы',
-                      value: project.totalMaterialCost,
-                      icon: Icons.shopping_cart_outlined,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _CostInfo(
-                      label: 'Работы',
-                      value: project.totalLaborCost,
-                      icon: Icons.handyman_outlined,
-                    ),
-                  ),
-                ],
-              ),
+              // Стоимости (скрыты до интеграции с магазинами)
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: _CostInfo(
+              //         label: 'Материалы',
+              //         value: project.totalMaterialCost,
+              //         icon: Icons.shopping_cart_outlined,
+              //       ),
+              //     ),
+              //     const SizedBox(width: 16),
+              //     Expanded(
+              //       child: _CostInfo(
+              //         label: 'Работы',
+              //         value: project.totalLaborCost,
+              //         icon: Icons.handyman_outlined,
+              //       ),
+              //     ),
+              //   ],
+              // ),
 
-              const Divider(height: 24),
+              // const Divider(height: 24),
 
               // Итого
               // Цены временно скрыты до интеграции с магазинами
@@ -749,46 +749,46 @@ class _StatusChip extends StatelessWidget {
   }
 }
 
-/// Информация о стоимости.
-class _CostInfo extends StatelessWidget {
-  final String label;
-  final double value;
-  final IconData icon;
-
-  const _CostInfo({
-    required this.label,
-    required this.value,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final format = NumberFormat('#,##0', 'ru_RU');
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          '${format.format(value)} ₽',
-          style: theme.textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-}
+/// Информация о стоимости (скрыта до интеграции с магазинами).
+// class _CostInfo extends StatelessWidget {
+//   final String label;
+//   final double value;
+//   final IconData icon;
+//
+//   const _CostInfo({
+//     required this.label,
+//     required this.value,
+//     required this.icon,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final theme = Theme.of(context);
+//     final format = NumberFormat('#,##0', 'ru_RU');
+//
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Row(
+//           children: [
+//             Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
+//             const SizedBox(width: 4),
+//             Text(
+//               label,
+//               style: theme.textTheme.bodySmall?.copyWith(
+//                 color: theme.colorScheme.onSurfaceVariant,
+//               ),
+//             ),
+//           ],
+//         ),
+//         const SizedBox(height: 4),
+//         Text(
+//           '${format.format(value)} ₽',
+//           style: theme.textTheme.titleSmall?.copyWith(
+//             fontWeight: FontWeight.w600,
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
