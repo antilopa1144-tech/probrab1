@@ -43,7 +43,7 @@ class CalculateWaterproofing extends BaseCalculator {
     final totalArea = floorArea + wallArea;
 
     // Расход материала: ~1.5-2.0 кг/м² на слой для обмазочной гидроизоляции
-    final consumptionPerLayer = 1.0; // кг/м²
+    const consumptionPerLayer = 1.0; // кг/м²
     final materialNeeded = totalArea * consumptionPerLayer * layers * 1.1; // +10%
 
     // Грунтовка: ~0.2-0.25 л/м², 1 слой перед гидроизоляцией
@@ -56,7 +56,7 @@ class CalculateWaterproofing extends BaseCalculator {
     final hydroTapeLength = perimeter;
 
     // Кисти/валики для нанесения: 1-2 комплекта
-    final toolsNeeded = 1;
+    const toolsNeeded = 1;
 
     // Проникающая гидроизоляция для швов: ~0.5 кг/м.п.
     final penetratingNeeded = perimeter * 0.5;

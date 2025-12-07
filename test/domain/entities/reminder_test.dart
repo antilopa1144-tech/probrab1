@@ -111,7 +111,7 @@ void main() {
 
   group('ReminderTemplate', () {
     test('creates reminder from template', () {
-      final template = ReminderTemplate(
+      const template = ReminderTemplate(
         workType: 'foundation',
         type: ReminderType.materialPurchase,
         title: 'Buy Materials',
@@ -134,7 +134,7 @@ void main() {
     });
 
     test('creates reminder without related IDs', () {
-      final template = ReminderTemplate(
+      const template = ReminderTemplate(
         workType: 'walls',
         type: ReminderType.qualityCheck,
         title: 'Check Quality',

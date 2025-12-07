@@ -152,7 +152,7 @@ void main() {
     });
 
     test('has all expected enum values', () {
-      final values = UnitType.values;
+      const values = UnitType.values;
       expect(values.length, equals(18));
       expect(values, contains(UnitType.squareMeters));
       expect(values, contains(UnitType.cubicMeters));

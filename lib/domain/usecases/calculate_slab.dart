@@ -36,17 +36,17 @@ class CalculateSlab extends BaseCalculator {
 
     // Арматура: обычно 1-1.5% от объёма бетона (две сетки)
     // Арматура Ø12 с шагом 200×200 мм в двух направлениях, в 2 слоя
-    final rebarVolumePercent = 0.012; // 1.2%
+    const rebarVolumePercent = 0.012; // 1.2%
     final rebarVolume = concreteVolume * rebarVolumePercent;
-    final rebarDensity = 7850.0; // кг/м³
+    const rebarDensity = 7850.0; // кг/м³
     final rebarWeight = rebarVolume * rebarDensity;
 
     // Песчаная подушка: ~0.1-0.15 м толщиной
-    final sandBedThickness = 0.12;
+    const sandBedThickness = 0.12;
     final sandVolume = area * sandBedThickness;
 
     // Щебень: ~0.15-0.2 м толщиной
-    final gravelBedThickness = 0.17;
+    const gravelBedThickness = 0.17;
     final gravelVolume = area * gravelBedThickness;
 
     // Гидроизоляция: площадь + 10% на нахлёсты и загибы

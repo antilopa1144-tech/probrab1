@@ -29,8 +29,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
         // Статистика вверху
         Container(
           padding: const EdgeInsets.all(16),
-          color:
-              Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
+          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
           child: statistics.when(
             data: (stats) => Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -41,12 +40,13 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                   value: '${stats['totalCalculations']}',
                   color: Colors.blue,
                 ),
-                _StatCard(
-                  icon: Icons.monetization_on,
-                  label: 'Общая сумма',
-                  value: '${(stats['totalCost'] / 1000).toStringAsFixed(0)}k ₽',
-                  color: Colors.green,
-                ),
+                // Цены временно скрыты до интеграции с магазинами
+                // _StatCard(
+                //   icon: Icons.monetization_on,
+                //   label: 'Общая сумма',
+                //   value: '${(stats['totalCost'] / 1000).toStringAsFixed(0)}k ₽',
+                //   color: Colors.green,
+                // ),
               ],
             ),
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -77,27 +77,32 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     _FilterChip(
                       label: 'Все',
                       selected: _selectedCategory == 'Все',
-                      onSelected: () => setState(() => _selectedCategory = 'Все'),
+                      onSelected: () =>
+                          setState(() => _selectedCategory = 'Все'),
                     ),
                     _FilterChip(
                       label: 'Фундамент',
                       selected: _selectedCategory == 'Фундамент',
-                      onSelected: () => setState(() => _selectedCategory = 'Фундамент'),
+                      onSelected: () =>
+                          setState(() => _selectedCategory = 'Фундамент'),
                     ),
                     _FilterChip(
                       label: 'Стены',
                       selected: _selectedCategory == 'Стены',
-                      onSelected: () => setState(() => _selectedCategory = 'Стены'),
+                      onSelected: () =>
+                          setState(() => _selectedCategory = 'Стены'),
                     ),
                     _FilterChip(
                       label: 'Кровля',
                       selected: _selectedCategory == 'Кровля',
-                      onSelected: () => setState(() => _selectedCategory = 'Кровля'),
+                      onSelected: () =>
+                          setState(() => _selectedCategory = 'Кровля'),
                     ),
                     _FilterChip(
                       label: 'Отделка',
                       selected: _selectedCategory == 'Отделка',
-                      onSelected: () => setState(() => _selectedCategory = 'Отделка'),
+                      onSelected: () =>
+                          setState(() => _selectedCategory = 'Отделка'),
                     ),
                   ],
                 ),
@@ -111,18 +116,27 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
           child: calculationsAsync.when(
             data: (calculations) {
               var filtered = calculations;
-              
+
               // Фильтр по категории
               if (_selectedCategory != 'Все') {
-                filtered = filtered.where((c) => c.category == _selectedCategory).toList();
+                filtered = filtered
+                    .where((c) => c.category == _selectedCategory)
+                    .toList();
               }
-              
+
               // Поиск
               if (_searchQuery.isNotEmpty) {
-                filtered = filtered.where((c) => 
-                  c.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                  c.calculatorName.toLowerCase().contains(_searchQuery.toLowerCase())
-                ).toList();
+                filtered = filtered
+                    .where(
+                      (c) =>
+                          c.title.toLowerCase().contains(
+                            _searchQuery.toLowerCase(),
+                          ) ||
+                          c.calculatorName.toLowerCase().contains(
+                            _searchQuery.toLowerCase(),
+                          ),
+                    )
+                    .toList();
               }
 
               if (filtered.isEmpty) {
@@ -151,7 +165,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         child: _CalculationCard(
                           calculation: calc,
                           onDelete: () async {
-                            final repo = ref.read(calculationRepositoryProvider);
+                            final repo = ref.read(
+                              calculationRepositoryProvider,
+                            );
                             await repo.deleteCalculation(calc.id);
                             ref.invalidate(calculationsProvider);
                             ref.invalidate(statisticsProvider);
@@ -164,9 +180,8 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Center(
-              child: Text('Ошибка загрузки: $error'),
-            ),
+            error: (error, stack) =>
+                Center(child: Text('Ошибка загрузки: $error')),
           ),
         ),
       ],
@@ -203,12 +218,10 @@ class _StatCardState extends State<_StatCard>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     )..forward();
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutBack,
-      ),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
   }
 
   @override
@@ -222,10 +235,7 @@ class _StatCardState extends State<_StatCard>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: _StatCardWidget(
         icon: widget.icon,
@@ -319,10 +329,7 @@ class _CalculationCard extends StatelessWidget {
   final Calculation calculation;
   final VoidCallback onDelete;
 
-  const _CalculationCard({
-    required this.calculation,
-    required this.onDelete,
-  });
+  const _CalculationCard({required this.calculation, required this.onDelete});
 
   IconData _getCategoryIcon(String category) {
     switch (category) {
@@ -357,14 +364,15 @@ class _CalculationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd.MM.yyyy HH:mm');
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(
-          backgroundColor: _getCategoryColor(calculation.category)
-              .withValues(alpha: 0.2),
+          backgroundColor: _getCategoryColor(
+            calculation.category,
+          ).withValues(alpha: 0.2),
           child: Icon(
             _getCategoryIcon(calculation.category),
             color: _getCategoryColor(calculation.category),
@@ -379,21 +387,19 @@ class _CalculationCard extends StatelessWidget {
           children: [
             const SizedBox(height: 4),
             Text(calculation.calculatorName),
-            const SizedBox(height: 4),
-            Text(
-              '${calculation.totalCost.toStringAsFixed(0)} ₽',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 4),
+            // Цены временно скрыты до интеграции с магазинами
+            // const SizedBox(height: 4),
+            // Text(
+            //   '${calculation.totalCost.toStringAsFixed(0)} ₽',
+            //   style: TextStyle(
+            //     color: Theme.of(context).colorScheme.primary,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
+            // const SizedBox(height: 4),
             Text(
               dateFormat.format(calculation.updatedAt),
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade500,
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
             ),
           ],
         ),
@@ -476,104 +482,97 @@ class _CalculationDetails extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 calculation.calculatorName,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey.shade400,
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey.shade400),
               ),
               const SizedBox(height: 24),
-              
+
               // Входные данные
               const Text(
                 'Введённые данные:',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
-              ...inputs.entries.map((e) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(e.key),
-                    Text(
-                      '${e.value}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
+              ...inputs.entries.map(
+                (e) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(e.key),
+                      Text(
+                        '${e.value}',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
-              )),
-              
+              ),
+
               const Divider(height: 32),
-              
+
               // Результаты
               const Text(
                 'Результаты:',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
-              ...results.entries.map((e) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(e.key),
-                    Text(
-                      double.parse(e.value.toString()).toStringAsFixed(2),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+              ...results.entries.map(
+                (e) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(e.key),
+                      Text(
+                        double.parse(e.value.toString()).toStringAsFixed(2),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              )),
-              
-              const Divider(height: 32),
-              
-              // Общая стоимость
-              Container(
-                padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color:
-              Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Общая стоимость:',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '${calculation.totalCost.toStringAsFixed(0)} ₽',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              
-              if (calculation.notes != null && calculation.notes!.isNotEmpty) ...[
+
+              // Цены временно скрыты до интеграции с магазинами
+              // const Divider(height: 32),
+              //
+              // // Общая стоимость
+              // Container(
+              //   padding: const EdgeInsets.all(16),
+              //   decoration: BoxDecoration(
+              //     color:
+              //         Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              //     borderRadius: BorderRadius.circular(12),
+              //   ),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       const Text(
+              //         'Общая стоимость:',
+              //         style: TextStyle(
+              //           fontSize: 18,
+              //           fontWeight: FontWeight.bold,
+              //         ),
+              //       ),
+              //       Text(
+              //         '${calculation.totalCost.toStringAsFixed(0)} ₽',
+              //         style: TextStyle(
+              //           fontSize: 24,
+              //           fontWeight: FontWeight.bold,
+              //           color: Theme.of(context).colorScheme.primary,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              if (calculation.notes != null &&
+                  calculation.notes!.isNotEmpty) ...[
                 const SizedBox(height: 24),
                 const Text(
                   'Заметки:',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Text(calculation.notes!),

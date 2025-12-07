@@ -4,7 +4,7 @@ import 'package:probrab_ai/core/exceptions/storage_exception.dart';
 void main() {
   group('StorageException', () {
     test('creates instance with all fields', () {
-      final exception = StorageException(
+      const exception = StorageException(
         'Test message',
         code: 'TEST_CODE',
         operation: 'test_op',
@@ -100,7 +100,7 @@ void main() {
       });
 
       test('returns generic message for unknown code', () {
-        final exception = StorageException(
+        const exception = StorageException(
           'Test',
           code: 'UNKNOWN_CODE',
         );
@@ -108,13 +108,13 @@ void main() {
       });
 
       test('returns generic message for null code', () {
-        final exception = StorageException('Test');
+        const exception = StorageException('Test');
         expect(exception.getUserMessage(), equals('Ошибка при работе с данными'));
       });
     });
 
     test('toString includes message', () {
-      final exception = StorageException('Test error message');
+      const exception = StorageException('Test error message');
       expect(exception.toString(), contains('Test error message'));
     });
 

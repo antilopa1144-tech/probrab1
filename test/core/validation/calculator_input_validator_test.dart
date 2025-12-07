@@ -38,7 +38,7 @@ void main() {
   group('CalculatorInputValidator', () {
     group('validate - required field', () {
       test('returns error for empty required field', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,
@@ -49,7 +49,7 @@ void main() {
       });
 
       test('returns error for null required field', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,
@@ -60,7 +60,7 @@ void main() {
       });
 
       test('returns null for empty optional field', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: false,
@@ -73,7 +73,7 @@ void main() {
 
     group('validate - number parsing', () {
       test('returns error for non-numeric input', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,
@@ -84,7 +84,7 @@ void main() {
       });
 
       test('accepts numeric input with comma', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,
@@ -96,7 +96,7 @@ void main() {
       });
 
       test('accepts numeric input with dot', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,
@@ -110,7 +110,7 @@ void main() {
 
     group('validate - negative values', () {
       test('returns error for negative value', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,
@@ -123,7 +123,7 @@ void main() {
 
     group('validate - zero values', () {
       test('returns error for zero in required field (non-rapport/windows/doors)', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,
@@ -134,7 +134,7 @@ void main() {
       });
 
       test('allows zero for rapport fields', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'rapport_height',
           labelKey: 'input.rapport_height',
           required: true,
@@ -146,7 +146,7 @@ void main() {
       });
 
       test('allows zero for windows fields', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'windows_area',
           labelKey: 'input.windows_area',
           required: true,
@@ -158,7 +158,7 @@ void main() {
       });
 
       test('allows zero for doors fields', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'doors_area',
           labelKey: 'input.doors_area',
           required: true,
@@ -172,7 +172,7 @@ void main() {
 
     group('validate - min/max values', () {
       test('returns error for value below minValue', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,
@@ -184,7 +184,7 @@ void main() {
       });
 
       test('returns error for value above maxValue', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,
@@ -196,7 +196,7 @@ void main() {
       });
 
       test('accepts value at minValue boundary', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,
@@ -208,7 +208,7 @@ void main() {
       });
 
       test('accepts value at maxValue boundary', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,
@@ -222,7 +222,7 @@ void main() {
 
     group('validate - special field limits', () {
       test('returns error for area above maxArea', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,
@@ -234,7 +234,7 @@ void main() {
       });
 
       test('returns error for volume above maxVolume', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'volume',
           labelKey: 'input.volume',
           required: true,
@@ -246,7 +246,7 @@ void main() {
       });
 
       test('returns error for height above maxHeight', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'height',
           labelKey: 'input.height',
           required: true,
@@ -258,7 +258,7 @@ void main() {
       });
 
       test('returns error for thickness above maxThickness', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'thickness',
           labelKey: 'input.thickness',
           required: true,
@@ -270,7 +270,7 @@ void main() {
       });
 
       test('returns error for width above maxWidth (non-tile/panel)', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'width',
           labelKey: 'input.width',
           required: true,
@@ -282,7 +282,7 @@ void main() {
       });
 
       test('allows large width for tile fields', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'tile_width',
           labelKey: 'input.tile_width',
           required: true,
@@ -294,7 +294,7 @@ void main() {
       });
 
       test('allows large width for panel fields', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'panel_width',
           labelKey: 'input.panel_width',
           required: true,
@@ -306,7 +306,7 @@ void main() {
       });
 
       test('returns error for perimeter above maxPerimeter', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'perimeter',
           labelKey: 'input.perimeter',
           required: true,
@@ -320,7 +320,7 @@ void main() {
 
     group('validate - whitespace handling', () {
       test('trims whitespace from input', () {
-        final field = InputFieldDefinition(
+        const field = InputFieldDefinition(
           key: 'area',
           labelKey: 'input.area',
           required: true,

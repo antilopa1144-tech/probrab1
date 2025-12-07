@@ -14,10 +14,12 @@ class MaterialComparisonScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<MaterialComparisonScreen> createState() => _MaterialComparisonScreenState();
+  ConsumerState<MaterialComparisonScreen> createState() =>
+      _MaterialComparisonScreenState();
 }
 
-class _MaterialComparisonScreenState extends ConsumerState<MaterialComparisonScreen> {
+class _MaterialComparisonScreenState
+    extends ConsumerState<MaterialComparisonScreen> {
   final List<MaterialOption> _options = [];
   MaterialOption? _selectedOption;
 
@@ -32,7 +34,7 @@ class _MaterialComparisonScreenState extends ConsumerState<MaterialComparisonScr
     // В реальном приложении это будет из базы данных
     setState(() {
       _options.addAll([
-        MaterialOption(
+        const MaterialOption(
           id: 'option1',
           name: 'Эконом вариант',
           category: 'Базовый',
@@ -41,7 +43,7 @@ class _MaterialComparisonScreenState extends ConsumerState<MaterialComparisonScr
           properties: {'толщина': '10 мм', 'класс': 'Б'},
           durabilityYears: 5,
         ),
-        MaterialOption(
+        const MaterialOption(
           id: 'option2',
           name: 'Стандарт',
           category: 'Средний',
@@ -50,7 +52,7 @@ class _MaterialComparisonScreenState extends ConsumerState<MaterialComparisonScr
           properties: {'толщина': '12 мм', 'класс': 'А'},
           durabilityYears: 10,
         ),
-        MaterialOption(
+        const MaterialOption(
           id: 'option3',
           name: 'Премиум',
           category: 'Высокий',
@@ -66,7 +68,7 @@ class _MaterialComparisonScreenState extends ConsumerState<MaterialComparisonScr
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     if (_options.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: const Text('Сравнение материалов')),
@@ -135,48 +137,51 @@ class _MaterialComparisonScreenState extends ConsumerState<MaterialComparisonScr
               cacheExtent: 500,
               itemBuilder: (context, index) {
                 final option = _options[index];
-                final totalCost = option.calculateTotalCost(widget.requiredQuantity);
-                final costPerYear = option.getCostPerYear(widget.requiredQuantity);
+                final totalCost = option.calculateTotalCost(
+                  widget.requiredQuantity,
+                );
+                final costPerYear = option.getCostPerYear(
+                  widget.requiredQuantity,
+                );
 
                 return RepaintBoundary(
                   child: Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      child: Text('${index + 1}'),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: ListTile(
+                      leading: CircleAvatar(child: Text('${index + 1}')),
+                      title: Text(option.name),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Цены временно скрыты до интеграции с магазинами
+                          // Text('${option.pricePerUnit} ₽/${option.unit}'),
+                          Text('Срок службы: ${option.durabilityYears} лет'),
+                          // Text(
+                          //   'Общая стоимость: ${totalCost.toStringAsFixed(0)} ₽',
+                          //   style: const TextStyle(fontWeight: FontWeight.bold),
+                          // ),
+                          // Text(
+                          //   'Стоимость/год: ${costPerYear.toStringAsFixed(0)} ₽',
+                          //   style: TextStyle(color: Colors.grey.shade600),
+                          // ),
+                        ],
+                      ),
+                      trailing: _selectedOption?.id == option.id
+                          ? const Icon(Icons.check_circle, color: Colors.green)
+                          : IconButton(
+                              icon: const Icon(Icons.check_circle_outline),
+                              onPressed: () {
+                                setState(() {
+                                  _selectedOption = option;
+                                });
+                              },
+                            ),
+                      onTap: () {
+                        setState(() {
+                          _selectedOption = option;
+                        });
+                      },
                     ),
-                    title: Text(option.name),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('${option.pricePerUnit} ₽/${option.unit}'),
-                        Text('Срок службы: ${option.durabilityYears} лет'),
-                        Text(
-                          'Общая стоимость: ${totalCost.toStringAsFixed(0)} ₽',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Стоимость/год: ${costPerYear.toStringAsFixed(0)} ₽',
-                          style: TextStyle(color: Colors.grey.shade600),
-                        ),
-                      ],
-                    ),
-                    trailing: _selectedOption?.id == option.id
-                        ? const Icon(Icons.check_circle, color: Colors.green)
-                        : IconButton(
-                            icon: const Icon(Icons.check_circle_outline),
-                            onPressed: () {
-                              setState(() {
-                                _selectedOption = option;
-                              });
-                            },
-                          ),
-                    onTap: () {
-                      setState(() {
-                        _selectedOption = option;
-                      });
-                    },
-                  ),
                   ),
                 );
               },
@@ -237,7 +242,9 @@ class _RecommendationCard extends StatelessWidget {
                     title,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text('${option!.name}: ${totalCost.toStringAsFixed(0)} ₽'),
+                  // Цены временно скрыты до интеграции с магазинами
+                  // Text('${option!.name}: ${totalCost.toStringAsFixed(0)} ₽'),
+                  Text(option!.name),
                 ],
               ),
             ),
@@ -247,4 +254,3 @@ class _RecommendationCard extends StatelessWidget {
     );
   }
 }
-

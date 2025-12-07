@@ -7,7 +7,7 @@ void main() {
   group('FieldValidator', () {
     group('validate', () {
       test('returns null for valid required field', () {
-        final field = CalculatorField(
+        const field = CalculatorField(
           key: 'area',
           labelKey: 'area',
           unitType: UnitType.squareMeters,
@@ -21,7 +21,7 @@ void main() {
       });
 
       test('returns error for missing required field', () {
-        final field = CalculatorField(
+        const field = CalculatorField(
           key: 'area',
           labelKey: 'area',
           unitType: UnitType.squareMeters,
@@ -35,7 +35,7 @@ void main() {
       });
 
       test('returns null for missing optional field', () {
-        final field = CalculatorField(
+        const field = CalculatorField(
           key: 'area',
           labelKey: 'area',
           unitType: UnitType.squareMeters,
@@ -47,7 +47,7 @@ void main() {
       });
 
       test('returns error for negative value when minValue >= 0', () {
-        final field = CalculatorField(
+        const field = CalculatorField(
           key: 'area',
           labelKey: 'area',
           unitType: UnitType.squareMeters,
@@ -61,7 +61,7 @@ void main() {
       });
 
       test('returns error for value below minValue', () {
-        final field = CalculatorField(
+        const field = CalculatorField(
           key: 'area',
           labelKey: 'area',
           unitType: UnitType.squareMeters,
@@ -76,7 +76,7 @@ void main() {
       });
 
       test('returns error for value above maxValue', () {
-        final field = CalculatorField(
+        const field = CalculatorField(
           key: 'area',
           labelKey: 'area',
           unitType: UnitType.squareMeters,
@@ -91,7 +91,7 @@ void main() {
       });
 
       test('allows negative values when minValue is negative', () {
-        final field = CalculatorField(
+        const field = CalculatorField(
           key: 'temperature',
           labelKey: 'temperature',
           unitType: UnitType.pieces,
@@ -103,7 +103,7 @@ void main() {
       });
 
       test('validates boundary values correctly', () {
-        final field = CalculatorField(
+        const field = CalculatorField(
           key: 'area',
           labelKey: 'area',
           unitType: UnitType.squareMeters,
@@ -120,21 +120,21 @@ void main() {
 
     group('validateAll', () {
       final fields = [
-        CalculatorField(
+        const CalculatorField(
           key: 'area',
           labelKey: 'area',
           unitType: UnitType.squareMeters,
           required: true,
           minValue: 1,
         ),
-        CalculatorField(
+        const CalculatorField(
           key: 'height',
           labelKey: 'height',
           unitType: UnitType.meters,
           required: false,
           maxValue: 10,
         ),
-        CalculatorField(
+        const CalculatorField(
           key: 'width',
           labelKey: 'width',
           unitType: UnitType.meters,
@@ -167,14 +167,14 @@ void main() {
 
     group('validateByKey', () {
       final fields = [
-        CalculatorField(
+        const CalculatorField(
           key: 'area',
           labelKey: 'area',
           unitType: UnitType.squareMeters,
           minValue: 1,
           maxValue: 100,
         ),
-        CalculatorField(
+        const CalculatorField(
           key: 'height',
           labelKey: 'height',
           unitType: UnitType.meters,
@@ -200,19 +200,19 @@ void main() {
 
     group('areRequiredFieldsFilled', () {
       final fields = [
-        CalculatorField(
+        const CalculatorField(
           key: 'area',
           labelKey: 'area',
           unitType: UnitType.squareMeters,
           required: true,
         ),
-        CalculatorField(
+        const CalculatorField(
           key: 'height',
           labelKey: 'height',
           unitType: UnitType.meters,
           required: false,
         ),
-        CalculatorField(
+        const CalculatorField(
           key: 'width',
           labelKey: 'width',
           unitType: UnitType.meters,
@@ -238,19 +238,19 @@ void main() {
 
     group('getMissingRequiredFields', () {
       final fields = [
-        CalculatorField(
+        const CalculatorField(
           key: 'area',
           labelKey: 'area',
           unitType: UnitType.squareMeters,
           required: true,
         ),
-        CalculatorField(
+        const CalculatorField(
           key: 'height',
           labelKey: 'height',
           unitType: UnitType.meters,
           required: false,
         ),
-        CalculatorField(
+        const CalculatorField(
           key: 'width',
           labelKey: 'width',
           unitType: UnitType.meters,

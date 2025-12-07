@@ -24,13 +24,11 @@ import '../calculator/universal_calculator_v2_screen.dart';
 class ProjectDetailsScreen extends ConsumerStatefulWidget {
   final int projectId;
 
-  const ProjectDetailsScreen({
-    super.key,
-    required this.projectId,
-  });
+  const ProjectDetailsScreen({super.key, required this.projectId});
 
   @override
-  ConsumerState<ProjectDetailsScreen> createState() => _ProjectDetailsScreenState();
+  ConsumerState<ProjectDetailsScreen> createState() =>
+      _ProjectDetailsScreenState();
 }
 
 class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
@@ -64,7 +62,9 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
 
   void _editProjectInfo(ProjectV2 project) async {
     final nameController = TextEditingController(text: project.name);
-    final descriptionController = TextEditingController(text: project.description ?? '');
+    final descriptionController = TextEditingController(
+      text: project.description ?? '',
+    );
 
     final result = await showDialog<bool>(
       context: context,
@@ -75,18 +75,14 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Название проекта',
-              ),
+              decoration: const InputDecoration(labelText: 'Название проекта'),
               autofocus: true,
               textCapitalization: TextCapitalization.sentences,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Описание',
-              ),
+              decoration: const InputDecoration(labelText: 'Описание'),
               maxLines: 3,
               textCapitalization: TextCapitalization.sentences,
             ),
@@ -121,7 +117,9 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
           ..color = project.color
           ..notes = project.notes;
 
-        await ref.read(projectV2NotifierProvider.notifier).updateProject(updated);
+        await ref
+            .read(projectV2NotifierProvider.notifier)
+            .updateProject(updated);
         _refreshProject();
 
         if (mounted) {
@@ -155,10 +153,7 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
             onPressed: () => Navigator.pop(context, status),
             child: Row(
               children: [
-                Icon(
-                  _getStatusIcon(status),
-                  color: _getStatusColor(status),
-                ),
+                Icon(_getStatusIcon(status), color: _getStatusColor(status)),
                 const SizedBox(width: 12),
                 Text(_getStatusLabel(status)),
               ],
@@ -182,13 +177,17 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
           ..color = project.color
           ..notes = project.notes;
 
-        await ref.read(projectV2NotifierProvider.notifier).updateProject(updated);
+        await ref
+            .read(projectV2NotifierProvider.notifier)
+            .updateProject(updated);
         _refreshProject();
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Статус изменён на "${_getStatusLabel(newStatus)}"'),
+              content: Text(
+                'Статус изменён на "${_getStatusLabel(newStatus)}"',
+              ),
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -246,7 +245,8 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => UniversalCalculatorV2Screen(definition: calcDef),
+            builder: (context) =>
+                UniversalCalculatorV2Screen(definition: calcDef),
           ),
         );
       }
@@ -258,20 +258,27 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
     final calcDef = CalculatorRegistry.getById(calculation.calculatorId);
     if (calcDef == null) {
       // Логируем ошибку в Crashlytics
-      FirebaseCrashlytics.instance.recordError(
-        Exception('Calculator not found: ${calculation.calculatorId}'),
-        StackTrace.current,
-        reason: 'User attempted to open saved calculation with non-existent calculator',
-        information: [
-          'calculatorId: ${calculation.calculatorId}',
-          'projectId: ${widget.projectId}',
-        ],
-      );
+      try {
+        FirebaseCrashlytics.instance.recordError(
+          Exception('Calculator not found: ${calculation.calculatorId}'),
+          StackTrace.current,
+          reason:
+              'User attempted to open saved calculation with non-existent calculator',
+          information: [
+            'calculatorId: ${calculation.calculatorId}',
+            'projectId: ${widget.projectId}',
+          ],
+        );
+      } catch (e) {
+        // Игнорируем ошибки Firebase, если сервис недоступен
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Калькулятор "${calculation.calculatorId}" не найден'),
+            content: Text(
+              'Калькулятор "${calculation.calculatorId}" не найден',
+            ),
             backgroundColor: Colors.orange,
           ),
         );
@@ -303,7 +310,9 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Удалить расчёт?'),
-        content: Text('Расчёт "${calculation.name}" будет удалён безвозвратно.'),
+        content: Text(
+          'Расчёт "${calculation.name}" будет удалён безвозвратно.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -448,10 +457,7 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
                     color: theme.colorScheme.outline,
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    'Проект не найден',
-                    style: theme.textTheme.titleLarge,
-                  ),
+                  Text('Проект не найден', style: theme.textTheme.titleLarge),
                   const SizedBox(height: 24),
                   FilledButton(
                     onPressed: () => Navigator.pop(context),
@@ -522,9 +528,7 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
               ),
 
               // Информация о проекте
-              SliverToBoxAdapter(
-                child: _ProjectInfoCard(project: project),
-              ),
+              SliverToBoxAdapter(child: _ProjectInfoCard(project: project)),
 
               // Заголовок расчётов
               SliverToBoxAdapter(
@@ -532,10 +536,7 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
                   child: Row(
                     children: [
-                      Text(
-                        'Расчёты',
-                        style: theme.textTheme.titleLarge,
-                      ),
+                      Text('Расчёты', style: theme.textTheme.titleLarge),
                       const Spacer(),
                       TextButton.icon(
                         onPressed: () => _addCalculation(project),
@@ -582,17 +583,14 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final calc = project.calculations.toList()[index];
-                        return _CalculationCard(
-                          calculation: calc,
-                          onTap: () => _openCalculation(calc),
-                          onDelete: () => _deleteCalculation(calc),
-                        );
-                      },
-                      childCount: project.calculations.length,
-                    ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final calc = project.calculations.toList()[index];
+                      return _CalculationCard(
+                        calculation: calc,
+                        onTap: () => _openCalculation(calc),
+                        onDelete: () => _deleteCalculation(calc),
+                      );
+                    }, childCount: project.calculations.length),
                   ),
                 ),
             ],
@@ -704,11 +702,9 @@ class _ProjectInfoCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Описание
-            if (project.description != null && project.description!.isNotEmpty) ...[
-              Text(
-                project.description!,
-                style: theme.textTheme.bodyLarge,
-              ),
+            if (project.description != null &&
+                project.description!.isNotEmpty) ...[
+              Text(project.description!, style: theme.textTheme.bodyLarge),
               const SizedBox(height: 16),
             ],
 
@@ -752,24 +748,25 @@ class _ProjectInfoCard extends StatelessWidget {
             const Divider(height: 24),
 
             // Итого
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Итого:',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  _formatCurrency(project.totalCost),
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
+            // Цены временно скрыты до интеграции с магазинами
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text(
+            //       'Итого:',
+            //       style: theme.textTheme.titleLarge?.copyWith(
+            //         fontWeight: FontWeight.bold,
+            //       ),
+            //     ),
+            //     Text(
+            //       _formatCurrency(project.totalCost),
+            //       style: theme.textTheme.headlineSmall?.copyWith(
+            //         fontWeight: FontWeight.bold,
+            //         color: theme.colorScheme.primary,
+            //       ),
+            //     ),
+            //   ],
+            // ),
 
             // Теги
             if (project.tags.isNotEmpty) ...[
@@ -789,10 +786,7 @@ class _ProjectInfoCard extends StatelessWidget {
             // Заметки
             if (project.notes != null && project.notes!.isNotEmpty) ...[
               const Divider(height: 24),
-              Text(
-                'Заметки',
-                style: theme.textTheme.titleSmall,
-              ),
+              Text('Заметки', style: theme.textTheme.titleSmall),
               const SizedBox(height: 8),
               Text(
                 project.notes!,
@@ -831,11 +825,7 @@ class _InfoRow extends StatelessWidget {
 
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
+        Icon(icon, size: 20, color: theme.colorScheme.onSurfaceVariant),
         const SizedBox(width: 8),
         Text(
           '$label:',
@@ -927,142 +917,149 @@ class _CalculationCard extends StatelessWidget {
             children: [
               // Заголовок
               Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        calculation.name,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          calculation.name,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        calculation.calculatorId,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                        const SizedBox(height: 4),
+                        Text(
+                          calculation.calculatorId,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete_outline_rounded),
-                  onPressed: onDelete,
-                  tooltip: 'Удалить',
-                ),
-              ],
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline_rounded),
+                    onPressed: onDelete,
+                    tooltip: 'Удалить',
+                  ),
+                ],
               ),
 
               const SizedBox(height: 12),
 
               // Дата
               Row(
-              children: [
-                Icon(
-                  Icons.access_time_rounded,
-                  size: 16,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  dateFormat.format(calculation.createdAt),
-                  style: theme.textTheme.bodySmall?.copyWith(
+                children: [
+                  Icon(
+                    Icons.access_time_rounded,
+                    size: 16,
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 4),
+                  Text(
+                    dateFormat.format(calculation.createdAt),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
               ),
 
               // Основные результаты (первые 3)
               if (results.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              const Divider(),
-              const SizedBox(height: 8),
-              ...results.entries.take(3).map((entry) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _formatResultKey(entry.key),
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                const SizedBox(height: 12),
+                const Divider(),
+                const SizedBox(height: 8),
+                ...results.entries.take(3).map((entry) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          _formatResultKey(entry.key),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
                         ),
-                      ),
-                      Text(
-                        _formatResultValue(entry.key, entry.value),
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
+                        Text(
+                          _formatResultValue(entry.key, entry.value),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
+                      ],
+                    ),
+                  );
+                }),
               ],
 
               // Стоимости
-              if (calculation.materialCost != null || calculation.laborCost != null) ...[
-              const SizedBox(height: 12),
-              const Divider(),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  if (calculation.materialCost != null)
-                    Expanded(
-                      child: _CostInfo(
-                        label: 'Материалы',
-                        value: calculation.materialCost!,
-                        icon: Icons.shopping_cart_outlined,
+              if (calculation.materialCost != null ||
+                  calculation.laborCost != null) ...[
+                const SizedBox(height: 12),
+                const Divider(),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    if (calculation.materialCost != null)
+                      Expanded(
+                        child: _CostInfo(
+                          label: 'Материалы',
+                          value: calculation.materialCost!,
+                          icon: Icons.shopping_cart_outlined,
+                        ),
                       ),
-                    ),
-                  if (calculation.materialCost != null && calculation.laborCost != null)
-                    const SizedBox(width: 16),
-                  if (calculation.laborCost != null)
-                    Expanded(
-                      child: _CostInfo(
-                        label: 'Работы',
-                        value: calculation.laborCost!,
-                        icon: Icons.handyman_outlined,
+                    if (calculation.materialCost != null &&
+                        calculation.laborCost != null)
+                      const SizedBox(width: 16),
+                    if (calculation.laborCost != null)
+                      Expanded(
+                        child: _CostInfo(
+                          label: 'Работы',
+                          value: calculation.laborCost!,
+                          icon: Icons.handyman_outlined,
+                        ),
                       ),
-                    ),
-                ],
-              ),
+                  ],
+                ),
               ],
 
               // Заметки
-              if (calculation.notes != null && calculation.notes!.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text(
-                calculation.notes!,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontStyle: FontStyle.italic,
+              if (calculation.notes != null &&
+                  calculation.notes!.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text(
+                  calculation.notes!,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
               ],
 
               // Кнопка открыть
               if (onTap != null) ...[
-              const SizedBox(height: 12),
-              const Divider(),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton.icon(
-                    onPressed: onTap,
-                    icon: const Icon(Icons.open_in_new, size: 18),
-                    label: Text(AppLocalizations.of(context).translate('button.open_for_recalculation')),
-                  ),
-                ],
-              ),
+                const SizedBox(height: 12),
+                const Divider(),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton.icon(
+                      onPressed: onTap,
+                      icon: const Icon(Icons.open_in_new, size: 18),
+                      label: Text(
+                        AppLocalizations.of(
+                          context,
+                        ).translate('button.open_for_recalculation'),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ],
           ),
@@ -1076,15 +1073,16 @@ class _CalculationCard extends StatelessWidget {
     return key
         .replaceAll('_', ' ')
         .split(' ')
-        .map((word) => word.isEmpty
-            ? ''
-            : word[0].toUpperCase() + word.substring(1))
+        .map(
+          (word) =>
+              word.isEmpty ? '' : word[0].toUpperCase() + word.substring(1),
+        )
         .join(' ');
   }
 
   String _formatResultValue(String key, double value) {
     final format = NumberFormat('#,##0.00', 'ru_RU');
-    
+
     // Определяем единицу измерения по ключу
     if (key.contains('area')) return '${format.format(value)} м²';
     if (key.contains('volume')) return '${format.format(value)} м³';
@@ -1097,13 +1095,15 @@ class _CalculationCard extends StatelessWidget {
     if (key.contains('liters') || key.contains('l')) {
       return '${format.format(value)} л';
     }
-    if (key.contains('pieces') || key.contains('pcs') || key.contains('needed')) {
+    if (key.contains('pieces') ||
+        key.contains('pcs') ||
+        key.contains('needed')) {
       return '${format.format(value)} шт.';
     }
     if (key.contains('price') || key.contains('cost')) {
       return '${format.format(value)} ₽';
     }
-    
+
     return format.format(value);
   }
 }
@@ -1128,11 +1128,7 @@ class _CostInfo extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
+        Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
         const SizedBox(width: 4),
         Text(
           '$label: ',

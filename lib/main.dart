@@ -11,14 +11,13 @@ import 'core/localization/app_localizations.dart';
 import 'presentation/app/home_main.dart';
 import 'presentation/providers/settings_provider.dart';
 import 'core/errors/global_error_handler.dart';
+import 'presentation/views/onboarding/onboarding_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Инициализация Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Передача Flutter ошибок в Crashlytics
   FlutterError.onError = (details) {
@@ -30,7 +29,11 @@ void main() async {
     );
 
     // Также отправляем напрямую в Crashlytics
-    FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+    try {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+    } catch (e) {
+      // Игнорируем ошибки Firebase, если сервис недоступен
+    }
   };
 
   runApp(const ProviderScope(child: ProbuilderApp()));
@@ -52,7 +55,9 @@ class ProbuilderApp extends ConsumerWidget {
       key: ValueKey('${settings.language}_${isDarkMode}_${accent.value}'),
       title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
-      theme: isDarkMode ? AppTheme.darkTheme(accent) : AppTheme.lightTheme(accent),
+      theme: isDarkMode
+          ? AppTheme.darkTheme(accent)
+          : AppTheme.lightTheme(accent),
       darkTheme: AppTheme.darkTheme(accent),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       locale: locale,
@@ -63,7 +68,47 @@ class ProbuilderApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      home: const HomeMainScreen(),
+      home: const _HomeSelector(),
     );
+  }
+}
+
+/// Виджет, который выбирает между онбордингом и главным экраном.
+class _HomeSelector extends ConsumerStatefulWidget {
+  const _HomeSelector();
+
+  @override
+  ConsumerState<_HomeSelector> createState() => _HomeSelectorState();
+}
+
+class _HomeSelectorState extends ConsumerState<_HomeSelector> {
+  bool _isLoading = true;
+  bool _showOnboarding = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboarding();
+  }
+
+  Future<void> _checkOnboarding() async {
+    final shouldShow = await OnboardingScreen.shouldShow();
+    setState(() {
+      _showOnboarding = shouldShow;
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (_showOnboarding) {
+      return const OnboardingScreen();
+    }
+
+    return const HomeMainScreen();
   }
 }

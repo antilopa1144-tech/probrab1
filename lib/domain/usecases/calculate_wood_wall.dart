@@ -60,7 +60,7 @@ class CalculateWoodWall extends BaseCalculator {
     final antisepticNeeded = area * 0.3;
 
     // Лак/масло для финишной отделки: ~0.1 л/м² на слой (2-3 слоя)
-    final finishLayers = 2;
+    const finishLayers = 2;
     final finishNeeded = area * 0.1 * finishLayers;
 
     // Грунтовка для дерева: ~0.1 л/м²

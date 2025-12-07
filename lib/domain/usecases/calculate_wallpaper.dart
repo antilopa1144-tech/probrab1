@@ -77,7 +77,7 @@ class CalculateWallpaper extends BaseCalculator {
     // Бумажные: 0.15-0.2 кг/м²
     // Флизелиновые/виниловые: 0.2-0.25 кг/м²
     // Тяжёлые (стеклообои): 0.25-0.3 кг/м²
-    final glueConsumption = 0.22; // кг/м² (средний расход)
+    const glueConsumption = 0.22; // кг/м² (средний расход)
     final glueNeeded = usefulArea * glueConsumption;
 
     // Грунтовка (рекомендуется перед поклейкой): ~0.1 л/м²

@@ -52,7 +52,7 @@ class CalculatePutty extends BaseCalculator {
     final sandpaperSets = ceilToInt(area / 25); // 1 комплект на 25 м²
 
     // Шпатели: набор из 3-4 шт разного размера
-    final spatulasNeeded = 3;
+    const spatulasNeeded = 3;
 
     // Вода для замешивания (информативно): ~0.4 л на кг смеси
     final waterNeeded = puttyNeeded * 0.4;

@@ -6,23 +6,25 @@ class ImprovedSmartProjectPage extends ConsumerStatefulWidget {
   const ImprovedSmartProjectPage({super.key});
 
   @override
-  ConsumerState<ImprovedSmartProjectPage> createState() => _ImprovedSmartProjectPageState();
+  ConsumerState<ImprovedSmartProjectPage> createState() =>
+      _ImprovedSmartProjectPageState();
 }
 
-class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectPage> {
+class _ImprovedSmartProjectPageState
+    extends ConsumerState<ImprovedSmartProjectPage> {
   int _currentStep = 0;
-  
+
   // Размеры дома
   final _lengthController = TextEditingController(text: '10');
   final _widthController = TextEditingController(text: '8');
   final _heightController = TextEditingController(text: '3');
-  
+
   // Выбранные разделы
   bool _includeFoundation = true;
   bool _includeWalls = true;
   bool _includeRoof = true;
   bool _includeFinish = true;
-  
+
   // Результаты
   Map<String, double>? _results;
 
@@ -38,7 +40,7 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
     final length = double.tryParse(_lengthController.text) ?? 10;
     final width = double.tryParse(_widthController.text) ?? 8;
     final height = double.tryParse(_heightController.text) ?? 3;
-    
+
     final results = <String, double>{};
     double totalCost = 0;
 
@@ -47,9 +49,11 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
 
     // Фундамент - ленточный
     if (_includeFoundation) {
-      final foundationVolume = perimeter * 0.4 * 0.6; // периметр * ширина 40см * высота 60см
+      final foundationVolume =
+          perimeter * 0.4 * 0.6; // периметр * ширина 40см * высота 60см
       final concreteCost = foundationVolume * 6500; // цена бетона М300
-      final rebarWeight = foundationVolume * 0.012 * 7850; // объём * коэф * плотность
+      final rebarWeight =
+          foundationVolume * 0.012 * 7850; // объём * коэф * плотность
       final rebarCost = rebarWeight * 100; // цена арматуры
       final foundationCost = concreteCost + rebarCost;
       results['Фундамент (ленточный)'] = foundationCost;
@@ -62,7 +66,7 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
     if (_includeWalls) {
       final wallArea = perimeter * height;
       final wallVolume = wallArea * 0.3; // толщина 30см
-      final blockVolume = 0.6 * 0.2 * 0.3; // размер блока
+      const blockVolume = 0.6 * 0.2 * 0.3; // размер блока
       final blocks = (wallVolume / blockVolume * 1.05).ceil(); // +5% запас
       final wallsCost = blocks * 200; // цена газоблока
       results['Стены (газоблок)'] = wallsCost.toDouble();
@@ -87,11 +91,12 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
     // Отделка - черновая
     if (_includeFinish) {
       final floorArea = area;
-      final wallsForFinish = perimeter * height * 0.7; // 70% от стен (за вычетом проёмов)
+      final wallsForFinish =
+          perimeter * height * 0.7; // 70% от стен (за вычетом проёмов)
       final plasterCost = wallsForFinish * 500; // штукатурка
       final floorCost = floorArea * 1500; // стяжка + покрытие
       final paintCost = wallsForFinish * 300; // покраска
-      
+
       final finishCost = plasterCost + floorCost + paintCost;
       results['Отделка (черновая)'] = finishCost;
       results['  Площадь пола (м²)'] = floorArea;
@@ -99,8 +104,9 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
       totalCost += finishCost;
     }
 
-    results['💰 ИТОГО'] = totalCost;
-    
+    // Цены временно скрыты до интеграции с магазинами
+    // results['💰 ИТОГО'] = totalCost;
+
     setState(() {
       _results = results;
       _currentStep = 3; // Переходим к результатам
@@ -158,15 +164,18 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
             state: _currentStep > 0 ? StepState.complete : StepState.indexed,
             content: Column(
               children: [
-                _InfoCard(
+                const _InfoCard(
                   icon: Icons.home,
                   title: 'Простой способ',
-                  description: 'Измерьте рулеткой длину и ширину вашего дома или участка под дом',
+                  description:
+                      'Измерьте рулеткой длину и ширину вашего дома или участка под дом',
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _lengthController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   decoration: const InputDecoration(
                     labelText: 'Длина дома (метры)',
                     prefixIcon: Icon(Icons.straighten),
@@ -176,7 +185,9 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
                 const SizedBox(height: 12),
                 TextField(
                   controller: _widthController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   decoration: const InputDecoration(
                     labelText: 'Ширина дома (метры)',
                     prefixIcon: Icon(Icons.straighten),
@@ -186,7 +197,9 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
                 const SizedBox(height: 12),
                 TextField(
                   controller: _heightController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   decoration: const InputDecoration(
                     labelText: 'Высота стен (метры)',
                     prefixIcon: Icon(Icons.height),
@@ -205,10 +218,11 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
             state: _currentStep > 1 ? StepState.complete : StepState.indexed,
             content: Column(
               children: [
-                _InfoCard(
+                const _InfoCard(
                   icon: Icons.construction,
                   title: 'Что включить?',
-                  description: 'Отметьте галочками что нужно построить. Всё остальное рассчитается автоматически!',
+                  description:
+                      'Отметьте галочками что нужно построить. Всё остальное рассчитается автоматически!',
                 ),
                 const SizedBox(height: 16),
                 _SectionCheckbox(
@@ -216,7 +230,8 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
                   title: 'Фундамент',
                   subtitle: 'Ленточный фундамент из бетона М300',
                   icon: Icons.foundation,
-                  onChanged: (v) => setState(() => _includeFoundation = v ?? false),
+                  onChanged: (v) =>
+                      setState(() => _includeFoundation = v ?? false),
                 ),
                 _SectionCheckbox(
                   value: _includeWalls,
@@ -260,7 +275,8 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
                 _SummaryRow(
                   icon: Icons.home,
                   label: 'Размеры дома',
-                  value: '${_lengthController.text}м × ${_widthController.text}м × ${_heightController.text}м',
+                  value:
+                      '${_lengthController.text}м × ${_widthController.text}м × ${_heightController.text}м',
                 ),
                 const Divider(),
                 _SummaryRow(
@@ -311,7 +327,11 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.check_circle, color: Colors.green, size: 32),
+                            const Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                              size: 32,
+                            ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
@@ -327,7 +347,9 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
                                   ),
                                   Text(
                                     'Ниже подробная смета вашего проекта',
-                                    style: TextStyle(color: Colors.grey.shade400),
+                                    style: TextStyle(
+                                      color: Colors.grey.shade400,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -339,14 +361,15 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
                       ..._results!.entries.map((e) {
                         final isTotal = e.key.contains('ИТОГО');
                         final isSubItem = e.key.startsWith('  ');
-                        
+
                         if (isTotal) {
                           return Container(
                             margin: const EdgeInsets.only(top: 16),
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary
-                                  .withValues(alpha: 0.2),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: Theme.of(context).colorScheme.primary,
@@ -368,14 +391,16 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
                                   style: TextStyle(
                                     fontSize: 26,
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                                 ),
                               ],
                             ),
                           );
                         }
-                        
+
                         return Padding(
                           padding: EdgeInsets.only(
                             left: isSubItem ? 24 : 0,
@@ -389,8 +414,12 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
                                   e.key,
                                   style: TextStyle(
                                     fontSize: isSubItem ? 14 : 16,
-                                    fontWeight: isSubItem ? FontWeight.normal : FontWeight.bold,
-                                    color: isSubItem ? Colors.grey.shade400 : null,
+                                    fontWeight: isSubItem
+                                        ? FontWeight.normal
+                                        : FontWeight.bold,
+                                    color: isSubItem
+                                        ? Colors.grey.shade400
+                                        : null,
                                   ),
                                 ),
                               ),
@@ -401,7 +430,9 @@ class _ImprovedSmartProjectPageState extends ConsumerState<ImprovedSmartProjectP
                                 style: TextStyle(
                                   fontSize: isSubItem ? 14 : 18,
                                   fontWeight: FontWeight.bold,
-                                  color: isSubItem ? Colors.grey.shade400 : Theme.of(context).colorScheme.primary,
+                                  color: isSubItem
+                                      ? Colors.grey.shade400
+                                      : Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                             ],
@@ -469,10 +500,7 @@ class _InfoCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade400,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade400),
                 ),
               ],
             ),
@@ -504,14 +532,12 @@ class _SectionCheckbox extends StatelessWidget {
       child: CheckboxListTile(
         value: value,
         onChanged: onChanged,
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(subtitle),
         secondary: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.primary
-              .withValues(alpha: 0.2),
+          backgroundColor: Theme.of(
+            context,
+          ).colorScheme.primary.withValues(alpha: 0.2),
           child: Icon(icon, color: Theme.of(context).colorScheme.primary),
         ),
       ),
@@ -540,7 +566,9 @@ class _SummaryRow extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: enabled ? Theme.of(context).colorScheme.primary : Colors.grey,
+            color: enabled
+                ? Theme.of(context).colorScheme.primary
+                : Colors.grey,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -557,7 +585,9 @@ class _SummaryRow extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: enabled ? Theme.of(context).colorScheme.primary : Colors.grey,
+              color: enabled
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.grey,
             ),
           ),
         ],

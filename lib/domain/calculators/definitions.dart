@@ -1,14 +1,17 @@
 // Репозиторий расчётов (цены и прочее)
 
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
-import 'package:probrab_ai/core/cache/calculation_cache.dart';
+import '../../data/models/price_item.dart';
+import '../usecases/calculator_usecase.dart';
+import '../../core/cache/calculation_cache.dart';
 // Модульные калькуляторы
 import 'modules/all_modules.dart' as modules;
-import 'package:probrab_ai/domain/usecases/calculate_sound_insulation.dart';
+import '../usecases/calculate_sound_insulation.dart';
+
+import 'package:flutter/foundation.dart';
 
 /// Описание поля ввода (одно поле формы: периметр, ширина и т.п.)
+@immutable
 class InputFieldDefinition {
   /// ID поля (используется во входной карте inputs['perimeter'])
   final String key;
@@ -43,6 +46,7 @@ class InputFieldDefinition {
 }
 
 /// Описание самого калькулятора (одного инструмента)
+@immutable
 class CalculatorDefinition {
   /// Уникальный ID (например 'calculator.stripTitle')
   final String id;
@@ -162,7 +166,8 @@ class CalculatorDefinition {
 
 /// ===== КАЛЬКУЛЯТОРЫ ФУНДАМЕНТА =====
 /// Импортированы из модуля modules/foundation/
-final List<CalculatorDefinition> foundationCalculators = modules.foundationCalculators;
+final List<CalculatorDefinition> foundationCalculators =
+    modules.foundationCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ СТЕН =====
 /// Перенесено в modules/walls/wall_calculators.dart
@@ -174,32 +179,39 @@ final List<CalculatorDefinition> floorCalculators = modules.floorCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ ПОТОЛКОВ =====
 /// Перенесено в modules/ceilings/ceiling_calculators.dart
-final List<CalculatorDefinition> ceilingCalculators = modules.ceilingCalculators;
+final List<CalculatorDefinition> ceilingCalculators =
+    modules.ceilingCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ ПЕРЕГОРОДОК =====
 /// Перенесено в modules/partitions/partition_calculators.dart
-final List<CalculatorDefinition> partitionCalculators = modules.partitionCalculators;
+final List<CalculatorDefinition> partitionCalculators =
+    modules.partitionCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ УТЕПЛЕНИЯ =====
 /// Перенесено в modules/insulation/insulation_calculators.dart
-final List<CalculatorDefinition> insulationCalculators = modules.insulationCalculators;
+final List<CalculatorDefinition> insulationCalculators =
+    modules.insulationCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ НАРУЖНОЙ ОТДЕЛКИ =====
 /// Перенесено в modules/exterior/exterior_calculators.dart
-final List<CalculatorDefinition> exteriorCalculators = modules.exteriorCalculators;
+final List<CalculatorDefinition> exteriorCalculators =
+    modules.exteriorCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ КРОВЛИ =====
 /// Перенесено в modules/roofing/roofing_calculators.dart
-final List<CalculatorDefinition> roofingCalculators = modules.roofingCalculators;
+final List<CalculatorDefinition> roofingCalculators =
+    modules.roofingCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ ИНЖЕНЕРНЫХ РАБОТ =====
 /// Перенесено в modules/engineering/engineering_calculators.dart
-final List<CalculatorDefinition> engineeringCalculators = modules.engineeringCalculators;
+final List<CalculatorDefinition> engineeringCalculators =
+    modules.engineeringCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ ВАННОЙ =====
 
 /// Перенесено в modules/bathroom/bathroom_calculators.dart
-final List<CalculatorDefinition> bathroomCalculators = modules.bathroomCalculators;
+final List<CalculatorDefinition> bathroomCalculators =
+    modules.bathroomCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ СМЕСЕЙ =====
 /// Перенесено в modules/mix/mix_calculators.dart
@@ -207,7 +219,8 @@ final List<CalculatorDefinition> mixCalculators = modules.mixCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ ОКОН/ДВЕРЕЙ =====
 /// Перенесено в modules/windows_doors/windows_doors_calculators.dart
-final List<CalculatorDefinition> windowsDoorsCalculators = modules.windowsDoorsCalculators;
+final List<CalculatorDefinition> windowsDoorsCalculators =
+    modules.windowsDoorsCalculators;
 
 /// ===== КАЛЬКУЛЯТОРЫ ШУМОИЗОЛЯЦИИ =====
 
@@ -217,24 +230,24 @@ final List<CalculatorDefinition> soundInsulationCalculators = [
     titleKey: 'calculator.soundInsulation',
     category: 'Внутренняя отделка',
     subCategory: 'Шумоизоляция',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 50.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'insulationType',
         labelKey: 'input.insulationType',
         defaultValue: 1.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'volume': 'result.volume',
       'sheetsNeeded': 'result.sheets',
@@ -251,10 +264,11 @@ final List<CalculatorDefinition> soundInsulationCalculators = [
 
 /// ===== КАЛЬКУЛЯТОРЫ КОНСТРУКЦИЙ =====
 /// Перенесено в modules/structure/structure_calculators.dart
-final List<CalculatorDefinition> structureCalculators = modules.structureCalculators;
+final List<CalculatorDefinition> structureCalculators =
+    modules.structureCalculators;
 
 /// Общий список всех калькуляторов приложения.
-final List<CalculatorDefinition> finishCalculators = [];
+final List<CalculatorDefinition> finishCalculators = const [];
 
 final List<CalculatorDefinition> calculators = [
   ...foundationCalculators,
@@ -294,7 +308,8 @@ CalculatorDefinition? findCalculatorById(String id) {
 /// ```
 class CalculatorRegistryV1 {
   // Singleton pattern
-  static final CalculatorRegistryV1 _instance = CalculatorRegistryV1._internal();
+  static final CalculatorRegistryV1 _instance =
+      CalculatorRegistryV1._internal();
   static CalculatorRegistryV1 get instance => _instance;
 
   CalculatorRegistryV1._internal() {

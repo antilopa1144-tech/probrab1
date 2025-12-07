@@ -45,10 +45,10 @@ class CalculatePrimer extends BaseCalculator {
     final rollersNeeded = ceilToInt(area / 30); // 1 валик на ~30-50 м²
 
     // Кисти для углов: 1-2 шт
-    final brushesNeeded = 2;
+    const brushesNeeded = 2;
 
     // Кювета для валика: 1 шт
-    final traysNeeded = 1;
+    const traysNeeded = 1;
 
     // Время высыхания (информативно, часов)
     final dryingTime = type == 1 ? 2.0 : (type == 2 ? 4.0 : 3.0);

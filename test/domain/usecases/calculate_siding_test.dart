@@ -136,7 +136,7 @@ void main() {
 
       // Узкие панели требуют больше штук
       expect(
-        resultSmall.values['panelsNeeded']!,
+        resultSmall.values['panelsNeeded'],
         greaterThan(resultWide.values['panelsNeeded']!),
       );
     });

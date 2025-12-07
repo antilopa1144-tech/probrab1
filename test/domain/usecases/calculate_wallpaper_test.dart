@@ -149,7 +149,7 @@ void main() {
 
       // rollsNeeded * 600
       expect(result.totalPrice, isNotNull);
-      expect(result.totalPrice!, greaterThan(0));
+      expect(result.totalPrice, greaterThan(0));
     });
 
     test('calculates strip length and strips needed', () {

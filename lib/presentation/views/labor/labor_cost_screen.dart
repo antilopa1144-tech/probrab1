@@ -63,8 +63,9 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
   void initState() {
     super.initState();
     final preferredRegion = ref.read(regionProvider);
-    _selectedRegion =
-        _rates.containsKey(preferredRegion) ? preferredRegion : _rates.keys.first;
+    _selectedRegion = _rates.containsKey(preferredRegion)
+        ? preferredRegion
+        : _rates.keys.first;
   }
 
   @override
@@ -96,10 +97,7 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Регион',
-                      style: theme.textTheme.titleMedium,
-                    ),
+                    Text('Регион', style: theme.textTheme.titleMedium),
                     const SizedBox(height: 8),
                     DropdownButton<String>(
                       value: _selectedRegion,
@@ -140,7 +138,8 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
                     const SizedBox(height: 16),
                     _ResultRow(
                       label: 'Объём работ',
-                      value: '${widget.quantity.toStringAsFixed(2)} ${rate.unit}',
+                      value:
+                          '${widget.quantity.toStringAsFixed(2)} ${rate.unit}',
                     ),
                     const Divider(),
                     _ResultRow(
@@ -151,16 +150,17 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
                       label: 'Оценка дней',
                       value: '${calculation.estimatedDays} дней',
                     ),
-                    const Divider(),
-                    _ResultRow(
-                      label: 'Стоимость работ',
-                      value: '${calculation.totalCost.toStringAsFixed(0)} ₽',
-                      isHighlighted: true,
-                    ),
-                    _ResultRow(
-                      label: 'Цена за единицу',
-                      value: '${rate.pricePerUnit} ₽/${rate.unit}',
-                    ),
+                    // Цены временно скрыты до интеграции с магазинами
+                    // const Divider(),
+                    // _ResultRow(
+                    //   label: 'Стоимость работ',
+                    //   value: '${calculation.totalCost.toStringAsFixed(0)} ₽',
+                    //   isHighlighted: true,
+                    // ),
+                    // _ResultRow(
+                    //   label: 'Цена за единицу',
+                    //   value: '${rate.pricePerUnit} ₽/${rate.unit}',
+                    // ),
                   ],
                 ),
               ),
@@ -176,7 +176,10 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.info_outline, color: theme.colorScheme.primary),
+                        Icon(
+                          Icons.info_outline,
+                          color: theme.colorScheme.primary,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           'Информация',
@@ -233,7 +236,9 @@ class _ResultRow extends StatelessWidget {
             style: TextStyle(
               fontSize: isHighlighted ? 18 : 16,
               fontWeight: FontWeight.bold,
-              color: isHighlighted ? Theme.of(context).colorScheme.primary : null,
+              color: isHighlighted
+                  ? Theme.of(context).colorScheme.primary
+                  : null,
             ),
           ),
         ],
@@ -241,4 +246,3 @@ class _ResultRow extends StatelessWidget {
     );
   }
 }
-

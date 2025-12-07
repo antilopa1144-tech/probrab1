@@ -35,7 +35,7 @@ class CalculateSelfLevelingFloor extends BaseCalculator {
     final thickness = getInput(inputs, 'thickness', defaultValue: 5.0, minValue: 1.0, maxValue: 50.0);
 
     // Расход наливного пола: ~1.5 кг/м² на 1 мм толщины
-    final consumptionPerMm = 1.5; // кг/м²·мм
+    const consumptionPerMm = 1.5; // кг/м²·мм
     final mixNeeded = area * consumptionPerMm * thickness * 1.1; // +10% запас
 
     // Грунтовка глубокого проникновения: 2 слоя по ~0.15 л/м²
@@ -49,10 +49,10 @@ class CalculateSelfLevelingFloor extends BaseCalculator {
     final rollersNeeded = ceilToInt(area / 50); // 1 валик на 50 м²
 
     // Краскоступы (для хождения по свежему полу): 1 пара
-    final shoesNeeded = 1;
+    const shoesNeeded = 1;
 
     // Миксер для замешивания (если нет)
-    final mixerNeeded = 1;
+    const mixerNeeded = 1;
 
     // Расход воды (информативно): ~0.15-0.2 л на кг смеси
     final waterNeeded = mixNeeded * 0.175; // л

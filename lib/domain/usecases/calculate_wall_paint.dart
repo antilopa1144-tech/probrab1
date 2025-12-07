@@ -63,7 +63,7 @@ class CalculateWallPaint extends BaseCalculator {
     ) * 1.08; // запас 8%
 
     // Грунтовка: расход ~0.1-0.12 л/м², один слой с запасом
-    final primerConsumption = 0.12; // л/м²
+    const primerConsumption = 0.12; // л/м²
     final primerNeeded = usefulArea * primerConsumption * 1.05;
 
     // Шпаклёвка (если стены требуют выравнивания): ~1.2 кг/м² на 1 мм

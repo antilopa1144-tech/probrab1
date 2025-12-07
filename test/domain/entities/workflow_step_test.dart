@@ -4,7 +4,7 @@ import 'package:probrab_ai/domain/entities/workflow_step.dart';
 void main() {
   group('WorkflowStep', () {
     test('creates WorkflowStep with all fields', () {
-      final step = WorkflowStep(
+      const step = WorkflowStep(
         id: 'step-1',
         title: 'Foundation',
         description: 'Pour foundation',
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('creates WorkflowStep with defaults', () {
-      final step = WorkflowStep(
+      const step = WorkflowStep(
         id: 'step-2',
         title: 'Walls',
         description: 'Build walls',

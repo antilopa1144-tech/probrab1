@@ -730,7 +730,7 @@ final List<WorkAreaDefinition> _flatAreas = [
 
 // Каталог для ГАРАЖА: базовая отделка и инженерия (без ванной, декора, фасадов, кровли)
 final List<WorkAreaDefinition> _garageAreas = [
-  WorkAreaDefinition(
+  const WorkAreaDefinition(
     id: 'interior',
     title: 'Внутренняя отделка',
     subtitle: 'Стены, потолки, полы и утепление',
@@ -860,7 +860,7 @@ final List<WorkAreaDefinition> _garageAreas = [
     ],
   ),
   // Инженерия для гаража - электрика, отопление, вентиляция
-  WorkAreaDefinition(
+  const WorkAreaDefinition(
     id: 'engineering',
     title: 'Инженерные работы',
     subtitle: 'Электрика, отопление, вентиляция',

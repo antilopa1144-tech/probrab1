@@ -3,6 +3,7 @@
 /// Преобразует List<PriceItem> в Map<String, PriceItem> для мгновенного поиска по SKU.
 library;
 
+import 'package:flutter/foundation.dart';
 import 'price_item.dart';
 
 /// Оптимизированная структура для быстрого поиска цен по SKU.
@@ -18,16 +19,17 @@ import 'price_item.dart';
 /// final price = priceMap.findBySku('concrete_m300');
 /// final prices = priceMap.findBySkus(['concrete_m300', 'concrete_m200']);
 /// ```
+@immutable
 class PriceMap {
   /// Внутреннее хранилище: SKU → PriceItem
   final Map<String, PriceItem> _map;
 
   /// Создать из списка PriceItem
   PriceMap.fromList(List<PriceItem> items)
-      : _map = {for (var item in items) item.sku: item};
+    : _map = {for (var item in items) item.sku: item};
 
   /// Создать из Map
-  PriceMap.fromMap(Map<String, PriceItem> map) : _map = map;
+  const PriceMap.fromMap(Map<String, PriceItem> map) : _map = map;
 
   /// Найти цену по одному SKU (O(1))
   PriceItem? findBySku(String sku) {

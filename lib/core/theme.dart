@@ -138,7 +138,7 @@ class AppTheme {
       ),
       
       // Современная типографика
-      textTheme: TextTheme(
+      textTheme: const TextTheme(
         displayLarge: TextStyle(
           fontSize: 57,
           fontWeight: FontWeight.w400,

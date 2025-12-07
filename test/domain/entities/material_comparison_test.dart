@@ -4,7 +4,7 @@ import 'package:probrab_ai/domain/entities/material_comparison.dart';
 void main() {
   group('MaterialOption', () {
     test('calculates total cost correctly', () {
-      final option = MaterialOption(
+      const option = MaterialOption(
         id: 'opt1',
         name: 'Option 1',
         category: 'test',
@@ -17,7 +17,7 @@ void main() {
     });
 
     test('calculates cost per year correctly', () {
-      final option = MaterialOption(
+      const option = MaterialOption(
         id: 'opt1',
         name: 'Option 1',
         category: 'test',
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('handles zero durability years', () {
-      final option = MaterialOption(
+      const option = MaterialOption(
         id: 'opt1',
         name: 'Option 1',
         category: 'test',
@@ -44,7 +44,7 @@ void main() {
     });
 
     test('handles negative durability years', () {
-      final option = MaterialOption(
+      const option = MaterialOption(
         id: 'opt1',
         name: 'Option 1',
         category: 'test',
@@ -60,21 +60,21 @@ void main() {
   group('MaterialComparison', () {
     test('finds cheapest option', () {
       final options = [
-        MaterialOption(
+        const MaterialOption(
           id: 'opt1',
           name: 'Expensive',
           category: 'test',
           pricePerUnit: 200.0,
           unit: 'м²',
         ),
-        MaterialOption(
+        const MaterialOption(
           id: 'opt2',
           name: 'Cheap',
           category: 'test',
           pricePerUnit: 100.0,
           unit: 'м²',
         ),
-        MaterialOption(
+        const MaterialOption(
           id: 'opt3',
           name: 'Medium',
           category: 'test',
@@ -94,7 +94,7 @@ void main() {
     });
 
     test('returns null for cheapest when options empty', () {
-      final comparison = MaterialComparison(
+      const comparison = MaterialComparison(
         calculatorId: 'test',
         requiredQuantity: 10.0,
         options: [],
@@ -105,7 +105,7 @@ void main() {
 
     test('finds most durable option', () {
       final options = [
-        MaterialOption(
+        const MaterialOption(
           id: 'opt1',
           name: 'Short',
           category: 'test',
@@ -113,7 +113,7 @@ void main() {
           unit: 'м²',
           durabilityYears: 5,
         ),
-        MaterialOption(
+        const MaterialOption(
           id: 'opt2',
           name: 'Long',
           category: 'test',
@@ -121,7 +121,7 @@ void main() {
           unit: 'м²',
           durabilityYears: 20,
         ),
-        MaterialOption(
+        const MaterialOption(
           id: 'opt3',
           name: 'Medium',
           category: 'test',
@@ -143,7 +143,7 @@ void main() {
 
     test('finds optimal option (balance price/quality)', () {
       final options = [
-        MaterialOption(
+        const MaterialOption(
           id: 'opt1',
           name: 'Cheap but short',
           category: 'test',
@@ -151,7 +151,7 @@ void main() {
           unit: 'м²',
           durabilityYears: 5, // 50*10/5 = 100 в год
         ),
-        MaterialOption(
+        const MaterialOption(
           id: 'opt2',
           name: 'Expensive but long',
           category: 'test',
@@ -159,7 +159,7 @@ void main() {
           unit: 'м²',
           durabilityYears: 20, // 200*10/20 = 100 в год
         ),
-        MaterialOption(
+        const MaterialOption(
           id: 'opt3',
           name: 'Optimal',
           category: 'test',
@@ -179,7 +179,7 @@ void main() {
     });
 
     test('returns null for optimal when options empty', () {
-      final comparison = MaterialComparison(
+      const comparison = MaterialComparison(
         calculatorId: 'test',
         requiredQuantity: 10.0,
         options: [],

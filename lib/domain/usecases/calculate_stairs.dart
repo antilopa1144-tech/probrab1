@@ -51,7 +51,7 @@ class CalculateStairs implements CalculatorUseCase {
     final railingLength = flightLength + (floorHeight * 2);
 
     // Балясины: одна на каждые 10-15 см перил
-    final balusterSpacing = 0.12; // м
+    const balusterSpacing = 0.12; // м
     final balustersNeeded = (railingLength / balusterSpacing).ceil();
 
     // Опорные столбы: минимум 2 (в начале и конце), плюс один на каждые 2 метра

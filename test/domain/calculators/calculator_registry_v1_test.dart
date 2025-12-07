@@ -303,7 +303,7 @@ void main() {
       });
 
       test('category lookup is faster than linear search', () {
-        final category = 'Фундамент';
+        const category = 'Фундамент';
 
         // Indexed lookup
         final stopwatch1 = Stopwatch()..start();

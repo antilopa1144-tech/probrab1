@@ -44,7 +44,7 @@ class CalculateSoftRoofing extends BaseCalculator {
     final realArea = area * slopeFactor;
 
     // Площадь упаковки черепицы (стандарт: 3 м² полезной площади на упаковку)
-    final packArea = 3.0;
+    const packArea = 3.0;
 
     // Количество упаковок с запасом 10%
     final packsNeeded = calculateUnitsNeeded(realArea, packArea, marginPercent: 10.0);

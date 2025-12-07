@@ -153,13 +153,13 @@ class _RemindersList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (reminders.isEmpty) {
-      return Center(
+      return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.notifications_none, size: 64),
-            const SizedBox(height: 16),
-            const Text('Нет напоминаний'),
+            Icon(Icons.notifications_none, size: 64),
+            SizedBox(height: 16),
+            Text('Нет напоминаний'),
           ],
         ),
       );

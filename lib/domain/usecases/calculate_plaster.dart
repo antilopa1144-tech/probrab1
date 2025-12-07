@@ -63,10 +63,10 @@ class CalculatePlaster extends BaseCalculator {
     final cornerProfileLength = getInput(inputs, 'corners', defaultValue: 0.0);
 
     // Правило алюминиевое: 1-2 шт
-    final rulesNeeded = 1;
+    const rulesNeeded = 1;
 
     // Инструменты: тёрка, шпатели, ведра
-    final toolSets = 1;
+    const toolSets = 1;
 
     // Вода для замешивания (информативно): ~0.6 л на кг для гипсовой, ~0.2 л для цементной
     final waterPerKg = type == 1 ? 0.6 : 0.2;

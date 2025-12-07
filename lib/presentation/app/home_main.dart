@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/calculation.dart';
 import '../../domain/entities/object_type.dart';
-import '../../domain/calculators/definitions.dart';
+import '../../domain/calculators/calculator_registry.dart';
+import '../../domain/models/calculator_definition_v2.dart';
 import '../components/mat_card.dart';
 import '../providers/calculation_provider.dart';
 import '../providers/favorites_provider.dart';
@@ -30,29 +31,29 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
   String _searchQuery = '';
 
   static final List<_ObjectCardData> _objectCards = [
-    _ObjectCardData(
+    const _ObjectCardData(
       objectType: ObjectType.house,
       icon: Icons.house_rounded,
       title: 'Дом',
       subtitle: 'Частный дом, коттедж, дача',
-      tags: const ['дом', 'коттедж', 'house', 'дача', 'загород'],
-      accentColor: const Color(0xFF80DEEA),
+      tags: ['дом', 'коттедж', 'house', 'дача', 'загород'],
+      accentColor: Color(0xFF80DEEA),
     ),
-    _ObjectCardData(
+    const _ObjectCardData(
       objectType: ObjectType.flat,
       icon: Icons.apartment_rounded,
       title: 'Квартира',
       subtitle: 'Новостройка или вторичка',
-      tags: const ['квартира', 'flat', 'апартаменты'],
-      accentColor: const Color(0xFFA5D6A7),
+      tags: ['квартира', 'flat', 'апартаменты'],
+      accentColor: Color(0xFFA5D6A7),
     ),
-    _ObjectCardData(
+    const _ObjectCardData(
       objectType: ObjectType.garage,
       icon: Icons.garage_rounded,
       title: 'Гараж',
       subtitle: 'Бокс, кооператив, мастерская',
-      tags: const ['гараж', 'box', 'мастерская'],
-      accentColor: const Color(0xFFFFCC80),
+      tags: ['гараж', 'box', 'мастерская'],
+      accentColor: Color(0xFFFFCC80),
     ),
   ];
 
@@ -67,134 +68,130 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
     final filteredCards = _objectCards
         .where((card) => card.matches(_searchQuery))
         .toList(growable: false);
-    
-    // Поиск по калькуляторам с переводом
+
+    // Поиск по калькуляторам с переводом (используем V2)
+    // TODO: Мигрировать все 63 калькулятора на V2 (сейчас только 13)
     final loc = AppLocalizations.of(context);
     final filteredCalculators = _searchQuery.isNotEmpty
-        ? calculators.where((calc) {
+        ? CalculatorRegistry.allCalculators.where((calc) {
             final query = _searchQuery.toLowerCase();
             // Переводим titleKey для поиска
             final translatedTitle = loc.translate(calc.titleKey).toLowerCase();
-            final category = calc.category.toLowerCase();
+            final category = calc.category.name.toLowerCase();
             final subCategory = calc.subCategory.toLowerCase();
             return translatedTitle.contains(query) ||
                 category.contains(query) ||
                 subCategory.contains(query) ||
-                calc.titleKey.toLowerCase().contains(query);
+                calc.titleKey.toLowerCase().contains(query) ||
+                calc.tags.any((tag) => tag.toLowerCase().contains(query));
           }).toList()
-        : <CalculatorDefinition>[];
-    
+        : <CalculatorDefinitionV2>[];
+
     final historyAsync = ref.watch(calculationsProvider);
 
     return Scaffold(
-             appBar: AppBar(
-               title: const Text('Probrab AI'),
-               centerTitle: false,
-               actions: [
-                 Consumer(
-                   builder: (context, ref, _) {
-                     final favorites = ref.watch(favoritesProvider);
-                     if (favorites.isNotEmpty) {
-                       return IconButton(
-                         icon: const Icon(Icons.favorite),
-                         tooltip: 'Избранные калькуляторы',
-                         onPressed: () {
-                           _showFavoritesDialog(context, ref);
-                         },
-                       );
-                     }
-                     return const SizedBox.shrink();
-                   },
-                 ),
-                 PopupMenuButton(
-                   icon: const Icon(Icons.menu_rounded),
-                   shape: RoundedRectangleBorder(
-                     borderRadius: BorderRadius.circular(16),
-                   ),
-                   itemBuilder: (context) => [
-                     const PopupMenuItem(
-                       value: 'workflow',
-                       child: ListTile(
-                         leading: Icon(Icons.event_note_outlined),
-                         title: Text('Планировщик работ'),
-                         contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                       ),
-                     ),
-                     const PopupMenuItem(
-                       value: 'projects',
-                       child: ListTile(
-                         leading: Icon(Icons.folder_outlined),
-                         title: Text('Проекты'),
-                         contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                       ),
-                     ),
-                     const PopupMenuItem(
-                       value: 'reminders',
-                       child: ListTile(
-                         leading: Icon(Icons.notifications_outlined),
-                         title: Text('Напоминания'),
-                         contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                       ),
-                     ),
-                     const PopupMenuItem(
-                       value: 'history',
-                       child: ListTile(
-                         leading: Icon(Icons.history_outlined),
-                         title: Text('История расчётов'),
-                         contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                       ),
-                     ),
-                     const PopupMenuItem(
-                       value: 'settings',
-                       child: ListTile(
-                         leading: Icon(Icons.settings_outlined),
-                         title: Text('Настройки'),
-                         contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                       ),
-                     ),
-                   ],
-                   onSelected: (value) {
-                     switch (value) {
-                       case 'workflow':
-                         Navigator.of(context).push(
-                           ModernPageTransitions.slideRight(
-                             const WorkflowPlannerScreen(),
-                           ),
-                         );
-                         break;
-                       case 'projects':
-                         Navigator.of(context).push(
-                           ModernPageTransitions.slideRight(
-                             const ProjectHistoryScreen(),
-                           ),
-                         );
-                         break;
-                       case 'reminders':
-                         Navigator.of(context).push(
-                           ModernPageTransitions.slideRight(
-                             const RemindersScreen(),
-                           ),
-                         );
-                         break;
-                       case 'history':
-                         Navigator.of(context).push(
-                           ModernPageTransitions.slideRight(
-                             const HistoryPage(),
-                           ),
-                         );
-                         break;
-                       case 'settings':
-                         Navigator.of(context).push(
-                           ModernPageTransitions.fade(
-                             const SettingsPage(),
-                           ),
-                         );
-                         break;
-                     }
-                   },
-                 ),
-               ],
-             ),
+      appBar: AppBar(
+        title: const Text('Probrab AI'),
+        centerTitle: false,
+        actions: [
+          Consumer(
+            builder: (context, ref, _) {
+              final favorites = ref.watch(favoritesProvider);
+              if (favorites.isNotEmpty) {
+                return IconButton(
+                  icon: const Icon(Icons.favorite),
+                  tooltip: 'Избранные калькуляторы',
+                  onPressed: () {
+                    _showFavoritesDialog(context, ref);
+                  },
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+          PopupMenuButton(
+            icon: const Icon(Icons.menu_rounded),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'workflow',
+                child: ListTile(
+                  leading: Icon(Icons.event_note_outlined),
+                  title: Text('Планировщик работ'),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'projects',
+                child: ListTile(
+                  leading: Icon(Icons.folder_outlined),
+                  title: Text('Проекты'),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'reminders',
+                child: ListTile(
+                  leading: Icon(Icons.notifications_outlined),
+                  title: Text('Напоминания'),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'history',
+                child: ListTile(
+                  leading: Icon(Icons.history_outlined),
+                  title: Text('История расчётов'),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'settings',
+                child: ListTile(
+                  leading: Icon(Icons.settings_outlined),
+                  title: Text('Настройки'),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                ),
+              ),
+            ],
+            onSelected: (value) {
+              switch (value) {
+                case 'workflow':
+                  Navigator.of(context).push(
+                    ModernPageTransitions.slideRight(
+                      const WorkflowPlannerScreen(),
+                    ),
+                  );
+                  break;
+                case 'projects':
+                  Navigator.of(context).push(
+                    ModernPageTransitions.slideRight(
+                      const ProjectHistoryScreen(),
+                    ),
+                  );
+                  break;
+                case 'reminders':
+                  Navigator.of(context).push(
+                    ModernPageTransitions.slideRight(const RemindersScreen()),
+                  );
+                  break;
+                case 'history':
+                  Navigator.of(
+                    context,
+                  ).push(ModernPageTransitions.slideRight(const HistoryPage()));
+                  break;
+                case 'settings':
+                  Navigator.of(
+                    context,
+                  ).push(ModernPageTransitions.fade(const SettingsPage()));
+                  break;
+              }
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -207,9 +204,10 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
             children: [
               _buildHeroSection(context),
               const SizedBox(height: 24),
-              
+
               // Если есть поиск, показываем результаты поиска калькуляторов
-              if (_searchQuery.isNotEmpty && filteredCalculators.isNotEmpty) ...[
+              if (_searchQuery.isNotEmpty &&
+                  filteredCalculators.isNotEmpty) ...[
                 _SectionHeader(
                   title: 'Найденные калькуляторы',
                   subtitle: 'Найдено: ${filteredCalculators.length}',
@@ -218,7 +216,7 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
                 _buildCalculatorsList(context, filteredCalculators),
                 const SizedBox(height: 32),
               ],
-              
+
               // Если поиск пустой или не нашел калькуляторы, показываем объекты
               if (_searchQuery.isEmpty || filteredCalculators.isEmpty) ...[
                 const _SectionHeader(
@@ -229,27 +227,28 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
                 _buildObjectGrid(context, filteredCards),
                 const SizedBox(height: 32),
               ],
-              
+
               // Если поиск не дал результатов
-              if (_searchQuery.isNotEmpty && filteredCards.isEmpty && filteredCalculators.isEmpty) ...[
-                AnimatedEmptyState(
+              if (_searchQuery.isNotEmpty &&
+                  filteredCards.isEmpty &&
+                  filteredCalculators.isEmpty) ...[
+                const AnimatedEmptyState(
                   icon: Icons.search_off_rounded,
                   title: 'Ничего не найдено',
-                  subtitle: 'Попробуйте другой запрос. Например: "бетон", "обои", "плитка"',
+                  subtitle:
+                      'Попробуйте другой запрос. Например: "бетон", "обои", "плитка"',
                 ),
                 const SizedBox(height: 32),
               ],
-              
+
               _SectionHeader(
                 title: 'История расчётов',
                 subtitle: 'Последние проекты и их стоимость',
                 actionLabel: 'Все расчёты',
                 onActionTap: () {
-                  Navigator.of(context).push(
-                    ModernPageTransitions.slideRight(
-                      const HistoryPage(),
-                    ),
-                  );
+                  Navigator.of(
+                    context,
+                  ).push(ModernPageTransitions.slideRight(const HistoryPage()));
                 },
               ),
               const SizedBox(height: 12),
@@ -316,7 +315,9 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
                     Text(
                       'Точные расчёты для строительства',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.7,
+                        ),
                       ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
@@ -354,12 +355,9 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
     );
   }
 
-  Widget _buildObjectGrid(
-    BuildContext context,
-    List<_ObjectCardData> cards,
-  ) {
+  Widget _buildObjectGrid(BuildContext context, List<_ObjectCardData> cards) {
     if (cards.isEmpty) {
-      return AnimatedEmptyState(
+      return const AnimatedEmptyState(
         icon: Icons.search_off_rounded,
         title: 'Не нашли объект',
         subtitle: 'Попробуйте другой запрос или оставьте поле пустым.',
@@ -370,8 +368,8 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
     final crossAxisCount = width > 900
         ? 4
         : width > 600
-            ? 3
-            : 2;
+        ? 3
+        : 2;
 
     return GridView.builder(
       shrinkWrap: true,
@@ -393,13 +391,13 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
             subtitle: card.subtitle,
             backgroundColor: card.accentColor.withValues(alpha: 0.12),
             iconColor: card.accentColor,
-                   onTap: () {
-                     Navigator.of(context).push(
-                       ModernPageTransitions.scale(
-                         ObjectSelectorScreen(objectType: card.objectType),
-                       ),
-                     );
-                   },
+            onTap: () {
+              Navigator.of(context).push(
+                ModernPageTransitions.scale(
+                  ObjectSelectorScreen(objectType: card.objectType),
+                ),
+              );
+            },
           ),
         );
       },
@@ -408,7 +406,7 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
 
   Widget _buildCalculatorsList(
     BuildContext context,
-    List<CalculatorDefinition> calculators,
+    List<CalculatorDefinitionV2> calculators,
   ) {
     final theme = Theme.of(context);
     final loc = AppLocalizations.of(context);
@@ -417,7 +415,10 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 12,
+            ),
             leading: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -436,7 +437,7 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
               ),
             ),
             subtitle: Text(
-              '${calc.category} → ${calc.subCategory}',
+              '${loc.translate(calc.category.translationKey)} → ${loc.translate('subcategory.${calc.subCategory}')}',
               style: theme.textTheme.bodySmall,
             ),
             trailing: Icon(
@@ -445,7 +446,10 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
               color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             ),
             onTap: () {
-              CalculatorNavigationHelper.navigateToCalculator(context, calc);
+              CalculatorNavigationHelper.navigateToCalculatorById(
+                context,
+                calc.id,
+              );
             },
           ),
         );
@@ -488,7 +492,9 @@ class _SectionHeader extends StatelessWidget {
                 Text(
                   subtitle!,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.7),
+                    color: theme.textTheme.bodySmall?.color?.withValues(
+                      alpha: 0.7,
+                    ),
                   ),
                 ),
               ],
@@ -496,10 +502,7 @@ class _SectionHeader extends StatelessWidget {
           ),
         ),
         if (actionLabel != null && onActionTap != null)
-          TextButton(
-            onPressed: onActionTap,
-            child: Text(actionLabel!),
-          ),
+          TextButton(onPressed: onActionTap, child: Text(actionLabel!)),
       ],
     );
   }
@@ -563,9 +566,7 @@ class _HistoryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -607,14 +608,15 @@ class _HistoryCard extends StatelessWidget {
               color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.7),
             ),
           ),
-          const Spacer(),
-          Text(
-            '${calculation.totalCost.toStringAsFixed(0)} ₽',
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          // Цены временно скрыты до интеграции с магазинами
+          // const Spacer(),
+          // Text(
+          //   '${calculation.totalCost.toStringAsFixed(0)} ₽',
+          //   style: theme.textTheme.titleMedium?.copyWith(
+          //     color: theme.colorScheme.primary,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          // ),
         ],
       ),
     );
@@ -639,9 +641,7 @@ class _EmptyState extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.4),
-        ),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.4)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -708,42 +708,53 @@ extension _HomeMainScreenStateExtension on _HomeMainScreenState {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Избранные калькуляторы'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: favorites.length,
-            itemBuilder: (context, index) {
-              final calculatorId = favorites[index];
-              final calculator = CalculatorRegistryV1.instance.getById(calculatorId);
-              if (calculator == null) return const SizedBox.shrink();
-              
-              return ListTile(
-                title: Text(calculator.titleKey),
-                subtitle: Text('${calculator.category} → ${calculator.subCategory}'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.favorite, color: Colors.red),
-                  onPressed: () {
-                    ref.read(favoritesProvider.notifier).toggleFavorite(calculatorId);
+      builder: (dialogContext) {
+        final dialogLoc = AppLocalizations.of(dialogContext);
+        return AlertDialog(
+          title: const Text('Избранные калькуляторы'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: favorites.length,
+              itemBuilder: (context, index) {
+                final calculatorId = favorites[index];
+                // Используем V2 вместо V1
+                final calculator = CalculatorRegistry.getById(calculatorId);
+                if (calculator == null) return const SizedBox.shrink();
+
+                return ListTile(
+                  title: Text(dialogLoc.translate(calculator.titleKey)),
+                  subtitle: Text(
+                    '${dialogLoc.translate(calculator.category.translationKey)} → ${dialogLoc.translate('subcategory.${calculator.subCategory}')}',
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.favorite, color: Colors.red),
+                    onPressed: () {
+                      ref
+                          .read(favoritesProvider.notifier)
+                          .toggleFavorite(calculatorId);
+                    },
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    CalculatorNavigationHelper.navigateToCalculatorById(
+                      context,
+                      calculator.id,
+                    );
                   },
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  CalculatorNavigationHelper.navigateToCalculator(context, calculator);
-                },
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Закрыть'),
-          ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Закрыть'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

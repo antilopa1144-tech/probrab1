@@ -23,10 +23,7 @@ import '../../components/calculator/calculator_input_field.dart';
 class UniversalCalculatorScreen extends ConsumerStatefulWidget {
   final CalculatorDefinition definition;
 
-  const UniversalCalculatorScreen({
-    super.key,
-    required this.definition,
-  });
+  const UniversalCalculatorScreen({super.key, required this.definition});
 
   /// Создать экран по ID калькулятора.
   static Widget? fromId(String calculatorId) {
@@ -77,8 +74,9 @@ class _UniversalCalculatorScreenState
     super.dispose();
   }
 
-  static final _numericInputFormatter =
-      FilteringTextInputFormatter.allow(RegExp(r'[0-9,\\. ]'));
+  static final _numericInputFormatter = FilteringTextInputFormatter.allow(
+    RegExp(r'[0-9,\\. ]'),
+  );
 
   String _formatInitialValue(double value) {
     if (value == 0) return '';
@@ -181,7 +179,10 @@ class _UniversalCalculatorScreenState
 
         // Используем улучшенный ErrorHandler
         ErrorHandler.logError(
-            error, stackTrace, 'UniversalCalculatorScreen._calculate');
+          error,
+          stackTrace,
+          'UniversalCalculatorScreen._calculate',
+        );
         final message = ErrorHandler.getUserFriendlyMessage(error);
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -200,11 +201,9 @@ class _UniversalCalculatorScreenState
 
   Future<void> _saveCalculation() async {
     if (_result == null || _inputs == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Сначала выполните расчёт'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Сначала выполните расчёт')));
       return;
     }
 
@@ -288,13 +287,13 @@ class _UniversalCalculatorScreenState
       } catch (e, stackTrace) {
         if (mounted) {
           ErrorHandler.logError(
-              e, stackTrace, 'UniversalCalculatorScreen._saveCalculation');
+            e,
+            stackTrace,
+            'UniversalCalculatorScreen._saveCalculation',
+          );
           final message = ErrorHandler.getUserFriendlyMessage(e);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(message),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text(message), backgroundColor: Colors.red),
           );
         }
       }
@@ -324,7 +323,10 @@ class _UniversalCalculatorScreenState
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) {
           ErrorHandler.logError(
-              error, stackTrace, 'UniversalCalculatorScreen.build');
+            error,
+            stackTrace,
+            'UniversalCalculatorScreen.build',
+          );
           final message = ErrorHandler.getUserFriendlyMessage(error);
           return Center(
             child: Column(
@@ -334,10 +336,7 @@ class _UniversalCalculatorScreenState
                 const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Text(
-                    message,
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Text(message, textAlign: TextAlign.center),
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
@@ -385,9 +384,7 @@ class _UniversalCalculatorScreenState
                   )
                 : const Icon(Icons.calculate),
             label: Text(
-              _isCalculating
-                  ? 'Расчёт...'
-                  : loc.translate('button.calculate'),
+              _isCalculating ? 'Расчёт...' : loc.translate('button.calculate'),
             ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -417,9 +414,7 @@ class _UniversalCalculatorScreenState
   Widget _buildResults(ThemeData theme) {
     final loc = AppLocalizations.of(context);
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -427,8 +422,10 @@ class _UniversalCalculatorScreenState
           children: [
             Row(
               children: [
-                Icon(Icons.check_circle_outline,
-                    color: theme.colorScheme.primary),
+                Icon(
+                  Icons.check_circle_outline,
+                  color: theme.colorScheme.primary,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'Результаты',
@@ -450,10 +447,7 @@ class _UniversalCalculatorScreenState
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Text(
-                        label,
-                        style: theme.textTheme.bodyLarge,
-                      ),
+                      child: Text(label, style: theme.textTheme.bodyLarge),
                     ),
                     Text(
                       entry.value.toStringAsFixed(2),
@@ -466,34 +460,35 @@ class _UniversalCalculatorScreenState
                 ),
               );
             }),
-            if (_result!.totalPrice != null) ...[
-              const Divider(height: 32),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Общая стоимость:',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '${_result!.totalPrice!.toStringAsFixed(0)} ₽',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            // Цены временно скрыты до интеграции с магазинами
+            // if (_result!.totalPrice != null) ...[
+            //   const Divider(height: 32),
+            //   Container(
+            //     padding: const EdgeInsets.all(16),
+            //     decoration: BoxDecoration(
+            //       color: theme.colorScheme.primary.withValues(alpha: 0.1),
+            //       borderRadius: BorderRadius.circular(12),
+            //     ),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Text(
+            //           'Общая стоимость:',
+            //           style: theme.textTheme.titleMedium?.copyWith(
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //         ),
+            //         Text(
+            //           '${_result!.totalPrice!.toStringAsFixed(0)} ₽',
+            //           style: theme.textTheme.headlineSmall?.copyWith(
+            //             fontWeight: FontWeight.bold,
+            //             color: theme.colorScheme.primary,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ],
             const SizedBox(height: 16),
             FilledButton.icon(
               onPressed: _saveCalculation,
@@ -514,31 +509,27 @@ class _UniversalCalculatorScreenState
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       padding: const EdgeInsets.all(14),
-      child: Row(
+      child: const Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(top: 2),
             child: Icon(Icons.info_outline, size: 20),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Как сохранить всё',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 8),
-                const Row(
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('• '),
@@ -551,7 +542,7 @@ class _UniversalCalculatorScreenState
                   ],
                 ),
                 SizedBox(height: 4),
-                const Row(
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('• '),
@@ -563,8 +554,8 @@ class _UniversalCalculatorScreenState
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
-                const Row(
+                SizedBox(height: 4),
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('• '),
@@ -576,8 +567,8 @@ class _UniversalCalculatorScreenState
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
-                const Text(
+                SizedBox(height: 6),
+                Text(
                   '1) Заполните поля и нажмите «Рассчитать».\n'
                   '2) После появления результатов нажмите «Сохранить все данные расчёта».\n'
                   'Мы сохраним входные значения, результаты, цену и ваши заметки.',
@@ -628,10 +619,7 @@ class _UniversalCalculatorScreenState
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.lightbulb_outline,
-                  color: theme.colorScheme.primary,
-                ),
+                Icon(Icons.lightbulb_outline, color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   'Советы мастера',
@@ -656,10 +644,7 @@ class _UniversalCalculatorScreenState
                       ),
                     ),
                     Expanded(
-                      child: Text(
-                        tip,
-                        style: theme.textTheme.bodyMedium,
-                      ),
+                      child: Text(tip, style: theme.textTheme.bodyMedium),
                     ),
                   ],
                 ),

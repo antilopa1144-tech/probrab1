@@ -71,7 +71,9 @@ class CalculatorNavigationHelper {
     }
 
     // Пытаемся найти старую версию через Registry (O(1) lookup)
-    final legacyDefinition = CalculatorRegistryV1.instance.getById(calculatorId);
+    final legacyDefinition = CalculatorRegistryV1.instance.getById(
+      calculatorId,
+    );
     if (legacyDefinition != null) {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
@@ -83,12 +85,16 @@ class CalculatorNavigationHelper {
 
     // Калькулятор не найден
     // Логируем ошибку в Crashlytics
-    FirebaseCrashlytics.instance.recordError(
-      Exception('Calculator not found: $calculatorId'),
-      StackTrace.current,
-      reason: 'User attempted to open non-existent calculator',
-      information: ['calculatorId: $calculatorId'],
-    );
+    try {
+      FirebaseCrashlytics.instance.recordError(
+        Exception('Calculator not found: $calculatorId'),
+        StackTrace.current,
+        reason: 'User attempted to open non-existent calculator',
+        information: ['calculatorId: $calculatorId'],
+      );
+    } catch (e) {
+      // Игнорируем ошибки Firebase, если сервис недоступен
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -104,4 +110,3 @@ class CalculatorNavigationHelper {
     return CalculatorRegistry.exists(v2Id);
   }
 }
-

@@ -90,7 +90,9 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen> {
           ..updatedAt = DateTime.now()
           ..status = ProjectStatus.planning;
 
-        await ref.read(projectV2NotifierProvider.notifier).createProject(project);
+        await ref
+            .read(projectV2NotifierProvider.notifier)
+            .createProject(project);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -139,7 +141,9 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen> {
 
     if (confirmed == true) {
       try {
-        await ref.read(projectV2NotifierProvider.notifier).deleteProject(project.id);
+        await ref
+            .read(projectV2NotifierProvider.notifier)
+            .deleteProject(project.id);
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -190,7 +194,9 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen> {
   }
 
   bool _hasActiveFilters() {
-    return _showFavoritesOnly || _filterStatus != null || _searchQuery.isNotEmpty;
+    return _showFavoritesOnly ||
+        _filterStatus != null ||
+        _searchQuery.isNotEmpty;
   }
 
   List<ProjectV2> _filterProjects(List<ProjectV2> projects) {
@@ -249,10 +255,7 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen> {
               });
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: null,
-                child: Text('Все проекты'),
-              ),
+              const PopupMenuItem(value: null, child: Text('Все проекты')),
               const PopupMenuDivider(),
               ...ProjectStatus.values.map(
                 (status) => PopupMenuItem(
@@ -452,11 +455,7 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: 64,
-            color: theme.colorScheme.outline,
-          ),
+          Icon(icon, size: 64, color: theme.colorScheme.outline),
           const SizedBox(height: 16),
           Text(
             message,
@@ -464,7 +463,9 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen> {
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-          if (_searchQuery.isEmpty && !_showFavoritesOnly && _filterStatus == null) ...[
+          if (_searchQuery.isEmpty &&
+              !_showFavoritesOnly &&
+              _filterStatus == null) ...[
             const SizedBox(height: 8),
             Text(
               'Создайте первый проект',
@@ -592,7 +593,8 @@ class _ProjectCard extends StatelessWidget {
               ),
 
               // Описание
-              if (project.description != null && project.description!.isNotEmpty) ...[
+              if (project.description != null &&
+                  project.description!.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 Text(
                   project.description!,
@@ -652,24 +654,25 @@ class _ProjectCard extends StatelessWidget {
               const Divider(height: 24),
 
               // Итого
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Итого:',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    _formatCurrency(project.totalCost),
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
+              // Цены временно скрыты до интеграции с магазинами
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(
+              //       'Итого:',
+              //       style: theme.textTheme.titleMedium?.copyWith(
+              //         fontWeight: FontWeight.bold,
+              //       ),
+              //     ),
+              //     Text(
+              //       _formatCurrency(project.totalCost),
+              //       style: theme.textTheme.titleLarge?.copyWith(
+              //         fontWeight: FontWeight.bold,
+              //         color: theme.colorScheme.primary,
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),
@@ -768,11 +771,7 @@ class _CostInfo extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              icon,
-              size: 16,
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
+            Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
             const SizedBox(width: 4),
             Text(
               label,

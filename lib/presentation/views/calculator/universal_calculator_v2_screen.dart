@@ -423,7 +423,7 @@ class _UniversalCalculatorV2ScreenState
                 loc.translate(widget.definition.descriptionKey!),
                 style: theme.textTheme.bodyLarge,
               ),
-              SizedBox(height: CalculatorStyles.paddingXLarge),
+              const SizedBox(height: CalculatorStyles.paddingXLarge),
             ],
 
             // Подсказки ДО расчёта
@@ -431,13 +431,13 @@ class _UniversalCalculatorV2ScreenState
               HintsList(
                 hints: widget.definition.getBeforeHints(_currentInputs),
               ),
-              SizedBox(height: CalculatorStyles.paddingLarge),
+              const SizedBox(height: CalculatorStyles.paddingLarge),
             ],
 
             // Поля ввода
             ..._buildInputFields(),
 
-            SizedBox(height: CalculatorStyles.paddingXLarge),
+            const SizedBox(height: CalculatorStyles.paddingXLarge),
 
             // Кнопка расчёта
             FilledButton(
@@ -454,16 +454,16 @@ class _UniversalCalculatorV2ScreenState
 
             // Результаты
             if (_hasCalculated && _results != null) ...[
-              SizedBox(height: CalculatorStyles.paddingXXLarge),
+              const SizedBox(height: CalculatorStyles.paddingXXLarge),
               const Divider(),
-              SizedBox(height: CalculatorStyles.paddingXLarge),
+              const SizedBox(height: CalculatorStyles.paddingXLarge),
 
               Text(
                 loc.translate('result.title'),
                 key: _resultsKey,
                 style: CalculatorStyles.sectionTitleStyle(theme),
               ),
-              SizedBox(height: CalculatorStyles.paddingLarge),
+              const SizedBox(height: CalculatorStyles.paddingLarge),
 
               ..._buildResults(),
 
@@ -477,7 +477,7 @@ class _UniversalCalculatorV2ScreenState
                 style: CalculatorStyles.outlinedButtonStyle,
               ),
 
-              SizedBox(height: CalculatorStyles.paddingXLarge),
+              const SizedBox(height: CalculatorStyles.paddingXLarge),
 
               // Подсказки ПОСЛЕ расчёта
               HintsList(
@@ -514,7 +514,7 @@ class _UniversalCalculatorV2ScreenState
 
     // Остальные группы
     for (final entry in groupedFields.entries) {
-      widgets.add(SizedBox(height: CalculatorStyles.paddingLarge));
+      widgets.add(const SizedBox(height: CalculatorStyles.paddingLarge));
       widgets.addAll(_buildFieldGroup(entry.key, entry.value));
     }
 
@@ -567,7 +567,7 @@ class _UniversalCalculatorV2ScreenState
     // Поля группы
     for (final field in fields) {
       widgets.add(_buildInputField(field));
-      widgets.add(SizedBox(height: CalculatorStyles.paddingMedium));
+      widgets.add(const SizedBox(height: CalculatorStyles.paddingMedium));
     }
 
     return widgets;

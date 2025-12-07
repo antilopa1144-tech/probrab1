@@ -132,6 +132,7 @@ class CalculatorDefinitionV2 {
 
     // Логирование использования калькулятора в Firebase Analytics
     // ТОЛЬКО для новых расчётов (не из кэша)
+    try {
     FirebaseAnalytics.instance.logEvent(
       name: 'calculator_used_v2',
       parameters: {
@@ -141,6 +142,9 @@ class CalculatorDefinitionV2 {
         'complexity': complexity.toString(),
       },
     );
+    } catch (e) {
+      // Игнорируем ошибки Firebase, если сервис недоступен
+    }
 
     // Сохраняем в кэш
     if (useCache) {

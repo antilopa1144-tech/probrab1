@@ -117,10 +117,10 @@ void main() {
 
     testWidgets('shows tablet layout on medium screens', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: MediaQuery(
-            data: const MediaQueryData(size: Size(700, 1000)),
-            child: const ResponsiveLayout(
+            data: MediaQueryData(size: Size(700, 1000)),
+            child: ResponsiveLayout(
               phone: Text('Phone'),
               tablet: Text('Tablet'),
               desktop: Text('Desktop'),
@@ -159,10 +159,10 @@ void main() {
 
     testWidgets('falls back to phone when tablet not provided', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: MediaQuery(
-            data: const MediaQueryData(size: Size(700, 1000)),
-            child: const ResponsiveLayout(
+            data: MediaQueryData(size: Size(700, 1000)),
+            child: ResponsiveLayout(
               phone: Text('Phone'),
             ),
           ),
@@ -174,10 +174,10 @@ void main() {
 
     testWidgets('falls back to tablet when desktop not provided', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: MediaQuery(
-            data: const MediaQueryData(size: Size(1200, 800)),
-            child: const ResponsiveLayout(
+            data: MediaQueryData(size: Size(1200, 800)),
+            child: ResponsiveLayout(
               phone: Text('Phone'),
               tablet: Text('Tablet'),
             ),

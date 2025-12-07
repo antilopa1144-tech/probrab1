@@ -135,7 +135,7 @@ void main() {
 
       // Маленькая плитка требует больше штук
       expect(
-        resultSmall.values['totalTiles']!,
+        resultSmall.values['totalTiles'],
         greaterThan(resultLarge.values['totalTiles']!),
       );
     });

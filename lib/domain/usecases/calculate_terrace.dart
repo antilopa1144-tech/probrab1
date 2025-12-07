@@ -40,11 +40,11 @@ class CalculateTerrace implements CalculatorUseCase {
       deckingArea = floorArea * 1.1; // +10% запас
     } else if (floorType == 2) {
       // Плитка
-      final tileArea = 0.25; // 50x50 см
+      const tileArea = 0.25; // 50x50 см
       tilesNeeded = (floorArea / tileArea * 1.1).ceil().toDouble();
     } else if (floorType == 3) {
       // Деревянный настил
-      final boardArea = 0.1; // м² на доску
+      const boardArea = 0.1; // м² на доску
       deckingBoards = (floorArea / boardArea * 1.1).ceil().toDouble();
     }
 
@@ -66,11 +66,11 @@ class CalculateTerrace implements CalculatorUseCase {
       
       if (roofType == 1) {
         // Поликарбонат
-        final sheetArea = 6.0; // м² на лист
+        const sheetArea = 6.0; // м² на лист
         polycarbonateSheets = (roofArea / sheetArea * 1.1).ceil().toDouble();
       } else if (roofType == 2) {
         // Профлист
-        final sheetArea = 8.0; // м² на лист
+        const sheetArea = 8.0; // м² на лист
         profiledSheets = (roofArea / sheetArea * 1.1).ceil().toDouble();
       } else if (roofType == 3) {
         // Мягкая кровля

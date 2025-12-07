@@ -52,7 +52,7 @@ class CalculateTile extends BaseCalculator {
 
     // Затирка: расход ~1.5 кг/м² × коэффициент шва
     // Формула: площадь × расход × (ширина_шва_мм / 10)
-    final groutConsumption = 1.5; // кг/м² на 1 мм шва
+    const groutConsumption = 1.5; // кг/м² на 1 мм шва
     final groutNeeded = area * groutConsumption * (jointWidth / 10);
 
     // Клей: расход зависит от размера плитки

@@ -56,77 +56,68 @@ class PdfExportService {
                     ),
                   ],
                 ),
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.end,
-                  children: [
-                    pw.Text(
-                      'Общая стоимость:',
-                      style: const pw.TextStyle(fontSize: 12),
-                    ),
-                    pw.SizedBox(height: 4),
-                    pw.Text(
-                      '${calculation.totalCost.toStringAsFixed(0)} ₽',
-                      style: pw.TextStyle(
-                        fontSize: 20,
-                        fontWeight: pw.FontWeight.bold,
-                        color: PdfColors.blue700,
-                      ),
-                    ),
-                  ],
-                ),
+                // Цены временно скрыты до интеграции с магазинами
+                // pw.Column(
+                //   crossAxisAlignment: pw.CrossAxisAlignment.end,
+                //   children: [
+                //     pw.Text(
+                //       'Общая стоимость:',
+                //       style: const pw.TextStyle(fontSize: 12),
+                //     ),
+                //     pw.SizedBox(height: 4),
+                //     pw.Text(
+                //       '${calculation.totalCost.toStringAsFixed(0)} ₽',
+                //       style: pw.TextStyle(
+                //         fontSize: 20,
+                //         fontWeight: pw.FontWeight.bold,
+                //         color: PdfColors.blue700,
+                //       ),
+                //     ),
+                //   ],
+                // ),
               ],
             ),
             pw.SizedBox(height: 30),
 
             // Входные данные
-            pw.Header(
-              level: 1,
-              child: pw.Text('Входные данные'),
-            ),
+            pw.Header(level: 1, child: pw.Text('Входные данные')),
             pw.SizedBox(height: 10),
             _buildInputsTable(calculation.inputsJson),
             pw.SizedBox(height: 20),
 
             // Результаты
-            pw.Header(
-              level: 1,
-              child: pw.Text('Результаты расчёта'),
-            ),
+            pw.Header(level: 1, child: pw.Text('Результаты расчёта')),
             pw.SizedBox(height: 10),
             _buildResultsTable(calculation.resultsJson),
             pw.SizedBox(height: 20),
 
             // Советы мастера
             if (definition != null && definition.tips.isNotEmpty) ...[
-            pw.Header(
-              level: 1,
-              child: pw.Text('Советы мастера'),
-            ),
+              pw.Header(level: 1, child: pw.Text('Советы мастера')),
               pw.SizedBox(height: 10),
-              ...definition.tips.map((tip) => pw.Padding(
-                    padding: const pw.EdgeInsets.only(bottom: 8),
-                    child: pw.Row(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text('• ', style: const pw.TextStyle(fontSize: 14)),
-                        pw.Expanded(
-                          child: pw.Text(
-                            tip,
-                            style: pw.TextStyle(fontSize: 12),
-                          ),
+              ...definition.tips.map(
+                (tip) => pw.Padding(
+                  padding: const pw.EdgeInsets.only(bottom: 8),
+                  child: pw.Row(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text('• ', style: const pw.TextStyle(fontSize: 14)),
+                      pw.Expanded(
+                        child: pw.Text(
+                          tip,
+                          style: const pw.TextStyle(fontSize: 12),
                         ),
-                      ],
-                    ),
-                  )),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
 
             // Заметки
             if (calculation.notes != null && calculation.notes!.isNotEmpty) ...[
               pw.SizedBox(height: 20),
-            pw.Header(
-              level: 1,
-              child: pw.Text('Заметки'),
-            ),
+              pw.Header(level: 1, child: pw.Text('Заметки')),
               pw.SizedBox(height: 10),
               pw.Text(
                 calculation.notes!,
@@ -173,18 +164,20 @@ class PdfExportService {
               ),
             ],
           ),
-          ...inputs.entries.map((entry) => pw.TableRow(
-                children: [
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(8),
-                    child: pw.Text(entry.key),
-                  ),
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(8),
-                    child: pw.Text(entry.value.toStringAsFixed(2)),
-                  ),
-                ],
-              )),
+          ...inputs.entries.map(
+            (entry) => pw.TableRow(
+              children: [
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(entry.key),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(entry.value.toStringAsFixed(2)),
+                ),
+              ],
+            ),
+          ),
         ],
       );
     } catch (_) {
@@ -221,18 +214,20 @@ class PdfExportService {
               ),
             ],
           ),
-          ...results.entries.map((entry) => pw.TableRow(
-                children: [
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(8),
-                    child: pw.Text(entry.key),
-                  ),
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(8),
-                    child: pw.Text(entry.value.toStringAsFixed(2)),
-                  ),
-                ],
-              )),
+          ...results.entries.map(
+            (entry) => pw.TableRow(
+              children: [
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(entry.key),
+                ),
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(8),
+                  child: pw.Text(entry.value.toStringAsFixed(2)),
+                ),
+              ],
+            ),
+          ),
         ],
       );
     } catch (_) {
@@ -243,7 +238,9 @@ class PdfExportService {
   static Map<String, double> _parseJson(String json) {
     try {
       final decoded = jsonDecode(json) as Map<String, dynamic>;
-      return decoded.map((key, value) => MapEntry(key, (value as num).toDouble()));
+      return decoded.map(
+        (key, value) => MapEntry(key, (value as num).toDouble()),
+      );
     } catch (_) {
       return {};
     }
@@ -253,4 +250,3 @@ class PdfExportService {
     return '${date.day}.${date.month}.${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
 }
-

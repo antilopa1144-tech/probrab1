@@ -18,7 +18,7 @@ void main() {
     });
 
     test('categorizes parsing errors correctly', () {
-      final error = FormatException('JSON parse error');
+      const error = FormatException('JSON parse error');
       final category = ErrorHandler.getErrorCategory(error);
       
       expect(category, equals(ErrorCategory.parsing));
@@ -60,7 +60,7 @@ void main() {
     });
 
     test('returns user-friendly message for parsing errors', () {
-      final error = FormatException('JSON decode error');
+      const error = FormatException('JSON decode error');
       final message = ErrorHandler.getUserFriendlyMessage(error);
       
       expect(message, contains('чтения данных'));

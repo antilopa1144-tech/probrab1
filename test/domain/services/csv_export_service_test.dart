@@ -135,7 +135,7 @@ void main() {
       });
 
       test('includes calculations with inputs and results', () {
-        final calc = ExportCalculation(
+        const calc = ExportCalculation(
           calculatorName: 'Wall Paint',
           inputs: {'area': 50.0, 'height': 3.0},
           results: {'paint_volume': 10.0, 'primer_volume': 5.0},
@@ -183,7 +183,7 @@ void main() {
       });
 
       test('formats numbers with 2 decimal places', () {
-        final calc = ExportCalculation(
+        const calc = ExportCalculation(
           calculatorName: 'Test',
           inputs: {'value': 10.123456},
           results: {},
@@ -242,13 +242,13 @@ void main() {
       });
 
       test('separates calculations with empty rows', () {
-        final calc1 = ExportCalculation(
+        const calc1 = ExportCalculation(
           calculatorName: 'Calc 1',
           inputs: {'a': 1.0},
           results: {},
         );
 
-        final calc2 = ExportCalculation(
+        const calc2 = ExportCalculation(
           calculatorName: 'Calc 2',
           inputs: {'b': 2.0},
           results: {},
@@ -270,7 +270,7 @@ void main() {
       });
 
       test('handles calculations without costs', () {
-        final calc = ExportCalculation(
+        const calc = ExportCalculation(
           calculatorName: 'Test',
           inputs: {'a': 1.0},
           results: {},

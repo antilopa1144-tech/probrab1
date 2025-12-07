@@ -18,6 +18,12 @@ analyzer:
     missing_required_param: error
     # Treat missing return types as errors
     always_declare_return_types: error
+    # Treat unused imports as errors
+    unused_import: warning
+    # Treat unused elements as warnings
+    unused_element: warning
+    # Treat unused local variables as warnings
+    unused_local_variable: warning
 
 linter:
   # Строгие правила для улучшения качества кода
@@ -34,6 +40,9 @@ linter:
     prefer_single_quotes: true
     # Использовать trailing commas для лучшего форматирования
     require_trailing_commas: true
+    # Избегать ненужных скобок
+    unnecessary_brace_in_string_interps: true
+    unnecessary_string_interpolations: true
 
     # === Безопасность и правильность ===
     # Избегать print в продакшене
@@ -46,6 +55,10 @@ linter:
     avoid_returning_null_for_void: true
     # Использовать super parameters где возможно
     use_super_parameters: true
+    # Избегать использования deprecated методов
+    avoid_deprecated_member_use: true
+    # Избегать использования устаревших классов
+    avoid_deprecated_member_use_from_same_package: true
 
     # === Производительность ===
     # Избегать медленных async операций в синхронных функциях
@@ -56,6 +69,11 @@ linter:
     prefer_spread_collections: true
     # Использовать if null operators
     prefer_if_null_operators: true
+    # Избегать ненужных await
+    unnecessary_await_in_return: true
+    # Предпочитать for-in loops
+    prefer_for_elements_to_map_fromIterable: true
+    prefer_iterable_whereType: true
 
     # === Читаемость ===
     # Использовать raw strings для регулярных выражений
@@ -67,6 +85,9 @@ linter:
     # Использовать is empty для проверки пустоты
     prefer_is_empty: true
     prefer_is_not_empty: true
+    # Избегать ненужных условных операторов
+    unnecessary_condition: true
+    unnecessary_nullable_for_final_variable_declarations: true
 
     # === Документация ===
     # Документировать публичные API
@@ -77,18 +98,34 @@ linter:
     prefer_final_locals: true
     prefer_final_fields: true
     prefer_final_in_for_each: true
+    # Использовать @immutable где возможно
+    prefer_immutable_fields: true
 
     # === Обработка ошибок ===
     # Избегать catch блоков без on
     avoid_catches_without_on_clauses: false  # Слишком строго для начала
     # Использовать rethrow вместо throw в catch
     use_rethrow_when_possible: true
+    # Избегать пустых catch блоков
+    avoid_empty_catches: true
 
     # === Null safety ===
     # Избегать null checks на non-nullable переменных
     unnecessary_null_in_if_null_operators: true
     # Использовать ?. вместо != null
     prefer_null_aware_operators: true
+    # Избегать ненужных null-aware операторов
+    unnecessary_null_aware_operators: true
+
+    # === Дополнительные правила ===
+    # Избегать дублирования кода
+    no_duplicate_case_values: true
+    # Избегать использования == для сравнения с null
+    prefer_relative_imports: true
+    # Использовать assert в debug режиме
+    prefer_asserts_in_initializer_lists: true
+    # Избегать ненужных getters
+    unnecessary_getters_setters: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

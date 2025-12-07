@@ -113,7 +113,7 @@ void main() {
       });
 
       test('includes calculation data', () {
-        final calc = ExportCalculation(
+        const calc = ExportCalculation(
           calculatorName: 'Wall Paint',
           inputs: {'area': 50.5},
           results: {'paint': 10.25},
@@ -187,13 +187,13 @@ void main() {
       });
 
       test('handles multiple calculations', () {
-        final calc1 = ExportCalculation(
+        const calc1 = ExportCalculation(
           calculatorName: 'Calc1',
           inputs: {'a': 1.0},
           results: {},
         );
 
-        final calc2 = ExportCalculation(
+        const calc2 = ExportCalculation(
           calculatorName: 'Calc2',
           inputs: {'b': 2.0},
           results: {},
@@ -236,7 +236,7 @@ void main() {
 
   group('ExportCalculation', () {
     test('creates instance with required fields', () {
-      final calc = ExportCalculation(
+      const calc = ExportCalculation(
         calculatorName: 'Test Calculator',
         inputs: {'a': 1.0, 'b': 2.0},
         results: {'c': 3.0},
@@ -251,7 +251,7 @@ void main() {
     });
 
     test('creates instance with optional fields', () {
-      final calc = ExportCalculation(
+      const calc = ExportCalculation(
         calculatorName: 'Test',
         inputs: {},
         results: {},
@@ -266,7 +266,7 @@ void main() {
     });
 
     test('handles empty inputs and results', () {
-      final calc = ExportCalculation(
+      const calc = ExportCalculation(
         calculatorName: 'Empty',
         inputs: {},
         results: {},

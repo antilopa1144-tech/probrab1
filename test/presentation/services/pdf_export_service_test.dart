@@ -11,7 +11,7 @@ void main() {
     });
 
     test('_parseJson handles invalid JSON gracefully', () {
-      final invalidJson = 'not a json';
+      const invalidJson = 'not a json';
       
       // Метод должен возвращать пустую map при ошибке
       // Проверяем через создание Calculation с невалидным JSON

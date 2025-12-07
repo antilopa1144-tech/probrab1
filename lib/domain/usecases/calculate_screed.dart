@@ -47,7 +47,7 @@ class CalculateScreed extends BaseCalculator {
     final sandRatio = 1.0 - cementRatio;
 
     // Плотность раствора ~2100 кг/м³ (с учётом уплотнения)
-    final solutionDensity = 2100.0; // кг/м³
+    const solutionDensity = 2100.0; // кг/м³
     final totalWeight = volume * solutionDensity;
 
     // Количество цемента и песка с учётом потерь (+3%)

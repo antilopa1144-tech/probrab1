@@ -142,7 +142,7 @@ void main() {
       final result = calculator(inputs, priceList);
 
       expect(result.totalPrice, isNotNull);
-      expect(result.totalPrice!, greaterThan(0));
+      expect(result.totalPrice, greaterThan(0));
     });
 
     test('handles high consumption rate', () {

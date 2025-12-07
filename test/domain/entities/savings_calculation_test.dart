@@ -132,7 +132,7 @@ void main() {
     });
 
     test('getRecommendation returns appropriate message', () {
-      final payback2 = MaterialPayback(
+      const payback2 = MaterialPayback(
         materialId: 'mat2',
         materialName: 'Test',
         initialCost: 10000.0,
@@ -145,7 +145,7 @@ void main() {
 
       expect(payback2.getRecommendation(), contains('Отличная инвестиция'));
 
-      final payback3 = MaterialPayback(
+      const payback3 = MaterialPayback(
         materialId: 'mat3',
         materialName: 'Test',
         initialCost: 10000.0,
@@ -158,7 +158,7 @@ void main() {
 
       expect(payback3.getRecommendation(), contains('Хорошая инвестиция'));
 
-      final payback4 = MaterialPayback(
+      const payback4 = MaterialPayback(
         materialId: 'mat4',
         materialName: 'Test',
         initialCost: 10000.0,
@@ -173,7 +173,7 @@ void main() {
     });
 
     test('handles infinite payback', () {
-      final payback = MaterialPayback(
+      const payback = MaterialPayback(
         materialId: 'mat1',
         materialName: 'Test',
         initialCost: 10000.0,

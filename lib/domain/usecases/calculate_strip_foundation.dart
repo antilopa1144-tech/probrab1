@@ -49,7 +49,7 @@ class CalculateStripFoundation extends BaseCalculator {
     final rebarWeight = concreteVolume * 0.01 * 7850;
 
     // Количество стержней продольной арматуры (4-6 шт, по 2-3 сверху и снизу)
-    final longitudinalBars = 6;
+    const longitudinalBars = 6;
     final longitudinalLength = perimeter * longitudinalBars;
 
     // Опалубка: площадь боковых поверхностей
@@ -59,11 +59,11 @@ class CalculateStripFoundation extends BaseCalculator {
     final waterproofingArea = (perimeter * width) + (perimeter * height * 2);
 
     // Песчаная подушка (обычно толщина 15-20 см)
-    final sandCushionThickness = 0.15; // м
+    const sandCushionThickness = 0.15; // м
     final sandVolume = perimeter * width * sandCushionThickness;
 
     // Щебень для подушки (обычно 10-15 см поверх песка)
-    final gravelThickness = 0.1; // м
+    const gravelThickness = 0.1; // м
     final gravelVolume = perimeter * width * gravelThickness;
 
     // Если делать бетон самостоятельно:

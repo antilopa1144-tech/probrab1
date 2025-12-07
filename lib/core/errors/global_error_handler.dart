@@ -60,13 +60,19 @@ class GlobalErrorHandler {
     // Обработка по категории
     final category = getErrorCategory(error);
     return switch (category) {
-      ErrorCategory.network => 'Проблема с сетью. Проверьте подключение к интернету.',
-      ErrorCategory.storage => 'Ошибка базы данных. Попробуйте перезапустить приложение.',
-      ErrorCategory.validation => 'Неверные данные. Проверьте введённые значения.',
+      ErrorCategory.network =>
+        'Проблема с сетью. Проверьте подключение к интернету.',
+      ErrorCategory.storage =>
+        'Ошибка базы данных. Попробуйте перезапустить приложение.',
+      ErrorCategory.validation =>
+        'Неверные данные. Проверьте введённые значения.',
       ErrorCategory.calculation => 'Ошибка расчёта. Проверьте входные данные.',
-      ErrorCategory.export => 'Не удалось экспортировать данные. Попробуйте ещё раз.',
-      ErrorCategory.ui => 'Ошибка отображения. Попробуйте перезапустить приложение.',
-      ErrorCategory.unknown => 'Произошла неожиданная ошибка. Попробуйте ещё раз.',
+      ErrorCategory.export =>
+        'Не удалось экспортировать данные. Попробуйте ещё раз.',
+      ErrorCategory.ui =>
+        'Ошибка отображения. Попробуйте перезапустить приложение.',
+      ErrorCategory.unknown =>
+        'Произошла неожиданная ошибка. Попробуйте ещё раз.',
     };
   }
 
@@ -90,23 +96,27 @@ class GlobalErrorHandler {
     }
 
     // Отправка ошибки в Firebase Crashlytics
-    FirebaseCrashlytics.instance.recordError(
-      error,
-      stackTrace,
-      reason: contextMessage,
-      fatal: false,
-    );
+    try {
+      FirebaseCrashlytics.instance.recordError(
+        error,
+        stackTrace,
+        reason: contextMessage,
+        fatal: false,
+      );
 
-    // Отправка события в Firebase Analytics
-    FirebaseAnalytics.instance.logEvent(
-      name: 'error_occurred',
-      parameters: {
-        'error_category': category.name,
-        'error_type': error.runtimeType.toString(),
-        'context': contextMessage ?? 'unknown',
-        'timestamp': timestamp,
-      },
-    );
+      // Отправка события в Firebase Analytics
+      FirebaseAnalytics.instance.logEvent(
+        name: 'error_occurred',
+        parameters: {
+          'error_category': category.name,
+          'error_type': error.runtimeType.toString(),
+          'context': contextMessage ?? 'unknown',
+          'timestamp': timestamp,
+        },
+      );
+    } catch (e) {
+      // Игнорируем ошибки Firebase, если сервис недоступен
+    }
   }
 
   /// Логировать критическую ошибку.
@@ -127,23 +137,27 @@ class GlobalErrorHandler {
     }
 
     // Отправка критической ошибки в Firebase Crashlytics
-    FirebaseCrashlytics.instance.recordError(
-      error,
-      stackTrace,
-      reason: contextMessage,
-      fatal: true,
-    );
+    try {
+      FirebaseCrashlytics.instance.recordError(
+        error,
+        stackTrace,
+        reason: contextMessage,
+        fatal: true,
+      );
 
-    // Отправка критического события в Firebase Analytics
-    FirebaseAnalytics.instance.logEvent(
-      name: 'fatal_error',
-      parameters: {
-        'error_category': category.name,
-        'error_type': error.runtimeType.toString(),
-        'context': contextMessage ?? 'unknown',
-        'timestamp': timestamp,
-      },
-    );
+      // Отправка критического события в Firebase Analytics
+      FirebaseAnalytics.instance.logEvent(
+        name: 'fatal_error',
+        parameters: {
+          'error_category': category.name,
+          'error_type': error.runtimeType.toString(),
+          'context': contextMessage ?? 'unknown',
+          'timestamp': timestamp,
+        },
+      );
+    } catch (e) {
+      // Игнорируем ошибки Firebase, если сервис недоступен
+    }
   }
 
   /// Показать ошибку через SnackBar.

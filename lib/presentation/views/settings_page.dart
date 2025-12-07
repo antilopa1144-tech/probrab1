@@ -66,7 +66,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final settings = ref.watch(settingsProvider);
 
     // Набор доступных акцентных цветов (2 основных)
-    final availableColors = const <Color>[
+    const availableColors = <Color>[
       Color(0xFFFFC107), // Жёлтый (по умолчанию)
       Color(0xFF00BCD4), // Голубой
     ];
@@ -333,7 +333,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   void _showRegionDialog(BuildContext context, WidgetRef ref) {
-    final regions = AppConstants.regions;
+    const regions = AppConstants.regions;
     final currentRegion = ref.watch(settingsProvider).region;
 
     showDialog(

@@ -43,7 +43,7 @@ class CalculateWarmFloor extends BaseCalculator {
 
     // Полезная площадь (не укладывается под мебель и стационарную технику)
     // Обычно 60-70% от общей площади
-    final usefulAreaRatio = 0.7; // 70% полезной площади
+    const usefulAreaRatio = 0.7; // 70% полезной площади
     final usefulArea = area * usefulAreaRatio;
 
     // Общая мощность системы (Вт)
@@ -78,7 +78,7 @@ class CalculateWarmFloor extends BaseCalculator {
     final damperTapeLength = addMargin(perimeter, 5.0);
 
     // УЗО (устройство защитного отключения): 1 шт на систему
-    final rcdNeeded = 1;
+    const rcdNeeded = 1;
 
     // Расчёт стоимости
     final cablePrice = findPrice(priceList, ['warm_floor_cable', 'cable_heating', 'heating_cable']);
