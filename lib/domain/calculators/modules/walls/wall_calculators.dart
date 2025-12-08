@@ -46,9 +46,9 @@ final List<CalculatorDefinition> wallCalculators = [
       InputFieldDefinition(
         key: 'consumption',
         labelKey: 'input.consumption',
-        defaultValue: 0.15,
-        minValue: 0.05,
-        maxValue: 1.0,
+        defaultValue: 0.12,
+        minValue: 0.08,
+        maxValue: 0.20,
       ),
       InputFieldDefinition(
         key: 'windowsArea',

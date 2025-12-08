@@ -13,7 +13,7 @@ import 'base_calculator.dart';
 /// Поля:
 /// - area: площадь стен (м²)
 /// - layers: количество слоёв (обычно 2)
-/// - consumption: расход краски (л/м²), по умолчанию 0.15 (ГЭСН)
+/// - consumption: расход краски (л/м²), по умолчанию 0.12 (современные краски 2024)
 /// - windowsArea: площадь окон (м²) - вычитается из общей площади
 /// - doorsArea: площадь дверей (м²) - вычитается из общей площади
 class CalculateWallPaint extends BaseCalculator {
@@ -39,7 +39,7 @@ class CalculateWallPaint extends BaseCalculator {
     // Получаем валидированные входные данные
     final area = getInput(inputs, 'area', minValue: 0.1);
     final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 5);
-    final consumption = getInput(inputs, 'consumption', defaultValue: 0.15, minValue: 0.1, maxValue: 0.3);
+    final consumption = getInput(inputs, 'consumption', defaultValue: 0.12, minValue: 0.08, maxValue: 0.20);
     final windowsArea = getInput(inputs, 'windowsArea', minValue: 0.0);
     final doorsArea = getInput(inputs, 'doorsArea', minValue: 0.0);
 
