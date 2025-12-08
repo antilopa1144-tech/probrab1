@@ -100,7 +100,25 @@
     "wire": "Проволока",
     "plasticizer": "Пластификатор",
     "formwork": "Опалубка",
-    "insulation": "Утепление"
+    "insulation": "Утепление",
+    "paint": "Краска",
+    "primer": "Грунтовка",
+    "putty": "Шпаклёвка",
+    "tape": "Малярный скотч",
+    "rollers": "Валики",
+    "brushes": "Кисти",
+    "battens": "Бруски",
+    "boards": "Доски",
+    "clips": "Клипсы",
+    "fasteners": "Крепёж",
+    "glue": "Клей",
+    "panels": "Панели",
+    "plaster": "Штукатурка",
+    "profiles": "Профили",
+    "screws": "Саморезы",
+    "sheets": "Листы",
+    "stones": "Камни",
+    "tiles": "Плитка"
   },
   "field": {
     "group": {
@@ -225,7 +243,9 @@
     "gravel": "Щебень",
     "waterproofing": "Гидроизоляция",
     "wire": "Проволока",
-    "plasticizer": "Пластификатор"
+    "plasticizer": "Пластификатор",
+    "windowsArea": "Площадь окон",
+    "doorsArea": "Площадь дверей"
   },
   "calculator": {
     "laminate": "Ламинат",
