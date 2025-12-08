@@ -15,35 +15,35 @@ final List<CalculatorDefinition> roofingCalculators = [
     titleKey: 'calculator.metalRoofing',
     category: 'Наружная отделка',
     subCategory: 'Кровля',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 10.0,
         maxValue: 1000.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'slope',
         labelKey: 'input.slope',
         defaultValue: 30.0,
         minValue: 5.0,
         maxValue: 60.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'sheetWidth',
         labelKey: 'input.sheetWidth',
         defaultValue: 1.18,
         minValue: 0.5,
         maxValue: 2.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'sheetLength',
         labelKey: 'input.sheetLength',
         defaultValue: 2.5,
         minValue: 1.0,
         maxValue: 8.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'ridgeLength',
         labelKey: 'input.ridgeLength',
         defaultValue: 0.0,
@@ -51,7 +51,7 @@ final List<CalculatorDefinition> roofingCalculators = [
         maxValue: 100.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'valleyLength',
         labelKey: 'input.valleyLength',
         defaultValue: 0.0,
@@ -59,7 +59,7 @@ final List<CalculatorDefinition> roofingCalculators = [
         maxValue: 100.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
@@ -67,7 +67,7 @@ final List<CalculatorDefinition> roofingCalculators = [
         maxValue: 200.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'endLength',
         labelKey: 'input.endLength',
         defaultValue: 0.0,
@@ -76,7 +76,7 @@ final List<CalculatorDefinition> roofingCalculators = [
         required: false,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'realArea': 'result.realArea',
       'sheetsNeeded': 'result.sheets',
@@ -100,34 +100,34 @@ final List<CalculatorDefinition> roofingCalculators = [
     titleKey: 'calculator.softRoofing',
     category: 'Наружная отделка',
     subCategory: 'Кровля',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'slope',
         labelKey: 'input.slope',
         defaultValue: 30.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'ridgeLength',
         labelKey: 'input.ridgeLength',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'valleyLength',
         labelKey: 'input.valleyLength',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'realArea': 'result.realArea',
       'packsNeeded': 'result.packs',
@@ -153,24 +153,24 @@ final List<CalculatorDefinition> roofingCalculators = [
     titleKey: 'calculator.gutters',
     category: 'Наружная отделка',
     subCategory: 'Кровля',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'roofLength',
         labelKey: 'input.roofLength',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'roofArea',
         labelKey: 'input.roofArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'gutterLength',
         labelKey: 'input.gutterLength',
         defaultValue: 3.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'gutterLength': 'result.guide',
       'downpipeLength': 'result.pipeLength',
       'gutterBrackets': 'result.fasteners',

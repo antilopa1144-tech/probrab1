@@ -17,21 +17,21 @@ final List<CalculatorDefinition> engineeringCalculators = [
     titleKey: 'calculator.electrics',
     category: 'Инженерные работы',
     subCategory: 'Электрика',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 5.0,
         maxValue: 1000.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'rooms',
         labelKey: 'input.rooms',
         defaultValue: 1.0,
         minValue: 1.0,
         maxValue: 50.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'sockets',
         labelKey: 'input.sockets',
         defaultValue: 0.0,
@@ -39,7 +39,7 @@ final List<CalculatorDefinition> engineeringCalculators = [
         maxValue: 200.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'switches',
         labelKey: 'input.switches',
         defaultValue: 0.0,
@@ -48,7 +48,7 @@ final List<CalculatorDefinition> engineeringCalculators = [
         required: false,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'rooms': 'result.rooms',
       'sockets': 'result.sockets',
@@ -71,24 +71,24 @@ final List<CalculatorDefinition> engineeringCalculators = [
     titleKey: 'calculator.plumbing',
     category: 'Инженерные работы',
     subCategory: 'Сантехника',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'rooms',
         labelKey: 'input.rooms',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'points',
         labelKey: 'input.points',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'pipeLength',
         labelKey: 'input.pipeLength',
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'rooms': 'result.rooms',
       'points': 'result.points',
       'pipeLength': 'result.pipeLength',
@@ -112,21 +112,21 @@ final List<CalculatorDefinition> engineeringCalculators = [
     titleKey: 'calculator.heating',
     category: 'Инженерные работы',
     subCategory: 'Отопление',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 10.0,
         maxValue: 1000.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'rooms',
         labelKey: 'input.rooms',
         defaultValue: 1.0,
         minValue: 1.0,
         maxValue: 50.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'ceilingHeight',
         labelKey: 'input.ceilingHeight',
         defaultValue: 2.5,
@@ -134,7 +134,7 @@ final List<CalculatorDefinition> engineeringCalculators = [
         maxValue: 5.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'volume': 'result.volume',
       'totalPower': 'result.power',
@@ -157,24 +157,24 @@ final List<CalculatorDefinition> engineeringCalculators = [
     titleKey: 'calculator.ventilation',
     category: 'Инженерные работы',
     subCategory: 'Вентиляция',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'rooms',
         labelKey: 'input.rooms',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'ceilingHeight',
         labelKey: 'input.ceilingHeight',
         defaultValue: 2.5,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'volume': 'result.volume',
       'airExchange': 'result.power',

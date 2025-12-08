@@ -15,24 +15,24 @@ final List<CalculatorDefinition> windowsDoorsCalculators = [
     titleKey: 'calculator.windowInstallation',
     category: 'Внутренняя отделка',
     subCategory: 'Окна / двери',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'windows',
         labelKey: 'input.windows',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'windowWidth',
         labelKey: 'input.windowWidth',
         defaultValue: 1.5,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'windowHeight',
         labelKey: 'input.windowHeight',
         defaultValue: 1.4,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'windows': 'result.windows',
       'windowArea': 'result.windowArea',
       'foamNeeded': 'result.foam',
@@ -53,24 +53,24 @@ final List<CalculatorDefinition> windowsDoorsCalculators = [
     titleKey: 'calculator.doorInstallation',
     category: 'Внутренняя отделка',
     subCategory: 'Окна / двери',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'doors',
         labelKey: 'input.doors',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'doorWidth',
         labelKey: 'input.doorWidth',
         defaultValue: 0.9,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'doorHeight',
         labelKey: 'input.doorHeight',
         defaultValue: 2.1,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'doors': 'result.doors',
       'foamNeeded': 'result.foam',
       'architraveLength': 'result.architrave',
@@ -90,29 +90,29 @@ final List<CalculatorDefinition> windowsDoorsCalculators = [
     titleKey: 'calculator.slopes',
     category: 'Внутренняя отделка',
     subCategory: 'Окна / двери',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'windows',
         labelKey: 'input.windows',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'windowWidth',
         labelKey: 'input.windowWidth',
         defaultValue: 1.5,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'windowHeight',
         labelKey: 'input.windowHeight',
         defaultValue: 1.4,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'slopeWidth',
         labelKey: 'input.slopeWidth',
         defaultValue: 0.3,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'windows': 'result.windows',
       'slopeArea': 'result.slopeArea',
       'puttyNeeded': 'result.putty',

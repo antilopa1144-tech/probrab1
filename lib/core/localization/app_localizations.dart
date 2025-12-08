@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 class AppLocalizations {
   final Locale locale;
   late Map<String, dynamic> _localizedStrings;
+  late Map<String, String> _flattenedStrings;
 
   AppLocalizations(this.locale);
 
@@ -17,57 +18,31 @@ class AppLocalizations {
     );
     final Map<String, dynamic> jsonMap = json.decode(jsonString);
     _localizedStrings = jsonMap.map((key, value) => MapEntry(key, value));
+    _flattenedStrings = {};
+    _flattenJson(_localizedStrings);
     return true;
   }
 
-  /// Получение строки по ключу.
-  /// Поддерживает вложенные ключи через точку (например, "input.area").
-  ///
-  /// Структура JSON: {"input": {"area": "Площадь", "area.hint": "..."}}
-  /// Ключи в коде: "input.area", "input.area.hint"
+  /// Получение строки по ключу с поддержкой вложенных структур и ключей с точками.
   String translate(String key) {
-    // Если ключ содержит точку, ищем вложенное значение
-    if (key.contains('.')) {
-      final parts = key.split('.');
-      dynamic value = _localizedStrings;
+    return _flattenedStrings[key] ?? key;
+  }
 
-      // Проходим по всем частям кроме последней
-      for (int i = 0; i < parts.length - 1; i++) {
-        if (value is Map<String, dynamic>) {
-          value = value[parts[i]];
-          if (value == null) return key;
-        } else {
-          return key; // Не нашли вложенный ключ
-        }
+  /// Превращает произвольную вложенную карту в плоский список ключей `a.b.c`.
+  void _flattenJson(dynamic value, [String prefix = '']) {
+    if (value is Map<String, dynamic>) {
+      if (prefix.isNotEmpty &&
+          value.containsKey('title') &&
+          value['title'] is String) {
+        _flattenedStrings[prefix] = value['title'] as String;
       }
-
-      // Последняя часть - это ключ в последнем Map
-      // Но может быть, что последние части нужно объединить (например, "area.hint")
-      if (value is Map<String, dynamic>) {
-        // Сначала пробуем найти полный ключ (например, "area.hint")
-        final lastKey = parts.sublist(parts.length - 1).join('.');
-        if (value.containsKey(lastKey)) {
-          final result = value[lastKey];
-          if (result is String) return result;
-        }
-
-        // Если не нашли, пробуем только последнюю часть (например, "hint")
-        final simpleKey = parts.last;
-        if (value.containsKey(simpleKey)) {
-          final result = value[simpleKey];
-          if (result is String) return result;
-        }
-      }
-
-      return key;
+      value.forEach((key, nested) {
+        final nextPrefix = prefix.isEmpty ? key : '$prefix.$key';
+        _flattenJson(nested, nextPrefix);
+      });
+    } else if (value is String) {
+      _flattenedStrings[prefix] = value;
     }
-
-    // Плоский ключ
-    final value = _localizedStrings[key];
-    if (value is String) {
-      return value;
-    }
-    return key;
   }
 
   /// Удобный метод доступа из контекста.

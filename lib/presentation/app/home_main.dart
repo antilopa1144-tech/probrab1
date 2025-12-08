@@ -70,7 +70,7 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
         .toList(growable: false);
 
     // Поиск по калькуляторам с переводом (используем V2)
-    // TODO: Мигрировать все 63 калькулятора на V2 (сейчас только 13)
+    // Все калькуляторы мигрированы в реестр V2
     final loc = AppLocalizations.of(context);
     final filteredCalculators = _searchQuery.isNotEmpty
         ? CalculatorRegistry.allCalculators.where((calc) {

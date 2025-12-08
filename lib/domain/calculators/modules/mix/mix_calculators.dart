@@ -17,24 +17,24 @@ final List<CalculatorDefinition> mixCalculators = [
     titleKey: 'calculator.putty',
     category: 'Внутренняя отделка',
     subCategory: 'Ровнители / смеси',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'layers',
         labelKey: 'input.layers',
         defaultValue: 2.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'type',
         labelKey: 'input.type',
         defaultValue: 1.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'puttyNeeded': 'result.putty',
       'primerNeeded': 'result.primer',
@@ -53,24 +53,24 @@ final List<CalculatorDefinition> mixCalculators = [
     titleKey: 'calculator.primer',
     category: 'Внутренняя отделка',
     subCategory: 'Ровнители / смеси',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'layers',
         labelKey: 'input.layers',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'type',
         labelKey: 'input.type',
         defaultValue: 1.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'primerNeeded': 'result.primer',
       'layers': 'result.layers',
@@ -89,24 +89,24 @@ final List<CalculatorDefinition> mixCalculators = [
     titleKey: 'calculator.tileGlue',
     category: 'Внутренняя отделка',
     subCategory: 'Ровнители / смеси',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'tileSize',
         labelKey: 'input.tileSize',
         defaultValue: 30.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'layerThickness',
         labelKey: 'input.layerThickness',
         defaultValue: 5.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'glueNeeded': 'result.glue',
       'consumptionPerM2': 'result.consumption',
@@ -124,29 +124,29 @@ final List<CalculatorDefinition> mixCalculators = [
     titleKey: 'calculator.plaster',
     category: 'Внутренняя отделка',
     subCategory: 'Ровнители / смеси',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 10.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'type',
         labelKey: 'input.type',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'plasterNeeded': 'result.plaster',
       'primerNeeded': 'result.primer',

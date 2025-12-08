@@ -10,9 +10,13 @@ class CalculatorResult {
   /// Итоговая стоимость, если считаем деньги.
   final double? totalPrice;
 
+  /// Нормативные источники (например, ГЭСН, ФЕР), использованные в расчёте.
+  final List<String> norms;
+
   const CalculatorResult({
     required this.values,
     this.totalPrice,
+    this.norms = const [],
   });
 }
 

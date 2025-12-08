@@ -23,24 +23,24 @@ final List<CalculatorDefinition> ceilingCalculators = [
     titleKey: 'calculator.ceilingPaint',
     category: 'Внутренняя отделка',
     subCategory: 'Потолки',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'layers',
         labelKey: 'input.layers',
         defaultValue: 2.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'consumption',
         labelKey: 'input.consumption',
         defaultValue: 0.12,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'paintNeeded': 'result.paint',
       'primerNeeded': 'result.primer',
@@ -58,29 +58,29 @@ final List<CalculatorDefinition> ceilingCalculators = [
     titleKey: 'calculator.stretchCeiling',
     category: 'Внутренняя отделка',
     subCategory: 'Потолки',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'corners',
         labelKey: 'input.corners',
         defaultValue: 4.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'fixtures',
         labelKey: 'input.fixtures',
         defaultValue: 1.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'canvasArea': 'result.canvas',
       'baguetteLength': 'result.baguette',
@@ -99,34 +99,34 @@ final List<CalculatorDefinition> ceilingCalculators = [
     titleKey: 'calculator.gklCeiling',
     category: 'Внутренняя отделка',
     subCategory: 'Потолки',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'layers',
         labelKey: 'input.layers',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'ceilingHeight',
         labelKey: 'input.ceilingHeight',
         defaultValue: 2.5,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'dropHeight',
         labelKey: 'input.dropHeight',
         defaultValue: 0.1,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'sheetsNeeded': 'result.sheets',
       'guideLength': 'result.guide',
@@ -147,29 +147,29 @@ final List<CalculatorDefinition> ceilingCalculators = [
     titleKey: 'calculator.railCeiling',
     category: 'Внутренняя отделка',
     subCategory: 'Потолки',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'railWidth',
         labelKey: 'input.railWidth',
         defaultValue: 10.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'railLength',
         labelKey: 'input.railLength',
         defaultValue: 300.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'railsNeeded': 'result.rails',
       'guideLength': 'result.guide',
@@ -188,24 +188,24 @@ final List<CalculatorDefinition> ceilingCalculators = [
     titleKey: 'calculator.cassetteCeiling',
     category: 'Внутренняя отделка',
     subCategory: 'Потолки',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'cassetteSize',
         labelKey: 'input.tileSize',
         defaultValue: 60.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'cassettesNeeded': 'result.panels',
       'guideLength': 'result.guide',
@@ -223,19 +223,19 @@ final List<CalculatorDefinition> ceilingCalculators = [
     titleKey: 'calculator.ceilingTiles',
     category: 'Внутренняя отделка',
     subCategory: 'Потолки',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'tileSize',
         labelKey: 'input.tileSize',
         defaultValue: 50.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'tilesNeeded': 'result.tiles',
       'glueNeeded': 'result.glue',
@@ -253,24 +253,24 @@ final List<CalculatorDefinition> ceilingCalculators = [
     titleKey: 'calculator.ceilingInsulation',
     category: 'Внутренняя отделка',
     subCategory: 'Потолки',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'insulationThickness',
         labelKey: 'input.insulationThickness',
         defaultValue: 100.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'insulationType',
         labelKey: 'input.insulationType',
         defaultValue: 1.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'volume': 'result.volume',
       'sheetsNeeded': 'result.sheets',

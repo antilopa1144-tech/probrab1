@@ -13,24 +13,24 @@ final List<CalculatorDefinition> insulationCalculators = [
     titleKey: 'calculator.mineralWool',
     category: 'Внутренняя отделка',
     subCategory: 'Утепление',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 100.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'density',
         labelKey: 'input.density',
         defaultValue: 50.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'volume': 'result.volume',
       'sheetsNeeded': 'result.sheets',
@@ -50,24 +50,24 @@ final List<CalculatorDefinition> insulationCalculators = [
     titleKey: 'calculator.foamInsulation',
     category: 'Внутренняя отделка',
     subCategory: 'Утепление',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 50.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'density',
         labelKey: 'input.density',
         defaultValue: 25.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'volume': 'result.volume',
       'sheetsNeeded': 'result.sheets',

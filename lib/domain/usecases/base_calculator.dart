@@ -66,6 +66,11 @@ import '../../core/exceptions/calculation_exception.dart';
 /// Если нужно кастомное поведение, переопределите `validateInputs()` или
 /// используйте `safeDivide(..., throwOnZero: true)` для явной обработки ошибок.
 abstract class BaseCalculator implements CalculatorUseCase {
+  /// Современные нормативы по умолчанию для всех расчётов.
+  ///
+  /// Используется для соответствия актуальным требованиям (ГЭСН/ФЕР).
+  List<String> get normativeSources => const ['ГЭСН-2024', 'ФЕР-2022'];
+
   /// Поиск цены по списку возможных SKU.
   /// 
   /// Возвращает первый найденный PriceItem или null.
@@ -264,6 +269,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
     double? totalPrice,
     int decimals = 2,
     String? calculatorId,
+    List<String>? norms,
   }) {
     final roundedValues = <String, double>{};
     
@@ -307,6 +313,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
     return CalculatorResult(
       values: roundedValues,
       totalPrice: roundedPrice,
+      norms: norms ?? normativeSources,
     );
   }
 

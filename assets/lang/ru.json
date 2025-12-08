@@ -344,7 +344,17 @@
     "wetFacade": "Мокрый фасад",
     "windowInstallation": "Установка окон",
     "woodFacade": "Деревянный фасад",
-    "woodWall": "Деревянная стена"
+    "woodWall": "Деревянная стена",
+    "soundInsulation": "Soundinsulation",
+    "warm_floor.title": "Тёплый пол",
+    "parquet.title": "Паркет",
+    "soft_roofing.title": "Мягкая кровля",
+    "slab.title": "Плитный фундамент",
+    "gkl_ceiling.title": "Потолок из ГКЛ",
+    "metal_roofing.title": "Металлочерепица",
+    "strip_foundation.title": "Ленточный фундамент",
+    "wall_paint.title": "Покраска стен",
+    "bathroom_tile.title": "Плитка в ванной"
   },
   "hint": {
     "paint": {

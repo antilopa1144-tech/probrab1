@@ -13,34 +13,34 @@ final List<CalculatorDefinition> bathroomCalculators = [
     titleKey: 'calculator.bathroomTile',
     category: 'Внутренняя отделка',
     subCategory: 'Ванная / туалет',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'wallArea',
         labelKey: 'input.wallArea',
         minValue: 0.0,
         maxValue: 100.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'floorArea',
         labelKey: 'input.floorArea',
         minValue: 0.0,
         maxValue: 50.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'tileWidth',
         labelKey: 'input.tileWidth',
         defaultValue: 30.0,
         minValue: 10.0,
         maxValue: 120.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'tileHeight',
         labelKey: 'input.tileHeight',
         defaultValue: 30.0,
         minValue: 10.0,
         maxValue: 120.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'jointWidth',
         labelKey: 'input.jointWidth',
         defaultValue: 3.0,
@@ -48,7 +48,7 @@ final List<CalculatorDefinition> bathroomCalculators = [
         maxValue: 10.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'wallArea': 'result.wallArea',
       'floorArea': 'result.floorArea',
       'totalTiles': 'result.tiles',
@@ -70,24 +70,24 @@ final List<CalculatorDefinition> bathroomCalculators = [
     titleKey: 'calculator.waterproofing',
     category: 'Внутренняя отделка',
     subCategory: 'Ванная / туалет',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'floorArea',
         labelKey: 'input.floorArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'wallHeight',
         labelKey: 'input.wallHeight',
         defaultValue: 0.3,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'floorArea': 'result.floorArea',
       'wallArea': 'result.wallArea',
       'totalArea': 'result.totalArea',

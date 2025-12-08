@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import '../../domain/calculators/definitions.dart';
+import '../../domain/models/calculator_definition_v2.dart';
 import '../../data/models/calculation.dart';
 
 /// Сервис для экспорта расчётов в PDF.
@@ -10,7 +10,7 @@ class PdfExportService {
   /// Экспортировать расчёт в PDF.
   static Future<void> exportCalculation(
     Calculation calculation,
-    CalculatorDefinition? definition,
+    CalculatorDefinitionV2? _definition,
   ) async {
     final pdf = pw.Document();
 
@@ -90,29 +90,6 @@ class PdfExportService {
             pw.SizedBox(height: 10),
             _buildResultsTable(calculation.resultsJson),
             pw.SizedBox(height: 20),
-
-            // Советы мастера
-            if (definition != null && definition.tips.isNotEmpty) ...[
-              pw.Header(level: 1, child: pw.Text('Советы мастера')),
-              pw.SizedBox(height: 10),
-              ...definition.tips.map(
-                (tip) => pw.Padding(
-                  padding: const pw.EdgeInsets.only(bottom: 8),
-                  child: pw.Row(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Text('• ', style: const pw.TextStyle(fontSize: 14)),
-                      pw.Expanded(
-                        child: pw.Text(
-                          tip,
-                          style: const pw.TextStyle(fontSize: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
 
             // Заметки
             if (calculation.notes != null && calculation.notes!.isNotEmpty) ...[

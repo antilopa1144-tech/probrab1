@@ -19,28 +19,28 @@ final List<CalculatorDefinition> exteriorCalculators = [
     titleKey: 'calculator.siding',
     category: 'Наружная отделка',
     subCategory: 'Сайдинг',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 10.0,
         maxValue: 1000.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         defaultValue: 20.0,
         minValue: 10.0,
         maxValue: 50.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'panelLength',
         labelKey: 'input.panelLength',
         defaultValue: 300.0,
         minValue: 200.0,
         maxValue: 600.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
@@ -48,14 +48,14 @@ final List<CalculatorDefinition> exteriorCalculators = [
         maxValue: 200.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'corners',
         labelKey: 'input.corners',
         defaultValue: 4.0,
         minValue: 4.0,
         maxValue: 20.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'soffitLength',
         labelKey: 'input.soffitLength',
         defaultValue: 0.0,
@@ -64,7 +64,7 @@ final List<CalculatorDefinition> exteriorCalculators = [
         required: false,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'panelsNeeded': 'result.panels',
       'jProfileLength': 'result.jProfile',
@@ -87,29 +87,29 @@ final List<CalculatorDefinition> exteriorCalculators = [
     titleKey: 'calculator.facadePanels',
     category: 'Наружная отделка',
     subCategory: 'Фасадные панели',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         defaultValue: 50.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'panelHeight',
         labelKey: 'input.panelHeight',
         defaultValue: 100.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'panelsNeeded': 'result.panels',
       'fastenersNeeded': 'result.fasteners',
@@ -128,29 +128,29 @@ final List<CalculatorDefinition> exteriorCalculators = [
     titleKey: 'calculator.woodFacade',
     category: 'Наружная отделка',
     subCategory: 'Дерево',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'boardWidth',
         labelKey: 'input.boardWidth',
         defaultValue: 14.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'boardLength',
         labelKey: 'input.boardLength',
         defaultValue: 3.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'boardsNeeded': 'result.boards',
       'cornersLength': 'result.corners',
@@ -169,39 +169,39 @@ final List<CalculatorDefinition> exteriorCalculators = [
     titleKey: 'calculator.brickFacing',
     category: 'Наружная отделка',
     subCategory: 'Облицовочный кирпич',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 0.5,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'wallHeight',
         labelKey: 'input.wallHeight',
         defaultValue: 2.5,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'usefulArea': 'result.usefulArea',
       'bricksNeeded': 'result.bricks',
@@ -223,24 +223,24 @@ final List<CalculatorDefinition> exteriorCalculators = [
     titleKey: 'calculator.wetFacade',
     category: 'Наружная отделка',
     subCategory: 'Мокрый фасад',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'insulationThickness',
         labelKey: 'input.insulationThickness',
         defaultValue: 100.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'insulationType',
         labelKey: 'input.insulationType',
         defaultValue: 2.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'insulationVolume': 'result.insulationVolume',
       'sheetsNeeded': 'result.sheets',

@@ -23,40 +23,40 @@ final List<CalculatorDefinition> structureCalculators = [
     titleKey: 'calculator.stairs',
     category: 'Конструкции',
     subCategory: 'Лестницы',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'floorHeight',
         labelKey: 'input.floorHeight',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'stepHeight',
         labelKey: 'input.stepHeight',
         defaultValue: 0.18,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'stepWidth',
         labelKey: 'input.stepWidth',
         defaultValue: 0.28,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'stepCount',
         labelKey: 'input.stepCount',
         defaultValue: 0.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'width',
         labelKey: 'input.width',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'materialType',
         labelKey: 'input.type',
         defaultValue: 1.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'floorHeight': 'result.height',
       'stepCount': 'result.steps',
       'stepHeight': 'result.stepHeight',
@@ -86,36 +86,36 @@ final List<CalculatorDefinition> structureCalculators = [
     titleKey: 'calculator.fence',
     category: 'Конструкции',
     subCategory: 'Заборы',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'length',
         labelKey: 'input.length',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'height',
         labelKey: 'input.height',
         defaultValue: 2.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'materialType',
         labelKey: 'input.type',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'gates',
         labelKey: 'input.gates',
         defaultValue: 1.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'wickets',
         labelKey: 'input.wickets',
         defaultValue: 1.0,
         required: false,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'length': 'result.length',
       'height': 'result.height',
       'fenceArea': 'result.area',
@@ -145,35 +145,35 @@ final List<CalculatorDefinition> structureCalculators = [
     titleKey: 'calculator.blindArea',
     category: 'Конструкции',
     subCategory: 'Отмостка',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'width',
         labelKey: 'input.width',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 100.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'materialType',
         labelKey: 'input.type',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'insulation',
         labelKey: 'input.insulation',
         defaultValue: 0.0,
         required: false,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'perimeter': 'result.perimeter',
       'width': 'result.width',
       'area': 'result.area',
@@ -203,59 +203,59 @@ final List<CalculatorDefinition> structureCalculators = [
     titleKey: 'calculator.basement',
     category: 'Конструкции',
     subCategory: 'Подвал / Погреб',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'height',
         labelKey: 'input.height',
         defaultValue: 2.5,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'wallThickness',
         labelKey: 'input.thickness',
         defaultValue: 0.4,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'materialType',
         labelKey: 'input.type',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'waterproofing',
         labelKey: 'input.waterproofing',
         defaultValue: 1.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'insulation',
         labelKey: 'input.insulation',
         defaultValue: 0.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'ventilation',
         labelKey: 'input.ventilation',
         defaultValue: 1.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'stairs',
         labelKey: 'input.stairs',
         defaultValue: 1.0,
         required: false,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'height': 'result.height',
       'volume': 'result.volume',
@@ -290,47 +290,47 @@ final List<CalculatorDefinition> structureCalculators = [
     titleKey: 'calculator.balcony',
     category: 'Внутренняя отделка',
     subCategory: 'Балкон / Лоджия',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'height',
         labelKey: 'input.height',
         defaultValue: 1.1,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'glazing',
         labelKey: 'input.glazing',
         defaultValue: 0.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'insulation',
         labelKey: 'input.insulation',
         defaultValue: 0.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'floorType',
         labelKey: 'input.floorType',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'wallFinish',
         labelKey: 'input.wallFinish',
         defaultValue: 1.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'floorArea': 'result.floorArea',
       'wallArea': 'result.wallArea',
@@ -364,52 +364,52 @@ final List<CalculatorDefinition> structureCalculators = [
     titleKey: 'calculator.attic',
     category: 'Внутренняя отделка',
     subCategory: 'Мансарда',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'roofArea',
         labelKey: 'input.roofArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'wallArea',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'floorArea',
         labelKey: 'input.floorArea',
         defaultValue: 0.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'windows',
         labelKey: 'input.windows',
         defaultValue: 0.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'insulation',
         labelKey: 'input.insulation',
         defaultValue: 1.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'wallFinish',
         labelKey: 'input.wallFinish',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'floorType',
         labelKey: 'input.floorType',
         defaultValue: 1.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'roofArea': 'result.roofArea',
       'wallArea': 'result.wallArea',
@@ -442,43 +442,43 @@ final List<CalculatorDefinition> structureCalculators = [
     titleKey: 'calculator.terrace',
     category: 'Конструкции',
     subCategory: 'Терраса / Веранда',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'floorType',
         labelKey: 'input.floorType',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'railing',
         labelKey: 'input.railing',
         defaultValue: 1.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'roof',
         labelKey: 'input.roof',
         defaultValue: 0.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'roofType',
         labelKey: 'input.roofType',
         defaultValue: 1.0,
         required: false,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'floorArea': 'result.floorArea',
       'deckingArea': 'result.decking',

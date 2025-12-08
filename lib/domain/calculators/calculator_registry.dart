@@ -12,6 +12,7 @@ import 'warm_floor_calculator_v2.dart';
 import 'parquet_calculator_v2.dart';
 import 'gkl_ceiling_calculator_v2.dart';
 import 'bathroom_tile_calculator_v2.dart';
+import 'legacy_v1_migration.dart';
 
 /// Реестр всех калькуляторов приложения.
 ///
@@ -50,8 +51,8 @@ import 'bathroom_tile_calculator_v2.dart';
 /// 3. Импортируйте файл в `calculator_registry.dart`
 /// 4. Добавьте в список `allCalculators`
 class CalculatorRegistry {
-  /// Все доступные калькуляторы (версия 2)
-  static final List<CalculatorDefinitionV2> allCalculators = [
+  /// Базовые (ручные) определения V2.
+  static final List<CalculatorDefinitionV2> _seedCalculators = [
     // Фундамент
     stripFoundationCalculatorV2,
     slabFoundationCalculatorV2,
@@ -80,9 +81,18 @@ class CalculatorRegistry {
 
     // Отделка (дополнительные)
     bathroomTileCalculatorV2,
-
-    // Здесь будут добавляться другие калькуляторы по мере миграции
   ];
+
+  /// Алиасы для совместимости с V1 ID.
+  static const Map<String, String> _idAliases = {
+    // Старый ID -> современный ID
+    'walls_paint': 'wall_paint',
+    'calculator.stripTitle': 'foundation_strip',
+  };
+
+  /// Все доступные калькуляторы (версия 2)
+  static final List<CalculatorDefinitionV2> allCalculators =
+      _buildAllCalculators();
 
   /// Кэш для быстрого поиска по ID (O(1) вместо O(n))
   static final Map<String, CalculatorDefinitionV2> _idCache = {
@@ -177,5 +187,37 @@ class CalculatorRegistry {
       _popularCache = null;
       _categoryCache.remove(calculator.category);
     }
+  }
+
+  /// Построить полный список калькуляторов из V2 и мигрированных V1.
+  static List<CalculatorDefinitionV2> _buildAllCalculators() {
+    final overrides = {for (final calc in _seedCalculators) calc.id: calc};
+    final migrated = buildMigratedCalculators(
+      skipIds: overrides.keys.toSet(),
+      overrides: overrides,
+    );
+
+    final all = <CalculatorDefinitionV2>[
+      ..._seedCalculators,
+      ...migrated,
+    ];
+    final ids = {for (final calc in all) calc.id};
+
+    for (final entry in _idAliases.entries) {
+      final canonicalId = entry.value;
+      final aliasId = entry.key;
+      if (ids.contains(aliasId)) continue;
+      final base = overrides[canonicalId];
+      if (base == null) continue;
+      all.add(
+        base.copyWith(
+          id: aliasId,
+          tags: {...base.tags, aliasId}.toList(),
+        ),
+      );
+      ids.add(aliasId);
+    }
+
+    return all;
   }
 }
