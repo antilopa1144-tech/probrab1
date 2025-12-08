@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../data/repositories/project_repository_v2.dart';
 import '../../domain/models/project_v2.dart';
@@ -8,7 +8,7 @@ import '../../domain/models/project_v2.dart';
 final isarProvider = FutureProvider<Isar>((ref) async {
   final dir = await getApplicationDocumentsDirectory();
 
-  return await Isar.open(
+  return Isar.open(
     [ProjectV2Schema, ProjectCalculationSchema],
     directory: dir.path,
     name: 'probrab_projects_v2',
@@ -27,31 +27,31 @@ final projectRepositoryV2Provider = Provider<ProjectRepositoryV2>((ref) {
 /// Provider для списка всех проектов
 final allProjectsProvider = FutureProvider<List<ProjectV2>>((ref) async {
   final repository = ref.watch(projectRepositoryV2Provider);
-  return await repository.getAllProjects();
+  return repository.getAllProjects();
 });
 
 /// Provider для избранных проектов
 final favoriteProjectsProvider = FutureProvider<List<ProjectV2>>((ref) async {
   final repository = ref.watch(projectRepositoryV2Provider);
-  return await repository.getFavoriteProjects();
+  return repository.getFavoriteProjects();
 });
 
 /// Provider для статистики проектов
 final projectStatisticsProvider = FutureProvider((ref) async {
   final repository = ref.watch(projectRepositoryV2Provider);
-  return await repository.getStatistics();
+  return repository.getStatistics();
 });
 
 /// Provider для конкретного проекта по ID
 final projectByIdProvider = FutureProvider.family<ProjectV2?, int>((ref, id) async {
   final repository = ref.watch(projectRepositoryV2Provider);
-  return await repository.getProjectById(id);
+  return repository.getProjectById(id);
 });
 
 /// Provider для расчётов проекта
 final projectCalculationsProvider = FutureProvider.family<List<ProjectCalculation>, int>((ref, projectId) async {
   final repository = ref.watch(projectRepositoryV2Provider);
-  return await repository.getProjectCalculations(projectId);
+  return repository.getProjectCalculations(projectId);
 });
 
 /// StateNotifier для управления проектами

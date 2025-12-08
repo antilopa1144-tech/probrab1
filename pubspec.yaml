@@ -25,9 +25,9 @@ dependencies:
   intl: ^0.20.2
   # State‑management библиотека Riverpod 3
   flutter_riverpod: ^2.6.1
-  # База данных Isar для оффлайн хранения проектов
-  isar: ^3.1.0+1
-  isar_flutter_libs: ^3.1.0+1
+  # База данных Isar для оффлайн хранения проектов (community fork)
+  isar_community: ^3.2.0
+  isar_community_flutter_libs: ^3.2.0
   # Запрос разрешений
   permission_handler: ^11.3.0
   # Съёмка и выбор фотографий
@@ -66,8 +66,8 @@ dev_dependencies:
     sdk: flutter
   # Правила линтинга (жёсткие)
   flutter_lints: ^6.0.0
-  # Генерация кода для Isar
-  isar_generator: ^3.1.0+1
+  # Генерация кода для Isar (community fork)
+  isar_community_generator: ^3.2.0
   build_runner: ^2.4.6
   # Генерация адаптивных иконок
   flutter_launcher_icons: ^0.14.4

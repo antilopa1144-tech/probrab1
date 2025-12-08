@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'dart:convert';
 import '../../domain/entities/project.dart';
 

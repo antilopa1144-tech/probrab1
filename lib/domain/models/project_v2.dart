@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 part 'project_v2.g.dart';
 
@@ -140,7 +140,7 @@ class ProjectCalculation {
   /// Получить входные данные как Map
   @ignore
   Map<String, double> get inputsMap {
-    return {for (var pair in inputs) pair.key: pair.value};
+    return {for (final pair in inputs) pair.key: pair.value};
   }
 
   /// Установить входные данные из Map
@@ -155,7 +155,7 @@ class ProjectCalculation {
   /// Получить результаты как Map
   @ignore
   Map<String, double> get resultsMap {
-    return {for (var pair in results) pair.key: pair.value};
+    return {for (final pair in results) pair.key: pair.value};
   }
 
   /// Установить результаты из Map

@@ -9,7 +9,7 @@ import file_selector_macos
 import firebase_analytics
 import firebase_core
 import firebase_crashlytics
-import isar_flutter_libs
+import isar_community_flutter_libs
 import package_info_plus
 import path_provider_foundation
 import printing

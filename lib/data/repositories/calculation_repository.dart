@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/calculation.dart';
 import 'dart:convert';
@@ -79,7 +79,7 @@ class CalculationRepository {
   /// Получить все расчёты
   Future<List<Calculation>> getAllCalculations() async {
     final isar = await _getIsar();
-    return await isar.calculations
+    return isar.calculations
         .where()
         .sortByUpdatedAtDesc()
         .findAll();
@@ -88,7 +88,7 @@ class CalculationRepository {
   /// Получить расчёты по категории
   Future<List<Calculation>> getCalculationsByCategory(String category) async {
     final isar = await _getIsar();
-    return await isar.calculations
+    return isar.calculations
         .filter()
         .categoryEqualTo(category)
         .sortByUpdatedAtDesc()
@@ -106,7 +106,7 @@ class CalculationRepository {
   /// Получить расчёт по ID
   Future<Calculation?> getCalculation(int id) async {
     final isar = await _getIsar();
-    return await isar.calculations.get(id);
+    return isar.calculations.get(id);
   }
 
   /// Поиск расчётов по названию

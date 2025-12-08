@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import '../../domain/models/project_v2.dart';
 import '../../core/exceptions/storage_exception.dart';
 
@@ -30,7 +30,7 @@ class ProjectRepositoryV2 {
   Future<int> createProject(ProjectV2 project) async {
     try {
       return await isar.writeTxn(() async {
-        return await isar.projectV2s.put(project);
+        return isar.projectV2s.put(project);
       });
     } catch (e) {
       throw StorageException.saveError('ProjectV2', e);
