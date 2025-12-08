@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.probrab_ai"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34  // Явно указываем API 34 для совместимости с Isar
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
