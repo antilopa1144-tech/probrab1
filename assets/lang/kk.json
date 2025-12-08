@@ -96,6 +96,9 @@
   "smartProject.walls": "Қабырғалар",
   "smartProject.roof": "Төбе",
   "smartProject.finish": "Жабын",
-  "smartProject.total": "Барлығы"
+  "smartProject.total": "Барлығы",
+  "onboarding.skip": "Өткізу",
+  "onboarding.next": "Әрі қарай",
+  "onboarding.start": "Бастау"
 }
 

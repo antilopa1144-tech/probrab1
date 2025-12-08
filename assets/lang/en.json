@@ -15,6 +15,11 @@
     "back": "Back",
     "retry": "Retry"
   },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "start": "Get Started"
+  },
   "share": {
     "date": "Calculation date",
     "inputs": "Input data",

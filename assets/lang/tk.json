@@ -96,6 +96,9 @@
   "smartProject.walls": "Diwarlar",
   "smartProject.roof": "Öýüň gapysy",
   "smartProject.finish": "Örtük",
-  "smartProject.total": "Hemmesi"
+  "smartProject.total": "Hemmesi",
+  "onboarding.skip": "Geçir",
+  "onboarding.next": "Indiki",
+  "onboarding.start": "Başla"
 }
 

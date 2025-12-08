@@ -96,6 +96,9 @@
   "smartProject.walls": "Деворҳо",
   "smartProject.roof": "Бом",
   "smartProject.finish": "Пӯшиш",
-  "smartProject.total": "Ҳамагӣ"
+  "smartProject.total": "Ҳамагӣ",
+  "onboarding.skip": "Гузаштан",
+  "onboarding.next": "Минбаъд",
+  "onboarding.start": "Оғоз кардан"
 }
 

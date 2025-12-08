@@ -96,6 +96,9 @@
   "smartProject.walls": "Devorlar",
   "smartProject.roof": "Tom",
   "smartProject.finish": "Qoplam",
-  "smartProject.total": "Jami"
+  "smartProject.total": "Jami",
+  "onboarding.skip": "O'tkazib yuborish",
+  "onboarding.next": "Keyingi",
+  "onboarding.start": "Boshlash"
 }
 

@@ -96,6 +96,9 @@
   "smartProject.walls": "Дубалдар",
   "smartProject.roof": "Чыпта",
   "smartProject.finish": "Жабуу",
-  "smartProject.total": "Баары"
+  "smartProject.total": "Баары",
+  "onboarding.skip": "Өткөрүү",
+  "onboarding.next": "Андан ары",
+  "onboarding.start": "Баштоо"
 }
 
