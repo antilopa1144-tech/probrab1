@@ -288,14 +288,13 @@ genhtml coverage/lcov.info -o coverage/html
 | `pdf` | ^3.11.3 | Генерация PDF |
 | `share_plus` | ^12.0.1 | Шаринг |
 
-### Медиа
+### Firebase
 
 | Пакет | Версия | Назначение |
 |-------|--------|------------|
-| `camera` | ^0.11.3 | AR-помощник |
-| `image_picker` | ^1.2.1 | Выбор фото |
-| `video_player` | ^2.10.1 | Инструкции |
-| `flutter_cube` | ^0.1.1 | 3D визуализация |
+| `firebase_core` | ^3.11.0 | Firebase SDK |
+| `firebase_analytics` | ^11.6.0 | Аналитика |
+| `firebase_crashlytics` | ^4.3.0 | Отчёты об ошибках |
 
 ### Разработка
 
