@@ -93,7 +93,14 @@
     "mastic": "Мастики",
     "decking": "Обрешётки",
     "dripEdge": "Капельников",
-    "ventilation": "Вентиляционных элементов"
+    "ventilation": "Вентиляционных элементов",
+    "rebar": "Арматура",
+    "sand": "Песок",
+    "gravel": "Щебень",
+    "wire": "Проволока",
+    "plasticizer": "Пластификатор",
+    "formwork": "Опалубка",
+    "insulation": "Утепление"
   },
   "field": {
     "group": {
@@ -105,7 +112,10 @@
   },
   "button": {
     "save_to_project": "Сохранить в проект",
-    "open_for_recalculation": "Открыть для пересчёта"
+    "open_for_recalculation": "Открыть для пересчёта",
+    "calculate": "Рассчитать",
+    "clear": "Очистить",
+    "save": "Сохранить"
   },
   "dialog": {
     "save_to_project": {
@@ -203,7 +213,19 @@
     "project_name": "Название проекта",
     "project_name.hint": "Например: Ремонт квартиры",
     "project_description": "Описание (необязательно)",
-    "project_description.hint": "Дополнительная информация о проекте"
+    "project_description.hint": "Дополнительная информация о проекте",
+    "width": "Ширина",
+    "height": "Высота",
+    "length": "Длина",
+    "wallThickness": "Толщина стены",
+    "floorThickness": "Толщина пола",
+    "insulationThickness": "Толщина утепления",
+    "insulation": "Утепление",
+    "sand": "Песок",
+    "gravel": "Щебень",
+    "waterproofing": "Гидроизоляция",
+    "wire": "Проволока",
+    "plasticizer": "Пластификатор"
   },
   "calculator": {
     "laminate": "Ламинат",
