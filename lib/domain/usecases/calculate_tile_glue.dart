@@ -1,6 +1,6 @@
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
-import 'package:probrab_ai/domain/usecases/base_calculator.dart';
+import '../../data/models/price_item.dart';
+import 'calculator_usecase.dart';
+import 'base_calculator.dart';
 
 /// Калькулятор плиточного клея.
 ///
@@ -67,14 +67,14 @@ class CalculateTileGlue extends BaseCalculator {
     // Зубчатые шпатели: размер зуба зависит от размера плитки
     // 6 мм для плитки до 20 см, 8 мм до 30 см, 10 мм более 30 см
     final notchSize = tileSize < 20 ? 6 : (tileSize < 40 ? 8 : 10);
-    final spatulasNeeded = 1;
+    const spatulasNeeded = 1;
 
     // Крестики для швов: ~5 шт на плитку
     final tilesCount = ceilToInt(area / ((tileSize / 100) * (tileSize / 100)));
     final crossesNeeded = tilesCount * 5;
 
     // Ёмкость для замешивания: 1 шт
-    final bucketsNeeded = 1;
+    const bucketsNeeded = 1;
 
     // Вода для замешивания (информативно): ~0.25 л на кг
     final waterNeeded = glueNeeded * 0.25;

@@ -118,7 +118,8 @@
     "screws": "Саморезы",
     "sheets": "Листы",
     "stones": "Камни",
-    "tiles": "Плитка"
+    "tiles": "Плитка",
+    "layers": "Слои"
   },
   "field": {
     "group": {

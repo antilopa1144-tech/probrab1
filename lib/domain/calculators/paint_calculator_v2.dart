@@ -20,7 +20,7 @@ final paintCalculatorV2 = CalculatorDefinitionV2(
 
   // Поля ввода
   fields: [
-    CalculatorField(
+    const CalculatorField(
       key: 'area',
       labelKey: 'input.area',
       hintKey: 'input.area.hint',
@@ -33,7 +33,7 @@ final paintCalculatorV2 = CalculatorDefinitionV2(
       iconName: 'square_foot',
       order: 1,
     ),
-    CalculatorField(
+    const CalculatorField(
       key: 'windowsArea',
       labelKey: 'input.windows_area',
       hintKey: 'input.windows_area.hint',
@@ -47,7 +47,7 @@ final paintCalculatorV2 = CalculatorDefinitionV2(
       group: 'openings',
       order: 2,
     ),
-    CalculatorField(
+    const CalculatorField(
       key: 'doorsArea',
       labelKey: 'input.doors_area',
       hintKey: 'input.doors_area.hint',
@@ -61,7 +61,7 @@ final paintCalculatorV2 = CalculatorDefinitionV2(
       group: 'openings',
       order: 3,
     ),
-    CalculatorField(
+    const CalculatorField(
       key: 'layers',
       labelKey: 'input.layers',
       hintKey: 'input.layers.hint',
@@ -74,7 +74,7 @@ final paintCalculatorV2 = CalculatorDefinitionV2(
       iconName: 'layers',
       order: 4,
     ),
-    CalculatorField(
+    const CalculatorField(
       key: 'consumption',
       labelKey: 'input.consumption',
       hintKey: 'input.consumption.hint',
@@ -88,7 +88,7 @@ final paintCalculatorV2 = CalculatorDefinitionV2(
       group: 'advanced',
       order: 5,
     ),
-    CalculatorField(
+    const CalculatorField(
       key: 'perimeter',
       labelKey: 'input.perimeter',
       hintKey: 'input.perimeter.hint',
@@ -106,15 +106,15 @@ final paintCalculatorV2 = CalculatorDefinitionV2(
 
   // Подсказки перед расчётом
   beforeHints: [
-    CalculatorHint(
+    const CalculatorHint(
       type: HintType.info,
       messageKey: 'hint.paint.before.measure',
     ),
-    CalculatorHint(
+    const CalculatorHint(
       type: HintType.tip,
       messageKey: 'hint.paint.before.primer',
     ),
-    CalculatorHint(
+    const CalculatorHint(
       type: HintType.warning,
       messageKey: 'hint.paint.large_area',
       condition: HintCondition(
@@ -127,15 +127,15 @@ final paintCalculatorV2 = CalculatorDefinitionV2(
 
   // Подсказки после расчёта
   afterHints: [
-    CalculatorHint(
+    const CalculatorHint(
       type: HintType.tip,
       messageKey: 'hint.paint.after.apply',
     ),
-    CalculatorHint(
+    const CalculatorHint(
       type: HintType.important,
       messageKey: 'hint.paint.after.ventilation',
     ),
-    CalculatorHint(
+    const CalculatorHint(
       type: HintType.warning,
       messageKey: 'hint.paint.high_consumption',
       condition: HintCondition(

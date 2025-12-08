@@ -110,7 +110,7 @@ void main() {
         'perimeter': 18.0,
       };
       final priceList = [
-        PriceItem(
+        const PriceItem(
           sku: 'laminate',
           name: 'Ламинат',
           price: 1000,

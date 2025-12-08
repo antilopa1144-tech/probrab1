@@ -136,7 +136,7 @@ void main() {
         'rollLength': 10.05,
       };
       final priceList = [
-        PriceItem(
+        const PriceItem(
           sku: 'wallpaper',
           name: 'Обои',
           price: 600,

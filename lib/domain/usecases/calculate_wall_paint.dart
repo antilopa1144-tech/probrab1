@@ -1,6 +1,6 @@
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
-import 'package:probrab_ai/domain/usecases/base_calculator.dart';
+import '../../data/models/price_item.dart';
+import 'calculator_usecase.dart';
+import 'base_calculator.dart';
 
 /// Калькулятор покраски стен.
 ///

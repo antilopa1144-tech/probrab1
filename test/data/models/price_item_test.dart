@@ -4,7 +4,7 @@ import 'package:probrab_ai/data/models/price_item.dart';
 void main() {
   group('PriceItem', () {
     test('creates PriceItem with all fields', () {
-      final item = PriceItem(
+      const item = PriceItem(
         sku: 'test-sku-1',
         name: 'Test Item',
         price: 100.50,
@@ -53,7 +53,7 @@ void main() {
     });
 
     test('toJson converts PriceItem to Map correctly', () {
-      final item = PriceItem(
+      const item = PriceItem(
         sku: 'to-json-1',
         name: 'To JSON Item',
         price: 99.99,
@@ -71,7 +71,7 @@ void main() {
     });
 
     test('fromJson and toJson are symmetric', () {
-      final original = PriceItem(
+      const original = PriceItem(
         sku: 'symmetric-1',
         name: 'Symmetric Item',
         price: 123.45,
@@ -90,7 +90,7 @@ void main() {
     });
 
     test('handles zero price', () {
-      final item = PriceItem(
+      const item = PriceItem(
         sku: 'zero-price',
         name: 'Zero Price Item',
         price: 0.0,
@@ -102,7 +102,7 @@ void main() {
     });
 
     test('handles very large price', () {
-      final item = PriceItem(
+      const item = PriceItem(
         sku: 'large-price',
         name: 'Large Price Item',
         price: 999999.99,
@@ -114,7 +114,7 @@ void main() {
     });
 
     test('handles empty strings', () {
-      final item = PriceItem(
+      const item = PriceItem(
         sku: '',
         name: '',
         unit: '',

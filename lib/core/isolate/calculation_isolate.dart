@@ -1,6 +1,6 @@
 import 'dart:isolate';
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import '../../data/models/price_item.dart';
+import '../../domain/usecases/calculator_usecase.dart';
 
 /// Сервис для выполнения тяжёлых расчётов в отдельном Isolate.
 ///

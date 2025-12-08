@@ -130,7 +130,7 @@ void main() {
         'layers': 2.0,
       };
       final priceList = [
-        PriceItem(
+        const PriceItem(
           sku: 'paint',
           name: 'Краска',
           price: 500,

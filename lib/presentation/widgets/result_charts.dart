@@ -25,7 +25,7 @@ class MaterialPieChart extends StatelessWidget {
     }
 
     final colors = _generateColors(materials.keys.length, theme);
-    double startAngle = -math.pi / 2;
+    const double startAngle = -math.pi / 2;
 
     return CustomPaint(
       size: const Size(200, 200),

@@ -69,8 +69,13 @@ final List<CalculatorDefinition> wallCalculators = [
     ],
     resultLabels: const {
       'usefulArea': 'result.area',
-      'paintNeeded': 'result.paint',
-      'primerNeeded': 'result.primer',
+      'paintNeeded': 'result.paintNeeded',
+      'primerNeeded': 'result.primerNeeded',
+      'puttyNeeded': 'result.puttyNeeded',
+      'tapeNeeded': 'result.tapeNeeded',
+      'rollersNeeded': 'result.rollersNeeded',
+      'brushesNeeded': 'result.brushesNeeded',
+      'layers': 'result.layers',
     },
     tips: const [
       'Рекомендуется купить грунтовку для улучшения сцепления.',

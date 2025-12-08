@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../../core/services/haptic_feedback_service.dart';
 
 /// Карточка с поддержкой swipe actions (удалить, поделиться, дублировать).

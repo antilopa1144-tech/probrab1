@@ -9,28 +9,28 @@ void main() {
 
     setUp(() {
       testPriceList = [
-        PriceItem(
+        const PriceItem(
           sku: 'concrete_m300',
           name: 'Бетон М300',
           price: 4500.0,
           unit: 'м³',
           imageUrl: '',
         ),
-        PriceItem(
+        const PriceItem(
           sku: 'concrete_m200',
           name: 'Бетон М200',
           price: 4000.0,
           unit: 'м³',
           imageUrl: '',
         ),
-        PriceItem(
+        const PriceItem(
           sku: 'rebar_12mm',
           name: 'Арматура 12мм',
           price: 55.0,
           unit: 'кг',
           imageUrl: '',
         ),
-        PriceItem(
+        const PriceItem(
           sku: 'tile_ceramic',
           name: 'Плитка керамическая',
           price: 800.0,
@@ -104,7 +104,7 @@ void main() {
     });
 
     test('searchByName работает с английским', () {
-      final priceMapEn = PriceMap.fromList([
+      final priceMapEn = PriceMap.fromList(const [
         PriceItem(sku: 'brick', name: 'Red Brick', price: 10, unit: 'pcs', imageUrl: ''),
         PriceItem(sku: 'tile', name: 'Ceramic Tile', price: 20, unit: 'm²', imageUrl: ''),
       ]);
