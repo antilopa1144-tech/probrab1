@@ -5,13 +5,15 @@ import 'base_calculator.dart';
 /// Калькулятор покраски стен.
 ///
 /// Нормативы:
-/// - СНиП 3.04.01-87 "Изоляционные и отделочные покрытия"
+/// - ГЭСН-2001 (Государственные элементные сметные нормы)
+/// - ФЕР-2001 (Федеральные единичные расценки)
+/// - СП 71.13330.2017 "Изоляционные и отделочные покрытия"
 /// - ГОСТ 28196-89 "Краски водно-дисперсионные"
 ///
 /// Поля:
 /// - area: площадь стен (м²)
 /// - layers: количество слоёв (обычно 2)
-/// - consumption: расход краски (л/м²), по умолчанию 0.15 (СНиП)
+/// - consumption: расход краски (л/м²), по умолчанию 0.15 (ГЭСН)
 /// - windowsArea: площадь окон (м²) - вычитается из общей площади
 /// - doorsArea: площадь дверей (м²) - вычитается из общей площади
 class CalculateWallPaint extends BaseCalculator {
@@ -53,21 +55,13 @@ class CalculateWallPaint extends BaseCalculator {
       );
     }
 
-    // Расход краски с учётом слоёв и запаса 5-10% (СНиП 3.04.01-87)
-    // Первый слой - больше расход, последующие - меньше
-    final firstLayerConsumption = consumption * 1.2; // первый слой впитывается больше
-    final otherLayersConsumption = consumption;
-    
-    final paintNeeded = usefulArea * (
-      firstLayerConsumption + (layers - 1) * otherLayersConsumption
-    ) * 1.08; // запас 8%
+    // Расход краски по ГЭСН-2001 (табл. 15-01-027)
+    // Простая формула: площадь × слои × расход + 10% запас
+    final paintNeeded = usefulArea * layers * consumption * 1.10; // запас 10% по ГЭСН
 
-    // Грунтовка: расход ~0.1-0.12 л/м², один слой с запасом
-    const primerConsumption = 0.12; // л/м²
+    // Грунтовка: расход 0.10-0.12 л/м² по ГЭСН, один слой с запасом 5%
+    const primerConsumption = 0.11; // л/м² (среднее значение)
     final primerNeeded = usefulArea * primerConsumption * 1.05;
-
-    // Шпаклёвка (если стены требуют выравнивания): ~1.2 кг/м² на 1 мм
-    final puttingNeeded = usefulArea * 1.5; // примерно 1.5 кг/м² для финишной шпаклёвки
 
     // Малярный скотч: периметр проёмов + периметр комнаты
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
@@ -77,16 +71,14 @@ class CalculateWallPaint extends BaseCalculator {
     final rollersNeeded = ceilToInt(usefulArea / 50); // валик на ~50 м²
     final brushesNeeded = ceilToInt(usefulArea / 40); // кисть на ~40 м²
 
-    // Расчёт стоимости
+    // Расчёт стоимости (без шпаклёвки - это отдельная операция)
     final paintPrice = findPrice(priceList, ['paint_wall', 'paint', 'paint_water_disp']);
     final primerPrice = findPrice(priceList, ['primer', 'primer_deep']);
-    final puttyPrice = findPrice(priceList, ['putty', 'putty_finish']);
     final tapePrice = findPrice(priceList, ['tape', 'masking_tape']);
 
     final costs = [
       calculateCost(paintNeeded, paintPrice?.price),
       calculateCost(primerNeeded, primerPrice?.price),
-      calculateCost(puttingNeeded, puttyPrice?.price),
       calculateCost(tapeNeeded, tapePrice?.price),
     ];
 
@@ -95,7 +87,6 @@ class CalculateWallPaint extends BaseCalculator {
         'usefulArea': usefulArea,
         'paintNeeded': paintNeeded,
         'primerNeeded': primerNeeded,
-        'puttyNeeded': puttingNeeded,
         'tapeNeeded': tapeNeeded,
         'rollersNeeded': rollersNeeded.toDouble(),
         'brushesNeeded': brushesNeeded.toDouble(),

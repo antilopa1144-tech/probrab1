@@ -71,7 +71,6 @@ final List<CalculatorDefinition> wallCalculators = [
       'usefulArea': 'result.area',
       'paintNeeded': 'result.paintNeeded',
       'primerNeeded': 'result.primerNeeded',
-      'puttyNeeded': 'result.puttyNeeded',
       'tapeNeeded': 'result.tapeNeeded',
       'rollersNeeded': 'result.rollersNeeded',
       'brushesNeeded': 'result.brushesNeeded',
