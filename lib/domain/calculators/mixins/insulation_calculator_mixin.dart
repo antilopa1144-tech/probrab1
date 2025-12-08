@@ -1,6 +1,4 @@
-import 'dart:math';
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/base_calculator.dart';
+import '../../usecases/base_calculator.dart';
 
 /// Миксин для калькуляторов утепления.
 ///
