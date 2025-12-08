@@ -720,184 +720,50 @@ const List<WorkAreaDefinition> _houseAreas = [
   ),
 ];
 
-// Каталог для КВАРТИРЫ: только внутренняя отделка и инженерия (без фасадов и кровли)
-final List<WorkAreaDefinition> _flatAreas = [
-  // Берём interior из _houseAreas (индекс 0)
-  _houseAreas[0], // Внутренняя отделка (все секции)
-  // Берём engineering из _houseAreas (индекс 3)
-  _houseAreas[3], // Инженерные работы (все секции)
+// Унифицированный каталог: две категории (внутренняя/наружная),
+// кровля переносится в наружные, инженерка добавляется к внутренним.
+final WorkAreaDefinition _interiorArea =
+    _houseAreas.firstWhere((area) => area.id == 'interior');
+final WorkAreaDefinition _exteriorArea =
+    _houseAreas.firstWhere((area) => area.id == 'exterior');
+final WorkAreaDefinition _roofingArea =
+    _houseAreas.firstWhere((area) => area.id == 'roofing');
+final WorkAreaDefinition _engineeringArea =
+    _houseAreas.firstWhere((area) => area.id == 'engineering');
+
+final List<WorkAreaDefinition> _mainAreas = [
+  WorkAreaDefinition(
+    id: _interiorArea.id,
+    title: _interiorArea.title,
+    subtitle: _interiorArea.subtitle,
+    icon: _interiorArea.icon,
+    color: _interiorArea.color,
+    sections: [
+      ..._interiorArea.sections,
+      ..._engineeringArea.sections,
+    ],
+  ),
+  WorkAreaDefinition(
+    id: _exteriorArea.id,
+    title: _exteriorArea.title,
+    subtitle: _exteriorArea.subtitle,
+    icon: _exteriorArea.icon,
+    color: _exteriorArea.color,
+    sections: [
+      ..._exteriorArea.sections,
+      ..._roofingArea.sections,
+    ],
+  ),
 ];
 
-// Каталог для ГАРАЖА: базовая отделка и инженерия (без ванной, декора, фасадов, кровли)
-final List<WorkAreaDefinition> _garageAreas = [
-  const WorkAreaDefinition(
-    id: 'interior',
-    title: 'Внутренняя отделка',
-    subtitle: 'Стены, потолки, полы и утепление',
-    icon: Icons.home_repair_service_rounded,
-    color: Color(0xFF80DEEA),
-    sections: [
-      // Стены - только покраска, штукатурка, простые панели (без декора)
-      WorkSectionDefinition(
-        id: 'walls',
-        title: 'Стены',
-        description: 'Покраска, штукатурка, простые панели',
-        icon: Icons.format_paint_rounded,
-        items: [
-          WorkItemDefinition(
-            id: 'walls_paint',
-            title: 'Покраска',
-            icon: Icons.format_paint,
-            calculatorId: 'walls_paint',
-          ),
-          WorkItemDefinition(
-            id: 'walls_pvc_panels',
-            title: 'Панели ПВХ',
-            icon: Icons.dashboard,
-            calculatorId: 'walls_pvc_panels',
-          ),
-          WorkItemDefinition(
-            id: 'walls_gkl',
-            title: 'Обшивка ГКЛ',
-            icon: Icons.layers,
-          ),
-          WorkItemDefinition(
-            id: 'walls_mixes',
-            title: 'Смеси для стен',
-            icon: Icons.inventory_2,
-            description: 'Шпаклёвка, грунт',
-          ),
-        ],
-      ),
-      // Потолки - только покраска и простые решения
-      WorkSectionDefinition(
-        id: 'ceilings',
-        title: 'Потолки',
-        description: 'Покраска и простые решения',
-        icon: Icons.expand_less_rounded,
-        items: [
-          WorkItemDefinition(
-            id: 'ceilings_paint',
-            title: 'Покраска / побелка',
-            icon: Icons.brush_outlined,
-            calculatorId: 'ceilings_paint',
-          ),
-          WorkItemDefinition(
-            id: 'ceilings_gkl',
-            title: 'Подвесной ГКЛ',
-            icon: Icons.grid_on,
-            calculatorId: 'ceilings_gkl',
-          ),
-        ],
-      ),
-      // Полы - бетон, плитка, резина, наливной
-      WorkSectionDefinition(
-        id: 'floors',
-        title: 'Полы',
-        description: 'Бетон, плитка, резина',
-        icon: Icons.grid_view_rounded,
-        items: [
-          WorkItemDefinition(
-            id: 'floors_tile',
-            title: 'Плитка / керамогранит',
-            icon: Icons.crop_square,
-            calculatorId: 'floors_tile',
-          ),
-          WorkItemDefinition(
-            id: 'floors_self_leveling',
-            title: 'Наливной пол',
-            icon: Icons.opacity,
-            calculatorId: 'floors_self_leveling',
-          ),
-          WorkItemDefinition(
-            id: 'floors_screed',
-            title: 'Стяжка',
-            icon: Icons.horizontal_rule,
-            calculatorId: 'floors_screed',
-          ),
-        ],
-      ),
-      // Утепление
-      WorkSectionDefinition(
-        id: 'insulation',
-        title: 'Утепление',
-        icon: Icons.ac_unit_rounded,
-        items: [
-          WorkItemDefinition(
-            id: 'insulation_mineral',
-            title: 'Минвата',
-            icon: Icons.grass,
-            calculatorId: 'insulation_mineral',
-          ),
-          WorkItemDefinition(
-            id: 'insulation_foam',
-            title: 'Пенопласт',
-            icon: Icons.blur_circular,
-            calculatorId: 'insulation_foam',
-          ),
-        ],
-      ),
-      // Смеси
-      WorkSectionDefinition(
-        id: 'mixes',
-        title: 'Ровнители / смеси',
-        icon: Icons.construction_rounded,
-        items: [
-          WorkItemDefinition(
-            id: 'mixes_putty',
-            title: 'Шпаклёвка старт/финиш',
-            icon: Icons.layers_rounded,
-            calculatorId: 'mixes_putty',
-          ),
-          WorkItemDefinition(
-            id: 'mixes_plaster',
-            title: 'Штукатурка',
-            icon: Icons.view_day_outlined,
-            calculatorId: 'mixes_plaster',
-          ),
-        ],
-      ),
-    ],
-  ),
-  // Инженерия для гаража - электрика, отопление, вентиляция
-  const WorkAreaDefinition(
-    id: 'engineering',
-    title: 'Инженерные работы',
-    subtitle: 'Электрика, отопление, вентиляция',
-    icon: Icons.device_hub_rounded,
-    color: Color(0xFFFFAB91),
-    sections: [
-      WorkSectionDefinition(
-        id: 'engineering_systems',
-        title: 'Инженерия',
-        icon: Icons.settings_input_component,
-        items: [
-          WorkItemDefinition(
-            id: 'engineering_electric',
-            title: 'Электрика',
-            icon: Icons.flash_on,
-            calculatorId: 'engineering_electrics',
-          ),
-          WorkItemDefinition(
-            id: 'engineering_heating',
-            title: 'Отопление',
-            icon: Icons.fireplace,
-            calculatorId: 'engineering_heating',
-          ),
-          WorkItemDefinition(
-            id: 'engineering_ventilation',
-            title: 'Вентиляция',
-            icon: Icons.air,
-            calculatorId: 'engineering_ventilation',
-          ),
-        ],
-      ),
-    ],
-  ),
-];
+// Каталог для КВАРТИРЫ: используем унифицированный набор
+final List<WorkAreaDefinition> _flatAreas = _mainAreas;
+
+// Каталог для ГАРАЖА: используем унифицированный набор
+final List<WorkAreaDefinition> _garageAreas = _mainAreas;
 
 final Map<ObjectType, List<WorkAreaDefinition>> _catalog = {
-  ObjectType.house: _houseAreas,
+  ObjectType.house: _mainAreas,
   ObjectType.flat: _flatAreas,
   ObjectType.garage: _garageAreas,
 };

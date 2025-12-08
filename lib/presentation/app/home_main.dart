@@ -16,7 +16,8 @@ import '../views/settings_page.dart';
 import '../../core/animations/page_transitions.dart';
 import '../../core/widgets/animated_empty_state.dart';
 import '../../core/localization/app_localizations.dart';
-import 'object_selector_screen.dart';
+import '../data/work_catalog.dart';
+import 'category_selector_screen.dart';
 
 /// Обновлённый главный экран: категории объектов + поиск + история.
 class HomeMainScreen extends ConsumerStatefulWidget {
@@ -32,27 +33,19 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
 
   static final List<_ObjectCardData> _objectCards = [
     const _ObjectCardData(
-      objectType: ObjectType.house,
-      icon: Icons.house_rounded,
-      title: 'Дом',
-      subtitle: 'Частный дом, коттедж, дача',
-      tags: ['дом', 'коттедж', 'house', 'дача', 'загород'],
+      areaId: 'interior',
+      icon: Icons.home_repair_service_rounded,
+      title: 'Внутренняя отделка',
+      subtitle: 'Стены, потолки, полы, перегородки',
+      tags: ['внутренняя отделка', 'стены', 'полы', 'потолки', 'интерьер'],
       accentColor: Color(0xFF80DEEA),
     ),
     const _ObjectCardData(
-      objectType: ObjectType.flat,
-      icon: Icons.apartment_rounded,
-      title: 'Квартира',
-      subtitle: 'Новостройка или вторичка',
-      tags: ['квартира', 'flat', 'апартаменты'],
-      accentColor: Color(0xFFA5D6A7),
-    ),
-    const _ObjectCardData(
-      objectType: ObjectType.garage,
-      icon: Icons.garage_rounded,
-      title: 'Гараж',
-      subtitle: 'Бокс, кооператив, мастерская',
-      tags: ['гараж', 'box', 'мастерская'],
+      areaId: 'exterior',
+      icon: Icons.house_siding_rounded,
+      title: 'Наружная отделка',
+      subtitle: 'Фасад, кровля, окна и двери',
+      tags: ['наружная отделка', 'фасад', 'кровля', 'окна', 'двери', 'street'],
       accentColor: Color(0xFFFFCC80),
     ),
   ];
@@ -392,9 +385,21 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
             backgroundColor: card.accentColor.withValues(alpha: 0.12),
             iconColor: card.accentColor,
             onTap: () {
+              final area = WorkCatalog.findArea(ObjectType.house, card.areaId);
+              if (area == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Категория ${card.title} временно недоступна'),
+                  ),
+                );
+                return;
+              }
               Navigator.of(context).push(
                 ModernPageTransitions.scale(
-                  ObjectSelectorScreen(objectType: card.objectType),
+                  CategorySelectorScreen(
+                    objectType: ObjectType.house,
+                    area: area,
+                  ),
                 ),
               );
             },
@@ -668,7 +673,7 @@ class _EmptyState extends StatelessWidget {
 }
 
 class _ObjectCardData {
-  final ObjectType objectType;
+  final String areaId;
   final IconData icon;
   final String title;
   final String subtitle;
@@ -676,7 +681,7 @@ class _ObjectCardData {
   final Color accentColor;
 
   const _ObjectCardData({
-    required this.objectType,
+    required this.areaId,
     required this.icon,
     required this.title,
     required this.subtitle,
@@ -684,14 +689,12 @@ class _ObjectCardData {
     required this.accentColor,
   });
 
-  String get _typeKey => objectType.toString().split('.').last;
-
   bool matches(String query) {
     if (query.isEmpty) return true;
     final q = query.toLowerCase();
     return title.toLowerCase().contains(q) ||
         subtitle.toLowerCase().contains(q) ||
-        _typeKey.toLowerCase().contains(q) ||
+        areaId.toLowerCase().contains(q) ||
         tags.any((tag) => tag.toLowerCase().contains(q));
   }
 }
