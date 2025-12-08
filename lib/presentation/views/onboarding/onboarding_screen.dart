@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:probrab_ai/core/localization/app_localizations.dart';
-import 'package:probrab_ai/presentation/app/home_main.dart';
+import '../../../core/localization/app_localizations.dart';
+import '../../app/home_main.dart';
 
 /// Экран онбординга с 4 шагами и анимациями.
 class OnboardingScreen extends StatefulWidget {
