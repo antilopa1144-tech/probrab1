@@ -141,35 +141,36 @@ class _SavingsCalculatorScreenState extends ConsumerState<SavingsCalculatorScree
                         ],
                       ),
                       const SizedBox(height: 16),
-                      _ResultRow(
-                        label: 'Стоимость материалов',
-                        value: '${widget.materialCost.toStringAsFixed(0)} ₽',
-                      ),
-                      const Divider(),
-                      _ResultRow(
-                        label: 'Стоимость работы мастеров',
-                        value: '${calculation.laborCost.toStringAsFixed(0)} ₽',
-                      ),
-                      _ResultRow(
-                        label: 'Стоимость вашего времени',
-                        value: '${calculation.timeCost.toStringAsFixed(0)} ₽',
-                      ),
-                      const Divider(),
-                      _ResultRow(
-                        label: 'Общая стоимость (мастера)',
-                        value: '${(widget.materialCost + calculation.laborCost).toStringAsFixed(0)} ₽',
-                      ),
-                      _ResultRow(
-                        label: 'Общая стоимость (самостоятельно)',
-                        value: '${(widget.materialCost + calculation.timeCost).toStringAsFixed(0)} ₽',
-                      ),
-                      const Divider(),
-                      _ResultRow(
-                        label: 'Экономия',
-                        value: '${calculation.savings.toStringAsFixed(0)} ₽',
-                        isHighlighted: true,
-                        color: calculation.savings > 0 ? Colors.green : Colors.red,
-                      ),
+                      // Цены временно скрыты до интеграции с магазинами
+                      // _ResultRow(
+                      //   label: 'Стоимость материалов',
+                      //   value: '${widget.materialCost.toStringAsFixed(0)} ₽',
+                      // ),
+                      // const Divider(),
+                      // _ResultRow(
+                      //   label: 'Стоимость работы мастеров',
+                      //   value: '${calculation.laborCost.toStringAsFixed(0)} ₽',
+                      // ),
+                      // _ResultRow(
+                      //   label: 'Стоимость вашего времени',
+                      //   value: '${calculation.timeCost.toStringAsFixed(0)} ₽',
+                      // ),
+                      // const Divider(),
+                      // _ResultRow(
+                      //   label: 'Общая стоимость (мастера)',
+                      //   value: '${(widget.materialCost + calculation.laborCost).toStringAsFixed(0)} ₽',
+                      // ),
+                      // _ResultRow(
+                      //   label: 'Общая стоимость (самостоятельно)',
+                      //   value: '${(widget.materialCost + calculation.timeCost).toStringAsFixed(0)} ₽',
+                      // ),
+                      // const Divider(),
+                      // _ResultRow(
+                      //   label: 'Экономия',
+                      //   value: '${calculation.savings.toStringAsFixed(0)} ₽',
+                      //   isHighlighted: true,
+                      //   color: calculation.savings > 0 ? Colors.green : Colors.red,
+                      // ),
                       const SizedBox(height: 16),
                       Container(
                         padding: const EdgeInsets.all(12),
@@ -193,44 +194,45 @@ class _SavingsCalculatorScreenState extends ConsumerState<SavingsCalculatorScree
   }
 }
 
-class _ResultRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool isHighlighted;
-  final Color? color;
-
-  const _ResultRow({
-    required this.label,
-    required this.value,
-    this.isHighlighted = false,
-    this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: isHighlighted ? 16 : 14,
-              fontWeight: isHighlighted ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: isHighlighted ? 18 : 16,
-              fontWeight: FontWeight.bold,
-              color: color ?? (isHighlighted ? Theme.of(context).colorScheme.primary : null),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+/// Виджет для отображения строки результата (скрыт до интеграции с магазинами).
+// class _ResultRow extends StatelessWidget {
+//   final String label;
+//   final String value;
+//   final bool isHighlighted;
+//   final Color? color;
+//
+//   const _ResultRow({
+//     required this.label,
+//     required this.value,
+//     this.isHighlighted = false,
+//     this.color,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 8),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           Text(
+//             label,
+//             style: TextStyle(
+//               fontSize: isHighlighted ? 16 : 14,
+//               fontWeight: isHighlighted ? FontWeight.bold : FontWeight.normal,
+//             ),
+//           ),
+//           Text(
+//             value,
+//             style: TextStyle(
+//               fontSize: isHighlighted ? 18 : 16,
+//               fontWeight: FontWeight.bold,
+//               color: color ?? (isHighlighted ? Theme.of(context).colorScheme.primary : null),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 

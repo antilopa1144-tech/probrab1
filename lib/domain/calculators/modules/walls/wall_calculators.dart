@@ -29,28 +29,28 @@ final List<CalculatorDefinition> wallCalculators = [
     titleKey: 'calculator.wallPaint',
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 1.0,
         maxValue: 1000.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'layers',
         labelKey: 'input.layers',
         defaultValue: 2.0,
         minValue: 1.0,
         maxValue: 5.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'consumption',
         labelKey: 'input.consumption',
         defaultValue: 0.15,
         minValue: 0.05,
         maxValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         defaultValue: 0.0,
@@ -58,7 +58,7 @@ final List<CalculatorDefinition> wallCalculators = [
         maxValue: 100.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         defaultValue: 0.0,
@@ -67,7 +67,7 @@ final List<CalculatorDefinition> wallCalculators = [
         required: false,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'usefulArea': 'result.area',
       'paintNeeded': 'result.paint',
       'primerNeeded': 'result.primer',
@@ -86,28 +86,28 @@ final List<CalculatorDefinition> wallCalculators = [
     titleKey: 'calculator.wallpaper',
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 1.0,
         maxValue: 500.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'rollWidth',
         labelKey: 'input.rollWidth',
         defaultValue: 0.53,
         minValue: 0.3,
         maxValue: 1.5,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'rollLength',
         labelKey: 'input.rollLength',
         defaultValue: 10.05,
         minValue: 5.0,
         maxValue: 25.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'rapport',
         labelKey: 'input.rapport',
         defaultValue: 0.0,
@@ -115,14 +115,14 @@ final List<CalculatorDefinition> wallCalculators = [
         maxValue: 1.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'wallHeight',
         labelKey: 'input.wallHeight',
         defaultValue: 2.5,
         minValue: 2.0,
         maxValue: 5.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         defaultValue: 0.0,
@@ -130,7 +130,7 @@ final List<CalculatorDefinition> wallCalculators = [
         maxValue: 100.0,
         required: false,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         defaultValue: 0.0,
@@ -139,7 +139,7 @@ final List<CalculatorDefinition> wallCalculators = [
         required: false,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'usefulArea': 'result.area',
       'rollsNeeded': 'result.rolls',
       'glueNeeded': 'result.glue',
@@ -158,29 +158,29 @@ final List<CalculatorDefinition> wallCalculators = [
     titleKey: 'calculator.decorativePlaster',
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 2.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'usefulArea': 'result.area',
       'plasterNeeded': 'result.plaster',
       'primerNeeded': 'result.primer',
@@ -197,19 +197,19 @@ final List<CalculatorDefinition> wallCalculators = [
     titleKey: 'calculator.decorativeStone',
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 15.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'stoneNeeded': 'result.stones',
       'glueNeeded': 'result.glue',
       'groutNeeded': 'result.grout',
@@ -226,19 +226,19 @@ final List<CalculatorDefinition> wallCalculators = [
     titleKey: 'calculator.pvcPanels',
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         defaultValue: 0.25,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'panelsNeeded': 'result.panels',
       'profilesNeeded': 'result.profiles',
       'clipsNeeded': 'result.clips',
@@ -255,19 +255,19 @@ final List<CalculatorDefinition> wallCalculators = [
     titleKey: 'calculator.mdfPanels',
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         defaultValue: 0.20,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'panelsNeeded': 'result.panels',
       'battensNeeded': 'result.battens',
       'clipsNeeded': 'result.clips',
@@ -284,19 +284,19 @@ final List<CalculatorDefinition> wallCalculators = [
     titleKey: 'calculator.3dPanels',
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'panelSize',
         labelKey: 'input.packArea',
         defaultValue: 0.5,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'panelsNeeded': 'result.panels',
       'glueNeeded': 'result.glue',
     },
@@ -312,19 +312,19 @@ final List<CalculatorDefinition> wallCalculators = [
     titleKey: 'calculator.woodWall',
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'boardWidth',
         labelKey: 'input.boardWidth',
         defaultValue: 0.10,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'boardsNeeded': 'result.boards',
       'battensNeeded': 'result.battens',
       'nailsNeeded': 'result.fasteners',
@@ -341,19 +341,19 @@ final List<CalculatorDefinition> wallCalculators = [
     titleKey: 'calculator.gvlWall',
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'layers',
         labelKey: 'input.layers',
         defaultValue: 1.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'sheetsNeeded': 'result.sheets',
       'profilesNeeded': 'result.profiles',
       'screwsNeeded': 'result.screws',
@@ -370,24 +370,24 @@ final List<CalculatorDefinition> wallCalculators = [
     titleKey: 'calculator.wallTile',
     category: 'Внутренняя отделка',
     subCategory: 'Стены',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.wallArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'tileWidth',
         labelKey: 'input.tileWidth',
         defaultValue: 30.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'tileHeight',
         labelKey: 'input.tileHeight',
         defaultValue: 60.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'tilesNeeded': 'result.tiles',
       'glueNeeded': 'result.glue',
       'groutNeeded': 'result.grout',

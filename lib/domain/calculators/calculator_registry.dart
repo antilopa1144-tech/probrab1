@@ -162,7 +162,7 @@ class CalculatorRegistry {
     _categoryCache.clear();
 
     // Пересоздаём кэш ID
-    for (var calc in allCalculators) {
+    for (final calc in allCalculators) {
       _idCache[calc.id] = calc;
     }
   }

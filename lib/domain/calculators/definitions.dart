@@ -268,7 +268,7 @@ final List<CalculatorDefinition> structureCalculators =
     modules.structureCalculators;
 
 /// Общий список всех калькуляторов приложения.
-final List<CalculatorDefinition> finishCalculators = const [];
+const List<CalculatorDefinition> finishCalculators = [];
 
 final List<CalculatorDefinition> calculators = [
   ...foundationCalculators,

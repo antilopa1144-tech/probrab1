@@ -18,7 +18,7 @@ final List<CalculatorDefinition> foundationCalculators = [
     titleKey: 'calculator.stripTitle',
     category: 'Фундамент',
     subCategory: 'Ленточный фундамент',
-    fields: [
+    fields: const [
       InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
@@ -40,7 +40,7 @@ final List<CalculatorDefinition> foundationCalculators = [
         defaultValue: 0.8,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'concreteVolume': 'result.volume',
       'rebarWeight': 'result.rebar',
     },
@@ -59,7 +59,7 @@ final List<CalculatorDefinition> foundationCalculators = [
     titleKey: 'calculator.slab',
     category: 'Фундамент',
     subCategory: 'Монолитная плита',
-    fields: [
+    fields: const [
       InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
@@ -81,7 +81,7 @@ final List<CalculatorDefinition> foundationCalculators = [
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'thickness': 'result.thickness',
       'concreteVolume': 'result.volume',
@@ -110,7 +110,7 @@ final List<CalculatorDefinition> foundationCalculators = [
     titleKey: 'calculator.basement',
     category: 'Фундамент',
     subCategory: 'Цокольный этаж',
-    fields: [
+    fields: const [
       InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
@@ -137,7 +137,7 @@ final List<CalculatorDefinition> foundationCalculators = [
         defaultValue: 0.15,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'concreteVolume': 'result.volume',
       'rebarWeight': 'result.rebar',
       'waterproofingArea': 'result.waterproofing',
@@ -158,7 +158,7 @@ final List<CalculatorDefinition> foundationCalculators = [
     titleKey: 'calculator.blindArea',
     category: 'Фундамент',
     subCategory: 'Отмостка',
-    fields: [
+    fields: const [
       InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
@@ -175,7 +175,7 @@ final List<CalculatorDefinition> foundationCalculators = [
         defaultValue: 0.1,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'concreteVolume': 'result.volume',
       'sandVolume': 'result.sand',

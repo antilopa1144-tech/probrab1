@@ -27,28 +27,28 @@ final List<CalculatorDefinition> floorCalculators = [
     titleKey: 'calculator.laminate',
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 1.0,
         maxValue: 500.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'packArea',
         labelKey: 'input.packArea',
         defaultValue: 2.0,
         minValue: 1.0,
         maxValue: 5.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'underlayThickness',
         labelKey: 'input.underlayThickness',
         defaultValue: 3.0,
         minValue: 2.0,
         maxValue: 10.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
@@ -57,7 +57,7 @@ final List<CalculatorDefinition> floorCalculators = [
         required: false,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'packsNeeded': 'result.packs',
       'underlayArea': 'result.underlay',
@@ -77,21 +77,21 @@ final List<CalculatorDefinition> floorCalculators = [
     titleKey: 'calculator.screed',
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 1.0,
         maxValue: 1000.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 50.0,
         minValue: 20.0,
         maxValue: 200.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'cementGrade',
         labelKey: 'input.cementGrade',
         defaultValue: 400.0,
@@ -99,7 +99,7 @@ final List<CalculatorDefinition> floorCalculators = [
         maxValue: 600.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'volume': 'result.volume',
       'cementBags': 'result.cementBags',
@@ -118,28 +118,28 @@ final List<CalculatorDefinition> floorCalculators = [
     titleKey: 'calculator.tile',
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 0.5,
         maxValue: 500.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'tileWidth',
         labelKey: 'input.tileWidth',
         defaultValue: 30.0,
         minValue: 10.0,
         maxValue: 120.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'tileHeight',
         labelKey: 'input.tileHeight',
         defaultValue: 30.0,
         minValue: 10.0,
         maxValue: 120.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'jointWidth',
         labelKey: 'input.jointWidth',
         defaultValue: 3.0,
@@ -147,7 +147,7 @@ final List<CalculatorDefinition> floorCalculators = [
         maxValue: 10.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'tilesNeeded': 'result.tiles',
       'groutNeeded': 'result.grout',
@@ -167,34 +167,34 @@ final List<CalculatorDefinition> floorCalculators = [
     titleKey: 'calculator.linoleum',
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'rollWidth',
         labelKey: 'input.rollWidth',
         defaultValue: 3.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'rollLength',
         labelKey: 'input.rollLength',
         defaultValue: 30.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'overlap',
         labelKey: 'input.overlap',
         defaultValue: 5.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'rollsNeeded': 'result.rolls',
       'plinthLength': 'result.plinth',
@@ -212,28 +212,28 @@ final List<CalculatorDefinition> floorCalculators = [
     titleKey: 'calculator.warmFloor',
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         minValue: 1.0,
         maxValue: 200.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'power',
         labelKey: 'input.power',
         defaultValue: 150.0,
         minValue: 80.0,
         maxValue: 250.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'type',
         labelKey: 'input.type',
         defaultValue: 2.0,
         minValue: 1.0,
         maxValue: 2.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'thermostats',
         labelKey: 'input.thermostats',
         defaultValue: 1.0,
@@ -241,7 +241,7 @@ final List<CalculatorDefinition> floorCalculators = [
         maxValue: 10.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'usefulArea': 'result.usefulArea',
       'totalPower': 'result.power',
@@ -262,29 +262,29 @@ final List<CalculatorDefinition> floorCalculators = [
     titleKey: 'calculator.parquet',
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'plankWidth',
         labelKey: 'input.plankWidth',
         defaultValue: 7.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'plankLength',
         labelKey: 'input.plankLength',
         defaultValue: 40.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'planksNeeded': 'result.planks',
       'varnishNeeded': 'result.varnish',
@@ -304,19 +304,19 @@ final List<CalculatorDefinition> floorCalculators = [
     titleKey: 'calculator.selfLevelingFloor',
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 5.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'mixNeeded': 'result.mix',
       'primerNeeded': 'result.primer',
@@ -336,19 +336,19 @@ final List<CalculatorDefinition> floorCalculators = [
     titleKey: 'calculator.carpet',
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.floorArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'rollWidth',
         labelKey: 'input.rollWidth',
         defaultValue: 4.0,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'rollsNeeded': 'result.rolls',
       'glueNeeded': 'result.glue',
       'tapeNeeded': 'result.tape',
@@ -366,30 +366,30 @@ final List<CalculatorDefinition> floorCalculators = [
     titleKey: 'calculator.floorInsulation',
     category: 'Внутренняя отделка',
     subCategory: 'Полы',
-    fields: [
-      const InputFieldDefinition(
+    fields: const [
+      InputFieldDefinition(
         key: 'area',
         labelKey: 'input.floorArea',
         defaultValue: 0.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'insulationThickness',
         labelKey: 'input.insulationThickness',
         defaultValue: 100.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'insulationType',
         labelKey: 'input.insulationType',
         defaultValue: 1.0,
       ),
-      const InputFieldDefinition(
+      InputFieldDefinition(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         defaultValue: 0.0,
         required: false,
       ),
     ],
-    resultLabels: {
+    resultLabels: const {
       'area': 'result.area',
       'volume': 'result.volume',
       'sheetsNeeded': 'result.sheets',
