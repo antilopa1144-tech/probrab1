@@ -11,7 +11,7 @@ class OnboardingScreen extends StatefulWidget {
   /// Проверить, нужно ли показывать онбординг.
   static Future<bool> shouldShow() async {
     final prefs = await SharedPreferences.getInstance();
-    return !prefs.getBool('onboarding_completed') ?? true;
+    return !(prefs.getBool('onboarding_completed') ?? false);
   }
 
   /// Отметить онбординг как завершённый.
