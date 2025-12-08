@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.probrab_ai"
-    compileSdk = 34  // Явно указываем API 34 для совместимости с Isar
+    compileSdk = 36  // API 36 требуется для androidx.core и media3
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
