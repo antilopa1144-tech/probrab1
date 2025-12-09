@@ -83,10 +83,6 @@ class CalculateWallpaper extends BaseCalculator {
     // Грунтовка (рекомендуется перед поклейкой): ~0.1 л/м²
     final primerNeeded = usefulArea * 0.1;
 
-    // Расходные материалы
-    // Угловой профиль/армирующая лента для углов
-    final cornerTapeLength = perimeter * 0.5; // м (примерно на углы)
-
     // Расчёт стоимости
     final wallpaperPrice = findPrice(priceList, ['wallpaper', 'wallpaper_vinyl', 'wallpaper_fleece', 'wallpaper_paper']);
     final gluePrice = findPrice(priceList, ['glue_wallpaper', 'glue']);

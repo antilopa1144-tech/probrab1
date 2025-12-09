@@ -56,8 +56,6 @@ class CalculateWaterproofing extends BaseCalculator {
     final hydroTapeLength = perimeter;
 
     // Кисти/валики для нанесения: 1-2 комплекта
-    const toolsNeeded = 1;
-
     // Проникающая гидроизоляция для швов: ~0.5 кг/м.п.
     final penetratingNeeded = perimeter * 0.5;
 

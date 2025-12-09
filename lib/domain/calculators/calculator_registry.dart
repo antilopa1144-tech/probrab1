@@ -226,7 +226,7 @@ class CalculatorRegistry {
 
   /// Строим кэш с учётом алиасов (для обратной совместимости без дублей в списках).
   static Map<String, CalculatorDefinitionV2> _buildIdCache() {
-    final map = {for (var calc in allCalculators) calc.id: calc};
+    final map = {for (final calc in allCalculators) calc.id: calc};
     for (final alias in _idAliases.entries) {
       final base = map[alias.value];
       if (base != null && !map.containsKey(alias.key)) {

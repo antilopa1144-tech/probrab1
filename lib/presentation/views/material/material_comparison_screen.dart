@@ -137,12 +137,6 @@ class _MaterialComparisonScreenState
               cacheExtent: 500,
               itemBuilder: (context, index) {
                 final option = _options[index];
-                final totalCost = option.calculateTotalCost(
-                  widget.requiredQuantity,
-                );
-                final costPerYear = option.getCostPerYear(
-                  widget.requiredQuantity,
-                );
 
                 return RepaintBoundary(
                   child: Card(

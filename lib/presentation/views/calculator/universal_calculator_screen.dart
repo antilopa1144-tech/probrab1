@@ -74,28 +74,8 @@ class _UniversalCalculatorScreenState
     super.dispose();
   }
 
-  static final _numericInputFormatter = FilteringTextInputFormatter.allow(
-    RegExp(r'[0-9,\\. ]'),
-  );
-
-  String _formatInitialValue(double value) {
-    if (value == 0) return '';
-    return NumberParser.format(value);
-  }
-
   List<String> get _orderedFieldKeys =>
       widget.definition.fields.map((f) => f.key).toList();
-
-  void _focusNext(String currentKey) {
-    final keys = _orderedFieldKeys;
-    final currentIndex = keys.indexOf(currentKey);
-    if (currentIndex == -1) return;
-    if (currentIndex + 1 < keys.length) {
-      _focusNodes[keys[currentIndex + 1]]?.requestFocus();
-    } else {
-      _focusNodes[currentKey]?.unfocus();
-    }
-  }
 
   double _extractValue(InputFieldDefinition field) {
     final rawValue = _controllers[field.key]?.text;
@@ -103,48 +83,6 @@ class _UniversalCalculatorScreenState
     return parsed ?? field.defaultValue;
   }
 
-  String? _validateField(
-    String? value,
-    InputFieldDefinition field,
-    AppLocalizations loc,
-  ) {
-    final trimmed = value?.trim() ?? '';
-
-    if (field.required && trimmed.isEmpty) {
-      return loc.translate('input.required');
-    }
-
-    if (!field.required && trimmed.isEmpty) {
-      return null;
-    }
-
-    final parsed = NumberParser.parse(trimmed);
-    if (parsed == null) {
-      return 'Введите корректное число';
-    }
-
-    if (parsed < 0 && (field.minValue ?? 0) >= 0) {
-      return 'Введите положительное число';
-    }
-
-    if (field.minValue != null && parsed < field.minValue!) {
-      return 'Минимальное значение: ${NumberParser.format(field.minValue!)}';
-    }
-
-    if (field.maxValue != null && parsed > field.maxValue!) {
-      return 'Максимальное значение: ${NumberParser.format(field.maxValue!)}';
-    }
-
-    if (field.key.contains('area') && parsed > 10000) {
-      return 'Проверьте значение. Слишком большое число для площади.';
-    }
-
-    if (field.key.contains('volume') && parsed > 1000) {
-      return 'Проверьте значение. Слишком большое число для объёма.';
-    }
-
-    return null;
-  }
 
   void _calculate() {
     if (!_formKey.currentState!.validate()) return;

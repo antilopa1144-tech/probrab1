@@ -10,7 +10,7 @@ class PdfExportService {
   /// Экспортировать расчёт в PDF.
   static Future<void> exportCalculation(
     Calculation calculation,
-    CalculatorDefinitionV2? _definition,
+    CalculatorDefinitionV2? definition,
   ) async {
     final pdf = pw.Document();
 

@@ -62,7 +62,7 @@ class _DraggableProjectListState extends State<DraggableProjectList> {
 class _DraggableProjectItem extends StatelessWidget {
   final ProjectItem item;
 
-  const _DraggableProjectItem({Key? key, required this.item}) : super(key: key);
+  const _DraggableProjectItem({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {

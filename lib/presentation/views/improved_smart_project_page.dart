@@ -42,7 +42,6 @@ class _ImprovedSmartProjectPageState
     final height = double.tryParse(_heightController.text) ?? 3;
 
     final results = <String, double>{};
-    double totalCost = 0;
 
     final perimeter = 2 * (length + width);
     final area = length * width;
@@ -59,7 +58,6 @@ class _ImprovedSmartProjectPageState
       results['Фундамент (ленточный)'] = foundationCost;
       results['  Бетон (м³)'] = foundationVolume;
       results['  Арматура (кг)'] = rebarWeight;
-      totalCost += foundationCost;
     }
 
     // Стены - газоблок
@@ -72,7 +70,6 @@ class _ImprovedSmartProjectPageState
       results['Стены (газоблок)'] = wallsCost.toDouble();
       results['  Блоков (шт)'] = blocks.toDouble();
       results['  Площадь стен (м²)'] = wallArea;
-      totalCost += wallsCost;
     }
 
     // Кровля - металлочерепица
@@ -85,7 +82,6 @@ class _ImprovedSmartProjectPageState
       results['Кровля (металлочерепица)'] = roofCost;
       results['  Площадь крыши (м²)'] = roofArea;
       results['  Листов (шт)'] = sheets.toDouble();
-      totalCost += roofCost;
     }
 
     // Отделка - черновая
@@ -101,7 +97,7 @@ class _ImprovedSmartProjectPageState
       results['Отделка (черновая)'] = finishCost;
       results['  Площадь пола (м²)'] = floorArea;
       results['  Площадь стен (м²)'] = wallsForFinish;
-      totalCost += finishCost;
+      // totalCost += finishCost;
     }
 
     // Цены временно скрыты до интеграции с магазинами

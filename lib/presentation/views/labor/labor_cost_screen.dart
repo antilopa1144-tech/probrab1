@@ -209,12 +209,10 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
 class _ResultRow extends StatelessWidget {
   final String label;
   final String value;
-  final bool isHighlighted;
 
   const _ResultRow({
     required this.label,
     required this.value,
-    this.isHighlighted = false,
   });
 
   @override
@@ -227,18 +225,15 @@ class _ResultRow extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontSize: isHighlighted ? 16 : 14,
-              fontWeight: isHighlighted ? FontWeight.bold : FontWeight.normal,
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
             ),
           ),
           Text(
             value,
             style: TextStyle(
-              fontSize: isHighlighted ? 18 : 16,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: isHighlighted
-                  ? Theme.of(context).colorScheme.primary
-                  : null,
             ),
           ),
         ],

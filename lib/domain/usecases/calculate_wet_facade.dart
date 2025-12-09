@@ -68,8 +68,6 @@ class CalculateWetFacade extends BaseCalculator {
     final startProfileLength = getInput(inputs, 'startProfile', defaultValue: 0.0);
 
     // Деформационный профиль: по факту
-    final expansionProfileLength = getInput(inputs, 'expansion', defaultValue: 0.0);
-
     // Расчёт стоимости
     final insulationPrice = insulationType == 1
         ? findPrice(priceList, ['mineral_wool', 'wool_insulation', 'facade_wool'])

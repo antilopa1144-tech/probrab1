@@ -31,7 +31,6 @@ class _SwipeableCardState extends State<SwipeableCard>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final cardWidth = MediaQuery.of(context).size.width;
 
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
