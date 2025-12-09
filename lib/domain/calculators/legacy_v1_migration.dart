@@ -66,41 +66,18 @@ CalculatorDefinitionV2 _convert(legacy.CalculatorDefinition legacyDef) {
 }
 
 CalculatorCategory _mapCategory(String category, String subCategory) {
+  // Упрощенная двухуровневая система: interior/exterior
   switch (category) {
     case 'Фундамент':
-      return CalculatorCategory.foundation;
-    case 'Инженерные работы':
-      return CalculatorCategory.engineering;
     case 'Наружная отделка':
-      if (subCategory == 'Кровля') return CalculatorCategory.roofing;
-      return CalculatorCategory.facade;
     case 'Конструкции':
-      if (subCategory == 'Отмостка' || subCategory == 'Подвал / Погреб') {
-        return CalculatorCategory.foundation;
-      }
-      return CalculatorCategory.auxiliary;
+      return CalculatorCategory.exterior;
+    case 'Инженерные работы':
     case 'Внутренняя отделка':
-      switch (subCategory) {
-        case 'Полы':
-          return CalculatorCategory.flooring;
-        case 'Потолки':
-          return CalculatorCategory.ceilings;
-        case 'Перегородки':
-        case 'Стены':
-          return CalculatorCategory.wallFinishing;
-        case 'Утепление':
-        case 'Шумоизоляция':
-          return CalculatorCategory.insulation;
-        case 'Окна / двери':
-          return CalculatorCategory.windowsDoors;
-        case 'Ванная / туалет':
-        case 'Ровнители / смеси':
-          return CalculatorCategory.wallFinishing;
-        default:
-          return CalculatorCategory.wallFinishing;
-      }
+      return CalculatorCategory.interior;
     default:
-      return CalculatorCategory.other;
+      // По умолчанию внутренняя отделка
+      return CalculatorCategory.interior;
   }
 }
 
@@ -174,15 +151,12 @@ UnitType _mapUnit(legacy.InputFieldDefinition field) {
 }
 
 int _inferComplexity(CalculatorCategory category, String subCategory) {
-  if (category == CalculatorCategory.foundation ||
-      category == CalculatorCategory.engineering) {
+  // Наружная отделка обычно сложнее (фундамент, кровля)
+  if (category == CalculatorCategory.exterior) {
     return 3;
   }
-  if (subCategory.contains('Кровля') || subCategory.contains('Подвал')) {
-    return 3;
-  }
-  if (category == CalculatorCategory.flooring ||
-      category == CalculatorCategory.wallFinishing) {
+  // Внутренняя отделка - средняя сложность
+  if (category == CalculatorCategory.interior) {
     return 2;
   }
   return 1;

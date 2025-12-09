@@ -12,7 +12,7 @@ final screedCalculatorV2 = CalculatorDefinitionV2(
   id: 'floors_screed',
   titleKey: calculatorTitleKey('floors_screed'),
   descriptionKey: calculatorDescriptionKey('floors_screed'),
-  category: CalculatorCategory.flooring,
+  category: CalculatorCategory.interior,
   subCategory: 'Полы',
   iconName: 'construction',
   accentColor: kCalculatorAccentColor,

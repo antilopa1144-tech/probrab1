@@ -12,7 +12,7 @@ final paintCalculatorV2 = CalculatorDefinitionV2(
   id: 'wall_paint',
   titleKey: calculatorTitleKey('wall_paint'),
   descriptionKey: calculatorDescriptionKey('wall_paint'),
-  category: CalculatorCategory.wallFinishing,
+  category: CalculatorCategory.interior,
   subCategory: 'paint',
   iconName: 'paint',
   accentColor: kCalculatorAccentColor,

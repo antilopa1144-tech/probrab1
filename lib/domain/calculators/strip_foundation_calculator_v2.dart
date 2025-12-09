@@ -12,7 +12,7 @@ final stripFoundationCalculatorV2 = CalculatorDefinitionV2(
   id: 'foundation_strip',
   titleKey: calculatorTitleKey('foundation_strip'),
   descriptionKey: calculatorDescriptionKey('foundation_strip'),
-  category: CalculatorCategory.foundation,
+  category: CalculatorCategory.exterior,
   subCategory: 'strip',
   iconName: 'foundation',
   accentColor: kCalculatorAccentColor,

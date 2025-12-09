@@ -12,7 +12,7 @@ final bathroomTileCalculatorV2 = CalculatorDefinitionV2(
   id: 'bathroom_tile',
   titleKey: calculatorTitleKey('bathroom_tile'),
   descriptionKey: calculatorDescriptionKey('bathroom_tile'),
-  category: CalculatorCategory.wallFinishing,
+  category: CalculatorCategory.interior,
   subCategory: 'tile',
   iconName: 'bathtub',
   accentColor: kCalculatorAccentColor,

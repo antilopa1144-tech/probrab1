@@ -12,7 +12,7 @@ final laminateCalculatorV2 = CalculatorDefinitionV2(
   id: 'floors_laminate',
   titleKey: calculatorTitleKey('floors_laminate'),
   descriptionKey: calculatorDescriptionKey('floors_laminate'),
-  category: CalculatorCategory.flooring,
+  category: CalculatorCategory.interior,
   subCategory: 'Полы',
   iconName: 'flooring',
   accentColor: kCalculatorAccentColor,

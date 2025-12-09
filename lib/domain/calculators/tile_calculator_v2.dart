@@ -12,7 +12,7 @@ final tileCalculatorV2 = CalculatorDefinitionV2(
   id: 'floors_tile',
   titleKey: calculatorTitleKey('floors_tile'),
   descriptionKey: calculatorDescriptionKey('floors_tile'),
-  category: CalculatorCategory.flooring,
+  category: CalculatorCategory.interior,
   subCategory: 'Полы',
   iconName: 'grid_view',
   accentColor: kCalculatorAccentColor,

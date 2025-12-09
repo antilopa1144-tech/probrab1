@@ -44,14 +44,14 @@ void main() {
     });
 
     test('getByCategory фильтрует по категории', () {
-      final foundationCalcs = CalculatorRegistry.getByCategory(
-        CalculatorCategory.foundation,
+      final interiorCalcs = CalculatorRegistry.getByCategory(
+        CalculatorCategory.interior,
       );
 
-      expect(foundationCalcs, isNotEmpty);
+      expect(interiorCalcs, isNotEmpty);
       expect(
-        foundationCalcs.every(
-          (calc) => calc.category == CalculatorCategory.foundation,
+        interiorCalcs.every(
+          (calc) => calc.category == CalculatorCategory.interior,
         ),
         isTrue,
       );
@@ -60,12 +60,12 @@ void main() {
     test('getByCategory кэширует результаты', () {
       // Первый вызов
       final result1 = CalculatorRegistry.getByCategory(
-        CalculatorCategory.wallFinishing,
+        CalculatorCategory.interior,
       );
 
       // Второй вызов должен вернуть тот же объект из кэша
       final result2 = CalculatorRegistry.getByCategory(
-        CalculatorCategory.wallFinishing,
+        CalculatorCategory.interior,
       );
 
       expect(identical(result1, result2), isTrue);
@@ -160,7 +160,7 @@ void main() {
       // Заполняем кэши
       CalculatorRegistry.getById('wall_paint');
       CalculatorRegistry.getPopular();
-      CalculatorRegistry.getByCategory(CalculatorCategory.foundation);
+      CalculatorRegistry.getByCategory(CalculatorCategory.exterior);
 
       // Очищаем
       CalculatorRegistry.clearCache();

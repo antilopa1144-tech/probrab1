@@ -12,7 +12,7 @@ final gklCeilingCalculatorV2 = CalculatorDefinitionV2(
   id: 'ceilings_gkl',
   titleKey: calculatorTitleKey('ceilings_gkl'),
   descriptionKey: calculatorDescriptionKey('ceilings_gkl'),
-  category: CalculatorCategory.ceilings,
+  category: CalculatorCategory.interior,
   subCategory: 'gkl',
   iconName: 'ceiling',
   accentColor: kCalculatorAccentColor,
