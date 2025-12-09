@@ -41,7 +41,7 @@ class MaterialPieChart extends StatelessWidget {
           children: [
             Text('Материалы', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
-            ...materials.entries.asMap().entries.map((entry) {
+            ...materials.entries.toList().asMap().entries.map((entry) {
               final index = entry.key;
               final material = entry.value;
               final percentage = (material.value / total * 100).toStringAsFixed(

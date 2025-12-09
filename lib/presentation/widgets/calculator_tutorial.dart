@@ -17,7 +17,8 @@ class CalculatorTutorial extends StatefulWidget {
   /// Проверить, нужно ли показывать туториал.
   static Future<bool> shouldShow(String tutorialId) async {
     final prefs = await SharedPreferences.getInstance();
-    return !prefs.getBool('tutorial_$tutorialId') ?? true;
+    final viewed = prefs.getBool('tutorial_$tutorialId') ?? false;
+    return !viewed;
   }
 
   /// Отметить туториал как просмотренный.

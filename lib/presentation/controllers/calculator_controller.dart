@@ -86,7 +86,7 @@ class CalculatorController {
     // Валидация логических ограничений
     final logicalError = FieldValidator.validateLogical(inputs);
     if (logicalError != null) {
-      return logicalError;
+      return logicalError.getUserMessage();
     }
 
     // Валидация через useCase, если он поддерживает
