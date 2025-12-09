@@ -5,17 +5,18 @@ import '../../core/enums/field_input_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
 import '../usecases/calculate_warm_floor.dart';
 
 /// Калькулятор тёплого пола V2.
 final warmFloorCalculatorV2 = CalculatorDefinitionV2(
   id: 'floors_warm',
-  titleKey: 'calculator.warm_floor.title',
-  descriptionKey: 'calculator.warm_floor.description',
+  titleKey: calculatorTitleKey('floors_warm'),
+  descriptionKey: calculatorDescriptionKey('floors_warm'),
   category: CalculatorCategory.engineering,
   subCategory: 'heating',
   iconName: 'radiator',
-  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
+  accentColor: kCalculatorAccentColor,
   complexity: 2,
   popularity: 90,
   tags: ['тёплый пол', 'отопление', 'электричество', 'heating', 'floor'],
@@ -112,4 +113,3 @@ final warmFloorCalculatorV2 = CalculatorDefinitionV2(
   // UseCase для расчёта
   useCase: CalculateWarmFloor(),
 );
-

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 import 'package:probrab_ai/domain/usecases/calculate_strip_foundation.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
 
@@ -54,19 +55,14 @@ void main() {
       }
     });
 
-    test('handles zero inputs gracefully', () {
+    test('throws on completely empty inputs', () {
       final inputs = <String, double>{};
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      // Fields may be null with zero inputs
-      if (result.values.containsKey('concreteVolume')) {
-        expect(result.values['concreteVolume'], equals(0.0));
-      }
-      if (result.values.containsKey('rebarWeight')) {
-        expect(result.values['rebarWeight'], equals(0.0));
-      }
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
 
     test('calculates total price with price list', () {

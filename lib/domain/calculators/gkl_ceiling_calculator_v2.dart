@@ -4,17 +4,18 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
 import '../usecases/calculate_gkl_ceiling.dart';
 
 /// Калькулятор потолка из ГКЛ V2.
 final gklCeilingCalculatorV2 = CalculatorDefinitionV2(
   id: 'ceilings_gkl',
-  titleKey: 'calculator.gkl_ceiling.title',
-  descriptionKey: 'calculator.gkl_ceiling.description',
+  titleKey: calculatorTitleKey('ceilings_gkl'),
+  descriptionKey: calculatorDescriptionKey('ceilings_gkl'),
   category: CalculatorCategory.ceilings,
   subCategory: 'gkl',
   iconName: 'ceiling',
-  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
+  accentColor: kCalculatorAccentColor,
   complexity: 2,
   popularity: 85,
   tags: ['потолок', 'гкл', 'гипсокартон', 'ceiling', 'gkl'],
@@ -118,4 +119,3 @@ final gklCeilingCalculatorV2 = CalculatorDefinitionV2(
   // UseCase для расчёта
   useCase: CalculateGklCeiling(),
 );
-

@@ -4,17 +4,18 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
 import '../usecases/calculate_laminate.dart';
 
 /// Калькулятор ламината V2.
 final laminateCalculatorV2 = CalculatorDefinitionV2(
   id: 'floors_laminate',
-  titleKey: 'calculator.laminate',
-  descriptionKey: 'calculator.laminate.description',
+  titleKey: calculatorTitleKey('floors_laminate'),
+  descriptionKey: calculatorDescriptionKey('floors_laminate'),
   category: CalculatorCategory.flooring,
   subCategory: 'Полы',
   iconName: 'flooring',
-  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
+  accentColor: kCalculatorAccentColor,
   complexity: 1,
   popularity: 90,
   tags: ['ламинат', 'полы', 'напольное покрытие', 'laminate', 'flooring'],
@@ -113,4 +114,3 @@ final laminateCalculatorV2 = CalculatorDefinitionV2(
   // UseCase для расчёта
   useCase: CalculateLaminate(),
 );
-

@@ -10,556 +10,253 @@
     "save_to_project": "Сохранить в проект"
   },
   "calculator": {
-    "3dPanels": {
-      "description": "3D панели",
-      "title": "3D панели"
-    },
     "attic": {
-      "description": "Мансарда",
-      "title": "Мансарда"
+      "title": "Мансарда",
+      "description": "Расчёт материалов: Мансарда"
     },
     "balcony": {
-      "description": "Балкон/лоджия",
-      "title": "Балкон/лоджия"
-    },
-    "basement": {
-      "description": "Цокольный этаж",
-      "title": "Цокольный этаж"
-    },
-    "bathroomTile": {
-      "description": "Плитка в ванной",
-      "title": "Плитка в ванной"
+      "title": "Балкон / Лоджия",
+      "description": "Расчёт материалов: Балкон / Лоджия"
     },
     "bathroom_tile": {
-      "description": "Расчёт плитки для стен и пола ванной комнаты",
-      "title": "Плитка в ванной"
-    },
-    "bathroom_tile.title": {
-      "description": "Плитка в ванной",
-      "title": "Плитка в ванной"
+      "title": "Плитка и затирка",
+      "description": "Расчёт материалов: Плитка и затирка"
     },
     "bathroom_waterproof": {
-      "description": "Гидроизоляция",
-      "title": "Гидроизоляция"
-    },
-    "blindArea": {
-      "description": "Отмостка",
-      "title": "Отмостка"
-    },
-    "blind_area": {
-      "description": "Отмостка",
-      "title": "Отмостка"
-    },
-    "brickFacing": {
-      "description": "Облицовка кирпичом",
-      "title": "Облицовка кирпичом"
-    },
-    "brickPartition": {
-      "description": "Кирпичная перегородка",
-      "title": "Кирпичная перегородка"
-    },
-    "calculator.stripTitle": {
-      "description": "Calculator.striptitle",
-      "title": "Calculator.striptitle"
-    },
-    "carpet": {
-      "description": "Ковролин",
-      "title": "Ковролин"
-    },
-    "cassetteCeiling": {
-      "description": "Кассетный потолок",
-      "title": "Кассетный потолок"
-    },
-    "ceilingInsulation": {
-      "description": "Утепление потолка",
-      "title": "Утепление потолка"
-    },
-    "ceilingPaint": {
-      "description": "Покраска потолка",
-      "title": "Покраска потолка"
-    },
-    "ceilingTiles": {
-      "description": "Потолочная плитка",
-      "title": "Потолочная плитка"
+      "title": "Гидроизоляция",
+      "description": "Расчёт материалов: Гидроизоляция"
     },
     "ceilings_cassette": {
-      "description": "Кассетный",
-      "title": "Кассетный"
+      "title": "Кассетный",
+      "description": "Расчёт материалов: Кассетный"
     },
     "ceilings_gkl": {
-      "description": "Подвесной ГКЛ",
-      "title": "Подвесной ГКЛ"
+      "title": "Подвесной ГКЛ",
+      "description": "Расчёт материалов: Подвесной ГКЛ"
     },
     "ceilings_insulation": {
-      "description": "Утепление потолка",
-      "title": "Утепление потолка"
+      "title": "Утепление потолка",
+      "description": "Расчёт материалов: Утепление потолка"
     },
     "ceilings_paint": {
-      "description": "Смеси для стен",
-      "title": "Смеси для стен"
+      "title": "Покраска / побелка",
+      "description": "Расчёт материалов: Покраска / побелка"
     },
     "ceilings_rail": {
-      "description": "Реечный потолок",
-      "title": "Реечный потолок"
+      "title": "Реечный потолок",
+      "description": "Расчёт материалов: Реечный потолок"
     },
     "ceilings_stretch": {
-      "description": "Натяжной потолок",
-      "title": "Натяжной потолок"
+      "title": "Натяжной потолок",
+      "description": "Расчёт материалов: Натяжной потолок"
     },
     "ceilings_tiles": {
-      "description": "Потолочная плитка",
-      "title": "Потолочная плитка"
-    },
-    "decorativePlaster": {
-      "description": "Декоративная штукатурка",
-      "title": "Декоративная штукатурка"
-    },
-    "decorativeStone": {
-      "description": "Декоративный камень",
-      "title": "Декоративный камень"
-    },
-    "doorInstallation": {
-      "description": "Установка дверей",
-      "title": "Установка дверей"
+      "title": "Потолочная плитка",
+      "description": "Расчёт материалов: Потолочная плитка"
     },
     "doors_install": {
-      "description": "Монтаж дверей",
-      "title": "Монтаж дверей"
-    },
-    "electrics": {
-      "description": "Электрика",
-      "title": "Электрика"
+      "title": "Монтаж дверей",
+      "description": "Расчёт материалов: Монтаж дверей"
     },
     "engineering_electrics": {
-      "description": "Инженерные работы",
-      "title": "Инженерные работы"
+      "title": "Электрика",
+      "description": "Расчёт материалов: Электрика"
     },
     "engineering_heating": {
-      "description": "Отопление",
-      "title": "Отопление"
+      "title": "Отопление",
+      "description": "Расчёт материалов: Отопление"
     },
     "engineering_plumbing": {
-      "description": "Сантехника",
-      "title": "Сантехника"
+      "title": "Сантехника",
+      "description": "Расчёт материалов: Сантехника"
     },
     "engineering_ventilation": {
-      "description": "Вентиляция",
-      "title": "Вентиляция"
+      "title": "Вентиляция",
+      "description": "Расчёт материалов: Вентиляция"
     },
     "exterior_brick": {
-      "description": "Кирпич облицовочный",
-      "title": "Кирпич облицовочный"
+      "title": "Кирпич облицовочный",
+      "description": "Расчёт материалов: Кирпич облицовочный"
     },
     "exterior_facade_panels": {
-      "description": "Фасадные панели",
-      "title": "Фасадные панели"
+      "title": "Фасадные панели",
+      "description": "Расчёт материалов: Фасадные панели"
     },
     "exterior_siding": {
-      "description": "Наружная отделка",
-      "title": "Наружная отделка"
+      "title": "Сайдинг (ПВХ/металл/фиброцемент)",
+      "description": "Расчёт материалов: Сайдинг (ПВХ/металл/фиброцемент)"
     },
     "exterior_wet_facade": {
-      "description": "Утепление фасада",
-      "title": "Утепление фасада"
+      "title": "Мокрый фасад",
+      "description": "Расчёт материалов: Мокрый фасад"
     },
     "exterior_wood": {
-      "description": "Камень (натуральный/искусственный)",
-      "title": "Камень (натуральный/искусственный)"
-    },
-    "facadePanels": {
-      "description": "Фасадные панели",
-      "title": "Фасадные панели"
+      "title": "Дерево (вагонка, планкен, блок-хаус)",
+      "description": "Расчёт материалов: Дерево (вагонка, планкен, блок-хаус)"
     },
     "fence": {
-      "description": "Забор",
-      "title": "Забор"
-    },
-    "floorInsulation": {
-      "description": "Утепление пола",
-      "title": "Утепление пола"
+      "title": "Забор",
+      "description": "Расчёт материалов: Забор"
     },
     "floors_carpet": {
-      "description": "Ковролин",
-      "title": "Ковролин"
+      "title": "Ковролин",
+      "description": "Расчёт материалов: Ковролин"
     },
     "floors_insulation": {
-      "description": "Утепление пола",
-      "title": "Утепление пола"
+      "title": "Утепление пола",
+      "description": "Расчёт материалов: Утепление пола"
     },
     "floors_laminate": {
-      "description": "Полы",
-      "title": "Полы"
+      "title": "Ламинат",
+      "description": "Расчёт материалов: Ламинат"
     },
     "floors_linoleum": {
-      "description": "Линолеум",
-      "title": "Линолеум"
+      "title": "Линолеум",
+      "description": "Расчёт материалов: Линолеум"
     },
     "floors_parquet": {
-      "description": "Паркет / массив",
-      "title": "Паркет / массив"
+      "title": "Паркет / массив",
+      "description": "Расчёт материалов: Паркет / массив"
     },
     "floors_screed": {
-      "description": "Стяжка",
-      "title": "Стяжка"
+      "title": "Стяжка",
+      "description": "Расчёт материалов: Стяжка"
     },
     "floors_self_leveling": {
-      "description": "Наливной пол",
-      "title": "Наливной пол"
+      "title": "Наливной пол",
+      "description": "Расчёт материалов: Наливной пол"
     },
     "floors_tile": {
-      "description": "Плитка / керамогранит",
-      "title": "Плитка / керамогранит"
+      "title": "Плитка / керамогранит",
+      "description": "Расчёт материалов: Плитка / керамогранит"
     },
     "floors_warm": {
-      "description": "Тёплый пол",
-      "title": "Тёплый пол"
-    },
-    "foamInsulation": {
-      "description": "Пеноизоляция",
-      "title": "Пеноизоляция"
+      "title": "Тёплый пол",
+      "description": "Расчёт материалов: Тёплый пол"
     },
     "foundation_basement": {
-      "description": "Foundation basement",
-      "title": "Foundation basement"
+      "title": "Цокольный этаж",
+      "description": "Расчёт материалов: Цокольный этаж"
     },
     "foundation_blind_area": {
-      "description": "Foundation blind area",
-      "title": "Foundation blind area"
+      "title": "Отмостка",
+      "description": "Расчёт материалов: Отмостка"
     },
     "foundation_slab": {
-      "description": "Foundation slab",
-      "title": "Foundation slab"
+      "title": "Плитный фундамент",
+      "description": "Расчёт материалов: Плитный фундамент"
     },
     "foundation_strip": {
-      "description": "Foundation strip",
-      "title": "Foundation strip"
-    },
-    "gasBlockPartition": {
-      "description": "Перегородка из газоблока",
-      "title": "Перегородка из газоблока"
-    },
-    "gklCeiling": {
-      "description": "Потолок из ГКЛ",
-      "title": "Потолок из ГКЛ"
-    },
-    "gklPartition": {
-      "description": "Перегородка из ГКЛ",
-      "title": "Перегородка из ГКЛ"
-    },
-    "gkl_ceiling": {
-      "description": "Расчёт гипсокартонных листов, профилей и крепежа для потолка",
-      "title": "Потолок из ГКЛ"
-    },
-    "gkl_ceiling.title": {
-      "description": "Потолок из ГКЛ",
-      "title": "Потолок из ГКЛ"
-    },
-    "gutters": {
-      "description": "Водостоки",
-      "title": "Водостоки"
-    },
-    "gvlWall": {
-      "description": "Стена из ГВЛ",
-      "title": "Стена из ГВЛ"
-    },
-    "heating": {
-      "description": "Отопление",
-      "title": "Отопление"
+      "title": "Ленточный фундамент",
+      "description": "Расчёт материалов: Ленточный фундамент"
     },
     "insulation_foam": {
-      "description": "Пенопласт",
-      "title": "Пенопласт"
+      "title": "Пенопласт",
+      "description": "Расчёт материалов: Пенопласт"
     },
     "insulation_mineral": {
-      "description": "Утепление",
-      "title": "Утепление"
+      "title": "Минвата",
+      "description": "Расчёт материалов: Минвата"
     },
     "insulation_sound": {
-      "description": "Шумоизоляция",
-      "title": "Шумоизоляция"
-    },
-    "laminate": {
-      "description": "Ламинат",
-      "title": "Ламинат"
-    },
-    "laminate.description": "Расчёт количества ламината, подложки и плинтуса",
-    "linoleum": {
-      "description": "Линолеум",
-      "title": "Линолеум"
-    },
-    "mdfPanels": {
-      "description": "МДФ панели",
-      "title": "МДФ панели"
-    },
-    "metalRoofing": {
-      "description": "Металлочерепица",
-      "title": "Металлочерепица"
-    },
-    "metal_roofing": {
-      "description": "Расчёт металлочерепицы, доборных элементов и крепежа",
-      "title": "Металлочерепица"
-    },
-    "metal_roofing.title": {
-      "description": "Металлочерепица",
-      "title": "Металлочерепица"
-    },
-    "mineralWool": {
-      "description": "Минеральная вата",
-      "title": "Минеральная вата"
+      "title": "Шумоизоляция",
+      "description": "Расчёт материалов: Шумоизоляция"
     },
     "mixes_plaster": {
-      "description": "Наливной раствор",
-      "title": "Наливной раствор"
+      "title": "Штукатурка",
+      "description": "Расчёт материалов: Штукатурка"
     },
     "mixes_primer": {
-      "description": "Грунтовка",
-      "title": "Грунтовка"
+      "title": "Грунтовка",
+      "description": "Расчёт материалов: Грунтовка"
     },
     "mixes_putty": {
-      "description": "Ровнители / смеси",
-      "title": "Ровнители / смеси"
+      "title": "Шпаклёвка старт/финиш",
+      "description": "Расчёт материалов: Шпаклёвка старт/финиш"
     },
     "mixes_tile_glue": {
-      "description": "Клей для плитки",
-      "title": "Клей для плитки"
-    },
-    "paint": "Покраска стен",
-    "paint.description": "Расчёт краски, грунтовки и расходных материалов",
-    "parquet": {
-      "description": "Parquet",
-      "title": "Parquet"
-    },
-    "parquet.title": {
-      "description": "Паркет",
-      "title": "Паркет"
+      "title": "Клей для плитки",
+      "description": "Расчёт материалов: Клей для плитки"
     },
     "partitions_blocks": {
-      "description": "Газоблок / пеноблок",
-      "title": "Газоблок / пеноблок"
+      "title": "Газоблок / пеноблок",
+      "description": "Расчёт материалов: Газоблок / пеноблок"
     },
     "partitions_brick": {
-      "description": "Кирпич",
-      "title": "Кирпич"
+      "title": "Кирпич",
+      "description": "Расчёт материалов: Кирпич"
     },
     "partitions_gkl": {
-      "description": "Перегородки",
-      "title": "Перегородки"
-    },
-    "plaster": {
-      "description": "Штукатурка",
-      "title": "Штукатурка"
-    },
-    "plumbing": {
-      "description": "Сантехника",
-      "title": "Сантехника"
-    },
-    "primer": {
-      "description": "Грунтовка",
-      "title": "Грунтовка"
-    },
-    "putty": {
-      "description": "Шпаклёвка",
-      "title": "Шпаклёвка"
-    },
-    "pvcPanels": {
-      "description": "ПВХ панели",
-      "title": "ПВХ панели"
-    },
-    "railCeiling": {
-      "description": "Реечный потолок",
-      "title": "Реечный потолок"
+      "title": "Перегородки ГКЛ",
+      "description": "Расчёт материалов: Перегородки ГКЛ"
     },
     "roofing_gutters": {
-      "description": "Водостоки",
-      "title": "Водостоки"
+      "title": "Водостоки",
+      "description": "Расчёт материалов: Водостоки"
     },
     "roofing_metal": {
-      "description": "Ветро-гидроизоляция",
-      "title": "Ветро-гидроизоляция"
+      "title": "Кровля",
+      "description": "Расчёт материалов: Кровля"
     },
     "roofing_soft": {
-      "description": "Roofing soft",
-      "title": "Roofing soft"
-    },
-    "screed": {
-      "description": "Стяжка пола",
-      "title": "Стяжка пола"
-    },
-    "selfLevelingFloor": {
-      "description": "Наливной пол",
-      "title": "Наливной пол"
-    },
-    "siding": {
-      "description": "Сайдинг",
-      "title": "Сайдинг"
-    },
-    "slab": {
-      "description": "Slab",
-      "title": "Slab"
-    },
-    "slab.title": {
-      "description": "Плитный фундамент",
-      "title": "Плитный фундамент"
-    },
-    "slab_foundation": {
-      "description": "Расчёт плитного фундамента: бетон, арматура, утеплитель",
-      "title": "Плитный фундамент"
-    },
-    "slopes": {
-      "description": "Откосы",
-      "title": "Откосы"
+      "title": "Мягкая кровля",
+      "description": "Расчёт материалов: Мягкая кровля"
     },
     "slopes_finishing": {
-      "description": "Откосы",
-      "title": "Откосы"
-    },
-    "softRoofing": {
-      "description": "Мягкая кровля",
-      "title": "Мягкая кровля"
-    },
-    "soft_roofing": {
-      "description": "Расчёт мягкой кровли, подкладочного ковра и крепежа",
-      "title": "Мягкая кровля"
-    },
-    "soft_roofing.title": {
-      "description": "Мягкая кровля",
-      "title": "Мягкая кровля"
-    },
-    "soundInsulation": {
-      "description": "Soundinsulation",
-      "title": "Soundinsulation"
+      "title": "Откосы",
+      "description": "Расчёт материалов: Откосы"
     },
     "stairs": {
-      "description": "Лестница",
-      "title": "Лестница"
-    },
-    "stretchCeiling": {
-      "description": "Натяжной потолок",
-      "title": "Натяжной потолок"
-    },
-    "stripTitle": {
-      "description": "Ленточный фундамент",
-      "title": "Ленточный фундамент"
-    },
-    "strip_foundation": {
-      "description": "Расчёт бетона, арматуры и опалубки для ленточного фундамента",
-      "title": "Ленточный фундамент"
-    },
-    "strip_foundation.title": {
-      "description": "Ленточный фундамент",
-      "title": "Ленточный фундамент"
+      "title": "Лестница",
+      "description": "Расчёт материалов: Лестница"
     },
     "terrace": {
-      "description": "Терраса",
-      "title": "Терраса"
-    },
-    "tile": {
-      "description": "Плитка на пол",
-      "title": "Плитка на пол"
-    },
-    "tileGlue": {
-      "description": "Плиточный клей",
-      "title": "Плиточный клей"
-    },
-    "ventilation": {
-      "description": "Вентиляция",
-      "title": "Вентиляция"
-    },
-    "wallPaint": {
-      "description": "Покраска стен",
-      "title": "Покраска стен"
-    },
-    "wallTile": {
-      "description": "Плитка на стены",
-      "title": "Плитка на стены"
+      "title": "Терраса / Веранда",
+      "description": "Расчёт материалов: Терраса / Веранда"
     },
     "wall_paint": {
-      "description": "Расчёт краски, грунтовки и расходных материалов для покраски стен",
-      "title": "Покраска стен"
-    },
-    "wall_paint.title": {
-      "description": "Покраска стен",
-      "title": "Покраска стен"
-    },
-    "wallpaper": {
-      "description": "Обои",
-      "title": "Обои"
+      "title": "Покраска",
+      "description": "Расчёт материалов: Покраска"
     },
     "walls_3d_panels": {
-      "description": "Панели гипсовинил",
-      "title": "Панели гипсовинил"
+      "title": "3D панели",
+      "description": "Расчёт материалов: 3D панели"
     },
     "walls_decor_plaster": {
-      "description": "Декоративная штукатурка",
-      "title": "Декоративная штукатурка"
+      "title": "Декоративная штукатурка",
+      "description": "Венецианка, фактура, структурные покрытия"
     },
     "walls_decor_stone": {
-      "description": "Декоративный камень",
-      "title": "Декоративный камень"
+      "title": "Декоративный камень",
+      "description": "Расчёт материалов: Декоративный камень"
     },
     "walls_gvl": {
-      "description": "Обшивка ГКЛ",
-      "title": "Обшивка ГКЛ"
+      "title": "Обшивка ГВЛ",
+      "description": "Расчёт материалов: Обшивка ГВЛ"
     },
     "walls_mdf_panels": {
-      "description": "Панели МДФ",
-      "title": "Панели МДФ"
-    },
-    "walls_paint": {
-      "description": "Внутренняя отделка",
-      "title": "Внутренняя отделка"
+      "title": "Панели МДФ",
+      "description": "Расчёт материалов: Панели МДФ"
     },
     "walls_pvc_panels": {
-      "description": "Гибкий камень",
-      "title": "Гибкий камень"
+      "title": "Панели ПВХ",
+      "description": "Расчёт материалов: Панели ПВХ"
     },
     "walls_tile": {
-      "description": "Плитка на стены",
-      "title": "Плитка на стены"
+      "title": "Плитка на стены",
+      "description": "Расчёт материалов: Плитка на стены"
     },
     "walls_wallpaper": {
-      "description": "Обои с раппортом",
-      "title": "Обои с раппортом"
+      "title": "Обои с раппортом",
+      "description": "Расчёт материалов: Обои с раппортом"
     },
     "walls_wood": {
-      "description": "Вагонка / брус",
-      "title": "Вагонка / брус"
-    },
-    "warmFloor": {
-      "description": "Тёплый пол",
-      "title": "Тёплый пол"
-    },
-    "warm_floor": {
-      "description": "Расчёт электрического тёплого пола: кабель или мат",
-      "title": "Тёплый пол"
-    },
-    "warm_floor.title": {
-      "description": "Тёплый пол",
-      "title": "Тёплый пол"
-    },
-    "waterproofing": {
-      "description": "Гидроизоляция",
-      "title": "Гидроизоляция"
-    },
-    "wetFacade": {
-      "description": "Мокрый фасад",
-      "title": "Мокрый фасад"
-    },
-    "windowInstallation": {
-      "description": "Установка окон",
-      "title": "Установка окон"
+      "title": "Вагонка / брус",
+      "description": "Расчёт материалов: Вагонка / брус"
     },
     "windows_install": {
-      "description": "Окна / двери",
-      "title": "Окна / двери"
-    },
-    "woodFacade": {
-      "description": "Деревянный фасад",
-      "title": "Деревянный фасад"
-    },
-    "woodWall": {
-      "description": "Деревянная стена",
-      "title": "Деревянная стена"
+      "title": "Вставка окон",
+      "description": "Расчёт материалов: Вставка окон"
     }
   },
   "category": {

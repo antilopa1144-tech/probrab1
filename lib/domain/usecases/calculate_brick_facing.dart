@@ -32,12 +32,22 @@ class CalculateBrickFacing extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 0.5, minValue: 0.5, maxValue: 1.0);
+    final thickness = getInput(
+      inputs,
+      'thickness',
+      defaultValue: 0.5,
+      minValue: 0.5,
+      maxValue: 1.0,
+    );
     final windowsArea = getInput(inputs, 'windowsArea', defaultValue: 0.0);
     final doorsArea = getInput(inputs, 'doorsArea', defaultValue: 0.0);
 
-    // Полезная площадь (за вычетом проёмов)
-    final usefulArea = safeDivide(area - windowsArea - doorsArea, 1.0, defaultValue: area);
+    // Полезная площадь (за вычетом проёмов, не уходим в отрицательные значения)
+    final usefulArea = calculateUsefulArea(
+      area,
+      windowsArea: windowsArea,
+      doorsArea: doorsArea,
+    );
 
     // Количество кирпичей на 1 м² (для облицовки полкирпича)
     final bricksPerM2 = thickness == 0.5 ? 61.5 : 128.0;

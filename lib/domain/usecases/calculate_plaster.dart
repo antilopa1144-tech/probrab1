@@ -24,7 +24,9 @@ class CalculatePlaster extends BaseCalculator {
     final thickness = inputs['thickness'] ?? 10;
 
     if (area <= 0) return 'Площадь должна быть больше нуля';
-    if (thickness < 5 || thickness > 50) return 'Толщина должна быть от 5 до 50 мм';
+    if (area > 100000) return 'Площадь превышает допустимый максимум';
+    if (thickness < 0) return 'Толщина не может быть отрицательной';
+    if (thickness > 100) return 'Толщина должна быть не более 100 мм';
 
     return null;
   }
@@ -34,8 +36,19 @@ class CalculatePlaster extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = getInput(inputs, 'area', minValue: 0.1);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 10.0, minValue: 5.0, maxValue: 50.0);
+    final area = getInput(
+      inputs,
+      'area',
+      minValue: 0.1,
+      maxValue: 100000.0,
+    );
+    final thickness = getInput(
+      inputs,
+      'thickness',
+      defaultValue: 10.0,
+      minValue: 0.0,
+      maxValue: 100.0,
+    );
     final type = getIntInput(inputs, 'type', defaultValue: 1, minValue: 1, maxValue: 2);
     
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
@@ -47,6 +60,7 @@ class CalculatePlaster extends BaseCalculator {
 
     // Общий расход с учётом толщины и запаса 10%
     final plasterNeeded = area * consumptionPer10mm * (thickness / 10) * 1.1;
+    final plasterVolume = calculateVolume(area, thickness);
 
     // Грунтовка глубокого проникновения: ~0.2 л/м²
     final primerNeeded = area * 0.2;
@@ -90,6 +104,7 @@ class CalculatePlaster extends BaseCalculator {
     return createResult(
       values: {
         'area': area,
+        'volume': plasterVolume,
         'plasterNeeded': plasterNeeded,
         'primerNeeded': primerNeeded,
         'thickness': thickness,
@@ -101,6 +116,7 @@ class CalculatePlaster extends BaseCalculator {
         'waterNeeded': waterNeeded,
       },
       totalPrice: sumCosts(costs),
+      decimals: 3,
     );
   }
 }

@@ -23,9 +23,11 @@ class CalculateStripFoundation extends BaseCalculator {
     final width = inputs['width'] ?? 0;
     final height = inputs['height'] ?? 0;
 
-    if (perimeter < 0) return 'Периметр должен быть неотрицательным';
-    if (width < 0 || width > 3) return 'Ширина ленты должна быть от 0.1 до 3 м';
-    if (height < 0 || height > 3) return 'Высота ленты должна быть от 0.1 до 3 м';
+    if (perimeter <= 0) return 'Периметр должен быть больше нуля';
+    if (perimeter > 10000)
+      return 'Периметр превышает допустимый максимум (10 км)';
+    if (width <= 0 || width > 3) return 'Ширина ленты должна быть от 0.1 до 3 м';
+    if (height <= 0 || height > 3) return 'Высота ленты должна быть от 0.1 до 3 м';
 
     return null;
   }
@@ -36,9 +38,27 @@ class CalculateStripFoundation extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Получаем валидированные входные данные
-    final perimeter = getInput(inputs, 'perimeter', defaultValue: 0.0, minValue: 0.0);
-    final width = getInput(inputs, 'width', defaultValue: 0.0, minValue: 0.0, maxValue: 3.0);
-    final height = getInput(inputs, 'height', defaultValue: 0.0, minValue: 0.0, maxValue: 3.0);
+    final perimeter = getInput(
+      inputs,
+      'perimeter',
+      defaultValue: 0.1,
+      minValue: 0.1,
+      maxValue: 10000.0,
+    );
+    final width = getInput(
+      inputs,
+      'width',
+      defaultValue: 0.1,
+      minValue: 0.1,
+      maxValue: 3.0,
+    );
+    final height = getInput(
+      inputs,
+      'height',
+      defaultValue: 0.1,
+      minValue: 0.1,
+      maxValue: 3.0,
+    );
 
     // Объём бетона для фундамента
     final concreteVolume = perimeter * width * height;

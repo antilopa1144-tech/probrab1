@@ -1,10 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/data/repositories/calculation_repository.dart';
 
+import '../../helpers/test_path_provider.dart';
+import '../../helpers/isar_test_utils.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late CalculationRepository repository;
+  late TestPathProviderPlatform pathProvider;
+
+  setUpAll(() async {
+    pathProvider = installTestPathProvider();
+    await ensureIsarInitialized();
+  });
 
   setUp(() {
     repository = CalculationRepository();
@@ -12,7 +21,11 @@ void main() {
 
   tearDown(() async {
     // Закрываем базу данных после каждого теста
-    await repository.close();
+    await repository.close(deleteFromDisk: true);
+  });
+
+  tearDownAll(() {
+    pathProvider.dispose();
   });
 
   group('CalculationRepository', () {

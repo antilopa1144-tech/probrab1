@@ -145,7 +145,7 @@ abstract class CalculatorUseCase {
 
 #### Views
 Экраны приложения:
-- `UniversalCalculatorScreen` - универсальный экран калькулятора
+- `UniversalCalculatorV2Screen` - универсальный экран калькулятора (второе поколение)
 - `ProjectHistoryScreen` - история проектов
 - `SettingsPage` - настройки
 - И другие...
@@ -193,8 +193,10 @@ final priceListProvider = FutureProvider<List<PriceItem>>((ref) async {
 Создание калькуляторов:
 ```dart
 static Widget? fromId(String calculatorId) {
-  final definition = calculators.firstWhere((calc) => calc.id == calculatorId);
-  return UniversalCalculatorScreen(definition: definition);
+  final definition = CalculatorRegistry.getById(calculatorId);
+  return definition != null
+      ? UniversalCalculatorV2Screen(definition: definition)
+      : null;
 }
 ```
 
@@ -343,7 +345,7 @@ class CalculatePlaster implements CalculatorUseCase {
 
 ### Универсальный экран
 
-`UniversalCalculatorScreen` динамически строит форму из `CalculatorDefinition`:
+`UniversalCalculatorV2Screen` динамически строит форму из `CalculatorDefinitionV2`:
 - Автоматически создаёт поля ввода
 - Валидирует данные
 - Выполняет расчёт

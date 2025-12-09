@@ -39,20 +39,31 @@ import '../definitions.dart' as old;
 /// 3. Замените использование old.* на прямые списки
 /// 4. Удалите definitions.dart после полной миграции
 final List<old.CalculatorDefinition> calculators = old.calculators;
-final List<old.CalculatorDefinition> foundationCalculators = old.foundationCalculators;
+final List<old.CalculatorDefinition> foundationCalculators =
+    old.foundationCalculators;
 final List<old.CalculatorDefinition> wallCalculators = old.wallCalculators;
 final List<old.CalculatorDefinition> floorCalculators = old.floorCalculators;
-final List<old.CalculatorDefinition> ceilingCalculators = old.ceilingCalculators;
-final List<old.CalculatorDefinition> partitionCalculators = old.partitionCalculators;
-final List<old.CalculatorDefinition> insulationCalculators = old.insulationCalculators;
-final List<old.CalculatorDefinition> exteriorCalculators = old.exteriorCalculators;
-final List<old.CalculatorDefinition> roofingCalculators = old.roofingCalculators;
-final List<old.CalculatorDefinition> engineeringCalculators = old.engineeringCalculators;
-final List<old.CalculatorDefinition> bathroomCalculators = old.bathroomCalculators;
+final List<old.CalculatorDefinition> ceilingCalculators =
+    old.ceilingCalculators;
+final List<old.CalculatorDefinition> partitionCalculators =
+    old.partitionCalculators;
+final List<old.CalculatorDefinition> insulationCalculators =
+    old.insulationCalculators;
+final List<old.CalculatorDefinition> exteriorCalculators =
+    old.exteriorCalculators;
+final List<old.CalculatorDefinition> roofingCalculators =
+    old.roofingCalculators;
+final List<old.CalculatorDefinition> engineeringCalculators =
+    old.engineeringCalculators;
+final List<old.CalculatorDefinition> bathroomCalculators =
+    old.bathroomCalculators;
 final List<old.CalculatorDefinition> mixCalculators = old.mixCalculators;
-final List<old.CalculatorDefinition> windowsDoorsCalculators = old.windowsDoorsCalculators;
-final List<old.CalculatorDefinition> soundInsulationCalculators = old.soundInsulationCalculators;
-final List<old.CalculatorDefinition> structureCalculators = old.structureCalculators;
+final List<old.CalculatorDefinition> windowsDoorsCalculators =
+    old.windowsDoorsCalculators;
+final List<old.CalculatorDefinition> soundInsulationCalculators =
+    old.soundInsulationCalculators;
+final List<old.CalculatorDefinition> structureCalculators =
+    old.structureCalculators;
 
 /// Вспомогательная функция для поиска калькулятора по ID
 old.CalculatorDefinition? findCalculatorById(String id) {

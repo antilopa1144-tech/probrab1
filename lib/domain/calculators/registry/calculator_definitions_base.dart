@@ -105,14 +105,14 @@ class CalculatorDefinition {
     // Логирование использования калькулятора в Firebase Analytics
     // ТОЛЬКО для новых расчётов (не из кэша)
     try {
-    FirebaseAnalytics.instance.logEvent(
-      name: 'calculator_used',
-      parameters: {
-        'calculator_id': id,
-        'calculator_category': category,
-        'calculator_subcategory': subCategory,
-      },
-    );
+      FirebaseAnalytics.instance.logEvent(
+        name: 'calculator_used',
+        parameters: {
+          'calculator_id': id,
+          'calculator_category': category,
+          'calculator_subcategory': subCategory,
+        },
+      );
     } catch (e) {
       // Игнорируем ошибки Firebase, если сервис недоступен
     }

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:probrab_ai/domain/calculators/calculator_registry.dart';
 import 'package:probrab_ai/core/enums/calculator_category.dart';
+import 'package:probrab_ai/domain/calculators/calculator_constants.dart';
+import 'package:probrab_ai/domain/calculators/calculator_registry.dart';
 
 void main() {
   group('CalculatorRegistry', () {
@@ -12,7 +13,17 @@ void main() {
     test('возвращает все калькуляторы', () {
       final all = CalculatorRegistry.allCalculators;
       expect(all, isNotEmpty);
-      expect(all.length, greaterThan(10)); // Должно быть минимум 10 калькуляторов
+      expect(
+        all.length,
+        greaterThan(10),
+      ); // Должно быть минимум 10 калькуляторов
+    });
+
+    test('все калькуляторы имеют уникальные ID', () {
+      final ids = CalculatorRegistry.allCalculators
+          .map((calc) => calc.id)
+          .toList();
+      expect(ids.toSet().length, equals(ids.length));
     });
 
     test('getById возвращает калькулятор по ID (O(1))', () {
@@ -33,39 +44,50 @@ void main() {
     });
 
     test('getByCategory фильтрует по категории', () {
-      final foundationCalcs = CalculatorRegistry.getByCategory(CalculatorCategory.foundation);
+      final foundationCalcs = CalculatorRegistry.getByCategory(
+        CalculatorCategory.foundation,
+      );
 
       expect(foundationCalcs, isNotEmpty);
       expect(
-        foundationCalcs.every((calc) => calc.category == CalculatorCategory.foundation),
+        foundationCalcs.every(
+          (calc) => calc.category == CalculatorCategory.foundation,
+        ),
         isTrue,
       );
     });
 
     test('getByCategory кэширует результаты', () {
       // Первый вызов
-      final result1 = CalculatorRegistry.getByCategory(CalculatorCategory.wallFinishing);
+      final result1 = CalculatorRegistry.getByCategory(
+        CalculatorCategory.wallFinishing,
+      );
 
       // Второй вызов должен вернуть тот же объект из кэша
-      final result2 = CalculatorRegistry.getByCategory(CalculatorCategory.wallFinishing);
+      final result2 = CalculatorRegistry.getByCategory(
+        CalculatorCategory.wallFinishing,
+      );
 
       expect(identical(result1, result2), isTrue);
     });
 
-    test('getPopular возвращает калькуляторы отсортированные по популярности', () {
-      final popular = CalculatorRegistry.getPopular(limit: 5);
+    test(
+      'getPopular возвращает калькуляторы отсортированные по популярности',
+      () {
+        final popular = CalculatorRegistry.getPopular(limit: 5);
 
-      expect(popular.length, lessThanOrEqualTo(5));
+        expect(popular.length, lessThanOrEqualTo(5));
 
-      // Проверяем, что отсортировано по убыванию популярности
-      for (var i = 1; i < popular.length; i++) {
-        expect(
-          popular[i - 1].popularity >= popular[i].popularity,
-          isTrue,
-          reason: 'Популярность должна убывать',
-        );
-      }
-    });
+        // Проверяем, что отсортировано по убыванию популярности
+        for (var i = 1; i < popular.length; i++) {
+          expect(
+            popular[i - 1].popularity >= popular[i].popularity,
+            isTrue,
+            reason: 'Популярность должна убывать',
+          );
+        }
+      },
+    );
 
     test('getPopular кэширует отсортированный список', () {
       // Первый вызов
@@ -86,9 +108,11 @@ void main() {
 
       expect(results, isNotEmpty);
       expect(
-        results.any((calc) =>
-            calc.titleKey.toLowerCase().contains('paint') ||
-            calc.id.toLowerCase().contains('paint')),
+        results.any(
+          (calc) =>
+              calc.titleKey.toLowerCase().contains('paint') ||
+              calc.id.toLowerCase().contains('paint'),
+        ),
         isTrue,
       );
     });
@@ -113,7 +137,16 @@ void main() {
     });
 
     test('count возвращает правильное количество', () {
-      expect(CalculatorRegistry.count, equals(CalculatorRegistry.allCalculators.length));
+      expect(
+        CalculatorRegistry.count,
+        equals(CalculatorRegistry.allCalculators.length),
+      );
+    });
+
+    test('акцентные цвета унифицированы', () {
+      for (final calc in CalculatorRegistry.allCalculators) {
+        expect(calc.accentColor, equals(kCalculatorAccentColor));
+      }
     });
 
     test('register добавляет новый калькулятор динамически', () {
@@ -160,7 +193,8 @@ void main() {
       expect(
         stopwatch1.elapsedMilliseconds <= stopwatch2.elapsedMilliseconds,
         isTrue,
-        reason: 'Map поиск (${stopwatch1.elapsedMilliseconds}ms) должен быть '
+        reason:
+            'Map поиск (${stopwatch1.elapsedMilliseconds}ms) должен быть '
             'быстрее или равен линейному (${stopwatch2.elapsedMilliseconds}ms)',
       );
 
@@ -168,9 +202,12 @@ void main() {
       print('  Map O(1):      ${stopwatch1.elapsedMilliseconds}ms');
       print('  List O(n):     ${stopwatch2.elapsedMilliseconds}ms');
       if (stopwatch1.elapsedMilliseconds > 0) {
-        print('  Ускорение:     ${(stopwatch2.elapsedMilliseconds / stopwatch1.elapsedMilliseconds).toStringAsFixed(1)}x');
+        print(
+          '  Ускорение:     ${(stopwatch2.elapsedMilliseconds / stopwatch1.elapsedMilliseconds).toStringAsFixed(1)}x',
+        );
       }
     });
   });
 }
+
 // ignore_for_file: avoid_print

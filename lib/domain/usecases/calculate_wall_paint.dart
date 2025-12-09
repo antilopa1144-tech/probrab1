@@ -27,7 +27,8 @@ class CalculateWallPaint extends BaseCalculator {
     final layers = inputs['layers'] ?? 2;
 
     if (area <= 0) return 'Площадь должна быть больше нуля';
-    if (layers < 1 || layers > 5) return 'Количество слоёв должно быть от 1 до 5';
+    if (layers < 1 || layers > 5)
+      return 'Количество слоёв должно быть от 1 до 5';
 
     return null;
   }
@@ -39,29 +40,44 @@ class CalculateWallPaint extends BaseCalculator {
   ) {
     // Получаем валидированные входные данные
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 5);
-    final consumption = getInput(inputs, 'consumption', defaultValue: 0.12, minValue: 0.08, maxValue: 0.20);
+    final layers = getIntInput(
+      inputs,
+      'layers',
+      defaultValue: 2,
+      minValue: 1,
+      maxValue: 5,
+    );
+    final consumption = getInput(
+      inputs,
+      'consumption',
+      defaultValue: 0.15,
+      minValue: 0.08,
+      maxValue: 0.30,
+    );
     final windowsArea = getInput(inputs, 'windowsArea', minValue: 0.0);
     final doorsArea = getInput(inputs, 'doorsArea', minValue: 0.0);
 
     // Полезная площадь (за вычетом проёмов)
-    final usefulArea = calculateUsefulArea(area, windowsArea: windowsArea, doorsArea: doorsArea);
+    final usefulArea = calculateUsefulArea(
+      area,
+      windowsArea: windowsArea,
+      doorsArea: doorsArea,
+    );
 
     if (usefulArea <= 0) {
-      return createResult(
-        values: {
-          'error': 1.0,
-          'usefulArea': 0.0,
-        },
-      );
+      return createResult(values: {'error': 1.0, 'usefulArea': 0.0});
     }
 
-    // Расход краски по ГЭСН-2001 (табл. 15-01-027)
-    // Простая формула: площадь × слои × расход + 10% запас
-    final paintNeeded = usefulArea * layers * consumption * 1.10; // запас 10% по ГЭСН
+    // Расход краски: первый слой берёт на 20% больше, остальные слои базовый расход.
+    // Дополнительно учитываем технологический запас 8%.
+    final firstLayerConsumption = consumption * 1.2;
+    final additionalLayers = layers > 1 ? (layers - 1) * consumption : 0.0;
+    const reserveFactor = 1.08;
+    final paintNeeded =
+        usefulArea * (firstLayerConsumption + additionalLayers) * reserveFactor;
 
-    // Грунтовка: расход 0.10-0.12 л/м² по ГЭСН, один слой с запасом 5%
-    const primerConsumption = 0.11; // л/м² (среднее значение)
+    // Грунтовка: расход 0.12 л/м² по ГЭСН, один слой с запасом 5%
+    const primerConsumption = 0.12; // л/м² (среднее значение)
     final primerNeeded = usefulArea * primerConsumption * 1.05;
 
     // Малярный скотч: периметр проёмов + периметр комнаты
@@ -73,7 +89,11 @@ class CalculateWallPaint extends BaseCalculator {
     final brushesNeeded = ceilToInt(usefulArea / 40); // кисть на ~40 м²
 
     // Расчёт стоимости (без шпаклёвки - это отдельная операция)
-    final paintPrice = findPrice(priceList, ['paint_wall', 'paint', 'paint_water_disp']);
+    final paintPrice = findPrice(priceList, [
+      'paint_wall',
+      'paint',
+      'paint_water_disp',
+    ]);
     final primerPrice = findPrice(priceList, ['primer', 'primer_deep']);
     final tapePrice = findPrice(priceList, ['tape', 'masking_tape']);
 
@@ -97,4 +117,3 @@ class CalculateWallPaint extends BaseCalculator {
     );
   }
 }
-

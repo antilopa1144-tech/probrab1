@@ -36,6 +36,19 @@ void main() {
           isNotEmpty,
           reason: '${definition.id} returned empty results',
         );
+        for (final entry in result.values.entries) {
+          expect(
+            entry.value.isFinite,
+            isTrue,
+            reason:
+                '${definition.id} produced non-finite value for ${entry.key}',
+          );
+          expect(
+            entry.value >= 0,
+            isTrue,
+            reason: '${definition.id} produced negative value for ${entry.key}',
+          );
+        }
       } catch (e) {
         if (!e.toString().contains('Firebase') &&
             !e.toString().contains('CalculationException')) {

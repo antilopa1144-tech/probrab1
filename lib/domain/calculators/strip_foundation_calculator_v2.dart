@@ -4,17 +4,18 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
 import '../usecases/calculate_strip_foundation.dart';
 
 /// Калькулятор ленточного фундамента V2.
 final stripFoundationCalculatorV2 = CalculatorDefinitionV2(
   id: 'foundation_strip',
-  titleKey: 'calculator.strip_foundation.title',
-  descriptionKey: 'calculator.strip_foundation.description',
+  titleKey: calculatorTitleKey('foundation_strip'),
+  descriptionKey: calculatorDescriptionKey('foundation_strip'),
   category: CalculatorCategory.foundation,
   subCategory: 'strip',
   iconName: 'foundation',
-  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
+  accentColor: kCalculatorAccentColor,
   complexity: 2,
   popularity: 90,
   tags: ['фундамент', 'ленточный', 'бетон', 'арматура', 'foundation', 'strip'],
@@ -107,4 +108,3 @@ final stripFoundationCalculatorV2 = CalculatorDefinitionV2(
   // UseCase для расчёта
   useCase: CalculateStripFoundation(),
 );
-

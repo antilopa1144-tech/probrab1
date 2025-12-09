@@ -4,17 +4,18 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
 import '../usecases/calculate_slab.dart';
 
 /// Калькулятор монолитной плиты V2.
 final slabFoundationCalculatorV2 = CalculatorDefinitionV2(
   id: 'foundation_slab',
-  titleKey: 'calculator.slab.title',
-  descriptionKey: 'calculator.slab.description',
+  titleKey: calculatorTitleKey('foundation_slab'),
+  descriptionKey: calculatorDescriptionKey('foundation_slab'),
   category: CalculatorCategory.foundation,
   subCategory: 'slab',
   iconName: 'foundation',
-  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
+  accentColor: kCalculatorAccentColor,
   complexity: 3,
   popularity: 85,
   tags: ['фундамент', 'плита', 'монолит', 'бетон', 'foundation', 'slab'],
@@ -113,4 +114,3 @@ final slabFoundationCalculatorV2 = CalculatorDefinitionV2(
   // UseCase для расчёта
   useCase: CalculateSlab(),
 );
-

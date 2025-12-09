@@ -14,17 +14,17 @@ import 'package:probrab_ai/main.dart';
 
 void main() {
   setUp(() {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'onboarding_completed': true});
   });
 
   testWidgets('renders home screen', (WidgetTester tester) async {
     await tester.pumpWidget(const ProviderScope(child: ProbuilderApp()));
 
-    // Use pump() with a duration instead of pumpAndSettle() to avoid timeout
+    await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
-    // Проверяем что AppBar отображается
-    expect(find.byType(AppBar), findsOneWidget);
+    // Проверяем что отображается основной заголовок
+    expect(find.text('Probrab AI'), findsOneWidget);
     // Проверяем что есть поле поиска
     expect(find.byType(TextField), findsWidgets);
   });

@@ -4,17 +4,18 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
 import '../usecases/calculate_roofing_metal.dart';
 
 /// Калькулятор металлической кровли V2.
 final metalRoofingCalculatorV2 = CalculatorDefinitionV2(
   id: 'roofing_metal',
-  titleKey: 'calculator.metal_roofing.title',
-  descriptionKey: 'calculator.metal_roofing.description',
+  titleKey: calculatorTitleKey('roofing_metal'),
+  descriptionKey: calculatorDescriptionKey('roofing_metal'),
   category: CalculatorCategory.roofing,
   subCategory: 'metal',
   iconName: 'roof',
-  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
+  accentColor: kCalculatorAccentColor,
   complexity: 2,
   popularity: 85,
   tags: ['кровля', 'металл', 'профлист', 'roofing', 'metal'],
@@ -164,4 +165,3 @@ final metalRoofingCalculatorV2 = CalculatorDefinitionV2(
   // UseCase для расчёта
   useCase: CalculateRoofingMetal(),
 );
-

@@ -4,17 +4,18 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
 import '../usecases/calculate_screed.dart';
 
 /// Калькулятор стяжки V2.
 final screedCalculatorV2 = CalculatorDefinitionV2(
   id: 'floors_screed',
-  titleKey: 'calculator.screed',
-  descriptionKey: 'calculator.screed.description',
+  titleKey: calculatorTitleKey('floors_screed'),
+  descriptionKey: calculatorDescriptionKey('floors_screed'),
   category: CalculatorCategory.flooring,
   subCategory: 'Полы',
   iconName: 'construction',
-  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
+  accentColor: kCalculatorAccentColor,
   complexity: 2,
   popularity: 85,
   tags: ['стяжка', 'полы', 'бетон', 'цемент', 'screed', 'flooring'],
@@ -66,10 +67,7 @@ final screedCalculatorV2 = CalculatorDefinitionV2(
 
   // Подсказки перед расчётом
   beforeHints: [
-    CalculatorHint(
-      type: HintType.info,
-      messageKey: 'hint.screed.before.level',
-    ),
+    CalculatorHint(type: HintType.info, messageKey: 'hint.screed.before.level'),
     CalculatorHint(
       type: HintType.tip,
       messageKey: 'hint.screed.before.beacons',
@@ -105,4 +103,3 @@ final screedCalculatorV2 = CalculatorDefinitionV2(
   // UseCase для расчёта
   useCase: CalculateScreed(),
 );
-

@@ -4,17 +4,18 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
 import '../usecases/calculate_tile.dart';
 
 /// Калькулятор плитки V2.
 final tileCalculatorV2 = CalculatorDefinitionV2(
   id: 'floors_tile',
-  titleKey: 'calculator.tile',
-  descriptionKey: 'calculator.tile.description',
+  titleKey: calculatorTitleKey('floors_tile'),
+  descriptionKey: calculatorDescriptionKey('floors_tile'),
   category: CalculatorCategory.flooring,
   subCategory: 'Полы',
   iconName: 'grid_view',
-  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
+  accentColor: kCalculatorAccentColor,
   complexity: 2,
   popularity: 95,
   tags: ['плитка', 'полы', 'кафель', 'tile', 'flooring', 'ceramic'],
@@ -80,26 +81,14 @@ final tileCalculatorV2 = CalculatorDefinitionV2(
 
   // Подсказки перед расчётом
   beforeHints: [
-    CalculatorHint(
-      type: HintType.info,
-      messageKey: 'hint.tile.before.measure',
-    ),
-    CalculatorHint(
-      type: HintType.tip,
-      messageKey: 'hint.tile.before.level',
-    ),
-    CalculatorHint(
-      type: HintType.tip,
-      messageKey: 'hint.tile.before.crosses',
-    ),
+    CalculatorHint(type: HintType.info, messageKey: 'hint.tile.before.measure'),
+    CalculatorHint(type: HintType.tip, messageKey: 'hint.tile.before.level'),
+    CalculatorHint(type: HintType.tip, messageKey: 'hint.tile.before.crosses'),
   ],
 
   // Подсказки после расчёта
   afterHints: [
-    CalculatorHint(
-      type: HintType.tip,
-      messageKey: 'hint.tile.after.grout',
-    ),
+    CalculatorHint(type: HintType.tip, messageKey: 'hint.tile.after.grout'),
     CalculatorHint(
       type: HintType.important,
       messageKey: 'hint.tile.after.adhesive',
@@ -113,4 +102,3 @@ final tileCalculatorV2 = CalculatorDefinitionV2(
   // UseCase для расчёта
   useCase: CalculateTile(),
 );
-

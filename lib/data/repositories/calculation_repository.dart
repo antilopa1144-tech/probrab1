@@ -143,9 +143,9 @@ class CalculationRepository {
   void getMaterialPrice(String s) {}
 
   /// Закрыть базу данных (для тестирования)
-  Future<void> close() async {
+  Future<void> close({bool deleteFromDisk = false}) async {
     if (_isar != null) {
-      await _isar!.close(deleteFromDisk: false);
+      await _isar!.close(deleteFromDisk: deleteFromDisk);
       _isar = null;
     }
   }

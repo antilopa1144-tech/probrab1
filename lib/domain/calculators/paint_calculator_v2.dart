@@ -4,17 +4,18 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
 import '../usecases/calculate_wall_paint.dart';
 
 /// Пример определения калькулятора краски с использованием новой модели.
 final paintCalculatorV2 = CalculatorDefinitionV2(
   id: 'wall_paint',
-  titleKey: 'calculator.wall_paint.title',
-  descriptionKey: 'calculator.wall_paint.description',
+  titleKey: calculatorTitleKey('wall_paint'),
+  descriptionKey: calculatorDescriptionKey('wall_paint'),
   category: CalculatorCategory.wallFinishing,
   subCategory: 'paint',
   iconName: 'paint',
-  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
+  accentColor: kCalculatorAccentColor,
   complexity: 1,
   popularity: 100,
   tags: ['краска', 'стены', 'отделка', 'paint', 'walls'],

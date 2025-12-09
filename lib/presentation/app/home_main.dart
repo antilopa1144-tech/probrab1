@@ -360,7 +360,9 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
               if (area == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Категория ${card.title} временно недоступна'),
+                    content: Text(
+                      'Категория ${card.title} временно недоступна',
+                    ),
                   ),
                 );
                 return;
@@ -388,6 +390,14 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
     final loc = AppLocalizations.of(context);
     return Column(
       children: calculators.map((calc) {
+        final accentColor = calc.accentColor != null
+            ? Color(calc.accentColor!)
+            : theme.colorScheme.primary;
+        final categoryLabel =
+            '${loc.translate(calc.category.translationKey)} → ${loc.translate('subcategory.${calc.subCategory}')}';
+        final description = calc.descriptionKey != null
+            ? loc.translate(calc.descriptionKey!)
+            : null;
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
@@ -398,13 +408,10 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
             leading: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.15),
+                color: accentColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                Icons.calculate_outlined,
-                color: theme.colorScheme.primary,
-              ),
+              child: Icon(Icons.calculate_outlined, color: accentColor),
             ),
             title: Text(
               loc.translate(calc.titleKey),
@@ -412,9 +419,21 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            subtitle: Text(
-              '${loc.translate(calc.category.translationKey)} → ${loc.translate('subcategory.${calc.subCategory}')}',
-              style: theme.textTheme.bodySmall,
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(categoryLabel, style: theme.textTheme.bodySmall),
+                if (description != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      description,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             trailing: Icon(
               Icons.arrow_forward_ios,
@@ -672,9 +691,9 @@ class _ObjectCardData {
 
 extension _HomeMainScreenStateExtension on _HomeMainScreenState {
   List<_ObjectCardData> _buildAreaCards() {
-    final areas = WorkCatalog.areasFor(ObjectType.house).where(
-      (area) => area.id == 'interior' || area.id == 'exterior',
-    );
+    final areas = WorkCatalog.areasFor(
+      ObjectType.house,
+    ).where((area) => area.id == 'interior' || area.id == 'exterior');
     return areas
         .map(
           (area) => _ObjectCardData(
@@ -700,10 +719,12 @@ extension _HomeMainScreenStateExtension on _HomeMainScreenState {
     final q = query.toLowerCase().trim();
     return CalculatorRegistry.allCalculators.where((calc) {
       final translatedTitle = loc.translate(calc.titleKey).toLowerCase();
-      final translatedCategory =
-          loc.translate(calc.category.translationKey).toLowerCase();
-      final translatedSubCategory =
-          loc.translate('subcategory.${calc.subCategory}').toLowerCase();
+      final translatedCategory = loc
+          .translate(calc.category.translationKey)
+          .toLowerCase();
+      final translatedSubCategory = loc
+          .translate('subcategory.${calc.subCategory}')
+          .toLowerCase();
 
       return translatedTitle.contains(q) ||
           translatedCategory.contains(q) ||
@@ -712,10 +733,9 @@ extension _HomeMainScreenStateExtension on _HomeMainScreenState {
           calc.id.toLowerCase().contains(q) ||
           calc.tags.any((tag) => tag.toLowerCase().contains(q)) ||
           calc.subCategory.toLowerCase().contains(q);
-    }).toList()
-      ..sort((a, b) => loc.translate(a.titleKey).compareTo(
-            loc.translate(b.titleKey),
-          ));
+    }).toList()..sort(
+      (a, b) => loc.translate(a.titleKey).compareTo(loc.translate(b.titleKey)),
+    );
   }
 
   void _showFavoritesDialog(BuildContext context, WidgetRef ref) {

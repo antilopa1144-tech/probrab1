@@ -4,17 +4,18 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
 import '../usecases/calculate_soft_roofing.dart';
 
 /// Калькулятор мягкой кровли V2.
 final softRoofingCalculatorV2 = CalculatorDefinitionV2(
   id: 'roofing_soft',
-  titleKey: 'calculator.soft_roofing.title',
-  descriptionKey: 'calculator.soft_roofing.description',
+  titleKey: calculatorTitleKey('roofing_soft'),
+  descriptionKey: calculatorDescriptionKey('roofing_soft'),
   category: CalculatorCategory.roofing,
   subCategory: 'soft',
   iconName: 'roof',
-  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
+  accentColor: kCalculatorAccentColor,
   complexity: 2,
   popularity: 80,
   tags: ['кровля', 'мягкая', 'битум', 'рулонная', 'roofing', 'soft'],
@@ -140,4 +141,3 @@ final softRoofingCalculatorV2 = CalculatorDefinitionV2(
   // UseCase для расчёта
   useCase: CalculateSoftRoofing(),
 );
-

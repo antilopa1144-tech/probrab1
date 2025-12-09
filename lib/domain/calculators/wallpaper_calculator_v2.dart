@@ -4,17 +4,18 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
 import '../usecases/calculate_wallpaper.dart';
 
 /// Калькулятор обоев V2.
 final wallpaperCalculatorV2 = CalculatorDefinitionV2(
   id: 'walls_wallpaper',
-  titleKey: 'calculator.wallpaper',
-  descriptionKey: 'calculator.wallpaper.description',
+  titleKey: calculatorTitleKey('walls_wallpaper'),
+  descriptionKey: calculatorDescriptionKey('walls_wallpaper'),
   category: CalculatorCategory.wallFinishing,
   subCategory: 'Стены',
   iconName: 'wallpaper',
-  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
+  accentColor: kCalculatorAccentColor,
   complexity: 2,
   popularity: 100,
   tags: ['обои', 'стены', 'отделка', 'wallpaper', 'walls', 'decoration'],
@@ -141,10 +142,7 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
       type: HintType.important,
       messageKey: 'hint.wallpaper.after.level',
     ),
-    CalculatorHint(
-      type: HintType.tip,
-      messageKey: 'hint.wallpaper.after.glue',
-    ),
+    CalculatorHint(type: HintType.tip, messageKey: 'hint.wallpaper.after.glue'),
     CalculatorHint(
       type: HintType.tip,
       messageKey: 'hint.wallpaper.after.installation',
@@ -154,4 +152,3 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
   // UseCase для расчёта
   useCase: CalculateWallpaper(),
 );
-

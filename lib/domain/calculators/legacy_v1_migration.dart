@@ -3,6 +3,7 @@ import '../../core/enums/field_input_type.dart';
 import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
+import 'calculator_constants.dart';
 import 'definitions.dart' as legacy;
 
 /// Конвертация всех V1 калькуляторов в V2-формат.
@@ -46,12 +47,10 @@ CalculatorDefinitionV2 _convert(legacy.CalculatorDefinition legacyDef) {
     );
   }
 
-  final descriptionKey = _deriveDescriptionKey(legacyDef.titleKey);
-
   return CalculatorDefinitionV2(
     id: legacyDef.id,
-    titleKey: legacyDef.titleKey,
-    descriptionKey: descriptionKey,
+    titleKey: calculatorTitleKey(legacyDef.id),
+    descriptionKey: calculatorDescriptionKey(legacyDef.id),
     category: category,
     subCategory: subCategory,
     fields: fields,
@@ -59,18 +58,11 @@ CalculatorDefinitionV2 _convert(legacy.CalculatorDefinition legacyDef) {
     afterHints: const [],
     useCase: legacyDef.useCase,
     iconName: null,
-    accentColor: null,
+    accentColor: kCalculatorAccentColor,
     complexity: _inferComplexity(category, legacyDef.subCategory),
     popularity: 10,
     tags: _buildTags(legacyDef),
   );
-}
-
-String _deriveDescriptionKey(String titleKey) {
-  if (titleKey.endsWith('.title')) {
-    return titleKey.replaceFirst('.title', '.description');
-  }
-  return '$titleKey.description';
 }
 
 CalculatorCategory _mapCategory(String category, String subCategory) {
@@ -136,12 +128,14 @@ List<String> _buildTags(legacy.CalculatorDefinition legacyDef) {
 UnitType _mapUnit(legacy.InputFieldDefinition field) {
   final key = field.key.toLowerCase();
   final defaultValue = field.defaultValue;
-  final referenceValue =
-      defaultValue != 0 ? defaultValue : (field.maxValue ?? field.minValue ?? 0);
+  final referenceValue = defaultValue != 0
+      ? defaultValue
+      : (field.maxValue ?? field.minValue ?? 0);
 
   if (key.contains('area')) return UnitType.squareMeters;
   if (key.contains('volume')) return UnitType.cubicMeters;
-  if (key.contains('power')) return UnitType.kilograms; // ближайший доступный тип
+  if (key.contains('power'))
+    return UnitType.kilograms; // ближайший доступный тип
   if (key.contains('density') || key.contains('weight')) {
     return UnitType.kilograms;
   }

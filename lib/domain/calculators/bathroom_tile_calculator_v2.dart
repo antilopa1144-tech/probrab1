@@ -4,17 +4,18 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
 import '../usecases/calculate_bathroom_tile.dart';
 
 /// Калькулятор плитки для ванной V2.
 final bathroomTileCalculatorV2 = CalculatorDefinitionV2(
   id: 'bathroom_tile',
-  titleKey: 'calculator.bathroom_tile.title',
-  descriptionKey: 'calculator.bathroom_tile.description',
+  titleKey: calculatorTitleKey('bathroom_tile'),
+  descriptionKey: calculatorDescriptionKey('bathroom_tile'),
   category: CalculatorCategory.wallFinishing,
   subCategory: 'tile',
   iconName: 'bathtub',
-  accentColor: 0xFF2196F3, // Единый цвет для всех калькуляторов
+  accentColor: kCalculatorAccentColor,
   complexity: 2,
   popularity: 95,
   tags: ['плитка', 'ванная', 'кафель', 'tile', 'bathroom'],
@@ -150,4 +151,3 @@ final bathroomTileCalculatorV2 = CalculatorDefinitionV2(
   // UseCase для расчёта
   useCase: CalculateBathroomTile(),
 );
-
