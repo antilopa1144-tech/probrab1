@@ -1,6 +1,5 @@
-import 'package:probrab_ai/domain/calculators/definitions.dart';
-import 'package:probrab_ai/domain/calculators/modules/all_modules.dart'
-    as modules;
+import './definitions.dart';
+import './modules/all_modules.dart' as modules;
 
 /// Реестр с lazy loading калькуляторов по категориям.
 ///

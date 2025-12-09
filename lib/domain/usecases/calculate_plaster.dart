@@ -1,6 +1,7 @@
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
-import 'package:probrab_ai/domain/usecases/base_calculator.dart';
+// ignore_for_file: prefer_const_declarations
+import '../../data/models/price_item.dart';
+import './calculator_usecase.dart';
+import './base_calculator.dart';
 
 /// Калькулятор штукатурки.
 ///
@@ -64,9 +65,6 @@ class CalculatePlaster extends BaseCalculator {
 
     // Правило алюминиевое: 1-2 шт
     const rulesNeeded = 1;
-
-    // Инструменты: тёрка, шпатели, ведра
-    const toolSets = 1;
 
     // Вода для замешивания (информативно): ~0.6 л на кг для гипсовой, ~0.2 л для цементной
     final waterPerKg = type == 1 ? 0.6 : 0.2;

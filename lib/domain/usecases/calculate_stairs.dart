@@ -1,5 +1,6 @@
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+// ignore_for_file: prefer_const_declarations
+import '../../data/models/price_item.dart';
+import './calculator_usecase.dart';
 
 /// Калькулятор лестницы.
 ///
@@ -30,9 +31,6 @@ class CalculateStairs implements CalculatorUseCase {
     // Если количество ступеней не указано, рассчитываем
     if (stepCount == 0 && floorHeight > 0 && stepHeight > 0) {
       stepCount = (floorHeight / stepHeight).round();
-      // Корректируем высоту ступени для точного соответствия
-      final adjustedStepHeight = floorHeight / stepCount;
-      // Используем скорректированную высоту для дальнейших расчётов
     }
 
     // Длина марша лестницы

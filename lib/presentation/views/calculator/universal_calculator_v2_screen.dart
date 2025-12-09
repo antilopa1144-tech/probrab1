@@ -1104,3 +1104,4 @@ class _ProjectSelectionDialogState extends State<_ProjectSelectionDialog> {
     }
   }
 }
+// ignore_for_file: deprecated_member_use

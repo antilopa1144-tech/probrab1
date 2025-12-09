@@ -1,4 +1,4 @@
-import 'package:probrab_ai/data/repositories/price_repository.dart';
+import '../../data/repositories/price_repository.dart';
 
 /// Сервис для предзагрузки цен при старте приложения.
 ///

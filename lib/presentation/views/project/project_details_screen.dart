@@ -801,10 +801,6 @@ class _ProjectInfoCard extends StatelessWidget {
     );
   }
 
-  String _formatCurrency(double value) {
-    final format = NumberFormat('#,##0.00', 'ru_RU');
-    return '${format.format(value)} ₽';
-  }
 }
 
 /// Строка информации с иконкой.

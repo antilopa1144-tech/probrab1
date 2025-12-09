@@ -18,7 +18,7 @@ class MaterialPieChart extends StatelessWidget {
         child: Text(
           'Нет данных',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       );
@@ -164,7 +164,7 @@ class CostBarChart extends StatelessWidget {
         child: Text(
           'Нет данных',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       );

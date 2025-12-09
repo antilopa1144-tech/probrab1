@@ -7,7 +7,7 @@ import 'package:probrab_ai/data/models/price_item.dart';
 class MockPriceDataSource extends LocalPriceDataSource {
   int _callCount = 0;
   final List<PriceItem> _mockPrices = [
-    PriceItem(sku: 'test_item', name: 'Test Item', price: 100.0, unit: 'шт', imageUrl: ''),
+    const PriceItem(sku: 'test_item', name: 'Test Item', price: 100.0, unit: 'шт', imageUrl: ''),
   ];
 
   int get callCount => _callCount;

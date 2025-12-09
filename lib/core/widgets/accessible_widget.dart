@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 
 /// Расширение для улучшения доступности виджетов.
 extension AccessibleWidget on Widget {
@@ -59,10 +58,10 @@ extension AccessibleWidget on Widget {
     return Theme(
       data: theme.copyWith(
         colorScheme: theme.colorScheme.copyWith(
-          primary: theme.colorScheme.primary.withOpacity(1.0),
-          onPrimary: theme.colorScheme.onPrimary.withOpacity(1.0),
+          primary: theme.colorScheme.primary.withValues(alpha: 1.0),
+          onPrimary: theme.colorScheme.onPrimary.withValues(alpha: 1.0),
           surface: theme.colorScheme.surface,
-          onSurface: theme.colorScheme.onSurface.withOpacity(1.0),
+          onSurface: theme.colorScheme.onSurface.withValues(alpha: 1.0),
         ),
       ),
       child: this,

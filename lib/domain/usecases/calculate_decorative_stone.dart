@@ -1,6 +1,7 @@
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
-import 'package:probrab_ai/domain/usecases/base_calculator.dart';
+// ignore_for_file: prefer_const_declarations
+import '../../data/models/price_item.dart';
+import './calculator_usecase.dart';
+import './base_calculator.dart';
 
 /// Калькулятор декоративного камня.
 ///
@@ -32,7 +33,6 @@ class CalculateDecorativeStone extends BaseCalculator {
     final area = getInput(inputs, 'area', minValue: 0.1);
     final stoneWidth = getInput(inputs, 'stoneWidth', defaultValue: 20.0, minValue: 5.0, maxValue: 50.0);
     final stoneHeight = getInput(inputs, 'stoneHeight', defaultValue: 5.0, minValue: 2.0, maxValue: 30.0);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 2.0, minValue: 1.0, maxValue: 5.0);
 
     // Площадь одного камня в м²
     final stoneArea = calculateTileArea(stoneWidth, stoneHeight);
@@ -57,10 +57,6 @@ class CalculateDecorativeStone extends BaseCalculator {
 
     // Угловые элементы: по факту (опционально)
     final cornerElements = getIntInput(inputs, 'corners', defaultValue: 0, minValue: 0, maxValue: 100);
-
-    // Профили для обрамления: периметр (опционально)
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
-    final profileLength = getInput(inputs, 'profile', defaultValue: 0.0);
 
     // Расчёт стоимости
     final stonePrice = findPrice(priceList, [

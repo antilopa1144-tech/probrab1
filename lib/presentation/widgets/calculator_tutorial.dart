@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/services/haptic_feedback_service.dart';
 
@@ -141,7 +140,7 @@ class _TutorialOverlay extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Material(
-      color: Colors.black.withOpacity(0.7),
+      color: Colors.black.withValues(alpha: 0.7),
       child: SafeArea(
         child: Column(
           children: [
@@ -171,7 +170,7 @@ class _TutorialOverlay extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -191,7 +190,7 @@ class _TutorialOverlay extends StatelessWidget {
                   Text(
                     step.description,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -210,9 +209,8 @@ class _TutorialOverlay extends StatelessWidget {
                               shape: BoxShape.circle,
                               color: index == currentStep
                                   ? theme.colorScheme.primary
-                                  : theme.colorScheme.onSurface.withOpacity(
-                                      0.3,
-                                    ),
+                                  : theme.colorScheme.onSurface
+                                      .withValues(alpha: 0.3),
                             ),
                           ),
                         ),

@@ -1,5 +1,6 @@
+// ignore_for_file: prefer_const_declarations
 
-import 'package:probrab_ai/data/models/price_item.dart';
+import '../../data/models/price_item.dart';
 
 
 /// Единый результат расчёта.

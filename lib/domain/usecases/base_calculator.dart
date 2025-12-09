@@ -1,6 +1,7 @@
+// ignore_for_file: prefer_const_declarations
 import 'dart:math';
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+import '../../data/models/price_item.dart';
+import './calculator_usecase.dart';
 import '../../core/exceptions/calculation_exception.dart';
 
 /// Базовый класс для всех калькуляторов с общими утилитами.

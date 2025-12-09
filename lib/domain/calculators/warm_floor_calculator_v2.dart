@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_const_constructors
 import '../../core/enums/calculator_category.dart';
 import '../../core/enums/unit_type.dart';
 import '../../core/enums/field_input_type.dart';

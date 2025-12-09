@@ -1,6 +1,7 @@
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
-import 'package:probrab_ai/domain/usecases/base_calculator.dart';
+// ignore_for_file: prefer_const_declarations
+import '../../data/models/price_item.dart';
+import './calculator_usecase.dart';
+import './base_calculator.dart';
 
 /// Калькулятор подвесного потолка из ГКЛ.
 ///
@@ -33,8 +34,6 @@ class CalculateGklCeiling extends BaseCalculator {
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
     final layers = getIntInput(inputs, 'layers', defaultValue: 1, minValue: 1, maxValue: 2);
-    final ceilingHeight = getInput(inputs, 'ceilingHeight', defaultValue: 2.5, minValue: 2.0, maxValue: 4.0);
-    final dropHeight = getInput(inputs, 'dropHeight', defaultValue: 0.1, minValue: 0.05, maxValue: 0.5);
 
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
@@ -61,8 +60,6 @@ class CalculateGklCeiling extends BaseCalculator {
     // Саморезы:
     // - Для ГКЛ к профилю: ~25 шт/лист
     // - Для профиля между собой: ~8 шт/м.п.
-    final gklScrewsNeeded = sheetsNeeded * 25;
-    final profileScrewsNeeded = ceilToInt((guideLength + ceilingProfileLength) * 8);
     final screwsNeeded = sheetsNeeded * 30;
 
     // Дюбели для крепления профиля: ~3 шт/м.п.

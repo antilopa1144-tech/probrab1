@@ -1,5 +1,6 @@
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
+// ignore_for_file: prefer_const_declarations
+import '../../data/models/price_item.dart';
+import './calculator_usecase.dart';
 
 /// Калькулятор забора.
 ///
@@ -80,10 +81,6 @@ class CalculateFence implements CalculatorUseCase {
       // Ленточный фундамент: ширина 0.3 м, глубина 0.5 м
       foundationVolume = length * 0.3 * 0.5;
     }
-
-    // Ворота и калитки
-    final gateArea = gates * 4.0; // стандартная ширина ворот 4 м, высота = height
-    final wicketArea = wickets * 1.0; // стандартная ширина калитки 1 м
 
     // Саморезы/гвозди/крепеж
     final fastenersNeeded = materialType == 1

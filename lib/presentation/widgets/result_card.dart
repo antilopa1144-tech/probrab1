@@ -39,7 +39,7 @@ class ResultCard extends StatelessWidget {
                 size: isPrimary ? 32 : 24,
                 color: isPrimary
                     ? colorScheme.onPrimaryContainer
-                    : colorScheme.onSurface.withOpacity(0.6),
+                    : colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               SizedBox(width: isPrimary ? 16 : 12),
             ],
@@ -55,7 +55,7 @@ class ResultCard extends StatelessWidget {
                         ?.copyWith(
                       color: isPrimary
                           ? colorScheme.onPrimaryContainer
-                          : colorScheme.onSurface.withOpacity(0.7),
+                          : colorScheme.onSurface.withValues(alpha: 0.7),
                       fontWeight: isPrimary ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
@@ -84,8 +84,9 @@ class ResultCard extends StatelessWidget {
                                 : theme.textTheme.titleMedium)
                             ?.copyWith(
                           color: isPrimary
-                              ? colorScheme.onPrimaryContainer.withOpacity(0.8)
-                              : colorScheme.onSurface.withOpacity(0.6),
+                              ? colorScheme.onPrimaryContainer
+                                  .withValues(alpha: 0.8)
+                              : colorScheme.onSurface.withValues(alpha: 0.6),
                           fontWeight: FontWeight.w500,
                         ),
                       ),

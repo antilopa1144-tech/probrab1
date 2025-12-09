@@ -152,9 +152,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 child: TextButton(
                   onPressed: _skip,
                   child: Text(
-                    loc.translate('onboarding.skip') ?? 'Пропустить',
+                    loc.translate('onboarding.skip'),
                     style: TextStyle(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -202,8 +202,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   ),
                   child: Text(
                     _currentPage == _pages.length - 1
-                        ? loc.translate('onboarding.start') ?? 'Начать'
-                        : loc.translate('onboarding.next') ?? 'Далее',
+                        ? loc.translate('onboarding.start')
+                        : loc.translate('onboarding.next'),
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
@@ -245,7 +245,7 @@ class _OnboardingPageContent extends StatelessWidget {
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: page.color.withOpacity(0.1),
+                    color: page.color.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(page.icon, size: 64, color: page.color),
@@ -271,7 +271,7 @@ class _OnboardingPageContent extends StatelessWidget {
           Text(
             page.description,
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               height: 1.5,
             ),
             textAlign: TextAlign.center,
@@ -319,7 +319,7 @@ class _IndicatorDot extends StatelessWidget {
       decoration: BoxDecoration(
         color: isActive
             ? theme.colorScheme.primary
-            : theme.colorScheme.onSurface.withOpacity(0.2),
+            : theme.colorScheme.onSurface.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(4),
       ),
     );

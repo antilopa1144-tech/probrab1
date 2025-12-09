@@ -117,13 +117,6 @@ void main() {
     });
 
     test('register добавляет новый калькулятор динамически', () {
-      final initialCount = CalculatorRegistry.count;
-
-      // Создаём тестовый калькулятор (используем первый из списка как шаблон)
-      final template = CalculatorRegistry.allCalculators.first;
-
-      // Note: Нельзя создать копию из-за const конструктора,
-      // но можем проверить что метод существует
       expect(() => CalculatorRegistry.register, returnsNormally);
 
       // Восстанавливаем состояние
@@ -180,3 +173,4 @@ void main() {
     });
   });
 }
+// ignore_for_file: avoid_print

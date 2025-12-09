@@ -40,7 +40,7 @@ class ExpertRecommendationsDatabase {
 
   static List<ExpertRecommendation> _getAllRecommendations() {
     return [
-      ExpertRecommendation(
+      const ExpertRecommendation(
         workType: 'покраска',
         title: 'Покраска стен и потолков',
         description: 'Профессиональные советы по покраске',
@@ -59,7 +59,7 @@ class ExpertRecommendationsDatabase {
         tools: const ['Валик', 'Кисти', 'Кювета', 'Малярный скотч', 'Плёнка'],
         materials: const ['Краска', 'Грунтовка', 'Шпаклёвка'],
       ),
-      ExpertRecommendation(
+      const ExpertRecommendation(
         workType: 'плитка',
         title: 'Укладка плитки',
         description: 'Секреты качественной укладки плитки',
@@ -78,7 +78,7 @@ class ExpertRecommendationsDatabase {
         tools: const ['Зубчатый шпатель', 'Уровень', 'Крестики', 'Плиткорез'],
         materials: const ['Плитка', 'Клей', 'Затирка'],
       ),
-      ExpertRecommendation(
+      const ExpertRecommendation(
         workType: 'стяжка',
         title: 'Заливка стяжки',
         description: 'Правильная заливка стяжки пола',
@@ -97,7 +97,7 @@ class ExpertRecommendationsDatabase {
         tools: const ['Маяки', 'Правило', 'Уровень', 'Игольчатый валик'],
         materials: const ['Цемент', 'Песок', 'Вода'],
       ),
-      ExpertRecommendation(
+      const ExpertRecommendation(
         workType: 'обои',
         title: 'Поклейка обоев',
         description: 'Как правильно клеить обои',
@@ -120,3 +120,4 @@ class ExpertRecommendationsDatabase {
   }
 }
 
+// ignore_for_file: unnecessary_const

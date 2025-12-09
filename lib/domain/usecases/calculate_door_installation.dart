@@ -1,6 +1,7 @@
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
-import 'package:probrab_ai/domain/usecases/base_calculator.dart';
+// ignore_for_file: prefer_const_declarations
+import '../../data/models/price_item.dart';
+import './calculator_usecase.dart';
+import './base_calculator.dart';
 
 /// Калькулятор установки дверей.
 ///
@@ -81,7 +82,6 @@ class CalculateDoorInstallation extends BaseCalculator {
         : findPrice(priceList, ['door_entrance', 'door_exterior', 'entrance_door']);
     final foamPrice = findPrice(priceList, ['foam_mounting', 'foam', 'polyurethane_foam']);
     final architravePrice = findPrice(priceList, ['architrave', 'door_architrave', 'trim']);
-    final framePrice = findPrice(priceList, ['door_frame', 'frame', 'door_jamb']);
     final hingePrice = findPrice(priceList, ['hinge', 'door_hinge']);
     final lockPrice = findPrice(priceList, ['lock', 'door_lock', 'door_handle']);
     final closerPrice = findPrice(priceList, ['closer', 'door_closer']);

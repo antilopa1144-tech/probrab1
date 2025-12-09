@@ -1,6 +1,7 @@
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
-import 'package:probrab_ai/domain/usecases/base_calculator.dart';
+// ignore_for_file: prefer_const_declarations
+import '../../data/models/price_item.dart';
+import './calculator_usecase.dart';
+import './base_calculator.dart';
 
 /// Калькулятор плитки для ванной комнаты.
 ///
@@ -73,9 +74,6 @@ class CalculateBathroomTile extends BaseCalculator {
     // Гидроизоляция: пол полностью + 30 см на стены
     final perimeter = inputs['perimeter'] ?? (floorArea > 0 ? estimatePerimeter(floorArea) : 0);
     final waterproofingArea = floorArea + (perimeter * 0.3);
-
-    // Угловые профили (для внешних углов): по факту
-    final cornerProfileLength = getInput(inputs, 'corners', defaultValue: 0.0);
 
     // Герметик (силиконовый): для швов в мокрых зонах
     final sealantTubes = ceilToInt(perimeter / 12); // 1 туба на ~12 м.п.

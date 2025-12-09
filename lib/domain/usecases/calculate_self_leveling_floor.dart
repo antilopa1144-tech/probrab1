@@ -1,6 +1,7 @@
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
-import 'package:probrab_ai/domain/usecases/base_calculator.dart';
+// ignore_for_file: prefer_const_declarations
+import '../../data/models/price_item.dart';
+import './calculator_usecase.dart';
+import './base_calculator.dart';
 
 /// Калькулятор наливного пола.
 ///
@@ -50,9 +51,6 @@ class CalculateSelfLevelingFloor extends BaseCalculator {
 
     // Краскоступы (для хождения по свежему полу): 1 пара
     const shoesNeeded = 1;
-
-    // Миксер для замешивания (если нет)
-    const mixerNeeded = 1;
 
     // Расход воды (информативно): ~0.15-0.2 л на кг смеси
     final waterNeeded = mixNeeded * 0.175; // л

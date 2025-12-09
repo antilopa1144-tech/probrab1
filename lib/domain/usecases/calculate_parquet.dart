@@ -1,6 +1,7 @@
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
-import 'package:probrab_ai/domain/usecases/base_calculator.dart';
+// ignore_for_file: prefer_const_declarations
+import '../../data/models/price_item.dart';
+import './calculator_usecase.dart';
+import './base_calculator.dart';
 
 /// Калькулятор паркета / массива.
 ///
@@ -34,7 +35,6 @@ class CalculateParquet extends BaseCalculator {
     final area = getInput(inputs, 'area', minValue: 0.1);
     final plankWidth = getInput(inputs, 'plankWidth', defaultValue: 7.0, minValue: 5.0, maxValue: 20.0);
     final plankLength = getInput(inputs, 'plankLength', defaultValue: 40.0, minValue: 20.0, maxValue: 100.0);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 15.0, minValue: 10.0, maxValue: 22.0);
     
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 

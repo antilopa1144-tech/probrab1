@@ -219,8 +219,6 @@ class _RecommendationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     if (option == null) return const SizedBox.shrink();
 
-    final totalCost = option!.calculateTotalCost(quantity);
-
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),

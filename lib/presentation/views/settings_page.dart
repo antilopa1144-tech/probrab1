@@ -96,7 +96,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     Row(
                       children: availableColors.map((color) {
                         final isSelected = currentColor == color;
-                        final colorName = color.value == 0xFFFFC107 
+                        final colorName = color.toARGB32() == 0xFFFFC107 
                             ? 'Жёлтая' 
                             : 'Голубая';
                         return Expanded(

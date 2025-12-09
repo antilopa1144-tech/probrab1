@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/number_parser.dart';
 import '../../../domain/calculators/definitions.dart';
@@ -46,7 +45,6 @@ class _UniversalCalculatorScreenState
     extends ConsumerState<UniversalCalculatorScreen> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
-  final Map<String, FocusNode> _focusNodes = {};
   CalculatorResult? _result;
   Map<String, double>? _inputs;
   bool _isCalculating = false;
@@ -59,7 +57,6 @@ class _UniversalCalculatorScreenState
       _controllers[field.key] = TextEditingController(
         text: field.defaultValue != 0 ? field.defaultValue.toString() : '',
       );
-      _focusNodes[field.key] = FocusNode();
     }
   }
 
@@ -68,14 +65,8 @@ class _UniversalCalculatorScreenState
     for (final controller in _controllers.values) {
       controller.dispose();
     }
-    for (final node in _focusNodes.values) {
-      node.dispose();
-    }
     super.dispose();
   }
-
-  List<String> get _orderedFieldKeys =>
-      widget.definition.fields.map((f) => f.key).toList();
 
   double _extractValue(InputFieldDefinition field) {
     final rawValue = _controllers[field.key]?.text;

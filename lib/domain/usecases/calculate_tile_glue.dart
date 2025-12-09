@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_const_declarations
 import '../../data/models/price_item.dart';
 import 'calculator_usecase.dart';
 import 'base_calculator.dart';

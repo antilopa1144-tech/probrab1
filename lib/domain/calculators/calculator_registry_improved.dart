@@ -1,5 +1,5 @@
-import 'package:probrab_ai/domain/calculators/definitions.dart';
-import 'package:probrab_ai/domain/models/calculator_definition_v2.dart';
+import './definitions.dart';
+import '../models/calculator_definition_v2.dart';
 import 'calculator_registry.dart' as v2;
 
 /// Улучшенный реестр калькуляторов, объединяющий V1 и V2.

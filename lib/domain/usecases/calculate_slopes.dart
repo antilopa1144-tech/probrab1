@@ -1,6 +1,7 @@
-import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
-import 'package:probrab_ai/domain/usecases/base_calculator.dart';
+// ignore_for_file: prefer_const_declarations
+import '../../data/models/price_item.dart';
+import './calculator_usecase.dart';
+import './base_calculator.dart';
 
 /// Калькулятор откосов.
 ///
@@ -91,9 +92,6 @@ class CalculateSlopes extends BaseCalculator {
 
     // Монтажная пена: ~0.5 баллона на окно для откосов
     final foamNeeded = windows * 0.5;
-
-    // Саморезы/клей: комплект на окно
-    final fixingSets = windows;
 
     // Расчёт стоимости
     final plasterPrice = findPrice(priceList, ['plaster', 'plaster_gypsum']);

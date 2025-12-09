@@ -30,14 +30,14 @@ List<PriceItem> createEmptyPriceList() {
 /// Создать стандартный тестовый прайс-лист с общими материалами
 List<PriceItem> createStandardTestPriceList() {
   return [
-    PriceItem(sku: 'cement_m400', name: 'Цемент М400', price: 300.0, unit: 'мешок', imageUrl: ''),
-    PriceItem(sku: 'sand', name: 'Песок', price: 500.0, unit: 'м³', imageUrl: ''),
-    PriceItem(sku: 'plaster', name: 'Штукатурка', price: 250.0, unit: 'кг', imageUrl: ''),
-    PriceItem(sku: 'paint', name: 'Краска', price: 400.0, unit: 'кг', imageUrl: ''),
-    PriceItem(sku: 'tile', name: 'Плитка', price: 800.0, unit: 'м²', imageUrl: ''),
-    PriceItem(sku: 'laminate', name: 'Ламинат', price: 600.0, unit: 'упаковка', imageUrl: ''),
-    PriceItem(sku: 'wallpaper', name: 'Обои', price: 500.0, unit: 'рулон', imageUrl: ''),
-    PriceItem(sku: 'primer', name: 'Грунтовка', price: 200.0, unit: 'л', imageUrl: ''),
+    const PriceItem(sku: 'cement_m400', name: 'Цемент М400', price: 300.0, unit: 'мешок', imageUrl: ''),
+    const PriceItem(sku: 'sand', name: 'Песок', price: 500.0, unit: 'м³', imageUrl: ''),
+    const PriceItem(sku: 'plaster', name: 'Штукатурка', price: 250.0, unit: 'кг', imageUrl: ''),
+    const PriceItem(sku: 'paint', name: 'Краска', price: 400.0, unit: 'кг', imageUrl: ''),
+    const PriceItem(sku: 'tile', name: 'Плитка', price: 800.0, unit: 'м²', imageUrl: ''),
+    const PriceItem(sku: 'laminate', name: 'Ламинат', price: 600.0, unit: 'упаковка', imageUrl: ''),
+    const PriceItem(sku: 'wallpaper', name: 'Обои', price: 500.0, unit: 'рулон', imageUrl: ''),
+    const PriceItem(sku: 'primer', name: 'Грунтовка', price: 200.0, unit: 'л', imageUrl: ''),
   ];
 }
 
