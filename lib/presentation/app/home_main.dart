@@ -31,25 +31,6 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
-  static final List<_ObjectCardData> _objectCards = [
-    const _ObjectCardData(
-      areaId: 'interior',
-      icon: Icons.home_repair_service_rounded,
-      title: 'Внутренняя отделка',
-      subtitle: 'Стены, потолки, полы, перегородки',
-      tags: ['внутренняя отделка', 'стены', 'полы', 'потолки', 'интерьер'],
-      accentColor: Color(0xFF80DEEA),
-    ),
-    const _ObjectCardData(
-      areaId: 'exterior',
-      icon: Icons.house_siding_rounded,
-      title: 'Наружная отделка',
-      subtitle: 'Фасад, кровля, окна и двери',
-      tags: ['наружная отделка', 'фасад', 'кровля', 'окна', 'двери', 'street'],
-      accentColor: Color(0xFFFFCC80),
-    ),
-  ];
-
   @override
   void dispose() {
     _searchController.dispose();
@@ -58,7 +39,8 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredCards = _objectCards
+    final areaCards = _buildAreaCards();
+    final filteredCards = areaCards
         .where((card) => card.matches(_searchQuery))
         .toList(growable: false);
 
@@ -700,6 +682,26 @@ class _ObjectCardData {
 }
 
 extension _HomeMainScreenStateExtension on _HomeMainScreenState {
+  List<_ObjectCardData> _buildAreaCards() {
+    final areas = WorkCatalog.areasFor(ObjectType.house);
+    return areas
+        .map(
+          (area) => _ObjectCardData(
+            areaId: area.id,
+            icon: area.icon,
+            title: area.title,
+            subtitle: area.subtitle,
+            tags: [
+              area.title,
+              area.subtitle,
+              ...area.sections.map((s) => s.title),
+            ],
+            accentColor: area.color,
+          ),
+        )
+        .toList(growable: false);
+  }
+
   void _showFavoritesDialog(BuildContext context, WidgetRef ref) {
     final favorites = ref.watch(favoritesProvider);
     if (favorites.isEmpty) {
