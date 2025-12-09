@@ -195,8 +195,8 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
               // Если поиск пустой или не нашел калькуляторы, показываем объекты
               if (_searchQuery.isEmpty || filteredCalculators.isEmpty) ...[
                 const _SectionHeader(
-                  title: 'Выберите объект',
-                  subtitle: 'Подготовим нужные инструменты и калькуляторы',
+                  title: 'Категории работ',
+                  subtitle: 'Внутренняя и наружная отделка',
                 ),
                 const SizedBox(height: 12),
                 _buildObjectGrid(context, filteredCards),
@@ -683,7 +683,9 @@ class _ObjectCardData {
 
 extension _HomeMainScreenStateExtension on _HomeMainScreenState {
   List<_ObjectCardData> _buildAreaCards() {
-    final areas = WorkCatalog.areasFor(ObjectType.house);
+    final areas = WorkCatalog.areasFor(ObjectType.house).where(
+      (area) => area.id == 'interior' || area.id == 'exterior',
+    );
     return areas
         .map(
           (area) => _ObjectCardData(
