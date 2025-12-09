@@ -48,18 +48,7 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
     // Все калькуляторы мигрированы в реестр V2
     final loc = AppLocalizations.of(context);
     final filteredCalculators = _searchQuery.isNotEmpty
-        ? CalculatorRegistry.allCalculators.where((calc) {
-            final query = _searchQuery.toLowerCase();
-            // Переводим titleKey для поиска
-            final translatedTitle = loc.translate(calc.titleKey).toLowerCase();
-            final category = calc.category.name.toLowerCase();
-            final subCategory = calc.subCategory.toLowerCase();
-            return translatedTitle.contains(query) ||
-                category.contains(query) ||
-                subCategory.contains(query) ||
-                calc.titleKey.toLowerCase().contains(query) ||
-                calc.tags.any((tag) => tag.toLowerCase().contains(query));
-          }).toList()
+        ? _searchCalculators(loc, _searchQuery)
         : <CalculatorDefinitionV2>[];
 
     final historyAsync = ref.watch(calculationsProvider);
@@ -398,7 +387,7 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
     final theme = Theme.of(context);
     final loc = AppLocalizations.of(context);
     return Column(
-      children: calculators.take(20).map((calc) {
+      children: calculators.map((calc) {
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
@@ -702,6 +691,31 @@ extension _HomeMainScreenStateExtension on _HomeMainScreenState {
           ),
         )
         .toList(growable: false);
+  }
+
+  List<CalculatorDefinitionV2> _searchCalculators(
+    AppLocalizations loc,
+    String query,
+  ) {
+    final q = query.toLowerCase().trim();
+    return CalculatorRegistry.allCalculators.where((calc) {
+      final translatedTitle = loc.translate(calc.titleKey).toLowerCase();
+      final translatedCategory =
+          loc.translate(calc.category.translationKey).toLowerCase();
+      final translatedSubCategory =
+          loc.translate('subcategory.${calc.subCategory}').toLowerCase();
+
+      return translatedTitle.contains(q) ||
+          translatedCategory.contains(q) ||
+          translatedSubCategory.contains(q) ||
+          calc.titleKey.toLowerCase().contains(q) ||
+          calc.id.toLowerCase().contains(q) ||
+          calc.tags.any((tag) => tag.toLowerCase().contains(q)) ||
+          calc.subCategory.toLowerCase().contains(q);
+    }).toList()
+      ..sort((a, b) => loc.translate(a.titleKey).compareTo(
+            loc.translate(b.titleKey),
+          ));
   }
 
   void _showFavoritesDialog(BuildContext context, WidgetRef ref) {
