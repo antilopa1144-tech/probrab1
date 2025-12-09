@@ -83,6 +83,14 @@ class CalculatorRegistry {
     bathroomTileCalculatorV2,
   ];
 
+  /// Наследуемые V1-идентификаторы, которые не используем в UI, чтобы избежать дублей.
+  static const Set<String> _legacySkipIds = {
+    'walls_paint',
+    'basement',
+    'blind_area',
+    'calculator.stripTitle',
+  };
+
   /// Алиасы для совместимости с V1 ID.
   static const Map<String, String> _idAliases = {
     // Старый ID -> современный ID
@@ -95,9 +103,7 @@ class CalculatorRegistry {
       _buildAllCalculators();
 
   /// Кэш для быстрого поиска по ID (O(1) вместо O(n))
-  static final Map<String, CalculatorDefinitionV2> _idCache = {
-    for (var calc in allCalculators) calc.id: calc,
-  };
+  static final Map<String, CalculatorDefinitionV2> _idCache = _buildIdCache();
 
   /// Кэш для популярных калькуляторов
   static List<CalculatorDefinitionV2>? _popularCache;
@@ -171,10 +177,8 @@ class CalculatorRegistry {
     _popularCache = null;
     _categoryCache.clear();
 
-    // Пересоздаём кэш ID
-    for (final calc in allCalculators) {
-      _idCache[calc.id] = calc;
-    }
+    // Пересоздаём кэш ID c учётом алиасов
+    _idCache.addAll(_buildIdCache());
   }
 
   /// Добавить калькулятор динамически (для плагинов/расширений)
@@ -193,7 +197,11 @@ class CalculatorRegistry {
   static List<CalculatorDefinitionV2> _buildAllCalculators() {
     final overrides = {for (final calc in _seedCalculators) calc.id: calc};
     final migrated = buildMigratedCalculators(
-      skipIds: overrides.keys.toSet(),
+      skipIds: {
+        ...overrides.keys.toSet(),
+        ..._legacySkipIds,
+        ..._idAliases.keys, // не добавляем алиасы как отдельные калькуляторы
+      },
       overrides: overrides,
     );
 
@@ -206,18 +214,28 @@ class CalculatorRegistry {
     for (final entry in _idAliases.entries) {
       final canonicalId = entry.value;
       final aliasId = entry.key;
+      // Алиасы обрабатываются в _buildIdCache, чтобы не засорять список калькуляторов.
       if (ids.contains(aliasId)) continue;
       final base = overrides[canonicalId];
       if (base == null) continue;
-      all.add(
-        base.copyWith(
-          id: aliasId,
-          tags: {...base.tags, aliasId}.toList(),
-        ),
-      );
       ids.add(aliasId);
     }
 
     return all;
+  }
+
+  /// Строим кэш с учётом алиасов (для обратной совместимости без дублей в списках).
+  static Map<String, CalculatorDefinitionV2> _buildIdCache() {
+    final map = {for (var calc in allCalculators) calc.id: calc};
+    for (final alias in _idAliases.entries) {
+      final base = map[alias.value];
+      if (base != null && !map.containsKey(alias.key)) {
+        map[alias.key] = base.copyWith(
+          id: alias.key,
+          tags: {...base.tags, alias.key}.toList(),
+        );
+      }
+    }
+    return map;
   }
 }

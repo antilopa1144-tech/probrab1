@@ -109,7 +109,7 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'walls_paint',
             title: 'Покраска',
             icon: Icons.format_paint,
-            calculatorId: 'walls_paint',
+            calculatorId: 'wall_paint',
             tips: [
               'Рекомендуется купить грунтовку для улучшения сцепления.',
               'Используйте малярный скотч для защиты углов и плинтуса.',
@@ -513,32 +513,6 @@ const List<WorkAreaDefinition> _houseAreas = [
             ],
           ),
           WorkItemDefinition(
-            id: 'blind_area',
-            title: 'Отмостка',
-            icon: Icons.landscape,
-            calculatorId: 'blind_area',
-            tips: [
-              'Ширина отмостки должна быть не менее 1 метра.',
-              'Отмостка должна иметь уклон 2-3% от стены.',
-              'Бетонная отмостка требует деформационных швов.',
-              'Утепление особенно важно для домов с цокольным этажом.',
-              'Песчаная подушка должна быть утрамбована.',
-            ],
-          ),
-          WorkItemDefinition(
-            id: 'basement',
-            title: 'Подвал / Погреб',
-            icon: Icons.storage,
-            calculatorId: 'basement',
-            tips: [
-              'Гидроизоляция обязательна для подвалов и погребов.',
-              'Вентиляция необходима для предотвращения сырости.',
-              'Утепление стен снижает теплопотери.',
-              'Бетонные стены требуют армирования.',
-              'Пол должен иметь уклон к дренажному отверстию.',
-            ],
-          ),
-          WorkItemDefinition(
             id: 'terrace',
             title: 'Терраса / Веранда',
             icon: Icons.deck,
@@ -587,6 +561,37 @@ const List<WorkAreaDefinition> _houseAreas = [
     icon: Icons.landscape_rounded,
     color: Color(0xFFA5D6A7),
     sections: [
+      WorkSectionDefinition(
+        id: 'foundation',
+        title: 'Фундамент',
+        icon: Icons.foundation,
+        items: [
+          WorkItemDefinition(
+            id: 'foundation_strip',
+            title: 'Ленточный фундамент',
+            icon: Icons.account_tree,
+            calculatorId: 'foundation_strip',
+          ),
+          WorkItemDefinition(
+            id: 'foundation_slab',
+            title: 'Плитный фундамент',
+            icon: Icons.layers_rounded,
+            calculatorId: 'foundation_slab',
+          ),
+          WorkItemDefinition(
+            id: 'foundation_basement',
+            title: 'Цокольный этаж',
+            icon: Icons.warehouse_outlined,
+            calculatorId: 'foundation_basement',
+          ),
+          WorkItemDefinition(
+            id: 'foundation_blind_area',
+            title: 'Отмостка',
+            icon: Icons.landscape_rounded,
+            calculatorId: 'foundation_blind_area',
+          ),
+        ],
+      ),
       WorkSectionDefinition(
         id: 'facade_systems',
         title: 'Фасадные решения',
@@ -662,6 +667,12 @@ const List<WorkAreaDefinition> _houseAreas = [
             title: 'Кровля',
             icon: Icons.home,
             calculatorId: 'roofing_metal',
+          ),
+          WorkItemDefinition(
+            id: 'roof_soft',
+            title: 'Мягкая кровля',
+            icon: Icons.home_work_outlined,
+            calculatorId: 'roofing_soft',
           ),
           WorkItemDefinition(
             id: 'roof_gutters',
