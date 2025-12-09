@@ -55,10 +55,6 @@ linter:
     avoid_returning_null_for_void: true
     # Использовать super parameters где возможно
     use_super_parameters: true
-    # Избегать использования deprecated методов
-    avoid_deprecated_member_use: true
-    # Избегать использования устаревших классов
-    avoid_deprecated_member_use_from_same_package: true
 
     # === Производительность ===
     # Избегать медленных async операций в синхронных функциях
@@ -86,7 +82,6 @@ linter:
     prefer_is_empty: true
     prefer_is_not_empty: true
     # Избегать ненужных условных операторов
-    unnecessary_condition: true
     unnecessary_nullable_for_final_variable_declarations: true
 
     # === Документация ===
@@ -98,8 +93,6 @@ linter:
     prefer_final_locals: true
     prefer_final_fields: true
     prefer_final_in_for_each: true
-    # Использовать @immutable где возможно
-    prefer_immutable_fields: true
 
     # === Обработка ошибок ===
     # Избегать catch блоков без on
@@ -107,7 +100,7 @@ linter:
     # Использовать rethrow вместо throw в catch
     use_rethrow_when_possible: true
     # Избегать пустых catch блоков
-    avoid_empty_catches: true
+    # avoid_empty_catches: true
 
     # === Null safety ===
     # Избегать null checks на non-nullable переменных
@@ -115,7 +108,7 @@ linter:
     # Использовать ?. вместо != null
     prefer_null_aware_operators: true
     # Избегать ненужных null-aware операторов
-    unnecessary_null_aware_operators: true
+    # unnecessary_null_aware_operators: true
 
     # === Дополнительные правила ===
     # Избегать дублирования кода

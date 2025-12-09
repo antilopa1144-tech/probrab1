@@ -18,7 +18,7 @@ class CalculatorInputValidator {
     final rawValue = value?.trim() ?? '';
 
     if (field.required && rawValue.isEmpty) {
-      return loc.translate('input.required') ?? 'Это поле обязательно';
+      return loc.translate('input.required');
     }
 
     if (!field.required && rawValue.isEmpty) {
@@ -28,11 +28,11 @@ class CalculatorInputValidator {
     final sanitizedValue = rawValue.replaceAll(',', '.');
     final numValue = double.tryParse(sanitizedValue);
     if (numValue == null) {
-      return loc.translate('input.invalid_number') ?? 'Введите корректное число';
+      return loc.translate('input.invalid_number');
     }
 
     if (numValue < 0) {
-      return loc.translate('input.positive_number') ?? 'Введите положительное число';
+      return loc.translate('input.positive_number');
     }
 
     if (field.required &&
@@ -40,49 +40,42 @@ class CalculatorInputValidator {
         !field.key.contains('rapport') &&
         !field.key.contains('windows') &&
         !field.key.contains('doors')) {
-      return loc.translate('input.cannot_be_zero') ??
-          'Значение должно быть больше нуля';
+      return loc.translate('input.cannot_be_zero');
     }
 
     if (field.minValue != null && numValue < field.minValue!) {
-      return '${loc.translate('input.min_value') ?? 'Минимальное значение'}: ${field.minValue}';
+      return '${loc.translate('input.min_value')}: ${field.minValue}';
     }
 
     if (field.maxValue != null && numValue > field.maxValue!) {
-      return '${loc.translate('input.max_value') ?? 'Максимальное значение'}: ${field.maxValue}';
+      return '${loc.translate('input.max_value')}: ${field.maxValue}';
     }
 
     if (field.key.contains('area') && numValue > maxArea) {
-      return loc.translate('input.area_too_large') ??
-          'Проверьте значение. Слишком большое число для площади (макс. $maxArea м²)';
+      return loc.translate('input.area_too_large');
     }
 
     if (field.key.contains('volume') && numValue > maxVolume) {
-      return loc.translate('input.volume_too_large') ??
-          'Проверьте значение. Слишком большое число для объёма (макс. $maxVolume м³)';
+      return loc.translate('input.volume_too_large');
     }
 
     if (field.key.contains('height') && numValue > maxHeight) {
-      return loc.translate('input.height_too_large') ??
-          'Проверьте значение. Слишком большая высота (макс. $maxHeight м)';
+      return loc.translate('input.height_too_large');
     }
 
     if (field.key.contains('thickness') && numValue > maxThickness) {
-      return loc.translate('input.thickness_too_large') ??
-          'Проверьте значение. Слишком большая толщина (макс. $maxThickness мм)';
+      return loc.translate('input.thickness_too_large');
     }
 
     if (field.key.contains('width') &&
         !field.key.contains('tile') &&
         !field.key.contains('panel') &&
         numValue > maxWidth) {
-      return loc.translate('input.width_too_large') ??
-          'Проверьте значение. Слишком большая ширина (макс. $maxWidth м)';
+      return loc.translate('input.width_too_large');
     }
 
     if (field.key.contains('perimeter') && numValue > maxPerimeter) {
-      return loc.translate('input.perimeter_too_large') ??
-          'Проверьте значение. Слишком большой периметр (макс. $maxPerimeter м)';
+      return loc.translate('input.perimeter_too_large');
     }
 
     return null;
