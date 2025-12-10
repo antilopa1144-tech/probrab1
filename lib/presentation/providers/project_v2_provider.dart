@@ -1,19 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:path_provider/path_provider.dart';
+
+import '../../core/database/database_provider.dart';
 import '../../data/repositories/project_repository_v2.dart';
 import '../../domain/models/project_v2.dart';
-
-/// Provider для Isar instance
-final isarProvider = FutureProvider<Isar>((ref) async {
-  final dir = await getApplicationDocumentsDirectory();
-
-  return Isar.open(
-    [ProjectV2Schema, ProjectCalculationSchema],
-    directory: dir.path,
-    name: 'probrab_projects_v2',
-  );
-});
 
 /// Provider для ProjectRepositoryV2
 final projectRepositoryV2Provider = Provider<ProjectRepositoryV2>((ref) {

@@ -1,27 +1,48 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:isar_community/isar.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:probrab_ai/data/models/calculation.dart';
 import 'package:probrab_ai/data/repositories/calculation_repository.dart';
+import 'package:probrab_ai/domain/models/project_v2.dart';
 
-import '../../helpers/test_path_provider.dart';
 import '../../helpers/isar_test_utils.dart';
+import '../../helpers/test_path_provider.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late CalculationRepository repository;
   late TestPathProviderPlatform pathProvider;
+  late Isar isar;
 
   setUpAll(() async {
     pathProvider = installTestPathProvider();
     await ensureIsarInitialized();
   });
 
-  setUp(() {
-    repository = CalculationRepository();
+  setUp(() async {
+    // Закрываем предыдущие инстансы, чтобы не ловить конфликтов имен
+    for (final name in List<String>.from(Isar.instanceNames)) {
+      final instance = Isar.getInstance(name);
+      if (instance != null && instance.isOpen) {
+        await instance.close(deleteFromDisk: true);
+      }
+    }
+
+    final dir = await getApplicationDocumentsDirectory();
+    isar = await Isar.open(
+      [ProjectV2Schema, ProjectCalculationSchema, CalculationSchema],
+      directory: dir.path,
+      name: 'calculation_test',
+    );
+    repository = CalculationRepository(isar);
   });
 
   tearDown(() async {
     // Закрываем базу данных после каждого теста
-    await repository.close(deleteFromDisk: true);
+    if (isar.isOpen) {
+      await isar.close(deleteFromDisk: true);
+    }
   });
 
   tearDownAll(() {
@@ -99,11 +120,13 @@ void main() {
         totalCost: 3000.0,
       );
 
-      final foundationCalcs = await repository.getCalculationsByCategory('фундамент');
+      final foundationCalcs =
+          await repository.getCalculationsByCategory('фундамент');
       expect(foundationCalcs.length, equals(1));
       expect(foundationCalcs.first.title, equals('Foundation Calc'));
 
-      final finishingCalcs = await repository.getCalculationsByCategory('отделка');
+      final finishingCalcs =
+          await repository.getCalculationsByCategory('отделка');
       expect(finishingCalcs.length, equals(1));
       expect(finishingCalcs.first.title, equals('Wall Calc'));
     });

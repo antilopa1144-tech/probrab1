@@ -1,10 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/database/database_provider.dart';
+import '../../core/errors/error_handler.dart';
 import '../../data/models/calculation.dart';
 import '../../data/repositories/calculation_repository.dart';
-import '../../core/errors/error_handler.dart';
 
 final calculationRepositoryProvider = Provider<CalculationRepository>((ref) {
-  return CalculationRepository();
+  final isar = ref.watch(isarProvider).value;
+  if (isar == null) {
+    throw StateError('Isar не инициализирован');
+  }
+  return CalculationRepository(isar);
 });
 
 /// Провайдер для всех расчётов с кэшированием

@@ -1,23 +1,15 @@
-import 'package:isar_community/isar.dart';
-import 'package:path_provider/path_provider.dart';
-import '../models/calculation.dart';
 import 'dart:convert';
+
+import 'package:isar_community/isar.dart';
+
+import '../models/calculation.dart';
 
 /// Репозиторий для работы с историей расчётов
 class CalculationRepository {
-  static Isar? _isar;
+  CalculationRepository(this.isar);
 
-  /// Инициализация базы данных
-  static Future<Isar> _getIsar() async {
-    if (_isar != null) return _isar!;
-    
-    final dir = await getApplicationDocumentsDirectory();
-    _isar = await Isar.open(
-      [CalculationSchema],
-      directory: dir.path,
-    );
-    return _isar!;
-  }
+  /// Инстанс Isar, передаётся через провайдер
+  final Isar isar;
 
   /// Сохранить новый расчёт
   Future<void> saveCalculation({
@@ -30,8 +22,6 @@ class CalculationRepository {
     required double totalCost,
     String? notes,
   }) async {
-    final isar = await _getIsar();
-    
     final calculation = Calculation()
       ..title = title
       ..calculatorId = calculatorId
@@ -58,9 +48,8 @@ class CalculationRepository {
     double? totalCost,
     String? notes,
   }) async {
-    final isar = await _getIsar();
     final calculation = await isar.calculations.get(id);
-    
+
     if (calculation == null) return;
 
     if (title != null) calculation.title = title;
@@ -68,7 +57,7 @@ class CalculationRepository {
     if (results != null) calculation.resultsJson = jsonEncode(results);
     if (totalCost != null) calculation.totalCost = totalCost;
     if (notes != null) calculation.notes = notes;
-    
+
     calculation.updatedAt = DateTime.now();
 
     await isar.writeTxn(() async {
@@ -78,16 +67,11 @@ class CalculationRepository {
 
   /// Получить все расчёты
   Future<List<Calculation>> getAllCalculations() async {
-    final isar = await _getIsar();
-    return isar.calculations
-        .where()
-        .sortByUpdatedAtDesc()
-        .findAll();
+    return isar.calculations.where().sortByUpdatedAtDesc().findAll();
   }
 
   /// Получить расчёты по категории
   Future<List<Calculation>> getCalculationsByCategory(String category) async {
-    final isar = await _getIsar();
     return isar.calculations
         .filter()
         .categoryEqualTo(category)
@@ -97,7 +81,6 @@ class CalculationRepository {
 
   /// Удалить расчёт
   Future<void> deleteCalculation(int id) async {
-    final isar = await _getIsar();
     await isar.writeTxn(() async {
       await isar.calculations.delete(id);
     });
@@ -105,28 +88,26 @@ class CalculationRepository {
 
   /// Получить расчёт по ID
   Future<Calculation?> getCalculation(int id) async {
-    final isar = await _getIsar();
     return isar.calculations.get(id);
   }
 
   /// Поиск расчётов по названию
   Future<List<Calculation>> searchCalculations(String query) async {
-    final isar = await _getIsar();
     final all = await isar.calculations.where().findAll();
-    return all.where((c) => 
-      c.title.toLowerCase().contains(query.toLowerCase()) ||
-      c.calculatorName.toLowerCase().contains(query.toLowerCase())
-    ).toList();
+    return all
+        .where((c) =>
+            c.title.toLowerCase().contains(query.toLowerCase()) ||
+            c.calculatorName.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
 
   /// Получить общую статистику
   Future<Map<String, dynamic>> getStatistics() async {
-    final isar = await _getIsar();
     final all = await isar.calculations.where().findAll();
-    
+
     double totalCost = 0;
     final categoryCount = <String, int>{};
-    
+
     for (final calc in all) {
       totalCost += calc.totalCost;
       categoryCount[calc.category] = (categoryCount[calc.category] ?? 0) + 1;
@@ -144,9 +125,6 @@ class CalculationRepository {
 
   /// Закрыть базу данных (для тестирования)
   Future<void> close({bool deleteFromDisk = false}) async {
-    if (_isar != null) {
-      await _isar!.close(deleteFromDisk: deleteFromDisk);
-      _isar = null;
-    }
+    await isar.close(deleteFromDisk: deleteFromDisk);
   }
 }
