@@ -14,7 +14,7 @@ import 'base_calculator.dart';
 /// Поля:
 /// - area: площадь стен (м²)
 /// - layers: количество слоёв (обычно 2)
-/// - consumption: расход краски (л/м²), по умолчанию 0.12 (современные краски 2024)
+/// - consumption: расход краски (л/м²), по умолчанию 0.15 (современные краски 2024)
 /// - windowsArea: площадь окон (м²) - вычитается из общей площади
 /// - doorsArea: площадь дверей (м²) - вычитается из общей площади
 class CalculateWallPaint extends BaseCalculator {
@@ -59,6 +59,9 @@ class CalculateWallPaint extends BaseCalculator {
     );
     final windowsArea = getInput(inputs, 'windowsArea', minValue: 0.0);
     final doorsArea = getInput(inputs, 'doorsArea', minValue: 0.0);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
 
     // Полезная площадь (за вычетом проёмов)
     final usefulArea = calculateUsefulArea(
@@ -84,7 +87,6 @@ class CalculateWallPaint extends BaseCalculator {
     final primerNeeded = usefulArea * primerConsumption * 1.05;
 
     // Малярный скотч: периметр проёмов + периметр комнаты
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
     final tapeNeeded = perimeter * 1.2; // м
 
     // Расходные материалы

@@ -46,9 +46,9 @@ final List<CalculatorDefinition> wallCalculators = [
       InputFieldDefinition(
         key: 'consumption',
         labelKey: 'input.consumption',
-        defaultValue: 0.12,
+        defaultValue: 0.15,
         minValue: 0.08,
-        maxValue: 0.20,
+        maxValue: 0.30,
       ),
       InputFieldDefinition(
         key: 'windowsArea',
@@ -101,22 +101,22 @@ final List<CalculatorDefinition> wallCalculators = [
         key: 'rollWidth',
         labelKey: 'input.rollWidth',
         defaultValue: 0.53,
-        minValue: 0.3,
-        maxValue: 1.5,
+        minValue: 0.5,
+        maxValue: 1.2,
       ),
       InputFieldDefinition(
         key: 'rollLength',
         labelKey: 'input.rollLength',
         defaultValue: 10.05,
         minValue: 5.0,
-        maxValue: 25.0,
+        maxValue: 50.0,
       ),
       InputFieldDefinition(
         key: 'rapport',
         labelKey: 'input.rapport',
         defaultValue: 0.0,
         minValue: 0.0,
-        maxValue: 1.0,
+        maxValue: 100.0,
         required: false,
       ),
       InputFieldDefinition(
