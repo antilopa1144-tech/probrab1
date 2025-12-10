@@ -65,11 +65,6 @@ final List<CalculatorDefinition> ceilingCalculators = [
         defaultValue: 0.0,
       ),
       InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
         key: 'corners',
         labelKey: 'input.corners',
         defaultValue: 4.0,
@@ -120,11 +115,6 @@ final List<CalculatorDefinition> ceilingCalculators = [
         labelKey: 'input.dropHeight',
         defaultValue: 0.1,
       ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
     ],
     resultLabels: const {
       'area': 'result.area',
@@ -163,11 +153,6 @@ final List<CalculatorDefinition> ceilingCalculators = [
         labelKey: 'input.railLength',
         defaultValue: 300.0,
       ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
     ],
     resultLabels: const {
       'area': 'result.area',
@@ -198,11 +183,6 @@ final List<CalculatorDefinition> ceilingCalculators = [
         key: 'cassetteSize',
         labelKey: 'input.tileSize',
         defaultValue: 60.0,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
       ),
     ],
     resultLabels: const {

@@ -13,7 +13,6 @@ import './base_calculator.dart';
 /// - area: площадь пола (м²)
 /// - packArea: площадь в упаковке (м²), по умолчанию 2.0
 /// - underlayThickness: толщина подложки (мм), по умолчанию 3
-/// - perimeter: периметр комнаты (м), опционально
 class CalculateLaminate extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -39,8 +38,10 @@ class CalculateLaminate extends BaseCalculator {
     final packArea = getInput(inputs, 'packArea', defaultValue: 2.0, minValue: 0.1, maxValue: 10.0);
     final underlayThickness = getInput(inputs, 'underlayThickness', defaultValue: 3.0, minValue: 2.0, maxValue: 5.0);
 
-    // Периметр: если указан - используем, иначе оцениваем
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    // Периметр: если указан положительный - используем, иначе оцениваем
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
 
     // Количество упаковок ламината с запасом 5-7% (ГОСТ 32304-2013)
     // Для прямой укладки - 5%, для диагональной - 7-10%

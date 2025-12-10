@@ -48,14 +48,6 @@ final List<CalculatorDefinition> floorCalculators = [
         minValue: 2.0,
         maxValue: 10.0,
       ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-        minValue: 0.0,
-        maxValue: 200.0,
-        required: false,
-      ),
     ],
     resultLabels: const {
       'area': 'result.area',
@@ -188,11 +180,6 @@ final List<CalculatorDefinition> floorCalculators = [
         labelKey: 'input.overlap',
         defaultValue: 5.0,
       ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
     ],
     resultLabels: const {
       'area': 'result.area',
@@ -277,11 +264,6 @@ final List<CalculatorDefinition> floorCalculators = [
         key: 'plankLength',
         labelKey: 'input.plankLength',
         defaultValue: 40.0,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
       ),
     ],
     resultLabels: const {
@@ -381,12 +363,6 @@ final List<CalculatorDefinition> floorCalculators = [
         key: 'insulationType',
         labelKey: 'input.insulationType',
         defaultValue: 1.0,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-        required: false,
       ),
     ],
     resultLabels: const {

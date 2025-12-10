@@ -14,7 +14,6 @@ import './base_calculator.dart';
 /// - layers: количество слоёв ГКЛ, по умолчанию 1
 /// - ceilingHeight: высота потолка (м), для расчёта профилей
 /// - dropHeight: высота опускания (м), по умолчанию 0.1
-/// - perimeter: периметр комнаты (м), опционально
 class CalculateGklCeiling extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -35,7 +34,9 @@ class CalculateGklCeiling extends BaseCalculator {
     final area = getInput(inputs, 'area', minValue: 0.1);
     final layers = getIntInput(inputs, 'layers', defaultValue: 1, minValue: 1, maxValue: 2);
 
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
 
     // Площадь одного листа ГКЛ (1.2×2.5 м = 3 м²)
     final sheetArea = 3.0;

@@ -10,7 +10,6 @@ import './base_calculator.dart';
 ///
 /// Поля:
 /// - area: площадь потолка (м²)
-/// - perimeter: периметр комнаты (м), опционально
 /// - corners: количество углов, по умолчанию 4
 /// - fixtures: количество светильников/люстр, по умолчанию 1
 class CalculateStretchCeiling extends BaseCalculator {
@@ -39,7 +38,9 @@ class CalculateStretchCeiling extends BaseCalculator {
     final fixtures = getIntInput(inputs, 'fixtures', defaultValue: 1, minValue: 0, maxValue: 20);
 
     // Периметр: если указан - используем, иначе оцениваем
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
 
     // Полотно: площадь с небольшим запасом (3-5%)
     // Натяжные потолки кроятся по размеру с точностью до см

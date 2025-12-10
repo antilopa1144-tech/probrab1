@@ -44,7 +44,9 @@ class CalculateCeilingTiles extends BaseCalculator {
     final primerNeeded = area * 0.1;
 
     // Потолочные плинтусы (багеты): периметр + 5%
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
     final plinthLength = addMargin(perimeter, 5.0);
 
     // Клей для багетов: ~0.3 кг на 10 м.п.

@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_declarations
 import '../../data/models/price_item.dart';
+import './base_calculator.dart';
 import './calculator_usecase.dart';
 
 /// Калькулятор утепления пола.
@@ -12,17 +13,18 @@ import './calculator_usecase.dart';
 /// - area: площадь пола (м²)
 /// - insulationThickness: толщина утеплителя (мм), по умолчанию 100
 /// - insulationType: тип утеплителя (1 - минвата, 2 - пенопласт, 3 - ЭППС)
-/// - perimeter: периметр помещения (м) - для расчёта плинтуса
-class CalculateFloorInsulation implements CalculatorUseCase {
+class CalculateFloorInsulation extends BaseCalculator {
   @override
-  CalculatorResult call(
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
     final area = inputs['area'] ?? 0;
     final insulationThickness = inputs['insulationThickness'] ?? 100.0; // мм
     final insulationType = (inputs['insulationType'] ?? 1.0).round();
-    final perimeter = inputs['perimeter'] ?? 0.0;
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? inputs['perimeter']!
+        : (area > 0 ? estimatePerimeter(area) : 0.0);
 
     // Объём утеплителя в м³
     final volume = area * (insulationThickness / 1000);

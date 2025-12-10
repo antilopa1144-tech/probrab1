@@ -75,7 +75,9 @@ class CalculateWarmFloor extends BaseCalculator {
     final corrugatedTubeLength = thermostats * 2.5;
 
     // Демпферная лента по периметру: периметр + 5%
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
     final damperTapeLength = addMargin(perimeter, 5.0);
 
     // УЗО (устройство защитного отключения): 1 шт на систему

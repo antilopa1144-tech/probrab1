@@ -55,7 +55,9 @@ class CalculateCeilingPaint extends BaseCalculator {
     final brushesNeeded = 2;
 
     // Малярная лента для защиты стен: периметр
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
     final tapeNeeded = perimeter;
 
     // Расчёт стоимости

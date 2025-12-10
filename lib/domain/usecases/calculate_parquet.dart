@@ -14,7 +14,6 @@ import './base_calculator.dart';
 /// - plankWidth: ширина планки (см), по умолчанию 7
 /// - plankLength: длина планки (см), по умолчанию 40
 /// - thickness: толщина (мм), по умолчанию 15
-/// - perimeter: периметр комнаты (м), опционально
 class CalculateParquet extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -36,7 +35,9 @@ class CalculateParquet extends BaseCalculator {
     final plankWidth = getInput(inputs, 'plankWidth', defaultValue: 7.0, minValue: 5.0, maxValue: 20.0);
     final plankLength = getInput(inputs, 'plankLength', defaultValue: 40.0, minValue: 20.0, maxValue: 100.0);
     
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
 
     // Площадь одной планки
     final plankArea = calculateTileArea(plankWidth, plankLength);

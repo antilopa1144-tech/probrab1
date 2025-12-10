@@ -57,7 +57,9 @@ class CalculateCeilingInsulation extends BaseCalculator {
     final fastenersNeeded = ceilToInt(area * fastenersPerM2);
 
     // Лента соединительная (для стыков плёнки): периметр + швы
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
     final tapeNeeded = perimeter * 1.5;
 
     // Клей-пена (для пенопласта): ~1 баллон на 10 м²

@@ -65,7 +65,9 @@ class CalculateScreed extends BaseCalculator {
     final waterproofingArea = addMargin(area, 20.0);
 
     // Демпферная лента (по периметру): периметр + 5%
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
     final damperTapeLength = addMargin(perimeter, 5.0);
 
     // Армирующая сетка (при толщине > 40 мм): площадь + 10%

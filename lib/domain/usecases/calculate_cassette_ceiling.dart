@@ -11,7 +11,6 @@ import './base_calculator.dart';
 /// Поля:
 /// - area: площадь потолка (м²)
 /// - cassetteSize: размер кассеты (см), по умолчанию 60 (60×60 см)
-/// - perimeter: периметр комнаты (м), опционально
 class CalculateCassetteCeiling extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -32,7 +31,9 @@ class CalculateCassetteCeiling extends BaseCalculator {
     final area = getInput(inputs, 'area', minValue: 0.1);
     final cassetteSize = getInput(inputs, 'cassetteSize', defaultValue: 60.0, minValue: 30.0, maxValue: 100.0);
     
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
 
     // Площадь одной кассеты в м²
     final cassetteArea = (cassetteSize / 100) * (cassetteSize / 100);

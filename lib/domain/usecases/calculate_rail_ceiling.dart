@@ -12,7 +12,6 @@ import './base_calculator.dart';
 /// - area: площадь потолка (м²)
 /// - railWidth: ширина рейки (см), по умолчанию 10
 /// - railLength: длина рейки (см), по умолчанию 300
-/// - perimeter: периметр комнаты (м), опционально
 class CalculateRailCeiling extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -34,7 +33,9 @@ class CalculateRailCeiling extends BaseCalculator {
     final railWidth = getInput(inputs, 'railWidth', defaultValue: 10.0, minValue: 5.0, maxValue: 20.0);
     final railLength = getInput(inputs, 'railLength', defaultValue: 300.0, minValue: 200.0, maxValue: 400.0);
     
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
 
     // Площадь одной рейки в м²
     final railArea = calculateTileArea(railWidth, railLength);

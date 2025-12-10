@@ -43,7 +43,9 @@ class CalculateSelfLevelingFloor extends BaseCalculator {
     final primerNeeded = area * 0.2 * 1.1;
 
     // Демпферная лента по периметру: периметр + 5%
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
     final damperTapeLength = addMargin(perimeter, 5.0);
 
     // Игольчатые валики для раскатки: 1-2 шт в зависимости от площади

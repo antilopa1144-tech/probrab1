@@ -14,7 +14,6 @@ import './base_calculator.dart';
 /// - rollWidth: ширина рулона (м), по умолчанию 3.0
 /// - rollLength: длина рулона (м), по умолчанию 30.0
 /// - overlap: нахлёст (см), по умолчанию 5
-/// - perimeter: периметр комнаты (м), опционально
 class CalculateLinoleum extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -37,7 +36,9 @@ class CalculateLinoleum extends BaseCalculator {
     final rollLength = getInput(inputs, 'rollLength', defaultValue: 30.0, minValue: 10.0, maxValue: 50.0);
     final overlap = getInput(inputs, 'overlap', defaultValue: 5.0, minValue: 0.0, maxValue: 15.0);
     
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
 
     // Площадь рулона
     final rollArea = rollWidth * rollLength;
