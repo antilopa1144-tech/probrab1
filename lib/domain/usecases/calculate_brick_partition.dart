@@ -62,7 +62,9 @@ class CalculateBrickPartition extends BaseCalculator {
 
     // Армирующая сетка: каждые 4-5 рядов (или каждые 0.6-0.8 м высоты)
     final meshRows = ceilToInt(wallHeight / 0.7);
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
     final meshLength = meshRows * perimeter;
 
     // Грунтовка (перед штукатуркой): ~0.15 л/м² с двух сторон

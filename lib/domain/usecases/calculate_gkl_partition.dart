@@ -13,7 +13,6 @@ import './base_calculator.dart';
 /// - area: площадь перегородки (м²)
 /// - layers: количество слоёв ГКЛ, по умолчанию 2
 /// - height: высота перегородки (м), по умолчанию 2.5
-/// - perimeter: периметр перегородки (м), опционально
 class CalculateGklPartition extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -41,8 +40,10 @@ class CalculateGklPartition extends BaseCalculator {
     final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 4);
     final height = getInput(inputs, 'height', defaultValue: 2.5, minValue: 0.5, maxValue: 4.0);
 
-    // Периметр: если указан - используем, иначе оцениваем
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    // Периметр: если указан положительный, берём его, иначе оцениваем
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
 
     // Площадь одного листа ГКЛ (стандарт 1.2×2.5 м = 3 м²)
     final sheetArea = 3.0; // м²

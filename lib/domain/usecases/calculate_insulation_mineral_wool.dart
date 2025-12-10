@@ -59,7 +59,9 @@ class CalculateInsulationMineralWool extends BaseCalculator {
     final fastenersNeeded = ceilToInt(area * 5);
 
     // Соединительная лента для пароизоляции: по швам
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
     final tapeNeeded = perimeter * 1.5; // +50% на стыки
 
     // Деревянная/металлическая обрешётка (опционально): зависит от конструкции

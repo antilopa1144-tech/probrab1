@@ -15,7 +15,6 @@ import './base_calculator.dart';
 /// - blockLength: длина блока (см), по умолчанию 60
 /// - blockHeight: высота блока (см), по умолчанию 25
 /// - height: высота перегородки (м), по умолчанию 2.5
-/// - perimeter: периметр перегородки (м), опционально
 class CalculateGasblockPartition extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -54,7 +53,9 @@ class CalculateGasblockPartition extends BaseCalculator {
     // Армирование: арматура через каждые 2-3 ряда (или каждый метр высоты)
     final rows = ceilToInt(wallHeight / (blockHeight / 100));
     final reinforcementRows = ceilToInt(rows / 3);
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
     final reinforcementLength = reinforcementRows * perimeter * 2; // 2 прута
 
     // Грунтовка для газоблока (перед финишной отделкой): ~0.2 л/м² на 2 стороны

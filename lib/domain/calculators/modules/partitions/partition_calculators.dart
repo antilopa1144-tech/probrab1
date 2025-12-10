@@ -36,14 +36,6 @@ final List<CalculatorDefinition> partitionCalculators = [
         minValue: 2.0,
         maxValue: 4.5,
       ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-        minValue: 0.0,
-        maxValue: 100.0,
-        required: false,
-      ),
     ],
     resultLabels: const {
       'area': 'result.area',
