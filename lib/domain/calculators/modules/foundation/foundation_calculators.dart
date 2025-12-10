@@ -20,10 +20,11 @@ final List<CalculatorDefinition> foundationCalculators = [
     subCategory: 'Ленточный фундамент',
     fields: const [
       InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        minValue: 4.0,
-        maxValue: 500.0,
+        key: 'area',
+        labelKey: 'input.area',
+        minValue: 10.0,
+        maxValue: 10000.0,
+        defaultValue: 100.0,
       ),
       InputFieldDefinition(
         key: 'width',
@@ -75,11 +76,6 @@ final List<CalculatorDefinition> foundationCalculators = [
         labelKey: 'input.insulationThickness',
         defaultValue: 0.0,
       ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
     ],
     resultLabels: const {
       'area': 'result.area',
@@ -112,9 +108,10 @@ final List<CalculatorDefinition> foundationCalculators = [
     subCategory: 'Цокольный этаж',
     fields: const [
       InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
+        key: 'area',
+        labelKey: 'input.area',
+        defaultValue: 50.0,
+        minValue: 10.0,
       ),
       InputFieldDefinition(
         key: 'height',
@@ -125,11 +122,6 @@ final List<CalculatorDefinition> foundationCalculators = [
         key: 'wallThickness',
         labelKey: 'input.wallThickness',
         defaultValue: 0.4,
-      ),
-      InputFieldDefinition(
-        key: 'floorArea',
-        labelKey: 'input.floorArea',
-        defaultValue: 0.0,
       ),
       InputFieldDefinition(
         key: 'floorThickness',
@@ -160,9 +152,10 @@ final List<CalculatorDefinition> foundationCalculators = [
     subCategory: 'Отмостка',
     fields: const [
       InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
+        key: 'area',
+        labelKey: 'input.area',
+        defaultValue: 100.0,
+        minValue: 10.0,
       ),
       InputFieldDefinition(
         key: 'width',
@@ -173,6 +166,22 @@ final List<CalculatorDefinition> foundationCalculators = [
         key: 'thickness',
         labelKey: 'input.thickness',
         defaultValue: 0.1,
+      ),
+      InputFieldDefinition(
+        key: 'materialType',
+        labelKey: 'input.materialType',
+        defaultValue: 1.0,
+        minValue: 1.0,
+        maxValue: 3.0,
+        required: false,
+      ),
+      InputFieldDefinition(
+        key: 'insulation',
+        labelKey: 'input.insulation',
+        defaultValue: 0.0,
+        minValue: 0.0,
+        maxValue: 1.0,
+        required: false,
       ),
     ],
     resultLabels: const {

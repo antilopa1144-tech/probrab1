@@ -1,17 +1,15 @@
 // ignore_for_file: prefer_const_declarations
+import 'dart:math';
+
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
 
 /// Калькулятор отмостки.
 ///
-/// Нормативы:
-/// - СНиП 2.02.01-83 "Основания зданий и сооружений"
-/// - СП 82.13330.2016 "Благоустройство территорий"
-///
 /// Поля:
-/// - perimeter: периметр дома (м)
-/// - width: ширина отмостки (м), по умолчанию 1.0
-/// - thickness: толщина отмостки (мм), по умолчанию 100
+/// - area: площадь дома (м²) — используется для оценки периметра
+/// - width: ширина отмостки (м)
+/// - thickness: толщина отмостки (м)
 /// - materialType: тип материала (1 - бетон, 2 - асфальт, 3 - тротуарная плитка)
 /// - insulation: утепление (0 - нет, 1 - да)
 class CalculateBlindArea implements CalculatorUseCase {
@@ -20,17 +18,32 @@ class CalculateBlindArea implements CalculatorUseCase {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final perimeter = inputs['perimeter'] ?? 0;
+    final houseArea = inputs['area'] ?? 0;
     final width = inputs['width'] ?? 1.0; // м
-    final thickness = inputs['thickness'] ?? 100.0; // мм
+    final thickness = inputs['thickness'] ?? 0.1; // м
     final materialType = (inputs['materialType'] ?? 1.0).round();
     final insulation = (inputs['insulation'] ?? 0.0).round();
+
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? inputs['perimeter']!
+        : (houseArea > 0 ? 4 * sqrt(houseArea) : 0.0);
+
+    if (perimeter <= 0 || width <= 0) {
+      return CalculatorResult(
+        values: {
+          'houseArea': houseArea,
+          'perimeter': perimeter,
+          'error': 1,
+        },
+        totalPrice: null,
+      );
+    }
 
     // Площадь отмостки
     final area = perimeter * width;
 
     // Объём бетона/асфальта в м³
-    final volume = area * (thickness / 1000);
+    final volume = area * thickness;
 
     // Песчаная подушка: толщина 10-15 см
     final sandThickness = 0.15; // м
@@ -141,6 +154,7 @@ class CalculateBlindArea implements CalculatorUseCase {
 
     return CalculatorResult(
       values: {
+        'houseArea': houseArea,
         'perimeter': perimeter,
         'width': width,
         'area': area,

@@ -60,14 +60,6 @@ final List<CalculatorDefinition> roofingCalculators = [
         required: false,
       ),
       InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-        minValue: 0.0,
-        maxValue: 200.0,
-        required: false,
-      ),
-      InputFieldDefinition(
         key: 'endLength',
         labelKey: 'input.endLength',
         defaultValue: 0.0,
@@ -119,11 +111,6 @@ final List<CalculatorDefinition> roofingCalculators = [
       InputFieldDefinition(
         key: 'valleyLength',
         labelKey: 'input.valleyLength',
-        defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
         defaultValue: 0.0,
       ),
     ],

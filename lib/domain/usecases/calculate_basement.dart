@@ -31,12 +31,22 @@ class CalculateBasement implements CalculatorUseCase {
     final waterproofing = (inputs['waterproofing'] ?? 1.0).round();
     final insulation = (inputs['insulation'] ?? 0.0).round();
     final ventilation = (inputs['ventilation'] ?? 1.0).round();
+    final floorThickness = inputs['floorThickness'] ?? 0.15;
+
+    if (area <= 0) {
+      return CalculatorResult(
+        values: {'area': 0, 'error': 1},
+        totalPrice: null,
+      );
+    }
 
     // Объём подвала
     final volume = area * height;
 
     // Периметр (приблизительно, если не указан)
-    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area / 4));
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? inputs['perimeter']!
+        : (4 * sqrt(area));
 
     // Площадь стен
     final wallArea = perimeter * height;
@@ -71,7 +81,7 @@ class CalculateBasement implements CalculatorUseCase {
     }
 
     // Бетон для пола (стяжка 10 см)
-    final floorConcreteVolume = floorArea * 0.1;
+    final floorConcreteVolume = floorArea * floorThickness;
 
     // Гидроизоляция
     final waterproofingArea = waterproofing == 1
@@ -175,6 +185,7 @@ class CalculateBasement implements CalculatorUseCase {
         'wallArea': wallArea,
         'wallVolume': wallVolume,
         'floorArea': floorArea,
+        'floorThickness': floorThickness,
         'concreteVolume': concreteVolume + floorConcreteVolume,
         'bricksNeeded': bricksNeeded,
         'blocksNeeded': blocksNeeded,

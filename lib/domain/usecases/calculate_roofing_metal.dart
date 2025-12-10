@@ -17,7 +17,6 @@ import './base_calculator.dart';
 /// - sheetLength: длина листа (м), по умолчанию 2.5
 /// - ridgeLength: длина конька (м), опционально
 /// - valleyLength: длина ендов (м), опционально
-/// - perimeter: периметр кровли (м), опционально
 class CalculateRoofingMetal extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -58,7 +57,9 @@ class CalculateRoofingMetal extends BaseCalculator {
     final valleyLength = inputs['valleyLength'] ?? 0.0;
 
     // Карнизные планки: по периметру
-    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area));
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
     final eaveLength = perimeter;
 
     // Торцевые (фронтонные) планки: торцы скатов

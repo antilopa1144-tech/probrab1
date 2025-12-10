@@ -10,8 +10,9 @@ import './base_calculator.dart';
 /// - ГОСТ 7623-84 "Водосточные системы"
 ///
 /// Поля:
-/// - perimeter: периметр крыши (м)
-/// - downpipes: количество водосточных труб, по умолчанию 0 (автоматически)
+/// - roofArea: площадь крыши (м²), используется для оценки периметра
+/// - roofLength: длина крыши по карнизу (м), запасной источник для периметра
+/// - downpipes: количество водосточных труб, по умолчанию авто
 /// - pipeHeight: высота трубы (м), по умолчанию 3.0
 /// - corners: количество углов, опционально
 class CalculateGutters extends BaseCalculator {
@@ -20,8 +21,11 @@ class CalculateGutters extends BaseCalculator {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final perimeter = inputs['perimeter'] ?? 0;
-    if (perimeter < 0) return 'Периметр должен быть неотрицательным';
+    final roofArea = inputs['roofArea'] ?? 0;
+    final roofLength = inputs['roofLength'] ?? 0;
+    if (roofArea < 0 || roofLength < 0) {
+      return 'Площадь и длина крыши должны быть неотрицательными';
+    }
 
     return null;
   }
@@ -31,7 +35,18 @@ class CalculateGutters extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final perimeter = getInput(inputs, 'perimeter', defaultValue: 0.0, minValue: 0.0);
+    final roofArea = getInput(inputs, 'roofArea', defaultValue: 0.0, minValue: 0.0);
+    final roofLength = getInput(inputs, 'roofLength', defaultValue: 0.0, minValue: 0.0);
+    var perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', defaultValue: 0.0, minValue: 0.0)
+        : 0.0;
+    if (perimeter <= 0 && roofArea > 0) {
+      perimeter = estimatePerimeter(roofArea);
+    }
+    if (perimeter <= 0 && roofLength > 0) {
+      perimeter = roofLength * 2;
+    }
+    if (perimeter <= 0) perimeter = 10.0;
     final pipeHeight = getInput(inputs, 'pipeHeight', defaultValue: 3.0, minValue: 2.0, maxValue: 10.0);
 
     // Желоб: периметр крыши + 3% на подрезку

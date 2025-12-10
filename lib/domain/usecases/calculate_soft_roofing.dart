@@ -15,7 +15,6 @@ import './base_calculator.dart';
 /// - slope: уклон крыши (градусы), по умолчанию 30
 /// - ridgeLength: длина конька (м), опционально
 /// - valleyLength: длина ендов (м), опционально
-/// - perimeter: периметр кровли (м), опционально
 class CalculateSoftRoofing extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -37,7 +36,9 @@ class CalculateSoftRoofing extends BaseCalculator {
     final slope = getInput(inputs, 'slope', defaultValue: 30.0, minValue: 0.0, maxValue: 60.0);
     
     final ridgeLength = inputs['ridgeLength'] ?? sqrt(area);
-    final perimeter = inputs['perimeter'] ?? (4 * sqrt(area));
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
     final valleyLength = inputs['valleyLength'] ?? (perimeter * 0.1);
 
     // Учитываем уклон

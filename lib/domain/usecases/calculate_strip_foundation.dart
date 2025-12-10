@@ -10,7 +10,7 @@ import './base_calculator.dart';
 /// - СНиП 3.03.01-87 "Несущие и ограждающие конструкции"
 ///
 /// Поля:
-/// - perimeter: периметр фундамента (м)
+/// - area: площадь контура (м²), используется для оценки периметра
 /// - width: ширина ленты (м)
 /// - height: высота ленты (м)
 class CalculateStripFoundation extends BaseCalculator {
@@ -19,14 +19,11 @@ class CalculateStripFoundation extends BaseCalculator {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final perimeter = inputs['perimeter'] ?? 0;
+    final area = inputs['area'] ?? 0;
     final width = inputs['width'] ?? 0;
     final height = inputs['height'] ?? 0;
 
-    if (perimeter <= 0) return 'Периметр должен быть больше нуля';
-    if (perimeter > 10000) {
-      return 'Периметр превышает допустимый максимум (10 км)';
-    }
+    if (area <= 0) return 'Площадь должна быть больше нуля';
     if (width <= 0 || width > 3) return 'Ширина ленты должна быть от 0.1 до 3 м';
     if (height <= 0 || height > 3) return 'Высота ленты должна быть от 0.1 до 3 м';
 
@@ -39,13 +36,10 @@ class CalculateStripFoundation extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Получаем валидированные входные данные
-    final perimeter = getInput(
-      inputs,
-      'perimeter',
-      defaultValue: 0.1,
-      minValue: 0.1,
-      maxValue: 10000.0,
-    );
+    final area = getInput(inputs, 'area', minValue: 0.1, maxValue: 10000.0);
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1, maxValue: 10000.0)
+        : estimatePerimeter(area);
     final width = getInput(
       inputs,
       'width',
@@ -111,6 +105,8 @@ class CalculateStripFoundation extends BaseCalculator {
 
     return createResult(
       values: {
+        'area': area,
+        'perimeter': perimeter,
         'concreteVolume': concreteVolume,
         'rebarWeight': rebarWeight,
         'longitudinalBars': longitudinalBars.toDouble(),
