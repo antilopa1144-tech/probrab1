@@ -147,8 +147,8 @@ final List<CalculatorDefinition> structureCalculators = [
     subCategory: 'Отмостка',
     fields: const [
       InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
+        key: 'area',
+        labelKey: 'input.area',
         defaultValue: 0.0,
       ),
       InputFieldDefinition(
@@ -243,12 +243,6 @@ final List<CalculatorDefinition> structureCalculators = [
         required: false,
       ),
       InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-        required: false,
-      ),
-      InputFieldDefinition(
         key: 'stairs',
         labelKey: 'input.stairs',
         defaultValue: 1.0,
@@ -295,12 +289,6 @@ final List<CalculatorDefinition> structureCalculators = [
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-        required: false,
       ),
       InputFieldDefinition(
         key: 'height',
@@ -447,12 +435,6 @@ final List<CalculatorDefinition> structureCalculators = [
         key: 'area',
         labelKey: 'input.area',
         defaultValue: 0.0,
-      ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-        required: false,
       ),
       InputFieldDefinition(
         key: 'floorType',

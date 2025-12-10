@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_declarations
+import 'dart:math';
+
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
 
@@ -9,8 +11,7 @@ import './calculator_usecase.dart';
 /// - СП 20.13330.2016 "Нагрузки и воздействия"
 ///
 /// Поля:
-/// - area: площадь террасы (м²)
-/// - perimeter: периметр (м)
+/// - area: площадь террасы (м2)
 /// - floorType: тип покрытия пола (1 - декинг, 2 - плитка, 3 - настил)
 /// - railing: ограждение (0 - нет, 1 - да)
 /// - roof: кровля (0 - нет, 1 - да)
@@ -22,7 +23,7 @@ class CalculateTerrace implements CalculatorUseCase {
     List<PriceItem> priceList,
   ) {
     final area = inputs['area'] ?? 0;
-    final perimeter = inputs['perimeter'] ?? 0.0;
+    final perimeter = _resolvePerimeter(inputs, area);
     final floorType = (inputs['floorType'] ?? 1.0).round();
     final railing = (inputs['railing'] ?? 1.0).round();
     final roof = (inputs['roof'] ?? 0.0).round();
@@ -45,7 +46,7 @@ class CalculateTerrace implements CalculatorUseCase {
       tilesNeeded = (floorArea / tileArea * 1.1).ceil().toDouble();
     } else if (floorType == 3) {
       // Деревянный настил
-      const boardArea = 0.1; // м² на доску
+      const boardArea = 0.1; // м2 на доску
       deckingBoards = (floorArea / boardArea * 1.1).ceil().toDouble();
     }
 
@@ -67,11 +68,11 @@ class CalculateTerrace implements CalculatorUseCase {
       
       if (roofType == 1) {
         // Поликарбонат
-        const sheetArea = 6.0; // м² на лист
+        const sheetArea = 6.0; // м2 на лист
         polycarbonateSheets = (roofArea / sheetArea * 1.1).ceil().toDouble();
       } else if (roofType == 2) {
         // Профлист
-        const sheetArea = 8.0; // м² на лист
+        const sheetArea = 8.0; // м2 на лист
         profiledSheets = (roofArea / sheetArea * 1.1).ceil().toDouble();
       } else if (roofType == 3) {
         // Мягкая кровля
@@ -80,7 +81,7 @@ class CalculateTerrace implements CalculatorUseCase {
     }
 
     // Опорные столбы для кровли
-    final roofPosts = (roof == 1 ? (area / 9.0).ceil() : 0).toDouble(); // один столб на 9 м²
+    final roofPosts = (roof == 1 ? (area / 9.0).ceil() : 0).toDouble(); // один столб на 9 м2
 
     // Фундамент для столбов (если кровля)
     final foundationVolume = roof == 1
@@ -200,5 +201,13 @@ class CalculateTerrace implements CalculatorUseCase {
       }
     }
     return null;
+  }
+
+  double _resolvePerimeter(Map<String, double> inputs, double area) {
+    final perimeterInput = inputs['perimeter'] ?? 0.0;
+    if (perimeterInput > 0) return perimeterInput;
+    if (area <= 0) return 0.0;
+    // Приблизительный периметр квадратной площадки
+    return sqrt(area) * 4;
   }
 }

@@ -81,11 +81,6 @@ final List<CalculatorDefinition> bathroomCalculators = [
         labelKey: 'input.wallHeight',
         defaultValue: 0.3,
       ),
-      InputFieldDefinition(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        defaultValue: 0.0,
-      ),
     ],
     resultLabels: const {
       'floorArea': 'result.floorArea',

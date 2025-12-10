@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_declarations
+import 'dart:math';
+
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
 
@@ -9,8 +11,7 @@ import './calculator_usecase.dart';
 /// - СП 50.13330.2012 "Тепловая защита зданий"
 ///
 /// Поля:
-/// - area: площадь балкона/лоджии (м²)
-/// - perimeter: периметр (м)
+/// - area: площадь балкона/лоджии (м2)
 /// - height: высота ограждения (м), по умолчанию 1.1
 /// - glazing: остекление (0 - нет, 1 - холодное, 2 - тёплое)
 /// - insulation: утепление (0 - нет, 1 - да)
@@ -23,7 +24,7 @@ class CalculateBalcony implements CalculatorUseCase {
     List<PriceItem> priceList,
   ) {
     final area = inputs['area'] ?? 0;
-    final perimeter = inputs['perimeter'] ?? 0.0;
+    final perimeter = _resolvePerimeter(inputs, area);
     final height = inputs['height'] ?? 1.1; // м
     final glazing = (inputs['glazing'] ?? 0.0).round();
     final insulation = (inputs['insulation'] ?? 0.0).round();
@@ -33,7 +34,7 @@ class CalculateBalcony implements CalculatorUseCase {
     // Площадь пола
     final floorArea = area;
 
-    // Площадь стен (если периметр указан)
+    // Площадь стен
     final wallArea = perimeter > 0 ? perimeter * height : 0.0;
 
     // Площадь потолка
@@ -67,11 +68,11 @@ class CalculateBalcony implements CalculatorUseCase {
     
     if (floorType == 1) {
       // Плитка
-      final tileArea = 0.09; // 30x30 см
+      const tileArea = 0.09; // 30x30 см
       tilesNeeded = (floorArea / tileArea * 1.1).ceil().toDouble();
     } else if (floorType == 2) {
       // Наливной пол
-      selfLevelingMix = floorArea * 1.5 * 0.005; // 5 мм, расход 1.5 кг/м²·мм
+      selfLevelingMix = floorArea * 1.5 * 0.005; // 5 мм, расход 1.5 кг/м2·мм
     } else if (floorType == 3) {
       // Дерево (террасная доска)
       woodArea = floorArea * 1.1; // +10% запас
@@ -84,14 +85,14 @@ class CalculateBalcony implements CalculatorUseCase {
     
     if (wallFinish == 1) {
       // Покраска
-      paintNeeded = wallArea * 0.15 * 2; // 2 слоя, расход 0.15 кг/м²
+      paintNeeded = wallArea * 0.15 * 2; // 2 слоя, расход 0.15 кг/м2
     } else if (wallFinish == 2) {
       // Панели ПВХ
-      final panelArea = 0.25; // м² на панель
+      const panelArea = 0.25; // м2 на панель
       panelsNeeded = (wallArea / panelArea * 1.1).ceil().toDouble();
     } else if (wallFinish == 3) {
       // Плитка
-      final tileArea = 0.09; // 30x30 см
+      const tileArea = 0.09; // 30x30 см
       wallTilesNeeded = (wallArea / tileArea * 1.1).ceil().toDouble();
     }
 
@@ -230,5 +231,13 @@ class CalculateBalcony implements CalculatorUseCase {
       }
     }
     return null;
+  }
+
+  double _resolvePerimeter(Map<String, double> inputs, double area) {
+    final perimeterInput = inputs['perimeter'] ?? 0.0;
+    if (perimeterInput > 0) return perimeterInput;
+    if (area <= 0) return 0.0;
+    // Приблизительный периметр квадратного помещения
+    return sqrt(area) * 4;
   }
 }

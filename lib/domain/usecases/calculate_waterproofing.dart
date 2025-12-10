@@ -21,10 +21,8 @@ class CalculateWaterproofing extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final floorArea = inputs['floorArea'] ?? 0;
-    final perimeter = inputs['perimeter'] ?? 0;
 
     if (floorArea < 0) return 'Площадь пола не может быть отрицательной';
-    if (perimeter < 0) return 'Периметр не может быть отрицательным';
 
     return null;
   }
@@ -36,7 +34,8 @@ class CalculateWaterproofing extends BaseCalculator {
   ) {
     final floorArea = getInput(inputs, 'floorArea', defaultValue: 0.0, minValue: 0.0);
     final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 0.3, minValue: 0.1, maxValue: 2.5);
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(floorArea);
+    final perimeterInput = inputs['perimeter'] ?? 0.0;
+    final perimeter = perimeterInput > 0 ? perimeterInput : estimatePerimeter(floorArea);
     final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 3);
 
     // Площадь гидроизоляции: пол + стены на высоту
