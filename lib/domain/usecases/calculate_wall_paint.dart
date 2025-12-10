@@ -26,9 +26,12 @@ class CalculateWallPaint extends BaseCalculator {
     final area = inputs['area'] ?? 0;
     final layers = inputs['layers'] ?? 2;
 
-    if (area <= 0) return 'Площадь должна быть больше нуля';
-    if (layers < 1 || layers > 5)
+    if (area <= 0) {
+      return 'Площадь должна быть больше нуля';
+    }
+    if (layers < 1 || layers > 5) {
       return 'Количество слоёв должно быть от 1 до 5';
+    }
 
     return null;
   }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -99,6 +100,7 @@ class _UniversalCalculatorV2ScreenState
   bool _isCalculating = false;
   bool _hasCalculated = false;
   final GlobalKey _resultsKey = GlobalKey();
+  Timer? _autoCalculateTimer;
 
   @override
   void initState() {
@@ -108,6 +110,7 @@ class _UniversalCalculatorV2ScreenState
 
   @override
   void dispose() {
+    _autoCalculateTimer?.cancel();
     _scrollController.dispose();
     for (final controller in _controllers.values) {
       controller.dispose();
@@ -141,6 +144,14 @@ class _UniversalCalculatorV2ScreenState
         final text = _controllers[field.key]?.text ?? '';
         _currentInputs[field.key] =
             InputSanitizer.parseDouble(text) ?? field.defaultValue;
+      }
+    });
+
+    // Автоматический расчёт с задержкой (debounce)
+    _autoCalculateTimer?.cancel();
+    _autoCalculateTimer = Timer(const Duration(milliseconds: 800), () {
+      if (mounted && _formKey.currentState!.validate()) {
+        _calculate();
       }
     });
   }

@@ -76,22 +76,7 @@ final parquetCalculatorV2 = CalculatorDefinitionV2(
       iconName: 'height',
       group: 'dimensions',
       order: 4,
-    ),
-    CalculatorField(
-      key: 'perimeter',
-      labelKey: 'input.perimeter',
-      hintKey: 'input.perimeter.hint',
-      unitType: UnitType.meters,
-      defaultValue: 0.0,
-      minValue: 0.0,
-      maxValue: 200.0,
-      required: false,
-      step: 0.5,
-      iconName: 'straighten',
-      group: 'advanced',
-      order: 5,
-    ),
-  ],
+    )],
 
   // Подсказки перед расчётом
   beforeHints: [

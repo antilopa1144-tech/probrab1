@@ -62,22 +62,7 @@ final laminateCalculatorV2 = CalculatorDefinitionV2(
       iconName: 'layers',
       group: 'material',
       order: 3,
-    ),
-    CalculatorField(
-      key: 'perimeter',
-      labelKey: 'input.perimeter',
-      hintKey: 'input.perimeter.hint',
-      unitType: UnitType.meters,
-      defaultValue: 0.0,
-      minValue: 0.0,
-      maxValue: 200.0,
-      required: false,
-      step: 0.5,
-      iconName: 'straighten',
-      group: 'additional',
-      order: 4,
-    ),
-  ],
+    )],
 
   // Подсказки перед расчётом
   beforeHints: [

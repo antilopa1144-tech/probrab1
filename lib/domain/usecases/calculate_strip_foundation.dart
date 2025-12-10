@@ -24,8 +24,9 @@ class CalculateStripFoundation extends BaseCalculator {
     final height = inputs['height'] ?? 0;
 
     if (perimeter <= 0) return 'Периметр должен быть больше нуля';
-    if (perimeter > 10000)
+    if (perimeter > 10000) {
       return 'Периметр превышает допустимый максимум (10 км)';
+    }
     if (width <= 0 || width > 3) return 'Ширина ленты должна быть от 0.1 до 3 м';
     if (height <= 0 || height > 3) return 'Высота ленты должна быть от 0.1 до 3 м';
 

@@ -8,7 +8,7 @@ import 'core/constants/app_constants.dart';
 import 'presentation/providers/accent_color_provider.dart';
 import 'core/theme.dart';
 import 'core/localization/app_localizations.dart';
-import 'presentation/app/home_main.dart';
+import 'presentation/app/new_home_screen.dart';
 import 'presentation/providers/settings_provider.dart';
 import 'core/errors/global_error_handler.dart';
 import 'presentation/views/onboarding/onboarding_screen.dart';
@@ -109,6 +109,6 @@ class _HomeSelectorState extends ConsumerState<_HomeSelector> {
       return const OnboardingScreen();
     }
 
-    return const HomeMainScreen();
+    return const NewHomeScreen();
   }
 }

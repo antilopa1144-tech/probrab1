@@ -109,10 +109,15 @@ UnitType _mapUnit(legacy.InputFieldDefinition field) {
       ? defaultValue
       : (field.maxValue ?? field.minValue ?? 0);
 
-  if (key.contains('area')) return UnitType.squareMeters;
-  if (key.contains('volume')) return UnitType.cubicMeters;
-  if (key.contains('power'))
+  if (key.contains('area')) {
+    return UnitType.squareMeters;
+  }
+  if (key.contains('volume')) {
+    return UnitType.cubicMeters;
+  }
+  if (key.contains('power')) {
     return UnitType.kilograms; // ближайший доступный тип
+  }
   if (key.contains('density') || key.contains('weight')) {
     return UnitType.kilograms;
   }

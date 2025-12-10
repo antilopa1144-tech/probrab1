@@ -12,11 +12,15 @@ class CalculatorNavigationHelper {
   /// Автоматически использует V2 версию, если она доступна.
   static void navigateToCalculator(
     BuildContext context,
-    CalculatorDefinitionV2 definition,
-  ) {
+    CalculatorDefinitionV2 definition, {
+    Map<String, double>? initialInputs,
+  }) {
     Navigator.of(context).push(
       ModernPageTransitions.scale(
-        UniversalCalculatorV2Screen(definition: definition),
+        UniversalCalculatorV2Screen(
+          definition: definition,
+          initialInputs: initialInputs,
+        ),
       ),
     );
   }
