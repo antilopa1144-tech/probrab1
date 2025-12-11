@@ -52,7 +52,10 @@ enum UnitType {
   days,
 
   /// Рубли
-  rubles;
+  rubles,
+
+  /// Литры на квадратный метр (л/м²)
+  litersPerSqm;
 
   /// Получить символ единицы измерения
   String get symbol {
@@ -93,6 +96,8 @@ enum UnitType {
         return 'дн.';
       case UnitType.rubles:
         return '₽';
+      case UnitType.litersPerSqm:
+        return 'л/м²';
     }
   }
 
@@ -135,6 +140,8 @@ enum UnitType {
         return 'unit.days';
       case UnitType.rubles:
         return 'unit.rubles';
+      case UnitType.litersPerSqm:
+        return 'unit.liters_per_sqm';
     }
   }
 }

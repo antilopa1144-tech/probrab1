@@ -31,7 +31,7 @@ void main() {
       }
 
       // Выводим подробный отчет
-      print('\\n=== Calculator Availability Report ===');
+      print(r'\n=== Calculator Availability Report ===');
       print('Total calculator IDs in work_catalog: ${catalogCalculatorIds.length}');
       print('? Available in V2: ${catalogCalculatorIds.length - missing.length}');
       print('? Missing: ${missing.length}');
@@ -51,4 +51,3 @@ void main() {
     });
   });
 }
-// ignore_for_file: avoid_print, use_raw_strings

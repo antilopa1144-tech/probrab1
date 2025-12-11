@@ -73,13 +73,13 @@ class _DraggableProjectItem extends StatelessWidget {
       child: ListTile(
         leading: Icon(
           Icons.drag_handle,
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+          color: theme.colorScheme.onSurface.withOpacity(0.4),
         ),
         title: Text(item.name),
         subtitle: Text(item.description),
         trailing: Icon(
           Icons.chevron_right,
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+          color: theme.colorScheme.onSurface.withOpacity(0.4),
         ),
       ),
     );

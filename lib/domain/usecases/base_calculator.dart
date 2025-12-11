@@ -261,6 +261,26 @@ abstract class BaseCalculator implements CalculatorUseCase {
     return nonNullCosts.reduce((a, b) => a + b);
   }
 
+  /// Округлить объёмные материалы (краска, стяжка и т.п.).
+  ///
+  /// Правила:
+  /// - < 1: округляем до 1 знака (0.1, 0.5 л)
+  /// - 1-10: округляем до 0.5 (5.5, 6.0 л)
+  /// - 10-100: округляем до целых (15, 27 л)
+  /// - > 100: округляем до 5 (105, 150 л)
+  double roundBulk(double value) {
+    if (value <= 0) return 0;
+    if (value < 1) {
+      return (value * 10).ceil() / 10; // 0.1, 0.2, 0.3...
+    } else if (value < 10) {
+      return (value * 2).ceil() / 2; // 0.5, 1.0, 1.5...
+    } else if (value < 100) {
+      return value.ceil().toDouble(); // 11, 12, 13...
+    } else {
+      return (value / 5).ceil() * 5.0; // 105, 110, 115...
+    }
+  }
+
   /// Создать результат с автоматическим округлением.
   /// 
   /// Округляет все значения до 2 знаков после запятой для читаемости.

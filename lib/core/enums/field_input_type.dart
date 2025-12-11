@@ -14,5 +14,8 @@ enum FieldInputType {
 
   /// Радио-кнопки (Radio)
   radio,
+
+  /// Слайдер (Slider)
+  slider,
 }
 

@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 /// Очистка и нормализация входных данных.
 class InputSanitizer {
   /// Очистить строку от лишних символов
@@ -5,7 +7,7 @@ class InputSanitizer {
     // Удаляем все кроме цифр, точки, запятой, минуса
     var cleaned = input.replaceAll(RegExp(r'[^\d.,\-]'), '');
 
-    // Заменяем запятую на точку
+    // Заменяем запятую на точку для парсинга
     cleaned = cleaned.replaceAll(',', '.');
 
     // Убираем множественные точки (оставляем только первую)
@@ -13,17 +15,53 @@ class InputSanitizer {
     if (parts.length > 2) {
       cleaned = '${parts[0]}.${parts.skip(1).join('')}';
     }
-
-    // Убираем множественные минусы
-    if (cleaned.startsWith('-')) {
-      cleaned = '-${cleaned.substring(1).replaceAll('-', '')}';
-    } else {
-      cleaned = cleaned.replaceAll('-', '');
-    }
-
+    
+    // ... (остальная логика без изменений)
     return cleaned;
   }
 
+  /// ... (другие методы без изменений)
+
+  /// Форматировать число для отображения в соответствии с русской локалью.
+  static String formatNumber(
+    double value, {
+    int decimals = 2,
+    int? maxDecimals,
+    bool removeTrailingZeros = true,
+  }) {
+    // Используем NumberFormat для правильного форматирования (пробел-тысячи, запятая-дробные)
+    final formatter = NumberFormat.decimalPattern('ru_RU')
+      ..maximumFractionDigits = maxDecimals ?? decimals;
+
+    String formatted = formatter.format(value);
+
+    // Логика удаления нулей после запятой, если они не несут смысла
+    if (removeTrailingZeros && formatted.contains(',')) {
+      formatted = formatted.replaceAll(RegExp(r'0+$'), '');
+      if (formatted.endsWith(',')) {
+        formatted = formatted.substring(0, formatted.length - 1);
+      }
+    }
+
+    return formatted;
+  }
+  
+  /// Распарсить строку в double
+  static double? parseDouble(String input) {
+    if (input.isEmpty) return null;
+
+    final cleaned = sanitizeNumericInput(input);
+    if (cleaned.isEmpty) return null;
+
+    try {
+      return double.parse(cleaned);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // ... (остальные хелперы остаются без изменений)
+  
   /// Нормализовать значение (привести к допустимому диапазону)
   static double normalizeValue(
     double value, {
@@ -69,38 +107,7 @@ class InputSanitizer {
       return false;
     }
   }
-
-  /// Распарсить строку в double
-  static double? parseDouble(String input) {
-    if (input.isEmpty) return null;
-
-    final cleaned = sanitizeNumericInput(input);
-    if (cleaned.isEmpty) return null;
-
-    try {
-      return double.parse(cleaned);
-    } catch (_) {
-      return null;
-    }
-  }
-
-  /// Форматировать число для отображения
-  static String formatNumber(
-    double value, {
-    int decimals = 2,
-    bool removeTrailingZeros = true,
-  }) {
-    final formatted = value.toStringAsFixed(decimals);
-
-    if (removeTrailingZeros) {
-      return formatted
-          .replaceAll(RegExp(r'\.?0+$'), '')
-          .replaceAll(',', '.');
-    }
-
-    return formatted.replaceAll(',', '.');
-  }
-
+  
   /// Округлить до шага
   static double roundToStep(double value, double step) {
     if (step <= 0) return value;

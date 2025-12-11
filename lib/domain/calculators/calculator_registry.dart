@@ -124,9 +124,7 @@ class CalculatorRegistry {
     }
 
     // Вычисляем и кэшируем
-    final result = allCalculators
-        .where((calc) => calc.category == category)
-        .toList();
+    final result = allCalculators.where((calc) => calc.category == category).toList();
     _categoryCache[category] = result;
     return result;
   }
@@ -162,9 +160,7 @@ class CalculatorRegistry {
 
   /// Получить калькуляторы по сложности
   static List<CalculatorDefinitionV2> getByComplexity(int complexity) {
-    return allCalculators
-        .where((calc) => calc.complexity == complexity)
-        .toList();
+    return allCalculators.where((calc) => calc.complexity == complexity).toList();
   }
 
   /// Количество калькуляторов
@@ -209,7 +205,10 @@ class CalculatorRegistry {
       overrides: overrides,
     );
 
-    final all = <CalculatorDefinitionV2>[..._seedCalculators, ...migrated];
+    final all = <CalculatorDefinitionV2>[
+      ..._seedCalculators,
+      ...migrated,
+    ];
     final ids = {for (final calc in all) calc.id};
 
     for (final entry in _idAliases.entries) {
