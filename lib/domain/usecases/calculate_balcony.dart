@@ -3,6 +3,7 @@ import 'dart:math';
 
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
+import './base_calculator.dart';
 
 /// Калькулятор балкона/лоджии.
 ///
@@ -17,160 +18,146 @@ import './calculator_usecase.dart';
 /// - insulation: утепление (0 - нет, 1 - да)
 /// - floorType: тип пола (1 - плитка, 2 - наливной, 3 - дерево)
 /// - wallFinish: отделка стен (1 - покраска, 2 - панели, 3 - плитка)
-class CalculateBalcony implements CalculatorUseCase {
+class CalculateBalcony extends BaseCalculator {
   @override
-  CalculatorResult call(
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
+    final area =
+        getInput(inputs, 'area', defaultValue: 0.0, minValue: 0.0);
     final perimeter = _resolvePerimeter(inputs, area);
-    final height = inputs['height'] ?? 1.1; // м
-    final glazing = (inputs['glazing'] ?? 0.0).round();
-    final insulation = (inputs['insulation'] ?? 0.0).round();
-    final floorType = (inputs['floorType'] ?? 1.0).round();
-    final wallFinish = (inputs['wallFinish'] ?? 1.0).round();
+    final height =
+        getInput(inputs, 'height', defaultValue: 1.1, minValue: 0.0);
+    final glazing = getIntInput(
+      inputs,
+      'glazing',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final insulation = getIntInput(
+      inputs,
+      'insulation',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final floorType = getIntInput(
+      inputs,
+      'floorType',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 3,
+    );
+    final wallFinish = getIntInput(
+      inputs,
+      'wallFinish',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 3,
+    );
 
-    // Площадь пола
     final floorArea = area;
-
-    // Площадь стен
     final wallArea = perimeter > 0 ? perimeter * height : 0.0;
-
-    // Площадь потолка
     final ceilingArea = area;
 
-    // Остекление
     double glazingArea = 0.0;
     double glazingLength = 0.0;
     if (glazing > 0) {
-      // Площадь остекления (примерно 70% от площади стен)
       glazingArea = wallArea * 0.7;
-      // Длина остекления (периметр балкона)
       glazingLength = perimeter;
     }
 
-    // Утепление
-    final insulationArea = insulation == 1
-        ? (wallArea + ceilingArea) * 1.1 // +10% на нахлёст
-        : 0.0;
-    final insulationVolume = insulation == 1
-        ? (wallArea + ceilingArea) * 0.05 // 5 см утеплителя
-        : 0.0;
+    final insulationArea =
+        insulation == 1 ? (wallArea + ceilingArea) * 1.1 : 0.0;
+    final insulationVolume =
+        insulation == 1 ? (wallArea + ceilingArea) * 0.05 : 0.0;
+    final vaporBarrierArea =
+        insulation == 1 ? (wallArea + ceilingArea) * 1.1 : 0.0;
 
-    // Пароизоляция (если утепление)
-    final vaporBarrierArea = insulation == 1 ? (wallArea + ceilingArea) * 1.1 : 0.0;
-
-    // Пол
     double tilesNeeded = 0.0;
     double selfLevelingMix = 0.0;
     double woodArea = 0.0;
-    
+
     if (floorType == 1) {
-      // Плитка
-      const tileArea = 0.09; // 30x30 см
+      const tileArea = 0.09;
       tilesNeeded = (floorArea / tileArea * 1.1).ceil().toDouble();
     } else if (floorType == 2) {
-      // Наливной пол
-      selfLevelingMix = floorArea * 1.5 * 0.005; // 5 мм, расход 1.5 кг/м2·мм
+      selfLevelingMix = floorArea * 1.5 * 0.005;
     } else if (floorType == 3) {
-      // Дерево (террасная доска)
-      woodArea = floorArea * 1.1; // +10% запас
+      woodArea = floorArea * 1.1;
     }
 
-    // Отделка стен
     double paintNeeded = 0.0;
     double panelsNeeded = 0.0;
     double wallTilesNeeded = 0.0;
-    
+
     if (wallFinish == 1) {
-      // Покраска
-      paintNeeded = wallArea * 0.15 * 2; // 2 слоя, расход 0.15 кг/м2
+      paintNeeded = wallArea * 0.15 * 2;
     } else if (wallFinish == 2) {
-      // Панели ПВХ
-      const panelArea = 0.25; // м2 на панель
+      const panelArea = 0.25;
       panelsNeeded = (wallArea / panelArea * 1.1).ceil().toDouble();
     } else if (wallFinish == 3) {
-      // Плитка
-      const tileArea = 0.09; // 30x30 см
+      const tileArea = 0.09;
       wallTilesNeeded = (wallArea / tileArea * 1.1).ceil().toDouble();
     }
 
-    // Потолок (обычно покраска или панели)
-    final ceilingPaintNeeded = ceilingArea * 0.12 * 2; // 2 слоя
+    final ceilingPaintNeeded = ceilingArea * 0.12 * 2;
+    final railingLength = glazing == 0 && perimeter > 0 ? perimeter : 0.0;
 
-    // Ограждение (если не остеклено)
-    double railingLength = 0.0;
-    if (glazing == 0 && perimeter > 0) {
-      railingLength = perimeter;
-    }
-
-    // Цены
-    final glazingPrice = _findPrice(
+    final glazingPrice = findPrice(
       priceList,
       glazing == 2
           ? ['glazing_warm', 'windows_warm', 'glazing']
           : ['glazing_cold', 'windows_cold', 'glazing'],
     )?.price;
-
-    final insulationPrice = _findPrice(
+    final insulationPrice = findPrice(
       priceList,
       ['insulation_eps', 'eps', 'xps', 'insulation'],
     )?.price;
-
-    final vaporBarrierPrice = _findPrice(
+    final vaporBarrierPrice = findPrice(
       priceList,
       ['vapor_barrier', 'vapor_membrane'],
     )?.price;
-
-    final tilePrice = _findPrice(
+    final tilePrice = findPrice(
       priceList,
       ['tile', 'tile_ceramic', 'tile_porcelain'],
     )?.price;
-
-    final selfLevelingPrice = _findPrice(
+    final selfLevelingPrice = findPrice(
       priceList,
       ['self_leveling', 'leveling_compound'],
     )?.price;
-
-    final woodPrice = _findPrice(
+    final woodPrice = findPrice(
       priceList,
       ['decking', 'terrace_board', 'wood'],
     )?.price;
-
-    final paintPrice = _findPrice(
+    final paintPrice = findPrice(
       priceList,
       ['paint', 'paint_wall'],
     )?.price;
-
-    final panelPrice = _findPrice(
+    final panelPrice = findPrice(
       priceList,
       ['pvc_panel', 'panel'],
     )?.price;
-
-    final railingPrice = _findPrice(
+    final railingPrice = findPrice(
       priceList,
       ['railing', 'balcony_railing'],
     )?.price;
 
     double? totalPrice;
 
-    // Остекление
     if (glazingPrice != null && glazingArea > 0) {
       totalPrice = glazingArea * glazingPrice;
     }
-
-    // Утепление
     if (insulationPrice != null && insulationArea > 0) {
       totalPrice = (totalPrice ?? 0) + insulationArea * insulationPrice;
     }
-
-    // Пароизоляция
     if (vaporBarrierPrice != null && vaporBarrierArea > 0) {
-      totalPrice = (totalPrice ?? 0) + vaporBarrierArea * vaporBarrierPrice;
+      totalPrice =
+          (totalPrice ?? 0) + vaporBarrierArea * vaporBarrierPrice;
     }
 
-    // Пол
     if (floorType == 1 && tilePrice != null) {
       totalPrice = (totalPrice ?? 0) + tilesNeeded * tilePrice;
     } else if (floorType == 2 && selfLevelingPrice != null) {
@@ -179,7 +166,6 @@ class CalculateBalcony implements CalculatorUseCase {
       totalPrice = (totalPrice ?? 0) + woodArea * woodPrice;
     }
 
-    // Стены
     if (wallFinish == 1 && paintPrice != null) {
       totalPrice = (totalPrice ?? 0) + paintNeeded * paintPrice;
     } else if (wallFinish == 2 && panelPrice != null) {
@@ -188,17 +174,15 @@ class CalculateBalcony implements CalculatorUseCase {
       totalPrice = (totalPrice ?? 0) + wallTilesNeeded * tilePrice;
     }
 
-    // Потолок
     if (paintPrice != null) {
-      totalPrice = (totalPrice ?? 0) + ceilingPaintNeeded * paintPrice;
+      totalPrice =
+          (totalPrice ?? 0) + ceilingPaintNeeded * paintPrice;
     }
-
-    // Ограждение
     if (railingPrice != null && railingLength > 0) {
       totalPrice = (totalPrice ?? 0) + railingLength * railingPrice;
     }
 
-    return CalculatorResult(
+    return createResult(
       values: {
         'area': area,
         'floorArea': floorArea,
@@ -219,25 +203,15 @@ class CalculateBalcony implements CalculatorUseCase {
         'railingLength': railingLength,
       },
       totalPrice: totalPrice,
+      calculatorId: 'balcony',
     );
-  }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
   }
 
   double _resolvePerimeter(Map<String, double> inputs, double area) {
     final perimeterInput = inputs['perimeter'] ?? 0.0;
     if (perimeterInput > 0) return perimeterInput;
     if (area <= 0) return 0.0;
-    // Приблизительный периметр квадратного помещения
     return sqrt(area) * 4;
   }
 }
+

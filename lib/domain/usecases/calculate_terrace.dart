@@ -3,6 +3,7 @@ import 'dart:math';
 
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
+import './base_calculator.dart';
 
 /// Калькулятор террасы/веранды.
 ///
@@ -16,127 +17,126 @@ import './calculator_usecase.dart';
 /// - railing: ограждение (0 - нет, 1 - да)
 /// - roof: кровля (0 - нет, 1 - да)
 /// - roofType: тип кровли (1 - поликарбонат, 2 - профлист, 3 - мягкая кровля)
-class CalculateTerrace implements CalculatorUseCase {
+class CalculateTerrace extends BaseCalculator {
   @override
-  CalculatorResult call(
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = inputs['area'] ?? 0;
+    final area =
+        getInput(inputs, 'area', defaultValue: 0.0, minValue: 0.0);
     final perimeter = _resolvePerimeter(inputs, area);
-    final floorType = (inputs['floorType'] ?? 1.0).round();
-    final railing = (inputs['railing'] ?? 1.0).round();
-    final roof = (inputs['roof'] ?? 0.0).round();
-    final roofType = (inputs['roofType'] ?? 1.0).round();
+    final floorType = getIntInput(
+      inputs,
+      'floorType',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 3,
+    );
+    final railing = getIntInput(
+      inputs,
+      'railing',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final roof =
+        getIntInput(inputs, 'roof', defaultValue: 0, minValue: 0, maxValue: 1);
+    final roofType = getIntInput(
+      inputs,
+      'roofType',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 3,
+    );
 
-    // Площадь пола
     final floorArea = area;
 
-    // Покрытие пола
     double deckingArea = 0.0;
     double tilesNeeded = 0.0;
     double deckingBoards = 0.0;
-    
+
     if (floorType == 1) {
-      // Декинг (террасная доска)
-      deckingArea = floorArea * 1.1; // +10% запас
+      deckingArea = floorArea * 1.1;
     } else if (floorType == 2) {
-      // Плитка
-      const tileArea = 0.25; // 50x50 см
+      const tileArea = 0.25;
       tilesNeeded = (floorArea / tileArea * 1.1).ceil().toDouble();
     } else if (floorType == 3) {
-      // Деревянный настил
-      const boardArea = 0.1; // м2 на доску
+      const boardArea = 0.1;
       deckingBoards = (floorArea / boardArea * 1.1).ceil().toDouble();
     }
 
-    // Ограждение
     final railingLength = railing == 1 && perimeter > 0 ? perimeter : 0.0;
     final railingPosts = (railing == 1 && perimeter > 0
-        ? (perimeter / 2.0).ceil() // столбы через каждые 2 метра
-        : 0).toDouble();
+            ? (perimeter / 2.0).ceil()
+            : 0)
+        .toDouble();
 
-    // Кровля
     double roofArea = 0.0;
     double polycarbonateSheets = 0.0;
     double profiledSheets = 0.0;
     double roofingMaterial = 0.0;
-    
+
     if (roof == 1) {
-      // Площадь кровли с учётом свесов (примерно +20%)
       roofArea = area * 1.2;
-      
+
       if (roofType == 1) {
-        // Поликарбонат
-        const sheetArea = 6.0; // м2 на лист
-        polycarbonateSheets = (roofArea / sheetArea * 1.1).ceil().toDouble();
+        const sheetArea = 6.0;
+        polycarbonateSheets =
+            (roofArea / sheetArea * 1.1).ceil().toDouble();
       } else if (roofType == 2) {
-        // Профлист
-        const sheetArea = 8.0; // м2 на лист
-        profiledSheets = (roofArea / sheetArea * 1.1).ceil().toDouble();
+        const sheetArea = 8.0;
+        profiledSheets =
+            (roofArea / sheetArea * 1.1).ceil().toDouble();
       } else if (roofType == 3) {
-        // Мягкая кровля
-        roofingMaterial = roofArea * 1.1; // +10% нахлёст
+        roofingMaterial = roofArea * 1.1;
       }
     }
 
-    // Опорные столбы для кровли
-    final roofPosts = (roof == 1 ? (area / 9.0).ceil() : 0).toDouble(); // один столб на 9 м2
-
-    // Фундамент для столбов (если кровля)
+    final roofPosts = (roof == 1 ? (area / 9.0).ceil() : 0).toDouble();
     final foundationVolume = roof == 1
-        ? roofPosts * 0.2 * 0.2 * 0.5 // 20x20x50 см на столб
+        ? roofPosts * 0.2 * 0.2 * 0.5
         : 0.0;
 
-    // Цены
-    final deckingPrice = _findPrice(
+    final deckingPrice = findPrice(
       priceList,
       ['decking', 'terrace_board', 'composite_decking'],
     )?.price;
-
-    final tilePrice = _findPrice(
+    final tilePrice = findPrice(
       priceList,
       ['tile', 'tile_porcelain', 'tile_outdoor'],
     )?.price;
-
-    final boardPrice = _findPrice(
+    final boardPrice = findPrice(
       priceList,
       ['board', 'wood', 'timber'],
     )?.price;
-
-    final railingPrice = _findPrice(
+    final railingPrice = findPrice(
       priceList,
       ['railing', 'terrace_railing', 'balustrade'],
     )?.price;
-
-    final postPrice = _findPrice(
+    final postPrice = findPrice(
       priceList,
       ['post', 'support_post', 'column'],
     )?.price;
-
-    final polycarbonatePrice = _findPrice(
+    final polycarbonatePrice = findPrice(
       priceList,
       ['polycarbonate', 'polycarbonate_sheet'],
     )?.price;
-
-    final profiledSheetPrice = _findPrice(
+    final profiledSheetPrice = findPrice(
       priceList,
       ['profiled_sheet', 'corrugated_sheet'],
     )?.price;
-
-    final roofingPrice = _findPrice(
+    final roofingPrice = findPrice(
       priceList,
       ['soft_roofing', 'roofing_material'],
     )?.price;
-
-    final concretePrice = _findPrice(
+    final concretePrice = findPrice(
       priceList,
       ['concrete', 'concrete_m300'],
     )?.price;
 
     double? totalPrice;
 
-    // Пол
     if (floorType == 1 && deckingPrice != null) {
       totalPrice = deckingArea * deckingPrice;
     } else if (floorType == 2 && tilePrice != null) {
@@ -145,7 +145,6 @@ class CalculateTerrace implements CalculatorUseCase {
       totalPrice = deckingBoards * boardPrice;
     }
 
-    // Ограждение
     if (railingPrice != null && railingLength > 0) {
       totalPrice = (totalPrice ?? 0) + railingLength * railingPrice;
     }
@@ -153,26 +152,30 @@ class CalculateTerrace implements CalculatorUseCase {
       totalPrice = (totalPrice ?? 0) + railingPosts * postPrice;
     }
 
-    // Кровля
-    if (roofType == 1 && polycarbonatePrice != null && polycarbonateSheets > 0) {
-      totalPrice = (totalPrice ?? 0) + polycarbonateSheets * polycarbonatePrice;
-    } else if (roofType == 2 && profiledSheetPrice != null && profiledSheets > 0) {
-      totalPrice = (totalPrice ?? 0) + profiledSheets * profiledSheetPrice;
+    if (roofType == 1 &&
+        polycarbonatePrice != null &&
+        polycarbonateSheets > 0) {
+      totalPrice =
+          (totalPrice ?? 0) + polycarbonateSheets * polycarbonatePrice;
+    } else if (roofType == 2 &&
+        profiledSheetPrice != null &&
+        profiledSheets > 0) {
+      totalPrice =
+          (totalPrice ?? 0) + profiledSheets * profiledSheetPrice;
     } else if (roofType == 3 && roofingPrice != null && roofingMaterial > 0) {
       totalPrice = (totalPrice ?? 0) + roofingMaterial * roofingPrice;
     }
 
-    // Столбы для кровли
     if (postPrice != null && roofPosts > 0) {
       totalPrice = (totalPrice ?? 0) + roofPosts * postPrice;
     }
 
-    // Фундамент
     if (concretePrice != null && foundationVolume > 0) {
-      totalPrice = (totalPrice ?? 0) + foundationVolume * concretePrice;
+      totalPrice =
+          (totalPrice ?? 0) + foundationVolume * concretePrice;
     }
 
-    return CalculatorResult(
+    return createResult(
       values: {
         'area': area,
         'floorArea': floorArea,
@@ -189,25 +192,15 @@ class CalculateTerrace implements CalculatorUseCase {
         'foundationVolume': foundationVolume,
       },
       totalPrice: totalPrice,
+      calculatorId: 'terrace',
     );
-  }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
   }
 
   double _resolvePerimeter(Map<String, double> inputs, double area) {
     final perimeterInput = inputs['perimeter'] ?? 0.0;
     if (perimeterInput > 0) return perimeterInput;
     if (area <= 0) return 0.0;
-    // Приблизительный периметр квадратной площадки
     return sqrt(area) * 4;
   }
 }
+

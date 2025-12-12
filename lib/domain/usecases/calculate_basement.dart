@@ -2,6 +2,7 @@
 import 'dart:math';
 
 import '../../data/models/price_item.dart';
+import './base_calculator.dart';
 import './calculator_usecase.dart';
 
 /// Калькулятор подвала/погреба.
@@ -11,16 +12,25 @@ import './calculator_usecase.dart';
 /// - СП 50.13330.2012 "Тепловая защита зданий"
 ///
 /// Поля:
-/// - area: площадь подвала (м²)
+/// - area: площадь подвала (м?)
 /// - height: высота подвала (м), по умолчанию 2.5
 /// - wallThickness: толщина стен (м), по умолчанию 0.4
 /// - materialType: материал стен (1 - бетон, 2 - кирпич, 3 - блоки)
 /// - waterproofing: гидроизоляция (0 - нет, 1 - да)
 /// - insulation: утепление (0 - нет, 1 - да)
 /// - ventilation: вентиляция (0 - нет, 1 - да)
-class CalculateBasement implements CalculatorUseCase {
+class CalculateBasement extends BaseCalculator {
   @override
-  CalculatorResult call(
+  String? validateInputs(Map<String, double> inputs) {
+    final area = inputs['area'] ?? 0;
+    if (area <= 0) {
+      return 'Площадь подвала должна быть больше 0';
+    }
+    return super.validateInputs(inputs);
+  }
+
+  @override
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
@@ -32,13 +42,6 @@ class CalculateBasement implements CalculatorUseCase {
     final insulation = (inputs['insulation'] ?? 0.0).round();
     final ventilation = (inputs['ventilation'] ?? 1.0).round();
     final floorThickness = inputs['floorThickness'] ?? 0.15;
-
-    if (area <= 0) {
-      return CalculatorResult(
-        values: {'area': 0, 'error': 1},
-        totalPrice: null,
-      );
-    }
 
     // Объём подвала
     final volume = area * height;
@@ -67,16 +70,16 @@ class CalculateBasement implements CalculatorUseCase {
     double bricksNeeded = 0.0;
     double mortarNeeded = 0.0;
     if (materialType == 2) {
-      // Кладка в 1.5 кирпича: ~153 шт/м² при толщине 38 см
+      // Кладка в 1.5 кирпича: ~153 шт/м? при толщине 38 см
       bricksNeeded = wallArea * 153 * 1.1; // +10% запас
-      mortarNeeded = wallArea * 0.03; // м³ раствора на м²
+      mortarNeeded = wallArea * 0.03; // м? раствора на м?
     }
 
     // Блоки для стен
     double blocksNeeded = 0.0;
     if (materialType == 3) {
-      // Газоблок 600x300x400 мм = 0.072 м²
-      final blockArea = 0.072; // м²
+      // Газоблок 600x300x400 мм = 0.072 м?
+      final blockArea = 0.072; // м?
       blocksNeeded = (wallArea / blockArea * 1.1).ceil().toDouble();
     }
 
@@ -90,53 +93,55 @@ class CalculateBasement implements CalculatorUseCase {
 
     // Утепление (если требуется)
     final insulationArea = insulation == 1 ? wallArea * 1.1 : 0.0;
-    final insulationVolume = insulation == 1 ? wallArea * 0.1 : 0.0; // 10 см утеплителя
+    final insulationVolume =
+        insulation == 1 ? wallArea * 0.1 : 0.0; // 10 см утеплителя
 
     // Армирование для бетонных стен
-    double rebarNeeded = 0.0;
+    double rebarWeight = 0.0;
     if (materialType == 1) {
-      rebarNeeded = wallArea * 12; // кг/м²
+      rebarWeight = wallArea * 12; // кг/м?
     }
 
     // Вентиляция: трубы и решётки
-    final ventilationPipes = ventilation == 1 ? 2.0 : 0.0; // приточная и вытяжная
+    final ventilationPipes =
+        ventilation == 1 ? 2.0 : 0.0; // приточная и вытяжная
     final ventilationGrilles = ventilation == 1 ? 2.0 : 0.0;
 
     // Лестница (если нужна)
     final stairsNeeded = inputs['stairs'] ?? 1.0;
 
     // Цены
-    final concretePrice = _findPrice(
+    final concretePrice = findPrice(
       priceList,
       ['concrete', 'concrete_m300', 'concrete_m200'],
     )?.price;
 
-    final brickPrice = _findPrice(
+    final brickPrice = findPrice(
       priceList,
       ['brick', 'brick_facing'],
     )?.price;
 
-    final blockPrice = _findPrice(
+    final blockPrice = findPrice(
       priceList,
       ['gas_block', 'foam_block', 'block'],
     )?.price;
 
-    final mortarPrice = _findPrice(
+    final mortarPrice = findPrice(
       priceList,
       ['mortar', 'cement_mortar'],
     )?.price;
 
-    final waterproofingPrice = _findPrice(
+    final waterproofingPrice = findPrice(
       priceList,
       ['waterproofing', 'waterproofing_membrane', 'bitumen'],
     )?.price;
 
-    final insulationPrice = _findPrice(
+    final insulationPrice = findPrice(
       priceList,
       ['insulation_eps', 'eps', 'xps', 'insulation'],
     )?.price;
 
-    final rebarPrice = _findPrice(
+    final rebarPrice = findPrice(
       priceList,
       ['rebar', 'reinforcement', 'rebar_12'],
     )?.price;
@@ -148,7 +153,7 @@ class CalculateBasement implements CalculatorUseCase {
       // Бетонные стены
       totalPrice = concreteVolume * concretePrice;
       if (rebarPrice != null) {
-        totalPrice = totalPrice + rebarNeeded * rebarPrice;
+        totalPrice = totalPrice + rebarWeight * rebarPrice;
       }
     } else if (materialType == 2 && brickPrice != null) {
       // Кирпичные стены
@@ -168,7 +173,8 @@ class CalculateBasement implements CalculatorUseCase {
 
     // Гидроизоляция
     if (waterproofingPrice != null && waterproofingArea > 0) {
-      totalPrice = (totalPrice ?? 0) + waterproofingArea * waterproofingPrice;
+      totalPrice =
+          (totalPrice ?? 0) + waterproofingArea * waterproofingPrice;
     }
 
     // Утепление
@@ -176,7 +182,7 @@ class CalculateBasement implements CalculatorUseCase {
       totalPrice = (totalPrice ?? 0) + insulationArea * insulationPrice;
     }
 
-    return CalculatorResult(
+    return createResult(
       values: {
         'area': area,
         'height': height,
@@ -193,23 +199,13 @@ class CalculateBasement implements CalculatorUseCase {
         'waterproofingArea': waterproofingArea,
         'insulationArea': insulationArea,
         'insulationVolume': insulationVolume,
-        'rebarNeeded': rebarNeeded,
+        'rebarWeight': rebarWeight,
         'ventilationPipes': ventilationPipes,
         'ventilationGrilles': ventilationGrilles,
         'stairsNeeded': stairsNeeded,
       },
       totalPrice: totalPrice,
+      calculatorId: 'foundation_basement',
     );
-  }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
   }
 }

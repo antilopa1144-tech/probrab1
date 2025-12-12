@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_declarations
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
+import './base_calculator.dart';
 
 /// Калькулятор лестницы.
 ///
@@ -15,56 +16,51 @@ import './calculator_usecase.dart';
 /// - stepCount: количество ступеней (если 0, рассчитывается автоматически)
 /// - width: ширина лестницы (м), по умолчанию 1.0
 /// - materialType: тип материала (1 - дерево, 2 - бетон, 3 - металл)
-class CalculateStairs implements CalculatorUseCase {
+class CalculateStairs extends BaseCalculator {
   @override
-  CalculatorResult call(
+  CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final floorHeight = inputs['floorHeight'] ?? 0;
-    final stepHeight = inputs['stepHeight'] ?? 0.18; // м
-    final stepWidth = inputs['stepWidth'] ?? 0.28; // м
-    var stepCount = (inputs['stepCount'] ?? 0).round();
-    final width = inputs['width'] ?? 1.0; // м
-    final materialType = (inputs['materialType'] ?? 1.0).round();
+    final floorHeight =
+        getInput(inputs, 'floorHeight', defaultValue: 0.0, minValue: 0.0);
+    final stepHeight =
+        getInput(inputs, 'stepHeight', defaultValue: 0.18, minValue: 0.0);
+    final stepWidth =
+        getInput(inputs, 'stepWidth', defaultValue: 0.28, minValue: 0.0);
+    var stepCount =
+        getIntInput(inputs, 'stepCount', defaultValue: 0, minValue: 0);
+    final width =
+        getInput(inputs, 'width', defaultValue: 1.0, minValue: 0.0);
+    final materialType = getIntInput(
+      inputs,
+      'materialType',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 3,
+    );
 
-    // Если количество ступеней не указано, рассчитываем
     if (stepCount == 0 && floorHeight > 0 && stepHeight > 0) {
       stepCount = (floorHeight / stepHeight).round();
     }
 
-    // Длина марша лестницы
-    final flightLength = stepCount > 0 ? (stepCount - 1) * stepWidth : 0.0;
-
-    // Площадь ступеней
+    final flightLength =
+        stepCount > 0 ? (stepCount - 1) * stepWidth : 0.0;
     final stepArea = stepCount * stepWidth * width;
-
-    // Площадь подступенков (вертикальная часть)
     final riserArea = stepCount * stepHeight * width;
-
-    // Общая площадь отделки
     final totalArea = stepArea + riserArea;
 
-    // Перила: длина = длина марша + высота * 2 (для двух сторон)
     final railingLength = flightLength + (floorHeight * 2);
-
-    // Балясины: одна на каждые 10-15 см перил
-    const balusterSpacing = 0.12; // м
+    const balusterSpacing = 0.12;
     final balustersNeeded = (railingLength / balusterSpacing).ceil();
-
-    // Опорные столбы: минимум 2 (в начале и конце), плюс один на каждые 2 метра
     final supportPosts = 2 + (railingLength / 2.0).ceil();
-
-    // Косоуры/тетивы (несущие балки): 2-3 штуки в зависимости от ширины
     final stringersNeeded = width > 1.2 ? 3 : 2;
 
-    // Объём бетона (для бетонной лестницы)
     final concreteVolume = materialType == 2
-        ? (stepArea * stepHeight * 0.5) // примерный объём
+        ? (stepArea * stepHeight * 0.5)
         : 0.0;
 
-    // Цены
-    final materialPrice = _findPrice(
+    final materialPrice = findPrice(
       priceList,
       materialType == 1
           ? ['wood_stairs', 'wood', 'timber']
@@ -72,30 +68,25 @@ class CalculateStairs implements CalculatorUseCase {
               ? ['concrete_stairs', 'concrete']
               : ['metal_stairs', 'metal', 'steel'],
     )?.price;
-
-    final railingPrice = _findPrice(
+    final railingPrice = findPrice(
       priceList,
       ['railing', 'handrail', 'balustrade'],
     )?.price;
-
-    final balusterPrice = _findPrice(
+    final balusterPrice = findPrice(
       priceList,
       ['baluster', 'balustrade_post'],
     )?.price;
-
-    final postPrice = _findPrice(
+    final postPrice = findPrice(
       priceList,
       ['post', 'support_post', 'newel_post'],
     )?.price;
-
-    final concretePrice = _findPrice(
+    final concretePrice = findPrice(
       priceList,
       ['concrete', 'concrete_m300'],
     )?.price;
 
     double? totalPrice;
     if (materialType == 1 && materialPrice != null) {
-      // Деревянная лестница
       totalPrice = totalArea * materialPrice;
       if (railingPrice != null) {
         totalPrice = totalPrice + railingLength * railingPrice;
@@ -107,21 +98,18 @@ class CalculateStairs implements CalculatorUseCase {
         totalPrice = totalPrice + supportPosts * postPrice;
       }
     } else if (materialType == 2 && concretePrice != null) {
-      // Бетонная лестница
       totalPrice = concreteVolume * concretePrice;
       if (materialPrice != null) {
-        // Отделка бетонной лестницы
         totalPrice = totalPrice + totalArea * materialPrice;
       }
     } else if (materialType == 3 && materialPrice != null) {
-      // Металлическая лестница
-      totalPrice = totalArea * materialPrice * 1.5; // металл дороже
+      totalPrice = totalArea * materialPrice * 1.5;
       if (railingPrice != null) {
         totalPrice = totalPrice + railingLength * railingPrice;
       }
     }
 
-    return CalculatorResult(
+    return createResult(
       values: {
         'floorHeight': floorHeight,
         'stepCount': stepCount.toDouble(),
@@ -137,17 +125,8 @@ class CalculateStairs implements CalculatorUseCase {
         'concreteVolume': concreteVolume,
       },
       totalPrice: totalPrice,
+      calculatorId: 'stairs',
     );
   }
-
-  PriceItem? _findPrice(List<PriceItem> priceList, List<String> skus) {
-    for (final sku in skus) {
-      try {
-        return priceList.firstWhere((item) => item.sku == sku);
-      } catch (_) {
-        continue;
-      }
-    }
-    return null;
-  }
 }
+

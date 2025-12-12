@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 /// Очистка и нормализация входных данных.
 class InputSanitizer {
   /// Очистить строку от лишних символов
@@ -10,35 +8,40 @@ class InputSanitizer {
     // Заменяем запятую на точку для парсинга
     cleaned = cleaned.replaceAll(',', '.');
 
+    // Обрабатываем знак минуса: допускаем только один ведущий минус
+    final isNegative = cleaned.startsWith('-');
+    cleaned = cleaned.replaceAll('-', '');
+    if (isNegative) {
+      cleaned = '-$cleaned';
+    }
+
     // Убираем множественные точки (оставляем только первую)
     final parts = cleaned.split('.');
     if (parts.length > 2) {
       cleaned = '${parts[0]}.${parts.skip(1).join('')}';
     }
-    
-    // ... (остальная логика без изменений)
+
+    if (cleaned == '-') return '';
+
     return cleaned;
   }
 
-  /// ... (другие методы без изменений)
-
-  /// Форматировать число для отображения в соответствии с русской локалью.
+  /// Форматировать число для отображения.
+  ///
+  /// По умолчанию использует точку как десятичный разделитель, чтобы
+  /// формат был стабильным в тестах и при вводе.
   static String formatNumber(
     double value, {
     int decimals = 2,
     int? maxDecimals,
     bool removeTrailingZeros = true,
   }) {
-    // Используем NumberFormat для правильного форматирования (пробел-тысячи, запятая-дробные)
-    final formatter = NumberFormat.decimalPattern('ru_RU')
-      ..maximumFractionDigits = maxDecimals ?? decimals;
+    final fractionDigits = maxDecimals ?? decimals;
+    String formatted = value.toStringAsFixed(fractionDigits);
 
-    String formatted = formatter.format(value);
-
-    // Логика удаления нулей после запятой, если они не несут смысла
-    if (removeTrailingZeros && formatted.contains(',')) {
+    if (removeTrailingZeros && formatted.contains('.')) {
       formatted = formatted.replaceAll(RegExp(r'0+$'), '');
-      if (formatted.endsWith(',')) {
+      if (formatted.endsWith('.')) {
         formatted = formatted.substring(0, formatted.length - 1);
       }
     }

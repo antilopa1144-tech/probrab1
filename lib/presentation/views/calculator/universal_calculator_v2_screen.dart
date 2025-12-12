@@ -576,7 +576,7 @@ class _UniversalCalculatorV2ScreenState
     final resultsData = <String, (double, UnitType, String)>{};
 
     _results!.forEach((key, value) {
-      final (unit, label) = _inferUnitAndLabel(key);
+      final (unit, label) = _inferUnitAndLabel(key, value);
       resultsData[key] = (value, unit, label);
     });
 
@@ -591,7 +591,7 @@ class _UniversalCalculatorV2ScreenState
     return widgets;
   }
 
-  (UnitType, String) _inferUnitAndLabel(String key) {
+  (UnitType, String) _inferUnitAndLabel(String key, double value) {
     // ... (код без изменений)
     final loc = AppLocalizations.of(context);
     final resultKey = 'result.$key';
@@ -601,6 +601,14 @@ class _UniversalCalculatorV2ScreenState
       if (key.contains('area')) return (UnitType.squareMeters, translated);
       if (key.contains('volume')) return (UnitType.cubicMeters, translated);
       if (key.contains('length') || key.contains('perimeter')) return (UnitType.meters, translated);
+      if (key.contains('thickness')) {
+        if (value >= 5) return (UnitType.millimeters, translated);
+        return (UnitType.meters, translated);
+      }
+      if (key.contains('height') || key.contains('width')) {
+        if (value >= 5) return (UnitType.centimeters, translated);
+        return (UnitType.meters, translated);
+      }
       if (key.contains('weight') || key.contains('kg')) return (UnitType.kilograms, translated);
       if (key.contains('price') || key.contains('cost')) return (UnitType.rubles, translated);
       if (key.contains('liters')) return (UnitType.liters, translated);

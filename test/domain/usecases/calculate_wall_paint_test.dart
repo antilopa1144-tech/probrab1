@@ -12,35 +12,40 @@ void main() {
 
     test('calculates paint needed correctly with 8% reserve', () {
       final inputs = {
-        'area': 40.0, // 40 м²
+        'inputMode': 1.0,
+        'area': 40.0, // 40 м?
+        'perimeter': 20.0,
         'layers': 2.0,
-        'consumption': 0.15, // кг/м²
+        'consumption': 0.15, // л/м?
+        'reserve': 8.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Краска = 40 * (0.15 * 1.2 + (2 - 1) * 0.15) * 1.08 = 14.26 кг
-      // Первый слой: 0.15 * 1.2 = 0.18, остальные: 0.15
-      expect(result.values['paintNeeded'], closeTo(14.26, 0.1));
+      // После roundBulk ожидаем 15 л
+      expect(result.values['paintNeededLiters'], equals(15.0));
     });
 
     test('calculates primer needed correctly', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 40.0,
+        'perimeter': 20.0,
         'layers': 2.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Грунтовка = 40 * 0.12 * 1.05 = 5.04 кг
-      expect(result.values['primerNeeded'], closeTo(5.04, 0.1));
+      expect(result.values['primerNeededLiters'], equals(5.5));
     });
 
     test('subtracts windows and doors area', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 50.0,
+        'perimeter': 28.0,
         'layers': 2.0,
         'windowsArea': 6.0,
         'doorsArea': 4.0,
@@ -49,75 +54,79 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Полезная площадь = 50 - 6 - 4 = 40 м²
       expect(result.values['usefulArea'], equals(40.0));
     });
 
     test('handles single layer correctly', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 40.0,
+        'perimeter': 20.0,
         'layers': 1.0,
         'consumption': 0.15,
+        'reserve': 8.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Краска = 40 * (0.15 * 1.2) * 1.08 = 7.78 кг
-      // Только первый слой с повышенным расходом
-      expect(result.values['paintNeeded'], closeTo(7.78, 0.1));
+      expect(result.values['paintNeededLiters'], equals(8.0));
     });
 
     test('handles three layers correctly', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 40.0,
+        'perimeter': 20.0,
         'layers': 3.0,
         'consumption': 0.15,
+        'reserve': 8.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Краска = 40 * (0.15 * 1.2 + (3 - 1) * 0.15) * 1.08 = 20.74 кг
-      expect(result.values['paintNeeded'], closeTo(20.74, 0.1));
+      expect(result.values['paintNeededLiters'], equals(21.0));
     });
 
     test('uses default values when not provided', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 40.0,
+        'perimeter': 20.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // По умолчанию: layers=2, consumption=0.15
       expect(result.values['layers'], equals(2.0));
-      // Краска = 40 * (0.15 * 1.2 + 1 * 0.15) * 1.08 = 14.26 кг
-      expect(result.values['paintNeeded'], closeTo(14.26, 0.1));
+      expect(result.values['paintNeededLiters'], equals(12.0));
     });
 
     test('does not allow negative useful area', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 20.0,
+        'perimeter': 18.0,
         'windowsArea': 15.0,
-        'doorsArea': 10.0, // больше, чем площадь стен
+        'doorsArea': 10.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Полезная площадь не может быть отрицательной
       expect(result.values['usefulArea'], equals(0.0));
     });
 
     test('throws exception for zero area', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 0.0,
+        'perimeter': 10.0,
         'layers': 2.0,
       };
       final emptyPriceList = <PriceItem>[];
 
-      // Калькулятор должен выбросить исключение при area <= 0
       expect(
         () => calculator(inputs, emptyPriceList),
         throwsA(isA<Exception>()),
@@ -126,7 +135,9 @@ void main() {
 
     test('calculates total price with price list', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 40.0,
+        'perimeter': 20.0,
         'layers': 2.0,
       };
       final priceList = [
@@ -147,16 +158,18 @@ void main() {
 
     test('handles high consumption rate', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 40.0,
+        'perimeter': 20.0,
         'layers': 2.0,
-        'consumption': 0.25, // текстурная краска
+        'consumption': 0.25,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Краска = 40 * (0.25 * 1.2 + 1 * 0.25) * 1.08 = 23.76 кг
-      expect(result.values['paintNeeded'], closeTo(23.76, 0.1));
+      expect(result.values['paintNeededLiters'], equals(24.0));
     });
   });
 }
+

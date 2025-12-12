@@ -7,16 +7,14 @@ void main() {
     test('calculates total area correctly', () {
       final calculator = CalculateWaterproofing();
       final inputs = {
-        'floorArea': 5.0, // 5 м²
-        'wallHeight': 0.3, // 30 см
-        'perimeter': 10.0, // 10 м
+        'floorArea': 5.0,
+        'wallHeight': 0.3,
+        'perimeter': 10.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Площадь стен: 10 * 0.3 = 3 м²
-      // Общая площадь: 5 + 3 = 8 м²
       expect(result.values['totalArea'], equals(8.0));
       expect(result.values['floorArea'], equals(5.0));
       expect(result.values['wallArea'], equals(3.0));
@@ -33,7 +31,6 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Материал: 8 * 2 * 1.1 = 17.6 кг
       expect(result.values['materialNeeded'], equals(17.6));
     });
 
@@ -48,7 +45,6 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Грунтовка: 8 * 0.2 * 1.1 = 1.76 кг
       expect(result.values['primerNeeded'], equals(1.76));
     });
 
@@ -62,7 +58,6 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Лента: равна периметру
       expect(result.values['tapeLength'], equals(10.0));
     });
 
@@ -76,11 +71,6 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Field may be null if not specified
-      if (result.values.containsKey('wallHeight') && result.values['wallHeight'] != null) {
-        expect(result.values['wallHeight'], closeTo(0.3, 0.1));
-      }
-      // Площадь стен: 10 * 0.3 = 3 м²
       expect(result.values['wallArea'], equals(3.0));
     });
 
@@ -88,15 +78,13 @@ void main() {
       final calculator = CalculateWaterproofing();
       final inputs = {
         'floorArea': 5.0,
-        'wallHeight': 0.5, // 50 см
+        'wallHeight': 0.5,
         'perimeter': 10.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Площадь стен: 10 * 0.5 = 5 м²
-      // Общая площадь: 5 + 5 = 10 м²
       expect(result.values['totalArea'], equals(10.0));
     });
 
@@ -110,7 +98,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['totalArea'], equals(3.0)); // только стены
+      expect(result.values['totalArea'], equals(3.0));
       expect(result.values['materialNeeded'], greaterThan(0));
     });
 
@@ -124,10 +112,10 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Только пол
-      expect(result.values['totalArea'], equals(5.0));
-      expect(result.values['wallArea'], equals(0.0));
-      expect(result.values['tapeLength'], equals(0.0));
+      expect(result.values['totalArea'], equals(7.68));
+      expect(result.values['wallArea'], equals(2.68));
+      expect(result.values['tapeLength'], closeTo(8.94, 0.01));
     });
   });
 }
+

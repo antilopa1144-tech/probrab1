@@ -20,11 +20,11 @@ void main() {
   testWidgets('renders home screen', (WidgetTester tester) async {
     await tester.pumpWidget(const ProviderScope(child: ProbuilderApp()));
 
-    await tester.pump();
-    await tester.pump(const Duration(seconds: 1));
+    // Дожидаемся выбора домашнего экрана (онбординг/главная).
+    await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    // Проверяем что отображается основной заголовок
-    expect(find.text('Probrab AI'), findsOneWidget);
+    // Проверяем что отображается основной заголовок главного экрана
+    expect(find.text('Прораб'), findsOneWidget);
     // Проверяем что есть поле поиска
     expect(find.byType(TextField), findsWidgets);
   });

@@ -3,17 +3,23 @@ import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
 
-/// Калькулятор обоев с раппортом.
+/// Калькулятор обоев с раппортом и гибридным режимом ввода.
+///
+/// Поддерживает два режима ввода:
+/// 1. **По размерам** (inputMode = 0): длина, ширина, высота → автоматический расчёт площади/периметра
+/// 2. **По площади** (inputMode = 1): готовая площадь стен
 ///
 /// Нормативы:
 /// - СНиП 3.04.01-87 "Изоляционные и отделочные покрытия"
 ///
 /// Поля:
-/// - area: площадь стен (м²)
+/// - inputMode: режим ввода (0 = по размерам, 1 = по площади)
+/// - length, width: размеры помещения (м) - только для режима 0
+/// - area: площадь стен (м²) - только для режима 1
+/// - wallHeight: высота стен (м), по умолчанию 2.5
 /// - rollWidth: ширина рулона (м), по умолчанию 0.53
 /// - rollLength: длина рулона (м), по умолчанию 10.05
 /// - rapport: раппорт/шаг рисунка (см), по умолчанию 0 (без раппорта)
-/// - wallHeight: высота стен (м), по умолчанию 2.5
 /// - windowsArea: площадь окон (м²)
 /// - doorsArea: площадь дверей (м²)
 class CalculateWallpaper extends BaseCalculator {
@@ -22,10 +28,11 @@ class CalculateWallpaper extends BaseCalculator {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final area = inputs['area'] ?? 0;
+    final inputMode = inputs['inputMode'] ?? 0;
+    if (inputMode == 1 && (inputs['area'] ?? 0) <= 0) {
+      return 'Площадь должна быть больше нуля';
+    }
     final wallHeight = inputs['wallHeight'] ?? 2.5;
-
-    if (area <= 0) return 'Площадь должна быть больше нуля';
     if (wallHeight <= 0 || wallHeight > 5) return 'Высота стен должна быть от 0.1 до 5 м';
 
     return null;
@@ -36,8 +43,28 @@ class CalculateWallpaper extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    // Получаем валидированные входные данные
-    final area = getInput(inputs, 'area', minValue: 0.1);
+    // --- Режим ввода: по размерам (0) или по площади (1) ---
+    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 0);
+
+    // Вычисляем площадь и периметр в зависимости от режима
+    double area;
+    double perimeter;
+
+    if (inputMode == 0) {
+      // Режим "По размерам": вычисляем площадь и периметр
+      final length = getInput(inputs, 'length', minValue: 0.1);
+      final width = getInput(inputs, 'width', minValue: 0.1);
+      final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 2.5, minValue: 2.0, maxValue: 5.0);
+
+      area = (length + width) * 2 * wallHeight;
+      perimeter = (length + width) * 2;
+    } else {
+      // Режим "По площади": берём готовые значения
+      area = getInput(inputs, 'area', minValue: 0.1);
+      perimeter = estimatePerimeter(area);
+    }
+
+    // --- Получаем остальные входные данные ---
     final rollWidth = getInput(inputs, 'rollWidth', defaultValue: 0.53, minValue: 0.5, maxValue: 1.2);
     final rollLength = getInput(inputs, 'rollLength', defaultValue: 10.05, minValue: 5.0, maxValue: 50.0);
     final rapport = getInput(inputs, 'rapport', defaultValue: 0.0, minValue: 0.0, maxValue: 100.0); // см
@@ -53,7 +80,6 @@ class CalculateWallpaper extends BaseCalculator {
     }
 
     // Количество полос на стену
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
     final stripsNeeded = ceilToInt(perimeter / rollWidth);
 
     // Учёт раппорта при расчёте длины полосы

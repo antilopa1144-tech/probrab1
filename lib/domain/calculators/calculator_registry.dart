@@ -4,6 +4,9 @@ import 'laminate_calculator_v2.dart';
 import 'screed_calculator_v2.dart';
 import 'tile_calculator_v2.dart';
 import 'wallpaper_calculator_v2.dart';
+import 'gkl_wall_calculator_v2.dart';
+import 'linoleum_calculator_v2.dart';
+import 'self_leveling_floor_calculator_v2.dart';
 import 'strip_foundation_calculator_v2.dart';
 import 'slab_foundation_calculator_v2.dart';
 import 'metal_roofing_calculator_v2.dart';
@@ -12,7 +15,7 @@ import 'warm_floor_calculator_v2.dart';
 import 'parquet_calculator_v2.dart';
 import 'gkl_ceiling_calculator_v2.dart';
 import 'bathroom_tile_calculator_v2.dart';
-import 'legacy_v1_migration.dart';
+import 'generated/legacy_calculators_v2.dart';
 
 /// Реестр всех калькуляторов приложения.
 ///
@@ -60,10 +63,13 @@ class CalculatorRegistry {
     // Отделка стен
     paintCalculatorV2,
     wallpaperCalculatorV2,
+    gklWallCalculatorV2,
 
     // Полы
     laminateCalculatorV2,
+    linoleumCalculatorV2,
     screedCalculatorV2,
+    selfLevelingFloorCalculatorV2,
     tileCalculatorV2,
 
     // Кровля
@@ -196,14 +202,13 @@ class CalculatorRegistry {
   /// Построить полный список калькуляторов из V2 и мигрированных V1.
   static List<CalculatorDefinitionV2> _buildAllCalculators() {
     final overrides = {for (final calc in _seedCalculators) calc.id: calc};
-    final migrated = buildMigratedCalculators(
-      skipIds: {
-        ...overrides.keys.toSet(),
-        ..._legacySkipIds,
-        ..._idAliases.keys, // не добавляем алиасы как отдельные калькуляторы
-      },
-      overrides: overrides,
-    );
+    final skipIds = {
+      ...overrides.keys.toSet(),
+      ..._legacySkipIds,
+      ..._idAliases.keys, // не добавляем алиасы как отдельные калькуляторы
+    };
+    final migrated =
+        legacyCalculatorsV2.where((c) => !skipIds.contains(c.id)).toList();
 
     final all = <CalculatorDefinitionV2>[
       ..._seedCalculators,

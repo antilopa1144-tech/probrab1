@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_const_declarations
+import 'dart:math';
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
@@ -20,10 +21,16 @@ class CalculateStripFoundation extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
+    final perimeter = inputs['perimeter'] ?? 0;
     final width = inputs['width'] ?? 0;
     final height = inputs['height'] ?? 0;
 
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0 && perimeter <= 0) {
+      return 'Площадь или периметр должны быть больше нуля';
+    }
+    if (area > 10000 || perimeter > 10000) {
+      return 'Площадь/периметр слишком большие';
+    }
     if (width <= 0 || width > 3) return 'Ширина ленты должна быть от 0.1 до 3 м';
     if (height <= 0 || height > 3) return 'Высота ленты должна быть от 0.1 до 3 м';
 
@@ -36,10 +43,16 @@ class CalculateStripFoundation extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Получаем валидированные входные данные
-    final area = getInput(inputs, 'area', minValue: 0.1, maxValue: 10000.0);
-    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+    final inputPerimeter = inputs['perimeter'] ?? 0.0;
+    final perimeter = inputPerimeter > 0
         ? getInput(inputs, 'perimeter', minValue: 0.1, maxValue: 10000.0)
-        : estimatePerimeter(area);
+        : estimatePerimeter(getInput(inputs, 'area', minValue: 0.1, maxValue: 10000.0));
+
+    // Если площадь не задана, оцениваем её из периметра (квадратная аппроксимация)
+    final inputArea = inputs['area'] ?? 0.0;
+    final area = inputArea > 0
+        ? getInput(inputs, 'area', minValue: 0.1, maxValue: 10000.0)
+        : pow(perimeter / 4, 2).toDouble();
     final width = getInput(
       inputs,
       'width',

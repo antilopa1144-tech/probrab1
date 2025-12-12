@@ -351,6 +351,9 @@ abstract class BaseCalculator implements CalculatorUseCase {
   String? validateInputs(Map<String, double> inputs) {
     // Базовая реализация - проверка на отрицательные значения
     for (final entry in inputs.entries) {
+      if (entry.value.isNaN || entry.value.isInfinite) {
+        return 'Значение ${entry.key} некорректно';
+      }
       if (entry.value < 0) {
         return 'Значение ${entry.key} не может быть отрицательным';
       }

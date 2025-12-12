@@ -12,7 +12,8 @@ void main() {
 
     test('calculates rolls needed correctly with 5% reserve', () {
       final inputs = {
-        'area': 50.0, // 50 м² стен
+        'inputMode': 1.0,
+        'area': 50.0, // 50 м? стен
         'rollWidth': 0.53,
         'rollLength': 10.05,
         'wallHeight': 2.5,
@@ -21,30 +22,32 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Новый алгоритм: периметр ≈ √(50*4) ≈ 14.14м → ~27 полос (14.14/0.53)
-      // Полос из рулона: 10.05/2.5 = 4 полосы → ~7 рулонов с запасом 5%
+      // Новый алгоритм: периметр ? √(50*4) ? 14.14м  ~27 полос (14.14/0.53)
+      // Полос из рулона: 10.05/2.5 = 4 полосы  ~7 рулонов с запасом 5%
       expect(result.values['rollsNeeded'], greaterThanOrEqualTo(7.0));
       expect(result.values['rollsNeeded'], lessThanOrEqualTo(15.0));
     });
 
     test('subtracts windows and doors area', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 50.0,
         'rollWidth': 0.53,
         'rollLength': 10.05,
-        'windowsArea': 4.0, // 4 м² окон
-        'doorsArea': 4.0, // 4 м² дверей
+        'windowsArea': 4.0, // 4 м? окон
+        'doorsArea': 4.0, // 4 м? дверей
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Полезная площадь = 50 - 4 - 4 = 42 м²
+      // Полезная площадь = 50 - 4 - 4 = 42 м?
       expect(result.values['usefulArea'], equals(42.0));
     });
 
     test('calculates glue needed correctly', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 50.0,
         'rollWidth': 0.53,
         'rollLength': 10.05,
@@ -59,6 +62,7 @@ void main() {
 
     test('handles rapport correctly', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 50.0,
         'rollWidth': 0.53,
         'rollLength': 10.05,
@@ -75,6 +79,7 @@ void main() {
 
     test('throws exception for zero area', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 0.0,
         'rollWidth': 0.53,
         'rollLength': 10.05,
@@ -90,6 +95,7 @@ void main() {
 
     test('uses default roll dimensions when not provided', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 50.0,
       };
       final emptyPriceList = <PriceItem>[];
@@ -103,6 +109,7 @@ void main() {
 
     test('handles wide wallpaper rolls', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 50.0,
         'rollWidth': 1.06, // метровые обои
         'rollLength': 10.0,
@@ -117,6 +124,7 @@ void main() {
 
     test('returns error for negative useful area', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 10.0,
         'windowsArea': 20.0, // больше, чем общая площадь
         'doorsArea': 5.0,
@@ -131,6 +139,7 @@ void main() {
 
     test('calculates total price with price list', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 50.0,
         'rollWidth': 0.53,
         'rollLength': 10.05,
@@ -154,6 +163,7 @@ void main() {
 
     test('calculates strip length and strips needed', () {
       final inputs = {
+        'inputMode': 1.0,
         'area': 50.0,
         'rollWidth': 0.53,
         'rollLength': 10.05,
