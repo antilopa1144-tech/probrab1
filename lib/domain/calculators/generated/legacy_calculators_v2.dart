@@ -79,7 +79,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Мансарда',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -88,7 +88,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'roofArea',
         labelKey: 'input.roofArea',
         unitType: UnitType.squareMeters,
@@ -97,7 +97,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'wallArea',
         labelKey: 'input.wallArea',
         unitType: UnitType.squareMeters,
@@ -106,7 +106,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'floorArea',
         labelKey: 'input.floorArea',
         unitType: UnitType.squareMeters,
@@ -115,7 +115,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'windows',
         labelKey: 'input.windows',
         unitType: UnitType.pieces,
@@ -124,7 +124,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 5,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulation',
         labelKey: 'input.insulation',
         unitType: UnitType.meters,
@@ -133,7 +133,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 6,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'wallFinish',
         labelKey: 'input.wallFinish',
         unitType: UnitType.meters,
@@ -142,7 +142,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 7,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'floorType',
         labelKey: 'input.floorType',
         unitType: UnitType.pieces,
@@ -153,20 +153,20 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Утепление мансарды обязательно для комфортного проживания.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Толщина утеплителя должна быть не менее 15-20 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Пароизоляция защищает утеплитель от влаги изнутри.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Мансардные окна обеспечивают естественное освещение.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Вагонка создаёт уютную атмосферу в мансарде.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте несущую способность перекрытия перед укладкой пола.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление мансарды обязательно для комфортного проживания.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Толщина утеплителя должна быть не менее 15-20 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Пароизоляция защищает утеплитель от влаги изнутри.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Мансардные окна обеспечивают естественное освещение.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Вагонка создаёт уютную атмосферу в мансарде.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте несущую способность перекрытия перед укладкой пола.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Утепление мансарды обязательно для комфортного проживания.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Толщина утеплителя должна быть не менее 15-20 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Пароизоляция защищает утеплитель от влаги изнутри.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Мансардные окна обеспечивают естественное освещение.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Вагонка создаёт уютную атмосферу в мансарде.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте несущую способность перекрытия перед укладкой пола.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление мансарды обязательно для комфортного проживания.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Толщина утеплителя должна быть не менее 15-20 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Пароизоляция защищает утеплитель от влаги изнутри.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Мансардные окна обеспечивают естественное освещение.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Вагонка создаёт уютную атмосферу в мансарде.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте несущую способность перекрытия перед укладкой пола.'),
     ],
     useCase: CalculateAttic(),
     accentColor: kCalculatorAccentColor,
@@ -185,7 +185,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Балкон / Лоджия',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -194,7 +194,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'height',
         labelKey: 'input.height',
         unitType: UnitType.meters,
@@ -203,7 +203,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'glazing',
         labelKey: 'input.glazing',
         unitType: UnitType.meters,
@@ -212,7 +212,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulation',
         labelKey: 'input.insulation',
         unitType: UnitType.meters,
@@ -221,7 +221,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'floorType',
         labelKey: 'input.floorType',
         unitType: UnitType.pieces,
@@ -230,7 +230,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 5,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'wallFinish',
         labelKey: 'input.wallFinish',
         unitType: UnitType.meters,
@@ -241,20 +241,20 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Остекление балкона значительно увеличивает полезную площадь.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Тёплое остекление позволяет использовать балкон круглый год.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Утепление обязательно для тёплого остекления.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Пароизоляция защищает утеплитель от влаги.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для пола на открытом балконе используйте морозостойкую плитку.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Террасная доска подходит для открытых балконов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Остекление балкона значительно увеличивает полезную площадь.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Тёплое остекление позволяет использовать балкон круглый год.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление обязательно для тёплого остекления.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Пароизоляция защищает утеплитель от влаги.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для пола на открытом балконе используйте морозостойкую плитку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Террасная доска подходит для открытых балконов.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Остекление балкона значительно увеличивает полезную площадь.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Тёплое остекление позволяет использовать балкон круглый год.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Утепление обязательно для тёплого остекления.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Пароизоляция защищает утеплитель от влаги.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для пола на открытом балконе используйте морозостойкую плитку.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Террасная доска подходит для открытых балконов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Остекление балкона значительно увеличивает полезную площадь.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Тёплое остекление позволяет использовать балкон круглый год.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление обязательно для тёплого остекления.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Пароизоляция защищает утеплитель от влаги.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для пола на открытом балконе используйте морозостойкую плитку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Террасная доска подходит для открытых балконов.'),
     ],
     useCase: CalculateBalcony(),
     accentColor: kCalculatorAccentColor,
@@ -273,7 +273,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Подвал / Погреб',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -282,7 +282,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'height',
         labelKey: 'input.height',
         unitType: UnitType.meters,
@@ -291,7 +291,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'wallThickness',
         labelKey: 'input.thickness',
         unitType: UnitType.meters,
@@ -300,7 +300,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'materialType',
         labelKey: 'input.type',
         unitType: UnitType.pieces,
@@ -309,7 +309,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'waterproofing',
         labelKey: 'input.waterproofing',
         unitType: UnitType.meters,
@@ -318,7 +318,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 5,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulation',
         labelKey: 'input.insulation',
         unitType: UnitType.meters,
@@ -327,7 +327,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 6,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'ventilation',
         labelKey: 'input.ventilation',
         unitType: UnitType.meters,
@@ -336,7 +336,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 7,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'stairs',
         labelKey: 'input.stairs',
         unitType: UnitType.meters,
@@ -347,20 +347,20 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для подвалов и погребов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Вентиляция необходима для предотвращения сырости.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Утепление стен снижает теплопотери и предотвращает промерзание.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Бетонные стены требуют армирования.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Пол должен иметь уклон к дренажному отверстию.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Лестница должна быть удобной и безопасной.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для подвалов и погребов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Вентиляция необходима для предотвращения сырости.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление стен снижает теплопотери и предотвращает промерзание.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Бетонные стены требуют армирования.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Пол должен иметь уклон к дренажному отверстию.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Лестница должна быть удобной и безопасной.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для подвалов и погребов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Вентиляция необходима для предотвращения сырости.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Утепление стен снижает теплопотери и предотвращает промерзание.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Бетонные стены требуют армирования.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Пол должен иметь уклон к дренажному отверстию.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Лестница должна быть удобной и безопасной.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для подвалов и погребов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Вентиляция необходима для предотвращения сырости.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление стен снижает теплопотери и предотвращает промерзание.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Бетонные стены требуют армирования.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Пол должен иметь уклон к дренажному отверстию.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Лестница должна быть удобной и безопасной.'),
     ],
     useCase: CalculateBasement(),
     accentColor: kCalculatorAccentColor,
@@ -379,7 +379,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Ванная / туалет',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'wallArea',
         labelKey: 'input.wallArea',
         unitType: UnitType.squareMeters,
@@ -390,7 +390,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'floorArea',
         labelKey: 'input.floorArea',
         unitType: UnitType.squareMeters,
@@ -401,7 +401,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'tileWidth',
         labelKey: 'input.tileWidth',
         unitType: UnitType.centimeters,
@@ -412,7 +412,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'tileHeight',
         labelKey: 'input.tileHeight',
         unitType: UnitType.centimeters,
@@ -423,7 +423,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'jointWidth',
         labelKey: 'input.jointWidth',
         unitType: UnitType.meters,
@@ -436,16 +436,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте влагостойкий клей и затирку.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для пола и нижней части стен.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность основания перед укладкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте крестики для равномерного шва.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте влагостойкий клей и затирку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для пола и нижней части стен.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность основания перед укладкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте крестики для равномерного шва.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте влагостойкий клей и затирку.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для пола и нижней части стен.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность основания перед укладкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте крестики для равномерного шва.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте влагостойкий клей и затирку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для пола и нижней части стен.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность основания перед укладкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте крестики для равномерного шва.'),
     ],
     useCase: CalculateBathroomTile(),
     accentColor: kCalculatorAccentColor,
@@ -466,7 +466,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Ванная / туалет',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'floorArea',
         labelKey: 'input.floorArea',
         unitType: UnitType.squareMeters,
@@ -475,7 +475,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'wallHeight',
         labelKey: 'input.wallHeight',
         unitType: UnitType.meters,
@@ -486,16 +486,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для пола и стен на высоту 30 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте армирующую ленту для углов и стыков.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Наносите материал в два слоя перпендикулярно.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте целостность покрытия перед укладкой плитки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для пола и стен на высоту 30 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте армирующую ленту для углов и стыков.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Наносите материал в два слоя перпендикулярно.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте целостность покрытия перед укладкой плитки.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для пола и стен на высоту 30 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте армирующую ленту для углов и стыков.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Наносите материал в два слоя перпендикулярно.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте целостность покрытия перед укладкой плитки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для пола и стен на высоту 30 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте армирующую ленту для углов и стыков.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Наносите материал в два слоя перпендикулярно.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте целостность покрытия перед укладкой плитки.'),
     ],
     useCase: CalculateWaterproofing(),
     accentColor: kCalculatorAccentColor,
@@ -516,7 +516,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Отмостка',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -525,7 +525,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'width',
         labelKey: 'input.width',
         unitType: UnitType.meters,
@@ -534,7 +534,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.millimeters,
@@ -543,7 +543,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'materialType',
         labelKey: 'input.type',
         unitType: UnitType.pieces,
@@ -552,7 +552,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulation',
         labelKey: 'input.insulation',
         unitType: UnitType.meters,
@@ -563,20 +563,20 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Ширина отмостки должна быть не менее 1 метра.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Отмостка должна иметь уклон 2-3% от стены для отвода воды.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Бетонная отмостка требует деформационных швов каждые 2-3 метра.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Утепление отмостки особенно важно для домов с цокольным этажом.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Песчаная подушка должна быть утрамбована.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Бордюр защищает отмостку от разрушения краёв.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Ширина отмостки должна быть не менее 1 метра.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Отмостка должна иметь уклон 2-3% от стены для отвода воды.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Бетонная отмостка требует деформационных швов каждые 2-3 метра.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление отмостки особенно важно для домов с цокольным этажом.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Песчаная подушка должна быть утрамбована.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Бордюр защищает отмостку от разрушения краёв.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Ширина отмостки должна быть не менее 1 метра.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Отмостка должна иметь уклон 2-3% от стены для отвода воды.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Бетонная отмостка требует деформационных швов каждые 2-3 метра.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Утепление отмостки особенно важно для домов с цокольным этажом.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Песчаная подушка должна быть утрамбована.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Бордюр защищает отмостку от разрушения краёв.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Ширина отмостки должна быть не менее 1 метра.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Отмостка должна иметь уклон 2-3% от стены для отвода воды.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Бетонная отмостка требует деформационных швов каждые 2-3 метра.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление отмостки особенно важно для домов с цокольным этажом.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Песчаная подушка должна быть утрамбована.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Бордюр защищает отмостку от разрушения краёв.'),
     ],
     useCase: CalculateBlindArea(),
     accentColor: kCalculatorAccentColor,
@@ -597,7 +597,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Ленточный фундамент',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -608,7 +608,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'width',
         labelKey: 'input.width',
         unitType: UnitType.meters,
@@ -619,7 +619,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'height',
         labelKey: 'input.height',
         unitType: UnitType.meters,
@@ -632,16 +632,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Снимите плодородный слой и утрамбуйте основание перед заливкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте песчано-щебёночную подушку не менее 200 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Контролируйте диагонали опалубки — от этого зависит геометрия стен.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Заранее подготовьте закладные гильзы для инженерных коммуникаций.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Снимите плодородный слой и утрамбуйте основание перед заливкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте песчано-щебёночную подушку не менее 200 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Контролируйте диагонали опалубки — от этого зависит геометрия стен.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Заранее подготовьте закладные гильзы для инженерных коммуникаций.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Снимите плодородный слой и утрамбуйте основание перед заливкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте песчано-щебёночную подушку не менее 200 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Контролируйте диагонали опалубки — от этого зависит геометрия стен.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Заранее подготовьте закладные гильзы для инженерных коммуникаций.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Снимите плодородный слой и утрамбуйте основание перед заливкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте песчано-щебёночную подушку не менее 200 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Контролируйте диагонали опалубки — от этого зависит геометрия стен.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Заранее подготовьте закладные гильзы для инженерных коммуникаций.'),
     ],
     useCase: CalculateStripFoundation(),
     accentColor: kCalculatorAccentColor,
@@ -662,7 +662,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Потолки',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -671,7 +671,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'cassetteSize',
         labelKey: 'input.tileSize',
         unitType: UnitType.meters,
@@ -682,14 +682,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Кассеты легко заменяются при повреждении.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обеспечьте доступ к коммуникациям над потолком.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте уровень для монтажа направляющих.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Кассеты легко заменяются при повреждении.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обеспечьте доступ к коммуникациям над потолком.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте уровень для монтажа направляющих.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Кассеты легко заменяются при повреждении.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обеспечьте доступ к коммуникациям над потолком.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте уровень для монтажа направляющих.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Кассеты легко заменяются при повреждении.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обеспечьте доступ к коммуникациям над потолком.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте уровень для монтажа направляющих.'),
     ],
     useCase: CalculateCassetteCeiling(),
     accentColor: kCalculatorAccentColor,
@@ -710,7 +710,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Потолки',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -719,7 +719,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'layers',
         labelKey: 'input.layers',
         unitType: UnitType.pieces,
@@ -728,7 +728,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'ceilingHeight',
         labelKey: 'input.ceilingHeight',
         unitType: UnitType.meters,
@@ -737,7 +737,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'dropHeight',
         labelKey: 'input.dropHeight',
         unitType: UnitType.meters,
@@ -748,14 +748,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Шаг подвесов — 60 см для надёжности.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте уровень всех профилей.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте армирующую ленту на стыках листов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Шаг подвесов — 60 см для надёжности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте уровень всех профилей.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте армирующую ленту на стыках листов.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Шаг подвесов — 60 см для надёжности.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте уровень всех профилей.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте армирующую ленту на стыках листов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Шаг подвесов — 60 см для надёжности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте уровень всех профилей.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте армирующую ленту на стыках листов.'),
     ],
     useCase: CalculateGklCeiling(),
     accentColor: kCalculatorAccentColor,
@@ -776,7 +776,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Потолки',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -785,7 +785,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulationThickness',
         labelKey: 'input.insulationThickness',
         unitType: UnitType.millimeters,
@@ -794,7 +794,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulationType',
         labelKey: 'input.insulationType',
         unitType: UnitType.pieces,
@@ -805,14 +805,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте пароизоляцию с внутренней стороны.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Не сжимайте утеплитель при укладке.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обеспечьте вентиляцию подкровельного пространства.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте пароизоляцию с внутренней стороны.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не сжимайте утеплитель при укладке.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обеспечьте вентиляцию подкровельного пространства.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте пароизоляцию с внутренней стороны.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Не сжимайте утеплитель при укладке.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обеспечьте вентиляцию подкровельного пространства.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте пароизоляцию с внутренней стороны.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не сжимайте утеплитель при укладке.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обеспечьте вентиляцию подкровельного пространства.'),
     ],
     useCase: CalculateCeilingInsulation(),
     accentColor: kCalculatorAccentColor,
@@ -833,7 +833,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Потолки',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -842,7 +842,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'layers',
         labelKey: 'input.layers',
         unitType: UnitType.pieces,
@@ -851,7 +851,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'consumption',
         labelKey: 'input.consumption',
         unitType: UnitType.liters,
@@ -862,14 +862,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте валик с длинным ворсом для потолка.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Красьте перпендикулярно окну для равномерного покрытия.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте защитить стены и пол плёнкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте валик с длинным ворсом для потолка.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Красьте перпендикулярно окну для равномерного покрытия.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте защитить стены и пол плёнкой.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте валик с длинным ворсом для потолка.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Красьте перпендикулярно окну для равномерного покрытия.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте защитить стены и пол плёнкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте валик с длинным ворсом для потолка.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Красьте перпендикулярно окну для равномерного покрытия.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте защитить стены и пол плёнкой.'),
     ],
     useCase: CalculateCeilingPaint(),
     accentColor: kCalculatorAccentColor,
@@ -890,7 +890,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Потолки',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -899,7 +899,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'railWidth',
         labelKey: 'input.railWidth',
         unitType: UnitType.centimeters,
@@ -908,7 +908,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'railLength',
         labelKey: 'input.railLength',
         unitType: UnitType.meters,
@@ -919,14 +919,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Монтируйте рейки перпендикулярно направляющим.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор для вентиляции.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте уровень для контроля плоскости.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Монтируйте рейки перпендикулярно направляющим.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор для вентиляции.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте уровень для контроля плоскости.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Монтируйте рейки перпендикулярно направляющим.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор для вентиляции.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте уровень для контроля плоскости.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Монтируйте рейки перпендикулярно направляющим.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор для вентиляции.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте уровень для контроля плоскости.'),
     ],
     useCase: CalculateRailCeiling(),
     accentColor: kCalculatorAccentColor,
@@ -947,7 +947,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Потолки',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -956,7 +956,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'corners',
         labelKey: 'input.corners',
         unitType: UnitType.pieces,
@@ -965,7 +965,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'fixtures',
         labelKey: 'input.fixtures',
         unitType: UnitType.pieces,
@@ -976,14 +976,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Монтаж выполняют специалисты с опытом.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Заранее определите места для светильников.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Учитывайте высоту потолка — натяжной потолок опускает его на 3–5 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Монтаж выполняют специалисты с опытом.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Заранее определите места для светильников.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Учитывайте высоту потолка — натяжной потолок опускает его на 3–5 см.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Монтаж выполняют специалисты с опытом.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Заранее определите места для светильников.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Учитывайте высоту потолка — натяжной потолок опускает его на 3–5 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Монтаж выполняют специалисты с опытом.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Заранее определите места для светильников.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Учитывайте высоту потолка — натяжной потолок опускает его на 3–5 см.'),
     ],
     useCase: CalculateStretchCeiling(),
     accentColor: kCalculatorAccentColor,
@@ -1004,7 +1004,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Потолки',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -1013,7 +1013,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'tileSize',
         labelKey: 'input.tileSize',
         unitType: UnitType.meters,
@@ -1024,14 +1024,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность потолка перед укладкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для потолочной плитки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Начинайте укладку от центра комнаты.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность потолка перед укладкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для потолочной плитки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Начинайте укладку от центра комнаты.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность потолка перед укладкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для потолочной плитки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Начинайте укладку от центра комнаты.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность потолка перед укладкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для потолочной плитки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Начинайте укладку от центра комнаты.'),
     ],
     useCase: CalculateCeilingTiles(),
     accentColor: kCalculatorAccentColor,
@@ -1052,7 +1052,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Окна / двери',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'doors',
         labelKey: 'input.doors',
         unitType: UnitType.pieces,
@@ -1061,7 +1061,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'doorWidth',
         labelKey: 'input.doorWidth',
         unitType: UnitType.meters,
@@ -1070,7 +1070,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'doorHeight',
         labelKey: 'input.doorHeight',
         unitType: UnitType.meters,
@@ -1081,14 +1081,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте вертикальность дверной коробки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте монтажную пену для фиксации.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Установите наличники для завершения.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте вертикальность дверной коробки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте монтажную пену для фиксации.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Установите наличники для завершения.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте вертикальность дверной коробки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте монтажную пену для фиксации.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Установите наличники для завершения.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте вертикальность дверной коробки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте монтажную пену для фиксации.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Установите наличники для завершения.'),
     ],
     useCase: CalculateDoorInstallation(),
     accentColor: kCalculatorAccentColor,
@@ -1109,7 +1109,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Электрика',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -1120,7 +1120,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'rooms',
         labelKey: 'input.rooms',
         unitType: UnitType.pieces,
@@ -1131,7 +1131,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'sockets',
         labelKey: 'input.sockets',
         unitType: UnitType.pieces,
@@ -1142,7 +1142,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'switches',
         labelKey: 'input.switches',
         unitType: UnitType.pieces,
@@ -1155,16 +1155,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Работы должен выполнять квалифицированный электрик.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте кабель сечением не менее 2.5 мм² для розеток.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Установите УЗО для защиты от утечек тока.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте все соединения перед включением.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Работы должен выполнять квалифицированный электрик.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте кабель сечением не менее 2.5 мм² для розеток.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Установите УЗО для защиты от утечек тока.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте все соединения перед включением.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Работы должен выполнять квалифицированный электрик.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте кабель сечением не менее 2.5 мм² для розеток.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Установите УЗО для защиты от утечек тока.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте все соединения перед включением.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Работы должен выполнять квалифицированный электрик.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте кабель сечением не менее 2.5 мм² для розеток.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Установите УЗО для защиты от утечек тока.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте все соединения перед включением.'),
     ],
     useCase: CalculateElectrics(),
     accentColor: kCalculatorAccentColor,
@@ -1185,7 +1185,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Отопление',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -1196,7 +1196,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'rooms',
         labelKey: 'input.rooms',
         unitType: UnitType.pieces,
@@ -1207,7 +1207,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'ceilingHeight',
         labelKey: 'input.ceilingHeight',
         unitType: UnitType.meters,
@@ -1220,16 +1220,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Расчёт мощности: 100 Вт на м² для средней полосы.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Установите терморегуляторы для экономии.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте балансировочные краны.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Работы должен выполнять квалифицированный специалист.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Расчёт мощности: 100 Вт на м² для средней полосы.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Установите терморегуляторы для экономии.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте балансировочные краны.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Работы должен выполнять квалифицированный специалист.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Расчёт мощности: 100 Вт на м² для средней полосы.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Установите терморегуляторы для экономии.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте балансировочные краны.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Работы должен выполнять квалифицированный специалист.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Расчёт мощности: 100 Вт на м² для средней полосы.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Установите терморегуляторы для экономии.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте балансировочные краны.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Работы должен выполнять квалифицированный специалист.'),
     ],
     useCase: CalculateHeating(),
     accentColor: kCalculatorAccentColor,
@@ -1250,7 +1250,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Сантехника',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'rooms',
         labelKey: 'input.rooms',
         unitType: UnitType.pieces,
@@ -1259,7 +1259,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'points',
         labelKey: 'input.points',
         unitType: UnitType.meters,
@@ -1268,7 +1268,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'pipeLength',
         labelKey: 'input.pipeLength',
         unitType: UnitType.meters,
@@ -1279,16 +1279,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте качественные фитинги для надёжности.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте все соединения на герметичность.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Установите запорные краны на каждую точку.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Работы должен выполнять квалифицированный сантехник.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте качественные фитинги для надёжности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте все соединения на герметичность.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Установите запорные краны на каждую точку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Работы должен выполнять квалифицированный сантехник.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте качественные фитинги для надёжности.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте все соединения на герметичность.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Установите запорные краны на каждую точку.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Работы должен выполнять квалифицированный сантехник.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте качественные фитинги для надёжности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте все соединения на герметичность.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Установите запорные краны на каждую точку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Работы должен выполнять квалифицированный сантехник.'),
     ],
     useCase: CalculatePlumbing(),
     accentColor: kCalculatorAccentColor,
@@ -1309,7 +1309,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Вентиляция',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -1318,7 +1318,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'rooms',
         labelKey: 'input.rooms',
         unitType: UnitType.pieces,
@@ -1327,7 +1327,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'ceilingHeight',
         labelKey: 'input.ceilingHeight',
         unitType: UnitType.meters,
@@ -1338,14 +1338,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Воздухообмен: минимум 3 м³/ч на м².'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Устанавливайте решётки вверху для вытяжки, внизу для притока.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте тягу перед монтажом вентиляторов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Воздухообмен: минимум 3 м³/ч на м².'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Устанавливайте решётки вверху для вытяжки, внизу для притока.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте тягу перед монтажом вентиляторов.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Воздухообмен: минимум 3 м³/ч на м².'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Устанавливайте решётки вверху для вытяжки, внизу для притока.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте тягу перед монтажом вентиляторов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Воздухообмен: минимум 3 м³/ч на м².'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Устанавливайте решётки вверху для вытяжки, внизу для притока.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте тягу перед монтажом вентиляторов.'),
     ],
     useCase: CalculateVentilation(),
     accentColor: kCalculatorAccentColor,
@@ -1366,7 +1366,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Облицовочный кирпич',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -1375,7 +1375,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.meters,
@@ -1384,7 +1384,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         unitType: UnitType.squareMeters,
@@ -1393,7 +1393,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         unitType: UnitType.squareMeters,
@@ -1402,7 +1402,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         unitType: UnitType.meters,
@@ -1411,7 +1411,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 5,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'wallHeight',
         labelKey: 'input.wallHeight',
         unitType: UnitType.meters,
@@ -1422,16 +1422,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте облицовочный кирпич с правильной геометрией.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Армируйте через каждые 5 рядов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверяйте вертикальность каждого ряда.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Защитите кладку от дождя во время работ.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте облицовочный кирпич с правильной геометрией.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Армируйте через каждые 5 рядов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверяйте вертикальность каждого ряда.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Защитите кладку от дождя во время работ.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте облицовочный кирпич с правильной геометрией.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Армируйте через каждые 5 рядов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверяйте вертикальность каждого ряда.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Защитите кладку от дождя во время работ.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте облицовочный кирпич с правильной геометрией.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Армируйте через каждые 5 рядов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверяйте вертикальность каждого ряда.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Защитите кладку от дождя во время работ.'),
     ],
     useCase: CalculateBrickFacing(),
     accentColor: kCalculatorAccentColor,
@@ -1452,7 +1452,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Фасадные панели',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -1461,7 +1461,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         unitType: UnitType.centimeters,
@@ -1470,7 +1470,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'panelHeight',
         labelKey: 'input.panelHeight',
         unitType: UnitType.centimeters,
@@ -1479,7 +1479,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         unitType: UnitType.meters,
@@ -1490,14 +1490,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Фасадные панели долговечны и не требуют ухода.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте качественные крепления.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор для температурного расширения.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Фасадные панели долговечны и не требуют ухода.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте качественные крепления.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор для температурного расширения.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Фасадные панели долговечны и не требуют ухода.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте качественные крепления.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор для температурного расширения.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Фасадные панели долговечны и не требуют ухода.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте качественные крепления.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор для температурного расширения.'),
     ],
     useCase: CalculateFacadePanels(),
     accentColor: kCalculatorAccentColor,
@@ -1519,7 +1519,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Сайдинг',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -1530,7 +1530,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         unitType: UnitType.centimeters,
@@ -1541,7 +1541,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'panelLength',
         labelKey: 'input.panelLength',
         unitType: UnitType.meters,
@@ -1552,7 +1552,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         unitType: UnitType.meters,
@@ -1563,7 +1563,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'corners',
         labelKey: 'input.corners',
         unitType: UnitType.pieces,
@@ -1574,7 +1574,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 5,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'soffitLength',
         labelKey: 'input.soffitLength',
         unitType: UnitType.meters,
@@ -1587,16 +1587,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте J-профиль, углы, стартовую и финишную планку.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте температурные зазоры (5-10 мм) для расширения материала.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Монтируйте сайдинг снизу вверх, начиная со стартовой планки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте саморезы с пресс-шайбой, не затягивайте их до упора.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте J-профиль, углы, стартовую и финишную планку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте температурные зазоры (5-10 мм) для расширения материала.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Монтируйте сайдинг снизу вверх, начиная со стартовой планки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте саморезы с пресс-шайбой, не затягивайте их до упора.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте J-профиль, углы, стартовую и финишную планку.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте температурные зазоры (5-10 мм) для расширения материала.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Монтируйте сайдинг снизу вверх, начиная со стартовой планки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте саморезы с пресс-шайбой, не затягивайте их до упора.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте J-профиль, углы, стартовую и финишную планку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте температурные зазоры (5-10 мм) для расширения материала.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Монтируйте сайдинг снизу вверх, начиная со стартовой планки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте саморезы с пресс-шайбой, не затягивайте их до упора.'),
     ],
     useCase: CalculateSiding(),
     accentColor: kCalculatorAccentColor,
@@ -1617,7 +1617,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Мокрый фасад',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -1626,7 +1626,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulationThickness',
         labelKey: 'input.insulationThickness',
         unitType: UnitType.millimeters,
@@ -1635,7 +1635,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulationType',
         labelKey: 'input.insulationType',
         unitType: UnitType.pieces,
@@ -1646,16 +1646,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Работы выполняйте при температуре выше +5°C.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте армирующую сетку для прочности.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Наносите штукатурку в два слоя.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Защитите фасад от дождя во время работ.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Работы выполняйте при температуре выше +5°C.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте армирующую сетку для прочности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Наносите штукатурку в два слоя.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Защитите фасад от дождя во время работ.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Работы выполняйте при температуре выше +5°C.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте армирующую сетку для прочности.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Наносите штукатурку в два слоя.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Защитите фасад от дождя во время работ.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Работы выполняйте при температуре выше +5°C.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте армирующую сетку для прочности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Наносите штукатурку в два слоя.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Защитите фасад от дождя во время работ.'),
     ],
     useCase: CalculateWetFacade(),
     accentColor: kCalculatorAccentColor,
@@ -1677,7 +1677,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Дерево',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -1686,7 +1686,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'boardWidth',
         labelKey: 'input.boardWidth',
         unitType: UnitType.centimeters,
@@ -1695,7 +1695,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'boardLength',
         labelKey: 'input.boardLength',
         unitType: UnitType.meters,
@@ -1704,7 +1704,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         unitType: UnitType.meters,
@@ -1715,14 +1715,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте защитные составы для дерева.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обрабатывайте торцы досок.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор для вентиляции.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте защитные составы для дерева.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обрабатывайте торцы досок.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор для вентиляции.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте защитные составы для дерева.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обрабатывайте торцы досок.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор для вентиляции.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте защитные составы для дерева.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обрабатывайте торцы досок.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор для вентиляции.'),
     ],
     useCase: CalculateWoodFacade(),
     accentColor: kCalculatorAccentColor,
@@ -1743,7 +1743,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Заборы',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'length',
         labelKey: 'input.length',
         unitType: UnitType.meters,
@@ -1752,7 +1752,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'height',
         labelKey: 'input.height',
         unitType: UnitType.meters,
@@ -1761,7 +1761,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'materialType',
         labelKey: 'input.type',
         unitType: UnitType.pieces,
@@ -1770,7 +1770,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'gates',
         labelKey: 'input.gates',
         unitType: UnitType.pieces,
@@ -1779,7 +1779,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'wickets',
         labelKey: 'input.wickets',
         unitType: UnitType.pieces,
@@ -1790,20 +1790,20 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Столбы устанавливаются на глубину 1/3 от высоты забора.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для профлиста используйте оцинкованные саморезы с уплотнителями.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Деревянный забор требует обработки антисептиком.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Кирпичный забор нуждается в фундаменте.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Расстояние между столбами: 2-3 метра в зависимости от материала.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Ворота и калитки должны быть на 5-10 см выше уровня земли.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Столбы устанавливаются на глубину 1/3 от высоты забора.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для профлиста используйте оцинкованные саморезы с уплотнителями.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Деревянный забор требует обработки антисептиком.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Кирпичный забор нуждается в фундаменте.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Расстояние между столбами: 2-3 метра в зависимости от материала.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Ворота и калитки должны быть на 5-10 см выше уровня земли.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Столбы устанавливаются на глубину 1/3 от высоты забора.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для профлиста используйте оцинкованные саморезы с уплотнителями.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Деревянный забор требует обработки антисептиком.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Кирпичный забор нуждается в фундаменте.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Расстояние между столбами: 2-3 метра в зависимости от материала.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Ворота и калитки должны быть на 5-10 см выше уровня земли.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Столбы устанавливаются на глубину 1/3 от высоты забора.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для профлиста используйте оцинкованные саморезы с уплотнителями.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Деревянный забор требует обработки антисептиком.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Кирпичный забор нуждается в фундаменте.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Расстояние между столбами: 2-3 метра в зависимости от материала.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Ворота и калитки должны быть на 5-10 см выше уровня земли.'),
     ],
     useCase: CalculateFence(),
     accentColor: kCalculatorAccentColor,
@@ -1822,7 +1822,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Полы',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.floorArea',
         unitType: UnitType.squareMeters,
@@ -1831,7 +1831,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'rollWidth',
         labelKey: 'input.rollWidth',
         unitType: UnitType.meters,
@@ -1842,16 +1842,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Ковролин должен отлежаться в помещении 24 часа.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для больших площадей используйте клей.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'На маленьких площадях можно использовать скотч.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Укладывайте в одном направлении ворса.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Ковролин должен отлежаться в помещении 24 часа.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для больших площадей используйте клей.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'На маленьких площадях можно использовать скотч.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Укладывайте в одном направлении ворса.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Ковролин должен отлежаться в помещении 24 часа.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для больших площадей используйте клей.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'На маленьких площадях можно использовать скотч.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Укладывайте в одном направлении ворса.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Ковролин должен отлежаться в помещении 24 часа.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для больших площадей используйте клей.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'На маленьких площадях можно использовать скотч.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Укладывайте в одном направлении ворса.'),
     ],
     useCase: CalculateCarpet(),
     accentColor: kCalculatorAccentColor,
@@ -1872,7 +1872,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Полы',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.floorArea',
         unitType: UnitType.squareMeters,
@@ -1881,7 +1881,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulationThickness',
         labelKey: 'input.insulationThickness',
         unitType: UnitType.millimeters,
@@ -1890,7 +1890,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulationType',
         labelKey: 'input.insulationType',
         unitType: UnitType.pieces,
@@ -1901,18 +1901,18 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Утепление пола особенно важно для первого этажа и над неотапливаемыми помещениями.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для минваты обязательна гидроизоляция снизу.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Пароизоляция укладывается сверху утеплителя (со стороны тёплого помещения).'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Пенопласт и ЭППС не требуют гидроизоляции, но нужна пароизоляция.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор 2-3 см между утеплителем и финишным покрытием для вентиляции.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление пола особенно важно для первого этажа и над неотапливаемыми помещениями.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для минваты обязательна гидроизоляция снизу.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Пароизоляция укладывается сверху утеплителя (со стороны тёплого помещения).'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Пенопласт и ЭППС не требуют гидроизоляции, но нужна пароизоляция.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор 2-3 см между утеплителем и финишным покрытием для вентиляции.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Утепление пола особенно важно для первого этажа и над неотапливаемыми помещениями.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для минваты обязательна гидроизоляция снизу.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Пароизоляция укладывается сверху утеплителя (со стороны тёплого помещения).'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Пенопласт и ЭППС не требуют гидроизоляции, но нужна пароизоляция.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор 2-3 см между утеплителем и финишным покрытием для вентиляции.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление пола особенно важно для первого этажа и над неотапливаемыми помещениями.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для минваты обязательна гидроизоляция снизу.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Пароизоляция укладывается сверху утеплителя (со стороны тёплого помещения).'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Пенопласт и ЭППС не требуют гидроизоляции, но нужна пароизоляция.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте зазор 2-3 см между утеплителем и финишным покрытием для вентиляции.'),
     ],
     useCase: CalculateFloorInsulation(),
     accentColor: kCalculatorAccentColor,
@@ -1933,7 +1933,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Полы',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -1944,7 +1944,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'packArea',
         labelKey: 'input.packArea',
         unitType: UnitType.squareMeters,
@@ -1955,7 +1955,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'underlayThickness',
         labelKey: 'input.underlayThickness',
         unitType: UnitType.meters,
@@ -1968,16 +1968,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Возьмите клинья для компенсационного зазора 10 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Подложку выбирайте толщиной 2–3 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Крестики не нужны, но контрольные клинья пригодятся.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность основания — перепад более 3 мм нежелателен.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Возьмите клинья для компенсационного зазора 10 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Подложку выбирайте толщиной 2–3 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Крестики не нужны, но контрольные клинья пригодятся.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность основания — перепад более 3 мм нежелателен.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Возьмите клинья для компенсационного зазора 10 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Подложку выбирайте толщиной 2–3 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Крестики не нужны, но контрольные клинья пригодятся.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность основания — перепад более 3 мм нежелателен.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Возьмите клинья для компенсационного зазора 10 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Подложку выбирайте толщиной 2–3 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Крестики не нужны, но контрольные клинья пригодятся.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность основания — перепад более 3 мм нежелателен.'),
     ],
     useCase: CalculateLaminate(),
     accentColor: kCalculatorAccentColor,
@@ -1998,7 +1998,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Полы',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2007,7 +2007,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'rollWidth',
         labelKey: 'input.rollWidth',
         unitType: UnitType.meters,
@@ -2016,7 +2016,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'rollLength',
         labelKey: 'input.rollLength',
         unitType: UnitType.meters,
@@ -2025,7 +2025,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'overlap',
         labelKey: 'input.overlap',
         unitType: UnitType.meters,
@@ -2036,14 +2036,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Раскатайте линолеум и дайте ему отлежаться 24 часа.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обрежьте излишки после укладки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте двухсторонний скотч для фиксации.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Раскатайте линолеум и дайте ему отлежаться 24 часа.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обрежьте излишки после укладки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте двухсторонний скотч для фиксации.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Раскатайте линолеум и дайте ему отлежаться 24 часа.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обрежьте излишки после укладки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте двухсторонний скотч для фиксации.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Раскатайте линолеум и дайте ему отлежаться 24 часа.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обрежьте излишки после укладки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте двухсторонний скотч для фиксации.'),
     ],
     useCase: CalculateLinoleum(),
     accentColor: kCalculatorAccentColor,
@@ -2064,7 +2064,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Полы',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2073,7 +2073,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'plankWidth',
         labelKey: 'input.plankWidth',
         unitType: UnitType.centimeters,
@@ -2082,7 +2082,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'plankLength',
         labelKey: 'input.plankLength',
         unitType: UnitType.meters,
@@ -2093,14 +2093,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Паркет требует акклиматизации 48 часов перед укладкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте подложку для звукоизоляции.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Лак наносите в 3 слоя с промежуточной шлифовкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Паркет требует акклиматизации 48 часов перед укладкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте подложку для звукоизоляции.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Лак наносите в 3 слоя с промежуточной шлифовкой.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Паркет требует акклиматизации 48 часов перед укладкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте подложку для звукоизоляции.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Лак наносите в 3 слоя с промежуточной шлифовкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Паркет требует акклиматизации 48 часов перед укладкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте подложку для звукоизоляции.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Лак наносите в 3 слоя с промежуточной шлифовкой.'),
     ],
     useCase: CalculateParquet(),
     accentColor: kCalculatorAccentColor,
@@ -2121,7 +2121,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Полы',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2132,7 +2132,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.millimeters,
@@ -2143,7 +2143,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'cementGrade',
         labelKey: 'input.cementGrade',
         unitType: UnitType.meters,
@@ -2156,16 +2156,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Перед заливкой проверьте уровень основания.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте маяки для контроля толщины стяжки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Выдержите стяжку не менее 7 дней перед укладкой покрытия.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'При толщине более 50 мм используйте армирующую сетку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Перед заливкой проверьте уровень основания.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте маяки для контроля толщины стяжки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Выдержите стяжку не менее 7 дней перед укладкой покрытия.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'При толщине более 50 мм используйте армирующую сетку.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Перед заливкой проверьте уровень основания.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте маяки для контроля толщины стяжки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Выдержите стяжку не менее 7 дней перед укладкой покрытия.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'При толщине более 50 мм используйте армирующую сетку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Перед заливкой проверьте уровень основания.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте маяки для контроля толщины стяжки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Выдержите стяжку не менее 7 дней перед укладкой покрытия.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'При толщине более 50 мм используйте армирующую сетку.'),
     ],
     useCase: CalculateScreed(),
     accentColor: kCalculatorAccentColor,
@@ -2186,7 +2186,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Полы',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2195,7 +2195,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.millimeters,
@@ -2206,16 +2206,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Основание должно быть чистым и сухим.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте грунтовку для улучшения адгезии.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Раскатывайте смесь игольчатым валиком сразу после заливки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Не ходите по полу 24 часа после заливки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Основание должно быть чистым и сухим.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте грунтовку для улучшения адгезии.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Раскатывайте смесь игольчатым валиком сразу после заливки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не ходите по полу 24 часа после заливки.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Основание должно быть чистым и сухим.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте грунтовку для улучшения адгезии.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Раскатывайте смесь игольчатым валиком сразу после заливки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Не ходите по полу 24 часа после заливки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Основание должно быть чистым и сухим.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте грунтовку для улучшения адгезии.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Раскатывайте смесь игольчатым валиком сразу после заливки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не ходите по полу 24 часа после заливки.'),
     ],
     useCase: CalculateSelfLevelingFloor(),
     accentColor: kCalculatorAccentColor,
@@ -2237,7 +2237,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Полы',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2248,7 +2248,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'tileWidth',
         labelKey: 'input.tileWidth',
         unitType: UnitType.centimeters,
@@ -2259,7 +2259,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'tileHeight',
         labelKey: 'input.tileHeight',
         unitType: UnitType.centimeters,
@@ -2270,7 +2270,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'jointWidth',
         labelKey: 'input.jointWidth',
         unitType: UnitType.meters,
@@ -2283,16 +2283,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте крестики для равномерного шва.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность основания — перепад не более 3 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Затирку выбирайте по цвету плитки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Клей наносите зубчатым шпателем.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте крестики для равномерного шва.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность основания — перепад не более 3 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Затирку выбирайте по цвету плитки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Клей наносите зубчатым шпателем.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте крестики для равномерного шва.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность основания — перепад не более 3 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Затирку выбирайте по цвету плитки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Клей наносите зубчатым шпателем.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте крестики для равномерного шва.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность основания — перепад не более 3 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Затирку выбирайте по цвету плитки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Клей наносите зубчатым шпателем.'),
     ],
     useCase: CalculateTile(),
     accentColor: kCalculatorAccentColor,
@@ -2313,7 +2313,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Полы',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2324,7 +2324,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'power',
         labelKey: 'input.power',
         unitType: UnitType.pieces,
@@ -2335,7 +2335,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'type',
         labelKey: 'input.type',
         unitType: UnitType.pieces,
@@ -2346,7 +2346,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thermostats',
         labelKey: 'input.thermostats',
         unitType: UnitType.pieces,
@@ -2359,16 +2359,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Не укладывайте под мебелью и стационарной техникой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте теплоизоляцию для повышения эффективности.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Подключение должен выполнять квалифицированный электрик.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Перед укладкой покрытия проверьте работоспособность системы.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не укладывайте под мебелью и стационарной техникой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте теплоизоляцию для повышения эффективности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Подключение должен выполнять квалифицированный электрик.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Перед укладкой покрытия проверьте работоспособность системы.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Не укладывайте под мебелью и стационарной техникой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте теплоизоляцию для повышения эффективности.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Подключение должен выполнять квалифицированный электрик.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Перед укладкой покрытия проверьте работоспособность системы.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не укладывайте под мебелью и стационарной техникой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте теплоизоляцию для повышения эффективности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Подключение должен выполнять квалифицированный электрик.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Перед укладкой покрытия проверьте работоспособность системы.'),
     ],
     useCase: CalculateWarmFloor(),
     accentColor: kCalculatorAccentColor,
@@ -2389,7 +2389,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Цокольный этаж',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2399,7 +2399,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'height',
         labelKey: 'input.height',
         unitType: UnitType.meters,
@@ -2408,7 +2408,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'wallThickness',
         labelKey: 'input.wallThickness',
         unitType: UnitType.meters,
@@ -2417,7 +2417,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'floorThickness',
         labelKey: 'input.floorThickness',
         unitType: UnitType.meters,
@@ -2428,16 +2428,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция по всей площади контакта с грунтом.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Утепление наружное (ЭППС) минимум 100 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Армирование стен вертикальными и горизонтальными сетками.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Вентиляция обязательна для предотвращения сырости.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция по всей площади контакта с грунтом.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление наружное (ЭППС) минимум 100 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Армирование стен вертикальными и горизонтальными сетками.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Вентиляция обязательна для предотвращения сырости.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция по всей площади контакта с грунтом.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Утепление наружное (ЭППС) минимум 100 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Армирование стен вертикальными и горизонтальными сетками.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Вентиляция обязательна для предотвращения сырости.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция по всей площади контакта с грунтом.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление наружное (ЭППС) минимум 100 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Армирование стен вертикальными и горизонтальными сетками.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Вентиляция обязательна для предотвращения сырости.'),
     ],
     useCase: CalculateBasement(),
     accentColor: kCalculatorAccentColor,
@@ -2458,7 +2458,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Отмостка',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2468,7 +2468,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'width',
         labelKey: 'input.width',
         unitType: UnitType.meters,
@@ -2477,7 +2477,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.millimeters,
@@ -2486,7 +2486,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'materialType',
         labelKey: 'input.materialType',
         unitType: UnitType.pieces,
@@ -2497,7 +2497,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulation',
         labelKey: 'input.insulation',
         unitType: UnitType.meters,
@@ -2510,16 +2510,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Минимальная ширина 60 см, рекомендуемая 1 м.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Уклон от дома 1-2 см на метр.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Песчано-гравийная подушка 15-20 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Компенсационный шов между отмосткой и цоколем.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Минимальная ширина 60 см, рекомендуемая 1 м.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Уклон от дома 1-2 см на метр.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Песчано-гравийная подушка 15-20 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Компенсационный шов между отмосткой и цоколем.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Минимальная ширина 60 см, рекомендуемая 1 м.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Уклон от дома 1-2 см на метр.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Песчано-гравийная подушка 15-20 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Компенсационный шов между отмосткой и цоколем.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Минимальная ширина 60 см, рекомендуемая 1 м.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Уклон от дома 1-2 см на метр.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Песчано-гравийная подушка 15-20 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Компенсационный шов между отмосткой и цоколем.'),
     ],
     useCase: CalculateBlindArea(),
     accentColor: kCalculatorAccentColor,
@@ -2541,7 +2541,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Монолитная плита',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2550,7 +2550,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.meters,
@@ -2559,7 +2559,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulation',
         labelKey: 'input.insulationThickness',
         unitType: UnitType.meters,
@@ -2570,18 +2570,18 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Плита толщиной минимум 200 мм для жилого дома.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обязательна песчано-гравийная подготовка.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция снизу и по периметру.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Армирование двумя сетками в верхней и нижней зонах.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Утеплитель (ЭППС) под плитой для теплого пола.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Плита толщиной минимум 200 мм для жилого дома.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обязательна песчано-гравийная подготовка.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция снизу и по периметру.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Армирование двумя сетками в верхней и нижней зонах.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утеплитель (ЭППС) под плитой для теплого пола.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Плита толщиной минимум 200 мм для жилого дома.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обязательна песчано-гравийная подготовка.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция снизу и по периметру.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Армирование двумя сетками в верхней и нижней зонах.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Утеплитель (ЭППС) под плитой для теплого пола.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Плита толщиной минимум 200 мм для жилого дома.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обязательна песчано-гравийная подготовка.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция снизу и по периметру.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Армирование двумя сетками в верхней и нижней зонах.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Утеплитель (ЭППС) под плитой для теплого пола.'),
     ],
     useCase: CalculateSlab(),
     accentColor: kCalculatorAccentColor,
@@ -2602,7 +2602,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Утепление',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2611,7 +2611,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.millimeters,
@@ -2620,7 +2620,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'density',
         labelKey: 'input.density',
         unitType: UnitType.kilograms,
@@ -2631,14 +2631,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для пенопласта.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Крепите дюбелями после высыхания клея.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для фасада обязательна армирующая сетка.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для пенопласта.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Крепите дюбелями после высыхания клея.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для фасада обязательна армирующая сетка.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для пенопласта.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Крепите дюбелями после высыхания клея.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для фасада обязательна армирующая сетка.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для пенопласта.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Крепите дюбелями после высыхания клея.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для фасада обязательна армирующая сетка.'),
     ],
     useCase: CalculateInsulationFoam(),
     accentColor: kCalculatorAccentColor,
@@ -2659,7 +2659,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Утепление',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2668,7 +2668,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.millimeters,
@@ -2677,7 +2677,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'density',
         labelKey: 'input.density',
         unitType: UnitType.kilograms,
@@ -2688,14 +2688,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте пароизоляцию с внутренней стороны.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Не сжимайте вату при укладке — это снижает эффективность.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Защитите руки и дыхательные пути при работе.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте пароизоляцию с внутренней стороны.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не сжимайте вату при укладке — это снижает эффективность.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Защитите руки и дыхательные пути при работе.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте пароизоляцию с внутренней стороны.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Не сжимайте вату при укладке — это снижает эффективность.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Защитите руки и дыхательные пути при работе.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте пароизоляцию с внутренней стороны.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не сжимайте вату при укладке — это снижает эффективность.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Защитите руки и дыхательные пути при работе.'),
     ],
     useCase: CalculateInsulationMineralWool(),
     accentColor: kCalculatorAccentColor,
@@ -2716,7 +2716,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Шумоизоляция',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2725,7 +2725,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.millimeters,
@@ -2734,7 +2734,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'insulationType',
         labelKey: 'input.insulationType',
         unitType: UnitType.pieces,
@@ -2745,14 +2745,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Шумоизоляция особенно важна для межкомнатных перегородок.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте материалы с высоким коэффициентом звукопоглощения.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обеспечьте герметичность стыков.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Шумоизоляция особенно важна для межкомнатных перегородок.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте материалы с высоким коэффициентом звукопоглощения.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обеспечьте герметичность стыков.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Шумоизоляция особенно важна для межкомнатных перегородок.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте материалы с высоким коэффициентом звукопоглощения.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обеспечьте герметичность стыков.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Шумоизоляция особенно важна для межкомнатных перегородок.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте материалы с высоким коэффициентом звукопоглощения.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обеспечьте герметичность стыков.'),
     ],
     useCase: CalculateSoundInsulation(),
     accentColor: kCalculatorAccentColor,
@@ -2773,7 +2773,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Ровнители / смеси',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2782,7 +2782,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.millimeters,
@@ -2791,7 +2791,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'type',
         labelKey: 'input.type',
         unitType: UnitType.pieces,
@@ -2800,7 +2800,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'perimeter',
         labelKey: 'input.perimeter',
         unitType: UnitType.meters,
@@ -2811,14 +2811,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Гипсовая штукатурка для внутренних работ.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Цементная для влажных помещений и фасадов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте маяки для ровной поверхности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Гипсовая штукатурка для внутренних работ.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Цементная для влажных помещений и фасадов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте маяки для ровной поверхности.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Гипсовая штукатурка для внутренних работ.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Цементная для влажных помещений и фасадов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте маяки для ровной поверхности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Гипсовая штукатурка для внутренних работ.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Цементная для влажных помещений и фасадов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте маяки для ровной поверхности.'),
     ],
     useCase: CalculatePlaster(),
     accentColor: kCalculatorAccentColor,
@@ -2839,7 +2839,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Ровнители / смеси',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2848,7 +2848,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'layers',
         labelKey: 'input.layers',
         unitType: UnitType.pieces,
@@ -2857,7 +2857,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'type',
         labelKey: 'input.type',
         unitType: UnitType.pieces,
@@ -2868,14 +2868,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Грунтовка улучшает адгезию материалов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Грунтовка глубокого проникновения для пористых поверхностей.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Наносите равномерным слоем.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Грунтовка улучшает адгезию материалов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Грунтовка глубокого проникновения для пористых поверхностей.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Наносите равномерным слоем.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Грунтовка улучшает адгезию материалов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Грунтовка глубокого проникновения для пористых поверхностей.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Наносите равномерным слоем.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Грунтовка улучшает адгезию материалов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Грунтовка глубокого проникновения для пористых поверхностей.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Наносите равномерным слоем.'),
     ],
     useCase: CalculatePrimer(),
     accentColor: kCalculatorAccentColor,
@@ -2896,7 +2896,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Ровнители / смеси',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2905,7 +2905,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'layers',
         labelKey: 'input.layers',
         unitType: UnitType.pieces,
@@ -2914,7 +2914,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'type',
         labelKey: 'input.type',
         unitType: UnitType.pieces,
@@ -2925,14 +2925,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Стартовая шпаклёвка для выравнивания, финишная для гладкости.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Наносите тонкими слоями.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Шлифуйте между слоями.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Стартовая шпаклёвка для выравнивания, финишная для гладкости.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Наносите тонкими слоями.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Шлифуйте между слоями.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Стартовая шпаклёвка для выравнивания, финишная для гладкости.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Наносите тонкими слоями.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Шлифуйте между слоями.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Стартовая шпаклёвка для выравнивания, финишная для гладкости.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Наносите тонкими слоями.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Шлифуйте между слоями.'),
     ],
     useCase: CalculatePutty(),
     accentColor: kCalculatorAccentColor,
@@ -2953,7 +2953,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Ровнители / смеси',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -2962,7 +2962,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'tileSize',
         labelKey: 'input.tileSize',
         unitType: UnitType.meters,
@@ -2971,7 +2971,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'layerThickness',
         labelKey: 'input.layerThickness',
         unitType: UnitType.millimeters,
@@ -2982,14 +2982,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Расход зависит от размера плитки и толщины слоя.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте зубчатый шпатель.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Наносите клей на основание и плитку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Расход зависит от размера плитки и толщины слоя.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте зубчатый шпатель.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Наносите клей на основание и плитку.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Расход зависит от размера плитки и толщины слоя.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте зубчатый шпатель.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Наносите клей на основание и плитку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Расход зависит от размера плитки и толщины слоя.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте зубчатый шпатель.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Наносите клей на основание и плитку.'),
     ],
     useCase: CalculateTileGlue(),
     accentColor: kCalculatorAccentColor,
@@ -3011,7 +3011,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Перегородки',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'length',
         labelKey: 'input.length',
         unitType: UnitType.meters,
@@ -3020,7 +3020,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'height',
         labelKey: 'input.height',
         unitType: UnitType.meters,
@@ -3029,7 +3029,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.millimeters,
@@ -3040,16 +3040,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для газобетона.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Армируйте каждый 3-4 ряд.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Первый ряд укладывайте на раствор.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверяйте геометрию уровнем.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для газобетона.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Армируйте каждый 3-4 ряд.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Первый ряд укладывайте на раствор.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверяйте геометрию уровнем.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для газобетона.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Армируйте каждый 3-4 ряд.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Первый ряд укладывайте на раствор.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверяйте геометрию уровнем.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для газобетона.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Армируйте каждый 3-4 ряд.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Первый ряд укладывайте на раствор.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверяйте геометрию уровнем.'),
     ],
     useCase: CalculateGasblockPartition(),
     accentColor: kCalculatorAccentColor,
@@ -3070,7 +3070,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Перегородки',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'length',
         labelKey: 'input.length',
         unitType: UnitType.meters,
@@ -3079,7 +3079,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'height',
         labelKey: 'input.height',
         unitType: UnitType.meters,
@@ -3088,7 +3088,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'brickType',
         labelKey: 'input.type',
         unitType: UnitType.pieces,
@@ -3099,16 +3099,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Кладку в полкирпича армируйте каждые 5 рядов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте цементно-песчаный раствор М100.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверяйте вертикальность отвесом.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Связывайте с несущими стенами анкерами.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Кладку в полкирпича армируйте каждые 5 рядов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте цементно-песчаный раствор М100.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверяйте вертикальность отвесом.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Связывайте с несущими стенами анкерами.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Кладку в полкирпича армируйте каждые 5 рядов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте цементно-песчаный раствор М100.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверяйте вертикальность отвесом.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Связывайте с несущими стенами анкерами.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Кладку в полкирпича армируйте каждые 5 рядов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте цементно-песчаный раствор М100.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверяйте вертикальность отвесом.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Связывайте с несущими стенами анкерами.'),
     ],
     useCase: CalculateBrickPartition(),
     accentColor: kCalculatorAccentColor,
@@ -3129,7 +3129,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Перегородки',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -3140,7 +3140,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'layers',
         labelKey: 'input.layers',
         unitType: UnitType.pieces,
@@ -3151,7 +3151,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'height',
         labelKey: 'input.height',
         unitType: UnitType.meters,
@@ -3164,16 +3164,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Шаг стоек — 60 см для прочности.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте звукоизоляцию между листами.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте вертикальность стоек уровнем.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Шпаклёвку наносите в два слоя.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Шаг стоек — 60 см для прочности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте звукоизоляцию между листами.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте вертикальность стоек уровнем.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Шпаклёвку наносите в два слоя.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Шаг стоек — 60 см для прочности.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте звукоизоляцию между листами.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте вертикальность стоек уровнем.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Шпаклёвку наносите в два слоя.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Шаг стоек — 60 см для прочности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте звукоизоляцию между листами.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте вертикальность стоек уровнем.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Шпаклёвку наносите в два слоя.'),
     ],
     useCase: CalculateGklPartition(),
     accentColor: kCalculatorAccentColor,
@@ -3194,7 +3194,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Кровля',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'roofLength',
         labelKey: 'input.roofLength',
         unitType: UnitType.meters,
@@ -3203,7 +3203,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'roofArea',
         labelKey: 'input.roofArea',
         unitType: UnitType.squareMeters,
@@ -3212,7 +3212,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'gutterLength',
         labelKey: 'input.gutterLength',
         unitType: UnitType.meters,
@@ -3223,16 +3223,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Устанавливайте желоба с уклоном 3-5 мм на 1 м.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Кронштейны монтируются через каждые 50-60 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'На каждые 10 м² крыши — 1 водосточная труба.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте герметик для соединений.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Устанавливайте желоба с уклоном 3-5 мм на 1 м.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Кронштейны монтируются через каждые 50-60 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'На каждые 10 м² крыши — 1 водосточная труба.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте герметик для соединений.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Устанавливайте желоба с уклоном 3-5 мм на 1 м.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Кронштейны монтируются через каждые 50-60 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'На каждые 10 м² крыши — 1 водосточная труба.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте герметик для соединений.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Устанавливайте желоба с уклоном 3-5 мм на 1 м.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Кронштейны монтируются через каждые 50-60 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'На каждые 10 м² крыши — 1 водосточная труба.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте герметик для соединений.'),
     ],
     useCase: CalculateGutters(),
     accentColor: kCalculatorAccentColor,
@@ -3253,7 +3253,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Кровля',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -3264,7 +3264,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'slope',
         labelKey: 'input.slope',
         unitType: UnitType.meters,
@@ -3275,7 +3275,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'sheetWidth',
         labelKey: 'input.sheetWidth',
         unitType: UnitType.meters,
@@ -3286,7 +3286,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'sheetLength',
         labelKey: 'input.sheetLength',
         unitType: UnitType.meters,
@@ -3297,7 +3297,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'ridgeLength',
         labelKey: 'input.ridgeLength',
         unitType: UnitType.meters,
@@ -3308,7 +3308,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 5,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'valleyLength',
         labelKey: 'input.valleyLength',
         unitType: UnitType.meters,
@@ -3319,7 +3319,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 6,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'endLength',
         labelKey: 'input.endLength',
         unitType: UnitType.meters,
@@ -3332,16 +3332,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Учитывайте уклон крыши при расчёте площади.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальные саморезы с уплотнителями.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Укладывайте листы с нахлёстом 15-20 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте про гидроизоляцию под кровлей.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Учитывайте уклон крыши при расчёте площади.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальные саморезы с уплотнителями.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Укладывайте листы с нахлёстом 15-20 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте про гидроизоляцию под кровлей.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Учитывайте уклон крыши при расчёте площади.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальные саморезы с уплотнителями.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Укладывайте листы с нахлёстом 15-20 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте про гидроизоляцию под кровлей.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Учитывайте уклон крыши при расчёте площади.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальные саморезы с уплотнителями.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Укладывайте листы с нахлёстом 15-20 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте про гидроизоляцию под кровлей.'),
     ],
     useCase: CalculateRoofingMetal(),
     accentColor: kCalculatorAccentColor,
@@ -3362,7 +3362,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Кровля',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -3371,7 +3371,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'slope',
         labelKey: 'input.slope',
         unitType: UnitType.meters,
@@ -3380,7 +3380,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'ridgeLength',
         labelKey: 'input.ridgeLength',
         unitType: UnitType.meters,
@@ -3389,7 +3389,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'valleyLength',
         labelKey: 'input.valleyLength',
         unitType: UnitType.meters,
@@ -3400,16 +3400,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Битумная черепица подходит для крыш с уклоном от 12°.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обязательно используйте подкладочный ковёр.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Монтаж при температуре выше +5°C.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Укладывайте снизу вверх с перекрытием.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Битумная черепица подходит для крыш с уклоном от 12°.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обязательно используйте подкладочный ковёр.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Монтаж при температуре выше +5°C.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Укладывайте снизу вверх с перекрытием.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Битумная черепица подходит для крыш с уклоном от 12°.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обязательно используйте подкладочный ковёр.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Монтаж при температуре выше +5°C.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Укладывайте снизу вверх с перекрытием.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Битумная черепица подходит для крыш с уклоном от 12°.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обязательно используйте подкладочный ковёр.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Монтаж при температуре выше +5°C.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Укладывайте снизу вверх с перекрытием.'),
     ],
     useCase: CalculateSoftRoofing(),
     accentColor: kCalculatorAccentColor,
@@ -3430,7 +3430,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Окна / двери',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'windows',
         labelKey: 'input.windows',
         unitType: UnitType.pieces,
@@ -3439,7 +3439,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'windowWidth',
         labelKey: 'input.windowWidth',
         unitType: UnitType.meters,
@@ -3448,7 +3448,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'windowHeight',
         labelKey: 'input.windowHeight',
         unitType: UnitType.meters,
@@ -3457,7 +3457,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'slopeWidth',
         labelKey: 'input.slopeWidth',
         unitType: UnitType.meters,
@@ -3468,14 +3468,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте уголки для ровных углов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Шпаклёвку наносите тонким слоем.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Красьте в 2 слоя для равномерного покрытия.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте уголки для ровных углов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Шпаклёвку наносите тонким слоем.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Красьте в 2 слоя для равномерного покрытия.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте уголки для ровных углов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Шпаклёвку наносите тонким слоем.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Красьте в 2 слоя для равномерного покрытия.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте уголки для ровных углов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Шпаклёвку наносите тонким слоем.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Красьте в 2 слоя для равномерного покрытия.'),
     ],
     useCase: CalculateSlopes(),
     accentColor: kCalculatorAccentColor,
@@ -3496,7 +3496,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Лестницы',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'floorHeight',
         labelKey: 'input.floorHeight',
         unitType: UnitType.meters,
@@ -3505,7 +3505,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'stepHeight',
         labelKey: 'input.stepHeight',
         unitType: UnitType.meters,
@@ -3514,7 +3514,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'stepWidth',
         labelKey: 'input.stepWidth',
         unitType: UnitType.meters,
@@ -3523,7 +3523,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'stepCount',
         labelKey: 'input.stepCount',
         unitType: UnitType.pieces,
@@ -3532,7 +3532,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'width',
         labelKey: 'input.width',
         unitType: UnitType.meters,
@@ -3541,7 +3541,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 5,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'materialType',
         labelKey: 'input.type',
         unitType: UnitType.pieces,
@@ -3552,22 +3552,22 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Высота ступени должна быть 15-20 см для комфортного подъёма.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Ширина проступи (ступени) должна быть не менее 28 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Ширина лестницы для жилых домов - минимум 90 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для деревянной лестницы используйте твёрдые породы дерева (дуб, ясень).'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Бетонная лестница требует армирования и опалубки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Перила должны быть на высоте 90-100 см от ступени.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Балясины устанавливаются с шагом 10-15 см для безопасности детей.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Высота ступени должна быть 15-20 см для комфортного подъёма.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Ширина проступи (ступени) должна быть не менее 28 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Ширина лестницы для жилых домов - минимум 90 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для деревянной лестницы используйте твёрдые породы дерева (дуб, ясень).'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Бетонная лестница требует армирования и опалубки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Перила должны быть на высоте 90-100 см от ступени.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Балясины устанавливаются с шагом 10-15 см для безопасности детей.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Высота ступени должна быть 15-20 см для комфортного подъёма.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Ширина проступи (ступени) должна быть не менее 28 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Ширина лестницы для жилых домов - минимум 90 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для деревянной лестницы используйте твёрдые породы дерева (дуб, ясень).'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Бетонная лестница требует армирования и опалубки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Перила должны быть на высоте 90-100 см от ступени.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Балясины устанавливаются с шагом 10-15 см для безопасности детей.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Высота ступени должна быть 15-20 см для комфортного подъёма.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Ширина проступи (ступени) должна быть не менее 28 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Ширина лестницы для жилых домов - минимум 90 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для деревянной лестницы используйте твёрдые породы дерева (дуб, ясень).'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Бетонная лестница требует армирования и опалубки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Перила должны быть на высоте 90-100 см от ступени.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Балясины устанавливаются с шагом 10-15 см для безопасности детей.'),
     ],
     useCase: CalculateStairs(),
     accentColor: kCalculatorAccentColor,
@@ -3586,7 +3586,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.exterior,
     subCategory: 'Терраса / Веранда',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -3595,7 +3595,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'floorType',
         labelKey: 'input.floorType',
         unitType: UnitType.pieces,
@@ -3604,7 +3604,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'railing',
         labelKey: 'input.railing',
         unitType: UnitType.meters,
@@ -3613,7 +3613,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'roof',
         labelKey: 'input.roof',
         unitType: UnitType.meters,
@@ -3622,7 +3622,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'roofType',
         labelKey: 'input.roofType',
         unitType: UnitType.pieces,
@@ -3633,20 +3633,20 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Террасная доска (декинг) устойчива к влаге и перепадам температур.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Плитка для террасы должна быть морозостойкой и нескользкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Ограждение обеспечивает безопасность, особенно если есть дети.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Кровля защищает от дождя и солнца.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Поликарбонат пропускает свет и создаёт лёгкую конструкцию.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Столбы для кровли должны быть установлены на фундамент.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Террасная доска (декинг) устойчива к влаге и перепадам температур.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Плитка для террасы должна быть морозостойкой и нескользкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Ограждение обеспечивает безопасность, особенно если есть дети.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Кровля защищает от дождя и солнца.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Поликарбонат пропускает свет и создаёт лёгкую конструкцию.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Столбы для кровли должны быть установлены на фундамент.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Террасная доска (декинг) устойчива к влаге и перепадам температур.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Плитка для террасы должна быть морозостойкой и нескользкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Ограждение обеспечивает безопасность, особенно если есть дети.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Кровля защищает от дождя и солнца.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Поликарбонат пропускает свет и создаёт лёгкую конструкцию.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Столбы для кровли должны быть установлены на фундамент.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Террасная доска (декинг) устойчива к влаге и перепадам температур.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Плитка для террасы должна быть морозостойкой и нескользкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Ограждение обеспечивает безопасность, особенно если есть дети.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Кровля защищает от дождя и солнца.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Поликарбонат пропускает свет и создаёт лёгкую конструкцию.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Столбы для кровли должны быть установлены на фундамент.'),
     ],
     useCase: CalculateTerrace(),
     accentColor: kCalculatorAccentColor,
@@ -3665,7 +3665,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Стены',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.wallArea',
         unitType: UnitType.squareMeters,
@@ -3674,7 +3674,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'panelSize',
         labelKey: 'input.packArea',
         unitType: UnitType.meters,
@@ -3685,14 +3685,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность стен перед установкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для 3D панелей.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Начинайте монтаж от центра стены.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность стен перед установкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для 3D панелей.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Начинайте монтаж от центра стены.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность стен перед установкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для 3D панелей.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Начинайте монтаж от центра стены.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте ровность стен перед установкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для 3D панелей.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Начинайте монтаж от центра стены.'),
     ],
     useCase: Calculate3dPanels(),
     accentColor: kCalculatorAccentColor,
@@ -3714,7 +3714,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Стены',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -3723,7 +3723,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.meters,
@@ -3732,7 +3732,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         unitType: UnitType.squareMeters,
@@ -3741,7 +3741,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         unitType: UnitType.squareMeters,
@@ -3752,14 +3752,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте грунтовку глубокого проникновения.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Возьмите шпатели и кельмы разных размеров.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для венецианской штукатурки нужна кельма из нержавейки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте грунтовку глубокого проникновения.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Возьмите шпатели и кельмы разных размеров.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для венецианской штукатурки нужна кельма из нержавейки.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте грунтовку глубокого проникновения.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Возьмите шпатели и кельмы разных размеров.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для венецианской штукатурки нужна кельма из нержавейки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте грунтовку глубокого проникновения.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Возьмите шпатели и кельмы разных размеров.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для венецианской штукатурки нужна кельма из нержавейки.'),
     ],
     useCase: CalculateDecorativePlaster(),
     accentColor: kCalculatorAccentColor,
@@ -3781,7 +3781,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Стены',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.wallArea',
         unitType: UnitType.squareMeters,
@@ -3790,7 +3790,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
         unitType: UnitType.millimeters,
@@ -3801,14 +3801,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Добавьте 10% запас на подрезку и бой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для декоративного камня.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обработайте камень гидрофобизатором.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Добавьте 10% запас на подрезку и бой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для декоративного камня.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обработайте камень гидрофобизатором.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Добавьте 10% запас на подрезку и бой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для декоративного камня.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обработайте камень гидрофобизатором.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Добавьте 10% запас на подрезку и бой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте специальный клей для декоративного камня.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обработайте камень гидрофобизатором.'),
     ],
     useCase: CalculateDecorativeStone(),
     accentColor: kCalculatorAccentColor,
@@ -3830,7 +3830,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Стены',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.wallArea',
         unitType: UnitType.squareMeters,
@@ -3839,7 +3839,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'layers',
         labelKey: 'input.layers',
         unitType: UnitType.pieces,
@@ -3850,14 +3850,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'ГВЛ тяжелее ГКЛ, усильте каркас.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте саморезы для ГВЛ.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Зазор между листами 5-7 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'ГВЛ тяжелее ГКЛ, усильте каркас.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте саморезы для ГВЛ.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Зазор между листами 5-7 мм.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'ГВЛ тяжелее ГКЛ, усильте каркас.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте саморезы для ГВЛ.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Зазор между листами 5-7 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'ГВЛ тяжелее ГКЛ, усильте каркас.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте саморезы для ГВЛ.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Зазор между листами 5-7 мм.'),
     ],
     useCase: CalculateGvlWall(),
     accentColor: kCalculatorAccentColor,
@@ -3878,7 +3878,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Стены',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.wallArea',
         unitType: UnitType.squareMeters,
@@ -3887,7 +3887,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         unitType: UnitType.meters,
@@ -3898,14 +3898,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'МДФ не для влажных помещений.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обрешетка с шагом 40-50 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Крепите на кляймеры или клипсы.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'МДФ не для влажных помещений.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обрешетка с шагом 40-50 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Крепите на кляймеры или клипсы.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'МДФ не для влажных помещений.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обрешетка с шагом 40-50 см.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Крепите на кляймеры или клипсы.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'МДФ не для влажных помещений.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обрешетка с шагом 40-50 см.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Крепите на кляймеры или клипсы.'),
     ],
     useCase: CalculateMdfPanels(),
     accentColor: kCalculatorAccentColor,
@@ -3927,7 +3927,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Стены',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -3938,7 +3938,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'layers',
         labelKey: 'input.layers',
         unitType: UnitType.pieces,
@@ -3949,7 +3949,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'consumption',
         labelKey: 'input.consumption',
         unitType: UnitType.liters,
@@ -3960,7 +3960,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         unitType: UnitType.squareMeters,
@@ -3971,7 +3971,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         unitType: UnitType.squareMeters,
@@ -3984,18 +3984,18 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Рекомендуется купить грунтовку для улучшения сцепления.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте малярный скотч для защиты углов и плинтуса.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Возьмите валик средней ворсистости и кювету.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для углов пригодятся кисти шириной 50 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте плёнку для защиты пола и мебели.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Рекомендуется купить грунтовку для улучшения сцепления.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте малярный скотч для защиты углов и плинтуса.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Возьмите валик средней ворсистости и кювету.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для углов пригодятся кисти шириной 50 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте плёнку для защиты пола и мебели.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Рекомендуется купить грунтовку для улучшения сцепления.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте малярный скотч для защиты углов и плинтуса.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Возьмите валик средней ворсистости и кювету.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Для углов пригодятся кисти шириной 50 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте плёнку для защиты пола и мебели.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Рекомендуется купить грунтовку для улучшения сцепления.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте малярный скотч для защиты углов и плинтуса.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Возьмите валик средней ворсистости и кювету.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Для углов пригодятся кисти шириной 50 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте плёнку для защиты пола и мебели.'),
     ],
     useCase: CalculateWallPaint(),
     accentColor: kCalculatorAccentColor,
@@ -4016,7 +4016,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Стены',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.wallArea',
         unitType: UnitType.squareMeters,
@@ -4025,7 +4025,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'panelWidth',
         labelKey: 'input.panelWidth',
         unitType: UnitType.meters,
@@ -4036,14 +4036,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Панели укладывайте от угла.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте температурный зазор 5 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте стартовый и финишный профили.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Панели укладывайте от угла.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте температурный зазор 5 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте стартовый и финишный профили.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Панели укладывайте от угла.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте температурный зазор 5 мм.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте стартовый и финишный профили.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Панели укладывайте от угла.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Оставляйте температурный зазор 5 мм.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте стартовый и финишный профили.'),
     ],
     useCase: CalculatePvcPanels(),
     accentColor: kCalculatorAccentColor,
@@ -4065,7 +4065,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Стены',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.wallArea',
         unitType: UnitType.squareMeters,
@@ -4074,7 +4074,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'tileWidth',
         labelKey: 'input.tileWidth',
         unitType: UnitType.centimeters,
@@ -4083,7 +4083,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'tileHeight',
         labelKey: 'input.tileHeight',
         unitType: UnitType.centimeters,
@@ -4094,14 +4094,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Добавьте 10% запас на подрезку.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте крестики для ровных швов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Начинайте со второго ряда снизу.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Добавьте 10% запас на подрезку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте крестики для ровных швов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Начинайте со второго ряда снизу.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Добавьте 10% запас на подрезку.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте крестики для ровных швов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Начинайте со второго ряда снизу.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Добавьте 10% запас на подрезку.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте крестики для ровных швов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Начинайте со второго ряда снизу.'),
     ],
     useCase: CalculateWallTile(),
     accentColor: kCalculatorAccentColor,
@@ -4122,7 +4122,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Стены',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.area',
         unitType: UnitType.squareMeters,
@@ -4133,7 +4133,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'rollWidth',
         labelKey: 'input.rollWidth',
         unitType: UnitType.meters,
@@ -4144,7 +4144,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'rollLength',
         labelKey: 'input.rollLength',
         unitType: UnitType.meters,
@@ -4155,7 +4155,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 3,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'rapport',
         labelKey: 'input.rapport',
         unitType: UnitType.meters,
@@ -4166,7 +4166,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 4,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'wallHeight',
         labelKey: 'input.wallHeight',
         unitType: UnitType.meters,
@@ -4177,7 +4177,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 5,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'windowsArea',
         labelKey: 'input.windowsArea',
         unitType: UnitType.squareMeters,
@@ -4188,7 +4188,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: false,
         order: 6,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'doorsArea',
         labelKey: 'input.doorsArea',
         unitType: UnitType.squareMeters,
@@ -4201,16 +4201,16 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте совпадение рисунка (раппорта) перед поклейкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Рекомендуется добавить 10 % к площади для подрезки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте лазерный уровень для контроля вертикали.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Клей подбирайте по типу обоев (флизелиновые/виниловые).'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте совпадение рисунка (раппорта) перед поклейкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Рекомендуется добавить 10 % к площади для подрезки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте лазерный уровень для контроля вертикали.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Клей подбирайте по типу обоев (флизелиновые/виниловые).'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте совпадение рисунка (раппорта) перед поклейкой.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Рекомендуется добавить 10 % к площади для подрезки.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте лазерный уровень для контроля вертикали.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Клей подбирайте по типу обоев (флизелиновые/виниловые).'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте совпадение рисунка (раппорта) перед поклейкой.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Рекомендуется добавить 10 % к площади для подрезки.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте лазерный уровень для контроля вертикали.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Клей подбирайте по типу обоев (флизелиновые/виниловые).'),
     ],
     useCase: CalculateWallpaper(),
     accentColor: kCalculatorAccentColor,
@@ -4231,7 +4231,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Стены',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'area',
         labelKey: 'input.wallArea',
         unitType: UnitType.squareMeters,
@@ -4240,7 +4240,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'boardWidth',
         labelKey: 'input.boardWidth',
         unitType: UnitType.meters,
@@ -4251,14 +4251,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Дайте вагонке акклиматизироваться 48 часов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обработайте антисептиком перед монтажом.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Крепите на кляймеры для скрытого монтажа.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Дайте вагонке акклиматизироваться 48 часов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обработайте антисептиком перед монтажом.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Крепите на кляймеры для скрытого монтажа.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Дайте вагонке акклиматизироваться 48 часов.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Обработайте антисептиком перед монтажом.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Крепите на кляймеры для скрытого монтажа.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Дайте вагонке акклиматизироваться 48 часов.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Обработайте антисептиком перед монтажом.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Крепите на кляймеры для скрытого монтажа.'),
     ],
     useCase: CalculateWoodWall(),
     accentColor: kCalculatorAccentColor,
@@ -4279,7 +4279,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     category: CalculatorCategory.interior,
     subCategory: 'Окна / двери',
     fields: [
-      CalculatorField(
+      const CalculatorField(
         key: 'windows',
         labelKey: 'input.windows',
         unitType: UnitType.pieces,
@@ -4288,7 +4288,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 1,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'windowWidth',
         labelKey: 'input.windowWidth',
         unitType: UnitType.meters,
@@ -4297,7 +4297,7 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
         required: true,
         order: 2,
       ),
-      CalculatorField(
+      const CalculatorField(
         key: 'windowHeight',
         labelKey: 'input.windowHeight',
         unitType: UnitType.meters,
@@ -4308,14 +4308,14 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       ),
     ],
     beforeHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте монтажную пену для герметизации.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Установите отливы для защиты от воды.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте вертикальность и горизонтальность.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте монтажную пену для герметизации.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Установите отливы для защиты от воды.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте вертикальность и горизонтальность.'),
     ],
     afterHints: [
-      CalculatorHint(type: HintType.tip, messageKey: 'Используйте монтажную пену для герметизации.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Установите отливы для защиты от воды.'),
-      CalculatorHint(type: HintType.tip, messageKey: 'Проверьте вертикальность и горизонтальность.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте монтажную пену для герметизации.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Установите отливы для защиты от воды.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'Проверьте вертикальность и горизонтальность.'),
     ],
     useCase: CalculateWindowInstallation(),
     accentColor: kCalculatorAccentColor,
