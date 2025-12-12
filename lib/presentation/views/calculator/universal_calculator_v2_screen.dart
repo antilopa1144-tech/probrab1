@@ -2,8 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:share_plus/share_plus.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_field.dart';
 import '../../../domain/calculators/calculator_registry.dart';
@@ -16,11 +14,9 @@ import '../../../core/enums/unit_type.dart';
 import '../../../core/enums/field_input_type.dart';
 import '../../../domain/models/project_v2.dart';
 import '../../providers/price_provider.dart';
-import '../../providers/project_v2_provider.dart';
 import '../../widgets/hint_card.dart';
 import '../../widgets/result_card.dart';
 import '../../styles/calculator_styles.dart';
-import '../project/project_details_screen.dart';
 
 /// Универсальный экран калькулятора V2.
 ///
@@ -592,32 +588,49 @@ class _UniversalCalculatorV2ScreenState
   }
 
   (UnitType, String) _inferUnitAndLabel(String key, double value) {
-    // ... (код без изменений)
     final loc = AppLocalizations.of(context);
     final resultKey = 'result.$key';
     final translated = loc.translate(resultKey);
-    if (translated != resultKey) {
-      // Simplified unit inference
-      if (key.contains('area')) return (UnitType.squareMeters, translated);
-      if (key.contains('volume')) return (UnitType.cubicMeters, translated);
-      if (key.contains('length') || key.contains('perimeter')) return (UnitType.meters, translated);
-      if (key.contains('thickness')) {
-        if (value >= 5) return (UnitType.millimeters, translated);
-        return (UnitType.meters, translated);
-      }
-      if (key.contains('height') || key.contains('width')) {
-        if (value >= 5) return (UnitType.centimeters, translated);
-        return (UnitType.meters, translated);
-      }
-      if (key.contains('weight') || key.contains('kg')) return (UnitType.kilograms, translated);
-      if (key.contains('price') || key.contains('cost')) return (UnitType.rubles, translated);
-      if (key.contains('liters')) return (UnitType.liters, translated);
-      if (key.contains('packs')) return (UnitType.packages, translated);
-      if (key.contains('bags')) return (UnitType.bags, translated);
-      if (key.contains('rolls')) return (UnitType.rolls, translated);
-      return (UnitType.pieces, translated);
+    final label = translated != resultKey ? translated : _humanizeResultKey(key);
+
+    final lowerKey = key.toLowerCase();
+
+    if (lowerKey.contains('area')) return (UnitType.squareMeters, label);
+    if (lowerKey.contains('volume')) return (UnitType.cubicMeters, label);
+    if (lowerKey.contains('length') || lowerKey.contains('perimeter') || lowerKey.endsWith('meters')) {
+      return (UnitType.meters, label);
     }
-    return (UnitType.pieces, key); // Fallback
+    if (lowerKey.contains('thickness')) {
+      if (value >= 5) return (UnitType.millimeters, label);
+      return (UnitType.meters, label);
+    }
+    if (lowerKey.contains('height') || lowerKey.contains('width')) {
+      if (value >= 5) return (UnitType.centimeters, label);
+      return (UnitType.meters, label);
+    }
+    if (lowerKey.contains('weight') || lowerKey.contains('kg')) return (UnitType.kilograms, label);
+    if (lowerKey.contains('price') || lowerKey.contains('cost') || lowerKey.contains('rub')) {
+      return (UnitType.rubles, label);
+    }
+    if (lowerKey.contains('consumption') && lowerKey.contains('perm2')) {
+      return (UnitType.litersPerSqm, label);
+    }
+    if (lowerKey.contains('liters') || lowerKey.contains('liter')) return (UnitType.liters, label);
+    if (lowerKey.contains('packs') || lowerKey.contains('packages')) return (UnitType.packages, label);
+    if (lowerKey.contains('bags')) return (UnitType.bags, label);
+    if (lowerKey.contains('rolls')) return (UnitType.rolls, label);
+    if (lowerKey.contains('percent') || lowerKey == 'reserve') return (UnitType.percent, label);
+    if (lowerKey.contains('hours')) return (UnitType.hours, label);
+    if (lowerKey.contains('days')) return (UnitType.days, label);
+
+    return (UnitType.pieces, label);
+  }
+
+  String _humanizeResultKey(String key) {
+    return key
+        .replaceAll(RegExp(r'[_]+'), ' ')
+        .replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (m) => '${m[1]} ${m[2]}')
+        .trim();
   }
 
   IconData _getIconForField(String iconName) {

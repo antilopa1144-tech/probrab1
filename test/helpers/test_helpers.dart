@@ -107,7 +107,8 @@ Future<void> pumpAndSettleWithTimeout(
 
   // Вместо pumpAndSettle используем фиксированное количество pump
   // для избежания таймаутов при бесконечных анимациях
-  for (int i = 0; i < 10; i++) {
+  final steps = (timeout.inMilliseconds / 100).ceil();
+  for (int i = 0; i < steps; i++) {
     await tester.pump(const Duration(milliseconds: 100));
   }
 }

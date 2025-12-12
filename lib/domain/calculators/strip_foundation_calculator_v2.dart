@@ -21,7 +21,34 @@ final stripFoundationCalculatorV2 = CalculatorDefinitionV2(
   tags: ['фундамент', 'ленточный', 'бетон', 'арматура', 'foundation', 'strip'],
 
   // Поля ввода
-  fields: [CalculatorField(
+  fields: [
+    CalculatorField(
+      key: 'area',
+      labelKey: 'input.area',
+      hintKey: 'input.area.hint',
+      unitType: UnitType.squareMeters,
+      defaultValue: 0,
+      minValue: 0.1,
+      maxValue: 10000,
+      required: true,
+      step: 1.0,
+      iconName: 'square_foot',
+      order: 0,
+    ),
+    CalculatorField(
+      key: 'perimeter',
+      labelKey: 'input.perimeter',
+      hintKey: 'input.perimeter.hint',
+      unitType: UnitType.meters,
+      defaultValue: 0,
+      minValue: 0.1,
+      maxValue: 10000,
+      required: false,
+      step: 0.5,
+      iconName: 'straighten',
+      order: 1,
+    ),
+    CalculatorField(
       key: 'width',
       labelKey: 'input.width',
       hintKey: 'input.width.hint',

@@ -22,7 +22,13 @@ class CalculateGasblockPartition extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) {
+      final length = inputs['length'] ?? 0;
+      final height = inputs['height'] ?? 0;
+      if (length <= 0 || height <= 0) {
+        return 'Площадь должна быть больше нуля';
+      }
+    }
 
     return null;
   }
@@ -32,7 +38,14 @@ class CalculateGasblockPartition extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = getInput(inputs, 'area', minValue: 0.1);
+    double area;
+    if ((inputs['area'] ?? 0) > 0) {
+      area = getInput(inputs, 'area', minValue: 0.1);
+    } else {
+      final length = getInput(inputs, 'length', minValue: 0.1);
+      final height = getInput(inputs, 'height', defaultValue: 2.5, minValue: 0.1);
+      area = length * height;
+    }
     final blockWidth = getInput(inputs, 'blockWidth', defaultValue: 10.0, minValue: 7.5, maxValue: 20.0);
     final blockLength = getInput(inputs, 'blockLength', defaultValue: 60.0, minValue: 50.0, maxValue: 62.5);
     final blockHeight = getInput(inputs, 'blockHeight', defaultValue: 25.0, minValue: 20.0, maxValue: 30.0);
