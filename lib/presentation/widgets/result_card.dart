@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/enums/unit_type.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../core/validation/input_sanitizer.dart';
 
 enum ResultsListLayout {
@@ -214,6 +215,7 @@ class ResultsList extends StatelessWidget {
     final materialWidgets = <Widget>[];
     final consumableWidgets = <Widget>[];
     final parameterWidgets = <Widget>[];
+    final loc = AppLocalizations.of(context);
 
     for (final entry in results.entries) {
       final key = entry.key;
@@ -253,12 +255,12 @@ class ResultsList extends StatelessWidget {
     widgets.addAll(primaryWidget);
 
     if (materialWidgets.isNotEmpty) {
-      widgets.add(_buildSectionTitle(context, 'Материалы'));
+      widgets.add(_buildSectionTitle(context, loc.translate('resultSection.materials')));
       widgets.addAll(materialWidgets);
     }
 
     if (consumableWidgets.isNotEmpty) {
-      widgets.add(_buildSectionTitle(context, 'Расходники'));
+      widgets.add(_buildSectionTitle(context, loc.translate('resultSection.consumables')));
       widgets.addAll(consumableWidgets);
     }
 
@@ -270,7 +272,7 @@ class ResultsList extends StatelessWidget {
             tilePadding: EdgeInsets.zero,
             childrenPadding: const EdgeInsets.only(top: 8),
             title: Text(
-              'Параметры',
+              loc.translate('resultSection.parameters'),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             children: parameterWidgets

@@ -51,6 +51,18 @@ class CalculateInsulationFoam extends BaseCalculator {
     // Вес утеплителя
     final weight = volume * density;
 
+    // Пароизоляция: площадь + 10% на нахлёсты и загибы
+    final vaporBarrierArea = addMargin(area, 10.0);
+
+    // Гидроизоляция/ветрозащита (для наружного утепления): площадь + 10%
+    final windBarrierArea = addMargin(area, 10.0);
+
+    // Соединительная лента: по швам
+    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1)
+        : estimatePerimeter(area);
+    final tapeNeeded = perimeter * 1.5; // +50% на стыки
+
     // Клей для пенопласта: 4-6 кг/м² (зависит от неровности поверхности)
     final glueNeeded = area * 5.0;
 
@@ -85,6 +97,9 @@ class CalculateInsulationFoam extends BaseCalculator {
     final meshPrice = findPrice(priceList, ['mesh_armor', 'mesh_facade', 'fiberglass_mesh']);
     final baseCoatPrice = findPrice(priceList, ['base_coat', 'adhesive_layer']);
     final primerPrice = findPrice(priceList, ['primer', 'primer_adhesion']);
+    final vaporBarrierPrice = findPrice(priceList, ['vapor_barrier', 'film_vapor', 'barrier_membrane']);
+    final windBarrierPrice = findPrice(priceList, ['wind_barrier', 'membrane_wind', 'windproof_membrane']);
+    final tapePrice = findPrice(priceList, ['tape', 'joining_tape', 'sealing_tape']);
     final cornerProfilePrice = findPrice(priceList, ['profile_corner', 'corner_bead_mesh']);
     final startProfilePrice = findPrice(priceList, ['profile_start', 'base_profile']);
 
@@ -93,6 +108,9 @@ class CalculateInsulationFoam extends BaseCalculator {
       calculateCost(glueNeeded, gluePrice?.price),
       calculateCost(foamGlueNeeded.toDouble(), foamGluePrice?.price),
       calculateCost(fastenersNeeded.toDouble(), fastenerPrice?.price),
+      calculateCost(vaporBarrierArea, vaporBarrierPrice?.price),
+      calculateCost(windBarrierArea, windBarrierPrice?.price),
+      calculateCost(tapeNeeded, tapePrice?.price),
       calculateCost(meshArea, meshPrice?.price),
       calculateCost(baseCoatNeeded, baseCoatPrice?.price),
       calculateCost(primerNeeded, primerPrice?.price),
@@ -108,9 +126,12 @@ class CalculateInsulationFoam extends BaseCalculator {
         'volume': volume,
         'sheetsNeeded': sheetsNeeded.toDouble(),
         'weight': weight,
+        'vaporBarrierArea': vaporBarrierArea,
+        'windBarrierArea': windBarrierArea,
         'glueNeeded': glueNeeded,
         'foamGlueNeeded': foamGlueNeeded.toDouble(),
         'fastenersNeeded': fastenersNeeded.toDouble(),
+        'tapeNeeded': tapeNeeded,
         'meshArea': meshArea,
         'baseCoatNeeded': baseCoatNeeded,
         'primerNeeded': primerNeeded,

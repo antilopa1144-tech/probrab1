@@ -633,6 +633,7 @@ class _UniversalCalculatorV2ScreenState
     if (_results == null) return [];
 
     final widgets = <Widget>[];
+    final loc = AppLocalizations.of(context);
     final resultsData = <String, (double, UnitType, String)>{};
 
     _results!.forEach((key, value) {
@@ -648,8 +649,109 @@ class _UniversalCalculatorV2ScreenState
           layout: ResultsListLayout.shoppingList,
         ),
       );
+
+      final toolKeys = _inferToolKeys(resultsData.keys);
+      if (toolKeys.isNotEmpty) {
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              childrenPadding: const EdgeInsets.only(top: 8),
+              title: Text(
+                loc.translate('resultSection.tools'),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: toolKeys
+                        .map((toolKey) => Chip(label: Text(loc.translate('tools.$toolKey'))))
+                        .toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
     }
     return widgets;
+  }
+
+  List<String> _inferToolKeys(Iterable<String> resultKeys) {
+    final lowerKeys = resultKeys.map((k) => k.toLowerCase()).toList();
+    final toolKeys = <String>[];
+
+    void addTool(String toolKey) {
+      if (!toolKeys.contains(toolKey)) toolKeys.add(toolKey);
+    }
+
+    addTool('tape_measure');
+    addTool('level');
+    addTool('pencil');
+
+    final hasFasteners = lowerKeys.any((k) =>
+        k.contains('screw') || k.contains('nail') || k.contains('dowel') || k.contains('fastener'));
+    if (hasFasteners) {
+      addTool('drill');
+      addTool('screwdriver');
+    }
+
+    final hasMixing = lowerKeys.any((k) =>
+        k.contains('glue') ||
+        k.contains('mortar') ||
+        k.contains('plaster') ||
+        k.contains('putty') ||
+        k.contains('grout') ||
+        k.contains('basecoat') ||
+        k.contains('mix'));
+    if (hasMixing) {
+      addTool('bucket');
+      addTool('mixing_paddle');
+      addTool('trowel');
+    }
+
+    final hasTiles = lowerKeys.any((k) => k.contains('tile'));
+    if (hasTiles) {
+      addTool('notched_trowel');
+    }
+
+    final hasPaint = lowerKeys.any((k) => k.contains('paint') || k.contains('primer'));
+    if (hasPaint) {
+      addTool('roller');
+      addTool('brush');
+    }
+
+    final hasCutting = lowerKeys.any((k) =>
+        k.contains('sheet') ||
+        k.contains('gkl') ||
+        k.contains('osb') ||
+        k.contains('plywood') ||
+        k.contains('laminate') ||
+        k.contains('linoleum'));
+    if (hasCutting) {
+      addTool('knife');
+      addTool('jigsaw');
+    }
+
+    addTool('protective_gloves');
+
+    final hasDustyWork = lowerKeys.any((k) =>
+        k.contains('insulation') ||
+        k.contains('wool') ||
+        k.contains('foam') ||
+        k.contains('plaster') ||
+        k.contains('putty'));
+    if (hasDustyWork) {
+      addTool('respirator');
+      addTool('goggles');
+    }
+
+    return toolKeys;
   }
 
   (UnitType, String) _inferUnitAndLabel(String key, double value) {

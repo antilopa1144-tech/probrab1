@@ -815,6 +815,30 @@
     "wedgesNeeded": "Wedges",
     "weight": "Weight"
   },
+  "resultSection": {
+    "materials": "Materials",
+    "consumables": "Consumables",
+    "parameters": "Parameters",
+    "tools": "Tools"
+  },
+  "tools": {
+    "bucket": "Bucket/tub",
+    "brush": "Brush",
+    "drill": "Drill/hammer drill",
+    "goggles": "Safety goggles",
+    "jigsaw": "Jigsaw",
+    "knife": "Utility knife",
+    "level": "Level",
+    "mixing_paddle": "Mixer paddle (for drill)",
+    "notched_trowel": "Notched trowel",
+    "pencil": "Pencil/marker",
+    "protective_gloves": "Protective gloves",
+    "respirator": "Respirator",
+    "roller": "Roller",
+    "screwdriver": "Screwdriver/driver",
+    "tape_measure": "Tape measure",
+    "trowel": "Trowel/spatula"
+  },
   "share": {
     "date": "Calculation date",
     "error": "Error sending",
