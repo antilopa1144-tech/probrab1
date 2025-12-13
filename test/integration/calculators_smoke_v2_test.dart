@@ -65,9 +65,6 @@ Map<String, double> _buildValidDefaults(CalculatorDefinitionV2 calc) {
     inputs[field.key] = value;
   }
 
-  // 3) Берём видимые поля после нормализации.
-  final visible = calc.getVisibleFields(inputs);
-
   // 4) Если есть поля площади и все они нулевые, поднимаем первую площадь.
   final areaFields = calc.fields
       .where((f) => f.key.toLowerCase().contains('area'))

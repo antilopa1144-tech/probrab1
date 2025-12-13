@@ -1,15 +1,19 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/models/calculator_definition_v2.dart';
-import '../../core/enums/calculator_category.dart';
 import '../../core/localization/app_localizations.dart';
-import '../utils/calculator_navigation_helper.dart';
 import '../providers/favorites_provider.dart';
+import '../utils/calculator_navigation_helper.dart';
+import '../views/calculator/calculator_catalog_screen.dart';
+import '../views/favorites/favorite_calculators_screen.dart';
 
-/// Современный главный экран с дизайном из прототипа
+/// Современный главный экран: поиск (режим), быстрый доступ, часто считают, категории.
 class NewHomeScreen extends ConsumerStatefulWidget {
-  const NewHomeScreen({super.key});
+  final void Function(int index)? onTabRequested;
+
+  const NewHomeScreen({super.key, this.onTabRequested});
 
   @override
   ConsumerState<NewHomeScreen> createState() => _NewHomeScreenState();
@@ -17,81 +21,82 @@ class NewHomeScreen extends ConsumerStatefulWidget {
 
 class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+  Timer? _searchDebounce;
   String _searchQuery = '';
-  CalculatorCategory? _activeCategory;
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
+  void _onSearchChanged(String value) {
+    final next = value.trim();
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 250), () {
+      if (!mounted) return;
+      setState(() => _searchQuery = next);
+    });
+  }
+
   List<CalculatorDefinitionV2> get _popularCalculators {
-    return CalculatorRegistry.getPopular(limit: 6);
+    return CalculatorRegistry.getCatalogPopular(limit: 6);
   }
 
   List<CalculatorDefinitionV2> get _recentCalculators {
     // TODO: Интеграция с историей расчетов
-    return CalculatorRegistry.getPopular(limit: 3);
+    return CalculatorRegistry.getCatalogPopular(limit: 3);
   }
 
-  List<CalculatorDefinitionV2> get _filteredCalculators {
-    var calcs = _activeCategory == null
-        ? CalculatorRegistry.allCalculators
-        : CalculatorRegistry.getByCategory(_activeCategory);
+  List<CalculatorDefinitionV2> _filteredCalculators(AppLocalizations loc) {
+    final all = CalculatorRegistry.catalogCalculators;
+    if (_searchQuery.isEmpty) return all;
 
-    if (_searchQuery.isNotEmpty) {
-      final query = _searchQuery.toLowerCase();
-      calcs = calcs.where((calc) {
-        final loc = AppLocalizations.of(context);
-        final title = loc.translate(calc.titleKey).toLowerCase();
-        return title.contains(query) ||
-            calc.id.toLowerCase().contains(query) ||
-            calc.tags.any((tag) => tag.toLowerCase().contains(query));
-      }).toList();
+    final query = _searchQuery.toLowerCase();
+    return all.where((calc) {
+      final title = loc.translate(calc.titleKey).toLowerCase();
+      final sub = loc.translate('subcategory.${calc.subCategory}').toLowerCase();
+      return title.contains(query) ||
+          sub.contains(query) ||
+          calc.id.toLowerCase().contains(query) ||
+          calc.tags.any((tag) => tag.toLowerCase().contains(query));
+    }).toList(growable: false);
+  }
+
+  void _openCalculator(CalculatorDefinitionV2 calc) {
+    CalculatorNavigationHelper.navigateToCalculator(context, calc);
+  }
+
+  void _openFavorites() {
+    if (widget.onTabRequested != null) {
+      widget.onTabRequested!(2);
+      return;
     }
-
-    return calcs;
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const FavoriteCalculatorsScreen()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final loc = AppLocalizations.of(context);
+    final favorites = ref.watch(favoritesProvider);
+
+    final isSearching = _searchQuery.isNotEmpty;
+    final filtered = isSearching ? _filteredCalculators(loc) : const <CalculatorDefinitionV2>[];
 
     return Scaffold(
       backgroundColor: const Color(0xFF0A0A0A), // zinc-950
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            _buildHeader(theme, loc),
-
-            // Content
+            _buildHeader(theme, loc, favoritesCount: favorites.length),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  const SizedBox(height: 16),
-
-                  // Популярные (только если нет поиска)
-                  if (_searchQuery.isEmpty) ...[
-                    _buildPopularSection(theme, loc),
-                    const SizedBox(height: 24),
-                  ],
-
-                  // Недавние (только если нет поиска)
-                  if (_searchQuery.isEmpty && _recentCalculators.isNotEmpty) ...[
-                    _buildRecentSection(theme, loc),
-                    const SizedBox(height: 24),
-                  ],
-
-                  // Категории
-                  _buildCategoriesSection(theme, loc),
-
-                  const SizedBox(height: 80), // Bottom padding
-                ],
-              ),
+              child: isSearching
+                  ? _buildSearchResults(theme, loc, favorites, filtered)
+                  : _buildHomeContent(theme, loc, favorites),
             ),
           ],
         ),
@@ -99,7 +104,11 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
     );
   }
 
-  Widget _buildHeader(ThemeData theme, AppLocalizations loc) {
+  Widget _buildHeader(
+    ThemeData theme,
+    AppLocalizations loc, {
+    required int favoritesCount,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF0A0A0A).withValues(alpha: 0.9),
@@ -112,64 +121,73 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
       ),
       child: Column(
         children: [
-          // Top bar
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
             child: Row(
               children: [
-                // Logo
                 Container(
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFBBF24), // amber-400
-                    borderRadius: BorderRadius.circular(8),
+                    color: const Color(0xFFFBBF24).withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: const Color(0xFFFBBF24).withValues(alpha: 0.3),
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.calculate_outlined,
-                    color: Color(0xFF18181B), // zinc-900
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  'Прораб',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  child: const Center(
+                    child: Icon(
+                      Icons.construction_rounded,
+                      size: 18,
+                      color: Color(0xFFFBBF24),
+                    ),
                   ),
                 ),
-                const Spacer(),
-                // Favorites button
-                Consumer(
-                  builder: (context, ref, _) {
-                    final favorites = ref.watch(favoritesProvider);
-                    return IconButton(
-                      onPressed: () {
-                        // TODO: Показать избранные
-                      },
-                      icon: Icon(
-                        favorites.isNotEmpty ? Icons.star : Icons.star_outline,
-                        color: const Color(0xFF71717A), // zinc-500
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Probrab AI',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                    );
-                  },
+                      Text(
+                        'Калькуляторы материалов',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color:
+                              const Color(0xFFA1A1AA).withValues(alpha: 0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: _openFavorites,
+                  icon: Icon(
+                    favoritesCount > 0
+                        ? Icons.star_rounded
+                        : Icons.star_outline_rounded,
+                    color: const Color(0xFF71717A),
+                  ),
                 ),
               ],
             ),
           ),
-
-          // Search bar
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
             child: TextField(
               controller: _searchController,
-              onChanged: (value) => setState(() => _searchQuery = value.trim()),
+              onChanged: _onSearchChanged,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Что нужно посчитать?',
-                hintStyle: const TextStyle(color: Color(0xFF71717A)), // zinc-500
+                hintStyle: const TextStyle(color: Color(0xFF71717A)),
                 prefixIcon: const Icon(
                   Icons.search_rounded,
                   color: Color(0xFF71717A),
@@ -187,10 +205,10 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                       )
                     : null,
                 filled: true,
-                fillColor: const Color(0xFF18181B), // zinc-900
+                fillColor: const Color(0xFF18181B),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: const BorderSide(color: Color(0xFF27272A)), // zinc-800
+                  borderSide: const BorderSide(color: Color(0xFF27272A)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -199,7 +217,7 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: const Color(0xFFFBBF24).withValues(alpha: 0.5), // amber-400/50
+                    color: const Color(0xFFFBBF24).withValues(alpha: 0.5),
                     width: 2,
                   ),
                 ),
@@ -215,38 +233,100 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
     );
   }
 
-  Widget _buildPopularSection(ThemeData theme, AppLocalizations loc) {
+  Widget _buildHomeContent(
+    ThemeData theme,
+    AppLocalizations loc,
+    List<String> favorites,
+  ) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      children: [
+        const SizedBox(height: 16),
+        _buildPopularSection(theme, loc, favorites),
+        const SizedBox(height: 24),
+        if (_recentCalculators.isNotEmpty) ...[
+          _buildRecentSection(theme, loc),
+          const SizedBox(height: 24),
+        ],
+        _buildCategoriesGrid(theme, loc),
+        const SizedBox(height: 80),
+      ],
+    );
+  }
+
+  Widget _buildSearchResults(
+    ThemeData theme,
+    AppLocalizations loc,
+    List<String> favorites,
+    List<CalculatorDefinitionV2> results,
+  ) {
+    if (results.isEmpty) {
+      return _buildEmptyState(
+        icon: Icons.search_off_rounded,
+        title: 'Ничего не найдено',
+        subtitle: 'Попробуйте другой запрос',
+      );
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+      itemCount: results.length + 1,
+      separatorBuilder: (context, _) => const SizedBox(height: 8),
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              'Найдено: ${results.length}',
+              style: const TextStyle(
+                fontSize: 14,
+                color: Color(0xFFA1A1AA),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
+        }
+
+        final calc = results[index - 1];
+        final isFavorite = favorites.contains(calc.id);
+        return _buildCalculatorCard(calc, loc, isFavorite: isFavorite);
+      },
+    );
+  }
+
+  Widget _buildPopularSection(
+    ThemeData theme,
+    AppLocalizations loc,
+    List<String> favorites,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section header
         const Row(
           children: [
             Icon(
-              Icons.auto_awesome,
+              Icons.flash_on_rounded,
               size: 16,
-              color: Color(0xFFFBBF24), // amber-400
+              color: Color(0xFFFBBF24),
             ),
             SizedBox(width: 8),
             Text(
-              'Популярные',
+              'Быстрый доступ',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFFD4D4D8), // zinc-300
+                color: Color(0xFFD4D4D8),
               ),
             ),
           ],
         ),
         const SizedBox(height: 12),
-
-        // Horizontal scroll list
         SizedBox(
           height: 60,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: _popularCalculators.length,
-            separatorBuilder: (context, index) => const SizedBox(width: 8),
+            separatorBuilder: (context, _) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
               final calc = _popularCalculators[index];
               return _buildPopularCard(calc, loc);
@@ -259,24 +339,22 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
 
   Widget _buildPopularCard(CalculatorDefinitionV2 calc, AppLocalizations loc) {
     return Material(
-      color: const Color(0xFF18181B), // zinc-900
+      color: const Color(0xFF18181B),
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: () => _openCalculator(calc),
+        onLongPress: () => _showCalculatorPresets(calc),
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFF27272A)), // zinc-800
+            border: Border.all(color: const Color(0xFF27272A)),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                _getCalculatorIcon(calc),
-                style: const TextStyle(fontSize: 20),
-              ),
+              Text(_getCalculatorIcon(calc), style: const TextStyle(fontSize: 20)),
               const SizedBox(width: 8),
               Text(
                 loc.translate(calc.titleKey),
@@ -300,23 +378,22 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
         const Row(
           children: [
             Icon(
-              Icons.access_time_rounded,
+              Icons.trending_up_rounded,
               size: 16,
-              color: Color(0xFF71717A), // zinc-500
+              color: Color(0xFF71717A),
             ),
             SizedBox(width: 8),
             Text(
-              'Недавние',
+              'Часто считают',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFFD4D4D8), // zinc-300
+                color: Color(0xFFD4D4D8),
               ),
             ),
           ],
         ),
         const SizedBox(height: 12),
-
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -330,10 +407,11 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
 
   Widget _buildRecentChip(CalculatorDefinitionV2 calc, AppLocalizations loc) {
     return Material(
-      color: const Color(0xFF18181B).withValues(alpha: 0.5), // zinc-900/50
+      color: const Color(0xFF18181B).withValues(alpha: 0.5),
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () => _openCalculator(calc),
+        onLongPress: () => _showCalculatorPresets(calc),
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -346,16 +424,13 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                _getCalculatorIcon(calc),
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text(_getCalculatorIcon(calc), style: const TextStyle(fontSize: 16)),
               const SizedBox(width: 6),
               Text(
                 loc.translate(calc.titleKey),
                 style: const TextStyle(
                   fontSize: 14,
-                  color: Color(0xFFA1A1AA), // zinc-400
+                  color: Color(0xFFA1A1AA),
                 ),
               ),
             ],
@@ -365,16 +440,24 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
     );
   }
 
-  Widget _buildCategoriesSection(ThemeData theme, AppLocalizations loc) {
+  Widget _buildCategoriesGrid(ThemeData theme, AppLocalizations loc) {
+    final available = CalculatorRegistry.catalogCalculators
+        .map((c) => c.subCategory)
+        .toSet();
+
+    final categories = _homeCategories
+        .where((c) => c.subCategory == null || available.contains(c.subCategory))
+        .toList(growable: false);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Row(
           children: [
             Icon(
-              Icons.grid_3x3_rounded,
+              Icons.grid_view_rounded,
               size: 16,
-              color: Color(0xFF71717A), // zinc-500
+              color: Color(0xFF71717A),
             ),
             SizedBox(width: 8),
             Text(
@@ -382,78 +465,72 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFFD4D4D8), // zinc-300
+                color: Color(0xFFD4D4D8),
               ),
             ),
           ],
         ),
         const SizedBox(height: 12),
-
-        // Category chips
-        SizedBox(
-          height: 40,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _buildCategoryChip(null, 'Все', Icons.grid_view_rounded),
-              const SizedBox(width: 8),
-              _buildCategoryChip(
-                CalculatorCategory.interior,
-                loc.translate(CalculatorCategory.interior.translationKey),
-                Icons.home_repair_service_rounded,
-              ),
-              const SizedBox(width: 8),
-              _buildCategoryChip(
-                CalculatorCategory.exterior,
-                loc.translate(CalculatorCategory.exterior.translationKey),
-                Icons.landscape_rounded,
-              ),
-            ],
-          ),
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 2.6,
+          children: [
+            for (final category in categories)
+              _buildCategoryTile(category, loc),
+          ],
         ),
-        const SizedBox(height: 8),
-
-        // Calculator list
-        ..._filteredCalculators.map((calc) => _buildCalculatorCard(calc, loc)),
-
-        // Empty state
-        if (_filteredCalculators.isEmpty) _buildEmptyState(),
       ],
     );
   }
 
-  Widget _buildCategoryChip(CalculatorCategory? category, String label, IconData icon) {
-    final isActive = _activeCategory == category;
+  Widget _buildCategoryTile(_HomeCategory category, AppLocalizations loc) {
+    const labelOverrides = {
+      'strip': 'Ленточный фундамент',
+    };
+
+    final label = category.subCategory == null
+        ? 'Все калькуляторы'
+        : (labelOverrides[category.subCategory] ??
+            loc.translate('subcategory.${category.subCategory}'));
 
     return Material(
-      color: isActive
-          ? const Color(0xFFFBBF24) // amber-400
-          : const Color(0xFF18181B), // zinc-900
-      borderRadius: BorderRadius.circular(20),
+      color: const Color(0xFF18181B),
+      borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        onTap: () => setState(() => _activeCategory = category),
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                size: 16,
-                color: isActive
-                    ? const Color(0xFF18181B) // zinc-900
-                    : const Color(0xFFA1A1AA), // zinc-400
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => CalculatorCatalogScreen(
+                subCategory: category.subCategory,
               ),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: isActive
-                      ? const Color(0xFF18181B)
-                      : const Color(0xFFA1A1AA),
+            ),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xFF27272A)),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              Icon(category.icon, color: const Color(0xFFFBBF24), size: 18),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
@@ -463,110 +540,118 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
     );
   }
 
-  Widget _buildCalculatorCard(CalculatorDefinitionV2 calc, AppLocalizations loc) {
+  Widget _buildCalculatorCard(
+    CalculatorDefinitionV2 calc,
+    AppLocalizations loc, {
+    required bool isFavorite,
+  }) {
     final accentColor = calc.accentColor != null
         ? Color(calc.accentColor!)
-        : const Color(0xFFFBBF24); // amber-400
+        : const Color(0xFFFBBF24);
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Material(
-        color: const Color(0xFF18181B).withValues(alpha: 0.5),
+    return Material(
+      color: const Color(0xFF18181B).withValues(alpha: 0.5),
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        onTap: () => _openCalculator(calc),
+        onLongPress: () => _showCalculatorPresets(calc),
         borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          onTap: () => _openCalculator(calc),
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: const Color(0xFF27272A).withValues(alpha: 0.5),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: const Color(0xFF27272A).withValues(alpha: 0.5),
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    _getCalculatorIcon(calc),
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                ),
               ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              children: [
-                // Icon
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: accentColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Text(
-                      _getCalculatorIcon(calc),
-                      style: const TextStyle(fontSize: 24),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      loc.translate(calc.titleKey),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-
-                // Text
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        loc.translate(calc.titleKey),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
+                    const SizedBox(height: 2),
+                    Text(
+                      loc.translate('subcategory.${calc.subCategory}'),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF71717A),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        loc.translate(calc.category.translationKey),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF71717A), // zinc-500
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-
-                // Arrow
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  color: Color(0xFF52525B), // zinc-600
+              ),
+              IconButton(
+                tooltip: isFavorite ? 'Убрать из избранного' : 'В избранное',
+                onPressed: () => ref
+                    .read(favoritesProvider.notifier)
+                    .toggleFavorite(calc.id),
+                icon: Icon(
+                  isFavorite
+                      ? Icons.star_rounded
+                      : Icons.star_outline_rounded,
+                  color: const Color(0xFF71717A),
                 ),
-              ],
-            ),
+              ),
+              IconButton(
+                tooltip: 'Пресеты',
+                onPressed: () => _showCalculatorPresets(calc),
+                icon: const Icon(
+                  Icons.more_horiz_rounded,
+                  color: Color(0xFF52525B),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildEmptyState() {
-    return const Center(
+  Widget _buildEmptyState({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(48),
+        padding: const EdgeInsets.all(48),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.search_off_rounded,
-              size: 48,
-              color: Color(0xFF3F3F46), // zinc-700
-            ),
-            SizedBox(height: 16),
+            Icon(icon, size: 48, color: const Color(0xFF3F3F46)),
+            const SizedBox(height: 16),
             Text(
-              'Ничего не найдено',
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFF71717A), // zinc-500
-              ),
+              title,
+              style: const TextStyle(fontSize: 16, color: Color(0xFF71717A)),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
-              'Попробуйте другой запрос',
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF52525B), // zinc-600
-              ),
+              subtitle,
+              style: const TextStyle(fontSize: 14, color: Color(0xFF52525B)),
             ),
           ],
         ),
@@ -575,34 +660,31 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
   }
 
   String _getCalculatorIcon(CalculatorDefinitionV2 calc) {
-    // Маппинг иконок для калькуляторов
     final iconMap = {
-      'wall_paint': '🖌️',
-      'wallpaper': '🎨',
-      'tile': '🔲',
-      'laminate': '🪵',
-      'screed': '🧱',
-      'parquet': '🪵',
-      'gkl_ceiling': '⬜',
       'bathroom_tile': '🚿',
-      'waterproofing': '💧',
-      'warm_floor': '🔥',
-      'electrics': '⚡',
       'foundation_strip': '🏗️',
       'foundation_slab': '🏗️',
+      'wall_paint': '🎨',
+      'walls_wallpaper': '🧻',
+      'walls_gkl': '🧱',
+      'floors_laminate': '🪵',
+      'floors_linoleum': '🧻',
+      'floors_screed': '🧱',
+      'floors_self_leveling': '🧱',
+      'floors_tile': '🧱',
+      'floors_warm': '🔥',
+      'floors_parquet': '🪵',
+      'ceilings_gkl': '🏗️',
       'roofing_metal': '🏠',
       'roofing_soft': '🏠',
+      'insulation_foam': '🧊',
+      'insulation_mineral': '🧊',
     };
 
-    return iconMap[calc.id] ?? '📐';
+    return iconMap[calc.id] ?? '🧰';
   }
 
-  void _openCalculator(CalculatorDefinitionV2 calc) {
-    // Показываем модальное окно предпросмотра
-    _showCalculatorPreview(calc);
-  }
-
-  void _showCalculatorPreview(CalculatorDefinitionV2 calc) {
+  void _showCalculatorPresets(CalculatorDefinitionV2 calc) {
     final loc = AppLocalizations.of(context);
     final accentColor = calc.accentColor != null
         ? Color(calc.accentColor!)
@@ -614,7 +696,7 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
       isScrollControlled: true,
       builder: (context) => Container(
         decoration: const BoxDecoration(
-          color: Color(0xFF18181B), // zinc-900
+          color: Color(0xFF18181B),
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: SafeArea(
@@ -623,18 +705,15 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Handle bar
                 Container(
                   width: 48,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3F3F46), // zinc-700
+                    color: const Color(0xFF3F3F46),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // Icon and title
                 Row(
                   children: [
                     Container(
@@ -666,10 +745,10 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            loc.translate(calc.category.translationKey),
+                            loc.translate('subcategory.${calc.subCategory}'),
                             style: const TextStyle(
                               fontSize: 14,
-                              color: Color(0xFF71717A), // zinc-500
+                              color: Color(0xFF71717A),
                             ),
                           ),
                         ],
@@ -678,17 +757,17 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-
-                // Quick presets
-                const Text(
-                  'Быстрый выбор:',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFFA1A1AA), // zinc-400
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Пресеты:',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFFA1A1AA),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
-
                 GridView.count(
                   crossAxisCount: 2,
                   shrinkWrap: true,
@@ -704,17 +783,12 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-
-                // Open button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      CalculatorNavigationHelper.navigateToCalculator(
-                        context,
-                        calc,
-                      );
+                      _openCalculator(calc);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: accentColor,
@@ -750,20 +824,18 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
     double? areaValue,
   ) {
     return Material(
-      color: const Color(0xFF27272A), // zinc-800
+      color: const Color(0xFF27272A),
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () {
-          Navigator.pop(context); // Закрываем модальное окно
+          Navigator.pop(context);
 
-          // Предзаполняем первое поле (обычно area)
           Map<String, double>? initialInputs;
           if (areaValue != null && calc.fields.isNotEmpty) {
             final firstField = calc.fields.first;
             initialInputs = {firstField.key: areaValue};
           }
 
-          // Открываем калькулятор с предзаполненными данными
           CalculatorNavigationHelper.navigateToCalculator(
             context,
             calc,
@@ -795,7 +867,7 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                         area,
                         style: const TextStyle(
                           fontSize: 12,
-                          color: Color(0xFF71717A), // zinc-500
+                          color: Color(0xFF71717A),
                         ),
                       ),
                   ],
@@ -808,3 +880,29 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
     );
   }
 }
+
+class _HomeCategory {
+  final String? subCategory;
+  final IconData icon;
+
+  const _HomeCategory({required this.subCategory, required this.icon});
+}
+
+const List<_HomeCategory> _homeCategories = [
+  _HomeCategory(subCategory: 'Полы', icon: Icons.square_foot_rounded),
+  _HomeCategory(subCategory: 'Стены', icon: Icons.crop_16_9_rounded),
+  _HomeCategory(subCategory: 'Потолки', icon: Icons.horizontal_rule_rounded),
+  _HomeCategory(subCategory: 'Кровля', icon: Icons.roofing),
+  _HomeCategory(subCategory: 'paint', icon: Icons.format_paint),
+  _HomeCategory(subCategory: 'strip', icon: Icons.foundation),
+  _HomeCategory(subCategory: 'Монолитная плита', icon: Icons.foundation),
+  _HomeCategory(subCategory: 'Бетон', icon: Icons.water_drop_rounded),
+  _HomeCategory(subCategory: 'Утепление', icon: Icons.ac_unit_rounded),
+  _HomeCategory(subCategory: 'Перегородки', icon: Icons.view_agenda_rounded),
+  _HomeCategory(subCategory: 'ОСБ/фанера', icon: Icons.grid_on_rounded),
+  _HomeCategory(subCategory: 'Электрика', icon: Icons.electrical_services_rounded),
+  _HomeCategory(subCategory: 'Сантехника', icon: Icons.plumbing_rounded),
+  _HomeCategory(subCategory: 'Отопление', icon: Icons.local_fire_department_rounded),
+  _HomeCategory(subCategory: 'Ванная / туалет', icon: Icons.bathroom_rounded),
+  _HomeCategory(subCategory: null, icon: Icons.apps_rounded),
+];

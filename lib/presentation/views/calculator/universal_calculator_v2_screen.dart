@@ -51,9 +51,11 @@ class _UniversalCalculatorV2ScreenState
   final _scrollController = ScrollController();
   final Map<String, TextEditingController> _controllers = {};
   final Map<String, double> _currentInputs = {};
+  final Set<String> _touchedFields = <String>{};
   Map<String, double>? _results;
   bool _isCalculating = false;
   bool _hasCalculated = false;
+  bool _showAllValidationErrors = false;
   final GlobalKey _resultsKey = GlobalKey();
   Timer? _autoCalculateTimer;
 
@@ -111,14 +113,39 @@ class _UniversalCalculatorV2ScreenState
     // Авто-расчёт с задержкой
     _autoCalculateTimer?.cancel();
     _autoCalculateTimer = Timer(const Duration(milliseconds: 800), () {
-      if (mounted && (_formKey.currentState?.validate() ?? false)) {
-        _calculate();
+      if (!mounted) return;
+      if (_canAutoCalculate()) {
+        _calculate(showErrors: false, scrollToResults: false);
       }
     });
   }
 
-  void _calculate() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+  bool _canAutoCalculate() {
+    final visibleFields = widget.definition.getVisibleFields(_currentInputs);
+    for (final field in visibleFields) {
+      double? value;
+
+      if (field.inputType == FieldInputType.number &&
+          _controllers.containsKey(field.key)) {
+        final raw = _controllers[field.key]?.text.trim() ?? '';
+        value = raw.isEmpty ? null : InputSanitizer.parseDouble(raw);
+      } else {
+        value = _currentInputs[field.key];
+      }
+
+      final error = FieldValidator.validate(field, value);
+      if (error != null) return false;
+    }
+    return true;
+  }
+
+  void _calculate({required bool showErrors, required bool scrollToResults}) async {
+    if (showErrors && !_showAllValidationErrors) {
+      setState(() => _showAllValidationErrors = true);
+    }
+
+    final isFormValid = showErrors ? (_formKey.currentState?.validate() ?? false) : _canAutoCalculate();
+    if (!isFormValid) return;
 
     setState(() => _isCalculating = true);
 
@@ -145,17 +172,32 @@ class _UniversalCalculatorV2ScreenState
           _isCalculating = false;
           _hasCalculated = true;
         });
-        _scrollToResults();
+        if (scrollToResults) {
+          _scrollToResults();
+        }
       }
     } on CalculationException catch (e, stack) {
       if (mounted) {
         setState(() => _isCalculating = false);
-        GlobalErrorHandler.handle(context, e, stackTrace: stack, contextMessage: 'Ошибка расчёта', onRetry: _calculate, useDialog: true);
+        GlobalErrorHandler.handle(
+          context,
+          e,
+          stackTrace: stack,
+          contextMessage: 'Ошибка расчёта',
+          onRetry: () => _calculate(showErrors: true, scrollToResults: true),
+          useDialog: true,
+        );
       }
     } catch (e, stack) {
       if (mounted) {
         setState(() => _isCalculating = false);
-        GlobalErrorHandler.handle(context, e, stackTrace: stack, contextMessage: 'Неожиданная ошибка', onRetry: _calculate);
+        GlobalErrorHandler.handle(
+          context,
+          e,
+          stackTrace: stack,
+          contextMessage: 'Неожиданная ошибка',
+          onRetry: () => _calculate(showErrors: true, scrollToResults: true),
+        );
       }
     }
   }
@@ -192,6 +234,8 @@ class _UniversalCalculatorV2ScreenState
     setState(() {
       _results = null;
       _hasCalculated = false;
+      _showAllValidationErrors = false;
+      _touchedFields.clear();
       _currentInputs.clear();
       for (final controller in _controllers.values) {
         controller.clear();
@@ -200,6 +244,11 @@ class _UniversalCalculatorV2ScreenState
         _currentInputs[field.key] = field.defaultValue;
       }
     });
+  }
+
+  bool _markFieldTouched(String fieldKey) {
+    if (_showAllValidationErrors) return false;
+    return _touchedFields.add(fieldKey);
   }
 
   @override
@@ -218,6 +267,7 @@ class _UniversalCalculatorV2ScreenState
         ],
       ),
       body: Form(
+        autovalidateMode: AutovalidateMode.disabled,
         key: _formKey,
         child: ListView(
           controller: _scrollController,
@@ -244,7 +294,9 @@ class _UniversalCalculatorV2ScreenState
             const SizedBox(height: CalculatorStyles.paddingXLarge),
 
             FilledButton(
-              onPressed: _isCalculating ? null : _calculate,
+              onPressed: _isCalculating
+                  ? null
+                  : () => _calculate(showErrors: true, scrollToResults: true),
               style: CalculatorStyles.filledButtonStyle,
               child: _isCalculating
                   ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
@@ -420,6 +472,9 @@ class _UniversalCalculatorV2ScreenState
 
     return TextFormField(
       controller: controller,
+      autovalidateMode: (_showAllValidationErrors || _touchedFields.contains(field.key))
+          ? AutovalidateMode.always
+          : AutovalidateMode.disabled,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
       style: theme.textTheme.bodyLarge,
@@ -441,7 +496,13 @@ class _UniversalCalculatorV2ScreenState
         final error = FieldValidator.validate(field, parsed);
         return error?.getUserMessage();
       },
-      onFieldSubmitted: (_) => _calculate(),
+      onChanged: (_) {
+        if (_markFieldTouched(field.key)) {
+          setState(() {});
+        }
+      },
+      onFieldSubmitted: (_) =>
+          _calculate(showErrors: true, scrollToResults: true),
     );
   }
 
@@ -456,6 +517,9 @@ class _UniversalCalculatorV2ScreenState
 
     return DropdownButtonFormField<double>(
       value: currentValue,
+      autovalidateMode: (_showAllValidationErrors || _touchedFields.contains(field.key))
+          ? AutovalidateMode.always
+          : AutovalidateMode.disabled,
       decoration: InputDecoration(
         labelText: loc.translate(field.labelKey),
         hintText: field.hintKey != null ? loc.translate(field.hintKey!) : null,
@@ -472,14 +536,16 @@ class _UniversalCalculatorV2ScreenState
       }).toList(),
       onChanged: (value) {
         if (value != null) {
-          setState(() {
-            _currentInputs[field.key] = value;
-            _controllers[field.key]?.text = InputSanitizer.formatNumber(value);
-            _onInputChanged();
-          });
+          _markFieldTouched(field.key);
+          _currentInputs[field.key] = value;
+          _controllers[field.key]?.text = InputSanitizer.formatNumber(value);
+          _onInputChanged();
         }
       },
-      validator: field.required ? (value) => value == null ? loc.translate('input.required') : null : null,
+      validator: (value) {
+        final error = FieldValidator.validate(field, value);
+        return error?.getUserMessage();
+      },
     );
   }
 
@@ -494,10 +560,9 @@ class _UniversalCalculatorV2ScreenState
       subtitle: field.hintKey != null ? Text(loc.translate(field.hintKey!)) : null,
       value: isChecked,
       onChanged: (value) {
-        setState(() {
-          _currentInputs[field.key] = (value ?? false) ? 1.0 : 0.0;
-          _onInputChanged();
-        });
+        _currentInputs[field.key] = (value ?? false) ? 1.0 : 0.0;
+        _markFieldTouched(field.key);
+        _onInputChanged();
       },
       secondary: field.iconName != null ? Icon(_getIconForField(field.iconName!)) : null,
     );
@@ -514,10 +579,9 @@ class _UniversalCalculatorV2ScreenState
       subtitle: field.hintKey != null ? Text(loc.translate(field.hintKey!)) : null,
       value: isOn,
       onChanged: (value) {
-        setState(() {
-          _currentInputs[field.key] = value ? 1.0 : 0.0;
-          _onInputChanged();
-        });
+        _currentInputs[field.key] = value ? 1.0 : 0.0;
+        _markFieldTouched(field.key);
+        _onInputChanged();
       },
       secondary: field.iconName != null ? Icon(_getIconForField(field.iconName!)) : null,
     );
@@ -581,6 +645,7 @@ class _UniversalCalculatorV2ScreenState
         ResultsList(
           results: resultsData,
           primaryResultKey: resultsData.keys.first,
+          layout: ResultsListLayout.shoppingList,
         ),
       );
     }
@@ -616,6 +681,7 @@ class _UniversalCalculatorV2ScreenState
       return (UnitType.litersPerSqm, label);
     }
     if (lowerKey.contains('liters') || lowerKey.contains('liter')) return (UnitType.liters, label);
+    if (lowerKey == 'waterneeded') return (UnitType.liters, label);
     if (lowerKey.contains('packs') || lowerKey.contains('packages')) return (UnitType.packages, label);
     if (lowerKey.contains('bags')) return (UnitType.bags, label);
     if (lowerKey.contains('rolls')) return (UnitType.rolls, label);

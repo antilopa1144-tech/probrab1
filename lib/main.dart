@@ -8,13 +8,15 @@ import 'core/constants/app_constants.dart';
 import 'presentation/providers/accent_color_provider.dart';
 import 'core/theme.dart';
 import 'core/localization/app_localizations.dart';
-import 'presentation/app/new_home_screen.dart';
+import 'presentation/app/main_shell.dart';
 import 'presentation/providers/settings_provider.dart';
 import 'core/errors/global_error_handler.dart';
 import 'presentation/views/onboarding/onboarding_screen.dart';
+import 'core/performance/frame_timing_logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  FrameTimingLogger.maybeInit();
 
   // Инициализация Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -109,6 +111,6 @@ class _HomeSelectorState extends ConsumerState<_HomeSelector> {
       return const OnboardingScreen();
     }
 
-    return const NewHomeScreen();
+    return const MainShell();
   }
 }

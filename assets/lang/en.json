@@ -207,6 +207,10 @@
       "description": "Плитка / керамогранит",
       "title": "Плитка / керамогранит"
     },
+    "plinth": {
+      "description": "Plinth and fasteners",
+      "title": "Plinth / baseboard"
+    },
     "floors_warm": {
       "description": "Тёплый пол",
       "title": "Тёплый пол"
@@ -230,6 +234,10 @@
     "foundation_strip": {
       "description": "Foundation strip",
       "title": "Foundation strip"
+    },
+    "concrete_universal": {
+      "description": "Concrete volume and manual mix materials",
+      "title": "Concrete (universal)"
     },
     "gasBlockPartition": {
       "description": "Перегородка из газоблока",
@@ -377,6 +385,10 @@
     "roofing_soft": {
       "description": "Roofing soft",
       "title": "Roofing soft"
+    },
+    "sheeting_osb_plywood": {
+      "description": "Sheet materials and fasteners",
+      "title": "OSB / plywood"
     },
     "screed": {
       "description": "Calculate cement-sand screed for floor",
@@ -665,6 +677,8 @@
     "perimeter.hint": "Room perimeter (m)",
     "plankLength": "Plank Length",
     "plankLength.hint": "Parquet plank length (cm)",
+    "plinthPieceLength": "Plinth piece length",
+    "plinthPieceLength.hint": "Usually 2.5 m",
     "plankWidth": "Plank Width",
     "plankWidth.hint": "Parquet plank width (cm)",
     "power": "Power",
@@ -682,10 +696,16 @@
     "rollLength.hint": "Length of material roll (m)",
     "rollWidth": "Roll Width",
     "rollWidth.hint": "Width of material roll (m)",
+    "concreteVolume": "Concrete volume",
+    "concreteVolume.hint": "Enter concrete volume in m³",
+    "manualMix": "Manual mix",
+    "manualMix.hint": "Show materials for manual mixing",
     "sheetLength": "Sheet Length",
     "sheetLength.hint": "Length of roofing sheet (m)",
     "sheetWidth": "Sheet Width",
     "sheetWidth.hint": "Width of roofing sheet (m)",
+    "screwsPerM2": "Screws per m²",
+    "screwsPerM2.hint": "Typically 15–30 pcs/m² depending on fixing step",
     "slope": "Slope",
     "slope.hint": "Roof slope (degrees or %)",
     "thermostats": "Thermostats",
@@ -843,6 +863,8 @@
     "Фасадные панели": "Фасадные панели",
     "Цокольный этаж": "Цокольный этаж",
     "Шумоизоляция": "Шумоизоляция",
-    "Электрика": "Электрика"
+    "Электрика": "Электрика",
+    "Бетон": "Concrete",
+    "ОСБ/фанера": "OSB/plywood"
   }
 }

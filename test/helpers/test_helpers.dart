@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,6 +14,33 @@ import 'package:shared_preferences/shared_preferences.dart';
 // ============================================================================
 // Price Test Helpers
 // ============================================================================
+
+bool _assetBundleMockInstalled = false;
+
+void _installAssetBundleMock() {
+  if (_assetBundleMockInstalled) return;
+  _assetBundleMockInstalled = true;
+
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMessageHandler('flutter/assets', (ByteData? message) async {
+    if (message == null) return null;
+
+    final encodedKey = utf8.decode(message.buffer.asUint8List());
+    final assetKey = Uri.decodeFull(encodedKey);
+    final normalized = assetKey.replaceAll('/', Platform.pathSeparator);
+
+    File file = File(normalized);
+    if (!file.existsSync()) {
+      file = File(
+        '${Directory.current.path}${Platform.pathSeparator}$normalized',
+      );
+    }
+    if (!file.existsSync()) return null;
+
+    final bytes = file.readAsBytesSync();
+    return ByteData.view(Uint8List.fromList(bytes).buffer);
+  });
+}
 
 /// Создать тестовый прайс-лист с указанными SKU и ценами
 List<PriceItem> createTestPriceList(Map<String, double> prices) {
@@ -88,6 +119,7 @@ void setupMocks({
   String buildNumber = '1',
 }) {
   SharedPreferences.setMockInitialValues(sharedPreferencesValues ?? {});
+  _installAssetBundleMock();
 
   PackageInfo.setMockInitialValues(
     appName: 'Probrab AI',

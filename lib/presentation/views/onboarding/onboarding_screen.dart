@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/localization/app_localizations.dart';
-import '../../app/new_home_screen.dart';
+import '../../app/main_shell.dart';
 
 /// Экран онбординга с 4 шагами и анимациями.
 class OnboardingScreen extends StatefulWidget {
@@ -129,7 +129,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     await OnboardingScreen.complete();
     if (mounted) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const NewHomeScreen()),
+        MaterialPageRoute(builder: (_) => const MainShell()),
       );
     }
   }

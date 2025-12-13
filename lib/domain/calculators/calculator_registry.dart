@@ -15,6 +15,9 @@ import 'warm_floor_calculator_v2.dart';
 import 'parquet_calculator_v2.dart';
 import 'gkl_ceiling_calculator_v2.dart';
 import 'bathroom_tile_calculator_v2.dart';
+import 'plinth_calculator_v2.dart';
+import 'concrete_universal_calculator_v2.dart';
+import 'sheeting_osb_plywood_calculator_v2.dart';
 import 'generated/legacy_calculators_v2.dart';
 
 /// Реестр всех калькуляторов приложения.
@@ -54,8 +57,49 @@ import 'generated/legacy_calculators_v2.dart';
 /// 3. Импортируйте файл в `calculator_registry.dart`
 /// 4. Добавьте в список `allCalculators`
 class CalculatorRegistry {
+  /// Ограниченный набор калькуляторов для MVP-каталога (релиз).
+  ///
+  /// По умолчанию включён, чтобы UI не разрастался до полного списка мигрированных калькуляторов.
+  /// Для разработки можно отключить сборкой с `--dart-define=PROBRAB_MVP_CATALOG=false`.
+  static const bool useMvpCatalog =
+      bool.fromEnvironment('PROBRAB_MVP_CATALOG', defaultValue: true);
+
+  /// MVP (18) — базовые + утепление.
+  static const List<String> mvpCalculatorIds = [
+    // Фундамент / бетон
+    'foundation_strip',
+    'foundation_slab',
+    'concrete_universal',
+
+    // Стены / перегородки
+    'wall_paint',
+    'walls_wallpaper',
+    'walls_gkl',
+    'partitions_blocks',
+
+    // Полы
+    'floors_laminate',
+    'floors_linoleum',
+    'floors_tile',
+    'floors_screed',
+    'floors_self_leveling',
+    'plinth',
+
+    // Утепление
+    'insulation_mineral',
+    'insulation_foam',
+
+    // Кровля / листовые материалы
+    'roofing_soft',
+    'roofing_metal',
+    'sheeting_osb_plywood',
+  ];
+
   /// Базовые (ручные) определения V2.
   static final List<CalculatorDefinitionV2> _seedCalculators = [
+    // Универсальные
+    concreteUniversalCalculatorV2,
+
     // Фундамент
     stripFoundationCalculatorV2,
     slabFoundationCalculatorV2,
@@ -71,6 +115,8 @@ class CalculatorRegistry {
     screedCalculatorV2,
     selfLevelingFloorCalculatorV2,
     tileCalculatorV2,
+    plinthCalculatorV2,
+    sheetingOsbPlywoodCalculatorV2,
 
     // Кровля
     metalRoofingCalculatorV2,
@@ -107,6 +153,29 @@ class CalculatorRegistry {
   /// Все доступные калькуляторы (версия 2)
   static final List<CalculatorDefinitionV2> allCalculators =
       _buildAllCalculators();
+
+  /// Калькуляторы, которые показываем в каталоге/на главной.
+  static List<CalculatorDefinitionV2> get catalogCalculators {
+    if (!useMvpCatalog) return allCalculators;
+    return mvpCalculatorIds
+        .map(getById)
+        .whereType<CalculatorDefinitionV2>()
+        .toList(growable: false);
+  }
+
+  /// Популярные калькуляторы из заданного набора (без кэширования).
+  static List<CalculatorDefinitionV2> getPopularFrom(
+    Iterable<CalculatorDefinitionV2> source, {
+    int limit = 10,
+  }) {
+    final sorted = source.toList(growable: false);
+    sorted.sort((a, b) => b.popularity.compareTo(a.popularity));
+    return sorted.take(limit).toList(growable: false);
+  }
+
+  static List<CalculatorDefinitionV2> getCatalogPopular({int limit = 10}) {
+    return getPopularFrom(catalogCalculators, limit: limit);
+  }
 
   /// Кэш для быстрого поиска по ID (O(1) вместо O(n))
   static final Map<String, CalculatorDefinitionV2> _idCache = _buildIdCache();
