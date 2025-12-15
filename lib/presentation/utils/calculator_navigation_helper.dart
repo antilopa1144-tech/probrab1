@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import '../../domain/calculators/calculator_id_migration.dart';
 import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/models/calculator_definition_v2.dart';
 import '../views/calculator/universal_calculator_v2_screen.dart';
@@ -31,7 +32,8 @@ class CalculatorNavigationHelper {
     BuildContext context,
     String calculatorId,
   ) {
-    final definition = CalculatorRegistry.getById(calculatorId);
+    final canonicalId = CalculatorIdMigration.canonicalize(calculatorId);
+    final definition = CalculatorRegistry.getById(canonicalId);
     if (definition != null) {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
@@ -48,7 +50,10 @@ class CalculatorNavigationHelper {
         Exception('Calculator not found: $calculatorId'),
         StackTrace.current,
         reason: 'User attempted to open non-existent calculator',
-        information: ['calculatorId: $calculatorId'],
+        information: [
+          'calculatorId: $calculatorId',
+          'canonicalId: $canonicalId',
+        ],
       );
     } catch (e) {
       // Игнорируем ошибки Firebase, если сервис недоступен
@@ -64,6 +69,7 @@ class CalculatorNavigationHelper {
 
   /// Проверить, есть ли V2 версия для калькулятора
   static bool hasV2Version(String calculatorId) {
-    return CalculatorRegistry.exists(calculatorId);
+    final canonicalId = CalculatorIdMigration.canonicalize(calculatorId);
+    return CalculatorRegistry.exists(canonicalId);
   }
 }

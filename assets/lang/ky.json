@@ -2,6 +2,11 @@
   "appName": "Прораб AI",
   "button.calculate": "Эсептөө",
   "button.reset": "Кайра коюу",
+  "history.category.all": "Баары",
+  "history.category.foundation": "Фундамент",
+  "history.category.walls": "Дубалдар",
+  "history.category.roofing": "Чатыр",
+  "history.category.finishing": "Отделка",
   "calculator": {
     "3dPanels": {
       "description": "3D панели",

@@ -2,6 +2,11 @@
   "appName": "Прораб AI",
   "button.calculate": "Hasap etmek",
   "button.reset": "Yzyna gaýtarmak",
+  "history.category.all": "Hemmesi",
+  "history.category.foundation": "Binýat",
+  "history.category.walls": "Diwarlar",
+  "history.category.roofing": "Üçek",
+  "history.category.finishing": "Bezeg",
   "calculator": {
     "3dPanels": {
       "description": "3D панели",

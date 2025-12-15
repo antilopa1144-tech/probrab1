@@ -9,6 +9,7 @@ import '../providers/calculation_provider.dart';
 import '../providers/favorites_provider.dart';
 import '../views/history_page.dart';
 import '../utils/calculator_navigation_helper.dart';
+import '../utils/calculation_display.dart';
 import '../views/workflow/workflow_planner_screen.dart';
 import '../views/project/projects_list_screen.dart';
 import '../views/reminders/reminders_screen.dart';
@@ -555,6 +556,14 @@ class _HistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final categoryLabel = CalculationDisplay.historyCategoryLabel(
+      context,
+      calculation,
+    );
+    final calculatorName = CalculationDisplay.calculatorName(
+      context,
+      calculation,
+    );
     return Container(
       width: 220,
       padding: const EdgeInsets.all(16),
@@ -576,7 +585,7 @@ class _HistoryCard extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  calculation.category,
+                  categoryLabel,
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -596,7 +605,7 @@ class _HistoryCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            calculation.calculatorName,
+            calculatorName,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodySmall?.copyWith(

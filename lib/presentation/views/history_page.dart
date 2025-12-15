@@ -6,6 +6,11 @@ import '../providers/calculation_provider.dart';
 import '../../data/models/calculation.dart';
 import '../../core/widgets/staggered_animation.dart';
 import '../../core/widgets/animated_empty_state.dart';
+import '../utils/calculation_display.dart';
+import '../../domain/calculators/calculator_registry.dart';
+import '../utils/calculator_navigation_helper.dart';
+import '../../core/localization/app_localizations.dart';
+import '../../domain/calculators/history_category.dart';
 
 /// Страница истории расчётов
 class HistoryPage extends ConsumerStatefulWidget {
@@ -17,10 +22,11 @@ class HistoryPage extends ConsumerStatefulWidget {
 
 class _HistoryPageState extends ConsumerState<HistoryPage> {
   String _searchQuery = '';
-  String _selectedCategory = 'Все';
+  HistoryCategory _selectedCategory = HistoryCategory.all;
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final calculationsAsync = ref.watch(calculationsProvider);
     final statistics = ref.watch(statisticsProvider);
 
@@ -75,34 +81,41 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                 child: Row(
                   children: [
                     _FilterChip(
-                      label: 'Все',
-                      selected: _selectedCategory == 'Все',
+                      label: loc.translate(HistoryCategory.all.translationKey),
+                      selected: _selectedCategory == HistoryCategory.all,
                       onSelected: () =>
-                          setState(() => _selectedCategory = 'Все'),
+                          setState(() => _selectedCategory = HistoryCategory.all),
                     ),
                     _FilterChip(
-                      label: 'Фундамент',
-                      selected: _selectedCategory == 'Фундамент',
+                      label: loc
+                          .translate(HistoryCategory.foundation.translationKey),
+                      selected: _selectedCategory == HistoryCategory.foundation,
                       onSelected: () =>
-                          setState(() => _selectedCategory = 'Фундамент'),
+                          setState(() =>
+                              _selectedCategory = HistoryCategory.foundation),
                     ),
                     _FilterChip(
-                      label: 'Стены',
-                      selected: _selectedCategory == 'Стены',
+                      label: loc.translate(HistoryCategory.walls.translationKey),
+                      selected: _selectedCategory == HistoryCategory.walls,
                       onSelected: () =>
-                          setState(() => _selectedCategory = 'Стены'),
+                          setState(() =>
+                              _selectedCategory = HistoryCategory.walls),
                     ),
                     _FilterChip(
-                      label: 'Кровля',
-                      selected: _selectedCategory == 'Кровля',
+                      label:
+                          loc.translate(HistoryCategory.roofing.translationKey),
+                      selected: _selectedCategory == HistoryCategory.roofing,
                       onSelected: () =>
-                          setState(() => _selectedCategory = 'Кровля'),
+                          setState(() =>
+                              _selectedCategory = HistoryCategory.roofing),
                     ),
                     _FilterChip(
-                      label: 'Отделка',
-                      selected: _selectedCategory == 'Отделка',
+                      label: loc
+                          .translate(HistoryCategory.finishing.translationKey),
+                      selected: _selectedCategory == HistoryCategory.finishing,
                       onSelected: () =>
-                          setState(() => _selectedCategory = 'Отделка'),
+                          setState(() =>
+                              _selectedCategory = HistoryCategory.finishing),
                     ),
                   ],
                 ),
@@ -115,10 +128,23 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
         Expanded(
           child: calculationsAsync.when(
             data: (calculations) {
-              var filtered = calculations;
+              final displayItems = calculations
+                  .map(
+                    (c) => (
+                      calculation: c,
+                      category: CalculationDisplay.historyCategory(c),
+                      calculatorName: CalculationDisplay.calculatorName(
+                        context,
+                        c,
+                      ),
+                    ),
+                  )
+                  .toList(growable: false);
+
+              var filtered = displayItems;
 
               // Фильтр по категории
-              if (_selectedCategory != 'Все') {
+              if (_selectedCategory != HistoryCategory.all) {
                 filtered = filtered
                     .where((c) => c.category == _selectedCategory)
                     .toList();
@@ -126,15 +152,12 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
 
               // Поиск
               if (_searchQuery.isNotEmpty) {
+                final q = _searchQuery.toLowerCase();
                 filtered = filtered
                     .where(
                       (c) =>
-                          c.title.toLowerCase().contains(
-                            _searchQuery.toLowerCase(),
-                          ) ||
-                          c.calculatorName.toLowerCase().contains(
-                            _searchQuery.toLowerCase(),
-                          ),
+                          c.calculation.title.toLowerCase().contains(q) ||
+                          c.calculatorName.toLowerCase().contains(q),
                     )
                     .toList();
               }
@@ -158,17 +181,19 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                   itemCount: filtered.length,
                   cacheExtent: 500, // Кэширование для плавной прокрутки
                   itemBuilder: (context, index) {
-                    final calc = filtered[index];
+                    final item = filtered[index];
                     return StaggeredAnimation(
                       index: index,
                       child: RepaintBoundary(
                         child: _CalculationCard(
-                          calculation: calc,
+                          calculation: item.calculation,
+                          category: item.category,
+                          calculatorName: item.calculatorName,
                           onDelete: () async {
                             final repo = ref.read(
                               calculationRepositoryProvider,
                             );
-                            await repo.deleteCalculation(calc.id);
+                            await repo.deleteCalculation(item.calculation.id);
                             ref.invalidate(calculationsProvider);
                             ref.invalidate(statisticsProvider);
                           },
@@ -327,35 +352,44 @@ class _FilterChip extends StatelessWidget {
 
 class _CalculationCard extends StatelessWidget {
   final Calculation calculation;
+  final HistoryCategory category;
+  final String calculatorName;
   final VoidCallback onDelete;
 
-  const _CalculationCard({required this.calculation, required this.onDelete});
+  const _CalculationCard({
+    required this.calculation,
+    required this.category,
+    required this.calculatorName,
+    required this.onDelete,
+  });
 
-  IconData _getCategoryIcon(String category) {
+  IconData _getCategoryIcon(HistoryCategory category) {
     switch (category) {
-      case 'Фундамент':
+      case HistoryCategory.foundation:
         return Icons.foundation;
-      case 'Стены':
+      case HistoryCategory.walls:
         return Icons.view_column;
-      case 'Кровля':
+      case HistoryCategory.roofing:
         return Icons.roofing;
-      case 'Отделка':
+      case HistoryCategory.finishing:
         return Icons.format_paint;
+      case HistoryCategory.all:
       default:
         return Icons.calculate;
     }
   }
 
-  Color _getCategoryColor(String category) {
+  Color _getCategoryColor(HistoryCategory category) {
     switch (category) {
-      case 'Фундамент':
+      case HistoryCategory.foundation:
         return Colors.brown;
-      case 'Стены':
+      case HistoryCategory.walls:
         return Colors.blue;
-      case 'Кровля':
+      case HistoryCategory.roofing:
         return Colors.red;
-      case 'Отделка':
+      case HistoryCategory.finishing:
         return Colors.green;
+      case HistoryCategory.all:
       default:
         return Colors.grey;
     }
@@ -370,12 +404,11 @@ class _CalculationCard extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(
-          backgroundColor: _getCategoryColor(
-            calculation.category,
-          ).withValues(alpha: 0.2),
+          backgroundColor:
+              _getCategoryColor(category).withValues(alpha: 0.2),
           child: Icon(
-            _getCategoryIcon(calculation.category),
-            color: _getCategoryColor(calculation.category),
+            _getCategoryIcon(category),
+            color: _getCategoryColor(category),
           ),
         ),
         title: Text(
@@ -386,7 +419,7 @@ class _CalculationCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 4),
-            Text(calculation.calculatorName),
+            Text(calculatorName),
             // Цены временно скрыты до интеграции с магазинами
             // const SizedBox(height: 4),
             // Text(
@@ -433,7 +466,10 @@ class _CalculationCard extends StatelessWidget {
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
-            builder: (context) => _CalculationDetails(calculation: calculation),
+            builder: (context) => _CalculationDetails(
+              calculation: calculation,
+              calculatorName: calculatorName,
+            ),
           );
         },
       ),
@@ -443,13 +479,37 @@ class _CalculationCard extends StatelessWidget {
 
 class _CalculationDetails extends StatelessWidget {
   final Calculation calculation;
+  final String calculatorName;
 
-  const _CalculationDetails({required this.calculation});
+  const _CalculationDetails({
+    required this.calculation,
+    required this.calculatorName,
+  });
+
+  Map<String, double> _parseInitialInputs() {
+    try {
+      final inputs = jsonDecode(calculation.inputsJson) as Map<String, dynamic>;
+      final parsed = <String, double>{};
+      for (final entry in inputs.entries) {
+        final value = entry.value;
+        if (value is num) {
+          parsed[entry.key] = value.toDouble();
+        } else {
+          final asNum = double.tryParse(value.toString());
+          if (asNum != null) parsed[entry.key] = asNum;
+        }
+      }
+      return parsed;
+    } catch (_) {
+      return const <String, double>{};
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final inputs = jsonDecode(calculation.inputsJson) as Map<String, dynamic>;
     final results = jsonDecode(calculation.resultsJson) as Map<String, dynamic>;
+    final definition = CalculatorRegistry.getById(calculation.calculatorId);
 
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
@@ -481,8 +541,37 @@ class _CalculationDetails extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                calculation.calculatorName,
+                calculatorName,
                 style: TextStyle(fontSize: 16, color: Colors.grey.shade400),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: definition == null
+                          ? null
+                          : () {
+                              final initialInputs = _parseInitialInputs();
+                              final navigator = Navigator.of(context);
+                              navigator.pop();
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                CalculatorNavigationHelper.navigateToCalculator(
+                                  navigator.context,
+                                  definition,
+                                  initialInputs: initialInputs,
+                                );
+                              });
+                            },
+                      icon: const Icon(Icons.play_arrow_rounded),
+                      label: Text(
+                        definition == null
+                            ? 'Калькулятор недоступен'
+                            : 'Открыть калькулятор',
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
 

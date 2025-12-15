@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/database/database_provider.dart';
+import '../../core/migrations/migration_flag_store_provider.dart';
 import '../../data/repositories/project_repository_v2.dart';
 import '../../domain/models/project_v2.dart';
 
@@ -10,7 +11,8 @@ final projectRepositoryV2Provider = Provider<ProjectRepositoryV2>((ref) {
   if (isar == null) {
     throw Exception('Isar not initialized');
   }
-  return ProjectRepositoryV2(isar);
+  final flagStore = ref.watch(migrationFlagStoreProvider);
+  return ProjectRepositoryV2(isar, flagStore: flagStore);
 });
 
 /// Provider для списка всех проектов

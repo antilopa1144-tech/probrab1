@@ -108,11 +108,11 @@ class CalculatorController {
   ) {
     // Калькуляторы фундамента и отопления считаются тяжёлыми
     final heavyCalculatorIds = [
-      'strip_foundation',
-      'slab_foundation',
-      'basement',
-      'heating',
-      'warm_floor',
+      'foundation_strip',
+      'foundation_slab',
+      'foundation_basement',
+      'engineering_heating',
+      'floors_warm',
     ];
 
     if (heavyCalculatorIds.contains(definition.id)) {

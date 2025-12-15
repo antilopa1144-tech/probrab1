@@ -13,7 +13,7 @@ void main() {
 
     test('calculates cost above minimum correctly', () {
       final calc = LaborCostCalculation.fromCalculator(
-        'walls_paint',
+        'wall_paint',
         20, // м²
         baseRate,
       );
@@ -25,7 +25,7 @@ void main() {
 
     test('applies minimum price when necessary', () {
       final calc = LaborCostCalculation.fromCalculator(
-        'walls_paint',
+        'wall_paint',
         2, // 2 * 500 = 1000 < minPrice
         baseRate,
       );

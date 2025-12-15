@@ -164,8 +164,7 @@ class CalculateBlindArea extends BaseCalculator {
         'jointsCount': jointsCount.toDouble(),
       },
       totalPrice: totalPrice,
-      calculatorId: 'blind_area',
+      calculatorId: 'foundation_blind_area',
     );
   }
 }
-

@@ -18,7 +18,7 @@ import 'bathroom_tile_calculator_v2.dart';
 import 'plinth_calculator_v2.dart';
 import 'concrete_universal_calculator_v2.dart';
 import 'sheeting_osb_plywood_calculator_v2.dart';
-import 'generated/legacy_calculators_v2.dart';
+import 'migrated_calculators_v2.dart';
 
 /// Реестр всех калькуляторов приложения.
 ///
@@ -57,44 +57,6 @@ import 'generated/legacy_calculators_v2.dart';
 /// 3. Импортируйте файл в `calculator_registry.dart`
 /// 4. Добавьте в список `allCalculators`
 class CalculatorRegistry {
-  /// Ограниченный набор калькуляторов для MVP-каталога (релиз).
-  ///
-  /// По умолчанию включён, чтобы UI не разрастался до полного списка мигрированных калькуляторов.
-  /// Для разработки можно отключить сборкой с `--dart-define=PROBRAB_MVP_CATALOG=false`.
-  static const bool useMvpCatalog =
-      bool.fromEnvironment('PROBRAB_MVP_CATALOG', defaultValue: true);
-
-  /// MVP (18) — базовые + утепление.
-  static const List<String> mvpCalculatorIds = [
-    // Фундамент / бетон
-    'foundation_strip',
-    'foundation_slab',
-    'concrete_universal',
-
-    // Стены / перегородки
-    'wall_paint',
-    'walls_wallpaper',
-    'walls_gkl',
-    'partitions_blocks',
-
-    // Полы
-    'floors_laminate',
-    'floors_linoleum',
-    'floors_tile',
-    'floors_screed',
-    'floors_self_leveling',
-    'plinth',
-
-    // Утепление
-    'insulation_mineral',
-    'insulation_foam',
-
-    // Кровля / листовые материалы
-    'roofing_soft',
-    'roofing_metal',
-    'sheeting_osb_plywood',
-  ];
-
   /// Базовые (ручные) определения V2.
   static final List<CalculatorDefinitionV2> _seedCalculators = [
     // Универсальные
@@ -135,33 +97,13 @@ class CalculatorRegistry {
     bathroomTileCalculatorV2,
   ];
 
-  /// Наследуемые V1-идентификаторы, которые не используем в UI, чтобы избежать дублей.
-  static const Set<String> _legacySkipIds = {
-    'walls_paint',
-    'basement',
-    'blind_area',
-    'calculator.stripTitle',
-  };
-
-  /// Алиасы для совместимости с V1 ID.
-  static const Map<String, String> _idAliases = {
-    // Старый ID -> современный ID
-    'walls_paint': 'wall_paint',
-    'calculator.stripTitle': 'foundation_strip',
-  };
-
   /// Все доступные калькуляторы (версия 2)
   static final List<CalculatorDefinitionV2> allCalculators =
       _buildAllCalculators();
 
   /// Калькуляторы, которые показываем в каталоге/на главной.
-  static List<CalculatorDefinitionV2> get catalogCalculators {
-    if (!useMvpCatalog) return allCalculators;
-    return mvpCalculatorIds
-        .map(getById)
-        .whereType<CalculatorDefinitionV2>()
-        .toList(growable: false);
-  }
+  static List<CalculatorDefinitionV2> get catalogCalculators =>
+      allCalculators.toList(growable: false);
 
   /// Популярные калькуляторы из заданного набора (без кэширования).
   static List<CalculatorDefinitionV2> getPopularFrom(
@@ -251,8 +193,6 @@ class CalculatorRegistry {
     _idCache.clear();
     _popularCache = null;
     _categoryCache.clear();
-
-    // Пересоздаём кэш ID c учётом алиасов
     _idCache.addAll(_buildIdCache());
   }
 
@@ -268,48 +208,23 @@ class CalculatorRegistry {
     }
   }
 
-  /// Построить полный список калькуляторов из V2 и мигрированных V1.
+  /// Построить полный список калькуляторов из ручных V2 и сгенерированных V2.
   static List<CalculatorDefinitionV2> _buildAllCalculators() {
     final overrides = {for (final calc in _seedCalculators) calc.id: calc};
-    final skipIds = {
-      ...overrides.keys.toSet(),
-      ..._legacySkipIds,
-      ..._idAliases.keys, // не добавляем алиасы как отдельные калькуляторы
-    };
+    final skipIds = overrides.keys.toSet();
     final migrated =
-        legacyCalculatorsV2.where((c) => !skipIds.contains(c.id)).toList();
+        migratedCalculatorsV2.where((c) => !skipIds.contains(c.id)).toList();
 
     final all = <CalculatorDefinitionV2>[
       ..._seedCalculators,
       ...migrated,
     ];
-    final ids = {for (final calc in all) calc.id};
-
-    for (final entry in _idAliases.entries) {
-      final canonicalId = entry.value;
-      final aliasId = entry.key;
-      // Алиасы обрабатываются в _buildIdCache, чтобы не засорять список калькуляторов.
-      if (ids.contains(aliasId)) continue;
-      final base = overrides[canonicalId];
-      if (base == null) continue;
-      ids.add(aliasId);
-    }
 
     return all;
   }
 
-  /// Строим кэш с учётом алиасов (для обратной совместимости без дублей в списках).
+  /// Строим кэш для быстрого доступа по ID.
   static Map<String, CalculatorDefinitionV2> _buildIdCache() {
-    final map = {for (final calc in allCalculators) calc.id: calc};
-    for (final alias in _idAliases.entries) {
-      final base = map[alias.value];
-      if (base != null && !map.containsKey(alias.key)) {
-        map[alias.key] = base.copyWith(
-          id: alias.key,
-          tags: {...base.tags, alias.key}.toList(),
-        );
-      }
-    }
-    return map;
+    return {for (final calc in allCalculators) calc.id: calc};
   }
 }

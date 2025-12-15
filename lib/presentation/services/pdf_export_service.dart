@@ -1,17 +1,41 @@
 import 'dart:convert';
+import 'package:flutter/widgets.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import '../../core/localization/app_localizations.dart';
+import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/models/calculator_definition_v2.dart';
 import '../../data/models/calculation.dart';
+import '../utils/calculation_display.dart';
 
 /// Сервис для экспорта расчётов в PDF.
 class PdfExportService {
   /// Экспортировать расчёт в PDF.
   static Future<void> exportCalculation(
     Calculation calculation,
-    CalculatorDefinitionV2? definition,
-  ) async {
+    CalculatorDefinitionV2? definition, {
+    BuildContext? buildContext,
+  }) async {
+    final resolvedDefinition =
+        definition ?? CalculatorRegistry.getById(calculation.calculatorId);
+
+    final loc =
+        buildContext == null ? null : AppLocalizations.of(buildContext);
+    final calculatorName = (loc == null || resolvedDefinition == null)
+        ? calculation.calculatorName
+        : () {
+            final translated = loc.translate(resolvedDefinition.titleKey).trim();
+            if (translated.isEmpty ||
+                translated == resolvedDefinition.titleKey) {
+              return calculation.calculatorName;
+            }
+            return translated;
+          }();
+
+    final categoryLabel = buildContext == null
+        ? calculation.category
+        : CalculationDisplay.historyCategoryLabel(buildContext, calculation);
     final pdf = pw.Document();
 
     pdf.addPage(
@@ -41,12 +65,12 @@ class PdfExportService {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      'Калькулятор: ${calculation.calculatorName}',
+                      'Калькулятор: $calculatorName',
                       style: const pw.TextStyle(fontSize: 12),
                     ),
                     pw.SizedBox(height: 4),
                     pw.Text(
-                      'Категория: ${calculation.category}',
+                      'Категория: $categoryLabel',
                       style: const pw.TextStyle(fontSize: 12),
                     ),
                     pw.SizedBox(height: 4),

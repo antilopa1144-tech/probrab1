@@ -3,6 +3,7 @@ import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:probrab_ai/data/models/calculation.dart';
 import 'package:probrab_ai/data/repositories/calculation_repository.dart';
+import 'package:probrab_ai/core/migrations/migration_flag_store.dart';
 import 'package:probrab_ai/domain/models/project_v2.dart';
 
 import '../../helpers/isar_test_utils.dart';
@@ -12,6 +13,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   late CalculationRepository repository;
+  late InMemoryMigrationFlagStore flagStore;
   late TestPathProviderPlatform pathProvider;
   late Isar isar;
 
@@ -35,7 +37,8 @@ void main() {
       directory: dir.path,
       name: 'calculation_test',
     );
-    repository = CalculationRepository(isar);
+    flagStore = InMemoryMigrationFlagStore();
+    repository = CalculationRepository(isar, flagStore: flagStore);
   });
 
   tearDown(() async {
@@ -50,12 +53,80 @@ void main() {
   });
 
   group('CalculationRepository', () {
+    test('migrates stored legacy category labels to stable category name', () async {
+      final legacy = Calculation()
+        ..title = 'Legacy category'
+        ..calculatorId = 'foundation_strip'
+        ..calculatorName = 'Ленточный фундамент'
+        ..category = 'Фундамент'
+        ..inputsJson = '{}'
+        ..resultsJson = '{}'
+        ..totalCost = 0.0
+        ..createdAt = DateTime.now()
+        ..updatedAt = DateTime.now();
+
+      await isar.writeTxn(() async {
+        await isar.calculations.put(legacy);
+      });
+
+      final all = await repository.getAllCalculations();
+      expect(all.length, equals(1));
+      expect(all.first.category, equals('foundation'));
+
+      final persisted = await isar.calculations.get(all.first.id);
+      expect(persisted, isNotNull);
+      expect(persisted!.category, equals('foundation'));
+    });
+
+    test('canonicalizes legacy calculatorId on save', () async {
+      await repository.saveCalculation(
+        title: 'Legacy ID',
+        calculatorId: 'strip_foundation',
+        calculatorName: 'Ленточный фундамент',
+        category: 'foundation',
+        inputs: {'length': 20.0},
+        results: {'concreteVolume': 10.0},
+        totalCost: 50000.0,
+      );
+
+      final all = await repository.getAllCalculations();
+      expect(all.length, equals(1));
+      expect(all.first.calculatorId, equals('foundation_strip'));
+    });
+
+    test('migrates legacy calculatorIds already stored in Isar', () async {
+      final legacy = Calculation()
+        ..title = 'Legacy stored'
+        ..calculatorId = 'walls_paint'
+        ..calculatorName = 'Покраска стен'
+        ..category = 'Отделка'
+        ..inputsJson = '{}'
+        ..resultsJson = '{}'
+        ..totalCost = 0.0
+        ..createdAt = DateTime.now()
+        ..updatedAt = DateTime.now();
+
+      await isar.writeTxn(() async {
+        await isar.calculations.put(legacy);
+      });
+
+      final all = await repository.getAllCalculations();
+      expect(all.length, equals(1));
+      expect(all.first.calculatorId, equals('wall_paint'));
+      expect(all.first.category, equals('walls'));
+
+      final persisted = await isar.calculations.get(all.first.id);
+      expect(persisted, isNotNull);
+      expect(persisted!.calculatorId, equals('wall_paint'));
+      expect(persisted.category, equals('walls'));
+    });
+
     test('saves calculation correctly', () async {
       await repository.saveCalculation(
         title: 'Test Calculation',
         calculatorId: 'plaster',
         calculatorName: 'Штукатурка',
-        category: 'отделка',
+        category: 'finishing',
         inputs: {'area': 20.0, 'thickness': 2.0},
         results: {'plasterNeeded': 100.0},
         totalCost: 5000.0,
@@ -75,7 +146,7 @@ void main() {
         title: 'Original Title',
         calculatorId: 'tile',
         calculatorName: 'Плитка',
-        category: 'отделка',
+        category: 'finishing',
         inputs: {'area': 10.0},
         results: {'tilesNeeded': 50.0},
         totalCost: 3000.0,
@@ -102,9 +173,9 @@ void main() {
     test('gets calculations by category', () async {
       await repository.saveCalculation(
         title: 'Foundation Calc',
-        calculatorId: 'strip_foundation',
+        calculatorId: 'foundation_strip',
         calculatorName: 'Ленточный фундамент',
-        category: 'фундамент',
+        category: 'foundation',
         inputs: {'length': 20.0},
         results: {'concreteVolume': 10.0},
         totalCost: 50000.0,
@@ -114,19 +185,19 @@ void main() {
         title: 'Wall Calc',
         calculatorId: 'plaster',
         calculatorName: 'Штукатурка',
-        category: 'отделка',
+        category: 'finishing',
         inputs: {'area': 15.0},
         results: {'plasterNeeded': 75.0},
         totalCost: 3000.0,
       );
 
       final foundationCalcs =
-          await repository.getCalculationsByCategory('фундамент');
+          await repository.getCalculationsByCategory('foundation');
       expect(foundationCalcs.length, equals(1));
       expect(foundationCalcs.first.title, equals('Foundation Calc'));
 
       final finishingCalcs =
-          await repository.getCalculationsByCategory('отделка');
+          await repository.getCalculationsByCategory('finishing');
       expect(finishingCalcs.length, equals(1));
       expect(finishingCalcs.first.title, equals('Wall Calc'));
     });
@@ -136,7 +207,7 @@ void main() {
         title: 'To Delete',
         calculatorId: 'test',
         calculatorName: 'Test',
-        category: 'отделка',
+        category: 'finishing',
         inputs: {},
         results: {},
         totalCost: 1000.0,
@@ -157,7 +228,7 @@ void main() {
         title: 'Kitchen Renovation',
         calculatorId: 'tile',
         calculatorName: 'Плитка',
-        category: 'отделка',
+        category: 'finishing',
         inputs: {},
         results: {},
         totalCost: 10000.0,
@@ -167,7 +238,7 @@ void main() {
         title: 'Bathroom Tiles',
         calculatorId: 'bathroom_tile',
         calculatorName: 'Плитка в ванную',
-        category: 'отделка',
+        category: 'finishing',
         inputs: {},
         results: {},
         totalCost: 8000.0,
@@ -186,7 +257,7 @@ void main() {
         title: 'Calc 1',
         calculatorId: 'test1',
         calculatorName: 'Test 1',
-        category: 'фундамент',
+        category: 'foundation',
         inputs: {},
         results: {},
         totalCost: 10000.0,
@@ -196,7 +267,7 @@ void main() {
         title: 'Calc 2',
         calculatorId: 'test2',
         calculatorName: 'Test 2',
-        category: 'фундамент',
+        category: 'foundation',
         inputs: {},
         results: {},
         totalCost: 15000.0,
@@ -206,7 +277,7 @@ void main() {
         title: 'Calc 3',
         calculatorId: 'test3',
         calculatorName: 'Test 3',
-        category: 'отделка',
+        category: 'finishing',
         inputs: {},
         results: {},
         totalCost: 5000.0,
@@ -215,8 +286,8 @@ void main() {
       final stats = await repository.getStatistics();
       expect(stats['totalCalculations'], equals(3));
       expect(stats['totalCost'], equals(30000.0));
-      expect(stats['categoryCount']['фундамент'], equals(2));
-      expect(stats['categoryCount']['отделка'], equals(1));
+      expect(stats['categoryCount']['foundation'], equals(2));
+      expect(stats['categoryCount']['finishing'], equals(1));
     });
 
     test('handles empty repository', () async {
@@ -243,7 +314,7 @@ void main() {
         title: 'Complex Calc',
         calculatorId: 'plaster',
         calculatorName: 'Штукатурка',
-        category: 'отделка',
+        category: 'finishing',
         inputs: complexInputs,
         results: complexResults,
         totalCost: 6375.0,

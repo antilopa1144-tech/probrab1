@@ -2,6 +2,11 @@
   "appName": "Прораб AI",
   "button.calculate": "Ҳисоб кардан",
   "button.reset": "Бозгашт",
+  "history.category.all": "Ҳама",
+  "history.category.foundation": "Пойдевор",
+  "history.category.walls": "Деворҳо",
+  "history.category.roofing": "Бом",
+  "history.category.finishing": "Ороиш",
   "calculator": {
     "3dPanels": {
       "description": "3D панели",

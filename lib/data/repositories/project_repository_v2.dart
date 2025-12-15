@@ -1,12 +1,66 @@
 import 'package:isar_community/isar.dart';
 import '../../domain/models/project_v2.dart';
 import '../../core/exceptions/storage_exception.dart';
+import '../../core/migrations/migration_flag_store.dart';
+import '../../domain/calculators/calculator_id_migration.dart';
 
 /// Репозиторий для работы с проектами (версия 2).
 class ProjectRepositoryV2 {
   final Isar isar;
 
-  ProjectRepositoryV2(this.isar);
+  ProjectRepositoryV2(
+    this.isar, {
+    MigrationFlagStore? flagStore,
+  }) : _flagStore = flagStore ?? InMemoryMigrationFlagStore();
+
+  final MigrationFlagStore _flagStore;
+
+  static const int _calculatorIdMigrationVersion = 1;
+  static const String _calculatorIdMigrationKey =
+      'migration.projectCalculation.calculatorId.version';
+
+  bool _calculatorIdMigrationDone = false;
+
+  Future<void> _ensureCalculatorIdsMigrated() async {
+    if (_calculatorIdMigrationDone) return;
+
+    final currentVersion = await _flagStore.getInt(_calculatorIdMigrationKey);
+    if (currentVersion != null &&
+        currentVersion >= _calculatorIdMigrationVersion) {
+      _calculatorIdMigrationDone = true;
+      return;
+    }
+
+    await migrateLegacyCalculatorIds();
+    await _flagStore.setInt(
+      _calculatorIdMigrationKey,
+      _calculatorIdMigrationVersion,
+    );
+    _calculatorIdMigrationDone = true;
+  }
+
+  /// One-time migration for stored legacy calculator IDs inside projects.
+  Future<int> migrateLegacyCalculatorIds() async {
+    return isar.writeTxn(() async {
+      final all = await isar.projectCalculations.where().findAll();
+      final changed = <ProjectCalculation>[];
+
+      for (final calculation in all) {
+        final canonical =
+            CalculatorIdMigration.canonicalize(calculation.calculatorId);
+        if (canonical != calculation.calculatorId) {
+          calculation.calculatorId = canonical;
+          changed.add(calculation);
+        }
+      }
+
+      for (final calculation in changed) {
+        await isar.projectCalculations.put(calculation);
+      }
+
+      return changed.length;
+    });
+  }
 
   /// Получить все проекты
   Future<List<ProjectV2>> getAllProjects() async {
@@ -131,6 +185,10 @@ class ProjectRepositoryV2 {
     ProjectCalculation calculation,
   ) async {
     try {
+      await _ensureCalculatorIdsMigrated();
+      calculation.calculatorId =
+          CalculatorIdMigration.canonicalize(calculation.calculatorId);
+
       await isar.writeTxn(() async {
         final project = await isar.projectV2s.get(projectId);
         if (project == null) {
@@ -157,6 +215,7 @@ class ProjectRepositoryV2 {
   /// Удалить расчёт из проекта
   Future<void> removeCalculationFromProject(int calculationId) async {
     try {
+      await _ensureCalculatorIdsMigrated();
       await isar.writeTxn(() async {
         final calculation = await isar.projectCalculations.get(calculationId);
         if (calculation != null) {
@@ -179,6 +238,7 @@ class ProjectRepositoryV2 {
   /// Получить все расчёты проекта
   Future<List<ProjectCalculation>> getProjectCalculations(int projectId) async {
     try {
+      await _ensureCalculatorIdsMigrated();
       final project = await isar.projectV2s.get(projectId);
       if (project == null) {
         throw StorageException.notFound('ProjectV2', projectId.toString());

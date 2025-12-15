@@ -1,77 +1,77 @@
-// GENERATED FILE — do not edit by hand.
-// Generated from legacy V1 calculator definitions.
+// GENERATED FILE - do not edit by hand.
+// CalculatorDefinitionV2 entries used by the app.
 
-import '../../../core/enums/calculator_category.dart';
-import '../../../core/enums/field_input_type.dart';
-import '../../../core/enums/unit_type.dart';
-import '../../models/calculator_definition_v2.dart';
-import '../../models/calculator_field.dart';
-import '../../models/calculator_hint.dart';
-import '../calculator_constants.dart';
-import '../../usecases/calculate_3d_panels.dart';
-import '../../usecases/calculate_attic.dart';
-import '../../usecases/calculate_balcony.dart';
-import '../../usecases/calculate_basement.dart';
-import '../../usecases/calculate_bathroom_tile.dart';
-import '../../usecases/calculate_blind_area.dart';
-import '../../usecases/calculate_brick_facing.dart';
-import '../../usecases/calculate_brick_partition.dart';
-import '../../usecases/calculate_carpet.dart';
-import '../../usecases/calculate_cassette_ceiling.dart';
-import '../../usecases/calculate_ceiling_insulation.dart';
-import '../../usecases/calculate_ceiling_paint.dart';
-import '../../usecases/calculate_ceiling_tiles.dart';
-import '../../usecases/calculate_decorative_plaster.dart';
-import '../../usecases/calculate_decorative_stone.dart';
-import '../../usecases/calculate_door_installation.dart';
-import '../../usecases/calculate_electrics.dart';
-import '../../usecases/calculate_facade_panels.dart';
-import '../../usecases/calculate_fence.dart';
-import '../../usecases/calculate_floor_insulation.dart';
-import '../../usecases/calculate_gasblock_partition.dart';
-import '../../usecases/calculate_gkl_ceiling.dart';
-import '../../usecases/calculate_gkl_partition.dart';
-import '../../usecases/calculate_gutters.dart';
-import '../../usecases/calculate_gvl_wall.dart';
-import '../../usecases/calculate_heating.dart';
-import '../../usecases/calculate_insulation_foam.dart';
-import '../../usecases/calculate_insulation_mineral_wool.dart';
-import '../../usecases/calculate_laminate.dart';
-import '../../usecases/calculate_linoleum.dart';
-import '../../usecases/calculate_mdf_panels.dart';
-import '../../usecases/calculate_parquet.dart';
-import '../../usecases/calculate_plaster.dart';
-import '../../usecases/calculate_plumbing.dart';
-import '../../usecases/calculate_primer.dart';
-import '../../usecases/calculate_putty.dart';
-import '../../usecases/calculate_pvc_panels.dart';
-import '../../usecases/calculate_rail_ceiling.dart';
-import '../../usecases/calculate_roofing_metal.dart';
-import '../../usecases/calculate_screed.dart';
-import '../../usecases/calculate_self_leveling_floor.dart';
-import '../../usecases/calculate_siding.dart';
-import '../../usecases/calculate_slab.dart';
-import '../../usecases/calculate_slopes.dart';
-import '../../usecases/calculate_soft_roofing.dart';
-import '../../usecases/calculate_sound_insulation.dart';
-import '../../usecases/calculate_stairs.dart';
-import '../../usecases/calculate_stretch_ceiling.dart';
-import '../../usecases/calculate_strip_foundation.dart';
-import '../../usecases/calculate_terrace.dart';
-import '../../usecases/calculate_tile.dart';
-import '../../usecases/calculate_tile_glue.dart';
-import '../../usecases/calculate_ventilation.dart';
-import '../../usecases/calculate_wall_paint.dart';
-import '../../usecases/calculate_wall_tile.dart';
-import '../../usecases/calculate_wallpaper.dart';
-import '../../usecases/calculate_warm_floor.dart';
-import '../../usecases/calculate_waterproofing.dart';
-import '../../usecases/calculate_wet_facade.dart';
-import '../../usecases/calculate_window_installation.dart';
-import '../../usecases/calculate_wood_facade.dart';
-import '../../usecases/calculate_wood_wall.dart';
+import '../../core/enums/calculator_category.dart';
+import '../../core/enums/field_input_type.dart';
+import '../../core/enums/unit_type.dart';
+import '../models/calculator_definition_v2.dart';
+import '../models/calculator_field.dart';
+import '../models/calculator_hint.dart';
+import 'calculator_constants.dart';
+import '../usecases/calculate_3d_panels.dart';
+import '../usecases/calculate_attic.dart';
+import '../usecases/calculate_balcony.dart';
+import '../usecases/calculate_basement.dart';
+import '../usecases/calculate_bathroom_tile.dart';
+import '../usecases/calculate_blind_area.dart';
+import '../usecases/calculate_brick_facing.dart';
+import '../usecases/calculate_brick_partition.dart';
+import '../usecases/calculate_carpet.dart';
+import '../usecases/calculate_cassette_ceiling.dart';
+import '../usecases/calculate_ceiling_insulation.dart';
+import '../usecases/calculate_ceiling_paint.dart';
+import '../usecases/calculate_ceiling_tiles.dart';
+import '../usecases/calculate_decorative_plaster.dart';
+import '../usecases/calculate_decorative_stone.dart';
+import '../usecases/calculate_door_installation.dart';
+import '../usecases/calculate_electrics.dart';
+import '../usecases/calculate_facade_panels.dart';
+import '../usecases/calculate_fence.dart';
+import '../usecases/calculate_floor_insulation.dart';
+import '../usecases/calculate_gasblock_partition.dart';
+import '../usecases/calculate_gkl_ceiling.dart';
+import '../usecases/calculate_gkl_partition.dart';
+import '../usecases/calculate_gutters.dart';
+import '../usecases/calculate_gvl_wall.dart';
+import '../usecases/calculate_heating.dart';
+import '../usecases/calculate_insulation_foam.dart';
+import '../usecases/calculate_insulation_mineral_wool.dart';
+import '../usecases/calculate_laminate.dart';
+import '../usecases/calculate_linoleum.dart';
+import '../usecases/calculate_mdf_panels.dart';
+import '../usecases/calculate_parquet.dart';
+import '../usecases/calculate_plaster.dart';
+import '../usecases/calculate_plumbing.dart';
+import '../usecases/calculate_primer.dart';
+import '../usecases/calculate_putty.dart';
+import '../usecases/calculate_pvc_panels.dart';
+import '../usecases/calculate_rail_ceiling.dart';
+import '../usecases/calculate_roofing_metal.dart';
+import '../usecases/calculate_screed.dart';
+import '../usecases/calculate_self_leveling_floor.dart';
+import '../usecases/calculate_siding.dart';
+import '../usecases/calculate_slab.dart';
+import '../usecases/calculate_slopes.dart';
+import '../usecases/calculate_soft_roofing.dart';
+import '../usecases/calculate_sound_insulation.dart';
+import '../usecases/calculate_stairs.dart';
+import '../usecases/calculate_stretch_ceiling.dart';
+import '../usecases/calculate_strip_foundation.dart';
+import '../usecases/calculate_terrace.dart';
+import '../usecases/calculate_tile.dart';
+import '../usecases/calculate_tile_glue.dart';
+import '../usecases/calculate_ventilation.dart';
+import '../usecases/calculate_wall_paint.dart';
+import '../usecases/calculate_wall_tile.dart';
+import '../usecases/calculate_wallpaper.dart';
+import '../usecases/calculate_warm_floor.dart';
+import '../usecases/calculate_waterproofing.dart';
+import '../usecases/calculate_wet_facade.dart';
+import '../usecases/calculate_window_installation.dart';
+import '../usecases/calculate_wood_facade.dart';
+import '../usecases/calculate_wood_wall.dart';
 
-final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
+final List<CalculatorDefinitionV2> migratedCalculatorsV2 = [
   CalculatorDefinitionV2(
     id: 'attic',
     titleKey: 'calculator.attic.title',
@@ -267,112 +267,6 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
     ],
   ),
   CalculatorDefinitionV2(
-    id: 'basement',
-    titleKey: 'calculator.basement.title',
-    descriptionKey: 'calculator.basement.description',
-    category: CalculatorCategory.exterior,
-    subCategory: 'Подвал / Погреб',
-    fields: [
-      const CalculatorField(
-        key: 'area',
-        labelKey: 'input.area',
-        unitType: UnitType.squareMeters,
-        inputType: FieldInputType.number,
-        defaultValue: 0.0,
-        required: true,
-        order: 1,
-      ),
-      const CalculatorField(
-        key: 'height',
-        labelKey: 'input.height',
-        unitType: UnitType.meters,
-        inputType: FieldInputType.number,
-        defaultValue: 2.5,
-        required: true,
-        order: 2,
-      ),
-      const CalculatorField(
-        key: 'wallThickness',
-        labelKey: 'input.thickness',
-        unitType: UnitType.meters,
-        inputType: FieldInputType.number,
-        defaultValue: 0.4,
-        required: true,
-        order: 3,
-      ),
-      const CalculatorField(
-        key: 'materialType',
-        labelKey: 'input.type',
-        unitType: UnitType.pieces,
-        inputType: FieldInputType.number,
-        defaultValue: 1.0,
-        required: true,
-        order: 4,
-      ),
-      const CalculatorField(
-        key: 'waterproofing',
-        labelKey: 'input.waterproofing',
-        unitType: UnitType.meters,
-        inputType: FieldInputType.number,
-        defaultValue: 1.0,
-        required: false,
-        order: 5,
-      ),
-      const CalculatorField(
-        key: 'insulation',
-        labelKey: 'input.insulation',
-        unitType: UnitType.meters,
-        inputType: FieldInputType.number,
-        defaultValue: 0.0,
-        required: false,
-        order: 6,
-      ),
-      const CalculatorField(
-        key: 'ventilation',
-        labelKey: 'input.ventilation',
-        unitType: UnitType.meters,
-        inputType: FieldInputType.number,
-        defaultValue: 1.0,
-        required: false,
-        order: 7,
-      ),
-      const CalculatorField(
-        key: 'stairs',
-        labelKey: 'input.stairs',
-        unitType: UnitType.meters,
-        inputType: FieldInputType.number,
-        defaultValue: 1.0,
-        required: false,
-        order: 8,
-      ),
-    ],
-    beforeHints: [
-      const CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для подвалов и погребов.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Вентиляция необходима для предотвращения сырости.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление стен снижает теплопотери и предотвращает промерзание.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Бетонные стены требуют армирования.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Пол должен иметь уклон к дренажному отверстию.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Лестница должна быть удобной и безопасной.'),
-    ],
-    afterHints: [
-      const CalculatorHint(type: HintType.tip, messageKey: 'Гидроизоляция обязательна для подвалов и погребов.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Вентиляция необходима для предотвращения сырости.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление стен снижает теплопотери и предотвращает промерзание.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Бетонные стены требуют армирования.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Пол должен иметь уклон к дренажному отверстию.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Лестница должна быть удобной и безопасной.'),
-    ],
-    useCase: CalculateBasement(),
-    accentColor: kCalculatorAccentColor,
-    complexity: 3,
-    popularity: 10,
-    tags: [
-      'Конструкции',
-      'basement',
-      'Подвал / Погреб',
-    ],
-  ),
-  CalculatorDefinitionV2(
     id: 'bathroom_tile',
     titleKey: 'calculator.bathroom_tile.title',
     descriptionKey: 'calculator.bathroom_tile.description',
@@ -507,152 +401,6 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       'Внутренняя отделка',
       'bathroom_waterproof',
       'Ванная / туалет',
-    ],
-  ),
-  CalculatorDefinitionV2(
-    id: 'blind_area',
-    titleKey: 'calculator.blind_area.title',
-    descriptionKey: 'calculator.blind_area.description',
-    category: CalculatorCategory.exterior,
-    subCategory: 'Отмостка',
-    fields: [
-      const CalculatorField(
-        key: 'area',
-        labelKey: 'input.area',
-        unitType: UnitType.squareMeters,
-        inputType: FieldInputType.number,
-        defaultValue: 0.0,
-        required: true,
-        order: 1,
-      ),
-      const CalculatorField(
-        key: 'width',
-        labelKey: 'input.width',
-        unitType: UnitType.meters,
-        inputType: FieldInputType.number,
-        defaultValue: 1.0,
-        required: true,
-        order: 2,
-      ),
-      const CalculatorField(
-        key: 'thickness',
-        labelKey: 'input.thickness',
-        unitType: UnitType.millimeters,
-        inputType: FieldInputType.number,
-        defaultValue: 100.0,
-        required: true,
-        order: 3,
-      ),
-      const CalculatorField(
-        key: 'materialType',
-        labelKey: 'input.type',
-        unitType: UnitType.pieces,
-        inputType: FieldInputType.number,
-        defaultValue: 1.0,
-        required: true,
-        order: 4,
-      ),
-      const CalculatorField(
-        key: 'insulation',
-        labelKey: 'input.insulation',
-        unitType: UnitType.meters,
-        inputType: FieldInputType.number,
-        defaultValue: 0.0,
-        required: false,
-        order: 5,
-      ),
-    ],
-    beforeHints: [
-      const CalculatorHint(type: HintType.tip, messageKey: 'Ширина отмостки должна быть не менее 1 метра.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Отмостка должна иметь уклон 2-3% от стены для отвода воды.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Бетонная отмостка требует деформационных швов каждые 2-3 метра.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление отмостки особенно важно для домов с цокольным этажом.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Песчаная подушка должна быть утрамбована.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Бордюр защищает отмостку от разрушения краёв.'),
-    ],
-    afterHints: [
-      const CalculatorHint(type: HintType.tip, messageKey: 'Ширина отмостки должна быть не менее 1 метра.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Отмостка должна иметь уклон 2-3% от стены для отвода воды.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Бетонная отмостка требует деформационных швов каждые 2-3 метра.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Утепление отмостки особенно важно для домов с цокольным этажом.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Песчаная подушка должна быть утрамбована.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Бордюр защищает отмостку от разрушения краёв.'),
-    ],
-    useCase: CalculateBlindArea(),
-    accentColor: kCalculatorAccentColor,
-    complexity: 3,
-    popularity: 10,
-    tags: [
-      'blind',
-      'area',
-      'blind_area',
-      'Отмостка',
-      'Конструкции',
-    ],
-  ),
-  CalculatorDefinitionV2(
-    id: 'calculator.stripTitle',
-    titleKey: 'calculator.calculator.stripTitle.title',
-    descriptionKey: 'calculator.calculator.stripTitle.description',
-    category: CalculatorCategory.exterior,
-    subCategory: 'Ленточный фундамент',
-    fields: [
-      const CalculatorField(
-        key: 'area',
-        labelKey: 'input.area',
-        unitType: UnitType.squareMeters,
-        inputType: FieldInputType.number,
-        defaultValue: 100.0,
-        minValue: 10.0,
-        maxValue: 10000.0,
-        required: true,
-        order: 1,
-      ),
-      const CalculatorField(
-        key: 'width',
-        labelKey: 'input.width',
-        unitType: UnitType.meters,
-        inputType: FieldInputType.number,
-        defaultValue: 0.4,
-        minValue: 0.2,
-        maxValue: 2.0,
-        required: true,
-        order: 2,
-      ),
-      const CalculatorField(
-        key: 'height',
-        labelKey: 'input.height',
-        unitType: UnitType.meters,
-        inputType: FieldInputType.number,
-        defaultValue: 0.8,
-        minValue: 0.3,
-        maxValue: 3.0,
-        required: true,
-        order: 3,
-      ),
-    ],
-    beforeHints: [
-      const CalculatorHint(type: HintType.tip, messageKey: 'Снимите плодородный слой и утрамбуйте основание перед заливкой.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте песчано-щебёночную подушку не менее 200 мм.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Контролируйте диагонали опалубки — от этого зависит геометрия стен.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Заранее подготовьте закладные гильзы для инженерных коммуникаций.'),
-    ],
-    afterHints: [
-      const CalculatorHint(type: HintType.tip, messageKey: 'Снимите плодородный слой и утрамбуйте основание перед заливкой.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте песчано-щебёночную подушку не менее 200 мм.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Контролируйте диагонали опалубки — от этого зависит геометрия стен.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Заранее подготовьте закладные гильзы для инженерных коммуникаций.'),
-    ],
-    useCase: CalculateStripFoundation(),
-    accentColor: kCalculatorAccentColor,
-    complexity: 3,
-    popularity: 10,
-    tags: [
-      'Фундамент',
-      'calculator.stripTitle',
-      'Ленточный фундамент',
-      'stripTitle',
-      'calculator',
     ],
   ),
   CalculatorDefinitionV2(
@@ -3918,95 +3666,6 @@ final List<CalculatorDefinitionV2> legacyCalculatorsV2 = [
       'Стены',
       'mdf',
       'panels',
-    ],
-  ),
-  CalculatorDefinitionV2(
-    id: 'walls_paint',
-    titleKey: 'calculator.walls_paint.title',
-    descriptionKey: 'calculator.walls_paint.description',
-    category: CalculatorCategory.interior,
-    subCategory: 'Стены',
-    fields: [
-      const CalculatorField(
-        key: 'area',
-        labelKey: 'input.area',
-        unitType: UnitType.squareMeters,
-        inputType: FieldInputType.number,
-        defaultValue: 0.0,
-        minValue: 1.0,
-        maxValue: 1000.0,
-        required: true,
-        order: 1,
-      ),
-      const CalculatorField(
-        key: 'layers',
-        labelKey: 'input.layers',
-        unitType: UnitType.pieces,
-        inputType: FieldInputType.number,
-        defaultValue: 2.0,
-        minValue: 1.0,
-        maxValue: 5.0,
-        required: true,
-        order: 2,
-      ),
-      const CalculatorField(
-        key: 'consumption',
-        labelKey: 'input.consumption',
-        unitType: UnitType.liters,
-        inputType: FieldInputType.number,
-        defaultValue: 0.15,
-        minValue: 0.08,
-        maxValue: 0.3,
-        required: true,
-        order: 3,
-      ),
-      const CalculatorField(
-        key: 'windowsArea',
-        labelKey: 'input.windowsArea',
-        unitType: UnitType.squareMeters,
-        inputType: FieldInputType.number,
-        defaultValue: 0.0,
-        minValue: 0.0,
-        maxValue: 100.0,
-        required: false,
-        order: 4,
-      ),
-      const CalculatorField(
-        key: 'doorsArea',
-        labelKey: 'input.doorsArea',
-        unitType: UnitType.squareMeters,
-        inputType: FieldInputType.number,
-        defaultValue: 0.0,
-        minValue: 0.0,
-        maxValue: 50.0,
-        required: false,
-        order: 5,
-      ),
-    ],
-    beforeHints: [
-      const CalculatorHint(type: HintType.tip, messageKey: 'Рекомендуется купить грунтовку для улучшения сцепления.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте малярный скотч для защиты углов и плинтуса.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Возьмите валик средней ворсистости и кювету.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Для углов пригодятся кисти шириной 50 мм.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте плёнку для защиты пола и мебели.'),
-    ],
-    afterHints: [
-      const CalculatorHint(type: HintType.tip, messageKey: 'Рекомендуется купить грунтовку для улучшения сцепления.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте малярный скотч для защиты углов и плинтуса.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Возьмите валик средней ворсистости и кювету.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Для углов пригодятся кисти шириной 50 мм.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Не забудьте плёнку для защиты пола и мебели.'),
-    ],
-    useCase: CalculateWallPaint(),
-    accentColor: kCalculatorAccentColor,
-    complexity: 2,
-    popularity: 10,
-    tags: [
-      'paint',
-      'Внутренняя отделка',
-      'walls_paint',
-      'walls',
-      'Стены',
     ],
   ),
   CalculatorDefinitionV2(

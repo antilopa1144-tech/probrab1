@@ -9,6 +9,15 @@
     "save": "Сохранить",
     "save_to_project": "Сохранить в проект"
   },
+  "history": {
+    "category": {
+      "all": "Все",
+      "foundation": "Фундамент",
+      "walls": "Стены",
+      "roofing": "Кровля",
+      "finishing": "Отделка"
+    }
+  },
   "calculator": {
     "attic": {
       "title": "Мансарда",

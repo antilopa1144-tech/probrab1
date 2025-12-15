@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/database/database_provider.dart';
 import '../../core/errors/error_handler.dart';
+import '../../core/migrations/migration_flag_store_provider.dart';
 import '../../data/models/calculation.dart';
 import '../../data/repositories/calculation_repository.dart';
 
@@ -10,7 +11,8 @@ final calculationRepositoryProvider = Provider<CalculationRepository>((ref) {
   if (isar == null) {
     throw StateError('Isar не инициализирован');
   }
-  return CalculationRepository(isar);
+  final flagStore = ref.watch(migrationFlagStoreProvider);
+  return CalculationRepository(isar, flagStore: flagStore);
 });
 
 /// Провайдер для всех расчётов с кэшированием
@@ -112,4 +114,3 @@ final paginatedCalculationsProvider = StateNotifierProvider.autoDispose<
   final repo = ref.watch(calculationRepositoryProvider);
   return PaginatedCalculationsNotifier(repo);
 });
-

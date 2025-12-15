@@ -2,6 +2,11 @@
   "appName": "Прораб AI",
   "button.calculate": "Hisoblash",
   "button.reset": "Qayta tiklash",
+  "history.category.all": "Barchasi",
+  "history.category.foundation": "Poydevor",
+  "history.category.walls": "Devorlar",
+  "history.category.roofing": "Tom",
+  "history.category.finishing": "Bezatish",
   "calculator": {
     "3dPanels": {
       "description": "3D панели",

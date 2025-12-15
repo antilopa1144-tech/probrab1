@@ -61,7 +61,7 @@ class LaborCostCalculation {
   static double _getHoursPerUnit(String calculatorId) {
     // Базовые нормы времени для разных типов работ
     final rates = {
-      'walls_paint': 0.5, // 0.5 часа на м²
+      'wall_paint': 0.5, // 0.5 часа на м²
       'walls_wallpaper': 0.8,
       'floors_laminate': 0.3,
       'floors_tile': 0.6,
@@ -74,4 +74,5 @@ class LaborCostCalculation {
     return rates[calculatorId] ?? 0.5; // по умолчанию 0.5 часа
   }
 }
+
 

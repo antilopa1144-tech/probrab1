@@ -2,6 +2,11 @@
   "appName": "Прораб AI",
   "button.calculate": "Есептеу",
   "button.reset": "Қалпына келтіру",
+  "history.category.all": "Барлығы",
+  "history.category.foundation": "Іргетас",
+  "history.category.walls": "Қабырғалар",
+  "history.category.roofing": "Шатыр",
+  "history.category.finishing": "Әрлеу",
   "calculator": {
     "3dPanels": {
       "description": "3D панели",

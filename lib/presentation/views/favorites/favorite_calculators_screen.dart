@@ -14,9 +14,8 @@ class FavoriteCalculatorsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context);
     final favorites = ref.watch(favoritesProvider);
-    final calculators = <CalculatorDefinitionV2>[
-      for (final id in favorites)
-        if (CalculatorRegistry.getById(id) case final calc?) calc,
+    final items = [
+      for (final id in favorites) (id: id, calc: CalculatorRegistry.getById(id)),
     ];
 
     return Scaffold(
@@ -36,7 +35,7 @@ class FavoriteCalculatorsScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: calculators.isEmpty
+      body: items.isEmpty
           ? Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
@@ -49,10 +48,20 @@ class FavoriteCalculatorsScreen extends ConsumerWidget {
             )
           : ListView.separated(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-              itemCount: calculators.length,
+              itemCount: items.length,
               separatorBuilder: (context, _) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
-                final calc = calculators[index];
+                final item = items[index];
+                final calc = item.calc;
+
+                if (calc == null) {
+                  return _UnavailableFavoriteCard(
+                    calculatorId: item.id,
+                    onRemove: () => ref
+                        .read(favoritesProvider.notifier)
+                        .toggleFavorite(item.id),
+                  );
+                }
                 return _CalculatorListCard(
                   calc: calc,
                   title: loc.translate(calc.titleKey),
@@ -68,6 +77,64 @@ class FavoriteCalculatorsScreen extends ConsumerWidget {
                 );
               },
             ),
+    );
+  }
+}
+
+class _UnavailableFavoriteCard extends StatelessWidget {
+  final String calculatorId;
+  final VoidCallback onRemove;
+
+  const _UnavailableFavoriteCard({
+    required this.calculatorId,
+    required this.onRemove,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Material(
+      borderRadius: BorderRadius.circular(16),
+      color: theme.colorScheme.surfaceContainerHighest,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Icon(
+              Icons.help_outline_rounded,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Калькулятор недоступен',
+                    style: theme.textTheme.titleMedium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    calculatorId,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              tooltip: 'Удалить из избранного',
+              onPressed: onRemove,
+              icon: const Icon(Icons.delete_outline_rounded),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

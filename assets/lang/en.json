@@ -6,6 +6,15 @@
     "open_for_recalculation": "Open for Recalculation",
     "save_to_project": "Save to Project"
   },
+  "history": {
+    "category": {
+      "all": "All",
+      "foundation": "Foundation",
+      "walls": "Walls",
+      "roofing": "Roofing",
+      "finishing": "Finishing"
+    }
+  },
   "calculator": {
     "3dPanels": {
       "description": "3D панели",
