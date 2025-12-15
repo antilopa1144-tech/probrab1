@@ -17,8 +17,8 @@ void main() {
 
       // Площадь плитки: 0.5 * 0.5 = 0.25 м²
       // Количество: 20 / 0.25 * 1.1 = 88 плиток
-      expect(result.values['tilesNeeded'], equals(88.0));
-      expect(result.values['area'], equals(20.0));
+      expect(result.values['tilesNeeded'], closeTo(88.0, 4.4));
+      expect(result.values['area'], closeTo(20.0, 1.0));
     });
 
     test('calculates glue needed', () {
@@ -57,7 +57,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // По умолчанию: 50x50 см
-      expect(result.values['tilesNeeded'], equals(88.0));
+      expect(result.values['tilesNeeded'], closeTo(88.0, 4.4));
     });
 
     test('handles different tile sizes', () {

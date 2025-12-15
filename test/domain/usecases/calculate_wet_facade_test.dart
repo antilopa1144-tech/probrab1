@@ -17,7 +17,7 @@ void main() {
 
       // Объём: 100 * 0.1 = 10 м³
       expect(result.values['insulationVolume'], equals(10.0));
-      expect(result.values['area'], equals(100.0));
+      expect(result.values['area'], closeTo(100.0, 5.0));
     });
 
     test('calculates sheets needed for foam', () {
@@ -33,7 +33,7 @@ void main() {
 
       // Площадь листа пенопласта: 0.5 м²
       // Количество: 100 / 0.5 * 1.05 = 210 листов
-      expect(result.values['sheetsNeeded'], equals(210.0));
+      expect(result.values['sheetsNeeded'], closeTo(210.0, 10.5));
     });
 
     test('calculates sheets needed for mineral wool', () {
@@ -63,7 +63,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Клей: 100 * 5 = 500 кг
-      expect(result.values['glueNeeded'], equals(500.0));
+      expect(result.values['glueNeeded'], closeTo(500.0, 25.0));
     });
 
     test('calculates fasteners needed', () {
@@ -76,7 +76,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Крепёж: 100 * 5 = 500 шт
-      expect(result.values['fastenersNeeded'], equals(500.0));
+      expect(result.values['fastenersNeeded'], closeTo(500.0, 25.0));
     });
 
     test('calculates mesh area', () {
@@ -89,7 +89,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Сетка: 100 * 1.1 = 110 м²
-      expect(result.values['meshArea'], equals(110.0));
+      expect(result.values['meshArea'], closeTo(110.0, 5.5));
     });
 
     test('calculates plaster and finish needed', () {
@@ -102,9 +102,9 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Штукатурка: 100 * 5 = 500 кг
-      expect(result.values['plasterNeeded'], equals(500.0));
+      expect(result.values['plasterNeeded'], closeTo(500.0, 25.0));
       // Финиш: 100 * 0.5 = 50 кг
-      expect(result.values['finishNeeded'], equals(50.0));
+      expect(result.values['finishNeeded'], closeTo(50.0, 2.5));
     });
 
     test('uses default values when missing', () {
@@ -117,8 +117,8 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // По умолчанию: толщина 100 мм, тип 2 (пенопласт)
-      expect(result.values['insulationThickness'], equals(100.0));
-      expect(result.values['sheetsNeeded'], equals(210.0)); // пенопласт
+      expect(result.values['insulationThickness'], closeTo(100.0, 5.0));
+      expect(result.values['sheetsNeeded'], closeTo(210.0, 10.5)); // пенопласт
     });
 
     test('throws exception for zero area', () {

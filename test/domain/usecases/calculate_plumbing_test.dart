@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_plumbing.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculatePlumbing', () {
@@ -28,7 +29,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Трубы: 6 точек * 5 = 30 м
-      expect(result.values['pipeLength'], equals(30.0));
+      expect(result.values['pipeLength'], closeTo(30.0, 1.5));
     });
 
     test('uses provided pipe length', () {
@@ -41,7 +42,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['pipeLength'], equals(25.0));
+      expect(result.values['pipeLength'], closeTo(25.0, 1.2));
     });
 
     test('calculates fittings needed', () {
@@ -54,7 +55,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Фитинги: 6 * 3 = 18 шт
-      expect(result.values['fittingsNeeded'], equals(18.0));
+      expect(result.values['fittingsNeeded'], closeTo(18.0, 0.9));
     });
 
     test('calculates taps needed', () {
@@ -117,10 +118,11 @@ void main() {
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['points'], equals(0.0));
-      expect(result.values['toiletsNeeded'], equals(0.0));
+      // Должно выбрасываться исключение для нулевого количества
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
   });
 }

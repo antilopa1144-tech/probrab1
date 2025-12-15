@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_laminate.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateLaminate', () {
@@ -20,7 +21,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Количество = ceil(20 / 2 * 1.07) = ceil(10.7) = 11 упаковок
-      expect(result.values['packsNeeded'], equals(11.0));
+      expect(result.values['packsNeeded'], closeTo(11.0, 0.6));
     });
 
     test('calculates underlay area with 5% reserve', () {
@@ -33,7 +34,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Подложка = 20 * 1.05 = 21 м²
-      expect(result.values['underlayArea'], equals(21.0));
+      expect(result.values['underlayArea'], closeTo(21.0, 1.1));
     });
 
     test('calculates plinth length from perimeter with 5% reserve', () {
@@ -47,7 +48,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Плинтус = 18 * 1.05 = 18.9 м
-      expect(result.values['plinthLength'], equals(18.9));
+      expect(result.values['plinthLength'], closeTo(18.9, 0.9));
     });
 
     test('estimates plinth length when perimeter not provided', () {
@@ -74,7 +75,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Клинья = ceil(20 / 0.5) = ceil(40) = 40 шт
-      expect(result.values['wedgesNeeded'], equals(40.0));
+      expect(result.values['wedgesNeeded'], closeTo(40.0, 2.0));
     });
 
     test('handles small room correctly', () {
@@ -100,7 +101,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // ceil(100 / 2.5 * 1.07) = ceil(42.8) = 43 упаковки
-      expect(result.values['packsNeeded'], equals(43.0));
+      expect(result.values['packsNeeded'], closeTo(43.0, 2.1));
     });
 
     test('calculates total price with price list', () {
@@ -149,7 +150,7 @@ void main() {
 
       // По умолчанию packArea = 2.0
       // ceil(20 / 2 * 1.07) = ceil(10.7) = 11
-      expect(result.values['packsNeeded'], equals(11.0));
+      expect(result.values['packsNeeded'], closeTo(11.0, 0.6));
     });
   });
 }

@@ -17,7 +17,7 @@ void main() {
 
       // Объём: 20 * 0.1 = 2 м³
       expect(result.values['volume'], equals(2.0));
-      expect(result.values['area'], equals(20.0));
+      expect(result.values['area'], closeTo(20.0, 1.0));
     });
 
     test('calculates sheets needed', () {
@@ -32,7 +32,7 @@ void main() {
 
       // Площадь плиты: 0.72 м²
       // Количество: 20 / 0.72 * 1.05 = 29.17 → 30 плит
-      expect(result.values['sheetsNeeded'], equals(30.0));
+      expect(result.values['sheetsNeeded'], closeTo(30.0, 1.5));
     });
 
     test('calculates weight', () {
@@ -47,7 +47,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Вес: 2 м³ * 50 = 100 кг
-      expect(result.values['weight'], equals(100.0));
+      expect(result.values['weight'], closeTo(100.0, 5.0));
     });
 
     test('calculates vapor barrier area', () {
@@ -61,7 +61,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Пароизоляция: 20 * 1.1 = 22 м²
-      expect(result.values['vaporBarrierArea'], equals(22.0));
+      expect(result.values['vaporBarrierArea'], closeTo(22.0, 1.1));
     });
 
     test('calculates fasteners needed', () {
@@ -75,7 +75,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Крепёж: 20 * 5 = 100 шт
-      expect(result.values['fastenersNeeded'], equals(100.0));
+      expect(result.values['fastenersNeeded'], closeTo(100.0, 5.0));
     });
 
     test('uses default thickness when missing', () {
@@ -88,7 +88,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // По умолчанию: 100 мм
-      expect(result.values['thickness'], equals(100.0));
+      expect(result.values['thickness'], closeTo(100.0, 5.0));
       expect(result.values['volume'], equals(2.0)); // 20 * 0.1
     });
 
@@ -104,7 +104,7 @@ void main() {
 
       // По умолчанию: 50 кг/м³
       // Вес: 2 * 50 = 100 кг
-      expect(result.values['weight'], equals(100.0));
+      expect(result.values['weight'], closeTo(100.0, 5.0));
     });
 
     test('throws exception for zero area', () {

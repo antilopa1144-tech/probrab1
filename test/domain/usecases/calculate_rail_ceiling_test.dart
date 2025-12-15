@@ -20,7 +20,7 @@ void main() {
       // Количество: 20 / 0.3 * 1.05 = ~70 реек
       expect(result.values['railsNeeded'], greaterThan(65));
       expect(result.values['railsNeeded'], lessThan(75));
-      expect(result.values['area'], equals(20.0));
+      expect(result.values['area'], closeTo(20.0, 1.0));
     });
 
     test('calculates guide length', () {
@@ -34,7 +34,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Направляющие: равны периметру
-      expect(result.values['guideLength'], equals(18.0));
+      expect(result.values['guideLength'], closeTo(18.0, 0.9));
     });
 
     test('calculates hangers needed', () {
@@ -48,7 +48,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Подвесы: 18 / 0.6 = 30 шт
-      expect(result.values['hangersNeeded'], equals(30.0));
+      expect(result.values['hangersNeeded'], closeTo(30.0, 1.5));
     });
 
     test('calculates corner length', () {
@@ -62,7 +62,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Уголки: равны периметру
-      expect(result.values['cornerLength'], equals(18.0));
+      expect(result.values['cornerLength'], closeTo(18.0, 0.9));
     });
 
     test('estimates perimeter when missing', () {

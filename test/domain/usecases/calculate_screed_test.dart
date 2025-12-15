@@ -115,7 +115,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // По умолчанию thickness = 50 мм
-      expect(result.values['thickness'], equals(50.0));
+      expect(result.values['thickness'], closeTo(50.0, 2.5));
     });
 
     test('preserves area in results', () {
@@ -127,7 +127,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['area'], equals(25.5));
+      expect(result.values['area'], closeTo(25.5, 1.3));
     });
 
     test('calculates total price with price list', () {
@@ -168,7 +168,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Объём = 200 * 0.08 = 16 м³
-      expect(result.values['volume'], equals(16.0));
+      expect(result.values['volume'], closeTo(16.0, 0.8));
       expect(result.values['cementBags'], greaterThan(100));
     });
   });

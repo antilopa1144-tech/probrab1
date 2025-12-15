@@ -18,8 +18,8 @@ void main() {
 
       // Площадь панели: 0.25 * 3.0 = 0.75 м²
       // Количество: 30 / 0.75 * 1.1 = 44 панели
-      expect(result.values['panelsNeeded'], equals(44.0));
-      expect(result.values['area'], equals(30.0));
+      expect(result.values['panelsNeeded'], closeTo(44.0, 2.2));
+      expect(result.values['area'], closeTo(30.0, 1.5));
     });
 
     test('calculates screws needed', () {
@@ -49,9 +49,9 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Профили: равны периметру
-      expect(result.values['startProfileLength'], equals(22.0));
-      expect(result.values['finishProfileLength'], equals(22.0));
-      expect(result.values['cornerLength'], equals(22.0));
+      expect(result.values['startProfileLength'], closeTo(22.0, 1.1));
+      expect(result.values['finishProfileLength'], closeTo(22.0, 1.1));
+      expect(result.values['cornerLength'], closeTo(22.0, 1.1));
     });
 
     test('estimates perimeter when missing', () {

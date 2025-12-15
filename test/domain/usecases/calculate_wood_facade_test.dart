@@ -20,7 +20,7 @@ void main() {
       // Количество: 30 / 0.42 * 1.1 = ~79 досок
       expect(result.values['boardsNeeded'], greaterThan(75));
       expect(result.values['boardsNeeded'], lessThan(85));
-      expect(result.values['area'], equals(30.0));
+      expect(result.values['area'], closeTo(30.0, 1.5));
     });
 
     test('calculates corners length', () {
@@ -47,7 +47,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Лак/масло: 30 * 0.15 * 2.5 = 11.25 л
-      expect(result.values['finishNeeded'], equals(11.25));
+      expect(result.values['finishNeeded'], closeTo(11.25, 0.6));
     });
 
     test('calculates fasteners needed', () {

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_tile.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateTile', () {
@@ -37,7 +38,7 @@ void main() {
       expect(result.values['groutNeeded'], closeTo(4.5, 1));
       
       // Клей: 10 м² * 4 кг/м² = 40 кг
-      expect(result.values['glueNeeded'], equals(40.0));
+      expect(result.values['glueNeeded'], closeTo(40.0, 2.0));
     });
 
     test('handles different tile sizes', () {

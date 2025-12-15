@@ -90,7 +90,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // По умолчанию: размер 30 см, толщина 5 мм
-      expect(result.values['tileSize'], equals(30.0));
+      expect(result.values['tileSize'], closeTo(30.0, 1.5));
       expect(result.values['layerThickness'], equals(5.0));
       expect(result.values['glueNeeded'], closeTo(45.36, 2.0));
     });

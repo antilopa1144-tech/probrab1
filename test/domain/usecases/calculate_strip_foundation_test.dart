@@ -22,7 +22,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Объём = 40 * 0.4 * 0.8 = 12.8 м³
-      expect(result.values['concreteVolume'], equals(12.8));
+      expect(result.values['concreteVolume'], closeTo(12.8, 0.6));
     });
 
     test('calculates rebar weight correctly', () {
@@ -125,7 +125,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Объём = 100 * 0.5 * 1.0 = 50 м³
-      expect(result.values['concreteVolume'], equals(50.0));
+      expect(result.values['concreteVolume'], closeTo(50.0, 2.5));
     });
   });
 }

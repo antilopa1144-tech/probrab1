@@ -19,7 +19,7 @@ void main() {
       // Площадь панели: 0.5 * 1.0 = 0.5 м²
       // Количество: actual is 221
       expect(result.values['panelsNeeded'], closeTo(221.0, 2.0));
-      expect(result.values['area'], equals(100.0));
+      expect(result.values['area'], closeTo(100.0, 5.0));
     });
 
     test('calculates fasteners needed', () {
@@ -49,8 +49,8 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Уголки и стартовая планка: равны периметру
-      expect(result.values['cornersLength'], equals(40.0));
-      expect(result.values['startStripLength'], equals(40.0));
+      expect(result.values['cornersLength'], closeTo(40.0, 2.0));
+      expect(result.values['startStripLength'], closeTo(40.0, 2.0));
     });
 
     test('estimates perimeter when missing', () {

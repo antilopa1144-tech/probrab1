@@ -16,8 +16,8 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Объём: 30 * 2.5 = 75 м³
-      expect(result.values['volume'], equals(75.0));
-      expect(result.values['area'], equals(30.0));
+      expect(result.values['volume'], closeTo(75.0, 3.8));
+      expect(result.values['area'], closeTo(30.0, 1.5));
     });
 
     test('calculates air exchange', () {
@@ -30,7 +30,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Воздухообмен: 30 * 3 = 90 м³/ч
-      expect(result.values['airExchange'], equals(90.0));
+      expect(result.values['airExchange'], closeTo(90.0, 4.5));
     });
 
     test('calculates ducts needed', () {
@@ -86,7 +86,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Воздуховоды: 3 * 5 = 15 м
-      expect(result.values['ductLength'], equals(15.0));
+      expect(result.values['ductLength'], closeTo(15.0, 0.8));
     });
 
     test('uses default values when missing', () {

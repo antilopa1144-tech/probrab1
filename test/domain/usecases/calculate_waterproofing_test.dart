@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_waterproofing.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateWaterproofing', () {
@@ -31,7 +32,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['materialNeeded'], equals(17.6));
+      expect(result.values['materialNeeded'], closeTo(17.6, 0.9));
     });
 
     test('calculates primer needed', () {

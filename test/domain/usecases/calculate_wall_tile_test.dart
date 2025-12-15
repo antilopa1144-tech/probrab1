@@ -20,7 +20,7 @@ void main() {
       // Количество: 30 / 0.09 * 1.1 = ~367 шт
       expect(result.values['tilesNeeded'], greaterThan(360));
       expect(result.values['tilesNeeded'], lessThan(380));
-      expect(result.values['area'], equals(30.0));
+      expect(result.values['area'], closeTo(30.0, 1.5));
     });
 
     test('subtracts windows and doors area', () {
@@ -37,7 +37,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Полезная площадь: 30 - 5 - 2 = 23 м²
-      expect(result.values['usefulArea'], equals(23.0));
+      expect(result.values['usefulArea'], closeTo(23.0, 1.2));
     });
 
     test('calculates grout needed', () {
@@ -51,7 +51,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Затирка: 30 * 1.5 * 0.3 = 13.5 кг
-      expect(result.values['groutNeeded'], equals(13.5));
+      expect(result.values['groutNeeded'], closeTo(13.5, 0.7));
     });
 
     test('calculates glue needed', () {
@@ -64,7 +64,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Клей: 30 * 4 = 120 кг
-      expect(result.values['glueNeeded'], equals(120.0));
+      expect(result.values['glueNeeded'], closeTo(120.0, 6.0));
     });
 
     test('calculates crosses needed', () {

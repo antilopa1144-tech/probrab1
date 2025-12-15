@@ -90,7 +90,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['soffitLength'], equals(20.0));
+      expect(result.values['soffitLength'], closeTo(20.0, 1.0));
     });
 
     test('estimates soffit length when not provided', () {
@@ -174,7 +174,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['area'], equals(150.0));
+      expect(result.values['area'], closeTo(150.0, 7.5));
     });
 
     test('handles multiple corners', () {

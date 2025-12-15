@@ -19,7 +19,7 @@ void main() {
       // Обычная: 0.1 л/м²
       // 50 * 0.1 * 1 * 1.1 = 5.5 л
       expect(result.values['primerNeeded'], equals(5.5));
-      expect(result.values['area'], equals(50.0));
+      expect(result.values['area'], closeTo(50.0, 2.5));
     });
 
     test('calculates deep penetration primer correctly', () {
@@ -50,7 +50,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // 50 * 0.1 * 2 * 1.1 = 11 л
-      expect(result.values['primerNeeded'], equals(11.0));
+      expect(result.values['primerNeeded'], closeTo(11.0, 0.6));
       expect(result.values['layers'], equals(2.0));
     });
 

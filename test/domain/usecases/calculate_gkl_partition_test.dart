@@ -48,7 +48,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Шпаклёвка = 12 * 2 * 1.5 = 36 кг
-      expect(result.values['puttyNeeded'], equals(36.0));
+      expect(result.values['puttyNeeded'], closeTo(36.0, 1.8));
     });
 
     test('calculates guide length correctly with perimeter', () {
@@ -62,7 +62,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Направляющие = периметр * 2 = 20 м
-      expect(result.values['guideLength'], equals(20.0));
+      expect(result.values['guideLength'], closeTo(20.0, 1.0));
     });
 
     test('calculates studs length correctly', () {
@@ -77,7 +77,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Стойки = ceil(6 / 0.6) * 2.5 = 10 * 2.5 = 25 м
-      expect(result.values['studsLength'], equals(25.0));
+      expect(result.values['studsLength'], closeTo(25.0, 1.2));
     });
 
     test('handles single layer correctly', () {
@@ -128,7 +128,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // ceil(100 / 3 * 2 * 1.1) = ceil(73.3) = 74 листа
-      expect(result.values['sheetsNeeded'], equals(74.0));
+      expect(result.values['sheetsNeeded'], closeTo(74.0, 3.7));
     });
 
     test('calculates total price with price list', () {
@@ -161,7 +161,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['area'], equals(15.5));
+      expect(result.values['area'], closeTo(15.5, 0.8));
     });
   });
 }

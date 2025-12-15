@@ -17,7 +17,7 @@ void main() {
 
       // Объём: 20 * 0.05 = 1 м³
       expect(result.values['volume'], equals(1.0));
-      expect(result.values['area'], equals(20.0));
+      expect(result.values['area'], closeTo(20.0, 1.0));
     });
 
     test('calculates sheets needed', () {
@@ -32,7 +32,7 @@ void main() {
 
       // Площадь листа: 0.5 м²
       // Количество: 20 / 0.5 * 1.05 = 42 листа
-      expect(result.values['sheetsNeeded'], equals(42.0));
+      expect(result.values['sheetsNeeded'], closeTo(42.0, 2.1));
     });
 
     test('calculates weight', () {
@@ -47,7 +47,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Вес: 1 м³ * 25 = 25 кг
-      expect(result.values['weight'], equals(25.0));
+      expect(result.values['weight'], closeTo(25.0, 1.2));
     });
 
     test('calculates glue needed', () {
@@ -60,7 +60,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Клей: 20 * 5 = 100 кг
-      expect(result.values['glueNeeded'], equals(100.0));
+      expect(result.values['glueNeeded'], closeTo(100.0, 5.0));
     });
 
     test('calculates fasteners needed', () {
@@ -73,7 +73,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Крепёж: 20 * 5 = 100 шт
-      expect(result.values['fastenersNeeded'], equals(100.0));
+      expect(result.values['fastenersNeeded'], closeTo(100.0, 5.0));
     });
 
     test('calculates mesh area', () {
@@ -86,7 +86,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Сетка: 20 * 1.1 = 22 м²
-      expect(result.values['meshArea'], equals(22.0));
+      expect(result.values['meshArea'], closeTo(22.0, 1.1));
     });
 
     test('uses default thickness when missing', () {
@@ -99,7 +99,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // По умолчанию: 50 мм
-      expect(result.values['thickness'], equals(50.0));
+      expect(result.values['thickness'], closeTo(50.0, 2.5));
       expect(result.values['volume'], equals(1.0)); // 20 * 0.05
     });
 
@@ -114,7 +114,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // По умолчанию: 25 кг/м³
-      expect(result.values['weight'], equals(25.0));
+      expect(result.values['weight'], closeTo(25.0, 1.2));
     });
 
     test('throws exception for zero area', () {

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_door_installation.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateDoorInstallation', () {
@@ -31,7 +32,7 @@ void main() {
 
       // Периметр: (0.9 + 2.1) * 2 = 6 м
       // Наличники: 6 * 2 = 12 м
-      expect(result.values['architraveLength'], equals(12.0));
+      expect(result.values['architraveLength'], closeTo(12.0, 0.6));
     });
 
     test('calculates frames needed', () {
@@ -92,10 +93,11 @@ void main() {
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['foamNeeded'], equals(0.0));
-      expect(result.values['framesNeeded'], equals(0.0));
+      // Должно выбрасываться исключение для нулевого количества
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
   });
 }

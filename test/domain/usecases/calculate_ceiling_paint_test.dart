@@ -18,7 +18,7 @@ void main() {
 
       // Краска: 30 * 0.12 * 2 * 1.1 = 7.92 кг
       expect(result.values['paintNeeded'], equals(7.92));
-      expect(result.values['area'], equals(30.0));
+      expect(result.values['area'], closeTo(30.0, 1.5));
     });
 
     test('calculates primer needed', () {

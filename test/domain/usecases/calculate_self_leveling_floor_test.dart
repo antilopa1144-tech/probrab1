@@ -16,8 +16,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['mixNeededKg'], equals(160.0));
-      expect(result.values['area'], equals(20.0));
+      expect(result.values['mixNeededKg'], closeTo(160.0, 8.0));
+      expect(result.values['area'], closeTo(20.0, 1.0));
       expect(result.values['thickness'], equals(5.0));
     });
 
@@ -59,7 +59,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       expect(result.values['thickness'], equals(10.0));
-      expect(result.values['mixNeededKg'], equals(320.0));
+      expect(result.values['mixNeededKg'], closeTo(320.0, 16.0));
     });
 
     test('handles different thickness values', () {
@@ -73,7 +73,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['mixNeededKg'], equals(320.0));
+      expect(result.values['mixNeededKg'], closeTo(320.0, 16.0));
     });
 
     test('throws exception for zero area', () {

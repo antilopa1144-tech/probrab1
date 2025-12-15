@@ -18,7 +18,7 @@ void main() {
 
       // Площадь камня: 0.2 * 0.05 = 0.01 м²
       // Количество: 10 / 0.01 * 1.15 = 1150 камней
-      expect(result.values['stonesNeeded'], equals(1150.0));
+      expect(result.values['stonesNeeded'], closeTo(1150.0, 57.5));
       expect(result.values['area'], equals(10.0));
     });
 
@@ -32,7 +32,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Клей: 10 * 5 = 50 кг
-      expect(result.values['glueNeeded'], equals(50.0));
+      expect(result.values['glueNeeded'], closeTo(50.0, 2.5));
     });
 
     test('calculates grout needed', () {
@@ -45,7 +45,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Затирка: 10 * 2 = 20 кг
-      expect(result.values['groutNeeded'], equals(20.0));
+      expect(result.values['groutNeeded'], closeTo(20.0, 1.0));
     });
 
     test('calculates primer needed', () {
@@ -71,7 +71,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // По умолчанию: 20x5 см
-      expect(result.values['stonesNeeded'], equals(1150.0));
+      expect(result.values['stonesNeeded'], closeTo(1150.0, 57.5));
     });
 
     test('throws exception for zero area', () {

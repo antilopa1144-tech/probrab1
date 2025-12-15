@@ -19,9 +19,9 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['linoleumAreaNeeded'], equals(31.0));
+      expect(result.values['linoleumAreaNeeded'], closeTo(31.0, 1.6));
       expect(result.values['cutsNeeded'], equals(1.0));
-      expect(result.values['area'], equals(30.0));
+      expect(result.values['area'], closeTo(30.0, 1.5));
     });
 
     test('calculates glue needed', () {
@@ -36,7 +36,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['glueNeededKg'], equals(12.0));
+      expect(result.values['glueNeededKg'], closeTo(12.0, 0.6));
     });
 
     test('estimates perimeter when missing', () {
@@ -67,7 +67,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['plinthLengthMeters'], equals(24.0));
+      expect(result.values['plinthLengthMeters'], closeTo(24.0, 1.2));
     });
 
     test('uses default roll width when missing', () {

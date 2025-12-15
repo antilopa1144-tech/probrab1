@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_gutters.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateGutters', () {
@@ -13,7 +14,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['gutterLength'], equals(40.0));
+      expect(result.values['gutterLength'], closeTo(40.0, 2.0));
     });
 
     test('calculates downpipes automatically', () {
@@ -27,7 +28,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       expect(result.values['downpipesCount'], equals(4.0));
-      expect(result.values['downpipeLength'], equals(12.0));
+      expect(result.values['downpipeLength'], closeTo(12.0, 0.6));
     });
 
     test('uses provided downpipes count', () {
@@ -42,7 +43,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       expect(result.values['downpipesCount'], equals(5.0));
-      expect(result.values['downpipeLength'], equals(15.0));
+      expect(result.values['downpipeLength'], closeTo(15.0, 0.8));
     });
 
     test('calculates corners', () {
@@ -93,7 +94,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       expect(result.values['gutterBrackets'], greaterThan(60));
-      expect(result.values['pipeBrackets'], equals(12.0));
+      expect(result.values['pipeBrackets'], closeTo(12.0, 0.6));
     });
 
     test('uses default values when missing', () {

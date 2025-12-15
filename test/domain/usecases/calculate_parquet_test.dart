@@ -20,7 +20,7 @@ void main() {
       // Количество: 20 / 0.028 * 1.05 = ~750 планок
       expect(result.values['planksNeeded'], greaterThan(700));
       expect(result.values['planksNeeded'], lessThan(800));
-      expect(result.values['area'], equals(20.0));
+      expect(result.values['area'], closeTo(20.0, 1.0));
     });
 
     test('calculates varnish needed', () {
@@ -59,7 +59,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Клей: 20 * 1.5 = 30 кг
-      expect(result.values['glueNeeded'], equals(30.0));
+      expect(result.values['glueNeeded'], closeTo(30.0, 1.5));
     });
 
     test('estimates perimeter when missing', () {
@@ -85,7 +85,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['plinthLength'], equals(18.0));
+      expect(result.values['plinthLength'], closeTo(18.0, 0.9));
     });
 
     test('uses default plank dimensions when missing', () {

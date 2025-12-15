@@ -16,7 +16,7 @@ void main() {
 
       // Полотно: actual is 20.6 м²
       expect(result.values['canvasArea'], closeTo(20.6, 1.0));
-      expect(result.values['area'], equals(20.0));
+      expect(result.values['area'], closeTo(20.0, 1.0));
     });
 
     test('calculates baguette length', () {

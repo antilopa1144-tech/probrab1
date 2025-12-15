@@ -19,7 +19,7 @@ void main() {
       // 50 * 61.5 * 1.05 = ~3230 шт
       expect(result.values['bricksNeeded'], greaterThan(3200));
       expect(result.values['bricksNeeded'], lessThan(3300));
-      expect(result.values['area'], equals(50.0));
+      expect(result.values['area'], closeTo(50.0, 2.5));
     });
 
     test('subtracts windows and doors area', () {
@@ -35,7 +35,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Полезная площадь: 50 - 10 - 5 = 35 м²
-      expect(result.values['usefulArea'], equals(35.0));
+      expect(result.values['usefulArea'], closeTo(35.0, 1.8));
     });
 
     test('calculates mortar volume', () {

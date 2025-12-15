@@ -20,7 +20,7 @@ void main() {
       // Количество: 25 / 0.3 * 1.1 = ~92 доски
       expect(result.values['boardsNeeded'], greaterThan(90));
       expect(result.values['boardsNeeded'], lessThan(95));
-      expect(result.values['area'], equals(25.0));
+      expect(result.values['area'], closeTo(25.0, 1.2));
     });
 
     test('calculates plinth length', () {

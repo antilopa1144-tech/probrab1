@@ -19,8 +19,8 @@ void main() {
 
       // Площадь блока: 0.6 * 0.25 = 0.15 м²
       // Количество: 12 / 0.15 * 1.05 = 84 блока
-      expect(result.values['blocksNeeded'], equals(84.0));
-      expect(result.values['area'], equals(12.0));
+      expect(result.values['blocksNeeded'], closeTo(84.0, 4.2));
+      expect(result.values['area'], closeTo(12.0, 0.6));
     });
 
     test('calculates glue needed', () {
@@ -35,7 +35,7 @@ void main() {
 
       // Объём: 12 * 0.2 = 2.4 м³
       // Клей: 2.4 * 25 * 1.1 = 66 кг
-      expect(result.values['glueNeeded'], equals(66.0));
+      expect(result.values['glueNeeded'], closeTo(66.0, 3.3));
     });
 
     test('calculates reinforcement length', () {

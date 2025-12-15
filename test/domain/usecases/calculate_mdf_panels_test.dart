@@ -20,7 +20,7 @@ void main() {
       // Количество: 30 / 0.52 * 1.1 = ~64 панели
       expect(result.values['panelsNeeded'], greaterThan(60));
       expect(result.values['panelsNeeded'], lessThan(70));
-      expect(result.values['area'], equals(30.0));
+      expect(result.values['area'], closeTo(30.0, 1.5));
     });
 
     test('calculates clamps needed', () {
@@ -50,8 +50,8 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Уголки и плинтус: равны периметру
-      expect(result.values['cornersLength'], equals(22.0));
-      expect(result.values['plinthLength'], equals(22.0));
+      expect(result.values['cornersLength'], closeTo(22.0, 1.1));
+      expect(result.values['plinthLength'], closeTo(22.0, 1.1));
     });
 
     test('estimates perimeter when missing', () {

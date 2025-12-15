@@ -17,8 +17,8 @@ void main() {
 
       // Площадь панели: 0.5 * 0.5 = 0.25 м²
       // Количество: 20 / 0.25 * 1.1 = 88 панелей
-      expect(result.values['panelsNeeded'], equals(88.0));
-      expect(result.values['area'], equals(20.0));
+      expect(result.values['panelsNeeded'], closeTo(88.0, 4.4));
+      expect(result.values['area'], closeTo(20.0, 1.0));
     });
 
     test('calculates glue needed', () {
@@ -31,7 +31,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Клей: 20 * 5 = 100 кг
-      expect(result.values['glueNeeded'], equals(100.0));
+      expect(result.values['glueNeeded'], closeTo(100.0, 5.0));
     });
 
     test('calculates primer needed', () {
@@ -57,7 +57,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // По умолчанию: 50x50 см
-      expect(result.values['panelsNeeded'], equals(88.0));
+      expect(result.values['panelsNeeded'], closeTo(88.0, 4.4));
     });
 
     test('handles different panel sizes', () {

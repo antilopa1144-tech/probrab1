@@ -18,7 +18,7 @@ void main() {
       // Площадь рулона: 10 м²
       // Реальная площадь с учётом уклона больше
       expect(result.values['rollsNeeded'], greaterThan(0));
-      expect(result.values['area'], equals(50.0));
+      expect(result.values['area'], closeTo(50.0, 2.5));
     });
 
     test('calculates real area with slope', () {

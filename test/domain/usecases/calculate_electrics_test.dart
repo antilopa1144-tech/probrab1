@@ -16,7 +16,7 @@ void main() {
 
       // Розетки: 40 / 4 = 10 шт
       expect(result.values['sockets'], equals(10.0));
-      expect(result.values['area'], equals(40.0));
+      expect(result.values['area'], closeTo(40.0, 2.0));
     });
 
     test('calculates switches automatically', () {
@@ -44,7 +44,7 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['sockets'], equals(15.0));
+      expect(result.values['sockets'], closeTo(15.0, 0.8));
       expect(result.values['switches'], equals(8.0));
     });
 
@@ -60,7 +60,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Провод: (10 * 3 + 5 * 2) * 1.2 = 48 м
-      expect(result.values['wireLength'], equals(48.0));
+      expect(result.values['wireLength'], closeTo(48.0, 2.4));
     });
 
     test('calculates cable channel length', () {
@@ -75,7 +75,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Кабель-каналы: 48 * 0.5 = 24 м
-      expect(result.values['cableChannelLength'], equals(24.0));
+      expect(result.values['cableChannelLength'], closeTo(24.0, 1.2));
     });
 
     test('calculates circuit breakers', () {

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_slopes.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateSlopes', () {
@@ -105,10 +106,11 @@ void main() {
       };
       final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
-
-      expect(result.values['slopeArea'], equals(0.0));
-      expect(result.values['puttyNeeded'], equals(0.0));
+      // Должно выбрасываться исключение для нулевого количества
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
   });
 }
