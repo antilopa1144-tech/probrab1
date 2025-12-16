@@ -4,6 +4,7 @@ import '../../domain/calculators/calculator_id_migration.dart';
 import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/models/calculator_definition_v2.dart';
 import '../views/calculator/universal_calculator_v2_screen.dart';
+import '../views/calculator/plaster_calculator_screen.dart';
 import '../../core/animations/page_transitions.dart';
 
 /// Помощник для навигации к калькуляторам.
@@ -16,6 +17,18 @@ class CalculatorNavigationHelper {
     CalculatorDefinitionV2 definition, {
     Map<String, double>? initialInputs,
   }) {
+    if (definition.id == 'mixes_plaster') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          PlasterCalculatorScreen(
+            definition: definition,
+            initialInputs: initialInputs,
+          ),
+        ),
+      );
+      return;
+    }
+
     Navigator.of(context).push(
       ModernPageTransitions.scale(
         UniversalCalculatorV2Screen(
@@ -35,11 +48,7 @@ class CalculatorNavigationHelper {
     final canonicalId = CalculatorIdMigration.canonicalize(calculatorId);
     final definition = CalculatorRegistry.getById(canonicalId);
     if (definition != null) {
-      Navigator.of(context).push(
-        ModernPageTransitions.scale(
-          UniversalCalculatorV2Screen(definition: definition),
-        ),
-      );
+      navigateToCalculator(context, definition);
       return;
     }
 

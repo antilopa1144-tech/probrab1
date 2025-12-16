@@ -25,7 +25,7 @@ void main() {
       expect(result.totalPrice, greaterThan(0));
       
       // Проверяем, что количество материала рассчитано
-      expect(result.values['plasterNeeded'], greaterThan(0));
+      expect(result.values['plasterKg'], greaterThan(0));
     });
 
     test('CalculateTile calculates price with multiple items', () {
@@ -89,7 +89,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Должен рассчитать количество, но без цены
-      expect(result.values['plasterNeeded'], greaterThan(0));
+      expect(result.values['plasterKg'], greaterThan(0));
       expect(result.totalPrice, isNull);
     });
 

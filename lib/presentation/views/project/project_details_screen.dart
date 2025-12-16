@@ -9,7 +9,7 @@ import '../../../domain/calculators/calculator_registry.dart';
 import '../../../core/errors/global_error_handler.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../providers/project_v2_provider.dart';
-import '../calculator/universal_calculator_v2_screen.dart';
+import '../../utils/calculator_navigation_helper.dart';
 
 /// Экран деталей проекта.
 ///
@@ -242,13 +242,7 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
       if (calcDef != null && mounted) {
         // Navigate to calculator screen
         // TODO: After calculation, save results to project
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                UniversalCalculatorV2Screen(definition: calcDef),
-          ),
-        );
+        CalculatorNavigationHelper.navigateToCalculator(context, calcDef);
       }
     }
   }
@@ -292,15 +286,10 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
       for (final pair in calculation.inputs) {
         initialInputs[pair.key] = pair.value;
       }
-
-      Navigator.push(
+      CalculatorNavigationHelper.navigateToCalculator(
         context,
-        MaterialPageRoute(
-          builder: (context) => UniversalCalculatorV2Screen(
-            definition: calcDef,
-            initialInputs: initialInputs,
-          ),
-        ),
+        calcDef,
+        initialInputs: initialInputs,
       );
     }
   }

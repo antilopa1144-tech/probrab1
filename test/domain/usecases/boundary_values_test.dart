@@ -96,8 +96,8 @@ void main() {
       final inputs = {'area': 10000.0, 'thickness': 10.0};
 
       final result = calculator.call(inputs, emptyPriceList);
-      expect(result.values['volume'], greaterThan(0));
-      expect(result.values['volume'], lessThan(1e10));
+      expect(result.values['plasterKg'], greaterThan(0));
+      expect(result.values['plasterKg'], lessThan(1e10));
     });
 
     test('Heating: очень большая площадь (5000 м²)', () {
@@ -124,7 +124,7 @@ void main() {
       final inputs = {'area': 0.1, 'thickness': 5.0};
 
       final result = calculator.call(inputs, emptyPriceList);
-      expect(result.values['volume'], greaterThan(0));
+      expect(result.values['plasterKg'], greaterThan(0));
     });
 
     test('WarmFloor: минимальная площадь (0.1 м²)', () {
@@ -151,8 +151,8 @@ void main() {
       final inputs = {'area': 100.0, 'thickness': 100.0};
 
       final result = calculator.call(inputs, emptyPriceList);
-      expect(result.values['volume'], greaterThan(0));
-      expect(result.values['volume'], lessThan(1e10));
+      expect(result.values['plasterKg'], greaterThan(0));
+      expect(result.values['plasterKg'], lessThan(1e10));
     });
   });
 
@@ -172,7 +172,8 @@ void main() {
       final inputs = {'area': 50.0, 'thickness': 0.0};
 
       final result = calculator.call(inputs, emptyPriceList);
-      expect(result.values['volume'], equals(0));
+      // Толщина нормализуется до минимально допустимой (5 мм).
+      expect(result.values['plasterKg'], greaterThan(0));
     });
 
     test('Tile: нулевой размер плитки', () {
