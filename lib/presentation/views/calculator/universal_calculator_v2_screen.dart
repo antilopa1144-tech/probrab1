@@ -13,6 +13,7 @@ import '../../../core/localization/app_localizations.dart';
 import '../../../core/enums/unit_type.dart';
 import '../../../core/enums/field_input_type.dart';
 import '../../../domain/models/project_v2.dart';
+import 'plaster_calculator_screen.dart';
 import '../../providers/price_provider.dart';
 import '../../widgets/hint_card.dart';
 import '../../widgets/result_card.dart';
@@ -62,6 +63,24 @@ class _UniversalCalculatorV2ScreenState
   @override
   void initState() {
     super.initState();
+
+    // Safety net: redirect the plaster calculator to the dedicated PRO UI even
+    // if a call site bypasses CalculatorNavigationHelper.
+    if (widget.definition.id == 'mixes_plaster') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute<void>(
+            builder: (_) => PlasterCalculatorScreen(
+              definition: widget.definition,
+              initialInputs: widget.initialInputs,
+            ),
+          ),
+        );
+      });
+      return;
+    }
+
     _initializeControllers();
   }
 
