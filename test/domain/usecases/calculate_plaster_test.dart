@@ -8,7 +8,7 @@ void main() {
     test('calculates plaster needed correctly', () {
       final calculator = CalculatePlaster();
       final inputs = {
-        'area': 100.0, // 100 м²
+        'area': 100.0, // 100 м² площадь стен
         'thickness': 10.0, // 10 мм
         'type': 1.0, // гипсовая
       };
@@ -16,11 +16,11 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Расход гипсовой штукатурки: ~8.5 кг/м² на 1 мм толщины
-      // Формула: area * consumptionPerMm * (thickness / 10) * 1.1
+      // Расход гипсовой штукатурки: ~8.5 кг/м² на 10 мм толщины
+      // Формула: area * consumptionPer10mm * (thickness / 10) * 1.1
       // 100 м² * 8.5 * (10 / 10) * 1.1 = 935 кг
-      expect(result.values['plasterNeeded'], closeTo(935, 10));
-      expect(result.values['area'], closeTo(100.0, 5.0));
+      expect(result.values['plasterKg'], closeTo(935, 10));
+      expect(result.values['plasterBags'], equals(32)); // 935 / 30 = 31.2 -> ceil = 32
     });
 
     test('calculates cement plaster correctly', () {
@@ -34,9 +34,10 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Расход цементной: обновленная формула
-      // Фактический результат: 1705 кг
-      expect(result.values['plasterNeeded'], closeTo(1705, 50));
+      // Расход цементной: 15.5 кг/м² на 10 мм толщины
+      // 50 * 15.5 * (20 / 10) * 1.1 = 1705 кг
+      expect(result.values['plasterKg'], closeTo(1705, 50));
+      expect(result.values['plasterBags'], equals(69)); // 1705 / 25 = 68.2 -> ceil = 69
     });
 
     test('throws exception for zero area', () {
@@ -63,25 +64,79 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // По умолчанию: толщина 10 мм, тип 1 (гипсовая)
-      expect(result.values['plasterNeeded'], greaterThan(0));
+      expect(result.values['plasterKg'], greaterThan(0));
+      expect(result.values['plasterBags'], greaterThan(0));
     });
 
     test('calculates beacons needed', () {
       final calculator = CalculatePlaster();
       final inputs = {
         'area': 100.0,
-        'perimeter': 40.0, // периметр
+        'thickness': 10.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Маяки: ~1 шт на 1.5 м ширины, периметр 40 м / 1.5 = ~27
-      // Проверяем что поле присутствует и больше нуля если рассчитано
-      if (result.values.containsKey('beaconsNeeded')) {
-        expect(result.values['beaconsNeeded'], greaterThan(0));
-      }
+      // Маяки: ~1 шт на 2.5 м² площади
+      // 100 / 2.5 = 40
+      expect(result.values['beacons'], equals(40));
+      expect(result.values['beaconSize'], equals(6)); // 6 мм для слоя <= 10 мм
+    });
+
+    test('calculates betonkontakt liters', () {
+      final calculator = CalculatePlaster();
+      final inputs = {
+        'area': 100.0,
+        'thickness': 10.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Бетонконтакт: 0.3 л/м² * 1.1 = 0.33 л/м²
+      // 100 * 0.33 = 33 л -> ceil
+      expect(result.values['betonkontaktLiters'], equals(33));
+    });
+
+    test('calculates rule size', () {
+      final calculator = CalculatePlaster();
+      final inputs = {
+        'area': 100.0,
+        'thickness': 10.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Правило: 1.5 м
+      expect(result.values['ruleSize'], equals(1.5));
+    });
+
+    test('beacon size depends on thickness', () {
+      final calculator = CalculatePlaster();
+      final emptyPriceList = <PriceItem>[];
+
+      // Толщина <= 10 мм -> маяки 6 мм
+      var result = calculator({'area': 50.0, 'thickness': 10.0}, emptyPriceList);
+      expect(result.values['beaconSize'], equals(6));
+
+      // Толщина > 10 мм -> маяки 10 мм
+      result = calculator({'area': 50.0, 'thickness': 15.0}, emptyPriceList);
+      expect(result.values['beaconSize'], equals(10));
+    });
+
+    test('calculates mesh area for thick layers', () {
+      final calculator = CalculatePlaster();
+      final emptyPriceList = <PriceItem>[];
+
+      // Толщина <= 30 мм -> нет сетки
+      var result = calculator({'area': 50.0, 'thickness': 30.0}, emptyPriceList);
+      expect(result.values.containsKey('meshArea'), isFalse);
+
+      // Толщина > 30 мм -> сетка нужна
+      result = calculator({'area': 50.0, 'thickness': 35.0}, emptyPriceList);
+      expect(result.values['meshArea'], closeTo(55, 1)); // 50 * 1.1 = 55
     });
   });
 }
-

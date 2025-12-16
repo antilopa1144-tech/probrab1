@@ -771,6 +771,12 @@
   "result": {
     "area": "Area",
     "bags": "Bags",
+    "beacons": "Beacons",
+    "beaconSize": "Beacon size",
+    "betonkontaktLiters": "Concrete contact primer",
+    "plasterBags": "Plaster bags",
+    "plasterKg": "Plaster (kg)",
+    "ruleSize": "Straight edge",
     "brushesNeeded": "Brushes",
     "cableLength": "Cable length",
     "ceilingProfileLength": "Ceiling profile length",

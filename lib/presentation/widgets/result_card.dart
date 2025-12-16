@@ -125,6 +125,8 @@ class ResultsList extends StatelessWidget {
 
   bool _isParameterKey(String key) {
     final k = key.toLowerCase();
+    // Исключаем beacons - это материал, а не параметр
+    if (k == 'beacons' || k.startsWith('beacon')) return false;
     return k == 'area' ||
         k == 'usefularea' ||
         k == 'realarea' ||

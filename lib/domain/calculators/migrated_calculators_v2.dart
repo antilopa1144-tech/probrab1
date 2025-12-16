@@ -56,12 +56,10 @@ import '../usecases/calculate_soft_roofing.dart';
 import '../usecases/calculate_sound_insulation.dart';
 import '../usecases/calculate_stairs.dart';
 import '../usecases/calculate_stretch_ceiling.dart';
-import '../usecases/calculate_strip_foundation.dart';
 import '../usecases/calculate_terrace.dart';
 import '../usecases/calculate_tile.dart';
 import '../usecases/calculate_tile_glue.dart';
 import '../usecases/calculate_ventilation.dart';
-import '../usecases/calculate_wall_paint.dart';
 import '../usecases/calculate_wall_tile.dart';
 import '../usecases/calculate_wallpaper.dart';
 import '../usecases/calculate_warm_floor.dart';
@@ -2523,19 +2521,25 @@ final List<CalculatorDefinitionV2> migratedCalculatorsV2 = [
     fields: [
       const CalculatorField(
         key: 'area',
-        labelKey: 'input.area',
+        labelKey: 'input.wallArea',
+        hintKey: 'input.wallArea.hint',
         unitType: UnitType.squareMeters,
         inputType: FieldInputType.number,
         defaultValue: 0.0,
+        minValue: 1.0,
+        maxValue: 1000.0,
         required: true,
         order: 1,
       ),
       const CalculatorField(
         key: 'thickness',
-        labelKey: 'input.thickness',
+        labelKey: 'input.plaster_thickness',
+        hintKey: 'input.plaster_thickness.hint',
         unitType: UnitType.millimeters,
         inputType: FieldInputType.number,
         defaultValue: 10.0,
+        minValue: 5.0,
+        maxValue: 50.0,
         required: true,
         order: 2,
       ),
@@ -2552,30 +2556,18 @@ final List<CalculatorDefinitionV2> migratedCalculatorsV2 = [
           FieldOption(value: 2.0, labelKey: 'input.plaster_type.cement'),
         ],
       ),
-      const CalculatorField(
-        key: 'perimeter',
-        labelKey: 'input.perimeter',
-        unitType: UnitType.meters,
-        inputType: FieldInputType.number,
-        defaultValue: 0.0,
-        required: true,
-        order: 4,
-      ),
     ],
     beforeHints: [
-      const CalculatorHint(type: HintType.tip, messageKey: 'Гипсовая штукатурка для внутренних работ.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Цементная для влажных помещений и фасадов.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте маяки для ровной поверхности.'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'hint.plaster.measure_walls'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'hint.plaster.gypsum_for_interior'),
+      const CalculatorHint(type: HintType.tip, messageKey: 'hint.plaster.cement_for_wet'),
     ],
-    afterHints: [
-      const CalculatorHint(type: HintType.tip, messageKey: 'Гипсовая штукатурка для внутренних работ.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Цементная для влажных помещений и фасадов.'),
-      const CalculatorHint(type: HintType.tip, messageKey: 'Используйте маяки для ровной поверхности.'),
-    ],
+    afterHints: [],
     useCase: CalculatePlaster(),
     accentColor: kCalculatorAccentColor,
     complexity: 2,
     popularity: 10,
+    showToolsSection: false,
     tags: [
       'Внутренняя отделка',
       'Ровнители / смеси',

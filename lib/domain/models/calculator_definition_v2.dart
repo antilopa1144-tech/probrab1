@@ -90,6 +90,9 @@ class CalculatorDefinitionV2 {
   /// Теги для поиска
   final List<String> tags;
 
+  /// Показывать секцию инструментов в результатах
+  final bool showToolsSection;
+
   const CalculatorDefinitionV2({
     required this.id,
     required this.titleKey,
@@ -106,6 +109,7 @@ class CalculatorDefinitionV2 {
     this.popularity = 0,
     this.isFavorite = false,
     this.tags = const [],
+    this.showToolsSection = true,
   });
 
   /// Кэш для результатов расчётов
@@ -226,6 +230,7 @@ class CalculatorDefinitionV2 {
     int? popularity,
     bool? isFavorite,
     List<String>? tags,
+    bool? showToolsSection,
   }) {
     return CalculatorDefinitionV2(
       id: id ?? this.id,
@@ -243,6 +248,7 @@ class CalculatorDefinitionV2 {
       popularity: popularity ?? this.popularity,
       isFavorite: isFavorite ?? this.isFavorite,
       tags: tags ?? this.tags,
+      showToolsSection: showToolsSection ?? this.showToolsSection,
     );
   }
 }

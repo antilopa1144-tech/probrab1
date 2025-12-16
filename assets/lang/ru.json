@@ -554,6 +554,11 @@
         "joints": "Заделайте швы серпянкой и шпаклёвкой для швов.",
         "screws": "Вкручивайте саморезы на расстоянии 25-30 см друг от друга."
       }
+    },
+    "plaster": {
+      "measure_walls": "Измерьте общую площадь стен, вычтите окна и двери.",
+      "gypsum_for_interior": "Гипсовая штукатурка — для сухих помещений.",
+      "cement_for_wet": "Цементная — для влажных помещений и фасадов."
     }
   },
   "input": {
@@ -634,6 +639,8 @@
     "plaster_type": "Тип штукатурки",
     "plaster_type.gypsum": "Гипсовая",
     "plaster_type.cement": "Цементная",
+    "plaster_thickness": "Толщина слоя",
+    "plaster_thickness.hint": "Средняя толщина слоя штукатурки (5-50 мм)",
     "putty_type": "Тип шпаклёвки",
     "putty_type.start": "Стартовая",
     "putty_type.finish": "Финишная",
@@ -969,7 +976,12 @@
     "balustersNeeded": "Балясин нужно",
     "baseCoatNeeded": "Базового слоя нужно",
     "battensLength": "Длина обрешётки",
-    "beaconsCount": "Количество маяков",
+    "beacons": "Маяки",
+    "beaconSize": "Размер маяков",
+    "plasterBags": "Штукатурка",
+    "plasterKg": "Штукатурка (кг)",
+    "betonkontaktLiters": "Бетонконтакт",
+    "ruleSize": "Правило",
     "blocksNeeded": "Блоков нужно",
     "boardsNeeded": "Досок нужно",
     "boilerNeeded": "Котла нужно",

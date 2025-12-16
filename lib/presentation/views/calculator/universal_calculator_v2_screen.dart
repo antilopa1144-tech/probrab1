@@ -650,33 +650,35 @@ class _UniversalCalculatorV2ScreenState
         ),
       );
 
-      final toolKeys = _inferToolKeys(resultsData.keys);
-      if (toolKeys.isNotEmpty) {
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: ExpansionTile(
-              tilePadding: EdgeInsets.zero,
-              childrenPadding: const EdgeInsets.only(top: 8),
-              title: Text(
-                loc.translate('resultSection.tools'),
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: toolKeys
-                        .map((toolKey) => Chip(label: Text(loc.translate('tools.$toolKey'))))
-                        .toList(),
-                  ),
+      if (widget.definition.showToolsSection) {
+        final toolKeys = _inferToolKeys(resultsData.keys);
+        if (toolKeys.isNotEmpty) {
+          widgets.add(
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: ExpansionTile(
+                tilePadding: EdgeInsets.zero,
+                childrenPadding: const EdgeInsets.only(top: 8),
+                title: Text(
+                  loc.translate('resultSection.tools'),
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
-              ],
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: toolKeys
+                          .map((toolKey) => Chip(label: Text(loc.translate('tools.$toolKey'))))
+                          .toList(),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
     }
     return widgets;

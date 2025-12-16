@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_const_declarations
+import 'dart:math' as math;
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
@@ -10,10 +11,9 @@ import './base_calculator.dart';
 /// - ГОСТ 31377-2008 "Смеси сухие строительные"
 ///
 /// Поля:
-/// - area: площадь стен (м²)
+/// - area: площадь стен (м²) - вводится напрямую
 /// - thickness: толщина слоя (мм), по умолчанию 10
 /// - type: тип (1=гипсовая, 2=цементная), по умолчанию 1
-/// - perimeter: периметр комнаты (м), опционально
 class CalculatePlaster extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -46,12 +46,10 @@ class CalculatePlaster extends BaseCalculator {
       inputs,
       'thickness',
       defaultValue: 10.0,
-      minValue: 0.0,
+      minValue: 5.0,
       maxValue: 100.0,
     );
     final type = getIntInput(inputs, 'type', defaultValue: 1, minValue: 1, maxValue: 2);
-    
-    final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
     // Расход штукатурки на 10 мм слоя:
     // - Гипсовая: 8-9 кг/м²
@@ -59,64 +57,59 @@ class CalculatePlaster extends BaseCalculator {
     final consumptionPer10mm = type == 1 ? 8.5 : 15.5; // кг/м²
 
     // Общий расход с учётом толщины и запаса 10%
-    final plasterNeeded = area * consumptionPer10mm * (thickness / 10) * 1.1;
-    final plasterVolume = calculateVolume(area, thickness);
+    final plasterKg = area * consumptionPer10mm * (thickness / 10) * 1.1;
 
-    // Грунтовка глубокого проникновения: ~0.2 л/м²
-    final primerNeeded = area * 0.2;
+    // Вес мешка: гипсовая обычно 30 кг, цементная 25 кг
+    final bagWeight = type == 1 ? 30.0 : 25.0;
+    final plasterBags = (plasterKg / bagWeight).ceil();
 
-    // Штукатурная сетка (при толщине > 20 мм): площадь покрытия
-    final meshArea = thickness > 20 ? area : 0.0;
+    // Бетонконтакт: ~0.3 л/м² (грунтовка для лучшей адгезии)
+    final betonkontaktLiters = (area * 0.3 * 1.1).ceil(); // с запасом 10%
 
-    // Маяки профильные: шаг установки 1.2-1.5 м
-    // Количество зависит от периметра и высоты стен
-    final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 2.7, minValue: 2.0, maxValue: 4.0);
-    final beaconsCount = ceilToInt(perimeter / 1.5);
-    final beaconsLength = beaconsCount * wallHeight;
+    // Штукатурная сетка (при толщине > 30 мм): площадь покрытия
+    final meshArea = thickness > 30 ? area * 1.1 : 0.0; // с запасом
 
-    // Угловой профиль (для наружных углов): по факту
-    final cornerProfileLength = getInput(inputs, 'corners', defaultValue: 0.0);
+    // Маяки: размер зависит от толщины слоя
+    // 6 мм - для слоя до 10 мм
+    // 10 мм - для слоя 10-30 мм
+    // Шаг установки 1.0-1.2 м (под правило 1.5 м)
+    final beaconSizeMm = thickness <= 10 ? 6 : 10;
 
-    // Правило алюминиевое: 1-2 шт
-    const rulesNeeded = 1;
+    // Примерный расчёт количества маяков:
+    // На каждые 10 м² стен нужно ~4-5 маяков по 3 м
+    final beaconsCount = math.max(2, (area / 2.5).ceil());
 
-    // Вода для замешивания (информативно): ~0.6 л на кг для гипсовой, ~0.2 л для цементной
-    final waterPerKg = type == 1 ? 0.6 : 0.2;
-    final waterNeeded = plasterNeeded * waterPerKg;
+    // Правило: рекомендуемый размер
+    // При шаге маяков 1.0-1.2 м нужно правило 1.5 м
+    const ruleSizeM = 1.5;
 
     // Расчёт стоимости
     final plasterPrice = type == 1
         ? findPrice(priceList, ['plaster_gypsum', 'plaster', 'gypsum_plaster'])
         : findPrice(priceList, ['plaster_cement', 'cement_plaster', 'plaster']);
-    final primerPrice = findPrice(priceList, ['primer', 'primer_deep', 'primer_penetrating']);
+    final betonkontaktPrice = findPrice(priceList, ['betonkontakt', 'primer_contact', 'primer']);
     final meshPrice = findPrice(priceList, ['mesh', 'plaster_mesh', 'reinforcement_mesh']);
     final beaconPrice = findPrice(priceList, ['beacon', 'beacon_plaster', 'profile_beacon']);
-    final cornerProfilePrice = findPrice(priceList, ['profile_corner', 'corner_bead']);
 
     final costs = [
-      calculateCost(plasterNeeded, plasterPrice?.price),
-      calculateCost(primerNeeded, primerPrice?.price),
+      calculateCost(plasterBags.toDouble() * bagWeight, plasterPrice?.price),
+      calculateCost(betonkontaktLiters.toDouble(), betonkontaktPrice?.price),
       if (meshArea > 0) calculateCost(meshArea, meshPrice?.price),
-      calculateCost(beaconsLength, beaconPrice?.price),
-      if (cornerProfileLength > 0) calculateCost(cornerProfileLength, cornerProfilePrice?.price),
+      calculateCost(beaconsCount.toDouble() * 3, beaconPrice?.price), // маяки по 3 м
     ];
 
     return createResult(
       values: {
-        'area': area,
-        'volume': plasterVolume,
-        'plasterNeeded': plasterNeeded,
-        'primerNeeded': primerNeeded,
-        'thickness': thickness,
+        'plasterBags': plasterBags.toDouble(),
+        'plasterKg': plasterKg,
+        'betonkontaktLiters': betonkontaktLiters.toDouble(),
         if (meshArea > 0) 'meshArea': meshArea,
-        'beaconsCount': beaconsCount.toDouble(),
-        'beaconsLength': beaconsLength,
-        if (cornerProfileLength > 0) 'cornerProfileLength': cornerProfileLength,
-        'rulesNeeded': rulesNeeded.toDouble(),
-        'waterNeeded': waterNeeded,
+        'beacons': beaconsCount.toDouble(),
+        'beaconSize': beaconSizeMm.toDouble(),
+        'ruleSize': ruleSizeM,
       },
       totalPrice: sumCosts(costs),
-      decimals: 3,
+      decimals: 1,
     );
   }
 }
