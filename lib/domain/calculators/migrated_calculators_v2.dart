@@ -2541,12 +2541,16 @@ final List<CalculatorDefinitionV2> migratedCalculatorsV2 = [
       ),
       const CalculatorField(
         key: 'type',
-        labelKey: 'input.type',
+        labelKey: 'input.plaster_type',
         unitType: UnitType.pieces,
-        inputType: FieldInputType.number,
+        inputType: FieldInputType.select,
         defaultValue: 1.0,
         required: true,
         order: 3,
+        options: [
+          FieldOption(value: 1.0, labelKey: 'input.plaster_type.gypsum'),
+          FieldOption(value: 2.0, labelKey: 'input.plaster_type.cement'),
+        ],
       ),
       const CalculatorField(
         key: 'perimeter',
@@ -2664,12 +2668,16 @@ final List<CalculatorDefinitionV2> migratedCalculatorsV2 = [
       ),
       const CalculatorField(
         key: 'type',
-        labelKey: 'input.type',
+        labelKey: 'input.putty_type',
         unitType: UnitType.pieces,
-        inputType: FieldInputType.number,
+        inputType: FieldInputType.select,
         defaultValue: 1.0,
         required: true,
         order: 3,
+        options: [
+          FieldOption(value: 1.0, labelKey: 'input.putty_type.start'),
+          FieldOption(value: 2.0, labelKey: 'input.putty_type.finish'),
+        ],
       ),
     ],
     beforeHints: [
@@ -3474,9 +3482,11 @@ final List<CalculatorDefinitionV2> migratedCalculatorsV2 = [
       const CalculatorField(
         key: 'thickness',
         labelKey: 'input.thickness',
-        unitType: UnitType.meters,
+        unitType: UnitType.millimeters,
         inputType: FieldInputType.number,
         defaultValue: 2.0,
+        minValue: 0.5,
+        maxValue: 10.0,
         required: true,
         order: 2,
       ),
