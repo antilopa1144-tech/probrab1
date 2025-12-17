@@ -14,6 +14,7 @@ import '../../../core/enums/unit_type.dart';
 import '../../../core/enums/field_input_type.dart';
 import '../../../domain/models/project_v2.dart';
 import 'plaster_calculator_screen.dart';
+import 'putty_calculator_screen.dart';
 import '../../providers/price_provider.dart';
 import '../../widgets/hint_card.dart';
 import '../../widgets/result_card.dart';
@@ -75,6 +76,19 @@ class _UniversalCalculatorV2ScreenState
               definition: widget.definition,
               initialInputs: widget.initialInputs,
             ),
+          ),
+        );
+      });
+      return;
+    }
+
+    // Redirect the putty calculator to the dedicated PRO UI
+    if (widget.definition.id == 'mixes_putty') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute<void>(
+            builder: (_) => const PuttyCalculatorScreen(),
           ),
         );
       });
