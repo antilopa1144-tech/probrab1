@@ -5,6 +5,7 @@ import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/models/calculator_definition_v2.dart';
 import '../views/calculator/universal_calculator_v2_screen.dart';
 import '../views/calculator/plaster_calculator_screen.dart';
+import '../views/calculator/putty_calculator_screen.dart';
 import '../../core/animations/page_transitions.dart';
 
 /// Помощник для навигации к калькуляторам.
@@ -24,6 +25,15 @@ class CalculatorNavigationHelper {
             definition: definition,
             initialInputs: initialInputs,
           ),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'mixes_putty') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const PuttyCalculatorScreen(),
         ),
       );
       return;
