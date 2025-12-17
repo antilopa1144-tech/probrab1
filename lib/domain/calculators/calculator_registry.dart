@@ -18,6 +18,7 @@ import 'bathroom_tile_calculator_v2.dart';
 import 'plinth_calculator_v2.dart';
 import 'concrete_universal_calculator_v2.dart';
 import 'sheeting_osb_plywood_calculator_v2.dart';
+import 'dsp_calculator_v2.dart';
 import 'migrated_calculators_v2.dart';
 
 /// Реестр всех калькуляторов приложения.
@@ -79,6 +80,7 @@ class CalculatorRegistry {
     tileCalculatorV2,
     plinthCalculatorV2,
     sheetingOsbPlywoodCalculatorV2,
+    dspCalculatorV2,
 
     // Кровля
     metalRoofingCalculatorV2,

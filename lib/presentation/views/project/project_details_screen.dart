@@ -241,7 +241,7 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
       final calcDef = CalculatorRegistry.getById(selectedCalcId);
       if (calcDef != null && mounted) {
         // Navigate to calculator screen
-        // TODO: After calculation, save results to project
+        // When calculators start returning result payloads, hook them here to save into the project
         CalculatorNavigationHelper.navigateToCalculator(context, calcDef);
       }
     }

@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_terrace.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateTerrace', () {
@@ -52,11 +51,12 @@ void main() {
         'perimeter': 100.0,
       };
       final priceList = [
-        PriceItem(
-          id: 'test-1',
+        const PriceItem(
+          sku: 'test-1',
           name: 'Тестовый материал',
           unit: 'м²',
           price: 1000.0,
+          imageUrl: '',
         ),
       ];
 

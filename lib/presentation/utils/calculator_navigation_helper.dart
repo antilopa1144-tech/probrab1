@@ -6,6 +6,7 @@ import '../../domain/models/calculator_definition_v2.dart';
 import '../views/calculator/universal_calculator_v2_screen.dart';
 import '../views/calculator/plaster_calculator_screen.dart';
 import '../views/calculator/putty_calculator_screen.dart';
+import '../views/primer/primer_screen.dart';
 import '../../core/animations/page_transitions.dart';
 
 /// Помощник для навигации к калькуляторам.
@@ -34,6 +35,15 @@ class CalculatorNavigationHelper {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
           const PuttyCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'mixes_primer') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const PrimerScreen(),
         ),
       );
       return;

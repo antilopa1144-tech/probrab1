@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_concrete_universal.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateConcreteUniversal', () {
@@ -25,13 +24,16 @@ void main() {
 
     test('uses default values when not provided', () {
       final calculator = CalculateConcreteUniversal();
-      final inputs = <String, double>{};
+      final inputs = {
+        'concreteVolume': 1.0,
+      };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Должен использовать значения по умолчанию
-      expect(result.values, isNotEmpty);
+      // Должен использовать значения по умолчанию для необязательных полей
+      expect(result.values['reserve'], equals(5.0));
+      expect(result.values['concreteVolume'], greaterThan(1.0));
     });
 
     test('preserves input values in result', () {
@@ -52,11 +54,12 @@ void main() {
         'concreteVolume': 100.0,
       };
       final priceList = [
-        PriceItem(
-          id: 'test-1',
+        const PriceItem(
+          sku: 'test-1',
           name: 'Тестовый материал',
           unit: 'м²',
           price: 1000.0,
+          imageUrl: '',
         ),
       ];
 

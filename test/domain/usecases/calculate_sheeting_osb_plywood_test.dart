@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_sheeting_osb_plywood.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
-import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateSheetingOsbPlywood', () {
@@ -25,13 +24,16 @@ void main() {
 
     test('uses default values when not provided', () {
       final calculator = CalculateSheetingOsbPlywood();
-      final inputs = <String, double>{};
+      final inputs = {
+        'area': 10.0,
+      };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
       // Должен использовать значения по умолчанию
-      expect(result.values, isNotEmpty);
+      expect(result.values['reserve'], equals(10.0));
+      expect(result.values['materialArea'], closeTo(11.0, 0.6));
     });
 
     test('preserves input values in result', () {
@@ -52,11 +54,12 @@ void main() {
         'area': 100.0,
       };
       final priceList = [
-        PriceItem(
-          id: 'test-1',
+        const PriceItem(
+          sku: 'test-1',
           name: 'Тестовый материал',
           unit: 'м²',
           price: 1000.0,
+          imageUrl: '',
         ),
       ];
 

@@ -58,13 +58,13 @@ class PuttyResult {
 // --- Основной Виджет ---
 
 class PuttyCalculatorScreen extends StatefulWidget {
-  const PuttyCalculatorScreen({Key? key}) : super(key: key);
+  const PuttyCalculatorScreen({super.key});
 
   @override
-  _PuttyCalculatorScreenState createState() => _PuttyCalculatorScreenState();
+  PuttyCalculatorScreenState createState() => PuttyCalculatorScreenState();
 }
 
-class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
+class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
   // Состояние
   CalculationMode _mode = CalculationMode.room;
   FinishTarget _target = FinishTarget.wallpaper;
@@ -76,8 +76,8 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
   double _roomHeight = 2.7;
 
   // Списки
-  List<Wall> _walls = [Wall(id: DateTime.now().toString(), length: 5.0, height: 2.7)];
-  List<Opening> _openings = [Opening(id: DateTime.now().toString())];
+  final List<Wall> _walls = [Wall(id: DateTime.now().toString(), length: 5.0, height: 2.7)];
+  final List<Opening> _openings = [Opening(id: DateTime.now().toString())];
 
   // Результат
   PuttyResult? _result;
@@ -94,34 +94,34 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
     // 1. Площадь
     double totalWallArea = 0;
     if (_mode == CalculationMode.room) {
-      double perimeter = (_roomLength + _roomWidth) * 2;
+      final double perimeter = (_roomLength + _roomWidth) * 2;
       totalWallArea = perimeter * _roomHeight;
     } else {
-      for (var wall in _walls) {
+      for (final wall in _walls) {
         totalWallArea += (wall.length * wall.height);
       }
     }
 
     double totalOpeningArea = 0;
-    for (var op in _openings) {
+    for (final op in _openings) {
       totalOpeningArea += (op.width * op.height * op.count);
     }
 
-    double netArea = (totalWallArea - totalOpeningArea).clamp(0, double.infinity);
+    final double netArea = (totalWallArea - totalOpeningArea).clamp(0, double.infinity);
 
     // 2. Технология нанесения
     // Под обои: 1 слой старта + 1 слой финиша (или 2 старта)
     // Под покраску: 2 слоя старта + 2 слоя финиша (стандарт)
 
-    int startLayers = _target == FinishTarget.painting ? 2 : 1;
-    int finishLayers = _target == FinishTarget.painting ? 2 : 1;
+    final int startLayers = _target == FinishTarget.painting ? 2 : 1;
+    final int finishLayers = _target == FinishTarget.painting ? 2 : 1;
 
     // 3. Расход материалов
 
     // СТАРТ (База): Обычно сухая смесь (Волма, Фуген). Расход ~1.0 кг/м2 на слой 1мм.
-    double startConsumption = 1.0 * startLayers;
-    double startTotalWeight = netArea * startConsumption;
-    int startBags = (startTotalWeight / 25).ceil(); // Стандарт мешок 25кг
+    final double startConsumption = 1.0 * startLayers;
+    final double startTotalWeight = netArea * startConsumption;
+    final int startBags = (startTotalWeight / 25).ceil(); // Стандарт мешок 25кг
 
     // ФИНИШ:
     // Сухая (Vetonit LR+): ~1.2 кг/м2/слой. Мешок 20кг.
@@ -129,32 +129,32 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
 
     double finishTotalAmount = 0;
     int finishPacks = 0;
-    String packName = "";
+    String packName = '';
 
     if (_finishType == FinishMaterialType.dryBag) {
       // Сухая
-      double cons = 1.2 * finishLayers;
+      final double cons = 1.2 * finishLayers;
       finishTotalAmount = netArea * cons;
       finishPacks = (finishTotalAmount / 20).ceil(); // Мешок 20кг
-      packName = "мешков (20кг)";
+      packName = 'мешков (20кг)';
     } else {
       // Готовая паста (считаем в литрах для простоты, т.к. ведра часто в литрах или кг)
       // Danogips SuperFinish ~ 1л/м2 на слой
-      double cons = 1.0 * finishLayers;
+      final double cons = 1.0 * finishLayers;
       finishTotalAmount = netArea * cons;
       finishPacks = (finishTotalAmount / 15).ceil(); // Ведро ~15-17л
-      packName = "ведер (15л)";
+      packName = 'ведер (15л)';
     }
 
     // 4. Грунтовка (межслойная + перед финишем)
     // Считаем 0.15л на м2. Кол-во слоев грунта = слои шпатлевки + 1
-    double primerVolume = netArea * 0.15 * (startLayers + finishLayers);
-    int primerCanisters = (primerVolume / 10).ceil();
+    final double primerVolume = netArea * 0.15 * (startLayers + finishLayers);
+    final int primerCanisters = (primerVolume / 10).ceil();
 
     // 5. Абразив (Сетки/Наждачка)
     // Примерно 1 лист на 10-15 м2 поверхности на каждый этап шлифовки
-    int sandingStages = 2; // Шлифовка базы + Шлифовка финиша
-    int sandingSheets = ((netArea / 10) * sandingStages).ceil();
+    const int sandingStages = 2; // Шлифовка базы + Шлифовка финиша
+    final int sandingSheets = ((netArea / 10) * sandingStages).ceil();
 
     setState(() {
       _result = PuttyResult(
@@ -239,8 +239,8 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 5))
+          boxShadow: const [
+            BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.1), blurRadius: 10, offset: Offset(0, 5))
           ],
         ),
         child: Row(
@@ -272,12 +272,12 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5)],
+        boxShadow: const [BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05), blurRadius: 5)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Цель отделки", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const Text('Цель отделки', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -351,7 +351,7 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
-          boxShadow: isSelected ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4)] : null,
+          boxShadow: isSelected ? [const BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05), blurRadius: 4)] : null,
         ),
         alignment: Alignment.center,
         child: Text(text, style: TextStyle(color: isSelected ? Colors.teal[800] : Colors.grey[600], fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
@@ -365,12 +365,12 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text("Геометрия", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text('Геометрия', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             if (_mode == CalculationMode.walls)
               TextButton.icon(
                 onPressed: () { setState(() => _walls.add(Wall(id: DateTime.now().toString()))); _calculate(); },
                 icon: const Icon(Icons.add, size: 16),
-                label: const Text("Стена"),
+                label: const Text('Стена'),
                 style: TextButton.styleFrom(backgroundColor: lightColor, foregroundColor: Colors.teal),
               )
           ],
@@ -383,12 +383,12 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
             child: Column(
               children: [
                 Row(children: [
-                    Expanded(child: _buildInput("Длина пола (м)", _roomLength, (v) => _roomLength = v)),
+                    Expanded(child: _buildInput('Длина пола (м)', _roomLength, (v) => _roomLength = v)),
                     const SizedBox(width: 12),
-                    Expanded(child: _buildInput("Ширина пола (м)", _roomWidth, (v) => _roomWidth = v)),
+                    Expanded(child: _buildInput('Ширина пола (м)', _roomWidth, (v) => _roomWidth = v)),
                 ]),
                 const SizedBox(height: 12),
-                _buildInput("Высота потолка (м)", _roomHeight, (v) => _roomHeight = v),
+                _buildInput('Высота потолка (м)', _roomHeight, (v) => _roomHeight = v),
               ],
             ),
           )
@@ -406,11 +406,11 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Row(children: [
-                      CircleAvatar(radius: 10, backgroundColor: Colors.white, child: Text("${index + 1}", style: const TextStyle(fontSize: 10, color: Colors.grey))),
+                      CircleAvatar(radius: 10, backgroundColor: Colors.white, child: Text('${index + 1}', style: const TextStyle(fontSize: 10, color: Colors.grey))),
                       const SizedBox(width: 12),
-                      Expanded(child: _buildInput("Длина", wall.length, (v) => wall.length = v)),
+                      Expanded(child: _buildInput('Длина', wall.length, (v) => wall.length = v)),
                       const SizedBox(width: 8),
-                      Expanded(child: _buildInput("Высота", wall.height, (v) => wall.height = v)),
+                      Expanded(child: _buildInput('Высота', wall.height, (v) => wall.height = v)),
                       if (_walls.length > 1) IconButton(icon: const Icon(Icons.close, color: Colors.red, size: 18), onPressed: () { setState(() => _walls.removeAt(index)); _calculate(); })
                   ]),
                 ),
@@ -423,7 +423,7 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
 
   Widget _buildOpeningsSection() {
     return ExpansionTile(
-      title: Text("Проемы (Окна/Двери): ${_openings.length}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+      title: Text('Проемы (Окна/Двери): ${_openings.length}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
       tilePadding: EdgeInsets.zero,
       children: [
         ListView.builder(
@@ -435,11 +435,11 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
             return Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Row(children: [
-                  Expanded(child: _buildInput("Ширина", op.width, (v) => op.width = v)),
+                  Expanded(child: _buildInput('Ширина', op.width, (v) => op.width = v)),
                   const SizedBox(width: 8),
-                  Expanded(child: _buildInput("Высота", op.height, (v) => op.height = v)),
+                  Expanded(child: _buildInput('Высота', op.height, (v) => op.height = v)),
                   const SizedBox(width: 8),
-                  Expanded(child: _buildInput("Шт", op.count.toDouble(), (v) => op.count = v.toInt(), isInt: true)),
+                  Expanded(child: _buildInput('Шт', op.count.toDouble(), (v) => op.count = v.toInt(), isInt: true)),
                   IconButton(icon: const Icon(Icons.remove_circle_outline, color: Colors.red), onPressed: () {
                     if (_openings.length > 1) { setState(() => _openings.removeAt(index)); _calculate(); }
                   })
@@ -447,7 +447,7 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
             );
           },
         ),
-        TextButton(onPressed: () { setState(() => _openings.add(Opening(id: DateTime.now().toString()))); _calculate(); }, child: const Text("Добавить проем"))
+        TextButton(onPressed: () { setState(() => _openings.add(Opening(id: DateTime.now().toString()))); _calculate(); }, child: const Text('Добавить проем'))
       ],
     );
   }
@@ -456,13 +456,13 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Тип финишного материала", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const Text('Тип финишного материала', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 8),
         Row(
           children: [
-            Expanded(child: _buildRadioTile("Сухая смесь", "В мешках (Vetonit)", FinishMaterialType.dryBag)),
+            Expanded(child: _buildRadioTile('Сухая смесь', 'В мешках (Vetonit)', FinishMaterialType.dryBag)),
             const SizedBox(width: 8),
-            Expanded(child: _buildRadioTile("Готовая паста", "В ведрах (Danogips)", FinishMaterialType.readyBucket)),
+            Expanded(child: _buildRadioTile('Готовая паста', 'В ведрах (Danogips)', FinishMaterialType.readyBucket)),
           ],
         )
       ],
@@ -470,7 +470,7 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
   }
 
   Widget _buildRadioTile(String title, String subtitle, FinishMaterialType type) {
-    bool selected = _finishType == type;
+    final bool selected = _finishType == type;
     return GestureDetector(
       onTap: () { setState(() => _finishType = type); _calculate(); },
       child: Container(
@@ -496,41 +496,41 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF2D3748), // Dark Gray
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 5))]
+        boxShadow: const [BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.3), blurRadius: 15, offset: Offset(0, 5))]
       ),
       child: Column(
         children: [
-          Row(
-            children: const [
+          const Row(
+            children: [
               Icon(Icons.check_circle, color: Colors.tealAccent),
               SizedBox(width: 8),
-              Text("Список покупок", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('Список покупок', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
             ],
           ),
           const Divider(color: Colors.grey),
           const SizedBox(height: 8),
 
           _buildResultRow(
-            "Старт (База)",
-            "Слой 1-2 мм",
-            "${_result?.startBags} шт",
-            "мешков 25кг"
+            'Старт (База)',
+            'Слой 1-2 мм',
+            '${_result?.startBags} шт',
+            'мешков 25кг'
           ),
           const SizedBox(height: 16),
 
           _buildResultRow(
             "Финиш (${_finishType == FinishMaterialType.dryBag ? 'Сухой' : 'Паста'})",
-            _target == FinishTarget.painting ? "Под покраску (2 слоя)" : "Под обои (1 слой)",
-            "${_result?.finishPacks} шт",
-            _result?.finishPackName ?? ""
+            _target == FinishTarget.painting ? 'Под покраску (2 слоя)' : 'Под обои (1 слой)',
+            '${_result?.finishPacks} шт',
+            _result?.finishPackName ?? ''
           ),
           const SizedBox(height: 16),
 
           _buildResultRow(
-            "Грунтовка",
-            "Межслойная",
-            "${_result?.primerCanisters} шт",
-            "канистр 10л"
+            'Грунтовка',
+            'Межслойная',
+            '${_result?.primerCanisters} шт',
+            'канистр 10л'
           ),
 
           const Divider(color: Colors.grey, height: 32),
@@ -538,8 +538,8 @@ class _PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Абразив (сетки/шкурка)", style: TextStyle(color: Colors.white70, fontSize: 14)),
-              Text("${_result?.sandingSheets} шт", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+              const Text('Абразив (сетки/шкурка)', style: TextStyle(color: Colors.white70, fontSize: 14)),
+              Text('${_result?.sandingSheets} шт', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
             ],
           )
         ],

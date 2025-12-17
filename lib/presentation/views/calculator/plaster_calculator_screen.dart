@@ -137,7 +137,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
       final area = initial['area'];
       if (area != null && area.isFinite && area > 0) {
         _mode = CalculationMode.walls;
-        final approxHeight = 2.7;
+        const approxHeight = 2.7;
         _walls
           ..forEach((w) => w.dispose())
           ..clear();

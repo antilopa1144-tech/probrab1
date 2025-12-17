@@ -374,7 +374,6 @@ class _CalculationCard extends StatelessWidget {
       case HistoryCategory.finishing:
         return Icons.format_paint;
       case HistoryCategory.all:
-      default:
         return Icons.calculate;
     }
   }
@@ -390,7 +389,6 @@ class _CalculationCard extends StatelessWidget {
       case HistoryCategory.finishing:
         return Colors.green;
       case HistoryCategory.all:
-      default:
         return Colors.grey;
     }
   }

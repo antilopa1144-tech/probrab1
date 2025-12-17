@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../dsp/dsp_screen.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/calculators/calculator_registry.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
@@ -119,11 +120,18 @@ class _CalculatorCatalogScreenState
                         onToggleFavorite: () => ref
                             .read(favoritesProvider.notifier)
                             .toggleFavorite(calc.id),
-                        onOpen: () =>
+                        onOpen: () {
+                          if (calc.id == 'dsp') {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const DspScreen(),
+                            ));
+                          } else {
                             CalculatorNavigationHelper.navigateToCalculator(
-                          context,
-                          calc,
-                        ),
+                              context,
+                              calc,
+                            );
+                          }
+                        },
                       );
                     },
                   ),

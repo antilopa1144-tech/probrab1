@@ -30,23 +30,11 @@ void main() {
         }
       }
 
-      // Выводим подробный отчет
-      print(r'\n=== Calculator Availability Report ===');
-      print('Total calculator IDs in work_catalog: ${catalogCalculatorIds.length}');
-      print('? Available in V2: ${catalogCalculatorIds.length - missing.length}');
-      print('? Missing: ${missing.length}');
-      if (missing.isNotEmpty) {
-        for (final id in missing) {
-          print('  - $id');
-        }
-      }
-      print('Calculator IDs registered in CalculatorRegistry (V2): ${CalculatorRegistry.count}');
-      print('=========================================');
-
       expect(
         missing,
         isEmpty,
-        reason: 'Некоторые калькуляторы из work_catalog отсутствуют в реестре V2',
+        reason:
+            'Некоторые калькуляторы из work_catalog отсутствуют в реестре V2: ${missing.join(', ')}',
       );
     });
   });

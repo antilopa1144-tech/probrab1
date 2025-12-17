@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../views/dsp/dsp_screen.dart';
 import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/models/calculator_definition_v2.dart';
 import '../../core/localization/app_localizations.dart';
@@ -45,7 +46,7 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
   }
 
   List<CalculatorDefinitionV2> get _recentCalculators {
-    // TODO: Интеграция с историей расчетов
+    // Placeholder: интеграция с историей расчетов появится после внедрения хранилища истории
     return CalculatorRegistry.getCatalogPopular(limit: 3);
   }
 
@@ -65,7 +66,13 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
   }
 
   void _openCalculator(CalculatorDefinitionV2 calc) {
-    CalculatorNavigationHelper.navigateToCalculator(context, calc);
+    if (calc.id == 'dsp') {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => const DspScreen(),
+      ));
+    } else {
+      CalculatorNavigationHelper.navigateToCalculator(context, calc);
+    }
   }
 
   void _openFavorites() {
