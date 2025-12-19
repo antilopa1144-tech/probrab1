@@ -167,10 +167,7 @@ class CalculatorDefinitionV2 {
 
   /// Получить видимые поля с учётом зависимостей
   List<CalculatorField> getVisibleFields(Map<String, double> inputs) {
-    return sortedFields.where((field) {
-      if (field.dependency == null) return true;
-      return field.dependency!.isSatisfied(inputs);
-    }).toList();
+    return sortedFields.where((field) => field.shouldDisplay(inputs)).toList();
   }
 
   /// Получить подсказки перед расчётом

@@ -1,5 +1,5 @@
 import '../models/calculator_definition_v2.dart';
-import 'paint_calculator_v2.dart';
+import 'paint_universal_calculator_v2.dart';
 import 'laminate_calculator_v2.dart';
 import 'screed_calculator_v2.dart';
 import 'tile_calculator_v2.dart';
@@ -68,7 +68,7 @@ class CalculatorRegistry {
     slabFoundationCalculatorV2,
 
     // Отделка стен
-    paintCalculatorV2,
+    paintUniversalCalculatorV2,
     wallpaperCalculatorV2,
     gklWallCalculatorV2,
 

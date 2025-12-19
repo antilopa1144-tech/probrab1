@@ -196,6 +196,10 @@
       "title": "Tile Adhesive",
       "description": "Material calculation: Tile Adhesive"
     },
+    "paint": {
+      "title": "Universal Paint",
+      "description": "Paint calculation for walls and ceilings"
+    },
     "partitions_blocks": {
       "title": "Aerated Concrete / Foam Block",
       "description": "Material calculation: Aerated Concrete / Foam Block"
@@ -313,14 +317,6 @@
   "error": {
     "save_calculation": "Error saving calculation to project"
   },
-  "field": {
-    "group": {
-      "advanced": "Advanced",
-      "dimensions": "Dimensions",
-      "materials": "Materials",
-      "openings": "Openings"
-    }
-  },
   "hint": {
     "dsp": {
       "before": {
@@ -334,9 +330,28 @@
         "crack_warning": "⚠ Warning: too thin layer may lead to cracks",
         "reinforcement": "Reinforcement mesh 100x100mm recommended for floors"
       }
+    },
+    "paint": {
+      "before": {
+        "prepare": "Prepare the surface: clean and level it",
+        "primer": "Always use primer before painting"
+      },
+      "after": {
+        "apply": "Apply paint evenly with a roller or spray gun",
+        "drying": "Allow each layer to dry completely (4-6 hours)"
+      }
     }
   },
   "input": {
+    "mode": "Input mode",
+    "mode.by_dimensions": "By dimensions",
+    "mode.by_area": "By area",
+    "length": "Length",
+    "width": "Width",
+    "height": "Height",
+    "area": "Area",
+    "area.hint": "Surface area in m²",
+    "perimeter": "Perimeter",
     "application_type": "Work Type",
     "application_type.floor": "Floor Screed",
     "application_type.walls": "Wall Plaster",
@@ -347,7 +362,140 @@
     "thickness": "Layer Thickness",
     "thickness.hint": "Layer thickness in millimeters",
     "bag_weight": "Bag Weight",
-    "bag_weight.hint": "Weight of one bag in kilograms (usually 25, 40 or 50 kg)"
+    "bag_weight.hint": "Weight of one bag in kilograms (usually 25, 40 or 50 kg)",
+    "bag_weight.20kg": "20 kg",
+    "bag_weight.25kg": "25 kg",
+    "windows_area": "Windows area",
+    "windows_area.hint": "Window openings area in m²",
+    "doors_area": "Doors area",
+    "doors_area.hint": "Door openings area in m²",
+    "boardLength": "Board length",
+    "boardWidth": "Board width",
+    "ceilingHeight": "Ceiling height",
+    "cementGrade": "Cement grade",
+    "concreteVolume": "Concrete volume",
+    "concreteVolume.hint": "Required concrete volume in m³",
+    "consumption": "Consumption",
+    "corners": "Corners",
+    "density": "Density",
+    "doorHeight": "Door height",
+    "doors": "Doors",
+    "doorsArea": "Doors area",
+    "doorWidth": "Door width",
+    "double_sided": "Double-sided",
+    "dropHeight": "Drop height",
+    "endLength": "End length",
+    "fixtures": "Fixtures",
+    "floorArea": "Floor area",
+    "floorArea.hint": "Floor area in m²",
+    "floorHeight": "Floor height",
+    "floorThickness": "Floor thickness",
+    "floorType": "Floor type",
+    "gates": "Gates",
+    "gkl_layers": "GKL layers",
+    "glazing": "Glazing",
+    "gutterLength": "Gutter length",
+    "insulation": "Insulation",
+    "insulationThickness": "Insulation thickness",
+    "insulationType": "Insulation type",
+    "jointWidth": "Joint width",
+    "jointWidth.hint": "Width of joints between tiles in mm",
+    "layers": "Layers",
+    "layerThickness": "Layer thickness",
+    "manualMix": "Manual mix",
+    "manualMix.hint": "Manual or concrete mixer batching",
+    "materialType": "Material type",
+    "overlap": "Overlap",
+    "packArea": "Pack area",
+    "panelHeight": "Panel height",
+    "panelLength": "Panel length",
+    "panelWidth": "Panel width",
+    "pipeLength": "Pipe length",
+    "plankLength": "Plank length",
+    "plankWidth": "Plank width",
+    "plaster_thickness": "Plaster thickness",
+    "plaster_type": "Plaster type",
+    "plaster_type.cement": "Cement",
+    "plaster_type.gypsum": "Gypsum",
+    "plinthPieceLength": "Plinth length",
+    "points": "Points",
+    "power": "Power",
+    "profile_step": "Profile step",
+    "profile_step.40cm": "40 cm",
+    "profile_step.60cm": "60 cm",
+    "putty_type": "Putty type",
+    "putty_type.finish": "Finish",
+    "putty_type.start": "Start",
+    "railing": "Railing",
+    "railLength": "Rail length",
+    "railWidth": "Rail width",
+    "rapport": "Rapport",
+    "reserve": "Reserve",
+    "ridgeLength": "Ridge length",
+    "roll_width": "Roll width",
+    "rollLength": "Roll length",
+    "rollWidth": "Roll width",
+    "roof": "Roof",
+    "roofArea": "Roof area",
+    "roofLength": "Roof length",
+    "roofType": "Roof type",
+    "room_width": "Room width",
+    "rooms": "Rooms",
+    "screwsPerM2": "Screws per m²",
+    "sheetLength": "Sheet length",
+    "sheetWidth": "Sheet width",
+    "slope": "Slope",
+    "slopeWidth": "Slope width",
+    "sockets": "Sockets",
+    "soffitLength": "Soffit length",
+    "stepCount": "Step count",
+    "stepHeight": "Step height",
+    "stepWidth": "Step width",
+    "switches": "Switches",
+    "thermostats": "Thermostats",
+    "tileHeight": "Tile height",
+    "tileHeight.hint": "Height of one tile in cm",
+    "tileSize": "Tile size",
+    "tileWidth": "Tile width",
+    "tileWidth.hint": "Width of one tile in cm",
+    "type": "Type",
+    "type.cable": "Cable",
+    "type.mat": "Mat",
+    "underlayThickness": "Underlay thickness",
+    "valleyLength": "Valley length",
+    "wall_height": "Wall height",
+    "wall_length": "Wall length",
+    "wallArea": "Wall area",
+    "wallArea.hint": "Wall area in m²",
+    "wallFinish": "Wall finish",
+    "wallHeight": "Wall height",
+    "wallThickness": "Wall thickness",
+    "wickets": "Wickets",
+    "windowHeight": "Window height",
+    "windows": "Windows",
+    "windowsArea": "Windows area",
+    "windowWidth": "Window width",
+    "with_glue": "With glue",
+    "with_plinth": "With plinth",
+    "paint": {
+      "type": "What to paint",
+      "type.walls": "Walls only",
+      "type.ceiling": "Ceiling only",
+      "type.both": "Walls and ceiling",
+      "wall_area": "Wall area",
+      "wall_area.hint": "Wall area to paint in m²",
+      "ceiling_area": "Ceiling area",
+      "ceiling_area.hint": "Ceiling area to paint in m²",
+      "doors_windows": "Doors and windows",
+      "doors_windows.hint": "Area of openings that don't need painting",
+      "layers": "Number of layers",
+      "layers.hint": "Usually 2 layers for good result"
+    },
+    "room_length": "Room length",
+    "room_width": "Room width",
+    "room_height": "Room height",
+    "consumption.hint": "Paint consumption per 1 m² in one layer",
+    "layers.hint": "Usually 2 layers of paint are applied"
   },
   "onboarding": {
     "next": "Next",
@@ -372,6 +520,8 @@
     "updated": "Updated"
   },
   "result": {
+    "details": "Details",
+    "unit_pcs": "pcs",
     "area": "Area",
     "bags": "Bags",
     "beacons": "Beacons",
@@ -408,6 +558,13 @@
     "packages": "Packages",
     "packsNeeded": "Laminate packs",
     "paintNeeded": "Paint",
+    "paintLiters": "Paint",
+    "primerLiters": "Primer",
+    "tapeMeters": "Masking tape",
+    "totalArea": "Total area",
+    "wallArea": "Wall area",
+    "ceilingArea": "Ceiling area",
+    "rollersNeeded": "Rollers",
     "pieces": "Pieces",
     "planksNeeded": "Parquet planks",
     "plinthLength": "Plinth length",
@@ -472,6 +629,79 @@
   "snackbar": {
     "calculate_first": "Please calculate first",
     "calculation_saved": "Calculation saved to project"
+  },
+  "plaster_pro": {
+    "brand": "Plaster Calculator",
+    "suite": "Construction Suite v2.5",
+    "material": {
+      "gypsum": "Gypsum",
+      "cement": "Cement"
+    },
+    "section": {
+      "area": "Area calculation"
+    },
+    "mode": {
+      "manual": "Manual",
+      "room": "Room"
+    },
+    "label": {
+      "wall_area": "Wall area",
+      "width": "Width",
+      "length": "Length",
+      "height": "Height",
+      "openings_title": "Subtract openings (windows/doors)",
+      "openings_hint": "Openings area, m²"
+    },
+    "thickness": {
+      "title": "Plaster thickness"
+    },
+    "options": {
+      "beacons": "Beacons",
+      "mesh": "Mesh",
+      "primer": "Primer"
+    },
+    "summary": {
+      "bags": "Total bags",
+      "area": "Final area",
+      "weight": "Mix weight",
+      "unit_pcs": "pcs."
+    },
+    "spec": {
+      "title": "Specification",
+      "beacon_sub": "Install step 1.2 m",
+      "mesh_title": "Reinforcement mesh",
+      "mesh_sub": "10% overlap allowance",
+      "primer_sub": "0.1 L/m²"
+    },
+    "tip": {
+      "title": "UI tip",
+      "body": "Use AnimatedCrossFade between modes to keep switching smooth. Add an \"Add room\" button if you need to calculate the whole apartment at once."
+    }
+  },
+  "unit": {
+    "none": "",
+    "squareMeters": "m²",
+    "cubicMeters": "m³",
+    "meters": "m",
+    "centimeters": "cm",
+    "millimeters": "mm",
+    "kilograms": "kg",
+    "grams": "g",
+    "liters": "L",
+    "pieces": "pcs",
+    "percent": "%"
+  },
+  "group": {
+    "default": "Main parameters",
+    "geometry": "Geometry",
+    "dimensions": "Dimensions",
+    "material": "Material",
+    "materials": "Materials",
+    "options": "Options",
+    "openings": "Openings",
+    "advanced": "Advanced",
+    "parameters": "Parameters",
+    "tile": "Tile"
   },
   "subcategory": {
     "gkl": "GKL",

@@ -58,6 +58,9 @@ class CalculatorField {
   /// Зависимость от других полей (показывать только если условие выполнено)
   final FieldDependency? dependency;
 
+  /// Список зависимостей (показывать только если ВСЕ условия выполнены)
+  final List<FieldDependency>? dependencies;
+
   /// Опции для селекта/радио (только для inputType == select или radio)
   final List<FieldOption>? options;
 
@@ -76,8 +79,25 @@ class CalculatorField {
     this.group,
     this.order = 0,
     this.dependency,
+    this.dependencies,
     this.options,
   });
+
+  /// Проверить, должно ли поле отображаться на основе зависимостей
+  bool shouldDisplay(Map<String, double> inputs) {
+    // Если есть dependencies (множественные), проверяем их все (AND)
+    if (dependencies != null && dependencies!.isNotEmpty) {
+      return dependencies!.every((dep) => dep.isSatisfied(inputs));
+    }
+
+    // Иначе проверяем одиночную dependency
+    if (dependency != null) {
+      return dependency!.isSatisfied(inputs);
+    }
+
+    // Нет зависимостей - всегда показываем
+    return true;
+  }
 
   /// Создать копию с изменениями
   CalculatorField copyWith({
@@ -95,6 +115,7 @@ class CalculatorField {
     String? group,
     int? order,
     FieldDependency? dependency,
+    List<FieldDependency>? dependencies,
     List<FieldOption>? options,
   }) {
     return CalculatorField(
@@ -112,6 +133,7 @@ class CalculatorField {
       group: group ?? this.group,
       order: order ?? this.order,
       dependency: dependency ?? this.dependency,
+      dependencies: dependencies ?? this.dependencies,
       options: options ?? this.options,
     );
   }
