@@ -3,10 +3,13 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import '../../domain/calculators/calculator_id_migration.dart';
 import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/models/calculator_definition_v2.dart';
-import '../views/calculator/universal_calculator_v2_screen.dart';
+import '../views/calculator/pro_calculator_screen.dart';
 import '../views/calculator/plaster_calculator_screen.dart';
 import '../views/calculator/putty_calculator_screen.dart';
 import '../views/primer/primer_screen.dart';
+import '../views/paint/paint_screen.dart';
+import '../views/wood/wood_screen.dart';
+import '../views/dsp/dsp_screen.dart';
 import '../../core/animations/page_transitions.dart';
 
 /// Помощник для навигации к калькуляторам.
@@ -19,6 +22,7 @@ class CalculatorNavigationHelper {
     CalculatorDefinitionV2 definition, {
     Map<String, double>? initialInputs,
   }) {
+    // Специальные экраны с iOS-дизайном
     if (definition.id == 'mixes_plaster') {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
@@ -49,9 +53,38 @@ class CalculatorNavigationHelper {
       return;
     }
 
+    if (definition.id == 'dsp') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const DspScreen(),
+        ),
+      );
+      return;
+    }
+
+    // Новые калькуляторы с iOS-дизайном из HTML
+    if (definition.id == 'paint_universal' || definition.id == 'paint') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const PaintScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'wood') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const WoodScreen(),
+        ),
+      );
+      return;
+    }
+
+    // Используем новый PRO UI для всех остальных калькуляторов
     Navigator.of(context).push(
       ModernPageTransitions.scale(
-        UniversalCalculatorV2Screen(
+        ProCalculatorScreen(
           definition: definition,
           initialInputs: initialInputs,
         ),
