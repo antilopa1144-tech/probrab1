@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../dsp/dsp_screen.dart';
+import '../paint/paint_screen.dart';
+import '../wood/wood_screen.dart';
+import '../primer/primer_screen.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/calculators/calculator_registry.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
@@ -121,9 +124,22 @@ class _CalculatorCatalogScreenState
                             .read(favoritesProvider.notifier)
                             .toggleFavorite(calc.id),
                         onOpen: () {
+                          // Специальные экраны с новым дизайном
                           if (calc.id == 'dsp') {
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => const DspScreen(),
+                            ));
+                          } else if (calc.id == 'paint' || calc.id == 'paint_universal') {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const PaintScreen(),
+                            ));
+                          } else if (calc.id == 'wood') {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const WoodScreen(),
+                            ));
+                          } else if (calc.id == 'primer') {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const PrimerScreen(),
                             ));
                           } else {
                             CalculatorNavigationHelper.navigateToCalculator(
