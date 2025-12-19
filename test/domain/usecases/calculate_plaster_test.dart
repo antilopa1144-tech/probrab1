@@ -34,10 +34,10 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Расход цементной: 15.5 кг/м² на 10 мм толщины
-      // 50 * 15.5 * (20 / 10) * 1.1 = 1705 кг
-      expect(result.values['plasterKg'], closeTo(1705, 50));
-      expect(result.values['plasterBags'], equals(69)); // 1705 / 25 = 68.2 -> ceil = 69
+      // Расход цементной: 17.0 кг/м² на 10 мм толщины
+      // 50 * 17.0 * (20 / 10) * 1.1 = 1870 кг
+      expect(result.values['plasterKg'], closeTo(1870, 50));
+      expect(result.values['plasterBags'], equals(75)); // 1870 / 25 = 74.8 -> ceil = 75
     });
 
     test('throws exception for zero area', () {
@@ -81,10 +81,10 @@ void main() {
       // Маяки: ~1 шт на 2.5 м² площади
       // 100 / 2.5 = 40
       expect(result.values['beacons'], equals(40));
-      expect(result.values['beaconSize'], equals(6)); // 6 мм для слоя <= 10 мм
+      expect(result.values['beaconSize'], equals(10)); // 10 мм для слоя >= 10 мм
     });
 
-    test('calculates betonkontakt liters', () {
+    test('calculates primer liters', () {
       final calculator = CalculatePlaster();
       final inputs = {
         'area': 100.0,
@@ -94,9 +94,9 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Бетонконтакт: 0.3 л/м² * 1.1 = 0.33 л/м²
-      // 100 * 0.33 = 33 л -> ceil
-      expect(result.values['betonkontaktLiters'], equals(33));
+      // Грунтовка: 0.1 л/м² * 1.1 = 0.11 л/м²
+      // 100 * 0.11 = 11 л -> ceil
+      expect(result.values['primerLiters'], equals(11));
     });
 
     test('calculates rule size', () {
@@ -117,11 +117,14 @@ void main() {
       final calculator = CalculatePlaster();
       final emptyPriceList = <PriceItem>[];
 
-      // Толщина <= 10 мм -> маяки 6 мм
-      var result = calculator({'area': 50.0, 'thickness': 10.0}, emptyPriceList);
+      // Толщина < 10 мм -> маяки 6 мм
+      var result = calculator({'area': 50.0, 'thickness': 9.0}, emptyPriceList);
       expect(result.values['beaconSize'], equals(6));
 
-      // Толщина > 10 мм -> маяки 10 мм
+      // Толщина >= 10 мм -> маяки 10 мм
+      result = calculator({'area': 50.0, 'thickness': 10.0}, emptyPriceList);
+      expect(result.values['beaconSize'], equals(10));
+
       result = calculator({'area': 50.0, 'thickness': 15.0}, emptyPriceList);
       expect(result.values['beaconSize'], equals(10));
     });

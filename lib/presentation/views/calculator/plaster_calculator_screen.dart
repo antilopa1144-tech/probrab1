@@ -1,87 +1,29 @@
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../core/validation/input_sanitizer.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 
-enum CalculationMode { room, walls }
-enum WallMaterial { absorbent, concrete }
-enum MixType { gypsum, cement }
+enum PlasterMaterial { gypsum, cement }
+enum PlasterInputMode { manual, room }
 
-class _WallFields {
-  final String id;
-  final TextEditingController length;
-  final TextEditingController height;
-
-  _WallFields({
-    required this.id,
-    double initialLength = 3.0,
-    double initialHeight = 2.7,
-  })  : length = TextEditingController(
-          text: InputSanitizer.formatNumber(initialLength, decimals: 2),
-        ),
-        height = TextEditingController(
-          text: InputSanitizer.formatNumber(initialHeight, decimals: 2),
-        );
-
-  void dispose() {
-    length.dispose();
-    height.dispose();
-  }
-}
-
-class _OpeningFields {
-  final String id;
-  final TextEditingController width;
-  final TextEditingController height;
-  final TextEditingController count;
-
-  _OpeningFields({
-    required this.id,
-    double initialWidth = 0.9,
-    double initialHeight = 2.1,
-    int initialCount = 1,
-  })  : width = TextEditingController(
-          text: InputSanitizer.formatNumber(initialWidth, decimals: 2),
-        ),
-        height = TextEditingController(
-          text: InputSanitizer.formatNumber(initialHeight, decimals: 2),
-        ),
-        count = TextEditingController(text: initialCount.toString());
-
-  void dispose() {
-    width.dispose();
-    height.dispose();
-    count.dispose();
-  }
-}
-
-class CalculationResult {
-  final double netArea;
+class _PlasterResult {
+  final double area;
   final double totalWeight;
-  final int bagsCount;
-  final int bagsStock;
-  final double primerVolume;
-  final int primerPacks;
-  final String primerName;
-  final String primerUnit;
-  final int primerPackSize;
-  final int totalBeacons;
-  final double perimeter;
+  final int bags;
+  final int beacons;
+  final int meshArea;
+  final double primerLiters;
+  final int beaconSize;
 
-  const CalculationResult({
-    required this.netArea,
+  const _PlasterResult({
+    required this.area,
     required this.totalWeight,
-    required this.bagsCount,
-    required this.bagsStock,
-    required this.primerVolume,
-    required this.primerPacks,
-    required this.primerName,
-    required this.primerUnit,
-    required this.primerPackSize,
-    required this.totalBeacons,
-    required this.perimeter,
+    required this.bags,
+    required this.beacons,
+    required this.meshArea,
+    required this.primerLiters,
+    required this.beaconSize,
   });
 }
 
@@ -96,869 +38,314 @@ class PlasterCalculatorScreen extends StatefulWidget {
   });
 
   @override
-  State<PlasterCalculatorScreen> createState() =>
-      _PlasterCalculatorScreenState();
+  State<PlasterCalculatorScreen> createState() => _PlasterCalculatorScreenState();
 }
 
 class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
-  CalculationMode _mode = CalculationMode.room;
-  WallMaterial _wallMaterial = WallMaterial.absorbent;
-  MixType _mixType = MixType.gypsum;
+  static const Map<PlasterMaterial, double> _consumptionRates = {
+    PlasterMaterial.gypsum: 8.5,
+    PlasterMaterial.cement: 17.0,
+  };
 
-  final TextEditingController _roomLength = TextEditingController(text: '4');
-  final TextEditingController _roomWidth = TextEditingController(text: '3');
+  final TextEditingController _roomWidth = TextEditingController(text: '4');
+  final TextEditingController _roomLength = TextEditingController(text: '5');
   final TextEditingController _roomHeight = TextEditingController(text: '2.7');
+  final TextEditingController _openingsArea = TextEditingController(text: '4');
 
-  final List<_WallFields> _walls = [];
-  final List<_OpeningFields> _openings = [];
-
-  double _layerThickness = 20.0;
+  double _manualArea = 30;
+  double _thickness = 15;
   int _bagWeight = 30;
-
-  CalculationResult? _result;
+  bool _useBeacons = true;
+  bool _useMesh = false;
+  bool _usePrimer = true;
+  PlasterMaterial _materialType = PlasterMaterial.gypsum;
+  PlasterInputMode _inputMode = PlasterInputMode.manual;
+  late _PlasterResult _result;
+  late AppLocalizations _loc;
 
   @override
   void initState() {
     super.initState();
+    _applyInitialInputs();
+    _result = _calculate();
+  }
 
-    _walls.add(_WallFields(id: _newId(), initialLength: 5.0, initialHeight: 2.7));
-    _openings.add(_OpeningFields(id: _newId()));
-
+  void _applyInitialInputs() {
     final initial = widget.initialInputs;
-    if (initial != null) {
-      final thickness = initial['thickness'];
-      if (thickness != null && thickness.isFinite) {
-        _layerThickness = thickness.clamp(6.0, 50.0);
-      }
-      final type = initial['type'];
-      if (type != null) {
-        _mixType = type.round() == 2 ? MixType.cement : MixType.gypsum;
-      }
-      final area = initial['area'];
-      if (area != null && area.isFinite && area > 0) {
-        _mode = CalculationMode.walls;
-        const approxHeight = 2.7;
-        _walls
-          ..forEach((w) => w.dispose())
-          ..clear();
-        _walls.add(
-          _WallFields(
-            id: _newId(),
-            initialLength: math.max(0.1, area / approxHeight),
-            initialHeight: approxHeight,
-          ),
-        );
-      }
+    if (initial == null) return;
+    if (initial['thickness'] != null) _thickness = initial['thickness']!.clamp(5.0, 100.0);
+    if (initial['type']?.round() == 2) {
+      _materialType = PlasterMaterial.cement;
+      _bagWeight = 25;
     }
-
-    _result = _compute();
+    if (initial['area'] != null && initial['area']! > 0) {
+      _manualArea = initial['area']!.clamp(1.0, 1000.0);
+      _inputMode = PlasterInputMode.manual;
+    }
   }
 
-  @override
-  void dispose() {
-    _roomLength.dispose();
-    _roomWidth.dispose();
-    _roomHeight.dispose();
-    for (final w in _walls) {
-      w.dispose();
-    }
-    for (final o in _openings) {
-      o.dispose();
-    }
-    super.dispose();
-  }
-
-  String _newId() => DateTime.now().microsecondsSinceEpoch.toString();
-
-  double _readDouble(TextEditingController controller) {
-    final parsed = InputSanitizer.parseDouble(controller.text);
-    return parsed ?? 0.0;
-  }
-
-  int _readInt(TextEditingController controller) {
-    final parsed = InputSanitizer.parseDouble(controller.text);
-    if (parsed == null) return 0;
-    return parsed.toInt();
-  }
-
-  void _recalculate() {
-    setState(() => _result = _compute());
-  }
-
-  CalculationResult _compute() {
-    double totalWallArea = 0;
-    double perimeter = 0;
-    int totalBeacons = 0;
-
-    if (_mode == CalculationMode.room) {
-      final roomLength = math.max(0.0, _readDouble(_roomLength));
-      final roomWidth = math.max(0.0, _readDouble(_roomWidth));
-      final roomHeight = math.max(0.0, _readDouble(_roomHeight));
-
-      perimeter = (roomLength + roomWidth) * 2;
-      totalWallArea = perimeter * roomHeight;
-      totalBeacons = (perimeter / 1.5).ceil();
-    } else {
-      for (final wall in _walls) {
-        final length = math.max(0.0, _readDouble(wall.length));
-        final height = math.max(0.0, _readDouble(wall.height));
-        totalWallArea += length * height;
-        perimeter += length;
-
-        if (length > 0.5) {
-          final count = ((length - 0.2) / 1.5).ceil();
-          totalBeacons += count < 2 ? 2 : count;
-        }
-      }
+  _PlasterResult _calculate() {
+    double area = _manualArea;
+    if (_inputMode == PlasterInputMode.room) {
+      final w = InputSanitizer.parseDouble(_roomWidth.text) ?? 0;
+      final l = InputSanitizer.parseDouble(_roomLength.text) ?? 0;
+      final h = InputSanitizer.parseDouble(_roomHeight.text) ?? 0;
+      final o = InputSanitizer.parseDouble(_openingsArea.text) ?? 0;
+      area = math.max(0, (2 * (w + l) * h) - o);
     }
 
-    double totalOpeningArea = 0;
-    for (final op in _openings) {
-      final width = math.max(0.0, _readDouble(op.width));
-      final height = math.max(0.0, _readDouble(op.height));
-      final count = math.max(0, _readInt(op.count));
-      totalOpeningArea += width * height * count;
-    }
-
-    final netArea = math.max(0.0, totalWallArea - totalOpeningArea);
-
-    final consumptionPer10mm = _mixType == MixType.gypsum ? 8.5 : 14.0;
-    final thickness = _layerThickness;
-    final totalWeight = netArea * (thickness / 10.0) * consumptionPer10mm;
-
-    final bagWeight = math.max(1, _bagWeight);
-    final bagsCount = (totalWeight / bagWeight).ceil();
-    final bagsStock = (bagsCount * 1.05).ceil();
-
-    final primerConsumption = _wallMaterial == WallMaterial.absorbent ? 0.2 : 0.35;
-    final primerTotalAmount = netArea * primerConsumption;
-    final primerPackSize = _wallMaterial == WallMaterial.absorbent ? 10 : 20;
-    final primerPacks = (primerTotalAmount / primerPackSize).ceil();
-    final primerName = _wallMaterial == WallMaterial.absorbent
-        ? 'Грунт глуб. прон.'
-        : 'Бетоноконтакт';
-    final primerUnit = _wallMaterial == WallMaterial.absorbent ? 'л' : 'кг';
-
-    return CalculationResult(
-      netArea: netArea,
+    final rate = _consumptionRates[_materialType] ?? 8.5;
+    final totalWeight = area * (_thickness / 10.0) * rate * 1.1;
+    return _PlasterResult(
+      area: area,
       totalWeight: totalWeight,
-      bagsCount: bagsCount,
-      bagsStock: bagsStock,
-      primerVolume: primerTotalAmount,
-      primerPacks: primerPacks,
-      primerName: primerName,
-      primerUnit: primerUnit,
-      primerPackSize: primerPackSize,
-      totalBeacons: totalBeacons,
-      perimeter: perimeter,
+      bags: (totalWeight / _bagWeight).ceil(),
+      beacons: _useBeacons ? (area / 2.5).ceil() : 0,
+      meshArea: _useMesh ? (area * 1.1).ceil() : 0,
+      primerLiters: double.parse((_usePrimer ? area * 0.1 * 1.1 : 0).toStringAsFixed(1)),
+      beaconSize: _thickness < 10 ? 6 : 10,
     );
   }
+
+  void _update() => setState(() => _result = _calculate());
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    final result = _result;
-
+    _loc = AppLocalizations.of(context);
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color(0xFF0A0F1A),
       appBar: AppBar(
-        title: Text(loc.translate(widget.definition.titleKey)),
-        backgroundColor: Colors.blue[700],
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        title: Text(_loc.translate('plaster_pro.brand'), style: const TextStyle(fontWeight: FontWeight.w900)),
+        centerTitle: true,
       ),
-      body: Column(
-        children: [
-          _buildSummaryHeader(result),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 100),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildMaterialSelector(),
-                    const SizedBox(height: 16),
-                    _buildModeSelector(),
-                    const SizedBox(height: 16),
-                    _buildGeometrySection(),
-                    const SizedBox(height: 16),
-                    _buildOpeningsSection(),
-                    const SizedBox(height: 16),
-                    _buildMixSettingsSection(),
-                    const SizedBox(height: 24),
-                    _buildResultCard(result),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSummaryHeader(CalculationResult? result) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-      decoration: BoxDecoration(
-        color: Colors.blue[700],
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
-        ),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
           children: [
-            _buildHeaderItem(
-              'Площадь',
-              '${(result?.netArea ?? 0).toStringAsFixed(1)} м²',
-            ),
-            Container(width: 1, height: 30, color: Colors.grey[200]),
-            _buildHeaderItem('Слой', '${_layerThickness.toInt()} мм'),
-            Container(width: 1, height: 30, color: Colors.grey[200]),
-            _buildHeaderItem(
-              'Вес',
-              '${(result?.totalWeight ?? 0).toInt()} кг',
-            ),
+            _buildMaterialSelector(),
+            const SizedBox(height: 16),
+            _buildAreaCard(),
+            const SizedBox(height: 16),
+            _buildThicknessCard(),
+            const SizedBox(height: 16),
+            _buildSummaryCard(),
+            const SizedBox(height: 16),
+            _buildSpecCard(),
+            const SizedBox(height: 20),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildHeaderItem(String label, String value) {
-    return Column(
-      children: [
-        Text(
-          label.toUpperCase(),
-          style: TextStyle(
-            fontSize: 10,
-            color: Colors.grey[400],
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 18,
-            color: Colors.blue[700],
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
     );
   }
 
   Widget _buildMaterialSelector() {
     return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.orange[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange[100]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(16)),
+      child: Row(
         children: [
-          const Row(
+          _materialBtn(PlasterMaterial.gypsum, _loc.translate('plaster_pro.material.gypsum')),
+          _materialBtn(PlasterMaterial.cement, _loc.translate('plaster_pro.material.cement')),
+        ],
+      ),
+    );
+  }
+
+  Widget _materialBtn(PlasterMaterial type, String label) {
+    final bool active = _materialType == type;
+    return Expanded(
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _materialType = type;
+            _bagWeight = type == PlasterMaterial.gypsum ? 30 : 25;
+            _result = _calculate();
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: active ? Colors.blueAccent : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(label, textAlign: TextAlign.center, style: TextStyle(color: active ? Colors.white : Colors.grey, fontWeight: FontWeight.bold)),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAreaCard() {
+    return _card(
+      child: Column(
+        children: [
+          Row(
             children: [
-              Icon(Icons.grid_view, size: 18, color: Colors.brown),
-              SizedBox(width: 8),
-              Text(
-                'Материал основания',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.brown,
-                ),
-              ),
+              _modeBtn(PlasterInputMode.manual, _loc.translate('plaster_pro.mode.manual')),
+              const SizedBox(width: 8),
+              _modeBtn(PlasterInputMode.room, _loc.translate('plaster_pro.mode.room')),
             ],
+          ),
+          const SizedBox(height: 20),
+          _inputMode == PlasterInputMode.manual ? _buildManualInputs() : _buildRoomInputs(),
+        ],
+      ),
+    );
+  }
+
+  Widget _modeBtn(PlasterInputMode mode, String label) {
+    final bool active = _inputMode == mode;
+    return Expanded(
+      child: OutlinedButton(
+        onPressed: () => setState(() { _inputMode = mode; _update(); }),
+        style: OutlinedButton.styleFrom(
+          backgroundColor: active ? Colors.blueAccent.withValues(alpha: 0.1) : Colors.transparent,
+          side: BorderSide(color: active ? Colors.blueAccent : Colors.white12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+        child: Text(label, style: TextStyle(color: active ? Colors.blueAccent : Colors.grey, fontSize: 12)),
+      ),
+    );
+  }
+
+  Widget _buildManualInputs() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(_loc.translate('plaster_pro.label.wall_area'), style: const TextStyle(color: Colors.white70)),
+            Text('${_manualArea.toStringAsFixed(0)} м²', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        Slider(
+          value: _manualArea,
+          min: 1,
+          max: 500,
+          onChanged: (v) { setState(() { _manualArea = v; _update(); }); },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRoomInputs() {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: [
+        _miniField(_loc.translate('plaster_pro.label.width'), _roomWidth),
+        _miniField(_loc.translate('plaster_pro.label.length'), _roomLength),
+        _miniField(_loc.translate('plaster_pro.label.height'), _roomHeight),
+        _miniField(_loc.translate('plaster_pro.label.openings_hint'), _openingsArea, isFull: true),
+      ],
+    );
+  }
+
+  Widget _miniField(String label, TextEditingController ctr, {bool isFull = false}) {
+    return SizedBox(
+      width: isFull ? double.infinity : 90,
+      child: TextField(
+        controller: ctr,
+        keyboardType: TextInputType.number,
+        onChanged: (_) => _update(),
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+          enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white10)),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThicknessCard() {
+    return _card(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(_loc.translate('plaster_pro.thickness.title'), style: const TextStyle(color: Colors.white70)),
+              Text('${_thickness.toStringAsFixed(0)} мм', style: const TextStyle(color: Colors.blueAccent, fontSize: 20, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          Slider(
+            value: _thickness,
+            min: 5,
+            max: 100,
+            onChanged: (v) { setState(() { _thickness = v; _update(); }); },
           ),
           const SizedBox(height: 8),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Expanded(
-                child: _buildSelectButton(
-                  '🧱 Блок/Кирпич',
-                  _wallMaterial == WallMaterial.absorbent,
-                  () => setState(() {
-                    _wallMaterial = WallMaterial.absorbent;
-                    _result = _compute();
-                  }),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildSelectButton(
-                  '🏗 Бетон',
-                  _wallMaterial == WallMaterial.concrete,
-                  () => setState(() {
-                    _wallMaterial = WallMaterial.concrete;
-                    _result = _compute();
-                  }),
-                ),
-              ),
+              _optIcon(Icons.architecture, _useBeacons, () => setState(() { _useBeacons = !_useBeacons; _update(); })),
+              _optIcon(Icons.grid_on, _useMesh, () => setState(() { _useMesh = !_useMesh; _update(); })),
+              _optIcon(Icons.water_drop, _usePrimer, () => setState(() { _usePrimer = !_usePrimer; _update(); })),
             ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            _wallMaterial == WallMaterial.absorbent
-                ? 'Для впитывающих стен: грунтовка глуб. проникновения'
-                : 'Для гладкого бетона: бетоноконтакт',
-            style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-          ),
+          )
         ],
       ),
     );
   }
 
-  Widget _buildModeSelector() {
+  Widget _optIcon(IconData icon, bool active, VoidCallback tap) {
+    return IconButton(
+      icon: Icon(icon, color: active ? Colors.blueAccent : Colors.white24),
+      onPressed: tap,
+    );
+  }
+
+  Widget _buildSummaryCard() {
     return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.all(4),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildSelectButton(
-              'По комнате',
-              _mode == CalculationMode.room,
-              () => setState(() {
-                _mode = CalculationMode.room;
-                _result = _compute();
-              }),
-              isTab: true,
-            ),
-          ),
-          Expanded(
-            child: _buildSelectButton(
-              'По стенам',
-              _mode == CalculationMode.walls,
-              () => setState(() {
-                _mode = CalculationMode.walls;
-                _result = _compute();
-              }),
-              isTab: true,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSelectButton(
-    String text,
-    bool isSelected,
-    VoidCallback onTap, {
-    bool isTab = false,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-          border: (!isTab && isSelected)
-              ? Border.all(color: Colors.orange)
-              : null,
-          boxShadow: (isSelected && isTab)
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 4,
-                  ),
-                ]
-              : null,
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          text,
-          style: TextStyle(
-            color: isSelected ? Colors.blue[800] : Colors.grey[600],
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 13,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGeometrySection() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Геометрия',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            if (_mode == CalculationMode.walls)
-              TextButton.icon(
-                onPressed: () => setState(() {
-                  _walls.add(_WallFields(id: _newId()));
-                  _result = _compute();
-                }),
-                icon: const Icon(Icons.add, size: 16),
-                label: const Text('Добавить'),
-                style: TextButton.styleFrom(backgroundColor: Colors.blue[50]),
-              ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        if (_mode == CalculationMode.room) ...[
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.blue[50],
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildInput(
-                        'Длина пола (м)',
-                        _roomLength,
-                        onChanged: _recalculate,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildInput(
-                        'Ширина пола (м)',
-                        _roomWidth,
-                        onChanged: _recalculate,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                _buildInput(
-                  'Высота потолка (м)',
-                  _roomHeight,
-                  onChanged: _recalculate,
-                ),
-                const Divider(),
-                Text(
-                  'Периметр стен: ${((_readDouble(_roomLength) + _readDouble(_roomWidth)) * 2).toStringAsFixed(1)} м',
-                  style: TextStyle(
-                    color: Colors.blue[800],
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ] else ...[
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _walls.length,
-            itemBuilder: (context, index) {
-              final wall = _walls[index];
-              return Card(
-                elevation: 0,
-                color: Colors.grey[50],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(color: Colors.grey[200]!),
-                ),
-                margin: const EdgeInsets.only(bottom: 8),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 12,
-                        backgroundColor: Colors.white,
-                        child: Text(
-                          '${index + 1}',
-                          style:
-                              const TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildInput(
-                          'Длина',
-                          wall.length,
-                          onChanged: _recalculate,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _buildInput(
-                          'Высота',
-                          wall.height,
-                          onChanged: _recalculate,
-                        ),
-                      ),
-                      if (_walls.length > 1)
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline,
-                              color: Colors.red),
-                          onPressed: () => setState(() {
-                            final removed = _walls.removeAt(index);
-                            removed.dispose();
-                            _result = _compute();
-                          }),
-                        ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildOpeningsSection() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Исключения (Окна/Двери)',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            TextButton.icon(
-              onPressed: () => setState(() {
-                _openings.add(_OpeningFields(id: _newId()));
-                _result = _compute();
-              }),
-              icon: const Icon(Icons.add, size: 16),
-              label: const Text('Добавить'),
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.orange[50],
-                foregroundColor: Colors.deepOrange,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: _openings.length,
-          itemBuilder: (context, index) {
-            final op = _openings[index];
-            return Card(
-              elevation: 0,
-              color: Colors.grey[50],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: Colors.grey[200]!),
-              ),
-              margin: const EdgeInsets.only(bottom: 8),
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildInput(
-                        'Ширина',
-                        op.width,
-                        onChanged: _recalculate,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildInput(
-                        'Высота',
-                        op.height,
-                        onChanged: _recalculate,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildInput(
-                        'Кол-во',
-                        op.count,
-                        onChanged: _recalculate,
-                        isInt: true,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.delete_outline,
-                        color: Colors.red,
-                        size: 20,
-                      ),
-                      onPressed: () => setState(() {
-                        final removed = _openings.removeAt(index);
-                        removed.dispose();
-                        _result = _compute();
-                      }),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMixSettingsSection() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Материал',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildSelectButton(
-                    'Гипсовая',
-                    _mixType == MixType.gypsum,
-                    () => setState(() {
-                      _mixType = MixType.gypsum;
-                      _result = _compute();
-                    }),
-                    isTab: true,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _buildSelectButton(
-                    'Цементная',
-                    _mixType == MixType.cement,
-                    () => setState(() {
-                      _mixType = MixType.cement;
-                      _result = _compute();
-                    }),
-                    isTab: true,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Средний слой',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  '${_layerThickness.toInt()} мм',
-                  style: TextStyle(
-                    color: Colors.blue[700],
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Slider(
-              value: _layerThickness,
-              min: 6,
-              max: 50,
-              divisions: 44,
-              activeColor: Colors.blue[600],
-              onChanged: (v) => setState(() {
-                _layerThickness = v;
-                _result = _compute();
-              }),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Вес мешка',
-              style: TextStyle(
-                color: Colors.grey,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [25, 30, 50]
-                  .map(
-                    (w) => Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: ChoiceChip(
-                        label: Text('$w кг'),
-                        selected: _bagWeight == w,
-                        onSelected: (selected) {
-                          if (!selected) return;
-                          setState(() {
-                            _bagWeight = w;
-                            _result = _compute();
-                          });
-                        },
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildResultCard(CalculationResult? result) {
-    final r = result;
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
+        gradient: const LinearGradient(colors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)]),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
         children: [
-          const Row(
-            children: [
-              Icon(Icons.calculate, color: Colors.greenAccent),
-              SizedBox(width: 8),
-              Text(
-                'Смета работ',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const Divider(color: Colors.grey),
+          Text(_loc.translate('plaster_pro.summary.bags').toUpperCase(), style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          _buildResultRow(
-            'Штукатурка',
-            r == null ? '' : '${r.bagsCount} мешков',
-            r == null ? '—' : '${r.bagsStock} шт',
-            'с запасом',
-          ),
-          const SizedBox(height: 16),
-          _buildResultRow(
-            r?.primerName ?? 'Грунтовка',
-            r == null
-                ? ''
-                : '~${r.primerVolume.toStringAsFixed(1)} ${r.primerUnit}',
-            r == null ? '—' : '${r.primerPacks} шт',
-            r == null ? '' : 'упак ${r.primerPackSize}${r.primerUnit}',
-          ),
-          const SizedBox(height: 16),
-          _buildResultRow(
-            'Маяки (шаг 1.5)',
-            '',
-            r == null ? '—' : '${r.totalBeacons} шт',
-            'по 3м',
-          ),
+          Text('${_result.bags}', style: const TextStyle(color: Colors.white, fontSize: 64, fontWeight: FontWeight.w900)),
+          Text(_loc.translate('plaster_pro.summary.unit_pcs'), style: const TextStyle(color: Colors.white70)),
         ],
       ),
     );
   }
 
-  Widget _buildResultRow(
-    String title,
-    String subtitle,
-    String mainValue,
-    String subValue,
-  ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            if (subtitle.isNotEmpty)
-              Text(subtitle,
-                  style: TextStyle(color: Colors.grey[400], fontSize: 12)),
-          ],
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              mainValue,
-              style: const TextStyle(
-                color: Colors.greenAccent,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(subValue, style: TextStyle(color: Colors.grey[500], fontSize: 12)),
-          ],
-        ),
-      ],
+  Widget _buildSpecCard() {
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(_loc.translate('plaster_pro.spec.title').toUpperCase(), style: const TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          _specItem(_loc.translate('plaster_pro.summary.weight'), '${_result.totalWeight.toStringAsFixed(0)} кг'),
+          if (_useBeacons) _specItem('${_loc.translate('plaster_pro.options.beacons')} ${_result.beaconSize}мм', '${_result.beacons} шт'),
+          if (_useMesh) _specItem(_loc.translate('plaster_pro.spec.mesh_title'), '${_result.meshArea} м²'),
+          if (_usePrimer) _specItem(_loc.translate('plaster_pro.options.primer'), '${_result.primerLiters} л'),
+        ],
+      ),
     );
   }
 
-  Widget _buildInput(
-    String label,
-    TextEditingController controller, {
-    required VoidCallback onChanged,
-    bool isInt = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
-        const SizedBox(height: 4),
-        TextFormField(
-          controller: controller,
-          keyboardType: TextInputType.numberWithOptions(decimal: !isInt),
-          decoration: InputDecoration(
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            filled: true,
-            fillColor: Colors.white,
-          ),
-          onChanged: (_) => onChanged(),
-        ),
-      ],
+  Widget _specItem(String label, String val) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(label, style: const TextStyle(color: Colors.white70)), Text(val, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))]),
     );
   }
+
+  Widget _card({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(20)),
+      child: child,
+    );
+  }
+
 }

@@ -52,31 +52,31 @@ class CalculatePlaster extends BaseCalculator {
     final type = getIntInput(inputs, 'type', defaultValue: 1, minValue: 1, maxValue: 2);
 
     // Расход штукатурки на 10 мм слоя:
-    // - Гипсовая: 8-9 кг/м²
-    // - Цементная: 14-17 кг/м²
-    final consumptionPer10mm = type == 1 ? 8.5 : 15.5; // кг/м²
+    // - Гипсовая: 8.5 кг/м² (среднее для Rotband и аналогов)
+    // - Цементная: 17.0 кг/м² (стандарт для ЦПС)
+    final consumptionPer10mm = type == 1 ? 8.5 : 17.0; // кг/м²
 
-    // Общий расход с учётом толщины и запаса 10%
+    // Общий расход с учётом толщины и запаса 10% на неровности
     final plasterKg = area * consumptionPer10mm * (thickness / 10) * 1.1;
 
     // Вес мешка: гипсовая обычно 30 кг, цементная 25 кг
     final bagWeight = type == 1 ? 30.0 : 25.0;
     final plasterBags = (plasterKg / bagWeight).ceil();
 
-    // Бетонконтакт: ~0.3 л/м² (грунтовка для лучшей адгезии)
-    final betonkontaktLiters = (area * 0.3 * 1.1).ceil(); // с запасом 10%
+    // Грунтовка: ~0.1 л/м² (стандартный расход)
+    final primerLiters = (area * 0.1 * 1.1).ceil(); // с запасом 10%
 
     // Штукатурная сетка (при толщине > 30 мм): площадь покрытия
     final meshArea = thickness > 30 ? area * 1.1 : 0.0; // с запасом
 
     // Маяки: размер зависит от толщины слоя
-    // 6 мм - для слоя до 10 мм
-    // 10 мм - для слоя 10-30 мм
+    // 6 мм - для слоя менее 10 мм
+    // 10 мм - для слоя 10 мм и выше
     // Шаг установки 1.0-1.2 м (под правило 1.5 м)
-    final beaconSizeMm = thickness <= 10 ? 6 : 10;
+    final beaconSizeMm = thickness < 10 ? 6 : 10;
 
     // Примерный расчёт количества маяков:
-    // На каждые 10 м² стен нужно ~4-5 маяков по 3 м
+    // На каждые 2.5 м² стен нужно ~1 маяк по 3 м
     final beaconsCount = math.max(2, (area / 2.5).ceil());
 
     // Правило: рекомендуемый размер
@@ -93,16 +93,16 @@ class CalculatePlaster extends BaseCalculator {
 
     final costs = [
       calculateCost(plasterBags.toDouble() * bagWeight, plasterPrice?.price),
-      calculateCost(betonkontaktLiters.toDouble(), betonkontaktPrice?.price),
+      calculateCost(primerLiters.toDouble(), betonkontaktPrice?.price),
       if (meshArea > 0) calculateCost(meshArea, meshPrice?.price),
-      calculateCost(beaconsCount.toDouble() * 3, beaconPrice?.price), // маяки по 3 м
+      calculateCost(beaconsCount.toDouble(), beaconPrice?.price), // маяки поштучно
     ];
 
     return createResult(
       values: {
         'plasterBags': plasterBags.toDouble(),
         'plasterKg': plasterKg,
-        'betonkontaktLiters': betonkontaktLiters.toDouble(),
+        'primerLiters': primerLiters.toDouble(),
         if (meshArea > 0) 'meshArea': meshArea,
         'beacons': beaconsCount.toDouble(),
         'beaconSize': beaconSizeMm.toDouble(),
