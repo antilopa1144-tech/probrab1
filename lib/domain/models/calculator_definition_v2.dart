@@ -2,6 +2,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import '../../core/enums/calculator_category.dart';
 import '../../core/cache/calculation_cache.dart';
 import '../../data/models/price_item.dart';
+import '../../core/localization/app_localizations.dart';
 import '../usecases/calculator_usecase.dart';
 import 'calculator_field.dart';
 import 'calculator_hint.dart';
@@ -26,7 +27,7 @@ import 'calculator_hint.dart';
 ///   id: 'wall_paint',
 ///   titleKey: 'calculator.wall_paint.title',
 ///   category: CalculatorCategory.wallFinishing,
-///   subCategory: 'paint',
+///   subCategoryKey: 'subcategory.paint',
 ///   fields: [
 ///     CalculatorField(
 ///       key: 'area',
@@ -57,8 +58,8 @@ class CalculatorDefinitionV2 {
   /// Категория калькулятора
   final CalculatorCategory category;
 
-  /// Подкатегория (строка)
-  final String subCategory;
+  /// Ключ локализации для подкатегории
+  final String subCategoryKey;
 
   /// Список полей ввода
   final List<CalculatorField> fields;
@@ -98,7 +99,7 @@ class CalculatorDefinitionV2 {
     required this.titleKey,
     this.descriptionKey,
     required this.category,
-    required this.subCategory,
+    required this.subCategoryKey,
     required this.fields,
     this.beforeHints = const [],
     this.afterHints = const [],
@@ -142,7 +143,7 @@ class CalculatorDefinitionV2 {
       parameters: {
         'calculator_id': id,
         'calculator_category': category.name,
-        'calculator_subcategory': subCategory,
+        'calculator_subcategory': subCategoryKey,
         'complexity': complexity.toString(),
       },
     );
@@ -168,6 +169,30 @@ class CalculatorDefinitionV2 {
   /// Получить видимые поля с учётом зависимостей
   List<CalculatorField> getVisibleFields(Map<String, double> inputs) {
     return sortedFields.where((field) => field.shouldDisplay(inputs)).toList();
+  }
+
+  /// Получить поля для режима новичка
+  List<CalculatorField> getBeginnerFields() {
+    return sortedFields.where((field) => field.complexityLevel == 1).toList();
+  }
+
+  /// Получить все поля (режим профи)
+  List<CalculatorField> getProFields() {
+    return sortedFields;
+  }
+
+  /// Получить видимые поля с учётом режима
+  List<CalculatorField> getVisibleFieldsForMode(
+    Map<String, double> inputs,
+    bool isProMode,
+  ) {
+    final modeFields = isProMode ? getProFields() : getBeginnerFields();
+    return modeFields.where((field) => field.shouldDisplay(inputs)).toList();
+  }
+
+  /// Получить локализованную подкатегорию
+  String getSubCategory(AppLocalizations loc) {
+    return loc.translate(subCategoryKey);
   }
 
   /// Получить подсказки перед расчётом
@@ -216,7 +241,7 @@ class CalculatorDefinitionV2 {
     String? titleKey,
     String? descriptionKey,
     CalculatorCategory? category,
-    String? subCategory,
+    String? subCategoryKey,
     List<CalculatorField>? fields,
     List<CalculatorHint>? beforeHints,
     List<CalculatorHint>? afterHints,
@@ -234,7 +259,7 @@ class CalculatorDefinitionV2 {
       titleKey: titleKey ?? this.titleKey,
       descriptionKey: descriptionKey ?? this.descriptionKey,
       category: category ?? this.category,
-      subCategory: subCategory ?? this.subCategory,
+      subCategoryKey: subCategoryKey ?? this.subCategoryKey,
       fields: fields ?? this.fields,
       beforeHints: beforeHints ?? this.beforeHints,
       afterHints: afterHints ?? this.afterHints,

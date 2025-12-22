@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../domain/calculators/calculator_id_migration.dart';
 import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/models/calculator_definition_v2.dart';
@@ -121,9 +122,15 @@ class CalculatorNavigationHelper {
       // Игнорируем ошибки Firebase, если сервис недоступен
     }
 
+    final loc = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Калькулятор "$calculatorId" не найден'),
+        content: Text(
+          loc.translate(
+            'error.calculator_not_found',
+            {'id': calculatorId},
+          ),
+        ),
         backgroundColor: Colors.orange,
       ),
     );

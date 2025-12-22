@@ -11,7 +11,7 @@ final sheetingOsbPlywoodCalculatorV2 = CalculatorDefinitionV2(
   titleKey: 'calculator.sheeting_osb_plywood.title',
   descriptionKey: 'calculator.sheeting_osb_plywood.description',
   category: CalculatorCategory.interior,
-  subCategory: 'ОСБ/фанера',
+  subCategoryKey: 'subcategory.osb_plywood',
   tags: ['осб', 'фанера', 'лист', 'sheets', 'osb', 'plywood'],
   accentColor: kCalculatorAccentColor,
   useCase: CalculateSheetingOsbPlywood(),

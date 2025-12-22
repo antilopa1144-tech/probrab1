@@ -14,7 +14,7 @@ final warmFloorCalculatorV2 = CalculatorDefinitionV2(
   titleKey: calculatorTitleKey('floors_warm'),
   descriptionKey: calculatorDescriptionKey('floors_warm'),
   category: CalculatorCategory.interior,
-  subCategory: 'heating',
+  subCategoryKey: 'subcategory.heating',
   iconName: 'radiator',
   accentColor: kCalculatorAccentColor,
   complexity: 2,

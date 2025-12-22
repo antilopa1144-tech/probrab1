@@ -19,7 +19,7 @@ final selfLevelingFloorCalculatorV2 = CalculatorDefinitionV2(
   titleKey: calculatorTitleKey('floors_self_leveling'),
   descriptionKey: calculatorDescriptionKey('floors_self_leveling'),
   category: CalculatorCategory.interior,
-  subCategory: 'Полы',
+  subCategoryKey: 'subcategory.floors',
   iconName: 'grid_on',
   accentColor: kCalculatorAccentColor,
   complexity: 2,

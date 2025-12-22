@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'core/constants/app_constants.dart';
 import 'presentation/providers/accent_color_provider.dart';
 import 'core/theme.dart';
 import 'core/localization/app_localizations.dart';
+import 'core/services/calculator_memory_service.dart';
 import 'presentation/app/main_shell.dart';
 import 'presentation/providers/settings_provider.dart';
 import 'core/errors/global_error_handler.dart';
@@ -20,6 +22,7 @@ void main() async {
 
   // Инициализация Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final prefs = await SharedPreferences.getInstance();
 
   // Передача Flutter ошибок в Crashlytics
   FlutterError.onError = (details) {
@@ -38,7 +41,16 @@ void main() async {
     }
   };
 
-  runApp(const ProviderScope(child: ProbuilderApp()));
+  runApp(
+    ProviderScope(
+      overrides: [
+        calculatorMemoryProvider.overrideWithValue(
+          CalculatorMemoryService(prefs),
+        ),
+      ],
+      child: const ProbuilderApp(),
+    ),
+  );
 }
 
 /// Корневой виджет приложения. Выбирает режим и передаёт управление

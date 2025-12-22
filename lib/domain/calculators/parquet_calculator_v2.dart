@@ -13,7 +13,7 @@ final parquetCalculatorV2 = CalculatorDefinitionV2(
   titleKey: calculatorTitleKey('floors_parquet'),
   descriptionKey: calculatorDescriptionKey('floors_parquet'),
   category: CalculatorCategory.interior,
-  subCategory: 'wood',
+  subCategoryKey: 'subcategory.wood',
   iconName: 'park',
   accentColor: kCalculatorAccentColor,
   complexity: 2,

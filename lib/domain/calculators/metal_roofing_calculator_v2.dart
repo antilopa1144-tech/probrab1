@@ -13,7 +13,7 @@ final metalRoofingCalculatorV2 = CalculatorDefinitionV2(
   titleKey: calculatorTitleKey('roofing_metal'),
   descriptionKey: calculatorDescriptionKey('roofing_metal'),
   category: CalculatorCategory.exterior,
-  subCategory: 'metal',
+  subCategoryKey: 'subcategory.metal',
   iconName: 'roof',
   accentColor: kCalculatorAccentColor,
   complexity: 2,

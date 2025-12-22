@@ -67,6 +67,9 @@ import '../../core/exceptions/calculation_exception.dart';
 /// Если нужно кастомное поведение, переопределите `validateInputs()` или
 /// используйте `safeDivide(..., throwOnZero: true)` для явной обработки ошибок.
 abstract class BaseCalculator implements CalculatorUseCase {
+  Map<String, double>? _lastInputs;
+  CalculatorResult? _lastResult;
+
   /// Современные нормативы по умолчанию для всех расчётов.
   ///
   /// Используется для соответствия актуальным требованиям (ГЭСН/ФЕР).
@@ -376,8 +379,15 @@ abstract class BaseCalculator implements CalculatorUseCase {
         );
       }
 
+      if (_lastResult != null && _areInputsEqual(inputs, _lastInputs)) {
+        return _lastResult!;
+      }
+
       // Вызов конкретной реализации
-      return calculate(inputs, priceList);
+      final result = calculate(inputs, priceList);
+      _lastInputs = Map<String, double>.from(inputs);
+      _lastResult = result;
+      return result;
     } on CalculationException {
       // Пробрасываем CalculationException дальше
       rethrow;
@@ -389,6 +399,20 @@ abstract class BaseCalculator implements CalculatorUseCase {
         details: stackTrace.toString(),
       );
     }
+  }
+
+  void invalidateCache() {
+    _lastInputs = null;
+    _lastResult = null;
+  }
+
+  bool _areInputsEqual(Map<String, double> a, Map<String, double>? b) {
+    if (b == null) return false;
+    if (a.length != b.length) return false;
+    for (final key in a.keys) {
+      if (a[key] != b[key]) return false;
+    }
+    return true;
   }
 
   /// Конкретная реализация расчёта (должна быть переопределена в подклассе).

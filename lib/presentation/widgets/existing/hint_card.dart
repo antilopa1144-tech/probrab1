@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../domain/models/calculator_hint.dart';
-import '../../core/localization/app_localizations.dart';
+import '../../../domain/models/calculator_hint.dart';
+import '../../../core/localization/app_localizations.dart';
 
 /// Карточка с подсказкой.
 class HintCard extends StatelessWidget {
@@ -39,7 +39,7 @@ class HintCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _getTitleForType(hint.type),
+                    _getTitleForType(hint.type, loc),
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: iconColor,
                       fontWeight: FontWeight.w600,
@@ -100,12 +100,12 @@ class HintCard extends StatelessWidget {
     };
   }
 
-  String _getTitleForType(HintType type) {
+  String _getTitleForType(HintType type, AppLocalizations loc) {
     return switch (type) {
-      HintType.info => 'Информация',
-      HintType.warning => 'Внимание',
-      HintType.tip => 'Совет мастера',
-      HintType.important => 'Важно',
+      HintType.info => loc.translate('hint.type.info'),
+      HintType.warning => loc.translate('hint.type.warning'),
+      HintType.tip => loc.translate('hint.type.tip'),
+      HintType.important => loc.translate('hint.type.important'),
     };
   }
 }

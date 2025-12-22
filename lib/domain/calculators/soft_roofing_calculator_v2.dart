@@ -13,7 +13,7 @@ final softRoofingCalculatorV2 = CalculatorDefinitionV2(
   titleKey: calculatorTitleKey('roofing_soft'),
   descriptionKey: calculatorDescriptionKey('roofing_soft'),
   category: CalculatorCategory.exterior,
-  subCategory: 'soft',
+  subCategoryKey: 'subcategory.soft',
   iconName: 'roof',
   accentColor: kCalculatorAccentColor,
   complexity: 2,

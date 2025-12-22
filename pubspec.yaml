@@ -54,6 +54,7 @@ dependencies:
   # Пакет для работы с цветами Material You
   # Для работы с векторами 3D (Vector3)
   vector_math: ^2.1.4
+  fl_chart: ^0.69.0
   printing: ^5.14.2
   package_info_plus: ^9.0.0
   # Firebase для аналитики и мониторинга ошибок

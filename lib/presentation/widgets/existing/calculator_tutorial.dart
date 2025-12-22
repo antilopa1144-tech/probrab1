@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../core/services/haptic_feedback_service.dart';
 
 /// Интерактивный туториал для первого запуска калькулятора.
@@ -52,22 +53,22 @@ class _CalculatorTutorialState extends State<CalculatorTutorial> {
   }
 
   void _initializeSteps() {
+    final loc = AppLocalizations.of(context);
     _steps.addAll([
       _TutorialStep(
-        title: 'Введите параметры',
-        description: 'Заполните все поля формы для расчёта материалов',
+        title: loc.translate('tutorial.enter_parameters_title'),
+        description: loc.translate('tutorial.enter_parameters_description'),
         targetKey: 'input_fields',
       ),
       _TutorialStep(
-        title: 'Нажмите "Рассчитать"',
+        title: loc.translate('tutorial.press_calculate'),
         description:
-            'После заполнения нажмите кнопку для получения результатов',
+            loc.translate('tutorial.press_calculate_description'),
         targetKey: 'calculate_button',
       ),
       _TutorialStep(
-        title: 'Просмотрите результаты',
-        description:
-            'Результаты расчёта отобразятся ниже с детальной информацией',
+        title: loc.translate('tutorial.view_results_title'),
+        description: loc.translate('tutorial.view_results_description'),
         targetKey: 'results_section',
       ),
     ]);
@@ -138,6 +139,7 @@ class _TutorialOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return Material(
       color: Colors.black.withValues(alpha: 0.7),
@@ -152,7 +154,7 @@ class _TutorialOverlay extends StatelessWidget {
                 child: TextButton(
                   onPressed: onSkip,
                   child: Text(
-                    'Пропустить',
+                    loc.translate('tutorial.skip'),
                     style: TextStyle(color: theme.colorScheme.onSurface),
                   ),
                 ),
@@ -219,7 +221,9 @@ class _TutorialOverlay extends StatelessWidget {
                       FilledButton(
                         onPressed: onNext,
                         child: Text(
-                          currentStep == totalSteps - 1 ? 'Готово' : 'Далее',
+                          currentStep == totalSteps - 1
+                              ? loc.translate('tutorial.done')
+                              : loc.translate('tutorial.next'),
                         ),
                       ),
                     ],

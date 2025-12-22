@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
+
+import '../../../core/localization/app_localizations.dart';
 
 /// Виджет для отображения круговой диаграммы материалов.
 class MaterialPieChart extends StatelessWidget {
@@ -11,12 +14,13 @@ class MaterialPieChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final total = materials.values.fold(0.0, (sum, value) => sum + value);
 
     if (total == 0) {
       return Center(
         child: Text(
-          'Нет данных',
+          loc.translate('chart.no_data'),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
@@ -39,7 +43,10 @@ class MaterialPieChart extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Материалы', style: theme.textTheme.titleMedium),
+            Text(
+              loc.translate('chart.materials'),
+              style: theme.textTheme.titleMedium,
+            ),
             const SizedBox(height: 8),
             ...materials.entries.toList().asMap().entries.map((entry) {
               final index = entry.key;
@@ -157,12 +164,13 @@ class CostBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final maxCost = costs.values.isEmpty ? 1.0 : costs.values.reduce(math.max);
 
     if (maxCost == 0) {
       return Center(
         child: Text(
-          'Нет данных',
+          loc.translate('chart.no_data'),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
@@ -226,5 +234,59 @@ class CostBarChart extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Диаграмма распределения затрат.
+class CostDistributionChart extends StatelessWidget {
+  final Map<String, double> costs;
+
+  const CostDistributionChart({super.key, required this.costs});
+
+  @override
+  Widget build(BuildContext context) {
+    final total = costs.values.fold(0.0, (a, b) => a + b);
+    if (total <= 0) return const SizedBox.shrink();
+
+    final sections = costs.entries
+        .where((entry) => entry.value > 0)
+        .map((entry) {
+          final percent = entry.value / total * 100;
+          return PieChartSectionData(
+            value: entry.value,
+            title: '${percent.toStringAsFixed(0)}%',
+            color: _getColorForKey(entry.key),
+            radius: 60,
+            titleStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+          );
+        })
+        .toList();
+
+    return SizedBox(
+      height: 200,
+      child: PieChart(
+        PieChartData(
+          sections: sections,
+          centerSpaceRadius: 40,
+          sectionsSpace: 2,
+        ),
+      ),
+    );
+  }
+
+  Color _getColorForKey(String key) {
+    const palette = [
+      Color(0xFF3B82F6),
+      Color(0xFF10B981),
+      Color(0xFFF59E0B),
+      Color(0xFFEF4444),
+      Color(0xFF8B5CF6),
+      Color(0xFF06B6D4),
+    ];
+    final index = key.hashCode.abs() % palette.length;
+    return palette[index];
   }
 }

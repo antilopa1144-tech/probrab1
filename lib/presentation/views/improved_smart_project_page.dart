@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/localization/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Улучшенный умный мастер проектов с пошаговым интерфейсом
@@ -310,7 +311,10 @@ class _ImprovedSmartProjectPageState
             isActive: _currentStep >= 3,
             state: _results != null ? StepState.complete : StepState.indexed,
             content: _results == null
-                ? const Text('Нажмите "Рассчитать" для получения результатов')
+                ? Text(
+                    AppLocalizations.of(context)
+                        .translate('smart_project.press_calculate_hint'),
+                  )
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

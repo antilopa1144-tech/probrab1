@@ -14,7 +14,7 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
   titleKey: calculatorTitleKey('walls_wallpaper'),
   descriptionKey: calculatorDescriptionKey('walls_wallpaper'),
   category: CalculatorCategory.interior,
-  subCategory: 'Стены',
+  subCategoryKey: 'subcategory.walls',
   iconName: 'wallpaper',
   accentColor: kCalculatorAccentColor,
   complexity: 2,

@@ -43,6 +43,9 @@ class CalculatorField {
   /// Обязательное поле
   final bool required;
 
+  /// Уровень сложности поля (1 = beginner, 2 = pro)
+  final int complexityLevel;
+
   /// Шаг изменения значения (для steppers)
   final double? step;
 
@@ -74,6 +77,7 @@ class CalculatorField {
     this.minValue,
     this.maxValue,
     this.required = true,
+    this.complexityLevel = 1,
     this.step,
     this.iconName,
     this.group,
@@ -110,6 +114,7 @@ class CalculatorField {
     double? minValue,
     double? maxValue,
     bool? required,
+    int? complexityLevel,
     double? step,
     String? iconName,
     String? group,
@@ -128,6 +133,7 @@ class CalculatorField {
       minValue: minValue ?? this.minValue,
       maxValue: maxValue ?? this.maxValue,
       required: required ?? this.required,
+      complexityLevel: complexityLevel ?? this.complexityLevel,
       step: step ?? this.step,
       iconName: iconName ?? this.iconName,
       group: group ?? this.group,

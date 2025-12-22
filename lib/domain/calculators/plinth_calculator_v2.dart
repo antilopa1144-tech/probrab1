@@ -11,7 +11,7 @@ final plinthCalculatorV2 = CalculatorDefinitionV2(
   titleKey: 'calculator.plinth.title',
   descriptionKey: 'calculator.plinth.description',
   category: CalculatorCategory.interior,
-  subCategory: 'Полы',
+  subCategoryKey: 'subcategory.floors',
   tags: ['плинтус', 'пол', 'ремонт', 'plinth', 'baseboard'],
   accentColor: kCalculatorAccentColor,
   useCase: CalculatePlinth(),

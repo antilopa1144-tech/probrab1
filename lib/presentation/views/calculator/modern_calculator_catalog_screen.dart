@@ -25,11 +25,11 @@ class _ModernCalculatorCatalogScreenState
 
   // Категории из HTML
   final List<Map<String, String>> categories = [
-    {'id': 'all', 'label': 'Все'},
-    {'id': 'walls', 'label': 'Стены'},
-    {'id': 'floor', 'label': 'Пол'},
-    {'id': 'finish', 'label': 'Отделка'},
-    {'id': 'wood', 'label': 'Дерево'},
+    {'id': 'all', 'labelKey': 'category.all'},
+    {'id': 'walls', 'labelKey': 'category.walls'},
+    {'id': 'floor', 'labelKey': 'category.floor'},
+    {'id': 'finish', 'labelKey': 'category.finish'},
+    {'id': 'wood', 'labelKey': 'category.wood'},
   ];
 
   // Данные инструментов с цветами и иконками (из HTML)
@@ -101,8 +101,8 @@ class _ModernCalculatorCatalogScreenState
       return toolData['cat'] as List<String>;
     }
 
-    // Автоматическое определение категорий по subCategory
-    final sub = calc.subCategory;
+    // Автоматическое определение категорий по subCategoryKey
+    final sub = calc.subCategoryKey.replaceFirst('subcategory.', '');
     final categories = <String>[];
 
     // Стены
@@ -153,7 +153,7 @@ class _ModernCalculatorCatalogScreenState
     final q = _query.toLowerCase();
     return calculators.where((calc) {
       final title = loc.translate(calc.titleKey).toLowerCase();
-      final sub = loc.translate('subcategory.${calc.subCategory}').toLowerCase();
+      final sub = loc.translate(calc.subCategoryKey).toLowerCase();
       return title.contains(q) ||
           sub.contains(q) ||
           calc.id.toLowerCase().contains(q) ||
@@ -186,7 +186,7 @@ class _ModernCalculatorCatalogScreenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'МОИ ПРОЕКТЫ',
+                            loc.translate('catalog.my_projects'),
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
@@ -196,7 +196,7 @@ class _ModernCalculatorCatalogScreenState
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Инструменты',
+                            loc.translate('catalog.tools'),
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.w900,
@@ -266,7 +266,7 @@ class _ModernCalculatorCatalogScreenState
                               fontWeight: FontWeight.w500,
                             ),
                             decoration: InputDecoration(
-                              hintText: 'Поиск...',
+                              hintText: loc.translate('search.placeholder'),
                               hintStyle: TextStyle(color: Colors.grey[400]),
                               border: InputBorder.none,
                               isDense: true,
@@ -321,7 +321,7 @@ class _ModernCalculatorCatalogScreenState
                               ),
                             ),
                             child: Text(
-                              cat['label']!,
+                              loc.translate(cat['labelKey']!),
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
@@ -344,7 +344,7 @@ class _ModernCalculatorCatalogScreenState
             // Калькуляторы - сетка 2 колонки
             Expanded(
               child: calculators.isEmpty
-                  ? const Center(child: Text('Ничего не найдено'))
+                  ? Center(child: Text(loc.translate('search.no_results')))
                   : GridView.builder(
                       padding: const EdgeInsets.all(20),
                       gridDelegate:
@@ -363,7 +363,7 @@ class _ModernCalculatorCatalogScreenState
                           calc: calc,
                           title: loc.translate(calc.titleKey),
                           subtitle:
-                              loc.translate('subcategory.${calc.subCategory}'),
+                              loc.translate(calc.subCategoryKey),
                           icon: toolData?['icon'] ?? Icons.calculate_rounded,
                           iconColor: toolData?['color'] ?? Colors.blue,
                           iconBg: isDark

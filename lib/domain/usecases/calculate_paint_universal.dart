@@ -71,9 +71,11 @@ class CalculatePaintUniversal extends BaseCalculator {
     final needCeiling = paintType == 1 || paintType == 2;
 
     // Вычитаем проёмы только из стен
-    double usefulWallArea = needWalls ? (wallArea - doorsWindows).clamp(0, double.infinity) : 0;
-    double usefulCeilingArea = needCeiling ? ceilingArea : 0;
-    double totalArea = usefulWallArea + usefulCeilingArea;
+    final double usefulWallArea = needWalls
+        ? (wallArea - doorsWindows).clamp(0, double.infinity).toDouble()
+        : 0.0;
+    final double usefulCeilingArea = needCeiling ? ceilingArea : 0.0;
+    final double totalArea = usefulWallArea + usefulCeilingArea;
 
     if (totalArea <= 0) {
       return createResult(values: {'error': 1.0});

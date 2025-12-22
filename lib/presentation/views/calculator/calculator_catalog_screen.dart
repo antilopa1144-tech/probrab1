@@ -12,9 +12,9 @@ import '../../providers/favorites_provider.dart';
 import '../../utils/calculator_navigation_helper.dart';
 
 class CalculatorCatalogScreen extends ConsumerStatefulWidget {
-  final String? subCategory;
+  final String? subCategoryKey;
 
-  const CalculatorCatalogScreen({super.key, this.subCategory});
+  const CalculatorCatalogScreen({super.key, this.subCategoryKey});
 
   @override
   ConsumerState<CalculatorCatalogScreen> createState() =>
@@ -45,10 +45,10 @@ class _CalculatorCatalogScreenState
 
   List<CalculatorDefinitionV2> _filtered(AppLocalizations loc) {
     final baseSource = CalculatorRegistry.catalogCalculators;
-    final base = widget.subCategory == null
+    final base = widget.subCategoryKey == null
         ? baseSource
         : baseSource
-            .where((c) => c.subCategory == widget.subCategory)
+            .where((c) => c.subCategoryKey == widget.subCategoryKey)
             .toList(growable: false);
 
     if (_query.isEmpty) return base;
@@ -56,7 +56,7 @@ class _CalculatorCatalogScreenState
     final q = _query.toLowerCase();
     return base.where((calc) {
       final title = loc.translate(calc.titleKey).toLowerCase();
-      final sub = loc.translate('subcategory.${calc.subCategory}').toLowerCase();
+      final sub = loc.translate(calc.subCategoryKey).toLowerCase();
       return title.contains(q) ||
           sub.contains(q) ||
           calc.id.toLowerCase().contains(q) ||
@@ -69,13 +69,9 @@ class _CalculatorCatalogScreenState
     final loc = AppLocalizations.of(context);
     final favorites = ref.watch(favoritesProvider);
     final calculators = _filtered(loc);
-    const titleOverrides = {
-      'strip': 'Ленточный фундамент',
-    };
-    final title = widget.subCategory == null
-        ? 'Все калькуляторы'
-        : (titleOverrides[widget.subCategory] ??
-            loc.translate('subcategory.${widget.subCategory}'));
+    final title = widget.subCategoryKey == null
+        ? loc.translate('catalog.all_calculators')
+        : loc.translate(widget.subCategoryKey!);
 
     return Scaffold(
       appBar: AppBar(
@@ -89,7 +85,7 @@ class _CalculatorCatalogScreenState
               controller: _searchController,
               onChanged: _onSearchChanged,
               decoration: InputDecoration(
-                hintText: 'Поиск…',
+                hintText: loc.translate('search.placeholder'),
                 prefixIcon: const Icon(Icons.search_rounded),
                 suffixIcon: _query.isNotEmpty
                     ? IconButton(
@@ -105,7 +101,7 @@ class _CalculatorCatalogScreenState
           ),
           Expanded(
             child: calculators.isEmpty
-                ? const Center(child: Text('Ничего не найдено'))
+                ? Center(child: Text(loc.translate('search.no_results')))
                 : ListView.separated(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                     itemCount: calculators.length,
@@ -117,8 +113,7 @@ class _CalculatorCatalogScreenState
                       return _CatalogCalculatorCard(
                         calc: calc,
                         title: loc.translate(calc.titleKey),
-                        subtitle:
-                            loc.translate('subcategory.${calc.subCategory}'),
+                        subtitle: loc.translate(calc.subCategoryKey),
                         isFavorite: isFavorite,
                         onToggleFavorite: () => ref
                             .read(favoritesProvider.notifier)
@@ -177,6 +172,7 @@ class _CatalogCalculatorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Material(
       borderRadius: BorderRadius.circular(16),
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -205,7 +201,9 @@ class _CatalogCalculatorCard extends StatelessWidget {
                 ),
               ),
               IconButton(
-                tooltip: isFavorite ? 'Убрать из избранного' : 'В избранное',
+                tooltip: isFavorite
+                    ? loc.translate('favorites.remove')
+                    : loc.translate('favorites.add'),
                 onPressed: onToggleFavorite,
                 icon: Icon(
                   isFavorite ? Icons.star_rounded : Icons.star_outline_rounded,

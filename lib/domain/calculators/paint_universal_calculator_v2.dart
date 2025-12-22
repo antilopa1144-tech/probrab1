@@ -15,7 +15,7 @@ final paintUniversalCalculatorV2 = CalculatorDefinitionV2(
   titleKey: calculatorTitleKey('paint'),
   descriptionKey: calculatorDescriptionKey('paint'),
   category: CalculatorCategory.interior,
-  subCategory: 'paint',
+  subCategoryKey: 'subcategory.paint',
   iconName: 'format_paint',
   accentColor: kCalculatorAccentColor,
   complexity: 1,

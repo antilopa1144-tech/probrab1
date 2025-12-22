@@ -65,7 +65,7 @@ class FavoriteCalculatorsScreen extends ConsumerWidget {
                 return _CalculatorListCard(
                   calc: calc,
                   title: loc.translate(calc.titleKey),
-                  subtitle: loc.translate('subcategory.${calc.subCategory}'),
+                  subtitle: loc.translate(calc.subCategoryKey),
                   isFavorite: true,
                   onToggleFavorite: () => ref
                       .read(favoritesProvider.notifier)

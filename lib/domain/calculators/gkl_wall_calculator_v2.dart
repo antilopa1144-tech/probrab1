@@ -20,7 +20,7 @@ final gklWallCalculatorV2 = CalculatorDefinitionV2(
   titleKey: calculatorTitleKey('walls_gkl'),
   descriptionKey: calculatorDescriptionKey('walls_gkl'),
   category: CalculatorCategory.interior,
-  subCategory: 'Стены',
+  subCategoryKey: 'subcategory.walls',
   iconName: 'dashboard_customize',
   accentColor: kCalculatorAccentColor,
   complexity: 3,

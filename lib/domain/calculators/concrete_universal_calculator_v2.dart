@@ -12,7 +12,7 @@ final concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
   titleKey: 'calculator.concrete_universal.title',
   descriptionKey: 'calculator.concrete_universal.description',
   category: CalculatorCategory.exterior,
-  subCategory: 'Бетон',
+  subCategoryKey: 'subcategory.concrete',
   tags: ['бетон', 'замес', 'цемент', 'песок', 'щебень', 'concrete'],
   accentColor: kCalculatorAccentColor,
   useCase: CalculateConcreteUniversal(),

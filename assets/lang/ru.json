@@ -9,6 +9,114 @@
     "save": "Сохранить",
     "save_to_project": "Сохранить в проект"
   },
+  "category": {
+    "all": "Все",
+    "walls": "Стены",
+    "floor": "Пол",
+    "finish": "Отделка",
+    "wood": "Дерево"
+  },
+  "catalog": {
+    "all_calculators": "Все калькуляторы",
+    "my_projects": "Мои проекты",
+    "tools": "Инструменты"
+  },
+  "chart": {
+    "no_data": "Нет данных",
+    "materials": "Материалы"
+  },
+  "tutorial": {
+    "press_calculate": "Нажмите \"Рассчитать\"",
+    "enter_parameters_title": "Введите параметры",
+    "enter_parameters_description": "Заполните поля для расчета материалов",
+    "press_calculate_description": "Нажмите кнопку, чтобы получить результат",
+    "view_results_title": "Посмотрите результат",
+    "view_results_description": "Ниже появятся материалы и рекомендации",
+    "skip": "Пропустить",
+    "next": "Далее",
+    "done": "Готово"
+  },
+  "search": {
+    "try_another_query": "Попробуйте другой запрос. Например: \"бетон\", \"обои\", \"плитка\"",
+    "placeholder": "Поиск",
+    "no_results": "Ничего не найдено"
+  },
+  "favorites": {
+    "add": "В избранное",
+    "remove": "Удалить из избранного"
+  },
+  "error": {
+    "calculator_not_found": "Калькулятор \"{id}\" не найден",
+    "calculation": "Ошибка расчета",
+    "unexpected": "Непредвиденная ошибка"
+  },
+  "material": {
+    "dry": "Сухой",
+    "paste": "Паста"
+  },
+  "putty": {
+    "title": "Шпатлевка",
+    "finish_type": "Финиш ({type})",
+    "summary": {
+      "area": "Площадь",
+      "start": "Старт",
+      "finish": "Финиш"
+    },
+    "section": {
+      "finish_goal": "Цель финиша",
+      "geometry": "Геометрия",
+      "openings": "Проемы ({count})",
+      "finish_material_type": "Тип финиша",
+      "shopping_list": "Список покупок",
+      "abrasive": "Абразив (сетки/шкурка)"
+    },
+    "target": {
+      "wallpaper": {
+        "title": "Под обои",
+        "subtitle": "1 слой старта + 1 слой финиша"
+      },
+      "painting": {
+        "title": "Под покраску",
+        "subtitle": "2 слоя старта + 2 слоя финиша"
+      }
+    },
+    "mode": {
+      "room": "Комната",
+      "walls": "Список стен"
+    },
+    "input": {
+      "wall": "Стена",
+      "floor_length": "Длина пола",
+      "floor_width": "Ширина пола",
+      "ceiling_height": "Высота потолка",
+      "length": "Длина",
+      "height": "Высота",
+      "width": "Ширина",
+      "count": "Количество"
+    },
+    "action": {
+      "add_opening": "Добавить проем"
+    },
+    "finish_material": {
+      "dry": "Сухая смесь",
+      "dry_subtitle": "Мешки 20 кг",
+      "ready": "Готовая паста",
+      "ready_subtitle": "Ведра 15 л"
+    },
+    "shopping": {
+      "start_title": "Старт (База)",
+      "start_subtitle": "Слой 1-2 мм",
+      "start_unit": "мешков 25кг",
+      "finish_painting": "Под покраску (2 слоя)",
+      "finish_wallpaper": "Под обои (1 слой)",
+      "primer_title": "Грунтовка",
+      "primer_subtitle": "Межслойная",
+      "primer_unit": "канистр 10л"
+    }
+  },
+  "smart_project": {
+    "press_calculate_hint": "Нажмите \"Рассчитать\" для получения результатов"
+  },
   "history": {
     "category": {
       "all": "Все",
@@ -478,6 +586,11 @@
   },
   "result": {
     "details": "Детали",
+    "group": {
+      "materials": "Материалы",
+      "consumables": "Расходники",
+      "additional": "Дополнительно"
+    },
     "unit_pcs": "шт",
     "area": "Площадь",
     "bags": "Мешков",
@@ -690,7 +803,6 @@
     "balustersNeeded": "Балясин нужно",
     "baseCoatNeeded": "Базового слоя нужно",
     "battensLength": "Длина обрешётки",
-    "beacons": "Маяки",
     "beaconSize": "Размер маяков",
     "plasterBags": "Штукатурка",
     "plasterKg": "Штукатурка (кг)",
@@ -1001,8 +1113,12 @@
       "body": "Перед началом работ обязательно прогрунтуйте поверхность. Для гипсовой штукатурки используйте грунт глубокого проникновения, а для гладкого бетона — бетонконтакт. Это предотвратит отслоение материала."
     }
   },
+  "mode": {
+    "beginner": "Новичок",
+    "pro": "Профи"
+  },
   "unit": {
-    "none": "",
+    "none": "-",
     "squareMeters": "м²",
     "cubicMeters": "м³",
     "meters": "м",
@@ -1012,9 +1128,22 @@
     "grams": "г",
     "liters": "л",
     "pieces": "шт",
-    "percent": "%"
+    "percent": "%",
+    "kg": "кг",
+    "liter": "л",
+    "sqm": "м²",
+    "mm": "мм",
+    "watt_per_sqm": "Вт/м2",
+    "bags": "мешков",
+    "buckets": "вёдер"
   },
   "hint": {
+    "type": {
+      "info": "Информация",
+      "warning": "Внимание",
+      "tip": "Совет мастера",
+      "important": "Важно"
+    },
     "paint": {
       "before": {
         "prepare": "Подготовьте поверхность: очистите и выровняйте",
@@ -1176,7 +1305,6 @@
       "layers.hint": "Обычно 2 слоя для хорошего результата"
     },
     "room_length": "Длина комнаты",
-    "room_width": "Ширина комнаты",
     "room_height": "Высота комнаты",
     "consumption.hint": "Расход краски на 1 м² в один слой",
     "layers.hint": "Обычно наносят 2 слоя краски"
@@ -1201,7 +1329,7 @@
     "paint": "Покраска",
     "slab": "Плитный",
     "soft": "Мягкая кровля",
-    "strip": "Ленточный",
+    "strip": "Ленточный фундамент",
     "tile": "Плитка",
     "wallpaper": "Обои",
     "wood": "Дерево",
@@ -1235,6 +1363,34 @@
     "Шумоизоляция": "Шумоизоляция",
     "Электрика": "Электрика",
     "Бетон": "Бетон",
-    "ОСБ/фанера": "ОСБ/фанера"
+    "ОСБ/фанера": "ОСБ/фанера",
+    "attic": "Мансарда",
+    "balcony": "Балкон / Лоджия",
+    "basement": "Цокольный этаж",
+    "bathroom": "Ванная / туалет",
+    "blind_area": "Отмостка",
+    "brick_facing": "Облицовочный кирпич",
+    "ceilings": "Потолки",
+    "concrete": "Бетон",
+    "electrics": "Электрика",
+    "engineering": "Инженерия",
+    "facade": "Фасад",
+    "facade_panels": "Фасадные панели",
+    "fences": "Заборы",
+    "foundation": "Фундамент",
+    "insulation": "Утепление",
+    "leveling_mix": "Ровнители / смеси",
+    "partitions": "Перегородки",
+    "plumbing": "Сантехника",
+    "roofing": "Кровля",
+    "siding": "Сайдинг",
+    "soundproofing": "Шумоизоляция",
+    "stairs": "Лестницы",
+    "terrace_veranda": "Терраса / Веранда",
+    "ventilation": "Вентиляция",
+    "walls": "Стены",
+    "wet_facade": "Мокрый фасад",
+    "windows_doors": "Окна / двери",
+    "osb_plywood": "ОСБ/фанера"
   }
 }

@@ -14,7 +14,7 @@ final dspCalculatorV2 = CalculatorDefinitionV2(
   titleKey: calculatorTitleKey('dsp'),
   descriptionKey: calculatorDescriptionKey('dsp'),
   category: CalculatorCategory.interior,
-  subCategory: 'flooring',
+  subCategoryKey: 'subcategory.floors',
   iconName: 'layers',
   accentColor: kCalculatorAccentColor,
   complexity: 2,

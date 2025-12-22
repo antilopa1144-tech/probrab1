@@ -1,0 +1,150 @@
+import 'package:flutter/material.dart';
+import '../../../core/localization/app_localizations.dart';
+
+class GroupedResultsCard extends StatelessWidget {
+  final Map<String, double> results;
+  final AppLocalizations loc;
+  final String? primaryKey;
+
+  const GroupedResultsCard({
+    super.key,
+    required this.results,
+    required this.loc,
+    this.primaryKey,
+  });
+
+  static const Map<String, List<String>> groups = {
+    'materials': [
+      'cementBags',
+      'sandVolume',
+      'plasterBags',
+      'paintLiters',
+      'wallpaperRolls',
+    ],
+    'consumables': [
+      'meshArea',
+      'beaconsLength',
+      'damperTapeLength',
+      'plasticizerNeeded',
+    ],
+    'additional': [
+      'waterproofingArea',
+      'primerLiters',
+      'underlayArea',
+    ],
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    if (results.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      children: [
+        _buildGroupCard(
+          title: loc.translate('result.group.materials'),
+          icon: Icons.inventory_2_outlined,
+          keys: groups['materials']!,
+        ),
+        const SizedBox(height: 12),
+        _buildGroupCard(
+          title: loc.translate('result.group.consumables'),
+          icon: Icons.build_outlined,
+          keys: groups['consumables']!,
+        ),
+        const SizedBox(height: 12),
+        _buildGroupCard(
+          title: loc.translate('result.group.additional'),
+          icon: Icons.add_circle_outline,
+          keys: groups['additional']!,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGroupCard({
+    required IconData icon,
+    required String title,
+    required List<String> keys,
+  }) {
+    final groupResults = results.entries
+        .where((entry) => keys.contains(entry.key))
+        .where((entry) => entry.key != primaryKey)
+        .where((entry) => entry.value > 0)
+        .toList();
+
+    if (groupResults.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: Colors.white54, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white54,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...groupResults.map((entry) {
+            final unit = _getUnit(entry.key);
+            final formatted = entry.value.toStringAsFixed(
+              entry.value % 1 == 0 ? 0 : 1,
+            );
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      loc.translate('result.${entry.key}'),
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    unit.isEmpty ? formatted : '$formatted $unit',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  String _getUnit(String resultKey) {
+    if (resultKey.contains('Kg') || resultKey.contains('kg')) {
+      return loc.translate('unit.kg');
+    }
+    if (resultKey.contains('Liter') || resultKey.contains('liter')) {
+      return loc.translate('unit.liter');
+    }
+    if (resultKey.contains('Area') || resultKey.contains('area')) {
+      return loc.translate('unit.sqm');
+    }
+    if (resultKey.contains('Size') || resultKey.contains('size')) {
+      return loc.translate('unit.mm');
+    }
+    return '';
+  }
+}

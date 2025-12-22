@@ -13,7 +13,7 @@ final slabFoundationCalculatorV2 = CalculatorDefinitionV2(
   titleKey: calculatorTitleKey('foundation_slab'),
   descriptionKey: calculatorDescriptionKey('foundation_slab'),
   category: CalculatorCategory.exterior,
-  subCategory: 'slab',
+  subCategoryKey: 'subcategory.slab',
   iconName: 'foundation',
   accentColor: kCalculatorAccentColor,
   complexity: 3,

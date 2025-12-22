@@ -19,7 +19,7 @@ final linoleumCalculatorV2 = CalculatorDefinitionV2(
   titleKey: calculatorTitleKey('floors_linoleum'),
   descriptionKey: calculatorDescriptionKey('floors_linoleum'),
   category: CalculatorCategory.interior,
-  subCategory: 'Полы',
+  subCategoryKey: 'subcategory.floors',
   iconName: 'layers',
   accentColor: kCalculatorAccentColor,
   complexity: 1,
