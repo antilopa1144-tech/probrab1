@@ -4,6 +4,7 @@ import '../../domain/entities/object_type.dart';
 import '../components/mat_card.dart';
 import '../data/work_catalog.dart';
 import '../../core/animations/page_transitions.dart';
+import '../../core/localization/app_localizations.dart';
 import 'work_items_screen.dart';
 
 /// Экран, отображающий разделы выбранной категории работ
@@ -20,6 +21,7 @@ class CategorySelectorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final sections = area.sections;
 
     return Scaffold(
@@ -27,9 +29,9 @@ class CategorySelectorScreen extends StatelessWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(area.title),
+            Text(loc.translate(area.title)),
             Text(
-              area.subtitle,
+              loc.translate(area.subtitle),
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
@@ -49,8 +51,10 @@ class CategorySelectorScreen extends StatelessWidget {
             final section = sections[index];
             return MatCardButton(
               icon: section.icon,
-              title: section.title,
-              subtitle: section.description,
+              title: loc.translate(section.title),
+              subtitle: section.description != null
+                  ? loc.translate(section.description!)
+                  : null,
               onTap: () {
                 Navigator.push(
                   context,

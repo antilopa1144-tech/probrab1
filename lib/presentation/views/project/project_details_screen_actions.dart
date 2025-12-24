@@ -231,10 +231,14 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
       }
 
       if (mounted) {
+        final loc = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Калькулятор "${calculation.calculatorId}" не найден',
+              loc.translate(
+                'error.calculator_not_found',
+                {'id': calculation.calculatorId},
+              ),
             ),
             backgroundColor: Colors.orange,
           ),

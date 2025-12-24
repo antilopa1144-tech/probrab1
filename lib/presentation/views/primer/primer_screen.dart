@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../dsp/project_state.dart';
-import '../dsp/widgets/custom_tab_selector.dart';
-import '../dsp/widgets/geometry_widget.dart';
-import '../dsp/widgets/results_sheet.dart';
-import '../dsp/widgets/section_card.dart';
+import '../../../core/localization/app_localizations.dart';
+import '../../widgets/calculator/calculator_widgets.dart';
 
 class PrimerScreen extends StatefulWidget {
   const PrimerScreen({super.key});
@@ -14,234 +10,348 @@ class PrimerScreen extends StatefulWidget {
 }
 
 class _PrimerScreenState extends State<PrimerScreen> {
-  final ProjectState _state = ProjectState();
+  late AppLocalizations _loc;
 
-  int typeIndex = 0;
-  int layers = 1;
-  double dilutionWater = 3.0; // Для концентрата: 1 часть грунта к N частям воды
+  // Геометрия
+  double _roomWidth = 4.0;
+  double _roomLength = 5.0;
+  double _roomHeight = 2.7;
+  double _openingsArea = 4.0;
+
+  int _inputMode = 0; // 0: комната, 1: площадь вручную
+  double _manualArea = 30.0;
+
+  int _typeIndex = 0;
+  int _layers = 1;
+  double _dilutionWater = 3.0;
 
   final List<Map<String, Object>> primers = const [
     {
       'name': 'Универсальная',
-      'desc': 'Глубокого проникновения (обычная белая водичка). Для шпатлевки, штукатурки.',
-      'consumption': 0.15, // л/м2
+      'desc': 'Глубокого проникновения',
+      'consumption': 0.15,
       'unit': 'л',
-      'pack_size': 10.0, // Канистра
+      'pack_size': 10.0,
       'is_concentrate': false,
     },
     {
       'name': 'Концентрат',
-      'desc': 'Требует разбавления водой. Выгоднее при больших объемах.',
-      'consumption': 0.15, // л/м2 (готового раствора!)
+      'desc': 'Требует разбавления',
+      'consumption': 0.15,
       'unit': 'л',
-      'pack_size': 1.0, // Бутылка 1л
+      'pack_size': 1.0,
       'is_concentrate': true,
     },
     {
       'name': 'Бетоноконтакт',
-      'desc': 'С кварцевым песком. Только для гладкого бетона под гипсовую штукатурку.',
-      'consumption': 0.35, // кг/м2
+      'desc': 'С кварцевым песком',
+      'consumption': 0.35,
       'unit': 'кг',
-      'pack_size': 15.0, // Ведро
+      'pack_size': 15.0,
       'is_concentrate': false,
     },
     {
       'name': 'Супер-Адгезия',
-      'desc': 'Для сложных поверхностей: старая плитка, OSB, пластик, масляная краска.',
-      'consumption': 0.2, // кг/м2
+      'desc': 'Для сложных поверхностей',
+      'consumption': 0.2,
       'unit': 'кг',
-      'pack_size': 3.0, // Маленькое ведерко
+      'pack_size': 3.0,
       'is_concentrate': false,
     },
   ];
 
-  @override
-  void dispose() {
-    _state.dispose();
-    super.dispose();
+  double _getArea() {
+    if (_inputMode == 1) return _manualArea;
+    return (_roomWidth + _roomLength) * 2 * _roomHeight - _openingsArea;
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: _state,
-      builder: (context, child) {
-        final area = _state.getNetArea();
-        final primer = primers[typeIndex];
+    _loc = AppLocalizations.of(context);
+    const accentColor = CalculatorColors.interior;
 
-        final double consumption = primer['consumption'] as double;
-        final bool isConcentrate = primer['is_concentrate'] as bool;
-        final double packSize = primer['pack_size'] as double;
-        final String unit = primer['unit'] as String;
+    final area = _getArea();
+    final primer = primers[_typeIndex];
+    final double consumption = primer['consumption'] as double;
+    final bool isConcentrate = primer['is_concentrate'] as bool;
+    final double packSize = primer['pack_size'] as double;
+    final String unit = primer['unit'] as String;
 
-        // 1. Расчет общего объема ГОТОВОГО раствора
-        final double totalSolutionNeeded = area * layers * consumption;
+    final double totalSolutionNeeded = area * _layers * consumption;
+    double buyAmount;
+    double waterAmount = 0;
 
-        double buyAmount;
-        double waterAmount = 0;
+    if (isConcentrate) {
+      final double totalParts = 1 + _dilutionWater;
+      buyAmount = totalSolutionNeeded / totalParts;
+      waterAmount = totalSolutionNeeded - buyAmount;
+    } else {
+      buyAmount = totalSolutionNeeded;
+    }
 
-        if (isConcentrate) {
-          // Пропорция 1 : N (например 1:3). Всего частей = 1 + 3 = 4.
-          final double totalParts = 1 + dilutionWater;
-          buyAmount = totalSolutionNeeded / totalParts; // Чистый концентрат
-          waterAmount = totalSolutionNeeded - buyAmount; // Вода
-        } else {
-          buyAmount = totalSolutionNeeded;
-        }
+    final int packs = (buyAmount / packSize).ceil();
 
-        final int packs = (buyAmount / packSize).ceil();
+    return CalculatorScaffold(
+      title: _loc.translate('primer.title'),
+      accentColor: accentColor,
+      resultHeader: CalculatorResultHeader(
+        accentColor: accentColor,
+        results: [
+          ResultItem(
+            label: _loc.translate('primer.area').toUpperCase(),
+            value: '${area.toStringAsFixed(1)} м²',
+            icon: Icons.straighten,
+          ),
+          ResultItem(
+            label: (isConcentrate ? _loc.translate('primer.concentrate') : _loc.translate('primer.title')).toUpperCase(),
+            value: '$packs ${_loc.translate('primer.packs')}',
+            icon: Icons.shopping_bag,
+          ),
+          ResultItem(
+            label: '${buyAmount.toStringAsFixed(1)} $unit',
+            value: '$_layers ${_loc.translate('primer.layers_label')}',
+            icon: Icons.layers,
+          ),
+        ],
+      ),
+      children: [
+        // Выбор типа грунтовки
+        TypeSelectorGroup(
+          options: primers.map((p) => TypeSelectorOption(
+            icon: Icons.water_drop,
+            title: p['name'] as String,
+            subtitle: p['desc'] as String,
+          )).toList(),
+          selectedIndex: _typeIndex,
+          onSelect: (index) => setState(() => _typeIndex = index),
+          accentColor: accentColor,
+        ),
 
-        return Scaffold(
-          appBar: AppBar(title: const Text('Грунтовка')),
-          body: ListView(
-            padding: const EdgeInsets.all(16),
+        const SizedBox(height: 16),
+
+        // Геометрия
+        _buildGeometryCard(),
+
+        const SizedBox(height: 16),
+
+        // Слои
+        _buildLayersCard(),
+
+        if (isConcentrate) ...[
+          const SizedBox(height: 16),
+          _buildDilutionCard(),
+        ],
+
+        const SizedBox(height: 16),
+
+        // Результаты
+        ResultCardLight(
+          title: _loc.translate('primer.results_title'),
+          titleIcon: Icons.receipt_long,
+          results: [
+            ResultRowItem(
+              label: _loc.translate('primer.area'),
+              value: '${area.toStringAsFixed(1)} м²',
+              icon: Icons.straighten,
+            ),
+            ResultRowItem(
+              label: isConcentrate ? _loc.translate('primer.concentrate') : _loc.translate('primer.title'),
+              value: '${buyAmount.toStringAsFixed(1)} $unit',
+              icon: Icons.shopping_bag,
+            ),
+            if (isConcentrate) ResultRowItem(
+              label: _loc.translate('primer.water'),
+              value: '${waterAmount.toStringAsFixed(1)} л',
+              icon: Icons.water,
+            ),
+            if (isConcentrate) ResultRowItem(
+              label: _loc.translate('primer.total_solution'),
+              value: '${totalSolutionNeeded.toStringAsFixed(1)} л',
+              icon: Icons.science,
+            ),
+          ],
+          accentColor: accentColor,
+        ),
+
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+
+  Widget _buildGeometryCard() {
+    const accentColor = CalculatorColors.interior;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          ModeSelector(
+            options: [
+              _loc.translate('plaster_pro.mode.room'),
+              _loc.translate('plaster_pro.mode.manual'),
+            ],
+            selectedIndex: _inputMode,
+            onSelect: (index) => setState(() => _inputMode = index),
+            accentColor: accentColor,
+          ),
+          const SizedBox(height: 16),
+          if (_inputMode == 0) ..._buildRoomInputs() else ..._buildManualInputs(),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildRoomInputs() {
+    const accentColor = CalculatorColors.interior;
+    return [
+      Row(
+        children: [
+          Expanded(
+            child: CalculatorTextField(
+              label: _loc.translate('plaster_pro.label.width'),
+              value: _roomWidth,
+              onChanged: (v) => setState(() => _roomWidth = v),
+              suffix: 'м',
+              accentColor: accentColor,
+              minValue: 0.1,
+              maxValue: 100,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: CalculatorTextField(
+              label: _loc.translate('plaster_pro.label.length'),
+              value: _roomLength,
+              onChanged: (v) => setState(() => _roomLength = v),
+              suffix: 'м',
+              accentColor: accentColor,
+              minValue: 0.1,
+              maxValue: 100,
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 12),
+      CalculatorTextField(
+        label: _loc.translate('plaster_pro.label.height'),
+        value: _roomHeight,
+        onChanged: (v) => setState(() => _roomHeight = v),
+        suffix: 'м',
+        accentColor: accentColor,
+        minValue: 1.5,
+        maxValue: 10,
+      ),
+      const SizedBox(height: 12),
+      CalculatorTextField(
+        label: _loc.translate('plaster_pro.label.openings_hint'),
+        value: _openingsArea,
+        onChanged: (v) => setState(() => _openingsArea = v),
+        suffix: 'м²',
+        accentColor: accentColor,
+        minValue: 0,
+        maxValue: 100,
+      ),
+    ];
+  }
+
+  List<Widget> _buildManualInputs() {
+    const accentColor = CalculatorColors.interior;
+    return [
+      CalculatorTextField(
+        label: _loc.translate('plaster_pro.label.wall_area'),
+        value: _manualArea,
+        onChanged: (v) => setState(() => _manualArea = v),
+        suffix: 'м²',
+        accentColor: accentColor,
+        minValue: 1,
+        maxValue: 500,
+      ),
+    ];
+  }
+
+  Widget _buildLayersCard() {
+    const accentColor = CalculatorColors.interior;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('primer.layers_label'),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: [
+              _loc.translate('primer.layers_1'),
+              _loc.translate('primer.layers_2'),
+              _loc.translate('primer.layers_3'),
+            ],
+            selectedIndex: _layers - 1,
+            onSelect: (index) => setState(() => _layers = index + 1),
+            accentColor: accentColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDilutionCard() {
+    const accentColor = CalculatorColors.interior;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.orange[50],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.orange[200]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${_loc.translate('primer.dilution_label')} (1 : ${_dilutionWater.toInt()})',
+            style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1E3A8A)),
+          ),
+          const SizedBox(height: 8),
+          Slider(
+            value: _dilutionWater,
+            min: 1,
+            max: 9,
+            divisions: 8,
+            label: '1:${_dilutionWater.toInt()}',
+            activeColor: accentColor,
+            onChanged: (v) => setState(() => _dilutionWater = v),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              GeometryWidget(state: _state),
-              const SizedBox(height: 16),
-
-              SectionCard(
-                title: 'Тип грунта',
-                icon: Icons.water_drop,
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8FAFC),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Column(
-                        children: List.generate(primers.length, (index) {
-                          final bool isSelected = typeIndex == index;
-                          final String name = primers[index]['name'] as String;
-                          final String desc = primers[index]['desc'] as String;
-
-                          return GestureDetector(
-                            onTap: () => setState(() => typeIndex = index),
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: isSelected ? Colors.white : Colors.transparent,
-                                borderRadius: BorderRadius.circular(11),
-                                boxShadow: isSelected
-                                    ? [const BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05), blurRadius: 4)]
-                                    : [],
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-                                    color: const Color(0xFF2563EB),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          name,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: isSelected ? const Color(0xFF2563EB) : Colors.black87,
-                                          ),
-                                        ),
-                                        Text(desc, style: TextStyle(fontSize: 11, color: Colors.grey[600])),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    Row(
-                      children: [
-                        const Text('Количество слоев:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: CustomTabSelector(
-                            labels: const ['1 слой', '2 слоя', '3 слоя'],
-                            selectedIndex: layers - 1,
-                            onSelect: (i) => setState(() => layers = i + 1),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    if (isConcentrate) ...[
-                      const SizedBox(height: 20),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.blue[50],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.blue[100]!),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Разбавление водой (1 : ${dilutionWater.toInt()})',
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1E3A8A)),
-                            ),
-                            const SizedBox(height: 8),
-                            Slider(
-                              value: dilutionWater,
-                              min: 1,
-                              max: 9,
-                              divisions: 8,
-                              label: '1 : ${dilutionWater.toInt()}',
-                              activeColor: const Color(0xFF2563EB),
-                              onChanged: (v) => setState(() => dilutionWater = v),
-                            ),
-                            const Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('1:1 (Сильная)', style: TextStyle(fontSize: 10, color: Colors.grey)),
-                                Text('1:9 (Слабая)', style: TextStyle(fontSize: 10, color: Colors.grey)),
-                              ],
-                            )
-                          ],
-                        ),
-                      )
-                    ]
-                  ],
-                ),
-              ),
-
-              ResultsSheet(
-                title: 'Смета: Грунтовка',
-                rows: [
-                  ResultRow('Обрабатываемая площадь', '${area.toStringAsFixed(1)} м²'),
-                  ResultRow(
-                    isConcentrate ? 'Концентрат (Покупка)' : 'Грунтовка',
-                    '${buyAmount.toStringAsFixed(1)} $unit',
-                    subValue: '$packs шт',
-                    subLabel: '${packSize.toStringAsFixed(packSize.truncateToDouble() == packSize ? 0 : 1)}$unit',
-                  ),
-                  if (isConcentrate)
-                    ResultRow(
-                      'Вода для смеси',
-                      '${waterAmount.toStringAsFixed(1)} л',
-                      subLabel: 'добавить',
-                    ),
-                  if (isConcentrate)
-                    ResultRow(
-                      'Итого раствора',
-                      '${totalSolutionNeeded.toStringAsFixed(1)} л',
-                      subLabel: 'готовой смеси',
-                    ),
-                ],
-              ),
-              const SizedBox(height: 40),
+              Text(_loc.translate('primer.dilution_strong'), style: const TextStyle(fontSize: 10, color: Colors.grey)),
+              Text(_loc.translate('primer.dilution_weak'), style: const TextStyle(fontSize: 10, color: Colors.grey)),
             ],
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }

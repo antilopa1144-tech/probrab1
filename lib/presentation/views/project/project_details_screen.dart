@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/project_v2.dart';
 import '../../../domain/models/export_data.dart';
 import '../../../domain/services/csv_export_service.dart';

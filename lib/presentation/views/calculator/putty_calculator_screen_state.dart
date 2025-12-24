@@ -109,206 +109,103 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
     });
   }
 
-  // --- Хелперы ---
-  void _updateValue(String value, Function(double) onUpdate) {
-    if (value.isEmpty) {
-      onUpdate(0.0);
-    } else {
-      final parsed = double.tryParse(value);
-      if (parsed != null) onUpdate(parsed);
-    }
-    _calculate();
-  }
 
   @override
   Widget build(BuildContext context) {
-    // Используем Teal цвет для шпатлевки, чтобы отличаться от синей штукатурки
-    final themeColor = Colors.teal[600];
+    const accentColor = CalculatorColors.interior;
     final lightColor = Colors.teal[50];
 
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: Text(_loc.translate('putty.title')),
-        backgroundColor: themeColor,
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
-          _buildSummaryHeader(themeColor!),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  _buildTargetSelector(lightColor!),
-                  const SizedBox(height: 16),
-                  _buildModeSelector(),
-                  const SizedBox(height: 16),
-                  _buildGeometrySection(lightColor),
-                  const SizedBox(height: 16),
-                  _buildOpeningsSection(),
-                  const SizedBox(height: 16),
-                  _buildMaterialTypeSection(),
-                  const SizedBox(height: 24),
-                  _buildResultCard(),
-                  const SizedBox(height: 40),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSummaryHeader(Color color) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
-        ),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
-            BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.1), blurRadius: 10, offset: Offset(0, 5))
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildHeaderItem(
-              _loc.translate('putty.summary.area'),
-              '${_result?.netArea.toStringAsFixed(1) ?? 0} ${_loc.translate('unit.sqm')}',
-              color,
-            ),
-            Container(width: 1, height: 30, color: Colors.grey[200]),
-            _buildHeaderItem(
-              _loc.translate('putty.summary.start'),
-              '${_result?.startBags ?? 0} ${_loc.translate('unit.bags')}',
-              color,
-            ),
-            Container(width: 1, height: 30, color: Colors.grey[200]),
-            _buildHeaderItem(
-              _loc.translate('putty.summary.finish'),
-              '${_result?.finishPacks ?? 0} ${_loc.translate('unit.pieces')}',
-              color,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeaderItem(String label, String value, Color color) {
-    return Column(
+    return CalculatorScaffold(
+      title: _loc.translate('putty.title'),
+      accentColor: accentColor,
+      resultHeader: _buildSummaryHeader(),
       children: [
-        Text(label.toUpperCase(), style: TextStyle(fontSize: 10, color: Colors.grey[400], fontWeight: FontWeight.bold)),
-        Text(value, style: TextStyle(fontSize: 18, color: color, fontWeight: FontWeight.bold)),
+        _buildTargetSelector(lightColor!),
+        const SizedBox(height: 16),
+        _buildModeSelector(),
+        const SizedBox(height: 16),
+        _buildGeometrySection(lightColor),
+        const SizedBox(height: 16),
+        _buildOpeningsSection(),
+        const SizedBox(height: 16),
+        _buildMaterialTypeSection(),
+        const SizedBox(height: 24),
+        _buildResultCard(),
+        const SizedBox(height: 40),
+      ],
+    );
+  }
+
+  Widget _buildSummaryHeader() {
+    const accentColor = CalculatorColors.interior;
+    return CalculatorResultHeader(
+      accentColor: accentColor,
+      results: [
+        ResultItem(
+          label: _loc.translate('putty.summary.area').toUpperCase(),
+          value: '${_result?.netArea.toStringAsFixed(1) ?? 0} ${_loc.translate('unit.sqm')}',
+          icon: Icons.straighten,
+        ),
+        ResultItem(
+          label: _loc.translate('putty.summary.start').toUpperCase(),
+          value: '${_result?.startBags ?? 0} ${_loc.translate('unit.bags')}',
+          icon: Icons.shopping_bag,
+        ),
+        ResultItem(
+          label: _loc.translate('putty.summary.finish').toUpperCase(),
+          value: '${_result?.finishPacks ?? 0} ${_loc.translate('unit.pieces')}',
+          icon: Icons.inventory_2,
+        ),
       ],
     );
   }
 
   Widget _buildTargetSelector(Color bgColor) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05), blurRadius: 5)],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _loc.translate('putty.section.finish_goal'),
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(child: _buildSelectCard(
-                icon: Icons.wallpaper,
-                title: _loc.translate('putty.target.wallpaper.title'),
-                subtitle: _loc.translate('putty.target.wallpaper.subtitle'),
-                isSelected: _target == FinishTarget.wallpaper,
-                onTap: () { setState(() => _target = FinishTarget.wallpaper); _calculate(); }
-              )),
-              const SizedBox(width: 12),
-              Expanded(child: _buildSelectCard(
-                icon: Icons.format_paint,
-                title: _loc.translate('putty.target.painting.title'),
-                subtitle: _loc.translate('putty.target.painting.subtitle'),
-                isSelected: _target == FinishTarget.painting,
-                onTap: () { setState(() => _target = FinishTarget.painting); _calculate(); }
-              )),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSelectCard({required IconData icon, required String title, required String subtitle, required bool isSelected, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.teal[50] : Colors.grey[50],
-          border: Border.all(color: isSelected ? Colors.teal : Colors.grey[200]!, width: 2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: isSelected ? Colors.teal[700] : Colors.grey[400], size: 28),
-            const SizedBox(height: 8),
-            Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: isSelected ? Colors.teal[900] : Colors.grey[700], fontSize: 13)),
-            const SizedBox(height: 4),
-            Text(subtitle, style: TextStyle(fontSize: 10, color: isSelected ? Colors.teal[600] : Colors.grey[500]), textAlign: TextAlign.center),
+    const accentColor = CalculatorColors.interior;
+    return InputGroup(
+      title: _loc.translate('putty.section.finish_goal'),
+      children: [
+        TypeSelectorGroup(
+          options: [
+            TypeSelectorOption(
+              icon: Icons.wallpaper,
+              title: _loc.translate('putty.target.wallpaper.title'),
+              subtitle: _loc.translate('putty.target.wallpaper.subtitle'),
+            ),
+            TypeSelectorOption(
+              icon: Icons.format_paint,
+              title: _loc.translate('putty.target.painting.title'),
+              subtitle: _loc.translate('putty.target.painting.subtitle'),
+            ),
           ],
+          selectedIndex: _target == FinishTarget.wallpaper ? 0 : 1,
+          onSelect: (index) {
+            setState(() {
+              _target = index == 0 ? FinishTarget.wallpaper : FinishTarget.painting;
+            });
+            _calculate();
+          },
+          accentColor: accentColor,
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildModeSelector() {
-    return Container(
-      decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(12)),
-      padding: const EdgeInsets.all(4),
-      child: Row(
-        children: [
-          Expanded(child: _buildSelectButton(_loc.translate('putty.mode.room'), _mode == CalculationMode.room, () {
-             setState(() => _mode = CalculationMode.room); _calculate();
-          })),
-          Expanded(child: _buildSelectButton(_loc.translate('putty.mode.walls'), _mode == CalculationMode.walls, () {
-             setState(() => _mode = CalculationMode.walls); _calculate();
-          })),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSelectButton(String text, bool isSelected, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: isSelected ? [const BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05), blurRadius: 4)] : null,
-        ),
-        alignment: Alignment.center,
-        child: Text(text, style: TextStyle(color: isSelected ? Colors.teal[800] : Colors.grey[600], fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
-      ),
+    const accentColor = CalculatorColors.interior;
+    return ModeSelector(
+      options: [
+        _loc.translate('putty.mode.room'),
+        _loc.translate('putty.mode.walls'),
+      ],
+      selectedIndex: _mode == CalculationMode.room ? 0 : 1,
+      onSelect: (index) {
+        setState(() {
+          _mode = index == 0 ? CalculationMode.room : CalculationMode.walls;
+        });
+        _calculate();
+      },
+      accentColor: accentColor,
     );
   }
 
@@ -339,12 +236,12 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
             child: Column(
               children: [
                 Row(children: [
-                    Expanded(child: _buildInput(_loc.translate('putty.input.floor_length'), _roomLength, (v) => _roomLength = v)),
+                    Expanded(child: _buildInput(_loc.translate('putty.input.floor_length'), _roomLength, (v) => _roomLength = v, suffix: 'м')),
                     const SizedBox(width: 12),
-                    Expanded(child: _buildInput(_loc.translate('putty.input.floor_width'), _roomWidth, (v) => _roomWidth = v)),
+                    Expanded(child: _buildInput(_loc.translate('putty.input.floor_width'), _roomWidth, (v) => _roomWidth = v, suffix: 'м')),
                 ]),
                 const SizedBox(height: 12),
-                _buildInput(_loc.translate('putty.input.ceiling_height'), _roomHeight, (v) => _roomHeight = v),
+                _buildInput(_loc.translate('putty.input.ceiling_height'), _roomHeight, (v) => _roomHeight = v, suffix: 'м'),
               ],
             ),
           )
@@ -364,9 +261,9 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
                   child: Row(children: [
                       CircleAvatar(radius: 10, backgroundColor: Colors.white, child: Text('${index + 1}', style: const TextStyle(fontSize: 10, color: Colors.grey))),
                       const SizedBox(width: 12),
-                      Expanded(child: _buildInput(_loc.translate('putty.input.length'), wall.length, (v) => wall.length = v)),
+                      Expanded(child: _buildInput(_loc.translate('putty.input.length'), wall.length, (v) => wall.length = v, suffix: 'м')),
                       const SizedBox(width: 8),
-                      Expanded(child: _buildInput(_loc.translate('putty.input.height'), wall.height, (v) => wall.height = v)),
+                      Expanded(child: _buildInput(_loc.translate('putty.input.height'), wall.height, (v) => wall.height = v, suffix: 'м')),
                       if (_walls.length > 1) IconButton(icon: const Icon(Icons.close, color: Colors.red, size: 18), onPressed: () { setState(() => _walls.removeAt(index)); _calculate(); })
                   ]),
                 ),
@@ -394,11 +291,11 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
             return Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Row(children: [
-                  Expanded(child: _buildInput(_loc.translate('putty.input.width'), op.width, (v) => op.width = v)),
+                  Expanded(child: _buildInput(_loc.translate('putty.input.width'), op.width, (v) => op.width = v, suffix: 'м')),
                   const SizedBox(width: 8),
-                  Expanded(child: _buildInput(_loc.translate('putty.input.height'), op.height, (v) => op.height = v)),
+                  Expanded(child: _buildInput(_loc.translate('putty.input.height'), op.height, (v) => op.height = v, suffix: 'м')),
                   const SizedBox(width: 8),
-                  Expanded(child: _buildInput(_loc.translate('putty.input.count'), op.count.toDouble(), (v) => op.count = v.toInt(), isInt: true)),
+                  Expanded(child: _buildInput(_loc.translate('putty.input.count'), op.count.toDouble(), (v) => op.count = v.toInt(), isInt: true, suffix: 'шт')),
                   IconButton(icon: const Icon(Icons.remove_circle_outline, color: Colors.red), onPressed: () {
                     if (_openings.length > 1) { setState(() => _openings.removeAt(index)); _calculate(); }
                   })
@@ -418,55 +315,38 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
   }
 
   Widget _buildMaterialTypeSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    const accentColor = CalculatorColors.interior;
+    return InputGroup(
+      title: _loc.translate('putty.section.finish_material_type'),
       children: [
-        Text(
-          _loc.translate('putty.section.finish_material_type'),
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(child: _buildRadioTile(
-              _loc.translate('putty.finish_material.dry'),
-              _loc.translate('putty.finish_material.dry_subtitle'),
-              FinishMaterialType.dryBag,
-            )),
-            const SizedBox(width: 8),
-            Expanded(child: _buildRadioTile(
-              _loc.translate('putty.finish_material.ready'),
-              _loc.translate('putty.finish_material.ready_subtitle'),
-              FinishMaterialType.readyBucket,
-            )),
+        TypeSelectorGroup(
+          options: [
+            TypeSelectorOption(
+              icon: Icons.inventory,
+              title: _loc.translate('putty.finish_material.dry'),
+              subtitle: _loc.translate('putty.finish_material.dry_subtitle'),
+            ),
+            TypeSelectorOption(
+              icon: Icons.shopping_basket,
+              title: _loc.translate('putty.finish_material.ready'),
+              subtitle: _loc.translate('putty.finish_material.ready_subtitle'),
+            ),
           ],
-        )
+          selectedIndex: _finishType == FinishMaterialType.dryBag ? 0 : 1,
+          onSelect: (index) {
+            setState(() {
+              _finishType = index == 0 ? FinishMaterialType.dryBag : FinishMaterialType.readyBucket;
+            });
+            _calculate();
+          },
+          accentColor: accentColor,
+        ),
       ],
     );
   }
 
-  Widget _buildRadioTile(String title, String subtitle, FinishMaterialType type) {
-    final bool selected = _finishType == type;
-    return GestureDetector(
-      onTap: () { setState(() => _finishType = type); _calculate(); },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        decoration: BoxDecoration(
-          color: selected ? Colors.teal[600] : Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: selected ? Colors.teal : Colors.grey[300]!),
-        ),
-        child: Column(
-          children: [
-            Text(title, style: TextStyle(color: selected ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 13)),
-            Text(subtitle, style: TextStyle(color: selected ? Colors.teal[100] : Colors.grey, fontSize: 10)),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildResultCard() {
+    const accentColor = CalculatorColors.interior;
     final loc = AppLocalizations.of(context);
     final finishTypeLabel = loc.translate(
       'putty.finish_type',
@@ -478,136 +358,61 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
         ),
       },
     );
-    final finishPackNameKey = _result?.finishPackNameKey ?? '';
-    final finishPackName =
-        finishPackNameKey.isEmpty ? '' : loc.translate(finishPackNameKey);
     final piecesLabel = loc.translate('unit.pieces');
-    final shoppingTitle = loc.translate('putty.section.shopping_list');
-    final startTitle = loc.translate('putty.shopping.start_title');
-    final startSubtitle = loc.translate('putty.shopping.start_subtitle');
-    final startUnit = loc.translate('putty.shopping.start_unit');
-    final finishSubtitle = loc.translate(
-      _target == FinishTarget.painting
-          ? 'putty.shopping.finish_painting'
-          : 'putty.shopping.finish_wallpaper',
-    );
-    final primerTitle = loc.translate('putty.shopping.primer_title');
-    final primerSubtitle = loc.translate('putty.shopping.primer_subtitle');
-    final primerUnit = loc.translate('putty.shopping.primer_unit');
-    final abrasiveTitle = loc.translate('putty.section.abrasive');
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2D3748), // Dark Gray
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.3), blurRadius: 15, offset: Offset(0, 5))]
+    final results = <ResultRowItem>[
+      ResultRowItem(
+        label: loc.translate('putty.shopping.start_title'),
+        value: '${_result?.startBags} $piecesLabel',
+        subtitle: loc.translate('putty.shopping.start_subtitle'),
+        icon: Icons.shopping_bag,
       ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.check_circle, color: Colors.tealAccent),
-              const SizedBox(width: 8),
-              Text(
-                shoppingTitle,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const Divider(color: Colors.grey),
-          const SizedBox(height: 8),
-
-          _buildResultRow(
-            startTitle,
-            startSubtitle,
-            '${_result?.startBags} $piecesLabel',
-            startUnit,
-          ),
-          const SizedBox(height: 16),
-
-          _buildResultRow(
-            finishTypeLabel,
-            finishSubtitle,
-            '${_result?.finishPacks} $piecesLabel',
-            finishPackName,
-          ),
-          const SizedBox(height: 16),
-
-          _buildResultRow(
-            primerTitle,
-            primerSubtitle,
-            '${_result?.primerCanisters} $piecesLabel',
-            primerUnit,
-          ),
-
-          const Divider(color: Colors.grey, height: 32),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                abrasiveTitle,
-                style: const TextStyle(color: Colors.white70, fontSize: 14),
-              ),
-              Text(
-                '${_result?.sandingSheets} $piecesLabel',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          )
-        ],
+      ResultRowItem(
+        label: finishTypeLabel,
+        value: '${_result?.finishPacks} $piecesLabel',
+        subtitle: loc.translate(
+          _target == FinishTarget.painting
+              ? 'putty.shopping.finish_painting'
+              : 'putty.shopping.finish_wallpaper',
+        ),
+        icon: Icons.inventory_2,
       ),
+      ResultRowItem(
+        label: loc.translate('putty.shopping.primer_title'),
+        value: '${_result?.primerCanisters} $piecesLabel',
+        subtitle: loc.translate('putty.shopping.primer_subtitle'),
+        icon: Icons.water_drop,
+      ),
+      ResultRowItem(
+        label: loc.translate('putty.section.abrasive'),
+        value: '${_result?.sandingSheets} $piecesLabel',
+        subtitle: '',
+        icon: Icons.build,
+      ),
+    ];
+
+    return ResultCard(
+      title: loc.translate('putty.section.shopping_list'),
+      titleIcon: Icons.check_circle,
+      results: results,
+      accentColor: accentColor,
     );
   }
 
-  Widget _buildResultRow(String title, String subtitle, String mainValue, String subValue) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600)),
-              const SizedBox(height: 4),
-              Text(subtitle, style: TextStyle(color: Colors.grey[400], fontSize: 12)),
-            ],
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(mainValue, style: const TextStyle(color: Colors.tealAccent, fontSize: 18, fontWeight: FontWeight.bold)),
-            Text(subValue, style: TextStyle(color: Colors.grey[500], fontSize: 11)),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInput(String label, double value, Function(double) onChanged, {bool isInt = false}) {
-    return TextField(
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(fontSize: 12, color: Colors.grey[600]),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      ),
-      controller: TextEditingController(text: isInt ? value.toInt().toString() : value.toStringAsFixed(1)),
-      onChanged: (val) => _updateValue(val, onChanged),
+  Widget _buildInput(String label, double value, Function(double) onChanged, {bool isInt = false, String? suffix}) {
+    const accentColor = CalculatorColors.interior;
+    return CalculatorTextField(
+      label: label,
+      value: value,
+      onChanged: (val) {
+        onChanged(val);
+        _calculate();
+      },
+      suffix: suffix,
+      accentColor: accentColor,
+      isInteger: isInt,
+      minValue: 0.1,
+      maxValue: isInt ? 100 : 50,
     );
   }
 }

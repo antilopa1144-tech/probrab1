@@ -9,24 +9,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     _loadAppVersion();
   }
 
-  String _getLanguageName(String code) {
+  String _getLanguageName(AppLocalizations loc, String code) {
     switch (code) {
       case 'ru':
-        return 'Русский 🇷🇺';
+        return loc.translate('language.ru');
       case 'en':
-        return 'English 🇬🇧';
+        return loc.translate('language.en');
       case 'kk':
-        return 'Қазақша 🇰🇿';
+        return loc.translate('language.kk');
       case 'ky':
-        return 'Кыргызча 🇰🇬';
+        return loc.translate('language.ky');
       case 'tg':
-        return 'Тоҷикӣ 🇹🇯';
+        return loc.translate('language.tg');
       case 'tk':
-        return 'Türkmençe 🇹🇲';
+        return loc.translate('language.tk');
       case 'uz':
-        return 'Oʻzbekcha 🇺🇿';
+        return loc.translate('language.uz');
       default:
-        return 'Русский';
+        return loc.translate('language.ru');
     }
   }
 
@@ -48,6 +48,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final currentColor = ref.watch(accentColorProvider);
     final settings = ref.watch(settingsProvider);
 
@@ -58,13 +59,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Настройки')),
+      appBar: AppBar(title: Text(loc.translate('settings.title'))),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         children: [
           // Внешний вид
           _SettingsSection(
-            title: 'Внешний вид',
+            title: loc.translate('settings.section.appearance'),
             icon: Icons.palette_outlined,
             children: [
               Padding(
@@ -73,7 +74,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Цветовая схема',
+                      loc.translate('settings.appearance.color_scheme'),
                       style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -82,9 +83,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     Row(
                       children: availableColors.map((color) {
                         final isSelected = currentColor == color;
-                        final colorName = color.toARGB32() == 0xFFFFC107 
-                            ? 'Жёлтая' 
-                            : 'Голубая';
+                        final colorName = color.toARGB32() == 0xFFFFC107
+                            ? loc.translate('settings.appearance.color.yellow')
+                            : loc.translate('settings.appearance.color.blue');
                         return Expanded(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -166,8 +167,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 ),
               ),
               SwitchListTile(
-                title: const Text('Тёмная тема'),
-                subtitle: const Text('Использовать тёмную тему'),
+                title: Text(
+                  loc.translate('settings.appearance.dark_theme.title'),
+                ),
+                subtitle: Text(
+                  loc.translate('settings.appearance.dark_theme.subtitle'),
+                ),
                 value: settings.darkMode,
                 onChanged: (value) {
                   ref.read(settingsProvider.notifier).updateDarkMode(value);
@@ -179,21 +184,21 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
           // Регион и единицы
           _SettingsSection(
-            title: 'Регион и единицы',
+            title: loc.translate('settings.section.region_units'),
             icon: Icons.location_on_outlined,
             children: [
               ListTile(
-                title: const Text('Регион'),
+                title: Text(loc.translate('settings.region.title')),
                 subtitle: Text(settings.region),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => _showRegionDialog(context, ref),
               ),
               ListTile(
-                title: const Text('Единицы измерения'),
+                title: Text(loc.translate('settings.units.title')),
                 subtitle: Text(
                   settings.unitSystem == 'metric'
-                      ? 'Метрические (м, м²)'
-                      : 'Имперские (фт, фт²)',
+                      ? loc.translate('settings.units.metric.short')
+                      : loc.translate('settings.units.imperial.short'),
                 ),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => _showUnitSystemDialog(context, ref),
@@ -204,28 +209,40 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
           // Поведение приложения
           _SettingsSection(
-            title: 'Поведение',
+            title: loc.translate('settings.section.behavior'),
             icon: Icons.tune_outlined,
             children: [
               SwitchListTile(
-                title: const Text('Автосохранение'),
-                subtitle: const Text('Автоматически сохранять расчёты'),
+                title: Text(
+                  loc.translate('settings.behavior.autosave.title'),
+                ),
+                subtitle: Text(
+                  loc.translate('settings.behavior.autosave.subtitle'),
+                ),
                 value: settings.autoSave,
                 onChanged: (value) {
                   ref.read(settingsProvider.notifier).updateAutoSave(value);
                 },
               ),
               SwitchListTile(
-                title: const Text('Показывать советы'),
-                subtitle: const Text('Отображать советы мастера'),
+                title: Text(
+                  loc.translate('settings.behavior.show_tips.title'),
+                ),
+                subtitle: Text(
+                  loc.translate('settings.behavior.show_tips.subtitle'),
+                ),
                 value: settings.showTips,
                 onChanged: (value) {
                   ref.read(settingsProvider.notifier).updateShowTips(value);
                 },
               ),
               SwitchListTile(
-                title: const Text('Уведомления'),
-                subtitle: const Text('Включить напоминания'),
+                title: Text(
+                  loc.translate('settings.behavior.notifications.title'),
+                ),
+                subtitle: Text(
+                  loc.translate('settings.behavior.notifications.subtitle'),
+                ),
                 value: settings.notificationsEnabled,
                 onChanged: (value) {
                   ref
@@ -239,12 +256,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
           // Язык
           _SettingsSection(
-            title: 'Язык',
+            title: loc.translate('settings.section.language'),
             icon: Icons.language_outlined,
             children: [
               ListTile(
-                title: const Text('Язык приложения'),
-                subtitle: Text(_getLanguageName(settings.language)),
+                title: Text(loc.translate('settings.language.title')),
+                subtitle: Text(_getLanguageName(loc, settings.language)),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => _showLanguageDialog(context, ref),
               ),
@@ -254,23 +271,27 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
           // Данные
           _SettingsSection(
-            title: 'Данные',
+            title: loc.translate('settings.section.data'),
             icon: Icons.storage_outlined,
             children: [
               ListTile(
-                title: const Text('Экспорт данных'),
-                subtitle: const Text('Сохранить все расчёты'),
+                title: Text(loc.translate('settings.data.export.title')),
+                subtitle: Text(loc.translate('settings.data.export.subtitle')),
                 leading: const Icon(Icons.download_outlined),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Функция в разработке')),
+                    SnackBar(
+                      content:
+                          Text(loc.translate('common.feature_in_development')),
+                    ),
                   );
                 },
               ),
               ListTile(
-                title: const Text('Очистить кэш'),
-                subtitle: const Text('Удалить временные данные'),
+                title: Text(loc.translate('settings.data.clear_cache.title')),
+                subtitle:
+                    Text(loc.translate('settings.data.clear_cache.subtitle')),
                 leading: const Icon(Icons.delete_outline),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => _showClearCacheDialog(context),
@@ -281,32 +302,42 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
           // О приложении
           _SettingsSection(
-            title: 'О приложении',
+            title: loc.translate('settings.section.about'),
             icon: Icons.info_outlined,
             children: [
               ListTile(
-                title: const Text('Версия'),
-                subtitle: Text(_appVersion ?? 'Загрузка...'),
+                title: Text(loc.translate('settings.about.version.title')),
+                subtitle: Text(
+                  _appVersion ?? loc.translate('common.loading'),
+                ),
                 leading: const Icon(Icons.numbers_outlined),
               ),
               ListTile(
-                title: const Text('Обратная связь'),
-                subtitle: const Text('Сообщить об ошибке'),
+                title: Text(loc.translate('settings.about.feedback.title')),
+                subtitle: Text(
+                  loc.translate('settings.about.feedback.subtitle'),
+                ),
                 leading: const Icon(Icons.feedback_outlined),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Функция в разработке')),
+                    SnackBar(
+                      content:
+                          Text(loc.translate('common.feature_in_development')),
+                    ),
                   );
                 },
               ),
               ListTile(
-                title: const Text('Политика конфиденциальности'),
+                title: Text(loc.translate('settings.about.privacy.title')),
                 leading: const Icon(Icons.privacy_tip_outlined),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Функция в разработке')),
+                    SnackBar(
+                      content:
+                          Text(loc.translate('common.feature_in_development')),
+                    ),
                   );
                 },
               ),
@@ -320,12 +351,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   void _showRegionDialog(BuildContext context, WidgetRef ref) {
     const regions = AppConstants.regions;
+    final loc = AppLocalizations.of(context);
     final currentRegion = ref.watch(settingsProvider).region;
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Выберите регион'),
+        title: Text(loc.translate('settings.region.dialog_title')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: regions.map((region) {
@@ -354,17 +386,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   void _showUnitSystemDialog(BuildContext context, WidgetRef ref) {
     final currentSystem = ref.watch(settingsProvider).unitSystem;
+    final loc = AppLocalizations.of(context);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Единицы измерения'),
+        title: Text(loc.translate('settings.units.title')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              title: const Text('Метрические'),
-              subtitle: const Text('Метры, квадратные метры'),
+              title: Text(loc.translate('settings.units.metric.title')),
+              subtitle: Text(loc.translate('settings.units.metric.subtitle')),
               leading: Icon(
                 currentSystem == 'metric'
                     ? Icons.radio_button_checked
@@ -379,8 +412,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               },
             ),
             ListTile(
-              title: const Text('Имперские'),
-              subtitle: const Text('Футы, квадратные футы'),
+              title: Text(loc.translate('settings.units.imperial.title')),
+              subtitle: Text(loc.translate('settings.units.imperial.subtitle')),
               leading: Icon(
                 currentSystem == 'imperial'
                     ? Icons.radio_button_checked
@@ -404,37 +437,23 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   void _showLanguageDialog(BuildContext context, WidgetRef ref) {
     final currentLanguage = ref.watch(settingsProvider).language;
-
-    final languages = [
-      {'code': 'ru', 'name': 'Русский', 'flag': '🇷🇺'},
-      {'code': 'en', 'name': 'English', 'flag': '🇬🇧'},
-      {'code': 'kk', 'name': 'Қазақша', 'flag': '🇰🇿'},
-      {'code': 'ky', 'name': 'Кыргызча', 'flag': '🇰🇬'},
-      {'code': 'tg', 'name': 'Тоҷикӣ', 'flag': '🇹🇯'},
-      {'code': 'tk', 'name': 'Türkmençe', 'flag': '🇹🇲'},
-      {'code': 'uz', 'name': 'Oʻzbekcha', 'flag': '🇺🇿'},
-    ];
+    final loc = AppLocalizations.of(context);
+    const languages = ['ru', 'en', 'kk', 'ky', 'tg', 'tk', 'uz'];
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Язык приложения'),
+        title: Text(loc.translate('settings.language.title')),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: languages.length,
             itemBuilder: (context, index) {
-              final lang = languages[index];
-              final langCode = lang['code'] as String;
+              final langCode = languages[index];
               final isSelected = langCode == currentLanguage;
               return ListTile(
-                title: Row(
-                  children: [
-                    Text('${lang['flag']} '),
-                    Text(lang['name'] as String),
-                  ],
-                ),
+                title: Text(_getLanguageName(loc, langCode)),
                 leading: Icon(
                   isSelected
                       ? Icons.radio_button_checked
@@ -461,18 +480,16 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   void _showClearCacheDialog(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Очистить кэш?'),
-        content: const Text(
-          'Это действие удалит временные данные приложения. '
-          'Настройки и сохранённые расчёты не будут затронуты.',
-        ),
+        title: Text(loc.translate('settings.data.clear_cache.dialog_title')),
+        content: Text(loc.translate('settings.data.clear_cache.dialog_body')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
+            child: Text(loc.translate('button.cancel')),
           ),
           TextButton(
             onPressed: () async {
@@ -480,19 +497,21 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               
               // Показываем индикатор загрузки
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
+                SnackBar(
                   content: Row(
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       ),
-                      SizedBox(width: 12),
-                      Text('Очистка кэша...'),
+                      const SizedBox(width: 12),
+                      Text(
+                        loc.translate('settings.data.clear_cache.clearing'),
+                      ),
                     ],
                   ),
-                  duration: Duration(seconds: 2),
+                  duration: const Duration(seconds: 2),
                 ),
               );
               
@@ -502,12 +521,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                     content: Row(
                       children: [
-                        Icon(Icons.check_circle, color: Colors.white),
-                        SizedBox(width: 12),
-                        Text('Кэш успешно очищен'),
+                        const Icon(Icons.check_circle, color: Colors.white),
+                        const SizedBox(width: 12),
+                        Text(
+                          loc.translate('settings.data.clear_cache.success'),
+                        ),
                       ],
                     ),
                     backgroundColor: Colors.green,
@@ -515,7 +536,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 );
               }
             },
-            child: const Text('Очистить'),
+            child: Text(loc.translate('button.clear')),
           ),
         ],
       ),

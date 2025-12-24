@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,6 +15,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 // ============================================================================
 
 bool _assetBundleMockInstalled = false;
+
+Directory _findProjectRoot() {
+  var dir = Directory.current;
+  for (int i = 0; i < 6; i++) {
+    final pubspec = File(
+      '${dir.path}${Platform.pathSeparator}pubspec.yaml',
+    );
+    if (pubspec.existsSync()) {
+      return dir;
+    }
+    final parent = dir.parent;
+    if (parent.path == dir.path) break;
+    dir = parent;
+  }
+  return Directory.current;
+}
 
 void _installAssetBundleMock() {
   if (_assetBundleMockInstalled) return;
@@ -31,15 +46,49 @@ void _installAssetBundleMock() {
 
     File file = File(normalized);
     if (!file.existsSync()) {
-      file = File(
-        '${Directory.current.path}${Platform.pathSeparator}$normalized',
-      );
+      final root = _findProjectRoot();
+      file = File('${root.path}${Platform.pathSeparator}$normalized');
     }
     if (!file.existsSync()) return null;
 
     final bytes = file.readAsBytesSync();
     return ByteData.view(Uint8List.fromList(bytes).buffer);
   });
+}
+
+class TestAppLocalizations extends AppLocalizations {
+  TestAppLocalizations(super.locale);
+
+  @override
+  String translate(String key, [Map<String, String>? params]) {
+    var resolved = key;
+    if (params != null && params.isNotEmpty) {
+      for (final entry in params.entries) {
+        resolved = resolved.replaceAll('{${entry.key}}', entry.value);
+      }
+    }
+    return resolved;
+  }
+}
+
+class TestAppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
+  const TestAppLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) {
+    return AppLocalizations.supportedLocales.any(
+      (l) => l.languageCode == locale.languageCode,
+    );
+  }
+
+  @override
+  Future<AppLocalizations> load(Locale locale) {
+    return SynchronousFuture<AppLocalizations>(TestAppLocalizations(locale));
+  }
+
+  @override
+  bool shouldReload(TestAppLocalizationsDelegate old) => false;
 }
 
 /// Создать тестовый прайс-лист с указанными SKU и ценами
@@ -101,7 +150,7 @@ Widget createTestApp({
     child: MaterialApp(
       locale: const Locale('ru'),
       localizationsDelegates: const [
-        AppLocalizationsDelegate(),
+        TestAppLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../widgets/calculator/calculator_widgets.dart';
 part 'putty_calculator_screen_state.dart';
 
 // --- Модели данных ---

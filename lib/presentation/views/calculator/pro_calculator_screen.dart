@@ -12,6 +12,7 @@ import '../../../data/models/price_item.dart';
 import '../../providers/price_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/calculator/grouped_results_card.dart';
+import '../../widgets/calculator/calculator_widgets.dart';
 
 class ProCalculatorState {
   final Map<String, double> inputs;
@@ -180,50 +181,31 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
     final calcState = ref.watch(proCalculatorProvider(widget.definition));
     _latestInputs = Map<String, double>.from(calcState.inputs);
     final settings = ref.watch(settingsProvider);
+    final accentColor = CalculatorColors.getColorByCategory(widget.definition.category.name);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF0A0F1A),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          _loc.translate(widget.definition.titleKey),
-          style: const TextStyle(fontWeight: FontWeight.w900),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ChoiceChip(
-                  label: Text(_loc.translate('mode.beginner')),
-                  selected: !settings.isProMode,
-                  onSelected: (_) =>
-                      ref.read(settingsProvider.notifier).setProMode(false),
-                ),
-                const SizedBox(width: 8),
-                ChoiceChip(
-                  label: Text(_loc.translate('mode.pro')),
-                  selected: settings.isProMode,
-                  onSelected: (_) =>
-                      ref.read(settingsProvider.notifier).setProMode(true),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ..._buildInputFields(calcState.inputs, settings.isProMode),
-            const SizedBox(height: 16),
-            if (calcState.results != null) _buildResultsCard(calcState.results),
-            if (calcState.results != null) const SizedBox(height: 16),
-            if (calcState.results != null) _buildDetailsCard(calcState.results),
-            const SizedBox(height: 20),
+    return CalculatorScaffold(
+      title: _loc.translate(widget.definition.titleKey),
+      accentColor: accentColor,
+      resultHeader: calcState.results != null ? _buildResultHeader(calcState.results, accentColor) : null,
+      children: [
+        // Режим: Новичок / PRO
+        ModeSelector(
+          options: [
+            _loc.translate('mode.beginner'),
+            _loc.translate('mode.pro'),
           ],
+          selectedIndex: settings.isProMode ? 1 : 0,
+          onSelect: (index) {
+            ref.read(settingsProvider.notifier).setProMode(index == 1);
+          },
+          accentColor: accentColor,
         ),
-      ),
+        const SizedBox(height: 16),
+        ..._buildInputFields(calcState.inputs, settings.isProMode),
+        const SizedBox(height: 16),
+        if (calcState.results != null) _buildDetailsCard(calcState.results),
+        const SizedBox(height: 20),
+      ],
     );
   }
 
@@ -252,11 +234,9 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
             if (entry.key != 'default') ...[
               Text(
                 _loc.translate('group.${entry.key}').toUpperCase(),
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
+                style: CalculatorDesignSystem.labelSmall.copyWith(
+                  color: CalculatorColors.textSecondary,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
                 ),
               ),
               const SizedBox(height: 16),
@@ -302,8 +282,9 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
                   Flexible(
                     child: Text(
                       _loc.translate(field.labelKey),
-                      style:
-                          const TextStyle(color: Colors.white70, fontSize: 14),
+                      style: CalculatorDesignSystem.bodyMedium.copyWith(
+                        color: CalculatorColors.textPrimary,
+                      ),
                     ),
                   ),
                   if (field.required) ...[
@@ -318,9 +299,8 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
             ),
             Text(
               '${value.toStringAsFixed(0)} $unitLabel',
-              style: const TextStyle(
-                color: Colors.blueAccent,
-                fontSize: 20,
+              style: CalculatorDesignSystem.headlineMedium.copyWith(
+                color: CalculatorColors.interior,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -333,16 +313,18 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
               width: 50,
               child: Text(
                 '${min.toInt()} $unitLabel',
-                style: const TextStyle(color: Colors.white54, fontSize: 12),
+                style: CalculatorDesignSystem.bodySmall.copyWith(
+                  color: CalculatorColors.textSecondary,
+                ),
               ),
             ),
             Expanded(
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: Colors.blueAccent,
-                  inactiveTrackColor: Colors.white10,
-                  thumbColor: Colors.blueAccent,
-                  overlayColor: Colors.blueAccent.withValues(alpha: 0.2),
+                  activeTrackColor: CalculatorColors.interior,
+                  inactiveTrackColor: Colors.grey[300],
+                  thumbColor: CalculatorColors.interior,
+                  overlayColor: CalculatorColors.interior.withValues(alpha: 0.2),
                 ),
                 child: Slider(
                   value: value.clamp(min, max),
@@ -357,7 +339,9 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
               width: 50,
               child: Text(
                 '${max.toInt()} $unitLabel',
-                style: const TextStyle(color: Colors.white54, fontSize: 12),
+                style: CalculatorDesignSystem.bodySmall.copyWith(
+                  color: CalculatorColors.textSecondary,
+                ),
                 textAlign: TextAlign.right,
               ),
             ),
@@ -392,7 +376,9 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
           children: [
             Text(
               _loc.translate(field.labelKey),
-              style: const TextStyle(color: Colors.white70, fontSize: 14),
+              style: CalculatorDesignSystem.bodyMedium.copyWith(
+                color: CalculatorColors.textPrimary,
+              ),
             ),
             if (field.required) ...[
               const SizedBox(width: 4),
@@ -408,7 +394,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
           children: [
             IconButton(
               icon: const Icon(Icons.remove_circle_outline),
-              color: Colors.white70,
+              color: CalculatorColors.textSecondary,
               onPressed: value > min ? () => applyValue(value - step) : null,
             ),
             Expanded(
@@ -416,20 +402,23 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
                 controller: controller,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
-                style: const TextStyle(color: Colors.white, fontSize: 16),
+                style: CalculatorDesignSystem.bodyLarge.copyWith(
+                  color: CalculatorColors.textPrimary,
+                ),
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
                   hintText:
                       field.hintKey == null ? null : _loc.translate(field.hintKey!),
-                  hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
+                  hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
                   suffixText: _loc.translate('unit.${field.unitType.name}'),
-                  suffixStyle:
-                      const TextStyle(color: Colors.white60, fontSize: 14),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white10, width: 1),
+                  suffixStyle: CalculatorDesignSystem.bodySmall.copyWith(
+                    color: CalculatorColors.textSecondary,
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
                   ),
                   focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueAccent, width: 2),
+                    borderSide: BorderSide(color: CalculatorColors.interior, width: 2),
                   ),
                   contentPadding: const EdgeInsets.symmetric(vertical: 8),
                 ),
@@ -442,7 +431,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
             ),
             IconButton(
               icon: const Icon(Icons.add_circle_outline),
-              color: Colors.white70,
+              color: CalculatorColors.textSecondary,
               onPressed: value < max ? () => applyValue(value + step) : null,
             ),
           ],
@@ -619,48 +608,39 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
     );
   }
 
-  Widget _buildResultsCard(Map<String, double>? results) {
-    if (results == null || results.isEmpty) return const SizedBox();
+  Widget _buildResultHeader(Map<String, double>? results, Color accentColor) {
+    if (results == null || results.isEmpty) return const SizedBox.shrink();
 
-    // Находим главный результат (первый в списке)
-    final mainKey = results.keys.first;
-    final mainValue = results[mainKey]!;
+    // Берём до 3 первых результатов для header
+    final resultKeys = results.keys.take(3).toList();
+    final headerResults = <ResultItem>[];
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
+    for (final key in resultKeys) {
+      final value = results[key]!;
+      headerResults.add(
+        ResultItem(
+          label: _loc.translate('result.$key').toUpperCase(),
+          value: value.toStringAsFixed(value % 1 == 0 ? 0 : 1),
+          icon: _getIconForResult(key),
         ),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        children: [
-          Text(
-            _loc.translate('result.$mainKey').toUpperCase(),
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            mainValue.toStringAsFixed(0),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 64,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          Text(
-            _loc.translate('result.unit_pcs'),
-            style: const TextStyle(color: Colors.white70),
-          ),
-        ],
-      ),
+      );
+    }
+
+    return CalculatorResultHeader(
+      accentColor: accentColor,
+      results: headerResults,
     );
+  }
+
+  IconData _getIconForResult(String key) {
+    // Подбираем иконку по типу результата
+    if (key.contains('area') || key.contains('площадь')) return Icons.straighten;
+    if (key.contains('bag') || key.contains('мешк')) return Icons.shopping_bag;
+    if (key.contains('weight') || key.contains('вес')) return Icons.scale;
+    if (key.contains('volume') || key.contains('объем')) return Icons.water_drop;
+    if (key.contains('count') || key.contains('количество')) return Icons.inventory_2;
+    if (key.contains('price') || key.contains('стоимость')) return Icons.attach_money;
+    return Icons.check_circle;
   }
 
   Widget _buildDetailsCard(Map<String, double>? results) {
@@ -675,12 +655,8 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
   Widget _card({required Widget child}) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
-      ),
+      padding: const EdgeInsets.all(CalculatorDesignSystem.spacingL),
+      decoration: CalculatorDesignSystem.cardDecoration(),
       child: child,
     );
   }

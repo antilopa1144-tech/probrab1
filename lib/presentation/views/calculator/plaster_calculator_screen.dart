@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
-import '../../../core/validation/input_sanitizer.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
+import '../../widgets/calculator/calculator_widgets.dart';
 
 enum PlasterMaterial { gypsum, cement }
 enum PlasterInputMode { manual, room }
@@ -47,10 +47,10 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
     PlasterMaterial.cement: 17.0,
   };
 
-  final TextEditingController _roomWidth = TextEditingController(text: '4');
-  final TextEditingController _roomLength = TextEditingController(text: '5');
-  final TextEditingController _roomHeight = TextEditingController(text: '2.7');
-  final TextEditingController _openingsArea = TextEditingController(text: '4');
+  double _roomWidth = 4.0;
+  double _roomLength = 5.0;
+  double _roomHeight = 2.7;
+  double _openingsArea = 4.0;
 
   double _manualArea = 30;
   double _thickness = 15;
@@ -87,11 +87,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
   _PlasterResult _calculate() {
     double area = _manualArea;
     if (_inputMode == PlasterInputMode.room) {
-      final w = InputSanitizer.parseDouble(_roomWidth.text) ?? 0;
-      final l = InputSanitizer.parseDouble(_roomLength.text) ?? 0;
-      final h = InputSanitizer.parseDouble(_roomHeight.text) ?? 0;
-      final o = InputSanitizer.parseDouble(_openingsArea.text) ?? 0;
-      area = math.max(0, (2 * (w + l) * h) - o);
+      area = math.max(0, (2 * (_roomWidth + _roomLength) * _roomHeight) - _openingsArea);
     }
 
     final rate = _consumptionRates[_materialType] ?? 8.5;
@@ -112,80 +108,95 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
-    return Scaffold(
-      backgroundColor: const Color(0xFF0A0F1A),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(_loc.translate('plaster_pro.brand'), style: const TextStyle(fontWeight: FontWeight.w900)),
-        centerTitle: true,
+    const accentColor = CalculatorColors.walls;
+
+    return CalculatorScaffold(
+      title: _loc.translate('plaster_pro.brand'),
+      accentColor: accentColor,
+
+      // Header с ключевыми результатами вверху
+      resultHeader: CalculatorResultHeader(
+        accentColor: accentColor,
+        results: [
+          ResultItem(
+            label: _loc.translate('plaster_pro.label.wall_area').toUpperCase(),
+            value: '${_result.area.toStringAsFixed(0)} м²',
+            icon: Icons.straighten,
+          ),
+          ResultItem(
+            label: _loc.translate('plaster_pro.summary.bags').toUpperCase(),
+            value: '${_result.bags}',
+            icon: Icons.shopping_bag,
+          ),
+          ResultItem(
+            label: _loc.translate('plaster_pro.summary.weight').toUpperCase(),
+            value: '${(_result.totalWeight / 1000).toStringAsFixed(1)} т',
+            icon: Icons.scale,
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          children: [
-            _buildMaterialSelector(),
-            const SizedBox(height: 16),
-            _buildAreaCard(),
-            const SizedBox(height: 16),
-            _buildThicknessCard(),
-            const SizedBox(height: 16),
-            _buildSummaryCard(),
-            const SizedBox(height: 16),
-            _buildSpecCard(),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
+
+      children: [
+        _buildMaterialSelector(),
+        const SizedBox(height: 16),
+        _buildAreaCard(),
+        const SizedBox(height: 16),
+        _buildThicknessCard(),
+        const SizedBox(height: 16),
+        // Убираем большую карточку с результатами - теперь они в header
+        // _buildSummaryCard(),
+        // const SizedBox(height: 16),
+        _buildSpecCard(),
+        const SizedBox(height: 20),
+      ],
     );
   }
 
   Widget _buildMaterialSelector() {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(16)),
-      child: Row(
-        children: [
-          _materialBtn(PlasterMaterial.gypsum, _loc.translate('plaster_pro.material.gypsum')),
-          _materialBtn(PlasterMaterial.cement, _loc.translate('plaster_pro.material.cement')),
-        ],
-      ),
-    );
-  }
-
-  Widget _materialBtn(PlasterMaterial type, String label) {
-    final bool active = _materialType == type;
-    return Expanded(
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            _materialType = type;
-            _bagWeight = type == PlasterMaterial.gypsum ? 30 : 25;
-            _result = _calculate();
-          });
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: active ? Colors.blueAccent : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(label, textAlign: TextAlign.center, style: TextStyle(color: active ? Colors.white : Colors.grey, fontWeight: FontWeight.bold)),
+    const accentColor = CalculatorColors.walls;
+    return TypeSelectorGroup(
+      options: [
+        TypeSelectorOption(
+          icon: Icons.home_repair_service,
+          title: _loc.translate('plaster_pro.material.gypsum'),
+          subtitle: '30 кг',
         ),
-      ),
+        TypeSelectorOption(
+          icon: Icons.construction,
+          title: _loc.translate('plaster_pro.material.cement'),
+          subtitle: '25 кг',
+        ),
+      ],
+      selectedIndex: _materialType == PlasterMaterial.gypsum ? 0 : 1,
+      onSelect: (index) {
+        setState(() {
+          _materialType = index == 0 ? PlasterMaterial.gypsum : PlasterMaterial.cement;
+          _bagWeight = index == 0 ? 30 : 25;
+          _result = _calculate();
+        });
+      },
+      accentColor: accentColor,
     );
   }
 
   Widget _buildAreaCard() {
+    const accentColor = CalculatorColors.walls;
     return _card(
       child: Column(
         children: [
-          Row(
-            children: [
-              _modeBtn(PlasterInputMode.manual, _loc.translate('plaster_pro.mode.manual')),
-              const SizedBox(width: 8),
-              _modeBtn(PlasterInputMode.room, _loc.translate('plaster_pro.mode.room')),
+          ModeSelector(
+            options: [
+              _loc.translate('plaster_pro.mode.manual'),
+              _loc.translate('plaster_pro.mode.room'),
             ],
+            selectedIndex: _inputMode == PlasterInputMode.manual ? 0 : 1,
+            onSelect: (index) {
+              setState(() {
+                _inputMode = index == 0 ? PlasterInputMode.manual : PlasterInputMode.room;
+                _update();
+              });
+            },
+            accentColor: accentColor,
           ),
           const SizedBox(height: 20),
           _inputMode == PlasterInputMode.manual ? _buildManualInputs() : _buildRoomInputs(),
@@ -194,35 +205,33 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
     );
   }
 
-  Widget _modeBtn(PlasterInputMode mode, String label) {
-    final bool active = _inputMode == mode;
-    return Expanded(
-      child: OutlinedButton(
-        onPressed: () => setState(() { _inputMode = mode; _update(); }),
-        style: OutlinedButton.styleFrom(
-          backgroundColor: active ? Colors.blueAccent.withValues(alpha: 0.1) : Colors.transparent,
-          side: BorderSide(color: active ? Colors.blueAccent : Colors.white12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-        child: Text(label, style: TextStyle(color: active ? Colors.blueAccent : Colors.grey, fontSize: 12)),
-      ),
-    );
-  }
-
   Widget _buildManualInputs() {
+    const accentColor = CalculatorColors.walls;
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(_loc.translate('plaster_pro.label.wall_area'), style: const TextStyle(color: Colors.white70)),
-            Text('${_manualArea.toStringAsFixed(0)} м²', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(
+              _loc.translate('plaster_pro.label.wall_area'),
+              style: CalculatorDesignSystem.bodyMedium.copyWith(
+                color: CalculatorColors.textSecondary,
+              ),
+            ),
+            Text(
+              '${_manualArea.toStringAsFixed(0)} м²',
+              style: CalculatorDesignSystem.headlineMedium.copyWith(
+                color: accentColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
         Slider(
           value: _manualArea,
           min: 1,
           max: 500,
+          activeColor: accentColor,
           onChanged: (v) { setState(() { _manualArea = v; _update(); }); },
         ),
       ],
@@ -230,50 +239,88 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
   }
 
   Widget _buildRoomInputs() {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
+    const accentColor = CalculatorColors.walls;
+    return Column(
       children: [
-        _miniField(_loc.translate('plaster_pro.label.width'), _roomWidth),
-        _miniField(_loc.translate('plaster_pro.label.length'), _roomLength),
-        _miniField(_loc.translate('plaster_pro.label.height'), _roomHeight),
-        _miniField(_loc.translate('plaster_pro.label.openings_hint'), _openingsArea, isFull: true),
+        Row(
+          children: [
+            Expanded(
+              child: CalculatorTextField(
+                label: _loc.translate('plaster_pro.label.width'),
+                value: _roomWidth,
+                onChanged: (v) => setState(() { _roomWidth = v; _update(); }),
+                suffix: 'м',
+                accentColor: accentColor,
+                minValue: 0.1,
+                maxValue: 100,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: CalculatorTextField(
+                label: _loc.translate('plaster_pro.label.length'),
+                value: _roomLength,
+                onChanged: (v) => setState(() { _roomLength = v; _update(); }),
+                suffix: 'м',
+                accentColor: accentColor,
+                minValue: 0.1,
+                maxValue: 100,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        CalculatorTextField(
+          label: _loc.translate('plaster_pro.label.height'),
+          value: _roomHeight,
+          onChanged: (v) => setState(() { _roomHeight = v; _update(); }),
+          suffix: 'м',
+          accentColor: accentColor,
+          minValue: 1.5,
+          maxValue: 10,
+        ),
+        const SizedBox(height: 12),
+        CalculatorTextField(
+          label: _loc.translate('plaster_pro.label.openings_hint'),
+          value: _openingsArea,
+          onChanged: (v) => setState(() { _openingsArea = v; _update(); }),
+          suffix: 'м²',
+          accentColor: accentColor,
+          minValue: 0,
+          maxValue: 100,
+        ),
       ],
     );
   }
 
-  Widget _miniField(String label, TextEditingController ctr, {bool isFull = false}) {
-    return SizedBox(
-      width: isFull ? double.infinity : 90,
-      child: TextField(
-        controller: ctr,
-        keyboardType: TextInputType.number,
-        onChanged: (_) => _update(),
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(color: Colors.grey, fontSize: 12),
-          enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white10)),
-        ),
-      ),
-    );
-  }
-
   Widget _buildThicknessCard() {
+    const accentColor = CalculatorColors.walls;
     return _card(
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('plaster_pro.thickness.title'), style: const TextStyle(color: Colors.white70)),
-              Text('${_thickness.toStringAsFixed(0)} мм', style: const TextStyle(color: Colors.blueAccent, fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(
+                _loc.translate('plaster_pro.thickness.title'),
+                style: CalculatorDesignSystem.bodyMedium.copyWith(
+                  color: CalculatorColors.textSecondary,
+                ),
+              ),
+              Text(
+                '${_thickness.toStringAsFixed(0)} мм',
+                style: CalculatorDesignSystem.headlineMedium.copyWith(
+                  color: accentColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
           Slider(
             value: _thickness,
             min: 5,
             max: 100,
+            activeColor: accentColor,
             onChanged: (v) { setState(() { _thickness = v; _update(); }); },
           ),
           const SizedBox(height: 8),
@@ -291,51 +338,54 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
   }
 
   Widget _optIcon(IconData icon, bool active, VoidCallback tap) {
+    const accentColor = CalculatorColors.walls;
     return IconButton(
-      icon: Icon(icon, color: active ? Colors.blueAccent : Colors.white24),
+      icon: Icon(icon, color: active ? accentColor : Colors.grey[300]),
       onPressed: tap,
     );
   }
 
-  Widget _buildSummaryCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFF3B82F6), Color(0xFF1D4ED8)]),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        children: [
-          Text(_loc.translate('plaster_pro.summary.bags').toUpperCase(), style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text('${_result.bags}', style: const TextStyle(color: Colors.white, fontSize: 64, fontWeight: FontWeight.w900)),
-          Text(_loc.translate('plaster_pro.summary.unit_pcs'), style: const TextStyle(color: Colors.white70)),
-        ],
-      ),
-    );
-  }
 
   Widget _buildSpecCard() {
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(_loc.translate('plaster_pro.spec.title').toUpperCase(), style: const TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          _specItem(_loc.translate('plaster_pro.summary.weight'), '${_result.totalWeight.toStringAsFixed(0)} кг'),
-          if (_useBeacons) _specItem('${_loc.translate('plaster_pro.options.beacons')} ${_result.beaconSize}мм', '${_result.beacons} шт'),
-          if (_useMesh) _specItem(_loc.translate('plaster_pro.spec.mesh_title'), '${_result.meshArea} м²'),
-          if (_usePrimer) _specItem(_loc.translate('plaster_pro.options.primer'), '${_result.primerLiters} л'),
-        ],
-      ),
-    );
-  }
+    const accentColor = CalculatorColors.walls;
 
-  Widget _specItem(String label, String val) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(label, style: const TextStyle(color: Colors.white70)), Text(val, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))]),
+    final results = <ResultRowItem>[
+      ResultRowItem(
+        label: _loc.translate('plaster_pro.summary.weight'),
+        value: '${_result.totalWeight.toStringAsFixed(0)} кг',
+        icon: Icons.scale,
+      ),
+    ];
+
+    if (_useBeacons) {
+      results.add(ResultRowItem(
+        label: '${_loc.translate('plaster_pro.options.beacons')} ${_result.beaconSize}мм',
+        value: '${_result.beacons} шт',
+        icon: Icons.architecture,
+      ));
+    }
+
+    if (_useMesh) {
+      results.add(ResultRowItem(
+        label: _loc.translate('plaster_pro.spec.mesh_title'),
+        value: '${_result.meshArea} м²',
+        icon: Icons.grid_on,
+      ));
+    }
+
+    if (_usePrimer) {
+      results.add(ResultRowItem(
+        label: _loc.translate('plaster_pro.options.primer'),
+        value: '${_result.primerLiters} л',
+        icon: Icons.water_drop,
+      ));
+    }
+
+    return ResultCardLight(
+      title: _loc.translate('plaster_pro.spec.title'),
+      titleIcon: Icons.receipt_long,
+      results: results,
+      accentColor: accentColor,
     );
   }
 
@@ -343,7 +393,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(20)),
+      decoration: CalculatorDesignSystem.cardDecoration(),
       child: child,
     );
   }

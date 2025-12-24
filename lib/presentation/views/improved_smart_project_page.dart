@@ -15,6 +15,44 @@ class _ImprovedSmartProjectPageState
     extends ConsumerState<ImprovedSmartProjectPage> {
   int _currentStep = 0;
 
+  static const String _resultFoundationKey =
+      'smart_project.result.foundation.title';
+  static const String _resultFoundationConcreteKey =
+      'smart_project.result.foundation.concrete_volume';
+  static const String _resultFoundationRebarKey =
+      'smart_project.result.foundation.rebar_weight';
+  static const String _resultWallsKey = 'smart_project.result.walls.title';
+  static const String _resultWallsBlocksKey =
+      'smart_project.result.walls.blocks_count';
+  static const String _resultWallsAreaKey = 'smart_project.result.walls.area';
+  static const String _resultRoofKey = 'smart_project.result.roof.title';
+  static const String _resultRoofAreaKey = 'smart_project.result.roof.area';
+  static const String _resultRoofSheetsKey =
+      'smart_project.result.roof.sheets_count';
+  static const String _resultFinishKey = 'smart_project.result.finish.title';
+  static const String _resultFinishFloorKey =
+      'smart_project.result.finish.floor_area';
+  static const String _resultFinishWallKey =
+      'smart_project.result.finish.wall_area';
+
+  static const Set<String> _resultSubItemKeys = {
+    _resultFoundationConcreteKey,
+    _resultFoundationRebarKey,
+    _resultWallsBlocksKey,
+    _resultWallsAreaKey,
+    _resultRoofAreaKey,
+    _resultRoofSheetsKey,
+    _resultFinishFloorKey,
+    _resultFinishWallKey,
+  };
+
+  static const Set<String> _resultCostItemKeys = {
+    _resultFoundationKey,
+    _resultWallsKey,
+    _resultRoofKey,
+    _resultFinishKey,
+  };
+
   // Размеры дома
   final _lengthController = TextEditingController(text: '10');
   final _widthController = TextEditingController(text: '8');
@@ -56,9 +94,9 @@ class _ImprovedSmartProjectPageState
           foundationVolume * 0.012 * 7850; // объём * коэф * плотность
       final rebarCost = rebarWeight * 100; // цена арматуры
       final foundationCost = concreteCost + rebarCost;
-      results['Фундамент (ленточный)'] = foundationCost;
-      results['  Бетон (м³)'] = foundationVolume;
-      results['  Арматура (кг)'] = rebarWeight;
+      results[_resultFoundationKey] = foundationCost;
+      results[_resultFoundationConcreteKey] = foundationVolume;
+      results[_resultFoundationRebarKey] = rebarWeight;
     }
 
     // Стены - газоблок
@@ -68,9 +106,9 @@ class _ImprovedSmartProjectPageState
       const blockVolume = 0.6 * 0.2 * 0.3; // размер блока
       final blocks = (wallVolume / blockVolume * 1.05).ceil(); // +5% запас
       final wallsCost = blocks * 200; // цена газоблока
-      results['Стены (газоблок)'] = wallsCost.toDouble();
-      results['  Блоков (шт)'] = blocks.toDouble();
-      results['  Площадь стен (м²)'] = wallArea;
+      results[_resultWallsKey] = wallsCost.toDouble();
+      results[_resultWallsBlocksKey] = blocks.toDouble();
+      results[_resultWallsAreaKey] = wallArea;
     }
 
     // Кровля - металлочерепица
@@ -80,9 +118,9 @@ class _ImprovedSmartProjectPageState
       final materialCost = sheets * 600; // металлочерепица
       final raftersCost = roofArea * 800; // стропильная система
       final roofCost = materialCost + raftersCost;
-      results['Кровля (металлочерепица)'] = roofCost;
-      results['  Площадь крыши (м²)'] = roofArea;
-      results['  Листов (шт)'] = sheets.toDouble();
+      results[_resultRoofKey] = roofCost;
+      results[_resultRoofAreaKey] = roofArea;
+      results[_resultRoofSheetsKey] = sheets.toDouble();
     }
 
     // Отделка - черновая
@@ -95,9 +133,9 @@ class _ImprovedSmartProjectPageState
       final paintCost = wallsForFinish * 300; // покраска
 
       final finishCost = plasterCost + floorCost + paintCost;
-      results['Отделка (черновая)'] = finishCost;
-      results['  Площадь пола (м²)'] = floorArea;
-      results['  Площадь стен (м²)'] = wallsForFinish;
+      results[_resultFinishKey] = finishCost;
+      results[_resultFinishFloorKey] = floorArea;
+      results[_resultFinishWallKey] = wallsForFinish;
       // totalCost += finishCost;
     }
 
@@ -112,9 +150,10 @@ class _ImprovedSmartProjectPageState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Умный мастер проектов'),
+        title: Text(loc.translate('smart_project.title')),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
@@ -140,13 +179,17 @@ class _ImprovedSmartProjectPageState
             children: [
               ElevatedButton(
                 onPressed: details.onStepContinue,
-                child: Text(_currentStep == 2 ? 'Рассчитать' : 'Далее'),
+                child: Text(
+                  _currentStep == 2
+                      ? loc.translate('button.calculate')
+                      : loc.translate('button.next'),
+                ),
               ),
               if (_currentStep > 0) ...[
                 const SizedBox(width: 12),
                 TextButton(
                   onPressed: details.onStepCancel,
-                  child: const Text('Назад'),
+                  child: Text(loc.translate('button.back')),
                 ),
               ],
             ],
@@ -155,17 +198,20 @@ class _ImprovedSmartProjectPageState
         steps: [
           // Шаг 1: Размеры дома
           Step(
-            title: const Text('Размеры дома'),
-            subtitle: const Text('Укажите основные размеры'),
+            title: Text(loc.translate('smart_project.step.dimensions.title')),
+            subtitle:
+                Text(loc.translate('smart_project.step.dimensions.subtitle')),
             isActive: _currentStep >= 0,
             state: _currentStep > 0 ? StepState.complete : StepState.indexed,
             content: Column(
               children: [
-                const _InfoCard(
+                _InfoCard(
                   icon: Icons.home,
-                  title: 'Простой способ',
-                  description:
-                      'Измерьте рулеткой длину и ширину вашего дома или участка под дом',
+                  title:
+                      loc.translate('smart_project.step.dimensions.info.title'),
+                  description: loc.translate(
+                    'smart_project.step.dimensions.info.description',
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -173,10 +219,14 @@ class _ImprovedSmartProjectPageState
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  decoration: const InputDecoration(
-                    labelText: 'Длина дома (метры)',
-                    prefixIcon: Icon(Icons.straighten),
-                    helperText: 'Например: 10 метров',
+                  decoration: InputDecoration(
+                    labelText: loc.translate(
+                      'smart_project.step.dimensions.length.label',
+                    ),
+                    prefixIcon: const Icon(Icons.straighten),
+                    helperText: loc.translate(
+                      'smart_project.step.dimensions.length.helper',
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -185,10 +235,14 @@ class _ImprovedSmartProjectPageState
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  decoration: const InputDecoration(
-                    labelText: 'Ширина дома (метры)',
-                    prefixIcon: Icon(Icons.straighten),
-                    helperText: 'Например: 8 метров',
+                  decoration: InputDecoration(
+                    labelText: loc.translate(
+                      'smart_project.step.dimensions.width.label',
+                    ),
+                    prefixIcon: const Icon(Icons.straighten),
+                    helperText: loc.translate(
+                      'smart_project.step.dimensions.width.helper',
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -197,10 +251,14 @@ class _ImprovedSmartProjectPageState
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  decoration: const InputDecoration(
-                    labelText: 'Высота стен (метры)',
-                    prefixIcon: Icon(Icons.height),
-                    helperText: 'Обычно: 2.5-3 метра',
+                  decoration: InputDecoration(
+                    labelText: loc.translate(
+                      'smart_project.step.dimensions.height.label',
+                    ),
+                    prefixIcon: const Icon(Icons.height),
+                    helperText: loc.translate(
+                      'smart_project.step.dimensions.height.helper',
+                    ),
                   ),
                 ),
               ],
@@ -209,45 +267,51 @@ class _ImprovedSmartProjectPageState
 
           // Шаг 2: Выбор разделов
           Step(
-            title: const Text('Что строим?'),
-            subtitle: const Text('Выберите разделы'),
+            title: Text(loc.translate('smart_project.step.sections.title')),
+            subtitle: Text(loc.translate('smart_project.step.sections.subtitle')),
             isActive: _currentStep >= 1,
             state: _currentStep > 1 ? StepState.complete : StepState.indexed,
             content: Column(
               children: [
-                const _InfoCard(
+                _InfoCard(
                   icon: Icons.construction,
-                  title: 'Что включить?',
-                  description:
-                      'Отметьте галочками что нужно построить. Всё остальное рассчитается автоматически!',
+                  title: loc.translate('smart_project.step.sections.info.title'),
+                  description: loc.translate(
+                    'smart_project.step.sections.info.description',
+                  ),
                 ),
                 const SizedBox(height: 16),
                 _SectionCheckbox(
                   value: _includeFoundation,
-                  title: 'Фундамент',
-                  subtitle: 'Ленточный фундамент из бетона М300',
+                  title: loc.translate('smart_project.section.foundation.title'),
+                  subtitle: loc.translate(
+                    'smart_project.section.foundation.subtitle',
+                  ),
                   icon: Icons.foundation,
                   onChanged: (v) =>
                       setState(() => _includeFoundation = v ?? false),
                 ),
                 _SectionCheckbox(
                   value: _includeWalls,
-                  title: 'Стены',
-                  subtitle: 'Газоблок 300мм',
+                  title: loc.translate('smart_project.section.walls.title'),
+                  subtitle:
+                      loc.translate('smart_project.section.walls.subtitle'),
                   icon: Icons.view_column,
                   onChanged: (v) => setState(() => _includeWalls = v ?? false),
                 ),
                 _SectionCheckbox(
                   value: _includeRoof,
-                  title: 'Кровля',
-                  subtitle: 'Металлочерепица со стропилами',
+                  title: loc.translate('smart_project.section.roof.title'),
+                  subtitle:
+                      loc.translate('smart_project.section.roof.subtitle'),
                   icon: Icons.roofing,
                   onChanged: (v) => setState(() => _includeRoof = v ?? false),
                 ),
                 _SectionCheckbox(
                   value: _includeFinish,
-                  title: 'Отделка',
-                  subtitle: 'Черновая отделка (штукатурка, стяжка)',
+                  title: loc.translate('smart_project.section.finish.title'),
+                  subtitle:
+                      loc.translate('smart_project.section.finish.subtitle'),
                   icon: Icons.format_paint,
                   onChanged: (v) => setState(() => _includeFinish = v ?? false),
                 ),
@@ -257,47 +321,61 @@ class _ImprovedSmartProjectPageState
 
           // Шаг 3: Подтверждение
           Step(
-            title: const Text('Проверка'),
-            subtitle: const Text('Всё правильно?'),
+            title: Text(loc.translate('smart_project.step.confirm.title')),
+            subtitle: Text(loc.translate('smart_project.step.confirm.subtitle')),
             isActive: _currentStep >= 2,
             state: _currentStep > 2 ? StepState.complete : StepState.indexed,
             content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Проверьте параметры перед расчётом:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  loc.translate('smart_project.step.confirm.prompt'),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 _SummaryRow(
                   icon: Icons.home,
-                  label: 'Размеры дома',
+                  label:
+                      loc.translate('smart_project.summary.dimensions.label'),
                   value:
-                      '${_lengthController.text}м × ${_widthController.text}м × ${_heightController.text}м',
+                      '${_lengthController.text} ${loc.translate('unit.meters')} '
+                      'x ${_widthController.text} ${loc.translate('unit.meters')} '
+                      'x ${_heightController.text} ${loc.translate('unit.meters')}',
                 ),
                 const Divider(),
                 _SummaryRow(
                   icon: Icons.foundation,
-                  label: 'Фундамент',
-                  value: _includeFoundation ? 'Да' : 'Нет',
+                  label: loc.translate('smart_project.summary.foundation.label'),
+                  value: _includeFoundation
+                      ? loc.translate('common.yes')
+                      : loc.translate('common.no'),
                   enabled: _includeFoundation,
                 ),
                 _SummaryRow(
                   icon: Icons.view_column,
-                  label: 'Стены',
-                  value: _includeWalls ? 'Да' : 'Нет',
+                  label: loc.translate('smart_project.summary.walls.label'),
+                  value: _includeWalls
+                      ? loc.translate('common.yes')
+                      : loc.translate('common.no'),
                   enabled: _includeWalls,
                 ),
                 _SummaryRow(
                   icon: Icons.roofing,
-                  label: 'Кровля',
-                  value: _includeRoof ? 'Да' : 'Нет',
+                  label: loc.translate('smart_project.summary.roof.label'),
+                  value: _includeRoof
+                      ? loc.translate('common.yes')
+                      : loc.translate('common.no'),
                   enabled: _includeRoof,
                 ),
                 _SummaryRow(
                   icon: Icons.format_paint,
-                  label: 'Отделка',
-                  value: _includeFinish ? 'Да' : 'Нет',
+                  label: loc.translate('smart_project.summary.finish.label'),
+                  value: _includeFinish
+                      ? loc.translate('common.yes')
+                      : loc.translate('common.no'),
                   enabled: _includeFinish,
                 ),
               ],
@@ -306,14 +384,13 @@ class _ImprovedSmartProjectPageState
 
           // Шаг 4: Результаты
           Step(
-            title: const Text('Результаты'),
-            subtitle: const Text('Смета проекта'),
+            title: Text(loc.translate('smart_project.step.results.title')),
+            subtitle: Text(loc.translate('smart_project.step.results.subtitle')),
             isActive: _currentStep >= 3,
             state: _results != null ? StepState.complete : StepState.indexed,
             content: _results == null
                 ? Text(
-                    AppLocalizations.of(context)
-                        .translate('smart_project.press_calculate_hint'),
+                    loc.translate('smart_project.press_calculate_hint'),
                   )
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -337,16 +414,20 @@ class _ImprovedSmartProjectPageState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'Расчёт готов!',
-                                    style: TextStyle(
+                                  Text(
+                                    loc.translate(
+                                      'smart_project.results.ready.title',
+                                    ),
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.green,
                                     ),
                                   ),
                                   Text(
-                                    'Ниже подробная смета вашего проекта',
+                                    loc.translate(
+                                      'smart_project.results.ready.subtitle',
+                                    ),
                                     style: TextStyle(
                                       color: Colors.grey.shade400,
                                     ),
@@ -359,7 +440,7 @@ class _ImprovedSmartProjectPageState
                       ),
                       const SizedBox(height: 24),
                       ..._results!.entries.map((e) {
-                        final isSubItem = e.key.startsWith('  ');
+                        final isSubItem = _resultSubItemKeys.contains(e.key);
 
                         // Цены временно скрыты до интеграции с магазинами
                         // if (isTotal) {
@@ -402,9 +483,7 @@ class _ImprovedSmartProjectPageState
                         // }
 
                         // Скрыть элементы с ценами (все основные разделы кроме подпунктов с единицами измерения)
-                        final isCostItem = !isSubItem && !e.key.contains('Площадь') &&
-                                          !e.key.contains('Блоков') && !e.key.contains('Листов') &&
-                                          !e.key.contains('Бетон') && !e.key.contains('Арматура');
+                        final isCostItem = _resultCostItemKeys.contains(e.key);
                         if (isCostItem) {
                           return const SizedBox.shrink(); // Скрыть элемент с ценой
                         }
@@ -419,7 +498,7 @@ class _ImprovedSmartProjectPageState
                             children: [
                               Expanded(
                                 child: Text(
-                                  e.key,
+                                  loc.translate(e.key),
                                   style: TextStyle(
                                     fontSize: isSubItem ? 14 : 16,
                                     fontWeight: isSubItem
@@ -454,7 +533,8 @@ class _ImprovedSmartProjectPageState
                           });
                         },
                         icon: const Icon(Icons.refresh),
-                        label: const Text('Новый расчёт'),
+                        label:
+                            Text(loc.translate('smart_project.results.new')),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
                         ),

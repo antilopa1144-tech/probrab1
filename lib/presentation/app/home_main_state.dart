@@ -37,7 +37,7 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
               if (favorites.isNotEmpty) {
                 return IconButton(
                   icon: const Icon(Icons.favorite),
-                  tooltip: 'Избранные калькуляторы',
+                  tooltip: loc.translate('home.menu.favorites.tooltip'),
                   onPressed: () {
                     _showFavoritesDialog(context, ref);
                   },
@@ -52,44 +52,44 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
               borderRadius: BorderRadius.circular(16),
             ),
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'workflow',
                 child: ListTile(
-                  leading: Icon(Icons.event_note_outlined),
-                  title: Text('Планировщик работ'),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  leading: const Icon(Icons.event_note_outlined),
+                  title: Text(loc.translate('workflow.screen.title')),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'projects',
                 child: ListTile(
-                  leading: Icon(Icons.folder_outlined),
-                  title: Text('Проекты'),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  leading: const Icon(Icons.folder_outlined),
+                  title: Text(loc.translate('home.menu.projects')),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'reminders',
                 child: ListTile(
-                  leading: Icon(Icons.notifications_outlined),
-                  title: Text('Напоминания'),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  leading: const Icon(Icons.notifications_outlined),
+                  title: Text(loc.translate('home.menu.reminders')),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'history',
                 child: ListTile(
-                  leading: Icon(Icons.history_outlined),
-                  title: Text('История расчётов'),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  leading: const Icon(Icons.history_outlined),
+                  title: Text(loc.translate('home.menu.history')),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'settings',
                 child: ListTile(
-                  leading: Icon(Icons.settings_outlined),
-                  title: Text('Настройки'),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  leading: const Icon(Icons.settings_outlined),
+                  title: Text(loc.translate('home.menu.settings')),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
               ),
             ],
@@ -146,8 +146,11 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
               if (_searchQuery.isNotEmpty &&
                   filteredCalculators.isNotEmpty) ...[
                 _SectionHeader(
-                  title: 'Найденные калькуляторы',
-                  subtitle: 'Найдено: ${filteredCalculators.length}',
+                  title: loc.translate('home.search.results.title'),
+                  subtitle: loc.translate(
+                    'home.search.results.subtitle',
+                    {'count': filteredCalculators.length.toString()},
+                  ),
                 ),
                 const SizedBox(height: 12),
                 _buildCalculatorsList(context, filteredCalculators),
@@ -156,9 +159,9 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
 
               // Если поиск пустой или не нашел калькуляторы, показываем объекты
               if (_searchQuery.isEmpty || filteredCalculators.isEmpty) ...[
-                const _SectionHeader(
-                  title: 'Категории работ',
-                  subtitle: 'Внутренняя и наружная отделка',
+                _SectionHeader(
+                  title: loc.translate('home.sections.categories.title'),
+                  subtitle: loc.translate('home.sections.categories.subtitle'),
                 ),
                 const SizedBox(height: 12),
                 _buildObjectGrid(context, filteredCards),
@@ -171,16 +174,16 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
                   filteredCalculators.isEmpty) ...[
                 AnimatedEmptyState(
                   icon: Icons.search_off_rounded,
-                  title: 'Ничего не найдено',
+                  title: loc.translate('search.no_results'),
                   subtitle: loc.translate('search.try_another_query'),
                 ),
                 const SizedBox(height: 32),
               ],
 
               _SectionHeader(
-                title: 'История расчётов',
-                subtitle: 'Последние проекты и их стоимость',
-                actionLabel: 'Все расчёты',
+                title: loc.translate('home.sections.history.title'),
+                subtitle: loc.translate('home.sections.history.subtitle'),
+                actionLabel: loc.translate('home.sections.history.action'),
                 onActionTap: () {
                   Navigator.of(
                     context,
@@ -198,6 +201,7 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
 
   Widget _buildHeroSection(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -240,7 +244,7 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Мастер расчётов',
+                      loc.translate('home.hero.title'),
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w800,
@@ -249,7 +253,7 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Точные расчёты для строительства',
+                      loc.translate('home.hero.subtitle'),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(
                           alpha: 0.7,
@@ -267,7 +271,7 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
           TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: 'Что нужно посчитать? (бетон, обои, плитка...)',
+              hintText: loc.translate('home.search.placeholder'),
               prefixIcon: Icon(
                 Icons.search_rounded,
                 color: theme.colorScheme.primary,
@@ -292,11 +296,12 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
   }
 
   Widget _buildObjectGrid(BuildContext context, List<_ObjectCardData> cards) {
+    final loc = AppLocalizations.of(context);
     if (cards.isEmpty) {
-      return const AnimatedEmptyState(
+      return AnimatedEmptyState(
         icon: Icons.search_off_rounded,
-        title: 'Не нашли объект',
-        subtitle: 'Попробуйте другой запрос или оставьте поле пустым.',
+        title: loc.translate('home.empty.object.title'),
+        subtitle: loc.translate('home.empty.object.subtitle'),
       );
     }
 
@@ -333,7 +338,10 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                      'Категория ${card.title} временно недоступна',
+                      loc.translate(
+                        'home.snackbar.category_unavailable',
+                        {'name': card.title},
+                      ),
                     ),
                   ),
                 );
@@ -485,10 +493,11 @@ class _HistoryStrip extends StatelessWidget {
     return history.when(
       data: (items) {
         if (items.isEmpty) {
-          return const _EmptyState(
+          final loc = AppLocalizations.of(context);
+          return _EmptyState(
             icon: Icons.timeline_outlined,
-            title: 'История пока пуста',
-            subtitle: 'Рассчитайте любой проект, и он появится здесь.',
+            title: loc.translate('home.history.empty.title'),
+            subtitle: loc.translate('home.history.empty.subtitle'),
           );
         }
 
@@ -510,11 +519,14 @@ class _HistoryStrip extends StatelessWidget {
         height: 140,
         child: Center(child: CircularProgressIndicator()),
       ),
-      error: (error, stackTrace) => const _EmptyState(
-        icon: Icons.error_outline,
-        title: 'Не удалось загрузить историю',
-        subtitle: 'Потяните вниз, чтобы обновить.',
-      ),
+      error: (error, stackTrace) {
+        final loc = AppLocalizations.of(context);
+        return _EmptyState(
+          icon: Icons.error_outline,
+          title: loc.translate('home.history.error.title'),
+          subtitle: loc.translate('home.history.error.subtitle'),
+        );
+      },
     );
   }
 }
@@ -671,6 +683,7 @@ class _ObjectCardData {
 
 extension _HomeMainScreenStateExtension on _HomeMainScreenState {
   List<_ObjectCardData> _buildAreaCards() {
+    final loc = AppLocalizations.of(context);
     final areas = WorkCatalog.areasFor(
       ObjectType.house,
     ).where((area) => area.id == 'interior' || area.id == 'exterior');
@@ -679,12 +692,12 @@ extension _HomeMainScreenStateExtension on _HomeMainScreenState {
           (area) => _ObjectCardData(
             areaId: area.id,
             icon: area.icon,
-            title: area.title,
-            subtitle: area.subtitle,
+            title: loc.translate(area.title),
+            subtitle: loc.translate(area.subtitle),
             tags: [
-              area.title,
-              area.subtitle,
-              ...area.sections.map((s) => s.title),
+              loc.translate(area.title),
+              loc.translate(area.subtitle),
+              ...area.sections.map((s) => loc.translate(s.title)),
             ],
             accentColor: area.color,
           ),
@@ -711,7 +724,11 @@ extension _HomeMainScreenStateExtension on _HomeMainScreenState {
           translatedSubCategory.contains(q) ||
           calc.titleKey.toLowerCase().contains(q) ||
           calc.id.toLowerCase().contains(q) ||
-          calc.tags.any((tag) => tag.toLowerCase().contains(q)) ||
+          calc.tags.any((tag) {
+            final tagValue =
+                tag.startsWith('tag.') ? loc.translate(tag) : tag;
+            return tagValue.toLowerCase().contains(q);
+          }) ||
           loc.translate(calc.subCategoryKey).toLowerCase().contains(q);
     }).toList()..sort(
       (a, b) => loc.translate(a.titleKey).compareTo(loc.translate(b.titleKey)),
@@ -719,10 +736,11 @@ extension _HomeMainScreenStateExtension on _HomeMainScreenState {
   }
 
   void _showFavoritesDialog(BuildContext context, WidgetRef ref) {
+    final loc = AppLocalizations.of(context);
     final favorites = ref.watch(favoritesProvider);
     if (favorites.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Нет избранных калькуляторов')),
+        SnackBar(content: Text(loc.translate('home.favorites.empty'))),
       );
       return;
     }
@@ -732,7 +750,7 @@ extension _HomeMainScreenStateExtension on _HomeMainScreenState {
       builder: (dialogContext) {
         final dialogLoc = AppLocalizations.of(dialogContext);
         return AlertDialog(
-          title: const Text('Избранные калькуляторы'),
+          title: Text(dialogLoc.translate('home.favorites.title')),
           content: SizedBox(
             width: double.maxFinite,
             child: ListView.builder(
@@ -771,7 +789,7 @@ extension _HomeMainScreenStateExtension on _HomeMainScreenState {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Закрыть'),
+              child: Text(dialogLoc.translate('button.close')),
             ),
           ],
         );

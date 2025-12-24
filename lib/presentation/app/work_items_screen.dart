@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/entities/object_type.dart';
+import '../../core/localization/app_localizations.dart';
 import '../data/work_catalog.dart';
 import '../utils/calculator_navigation_helper.dart';
 
@@ -19,13 +20,17 @@ class WorkItemsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(section.title),
-            Text(area.title, style: Theme.of(context).textTheme.bodySmall),
+            Text(loc.translate(section.title)),
+            Text(
+              loc.translate(area.title),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           ],
         ),
       ),
@@ -51,6 +56,7 @@ class _WorkItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final definition = item.calculatorId != null
         ? CalculatorRegistry.getById(item.calculatorId!)
         : null;
@@ -81,7 +87,7 @@ class _WorkItemCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item.title,
+                        loc.translate(item.title),
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -89,7 +95,7 @@ class _WorkItemCard extends StatelessWidget {
                       if (item.description != null) ...[
                         const SizedBox(height: 4),
                         Text(
-                          item.description!,
+                          loc.translate(item.description!),
                           style: theme.textTheme.bodySmall,
                         ),
                       ],
@@ -103,7 +109,7 @@ class _WorkItemCard extends StatelessWidget {
               _TipsBlock(tips: item.tips, accent: calculatorAccent)
             else
               Text(
-                'Советы мастера появятся после подключения калькулятора.',
+                loc.translate('work.screen.no_tips'),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.textTheme.bodySmall?.color?.withValues(
                     alpha: 0.7,
@@ -129,8 +135,8 @@ class _WorkItemCard extends StatelessWidget {
                 ),
                 label: Text(
                   item.calculatorId == null
-                      ? 'В разработке'
-                      : 'Открыть калькулятор',
+                      ? loc.translate('work.screen.in_development')
+                      : loc.translate('work.screen.open_calculator'),
                 ),
                 style: FilledButton.styleFrom(
                   backgroundColor: item.calculatorId == null
@@ -158,6 +164,7 @@ class _TipsBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -174,7 +181,7 @@ class _TipsBlock extends StatelessWidget {
               Icon(Icons.lightbulb_outline, color: accent),
               const SizedBox(width: 8),
               Text(
-                'Советы мастера',
+                loc.translate('work.screen.tips_title'),
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -192,7 +199,12 @@ class _TipsBlock extends StatelessWidget {
                     '• ',
                     style: theme.textTheme.bodyMedium?.copyWith(color: accent),
                   ),
-                  Expanded(child: Text(tip, style: theme.textTheme.bodyMedium)),
+                  Expanded(
+                    child: Text(
+                      loc.translate(tip),
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -5,6 +5,7 @@ import '../providers/accent_color_provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/region_provider.dart';
 import '../../core/constants.dart';
+import '../../core/localization/app_localizations.dart';
 part 'settings_page_state.dart';
 
 /// Расширенная страница настроек.

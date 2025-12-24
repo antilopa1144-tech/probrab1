@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../domain/entities/workflow_step.dart';
 import '../../providers/workflow_provider.dart';
 
@@ -23,29 +24,36 @@ class _WorkflowPlannerScreenState extends ConsumerState<WorkflowPlannerScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.objectType != null) {
-      _currentPlan = createStandardWorkflow(widget.objectType!);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_currentPlan == null && widget.objectType != null) {
+      final loc = AppLocalizations.of(context);
+      _currentPlan = createStandardWorkflow(widget.objectType!, loc);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     
     if (_currentPlan == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Планировщик работ')),
+        appBar: AppBar(title: Text(loc.translate('workflow.screen.title'))),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.work_outline, size: 64),
               const SizedBox(height: 16),
-              const Text('Выберите тип объекта для создания плана'),
+              Text(loc.translate('workflow.screen.empty_title')),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () => _showObjectTypeDialog(context),
-                child: const Text('Создать план'),
+                child: Text(loc.translate('workflow.screen.create_plan')),
               ),
             ],
           ),
@@ -65,7 +73,9 @@ class _WorkflowPlannerScreenState extends ConsumerState<WorkflowPlannerScreen> {
             onPressed: () {
               ref.read(workflowProvider.notifier).addPlan(_currentPlan!);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('План сохранён')),
+                SnackBar(
+                  content: Text(loc.translate('workflow.screen.save_plan')),
+                ),
               );
             },
           ),
@@ -81,17 +91,17 @@ class _WorkflowPlannerScreenState extends ConsumerState<WorkflowPlannerScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _StatItem(
-                  label: 'Всего шагов',
+                  label: loc.translate('workflow.screen.stats.total_steps'),
                   value: '${_currentPlan!.steps.length}',
                   icon: Icons.list,
                 ),
                 _StatItem(
-                  label: 'Выполнено',
+                  label: loc.translate('workflow.screen.stats.completed'),
                   value: '${_completedSteps.length}',
                   icon: Icons.check_circle,
                 ),
                 _StatItem(
-                  label: 'Дней',
+                  label: loc.translate('workflow.screen.stats.days'),
                   value: '${_currentPlan!.totalDays}',
                   icon: Icons.calendar_today,
                 ),
@@ -125,7 +135,13 @@ class _WorkflowPlannerScreenState extends ConsumerState<WorkflowPlannerScreen> {
                     ),
                     title: Text(step.title),
                     subtitle: Text(
-                      '${step.estimatedDays} дней • ${step.category}',
+                      loc.translate(
+                        'workflow.screen.step_subtitle',
+                        {
+                          'days': step.estimatedDays.toString(),
+                          'category': step.category,
+                        },
+                      ),
                     ),
                     trailing: isCompleted
                         ? const Icon(Icons.check_circle, color: Colors.green)
@@ -148,7 +164,7 @@ class _WorkflowPlannerScreenState extends ConsumerState<WorkflowPlannerScreen> {
                             if (step.requiredMaterials.isNotEmpty) ...[
                               const SizedBox(height: 12),
                               Text(
-                                'Материалы:',
+                                loc.translate('workflow.screen.materials'),
                                 style: theme.textTheme.titleSmall,
                               ),
                               Wrap(
@@ -161,7 +177,7 @@ class _WorkflowPlannerScreenState extends ConsumerState<WorkflowPlannerScreen> {
                             if (step.checklist.isNotEmpty) ...[
                               const SizedBox(height: 12),
                               Text(
-                                'Чек-лист:',
+                                loc.translate('workflow.screen.checklist'),
                                 style: theme.textTheme.titleSmall,
                               ),
                               ...step.checklist.map((item) => Padding(
@@ -210,39 +226,40 @@ class _WorkflowPlannerScreenState extends ConsumerState<WorkflowPlannerScreen> {
   }
 
   void _showObjectTypeDialog(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Выберите тип объекта'),
+        title: Text(loc.translate('workflow.screen.choose_object')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
               leading: const Icon(Icons.house),
-              title: const Text('Дом'),
+              title: Text(loc.translate('workflow.object.home')),
               onTap: () {
                 setState(() {
-                  _currentPlan = createStandardWorkflow('дом');
+                  _currentPlan = createStandardWorkflow('home', loc);
                 });
                 Navigator.pop(context);
               },
             ),
             ListTile(
               leading: const Icon(Icons.apartment),
-              title: const Text('Квартира'),
+              title: Text(loc.translate('workflow.object.flat')),
               onTap: () {
                 setState(() {
-                  _currentPlan = createStandardWorkflow('квартира');
+                  _currentPlan = createStandardWorkflow('flat', loc);
                 });
                 Navigator.pop(context);
               },
             ),
             ListTile(
               leading: const Icon(Icons.garage),
-              title: const Text('Гараж'),
+              title: Text(loc.translate('workflow.object.garage')),
               onTap: () {
                 setState(() {
-                  _currentPlan = createStandardWorkflow('гараж');
+                  _currentPlan = createStandardWorkflow('garage', loc);
                 });
                 Navigator.pop(context);
               },

@@ -3,6 +3,7 @@ import '../components/mat_card.dart';
 import '../../domain/entities/object_type.dart';
 import '../data/work_catalog.dart';
 import '../../core/animations/page_transitions.dart';
+import '../../core/localization/app_localizations.dart';
 import 'category_selector_screen.dart';
 
 /// Экран выбора типа работ для конкретного объекта (дом/квартира/гараж).
@@ -11,25 +12,26 @@ class ObjectSelectorScreen extends StatelessWidget {
 
   const ObjectSelectorScreen({super.key, required this.objectType});
 
-  String get _title {
+  String _title(AppLocalizations loc) {
     switch (objectType) {
       case ObjectType.house:
-        return 'Дом';
+        return loc.translate('workflow.object.home');
       case ObjectType.flat:
-        return 'Квартира';
+        return loc.translate('workflow.object.flat');
       case ObjectType.garage:
-        return 'Гараж';
+        return loc.translate('workflow.object.garage');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final areas = WorkCatalog.areasFor(objectType);
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_title),
+        title: Text(_title(loc)),
         centerTitle: true,
       ),
       body: Padding(
@@ -37,7 +39,7 @@ class ObjectSelectorScreen extends StatelessWidget {
         child: areas.isEmpty
             ? Center(
                 child: Text(
-                  'Категории для этого объекта появятся позже',
+                  loc.translate('work.screen.no_categories'),
                   style: theme.textTheme.bodyMedium,
                 ),
               )
@@ -53,8 +55,8 @@ class ObjectSelectorScreen extends StatelessWidget {
                   final area = areas[index];
                   return MatCardButton(
                     icon: area.icon,
-                    title: area.title,
-                    subtitle: area.subtitle,
+                    title: loc.translate(area.title),
+                    subtitle: loc.translate(area.subtitle),
                     backgroundColor: area.color.withValues(alpha: 0.12),
                     iconColor: area.color,
                     onTap: () {

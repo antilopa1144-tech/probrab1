@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import '../dsp/project_state.dart';
-import '../dsp/widgets/custom_tab_selector.dart';
-import '../dsp/widgets/geometry_widget.dart';
-import '../dsp/widgets/number_input.dart';
-import '../dsp/widgets/results_sheet.dart';
-import '../dsp/widgets/section_card.dart';
+import '../../../core/localization/app_localizations.dart';
+import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Экран расчета краски (Интерьер/Фасад) по образцу HTML-калькулятора
 class PaintScreen extends StatefulWidget {
@@ -15,7 +11,16 @@ class PaintScreen extends StatefulWidget {
 }
 
 class _PaintScreenState extends State<PaintScreen> {
-  final ProjectState _state = ProjectState();
+  late AppLocalizations _loc;
+
+  // Геометрия
+  double _roomWidth = 4.0;
+  double _roomLength = 5.0;
+  double _roomHeight = 2.7;
+  double _openingsArea = 4.0;
+
+  int _inputMode = 0; // 0: комната, 1: площадь вручную
+  double _manualArea = 30.0;
 
   // 0: Интерьер, 1: Фасад
   int paintType = 0;
@@ -43,10 +48,9 @@ class _PaintScreenState extends State<PaintScreen> {
     ],
   ];
 
-  @override
-  void dispose() {
-    _state.dispose();
-    super.dispose();
+  double _getArea() {
+    if (_inputMode == 1) return _manualArea;
+    return (_roomWidth + _roomLength) * 2 * _roomHeight - _openingsArea;
   }
 
   // Обновление параметров при переключении типа краски
@@ -61,231 +65,317 @@ class _PaintScreenState extends State<PaintScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: _state,
-      builder: (context, child) {
-        final netArea = _state.getNetArea();
-        final perimeter = _state.getPerimeter();
+    _loc = AppLocalizations.of(context);
+    const accentColor = CalculatorColors.interior;
 
-        final surface = surfaces[paintType][surfaceIndex];
-        final factor = surface['factor'] as double;
+    final netArea = _getArea();
+    final perimeter = (_roomWidth + _roomLength) * 2;
 
-        // Расчет краски
-        final liters = (netArea * layers * factor) / coverage;
+    final surface = surfaces[paintType][surfaceIndex];
+    final factor = surface['factor'] as double;
 
-        // Размер банок: интерьер = 9л, фасад = 10л
-        final canSize = paintType == 0 ? 9 : 10;
-        final cans = (liters / canSize).ceil();
+    // Расчет краски
+    final liters = (netArea * layers * factor) / coverage;
 
-        // Малярный скотч: периметр х 2 (обвод плинтуса и потолка) / 50м рулон
-        final tape = ((perimeter * 2) / 50).ceil();
+    // Размер банок: интерьер = 9л, фасад = 10л
+    final canSize = paintType == 0 ? 9 : 10;
+    final cans = (liters / canSize).ceil();
 
-        // Предупреждение для короеда на фасаде
-        final showWarning = paintType == 1 && surfaceIndex == 2;
+    // Малярный скотч: периметр х 2 (обвод плинтуса и потолка) / 50м рулон
+    final tape = ((perimeter * 2) / 50).ceil();
 
-        return Scaffold(
-          appBar: AppBar(
-            title: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.format_paint_rounded),
-                SizedBox(width: 10),
-                Text('Покраска'),
-              ],
-            ),
+    // Предупреждение для короеда на фасаде
+    final showWarning = paintType == 1 && surfaceIndex == 2;
+
+    return CalculatorScaffold(
+      title: _loc.translate('paint.title'),
+      accentColor: accentColor,
+      resultHeader: CalculatorResultHeader(
+        accentColor: accentColor,
+        results: [
+          ResultItem(
+            label: _loc.translate('paint.area').toUpperCase(),
+            value: '${netArea.toStringAsFixed(1)} м²',
+            icon: Icons.straighten,
           ),
-          body: ListView(
-            padding: const EdgeInsets.all(16),
+          ResultItem(
+            label: _loc.translate('paint.paint').toUpperCase(),
+            value: '$cans ${_loc.translate('paint.packs')}',
+            icon: Icons.shopping_bag,
+          ),
+          ResultItem(
+            label: '${liters.toStringAsFixed(1)} л',
+            value: '$layers ${_loc.translate('paint.layers_label')}',
+            icon: Icons.layers,
+          ),
+        ],
+      ),
+      children: [
+        // Геометрия
+        _buildGeometryCard(),
+
+        const SizedBox(height: 16),
+
+        // Тип краски (Интерьер/Фасад)
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Геометрия
-              GeometryWidget(state: _state),
-              const SizedBox(height: 16),
+              Text(
+                _loc.translate('paint.paint_type'),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey),
+              ),
+              const SizedBox(height: 12),
+              ModeSelector(
+                options: [
+                  _loc.translate('paint.interior'),
+                  _loc.translate('paint.facade'),
+                ],
+                selectedIndex: paintType,
+                onSelect: _onPaintTypeChanged,
+                accentColor: accentColor,
+              ),
+            ],
+          ),
+        ),
 
-              // Параметры
-              SectionCard(
-                title: 'Параметры',
-                icon: Icons.format_paint_rounded,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Тип краски',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    CustomTabSelector(
-                      labels: const ['Интерьер', 'Фасад'],
-                      selectedIndex: paintType,
-                      onSelect: _onPaintTypeChanged,
-                    ),
-                    const SizedBox(height: 16),
+        const SizedBox(height: 16),
 
-                    // Выбор поверхности
-                    const Text(
-                      'Поверхность',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildSurfaceDropdown(),
-                    const SizedBox(height: 16),
+        // Выбор поверхности
+        TypeSelectorGroup(
+          options: surfaces[paintType].map((s) => TypeSelectorOption(
+            icon: Icons.texture,
+            title: s['name'] as String,
+            subtitle: '',
+          )).toList(),
+          selectedIndex: surfaceIndex,
+          onSelect: (index) => setState(() => surfaceIndex = index),
+          accentColor: accentColor,
+        ),
 
-                    // Расход и Слои
-                    Row(
+        const SizedBox(height: 16),
+
+        // Параметры (Расход и Слои)
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: CalculatorTextField(
+                      label: _loc.translate('paint.coverage'),
+                      value: coverage,
+                      onChanged: (v) => setState(() => coverage = v),
+                      suffix: 'м²/л',
+                      accentColor: accentColor,
+                      minValue: 4,
+                      maxValue: 15,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CalculatorTextField(
+                      label: _loc.translate('paint.layers'),
+                      value: layers.toDouble(),
+                      onChanged: (v) => setState(() => layers = v.toInt().clamp(1, 5)),
+                      suffix: '',
+                      accentColor: accentColor,
+                      minValue: 1,
+                      maxValue: 5,
+                    ),
+                  ),
+                ],
+              ),
+              // Предупреждение для Короеда
+              if (showWarning)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.orange[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.orange[200]!),
+                    ),
+                    child: Row(
                       children: [
+                        Icon(Icons.warning_rounded, size: 20, color: Colors.orange[800]),
+                        const SizedBox(width: 8),
                         Expanded(
-                          child: NumberInput(
-                            label: 'Расход (м²/л)',
-                            value: coverage,
-                            onChanged: (v) => setState(() => coverage = v),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: NumberInput(
-                            label: 'Слоев',
-                            value: layers.toDouble(),
-                            onChanged: (v) =>
-                                setState(() => layers = v.toInt().clamp(1, 5)),
+                          child: Text(
+                            _loc.translate('paint.increased_warning'),
+                            style: TextStyle(fontSize: 12, color: Colors.orange[900], fontWeight: FontWeight.w600),
                           ),
                         ),
                       ],
                     ),
-
-                    // Предупреждение для Короеда
-                    if (showWarning)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12),
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.orange[50],
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.orange[200]!),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.warning_rounded,
-                                  size: 20, color: Colors.orange[800]),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Расход увеличен на 40% (Короед)',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.orange[900],
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                  ],
+                  ),
                 ),
-              ),
-
-              // Результаты
-              const SizedBox(height: 16),
-              ResultsSheet(
-                title: 'Смета: Краска',
-                rows: [
-                  ResultRow('Площадь', '${netArea.toStringAsFixed(1)} м²'),
-                  ResultRow(
-                    'Краска',
-                    '${liters.toStringAsFixed(1)} л',
-                    subLabel: '$layers слоя, ${factor}x',
-                  ),
-                  ResultRow(
-                    'Банки',
-                    '$cans шт',
-                    subLabel: 'по $canSize''л',
-                  ),
-                  ResultRow(
-                    'Скотч',
-                    '$tape шт',
-                    subLabel: 'рулонов 50м',
-                  ),
-                ],
-              ),
-              const SizedBox(height: 40),
             ],
           ),
-        );
-      },
+        ),
+
+        const SizedBox(height: 16),
+
+        // Результаты
+        ResultCardLight(
+          title: _loc.translate('paint.results_title'),
+          titleIcon: Icons.receipt_long,
+          results: [
+            ResultRowItem(
+              label: _loc.translate('paint.area'),
+              value: '${netArea.toStringAsFixed(1)} м²',
+              icon: Icons.straighten,
+            ),
+            ResultRowItem(
+              label: _loc.translate('paint.paint'),
+              value: '${liters.toStringAsFixed(1)} л',
+              icon: Icons.format_paint,
+              subtitle: '$layers ${_loc.translate('paint.layers_label')}, ${factor}x',
+            ),
+            ResultRowItem(
+              label: _loc.translate('paint.cans'),
+              value: '$cans ${_loc.translate('paint.packs')}',
+              icon: Icons.shopping_bag,
+              subtitle: '${_loc.translate('paint.per')} $canSize л',
+            ),
+            ResultRowItem(
+              label: _loc.translate('paint.tape'),
+              value: '$tape ${_loc.translate('paint.packs')}',
+              icon: Icons.cleaning_services,
+              subtitle: _loc.translate('paint.rolls_50m'),
+            ),
+          ],
+          accentColor: accentColor,
+        ),
+
+        const SizedBox(height: 20),
+      ],
     );
   }
 
-  Widget _buildSurfaceDropdown() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final currentSurfaces = surfaces[paintType];
-
+  Widget _buildGeometryCard() {
+    const accentColor = CalculatorColors.interior;
     return Container(
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF334155) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark
-              ? const Color(0xFF475569)
-              : const Color(0xFFE2E8F0),
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
-        children: List.generate(currentSurfaces.length, (index) {
-          final isSelected = surfaceIndex == index;
-          final surface = currentSurfaces[index];
-
-          return GestureDetector(
-            onTap: () => setState(() => surfaceIndex = index),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? (isDark ? const Color(0xFF475569) : Colors.white)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(11),
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 4,
-                        )
-                      ]
-                    : [],
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    isSelected
-                        ? Icons.radio_button_checked
-                        : Icons.radio_button_off,
-                    color: const Color(0xFF2563EB),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    surface['name'],
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isSelected
-                          ? (isDark ? Colors.white : Colors.black87)
-                          : Colors.grey[700],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
+        children: [
+          ModeSelector(
+            options: [
+              _loc.translate('plaster_pro.mode.room'),
+              _loc.translate('plaster_pro.mode.manual'),
+            ],
+            selectedIndex: _inputMode,
+            onSelect: (index) => setState(() => _inputMode = index),
+            accentColor: accentColor,
+          ),
+          const SizedBox(height: 16),
+          if (_inputMode == 0) ..._buildRoomInputs() else ..._buildManualInputs(),
+        ],
       ),
     );
+  }
+
+  List<Widget> _buildRoomInputs() {
+    const accentColor = CalculatorColors.interior;
+    return [
+      Row(
+        children: [
+          Expanded(
+            child: CalculatorTextField(
+              label: _loc.translate('plaster_pro.label.width'),
+              value: _roomWidth,
+              onChanged: (v) => setState(() => _roomWidth = v),
+              suffix: 'м',
+              accentColor: accentColor,
+              minValue: 0.1,
+              maxValue: 100,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: CalculatorTextField(
+              label: _loc.translate('plaster_pro.label.length'),
+              value: _roomLength,
+              onChanged: (v) => setState(() => _roomLength = v),
+              suffix: 'м',
+              accentColor: accentColor,
+              minValue: 0.1,
+              maxValue: 100,
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 12),
+      CalculatorTextField(
+        label: _loc.translate('plaster_pro.label.height'),
+        value: _roomHeight,
+        onChanged: (v) => setState(() => _roomHeight = v),
+        suffix: 'м',
+        accentColor: accentColor,
+        minValue: 1.5,
+        maxValue: 10,
+      ),
+      const SizedBox(height: 12),
+      CalculatorTextField(
+        label: _loc.translate('plaster_pro.label.openings_hint'),
+        value: _openingsArea,
+        onChanged: (v) => setState(() => _openingsArea = v),
+        suffix: 'м²',
+        accentColor: accentColor,
+        minValue: 0,
+        maxValue: 100,
+      ),
+    ];
+  }
+
+  List<Widget> _buildManualInputs() {
+    const accentColor = CalculatorColors.interior;
+    return [
+      CalculatorTextField(
+        label: _loc.translate('plaster_pro.label.wall_area'),
+        value: _manualArea,
+        onChanged: (v) => setState(() => _manualArea = v),
+        suffix: 'м²',
+        accentColor: accentColor,
+        minValue: 1,
+        maxValue: 500,
+      ),
+    ];
   }
 }

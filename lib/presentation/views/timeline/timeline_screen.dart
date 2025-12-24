@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../domain/entities/timeline.dart';
 import '../../../domain/entities/workflow_step.dart';
 import '../../providers/workflow_provider.dart';
@@ -16,6 +17,7 @@ class TimelineScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     
     // Получаем план работ
     final plansAsync = ref.watch(workflowProvider);
@@ -32,25 +34,35 @@ class TimelineScreen extends ConsumerWidget {
 
         if (plan == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Временная линия')),
-            body: const Center(child: Text('Нет плана работ')),
+            appBar: AppBar(title: Text(loc.translate('workflow.timeline.title'))),
+            body: Center(
+              child: Text(loc.translate('workflow.timeline.no_plan')),
+            ),
           );
         }
         
         return _buildTimeline(context, theme, plan);
       },
       loading: () => Scaffold(
-        appBar: AppBar(title: const Text('Временная линия')),
+        appBar: AppBar(title: Text(loc.translate('workflow.timeline.title'))),
         body: const Center(child: CircularProgressIndicator()),
       ),
       error: (error, stackTrace) => Scaffold(
-        appBar: AppBar(title: const Text('Временная линия')),
-        body: Center(child: Text('Ошибка: $error')),
+        appBar: AppBar(title: Text(loc.translate('workflow.timeline.title'))),
+        body: Center(
+          child: Text(
+            loc.translate(
+              'workflow.timeline.error',
+              {'error': error.toString()},
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildTimeline(BuildContext context, ThemeData theme, WorkflowPlan plan) {
+    final loc = AppLocalizations.of(context);
 
     final startDate = DateTime.now();
     final timeline = Timeline.fromWorkflowPlan(plan, startDate);
@@ -58,7 +70,7 @@ class TimelineScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Временная линия'),
+        title: Text(loc.translate('workflow.timeline.title')),
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_today),
@@ -78,19 +90,19 @@ class TimelineScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _TimelineStat(
-                  label: 'Начало',
+                  label: loc.translate('workflow.timeline.start'),
                   value: _formatDate(timeline.startDate),
                   icon: Icons.play_arrow,
                 ),
                 _TimelineStat(
-                  label: 'Окончание',
+                  label: loc.translate('workflow.timeline.end'),
                   value: timeline.endDate != null 
                       ? _formatDate(timeline.endDate!)
-                      : '—',
+                      : '-',
                   icon: Icons.stop,
                 ),
                 _TimelineStat(
-                  label: 'Дней',
+                  label: loc.translate('workflow.timeline.days'),
                   value: '${timeline.getTotalDays()}',
                   icon: Icons.calendar_today,
                 ),
@@ -127,10 +139,17 @@ class TimelineScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('${_formatDate(event.startDate)} - ${_formatDate(event.endDate)}'),
-                        Text('${event.durationDays} дней'),
+                        Text(
+                          loc.translate(
+                            'workflow.timeline.duration_days',
+                            {'days': event.durationDays.toString()},
+                          ),
+                        ),
                         if (isCritical)
                           Chip(
-                            label: const Text('Критический путь'),
+                            label: Text(
+                              loc.translate('workflow.timeline.critical_path'),
+                            ),
                             backgroundColor: Colors.red.withValues(alpha: 0.2),
                           ),
                       ],

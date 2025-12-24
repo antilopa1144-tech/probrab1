@@ -60,7 +60,11 @@ class _CalculatorCatalogScreenState
       return title.contains(q) ||
           sub.contains(q) ||
           calc.id.toLowerCase().contains(q) ||
-          calc.tags.any((t) => t.toLowerCase().contains(q));
+          calc.tags.any((t) {
+            final tagValue =
+                t.startsWith('tag.') ? loc.translate(t) : t;
+            return tagValue.toLowerCase().contains(q);
+          });
     }).toList(growable: false);
   }
 

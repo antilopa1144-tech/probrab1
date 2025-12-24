@@ -9,6 +9,164 @@
   "history.category.walls": "Diwarlar",
   "history.category.roofing": "Üçek",
   "history.category.finishing": "Bezeg",
+  "workflow": {
+    "plan": {
+      "title": "План работ: {object}"
+    },
+    "object": {
+      "home": "Дом",
+      "flat": "Квартира",
+      "garage": "Гараж"
+    },
+    "screen": {
+      "title": "Планировщик работ",
+      "empty_title": "Выберите тип объекта для создания плана",
+      "create_plan": "Создать план",
+      "save_plan": "План сохранён",
+      "choose_object": "Выберите тип объекта",
+      "materials": "Материалы:",
+      "checklist": "Чек-лист:",
+      "step_subtitle": "{days} дней - {category}",
+      "stats": {
+        "total_steps": "Всего шагов",
+        "completed": "Выполнено",
+        "days": "Дней"
+      }
+    },
+    "timeline": {
+      "title": "Временная линия",
+      "no_plan": "Нет плана работ",
+      "error": "Ошибка: {error}",
+      "start": "Начало",
+      "end": "Окончание",
+      "days": "Дней",
+      "critical_path": "Критический путь",
+      "duration_days": "{days} дней"
+    },
+    "category": {
+      "foundation": "Фундамент",
+      "walls": "Стены",
+      "roofing": "Кровля",
+      "finishing": "Отделка",
+      "preparation": "Подготовка",
+      "floors": "Полы"
+    },
+    "step": {
+      "foundation": {
+        "title": "Фундамент",
+        "description": "Заливка фундамента"
+      },
+      "walls": {
+        "title": "Стены",
+        "description": "Возведение стен"
+      },
+      "roof": {
+        "title": "Кровля",
+        "description": "Устройство кровли"
+      },
+      "interior": {
+        "title": "Внутренняя отделка",
+        "description": "Отделочные работы"
+      },
+      "prep": {
+        "title": "Подготовка",
+        "description": "Подготовительные работы"
+      },
+      "walls_finish": {
+        "title": "Отделка стен",
+        "description": "Штукатурка и покраска стен"
+      },
+      "floors_finish": {
+        "title": "Отделка полов",
+        "description": "Укладка напольного покрытия"
+      },
+      "foundation_garage": {
+        "title": "Плита основания",
+        "description": "Бетонная плита для гаража"
+      },
+      "walls_garage": {
+        "title": "Стены гаража",
+        "description": "Возведение стен"
+      },
+      "roof_garage": {
+        "title": "Крыша гаража",
+        "description": "Устройство кровли"
+      }
+    },
+    "material": {
+      "concrete": "Бетон",
+      "rebar": "Арматура",
+      "formwork": "Опалубка",
+      "brick_blocks": "Кирпич/блоки",
+      "mortar": "Раствор",
+      "roofing_material": "Кровельный материал",
+      "insulation": "Утеплитель",
+      "plaster": "Штукатурка",
+      "putty": "Шпаклёвка",
+      "paint": "Краска",
+      "wallpaper": "Обои",
+      "protective_film": "Защитная плёнка",
+      "flooring": "Напольное покрытие",
+      "underlay": "Подложка",
+      "rebar_mesh": "Арматурная сетка",
+      "sand": "Песок",
+      "crushed_stone": "Щебень",
+      "corrugated_sheet": "Профнастил",
+      "timber": "Брус",
+      "waterproofing": "Гидроизоляция",
+      "blocks_brick": "Блоки/кирпич"
+    },
+    "tool": {
+      "concrete_mixer": "Бетономешалка",
+      "vibration_compactor": "Виброуплотнитель",
+      "trowel": "Кельма",
+      "level": "Уровень",
+      "ladder": "Лестница",
+      "roofing_tools": "Инструменты для кровли",
+      "spatulas": "Шпатели",
+      "rollers": "Валики",
+      "tape": "Скотч",
+      "knife": "Нож",
+      "hammer": "Молоток",
+      "vibrating_screed": "Виброрейка",
+      "screwdriver": "Шуруповёрт",
+      "metal_shears": "Ножницы по металлу"
+    },
+    "checklist": {
+      "prepare_site": "Подготовить площадку",
+      "install_formwork": "Установить опалубку",
+      "place_rebar": "Уложить арматуру",
+      "pour_concrete": "Залить бетон",
+      "cure_7_days": "Выдержать 7 дней",
+      "check_foundation": "Проверить фундамент",
+      "start_masonry": "Начать кладку",
+      "control_vertical": "Контролировать вертикальность",
+      "install_rafters": "Установить стропила",
+      "lay_insulation": "Уложить утеплитель",
+      "install_roofing": "Смонтировать кровельный материал",
+      "plaster_walls": "Штукатурка стен",
+      "putty": "Шпаклёвка",
+      "prime": "Грунтовка",
+      "paint_wallpaper": "Покраска/обои",
+      "protect_furniture": "Защитить мебель",
+      "remove_old_finish": "Демонтировать старую отделку",
+      "prepare_surfaces": "Подготовить поверхности",
+      "level_walls": "Выровнять стены",
+      "apply_putty": "Зашпаклевать",
+      "paint": "Покрасить",
+      "level_floor": "Выровнять пол",
+      "lay_underlay": "Уложить подложку",
+      "lay_flooring": "Уложить покрытие",
+      "prepare_base": "Подготовить основание",
+      "lay_sand_bed": "Уложить песчаную подушку",
+      "install_rebar": "Установить арматуру",
+      "lay_walls": "Кладка стен",
+      "prepare_gate_opening": "Подготовка под ворота",
+      "install_floor_beams": "Установить балки перекрытия",
+      "lay_waterproofing": "Уложить гидроизоляцию",
+      "install_roof": "Смонтировать кровлю"
+    }
+  },
   "calculator": {
     "dsp": {
       "title": "DSP / Screed",
@@ -448,15 +606,15 @@
   "hint": {
     "dsp": {
       "before": {
-        "measure": "",
-        "mix_choice": "",
-        "thin_screed": ""
+        "measure": "Takyk hasaplamak üçin üstüň meýdanyny seresap ölçäň",
+        "mix_choice": "M300 (gum-beton) - pol üçin, M150 - diwar üçin",
+        "thin_screed": "30 mm-den inçe stýajka çatlaklara sebäp bolup biler. Inçe gatlaklar üçin öz-özüni tekizleýän garyndyny ulanyň"
       },
       "after": {
-        "curing": "",
-        "temperature": "",
-        "crack_warning": "",
-        "reinforcement": ""
+        "curing": "Stýajka 28 günde berkligini alýar. Ilkinji 7 gün üstüni nemlendiriň",
+        "temperature": "Işi +5° bilen +30° arasynda ýerine ýetiriň",
+        "crack_warning": "Duýduryş: gaty inçe gatlak çatlaklara getirip biler",
+        "reinforcement": "Pol üçin 100x100 mm armatura tor maslahat berilýär"
       }
     },
     "type": {
@@ -474,6 +632,239 @@
         "apply": "Boýagy rolik ýa-da pürküji ýarag bilen deň derejede çalyň",
         "drying": "Her gatyň doly guramagyna rugsat beriň (4-6 sagat)"
       }
+    },
+    "walls": {
+      "gruntovka_uluchshaet_adgeziyu_materialov": "Грунтовка улучшает адгезию материалов.",
+      "gruntovka_glubokogo_proniknoveniya_dlya": "Грунтовка глубокого проникновения для пористых поверхностей.",
+      "nanosite_ravnomernym_sloem": "Наносите равномерным слоем.",
+      "startovaya_shpaklevka_dlya_vyravnivaniya": "Стартовая шпаклёвка для выравнивания, финишная для гладкости.",
+      "nanosite_tonkimi_sloyami": "Наносите тонкими слоями.",
+      "shlifuyte_mezhdu_sloyami": "Шлифуйте между слоями.",
+      "rashod_zavisit_ot_razmera": "Расход зависит от размера плитки и толщины слоя.",
+      "ispolzuyte_zubchatyy_shpatel": "Используйте зубчатый шпатель.",
+      "nanosite_kley_na_osnovanie": "Наносите клей на основание и плитку.",
+      "ispolzuyte_spetsialnyy_kley_dlya": "Используйте специальный клей для газобетона.",
+      "armiruyte_kazhdyy_3_4": "Армируйте каждый 3-4 ряд.",
+      "pervyy_ryad_ukladyvayte_na": "Первый ряд укладывайте на раствор.",
+      "proveryayte_geometriyu_urovnem": "Проверяйте геометрию уровнем.",
+      "kladku_v_polkirpicha_armiruyte": "Кладку в полкирпича армируйте каждые 5 рядов.",
+      "ispolzuyte_tsementno_peschanyy_rastvor": "Используйте цементно-песчаный раствор М100.",
+      "proveryayte_vertikalnost_otvesom": "Проверяйте вертикальность отвесом.",
+      "svyazyvayte_s_nesuschimi_stenami": "Связывайте с несущими стенами анкерами.",
+      "shag_stoek_60_sm": "Шаг стоек — 60 см для прочности.",
+      "ispolzuyte_zvukoizolyatsiyu_mezhdu_listami": "Используйте звукоизоляцию между листами.",
+      "proverte_vertikalnost_stoek_urovnem": "Проверьте вертикальность стоек уровнем.",
+      "shpaklevku_nanosite_v_dva": "Шпаклёвку наносите в два слоя.",
+      "proverte_rovnost_sten_pered": "Проверьте ровность стен перед установкой.",
+      "ispolzuyte_spetsialnyy_kley_dlya_2": "Используйте специальный клей для 3D панелей.",
+      "nachinayte_montazh_ot_tsentra": "Начинайте монтаж от центра стены.",
+      "ispolzuyte_gruntovku_glubokogo_proniknoveniya": "Используйте грунтовку глубокого проникновения.",
+      "vozmite_shpateli_i_kelmy": "Возьмите шпатели и кельмы разных размеров.",
+      "dlya_venetsianskoy_shtukaturki_nuzhna": "Для венецианской штукатурки нужна кельма из нержавейки.",
+      "dobavte_10_zapas_na": "Добавьте 10% запас на подрезку и бой.",
+      "ispolzuyte_spetsialnyy_kley_dlya_3": "Используйте специальный клей для декоративного камня.",
+      "obrabotayte_kamen_gidrofobizatorom": "Обработайте камень гидрофобизатором.",
+      "gvl_tyazhelee_gkl_usilte": "ГВЛ тяжелее ГКЛ, усильте каркас.",
+      "ispolzuyte_samorezy_dlya_gvl": "Используйте саморезы для ГВЛ.",
+      "zazor_mezhdu_listami_5": "Зазор между листами 5-7 мм.",
+      "mdf_ne_dlya_vlazhnyh": "МДФ не для влажных помещений.",
+      "obreshetka_s_shagom_40": "Обрешетка с шагом 40-50 см.",
+      "krepite_na_klyaymery_ili": "Крепите на кляймеры или клипсы.",
+      "paneli_ukladyvayte_ot_ugla": "Панели укладывайте от угла.",
+      "ostavlyayte_temperaturnyy_zazor_5": "Оставляйте температурный зазор 5 мм.",
+      "ispolzuyte_startovyy_i_finishnyy": "Используйте стартовый и финишный профили.",
+      "dobavte_10_zapas_na_2": "Добавьте 10% запас на подрезку.",
+      "ispolzuyte_krestiki_dlya_rovnyh": "Используйте крестики для ровных швов.",
+      "nachinayte_so_vtorogo_ryada": "Начинайте со второго ряда снизу.",
+      "proverte_sovpadenie_risunka_rapporta": "Проверьте совпадение рисунка (раппорта) перед поклейкой.",
+      "rekomenduetsya_dobavit_10_k": "Рекомендуется добавить 10 % к площади для подрезки.",
+      "ispolzuyte_lazernyy_uroven_dlya": "Используйте лазерный уровень для контроля вертикали.",
+      "kley_podbirayte_po_tipu": "Клей подбирайте по типу обоев (флизелиновые/виниловые).",
+      "dayte_vagonke_akklimatizirovatsya_48": "Дайте вагонке акклиматизироваться 48 часов.",
+      "obrabotayte_antiseptikom_pered_montazhom": "Обработайте антисептиком перед монтажом.",
+      "krepite_na_klyaymery_dlya": "Крепите на кляймеры для скрытого монтажа."
+    },
+    "interior": {
+      "uteplenie_mansardy_obyazatelno_dlya": "Утепление мансарды обязательно для комфортного проживания.",
+      "tolschina_uteplitelya_dolzhna_byt": "Толщина утеплителя должна быть не менее 15-20 см.",
+      "paroizolyatsiya_zaschischaet_uteplitel_ot": "Пароизоляция защищает утеплитель от влаги изнутри.",
+      "mansardnye_okna_obespechivayut_estestvennoe": "Мансардные окна обеспечивают естественное освещение.",
+      "vagonka_sozdaet_uyutnuyu_atmosferu": "Вагонка создаёт уютную атмосферу в мансарде.",
+      "proverte_nesuschuyu_sposobnost_perekrytiya": "Проверьте несущую способность перекрытия перед укладкой пола.",
+      "osteklenie_balkona_znachitelno_uvelichivaet": "Остекление балкона значительно увеличивает полезную площадь.",
+      "teploe_osteklenie_pozvolyaet_ispolzovat": "Тёплое остекление позволяет использовать балкон круглый год.",
+      "uteplenie_obyazatelno_dlya_teplogo": "Утепление обязательно для тёплого остекления.",
+      "paroizolyatsiya_zaschischaet_uteplitel_ot_2": "Пароизоляция защищает утеплитель от влаги.",
+      "dlya_pola_na_otkrytom": "Для пола на открытом балконе используйте морозостойкую плитку.",
+      "terrasnaya_doska_podhodit_dlya": "Террасная доска подходит для открытых балконов.",
+      "ispolzuyte_vlagostoykiy_kley_i": "Используйте влагостойкий клей и затирку.",
+      "gidroizolyatsiya_obyazatelna_dlya_pola": "Гидроизоляция обязательна для пола и нижней части стен.",
+      "proverte_rovnost_osnovaniya_pered": "Проверьте ровность основания перед укладкой.",
+      "ispolzuyte_krestiki_dlya_ravnomernogo": "Используйте крестики для равномерного шва.",
+      "gidroizolyatsiya_obyazatelna_dlya_pola_2": "Гидроизоляция обязательна для пола и стен на высоту 30 см.",
+      "ispolzuyte_armiruyuschuyu_lentu_dlya": "Используйте армирующую ленту для углов и стыков.",
+      "nanosite_material_v_dva": "Наносите материал в два слоя перпендикулярно.",
+      "proverte_tselostnost_pokrytiya_pered": "Проверьте целостность покрытия перед укладкой плитки.",
+      "proverte_vertikalnost_dvernoy_korobki": "Проверьте вертикальность дверной коробки.",
+      "ispolzuyte_montazhnuyu_penu_dlya": "Используйте монтажную пену для фиксации.",
+      "ustanovite_nalichniki_dlya_zaversheniya": "Установите наличники для завершения.",
+      "ispolzuyte_spetsialnyy_kley_dlya": "Используйте специальный клей для пенопласта.",
+      "krepite_dyubelyami_posle_vysyhaniya": "Крепите дюбелями после высыхания клея.",
+      "dlya_fasada_obyazatelna_armiruyuschaya": "Для фасада обязательна армирующая сетка.",
+      "ispolzuyte_paroizolyatsiyu_s_vnutrenney": "Используйте пароизоляцию с внутренней стороны.",
+      "ne_szhimayte_vatu_pri": "Не сжимайте вату при укладке — это снижает эффективность.",
+      "zaschitite_ruki_i_dyhatelnye": "Защитите руки и дыхательные пути при работе.",
+      "shumoizolyatsiya_osobenno_vazhna_dlya": "Шумоизоляция особенно важна для межкомнатных перегородок.",
+      "ispolzuyte_materialy_s_vysokim": "Используйте материалы с высоким коэффициентом звукопоглощения.",
+      "obespechte_germetichnost_stykov": "Обеспечьте герметичность стыков.",
+      "ispolzuyte_ugolki_dlya_rovnyh": "Используйте уголки для ровных углов.",
+      "shpaklevku_nanosite_tonkim_sloem": "Шпаклёвку наносите тонким слоем.",
+      "kraste_v_2_sloya": "Красьте в 2 слоя для равномерного покрытия.",
+      "ispolzuyte_montazhnuyu_penu_dlya_2": "Используйте монтажную пену для герметизации.",
+      "ustanovite_otlivy_dlya_zaschity": "Установите отливы для защиты от воды.",
+      "proverte_vertikalnost_i_gorizontalnost": "Проверьте вертикальность и горизонтальность."
+    },
+    "facade": {
+      "ispolzuyte_oblitsovochnyy_kirpich_s": "Используйте облицовочный кирпич с правильной геометрией.",
+      "armiruyte_cherez_kazhdye_5": "Армируйте через каждые 5 рядов.",
+      "proveryayte_vertikalnost_kazhdogo_ryada": "Проверяйте вертикальность каждого ряда.",
+      "zaschitite_kladku_ot_dozhdya": "Защитите кладку от дождя во время работ.",
+      "fasadnye_paneli_dolgovechny_i": "Фасадные панели долговечны и не требуют ухода.",
+      "ispolzuyte_kachestvennye_krepleniya": "Используйте качественные крепления.",
+      "ostavlyayte_zazor_dlya_temperaturnogo": "Оставляйте зазор для температурного расширения.",
+      "ne_zabudte_j_profil": "Не забудьте J-профиль, углы, стартовую и финишную планку.",
+      "ostavlyayte_temperaturnye_zazory_5": "Оставляйте температурные зазоры (5-10 мм) для расширения материала.",
+      "montiruyte_sayding_snizu_vverh": "Монтируйте сайдинг снизу вверх, начиная со стартовой планки.",
+      "ispolzuyte_samorezy_s_press": "Используйте саморезы с пресс-шайбой, не затягивайте их до упора.",
+      "raboty_vypolnyayte_pri_temperature": "Работы выполняйте при температуре выше +5°C.",
+      "ispolzuyte_armiruyuschuyu_setku_dlya": "Используйте армирующую сетку для прочности.",
+      "nanosite_shtukaturku_v_dva": "Наносите штукатурку в два слоя.",
+      "zaschitite_fasad_ot_dozhdya": "Защитите фасад от дождя во время работ.",
+      "ispolzuyte_zaschitnye_sostavy_dlya": "Используйте защитные составы для дерева.",
+      "obrabatyvayte_tortsy_dosok": "Обрабатывайте торцы досок.",
+      "ostavlyayte_zazor_dlya_ventilyatsii": "Оставляйте зазор для вентиляции.",
+      "stolby_ustanavlivayutsya_na_glubinu": "Столбы устанавливаются на глубину 1/3 от высоты забора.",
+      "dlya_proflista_ispolzuyte_otsinkovannye": "Для профлиста используйте оцинкованные саморезы с уплотнителями.",
+      "derevyannyy_zabor_trebuet_obrabotki": "Деревянный забор требует обработки антисептиком.",
+      "kirpichnyy_zabor_nuzhdaetsya_v": "Кирпичный забор нуждается в фундаменте.",
+      "rasstoyanie_mezhdu_stolbami_2": "Расстояние между столбами: 2-3 метра в зависимости от материала.",
+      "vorota_i_kalitki_dolzhny": "Ворота и калитки должны быть на 5-10 см выше уровня земли.",
+      "vysota_stupeni_dolzhna_byt": "Высота ступени должна быть 15-20 см для комфортного подъёма.",
+      "shirina_prostupi_stupeni_dolzhna": "Ширина проступи (ступени) должна быть не менее 28 см.",
+      "shirina_lestnitsy_dlya_zhilyh": "Ширина лестницы для жилых домов - минимум 90 см.",
+      "dlya_derevyannoy_lestnitsy_ispolzuyte": "Для деревянной лестницы используйте твёрдые породы дерева (дуб, ясень).",
+      "betonnaya_lestnitsa_trebuet_armirovaniya": "Бетонная лестница требует армирования и опалубки.",
+      "perila_dolzhny_byt_na": "Перила должны быть на высоте 90-100 см от ступени.",
+      "balyasiny_ustanavlivayutsya_s_shagom": "Балясины устанавливаются с шагом 10-15 см для безопасности детей.",
+      "terrasnaya_doska_deking_ustoychiva": "Террасная доска (декинг) устойчива к влаге и перепадам температур.",
+      "plitka_dlya_terrasy_dolzhna": "Плитка для террасы должна быть морозостойкой и нескользкой.",
+      "ograzhdenie_obespechivaet_bezopasnost_osobenno": "Ограждение обеспечивает безопасность, особенно если есть дети.",
+      "krovlya_zaschischaet_ot_dozhdya": "Кровля защищает от дождя и солнца.",
+      "polikarbonat_propuskaet_svet_i": "Поликарбонат пропускает свет и создаёт лёгкую конструкцию.",
+      "stolby_dlya_krovli_dolzhny": "Столбы для кровли должны быть установлены на фундамент."
+    },
+    "flooring": {
+      "kovrolin_dolzhen_otlezhatsya_v": "Ковролин должен отлежаться в помещении 24 часа.",
+      "dlya_bolshih_ploschadey_ispolzuyte": "Для больших площадей используйте клей.",
+      "na_malenkih_ploschadyah_mozhno": "На маленьких площадях можно использовать скотч.",
+      "ukladyvayte_v_odnom_napravlenii": "Укладывайте в одном направлении ворса.",
+      "uteplenie_pola_osobenno_vazhno": "Утепление пола особенно важно для первого этажа и над неотапливаемыми помещениями.",
+      "dlya_minvaty_obyazatelna_gidroizolyatsiya": "Для минваты обязательна гидроизоляция снизу.",
+      "paroizolyatsiya_ukladyvaetsya_sverhu_uteplitelya": "Пароизоляция укладывается сверху утеплителя (со стороны тёплого помещения).",
+      "penoplast_i_epps_ne": "Пенопласт и ЭППС не требуют гидроизоляции, но нужна пароизоляция.",
+      "ostavlyayte_zazor_2_3": "Оставляйте зазор 2-3 см между утеплителем и финишным покрытием для вентиляции.",
+      "vozmite_klinya_dlya_kompensatsionnogo": "Возьмите клинья для компенсационного зазора 10 мм.",
+      "podlozhku_vybirayte_tolschinoy_2": "Подложку выбирайте толщиной 2–3 мм.",
+      "krestiki_ne_nuzhny_no": "Крестики не нужны, но контрольные клинья пригодятся.",
+      "proverte_rovnost_osnovaniya_perepad": "Проверьте ровность основания — перепад более 3 мм нежелателен.",
+      "raskatayte_linoleum_i_dayte": "Раскатайте линолеум и дайте ему отлежаться 24 часа.",
+      "obrezhte_izlishki_posle_ukladki": "Обрежьте излишки после укладки.",
+      "ispolzuyte_dvuhstoronniy_skotch_dlya": "Используйте двухсторонний скотч для фиксации.",
+      "parket_trebuet_akklimatizatsii_48": "Паркет требует акклиматизации 48 часов перед укладкой.",
+      "ispolzuyte_podlozhku_dlya_zvukoizolyatsii": "Используйте подложку для звукоизоляции.",
+      "lak_nanosite_v_3": "Лак наносите в 3 слоя с промежуточной шлифовкой.",
+      "pered_zalivkoy_proverte_uroven": "Перед заливкой проверьте уровень основания.",
+      "ispolzuyte_mayaki_dlya_kontrolya": "Используйте маяки для контроля толщины стяжки.",
+      "vyderzhite_styazhku_ne_menee": "Выдержите стяжку не менее 7 дней перед укладкой покрытия.",
+      "pri_tolschine_bolee_50": "При толщине более 50 мм используйте армирующую сетку.",
+      "osnovanie_dolzhno_byt_chistym": "Основание должно быть чистым и сухим.",
+      "ispolzuyte_gruntovku_dlya_uluchsheniya": "Используйте грунтовку для улучшения адгезии.",
+      "raskatyvayte_smes_igolchatym_valikom": "Раскатывайте смесь игольчатым валиком сразу после заливки.",
+      "ne_hodite_po_polu": "Не ходите по полу 24 часа после заливки.",
+      "ispolzuyte_krestiki_dlya_ravnomernogo": "Используйте крестики для равномерного шва.",
+      "proverte_rovnost_osnovaniya_perepad_2": "Проверьте ровность основания — перепад не более 3 мм.",
+      "zatirku_vybirayte_po_tsvetu": "Затирку выбирайте по цвету плитки.",
+      "kley_nanosite_zubchatym_shpatelem": "Клей наносите зубчатым шпателем.",
+      "ne_ukladyvayte_pod_mebelyu": "Не укладывайте под мебелью и стационарной техникой.",
+      "ispolzuyte_teploizolyatsiyu_dlya_povysheniya": "Используйте теплоизоляцию для повышения эффективности.",
+      "podklyuchenie_dolzhen_vypolnyat_kvalifitsirovannyy": "Подключение должен выполнять квалифицированный электрик.",
+      "pered_ukladkoy_pokrytiya_proverte": "Перед укладкой покрытия проверьте работоспособность системы."
+    },
+    "ceiling": {
+      "kassety_legko_zamenyayutsya_pri": "Кассеты легко заменяются при повреждении.",
+      "obespechte_dostup_k_kommunikatsiyam": "Обеспечьте доступ к коммуникациям над потолком.",
+      "ispolzuyte_uroven_dlya_montazha": "Используйте уровень для монтажа направляющих.",
+      "shag_podvesov_60_sm": "Шаг подвесов — 60 см для надёжности.",
+      "proverte_uroven_vseh_profiley": "Проверьте уровень всех профилей.",
+      "ispolzuyte_armiruyuschuyu_lentu_na": "Используйте армирующую ленту на стыках листов.",
+      "ispolzuyte_paroizolyatsiyu_s_vnutrenney": "Используйте пароизоляцию с внутренней стороны.",
+      "ne_szhimayte_uteplitel_pri": "Не сжимайте утеплитель при укладке.",
+      "obespechte_ventilyatsiyu_podkrovelnogo_prostranstva": "Обеспечьте вентиляцию подкровельного пространства.",
+      "montiruyte_reyki_perpendikulyarno_napravlyayuschim": "Монтируйте рейки перпендикулярно направляющим.",
+      "ostavlyayte_zazor_dlya_ventilyatsii": "Оставляйте зазор для вентиляции.",
+      "ispolzuyte_uroven_dlya_kontrolya": "Используйте уровень для контроля плоскости.",
+      "montazh_vypolnyayut_spetsialisty_s": "Монтаж выполняют специалисты с опытом.",
+      "zaranee_opredelite_mesta_dlya": "Заранее определите места для светильников.",
+      "uchityvayte_vysotu_potolka_natyazhnoy": "Учитывайте высоту потолка — натяжной потолок опускает его на 3–5 см.",
+      "proverte_rovnost_potolka_pered": "Проверьте ровность потолка перед укладкой.",
+      "ispolzuyte_spetsialnyy_kley_dlya": "Используйте специальный клей для потолочной плитки.",
+      "nachinayte_ukladku_ot_tsentra": "Начинайте укладку от центра комнаты."
+    },
+    "engineering": {
+      "raboty_dolzhen_vypolnyat_kvalifitsirovannyy": "Работы должен выполнять квалифицированный электрик.",
+      "ispolzuyte_kabel_secheniem_ne": "Используйте кабель сечением не менее 2.5 мм² для розеток.",
+      "ustanovite_uzo_dlya_zaschity": "Установите УЗО для защиты от утечек тока.",
+      "proverte_vse_soedineniya_pered": "Проверьте все соединения перед включением.",
+      "raschet_moschnosti_100_vt": "Расчёт мощности: 100 Вт на м² для средней полосы.",
+      "ustanovite_termoregulyatory_dlya_ekonomii": "Установите терморегуляторы для экономии.",
+      "ispolzuyte_balansirovochnye_krany": "Используйте балансировочные краны.",
+      "raboty_dolzhen_vypolnyat_kvalifitsirovannyy_2": "Работы должен выполнять квалифицированный специалист.",
+      "ispolzuyte_kachestvennye_fitingi_dlya": "Используйте качественные фитинги для надёжности.",
+      "proverte_vse_soedineniya_na": "Проверьте все соединения на герметичность.",
+      "ustanovite_zapornye_krany_na": "Установите запорные краны на каждую точку.",
+      "raboty_dolzhen_vypolnyat_kvalifitsirovannyy_3": "Работы должен выполнять квалифицированный сантехник.",
+      "vozduhoobmen_minimum_3_m": "Воздухообмен: минимум 3 м³/ч на м².",
+      "ustanavlivayte_reshetki_vverhu_dlya": "Устанавливайте решётки вверху для вытяжки, внизу для притока.",
+      "proverte_tyagu_pered_montazhom": "Проверьте тягу перед монтажом вентиляторов."
+    },
+    "foundation": {
+      "gidroizolyatsiya_po_vsey_ploschadi": "Гидроизоляция по всей площади контакта с грунтом.",
+      "uteplenie_naruzhnoe_epps_minimum": "Утепление наружное (ЭППС) минимум 100 мм.",
+      "armirovanie_sten_vertikalnymi_i": "Армирование стен вертикальными и горизонтальными сетками.",
+      "ventilyatsiya_obyazatelna_dlya_predotvrascheniya": "Вентиляция обязательна для предотвращения сырости.",
+      "minimalnaya_shirina_60_sm": "Минимальная ширина 60 см, рекомендуемая 1 м.",
+      "uklon_ot_doma_1": "Уклон от дома 1-2 см на метр.",
+      "peschano_graviynaya_podushka_15": "Песчано-гравийная подушка 15-20 см.",
+      "kompensatsionnyy_shov_mezhdu_otmostkoy": "Компенсационный шов между отмосткой и цоколем.",
+      "plita_tolschinoy_minimum_200": "Плита толщиной минимум 200 мм для жилого дома.",
+      "obyazatelna_peschano_graviynaya_podgotovka": "Обязательна песчано-гравийная подготовка.",
+      "gidroizolyatsiya_snizu_i_po": "Гидроизоляция снизу и по периметру.",
+      "armirovanie_dvumya_setkami_v": "Армирование двумя сетками в верхней и нижней зонах.",
+      "uteplitel_epps_pod_plitoy": "Утеплитель (ЭППС) под плитой для теплого пола."
+    },
+    "roofing": {
+      "ustanavlivayte_zheloba_s_uklonom": "Устанавливайте желоба с уклоном 3-5 мм на 1 м.",
+      "kronshteyny_montiruyutsya_cherez_kazhdye": "Кронштейны монтируются через каждые 50-60 см.",
+      "na_kazhdye_10_m": "На каждые 10 м² крыши — 1 водосточная труба.",
+      "ispolzuyte_germetik_dlya_soedineniy": "Используйте герметик для соединений.",
+      "uchityvayte_uklon_kryshi_pri": "Учитывайте уклон крыши при расчёте площади.",
+      "ispolzuyte_spetsialnye_samorezy_s": "Используйте специальные саморезы с уплотнителями.",
+      "ukladyvayte_listy_s_nahlestom": "Укладывайте листы с нахлёстом 15-20 см.",
+      "ne_zabudte_pro_gidroizolyatsiyu": "Не забудьте про гидроизоляцию под кровлей.",
+      "bitumnaya_cherepitsa_podhodit_dlya": "Битумная черепица подходит для крыш с уклоном от 12°.",
+      "obyazatelno_ispolzuyte_podkladochnyy_kover": "Обязательно используйте подкладочный ковёр.",
+      "montazh_pri_temperature_vyshe": "Монтаж при температуре выше +5°C.",
+      "ukladyvayte_snizu_vverh_s": "Укладывайте снизу вверх с перекрытием."
     }
   },
   "input": {
@@ -638,7 +1029,11 @@
     "clear": "Arassala",
     "open_for_recalculation": "Hasaplamak üçin açyk",
     "save": "Saklaň",
-    "save_to_project": "Taslama ýazdyryň"
+    "save_to_project": "Taslama ýazdyryň",
+    "close": "Закрыть",
+    "next": "Далее",
+    "back": "Назад",
+    "cancel": "Отмена"
   },
   "category": {
     "all": "Hemmesi",
@@ -732,8 +1127,205 @@
       "primer_unit": "канистр 10л"
     }
   },
+  "primer": {
+    "title": "Грунтовка",
+    "type_section": "Grunt görnüşi",
+    "layers_label": "Gatlaklaryň sany:",
+    "layers_1": "1 gatlak",
+    "layers_2": "2 gatlak",
+    "layers_3": "3 gatlak",
+    "dilution_label": "Suw bilen suwlandyrmak",
+    "dilution_strong": "1:1 (Güýçli)",
+    "dilution_weak": "1:9 (Gowşak)",
+    "results_title": "Смета: Грунтовка",
+    "area": "İşlenilýän meýdan",
+    "concentrate": "Концентрат (Satyn almak)",
+    "packs": "sany",
+    "water": "Garyndy üçin suw",
+    "to_add": "goşmak",
+    "total_solution": "Jemi ergin",
+    "ready_mix": "taýýar garyndy"
+  },
+  "dsp": {
+    "title": "ЦПС / Стяжка",
+    "floor_dimensions_hint": "Stýažka üçin pol ölçegleri ulanylýar (Uzynlyk х Ini)",
+    "parameters_title": "Iş parametrleri",
+    "work_type": "Iş görnüşi",
+    "screed_floor": "Stýažka (Pol)",
+    "plaster_walls": "Suwamak (Diwarlar)",
+    "mix_grade": "Garyndynyň markasy",
+    "thickness_warning": "ЦПС stýažkasy üçin <30мм gatlagy howply (ýaryklar). Öz-özüňi deňleşdirýän poluň ulanyň.",
+    "results_title": "Смета: ЦПС",
+    "area": "Meýdan",
+    "dry_mix": "Gury garyndy",
+    "packs": "sany",
+    "tons": "t",
+    "kg": "kg",
+    "mesh": "Armatura tory",
+    "mesh_size": "100х100 öý",
+    "damper_tape": "Demper lentasy",
+    "perimeter": "perimetr boýunça",
+    "beacons": "Maýaklar (10мм)",
+    "beacon_step": "1-1.5m ädim",
+    "primer": "Грунтовка",
+    "canisters_10l": "10l kanistr"
+  },
+  "paint": {
+    "title": "Boýamak",
+    "parameters": "Parametrler",
+    "paint_type": "Boýag görnüşi",
+    "interior": "Interer",
+    "facade": "Fasad",
+    "surface": "Ýüz",
+    "coverage": "Sarp (м²/l)",
+    "layers": "Gatlaklary",
+    "increased_warning": "Sarp 40% artdy (Koroýed)",
+    "results_title": "Смета: Boýag",
+    "area": "Meýdan",
+    "paint": "Boýag",
+    "layers_label": "gatlak",
+    "cans": "Bankalar",
+    "packs": "sany",
+    "per": "boýunça",
+    "tape": "Skotç",
+    "rolls_50m": "50m rulonlar"
+  },
+  "wood": {
+    "title": "Agaç",
+    "material": "Material",
+    "what_coating": "Näme bilen örtýäris?",
+    "base": "Esas",
+    "water_based": "Suwly",
+    "alkyd_based": "Alkidli",
+    "texture": "Agaç teksturasy",
+    "planed": "Süýrelen",
+    "sawn": "Kесilen",
+    "layers": "Gatlaklary",
+    "sawn_warning": "Kesilen tagta 1.6 esse köp siňdirýär!",
+    "tips": "Maslahatlar",
+    "brush": "Çotga",
+    "synthetic": "Sintetik (suw üçin)",
+    "natural": "Tebigy şaç",
+    "cleaning": "Arassalamak",
+    "water": "Suw",
+    "white_spirit": "Waýt-spirt",
+    "results_title": "Смета: Agaç",
+    "area": "Meýdan",
+    "material_name_0": "Antiseptik",
+    "material_name_1": "Boýag",
+    "material_name_2": "Lak",
+    "material_name_3": "Ýag",
+    "coverage_label": "sarp",
+    "cans": "Bankalar",
+    "packs": "sany",
+    "per": "boýunça"
+  },
   "smart_project": {
-    "press_calculate_hint": "Netijeleri almak üçin \"Hasaplamak\" düwmesine basyň"
+    "press_calculate_hint": "Netijeleri almak üçin \"Hasaplamak\" düwmesine basyň",
+    "title": "Умный мастер проектов",
+    "step": {
+      "dimensions": {
+        "title": "Размеры дома",
+        "subtitle": "Укажите основные размеры",
+        "info": {
+          "title": "Простой способ",
+          "description": "Измерьте рулеткой длину и ширину вашего дома или участка под дом"
+        },
+        "length": {
+          "label": "Длина дома (метры)",
+          "helper": "Например: 10 метров"
+        },
+        "width": {
+          "label": "Ширина дома (метры)",
+          "helper": "Например: 8 метров"
+        },
+        "height": {
+          "label": "Высота стен (метры)",
+          "helper": "Обычно: 2.5-3 метра"
+        }
+      },
+      "sections": {
+        "title": "Что строим?",
+        "subtitle": "Выберите разделы",
+        "info": {
+          "title": "Что включить?",
+          "description": "Отметьте галочками что нужно построить. Всё остальное рассчитается автоматически!"
+        }
+      },
+      "confirm": {
+        "title": "Проверка",
+        "subtitle": "Всё правильно?",
+        "prompt": "Проверьте параметры перед расчётом:"
+      },
+      "results": {
+        "title": "Результаты",
+        "subtitle": "Смета проекта"
+      }
+    },
+    "section": {
+      "foundation": {
+        "title": "Фундамент",
+        "subtitle": "Ленточный фундамент из бетона М300"
+      },
+      "walls": {
+        "title": "Стены",
+        "subtitle": "Газоблок 300мм"
+      },
+      "roof": {
+        "title": "Кровля",
+        "subtitle": "Металлочерепица со стропилами"
+      },
+      "finish": {
+        "title": "Отделка",
+        "subtitle": "Черновая отделка (штукатурка, стяжка)"
+      }
+    },
+    "summary": {
+      "dimensions": {
+        "label": "Размеры дома"
+      },
+      "foundation": {
+        "label": "Фундамент"
+      },
+      "walls": {
+        "label": "Стены"
+      },
+      "roof": {
+        "label": "Кровля"
+      },
+      "finish": {
+        "label": "Отделка"
+      }
+    },
+    "results": {
+      "ready": {
+        "title": "Расчёт готов!",
+        "subtitle": "Ниже подробная смета вашего проекта"
+      },
+      "new": "Новый расчёт"
+    },
+    "result": {
+      "foundation": {
+        "title": "Фундамент (ленточный)",
+        "concrete_volume": "Бетон (м³)",
+        "rebar_weight": "Арматура (кг)"
+      },
+      "walls": {
+        "title": "Стены (газоблок)",
+        "blocks_count": "Блоков (шт)",
+        "area": "Площадь стен (м²)"
+      },
+      "roof": {
+        "title": "Кровля (металлочерепица)",
+        "area": "Площадь крыши (м²)",
+        "sheets_count": "Листов (шт)"
+      },
+      "finish": {
+        "title": "Отделка (черновая)",
+        "floor_area": "Площадь пола (м²)",
+        "wall_area": "Площадь стен (м²)"
+      }
+    }
   },
   "history": {
     "category": {
@@ -1411,5 +2003,570 @@
   "favorites": {
     "add": "В избранное",
     "remove": "Удалить из избранного"
+  },
+  "work": {
+    "area": {
+      "interior": {
+        "title": "Внутренняя отделка",
+        "subtitle": "Стены, потолки, полы, перегородки и окна"
+      },
+      "exterior": {
+        "title": "Наружная отделка",
+        "subtitle": "Фасады, утепление и изоляция"
+      },
+      "roofing": {
+        "title": "Кровля",
+        "subtitle": "Крыша и водосточные системы"
+      },
+      "engineering": {
+        "title": "Инженерные работы",
+        "subtitle": "Электрика, отопление, вентиляция"
+      }
+    },
+    "section": {
+      "interior": {
+        "walls": {
+          "title": "Стены",
+          "description": "Покраска, обои, штукатурка, панели и камень"
+        },
+        "ceilings": {
+          "title": "Потолки",
+          "description": "Покраска, натяжные, подвесные и утепление"
+        },
+        "floors": {
+          "title": "Полы",
+          "description": "Ламинат, линолеум, плитка, стяжка и тёплый пол"
+        },
+        "bathroom": {
+          "title": "Ванная / туалет"
+        },
+        "balcony": {
+          "title": "Балкон / Лоджия"
+        },
+        "attic": {
+          "title": "Мансарда"
+        },
+        "partitions": {
+          "title": "Перегородки"
+        },
+        "insulation": {
+          "title": "Утепление"
+        },
+        "mixes": {
+          "title": "Ровнители / смеси"
+        },
+        "structures": {
+          "title": "Конструкции"
+        },
+        "windows_doors": {
+          "title": "Окна / двери"
+        }
+      },
+      "exterior": {
+        "foundation": {
+          "title": "Фундамент"
+        },
+        "facade_systems": {
+          "title": "Фасадные решения"
+        }
+      },
+      "roofing": {
+        "roof_cover": {
+          "title": "Кровельные материалы"
+        }
+      },
+      "engineering": {
+        "engineering_systems": {
+          "title": "Инженерия"
+        }
+      }
+    },
+    "item": {
+      "walls_top": {
+        "title": "Стены (ТОП-использование)",
+        "description": "Подбор популярных решений по стенам"
+      },
+      "walls_paint": {
+        "title": "Покраска",
+        "tip": {
+          "1": "Рекомендуется купить грунтовку для улучшения сцепления.",
+          "2": "Используйте малярный скотч для защиты углов и плинтуса.",
+          "3": "Возьмите валик средней ворсистости и кювету.",
+          "4": "Для углов пригодятся кисти шириной 50 мм.",
+          "5": "Не забудьте плёнку для защиты пола и мебели."
+        }
+      },
+      "walls_wallpaper": {
+        "title": "Обои с раппортом",
+        "tip": {
+          "1": "Проверьте совпадение рисунка (раппорта) перед поклейкой.",
+          "2": "Рекомендуется добавить 10 % к площади для подрезки.",
+          "3": "Используйте лазерный уровень для контроля вертикали.",
+          "4": "Клей подбирайте по типу обоев (флизелиновые/виниловые)."
+        }
+      },
+      "walls_decor_plaster": {
+        "title": "Декоративная штукатурка",
+        "description": "Венецианка, фактура, структурные покрытия",
+        "tip": {
+          "1": "Используйте грунтовку глубокого проникновения.",
+          "2": "Возьмите шпатели и кельмы разных размеров.",
+          "3": "Для венецианской штукатурки нужна кельма из нержавейки."
+        }
+      },
+      "walls_decor_stone": {
+        "title": "Декоративный камень"
+      },
+      "walls_flex_stone": {
+        "title": "Гибкий камень"
+      },
+      "walls_pvc_panels": {
+        "title": "Панели ПВХ"
+      },
+      "walls_mdf_panels": {
+        "title": "Панели МДФ"
+      },
+      "walls_gipso_panels": {
+        "title": "Панели гипсовинил"
+      },
+      "walls_3d_panels": {
+        "title": "3D панели"
+      },
+      "walls_wood": {
+        "title": "Вагонка / брус"
+      },
+      "walls_gkl": {
+        "title": "Обшивка ГКЛ"
+      },
+      "walls_gvl": {
+        "title": "Обшивка ГВЛ"
+      },
+      "walls_tile": {
+        "title": "Плитка на стены"
+      },
+      "walls_mixes": {
+        "title": "Смеси для стен",
+        "description": "Шпаклёвка старт/финиш, грунт, клей"
+      },
+      "ceilings_paint": {
+        "title": "Покраска / побелка"
+      },
+      "ceilings_stretch": {
+        "title": "Натяжной потолок"
+      },
+      "ceilings_gkl": {
+        "title": "Подвесной ГКЛ"
+      },
+      "ceilings_rail": {
+        "title": "Реечный потолок"
+      },
+      "ceilings_cassette": {
+        "title": "Кассетный"
+      },
+      "ceilings_tiles": {
+        "title": "Потолочная плитка"
+      },
+      "ceilings_insulation": {
+        "title": "Утепление потолка"
+      },
+      "floors_laminate": {
+        "title": "Ламинат",
+        "tip": {
+          "1": "Возьмите клинья для компенсационного зазора 10 мм.",
+          "2": "Подложку выбирайте толщиной 2–3 мм.",
+          "3": "Крестики не нужны, но контрольные клинья пригодятся.",
+          "4": "Проверьте ровность основания — перепад более 3 мм нежелателен."
+        }
+      },
+      "floors_linoleum": {
+        "title": "Линолеум"
+      },
+      "floors_tile": {
+        "title": "Плитка / керамогранит"
+      },
+      "floors_parquet": {
+        "title": "Паркет / массив"
+      },
+      "floors_carpet": {
+        "title": "Ковролин"
+      },
+      "floors_self_leveling": {
+        "title": "Наливной пол"
+      },
+      "floors_screed": {
+        "title": "Стяжка"
+      },
+      "floors_warm": {
+        "title": "Тёплый пол"
+      },
+      "floors_insulation": {
+        "title": "Утепление пола",
+        "tip": {
+          "1": "Утепление пола особенно важно для первого этажа.",
+          "2": "Для минваты обязательна гидроизоляция снизу.",
+          "3": "Пароизоляция укладывается сверху утеплителя.",
+          "4": "Оставляйте зазор 2-3 см для вентиляции."
+        }
+      },
+      "bathroom_tile": {
+        "title": "Плитка и затирка"
+      },
+      "bathroom_waterproof": {
+        "title": "Гидроизоляция"
+      },
+      "bathroom_sanitary": {
+        "title": "Сантехника"
+      },
+      "balcony": {
+        "title": "Балкон / Лоджия",
+        "tip": {
+          "1": "Остекление балкона значительно увеличивает полезную площадь.",
+          "2": "Тёплое остекление позволяет использовать балкон круглый год.",
+          "3": "Утепление обязательно для тёплого остекления.",
+          "4": "Пароизоляция защищает утеплитель от влаги.",
+          "5": "Для пола на открытом балконе используйте морозостойкую плитку."
+        }
+      },
+      "attic": {
+        "title": "Мансарда",
+        "tip": {
+          "1": "Утепление мансарды обязательно для комфортного проживания.",
+          "2": "Толщина утеплителя должна быть не менее 15-20 см.",
+          "3": "Пароизоляция защищает утеплитель от влаги изнутри.",
+          "4": "Мансардные окна обеспечивают естественное освещение.",
+          "5": "Вагонка создаёт уютную атмосферу в мансарде."
+        }
+      },
+      "partitions_gkl": {
+        "title": "Перегородки ГКЛ"
+      },
+      "partitions_blocks": {
+        "title": "Газоблок / пеноблок"
+      },
+      "partitions_brick": {
+        "title": "Кирпич"
+      },
+      "insulation_mineral": {
+        "title": "Минвата"
+      },
+      "insulation_foam": {
+        "title": "Пенопласт"
+      },
+      "insulation_sound": {
+        "title": "Шумоизоляция"
+      },
+      "mixes_putty": {
+        "title": "Шпаклёвка старт/финиш"
+      },
+      "mixes_primer": {
+        "title": "Грунтовка"
+      },
+      "mixes_tile_glue": {
+        "title": "Клей для плитки"
+      },
+      "mixes_self_level": {
+        "title": "Наливной раствор"
+      },
+      "mixes_plaster": {
+        "title": "Штукатурка"
+      },
+      "stairs": {
+        "title": "Лестница",
+        "tip": {
+          "1": "Высота ступени должна быть 15-20 см для комфортного подъёма.",
+          "2": "Ширина проступи (ступени) должна быть не менее 28 см.",
+          "3": "Ширина лестницы для жилых домов - минимум 90 см.",
+          "4": "Для деревянной лестницы используйте твёрдые породы дерева.",
+          "5": "Перила должны быть на высоте 90-100 см от ступени."
+        }
+      },
+      "fence": {
+        "title": "Забор",
+        "tip": {
+          "1": "Столбы устанавливаются на глубину 1/3 от высоты забора.",
+          "2": "Для профлиста используйте оцинкованные саморезы.",
+          "3": "Деревянный забор требует обработки антисептиком.",
+          "4": "Кирпичный забор нуждается в фундаменте.",
+          "5": "Расстояние между столбами: 2-3 метра."
+        }
+      },
+      "terrace": {
+        "title": "Терраса / Веранда",
+        "tip": {
+          "1": "Террасная доска (декинг) устойчива к влаге и перепадам температур.",
+          "2": "Плитка для террасы должна быть морозостойкой и нескользкой.",
+          "3": "Ограждение обеспечивает безопасность.",
+          "4": "Кровля защищает от дождя и солнца.",
+          "5": "Поликарбонат пропускает свет и создаёт лёгкую конструкцию."
+        }
+      },
+      "windows_install": {
+        "title": "Вставка окон"
+      },
+      "windows_slopes": {
+        "title": "Откосы"
+      },
+      "doors_install": {
+        "title": "Монтаж дверей"
+      },
+      "foundation_strip": {
+        "title": "Ленточный фундамент"
+      },
+      "foundation_slab": {
+        "title": "Плитный фундамент"
+      },
+      "foundation_basement": {
+        "title": "Цокольный этаж"
+      },
+      "foundation_blind_area": {
+        "title": "Отмостка"
+      },
+      "facade_siding": {
+        "title": "Сайдинг (ПВХ/металл/фиброцемент)",
+        "tip": {
+          "1": "Не забудьте J‑профиль, углы, стартовую и финишную планку.",
+          "2": "Оставляйте температурные зазоры в 5–7 мм."
+        }
+      },
+      "facade_brick": {
+        "title": "Кирпич облицовочный"
+      },
+      "facade_panels": {
+        "title": "Фасадные панели"
+      },
+      "facade_stone": {
+        "title": "Камень (натуральный/искусственный)"
+      },
+      "facade_wood": {
+        "title": "Дерево (вагонка, планкен, блок-хаус)"
+      },
+      "facade_insulation": {
+        "title": "Утепление фасада"
+      },
+      "facade_wet": {
+        "title": "Мокрый фасад"
+      },
+      "facade_membrane": {
+        "title": "Ветро-гидроизоляция"
+      },
+      "roof_metal": {
+        "title": "Кровля"
+      },
+      "roof_soft": {
+        "title": "Мягкая кровля"
+      },
+      "roof_gutters": {
+        "title": "Водостоки"
+      },
+      "engineering_warm_floor": {
+        "title": "Тёплый пол"
+      },
+      "engineering_electric": {
+        "title": "Электрика"
+      },
+      "engineering_plumbing": {
+        "title": "Сантехника"
+      },
+      "engineering_heating": {
+        "title": "Отопление"
+      },
+      "engineering_ventilation": {
+        "title": "Вентиляция"
+      }
+    },
+    "screen": {
+      "no_categories": "Категории для этого объекта появятся позже",
+      "no_tips": "Советы мастера появятся после подключения калькулятора.",
+      "in_development": "В разработке",
+      "open_calculator": "Открыть калькулятор",
+      "tips_title": "Советы мастера"
+    }
+  },
+  "tag": {
+    "vnutrennyaya_otdelka": "Внутренняя отделка",
+    "rovniteli_smesi": "Ровнители / смеси",
+    "peregorodki": "Перегородки",
+    "steny": "Стены",
+    "mansarda": "Мансарда",
+    "balkon_lodzhiya": "Балкон / Лоджия",
+    "vannaya_tualet": "Ванная / туалет",
+    "okna_dveri": "Окна / двери",
+    "uteplenie": "Утепление",
+    "shumoizolyatsiya": "Шумоизоляция",
+    "oblitsovochnyy_kirpich": "Облицовочный кирпич",
+    "naruzhnaya_otdelka": "Наружная отделка",
+    "fasadnye_paneli": "Фасадные панели",
+    "sayding": "Сайдинг",
+    "mokryy_fasad": "Мокрый фасад",
+    "derevo": "Дерево",
+    "konstruktsii": "Конструкции",
+    "zabory": "Заборы",
+    "lestnitsy": "Лестницы",
+    "terrasa_veranda": "Терраса / Веранда",
+    "poly": "Полы",
+    "potolki": "Потолки",
+    "inzhenernye_raboty": "Инженерные работы",
+    "elektrika": "Электрика",
+    "otoplenie": "Отопление",
+    "santehnika": "Сантехника",
+    "ventilyatsiya": "Вентиляция",
+    "fundament": "Фундамент",
+    "tsokolnyy_etazh": "Цокольный этаж",
+    "otmostka": "Отмостка",
+    "monolitnaya_plita": "Монолитная плита",
+    "krovlya": "Кровля"
+  },
+  "home": {
+    "menu": {
+      "favorites": {
+        "tooltip": "Избранные калькуляторы"
+      },
+      "projects": "Проекты",
+      "reminders": "Напоминания",
+      "history": "История расчётов",
+      "settings": "Настройки"
+    },
+    "search": {
+      "results": {
+        "title": "Найденные калькуляторы",
+        "subtitle": "Найдено: {count}"
+      },
+      "placeholder": "Что нужно посчитать? (бетон, обои, плитка...)"
+    },
+    "sections": {
+      "categories": {
+        "title": "Категории работ",
+        "subtitle": "Внутренняя и наружная отделка"
+      },
+      "history": {
+        "title": "История расчётов",
+        "subtitle": "Последние проекты и их стоимость",
+        "action": "Все расчёты"
+      }
+    },
+    "hero": {
+      "title": "Мастер расчётов",
+      "subtitle": "Точные расчёты для строительства"
+    },
+    "empty": {
+      "object": {
+        "title": "Не нашли объект",
+        "subtitle": "Попробуйте другой запрос или оставьте поле пустым."
+      }
+    },
+    "snackbar": {
+      "category_unavailable": "Категория {name} временно недоступна"
+    },
+    "history": {
+      "empty": {
+        "title": "История пока пуста",
+        "subtitle": "Рассчитайте любой проект, и он появится здесь."
+      },
+      "error": {
+        "title": "Не удалось загрузить историю",
+        "subtitle": "Потяните вниз, чтобы обновить."
+      }
+    },
+    "favorites": {
+      "empty": "Нет избранных калькуляторов",
+      "title": "Избранные калькуляторы"
+    }
+  },
+  "common": {
+    "yes": "Да",
+    "no": "Нет",
+    "loading": "Загрузка...",
+    "feature_in_development": "Функция в разработке"
+  },
+  "settings": {
+    "title": "Настройки",
+    "section": {
+      "appearance": "Внешний вид",
+      "region_units": "Регион и единицы",
+      "behavior": "Поведение приложения",
+      "language": "Язык",
+      "data": "Данные",
+      "about": "О приложении"
+    },
+    "appearance": {
+      "color_scheme": "Цветовая схема",
+      "color": {
+        "yellow": "Жёлтый",
+        "blue": "Голубой"
+      },
+      "dark_theme": {
+        "title": "Тёмная тема",
+        "subtitle": "Использовать тёмную тему приложения"
+      }
+    },
+    "region": {
+      "title": "Регион",
+      "dialog_title": "Выберите регион"
+    },
+    "units": {
+      "title": "Единицы",
+      "metric": {
+        "short": "Метрическая",
+        "title": "Метрическая система",
+        "subtitle": "Метры, килограммы, литры"
+      },
+      "imperial": {
+        "short": "Имперская",
+        "title": "Имперская система",
+        "subtitle": "Футы, фунты, галлоны"
+      }
+    },
+    "behavior": {
+      "autosave": {
+        "title": "Автосохранение расчётов",
+        "subtitle": "Сохранять результаты автоматически"
+      },
+      "show_tips": {
+        "title": "Показывать подсказки",
+        "subtitle": "Отображать советы в калькуляторах"
+      },
+      "notifications": {
+        "title": "Уведомления",
+        "subtitle": "Напоминания о запланированных работах"
+      }
+    },
+    "language": {
+      "title": "Язык приложения"
+    },
+    "data": {
+      "export": {
+        "title": "Экспорт данных",
+        "subtitle": "Сохранить расчёты в файл"
+      },
+      "clear_cache": {
+        "title": "Очистить кэш",
+        "subtitle": "Удалить временные данные приложения",
+        "dialog_title": "Очистить кэш?",
+        "dialog_body": "Это действие удалит временные данные приложения. Настройки и сохранённые расчёты не будут затронуты.",
+        "clearing": "Очистка кэша...",
+        "success": "Кэш успешно очищен"
+      }
+    },
+    "about": {
+      "version": {
+        "title": "Версия"
+      },
+      "feedback": {
+        "title": "Обратная связь",
+        "subtitle": "Расскажите, что можно улучшить"
+      },
+      "privacy": {
+        "title": "Политика конфиденциальности"
+      }
+    }
+  },
+  "language": {
+    "ru": "Русский",
+    "en": "English",
+    "kk": "Қазақша",
+    "ky": "Кыргызча",
+    "tg": "Тоҷикӣ",
+    "tk": "Türkmençe",
+    "uz": "Oʻzbekcha"
   }
 }

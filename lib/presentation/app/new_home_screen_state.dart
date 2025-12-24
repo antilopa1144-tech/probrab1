@@ -41,7 +41,11 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
       return title.contains(query) ||
           sub.contains(query) ||
           calc.id.toLowerCase().contains(query) ||
-          calc.tags.any((tag) => tag.toLowerCase().contains(query));
+          calc.tags.any((tag) {
+            final tagValue =
+                tag.startsWith('tag.') ? loc.translate(tag) : tag;
+            return tagValue.toLowerCase().contains(query);
+          });
     }).toList(growable: false);
   }
 
@@ -250,8 +254,8 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
     if (results.isEmpty) {
       return _buildEmptyState(
         icon: Icons.search_off_rounded,
-        title: 'Ничего не найдено',
-        subtitle: 'Попробуйте другой запрос',
+        title: loc.translate('search.no_results'),
+        subtitle: loc.translate('search.try_another_query'),
       );
     }
 
