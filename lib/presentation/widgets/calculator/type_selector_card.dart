@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
 
 /// Визуальная карточка для выбора типа материала/опции
@@ -103,7 +104,7 @@ class TypeSelectorCard extends StatelessWidget {
               children: [
                 Icon(
                   icon,
-                  color: isSelected ? darkColor : Colors.grey[400],
+                  color: isSelected ? darkColor : Colors.grey[600],
                   size: iconSize,
                 ),
                 if (showCheckmark && isSelected)
@@ -131,7 +132,7 @@ class TypeSelectorCard extends StatelessWidget {
               title,
               style: CalculatorDesignSystem.titleSmall.copyWith(
                 fontWeight: FontWeight.bold,
-                color: isSelected ? darkColor : Colors.grey[700],
+                color: isSelected ? darkColor : CalculatorColors.textPrimary,
               ),
               textAlign: TextAlign.center,
               maxLines: 2,
@@ -143,7 +144,7 @@ class TypeSelectorCard extends StatelessWidget {
               Text(
                 subtitle!,
                 style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: isSelected ? accentColor : Colors.grey[500],
+                  color: isSelected ? accentColor : CalculatorColors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,

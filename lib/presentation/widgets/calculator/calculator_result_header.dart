@@ -141,28 +141,30 @@ class CalculatorResultHeader extends StatelessWidget {
           Icon(
             item.icon,
             size: CalculatorDesignSystem.iconSizeSmall,
-            color: useWhiteCard ? Colors.grey[400] : Colors.white70,
+            color: useWhiteCard ? Colors.grey[600] : Colors.white,
           ),
           const SizedBox(height: 4),
         ],
         Text(
           item.label.toUpperCase(),
           style: CalculatorDesignSystem.headerLabel.copyWith(
-            color: useWhiteCard ? Colors.grey[400] : Colors.white70,
+            color: useWhiteCard ? Colors.grey[600] : Colors.white,
           ),
           textAlign: TextAlign.center,
-          maxLines: 1,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 4),
-        Text(
-          item.value,
-          style: CalculatorDesignSystem.headerValue.copyWith(
-            color: valueColor,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            item.value,
+            style: CalculatorDesignSystem.headerValue.copyWith(
+              color: valueColor,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
           ),
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
         ),
       ],
     );

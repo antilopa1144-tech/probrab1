@@ -72,8 +72,8 @@ class CalculatorColors {
   // === ТЕКСТ ===
 
   static const textPrimary = Color(0xFF1E293B); // Основной текст
-  static const textSecondary = Color(0xFF64748B); // Вторичный текст
-  static const textTertiary = Color(0xFF94A3B8); // Подсказки
+  static const textSecondary = Color(0xFF475569); // Вторичный текст (улучшенный контраст)
+  static const textTertiary = Color(0xFF64748B); // Подсказки (улучшенный контраст)
   static const textDisabled = Color(0xFFCBD5E1);
 
   // === ГРАНИЦЫ И РАЗДЕЛИТЕЛИ ===

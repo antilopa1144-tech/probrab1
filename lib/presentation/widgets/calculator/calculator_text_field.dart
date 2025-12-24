@@ -153,6 +153,7 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
         else
           FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
       ],
+      textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(
         labelText: widget.label,
         hintText: widget.hint,
@@ -181,12 +182,18 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
           borderRadius: CalculatorDesignSystem.inputBorderRadius,
           borderSide: BorderSide.none,
         ),
-        contentPadding: CalculatorDesignSystem.inputPadding,
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 12,
+        ),
         labelStyle: CalculatorDesignSystem.bodySmall.copyWith(
           color: CalculatorColors.textSecondary,
         ),
       ),
-      style: CalculatorDesignSystem.bodyMedium,
+      style: CalculatorDesignSystem.bodyMedium.copyWith(
+        height: 1.2,
+      ),
       onChanged: _handleChange,
     );
   }
