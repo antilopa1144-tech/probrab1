@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/app/main_shell.dart';
 import 'package:probrab_ai/core/localization/app_localizations.dart';
-import 'package:probrab_ai/presentation/views/calculator/universal_calculator_v2_screen.dart';
 import 'package:probrab_ai/presentation/views/calculator/pro_calculator_screen.dart';
 import 'package:probrab_ai/presentation/views/calculator/calculator_catalog_screen.dart';
 import 'package:probrab_ai/presentation/widgets/common/app_number_field.dart';
@@ -82,8 +81,6 @@ Finder _calculatorListView() {
     );
   }
 
-  final universal = verticalScrollable(find.byType(UniversalCalculatorV2Screen));
-  if (universal.evaluate().isNotEmpty) return universal;
   return verticalScrollable(find.byType(ProCalculatorScreen));
 }
 
