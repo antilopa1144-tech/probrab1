@@ -670,6 +670,10 @@
       "title": "Универсальная покраска",
       "description": "Расчёт краски для стен и потолка"
     },
+    "wall_paint": {
+      "title": "Покраска стен",
+      "description": "Расчёт краски для стен"
+    },
     "partitions_blocks": {
       "title": "Газоблок / пеноблок",
       "description": "Расчёт материалов: Газоблок / пеноблок"
@@ -697,6 +701,46 @@
     "sheeting_osb_plywood": {
       "title": "ОСБ / фанера",
       "description": "Листовые материалы и крепёж"
+    },
+    "walls_gkl": {
+      "title": "Обшивка ГКЛ",
+      "description": "Расчёт гипсокартона и профилей"
+    },
+    "walls_wood": {
+      "title": "Вагонка / брус",
+      "description": "Расчёт деревянной обшивки"
+    },
+    "walls_tile": {
+      "title": "Плитка на стены",
+      "description": "Расчёт плитки и клея"
+    },
+    "walls_wallpaper": {
+      "title": "Обои",
+      "description": "Расчёт количества рулонов"
+    },
+    "walls_3d_panels": {
+      "title": "3D панели",
+      "description": "Расчёт декоративных панелей"
+    },
+    "walls_decor_plaster": {
+      "title": "Декоративная штукатурка",
+      "description": "Расчёт расхода штукатурки"
+    },
+    "walls_decor_stone": {
+      "title": "Декоративный камень",
+      "description": "Расчёт камня и клея"
+    },
+    "walls_gvl": {
+      "title": "Обшивка ГВЛ",
+      "description": "Расчёт гипсоволокнистых листов"
+    },
+    "walls_mdf_panels": {
+      "title": "Панели МДФ",
+      "description": "Расчёт панелей и обрешётки"
+    },
+    "walls_pvc_panels": {
+      "title": "Панели ПВХ",
+      "description": "Расчёт пластиковых панелей"
     },
     "blocksNeeded": "Блоков нужно",
     "boardsNeeded": "Досок нужно",
