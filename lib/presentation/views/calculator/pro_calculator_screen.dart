@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/localization/app_localizations.dart';
-import '../../../core/validation/input_sanitizer.dart';
 import '../../../core/enums/field_input_type.dart';
 import '../../../core/exceptions/calculation_exception.dart';
 import '../../../core/services/calculator_memory_service.dart';
@@ -113,8 +112,6 @@ class ProCalculatorScreen extends ConsumerStatefulWidget {
 }
 
 class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
-  // Контроллеры для текстовых полей (только для number полей)
-  final Map<String, TextEditingController> _controllers = {};
   late final CalculatorMemoryService _memory;
   Map<String, double> _latestInputs = {};
 
@@ -126,16 +123,12 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
     _memory = ref.read(calculatorMemoryProvider);
     _latestInputs =
         Map<String, double>.from(ref.read(proCalculatorProvider(widget.definition)).inputs);
-    _initializeControllers();
     _loadLastInputs();
   }
 
   @override
   void dispose() {
     _memory.saveLastInputs(widget.definition.id, _latestInputs);
-    for (final controller in _controllers.values) {
-      controller.dispose();
-    }
     super.dispose();
   }
 
@@ -151,22 +144,6 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
 
   void _applyInputs(Map<String, double> inputs) {
     ref.read(proCalculatorProvider(widget.definition).notifier).applyInputs(inputs);
-    for (final entry in inputs.entries) {
-      _controllers[entry.key]?.text =
-          entry.value.toStringAsFixed(entry.value % 1 == 0 ? 0 : 1);
-    }
-  }
-
-  void _initializeControllers() {
-    for (final field in widget.definition.fields) {
-      final initialValue = widget.initialInputs?[field.key] ?? field.defaultValue;
-      // Создаем контроллер только для number полей
-      if (field.inputType == FieldInputType.number) {
-        _controllers[field.key] = TextEditingController(
-          text: initialValue != 0 ? initialValue.toStringAsFixed(0) : '',
-        );
-      }
-    }
   }
 
   void _updateValue(String key, double value) {
@@ -225,47 +202,59 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
     }
 
     final widgets = <Widget>[];
+    final accentColor = CalculatorColors.getColorByCategory(widget.definition.category.name);
 
     for (final entry in groupedFields.entries) {
-      widgets.add(_card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (entry.key != 'default') ...[
-              Text(
-                _loc.translate('group.${entry.key}').toUpperCase(),
-                style: CalculatorDesignSystem.labelSmall.copyWith(
-                  color: CalculatorColors.textSecondary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-            ...entry.value.map((field) => _buildField(field, inputs)),
-          ],
-        ),
-      ));
+      // Используем InputGroup для групп с названием
+      if (entry.key != 'default') {
+        widgets.add(
+          InputGroup(
+            title: _loc.translate('group.${entry.key}'),
+            icon: _getIconForGroup(entry.key),
+            accentColor: accentColor,
+            children: entry.value.map((field) => _buildField(field, inputs, accentColor)).toList(),
+          ),
+        );
+      } else {
+        // Для default группы используем простую белую карточку
+        widgets.add(_card(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: entry.value.map((field) => _buildField(field, inputs, accentColor)).toList(),
+          ),
+        ));
+      }
       widgets.add(const SizedBox(height: 16));
     }
 
     return widgets;
   }
 
-  Widget _buildField(CalculatorField field, Map<String, double> inputs) {
+  IconData _getIconForGroup(String groupKey) {
+    // Подбираем иконку по типу группы
+    if (groupKey.contains('geometry') || groupKey.contains('геометрия')) return Icons.straighten;
+    if (groupKey.contains('material') || groupKey.contains('материал')) return Icons.category;
+    if (groupKey.contains('opening') || groupKey.contains('проем')) return Icons.door_front_door;
+    if (groupKey.contains('parameter') || groupKey.contains('параметр')) return Icons.tune;
+    if (groupKey.contains('option') || groupKey.contains('опци')) return Icons.settings;
+    return Icons.folder;
+  }
+
+  Widget _buildField(CalculatorField field, Map<String, double> inputs, Color accentColor) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: switch (field.inputType) {
-        FieldInputType.slider => _buildSliderField(field, inputs),
-        FieldInputType.select => _buildSelectField(field, inputs),
+        FieldInputType.slider => _buildSliderField(field, inputs, accentColor),
+        FieldInputType.select => _buildSelectField(field, inputs, accentColor),
         FieldInputType.checkbox || FieldInputType.switch_ =>
           _buildToggleField(field, inputs),
-        FieldInputType.radio => _buildRadioField(field, inputs),
-        _ => _buildNumberField(field, inputs),
+        FieldInputType.radio => _buildRadioField(field, inputs, accentColor),
+        _ => _buildNumberField(field, inputs, accentColor),
       },
     );
   }
 
-  Widget _buildSliderField(CalculatorField field, Map<String, double> inputs) {
+  Widget _buildSliderField(CalculatorField field, Map<String, double> inputs, Color accentColor) {
     final value = inputs[field.key] ?? field.defaultValue;
     final min = field.minValue ?? 0;
     final max = field.maxValue ?? 100;
@@ -300,7 +289,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
             Text(
               '${value.toStringAsFixed(0)} $unitLabel',
               style: CalculatorDesignSystem.headlineMedium.copyWith(
-                color: CalculatorColors.interior,
+                color: accentColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -321,10 +310,10 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
             Expanded(
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: CalculatorColors.interior,
+                  activeTrackColor: accentColor,
                   inactiveTrackColor: Colors.grey[300],
-                  thumbColor: CalculatorColors.interior,
-                  overlayColor: CalculatorColors.interior.withValues(alpha: 0.2),
+                  thumbColor: accentColor,
+                  overlayColor: accentColor.withValues(alpha: 0.2),
                 ),
                 child: Slider(
                   value: value.clamp(min, max),
@@ -354,21 +343,69 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
   Widget _buildNumberField(
     CalculatorField field,
     Map<String, double> inputs,
+    Color accentColor,
   ) {
     final value = inputs[field.key] ?? field.defaultValue;
-    final step = field.step ?? 1.0;
-    final min = field.minValue ?? 0;
-    final max = field.maxValue ?? double.infinity;
-    final controller = _controllers[field.key];
 
-    void applyValue(double next) {
-      final clamped = next.clamp(min, max);
-      _updateValue(field.key, clamped);
-      if (controller != null) {
-        controller.text = clamped.toStringAsFixed(clamped % 1 == 0 ? 0 : 1);
-      }
+    return CalculatorTextField(
+      label: _loc.translate(field.labelKey),
+      value: value,
+      onChanged: (v) => _updateValue(field.key, v),
+      suffix: _loc.translate('unit.${field.unitType.name}'),
+      hint: field.hintKey != null ? _loc.translate(field.hintKey!) : null,
+      accentColor: accentColor,
+      minValue: field.minValue ?? 0,
+      maxValue: field.maxValue ?? double.infinity,
+      isInteger: (field.step ?? 1.0) >= 1.0,
+      decimalPlaces: 1,
+    );
+  }
+
+  Widget _buildSelectField(CalculatorField field, Map<String, double> inputs, Color accentColor) {
+    final value = inputs[field.key] ?? field.defaultValue;
+    final options = field.options ?? [];
+
+    // Если опций <= 4, используем TypeSelectorGroup для лучшего UX
+    if (options.length <= 4) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (field.labelKey.isNotEmpty) ...[
+            Row(
+              children: [
+                Text(
+                  _loc.translate(field.labelKey),
+                  style: CalculatorDesignSystem.bodyMedium.copyWith(
+                    color: CalculatorColors.textPrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                if (field.required) ...[
+                  const SizedBox(width: 4),
+                  const Text(
+                    '*',
+                    style: TextStyle(color: Colors.redAccent, fontSize: 14),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
+          TypeSelectorGroup(
+            options: options.map((opt) => TypeSelectorOption(
+              icon: _getIconForOption(opt.labelKey),
+              title: _loc.translate(opt.labelKey),
+              subtitle: '',
+            )).toList(),
+            selectedIndex: options.indexWhere((opt) => opt.value == value),
+            onSelect: (index) => _updateValue(field.key, options[index].value),
+            accentColor: accentColor,
+          ),
+        ],
+      );
     }
 
+    // Для большого количества опций используем Dropdown
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -390,92 +427,21 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
           ],
         ),
         const SizedBox(height: 8),
-        Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.remove_circle_outline),
-              color: CalculatorColors.textSecondary,
-              onPressed: value > min ? () => applyValue(value - step) : null,
-            ),
-            Expanded(
-              child: TextField(
-                controller: controller,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                style: CalculatorDesignSystem.bodyLarge.copyWith(
-                  color: CalculatorColors.textPrimary,
-                ),
-                textAlign: TextAlign.center,
-                decoration: InputDecoration(
-                  hintText:
-                      field.hintKey == null ? null : _loc.translate(field.hintKey!),
-                  hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
-                  suffixText: _loc.translate('unit.${field.unitType.name}'),
-                  suffixStyle: CalculatorDesignSystem.bodySmall.copyWith(
-                    color: CalculatorColors.textSecondary,
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
-                  ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: CalculatorColors.interior, width: 2),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                ),
-                onChanged: (text) {
-                  final parsed =
-                      InputSanitizer.parseDouble(text) ?? field.defaultValue;
-                  _updateValue(field.key, parsed);
-                },
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.add_circle_outline),
-              color: CalculatorColors.textSecondary,
-              onPressed: value < max ? () => applyValue(value + step) : null,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSelectField(CalculatorField field, Map<String, double> inputs) {
-    final value = inputs[field.key] ?? field.defaultValue;
-    final options = field.options ?? [];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              _loc.translate(field.labelKey),
-              style: const TextStyle(color: Colors.white70, fontSize: 14),
-            ),
-            if (field.required) ...[
-              const SizedBox(width: 4),
-              const Text(
-                '*',
-                style: TextStyle(color: Colors.redAccent, fontSize: 14),
-              ),
-            ],
-          ],
-        ),
-        const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white10),
+            color: CalculatorColors.inputBackground,
+            borderRadius: CalculatorDesignSystem.inputBorderRadius,
+            border: Border.all(color: Colors.grey[300]!),
           ),
           child: DropdownButton<double>(
             value: value,
             isExpanded: true,
             underline: const SizedBox(),
-            dropdownColor: const Color(0xFF1E293B),
-            style: const TextStyle(color: Colors.white),
+            dropdownColor: CalculatorColors.inputBackground,
+            style: CalculatorDesignSystem.bodyMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
             items: options.map((opt) {
               return DropdownMenuItem(
                 value: opt.value,
@@ -489,6 +455,19 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
         ),
       ],
     );
+  }
+
+  IconData _getIconForOption(String labelKey) {
+    // Подбираем иконку на основе ключа перевода
+    final key = labelKey.toLowerCase();
+    if (key.contains('gypsum') || key.contains('гипс')) return Icons.home_repair_service;
+    if (key.contains('cement') || key.contains('цемент')) return Icons.construction;
+    if (key.contains('paint') || key.contains('краск')) return Icons.format_paint;
+    if (key.contains('wood') || key.contains('дерев')) return Icons.carpenter;
+    if (key.contains('wall') || key.contains('стен')) return Icons.square;
+    if (key.contains('floor') || key.contains('пол')) return Icons.layers;
+    if (key.contains('ceiling') || key.contains('потолок')) return Icons.horizontal_rule;
+    return Icons.check_circle;
   }
 
   Widget _buildToggleField(CalculatorField field, Map<String, double> inputs) {
@@ -532,78 +511,44 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
     );
   }
 
-  Widget _buildRadioField(CalculatorField field, Map<String, double> inputs) {
+  Widget _buildRadioField(CalculatorField field, Map<String, double> inputs, Color accentColor) {
     final value = inputs[field.key] ?? field.defaultValue;
     final options = field.options ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              _loc.translate(field.labelKey),
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            if (field.required) ...[
-              const SizedBox(width: 4),
-              const Text(
-                '*',
-                style: TextStyle(color: Colors.redAccent, fontSize: 14),
-              ),
-            ],
-          ],
-        ),
-        const SizedBox(height: 12),
-        ...options.map((opt) {
-          final isSelected = value == opt.value;
-          return InkWell(
-            onTap: () => _updateValue(field.key, opt.value),
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-              decoration: BoxDecoration(
-                color: isSelected ? Colors.blueAccent.withValues(alpha: 0.1) : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: isSelected ? Colors.blueAccent : Colors.transparent,
-                  width: 1,
+        if (field.labelKey.isNotEmpty) ...[
+          Row(
+            children: [
+              Text(
+                _loc.translate(field.labelKey),
+                style: CalculatorDesignSystem.bodyMedium.copyWith(
+                  color: CalculatorColors.textPrimary,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              child: Row(
-                children: [
-                  Radio<double>(
-                    value: opt.value,
-                    groupValue: value,
-                    fillColor: WidgetStateProperty.resolveWith<Color>((states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return Colors.blueAccent;
-                      }
-                      return Colors.white24;
-                    }),
-                    onChanged: (v) {
-                      if (v != null) _updateValue(field.key, v);
-                    },
-                  ),
-                  Expanded(
-                    child: Text(
-                      _loc.translate(opt.labelKey),
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.white70,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
+              if (field.required) ...[
+                const SizedBox(width: 4),
+                const Text(
+                  '*',
+                  style: TextStyle(color: Colors.redAccent, fontSize: 14),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 12),
+        ],
+        TypeSelectorGroup(
+          options: options.map((opt) => TypeSelectorOption(
+            icon: _getIconForOption(opt.labelKey),
+            title: _loc.translate(opt.labelKey),
+            subtitle: '',
+          )).toList(),
+          selectedIndex: options.indexWhere((opt) => opt.value == value),
+          onSelect: (index) => _updateValue(field.key, options[index].value),
+          accentColor: accentColor,
+        ),
       ],
     );
   }
