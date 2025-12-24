@@ -25,11 +25,9 @@ class AppLocalizations {
     _fallbackStrings.clear();
     _flattenedStrings = await _loadAndFlatten(locale.languageCode);
 
+    // Для языков СНГ используем русский как fallback
     if (_cisLangCodes.contains(locale.languageCode)) {
       _fallbackStrings['ru'] = await _loadAndFlatten('ru');
-    }
-    if (locale.languageCode != 'en') {
-      _fallbackStrings['en'] = await _loadAndFlatten('en');
     }
     return true;
   }
@@ -38,11 +36,12 @@ class AppLocalizations {
   String translate(String key, [Map<String, String>? params]) {
     String? value = _flattenedStrings[key];
     if (value == null || value.isEmpty) {
+      // Для языков СНГ используем русский как fallback
       if (_cisLangCodes.contains(locale.languageCode)) {
         value = _fallbackStrings['ru']?[key];
       }
-      value ??= _fallbackStrings['en']?[key];
     }
+    // Если не нашли перевод, возвращаем сам ключ
     value ??= key;
 
     var resolved = value;
@@ -93,9 +92,9 @@ class AppLocalizations {
   }
 
   /// Доступные локали.
+  /// Поддерживаются только русский язык и языки СНГ.
   static const List<Locale> supportedLocales = [
-    Locale('ru'),
-    Locale('en'),
+    Locale('ru'), // Русский (основной)
     Locale('kk'), // Казахский
     Locale('ky'), // Киргизский
     Locale('tg'), // Таджикский
