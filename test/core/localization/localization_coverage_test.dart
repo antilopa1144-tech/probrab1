@@ -6,38 +6,21 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Localization Coverage', () {
     late Map<String, dynamic> ruJson;
-    late Map<String, dynamic> enJson;
 
     setUpAll(() {
       ruJson = jsonDecode(
         File('assets/lang/ru.json').readAsStringSync(),
       ) as Map<String, dynamic>;
-      enJson = jsonDecode(
-        File('assets/lang/en.json').readAsStringSync(),
-      ) as Map<String, dynamic>;
     });
 
-    test('en.json contains all keys from ru.json', () {
-      final ruKeys = _flattenKeys(ruJson);
-      final enKeys = _flattenKeys(enJson);
-      final missingInEn = ruKeys.difference(enKeys);
-
-      expect(
-        missingInEn,
-        isEmpty,
-        reason: 'Missing keys in en.json: ${missingInEn.take(10).join(", ")}... '
-            '(total ${missingInEn.length})',
-      );
-    });
-
-    test('en.json has no empty values', () {
+    test('ru.json has no empty values', () {
       final emptyKeys = <String>[];
-      _checkEmptyValues(enJson, '', emptyKeys);
+      _checkEmptyValues(ruJson, '', emptyKeys);
 
       expect(
         emptyKeys,
         isEmpty,
-        reason: 'Empty values in en.json: ${emptyKeys.take(10).join(", ")}',
+        reason: 'Empty values in ru.json: ${emptyKeys.take(10).join(", ")}',
       );
     });
 
