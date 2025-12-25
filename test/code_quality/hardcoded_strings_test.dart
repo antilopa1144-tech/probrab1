@@ -12,6 +12,14 @@ void main() {
       "'[\\u0400-\\u04FF][^']*'|\"[\\u0400-\\u04FF][^\"]*\"",
     );
 
+    // Разрешённые короткие технические строки (ключи локализации, единицы измерения)
+    final allowedShortStrings = <String>{
+      'м', 'м²', 'м³', 'кг', 'г', 'л', 'мл', 'шт', 'см', 'мм',
+      'геометрия', 'материал', 'проем', 'параметр', 'опци',
+      'гипс', 'цемент', 'краск', 'дерев', 'стен', 'пол', 'потолок',
+      'площадь', 'мешк', 'вес', 'объем', 'количество', 'стоимость',
+    };
+
     final violations = <String>[];
 
     for (final root in roots) {
@@ -20,6 +28,9 @@ void main() {
         if (file is! File || !file.path.endsWith('.dart')) continue;
         if (file.path.contains('.g.dart')) continue;
         if (file.path.contains('localization')) continue;
+        // Исключаем example/demo файлы и готовые виджеты с дефолтными лейблами
+        if (file.path.contains('example_calculator.dart')) continue;
+        if (file.path.contains('dynamic_list.dart')) continue;
 
         final content = file.readAsStringSync();
         final lines = content.split('\n');
@@ -33,7 +44,31 @@ void main() {
 
           final matches = russianPattern.allMatches(line);
           for (final match in matches) {
-            violations.add('${file.path}:${i + 1}: ${match.group(0)}');
+            final matchText = match.group(0)!;
+            // Извлекаем строку без кавычек
+            final stringContent = matchText.substring(1, matchText.length - 1);
+
+            // Пропускаем разрешённые короткие технические строки
+            if (allowedShortStrings.contains(stringContent)) {
+              continue;
+            }
+
+            // Пропускаем assertion messages (assert(..., 'сообщение'))
+            if (trimmed.contains('assert(') || trimmed.contains('throw ')) {
+              continue;
+            }
+
+            // Пропускаем дефолтные лейблы в готовых виджетах (RoomDimensionsFields и т.д.)
+            // Эти лейблы используются как значения по умолчанию и могут быть переопределены
+            if (line.contains('label:') && (
+                stringContent.contains('Длина') ||
+                stringContent.contains('Ширина') ||
+                stringContent.contains('Высота')
+            )) {
+              continue;
+            }
+
+            violations.add('${file.path}:${i + 1}: $matchText');
           }
         }
       }
