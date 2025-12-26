@@ -16,7 +16,6 @@ import '../../usecases/calculate_parquet.dart';
 import '../../usecases/calculate_screed.dart';
 import '../../usecases/calculate_self_leveling_floor.dart';
 import '../../usecases/calculate_tile.dart';
-import '../../usecases/calculate_warm_floor.dart';
 
 final List<CalculatorDefinitionV2> flooringCalculators = [
   CalculatorDefinitionV2(
@@ -510,80 +509,25 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         'floors_tile',
       ],
     ),
+  // Калькулятор тёплого пола использует custom экран (WarmFloorCalculatorScreen)
+  // Регистрируется только как заглушка для каталога
   CalculatorDefinitionV2(
       id: 'floors_warm',
       titleKey: 'calculator.floors_warm.title',
       descriptionKey: 'calculator.floors_warm.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.floors',
-      fields: [
-        const CalculatorField(
-          key: 'area',
-          labelKey: 'input.area',
-          unitType: UnitType.squareMeters,
-          inputType: FieldInputType.number,
-          defaultValue: 0.0,
-          minValue: 1.0,
-          maxValue: 200.0,
-          required: true,
-          order: 1,
-        ),
-        const CalculatorField(
-          key: 'power',
-          labelKey: 'input.power',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.number,
-          defaultValue: 150.0,
-          minValue: 80.0,
-          maxValue: 250.0,
-          required: true,
-          order: 2,
-        ),
-        const CalculatorField(
-          key: 'type',
-          labelKey: 'input.type',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.number,
-          defaultValue: 2.0,
-          minValue: 1.0,
-          maxValue: 2.0,
-          required: true,
-          order: 3,
-        ),
-        const CalculatorField(
-          key: 'thermostats',
-          labelKey: 'input.thermostats',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.number,
-          defaultValue: 1.0,
-          minValue: 1.0,
-          maxValue: 10.0,
-          required: true,
-          order: 4,
-        ),
-      ],
-      beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_ukladyvayte_pod_mebelyu'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_teploizolyatsiyu_dlya_povysheniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podklyuchenie_dolzhen_vypolnyat_kvalifitsirovannyy'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pered_ukladkoy_pokrytiya_proverte'),
-      ],
-      afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_ukladyvayte_pod_mebelyu'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_teploizolyatsiyu_dlya_povysheniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podklyuchenie_dolzhen_vypolnyat_kvalifitsirovannyy'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pered_ukladkoy_pokrytiya_proverte'),
-      ],
-      useCase: CalculateWarmFloor(),
+      fields: const [],
       accentColor: kCalculatorAccentColor,
       complexity: 2,
-      popularity: 10,
-      tags: [
+      popularity: 90,
+      tags: const [
         'tag.vnutrennyaya_otdelka',
         'tag.poly',
         'floors',
         'warm',
         'floors_warm',
+        'heating',
       ],
     ),
 ];

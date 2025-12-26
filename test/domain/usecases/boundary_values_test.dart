@@ -3,7 +3,6 @@ import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/usecases/calculate_strip_foundation.dart';
 import 'package:probrab_ai/domain/usecases/calculate_heating.dart';
-import 'package:probrab_ai/domain/usecases/calculate_warm_floor.dart';
 import 'package:probrab_ai/domain/usecases/calculate_plaster.dart';
 import 'package:probrab_ai/domain/usecases/calculate_tile.dart';
 
@@ -125,14 +124,6 @@ void main() {
 
       final result = calculator.call(inputs, emptyPriceList);
       expect(result.values['plasterKg'], greaterThan(0));
-    });
-
-    test('WarmFloor: минимальная площадь (0.1 м²)', () {
-      final calculator = CalculateWarmFloor();
-      final inputs = {'area': 0.1, 'power': 80.0, 'type': 1.0};
-
-      final result = calculator.call(inputs, emptyPriceList);
-      expect(result.values['usefulArea'], greaterThan(0));
     });
   });
 
