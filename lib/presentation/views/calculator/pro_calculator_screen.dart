@@ -7,10 +7,12 @@ import '../../../core/exceptions/calculation_exception.dart';
 import '../../../core/services/calculator_memory_service.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_field.dart';
+import '../../../domain/models/calculator_hint.dart';
 import '../../../data/models/price_item.dart';
 import '../../providers/price_provider.dart';
 import '../../widgets/calculator/grouped_results_card.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
+import '../../widgets/existing/hint_card.dart';
 
 class ProCalculatorState {
   final Map<String, double> inputs;
@@ -51,7 +53,8 @@ class ProCalculatorNotifier extends StateNotifier<ProCalculatorState> {
     for (final field in definition.fields) {
       defaults[field.key] = field.defaultValue;
     }
-    state = state.copyWith(inputs: defaults);
+    final adjusted = _applyAutoAdjustments(defaults);
+    state = state.copyWith(inputs: adjusted);
     calculate();
   }
 
@@ -61,15 +64,70 @@ class ProCalculatorNotifier extends StateNotifier<ProCalculatorState> {
     for (final entry in inputs.entries) {
       merged[entry.key] = entry.value;
     }
-    state = state.copyWith(inputs: merged);
+    final adjusted = _applyAutoAdjustments(merged);
+    state = state.copyWith(inputs: adjusted);
     calculate();
   }
 
   void updateInput(String key, double value) {
     final updated = Map<String, double>.from(state.inputs);
     updated[key] = value;
-    state = state.copyWith(inputs: updated);
+    final adjusted = _applyAutoAdjustments(updated);
+    state = state.copyWith(inputs: adjusted);
     calculate();
+  }
+
+  Map<String, double> _applyAutoAdjustments(Map<String, double> inputs) {
+    if (definition.id != 'sheeting_osb_plywood') {
+      return inputs;
+    }
+
+    final adjusted = Map<String, double>.from(inputs);
+    final constructionType = (adjusted['constructionType'] ?? 1).round();
+    final thickness = (adjusted['thickness'] ?? 9).round();
+    final joistStep = (adjusted['joistStep'] ?? 600).round();
+    final rafterStep = (adjusted['rafterStep'] ?? 600).round();
+
+    int? recommendedThickness;
+    if (constructionType == 2) {
+      if (joistStep <= 300) {
+        recommendedThickness = 15;
+      } else if (joistStep <= 400) {
+        recommendedThickness = 18;
+      } else if (joistStep <= 500) {
+        recommendedThickness = 18;
+      } else if (joistStep <= 600) {
+        recommendedThickness = 22;
+      } else {
+        recommendedThickness = 22;
+      }
+    } else if (constructionType == 3) {
+      if (rafterStep <= 600) {
+        recommendedThickness = 9;
+      } else if (rafterStep <= 900) {
+        recommendedThickness = 12;
+      } else {
+        recommendedThickness = 15;
+      }
+    }
+
+    if (recommendedThickness != null && thickness < recommendedThickness) {
+      adjusted['thickness'] = recommendedThickness.toDouble();
+    }
+
+    final osbClass = (adjusted['osbClass'] ?? 3).round();
+    final environment = (adjusted['environment'] ?? 1).round();
+    final loadLevel = (adjusted['loadLevel'] ?? 1).round();
+    final requiresOsb3 = environment >= 2 ||
+        loadLevel == 2 ||
+        constructionType == 3 ||
+        constructionType == 6;
+
+    if (requiresOsb3 && osbClass < 3) {
+      adjusted['osbClass'] = 3.0;
+    }
+
+    return adjusted;
   }
 
   void calculate() {
@@ -157,15 +215,23 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
     final calcState = ref.watch(proCalculatorProvider(widget.definition));
     _latestInputs = Map<String, double>.from(calcState.inputs);
     final accentColor = CalculatorColors.getColorByCategory(widget.definition.category.name);
+    final beforeHints = widget.definition.getBeforeHints(calcState.inputs);
+    final afterHints = calcState.results != null
+        ? widget.definition.getAfterHints(calcState.inputs, calcState.results!)
+        : const <CalculatorHint>[];
 
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
       resultHeader: calcState.results != null ? _buildResultHeader(calcState.results, accentColor) : null,
       children: [
+        if (beforeHints.isNotEmpty) HintsList(hints: beforeHints),
+        if (beforeHints.isNotEmpty) const SizedBox(height: 16),
         ..._buildInputFields(calcState.inputs),
         const SizedBox(height: 16),
         if (calcState.results != null) _buildDetailsCard(calcState.results),
+        if (afterHints.isNotEmpty) const SizedBox(height: 16),
+        if (afterHints.isNotEmpty) HintsList(hints: afterHints),
         const SizedBox(height: 20),
       ],
     );
@@ -545,9 +611,10 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
 
     for (final key in resultKeys) {
       final value = results[key]!;
+      final label = _translateResultLabel(key);
       headerResults.add(
         ResultItem(
-          label: _loc.translate('result.$key').toUpperCase(),
+          label: label.toUpperCase(),
           value: value.toStringAsFixed(value % 1 == 0 ? 0 : 1),
           icon: _getIconForResult(key),
         ),
@@ -558,6 +625,16 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
       accentColor: accentColor,
       results: headerResults,
     );
+  }
+
+  String _translateResultLabel(String key) {
+    final resultKey = 'result.$key';
+    final translated = _loc.translate(resultKey);
+    if (translated == resultKey) {
+      final fallback = _loc.translate(key);
+      if (fallback != key) return fallback;
+    }
+    return translated;
   }
 
   IconData _getIconForResult(String key) {

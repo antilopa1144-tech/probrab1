@@ -120,7 +120,8 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
       return;
     }
 
-    final parsed = double.tryParse(text);
+    final normalized = text.replaceAll(',', '.');
+    final parsed = double.tryParse(normalized);
     if (parsed == null) return;
 
     // Валидация диапазона
@@ -151,7 +152,7 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
         if (widget.isInteger)
           FilteringTextInputFormatter.digitsOnly
         else
-          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+          FilteringTextInputFormatter.allow(RegExp(r'^\d*[.,]?\d*$')),
       ],
       textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(

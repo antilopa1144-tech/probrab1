@@ -47,6 +47,7 @@ class GroupedResultsCard extends StatelessWidget {
       'vaporBarrierArea',
       'underlaymentArea',
       'membraneArea',
+      'recommendedThickness',
     ],
   };
 
@@ -57,19 +58,19 @@ class GroupedResultsCard extends StatelessWidget {
     return Column(
       children: [
         _buildGroupCard(
-          title: loc.translate('result.group.materials'),
+          title: _translateGroupLabel('materials'),
           icon: Icons.inventory_2_outlined,
           keys: groups['materials']!,
         ),
         const SizedBox(height: 12),
         _buildGroupCard(
-          title: loc.translate('result.group.consumables'),
+          title: _translateGroupLabel('consumables'),
           icon: Icons.build_outlined,
           keys: groups['consumables']!,
         ),
         const SizedBox(height: 12),
         _buildGroupCard(
-          title: loc.translate('result.group.additional'),
+          title: _translateGroupLabel('additional'),
           icon: Icons.add_circle_outline,
           keys: groups['additional']!,
         ),
@@ -127,7 +128,7 @@ class GroupedResultsCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      loc.translate('result.${entry.key}'),
+                      _translateResultLabel(entry.key),
                       style: const TextStyle(color: Colors.white70),
                     ),
                   ),
@@ -161,6 +162,30 @@ class GroupedResultsCard extends StatelessWidget {
     if (resultKey.contains('Size') || resultKey.contains('size')) {
       return loc.translate('unit.mm');
     }
+    if (resultKey.contains('Thickness') || resultKey.contains('thickness')) {
+      return loc.translate('unit.mm');
+    }
     return '';
+  }
+
+  String _translateResultLabel(String key) {
+    final resultKey = 'result.$key';
+    final translated = loc.translate(resultKey);
+    if (translated == resultKey) {
+      final fallback = loc.translate(key);
+      if (fallback != key) return fallback;
+    }
+    return translated;
+  }
+
+  String _translateGroupLabel(String key) {
+    final resultKey = 'result.group.$key';
+    final translated = loc.translate(resultKey);
+    if (translated == resultKey) {
+      final fallbackKey = 'group.$key';
+      final fallback = loc.translate(fallbackKey);
+      if (fallback != fallbackKey) return fallback;
+    }
+    return translated;
   }
 }
