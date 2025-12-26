@@ -7,6 +7,7 @@ import '../../domain/models/calculator_definition_v2.dart';
 import '../views/calculator/pro_calculator_screen.dart';
 import '../views/calculator/plaster_calculator_screen.dart';
 import '../views/calculator/putty_calculator_screen.dart';
+import '../views/calculator/warm_floor_calculator_screen.dart';
 import '../views/primer/primer_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
@@ -40,6 +41,18 @@ class CalculatorNavigationHelper {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
           const PuttyCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'floors_warm') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          WarmFloorCalculatorScreen(
+            definition: definition,
+            initialInputs: initialInputs,
+          ),
         ),
       );
       return;
