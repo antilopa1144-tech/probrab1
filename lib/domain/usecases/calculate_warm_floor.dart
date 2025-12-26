@@ -36,16 +36,56 @@ class CalculateWarmFloor extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    // Получаем валидированные входные данные
-    final area = getInput(inputs, 'area', minValue: 0.1);
-    final power = getInput(inputs, 'power', defaultValue: 150.0, minValue: 80.0, maxValue: 200.0);
+    // --- Режим ввода: по размерам (0) или по площади (1) ---
+    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 1);
+
+    // Вычисляем площадь и периметр в зависимости от режима
+    double area;
+    double perimeter;
+
+    if (inputMode == 0) {
+      // Режим "По размерам": вычисляем площадь и периметр
+      final length = getInput(inputs, 'length', minValue: 0.1);
+      final width = getInput(inputs, 'width', minValue: 0.1);
+      area = length * width;
+      perimeter = (length + width) * 2;
+    } else {
+      // Режим "По площади": берём готовую площадь
+      area = getInput(inputs, 'area', minValue: 0.1);
+      // Периметр: если указан - используем, иначе оцениваем
+      perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+          ? getInput(inputs, 'perimeter', minValue: 0.1)
+          : estimatePerimeter(area);
+    }
+
+    // --- Мощность в зависимости от типа помещения ---
+    final roomType = getIntInput(inputs, 'roomType', defaultValue: 2, minValue: 0, maxValue: 4);
+    double power;
+
+    switch (roomType) {
+      case 1: // Ванная
+        power = 180.0;
+        break;
+      case 2: // Жилая комната
+        power = 150.0;
+        break;
+      case 3: // Кухня
+        power = 130.0;
+        break;
+      case 4: // Балкон/лоджия
+        power = 200.0;
+        break;
+      default: // Пользовательское значение
+        power = getInput(inputs, 'power', defaultValue: 150.0, minValue: 80.0, maxValue: 200.0);
+    }
+
     final type = getIntInput(inputs, 'type', defaultValue: 2, minValue: 1, maxValue: 2);
     final thermostats = getIntInput(inputs, 'thermostats', defaultValue: 1, minValue: 1, maxValue: 10);
 
     // Полезная площадь (не укладывается под мебель и стационарную технику)
-    // Обычно 60-70% от общей площади
-    const usefulAreaRatio = 0.7; // 70% полезной площади
-    final usefulArea = area * usefulAreaRatio;
+    // Пользователь может настроить процент (50-90%)
+    final usefulAreaPercent = getInput(inputs, 'usefulAreaPercent', defaultValue: 70.0, minValue: 50.0, maxValue: 90.0);
+    final usefulArea = area * (usefulAreaPercent / 100);
 
     // Общая мощность системы (Вт)
     final totalPower = usefulArea * power;
@@ -75,9 +115,6 @@ class CalculateWarmFloor extends BaseCalculator {
     final corrugatedTubeLength = thermostats * 2.5;
 
     // Демпферная лента по периметру: периметр + 5%
-    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
-        ? getInput(inputs, 'perimeter', minValue: 0.1)
-        : estimatePerimeter(area);
     final damperTapeLength = addMargin(perimeter, 5.0);
 
     // УЗО (устройство защитного отключения): 1 шт на систему

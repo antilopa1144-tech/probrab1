@@ -9,7 +9,6 @@ import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_field.dart';
 import '../../../data/models/price_item.dart';
 import '../../providers/price_provider.dart';
-import '../../providers/settings_provider.dart';
 import '../../widgets/calculator/grouped_results_card.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -157,7 +156,6 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
     _loc = AppLocalizations.of(context);
     final calcState = ref.watch(proCalculatorProvider(widget.definition));
     _latestInputs = Map<String, double>.from(calcState.inputs);
-    final settings = ref.watch(settingsProvider);
     final accentColor = CalculatorColors.getColorByCategory(widget.definition.category.name);
 
     return CalculatorScaffold(
@@ -165,20 +163,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
       accentColor: accentColor,
       resultHeader: calcState.results != null ? _buildResultHeader(calcState.results, accentColor) : null,
       children: [
-        // Режим: Новичок / PRO
-        ModeSelector(
-          options: [
-            _loc.translate('mode.beginner'),
-            _loc.translate('mode.pro'),
-          ],
-          selectedIndex: settings.isProMode ? 1 : 0,
-          onSelect: (index) {
-            ref.read(settingsProvider.notifier).setProMode(index == 1);
-          },
-          accentColor: accentColor,
-        ),
-        const SizedBox(height: 16),
-        ..._buildInputFields(calcState.inputs, settings.isProMode),
+        ..._buildInputFields(calcState.inputs),
         const SizedBox(height: 16),
         if (calcState.results != null) _buildDetailsCard(calcState.results),
         const SizedBox(height: 20),
@@ -188,10 +173,8 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
 
   List<Widget> _buildInputFields(
     Map<String, double> inputs,
-    bool isProMode,
   ) {
-    final visibleFields =
-        widget.definition.getVisibleFieldsForMode(inputs, isProMode);
+    final visibleFields = widget.definition.getVisibleFields(inputs);
     final groupedFields = <String, List<CalculatorField>>{};
 
     // Группируем поля

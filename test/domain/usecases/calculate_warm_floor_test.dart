@@ -128,24 +128,30 @@ void main() {
 
     test('handles different power values', () {
       final inputs100 = {
+        'inputMode': 1.0, // По площади
         'area': 20.0,
+        'roomType': 0.0, // Пользовательская мощность
         'power': 100.0, // низкая мощность
         'type': 2.0,
+        'usefulAreaPercent': 70.0, // 70% полезной площади
       };
       final inputs200 = {
+        'inputMode': 1.0,
         'area': 20.0,
+        'roomType': 0.0,
         'power': 200.0, // высокая мощность
         'type': 2.0,
+        'usefulAreaPercent': 70.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result100 = calculator(inputs100, emptyPriceList);
       final result200 = calculator(inputs200, emptyPriceList);
 
-      // 100 Вт/м²: 14 * 100 = 1400 Вт
+      // 100 Вт/м²: 20 * 0.7 * 100 = 1400 Вт
       expect(result100.values['totalPower'], equals(1400.0));
 
-      // 200 Вт/м²: 14 * 200 = 2800 Вт
+      // 200 Вт/м²: 20 * 0.7 * 200 = 2800 Вт
       expect(result200.values['totalPower'], equals(2800.0));
     });
 

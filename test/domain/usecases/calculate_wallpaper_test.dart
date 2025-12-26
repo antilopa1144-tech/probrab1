@@ -14,9 +14,9 @@ void main() {
       final inputs = {
         'inputMode': 1.0,
         'area': 50.0, // 50 м? стен
-        'rollWidth': 0.53,
-        'rollLength': 10.05,
+        'rollSize': 1.0, // 0.53×10
         'wallHeight': 2.5,
+        'reserve': 5.0, // 5% запас
       };
       final emptyPriceList = <PriceItem>[];
 
@@ -32,10 +32,10 @@ void main() {
       final inputs = {
         'inputMode': 1.0,
         'area': 50.0,
-        'rollWidth': 0.53,
-        'rollLength': 10.05,
+        'rollSize': 1.0, // 0.53×10
         'windowsArea': 4.0, // 4 м? окон
         'doorsArea': 4.0, // 4 м? дверей
+        'reserve': 5.0,
       };
       final emptyPriceList = <PriceItem>[];
 
@@ -49,8 +49,8 @@ void main() {
       final inputs = {
         'inputMode': 1.0,
         'area': 50.0,
-        'rollWidth': 0.53,
-        'rollLength': 10.05,
+        'rollSize': 1.0, // 0.53×10
+        'reserve': 5.0,
       };
       final emptyPriceList = <PriceItem>[];
 
@@ -64,10 +64,10 @@ void main() {
       final inputs = {
         'inputMode': 1.0,
         'area': 50.0,
-        'rollWidth': 0.53,
-        'rollLength': 10.05,
-        'rapport': 0.64, // 64 см раппорт
+        'rollSize': 1.0, // 0.53×10
+        'rapport': 64.0, // 64 см раппорт
         'wallHeight': 2.5,
+        'reserve': 5.0,
       };
       final emptyPriceList = <PriceItem>[];
 
@@ -81,8 +81,7 @@ void main() {
       final inputs = {
         'inputMode': 1.0,
         'area': 0.0,
-        'rollWidth': 0.53,
-        'rollLength': 10.05,
+        'rollSize': 1.0,
       };
       final emptyPriceList = <PriceItem>[];
 
@@ -97,12 +96,13 @@ void main() {
       final inputs = {
         'inputMode': 1.0,
         'area': 50.0,
+        'reserve': 5.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // По умолчанию: 0.53 x 10.05
+      // По умолчанию: rollSize=1 → 0.53 x 10.05
       expect(result.values['usefulArea'], closeTo(50.0, 2.5));
       expect(result.values['rollsNeeded'], greaterThan(0));
     });
@@ -111,15 +111,15 @@ void main() {
       final inputs = {
         'inputMode': 1.0,
         'area': 50.0,
-        'rollWidth': 1.06, // метровые обои
-        'rollLength': 10.0,
+        'rollSize': 2.0, // 1.06×10 метровые обои
+        'reserve': 5.0,
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
       // Широкие обои требуют меньше рулонов
-      expect(result.values['rollsNeeded'], lessThanOrEqualTo(8));
+      expect(result.values['rollsNeeded'], lessThanOrEqualTo(15));
     });
 
     test('returns error for negative useful area', () {

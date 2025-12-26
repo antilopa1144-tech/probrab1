@@ -36,11 +36,42 @@ class CalculateTile extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    // Получаем валидированные входные данные
-    final area = getInput(inputs, 'area', minValue: 0.1);
-    final tileWidth = getInput(inputs, 'tileWidth', defaultValue: 30.0, minValue: 1.0, maxValue: 200.0);
-    final tileHeight = getInput(inputs, 'tileHeight', defaultValue: 30.0, minValue: 1.0, maxValue: 200.0);
+    // --- Режим ввода: по размерам (0) или по площади (1) ---
+    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 1);
+
+    // Вычисляем площадь в зависимости от режима
+    double area;
+    if (inputMode == 0) {
+      // Режим "По размерам": вычисляем площадь
+      final length = getInput(inputs, 'length', minValue: 0.1);
+      final width = getInput(inputs, 'width', minValue: 0.1);
+      area = length * width;
+    } else {
+      // Режим "По площади": берём готовую площадь
+      area = getInput(inputs, 'area', minValue: 0.1);
+    }
+
+    // --- Размер плитки ---
+    final tileSize = getInput(inputs, 'tileSize', defaultValue: 60);
+    double tileWidth;
+    double tileHeight;
+
+    if (tileSize == 0) {
+      // Пользовательский размер
+      tileWidth = getInput(inputs, 'tileWidth', defaultValue: 60.0, minValue: 1.0, maxValue: 200.0);
+      tileHeight = getInput(inputs, 'tileHeight', defaultValue: 60.0, minValue: 1.0, maxValue: 200.0);
+    } else if (tileSize == 120) {
+      // Прямоугольная плитка 120×60
+      tileWidth = 120.0;
+      tileHeight = 60.0;
+    } else {
+      // Квадратная плитка (20×20, 30×30, 40×40, 60×60, 80×80)
+      tileWidth = tileSize;
+      tileHeight = tileSize;
+    }
+
     final jointWidth = getInput(inputs, 'jointWidth', defaultValue: 3.0, minValue: 1.0, maxValue: 10.0);
+    final reserve = getInput(inputs, 'reserve', defaultValue: 10.0, minValue: 5.0, maxValue: 20.0);
 
     // Площадь одной плитки в м²
     final tileArea = calculateTileArea(tileWidth, tileHeight);
@@ -48,8 +79,8 @@ class CalculateTile extends BaseCalculator {
       return createResult(values: {'error': 1.0});
     }
 
-    // Количество плиток с запасом 10% (СНиП 3.04.01-87)
-    final tilesNeeded = calculateUnitsNeeded(area, tileArea, marginPercent: 10.0);
+    // Количество плиток с запасом (reserve% по выбору пользователя)
+    final tilesNeeded = calculateUnitsNeeded(area, tileArea, marginPercent: reserve);
 
     // Затирка: расход ~1.5 кг/м² × коэффициент шва
     // Формула: площадь × расход × (ширина_шва_мм / 10)

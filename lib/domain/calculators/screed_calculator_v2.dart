@@ -58,7 +58,6 @@ final screedCalculatorV2 = CalculatorDefinitionV2(
       minValue: 300.0,
       maxValue: 600.0,
       required: false,
-      complexityLevel: 2,
       step: 50.0,
       iconName: 'grade',
       group: 'parameters',

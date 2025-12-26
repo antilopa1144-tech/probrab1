@@ -132,7 +132,25 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
       ),
     ),
 
-    // --- Общие поля (материал рулона) ---
+    // --- Группа "Размер рулона" ---
+    const CalculatorField(
+      key: 'rollSize',
+      labelKey: 'input.rollSize',
+      hintKey: 'input.rollSize.hint',
+      unitType: UnitType.pieces,
+      inputType: FieldInputType.select,
+      defaultValue: 1,
+      required: true,
+      iconName: 'straighten',
+      group: 'roll',
+      order: 10,
+      options: [
+        FieldOption(value: 1, labelKey: 'input.rollSize.53x10'),
+        FieldOption(value: 2, labelKey: 'input.rollSize.106x10'),
+        FieldOption(value: 3, labelKey: 'input.rollSize.106x25'),
+        FieldOption(value: 0, labelKey: 'input.rollSize.custom'),
+      ],
+    ),
     const CalculatorField(
       key: 'rollWidth',
       labelKey: 'input.rollWidth',
@@ -144,7 +162,13 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
       required: true,
       step: 0.01,
       iconName: 'straighten',
-      order: 10,
+      group: 'roll',
+      order: 11,
+      dependency: FieldDependency(
+        condition: DependencyCondition.equals,
+        fieldKey: 'rollSize',
+        value: 0,
+      ),
     ),
     const CalculatorField(
       key: 'rollLength',
@@ -157,8 +181,16 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
       required: true,
       step: 0.1,
       iconName: 'straighten',
-      order: 11,
+      group: 'roll',
+      order: 12,
+      dependency: FieldDependency(
+        condition: DependencyCondition.equals,
+        fieldKey: 'rollSize',
+        value: 0,
+      ),
     ),
+
+    // --- Группа "Дополнительно" ---
     const CalculatorField(
       key: 'rapport',
       labelKey: 'input.rapport',
@@ -170,7 +202,22 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
       required: false,
       step: 5.0,
       iconName: 'layers',
-      order: 12,
+      group: 'advanced',
+      order: 20,
+    ),
+    const CalculatorField(
+      key: 'reserve',
+      labelKey: 'input.reserve',
+      hintKey: 'input.reserve.hint',
+      unitType: UnitType.percent,
+      inputType: FieldInputType.slider,
+      defaultValue: 5,
+      minValue: 0,
+      maxValue: 15,
+      step: 1,
+      iconName: 'add_shopping_cart',
+      group: 'advanced',
+      order: 21,
     ),
 
     // --- Группа "Проёмы" (дополнительно) ---

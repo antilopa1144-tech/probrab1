@@ -10,7 +10,6 @@ class AppSettings {
   final String unitSystem; // 'metric' или 'imperial'
   final bool showTips;
   final bool darkMode;
-  final bool isProMode;
 
   const AppSettings({
     this.region = 'Москва',
@@ -20,7 +19,6 @@ class AppSettings {
     this.unitSystem = 'metric',
     this.showTips = true,
     this.darkMode = true,
-    this.isProMode = false,
   });
 
   AppSettings copyWith({
@@ -31,7 +29,6 @@ class AppSettings {
     String? unitSystem,
     bool? showTips,
     bool? darkMode,
-    bool? isProMode,
   }) {
     return AppSettings(
       region: region ?? this.region,
@@ -41,7 +38,6 @@ class AppSettings {
       unitSystem: unitSystem ?? this.unitSystem,
       showTips: showTips ?? this.showTips,
       darkMode: darkMode ?? this.darkMode,
-      isProMode: isProMode ?? this.isProMode,
     );
   }
 
@@ -54,7 +50,6 @@ class AppSettings {
       'unitSystem': unitSystem,
       'showTips': showTips,
       'darkMode': darkMode,
-      'isProMode': isProMode,
     };
   }
 
@@ -67,7 +62,6 @@ class AppSettings {
       unitSystem: json['unitSystem'] ?? 'metric',
       showTips: json['showTips'] ?? true,
       darkMode: json['darkMode'] ?? true,
-      isProMode: json['isProMode'] ?? false,
     );
   }
 }
@@ -79,7 +73,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    
+
     // Загружаем настройки по отдельности для надежности
     final region = prefs.getString('region') ?? 'Москва';
     final language = prefs.getString('language') ?? 'ru';
@@ -88,8 +82,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     final unitSystem = prefs.getString('unitSystem') ?? 'metric';
     final showTips = prefs.getBool('showTips') ?? true;
     final darkMode = prefs.getBool('darkMode') ?? true;
-    final isProMode = prefs.getBool('isProMode') ?? false;
-    
+
     state = AppSettings(
       region: region,
       language: language,
@@ -98,7 +91,6 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       unitSystem: unitSystem,
       showTips: showTips,
       darkMode: darkMode,
-      isProMode: isProMode,
     );
   }
 
@@ -111,7 +103,6 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     await prefs.setString('unitSystem', state.unitSystem);
     await prefs.setBool('showTips', state.showTips);
     await prefs.setBool('darkMode', state.darkMode);
-    await prefs.setBool('isProMode', state.isProMode);
   }
 
   Future<void> updateRegion(String region) async {
@@ -146,11 +137,6 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
 
   Future<void> updateDarkMode(bool darkMode) async {
     state = state.copyWith(darkMode: darkMode);
-    await _saveSettings();
-  }
-
-  Future<void> setProMode(bool isProMode) async {
-    state = state.copyWith(isProMode: isProMode);
     await _saveSettings();
   }
 }

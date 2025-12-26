@@ -380,6 +380,22 @@
       "title": "OSB / faner",
       "description": "Sahypa materiallary we berkidijiler"
     },
+    "stairs": {
+      "title": "Basgançak",
+      "description": "Materiallary hasaplamak: Basgançak"
+    },
+    "terrace": {
+      "title": "Terrasa / Weranda",
+      "description": "Materiallary hasaplamak: Terrasa / Weranda"
+    },
+    "windows_install": {
+      "title": "Penjireleri oturtmak",
+      "description": "Materiallary hasaplamak: Penjireleri oturtmak"
+    },
+    "slopes_finishing": {
+      "title": "Eňňitler",
+      "description": "Materiallary hasaplamak: Eňňitler"
+    },
     "blocksNeeded": "Bloklar gerek",
     "boardsNeeded": "Tagtalar gerek",
     "boilerNeeded": "Gazan gerek",
@@ -1092,10 +1108,6 @@
         "title": "Под покраску",
         "subtitle": "2 слоя старта + 2 слоя финиша"
       }
-    },
-    "mode": {
-      "room": "Комната",
-      "walls": "Список стен"
     },
     "input": {
       "wall": "Стена",
@@ -1849,10 +1861,6 @@
     "section": {
       "area": "Meýdany hasaplamak"
     },
-    "mode": {
-      "manual": "El bilen",
-      "room": "Otag"
-    },
     "label": {
       "wall_area": "Diwar meýdany",
       "width": "Ini",
@@ -1886,10 +1894,6 @@
       "title": "Mugallymyň maslahaty",
       "body": "Işe başlamazdan ozal ýüzüňize üns beriň. Gips gips üçin çuňňur aralaşma primerini we tekiz beton üçin beton kontakt ulanyň. Bu materialyň gabygynyň öňüni alar."
     }
-  },
-  "mode": {
-    "beginner": "Новичок",
-    "pro": "Профи"
   },
   "unit": {
     "none": "-",

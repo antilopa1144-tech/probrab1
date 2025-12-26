@@ -23,6 +23,59 @@ final warmFloorCalculatorV2 = CalculatorDefinitionV2(
 
   // Поля ввода
   fields: [
+    // --- Переключатель режима ввода ---
+    const CalculatorField(
+      key: 'inputMode',
+      labelKey: 'input.mode',
+      unitType: UnitType.pieces,
+      inputType: FieldInputType.radio,
+      defaultValue: 1,
+      options: [
+        FieldOption(value: 0, labelKey: 'input.mode.by_dimensions'),
+        FieldOption(value: 1, labelKey: 'input.mode.by_area'),
+      ],
+      order: 0,
+    ),
+
+    // --- Группа "По размерам" ---
+    const CalculatorField(
+      key: 'length',
+      labelKey: 'input.length',
+      unitType: UnitType.meters,
+      defaultValue: 0,
+      minValue: 0.1,
+      maxValue: 100,
+      required: true,
+      step: 0.1,
+      iconName: 'straighten',
+      group: 'dimensions',
+      order: 1,
+      dependency: FieldDependency(
+        condition: DependencyCondition.equals,
+        fieldKey: 'inputMode',
+        value: 0,
+      ),
+    ),
+    const CalculatorField(
+      key: 'width',
+      labelKey: 'input.width',
+      unitType: UnitType.meters,
+      defaultValue: 0,
+      minValue: 0.1,
+      maxValue: 100,
+      required: true,
+      step: 0.1,
+      iconName: 'straighten',
+      group: 'dimensions',
+      order: 2,
+      dependency: FieldDependency(
+        condition: DependencyCondition.equals,
+        fieldKey: 'inputMode',
+        value: 0,
+      ),
+    ),
+
+    // --- Группа "По площади" ---
     CalculatorField(
       key: 'area',
       labelKey: 'input.area',
@@ -34,7 +87,48 @@ final warmFloorCalculatorV2 = CalculatorDefinitionV2(
       required: true,
       step: 0.5,
       iconName: 'square_foot',
-      order: 1,
+      order: 3,
+      dependency: FieldDependency(
+        condition: DependencyCondition.equals,
+        fieldKey: 'inputMode',
+        value: 1,
+      ),
+    ),
+
+    // --- Периметр для демпферной ленты ---
+    const CalculatorField(
+      key: 'perimeter',
+      labelKey: 'input.perimeter',
+      hintKey: 'input.perimeter.hint',
+      unitType: UnitType.meters,
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 500,
+      required: false,
+      step: 0.5,
+      iconName: 'border_outer',
+      order: 4,
+    ),
+
+    // --- Группа "Система" ---
+    const CalculatorField(
+      key: 'roomType',
+      labelKey: 'input.roomType',
+      hintKey: 'input.roomType.hint',
+      unitType: UnitType.pieces,
+      inputType: FieldInputType.select,
+      defaultValue: 2,
+      required: true,
+      iconName: 'meeting_room',
+      group: 'system',
+      order: 10,
+      options: [
+        FieldOption(value: 1, labelKey: 'input.roomType.bathroom'),
+        FieldOption(value: 2, labelKey: 'input.roomType.living'),
+        FieldOption(value: 3, labelKey: 'input.roomType.kitchen'),
+        FieldOption(value: 4, labelKey: 'input.roomType.balcony'),
+        FieldOption(value: 0, labelKey: 'input.roomType.custom'),
+      ],
     ),
     CalculatorField(
       key: 'power',
@@ -47,8 +141,13 @@ final warmFloorCalculatorV2 = CalculatorDefinitionV2(
       required: true,
       step: 10.0,
       iconName: 'bolt',
-      group: 'advanced',
-      order: 2,
+      group: 'system',
+      order: 11,
+      dependency: FieldDependency(
+        condition: DependencyCondition.equals,
+        fieldKey: 'roomType',
+        value: 0,
+      ),
     ),
     CalculatorField(
       key: 'type',
@@ -59,8 +158,8 @@ final warmFloorCalculatorV2 = CalculatorDefinitionV2(
       defaultValue: 2.0,
       required: true,
       iconName: 'category',
-      group: 'advanced',
-      order: 3,
+      group: 'system',
+      order: 12,
       options: [
         FieldOption(value: 1.0, labelKey: 'input.type.cable'),
         FieldOption(value: 2.0, labelKey: 'input.type.mat'),
@@ -77,8 +176,24 @@ final warmFloorCalculatorV2 = CalculatorDefinitionV2(
       required: true,
       step: 1,
       iconName: 'settings',
+      group: 'system',
+      order: 13,
+    ),
+
+    // --- Группа "Дополнительно" ---
+    const CalculatorField(
+      key: 'usefulAreaPercent',
+      labelKey: 'input.usefulAreaPercent',
+      hintKey: 'input.usefulAreaPercent.hint',
+      unitType: UnitType.percent,
+      inputType: FieldInputType.slider,
+      defaultValue: 70,
+      minValue: 50,
+      maxValue: 90,
+      step: 5,
+      iconName: 'dashboard',
       group: 'advanced',
-      order: 4,
+      order: 20,
     ),
   ],
 

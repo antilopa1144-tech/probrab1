@@ -1646,10 +1646,6 @@
     "section": {
       "area": "Hududni hisoblash"
     },
-    "mode": {
-      "manual": "Qo'llanma",
-      "room": "Xona"
-    },
     "label": {
       "wall_area": "Devor maydoni",
       "width": "Kengligi",
@@ -1683,10 +1679,6 @@
       "title": "UI maslahati",
       "body": "Mos almashinuvni davom ettirish uchun rejimlar orasida AnimatedCrossFade-dan foydalaning. Agar siz bir vaqtning o'zida butun kvartirani hisoblashingiz kerak bo'lsa, \"Xona qo'shish\" tugmasini qo'shing."
     }
-  },
-  "mode": {
-    "beginner": "Новичок",
-    "pro": "Профи"
   },
   "unit": {
     "none": "-",
@@ -1844,10 +1836,6 @@
         "title": "Под покраску",
         "subtitle": "2 слоя старта + 2 слоя финиша"
       }
-    },
-    "mode": {
-      "room": "Комната",
-      "walls": "Список стен"
     },
     "input": {
       "wall": "Стена",

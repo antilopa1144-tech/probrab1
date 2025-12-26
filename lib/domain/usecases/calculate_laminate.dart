@@ -33,19 +33,35 @@ class CalculateLaminate extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    // Получаем валидированные входные данные
-    final area = getInput(inputs, 'area', minValue: 0.1);
-    final packArea = getInput(inputs, 'packArea', defaultValue: 2.0, minValue: 0.1, maxValue: 10.0);
-    final underlayThickness = getInput(inputs, 'underlayThickness', defaultValue: 3.0, minValue: 2.0, maxValue: 5.0);
+    // --- Режим ввода: по размерам (0) или по площади (1) ---
+    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 1);
 
-    // Периметр: если указан положительный - используем, иначе оцениваем
-    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
-        ? getInput(inputs, 'perimeter', minValue: 0.1)
-        : estimatePerimeter(area);
+    // Вычисляем площадь в зависимости от режима
+    double area;
+    double perimeter;
 
-    // Количество упаковок ламината с запасом 5-7% (ГОСТ 32304-2013)
-    // Для прямой укладки - 5%, для диагональной - 7-10%
-    final packsNeeded = calculateUnitsNeeded(area, packArea, marginPercent: 7.0);
+    if (inputMode == 0) {
+      // Режим "По размерам": вычисляем площадь и периметр
+      final length = getInput(inputs, 'length', minValue: 0.1);
+      final width = getInput(inputs, 'width', minValue: 0.1);
+      area = length * width;
+      perimeter = (length + width) * 2;
+    } else {
+      // Режим "По площади": берём готовую площадь
+      area = getInput(inputs, 'area', minValue: 0.1);
+      // Периметр: если указан - используем, иначе оцениваем
+      perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
+          ? getInput(inputs, 'perimeter', minValue: 0.1)
+          : estimatePerimeter(area);
+    }
+
+    // Получаем остальные параметры
+    final packArea = getInput(inputs, 'packArea', defaultValue: 2.0, minValue: 0.5, maxValue: 3.0);
+    final reserve = getInput(inputs, 'reserve', defaultValue: 7.0, minValue: 5.0, maxValue: 15.0);
+    final underlayType = getIntInput(inputs, 'underlayType', defaultValue: 3, minValue: 2, maxValue: 5);
+
+    // Количество упаковок ламината с запасом (reserve%)
+    final packsNeeded = calculateUnitsNeeded(area, packArea, marginPercent: reserve);
 
     // Подложка: площадь = площадь пола + 5% на подрезку и нахлёсты
     final underlayArea = addMargin(area, 5.0);
@@ -64,7 +80,7 @@ class CalculateLaminate extends BaseCalculator {
 
     // Расчёт стоимости
     final laminatePrice = findPrice(priceList, ['laminate', 'laminate_pack']);
-    final underlayPrice = findPrice(priceList, ['underlay', 'underlay_${underlayThickness.round()}mm', 'underlay']);
+    final underlayPrice = findPrice(priceList, ['underlay', 'underlay_${underlayType}mm', 'underlay']);
     final plinthPrice = findPrice(priceList, ['plinth', 'plinth_laminate']);
     final vaporBarrierPrice = findPrice(priceList, ['vapor_barrier', 'film_pe']);
     final thresholdPrice = findPrice(priceList, ['threshold', 'threshold_laminate']);

@@ -64,10 +64,32 @@ class CalculateWallpaper extends BaseCalculator {
       perimeter = estimatePerimeter(area);
     }
 
+    // --- Получаем размер рулона ---
+    final rollSize = getIntInput(inputs, 'rollSize', defaultValue: 1);
+    double rollWidth;
+    double rollLength;
+
+    switch (rollSize) {
+      case 1: // 0.53×10
+        rollWidth = 0.53;
+        rollLength = 10.05;
+        break;
+      case 2: // 1.06×10
+        rollWidth = 1.06;
+        rollLength = 10.05;
+        break;
+      case 3: // 1.06×25
+        rollWidth = 1.06;
+        rollLength = 25.0;
+        break;
+      default: // Пользовательский
+        rollWidth = getInput(inputs, 'rollWidth', defaultValue: 0.53, minValue: 0.5, maxValue: 1.2);
+        rollLength = getInput(inputs, 'rollLength', defaultValue: 10.05, minValue: 5.0, maxValue: 50.0);
+    }
+
     // --- Получаем остальные входные данные ---
-    final rollWidth = getInput(inputs, 'rollWidth', defaultValue: 0.53, minValue: 0.5, maxValue: 1.2);
-    final rollLength = getInput(inputs, 'rollLength', defaultValue: 10.05, minValue: 5.0, maxValue: 50.0);
     final rapport = getInput(inputs, 'rapport', defaultValue: 0.0, minValue: 0.0, maxValue: 100.0); // см
+    final reserve = getInput(inputs, 'reserve', defaultValue: 5.0, minValue: 0.0, maxValue: 15.0);
     final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 2.5, minValue: 2.0, maxValue: 5.0);
     final windowsArea = getInput(inputs, 'windowsArea', minValue: 0.0);
     final doorsArea = getInput(inputs, 'doorsArea', minValue: 0.0);
@@ -95,10 +117,11 @@ class CalculateWallpaper extends BaseCalculator {
     // Количество полос из одного рулона
     final stripsPerRoll = (rollLength / stripLength).floor();
     
-    // Количество рулонов с учётом подрезки и брака
-    final rollsNeeded = stripsPerRoll > 0 
-        ? ceilToInt(stripsNeeded / stripsPerRoll.toDouble() * 1.05) // +5% запас
-        : ceilToInt(usefulArea / (rollWidth * rollLength) * 1.15); // резервный расчёт
+    // Количество рулонов с учётом подрезки и запаса (reserve%)
+    final reserveMultiplier = 1.0 + (reserve / 100);
+    final rollsNeeded = stripsPerRoll > 0
+        ? ceilToInt(stripsNeeded / stripsPerRoll.toDouble() * reserveMultiplier)
+        : ceilToInt(usefulArea / (rollWidth * rollLength) * (1.0 + reserve / 100 + 0.10)); // резервный расчёт
 
     // Клей: расход зависит от типа обоев
     // Бумажные: 0.15-0.2 кг/м²

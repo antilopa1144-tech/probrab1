@@ -171,25 +171,6 @@ class CalculatorDefinitionV2 {
     return sortedFields.where((field) => field.shouldDisplay(inputs)).toList();
   }
 
-  /// Получить поля для режима новичка
-  List<CalculatorField> getBeginnerFields() {
-    return sortedFields.where((field) => field.complexityLevel == 1).toList();
-  }
-
-  /// Получить все поля (режим профи)
-  List<CalculatorField> getProFields() {
-    return sortedFields;
-  }
-
-  /// Получить видимые поля с учётом режима
-  List<CalculatorField> getVisibleFieldsForMode(
-    Map<String, double> inputs,
-    bool isProMode,
-  ) {
-    final modeFields = isProMode ? getProFields() : getBeginnerFields();
-    return modeFields.where((field) => field.shouldDisplay(inputs)).toList();
-  }
-
   /// Получить локализованную подкатегорию
   String getSubCategory(AppLocalizations loc) {
     return loc.translate(subCategoryKey);
