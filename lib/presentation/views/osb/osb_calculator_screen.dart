@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/localization/app_localizations.dart';
-import '../../../core/enums/field_input_type.dart';
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
 import '../../../core/services/calculator_memory_service.dart';
@@ -75,10 +74,11 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
     final calcState = ref.watch(proCalculatorProvider(widget.definition));
     _latestInputs = Map<String, double>.from(calcState.inputs);
     final accentColor = CalculatorColors.getColorByCategory(widget.definition.category.name);
-    final beforeHints = widget.definition.getBeforeHints(calcState.inputs);
     final afterHints = calcState.results != null
         ? widget.definition.getAfterHints(calcState.inputs, calcState.results!)
         : const <CalculatorHint>[];
+    final beforeHints = widget.definition.getBeforeHints(calcState.inputs);
+    final bottomHints = [...afterHints, ...beforeHints];
 
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
@@ -87,8 +87,6 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
           ? _buildResultHeader(calcState.results!, accentColor)
           : null,
       children: [
-        if (beforeHints.isNotEmpty) HintsList(hints: beforeHints),
-        if (beforeHints.isNotEmpty) const SizedBox(height: 16),
         _buildModeSelector(calcState.inputs, accentColor),
         const SizedBox(height: 16),
         _buildDimensionsGroup(calcState.inputs, accentColor),
@@ -101,14 +99,12 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
         const SizedBox(height: 16),
         _buildOpeningsGroup(calcState.inputs, accentColor),
         const SizedBox(height: 16),
-        _buildAdvancedGroup(calcState.inputs, accentColor),
-        const SizedBox(height: 16),
         if (calcState.results != null) GroupedResultsCard(
           results: calcState.results!,
           loc: _loc,
         ),
-        if (afterHints.isNotEmpty) const SizedBox(height: 16),
-        if (afterHints.isNotEmpty) HintsList(hints: afterHints),
+        if (bottomHints.isNotEmpty) const SizedBox(height: 16),
+        if (bottomHints.isNotEmpty) HintsList(hints: bottomHints),
         const SizedBox(height: 20),
       ],
     );
@@ -174,6 +170,7 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
     final sheetLengthField = _field('sheetLength');
     final sheetWidthField = _field('sheetWidth');
     final thicknessField = _field('thickness');
+    final osbClassField = _field('osbClass');
 
     final children = <Widget>[
       _buildSelectField(sheetSizeField, inputs, accentColor),
@@ -195,6 +192,7 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
     }
 
     children.add(_buildSelectField(thicknessField, inputs, accentColor));
+    children.add(_buildSelectField(osbClassField, inputs, accentColor));
 
     final recommendedThickness = results?['recommendedThickness'];
     if (recommendedThickness != null && recommendedThickness > 0) {
@@ -230,6 +228,8 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
     final constructionField = _field('constructionType');
     final joistStepField = _field('joistStep');
     final rafterStepField = _field('rafterStep');
+    final environmentField = _field('environment');
+    final loadLevelField = _field('loadLevel');
 
     final children = <Widget>[
       _buildSelectField(constructionField, inputs, accentColor),
@@ -241,6 +241,8 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
     if (rafterStepField.shouldDisplay(inputs)) {
       children.add(_buildSelectField(rafterStepField, inputs, accentColor));
     }
+    children.add(_buildSelectField(environmentField, inputs, accentColor));
+    children.add(_buildSelectField(loadLevelField, inputs, accentColor));
 
     return InputGroup(
       title: _loc.translate('group.application'),
@@ -275,25 +277,6 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
       children: [
         _buildNumberField(windowsField, inputs, accentColor),
         _buildNumberField(doorsField, inputs, accentColor),
-      ],
-    );
-  }
-
-  Widget _buildAdvancedGroup(Map<String, double> inputs, Color accentColor) {
-    final osbClassField = _field('osbClass');
-    final environmentField = _field('environment');
-    final loadLevelField = _field('loadLevel');
-
-    return InputGroup(
-      title: _loc.translate('group.advanced'),
-      icon: Icons.settings,
-      accentColor: accentColor,
-      isCollapsible: true,
-      initiallyExpanded: false,
-      children: [
-        _buildSelectField(osbClassField, inputs, accentColor),
-        _buildSelectField(environmentField, inputs, accentColor),
-        _buildSelectField(loadLevelField, inputs, accentColor),
       ],
     );
   }

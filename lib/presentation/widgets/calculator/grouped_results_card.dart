@@ -32,6 +32,8 @@ class GroupedResultsCard extends StatelessWidget {
       'damperTapeLength',
       'plasticizerNeeded',
       'screwsNeeded',
+      'screwDiameter',
+      'screwLength',
       'nailsNeeded',
       'fastenersNeeded',
       'clips',
@@ -163,6 +165,9 @@ class GroupedResultsCard extends StatelessWidget {
       return loc.translate('unit.mm');
     }
     if (resultKey.contains('Thickness') || resultKey.contains('thickness')) {
+      return loc.translate('unit.mm');
+    }
+    if (resultKey == 'screwDiameter' || resultKey == 'screwLength') {
       return loc.translate('unit.mm');
     }
     return '';

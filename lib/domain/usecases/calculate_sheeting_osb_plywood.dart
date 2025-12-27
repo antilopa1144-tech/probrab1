@@ -230,6 +230,26 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
 
     final screwsNeeded = ceilToInt(effectiveArea * screwsPerM2);
 
+    // --- Подбор размера самореза по толщине ОСБ ---
+    double screwDiameter;
+    double screwLength;
+    if (thickness <= 9) {
+      screwDiameter = 3.5;
+      screwLength = 35;
+    } else if (thickness <= 10) {
+      screwDiameter = 4.0;
+      screwLength = 40;
+    } else if (thickness <= 12) {
+      screwDiameter = 4.2;
+      screwLength = 50;
+    } else if (thickness <= 18) {
+      screwDiameter = 4.5;
+      screwLength = 60;
+    } else {
+      screwDiameter = 4.5;
+      screwLength = 75;
+    }
+
     // --- Рекомендованная толщина и предупреждения ---
     int? recommendedThickness;
     bool warningLowThicknessFloor = false;
@@ -370,6 +390,8 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
       values: {
         'sheetsNeeded': sheetsNeeded.toDouble(),
         'screwsNeeded': screwsNeeded.toDouble(),
+        'screwDiameter': screwDiameter,
+        'screwLength': screwLength,
         'materialArea': roundBulk(materialArea),
         if (recommendedThickness != null) 'recommendedThickness': recommendedThickness.toDouble(),
         if (windBarrierArea > 0) 'windBarrierArea': roundBulk(windBarrierArea),
