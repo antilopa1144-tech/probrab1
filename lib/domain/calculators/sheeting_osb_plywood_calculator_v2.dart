@@ -175,24 +175,6 @@ final sheetingOsbPlywoodCalculatorV2 = CalculatorDefinitionV2(
         FieldOption(value: 22, labelKey: 'input.thickness.22mm'),
       ],
     ),
-    const CalculatorField(
-      key: 'osbClass',
-      labelKey: 'input.osbClass',
-      hintKey: 'input.osbClass.hint',
-      unitType: UnitType.pieces,
-      inputType: FieldInputType.select,
-      defaultValue: 3,
-      required: true,
-      iconName: 'fact_check',
-      group: 'sheet',
-      order: 14,
-      options: [
-        FieldOption(value: 1, labelKey: 'input.osbClass.osb1'),
-        FieldOption(value: 2, labelKey: 'input.osbClass.osb2'),
-        FieldOption(value: 3, labelKey: 'input.osbClass.osb3'),
-        FieldOption(value: 4, labelKey: 'input.osbClass.osb4'),
-      ],
-    ),
 
     // --- Группа "Применение" ---
     const CalculatorField(
@@ -239,29 +221,6 @@ final sheetingOsbPlywoodCalculatorV2 = CalculatorDefinitionV2(
         value: 2,
       ),
     ),
-    const CalculatorField(
-      key: 'rafterStep',
-      labelKey: 'input.rafterStep',
-      hintKey: 'input.rafterStep.hint',
-      unitType: UnitType.millimeters,
-      inputType: FieldInputType.select,
-      defaultValue: 600,
-      required: true,
-      iconName: 'straighten',
-      group: 'application',
-      order: 22,
-      options: [
-        FieldOption(value: 300, labelKey: 'input.rafterStep.300mm'),
-        FieldOption(value: 600, labelKey: 'input.rafterStep.600mm'),
-        FieldOption(value: 900, labelKey: 'input.rafterStep.900mm'),
-        FieldOption(value: 1200, labelKey: 'input.rafterStep.1200mm'),
-      ],
-      dependency: FieldDependency(
-        condition: DependencyCondition.equals,
-        fieldKey: 'constructionType',
-        value: 3,
-      ),
-    ),
 
     // --- Группа "Дополнительно" ---
     const CalculatorField(
@@ -277,39 +236,6 @@ final sheetingOsbPlywoodCalculatorV2 = CalculatorDefinitionV2(
       iconName: 'inventory',
       group: 'advanced',
       order: 30,
-    ),
-    const CalculatorField(
-      key: 'environment',
-      labelKey: 'input.environment',
-      hintKey: 'input.environment.hint',
-      unitType: UnitType.pieces,
-      inputType: FieldInputType.select,
-      defaultValue: 1,
-      required: true,
-      iconName: 'water_drop',
-      group: 'advanced',
-      order: 31,
-      options: [
-        FieldOption(value: 1, labelKey: 'input.environment.dry'),
-        FieldOption(value: 2, labelKey: 'input.environment.wet'),
-        FieldOption(value: 3, labelKey: 'input.environment.outdoor'),
-      ],
-    ),
-    const CalculatorField(
-      key: 'loadLevel',
-      labelKey: 'input.loadLevel',
-      hintKey: 'input.loadLevel.hint',
-      unitType: UnitType.pieces,
-      inputType: FieldInputType.select,
-      defaultValue: 1,
-      required: true,
-      iconName: 'fitness_center',
-      group: 'advanced',
-      order: 32,
-      options: [
-        FieldOption(value: 1, labelKey: 'input.loadLevel.normal'),
-        FieldOption(value: 2, labelKey: 'input.loadLevel.high'),
-      ],
     ),
 
     // --- Группа "Проёмы" ---

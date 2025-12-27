@@ -33,7 +33,6 @@ class GroupedResultsCard extends StatelessWidget {
       'plasticizerNeeded',
       'screwsNeeded',
       'screwDiameter',
-      'screwLength',
       'nailsNeeded',
       'fastenersNeeded',
       'clips',
@@ -120,9 +119,7 @@ class GroupedResultsCard extends StatelessWidget {
           const SizedBox(height: 12),
           ...groupResults.map((entry) {
             final unit = _getUnit(entry.key);
-            final formatted = entry.value.toStringAsFixed(
-              entry.value % 1 == 0 ? 0 : 1,
-            );
+            final formatted = _formatValue(entry.key, entry.value);
             return Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Row(
@@ -171,6 +168,20 @@ class GroupedResultsCard extends StatelessWidget {
       return loc.translate('unit.mm');
     }
     return '';
+  }
+
+  String _formatValue(String key, double value) {
+    if (key == 'screwDiameter') {
+      final length = results['screwLength'];
+      if (length != null && length > 0) {
+        return '${_formatNumber(value)}×${_formatNumber(length)}';
+      }
+    }
+    return _formatNumber(value);
+  }
+
+  String _formatNumber(double value) {
+    return value.toStringAsFixed(value % 1 == 0 ? 0 : 1);
   }
 
   String _translateResultLabel(String key) {

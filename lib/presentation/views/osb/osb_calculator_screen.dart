@@ -104,7 +104,11 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
           loc: _loc,
         ),
         if (bottomHints.isNotEmpty) const SizedBox(height: 16),
-        if (bottomHints.isNotEmpty) HintsList(hints: bottomHints),
+        if (bottomHints.isNotEmpty)
+          HintsList(
+            key: ValueKey('osb_hints_${bottomHints.length}_${calcState.results != null}'),
+            hints: bottomHints,
+          ),
         const SizedBox(height: 20),
       ],
     );
@@ -170,7 +174,6 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
     final sheetLengthField = _field('sheetLength');
     final sheetWidthField = _field('sheetWidth');
     final thicknessField = _field('thickness');
-    final osbClassField = _field('osbClass');
 
     final children = <Widget>[
       _buildSelectField(sheetSizeField, inputs, accentColor),
@@ -192,7 +195,6 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
     }
 
     children.add(_buildSelectField(thicknessField, inputs, accentColor));
-    children.add(_buildSelectField(osbClassField, inputs, accentColor));
 
     final recommendedThickness = results?['recommendedThickness'];
     if (recommendedThickness != null && recommendedThickness > 0) {
@@ -227,9 +229,6 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
   Widget _buildApplicationGroup(Map<String, double> inputs, Color accentColor) {
     final constructionField = _field('constructionType');
     final joistStepField = _field('joistStep');
-    final rafterStepField = _field('rafterStep');
-    final environmentField = _field('environment');
-    final loadLevelField = _field('loadLevel');
 
     final children = <Widget>[
       _buildSelectField(constructionField, inputs, accentColor),
@@ -238,11 +237,6 @@ class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
     if (joistStepField.shouldDisplay(inputs)) {
       children.add(_buildSelectField(joistStepField, inputs, accentColor));
     }
-    if (rafterStepField.shouldDisplay(inputs)) {
-      children.add(_buildSelectField(rafterStepField, inputs, accentColor));
-    }
-    children.add(_buildSelectField(environmentField, inputs, accentColor));
-    children.add(_buildSelectField(loadLevelField, inputs, accentColor));
 
     return InputGroup(
       title: _loc.translate('group.application'),
