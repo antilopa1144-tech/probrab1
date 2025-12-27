@@ -11,6 +11,7 @@ import '../views/primer/primer_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
 import '../views/dsp/dsp_screen.dart';
+import '../views/osb/osb_calculator_screen.dart';
 import '../../core/animations/page_transitions.dart';
 
 /// Помощник для навигации к калькуляторам.
@@ -77,6 +78,18 @@ class CalculatorNavigationHelper {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
           const WoodScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'sheeting_osb_plywood') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          OsbCalculatorScreen(
+            definition: definition,
+            initialInputs: initialInputs,
+          ),
         ),
       );
       return;
