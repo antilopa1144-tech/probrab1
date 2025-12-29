@@ -11,7 +11,6 @@ import '../calculator_constants.dart';
 import '../../usecases/calculate_cassette_ceiling.dart';
 import '../../usecases/calculate_ceiling_insulation.dart';
 import '../../usecases/calculate_ceiling_tiles.dart';
-import '../../usecases/calculate_gkl_ceiling.dart';
 import '../../usecases/calculate_rail_ceiling.dart';
 import '../../usecases/calculate_stretch_ceiling.dart';
 
@@ -62,72 +61,6 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         'tag.potolki',
         'ceilings',
         'ceilings_cassette',
-      ],
-    ),
-  CalculatorDefinitionV2(
-      id: 'ceilings_gkl',
-      titleKey: 'calculator.ceilings_gkl.title',
-      descriptionKey: 'calculator.ceilings_gkl.description',
-      category: CalculatorCategory.interior,
-      subCategoryKey: 'subcategory.ceilings',
-      fields: [
-        const CalculatorField(
-          key: 'area',
-          labelKey: 'input.area',
-          unitType: UnitType.squareMeters,
-          inputType: FieldInputType.number,
-          defaultValue: 0.0,
-          required: true,
-          order: 1,
-        ),
-        const CalculatorField(
-          key: 'layers',
-          labelKey: 'input.layers',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.number,
-          defaultValue: 1.0,
-          required: true,
-          order: 2,
-        ),
-        const CalculatorField(
-          key: 'ceilingHeight',
-          labelKey: 'input.ceilingHeight',
-          unitType: UnitType.meters,
-          inputType: FieldInputType.number,
-          defaultValue: 2.5,
-          required: true,
-          order: 3,
-        ),
-        const CalculatorField(
-          key: 'dropHeight',
-          labelKey: 'input.dropHeight',
-          unitType: UnitType.meters,
-          inputType: FieldInputType.number,
-          defaultValue: 0.1,
-          required: true,
-          order: 4,
-        ),
-      ],
-      beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.shag_podvesov_60_sm'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.proverte_uroven_vseh_profiley'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_armiruyuschuyu_lentu_na'),
-      ],
-      afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.shag_podvesov_60_sm'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.proverte_uroven_vseh_profiley'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_armiruyuschuyu_lentu_na'),
-      ],
-      useCase: CalculateGklCeiling(),
-      accentColor: kCalculatorAccentColor,
-      complexity: 2,
-      popularity: 10,
-      tags: [
-        'tag.vnutrennyaya_otdelka',
-        'tag.potolki',
-        'ceilings',
-        'ceilings_gkl',
-        'gkl',
       ],
     ),
   CalculatorDefinitionV2(

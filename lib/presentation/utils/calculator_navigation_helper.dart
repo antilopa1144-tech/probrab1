@@ -7,6 +7,7 @@ import '../../domain/models/calculator_definition_v2.dart';
 import '../views/calculator/pro_calculator_screen.dart';
 import '../views/calculator/plaster_calculator_screen.dart';
 import '../views/calculator/putty_calculator_screen.dart';
+import '../views/calculator/gypsum_calculator_screen.dart';
 import '../views/primer/primer_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
@@ -87,6 +88,18 @@ class CalculatorNavigationHelper {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
           OsbCalculatorScreen(
+            definition: definition,
+            initialInputs: initialInputs,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'gypsum_board') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          GypsumCalculatorScreen(
             definition: definition,
             initialInputs: initialInputs,
           ),

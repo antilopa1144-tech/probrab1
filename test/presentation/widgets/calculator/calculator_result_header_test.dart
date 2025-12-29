@@ -128,11 +128,11 @@ void main() {
 
     testWidgets('colored variant renders without white card', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: CalculatorResultHeaderColored(
               accentColor: Colors.purple,
-              results: const [
+              results: [
                 ResultItem(label: 'Площадь', value: '50 м²'),
                 ResultItem(label: 'Объем', value: '10 м³'),
               ],

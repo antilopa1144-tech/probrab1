@@ -24,7 +24,7 @@ void main() {
     });
 
     testWidgets('calls onChanged when value is entered', (tester) async {
-      double testValue = 5.0;
+      const double testValue = 5.0;
       double? changedValue;
 
       await tester.pumpWidget(
@@ -46,7 +46,7 @@ void main() {
     });
 
     testWidgets('handles integer mode correctly', (tester) async {
-      double testValue = 5.0;
+      const double testValue = 5.0;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -119,7 +119,7 @@ void main() {
     });
 
     testWidgets('enforces minValue constraint', (tester) async {
-      double testValue = 5.0;
+      const double testValue = 5.0;
       double? finalValue;
 
       await tester.pumpWidget(
@@ -143,7 +143,7 @@ void main() {
     });
 
     testWidgets('enforces maxValue constraint', (tester) async {
-      double testValue = 50.0;
+      const double testValue = 50.0;
       double? finalValue;
 
       await tester.pumpWidget(

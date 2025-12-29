@@ -1,18 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
-import '../../../core/constants/calculator_colors.dart';
-import '../../../core/constants/calculator_design_system.dart';
-import '../../../core/services/calculator_memory_service.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_field.dart';
-import '../../views/calculator/pro_calculator_screen.dart';
+import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/calculator/grouped_results_card.dart';
 import '../../widgets/existing/hint_card.dart';
+import '../../utils/screw_formatter.dart';
 
-class OsbCalculatorScreen extends ConsumerStatefulWidget {
+enum OsbConstructionType { wall, floor, roof, partition, sip, formwork }
+enum OsbSheetSize { s2500x1250, s1220x2440, s2800x1250, s3000x1250, s2440x1220, custom }
+enum InputMode { byArea, byDimensions }
+
+class _OsbResult {
+  final double area;
+  final int sheetsNeeded;
+  final double sheetArea;
+  final String sheetSizeName;
+  final int constructionType;
+  final int screwsNeeded;
+  final double screwDiameter;
+  final double screwLength;
+  final double materialArea;
+  final int? recommendedThickness;
+  final double windBarrierArea;
+  final double vaporBarrierArea;
+  final double underlayArea;
+  final double underlaymentArea;
+  final double counterBattensLength;
+  final double clips;
+  final double studsLength;
+  final double insulationArea;
+  final double battensLength;
+  final double glueNeededKg;
+  final double foamNeeded;
+
+  const _OsbResult({
+    required this.area,
+    required this.sheetsNeeded,
+    required this.sheetArea,
+    required this.sheetSizeName,
+    required this.constructionType,
+    required this.screwsNeeded,
+    required this.screwDiameter,
+    required this.screwLength,
+    required this.materialArea,
+    this.recommendedThickness,
+    required this.windBarrierArea,
+    required this.vaporBarrierArea,
+    required this.underlayArea,
+    required this.underlaymentArea,
+    required this.counterBattensLength,
+    required this.clips,
+    required this.studsLength,
+    required this.insulationArea,
+    required this.battensLength,
+    required this.glueNeededKg,
+    required this.foamNeeded,
+  });
+}
+
+class OsbCalculatorScreen extends StatefulWidget {
   final CalculatorDefinitionV2 definition;
   final Map<String, double>? initialInputs;
 
@@ -23,517 +71,1033 @@ class OsbCalculatorScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<OsbCalculatorScreen> createState() => _OsbCalculatorScreenState();
+  State<OsbCalculatorScreen> createState() => _OsbCalculatorScreenState();
 }
 
-class _OsbCalculatorScreenState extends ConsumerState<OsbCalculatorScreen> {
-  late final CalculatorMemoryService _memory;
-  Map<String, double> _latestInputs = {};
+class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
+  InputMode _inputMode = InputMode.byArea;
+  double _area = 20.0;
+  double _length = 4.0;
+  double _width = 3.0;
+  int _thickness = 9;
+  double _reserve = 10.0;
+  OsbConstructionType _constructionType = OsbConstructionType.wall;
+  OsbSheetSize _sheetSize = OsbSheetSize.s2500x1250;
+  late _OsbResult _result;
   late AppLocalizations _loc;
 
   @override
   void initState() {
     super.initState();
-    _memory = ref.read(calculatorMemoryProvider);
-    _latestInputs =
-        Map<String, double>.from(ref.read(proCalculatorProvider(widget.definition)).inputs);
-    _loadLastInputs();
+    _applyInitialInputs();
+    _result = _calculate();
   }
 
-  @override
-  void dispose() {
-    _memory.saveLastInputs(widget.definition.id, _latestInputs);
-    super.dispose();
+  void _applyInitialInputs() {
+    final initial = widget.initialInputs ?? {};
+    if (initial['area'] != null) _area = initial['area']!;
+    if (initial['thickness'] != null) _thickness = initial['thickness']!.toInt();
   }
 
-  Future<void> _loadLastInputs() async {
-    final lastInputs = _memory.loadLastInputs(widget.definition.id);
-    if (lastInputs != null) {
-      _applyInputs(lastInputs);
+  double _getCalculatedArea() {
+    if (_inputMode == InputMode.byArea) {
+      return _area;
     }
-    if (widget.initialInputs != null) {
-      _applyInputs(widget.initialInputs!);
+    return _length * _width;
+  }
+
+  _OsbResult _calculate() {
+    final calculatedArea = _getCalculatedArea();
+
+    // Размер листа
+    double sheetLength;
+    double sheetWidth;
+    String sheetSizeName;
+
+    switch (_sheetSize) {
+      case OsbSheetSize.s2500x1250:
+        sheetLength = 2.50;
+        sheetWidth = 1.25;
+        sheetSizeName = '2500×1250';
+        break;
+      case OsbSheetSize.s1220x2440:
+        sheetLength = 2.44;
+        sheetWidth = 1.22;
+        sheetSizeName = '1220×2440';
+        break;
+      case OsbSheetSize.s2800x1250:
+        sheetLength = 2.80;
+        sheetWidth = 1.25;
+        sheetSizeName = '2800×1250';
+        break;
+      case OsbSheetSize.s3000x1250:
+        sheetLength = 3.00;
+        sheetWidth = 1.25;
+        sheetSizeName = '3000×1250';
+        break;
+      case OsbSheetSize.s2440x1220:
+        sheetLength = 2.44;
+        sheetWidth = 1.22;
+        sheetSizeName = '2440×1220';
+        break;
+      case OsbSheetSize.custom:
+        sheetLength = 2.50;
+        sheetWidth = 1.25;
+        sheetSizeName = 'Пользовательский';
+        break;
     }
+
+    final sheetArea = sheetLength * sheetWidth;
+
+    // Множитель площади ОСБ
+    double osbAreaMultiplier;
+    switch (_constructionType) {
+      case OsbConstructionType.wall:
+      case OsbConstructionType.floor:
+      case OsbConstructionType.roof:
+      case OsbConstructionType.formwork:
+        osbAreaMultiplier = 1.0;
+        break;
+      case OsbConstructionType.partition:
+        osbAreaMultiplier = 2.1;
+        break;
+      case OsbConstructionType.sip:
+        osbAreaMultiplier = 2.05;
+        break;
+    }
+
+    final effectiveArea = calculatedArea;
+    final osbBaseArea = effectiveArea * osbAreaMultiplier;
+    final materialArea = osbBaseArea * (1 + _reserve / 100);
+    final sheetsNeeded = (osbBaseArea * (1 + _reserve / 100) / sheetArea).ceil();
+
+    // Расчёт крепежа
+    double screwsPerM2;
+    switch (_constructionType) {
+      case OsbConstructionType.wall:
+        screwsPerM2 = 23.0;
+        break;
+      case OsbConstructionType.floor:
+        screwsPerM2 = 18.0;
+        break;
+      case OsbConstructionType.roof:
+        screwsPerM2 = 18.0;
+        break;
+      case OsbConstructionType.partition:
+        screwsPerM2 = 27.0;
+        break;
+      case OsbConstructionType.sip:
+        screwsPerM2 = 12.0;
+        break;
+      case OsbConstructionType.formwork:
+        screwsPerM2 = 20.0;
+        break;
+    }
+
+    final screwsNeeded = (effectiveArea * screwsPerM2).ceil();
+
+    // Размер самореза
+    double screwDiameter;
+    double screwLength;
+    if (_thickness <= 9) {
+      screwDiameter = 3.5;
+      screwLength = 35;
+    } else if (_thickness <= 10) {
+      screwDiameter = 4.0;
+      screwLength = 40;
+    } else if (_thickness <= 12) {
+      screwDiameter = 4.2;
+      screwLength = 50;
+    } else if (_thickness <= 18) {
+      screwDiameter = 4.5;
+      screwLength = 60;
+    } else {
+      screwDiameter = 4.5;
+      screwLength = 75;
+    }
+
+    // Рекомендованная толщина для пола
+    int? recommendedThickness;
+    if (_constructionType == OsbConstructionType.floor) {
+      recommendedThickness = 18; // Базовая рекомендация
+    }
+
+    // Дополнительные материалы
+    double windBarrierArea = 0.0;
+    double vaporBarrierArea = 0.0;
+    double underlayArea = 0.0;
+    double underlaymentArea = 0.0;
+    double counterBattensLength = 0.0;
+    double clips = 0.0;
+    double studsLength = 0.0;
+    double insulationArea = 0.0;
+    double battensLength = 0.0;
+    double glueNeededKg = 0.0;
+    double foamNeeded = 0.0;
+
+    switch (_constructionType) {
+      case OsbConstructionType.wall:
+        windBarrierArea = effectiveArea * 1.15;
+        vaporBarrierArea = effectiveArea * 1.15;
+        break;
+      case OsbConstructionType.floor:
+        underlayArea = effectiveArea * 1.05;
+        break;
+      case OsbConstructionType.roof:
+        underlaymentArea = effectiveArea * 1.10;
+        clips = sheetsNeeded * 2.5;
+        counterBattensLength = effectiveArea * 3.5;
+        break;
+      case OsbConstructionType.partition:
+        studsLength = effectiveArea * 2.75;
+        insulationArea = effectiveArea * 1.02;
+        break;
+      case OsbConstructionType.sip:
+        insulationArea = effectiveArea;
+        glueNeededKg = (effectiveArea * 0.15).ceilToDouble();
+        foamNeeded = (effectiveArea * 0.3).ceilToDouble();
+        break;
+      case OsbConstructionType.formwork:
+        battensLength = effectiveArea * 3.5;
+        break;
+    }
+
+    return _OsbResult(
+      area: calculatedArea,
+      sheetsNeeded: sheetsNeeded,
+      sheetArea: sheetArea,
+      sheetSizeName: sheetSizeName,
+      constructionType: _constructionType.index + 1,
+      screwsNeeded: screwsNeeded,
+      screwDiameter: screwDiameter,
+      screwLength: screwLength,
+      materialArea: materialArea,
+      recommendedThickness: recommendedThickness,
+      windBarrierArea: windBarrierArea,
+      vaporBarrierArea: vaporBarrierArea,
+      underlayArea: underlayArea,
+      underlaymentArea: underlaymentArea,
+      counterBattensLength: counterBattensLength,
+      clips: clips,
+      studsLength: studsLength,
+      insulationArea: insulationArea,
+      battensLength: battensLength,
+      glueNeededKg: glueNeededKg,
+      foamNeeded: foamNeeded,
+    );
   }
 
-  void _applyInputs(Map<String, double> inputs) {
-    ref.read(proCalculatorProvider(widget.definition).notifier).applyInputs(inputs);
+  void _update() => setState(() => _result = _calculate());
+
+  String _generateExportText() {
+    final buffer = StringBuffer();
+    buffer.writeln('📋 РАСЧЁТ МАТЕРИАЛОВ ДЛЯ ОСБ');
+    buffer.writeln('═' * 40);
+    buffer.writeln();
+
+    // Площадь
+    buffer.writeln('Площадь: ${_result.area.toStringAsFixed(1)} м²');
+
+    // Тип конструкции
+    String constructionName;
+    switch (_constructionType) {
+      case OsbConstructionType.wall:
+        constructionName = 'Обшивка стен';
+        break;
+      case OsbConstructionType.floor:
+        constructionName = 'Пол';
+        break;
+      case OsbConstructionType.roof:
+        constructionName = 'Крыша';
+        break;
+      case OsbConstructionType.partition:
+        constructionName = 'Перегородки';
+        break;
+      case OsbConstructionType.sip:
+        constructionName = 'СИП-панели';
+        break;
+      case OsbConstructionType.formwork:
+        constructionName = 'Опалубка';
+        break;
+    }
+    buffer.writeln('Тип: $constructionName');
+    buffer.writeln('Толщина: $_thickness мм');
+    buffer.writeln();
+
+    buffer.writeln('📦 МАТЕРИАЛЫ:');
+    buffer.writeln('─' * 40);
+    buffer.writeln('• ОСБ ${_result.sheetSizeName} мм: ${_result.sheetsNeeded} шт');
+    buffer.writeln('• Площадь материала: ${_result.materialArea.toStringAsFixed(1)} м²');
+    final screwFormatted = ScrewFormatter.formatWithWeight(
+      quantity: _result.screwsNeeded,
+      diameter: _result.screwDiameter,
+      length: _result.screwLength,
+    );
+    buffer.writeln('• Саморезы ⌀${_result.screwDiameter.toStringAsFixed(1)}×${_result.screwLength.toStringAsFixed(0)} мм: $screwFormatted');
+
+    if (_result.windBarrierArea > 0) {
+      buffer.writeln('• Ветрозащита: ${_result.windBarrierArea.toStringAsFixed(1)} м²');
+    }
+    if (_result.vaporBarrierArea > 0) {
+      buffer.writeln('• Пароизоляция: ${_result.vaporBarrierArea.toStringAsFixed(1)} м²');
+    }
+    if (_result.underlayArea > 0) {
+      buffer.writeln('• Подложка: ${_result.underlayArea.toStringAsFixed(1)} м²');
+    }
+    if (_result.underlaymentArea > 0) {
+      buffer.writeln('• Кровельная подложка: ${_result.underlaymentArea.toStringAsFixed(1)} м²');
+    }
+    if (_result.counterBattensLength > 0) {
+      buffer.writeln('• Контррейка: ${_result.counterBattensLength.toStringAsFixed(1)} м');
+    }
+    if (_result.clips > 0) {
+      buffer.writeln('• Кляймеры: ${_result.clips.toStringAsFixed(0)} шт');
+    }
+    if (_result.studsLength > 0) {
+      buffer.writeln('• Брус для стоек: ${_result.studsLength.toStringAsFixed(1)} м');
+    }
+    if (_result.insulationArea > 0) {
+      buffer.writeln('• Утеплитель: ${_result.insulationArea.toStringAsFixed(1)} м²');
+    }
+    if (_result.battensLength > 0) {
+      buffer.writeln('• Рейки: ${_result.battensLength.toStringAsFixed(1)} м');
+    }
+    if (_result.glueNeededKg > 0) {
+      buffer.writeln('• Клей для СИП: ${_result.glueNeededKg.toStringAsFixed(1)} кг');
+    }
+    if (_result.foamNeeded > 0) {
+      buffer.writeln('• Монтажная пена: ${_result.foamNeeded.toStringAsFixed(0)} баллонов');
+    }
+
+    if (_result.recommendedThickness != null) {
+      buffer.writeln();
+      buffer.writeln('💡 РЕКОМЕНДАЦИЯ:');
+      buffer.writeln('─' * 40);
+      buffer.writeln('Рекомендуемая толщина: ${_result.recommendedThickness} мм');
+    }
+
+    buffer.writeln();
+    buffer.writeln('═' * 40);
+    buffer.writeln('Создано с помощью Калькулятора Стройматериалов');
+
+    return buffer.toString();
   }
 
-  void _updateValue(String key, double value) {
-    ref.read(proCalculatorProvider(widget.definition).notifier).updateInput(key, value);
+  Future<void> _shareCalculation() async {
+    final text = _generateExportText();
+    await SharePlus.instance.share(ShareParams(text: text, subject: 'Расчёт материалов для ОСБ'));
   }
 
-  CalculatorField _field(String key) {
-    return widget.definition.fields.firstWhere((f) => f.key == key);
+  void _copyToClipboard() {
+    final text = _generateExportText();
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_loc.translate('common.copied_to_clipboard')),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
-    final calcState = ref.watch(proCalculatorProvider(widget.definition));
-    _latestInputs = Map<String, double>.from(calcState.inputs);
-    final accentColor = CalculatorColors.getColorByCategory(widget.definition.category.name);
-    final afterHints = calcState.results != null
-        ? widget.definition.getAfterHints(calcState.inputs, calcState.results!)
-        : const <CalculatorHint>[];
-    final beforeHints = widget.definition.getBeforeHints(calcState.inputs);
-    final bottomHints = [...afterHints, ...beforeHints];
+    const accentColor = CalculatorColors.walls;
 
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
-      resultHeader: calcState.results != null
-          ? _buildResultHeader(calcState.results!, accentColor)
-          : null,
-      children: [
-        _buildModeSelector(calcState.inputs, accentColor),
-        const SizedBox(height: 16),
-        _buildDimensionsGroup(calcState.inputs, accentColor),
-        const SizedBox(height: 16),
-        _buildSheetGroup(calcState.inputs, calcState.results, accentColor),
-        const SizedBox(height: 16),
-        _buildApplicationGroup(calcState.inputs, accentColor),
-        const SizedBox(height: 16),
-        _buildReserveGroup(calcState.inputs, accentColor),
-        const SizedBox(height: 16),
-        _buildOpeningsGroup(calcState.inputs, accentColor),
-        const SizedBox(height: 16),
-        if (calcState.results != null) GroupedResultsCard(
-          results: calcState.results!,
-          loc: _loc,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.copy),
+          onPressed: _copyToClipboard,
+          tooltip: _loc.translate('common.copy'),
         ),
-        if (bottomHints.isNotEmpty) const SizedBox(height: 16),
-        if (bottomHints.isNotEmpty)
-          HintsList(
-            key: ValueKey('osb_hints_${bottomHints.length}_${calcState.results != null}'),
-            hints: bottomHints,
+        IconButton(
+          icon: const Icon(Icons.share),
+          onPressed: _shareCalculation,
+          tooltip: _loc.translate('common.share'),
+        ),
+      ],
+      resultHeader: CalculatorResultHeader(
+        accentColor: accentColor,
+        results: [
+          ResultItem(
+            label: 'ПЛОЩАДЬ',
+            value: '${_result.area.toStringAsFixed(0)} м²',
+            icon: Icons.straighten,
           ),
+          ResultItem(
+            label: 'ЛИСТОВ',
+            value: '${_result.sheetsNeeded} шт',
+            icon: Icons.layers,
+          ),
+          ResultItem(
+            label: 'САМОРЕЗОВ',
+            value: ScrewFormatter.formatWithWeight(
+              quantity: _result.screwsNeeded,
+              diameter: _result.screwDiameter,
+              length: _result.screwLength,
+            ),
+            icon: Icons.build,
+          ),
+        ],
+      ),
+      children: [
+        _buildConstructionTypeSelector(),
+        const SizedBox(height: 16),
+        _buildSheetSizeSelector(),
+        const SizedBox(height: 16),
+        _buildThicknessSelector(),
+        const SizedBox(height: 16),
+        _buildInputModeSelector(),
+        const SizedBox(height: 16),
+        _inputMode == InputMode.byArea ? _buildAreaCard() : _buildDimensionsCard(),
+        const SizedBox(height: 16),
+        _buildReserveCard(),
+        const SizedBox(height: 16),
+        _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        if (_hasAdditionalMaterials()) _buildAdditionalMaterialsCard(),
+        if (_hasAdditionalMaterials()) const SizedBox(height: 24),
+        _buildTipsSection(),
         const SizedBox(height: 20),
       ],
     );
   }
 
-  Widget _buildModeSelector(Map<String, double> inputs, Color accentColor) {
-    final field = _field('inputMode');
-    final options = field.options ?? [];
-    final current = inputs[field.key] ?? field.defaultValue;
-    final selectedIndex = options.indexWhere((opt) => opt.value == current);
-
-    return InputGroup(
-      title: _loc.translate('group.dimensions'),
-      icon: Icons.straighten,
-      accentColor: accentColor,
+  Widget _buildConstructionTypeSelector() {
+    const accentColor = CalculatorColors.walls;
+    return Column(
       children: [
-        ModeSelector(
-          options: options.map((opt) => _loc.translate(opt.labelKey)).toList(),
-          selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
-          onSelect: (index) => _updateValue(field.key, options[index].value),
-          accentColor: accentColor,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDimensionsGroup(Map<String, double> inputs, Color accentColor) {
-    final lengthField = _field('length');
-    final widthField = _field('width');
-    final areaField = _field('area');
-    final children = <Widget>[];
-
-    if (lengthField.shouldDisplay(inputs) && widthField.shouldDisplay(inputs)) {
-      children.add(
+        // Первый ряд: стены, пол, крыша
         Row(
           children: [
-            Expanded(child: _buildNumberField(lengthField, inputs, accentColor)),
-            const SizedBox(width: 12),
-            Expanded(child: _buildNumberField(widthField, inputs, accentColor)),
-          ],
-        ),
-      );
-    }
-
-    if (areaField.shouldDisplay(inputs)) {
-      children.add(_buildNumberField(areaField, inputs, accentColor));
-    }
-
-    return InputGroup(
-      title: _loc.translate('group.dimensions'),
-      icon: Icons.straighten,
-      accentColor: accentColor,
-      children: children,
-    );
-  }
-
-  Widget _buildSheetGroup(
-    Map<String, double> inputs,
-    Map<String, double>? results,
-    Color accentColor,
-  ) {
-    final sheetSizeField = _field('sheetSize');
-    final sheetLengthField = _field('sheetLength');
-    final sheetWidthField = _field('sheetWidth');
-    final thicknessField = _field('thickness');
-
-    final children = <Widget>[
-      _buildSelectField(sheetSizeField, inputs, accentColor),
-    ];
-
-    if (sheetLengthField.shouldDisplay(inputs) || sheetWidthField.shouldDisplay(inputs)) {
-      children.add(
-        Row(
-          children: [
-            if (sheetLengthField.shouldDisplay(inputs))
-              Expanded(child: _buildNumberField(sheetLengthField, inputs, accentColor)),
-            if (sheetLengthField.shouldDisplay(inputs) && sheetWidthField.shouldDisplay(inputs))
-              const SizedBox(width: 12),
-            if (sheetWidthField.shouldDisplay(inputs))
-              Expanded(child: _buildNumberField(sheetWidthField, inputs, accentColor)),
-          ],
-        ),
-      );
-    }
-
-    children.add(_buildSelectField(thicknessField, inputs, accentColor));
-
-    final recommendedThickness = results?['recommendedThickness'];
-    if (recommendedThickness != null && recommendedThickness > 0) {
-      children.add(
-        Row(
-          children: [
-            Icon(Icons.recommend, color: accentColor, size: 18),
-            const SizedBox(width: 8),
             Expanded(
-              child: Text(
-                '${_loc.translate('result.recommendedThickness')}: '
-                '${recommendedThickness.toStringAsFixed(0)} '
-                '${_loc.translate('unit.mm')}',
-                style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
-                ),
+              child: TypeSelectorCard(
+                icon: Icons.square,
+                title: 'Стены',
+                subtitle: 'Обшивка',
+                isSelected: _constructionType == OsbConstructionType.wall,
+                accentColor: accentColor,
+                onTap: () {
+                  setState(() {
+                    _constructionType = OsbConstructionType.wall;
+                    _update();
+                  });
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: TypeSelectorCard(
+                icon: Icons.layers,
+                title: 'Пол',
+                subtitle: 'Настил',
+                isSelected: _constructionType == OsbConstructionType.floor,
+                accentColor: accentColor,
+                onTap: () {
+                  setState(() {
+                    _constructionType = OsbConstructionType.floor;
+                    _update();
+                  });
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: TypeSelectorCard(
+                icon: Icons.roofing,
+                title: 'Крыша',
+                subtitle: 'Обрешётка',
+                isSelected: _constructionType == OsbConstructionType.roof,
+                accentColor: accentColor,
+                onTap: () {
+                  setState(() {
+                    _constructionType = OsbConstructionType.roof;
+                    _update();
+                  });
+                },
               ),
             ),
           ],
         ),
-      );
-    }
-
-    return InputGroup(
-      title: _loc.translate('group.sheet'),
-      icon: Icons.grid_on,
-      accentColor: accentColor,
-      children: children,
-    );
-  }
-
-  Widget _buildApplicationGroup(Map<String, double> inputs, Color accentColor) {
-    final constructionField = _field('constructionType');
-    final joistStepField = _field('joistStep');
-
-    final children = <Widget>[
-      _buildSelectField(constructionField, inputs, accentColor),
-    ];
-
-    if (joistStepField.shouldDisplay(inputs)) {
-      children.add(_buildSelectField(joistStepField, inputs, accentColor));
-    }
-
-    return InputGroup(
-      title: _loc.translate('group.application'),
-      icon: Icons.home_repair_service,
-      accentColor: accentColor,
-      children: children,
-    );
-  }
-
-  Widget _buildReserveGroup(Map<String, double> inputs, Color accentColor) {
-    final reserveField = _field('reserve');
-    return InputGroup(
-      title: _loc.translate('group.parameters'),
-      icon: Icons.tune,
-      accentColor: accentColor,
-      children: [
-        _buildSliderField(reserveField, inputs, accentColor),
+        const SizedBox(height: 12),
+        // Второй ряд: перегородки, СИП, опалубка
+        Row(
+          children: [
+            Expanded(
+              child: TypeSelectorCard(
+                icon: Icons.view_week,
+                title: 'Перегородка',
+                subtitle: 'Двойная',
+                isSelected: _constructionType == OsbConstructionType.partition,
+                accentColor: accentColor,
+                onTap: () {
+                  setState(() {
+                    _constructionType = OsbConstructionType.partition;
+                    _update();
+                  });
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: TypeSelectorCard(
+                icon: Icons.holiday_village,
+                title: 'СИП',
+                subtitle: 'Панели',
+                isSelected: _constructionType == OsbConstructionType.sip,
+                accentColor: accentColor,
+                onTap: () {
+                  setState(() {
+                    _constructionType = OsbConstructionType.sip;
+                    _update();
+                  });
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: TypeSelectorCard(
+                icon: Icons.factory,
+                title: 'Опалубка',
+                subtitle: 'Бетон',
+                isSelected: _constructionType == OsbConstructionType.formwork,
+                accentColor: accentColor,
+                onTap: () {
+                  setState(() {
+                    _constructionType = OsbConstructionType.formwork;
+                    _update();
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
 
-  Widget _buildOpeningsGroup(Map<String, double> inputs, Color accentColor) {
-    final windowsField = _field('windowsArea');
-    final doorsField = _field('doorsArea');
-
-    return InputGroup(
-      title: _loc.translate('group.openings'),
-      icon: Icons.door_front_door,
-      accentColor: accentColor,
-      isCollapsible: true,
-      initiallyExpanded: false,
-      children: [
-        _buildNumberField(windowsField, inputs, accentColor),
-        _buildNumberField(doorsField, inputs, accentColor),
-      ],
-    );
-  }
-
-  Widget _buildNumberField(
-    CalculatorField field,
-    Map<String, double> inputs,
-    Color accentColor,
-  ) {
-    final value = inputs[field.key] ?? field.defaultValue;
-
-    return CalculatorTextField(
-      label: _loc.translate(field.labelKey),
-      value: value,
-      onChanged: (v) => _updateValue(field.key, v),
-      suffix: _loc.translate('unit.${field.unitType.name}'),
-      hint: field.hintKey != null ? _loc.translate(field.hintKey!) : null,
-      accentColor: accentColor,
-      minValue: field.minValue ?? 0,
-      maxValue: field.maxValue ?? double.infinity,
-      isInteger: (field.step ?? 1.0) >= 1.0,
-      decimalPlaces: 1,
-    );
-  }
-
-  Widget _buildSelectField(
-    CalculatorField field,
-    Map<String, double> inputs,
-    Color accentColor,
-  ) {
-    final value = inputs[field.key] ?? field.defaultValue;
-    final options = field.options ?? [];
-
-    if (options.length <= 4) {
-      return Column(
+  Widget _buildSheetSizeSelector() {
+    const accentColor = CalculatorColors.walls;
+    return _card(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (field.labelKey.isNotEmpty) ...[
-            Row(
-              children: [
-                Text(
-                  _loc.translate(field.labelKey),
-                  style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textPrimary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                if (field.required) ...[
-                  const SizedBox(width: 4),
-                  const Text(
-                    '*',
-                    style: TextStyle(color: Colors.redAccent, fontSize: 14),
-                  ),
-                ],
-              ],
+          Text(
+            'Размер листа',
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
             ),
-            const SizedBox(height: 12),
-          ],
-          TypeSelectorGroup(
-            options: options.map((opt) => TypeSelectorOption(
-              icon: _getIconForOption(opt.labelKey),
-              title: _loc.translate(opt.labelKey),
-              subtitle: '',
-            )).toList(),
-            selectedIndex: options.indexWhere((opt) => opt.value == value),
-            onSelect: (index) => _updateValue(field.key, options[index].value),
+          ),
+          const SizedBox(height: 12),
+          ModeSelectorVertical(
+            options: const [
+              '2500×1250 мм (3.1 м²)',
+              '1220×2440 мм (3.0 м²)',
+              '2800×1250 мм (3.5 м²)',
+              '3000×1250 мм (3.8 м²)',
+              '2440×1220 мм (3.0 м²)',
+            ],
+            selectedIndex: _sheetSize.index,
+            onSelect: (index) {
+              setState(() {
+                _sheetSize = OsbSheetSize.values[index];
+                _update();
+              });
+            },
             accentColor: accentColor,
           ),
         ],
-      );
-    }
+      ),
+    );
+  }
 
+  Widget _buildThicknessSelector() {
+    const accentColor = CalculatorColors.walls;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Толщина ОСБ',
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: const ['6 мм', '9 мм', '10 мм', '12 мм', '15 мм', '18 мм', '22 мм'],
+            selectedIndex: _getThicknessIndex(),
+            onSelect: (index) {
+              setState(() {
+                _thickness = [6, 9, 10, 12, 15, 18, 22][index];
+                _update();
+              });
+            },
+            accentColor: accentColor,
+          ),
+          if (_result.recommendedThickness != null) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.recommend, color: CalculatorColors.walls, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Рекомендуемая толщина: ${_result.recommendedThickness} мм',
+                    style: CalculatorDesignSystem.bodySmall.copyWith(
+                      color: CalculatorColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  int _getThicknessIndex() {
+    const thicknesses = [6, 9, 10, 12, 15, 18, 22];
+    final index = thicknesses.indexOf(_thickness);
+    return index >= 0 ? index : 1;
+  }
+
+  Widget _buildInputModeSelector() {
+    const accentColor = CalculatorColors.walls;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Режим ввода',
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: const ['По площади', 'По размерам'],
+            selectedIndex: _inputMode.index,
+            onSelect: (index) {
+              setState(() {
+                _inputMode = InputMode.values[index];
+                _update();
+              });
+            },
+            accentColor: accentColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAreaCard() {
+    const accentColor = CalculatorColors.walls;
+    return _card(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Площадь',
+                style: CalculatorDesignSystem.bodyMedium.copyWith(
+                  color: CalculatorColors.textSecondary,
+                ),
+              ),
+              Text(
+                '${_area.toStringAsFixed(1)} м²',
+                style: CalculatorDesignSystem.titleMedium.copyWith(
+                  color: accentColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          Slider(
+            value: _area,
+            min: 1.0,
+            max: 200.0,
+            divisions: 199,
+            activeColor: accentColor,
+            onChanged: (value) {
+              setState(() {
+                _area = value;
+                _update();
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDimensionsCard() {
+    const accentColor = CalculatorColors.walls;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Размеры помещения',
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildDimensionSlider(
+            label: 'Длина',
+            value: _length,
+            min: 1.0,
+            max: 20.0,
+            onChanged: (v) {
+              setState(() {
+                _length = v;
+                _update();
+              });
+            },
+            accentColor: accentColor,
+          ),
+          const SizedBox(height: 16),
+          _buildDimensionSlider(
+            label: 'Ширина',
+            value: _width,
+            min: 1.0,
+            max: 20.0,
+            onChanged: (v) {
+              setState(() {
+                _width = v;
+                _update();
+              });
+            },
+            accentColor: accentColor,
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Расчётная площадь',
+                  style: CalculatorDesignSystem.bodyMedium.copyWith(
+                    color: CalculatorColors.textSecondary,
+                  ),
+                ),
+                Text(
+                  '${_getCalculatedArea().toStringAsFixed(1)} м²',
+                  style: CalculatorDesignSystem.headlineMedium.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDimensionSlider({
+    required String label,
+    required double value,
+    required double min,
+    required double max,
+    required ValueChanged<double> onChanged,
+    required Color accentColor,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          children: [
-            Text(
-              _loc.translate(field.labelKey),
-              style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
-              ),
-            ),
-            if (field.required) ...[
-              const SizedBox(width: 4),
-              const Text(
-                '*',
-                style: TextStyle(color: Colors.redAccent, fontSize: 14),
-              ),
-            ],
-          ],
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: CalculatorColors.inputBackground,
-            borderRadius: CalculatorDesignSystem.inputBorderRadius,
-            border: Border.all(color: Colors.grey[300]!),
-          ),
-          child: DropdownButton<double>(
-            value: value,
-            isExpanded: true,
-            underline: const SizedBox(),
-            dropdownColor: CalculatorColors.inputBackground,
-            style: CalculatorDesignSystem.bodyMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-            items: options.map((opt) {
-              return DropdownMenuItem(
-                value: opt.value,
-                child: Text(_loc.translate(opt.labelKey)),
-              );
-            }).toList(),
-            onChanged: (v) {
-              if (v != null) _updateValue(field.key, v);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSliderField(
-    CalculatorField field,
-    Map<String, double> inputs,
-    Color accentColor,
-  ) {
-    final value = inputs[field.key] ?? field.defaultValue;
-    final min = field.minValue ?? 0;
-    final max = field.maxValue ?? 100;
-    final unitLabel = _loc.translate('unit.${field.unitType.name}');
-
-    return Column(
-      children: [
-        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      _loc.translate(field.labelKey),
-                      style: CalculatorDesignSystem.bodyMedium.copyWith(
-                        color: CalculatorColors.textPrimary,
-                      ),
-                    ),
-                  ),
-                  if (field.required) ...[
-                    const SizedBox(width: 4),
-                    const Text(
-                      '*',
-                      style: TextStyle(color: Colors.redAccent, fontSize: 14),
-                    ),
-                  ],
-                ],
+            Text(
+              label,
+              style: CalculatorDesignSystem.bodyMedium.copyWith(
+                color: CalculatorColors.textSecondary,
               ),
             ),
             Text(
-              '${value.toStringAsFixed(0)} $unitLabel',
-              style: CalculatorDesignSystem.headlineMedium.copyWith(
+              '${value.toStringAsFixed(1)} м',
+              style: CalculatorDesignSystem.titleMedium.copyWith(
                 color: accentColor,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 4),
-        Row(
-          children: [
-            SizedBox(
-              width: 50,
-              child: Text(
-                '${min.toInt()} $unitLabel',
-                style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
-                ),
-              ),
-            ),
-            Expanded(
-              child: SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: accentColor,
-                  inactiveTrackColor: Colors.grey[300],
-                  thumbColor: accentColor,
-                  overlayColor: accentColor.withValues(alpha: 0.2),
-                ),
-                child: Slider(
-                  value: value.clamp(min, max),
-                  min: min,
-                  max: max,
-                  divisions: ((max - min) / (field.step ?? 1)).round(),
-                  onChanged: (v) => _updateValue(field.key, v),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 50,
-              child: Text(
-                '${max.toInt()} $unitLabel',
-                style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
-                ),
-                textAlign: TextAlign.right,
-              ),
-            ),
-          ],
+        Slider(
+          value: value,
+          min: min,
+          max: max,
+          divisions: ((max - min) * 10).toInt(),
+          activeColor: accentColor,
+          onChanged: onChanged,
         ),
       ],
     );
   }
 
-  Widget _buildResultHeader(Map<String, double> results, Color accentColor) {
-    final headerResults = <ResultItem>[];
-
-    void addItem(String key, IconData icon) {
-      final value = results[key];
-      if (value == null) return;
-      headerResults.add(
-        ResultItem(
-          label: _translateResultLabel(key).toUpperCase(),
-          value: value.toStringAsFixed(value % 1 == 0 ? 0 : 1),
-          icon: icon,
-        ),
-      );
-    }
-
-    addItem('sheetsNeeded', Icons.layers);
-    addItem('screwsNeeded', Icons.build);
-    addItem('materialArea', Icons.straighten);
-
-    if (headerResults.length < 2) {
-      return const SizedBox.shrink();
-    }
-
-    return CalculatorResultHeader(
-      accentColor: accentColor,
-      results: headerResults.take(3).toList(),
+  Widget _buildReserveCard() {
+    const accentColor = CalculatorColors.walls;
+    return _card(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Запас материала',
+                style: CalculatorDesignSystem.bodyMedium.copyWith(
+                  color: CalculatorColors.textPrimary,
+                ),
+              ),
+              Text(
+                '${_reserve.toStringAsFixed(0)} %',
+                style: CalculatorDesignSystem.headlineMedium.copyWith(
+                  color: accentColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              SizedBox(
+                width: 50,
+                child: Text(
+                  '5 %',
+                  style: CalculatorDesignSystem.bodySmall.copyWith(
+                    color: CalculatorColors.textSecondary,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    activeTrackColor: accentColor,
+                    inactiveTrackColor: Colors.grey[300],
+                    thumbColor: accentColor,
+                    overlayColor: accentColor.withValues(alpha: 0.2),
+                  ),
+                  child: Slider(
+                    value: _reserve,
+                    min: 5.0,
+                    max: 20.0,
+                    divisions: 15,
+                    onChanged: (value) {
+                      setState(() {
+                        _reserve = value;
+                        _update();
+                      });
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 50,
+                child: Text(
+                  '20 %',
+                  style: CalculatorDesignSystem.bodySmall.copyWith(
+                    color: CalculatorColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.right,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  String _translateResultLabel(String key) {
-    final resultKey = 'result.$key';
-    final translated = _loc.translate(resultKey);
-    if (translated == resultKey) {
-      final fallback = _loc.translate(key);
-      if (fallback != key) return fallback;
-    }
-    return translated;
+  Widget _buildMaterialsCard() {
+    const accentColor = CalculatorColors.walls;
+
+    final results = <ResultRowItem>[
+      ResultRowItem(
+        label: 'ОСБ плиты',
+        value: '${_result.sheetsNeeded} шт (${_result.sheetSizeName} мм)',
+        icon: Icons.dashboard,
+      ),
+      ResultRowItem(
+        label: 'Площадь материала',
+        value: '${_result.materialArea.toStringAsFixed(1)} м²',
+        icon: Icons.straighten,
+      ),
+      ResultRowItem(
+        label: 'Саморезы ⌀${_result.screwDiameter.toStringAsFixed(1)}×${_result.screwLength.toStringAsFixed(0)} мм',
+        value: ScrewFormatter.formatWithWeight(
+          quantity: _result.screwsNeeded,
+          diameter: _result.screwDiameter,
+          length: _result.screwLength,
+        ),
+        icon: Icons.hardware,
+      ),
+    ];
+
+    return ResultCardLight(
+      title: 'Основные материалы',
+      titleIcon: Icons.dashboard,
+      results: results,
+      accentColor: accentColor,
+    );
   }
 
-  IconData _getIconForOption(String labelKey) {
-    final key = labelKey.toLowerCase();
-    if (key.contains('wall')) return Icons.square;
-    if (key.contains('floor')) return Icons.layers;
-    if (key.contains('roof')) return Icons.roofing;
-    if (key.contains('partition')) return Icons.view_week;
-    if (key.contains('sip')) return Icons.holiday_village;
-    if (key.contains('formwork')) return Icons.factory;
-    if (key.contains('wet')) return Icons.water_drop;
-    if (key.contains('outdoor')) return Icons.cloud;
-    if (key.contains('high')) return Icons.fitness_center;
-    return Icons.check_circle;
+  bool _hasAdditionalMaterials() {
+    return _result.windBarrierArea > 0 ||
+        _result.vaporBarrierArea > 0 ||
+        _result.underlayArea > 0 ||
+        _result.underlaymentArea > 0 ||
+        _result.counterBattensLength > 0 ||
+        _result.clips > 0 ||
+        _result.studsLength > 0 ||
+        _result.insulationArea > 0 ||
+        _result.battensLength > 0 ||
+        _result.glueNeededKg > 0 ||
+        _result.foamNeeded > 0;
+  }
+
+  Widget _buildAdditionalMaterialsCard() {
+    const accentColor = CalculatorColors.walls;
+    final results = <ResultRowItem>[];
+
+    if (_result.windBarrierArea > 0) {
+      results.add(ResultRowItem(
+        label: 'Ветрозащита',
+        value: '${_result.windBarrierArea.toStringAsFixed(1)} м²',
+        icon: Icons.air,
+      ));
+    }
+    if (_result.vaporBarrierArea > 0) {
+      results.add(ResultRowItem(
+        label: 'Пароизоляция',
+        value: '${_result.vaporBarrierArea.toStringAsFixed(1)} м²',
+        icon: Icons.water_drop,
+      ));
+    }
+    if (_result.underlayArea > 0) {
+      results.add(ResultRowItem(
+        label: 'Подложка',
+        value: '${_result.underlayArea.toStringAsFixed(1)} м²',
+        icon: Icons.layers,
+      ));
+    }
+    if (_result.underlaymentArea > 0) {
+      results.add(ResultRowItem(
+        label: 'Кровельная подложка',
+        value: '${_result.underlaymentArea.toStringAsFixed(1)} м²',
+        icon: Icons.roofing,
+      ));
+    }
+    if (_result.counterBattensLength > 0) {
+      results.add(ResultRowItem(
+        label: 'Контррейка',
+        value: '${_result.counterBattensLength.toStringAsFixed(1)} м',
+        icon: Icons.horizontal_rule,
+      ));
+    }
+    if (_result.clips > 0) {
+      results.add(ResultRowItem(
+        label: 'Кляймеры',
+        value: '${_result.clips.toStringAsFixed(0)} шт',
+        icon: Icons.attachment,
+      ));
+    }
+    if (_result.studsLength > 0) {
+      results.add(ResultRowItem(
+        label: 'Брус для стоек',
+        value: '${_result.studsLength.toStringAsFixed(1)} м',
+        icon: Icons.architecture,
+      ));
+    }
+    if (_result.insulationArea > 0) {
+      results.add(ResultRowItem(
+        label: 'Утеплитель',
+        value: '${_result.insulationArea.toStringAsFixed(1)} м²',
+        icon: Icons.layers,
+      ));
+    }
+    if (_result.battensLength > 0) {
+      results.add(ResultRowItem(
+        label: 'Рейки',
+        value: '${_result.battensLength.toStringAsFixed(1)} м',
+        icon: Icons.horizontal_rule,
+      ));
+    }
+    if (_result.glueNeededKg > 0) {
+      results.add(ResultRowItem(
+        label: 'Клей для СИП',
+        value: '${_result.glueNeededKg.toStringAsFixed(1)} кг',
+        icon: Icons.colorize,
+      ));
+    }
+    if (_result.foamNeeded > 0) {
+      results.add(ResultRowItem(
+        label: 'Монтажная пена',
+        value: '${_result.foamNeeded.toStringAsFixed(0)} баллонов',
+        icon: Icons.format_paint,
+      ));
+    }
+
+    return ResultCardLight(
+      title: 'Дополнительные материалы',
+      titleIcon: Icons.add_circle_outline,
+      results: results,
+      accentColor: accentColor,
+    );
+  }
+
+  Widget _buildTipsSection() {
+    const hints = [
+      CalculatorHint(
+        type: HintType.important,
+        messageKey: 'hint.osb.class_for_wet',
+      ),
+      CalculatorHint(
+        type: HintType.tip,
+        messageKey: 'hint.osb.gap_3mm',
+      ),
+      CalculatorHint(
+        type: HintType.tip,
+        messageKey: 'hint.osb.thickness_by_step',
+      ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            _loc.translate('common.tips'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+        ),
+        const HintsList(hints: hints),
+      ],
+    );
+  }
+
+  Widget _card({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: CalculatorDesignSystem.cardDecoration(),
+      child: child,
+    );
   }
 }

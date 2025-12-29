@@ -277,7 +277,7 @@ class _ExamplePaintCalculatorScreenState
             children: [
               Row(
                 children: [
-                  Icon(Icons.info_outline, color: accentColor),
+                  const Icon(Icons.info_outline, color: CalculatorColors.interior),
                   CalculatorDesignSystem.horizontalSpacingS,
                   Text(
                     'Итого к покупке',
