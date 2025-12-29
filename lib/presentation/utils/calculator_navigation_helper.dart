@@ -8,6 +8,8 @@ import '../views/calculator/pro_calculator_screen.dart';
 import '../views/calculator/plaster_calculator_screen.dart';
 import '../views/calculator/putty_calculator_screen.dart';
 import '../views/calculator/gypsum_calculator_screen.dart';
+import '../views/calculator/wallpaper_calculator_screen.dart';
+import '../views/calculator/self_leveling_floor_calculator_screen.dart';
 import '../views/primer/primer_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
@@ -100,6 +102,30 @@ class CalculatorNavigationHelper {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
           GypsumCalculatorScreen(
+            definition: definition,
+            initialInputs: initialInputs,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'walls_wallpaper') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          WallpaperCalculatorScreen(
+            definition: definition,
+            initialInputs: initialInputs,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'floors_self_leveling') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          SelfLevelingFloorCalculatorScreen(
             definition: definition,
             initialInputs: initialInputs,
           ),
