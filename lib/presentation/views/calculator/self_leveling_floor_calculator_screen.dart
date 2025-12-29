@@ -12,19 +12,24 @@ enum InputMode { byArea, byDimensions }
 enum BagWeight { kg20, kg25 }
 
 enum MixtureBrand {
-  ceresit175(1.5, 'Ceresit CN 175'),
-  ceresit173(1.6, 'Ceresit CN 173'),
-  knauf(1.6, 'Knauf Боден'),
-  unis(1.5, 'Unis Горизонт'),
-  volma(1.7, 'Волма Нивелир'),
-  osnovit(1.5, 'Основит Скорлайн'),
-  bergauf(1.6, 'Bergauf Easy Boden'),
-  starateli(1.6, 'Старатели'),
-  average(1.6, 'Средний расход');
+  ceresit175(1.5, 'Ceresit CN 175', [25]),
+  ceresit173(1.6, 'Ceresit CN 173', [25]),
+  knauf(1.6, 'Knauf Боден', [20, 25]),
+  unis(1.5, 'Unis Горизонт', [20, 25]),
+  volma(1.7, 'Волма Нивелир', [20]),
+  osnovit(1.5, 'Основит Скорлайн', [20]),
+  bergauf(1.6, 'Bergauf Easy Boden', [25]),
+  starateli(1.6, 'Старатели', [20]),
+  average(1.6, 'Средний расход', [20, 25]);
 
   final double consumption;
   final String name;
-  const MixtureBrand(this.consumption, this.name);
+  final List<int> availableBagSizes;
+  const MixtureBrand(this.consumption, this.name, this.availableBagSizes);
+
+  bool hasBagSize(int size) => availableBagSizes.contains(size);
+  int get defaultBagSize => availableBagSizes.first;
+  bool get hasMultipleSizes => availableBagSizes.length > 1;
 }
 
 class _SelfLevelingFloorResult {
@@ -251,8 +256,10 @@ class _SelfLevelingFloorCalculatorScreenState
         _buildThicknessCard(),
         const SizedBox(height: 16),
         _buildMixtureBrandSelector(),
-        const SizedBox(height: 16),
-        _buildBagWeightSelector(),
+        if (_mixtureBrand.hasMultipleSizes) ...[
+          const SizedBox(height: 16),
+          _buildBagWeightSelector(),
+        ],
         const SizedBox(height: 16),
         _buildMaterialsCard(),
         const SizedBox(height: 16),
@@ -522,6 +529,14 @@ class _SelfLevelingFloorCalculatorScreenState
             onSelect: (index) {
               setState(() {
                 _mixtureBrand = MixtureBrand.values[index];
+                // Автоматически устанавливаем доступный вес мешка
+                final currentBagWeight = _bagWeight == BagWeight.kg20 ? 20 : 25;
+                if (!_mixtureBrand.hasBagSize(currentBagWeight)) {
+                  // Если текущий вес недоступен для нового бренда, устанавливаем дефолтный
+                  _bagWeight = _mixtureBrand.defaultBagSize == 20
+                      ? BagWeight.kg20
+                      : BagWeight.kg25;
+                }
                 _update();
               });
             },
@@ -533,7 +548,34 @@ class _SelfLevelingFloorCalculatorScreenState
   }
 
   Widget _buildBagWeightSelector() {
+    // Если у бренда только одна доступная фасовка, не показываем выбор
+    if (!_mixtureBrand.hasMultipleSizes) {
+      return const SizedBox.shrink();
+    }
+
     const accentColor = CalculatorColors.interior;
+    final availableSizes = _mixtureBrand.availableBagSizes;
+
+    // Создаем опции только для доступных фасовок
+    final options = <String>[];
+    final indexMapping = <int, BagWeight>{};
+    int currentMappedIndex = 0;
+
+    for (var i = 0; i < BagWeight.values.length; i++) {
+      final weight = BagWeight.values[i];
+      final weightKg = weight == BagWeight.kg20 ? 20 : 25;
+
+      if (availableSizes.contains(weightKg)) {
+        options.add(_loc.translate('self_leveling.bag_weight.kg$weightKg'));
+        indexMapping[currentMappedIndex] = weight;
+        currentMappedIndex++;
+      }
+    }
+
+    // Определяем текущий выбранный индекс среди доступных опций
+    final currentWeightKg = _bagWeight == BagWeight.kg20 ? 20 : 25;
+    final selectedIndex = availableSizes.indexOf(currentWeightKg);
+
     return _card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -546,14 +588,11 @@ class _SelfLevelingFloorCalculatorScreenState
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: [
-              _loc.translate('self_leveling.bag_weight.kg20'),
-              _loc.translate('self_leveling.bag_weight.kg25'),
-            ],
-            selectedIndex: _bagWeight.index,
+            options: options,
+            selectedIndex: selectedIndex.clamp(0, options.length - 1),
             onSelect: (index) {
               setState(() {
-                _bagWeight = BagWeight.values[index];
+                _bagWeight = indexMapping[index]!;
                 _update();
               });
             },
