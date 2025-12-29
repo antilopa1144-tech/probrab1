@@ -1695,9 +1695,8 @@
       "title": "Толщина слоя",
       "subtitle": "Рекомендуется 5-10 мм"
     },
-    "consumption": {
-      "title": "Расход смеси",
-      "subtitle": "кг/м²/мм"
+    "brand": {
+      "title": "Марка смеси"
     },
     "bag_weight": {
       "title": "Вес мешка",

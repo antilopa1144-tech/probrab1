@@ -11,6 +11,22 @@ import '../../widgets/existing/hint_card.dart';
 enum InputMode { byArea, byDimensions }
 enum BagWeight { kg20, kg25 }
 
+enum MixtureBrand {
+  ceresit175(1.5, 'Ceresit CN 175'),
+  ceresit173(1.6, 'Ceresit CN 173'),
+  knauf(1.6, 'Knauf Боден'),
+  unis(1.5, 'Unis Горизонт'),
+  volma(1.7, 'Волма Нивелир'),
+  osnovit(1.5, 'Основит Скорлайн'),
+  bergauf(1.6, 'Bergauf Easy Boden'),
+  starateli(1.6, 'Старатели'),
+  average(1.6, 'Средний расход');
+
+  final double consumption;
+  final String name;
+  const MixtureBrand(this.consumption, this.name);
+}
+
 class _SelfLevelingFloorResult {
   final double area;
   final double thickness;
@@ -59,7 +75,7 @@ class _SelfLevelingFloorCalculatorScreenState
   double _length = 5.0;
   double _width = 4.0;
   double _thickness = 10.0;
-  double _consumption = 1.6;
+  MixtureBrand _mixtureBrand = MixtureBrand.average;
   BagWeight _bagWeight = BagWeight.kg25;
   late _SelfLevelingFloorResult _result;
   late AppLocalizations _loc;
@@ -94,7 +110,7 @@ class _SelfLevelingFloorCalculatorScreenState
 
     // Расчёт общего веса смеси
     // Формула: Площадь × Толщина (мм) × Расход (кг/м²/мм)
-    final totalWeight = calculatedArea * _thickness * _consumption;
+    final totalWeight = calculatedArea * _thickness * _mixtureBrand.consumption;
 
     // Вес мешка
     final bagWeightKg = _bagWeight == BagWeight.kg20 ? 20 : 25;
@@ -124,7 +140,7 @@ class _SelfLevelingFloorCalculatorScreenState
     return _SelfLevelingFloorResult(
       area: calculatedArea,
       thickness: _thickness,
-      consumption: _consumption,
+      consumption: _mixtureBrand.consumption,
       totalWeight: totalWeight,
       bagsNeeded: bagsNeeded,
       bagWeight: bagWeightKg,
@@ -234,7 +250,7 @@ class _SelfLevelingFloorCalculatorScreenState
         const SizedBox(height: 16),
         _buildThicknessCard(),
         const SizedBox(height: 16),
-        _buildConsumptionCard(),
+        _buildMixtureBrandSelector(),
         const SizedBox(height: 16),
         _buildBagWeightSelector(),
         const SizedBox(height: 16),
@@ -487,55 +503,29 @@ class _SelfLevelingFloorCalculatorScreenState
     );
   }
 
-  Widget _buildConsumptionCard() {
+  Widget _buildMixtureBrandSelector() {
     const accentColor = CalculatorColors.interior;
     return _card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _loc.translate('self_leveling.consumption.title'),
-                    style: CalculatorDesignSystem.titleMedium.copyWith(
-                      color: CalculatorColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _loc.translate('self_leveling.consumption.subtitle'),
-                    style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                '${_consumption.toStringAsFixed(1)} кг',
-                style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+          Text(
+            _loc.translate('self_leveling.brand.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
           ),
-          const SizedBox(height: 8),
-          Slider(
-            value: _consumption,
-            min: 1.3,
-            max: 2.0,
-            divisions: 14,
-            activeColor: accentColor,
-            onChanged: (v) {
+          const SizedBox(height: 12),
+          ModeSelectorVertical(
+            options: MixtureBrand.values.map((brand) => brand.name).toList(),
+            selectedIndex: _mixtureBrand.index,
+            onSelect: (index) {
               setState(() {
-                _consumption = v;
+                _mixtureBrand = MixtureBrand.values[index];
                 _update();
               });
             },
+            accentColor: accentColor,
           ),
         ],
       ),
