@@ -10,28 +10,49 @@ import '../../widgets/existing/hint_card.dart';
 enum InputMode { byArea, byDimensions }
 
 enum HeatingSystemType {
-  electricMat('Электрический мат', 'Под плитку, керамогранит'),
-  electricCable('Электрический кабель', 'Универсальный, для сложных форм'),
-  infraredFilm('ИК плёночный', 'Под ламинат, линолеум'),
-  waterBased('Водяной', 'Экономичный, для частного дома');
+  electricMat(
+    'Электрический мат',
+    'Под плитку, керамогранит',
+    'Простой монтаж, быстрый прогрев',
+    Icons.grid_on,
+  ),
+  electricCable(
+    'Электрический кабель',
+    'Универсальный, для сложных форм',
+    'Гибкая укладка, любые конфигурации',
+    Icons.cable,
+  ),
+  infraredFilm(
+    'ИК плёночный',
+    'Под ламинат, линолеум',
+    'Сухой монтаж, быстрая установка',
+    Icons.view_module,
+  ),
+  waterBased(
+    'Водяной',
+    'Экономичный, для частного дома',
+    'Низкие расходы на отопление',
+    Icons.waves,
+  );
 
   final String name;
   final String subtitle;
-  const HeatingSystemType(this.name, this.subtitle);
+  final String advantage;
+  final IconData icon;
+  const HeatingSystemType(this.name, this.subtitle, this.advantage, this.icon);
 }
 
 enum RoomType {
-  livingMain('Жилая комната (основной)', 180, 150),
-  livingAdditional('Жилая комната (дополнительный)', 140, 200),
-  bathroom('Ванная / санузел', 160, 150),
-  kitchen('Кухня', 150, 150),
-  balcony('Балкон / лоджия', 220, 150),
-  corridor('Коридор', 140, 200);
+  bathroom('Ванная / санузел', 180, 'Высокая влажность, комфорт', 150),
+  living('Жилая комната', 120, 'Основное или дополнительное отопление', 150),
+  kitchen('Кухня', 130, 'Среднее тепловыделение', 150),
+  balcony('Балкон / лоджия', 200, 'Большие теплопотери', 100);
 
   final String name;
   final int powerPerM2; // Вт/м² для электрического
+  final String description; // Пояснение для пользователя
   final int pipeStep; // мм шаг укладки для водяного
-  const RoomType(this.name, this.powerPerM2, this.pipeStep);
+  const RoomType(this.name, this.powerPerM2, this.description, this.pipeStep);
 }
 
 class _HeatingResult {
@@ -110,7 +131,7 @@ class _UnderfloorHeatingCalculatorScreenState
   double _length = 4.0;
   double _width = 3.75;
   HeatingSystemType _systemType = HeatingSystemType.electricMat;
-  RoomType _roomType = RoomType.bathroom;
+  RoomType _roomType = RoomType.living;
   bool _addInsulation = false;
   late _HeatingResult _result;
   late AppLocalizations _loc;
@@ -408,14 +429,18 @@ class _UnderfloorHeatingCalculatorScreenState
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Площадь помещения',
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+              Expanded(
+                child: Text(
+                  'Площадь помещения',
+                  style: CalculatorDesignSystem.bodyMedium.copyWith(
+                    color: CalculatorColors.textSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               Text(
                 '${_area.toStringAsFixed(1)} м²',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
@@ -490,14 +515,18 @@ class _UnderfloorHeatingCalculatorScreenState
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Площадь помещения',
-                  style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                Expanded(
+                  child: Text(
+                    'Площадь помещения',
+                    style: CalculatorDesignSystem.bodyMedium.copyWith(
+                      color: CalculatorColors.textSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                const SizedBox(width: 8),
                 Text(
                   '${_getCalculatedArea().toStringAsFixed(1)} м²',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
@@ -525,14 +554,18 @@ class _UnderfloorHeatingCalculatorScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
-              style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textSecondary,
+            Expanded(
+              child: Text(
+                label,
+                style: CalculatorDesignSystem.bodyMedium.copyWith(
+                  color: CalculatorColors.textSecondary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 8),
             Text(
               '${value.toStringAsFixed(1)} м',
               style: CalculatorDesignSystem.titleMedium.copyWith(
@@ -598,6 +631,22 @@ class _UnderfloorHeatingCalculatorScreenState
                   ),
                   child: Row(
                     children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? accentColor.withValues(alpha: 0.15)
+                              : CalculatorColors.textSecondary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          type.icon,
+                          color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -611,13 +660,23 @@ class _UnderfloorHeatingCalculatorScreenState
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 2),
                             Text(
                               type.subtitle,
                               style: CalculatorDesignSystem.bodySmall.copyWith(
                                 color: CalculatorColors.textSecondary,
                               ),
                             ),
+                            if (isSelected) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                '✓ ${type.advantage}',
+                                style: CalculatorDesignSystem.bodySmall.copyWith(
+                                  color: accentColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -654,17 +713,68 @@ class _UnderfloorHeatingCalculatorScreenState
             ),
           ),
           const SizedBox(height: 12),
-          ModeSelectorVertical(
-            options: RoomType.values.map((type) => type.name).toList(),
-            selectedIndex: _roomType.index,
-            onSelect: (index) {
-              setState(() {
-                _roomType = RoomType.values[index];
-                _update();
-              });
-            },
-            accentColor: accentColor,
-          ),
+          ...RoomType.values.asMap().entries.map((entry) {
+            final index = entry.key;
+            final type = entry.value;
+            final isSelected = _roomType == type;
+
+            return Padding(
+              padding: EdgeInsets.only(bottom: index < RoomType.values.length - 1 ? 8.0 : 0),
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _roomType = type;
+                    _update();
+                  });
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? accentColor.withValues(alpha: 0.1)
+                        : Colors.transparent,
+                    border: Border.all(
+                      color: isSelected
+                          ? accentColor
+                          : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              type.name,
+                              style: CalculatorDesignSystem.titleSmall.copyWith(
+                                color: isSelected
+                                    ? accentColor
+                                    : CalculatorColors.textPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${type.description} • ${type.powerPerM2} Вт/м²',
+                              style: CalculatorDesignSystem.bodySmall.copyWith(
+                                color: CalculatorColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (isSelected)
+                        Icon(Icons.check_circle, color: accentColor, size: 24),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -847,34 +957,108 @@ class _UnderfloorHeatingCalculatorScreenState
     final monthlyConsumption = (_result.totalPower / 1000) * 8 * 30; // кВт⋅ч
     final seasonConsumption = monthlyConsumption * 4; // 4 месяца
 
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: 'Мощность системы',
-        value: '${(_result.totalPower / 1000).toStringAsFixed(2)} кВт',
-        icon: Icons.bolt,
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.info_outline, color: accentColor, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Дополнительная информация',
+                style: CalculatorDesignSystem.titleMedium.copyWith(
+                  color: CalculatorColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildInfoRow(
+            icon: Icons.bolt,
+            label: 'Мощность системы',
+            value: '${(_result.totalPower / 1000).toStringAsFixed(2)} кВт',
+            accentColor: accentColor,
+          ),
+          const SizedBox(height: 12),
+          _buildInfoRow(
+            icon: Icons.heat_pump,
+            label: 'Площадь обогрева',
+            value: '${_result.heatingArea.toStringAsFixed(1)} м²',
+            accentColor: accentColor,
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.only(left: 32),
+            child: Text(
+              '72% от общей площади (без мебели и сантехники)',
+              style: CalculatorDesignSystem.bodySmall.copyWith(
+                color: CalculatorColors.textSecondary,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          _buildInfoRow(
+            icon: Icons.calendar_month,
+            label: 'Расход в месяц',
+            value: '~${monthlyConsumption.toStringAsFixed(0)} кВт⋅ч',
+            accentColor: accentColor,
+          ),
+          const SizedBox(height: 12),
+          _buildInfoRow(
+            icon: Icons.calendar_today,
+            label: 'Расход за сезон',
+            value: '~${seasonConsumption.toStringAsFixed(0)} кВт⋅ч',
+            accentColor: accentColor,
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.only(left: 32),
+            child: Text(
+              'При работе 8 часов в день, 4 месяца',
+              style: CalculatorDesignSystem.bodySmall.copyWith(
+                color: CalculatorColors.textSecondary,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
+        ],
       ),
-      ResultRowItem(
-        label: 'Площадь обогрева',
-        value: '${_result.heatingArea.toStringAsFixed(1)} м² (72% от общей)',
-        icon: Icons.heat_pump,
-      ),
-      ResultRowItem(
-        label: 'Расход в месяц',
-        value: '~${monthlyConsumption.toStringAsFixed(0)} кВт⋅ч',
-        icon: Icons.calendar_month,
-      ),
-      ResultRowItem(
-        label: 'Расход за сезон',
-        value: '~${seasonConsumption.toStringAsFixed(0)} кВт⋅ч',
-        icon: Icons.calendar_today,
-      ),
-    ];
+    );
+  }
 
-    return ResultCardLight(
-      title: 'Дополнительная информация',
-      titleIcon: Icons.info_outline,
-      results: results,
-      accentColor: accentColor,
+  Widget _buildInfoRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color accentColor,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, color: accentColor.withValues(alpha: 0.7), size: 18),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            label,
+            style: CalculatorDesignSystem.bodyMedium.copyWith(
+              color: CalculatorColors.textSecondary,
+            ),
+          ),
+        ),
+        const SizedBox(width: 4),
+        Flexible(
+          child: Text(
+            value,
+            style: CalculatorDesignSystem.titleSmall.copyWith(
+              color: CalculatorColors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.end,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 
