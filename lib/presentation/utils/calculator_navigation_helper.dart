@@ -11,6 +11,7 @@ import '../views/calculator/gypsum_calculator_screen.dart';
 import '../views/calculator/wallpaper_calculator_screen.dart';
 import '../views/calculator/self_leveling_floor_calculator_screen.dart';
 import '../views/calculator/tile_adhesive_calculator_screen.dart';
+import '../views/calculator/underfloor_heating_calculator_screen.dart';
 import '../views/primer/primer_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
@@ -139,6 +140,18 @@ class CalculatorNavigationHelper {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
           TileAdhesiveCalculatorScreen(
+            definition: definition,
+            initialInputs: initialInputs,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'engineering_heating') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          UnderfloorHeatingCalculatorScreen(
             definition: definition,
             initialInputs: initialInputs,
           ),
