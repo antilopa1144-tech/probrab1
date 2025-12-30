@@ -10,6 +10,7 @@ import '../views/calculator/putty_calculator_screen.dart';
 import '../views/calculator/gypsum_calculator_screen.dart';
 import '../views/calculator/wallpaper_calculator_screen.dart';
 import '../views/calculator/self_leveling_floor_calculator_screen.dart';
+import '../views/calculator/tile_adhesive_calculator_screen.dart';
 import '../views/primer/primer_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
@@ -126,6 +127,18 @@ class CalculatorNavigationHelper {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
           SelfLevelingFloorCalculatorScreen(
+            definition: definition,
+            initialInputs: initialInputs,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'mixes_tile_glue') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          TileAdhesiveCalculatorScreen(
             definition: definition,
             initialInputs: initialInputs,
           ),
