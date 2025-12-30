@@ -7,7 +7,7 @@ import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
 
-enum InputMode { byArea, byDimensions }
+enum InputMode { byDimensions, byArea }
 enum BagWeight { kg20, kg25 }
 enum SurfaceType { wall, floor }
 
@@ -64,6 +64,10 @@ class _TileAdhesiveResult {
   final int crossesNeeded;
   final bool useSVP;
   final int svpCount;
+  final double tileWidth;
+  final double tileHeight;
+  final double? groutWeight;
+  final double? waterproofingWeight;
 
   const _TileAdhesiveResult({
     required this.area,
@@ -79,6 +83,10 @@ class _TileAdhesiveResult {
     required this.crossesNeeded,
     required this.useSVP,
     required this.svpCount,
+    required this.tileWidth,
+    required this.tileHeight,
+    this.groutWeight,
+    this.waterproofingWeight,
   });
 }
 
@@ -99,7 +107,7 @@ class TileAdhesiveCalculatorScreen extends StatefulWidget {
 
 class _TileAdhesiveCalculatorScreenState
     extends State<TileAdhesiveCalculatorScreen> {
-  InputMode _inputMode = InputMode.byDimensions;
+  InputMode _inputMode = InputMode.byArea;
   double _area = 20.0;
   double _length = 5.0;
   double _width = 4.0;
@@ -108,6 +116,8 @@ class _TileAdhesiveCalculatorScreenState
   BagWeight _bagWeight = BagWeight.kg25;
   SurfaceType _surfaceType = SurfaceType.wall;
   bool _useSVP = false;
+  bool _calculateGrout = false;
+  bool _useWaterproofing = false;
   late _TileAdhesiveResult _result;
   late AppLocalizations _loc;
 
@@ -161,21 +171,55 @@ class _TileAdhesiveCalculatorScreenState
     // Грунтовка (0.15 л/м²)
     final primerLiters = calculatedArea * 0.15;
 
-    // Крестики для швов: ~5 шт на плитку
-    // Примерная площадь одной плитки в зависимости от типа
-    final avgTileArea = _tileType == TileType.mosaic
-        ? 0.01 // 10×10 см
+    // Стандартные размеры плитки в зависимости от типа
+    final tileWidth = _tileType == TileType.mosaic
+        ? 10.0 // см
         : _tileType == TileType.ceramic
-            ? 0.09 // 30×30 см
+            ? 30.0
             : _tileType == TileType.porcelain
-                ? 0.16 // 40×40 см
-                : 0.36; // 60×60 см
+                ? 40.0
+                : 60.0; // крупноформат
 
-    final tilesCount = (calculatedArea / avgTileArea).ceil();
+    final tileHeight = tileWidth; // квадратная плитка
+
+    // Рассчитываем количество плиток на основе стандартного размера
+    final tileAreaM2 = (tileWidth / 100) * (tileHeight / 100);
+    final tilesCount = (calculatedArea / tileAreaM2).ceil();
+
+    // Крестики для швов: ~5 шт на плитку
     final crossesNeeded = tilesCount * 5;
 
-    // СВП (система выравнивания плитки): 1 клипса + 2 клина на плитку
-    final svpCount = _useSVP ? tilesCount : 0;
+    // СВП (система выравнивания плитки): количество клипс зависит от размера плитки
+    // Маленькая плитка (<20 см): 4 клипсы
+    // Средняя плитка (20-40 см): 3 клипсы
+    // Большая плитка (>40 см): 2 клипсы
+    final avgTileSize = (tileWidth + tileHeight) / 2;
+    final clipsPerTile = avgTileSize < 20 ? 4 : (avgTileSize <= 40 ? 3 : 2);
+    final svpCount = _useSVP ? tilesCount * clipsPerTile : 0;
+
+    // Расчет затирки (опционально)
+    double? groutWeight;
+    if (_calculateGrout) {
+      // Стандартные параметры затирки
+      const jointWidth = 3.0; // мм
+      const jointDepth = 2.0; // мм
+      // Формула: (Длина + Ширина) / (Длина × Ширина) × Ширина_шва × Глубина_шва × Плотность × Площадь
+      // Плотность затирки ~1.6 кг/дм³
+      const groutDensity = 1.6; // кг/дм³
+      final groutConsumptionPerM2 =
+          ((tileWidth + tileHeight) / (tileWidth * tileHeight)) *
+          jointWidth *
+          jointDepth *
+          groutDensity;
+      groutWeight = calculatedArea * groutConsumptionPerM2 * 1.1; // +10% запас
+    }
+
+    // Гидроизоляция (опционально)
+    double? waterproofingWeight;
+    if (_useWaterproofing) {
+      // 2 слоя по 0.4 кг/м²
+      waterproofingWeight = calculatedArea * 0.4 * 2;
+    }
 
     return _TileAdhesiveResult(
       area: calculatedArea,
@@ -191,6 +235,10 @@ class _TileAdhesiveCalculatorScreenState
       crossesNeeded: crossesNeeded,
       useSVP: _useSVP,
       svpCount: svpCount,
+      tileWidth: tileWidth,
+      tileHeight: tileHeight,
+      groutWeight: groutWeight,
+      waterproofingWeight: waterproofingWeight,
     );
   }
 
@@ -204,6 +252,7 @@ class _TileAdhesiveCalculatorScreenState
 
     buffer.writeln('Площадь: ${_result.area.toStringAsFixed(1)} м²');
     buffer.writeln('Тип плитки: ${_result.tileType.name}');
+    buffer.writeln('Размер плитки: ${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} см');
     buffer.writeln('Размер зуба шпателя: ${_result.notchSize} мм');
     buffer.writeln('Поверхность: ${_result.surfaceType == SurfaceType.wall ? "Стена" : "Пол"}');
     buffer.writeln();
@@ -214,9 +263,15 @@ class _TileAdhesiveCalculatorScreenState
     buffer.writeln('• Расход: ${_result.adhesiveConsumption.toStringAsFixed(2)} кг/м²');
     buffer.writeln('• Общий вес: ${_result.totalWeight.toStringAsFixed(1)} кг');
     buffer.writeln('• Грунтовка: ${_result.primerLiters.toStringAsFixed(1)} л');
+    if (_result.groutWeight != null) {
+      buffer.writeln('• Затирка: ${_result.groutWeight!.toStringAsFixed(2)} кг');
+    }
+    if (_result.waterproofingWeight != null) {
+      buffer.writeln('• Гидроизоляция: ${_result.waterproofingWeight!.toStringAsFixed(1)} кг (2 слоя)');
+    }
     buffer.writeln('• Крестики: ${_result.crossesNeeded} шт');
     if (_result.useSVP) {
-      buffer.writeln('• СВП (клипсы + клинья): ${_result.svpCount} комплектов');
+      buffer.writeln('• СВП (клипсы + клинья): ${_result.svpCount} шт');
     }
     buffer.writeln();
 
@@ -309,6 +364,10 @@ class _TileAdhesiveCalculatorScreenState
         ],
         const SizedBox(height: 16),
         _buildSVPToggle(),
+        const SizedBox(height: 16),
+        _buildGroutToggle(),
+        const SizedBox(height: 16),
+        _buildWaterproofingToggle(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
         const SizedBox(height: 16),
@@ -702,6 +761,86 @@ class _TileAdhesiveCalculatorScreenState
     );
   }
 
+  Widget _buildGroutToggle() {
+    const accentColor = CalculatorColors.interior;
+    return _card(
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _loc.translate('tile_adhesive.grout.title'),
+                  style: CalculatorDesignSystem.titleMedium.copyWith(
+                    color: CalculatorColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _loc.translate('tile_adhesive.grout.subtitle'),
+                  style: CalculatorDesignSystem.bodySmall.copyWith(
+                    color: CalculatorColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: _calculateGrout,
+            onChanged: (value) {
+              setState(() {
+                _calculateGrout = value;
+                _update();
+              });
+            },
+            activeTrackColor: accentColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWaterproofingToggle() {
+    const accentColor = CalculatorColors.interior;
+    return _card(
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _loc.translate('tile_adhesive.waterproofing.title'),
+                  style: CalculatorDesignSystem.titleMedium.copyWith(
+                    color: CalculatorColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _loc.translate('tile_adhesive.waterproofing.subtitle'),
+                  style: CalculatorDesignSystem.bodySmall.copyWith(
+                    color: CalculatorColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: _useWaterproofing,
+            onChanged: (value) {
+              setState(() {
+                _useWaterproofing = value;
+                _update();
+              });
+            },
+            activeTrackColor: accentColor,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMaterialsCard() {
     const accentColor = CalculatorColors.interior;
 
@@ -730,6 +869,20 @@ class _TileAdhesiveCalculatorScreenState
             '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('tile_adhesive.materials.liters')}',
         icon: Icons.water_drop,
       ),
+      if (_result.groutWeight != null)
+        ResultRowItem(
+          label: _loc.translate('tile_adhesive.materials.grout'),
+          value:
+              '${_result.groutWeight!.toStringAsFixed(2)} ${_loc.translate('tile_adhesive.materials.kg')}',
+          icon: Icons.gradient,
+        ),
+      if (_result.waterproofingWeight != null)
+        ResultRowItem(
+          label: _loc.translate('tile_adhesive.materials.waterproofing'),
+          value:
+              '${_result.waterproofingWeight!.toStringAsFixed(1)} ${_loc.translate('tile_adhesive.materials.kg')}',
+          icon: Icons.water,
+        ),
       ResultRowItem(
         label: _loc.translate('tile_adhesive.materials.crosses'),
         value:
@@ -740,7 +893,7 @@ class _TileAdhesiveCalculatorScreenState
         ResultRowItem(
           label: _loc.translate('tile_adhesive.materials.svp'),
           value:
-              '${_result.svpCount} ${_loc.translate('tile_adhesive.materials.sets')}',
+              '${_result.svpCount} ${_loc.translate('tile_adhesive.materials.pieces')}',
           icon: Icons.construction,
         ),
     ];
