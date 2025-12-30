@@ -148,7 +148,7 @@ class CalculatorNavigationHelper {
       return;
     }
 
-    if (definition.id == 'engineering_heating') {
+    if (definition.id == 'engineering_heating' || definition.id == 'floors_warm') {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
           UnderfloorHeatingCalculatorScreen(
