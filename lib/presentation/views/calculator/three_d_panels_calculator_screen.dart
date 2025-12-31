@@ -11,6 +11,7 @@ import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_result_header.dart';
 import '../../widgets/calculator/calculator_scaffold.dart';
+import '../../widgets/calculator/calculator_text_field.dart';
 import '../../widgets/calculator/mode_selector.dart';
 import '../../widgets/calculator/result_card.dart';
 import '../../widgets/existing/hint_card.dart';
@@ -83,13 +84,13 @@ class _ThreeDPanelsCalculatorScreenState
     if (initial == null) return;
 
     if (initial['area'] != null) {
-      _area = initial['area']!.clamp(1.0, 400.0);
+      _area = initial['area']!.clamp(3.0, 150.0);
     }
     if (initial['length'] != null) {
-      _length = initial['length']!.clamp(0.5, 20.0);
+      _length = initial['length']!.clamp(1.0, 12.0);
     }
     if (initial['height'] != null) {
-      _height = initial['height']!.clamp(0.5, 6.0);
+      _height = initial['height']!.clamp(2.0, 4.0);
     }
     if (initial['panelSize'] != null) {
       final raw = initial['panelSize']!;
@@ -310,6 +311,22 @@ class _ThreeDPanelsCalculatorScreenState
               },
             ),
           ),
+          const SizedBox(height: 12),
+          CalculatorTextField(
+            label: 'Площадь',
+            value: _area,
+            suffix: 'м²',
+            minValue: 3,
+            maxValue: 150,
+            decimalPlaces: 1,
+            accentColor: accentColor,
+            onChanged: (value) {
+              setState(() {
+                _area = value;
+                _update();
+              });
+            },
+          ),
         ],
       ),
     );
@@ -437,6 +454,17 @@ class _ThreeDPanelsCalculatorScreenState
             onChanged: onChanged,
           ),
         ),
+        const SizedBox(height: 12),
+        CalculatorTextField(
+          label: label,
+          value: value,
+          suffix: 'м',
+          minValue: min,
+          maxValue: max,
+          decimalPlaces: 1,
+          accentColor: accentColor,
+          onChanged: onChanged,
+        ),
       ],
     );
   }
@@ -490,8 +518,8 @@ class _ThreeDPanelsCalculatorScreenState
             child: Slider(
               value: _panelSize,
               min: 30,
-              max: 90,
-              divisions: 60,
+              max: 100,
+              divisions: 70,
               onChanged: (v) {
                 setState(() {
                   _panelSize = v;
@@ -499,6 +527,22 @@ class _ThreeDPanelsCalculatorScreenState
                 });
               },
             ),
+          ),
+          const SizedBox(height: 12),
+          CalculatorTextField(
+            label: 'Сторона панели',
+            value: _panelSize,
+            suffix: 'см',
+            minValue: 30,
+            maxValue: 100,
+            isInteger: true,
+            accentColor: accentColor,
+            onChanged: (value) {
+              setState(() {
+                _panelSize = value;
+                _update();
+              });
+            },
           ),
           const SizedBox(height: 4),
           Text(

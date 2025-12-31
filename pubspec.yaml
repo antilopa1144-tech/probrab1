@@ -24,6 +24,8 @@ dependencies:
   intl: ^0.20.2
   # State‑management библиотека Riverpod 3
   flutter_riverpod: ^2.6.1
+  # Типографика для премиального интерфейса
+  google_fonts: ^6.1.0
   # База данных Isar для оффлайн хранения проектов (community fork)
   isar_community: ^3.2.0
   isar_community_flutter_libs: ^3.2.0
