@@ -11,6 +11,7 @@ import '../calculator_constants.dart';
 import '../../usecases/calculate_cassette_ceiling.dart';
 import '../../usecases/calculate_ceiling_insulation.dart';
 import '../../usecases/calculate_ceiling_tiles.dart';
+import '../../usecases/calculate_gypsum.dart';
 import '../../usecases/calculate_rail_ceiling.dart';
 import '../../usecases/calculate_stretch_ceiling.dart';
 
@@ -61,6 +62,95 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         'tag.potolki',
         'ceilings',
         'ceilings_cassette',
+      ],
+    ),
+  CalculatorDefinitionV2(
+      id: 'ceilings_gkl',
+      titleKey: 'calculator.ceilings_gkl.title',
+      descriptionKey: 'calculator.ceilings_gkl.description',
+      category: CalculatorCategory.interior,
+      subCategoryKey: 'subcategory.ceilings',
+      fields: [
+        const CalculatorField(
+          key: 'area',
+          labelKey: 'input.area',
+          unitType: UnitType.squareMeters,
+          inputType: FieldInputType.number,
+          defaultValue: 20.0,
+          minValue: 1.0,
+          maxValue: 1000.0,
+          required: true,
+          order: 1,
+        ),
+        const CalculatorField(
+          key: 'layers',
+          labelKey: 'input.layers',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.number,
+          defaultValue: 1.0,
+          minValue: 1.0,
+          maxValue: 2.0,
+          required: true,
+          order: 2,
+        ),
+        const CalculatorField(
+          key: 'gkl_type',
+          labelKey: 'input.gkl_type',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.select,
+          defaultValue: 1.0,
+          required: true,
+          order: 3,
+          options: [
+            FieldOption(value: 1.0, labelKey: 'input.gkl_type.standard'),
+            FieldOption(value: 2.0, labelKey: 'input.gkl_type.moisture'),
+            FieldOption(value: 3.0, labelKey: 'input.gkl_type.fire'),
+          ],
+        ),
+        const CalculatorField(
+          key: 'use_insulation',
+          labelKey: 'input.use_insulation',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.checkbox,
+          defaultValue: 0.0,
+          required: false,
+          order: 4,
+        ),
+        const CalculatorField(
+          key: 'construction_type',
+          labelKey: 'input.construction_type',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.select,
+          defaultValue: 3.0,
+          required: true,
+          order: 5,
+          options: [
+            FieldOption(value: 3.0, labelKey: 'input.construction_type.ceiling'),
+          ],
+        ),
+      ],
+      beforeHints: [
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.choose_gklv_for_wet'),
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.step_profiles_60cm'),
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.use_sealing_tape'),
+      ],
+      afterHints: [
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.screw_depth_1mm'),
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.joints_offset'),
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.gap_from_floor'),
+      ],
+      useCase: CalculateGypsum(),
+      accentColor: kCalculatorAccentColor,
+      complexity: 3,
+      popularity: 9,
+      showToolsSection: false,
+      tags: [
+        'tag.vnutrennyaya_otdelka',
+        'tag.potolki',
+        'ceilings',
+        'gkl',
+        'gypsum',
+        'ceilings_gkl',
       ],
     ),
   CalculatorDefinitionV2(

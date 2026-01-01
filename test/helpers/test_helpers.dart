@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -42,6 +43,13 @@ void _installAssetBundleMock() {
 
     final encodedKey = utf8.decode(message.buffer.asUint8List());
     final assetKey = Uri.decodeFull(encodedKey);
+    if (assetKey == 'AssetManifest.bin') {
+      return const StandardMessageCodec().encodeMessage(<String, dynamic>{});
+    }
+    if (assetKey == 'AssetManifest.json') {
+      final bytes = utf8.encode('{}');
+      return ByteData.view(Uint8List.fromList(bytes).buffer);
+    }
     final normalized = assetKey.replaceAll('/', Platform.pathSeparator);
 
     File file = File(normalized);
