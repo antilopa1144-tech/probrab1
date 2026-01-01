@@ -11,6 +11,7 @@ import '../views/calculator/gypsum_calculator_screen.dart';
 import '../views/calculator/wallpaper_calculator_screen.dart';
 import '../views/calculator/self_leveling_floor_calculator_screen.dart';
 import '../views/calculator/tile_adhesive_calculator_screen.dart';
+import '../views/calculator/tile_calculator_screen.dart';
 import '../views/calculator/underfloor_heating_calculator_screen.dart';
 import '../views/calculator/three_d_panels_calculator_screen.dart';
 import '../views/calculator/terrace_calculator_screen.dart';
@@ -178,6 +179,18 @@ class CalculatorNavigationHelper {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
           TerraceCalculatorScreen(
+            definition: definition,
+            initialInputs: initialInputs,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'floors_tile') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          TileCalculatorScreen(
             definition: definition,
             initialInputs: initialInputs,
           ),
