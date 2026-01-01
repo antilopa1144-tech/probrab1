@@ -15,6 +15,7 @@ import '../views/calculator/tile_calculator_screen.dart';
 import '../views/calculator/underfloor_heating_calculator_screen.dart';
 import '../views/calculator/three_d_panels_calculator_screen.dart';
 import '../views/calculator/terrace_calculator_screen.dart';
+import '../views/calculator/wood_lining_calculator_screen.dart';
 import '../views/primer/primer_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
@@ -179,6 +180,18 @@ class CalculatorNavigationHelper {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
           TerraceCalculatorScreen(
+            definition: definition,
+            initialInputs: initialInputs,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'walls_wood') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          WoodLiningCalculatorScreen(
             definition: definition,
             initialInputs: initialInputs,
           ),
