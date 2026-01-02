@@ -95,9 +95,10 @@ class CalculateWarmFloor extends BaseCalculator {
     double matArea = 0.0;
 
     if (type == 1) {
-      // Нагревательный кабель: укладывается с шагом 10-15 см
-      // Плотность укладки: ~5-6 м кабеля на 1 м² (для мощности 150 Вт/м²)
-      cableLength = usefulArea * 4;
+      // Нагревательный кабель: длина зависит от общей мощности
+      // Стандартный кабель: 17-20 Вт/м, используем 18 Вт/м
+      const cablePowerPerMeter = 18.0; // Вт/м
+      cableLength = totalPower / cablePowerPerMeter;
     } else {
       // Нагревательный мат: готовая секция с фиксированным шагом
       matArea = usefulArea;

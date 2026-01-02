@@ -47,7 +47,7 @@ class HintCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    loc.translate(hint.messageKey),
+                    hint.message ?? loc.translate(hint.messageKey ?? ''),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                     ),

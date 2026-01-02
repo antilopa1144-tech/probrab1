@@ -49,8 +49,9 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Кабель = 14 * 4 = 56 м
-      expect(result.values['cableLength'], closeTo(56.0, 2.8));
+      // Кабель = totalPower / 18 = (14 * 150) / 18 ≈ 116.67 м
+      // usefulArea = 20 * 0.7 = 14 м², totalPower = 14 * 150 = 2100 Вт
+      expect(result.values['cableLength'], closeTo(116.67, 5.0));
       expect(result.values['matArea'], equals(0.0));
     });
 

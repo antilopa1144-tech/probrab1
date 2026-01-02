@@ -109,6 +109,20 @@ class _HeatingResult {
   });
 }
 
+class _MaterialItem {
+  final String name;
+  final String value;
+  final String? subtitle;
+  final IconData icon;
+
+  const _MaterialItem({
+    required this.name,
+    required this.value,
+    this.subtitle,
+    required this.icon,
+  });
+}
+
 class UnderfloorHeatingCalculatorScreen extends StatefulWidget {
   final CalculatorDefinitionV2 definition;
   final Map<String, double>? initialInputs;
@@ -133,6 +147,7 @@ class _UnderfloorHeatingCalculatorScreenState
   HeatingSystemType _systemType = HeatingSystemType.electricMat;
   RoomType _roomType = RoomType.living;
   bool _addInsulation = false;
+  double _usefulAreaPercent = 72.0; // Процент полезной площади (50-90%)
   late _HeatingResult _result;
   late AppLocalizations _loc;
 
@@ -163,8 +178,8 @@ class _UnderfloorHeatingCalculatorScreenState
   _HeatingResult _calculate() {
     final calculatedArea = _getCalculatedArea();
 
-    // Площадь обогрева = 70-75% от общей (минус мебель, сантехника)
-    final heatingArea = calculatedArea * 0.72;
+    // Площадь обогрева = настраиваемый % от общей (минус мебель, сантехника)
+    final heatingArea = calculatedArea * (_usefulAreaPercent / 100);
 
     // Мощность
     final totalPower = (heatingArea * _roomType.powerPerM2).round();
@@ -197,10 +212,14 @@ class _UnderfloorHeatingCalculatorScreenState
         break;
 
       case HeatingSystemType.infraredFilm:
-        // ИК плёнка укладывается полосами
+        // ИК плёнка укладывается полосами шириной 0.5 или 1.0 м
+        // Используем ширину 0.5м как наиболее распространённую
         filmArea = heatingArea;
-        // Контактные зажимы: 2 на каждые 3-4 м² + изоляция
-        contactClips = ((filmArea / 3.5).ceil() * 2).toInt();
+        // Рассчитываем количество полос: площадь / ширина полосы / длину комнаты
+        // Упрощённо: 1 полоса на каждые 2-3 м² при типичных размерах комнат
+        final filmStrips = (filmArea / 2.5).ceil();
+        // На каждую полосу: 2 контактных зажима (фаза + ноль на каждый конец)
+        contactClips = (filmStrips * 2).toInt();
         break;
 
       case HeatingSystemType.waterBased:
@@ -216,8 +235,9 @@ class _UnderfloorHeatingCalculatorScreenState
         // Теплоизоляция обязательна для водяного
         insulationArea = calculatedArea;
 
-        // Стяжка: толщина 50мм над трубой + 16мм труба = 66мм = 0.066м
-        screedVolume = calculatedArea * 0.066;
+        // Стяжка: 30мм над трубой (мин. по СП) + 16мм труба + 30мм под трубой = 76мм
+        // Рекомендуемая толщина 75-80мм для надёжного распределения тепла
+        screedVolume = calculatedArea * 0.08;
         break;
     }
 
@@ -381,6 +401,8 @@ class _UnderfloorHeatingCalculatorScreenState
         _buildSystemTypeSelector(),
         const SizedBox(height: 16),
         _buildRoomTypeSelector(),
+        const SizedBox(height: 16),
+        _buildUsefulAreaSlider(),
         const SizedBox(height: 16),
         if (_systemType != HeatingSystemType.waterBased) _buildInsulationToggle(),
         if (_systemType != HeatingSystemType.waterBased) const SizedBox(height: 16),
@@ -780,6 +802,90 @@ class _UnderfloorHeatingCalculatorScreenState
     );
   }
 
+  Widget _buildUsefulAreaSlider() {
+    const accentColor = CalculatorColors.engineering;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Площадь обогрева',
+                style: CalculatorDesignSystem.titleMedium.copyWith(
+                  color: CalculatorColors.textPrimary,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '${_usefulAreaPercent.round()}%',
+                  style: CalculatorDesignSystem.titleMedium.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Процент площади без мебели и техники',
+            style: CalculatorDesignSystem.bodySmall.copyWith(
+              color: CalculatorColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SliderTheme(
+            data: SliderThemeData(
+              activeTrackColor: accentColor,
+              inactiveTrackColor: accentColor.withValues(alpha: 0.2),
+              thumbColor: accentColor,
+              overlayColor: accentColor.withValues(alpha: 0.1),
+              trackHeight: 6,
+            ),
+            child: Slider(
+              value: _usefulAreaPercent,
+              min: 50,
+              max: 90,
+              divisions: 8,
+              onChanged: (value) {
+                setState(() {
+                  _usefulAreaPercent = value;
+                  _update();
+                });
+              },
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '50% (много мебели)',
+                style: CalculatorDesignSystem.bodySmall.copyWith(
+                  color: CalculatorColors.textSecondary,
+                  fontSize: 11,
+                ),
+              ),
+              Text(
+                '90% (мало мебели)',
+                style: CalculatorDesignSystem.bodySmall.copyWith(
+                  color: CalculatorColors.textSecondary,
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildInsulationToggle() {
     const accentColor = CalculatorColors.engineering;
     return _card(
@@ -823,26 +929,28 @@ class _UnderfloorHeatingCalculatorScreenState
   Widget _buildMaterialsCard() {
     const accentColor = CalculatorColors.engineering;
 
-    final results = <ResultRowItem>[];
+    final materials = <_MaterialItem>[];
 
     switch (_result.systemType) {
       case HeatingSystemType.electricMat:
-        results.add(ResultRowItem(
-          label: 'Нагревательный мат',
-          value: '${_result.matArea!.toStringAsFixed(1)} м² (${_result.totalPower} Вт)',
+        materials.add(_MaterialItem(
+          name: 'Нагревательный мат',
+          value: '${_result.matArea!.toStringAsFixed(1)} м²',
+          subtitle: '${_result.totalPower} Вт',
           icon: Icons.grid_on,
         ));
         break;
 
       case HeatingSystemType.electricCable:
-        results.addAll([
-          ResultRowItem(
-            label: 'Нагревательный кабель',
-            value: '${_result.cableLength!.toStringAsFixed(1)} м (${_result.totalPower} Вт)',
+        materials.addAll([
+          _MaterialItem(
+            name: 'Нагревательный кабель',
+            value: '${_result.cableLength!.toStringAsFixed(0)} м',
+            subtitle: '${_result.totalPower} Вт',
             icon: Icons.cable,
           ),
-          ResultRowItem(
-            label: 'Монтажная лента',
+          _MaterialItem(
+            name: 'Монтажная лента',
             value: '${(_result.heatingArea * 2).toStringAsFixed(0)} м',
             icon: Icons.straighten,
           ),
@@ -850,24 +958,24 @@ class _UnderfloorHeatingCalculatorScreenState
         break;
 
       case HeatingSystemType.infraredFilm:
-        results.addAll([
-          ResultRowItem(
-            label: 'ИК плёнка',
+        materials.addAll([
+          _MaterialItem(
+            name: 'ИК плёнка',
             value: '${_result.filmArea!.toStringAsFixed(1)} м²',
             icon: Icons.view_module,
           ),
-          ResultRowItem(
-            label: 'Контактные зажимы',
+          _MaterialItem(
+            name: 'Контактные зажимы',
             value: '${_result.contactClips} шт',
             icon: Icons.link,
           ),
-          ResultRowItem(
-            label: 'Изоляция контактов',
+          _MaterialItem(
+            name: 'Изоляция контактов',
             value: '${_result.contactClips} шт',
             icon: Icons.bolt,
           ),
-          ResultRowItem(
-            label: 'Теплоотражающая подложка',
+          _MaterialItem(
+            name: 'Теплоотражающая подложка',
             value: '${_result.area.toStringAsFixed(1)} м²',
             icon: Icons.layers,
           ),
@@ -875,39 +983,40 @@ class _UnderfloorHeatingCalculatorScreenState
         break;
 
       case HeatingSystemType.waterBased:
-        results.addAll([
-          ResultRowItem(
-            label: 'Труба PE-RT 16мм',
+        materials.addAll([
+          _MaterialItem(
+            name: 'Труба PE-RT 16мм',
             value: '${_result.pipeLength!.toStringAsFixed(0)} м',
             icon: Icons.timeline,
           ),
-          ResultRowItem(
-            label: 'Коллектор',
-            value: '${_result.collectorOutputs} выходов',
+          _MaterialItem(
+            name: 'Коллектор',
+            value: '${_result.collectorOutputs} вых.',
             icon: Icons.device_hub,
           ),
-          ResultRowItem(
-            label: 'Контуров',
+          _MaterialItem(
+            name: 'Контуров',
             value: '${_result.loopCount} шт',
             icon: Icons.loop,
           ),
-          ResultRowItem(
-            label: 'Теплоизоляция ПСБ-35 (50мм)',
+          _MaterialItem(
+            name: 'Теплоизоляция ПСБ-35',
             value: '${_result.insulationArea!.toStringAsFixed(1)} м²',
+            subtitle: '50 мм',
             icon: Icons.layers,
           ),
-          ResultRowItem(
-            label: 'Демпферная лента',
+          _MaterialItem(
+            name: 'Демпферная лента',
             value: '${(_result.area * 0.4).toStringAsFixed(0)} м',
             icon: Icons.straighten,
           ),
-          ResultRowItem(
-            label: 'Крепёж (скобы)',
+          _MaterialItem(
+            name: 'Крепёж (скобы)',
             value: '${(_result.heatingArea * 10).toStringAsFixed(0)} шт',
             icon: Icons.push_pin,
           ),
-          ResultRowItem(
-            label: 'Стяжка',
+          _MaterialItem(
+            name: 'Стяжка',
             value: '${_result.screedVolume!.toStringAsFixed(2)} м³',
             icon: Icons.foundation,
           ),
@@ -916,37 +1025,134 @@ class _UnderfloorHeatingCalculatorScreenState
     }
 
     // Общие материалы
-    results.addAll([
-      ResultRowItem(
-        label: 'Терморегулятор',
+    materials.addAll([
+      _MaterialItem(
+        name: 'Терморегулятор',
         value: '${_result.thermostatCount.toStringAsFixed(0)} шт',
         icon: Icons.thermostat,
       ),
-      ResultRowItem(
-        label: 'Датчик температуры',
+      _MaterialItem(
+        name: 'Датчик температуры',
         value: '${_result.sensorCount.toStringAsFixed(0)} шт',
         icon: Icons.sensors,
       ),
-      ResultRowItem(
-        label: 'Гофротруба для датчика',
+      _MaterialItem(
+        name: 'Гофротруба',
         value: '${_result.corrugatedTubeLength.toStringAsFixed(1)} м',
+        subtitle: 'для датчика',
         icon: Icons.sensor_door,
       ),
     ]);
 
     if (_result.insulationArea != null && _result.systemType != HeatingSystemType.waterBased) {
-      results.add(ResultRowItem(
-        label: 'Теплоизоляция',
+      materials.add(_MaterialItem(
+        name: 'Теплоизоляция',
         value: '${_result.insulationArea!.toStringAsFixed(1)} м²',
         icon: Icons.layers,
       ));
     }
 
-    return ResultCardLight(
-      title: 'Материалы',
-      titleIcon: Icons.construction,
-      results: results,
-      accentColor: accentColor,
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Заголовок
+          Row(
+            children: [
+              Icon(Icons.construction, color: accentColor, size: 22),
+              const SizedBox(width: 10),
+              Text(
+                'Материалы',
+                style: CalculatorDesignSystem.titleMedium.copyWith(
+                  color: CalculatorColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Список материалов
+          ...materials.asMap().entries.map((entry) {
+            final index = entry.key;
+            final item = entry.value;
+            final isLast = index == materials.length - 1;
+            return _buildMaterialRow(item, accentColor, isLast);
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMaterialRow(_MaterialItem item, Color accentColor, bool isLast) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Row(
+            children: [
+              // Иконка
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(item.icon, color: accentColor, size: 20),
+              ),
+              const SizedBox(width: 12),
+              // Название и подзаголовок
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.name,
+                      style: CalculatorDesignSystem.bodyMedium.copyWith(
+                        color: CalculatorColors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
+                      ),
+                    ),
+                    if (item.subtitle != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        item.subtitle!,
+                        style: CalculatorDesignSystem.bodySmall.copyWith(
+                          color: CalculatorColors.textSecondary,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              // Значение
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  item.value,
+                  style: CalculatorDesignSystem.titleSmall.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (!isLast)
+          Divider(
+            height: 1,
+            color: CalculatorColors.textSecondary.withValues(alpha: 0.15),
+          ),
+      ],
     );
   }
 
@@ -965,10 +1171,12 @@ class _UnderfloorHeatingCalculatorScreenState
             children: [
               Icon(Icons.info_outline, color: accentColor, size: 20),
               const SizedBox(width: 8),
-              Text(
-                'Дополнительная информация',
-                style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
+              Expanded(
+                child: Text(
+                  'Дополнительная информация',
+                  style: CalculatorDesignSystem.titleMedium.copyWith(
+                    color: CalculatorColors.textPrimary,
+                  ),
                 ),
               ),
             ],
@@ -991,7 +1199,7 @@ class _UnderfloorHeatingCalculatorScreenState
           Padding(
             padding: const EdgeInsets.only(left: 32),
             child: Text(
-              '72% от общей площади (без мебели и сантехники)',
+              '${_usefulAreaPercent.round()}% от общей площади (без мебели и сантехники)',
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
                 fontStyle: FontStyle.italic,
@@ -1070,15 +1278,15 @@ class _UnderfloorHeatingCalculatorScreenState
         hints.addAll([
           const CalculatorHint(
             type: HintType.important,
-            messageKey: 'hint.underfloor.mat_surface_must_be_level',
+            message: 'Поверхность пола должна быть ровной. Перепад высоты не более 5мм на 2м.',
           ),
           const CalculatorHint(
             type: HintType.tip,
-            messageKey: 'hint.underfloor.use_programmable_thermostat',
+            message: 'Используйте программируемый терморегулятор для экономии до 30% электроэнергии.',
           ),
           const CalculatorHint(
             type: HintType.tip,
-            messageKey: 'hint.underfloor.check_resistance_before_installation',
+            message: 'Проверьте сопротивление кабеля до и после укладки — оно должно соответствовать паспорту.',
           ),
         ]);
         break;
@@ -1086,15 +1294,15 @@ class _UnderfloorHeatingCalculatorScreenState
         hints.addAll([
           const CalculatorHint(
             type: HintType.important,
-            messageKey: 'hint.underfloor.cable_step_150_200mm',
+            message: 'Шаг укладки кабеля должен быть 10-15 см. Не допускайте пересечения витков.',
           ),
           const CalculatorHint(
             type: HintType.tip,
-            messageKey: 'hint.underfloor.use_installation_tape',
+            message: 'Используйте монтажную ленту для фиксации кабеля с равномерным шагом.',
           ),
           const CalculatorHint(
             type: HintType.warning,
-            messageKey: 'hint.underfloor.do_not_cut_cable',
+            message: 'Кабель нельзя резать и укорачивать! Выбирайте секцию под вашу площадь.',
           ),
         ]);
         break;
@@ -1102,15 +1310,15 @@ class _UnderfloorHeatingCalculatorScreenState
         hints.addAll([
           const CalculatorHint(
             type: HintType.important,
-            messageKey: 'hint.underfloor.film_requires_reflective_substrate',
+            message: 'Под ИК плёнку обязательна теплоотражающая подложка (не фольга!).',
           ),
           const CalculatorHint(
             type: HintType.tip,
-            messageKey: 'hint.underfloor.film_parallel_connection',
+            message: 'Полосы плёнки подключайте параллельно для равномерного нагрева.',
           ),
           const CalculatorHint(
             type: HintType.warning,
-            messageKey: 'hint.underfloor.isolate_all_contacts',
+            message: 'Тщательно изолируйте все контакты битумной лентой с двух сторон.',
           ),
         ]);
         break;
@@ -1118,15 +1326,15 @@ class _UnderfloorHeatingCalculatorScreenState
         hints.addAll([
           const CalculatorHint(
             type: HintType.important,
-            messageKey: 'hint.underfloor.water_requires_pressure_test',
+            message: 'Перед заливкой стяжки обязательно проведите опрессовку системы (6 бар, 24 часа).',
           ),
           const CalculatorHint(
             type: HintType.tip,
-            messageKey: 'hint.underfloor.water_use_oxygen_barrier_pipe',
+            message: 'Используйте трубу с кислородным барьером (PE-RT или PEX-a) для долговечности.',
           ),
           const CalculatorHint(
             type: HintType.tip,
-            messageKey: 'hint.underfloor.water_screed_drying_28_days',
+            message: 'Стяжка должна сохнуть минимум 28 дней. Включать систему можно только после полного высыхания.',
           ),
         ]);
         break;

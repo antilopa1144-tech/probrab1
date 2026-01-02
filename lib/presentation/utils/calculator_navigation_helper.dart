@@ -17,6 +17,7 @@ import '../views/calculator/three_d_panels_calculator_screen.dart';
 import '../views/calculator/terrace_calculator_screen.dart';
 import '../views/calculator/wood_lining_calculator_screen.dart';
 import '../views/calculator/gasblock_calculator_screen.dart';
+import '../views/calculator/electrical_calculator_screen.dart';
 import '../views/primer/primer_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
@@ -217,6 +218,18 @@ class CalculatorNavigationHelper {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
           TileCalculatorScreen(
+            definition: definition,
+            initialInputs: initialInputs,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'engineering_electrics') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          ElectricalCalculatorScreen(
             definition: definition,
             initialInputs: initialInputs,
           ),

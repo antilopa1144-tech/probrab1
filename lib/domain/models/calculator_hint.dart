@@ -18,8 +18,11 @@ class CalculatorHint {
   /// Тип подсказки
   final HintType type;
 
-  /// Ключ перевода для текста подсказки
-  final String messageKey;
+  /// Ключ перевода для текста подсказки (используется если message не задан)
+  final String? messageKey;
+
+  /// Прямой текст подсказки (приоритет над messageKey)
+  final String? message;
 
   /// Условие отображения подсказки
   final HintCondition? condition;
@@ -29,10 +32,11 @@ class CalculatorHint {
 
   const CalculatorHint({
     required this.type,
-    required this.messageKey,
+    this.messageKey,
+    this.message,
     this.condition,
     this.iconName,
-  });
+  }) : assert(messageKey != null || message != null, 'Either messageKey or message must be provided');
 }
 
 /// Условие отображения подсказки.

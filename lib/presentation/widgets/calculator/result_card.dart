@@ -196,11 +196,15 @@ class ResultCard extends StatelessWidget {
           ),
 
           // Значение справа
-          Text(
-            item.value,
-            style: CalculatorDesignSystem.bodyMedium.copyWith(
-              color: isTotal ? accentColor : CalculatorColors.resultCardText,
-              fontWeight: FontWeight.bold,
+          Flexible(
+            child: Text(
+              item.value,
+              style: CalculatorDesignSystem.bodyMedium.copyWith(
+                color: isTotal ? accentColor : CalculatorColors.resultCardText,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -315,11 +319,15 @@ class ResultCardLight extends StatelessWidget {
               ],
             ),
           ),
-          Text(
-            item.value,
-            style: CalculatorDesignSystem.bodyMedium.copyWith(
-              color: isTotal ? accentColor : CalculatorColors.textPrimary,
-              fontWeight: FontWeight.bold,
+          Flexible(
+            child: Text(
+              item.value,
+              style: CalculatorDesignSystem.bodyMedium.copyWith(
+                color: isTotal ? accentColor : CalculatorColors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
