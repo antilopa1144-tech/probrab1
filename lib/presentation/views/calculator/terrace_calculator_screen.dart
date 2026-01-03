@@ -618,106 +618,102 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
 
   Widget _buildMaterialsCard() {
     const accentColor = CalculatorColors.facade;
-    final results = <ResultRowItem>[];
+    final items = <MaterialItem>[];
 
     switch (_floorType) {
       case TerraceFloorType.decking:
-        results.add(
-          ResultRowItem(
-            label: 'Террасная доска (декинг)',
-            value: '${_result.deckingArea.toStringAsFixed(1)} м²',
-            icon: Icons.deck,
-          ),
-        );
+        items.add(MaterialItem(
+          name: 'Террасная доска (декинг)',
+          value: '${_result.deckingArea.toStringAsFixed(1)} м²',
+          subtitle: 'с запасом 10%',
+          icon: Icons.deck,
+        ));
         break;
       case TerraceFloorType.tile:
-        results.add(
-          ResultRowItem(
-            label: 'Плитка для террасы',
-            value: '${_result.tilesNeeded} шт',
-            icon: Icons.grid_on,
-          ),
-        );
+        items.add(MaterialItem(
+          name: 'Плитка для террасы',
+          value: '${_result.tilesNeeded} шт',
+          subtitle: 'с запасом 10%',
+          icon: Icons.grid_on,
+        ));
         break;
       case TerraceFloorType.board:
-        results.add(
-          ResultRowItem(
-            label: 'Доска настила',
-            value: '${_result.deckingBoards} шт',
-            icon: Icons.view_agenda,
-          ),
-        );
+        items.add(MaterialItem(
+          name: 'Доска настила',
+          value: '${_result.deckingBoards} шт',
+          subtitle: 'с запасом 10%',
+          icon: Icons.view_agenda,
+        ));
         break;
     }
 
     if (_hasRailing) {
-      results.addAll([
-        ResultRowItem(
-          label: 'Ограждение',
+      items.addAll([
+        MaterialItem(
+          name: 'Ограждение',
           value: '${_result.railingLength.toStringAsFixed(1)} м',
+          subtitle: 'По периметру',
           icon: Icons.straighten,
         ),
-        ResultRowItem(
-          label: 'Столбы ограждения',
+        MaterialItem(
+          name: 'Столбы ограждения',
           value: '${_result.railingPosts} шт',
+          subtitle: 'Шаг 2 м',
           icon: Icons.flag,
         ),
       ]);
     }
 
     if (_hasRoof) {
-      results.add(
-        ResultRowItem(
-          label: 'Площадь кровли',
-          value: '${_result.roofArea.toStringAsFixed(1)} м²',
-          icon: Icons.roofing,
-        ),
-      );
+      items.add(MaterialItem(
+        name: 'Площадь кровли',
+        value: '${_result.roofArea.toStringAsFixed(1)} м²',
+        subtitle: '+20% к площади террасы',
+        icon: Icons.roofing,
+      ));
 
       if (_roofType == TerraceRoofType.polycarbonate) {
-        results.add(
-          ResultRowItem(
-            label: 'Поликарбонат',
-            value: '${_result.polycarbonateSheets} листов',
-            icon: Icons.cloud_queue,
-          ),
-        );
+        items.add(MaterialItem(
+          name: 'Поликарбонат',
+          value: '${_result.polycarbonateSheets} листов',
+          subtitle: '6 м² / лист',
+          icon: Icons.cloud_queue,
+        ));
       } else if (_roofType == TerraceRoofType.profiledSheet) {
-        results.add(
-          ResultRowItem(
-            label: 'Профлист',
-            value: '${_result.profiledSheets} листов',
-            icon: Icons.table_chart,
-          ),
-        );
+        items.add(MaterialItem(
+          name: 'Профлист',
+          value: '${_result.profiledSheets} листов',
+          subtitle: '8 м² / лист',
+          icon: Icons.table_chart,
+        ));
       } else {
-        results.add(
-          ResultRowItem(
-            label: 'Мягкая кровля',
-            value: '${_result.roofingMaterial.toStringAsFixed(1)} м²',
-            icon: Icons.layers,
-          ),
-        );
+        items.add(MaterialItem(
+          name: 'Мягкая кровля',
+          value: '${_result.roofingMaterial.toStringAsFixed(1)} м²',
+          icon: Icons.layers,
+        ));
       }
 
-      results.addAll([
-        ResultRowItem(
-          label: 'Опорные столбы кровли',
+      items.addAll([
+        MaterialItem(
+          name: 'Опорные столбы кровли',
           value: '${_result.roofPosts} шт',
+          subtitle: '1 столб на 9 м²',
           icon: Icons.vertical_align_bottom,
         ),
-        ResultRowItem(
-          label: 'Бетон под опоры',
+        MaterialItem(
+          name: 'Бетон под опоры',
           value: '${_result.foundationVolume.toStringAsFixed(2)} м³',
+          subtitle: '20×20×50 см / опору',
           icon: Icons.foundation,
         ),
       ]);
     }
 
-    return ResultCardLight(
+    return MaterialsCardModern(
       title: _loc.translate('group.materials'),
       titleIcon: Icons.inventory_2,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }

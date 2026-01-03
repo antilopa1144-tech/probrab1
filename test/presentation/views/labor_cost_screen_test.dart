@@ -33,7 +33,7 @@ void main() {
         container: container,
         child: const MaterialApp(
           home: LaborCostScreen(
-            calculatorId: 'wall_paint',
+            calculatorId: 'paint_universal',
             quantity: 10,
           ),
         ),

@@ -27,10 +27,10 @@ void main() {
     });
 
     test('getById возвращает калькулятор по ID (O(1))', () {
-      final calc = CalculatorRegistry.getById('wall_paint');
+      final calc = CalculatorRegistry.getById('paint_universal');
 
       expect(calc, isNotNull);
-      expect(calc!.id, equals('wall_paint'));
+      expect(calc!.id, equals('paint_universal'));
     });
 
     test('getById возвращает null для несуществующего ID', () {
@@ -39,7 +39,7 @@ void main() {
     });
 
     test('exists проверяет наличие калькулятора (O(1))', () {
-      expect(CalculatorRegistry.exists('wall_paint'), isTrue);
+      expect(CalculatorRegistry.exists('paint_universal'), isTrue);
       expect(CalculatorRegistry.exists('nonexistent'), isFalse);
     });
 
@@ -158,7 +158,7 @@ void main() {
 
     test('clearCache очищает все кэши', () {
       // Заполняем кэши
-      CalculatorRegistry.getById('wall_paint');
+      CalculatorRegistry.getById('paint_universal');
       CalculatorRegistry.getPopular();
       CalculatorRegistry.getByCategory(CalculatorCategory.exterior);
 
@@ -166,7 +166,7 @@ void main() {
       CalculatorRegistry.clearCache();
 
       // После очистки всё должно работать
-      expect(CalculatorRegistry.exists('wall_paint'), isTrue);
+      expect(CalculatorRegistry.exists('paint_universal'), isTrue);
     });
 
     test('производительность: getById O(1) vs линейный поиск O(n)', () {

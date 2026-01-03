@@ -606,36 +606,34 @@ class _SelfLevelingFloorCalculatorScreenState
   Widget _buildMaterialsCard() {
     const accentColor = CalculatorColors.interior;
 
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: _loc.translate('self_leveling.materials.mixture'),
-        value:
-            '${_result.bagsNeeded} ${_loc.translate('self_leveling.materials.bags_unit')} × ${_result.bagWeight} ${_loc.translate('self_leveling.materials.kg')}',
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: _loc.translate('self_leveling.materials.mixture'),
+        value: '${_result.bagsNeeded} ${_loc.translate('self_leveling.materials.bags_unit')}',
+        subtitle: '× ${_result.bagWeight} ${_loc.translate('self_leveling.materials.kg')}',
         icon: Icons.shopping_bag,
       ),
-      ResultRowItem(
-        label: _loc.translate('self_leveling.materials.total_weight'),
-        value:
-            '${_result.totalWeight.toStringAsFixed(1)} ${_loc.translate('self_leveling.materials.kg')}',
+      MaterialItem(
+        name: _loc.translate('self_leveling.materials.total_weight'),
+        value: '${_result.totalWeight.toStringAsFixed(0)} ${_loc.translate('self_leveling.materials.kg')}',
         icon: Icons.scale,
       ),
-      ResultRowItem(
-        label: _loc.translate('self_leveling.materials.primer'),
-        value:
-            '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('self_leveling.materials.liters')}',
+      MaterialItem(
+        name: _loc.translate('self_leveling.materials.primer'),
+        value: '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('self_leveling.materials.liters')}',
         icon: Icons.water_drop,
       ),
-      ResultRowItem(
-        label: _loc.translate('self_leveling.materials.damper_tape'),
+      MaterialItem(
+        name: _loc.translate('self_leveling.materials.damper_tape'),
         value: '${_result.damperTape.toStringAsFixed(1)} м',
         icon: Icons.straighten,
       ),
     ];
 
-    return ResultCardLight(
+    return MaterialsCardModern(
       title: _loc.translate('self_leveling.materials.title'),
       titleIcon: Icons.construction,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }
@@ -643,23 +641,23 @@ class _SelfLevelingFloorCalculatorScreenState
   Widget _buildToolsCard() {
     const accentColor = CalculatorColors.interior;
 
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: _loc.translate('self_leveling.tools.spike_roller'),
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: _loc.translate('self_leveling.tools.spike_roller'),
         value: '${_result.spikeRollers} ${_loc.translate('self_leveling.tools.pieces')}',
         icon: Icons.roller_shades,
       ),
-      ResultRowItem(
-        label: _loc.translate('self_leveling.tools.spike_shoes'),
+      MaterialItem(
+        name: _loc.translate('self_leveling.tools.spike_shoes'),
         value: '${_result.spikeShoesCount} ${_loc.translate('self_leveling.tools.pair')}',
         icon: Icons.skateboarding,
       ),
     ];
 
-    return ResultCardLight(
+    return MaterialsCardModern(
       title: _loc.translate('self_leveling.tools.title'),
       titleIcon: Icons.build_circle,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }

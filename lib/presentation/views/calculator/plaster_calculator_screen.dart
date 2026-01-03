@@ -349,42 +349,43 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
   Widget _buildSpecCard() {
     const accentColor = CalculatorColors.walls;
 
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: _loc.translate('plaster_pro.summary.weight'),
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: _loc.translate('plaster_pro.summary.weight'),
         value: '${_result.totalWeight.toStringAsFixed(0)} кг',
         icon: Icons.scale,
       ),
     ];
 
     if (_useBeacons) {
-      results.add(ResultRowItem(
-        label: '${_loc.translate('plaster_pro.options.beacons')} ${_result.beaconSize}мм',
+      items.add(MaterialItem(
+        name: _loc.translate('plaster_pro.options.beacons'),
         value: '${_result.beacons} шт',
+        subtitle: '${_result.beaconSize} мм',
         icon: Icons.architecture,
       ));
     }
 
     if (_useMesh) {
-      results.add(ResultRowItem(
-        label: _loc.translate('plaster_pro.spec.mesh_title'),
+      items.add(MaterialItem(
+        name: _loc.translate('plaster_pro.spec.mesh_title'),
         value: '${_result.meshArea} м²',
         icon: Icons.grid_on,
       ));
     }
 
     if (_usePrimer) {
-      results.add(ResultRowItem(
-        label: _loc.translate('plaster_pro.options.primer'),
+      items.add(MaterialItem(
+        name: _loc.translate('plaster_pro.options.primer'),
         value: '${_result.primerLiters} л',
         icon: Icons.water_drop,
       ));
     }
 
-    return ResultCardLight(
+    return MaterialsCardModern(
       title: _loc.translate('plaster_pro.spec.title'),
       titleIcon: Icons.receipt_long,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }

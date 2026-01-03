@@ -1131,143 +1131,82 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
 
   Widget _buildMaterialsCard() {
     const accentColor = CalculatorColors.walls;
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Необходимые материалы',
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildMaterialRow(
-            'Блоки',
-            '${_result.blocks} шт',
-            'Объём кладки ${_result.volume.toStringAsFixed(2)} м³',
-            Icons.view_module,
-            accentColor,
-          ),
-          const SizedBox(height: 12),
-          if (_masonryMix == MasonryMix.glue) ...[
-            _buildMaterialRow(
-              'Клей',
-              '${_result.glueKg.toStringAsFixed(1)} кг',
-              '${_result.glueBags} меш. по 25 кг',
-              Icons.grain,
-              accentColor,
-            ),
-          ] else ...[
-            _buildMaterialRow(
-              'Раствор',
-              '${_result.mortarM3.toStringAsFixed(2)} м³',
-              'Цементно-песчаный',
-              Icons.construction,
-              accentColor,
-            ),
-          ],
-          if (_useReinforcement) ...[
-            const SizedBox(height: 12),
-            _buildMaterialRow(
-              'Армирование',
-              '${_result.reinforcementLength.toStringAsFixed(1)} м',
-              '2 прута по длине',
-              Icons.tune,
-              accentColor,
-            ),
-          ],
-          if (_usePrimer) ...[
-            const SizedBox(height: 12),
-            _buildMaterialRow(
-              'Грунтовка',
-              '${_result.primerLiters.toStringAsFixed(1)} л',
-              'Две стороны',
-              Icons.water_drop,
-              accentColor,
-            ),
-          ],
-          if (_usePlaster) ...[
-            const SizedBox(height: 12),
-            _buildMaterialRow(
-              'Штукатурка',
-              '${_result.plasterKg.toStringAsFixed(1)} кг',
-              'Две стороны',
-              Icons.layers,
-              accentColor,
-            ),
-          ],
-          if (_useMesh) ...[
-            const SizedBox(height: 12),
-            _buildMaterialRow(
-              'Сетка',
-              '${_result.meshArea.toStringAsFixed(1)} м²',
-              'Армирование',
-              Icons.grid_on,
-              accentColor,
-            ),
-          ],
-          if (_useLintels && _result.lintels > 0) ...[
-            const SizedBox(height: 12),
-            _buildMaterialRow(
-              'Перемычки',
-              '${_result.lintels} шт',
-              'Над проёмами',
-              Icons.call_split,
-              accentColor,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
 
-  Widget _buildMaterialRow(
-    String label,
-    String value,
-    String subtitle,
-    IconData icon,
-    Color accentColor,
-  ) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: accentColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, size: 20, color: accentColor),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                subtitle,
-                style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Text(
-          value,
-          style: CalculatorDesignSystem.titleMedium.copyWith(
-            color: accentColor,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: 'Блоки',
+        value: '${_result.blocks} шт',
+        subtitle: 'Объём: ${_result.volume.toStringAsFixed(2)} м³',
+        icon: Icons.view_module,
+      ),
+    ];
+
+    if (_masonryMix == MasonryMix.glue) {
+      items.add(MaterialItem(
+        name: 'Клей',
+        value: '${_result.glueBags} меш.',
+        subtitle: '${_result.glueKg.toStringAsFixed(0)} кг (25 кг/меш.)',
+        icon: Icons.grain,
+      ));
+    } else {
+      items.add(MaterialItem(
+        name: 'Раствор',
+        value: '${_result.mortarM3.toStringAsFixed(2)} м³',
+        subtitle: 'Цементно-песчаный',
+        icon: Icons.construction,
+      ));
+    }
+
+    if (_useReinforcement) {
+      items.add(MaterialItem(
+        name: 'Армирование',
+        value: '${_result.reinforcementLength.toStringAsFixed(0)} м',
+        subtitle: '2 прута по длине',
+        icon: Icons.tune,
+      ));
+    }
+
+    if (_usePrimer) {
+      items.add(MaterialItem(
+        name: 'Грунтовка',
+        value: '${_result.primerLiters.toStringAsFixed(1)} л',
+        subtitle: 'Две стороны',
+        icon: Icons.water_drop,
+      ));
+    }
+
+    if (_usePlaster) {
+      items.add(MaterialItem(
+        name: 'Штукатурка',
+        value: '${_result.plasterKg.toStringAsFixed(0)} кг',
+        subtitle: 'Две стороны',
+        icon: Icons.layers,
+      ));
+    }
+
+    if (_useMesh) {
+      items.add(MaterialItem(
+        name: 'Сетка',
+        value: '${_result.meshArea.toStringAsFixed(1)} м²',
+        subtitle: 'Армирование',
+        icon: Icons.grid_on,
+      ));
+    }
+
+    if (_useLintels && _result.lintels > 0) {
+      items.add(MaterialItem(
+        name: 'Перемычки',
+        value: '${_result.lintels} шт',
+        subtitle: 'Над проёмами',
+        icon: Icons.call_split,
+      ));
+    }
+
+    return MaterialsCardModern(
+      title: 'Необходимые материалы',
+      titleIcon: Icons.construction,
+      items: items,
+      accentColor: accentColor,
     );
   }
 

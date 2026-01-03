@@ -296,10 +296,10 @@ class _TileCalculatorScreenState extends State<TileCalculatorScreen> {
       svpCount = tilesNeeded * clipsPerTile;
     }
 
-    // Гидроизоляция (2 слоя по 0.4 кг/м²) + запас 10%
+    // Гидроизоляция (2 слоя по 1.5 кг/м²) + запас 10%
     double? waterproofingWeight;
     if (_useWaterproofing || _roomType.needsWaterproofing) {
-      waterproofingWeight = calculatedArea * 0.4 * 2 * 1.1;
+      waterproofingWeight = calculatedArea * 1.5 * 2 * 1.1;
     }
 
     // Подложка для выравнивания (с запасом 10%)
@@ -1259,67 +1259,72 @@ class _TileCalculatorScreenState extends State<TileCalculatorScreen> {
   Widget _buildMaterialsCard() {
     const accentColor = CalculatorColors.interior;
 
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: 'Плитка',
-        value: '${_result.tilesNeeded} шт (${_result.tilesArea.toStringAsFixed(1)} м²)',
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: 'Плитка',
+        value: '${_result.tilesNeeded} шт',
+        subtitle: '${_result.tilesArea.toStringAsFixed(1)} м²',
         icon: Icons.grid_on,
       ),
-      ResultRowItem(
-        label: 'Упаковок',
-        value: '${_result.boxesNeeded} коробок',
+      MaterialItem(
+        name: 'Упаковок',
+        value: '${_result.boxesNeeded}',
+        subtitle: 'коробок',
         icon: Icons.inventory_2,
       ),
-      ResultRowItem(
-        label: 'Клей',
-        value: '${_result.glueBags} меш. × 25 кг (${_result.glueWeight.toStringAsFixed(1)} кг)',
+      MaterialItem(
+        name: 'Клей',
+        value: '${_result.glueBags} меш.',
+        subtitle: '${_result.glueWeight.toStringAsFixed(0)} кг (25 кг/меш.)',
         icon: Icons.shopping_bag,
       ),
-      ResultRowItem(
-        label: 'Затирка',
-        value: '${_result.groutWeight.toStringAsFixed(2)} кг',
+      MaterialItem(
+        name: 'Затирка',
+        value: '${_result.groutWeight.toStringAsFixed(1)} кг',
         icon: Icons.gradient,
       ),
-      ResultRowItem(
-        label: 'Грунтовка',
+      MaterialItem(
+        name: 'Грунтовка',
         value: '${_result.primerLiters.toStringAsFixed(1)} л',
         icon: Icons.water_drop,
       ),
-      ResultRowItem(
-        label: 'Крестики',
+      MaterialItem(
+        name: 'Крестики',
         value: '${_result.crossesNeeded} шт',
         icon: Icons.add,
       ),
     ];
 
     if (_result.useSVP && _result.svpCount != null) {
-      results.add(ResultRowItem(
-        label: 'СВП',
+      items.add(MaterialItem(
+        name: 'СВП',
         value: '${_result.svpCount} компл.',
+        subtitle: 'Система выравнивания',
         icon: Icons.construction,
       ));
     }
 
     if (_result.useWaterproofing && _result.waterproofingWeight != null) {
-      results.add(ResultRowItem(
-        label: 'Гидроизоляция',
+      items.add(MaterialItem(
+        name: 'Гидроизоляция',
         value: '${_result.waterproofingWeight!.toStringAsFixed(1)} кг',
+        subtitle: '2 слоя',
         icon: Icons.water,
       ));
     }
 
     if (_result.useUnderlay && _result.underlayArea != null) {
-      results.add(ResultRowItem(
-        label: 'Подложка',
+      items.add(MaterialItem(
+        name: 'Подложка',
         value: '${_result.underlayArea!.toStringAsFixed(1)} м²',
         icon: Icons.layers,
       ));
     }
 
-    return ResultCardLight(
+    return MaterialsCardModern(
       title: 'Материалы',
       titleIcon: Icons.construction,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }
@@ -1327,92 +1332,35 @@ class _TileCalculatorScreenState extends State<TileCalculatorScreen> {
   Widget _buildAdditionalInfoCard() {
     const accentColor = CalculatorColors.interior;
 
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.info_outline, color: accentColor, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                'Информация о расчёте',
-                style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildInfoRow(
-            icon: Icons.grid_on,
-            label: 'Материал',
-            value: _result.material.name,
-            accentColor: accentColor,
-          ),
-          const SizedBox(height: 12),
-          _buildInfoRow(
-            icon: Icons.square_foot,
-            label: 'Размер плитки',
-            value: '${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} см',
-            accentColor: accentColor,
-          ),
-          const SizedBox(height: 12),
-          _buildInfoRow(
-            icon: Icons.pattern,
-            label: 'Способ укладки',
-            value: _result.layout.name,
-            accentColor: accentColor,
-          ),
-          const SizedBox(height: 12),
-          _buildInfoRow(
-            icon: Icons.add_shopping_cart,
-            label: 'Запас',
-            value: '+${_result.layout.reservePercent}%',
-            accentColor: accentColor,
-          ),
-          const SizedBox(height: 12),
-          _buildInfoRow(
-            icon: Icons.border_style,
-            label: 'Ширина шва',
-            value: '${_result.jointWidth.toStringAsFixed(1)} мм',
-            accentColor: accentColor,
-          ),
-        ],
+    final infoItems = <MaterialItem>[
+      MaterialItem(
+        name: 'Материал',
+        value: _result.material.name,
+        icon: Icons.grid_on,
       ),
-    );
-  }
+      MaterialItem(
+        name: 'Размер плитки',
+        value: '${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} см',
+        icon: Icons.square_foot,
+      ),
+      MaterialItem(
+        name: 'Способ укладки',
+        value: _result.layout.name,
+        subtitle: '+${_result.layout.reservePercent}% запас',
+        icon: Icons.pattern,
+      ),
+      MaterialItem(
+        name: 'Ширина шва',
+        value: '${_result.jointWidth.toStringAsFixed(1)} мм',
+        icon: Icons.border_style,
+      ),
+    ];
 
-  Widget _buildInfoRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color accentColor,
-  }) {
-    return Row(
-      children: [
-        Icon(icon, color: accentColor.withValues(alpha: 0.7), size: 18),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            label,
-            style: CalculatorDesignSystem.bodyMedium.copyWith(
-              color: CalculatorColors.textSecondary,
-            ),
-          ),
-        ),
-        const SizedBox(width: 4),
-        Flexible(
-          child: Text(
-            value,
-            style: CalculatorDesignSystem.titleSmall.copyWith(
-              color: CalculatorColors.textPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.end,
-          ),
-        ),
-      ],
+    return MaterialsCardModern(
+      title: 'Параметры расчёта',
+      titleIcon: Icons.info_outline,
+      items: infoItems,
+      accentColor: accentColor,
     );
   }
 

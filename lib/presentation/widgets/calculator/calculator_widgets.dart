@@ -4,6 +4,29 @@
 /// ```dart
 /// import 'package:prorab/presentation/widgets/calculator/calculator_widgets.dart';
 /// ```
+///
+/// ## Создание нового кастомного калькулятора
+///
+/// При создании нового калькулятора используйте следующие компоненты:
+///
+/// 1. **CalculatorScaffold** - основной контейнер экрана
+/// 2. **CalculatorResultHeader** - шапка с основными результатами
+/// 3. **MaterialsCardModern** - карточка материалов (ОБЯЗАТЕЛЬНО для списков)
+/// 4. **InputGroup** - группа полей ввода
+/// 5. **CalculatorTextField** - поле ввода числа
+///
+/// ### Пример карточки материалов:
+/// ```dart
+/// MaterialsCardModern(
+///   title: 'Материалы',
+///   titleIcon: Icons.construction,
+///   items: [
+///     MaterialItem(name: 'Плитка', value: '120 шт', icon: Icons.grid_on),
+///     MaterialItem(name: 'Клей', value: '5 меш.', subtitle: '25 кг', icon: Icons.shopping_bag),
+///   ],
+///   accentColor: CalculatorColors.interior,
+/// )
+/// ```
 library;
 
 // Основные компоненты
@@ -18,6 +41,7 @@ export 'calculator_text_field.dart';
 export 'dynamic_list.dart';
 
 // Компоненты для результатов
+// Включает: ResultCard, ResultCardLight, MaterialsCardModern, MaterialItem
 export 'result_card.dart';
 
 // Константы

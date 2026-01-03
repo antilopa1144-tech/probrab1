@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
+import '../../widgets/existing/hint_card.dart';
 
-/// Экран расчета краски (Интерьер/Фасад) по образцу HTML-калькулятора
+/// Экран расчета краски (Интерьер/Фасад)
 class PaintScreen extends StatefulWidget {
   const PaintScreen({super.key});
 
@@ -23,17 +27,17 @@ class _PaintScreenState extends State<PaintScreen> {
   double _manualArea = 30.0;
 
   // 0: Интерьер, 1: Фасад
-  int paintType = 0;
+  int _paintType = 0;
 
   // Индекс типа поверхности
-  int surfaceIndex = 0;
+  int _surfaceIndex = 0;
 
   // Параметры
-  double coverage = 10.0; // м²/л (по умолчанию для интерьера)
-  int layers = 2;
+  double _coverage = 10.0; // м²/л (по умолчанию для интерьера)
+  int _layers = 2;
 
   // Данные типов поверхностей
-  final List<List<Map<String, dynamic>>> surfaces = [
+  final List<List<Map<String, dynamic>>> _surfaces = [
     // Интерьер
     [
       {'name': 'Гладкая (х1.0)', 'factor': 1.0},
@@ -56,40 +60,102 @@ class _PaintScreenState extends State<PaintScreen> {
   // Обновление параметров при переключении типа краски
   void _onPaintTypeChanged(int newType) {
     setState(() {
-      paintType = newType;
-      surfaceIndex = 0;
+      _paintType = newType;
+      _surfaceIndex = 0;
       // Меняем стандартный расход: интерьер = 10, фасад = 7
-      coverage = newType == 0 ? 10.0 : 7.0;
+      _coverage = newType == 0 ? 10.0 : 7.0;
     });
+  }
+
+  String _generateExportText() {
+    final netArea = _getArea();
+    final surface = _surfaces[_paintType][_surfaceIndex];
+    final factor = surface['factor'] as double;
+    final liters = (netArea * _layers * factor) / _coverage;
+    final canSize = _paintType == 0 ? 9 : 10;
+    final cans = (liters / canSize).ceil();
+    final perimeter = (_roomWidth + _roomLength) * 2;
+    final tape = ((perimeter * 2) / 50).ceil();
+
+    final buffer = StringBuffer();
+    buffer.writeln('🎨 РАСЧЁТ КРАСКИ');
+    buffer.writeln('═' * 40);
+    buffer.writeln();
+
+    buffer.writeln('Тип: ${_paintType == 0 ? "Интерьер" : "Фасад"}');
+    buffer.writeln('Поверхность: ${surface['name']}');
+    buffer.writeln('Площадь: ${netArea.toStringAsFixed(1)} м²');
+    buffer.writeln();
+
+    buffer.writeln('🎨 МАТЕРИАЛЫ:');
+    buffer.writeln('─' * 40);
+    buffer.writeln('• Краска: ${liters.toStringAsFixed(1)} л ($_layers слоя)');
+    buffer.writeln('• Банки: $cans шт (по $canSize л)');
+    buffer.writeln('• Малярный скотч: $tape рул. (50м)');
+
+    buffer.writeln();
+    buffer.writeln('═' * 40);
+    buffer.writeln('Создано в ПроРаб');
+
+    return buffer.toString();
+  }
+
+  Future<void> _shareCalculation() async {
+    final text = _generateExportText();
+    await SharePlus.instance.share(ShareParams(text: text, subject: 'Расчёт краски'));
+  }
+
+  void _copyToClipboard() {
+    final text = _generateExportText();
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_loc.translate('common.copied_to_clipboard')),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
-    const accentColor = CalculatorColors.interior;
+    // Цвет зависит от типа: интерьер = interior, фасад = facade
+    final accentColor = _paintType == 0 ? CalculatorColors.interior : CalculatorColors.facade;
 
     final netArea = _getArea();
     final perimeter = (_roomWidth + _roomLength) * 2;
 
-    final surface = surfaces[paintType][surfaceIndex];
+    final surface = _surfaces[_paintType][_surfaceIndex];
     final factor = surface['factor'] as double;
 
     // Расчет краски
-    final liters = (netArea * layers * factor) / coverage;
+    final liters = (netArea * _layers * factor) / _coverage;
 
     // Размер банок: интерьер = 9л, фасад = 10л
-    final canSize = paintType == 0 ? 9 : 10;
+    final canSize = _paintType == 0 ? 9 : 10;
     final cans = (liters / canSize).ceil();
 
     // Малярный скотч: периметр х 2 (обвод плинтуса и потолка) / 50м рулон
     final tape = ((perimeter * 2) / 50).ceil();
 
     // Предупреждение для короеда на фасаде
-    final showWarning = paintType == 1 && surfaceIndex == 2;
+    final showWarning = _paintType == 1 && _surfaceIndex == 2;
 
     return CalculatorScaffold(
       title: _loc.translate('paint.title'),
       accentColor: accentColor,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.copy),
+          onPressed: _copyToClipboard,
+          tooltip: _loc.translate('common.copy'),
+        ),
+        IconButton(
+          icon: const Icon(Icons.share),
+          onPressed: _shareCalculation,
+          tooltip: _loc.translate('common.share'),
+        ),
+      ],
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,
         results: [
@@ -105,37 +171,22 @@ class _PaintScreenState extends State<PaintScreen> {
           ),
           ResultItem(
             label: '${liters.toStringAsFixed(1)} л',
-            value: '$layers ${_loc.translate('paint.layers_label')}',
+            value: '$_layers ${_loc.translate('paint.layers_label')}',
             icon: Icons.layers,
           ),
         ],
       ),
       children: [
-        // Геометрия
-        _buildGeometryCard(),
-
-        const SizedBox(height: 16),
-
         // Тип краски (Интерьер/Фасад)
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+        _card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 _loc.translate('paint.paint_type'),
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey),
+                style: CalculatorDesignSystem.titleMedium.copyWith(
+                  color: CalculatorColors.textPrimary,
+                ),
               ),
               const SizedBox(height: 12),
               ModeSelector(
@@ -143,7 +194,7 @@ class _PaintScreenState extends State<PaintScreen> {
                   _loc.translate('paint.interior'),
                   _loc.translate('paint.facade'),
                 ],
-                selectedIndex: paintType,
+                selectedIndex: _paintType,
                 onSelect: _onPaintTypeChanged,
                 accentColor: accentColor,
               ),
@@ -155,41 +206,42 @@ class _PaintScreenState extends State<PaintScreen> {
 
         // Выбор поверхности
         TypeSelectorGroup(
-          options: surfaces[paintType].map((s) => TypeSelectorOption(
+          options: _surfaces[_paintType].map((s) => TypeSelectorOption(
             icon: Icons.texture,
             title: s['name'] as String,
             subtitle: '',
           )).toList(),
-          selectedIndex: surfaceIndex,
-          onSelect: (index) => setState(() => surfaceIndex = index),
+          selectedIndex: _surfaceIndex,
+          onSelect: (index) => setState(() => _surfaceIndex = index),
           accentColor: accentColor,
         ),
 
         const SizedBox(height: 16),
 
+        // Геометрия
+        _buildGeometryCard(accentColor),
+
+        const SizedBox(height: 16),
+
         // Параметры (Расход и Слои)
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+        _card(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                _loc.translate('paint.parameters'),
+                style: CalculatorDesignSystem.titleMedium.copyWith(
+                  color: CalculatorColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   Expanded(
                     child: CalculatorTextField(
                       label: _loc.translate('paint.coverage'),
-                      value: coverage,
-                      onChanged: (v) => setState(() => coverage = v),
+                      value: _coverage,
+                      onChanged: (v) => setState(() => _coverage = v),
                       suffix: 'м²/л',
                       accentColor: accentColor,
                       minValue: 4,
@@ -200,8 +252,8 @@ class _PaintScreenState extends State<PaintScreen> {
                   Expanded(
                     child: CalculatorTextField(
                       label: _loc.translate('paint.layers'),
-                      value: layers.toDouble(),
-                      onChanged: (v) => setState(() => layers = v.toInt().clamp(1, 5)),
+                      value: _layers.toDouble(),
+                      onChanged: (v) => setState(() => _layers = v.toInt().clamp(1, 5)),
                       suffix: '',
                       accentColor: accentColor,
                       minValue: 1,
@@ -242,29 +294,29 @@ class _PaintScreenState extends State<PaintScreen> {
         const SizedBox(height: 16),
 
         // Результаты
-        ResultCardLight(
+        MaterialsCardModern(
           title: _loc.translate('paint.results_title'),
           titleIcon: Icons.receipt_long,
-          results: [
-            ResultRowItem(
-              label: _loc.translate('paint.area'),
+          items: [
+            MaterialItem(
+              name: _loc.translate('paint.area'),
               value: '${netArea.toStringAsFixed(1)} м²',
               icon: Icons.straighten,
             ),
-            ResultRowItem(
-              label: _loc.translate('paint.paint'),
+            MaterialItem(
+              name: _loc.translate('paint.paint'),
               value: '${liters.toStringAsFixed(1)} л',
               icon: Icons.format_paint,
-              subtitle: '$layers ${_loc.translate('paint.layers_label')}, ${factor}x',
+              subtitle: '$_layers ${_loc.translate('paint.layers_label')}, ${factor}x',
             ),
-            ResultRowItem(
-              label: _loc.translate('paint.cans'),
+            MaterialItem(
+              name: _loc.translate('paint.cans'),
               value: '$cans ${_loc.translate('paint.packs')}',
               icon: Icons.shopping_bag,
               subtitle: '${_loc.translate('paint.per')} $canSize л',
             ),
-            ResultRowItem(
-              label: _loc.translate('paint.tape'),
+            MaterialItem(
+              name: _loc.translate('paint.tape'),
               value: '$tape ${_loc.translate('paint.packs')}',
               icon: Icons.cleaning_services,
               subtitle: _loc.translate('paint.rolls_50m'),
@@ -273,28 +325,28 @@ class _PaintScreenState extends State<PaintScreen> {
           accentColor: accentColor,
         ),
 
+        const SizedBox(height: 24),
+
+        // Подсказки
+        _buildTipsSection(),
+
         const SizedBox(height: 20),
       ],
     );
   }
 
-  Widget _buildGeometryCard() {
-    const accentColor = CalculatorColors.interior;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+  Widget _buildGeometryCard(Color accentColor) {
+    return _card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            _loc.translate('common.dimensions'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
           ModeSelector(
             options: [
               _loc.translate('plaster_pro.mode.room'),
@@ -305,14 +357,13 @@ class _PaintScreenState extends State<PaintScreen> {
             accentColor: accentColor,
           ),
           const SizedBox(height: 16),
-          if (_inputMode == 0) ..._buildRoomInputs() else ..._buildManualInputs(),
+          if (_inputMode == 0) ..._buildRoomInputs(accentColor) else ..._buildManualInputs(accentColor),
         ],
       ),
     );
   }
 
-  List<Widget> _buildRoomInputs() {
-    const accentColor = CalculatorColors.interior;
+  List<Widget> _buildRoomInputs(Color accentColor) {
     return [
       Row(
         children: [
@@ -364,8 +415,7 @@ class _PaintScreenState extends State<PaintScreen> {
     ];
   }
 
-  List<Widget> _buildManualInputs() {
-    const accentColor = CalculatorColors.interior;
+  List<Widget> _buildManualInputs(Color accentColor) {
     return [
       CalculatorTextField(
         label: _loc.translate('plaster_pro.label.wall_area'),
@@ -377,5 +427,47 @@ class _PaintScreenState extends State<PaintScreen> {
         maxValue: 500,
       ),
     ];
+  }
+
+  Widget _buildTipsSection() {
+    const hints = [
+      CalculatorHint(
+        type: HintType.important,
+        messageKey: 'hint.paint.primer_first',
+      ),
+      CalculatorHint(
+        type: HintType.tip,
+        messageKey: 'hint.paint.dry_between_layers',
+      ),
+      CalculatorHint(
+        type: HintType.tip,
+        messageKey: 'hint.paint.temperature',
+      ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            _loc.translate('common.tips'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+        ),
+        const HintsList(hints: hints),
+      ],
+    );
+  }
+
+  Widget _card({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: CalculatorDesignSystem.cardDecoration(),
+      child: child,
+    );
   }
 }

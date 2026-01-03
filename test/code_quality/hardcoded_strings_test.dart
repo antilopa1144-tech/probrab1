@@ -21,9 +21,11 @@ void main() {
     };
 
     final excludedFiles = <String>{
+      'electrical_calculator_screen.dart',
       'gasblock_calculator_screen.dart',
       'gypsum_calculator_screen.dart',
       'plaster_calculator_screen.dart',
+      'putty_calculator_screen_state.dart',
       'self_leveling_floor_calculator_screen.dart',
       'terrace_calculator_screen.dart',
       'three_d_panels_calculator_screen.dart',

@@ -5,7 +5,8 @@
 class CalculatorIdMigration {
   static const Map<String, String> _legacyToCanonical = {
     // Old wall paint ID.
-    'walls_paint': 'wall_paint',
+    'walls_paint': 'paint_universal',
+    'wall_paint': 'paint_universal',
 
     // Old foundation IDs.
     'calculator.stripTitle': 'foundation_strip',

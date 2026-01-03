@@ -335,3 +335,217 @@ class ResultCardLight extends StatelessWidget {
     );
   }
 }
+
+/// Элемент для MaterialsCardModern.
+///
+/// Используется для отображения одной строки материала/параметра.
+///
+/// Пример:
+/// ```dart
+/// MaterialItem(
+///   name: 'Плитка',
+///   value: '120 шт',
+///   subtitle: '10.5 м²',
+///   icon: Icons.grid_on,
+/// )
+/// ```
+class MaterialItem {
+  /// Название материала/параметра
+  final String name;
+
+  /// Значение (количество, размер и т.д.)
+  final String value;
+
+  /// Дополнительная информация (опционально)
+  final String? subtitle;
+
+  /// Иконка материала
+  final IconData icon;
+
+  const MaterialItem({
+    required this.name,
+    required this.value,
+    this.subtitle,
+    required this.icon,
+  });
+}
+
+/// Современная карточка материалов с улучшенной читаемостью.
+///
+/// **ВАЖНО: Используйте этот виджет для всех новых кастомных калькуляторов!**
+///
+/// Каждый элемент имеет:
+/// - Иконку в цветном квадрате (36×36px)
+/// - Название и опциональный подзаголовок
+/// - Значение в цветном бейдже
+/// - Разделители между элементами
+///
+/// ## Пример использования в калькуляторе:
+///
+/// ```dart
+/// Widget _buildMaterialsCard() {
+///   const accentColor = CalculatorColors.interior;
+///
+///   final items = <MaterialItem>[
+///     MaterialItem(
+///       name: 'Плитка',
+///       value: '${_result.tilesNeeded} шт',
+///       subtitle: '${_result.tilesArea.toStringAsFixed(1)} м²',
+///       icon: Icons.grid_on,
+///     ),
+///     MaterialItem(
+///       name: 'Клей',
+///       value: '${_result.glueBags} меш.',
+///       subtitle: '25 кг/мешок',
+///       icon: Icons.shopping_bag,
+///     ),
+///     MaterialItem(
+///       name: 'Затирка',
+///       value: '${_result.groutWeight.toStringAsFixed(1)} кг',
+///       icon: Icons.gradient,
+///     ),
+///   ];
+///
+///   return MaterialsCardModern(
+///     title: 'Материалы',
+///     titleIcon: Icons.construction,
+///     items: items,
+///     accentColor: accentColor,
+///   );
+/// }
+/// ```
+///
+/// ## Рекомендации по иконкам:
+/// - Материалы: Icons.construction, Icons.category
+/// - Плитка/панели: Icons.grid_on, Icons.view_module
+/// - Жидкости (краска, клей): Icons.water_drop, Icons.format_paint
+/// - Упаковки: Icons.shopping_bag, Icons.inventory_2
+/// - Кабели/трубы: Icons.cable, Icons.timeline
+/// - Инструменты: Icons.build, Icons.handyman
+/// - Электрика: Icons.electrical_services, Icons.bolt
+/// - Информация: Icons.info_outline, Icons.summarize
+class MaterialsCardModern extends StatelessWidget {
+  final String title;
+  final IconData titleIcon;
+  final List<MaterialItem> items;
+  final Color accentColor;
+
+  const MaterialsCardModern({
+    super.key,
+    required this.title,
+    required this.titleIcon,
+    required this.items,
+    required this.accentColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: CalculatorDesignSystem.cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Заголовок
+          Row(
+            children: [
+              Icon(titleIcon, color: accentColor, size: 22),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  title,
+                  style: CalculatorDesignSystem.titleMedium.copyWith(
+                    color: CalculatorColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Список материалов
+          ...items.asMap().entries.map((entry) {
+            final index = entry.key;
+            final item = entry.value;
+            final isLast = index == items.length - 1;
+            return _buildMaterialRow(item, isLast);
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMaterialRow(MaterialItem item, bool isLast) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Row(
+            children: [
+              // Иконка в квадрате
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(item.icon, color: accentColor, size: 20),
+              ),
+              const SizedBox(width: 12),
+              // Название и подзаголовок
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.name,
+                      style: CalculatorDesignSystem.bodyMedium.copyWith(
+                        color: CalculatorColors.textPrimary,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
+                      ),
+                    ),
+                    if (item.subtitle != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        item.subtitle!,
+                        style: CalculatorDesignSystem.bodySmall.copyWith(
+                          color: CalculatorColors.textSecondary,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              // Значение в бейдже
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  item.value,
+                  style: CalculatorDesignSystem.titleSmall.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (!isLast)
+          Divider(
+            height: 1,
+            color: CalculatorColors.textSecondary.withValues(alpha: 0.15),
+          ),
+      ],
+    );
+  }
+}

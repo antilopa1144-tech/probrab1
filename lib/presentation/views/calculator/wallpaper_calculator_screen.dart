@@ -723,33 +723,34 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen> {
   Widget _buildMaterialsCard() {
     const accentColor = CalculatorColors.interior;
 
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: _loc.translate('wallpaper.materials.rolls'),
-        value: '${_result.rollsNeeded} ${_loc.translate('wallpaper.materials.rolls_unit')} (${_result.rollSizeName} м)',
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: _loc.translate('wallpaper.materials.rolls'),
+        value: '${_result.rollsNeeded} ${_loc.translate('wallpaper.materials.rolls_unit')}',
+        subtitle: _result.rollSizeName,
         icon: Icons.ballot,
       ),
-      ResultRowItem(
-        label: _loc.translate('wallpaper.materials.strips'),
+      MaterialItem(
+        name: _loc.translate('wallpaper.materials.strips'),
         value: '${_result.stripsNeeded} ${_loc.translate('wallpaper.materials.strips_unit')}',
         icon: Icons.view_week,
       ),
-      ResultRowItem(
-        label: _loc.translate('wallpaper.materials.glue'),
+      MaterialItem(
+        name: _loc.translate('wallpaper.materials.glue'),
         value: '${_result.glueNeededKg.toStringAsFixed(1)} ${_loc.translate('wallpaper.materials.kg')}',
         icon: Icons.colorize,
       ),
-      ResultRowItem(
-        label: _loc.translate('wallpaper.materials.primer'),
+      MaterialItem(
+        name: _loc.translate('wallpaper.materials.primer'),
         value: '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('wallpaper.materials.liters')}',
         icon: Icons.water_drop,
       ),
     ];
 
-    return ResultCardLight(
+    return MaterialsCardModern(
       title: _loc.translate('wallpaper.materials.title'),
       titleIcon: Icons.construction,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }

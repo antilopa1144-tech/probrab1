@@ -8,8 +8,6 @@ import '../../models/calculator_definition_v2.dart';
 import '../../models/calculator_field.dart';
 import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
-import '../../usecases/calculate_carpet.dart';
-import '../../usecases/calculate_floor_insulation.dart';
 import '../../usecases/calculate_laminate.dart';
 import '../../usecases/calculate_linoleum.dart';
 import '../../usecases/calculate_parquet.dart';
@@ -19,117 +17,6 @@ import '../../usecases/calculate_tile.dart';
 import '../../usecases/calculate_warm_floor.dart';
 
 final List<CalculatorDefinitionV2> flooringCalculators = [
-  CalculatorDefinitionV2(
-      id: 'floors_carpet',
-      titleKey: 'calculator.floors_carpet.title',
-      descriptionKey: 'calculator.floors_carpet.description',
-      category: CalculatorCategory.interior,
-      subCategoryKey: 'subcategory.floors',
-      fields: [
-        const CalculatorField(
-          key: 'area',
-          labelKey: 'input.floorArea',
-          unitType: UnitType.squareMeters,
-          inputType: FieldInputType.number,
-          defaultValue: 0.0,
-          required: true,
-          order: 1,
-        ),
-        const CalculatorField(
-          key: 'rollWidth',
-          labelKey: 'input.rollWidth',
-          unitType: UnitType.meters,
-          inputType: FieldInputType.number,
-          defaultValue: 4.0,
-          required: true,
-          order: 2,
-        ),
-      ],
-      beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.kovrolin_dolzhen_otlezhatsya_v'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.dlya_bolshih_ploschadey_ispolzuyte'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.na_malenkih_ploschadyah_mozhno'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ukladyvayte_v_odnom_napravlenii'),
-      ],
-      afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.kovrolin_dolzhen_otlezhatsya_v'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.dlya_bolshih_ploschadey_ispolzuyte'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.na_malenkih_ploschadyah_mozhno'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ukladyvayte_v_odnom_napravlenii'),
-      ],
-      useCase: CalculateCarpet(),
-      accentColor: kCalculatorAccentColor,
-      complexity: 2,
-      popularity: 10,
-      tags: [
-        'floors',
-        'tag.vnutrennyaya_otdelka',
-        'tag.poly',
-        'carpet',
-        'floors_carpet',
-      ],
-    ),
-  CalculatorDefinitionV2(
-      id: 'floors_insulation',
-      titleKey: 'calculator.floors_insulation.title',
-      descriptionKey: 'calculator.floors_insulation.description',
-      category: CalculatorCategory.interior,
-      subCategoryKey: 'subcategory.floors',
-      fields: [
-        const CalculatorField(
-          key: 'area',
-          labelKey: 'input.floorArea',
-          unitType: UnitType.squareMeters,
-          inputType: FieldInputType.number,
-          defaultValue: 0.0,
-          required: true,
-          order: 1,
-        ),
-        const CalculatorField(
-          key: 'insulationThickness',
-          labelKey: 'input.insulationThickness',
-          unitType: UnitType.millimeters,
-          inputType: FieldInputType.number,
-          defaultValue: 100.0,
-          required: true,
-          order: 2,
-        ),
-        const CalculatorField(
-          key: 'insulationType',
-          labelKey: 'input.insulationType',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.number,
-          defaultValue: 1.0,
-          required: true,
-          order: 3,
-        ),
-      ],
-      beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.uteplenie_pola_osobenno_vazhno'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.dlya_minvaty_obyazatelna_gidroizolyatsiya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.paroizolyatsiya_ukladyvaetsya_sverhu_uteplitelya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.penoplast_i_epps_ne'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ostavlyayte_zazor_2_3'),
-      ],
-      afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.uteplenie_pola_osobenno_vazhno'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.dlya_minvaty_obyazatelna_gidroizolyatsiya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.paroizolyatsiya_ukladyvaetsya_sverhu_uteplitelya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.penoplast_i_epps_ne'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ostavlyayte_zazor_2_3'),
-      ],
-      useCase: CalculateFloorInsulation(),
-      accentColor: kCalculatorAccentColor,
-      complexity: 2,
-      popularity: 10,
-      tags: [
-        'floors',
-        'floors_insulation',
-        'tag.vnutrennyaya_otdelka',
-        'tag.poly',
-        'insulation',
-      ],
-    ),
   CalculatorDefinitionV2(
       id: 'floors_laminate',
       titleKey: 'calculator.floors_laminate.title',

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
+import '../../widgets/existing/hint_card.dart';
 
 class DspScreen extends StatefulWidget {
   const DspScreen({super.key});
@@ -22,16 +26,16 @@ class _DspScreenState extends State<DspScreen> {
   double _manualArea = 30.0;
 
   // 0: Пол (Стяжка), 1: Стены (Штукатурка)
-  int applicationIndex = 0;
+  int _applicationIndex = 0;
 
   // 0: М300 (Пескобетон), 1: М150 (Универсальная)
-  int mixIndex = 0;
+  int _mixIndex = 0;
 
-  double thickness = 40.0; // мм (стандарт для стяжки)
-  double bagWeight = 40.0; // Пескобетон часто идет по 40кг или 50кг
+  double _thickness = 40.0; // мм (стандарт для стяжки)
+  double _bagWeight = 40.0; // Пескобетон часто идет по 40кг или 50кг
 
   // Данные смесей
-  final List<Map<String, dynamic>> mixes = [
+  final List<Map<String, dynamic>> _mixes = [
     {
       'name': 'М300 (Пескобетон)',
       'desc': 'Крупная фракция. Для прочной стяжки пола.',
@@ -46,7 +50,7 @@ class _DspScreenState extends State<DspScreen> {
 
   double _getArea() {
     if (_inputMode == 1) return _manualArea;
-    if (applicationIndex == 0) {
+    if (_applicationIndex == 0) {
       // Пол - площадь пола
       return _roomWidth * _roomLength;
     } else {
@@ -55,31 +59,97 @@ class _DspScreenState extends State<DspScreen> {
     }
   }
 
+  String _generateExportText() {
+    final area = _getArea();
+    final mix = _mixes[_mixIndex];
+    final double consumptionPerMm = mix['consumption'];
+    final double totalWeightKg = area * _thickness * consumptionPerMm;
+    final int bags = (totalWeightKg / _bagWeight).ceil();
+    final double totalWeightTons = totalWeightKg / 1000;
+    final double meshArea = _applicationIndex == 0 ? area * 1.1 : 0;
+    final double tapeMeters = _applicationIndex == 0 ? (_roomWidth + _roomLength) * 2 : 0;
+
+    final buffer = StringBuffer();
+    buffer.writeln('🧱 РАСЧЁТ ЦПС (${_applicationIndex == 0 ? "Стяжка" : "Штукатурка"})');
+    buffer.writeln('═' * 40);
+    buffer.writeln();
+
+    buffer.writeln('Смесь: ${mix['name']}');
+    buffer.writeln('Площадь: ${area.toStringAsFixed(1)} м²');
+    buffer.writeln('Толщина: ${_thickness.toInt()} мм');
+    buffer.writeln();
+
+    buffer.writeln('🧱 МАТЕРИАЛЫ:');
+    buffer.writeln('─' * 40);
+    buffer.writeln('• Сухая смесь: ${totalWeightKg.toInt()} кг ($bags мешков по ${_bagWeight.toInt()} кг)');
+    buffer.writeln('• Вес: ${totalWeightTons.toStringAsFixed(2)} т');
+
+    if (_applicationIndex == 0) {
+      buffer.writeln('• Сетка армирующая: ${meshArea.ceil()} м²');
+      buffer.writeln('• Демпферная лента: ${tapeMeters.toStringAsFixed(1)} м');
+      buffer.writeln('• Маяки: ${(area / 1.5).ceil()} шт');
+    } else {
+      buffer.writeln('• Грунтовка: ${(area * 0.2 / 10).ceil()} канистр (10л)');
+    }
+
+    buffer.writeln();
+    buffer.writeln('═' * 40);
+    buffer.writeln('Создано в ПроРаб');
+
+    return buffer.toString();
+  }
+
+  Future<void> _shareCalculation() async {
+    final text = _generateExportText();
+    await SharePlus.instance.share(ShareParams(text: text, subject: 'Расчёт ЦПС'));
+  }
+
+  void _copyToClipboard() {
+    final text = _generateExportText();
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_loc.translate('common.copied_to_clipboard')),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
-    const accentColor = CalculatorColors.interior;
+    // Пол = flooring, Стены = walls
+    final accentColor = _applicationIndex == 0 ? CalculatorColors.flooring : CalculatorColors.walls;
 
     final area = _getArea();
-    final mix = mixes[mixIndex];
+    final mix = _mixes[_mixIndex];
     final double consumptionPerMm = mix['consumption'];
-    final double totalWeightKg = area * thickness * consumptionPerMm;
-    final int bags = (totalWeightKg / bagWeight).ceil();
+    final double totalWeightKg = area * _thickness * consumptionPerMm;
+    final int bags = (totalWeightKg / _bagWeight).ceil();
     final double totalWeightTons = totalWeightKg / 1000;
 
     // Доп. материалы (Армирование и Лента)
-    // Сетка: только для пола, с запасом 10% на нахлест
-    final double meshArea = applicationIndex == 0 ? area * 1.1 : 0;
-    // Лента: периметр комнаты
-    final double tapeMeters = applicationIndex == 0 ? (_roomWidth + _roomLength) * 2 : 0;
+    final double meshArea = _applicationIndex == 0 ? area * 1.1 : 0;
+    final double tapeMeters = _applicationIndex == 0 ? (_roomWidth + _roomLength) * 2 : 0;
 
-    // Валидация (Предупреждение)
-    // Стяжка тоньше 30мм из ЦПС часто трескается без спец добавок
-    final bool thicknessWarning = applicationIndex == 0 && thickness < 30;
+    // Валидация
+    final bool thicknessWarning = _applicationIndex == 0 && _thickness < 30;
 
     return CalculatorScaffold(
       title: _loc.translate('dsp.title'),
       accentColor: accentColor,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.copy),
+          onPressed: _copyToClipboard,
+          tooltip: _loc.translate('common.copy'),
+        ),
+        IconButton(
+          icon: const Icon(Icons.share),
+          onPressed: _shareCalculation,
+          tooltip: _loc.translate('common.share'),
+        ),
+      ],
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,
         results: [
@@ -95,32 +165,22 @@ class _DspScreenState extends State<DspScreen> {
           ),
           ResultItem(
             label: '${totalWeightTons.toStringAsFixed(2)} ${_loc.translate('dsp.tons')}',
-            value: '${thickness.toInt()} мм',
+            value: '${_thickness.toInt()} мм',
             icon: Icons.layers,
           ),
         ],
       ),
       children: [
         // Выбор типа работ (Пол/Стены)
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+        _card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 _loc.translate('dsp.work_type'),
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey),
+                style: CalculatorDesignSystem.titleMedium.copyWith(
+                  color: CalculatorColors.textPrimary,
+                ),
               ),
               const SizedBox(height: 12),
               ModeSelector(
@@ -128,12 +188,11 @@ class _DspScreenState extends State<DspScreen> {
                   _loc.translate('dsp.screed_floor'),
                   _loc.translate('dsp.plaster_walls'),
                 ],
-                selectedIndex: applicationIndex,
+                selectedIndex: _applicationIndex,
                 onSelect: (i) => setState(() {
-                  applicationIndex = i;
-                  // Умное переключение: Пол -> М300 (40мм), Стены -> М150 (20мм)
-                  mixIndex = i == 0 ? 0 : 1;
-                  thickness = i == 0 ? 40.0 : 20.0;
+                  _applicationIndex = i;
+                  _mixIndex = i == 0 ? 0 : 1;
+                  _thickness = i == 0 ? 40.0 : 20.0;
                 }),
                 accentColor: accentColor,
               ),
@@ -143,11 +202,25 @@ class _DspScreenState extends State<DspScreen> {
 
         const SizedBox(height: 16),
 
-        // Геометрия
-        _buildGeometryCard(),
+        // Выбор смеси
+        TypeSelectorGroup(
+          options: _mixes.map((m) => TypeSelectorOption(
+            icon: Icons.grain,
+            title: m['name'] as String,
+            subtitle: m['desc'] as String,
+          )).toList(),
+          selectedIndex: _mixIndex,
+          onSelect: (index) => setState(() => _mixIndex = index),
+          accentColor: accentColor,
+        ),
 
-        // Подсказка для пола в режиме стен
-        if (applicationIndex == 0 && _inputMode == 0)
+        const SizedBox(height: 16),
+
+        // Геометрия
+        _buildGeometryCard(accentColor),
+
+        // Подсказка для пола
+        if (_applicationIndex == 0 && _inputMode == 0)
           Padding(
             padding: const EdgeInsets.only(top: 12),
             child: Container(
@@ -174,43 +247,25 @@ class _DspScreenState extends State<DspScreen> {
 
         const SizedBox(height: 16),
 
-        // Выбор смеси
-        TypeSelectorGroup(
-          options: mixes.map((m) => TypeSelectorOption(
-            icon: Icons.grain,
-            title: m['name'] as String,
-            subtitle: m['desc'] as String,
-          )).toList(),
-          selectedIndex: mixIndex,
-          onSelect: (index) => setState(() => mixIndex = index),
-          accentColor: accentColor,
-        ),
-
-        const SizedBox(height: 16),
-
         // Параметры (Толщина и Вес мешка)
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+        _card(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                _loc.translate('dsp.parameters'),
+                style: CalculatorDesignSystem.titleMedium.copyWith(
+                  color: CalculatorColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   Expanded(
                     child: CalculatorTextField(
-                      label: 'Слой (мм)',
-                      value: thickness,
-                      onChanged: (v) => setState(() => thickness = v),
+                      label: _loc.translate('dsp.layer_thickness'),
+                      value: _thickness,
+                      onChanged: (v) => setState(() => _thickness = v),
                       suffix: 'мм',
                       accentColor: accentColor,
                       minValue: 10,
@@ -220,9 +275,9 @@ class _DspScreenState extends State<DspScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: CalculatorTextField(
-                      label: 'Мешок (кг)',
-                      value: bagWeight,
-                      onChanged: (v) => setState(() => bagWeight = v),
+                      label: _loc.translate('dsp.bag_weight'),
+                      value: _bagWeight,
+                      onChanged: (v) => setState(() => _bagWeight = v),
                       suffix: 'кг',
                       accentColor: accentColor,
                       minValue: 25,
@@ -263,44 +318,44 @@ class _DspScreenState extends State<DspScreen> {
         const SizedBox(height: 16),
 
         // Результаты
-        ResultCardLight(
+        MaterialsCardModern(
           title: _loc.translate('dsp.results_title'),
           titleIcon: Icons.receipt_long,
-          results: [
-            ResultRowItem(
-              label: _loc.translate('dsp.area'),
+          items: [
+            MaterialItem(
+              name: _loc.translate('dsp.area'),
               value: '${area.toStringAsFixed(1)} м²',
               icon: Icons.straighten,
             ),
-            ResultRowItem(
-              label: _loc.translate('dsp.dry_mix'),
-              value: '${totalWeightKg.toInt()} ${_loc.translate('dsp.kg')} (${bags}x${bagWeight.toInt()})',
+            MaterialItem(
+              name: _loc.translate('dsp.dry_mix'),
+              value: '${totalWeightKg.toInt()} ${_loc.translate('dsp.kg')}',
               icon: Icons.shopping_bag,
-              subtitle: '${totalWeightTons.toStringAsFixed(2)} ${_loc.translate('dsp.tons')}',
+              subtitle: '${bags}x${_bagWeight.toInt()} кг = ${totalWeightTons.toStringAsFixed(2)} ${_loc.translate('dsp.tons')}',
             ),
-            if (applicationIndex == 0) ...[
-              ResultRowItem(
-                label: _loc.translate('dsp.mesh'),
+            if (_applicationIndex == 0) ...[
+              MaterialItem(
+                name: _loc.translate('dsp.mesh'),
                 value: '${meshArea.ceil()} м²',
                 icon: Icons.grid_on,
                 subtitle: _loc.translate('dsp.mesh_size'),
               ),
-              ResultRowItem(
-                label: _loc.translate('dsp.damper_tape'),
+              MaterialItem(
+                name: _loc.translate('dsp.damper_tape'),
                 value: '${tapeMeters.toStringAsFixed(1)} м',
                 icon: Icons.linear_scale,
                 subtitle: _loc.translate('dsp.perimeter'),
               ),
-              ResultRowItem(
-                label: _loc.translate('dsp.beacons'),
+              MaterialItem(
+                name: _loc.translate('dsp.beacons'),
                 value: '${(area / 1.5).ceil()} ${_loc.translate('dsp.packs')}',
                 icon: Icons.architecture,
                 subtitle: _loc.translate('dsp.beacon_step'),
               ),
             ],
-            if (applicationIndex == 1)
-              ResultRowItem(
-                label: _loc.translate('dsp.primer'),
+            if (_applicationIndex == 1)
+              MaterialItem(
+                name: _loc.translate('dsp.primer'),
                 value: '${(area * 0.2 / 10).ceil()} ${_loc.translate('dsp.packs')}',
                 icon: Icons.water_drop,
                 subtitle: _loc.translate('dsp.canisters_10l'),
@@ -309,28 +364,28 @@ class _DspScreenState extends State<DspScreen> {
           accentColor: accentColor,
         ),
 
+        const SizedBox(height: 24),
+
+        // Подсказки
+        _buildTipsSection(),
+
         const SizedBox(height: 20),
       ],
     );
   }
 
-  Widget _buildGeometryCard() {
-    const accentColor = CalculatorColors.interior;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+  Widget _buildGeometryCard(Color accentColor) {
+    return _card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            _loc.translate('common.dimensions'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
           ModeSelector(
             options: [
               _loc.translate('plaster_pro.mode.room'),
@@ -341,14 +396,13 @@ class _DspScreenState extends State<DspScreen> {
             accentColor: accentColor,
           ),
           const SizedBox(height: 16),
-          if (_inputMode == 0) ..._buildRoomInputs() else ..._buildManualInputs(),
+          if (_inputMode == 0) ..._buildRoomInputs(accentColor) else ..._buildManualInputs(accentColor),
         ],
       ),
     );
   }
 
-  List<Widget> _buildRoomInputs() {
-    const accentColor = CalculatorColors.interior;
+  List<Widget> _buildRoomInputs(Color accentColor) {
     return [
       Row(
         children: [
@@ -377,7 +431,7 @@ class _DspScreenState extends State<DspScreen> {
           ),
         ],
       ),
-      if (applicationIndex == 1) ...[
+      if (_applicationIndex == 1) ...[
         const SizedBox(height: 12),
         CalculatorTextField(
           label: _loc.translate('plaster_pro.label.height'),
@@ -402,11 +456,10 @@ class _DspScreenState extends State<DspScreen> {
     ];
   }
 
-  List<Widget> _buildManualInputs() {
-    const accentColor = CalculatorColors.interior;
+  List<Widget> _buildManualInputs(Color accentColor) {
     return [
       CalculatorTextField(
-        label: applicationIndex == 0
+        label: _applicationIndex == 0
             ? _loc.translate('dsp.floor_area')
             : _loc.translate('plaster_pro.label.wall_area'),
         value: _manualArea,
@@ -417,5 +470,47 @@ class _DspScreenState extends State<DspScreen> {
         maxValue: 500,
       ),
     ];
+  }
+
+  Widget _buildTipsSection() {
+    const hints = [
+      CalculatorHint(
+        type: HintType.important,
+        messageKey: 'hint.dsp.min_thickness',
+      ),
+      CalculatorHint(
+        type: HintType.tip,
+        messageKey: 'hint.dsp.reinforcement',
+      ),
+      CalculatorHint(
+        type: HintType.tip,
+        messageKey: 'hint.dsp.damper_tape',
+      ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            _loc.translate('common.tips'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+        ),
+        const HintsList(hints: hints),
+      ],
+    );
+  }
+
+  Widget _card({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: CalculatorDesignSystem.cardDecoration(),
+      child: child,
+    );
   }
 }

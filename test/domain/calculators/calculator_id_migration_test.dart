@@ -4,7 +4,8 @@ import 'package:probrab_ai/domain/calculators/calculator_id_migration.dart';
 void main() {
   group('CalculatorIdMigration', () {
     test('canonicalize maps known legacy IDs', () {
-      expect(CalculatorIdMigration.canonicalize('walls_paint'), 'wall_paint');
+      expect(CalculatorIdMigration.canonicalize('walls_paint'), 'paint_universal');
+      expect(CalculatorIdMigration.canonicalize('wall_paint'), 'paint_universal');
       expect(
         CalculatorIdMigration.canonicalize('calculator.stripTitle'),
         'foundation_strip',
@@ -47,7 +48,7 @@ void main() {
         'strip_foundation',
         'foundation_strip',
       ]);
-      expect(result, ['wall_paint', 'foundation_strip']);
+      expect(result, ['paint_universal', 'foundation_strip']);
     });
   });
 }

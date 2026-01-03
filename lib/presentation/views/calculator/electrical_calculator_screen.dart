@@ -246,7 +246,7 @@ class _ElectricalCalculatorScreenState
     if (_hasWashingMachine) cablePower += 8;
     if (_hasDishwasher) cablePower += 8;
     if (_hasConditioner) cablePower += 12; // Может быть далеко
-    if (_hasWarmFloor) cablePower += (_area * 0.3); // На площадь тёплого пола
+    if (_hasWarmFloor) cablePower += 10; // Кабель до терморегулятора
     cablePower *= 1.15; // +15% запас
 
     // Общая длина кабеля для гофры
@@ -1016,214 +1016,144 @@ class _ElectricalCalculatorScreenState
 
   Widget _buildPointsCard() {
     const accentColor = CalculatorColors.interior;
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.electrical_services,
-                color: accentColor,
-                size: 20,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Точки подключения',
-                style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildPointRow(
-            icon: Icons.power,
-            label: 'Розетки',
-            value: '${_result.sockets} шт',
-            subtitle: _inputMode == InputMode.byArea
-                ? '1 на 4 м² + кухня'
-                : 'Указано вручную',
-            accentColor: accentColor,
-          ),
-          const Divider(height: 24),
-          _buildPointRow(
-            icon: Icons.toggle_off,
-            label: 'Выключатели',
-            value: '${_result.switches} шт',
-            subtitle: _inputMode == InputMode.byArea
-                ? '1.5 на комнату'
-                : 'Указано вручную',
-            accentColor: accentColor,
-          ),
-          const Divider(height: 24),
-          _buildPointRow(
-            icon: Icons.lightbulb_outline,
-            label: 'Светильники',
-            value: '${_result.lights} шт',
-            subtitle: _inputMode == InputMode.byArea
-                ? '1 на 6 м²'
-                : 'Указано вручную',
-            accentColor: accentColor,
-          ),
-          if (_result.powerConsumers > 0) ...[
-            const Divider(height: 24),
-            _buildPointRow(
-              icon: Icons.bolt,
-              label: 'Мощные потребители',
-              value: '${_result.powerConsumers} шт',
-              subtitle: 'Отдельные линии',
-              accentColor: accentColor,
-            ),
-          ],
-        ],
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: 'Розетки',
+        value: '${_result.sockets} шт',
+        subtitle: _inputMode == InputMode.byArea
+            ? '1 на 4 м² + кухня'
+            : 'Указано вручную',
+        icon: Icons.power,
       ),
-    );
-  }
+      MaterialItem(
+        name: 'Выключатели',
+        value: '${_result.switches} шт',
+        subtitle: _inputMode == InputMode.byArea
+            ? '1.5 на комнату'
+            : 'Указано вручную',
+        icon: Icons.toggle_off,
+      ),
+      MaterialItem(
+        name: 'Светильники',
+        value: '${_result.lights} шт',
+        subtitle: _inputMode == InputMode.byArea
+            ? '1 на 6 м²'
+            : 'Указано вручную',
+        icon: Icons.lightbulb_outline,
+      ),
+      if (_result.powerConsumers > 0)
+        MaterialItem(
+          name: 'Мощные потребители',
+          value: '${_result.powerConsumers} шт',
+          subtitle: 'Отдельные линии',
+          icon: Icons.bolt,
+        ),
+    ];
 
-  Widget _buildPointRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    required String subtitle,
-    required Color accentColor,
-  }) {
-    return Row(
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: accentColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: accentColor, size: 20),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
-                ),
-              ),
-              Text(
-                subtitle,
-                style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Text(
-          value,
-          style: CalculatorDesignSystem.headlineMedium.copyWith(
-            color: accentColor,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
+    return MaterialsCardModern(
+      title: 'Точки подключения',
+      titleIcon: Icons.electrical_services,
+      items: items,
+      accentColor: accentColor,
     );
   }
 
   Widget _buildCableCard() {
     const accentColor = CalculatorColors.interior;
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: 'ВВГнг-LS 3×1.5',
+    final totalCable = _result.cableLight + _result.cableSocket + _result.cablePower;
+
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: 'ВВГнг-LS 3×1.5',
         value: '${_result.cableLight.toStringAsFixed(0)} м',
-        subtitle: 'Освещение (до 2.3 кВт на группу)',
+        subtitle: 'Освещение (до 2.3 кВт)',
         icon: Icons.cable,
       ),
-      ResultRowItem(
-        label: 'ВВГнг-LS 3×2.5',
+      MaterialItem(
+        name: 'ВВГнг-LS 3×2.5',
         value: '${_result.cableSocket.toStringAsFixed(0)} м',
-        subtitle: 'Розетки (до 3.5 кВт на группу)',
+        subtitle: 'Розетки (до 3.5 кВт)',
         icon: Icons.cable,
       ),
       if (_result.cablePower > 0)
-        ResultRowItem(
-          label: 'ВВГнг-LS 3×4 / 3×6',
+        MaterialItem(
+          name: 'ВВГнг-LS 3×4 / 3×6',
           value: '${_result.cablePower.toStringAsFixed(0)} м',
           subtitle: 'Мощные потребители',
           icon: Icons.cable,
         ),
       if (_result.conduitLength > 0)
-        ResultRowItem(
-          label: _wiringMethod == WiringMethod.hidden
+        MaterialItem(
+          name: _wiringMethod == WiringMethod.hidden
               ? 'Гофра ПВХ d16-20'
               : 'Кабель-канал',
           value: '${_result.conduitLength.toStringAsFixed(0)} м',
           subtitle: 'Защита кабеля',
           icon: Icons.linear_scale,
         ),
-      ResultRowItem(
-        label: 'Распред. коробки',
+      MaterialItem(
+        name: 'Распред. коробки',
         value: '${_result.junctionBoxes} шт',
         subtitle: 'd80 мм',
         icon: Icons.check_box_outline_blank,
       ),
+      MaterialItem(
+        name: 'Всего кабеля',
+        value: '${totalCable.toStringAsFixed(0)} м',
+        subtitle: 'Общая длина',
+        icon: Icons.summarize,
+      ),
     ];
 
-    final totalCable = _result.cableLight + _result.cableSocket + _result.cablePower;
-
-    return ResultCardLight(
+    return MaterialsCardModern(
       title: 'Кабель и материалы',
       titleIcon: Icons.inventory_2,
-      results: results,
-      totalRow: ResultRowItem(
-        label: 'Всего кабеля',
-        value: '${totalCable.toStringAsFixed(0)} м',
-      ),
+      items: items,
       accentColor: accentColor,
     );
   }
 
   Widget _buildEquipmentCard() {
     const accentColor = CalculatorColors.interior;
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: 'Электрощит',
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: 'Электрощит',
         value: 'от ${_result.panelModules} мод',
-        subtitle: 'Рекомендуем с запасом +4 модуля',
+        subtitle: 'С запасом +4 модуля',
         icon: Icons.dashboard,
       ),
-      ResultRowItem(
-        label: 'Автоматы C10-C16',
+      MaterialItem(
+        name: 'Автоматы C10-C16',
         value: '${_result.circuitBreakers} шт',
         subtitle: 'Свет + розетки',
         icon: Icons.toggle_on,
       ),
-      ResultRowItem(
-        label: 'УЗО 30мА',
+      MaterialItem(
+        name: 'УЗО 30мА',
         value: '${_result.rcdDevices} шт',
         subtitle: 'Включая вводное 100мА',
         icon: Icons.shield,
       ),
       if (_result.difAutomats > 0)
-        ResultRowItem(
-          label: 'Дифавтоматы',
+        MaterialItem(
+          name: 'Дифавтоматы',
           value: '${_result.difAutomats} шт',
           subtitle: 'Для мощных потребителей',
           icon: Icons.security,
         ),
       if (_result.hasGrounding)
-        const ResultRowItem(
-          label: 'Заземление',
+        const MaterialItem(
+          name: 'Заземление',
           value: '1 компл.',
           subtitle: 'Шина PE + контур',
           icon: Icons.electric_bolt,
         ),
     ];
 
-    return ResultCardLight(
+    return MaterialsCardModern(
       title: 'Оборудование щитка',
       titleIcon: Icons.electrical_services,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }

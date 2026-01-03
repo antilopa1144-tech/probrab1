@@ -13,7 +13,6 @@ import '../../usecases/calculate_brick_partition.dart';
 import '../../usecases/calculate_decorative_plaster.dart';
 import '../../usecases/calculate_decorative_stone.dart';
 import '../../usecases/calculate_gasblock_partition.dart';
-import '../../usecases/calculate_gvl_wall.dart';
 import '../../usecases/calculate_gypsum.dart';
 import '../../usecases/calculate_mdf_panels.dart';
 import '../../usecases/calculate_plaster.dart';
@@ -21,7 +20,6 @@ import '../../usecases/calculate_primer.dart';
 import '../../usecases/calculate_putty.dart';
 import '../../usecases/calculate_pvc_panels.dart';
 import '../../usecases/calculate_tile_glue.dart';
-import '../../usecases/calculate_wall_tile.dart';
 import '../../usecases/calculate_wallpaper.dart';
 import '../../usecases/calculate_wood_wall.dart';
 
@@ -323,95 +321,6 @@ final List<CalculatorDefinitionV2> wallsCalculators = [
         'partitions',
         'blocks',
         'partitions_blocks',
-      ],
-    ),
-  CalculatorDefinitionV2(
-      id: 'partitions_gkl',
-      titleKey: 'calculator.partitions_gkl.title',
-      descriptionKey: 'calculator.partitions_gkl.description',
-      category: CalculatorCategory.interior,
-      subCategoryKey: 'subcategory.partitions',
-      fields: [
-        const CalculatorField(
-          key: 'area',
-          labelKey: 'input.area',
-          unitType: UnitType.squareMeters,
-          inputType: FieldInputType.number,
-          defaultValue: 20.0,
-          minValue: 1.0,
-          maxValue: 1000.0,
-          required: true,
-          order: 1,
-        ),
-        const CalculatorField(
-          key: 'layers',
-          labelKey: 'input.layers',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.number,
-          defaultValue: 1.0,
-          minValue: 1.0,
-          maxValue: 2.0,
-          required: true,
-          order: 2,
-        ),
-        const CalculatorField(
-          key: 'gkl_type',
-          labelKey: 'input.gkl_type',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.select,
-          defaultValue: 1.0,
-          required: true,
-          order: 3,
-          options: [
-            FieldOption(value: 1.0, labelKey: 'input.gkl_type.standard'),
-            FieldOption(value: 2.0, labelKey: 'input.gkl_type.moisture'),
-            FieldOption(value: 3.0, labelKey: 'input.gkl_type.fire'),
-          ],
-        ),
-        const CalculatorField(
-          key: 'use_insulation',
-          labelKey: 'input.use_insulation',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.checkbox,
-          defaultValue: 0.0,
-          required: false,
-          order: 4,
-        ),
-        const CalculatorField(
-          key: 'construction_type',
-          labelKey: 'input.construction_type',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.select,
-          defaultValue: 2.0,
-          required: true,
-          order: 5,
-          options: [
-            FieldOption(value: 2.0, labelKey: 'input.construction_type.partition'),
-          ],
-        ),
-      ],
-      beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.choose_gklv_for_wet'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.step_profiles_60cm'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.use_sealing_tape'),
-      ],
-      afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.screw_depth_1mm'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.joints_offset'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.gap_from_floor'),
-      ],
-      useCase: CalculateGypsum(),
-      accentColor: kCalculatorAccentColor,
-      complexity: 3,
-      popularity: 9,
-      showToolsSection: false,
-      tags: [
-        'tag.vnutrennyaya_otdelka',
-        'tag.peregorodki',
-        'gkl',
-        'gypsum',
-        'partitions',
-        'partitions_gkl',
       ],
     ),
   CalculatorDefinitionV2(
@@ -732,54 +641,6 @@ final List<CalculatorDefinitionV2> wallsCalculators = [
       ],
     ),
   CalculatorDefinitionV2(
-      id: 'walls_gvl',
-      titleKey: 'calculator.walls_gvl.title',
-      descriptionKey: 'calculator.walls_gvl.description',
-      category: CalculatorCategory.interior,
-      subCategoryKey: 'subcategory.walls',
-      fields: [
-        const CalculatorField(
-          key: 'area',
-          labelKey: 'input.wallArea',
-          unitType: UnitType.squareMeters,
-          inputType: FieldInputType.number,
-          defaultValue: 0.0,
-          required: true,
-          order: 1,
-        ),
-        const CalculatorField(
-          key: 'layers',
-          labelKey: 'input.layers',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.number,
-          defaultValue: 1.0,
-          required: true,
-          order: 2,
-        ),
-      ],
-      beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.gvl_tyazhelee_gkl_usilte'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_samorezy_dlya_gvl'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.zazor_mezhdu_listami_5'),
-      ],
-      afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.gvl_tyazhelee_gkl_usilte'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_samorezy_dlya_gvl'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.zazor_mezhdu_listami_5'),
-      ],
-      useCase: CalculateGvlWall(),
-      accentColor: kCalculatorAccentColor,
-      complexity: 2,
-      popularity: 10,
-      tags: [
-        'tag.vnutrennyaya_otdelka',
-        'gvl',
-        'walls',
-        'walls_gvl',
-        'tag.steny',
-      ],
-    ),
-  CalculatorDefinitionV2(
       id: 'walls_mdf_panels',
       titleKey: 'calculator.walls_mdf_panels.title',
       descriptionKey: 'calculator.walls_mdf_panels.description',
@@ -875,63 +736,6 @@ final List<CalculatorDefinitionV2> wallsCalculators = [
         'walls_pvc_panels',
         'pvc',
         'panels',
-      ],
-    ),
-  CalculatorDefinitionV2(
-      id: 'walls_tile',
-      titleKey: 'calculator.walls_tile.title',
-      descriptionKey: 'calculator.walls_tile.description',
-      category: CalculatorCategory.interior,
-      subCategoryKey: 'subcategory.walls',
-      fields: [
-        const CalculatorField(
-          key: 'area',
-          labelKey: 'input.wallArea',
-          unitType: UnitType.squareMeters,
-          inputType: FieldInputType.number,
-          defaultValue: 0.0,
-          required: true,
-          order: 1,
-        ),
-        const CalculatorField(
-          key: 'tileWidth',
-          labelKey: 'input.tileWidth',
-          unitType: UnitType.centimeters,
-          inputType: FieldInputType.number,
-          defaultValue: 30.0,
-          required: true,
-          order: 2,
-        ),
-        const CalculatorField(
-          key: 'tileHeight',
-          labelKey: 'input.tileHeight',
-          unitType: UnitType.centimeters,
-          inputType: FieldInputType.number,
-          defaultValue: 60.0,
-          required: true,
-          order: 3,
-        ),
-      ],
-      beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dobavte_10_zapas_na_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_krestiki_dlya_rovnyh'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nachinayte_so_vtorogo_ryada'),
-      ],
-      afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dobavte_10_zapas_na_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_krestiki_dlya_rovnyh'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nachinayte_so_vtorogo_ryada'),
-      ],
-      useCase: CalculateWallTile(),
-      accentColor: kCalculatorAccentColor,
-      complexity: 2,
-      popularity: 10,
-      tags: [
-        'tag.vnutrennyaya_otdelka',
-        'walls_tile',
-        'walls',
-        'tag.steny',
-        'tile',
       ],
     ),
   CalculatorDefinitionV2(

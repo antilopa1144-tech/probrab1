@@ -109,7 +109,7 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'walls_paint',
             title: 'work.item.walls_paint.title',
             icon: Icons.format_paint,
-            calculatorId: 'wall_paint',
+            calculatorId: 'paint_universal',
             tips: [
               'work.item.walls_paint.tip.1',
               'work.item.walls_paint.tip.2',
@@ -191,13 +191,11 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'walls_gvl',
             title: 'work.item.walls_gvl.title',
             icon: Icons.layers_clear,
-            calculatorId: 'walls_gvl',
           ),
           WorkItemDefinition(
             id: 'walls_tile',
             title: 'work.item.walls_tile.title',
             icon: Icons.apps,
-            calculatorId: 'walls_tile',
           ),
           WorkItemDefinition(
             id: 'walls_mixes',
@@ -217,7 +215,7 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'ceilings_paint',
             title: 'work.item.ceilings_paint.title',
             icon: Icons.brush_outlined,
-            calculatorId: 'ceilings_paint',
+            calculatorId: 'paint_universal',
           ),
           WorkItemDefinition(
             id: 'ceilings_stretch',
@@ -229,7 +227,6 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'ceilings_gkl',
             title: 'work.item.ceilings_gkl.title',
             icon: Icons.grid_on,
-            calculatorId: 'ceilings_gkl',
           ),
           WorkItemDefinition(
             id: 'ceilings_rail',
@@ -247,7 +244,6 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'ceilings_tiles',
             title: 'work.item.ceilings_tiles.title',
             icon: Icons.apps_rounded,
-            calculatorId: 'ceilings_tiles',
           ),
           WorkItemDefinition(
             id: 'ceilings_insulation',
@@ -297,7 +293,6 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'floors_carpet',
             title: 'work.item.floors_carpet.title',
             icon: Icons.texture_outlined,
-            calculatorId: 'floors_carpet',
           ),
           WorkItemDefinition(
             id: 'floors_self_leveling',
@@ -321,7 +316,6 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'floors_insulation',
             title: 'work.item.floors_insulation.title',
             icon: Icons.ac_unit,
-            calculatorId: 'floors_insulation',
             tips: [
               'work.item.floors_insulation.tip.1',
               'work.item.floors_insulation.tip.2',
@@ -404,7 +398,7 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'partitions_gkl',
             title: 'work.item.partitions_gkl.title',
             icon: Icons.view_array,
-            calculatorId: 'partitions_gkl',
+            calculatorId: 'gypsum_board',
           ),
           WorkItemDefinition(
             id: 'partitions_blocks',
@@ -429,13 +423,11 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'insulation_mineral',
             title: 'work.item.insulation_mineral.title',
             icon: Icons.grass,
-            calculatorId: 'insulation_mineral',
           ),
           WorkItemDefinition(
             id: 'insulation_foam',
             title: 'work.item.insulation_foam.title',
             icon: Icons.blur_circular,
-            calculatorId: 'insulation_foam',
           ),
           WorkItemDefinition(
             id: 'insulation_sound',
@@ -601,7 +593,6 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'facade_siding',
             title: 'work.item.facade_siding.title',
             icon: Icons.layers_outlined,
-            calculatorId: 'exterior_siding',
             tips: [
               'work.item.facade_siding.tip.1',
               'work.item.facade_siding.tip.2',
@@ -628,7 +619,6 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'facade_wood',
             title: 'work.item.facade_wood.title',
             icon: Icons.park,
-            calculatorId: 'exterior_wood',
           ),
           WorkItemDefinition(
             id: 'facade_insulation',
@@ -639,7 +629,6 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'facade_wet',
             title: 'work.item.facade_wet.title',
             icon: Icons.waterfall_chart_rounded,
-            calculatorId: 'exterior_wet_facade',
           ),
           WorkItemDefinition(
             id: 'facade_membrane',

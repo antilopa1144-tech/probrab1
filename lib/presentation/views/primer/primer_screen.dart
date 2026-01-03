@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
+import '../../widgets/existing/hint_card.dart';
 
 class PrimerScreen extends StatefulWidget {
   const PrimerScreen({super.key});
@@ -25,7 +29,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
   int _layers = 1;
   double _dilutionWater = 3.0;
 
-  final List<Map<String, Object>> primers = const [
+  final List<Map<String, Object>> _primers = const [
     {
       'name': 'Универсальная',
       'desc': 'Глубокого проникновения',
@@ -65,13 +69,74 @@ class _PrimerScreenState extends State<PrimerScreen> {
     return (_roomWidth + _roomLength) * 2 * _roomHeight - _openingsArea;
   }
 
+  String _generateExportText() {
+    final area = _getArea();
+    final primer = _primers[_typeIndex];
+    final double consumption = primer['consumption'] as double;
+    final bool isConcentrate = primer['is_concentrate'] as bool;
+    final String unit = primer['unit'] as String;
+
+    final double totalSolutionNeeded = area * _layers * consumption;
+    double buyAmount;
+    double waterAmount = 0;
+
+    if (isConcentrate) {
+      final double totalParts = 1 + _dilutionWater;
+      buyAmount = totalSolutionNeeded / totalParts;
+      waterAmount = totalSolutionNeeded - buyAmount;
+    } else {
+      buyAmount = totalSolutionNeeded;
+    }
+
+    final buffer = StringBuffer();
+    buffer.writeln('💧 РАСЧЁТ ГРУНТОВКИ');
+    buffer.writeln('═' * 40);
+    buffer.writeln();
+
+    buffer.writeln('Тип: ${primer['name']}');
+    buffer.writeln('Площадь: ${area.toStringAsFixed(1)} м²');
+    buffer.writeln('Слоёв: $_layers');
+    buffer.writeln();
+
+    buffer.writeln('💧 МАТЕРИАЛЫ:');
+    buffer.writeln('─' * 40);
+    buffer.writeln('• ${isConcentrate ? "Концентрат" : "Грунтовка"}: ${buyAmount.toStringAsFixed(1)} $unit');
+
+    if (isConcentrate) {
+      buffer.writeln('• Вода: ${waterAmount.toStringAsFixed(1)} л');
+      buffer.writeln('• Готовый раствор: ${totalSolutionNeeded.toStringAsFixed(1)} л');
+    }
+
+    buffer.writeln();
+    buffer.writeln('═' * 40);
+    buffer.writeln('Создано в ПроРаб');
+
+    return buffer.toString();
+  }
+
+  Future<void> _shareCalculation() async {
+    final text = _generateExportText();
+    await SharePlus.instance.share(ShareParams(text: text, subject: 'Расчёт грунтовки'));
+  }
+
+  void _copyToClipboard() {
+    final text = _generateExportText();
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_loc.translate('common.copied_to_clipboard')),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
     const accentColor = CalculatorColors.interior;
 
     final area = _getArea();
-    final primer = primers[_typeIndex];
+    final primer = _primers[_typeIndex];
     final double consumption = primer['consumption'] as double;
     final bool isConcentrate = primer['is_concentrate'] as bool;
     final double packSize = primer['pack_size'] as double;
@@ -94,6 +159,18 @@ class _PrimerScreenState extends State<PrimerScreen> {
     return CalculatorScaffold(
       title: _loc.translate('primer.title'),
       accentColor: accentColor,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.copy),
+          onPressed: _copyToClipboard,
+          tooltip: _loc.translate('common.copy'),
+        ),
+        IconButton(
+          icon: const Icon(Icons.share),
+          onPressed: _shareCalculation,
+          tooltip: _loc.translate('common.share'),
+        ),
+      ],
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,
         results: [
@@ -117,7 +194,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
       children: [
         // Выбор типа грунтовки
         TypeSelectorGroup(
-          options: primers.map((p) => TypeSelectorOption(
+          options: _primers.map((p) => TypeSelectorOption(
             icon: Icons.water_drop,
             title: p['name'] as String,
             subtitle: p['desc'] as String,
@@ -145,33 +222,38 @@ class _PrimerScreenState extends State<PrimerScreen> {
         const SizedBox(height: 16),
 
         // Результаты
-        ResultCardLight(
+        MaterialsCardModern(
           title: _loc.translate('primer.results_title'),
           titleIcon: Icons.receipt_long,
-          results: [
-            ResultRowItem(
-              label: _loc.translate('primer.area'),
+          items: [
+            MaterialItem(
+              name: _loc.translate('primer.area'),
               value: '${area.toStringAsFixed(1)} м²',
               icon: Icons.straighten,
             ),
-            ResultRowItem(
-              label: isConcentrate ? _loc.translate('primer.concentrate') : _loc.translate('primer.title'),
+            MaterialItem(
+              name: isConcentrate ? _loc.translate('primer.concentrate') : _loc.translate('primer.title'),
               value: '${buyAmount.toStringAsFixed(1)} $unit',
               icon: Icons.shopping_bag,
             ),
-            if (isConcentrate) ResultRowItem(
-              label: _loc.translate('primer.water'),
+            if (isConcentrate) MaterialItem(
+              name: _loc.translate('primer.water'),
               value: '${waterAmount.toStringAsFixed(1)} л',
               icon: Icons.water,
             ),
-            if (isConcentrate) ResultRowItem(
-              label: _loc.translate('primer.total_solution'),
+            if (isConcentrate) MaterialItem(
+              name: _loc.translate('primer.total_solution'),
               value: '${totalSolutionNeeded.toStringAsFixed(1)} л',
               icon: Icons.science,
             ),
           ],
           accentColor: accentColor,
         ),
+
+        const SizedBox(height: 24),
+
+        // Подсказки
+        _buildTipsSection(),
 
         const SizedBox(height: 20),
       ],
@@ -180,21 +262,17 @@ class _PrimerScreenState extends State<PrimerScreen> {
 
   Widget _buildGeometryCard() {
     const accentColor = CalculatorColors.interior;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return _card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            _loc.translate('common.dimensions'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
           ModeSelector(
             options: [
               _loc.translate('plaster_pro.mode.room'),
@@ -281,25 +359,15 @@ class _PrimerScreenState extends State<PrimerScreen> {
 
   Widget _buildLayersCard() {
     const accentColor = CalculatorColors.interior;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return _card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            _loc.translate('primer.layers_label'),
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey),
+            _loc.translate('primer.layers_title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
           ),
           const SizedBox(height: 12),
           ModeSelector(
@@ -352,6 +420,48 @@ class _PrimerScreenState extends State<PrimerScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTipsSection() {
+    const hints = [
+      CalculatorHint(
+        type: HintType.important,
+        messageKey: 'hint.primer.application',
+      ),
+      CalculatorHint(
+        type: HintType.tip,
+        messageKey: 'hint.primer.drying_time',
+      ),
+      CalculatorHint(
+        type: HintType.tip,
+        messageKey: 'hint.primer.dilution',
+      ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            _loc.translate('common.tips'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+        ),
+        const HintsList(hints: hints),
+      ],
+    );
+  }
+
+  Widget _card({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: CalculatorDesignSystem.cardDecoration(),
+      child: child,
     );
   }
 }

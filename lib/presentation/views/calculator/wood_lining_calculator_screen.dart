@@ -190,8 +190,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
       );
     }
 
-    // Вагонка с запасом
-    final liningArea = calculatedArea * (1 + _reserve / 100) * 1.1;
+    // Вагонка с запасом (используем только пользовательский запас)
+    final liningArea = calculatedArea * (1 + _reserve / 100);
     final boardAreaM2 = _liningType.length * (_liningType.width / 1000);
     final liningPieces = (liningArea / boardAreaM2).ceil();
 
@@ -227,8 +227,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
     // Утеплитель
     final insulation = _useInsulation ? calculatedArea * 1.1 : 0.0;
 
-    // Пароизоляция
-    final vaporBarrier = _useVaporBarrier ? calculatedArea * 1.1 : 0.0;
+    // Пароизоляция (20% на нахлёсты)
+    final vaporBarrier = _useVaporBarrier ? calculatedArea * 1.2 : 0.0;
     final vaporBarrierWeight = vaporBarrier * 0.15;
 
     return _WoodLiningResult(
@@ -841,131 +841,69 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
 
   Widget _buildMaterialsCard() {
     const accentColor = CalculatorColors.walls;
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Необходимые материалы',
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildMaterialRow(
-            'Вагонка',
-            '${_result.liningArea.toStringAsFixed(2)} м²',
-            '${_result.liningPieces} шт',
-            Icons.view_agenda,
-            accentColor,
-          ),
-          const SizedBox(height: 12),
-          _buildMaterialRow(
-            'Обрешётка',
-            '${_result.battenLength.toStringAsFixed(1)} м.п.',
-            'Брус ${_mountingDirection.battenSize}',
-            Icons.view_stream,
-            accentColor,
-          ),
-          const SizedBox(height: 12),
-          _buildMaterialRow(
-            'Крепёж',
-            '${_result.fasteners} шт',
-            _fasteningType.name,
-            Icons.construction,
-            accentColor,
-          ),
-          if (_useAntiseptic) ...[
-            const SizedBox(height: 12),
-            _buildMaterialRow(
-              'Антисептик',
-              '${_result.antiseptic.toStringAsFixed(2)} л',
-              'Расход 0.2 л/м²',
-              Icons.shield_outlined,
-              accentColor,
-            ),
-          ],
-          if (_useFinish) ...[
-            const SizedBox(height: 12),
-            _buildMaterialRow(
-              _finishType.name,
-              '${_result.finish.toStringAsFixed(2)} л',
-              'Расход ${_finishType.consumption} л/м²',
-              Icons.format_paint,
-              accentColor,
-            ),
-          ],
-          if (_useInsulation) ...[
-            const SizedBox(height: 12),
-            _buildMaterialRow(
-              'Утеплитель',
-              '${_result.insulation.toStringAsFixed(2)} м²',
-              'Минвата ${_insulationThickness.toInt()} мм',
-              Icons.waves,
-              accentColor,
-            ),
-          ],
-          if (_useVaporBarrier) ...[
-            const SizedBox(height: 12),
-            _buildMaterialRow(
-              'Пароизоляция',
-              '${_result.vaporBarrier.toStringAsFixed(2)} м²',
-              '~${_result.vaporBarrierWeight.toStringAsFixed(2)} кг',
-              Icons.shield,
-              accentColor,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
 
-  Widget _buildMaterialRow(
-    String label,
-    String value,
-    String subtitle,
-    IconData icon,
-    Color accentColor,
-  ) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: accentColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, size: 20, color: accentColor),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                subtitle,
-                style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Text(
-          value,
-          style: CalculatorDesignSystem.titleMedium.copyWith(
-            color: accentColor,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: 'Вагонка',
+        value: '${_result.liningArea.toStringAsFixed(1)} м²',
+        subtitle: '${_result.liningPieces} шт',
+        icon: Icons.view_agenda,
+      ),
+      MaterialItem(
+        name: 'Обрешётка',
+        value: '${_result.battenLength.toStringAsFixed(0)} м.п.',
+        subtitle: 'Брус ${_mountingDirection.battenSize}',
+        icon: Icons.view_stream,
+      ),
+      MaterialItem(
+        name: 'Крепёж',
+        value: '${_result.fasteners} шт',
+        subtitle: _fasteningType.name,
+        icon: Icons.construction,
+      ),
+    ];
+
+    if (_useAntiseptic) {
+      items.add(MaterialItem(
+        name: 'Антисептик',
+        value: '${_result.antiseptic.toStringAsFixed(1)} л',
+        subtitle: 'Расход 0.2 л/м²',
+        icon: Icons.shield_outlined,
+      ));
+    }
+
+    if (_useFinish) {
+      items.add(MaterialItem(
+        name: _finishType.name,
+        value: '${_result.finish.toStringAsFixed(1)} л',
+        subtitle: 'Расход ${_finishType.consumption} л/м²',
+        icon: Icons.format_paint,
+      ));
+    }
+
+    if (_useInsulation) {
+      items.add(MaterialItem(
+        name: 'Утеплитель',
+        value: '${_result.insulation.toStringAsFixed(1)} м²',
+        subtitle: 'Минвата ${_insulationThickness.toInt()} мм',
+        icon: Icons.waves,
+      ));
+    }
+
+    if (_useVaporBarrier) {
+      items.add(MaterialItem(
+        name: 'Пароизоляция',
+        value: '${_result.vaporBarrier.toStringAsFixed(1)} м²',
+        subtitle: '~${_result.vaporBarrierWeight.toStringAsFixed(1)} кг',
+        icon: Icons.shield,
+      ));
+    }
+
+    return MaterialsCardModern(
+      title: 'Необходимые материалы',
+      titleIcon: Icons.construction,
+      items: items,
+      accentColor: accentColor,
     );
   }
 

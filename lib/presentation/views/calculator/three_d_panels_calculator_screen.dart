@@ -641,51 +641,59 @@ class _ThreeDPanelsCalculatorScreenState
 
   Widget _buildMaterialsCard() {
     const accentColor = CalculatorColors.interior;
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: 'Панели 3D',
-        value:
-            '${_result.panelsCount} шт · ${_result.panelSizeCm.toStringAsFixed(0)}×${_result.panelSizeCm.toStringAsFixed(0)} см',
+
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: 'Панели 3D',
+        value: '${_result.panelsCount} шт',
+        subtitle: '${_result.panelSizeCm.toStringAsFixed(0)}×${_result.panelSizeCm.toStringAsFixed(0)} см',
         icon: Icons.apps,
       ),
-      ResultRowItem(
-        label: 'Клей для панелей',
+      MaterialItem(
+        name: 'Клей для панелей',
         value: '${_result.glueKg.toStringAsFixed(1)} кг',
         icon: Icons.construction,
       ),
-      ResultRowItem(
-        label: 'Грунтовка',
+      MaterialItem(
+        name: 'Грунтовка',
         value: '${_result.primerLiters.toStringAsFixed(1)} л',
         icon: Icons.water_drop,
       ),
-      ResultRowItem(
-        label: 'Шпаклёвка под основание',
+      MaterialItem(
+        name: 'Шпаклёвка',
         value: '${_result.puttyKg.toStringAsFixed(1)} кг',
+        subtitle: 'Под основание',
         icon: Icons.format_paint,
-      ),
-      if (_result.paintLiters > 0)
-        ResultRowItem(
-          label: 'Краска (2 слоя)',
-          value: '${_result.paintLiters.toStringAsFixed(1)} л',
-          icon: Icons.brush,
-        ),
-      if (_result.varnishLiters > 0)
-        ResultRowItem(
-          label: 'Лак / защитный слой',
-          value: '${_result.varnishLiters.toStringAsFixed(1)} л',
-          icon: Icons.shield,
-        ),
-      ResultRowItem(
-        label: 'Молдинги / плинты',
-        value: '${_result.moldingLength.toStringAsFixed(1)} м',
-        icon: Icons.straighten,
       ),
     ];
 
-    return ResultCardLight(
+    if (_result.paintLiters > 0) {
+      items.add(MaterialItem(
+        name: 'Краска',
+        value: '${_result.paintLiters.toStringAsFixed(1)} л',
+        subtitle: '2 слоя',
+        icon: Icons.brush,
+      ));
+    }
+
+    if (_result.varnishLiters > 0) {
+      items.add(MaterialItem(
+        name: 'Лак / защитный слой',
+        value: '${_result.varnishLiters.toStringAsFixed(1)} л',
+        icon: Icons.shield,
+      ));
+    }
+
+    items.add(MaterialItem(
+      name: 'Молдинги / плинты',
+      value: '${_result.moldingLength.toStringAsFixed(1)} м',
+      icon: Icons.straighten,
+    ));
+
+    return MaterialsCardModern(
       title: 'Материалы',
       titleIcon: Icons.inventory_2,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }

@@ -112,12 +112,12 @@ void main() {
 
       final all = await repository.getAllCalculations();
       expect(all.length, equals(1));
-      expect(all.first.calculatorId, equals('wall_paint'));
+      expect(all.first.calculatorId, equals('paint_universal'));
       expect(all.first.category, equals('walls'));
 
       final persisted = await isar.calculations.get(all.first.id);
       expect(persisted, isNotNull);
-      expect(persisted!.calculatorId, equals('wall_paint'));
+      expect(persisted!.calculatorId, equals('paint_universal'));
       expect(persisted.category, equals('walls'));
     });
 

@@ -925,19 +925,20 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
   Widget _buildMaterialsCard() {
     const accentColor = CalculatorColors.walls;
 
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: 'ОСБ плиты',
-        value: '${_result.sheetsNeeded} шт (${_result.sheetSizeName} мм)',
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: 'ОСБ плиты',
+        value: '${_result.sheetsNeeded} шт',
+        subtitle: '${_result.sheetSizeName} мм',
         icon: Icons.dashboard,
       ),
-      ResultRowItem(
-        label: 'Площадь материала',
+      MaterialItem(
+        name: 'Площадь материала',
         value: '${_result.materialArea.toStringAsFixed(1)} м²',
         icon: Icons.straighten,
       ),
-      ResultRowItem(
-        label: 'Саморезы ⌀${_result.screwDiameter.toStringAsFixed(1)}×${_result.screwLength.toStringAsFixed(0)} мм',
+      MaterialItem(
+        name: 'Саморезы ⌀${_result.screwDiameter.toStringAsFixed(1)}×${_result.screwLength.toStringAsFixed(0)}',
         value: ScrewFormatter.formatWithWeight(
           quantity: _result.screwsNeeded,
           diameter: _result.screwDiameter,
@@ -947,10 +948,10 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
       ),
     ];
 
-    return ResultCardLight(
+    return MaterialsCardModern(
       title: 'Основные материалы',
       titleIcon: Icons.dashboard,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }
@@ -971,90 +972,90 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
 
   Widget _buildAdditionalMaterialsCard() {
     const accentColor = CalculatorColors.walls;
-    final results = <ResultRowItem>[];
+    final items = <MaterialItem>[];
 
     if (_result.windBarrierArea > 0) {
-      results.add(ResultRowItem(
-        label: 'Ветрозащита',
+      items.add(MaterialItem(
+        name: 'Ветрозащита',
         value: '${_result.windBarrierArea.toStringAsFixed(1)} м²',
         icon: Icons.air,
       ));
     }
     if (_result.vaporBarrierArea > 0) {
-      results.add(ResultRowItem(
-        label: 'Пароизоляция',
+      items.add(MaterialItem(
+        name: 'Пароизоляция',
         value: '${_result.vaporBarrierArea.toStringAsFixed(1)} м²',
         icon: Icons.water_drop,
       ));
     }
     if (_result.underlayArea > 0) {
-      results.add(ResultRowItem(
-        label: 'Подложка',
+      items.add(MaterialItem(
+        name: 'Подложка',
         value: '${_result.underlayArea.toStringAsFixed(1)} м²',
         icon: Icons.layers,
       ));
     }
     if (_result.underlaymentArea > 0) {
-      results.add(ResultRowItem(
-        label: 'Кровельная подложка',
+      items.add(MaterialItem(
+        name: 'Кровельная подложка',
         value: '${_result.underlaymentArea.toStringAsFixed(1)} м²',
         icon: Icons.roofing,
       ));
     }
     if (_result.counterBattensLength > 0) {
-      results.add(ResultRowItem(
-        label: 'Контррейка',
+      items.add(MaterialItem(
+        name: 'Контррейка',
         value: '${_result.counterBattensLength.toStringAsFixed(1)} м',
         icon: Icons.horizontal_rule,
       ));
     }
     if (_result.clips > 0) {
-      results.add(ResultRowItem(
-        label: 'Кляймеры',
+      items.add(MaterialItem(
+        name: 'Кляймеры',
         value: '${_result.clips.toStringAsFixed(0)} шт',
         icon: Icons.attachment,
       ));
     }
     if (_result.studsLength > 0) {
-      results.add(ResultRowItem(
-        label: 'Брус для стоек',
+      items.add(MaterialItem(
+        name: 'Брус для стоек',
         value: '${_result.studsLength.toStringAsFixed(1)} м',
         icon: Icons.architecture,
       ));
     }
     if (_result.insulationArea > 0) {
-      results.add(ResultRowItem(
-        label: 'Утеплитель',
+      items.add(MaterialItem(
+        name: 'Утеплитель',
         value: '${_result.insulationArea.toStringAsFixed(1)} м²',
         icon: Icons.layers,
       ));
     }
     if (_result.battensLength > 0) {
-      results.add(ResultRowItem(
-        label: 'Рейки',
+      items.add(MaterialItem(
+        name: 'Рейки',
         value: '${_result.battensLength.toStringAsFixed(1)} м',
         icon: Icons.horizontal_rule,
       ));
     }
     if (_result.glueNeededKg > 0) {
-      results.add(ResultRowItem(
-        label: 'Клей для СИП',
+      items.add(MaterialItem(
+        name: 'Клей для СИП',
         value: '${_result.glueNeededKg.toStringAsFixed(1)} кг',
         icon: Icons.colorize,
       ));
     }
     if (_result.foamNeeded > 0) {
-      results.add(ResultRowItem(
-        label: 'Монтажная пена',
-        value: '${_result.foamNeeded.toStringAsFixed(0)} баллонов',
+      items.add(MaterialItem(
+        name: 'Монтажная пена',
+        value: '${_result.foamNeeded.toStringAsFixed(0)} балл.',
         icon: Icons.format_paint,
       ));
     }
 
-    return ResultCardLight(
+    return MaterialsCardModern(
       title: 'Дополнительные материалы',
       titleIcon: Icons.add_circle_outline,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }

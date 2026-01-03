@@ -189,7 +189,7 @@ class _GypsumCalculatorScreenState extends State<GypsumCalculatorScreen> {
       ppPieces = (ppMeters / profileLength).ceil();
       suspensions = (calculatedArea * 1.3).ceil();
       dowels = (calculatedArea * 1.6).ceil();
-      screwsTN25 = (calculatedArea * 25).ceil();
+      screwsTN25 = (calculatedArea * 34).ceil();
       screwsLN = (calculatedArea * 4).ceil();
       sealingTape = calculatedArea * 0.8;
     } else if (_constructionType == GypsumConstructionType.partition) {
@@ -198,7 +198,7 @@ class _GypsumCalculatorScreenState extends State<GypsumCalculatorScreen> {
       pnPieces = (pnMeters / profileLength).ceil();
       ppPieces = (ppMeters / profileLength).ceil();
       dowels = (calculatedArea * 1.5).ceil();
-      screwsTN25 = (calculatedArea * 34).ceil();
+      screwsTN25 = (calculatedArea * 50).ceil();
       screwsLN = (calculatedArea * 4).ceil();
       sealingTape = calculatedArea * 1.2;
     } else if (_constructionType == GypsumConstructionType.ceiling) {
@@ -207,7 +207,7 @@ class _GypsumCalculatorScreenState extends State<GypsumCalculatorScreen> {
       pnPieces = (pnMeters / profileLength).ceil();
       ppPieces = (ppMeters / profileLength).ceil();
       suspensions = (calculatedArea * 0.7).ceil();
-      connectors = (calculatedArea * 1.7).ceil();
+      connectors = (calculatedArea * 2.4).ceil();
       dowels = (suspensions * 2);
       screwsTN25 = (calculatedArea * 23).ceil();
       screwsLN = (calculatedArea * 7).ceil();
@@ -805,59 +805,68 @@ class _GypsumCalculatorScreenState extends State<GypsumCalculatorScreen> {
     String pnProfileName;
     String ppProfileName;
     if (_result.constructionType == 1) {
-      // Облицовка стен
       pnProfileName = _loc.translate('gypsum.materials.pn_wall');
       ppProfileName = _loc.translate('gypsum.materials.pp_wall');
     } else if (_result.constructionType == 2) {
-      // Перегородка
       pnProfileName = _loc.translate('gypsum.materials.pn_partition');
       ppProfileName = _loc.translate('gypsum.materials.ps_partition');
     } else {
-      // Потолок
       pnProfileName = _loc.translate('gypsum.materials.pnp_ceiling');
       ppProfileName = _loc.translate('gypsum.materials.pp_ceiling');
     }
 
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: _loc.translate('gypsum.materials.gkl_sheets'),
-        value: '${_result.gklSheets} ${_loc.translate('gypsum.materials.sheets_unit')} (${_result.sheetSizeName} мм)',
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: _loc.translate('gypsum.materials.gkl_sheets'),
+        value: '${_result.gklSheets} ${_loc.translate('gypsum.materials.sheets_unit')}',
+        subtitle: _result.sheetSizeName,
         icon: Icons.dashboard,
-      ),
-      if (_result.pnPieces > 0)
-        ResultRowItem(
-          label: pnProfileName,
-          value: '${_result.pnPieces} шт × 3 м',
-          icon: Icons.horizontal_rule,
-        ),
-      if (_result.ppPieces > 0)
-        ResultRowItem(
-          label: ppProfileName,
-          value: '${_result.ppPieces} шт × 3 м',
-          icon: Icons.architecture,
-        ),
-      if (_result.insulationArea > 0)
-        ResultRowItem(
-          label: _loc.translate('gypsum.materials.insulation'),
-          value: '${_result.insulationArea.toStringAsFixed(1)} м²',
-          icon: Icons.layers,
-        ),
-      ResultRowItem(
-        label: _loc.translate('gypsum.materials.filler'),
-        value: '${_result.fillerKg.toStringAsFixed(1)} ${_loc.translate('gypsum.materials.kg')}',
-        icon: Icons.shopping_bag,
-      ),
-      ResultRowItem(
-        label: _loc.translate('gypsum.materials.primer'),
-        value: '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('gypsum.materials.liters')}',
-        icon: Icons.water_drop,
       ),
     ];
 
-    return ResultCardLight(
+    if (_result.pnPieces > 0) {
+      items.add(MaterialItem(
+        name: pnProfileName,
+        value: '${_result.pnPieces} шт',
+        subtitle: '× 3 м',
+        icon: Icons.horizontal_rule,
+      ));
+    }
+
+    if (_result.ppPieces > 0) {
+      items.add(MaterialItem(
+        name: ppProfileName,
+        value: '${_result.ppPieces} шт',
+        subtitle: '× 3 м',
+        icon: Icons.architecture,
+      ));
+    }
+
+    if (_result.insulationArea > 0) {
+      items.add(MaterialItem(
+        name: _loc.translate('gypsum.materials.insulation'),
+        value: '${_result.insulationArea.toStringAsFixed(1)} м²',
+        icon: Icons.layers,
+      ));
+    }
+
+    items.addAll([
+      MaterialItem(
+        name: _loc.translate('gypsum.materials.filler'),
+        value: '${_result.fillerKg.toStringAsFixed(1)} ${_loc.translate('gypsum.materials.kg')}',
+        icon: Icons.shopping_bag,
+      ),
+      MaterialItem(
+        name: _loc.translate('gypsum.materials.primer'),
+        value: '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('gypsum.materials.liters')}',
+        icon: Icons.water_drop,
+      ),
+    ]);
+
+    return MaterialsCardModern(
       title: _loc.translate('gypsum.materials.title'),
       titleIcon: Icons.construction,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }
@@ -865,72 +874,86 @@ class _GypsumCalculatorScreenState extends State<GypsumCalculatorScreen> {
   Widget _buildFixingsCard() {
     const accentColor = CalculatorColors.walls;
 
-    final results = <ResultRowItem>[
-      if (_result.screwsTN25 > 0)
-        ResultRowItem(
-          label: _loc.translate('gypsum.fixings.screws_gkl_25'),
-          value: ScrewFormatter.formatWithWeight(
-            quantity: _result.screwsTN25,
-            diameter: 3.5,
-            length: 25,
-          ),
-          icon: Icons.hardware,
-        ),
-      if (_result.screwsTN35 > 0)
-        ResultRowItem(
-          label: _loc.translate('gypsum.fixings.screws_gkl_35'),
-          value: ScrewFormatter.formatWithWeight(
-            quantity: _result.screwsTN35,
-            diameter: 3.5,
-            length: 35,
-          ),
-          icon: Icons.hardware,
-        ),
-      if (_result.screwsLN > 0)
-        ResultRowItem(
-          label: _loc.translate('gypsum.fixings.screws_metal'),
-          value: ScrewFormatter.formatWithWeight(
-            quantity: _result.screwsLN,
-            diameter: 3.5,
-            length: 9.5,
-          ),
-          icon: Icons.hardware,
-        ),
-      if (_result.dowels > 0)
-        ResultRowItem(
-          label: _loc.translate('gypsum.fixings.dowels'),
-          value: '${_result.dowels} ${_loc.translate('gypsum.fixings.pieces')}',
-          icon: Icons.push_pin,
-        ),
-      if (_result.suspensions > 0)
-        ResultRowItem(
-          label: _loc.translate('gypsum.fixings.suspensions'),
-          value: '${_result.suspensions} ${_loc.translate('gypsum.fixings.pieces')}',
-          icon: Icons.architecture,
-        ),
-      if (_result.connectors > 0)
-        ResultRowItem(
-          label: _loc.translate('gypsum.fixings.connectors'),
-          value: '${_result.connectors} ${_loc.translate('gypsum.fixings.pieces')}',
-          icon: Icons.category,
-        ),
-      if (_result.sealingTape > 0)
-        ResultRowItem(
-          label: _loc.translate('gypsum.fixings.sealing_tape'),
-          value: '${_result.sealingTape.toStringAsFixed(1)} м',
-          icon: Icons.straighten,
-        ),
-      ResultRowItem(
-        label: _loc.translate('gypsum.fixings.armature_tape'),
-        value: '${_result.armatureTape.toStringAsFixed(1)} м',
-        icon: Icons.grid_on,
-      ),
-    ];
+    final items = <MaterialItem>[];
 
-    return ResultCardLight(
+    if (_result.screwsTN25 > 0) {
+      items.add(MaterialItem(
+        name: _loc.translate('gypsum.fixings.screws_gkl_25'),
+        value: ScrewFormatter.formatWithWeight(
+          quantity: _result.screwsTN25,
+          diameter: 3.5,
+          length: 25,
+        ),
+        icon: Icons.hardware,
+      ));
+    }
+
+    if (_result.screwsTN35 > 0) {
+      items.add(MaterialItem(
+        name: _loc.translate('gypsum.fixings.screws_gkl_35'),
+        value: ScrewFormatter.formatWithWeight(
+          quantity: _result.screwsTN35,
+          diameter: 3.5,
+          length: 35,
+        ),
+        icon: Icons.hardware,
+      ));
+    }
+
+    if (_result.screwsLN > 0) {
+      items.add(MaterialItem(
+        name: _loc.translate('gypsum.fixings.screws_metal'),
+        value: ScrewFormatter.formatWithWeight(
+          quantity: _result.screwsLN,
+          diameter: 3.5,
+          length: 9.5,
+        ),
+        icon: Icons.hardware,
+      ));
+    }
+
+    if (_result.dowels > 0) {
+      items.add(MaterialItem(
+        name: _loc.translate('gypsum.fixings.dowels'),
+        value: '${_result.dowels} ${_loc.translate('gypsum.fixings.pieces')}',
+        icon: Icons.push_pin,
+      ));
+    }
+
+    if (_result.suspensions > 0) {
+      items.add(MaterialItem(
+        name: _loc.translate('gypsum.fixings.suspensions'),
+        value: '${_result.suspensions} ${_loc.translate('gypsum.fixings.pieces')}',
+        icon: Icons.architecture,
+      ));
+    }
+
+    if (_result.connectors > 0) {
+      items.add(MaterialItem(
+        name: _loc.translate('gypsum.fixings.connectors'),
+        value: '${_result.connectors} ${_loc.translate('gypsum.fixings.pieces')}',
+        icon: Icons.category,
+      ));
+    }
+
+    if (_result.sealingTape > 0) {
+      items.add(MaterialItem(
+        name: _loc.translate('gypsum.fixings.sealing_tape'),
+        value: '${_result.sealingTape.toStringAsFixed(1)} м',
+        icon: Icons.straighten,
+      ));
+    }
+
+    items.add(MaterialItem(
+      name: _loc.translate('gypsum.fixings.armature_tape'),
+      value: '${_result.armatureTape.toStringAsFixed(1)} м',
+      icon: Icons.grid_on,
+    ));
+
+    return MaterialsCardModern(
       title: _loc.translate('gypsum.fixings.title'),
       titleIcon: Icons.build,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }

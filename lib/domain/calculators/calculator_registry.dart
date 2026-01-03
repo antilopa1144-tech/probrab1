@@ -1,6 +1,5 @@
 import '../models/calculator_definition_v2.dart';
 import 'paint_universal_calculator_v2.dart';
-import 'paint_calculator_v2.dart';
 import 'laminate_calculator_v2.dart';
 import 'screed_calculator_v2.dart';
 import 'tile_calculator_v2.dart';
@@ -13,7 +12,6 @@ import 'metal_roofing_calculator_v2.dart';
 import 'soft_roofing_calculator_v2.dart';
 import 'warm_floor_calculator_v2.dart';
 import 'parquet_calculator_v2.dart';
-import 'ceilings_paint_calculator_v2.dart';
 import 'bathroom_tile_calculator_v2.dart';
 import 'plinth_calculator_v2.dart';
 import 'concrete_universal_calculator_v2.dart';
@@ -70,7 +68,6 @@ class CalculatorRegistry {
 
     // Отделка стен
     paintUniversalCalculatorV2,
-    paintCalculatorV2,
     wallpaperCalculatorV2,
 
     // Полы
@@ -92,9 +89,6 @@ class CalculatorRegistry {
 
     // Полы (дополнительные)
     parquetCalculatorV2,
-
-    // Потолки
-    ceilingsPaintCalculatorV2,
 
     // Отделка (дополнительные)
     bathroomTileCalculatorV2,

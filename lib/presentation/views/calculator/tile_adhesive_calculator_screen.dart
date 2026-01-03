@@ -844,64 +844,64 @@ class _TileAdhesiveCalculatorScreenState
   Widget _buildMaterialsCard() {
     const accentColor = CalculatorColors.interior;
 
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: _loc.translate('tile_adhesive.materials.adhesive'),
-        value:
-            '${_result.bagsNeeded} ${_loc.translate('tile_adhesive.materials.bags_unit')} × ${_result.bagWeight} ${_loc.translate('tile_adhesive.materials.kg')}',
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: _loc.translate('tile_adhesive.materials.adhesive'),
+        value: '${_result.bagsNeeded} ${_loc.translate('tile_adhesive.materials.bags_unit')}',
+        subtitle: '× ${_result.bagWeight} ${_loc.translate('tile_adhesive.materials.kg')}',
         icon: Icons.shopping_bag,
       ),
-      ResultRowItem(
-        label: _loc.translate('tile_adhesive.materials.consumption'),
-        value:
-            '${_result.adhesiveConsumption.toStringAsFixed(2)} ${_loc.translate('tile_adhesive.materials.kg_per_m2')}',
+      MaterialItem(
+        name: _loc.translate('tile_adhesive.materials.consumption'),
+        value: '${_result.adhesiveConsumption.toStringAsFixed(2)} ${_loc.translate('tile_adhesive.materials.kg_per_m2')}',
         icon: Icons.info_outline,
       ),
-      ResultRowItem(
-        label: _loc.translate('tile_adhesive.materials.total_weight'),
-        value:
-            '${_result.totalWeight.toStringAsFixed(1)} ${_loc.translate('tile_adhesive.materials.kg')}',
+      MaterialItem(
+        name: _loc.translate('tile_adhesive.materials.total_weight'),
+        value: '${_result.totalWeight.toStringAsFixed(0)} ${_loc.translate('tile_adhesive.materials.kg')}',
         icon: Icons.scale,
       ),
-      ResultRowItem(
-        label: _loc.translate('tile_adhesive.materials.primer'),
-        value:
-            '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('tile_adhesive.materials.liters')}',
+      MaterialItem(
+        name: _loc.translate('tile_adhesive.materials.primer'),
+        value: '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('tile_adhesive.materials.liters')}',
         icon: Icons.water_drop,
       ),
-      if (_result.groutWeight != null)
-        ResultRowItem(
-          label: _loc.translate('tile_adhesive.materials.grout'),
-          value:
-              '${_result.groutWeight!.toStringAsFixed(2)} ${_loc.translate('tile_adhesive.materials.kg')}',
-          icon: Icons.gradient,
-        ),
-      if (_result.waterproofingWeight != null)
-        ResultRowItem(
-          label: _loc.translate('tile_adhesive.materials.waterproofing'),
-          value:
-              '${_result.waterproofingWeight!.toStringAsFixed(1)} ${_loc.translate('tile_adhesive.materials.kg')}',
-          icon: Icons.water,
-        ),
-      ResultRowItem(
-        label: _loc.translate('tile_adhesive.materials.crosses'),
-        value:
-            '${_result.crossesNeeded} ${_loc.translate('tile_adhesive.materials.pieces')}',
-        icon: Icons.add,
-      ),
-      if (_result.useSVP)
-        ResultRowItem(
-          label: _loc.translate('tile_adhesive.materials.svp'),
-          value:
-              '${_result.svpCount} ${_loc.translate('tile_adhesive.materials.pieces')}',
-          icon: Icons.construction,
-        ),
     ];
 
-    return ResultCardLight(
+    if (_result.groutWeight != null) {
+      items.add(MaterialItem(
+        name: _loc.translate('tile_adhesive.materials.grout'),
+        value: '${_result.groutWeight!.toStringAsFixed(1)} ${_loc.translate('tile_adhesive.materials.kg')}',
+        icon: Icons.gradient,
+      ));
+    }
+
+    if (_result.waterproofingWeight != null) {
+      items.add(MaterialItem(
+        name: _loc.translate('tile_adhesive.materials.waterproofing'),
+        value: '${_result.waterproofingWeight!.toStringAsFixed(1)} ${_loc.translate('tile_adhesive.materials.kg')}',
+        icon: Icons.water,
+      ));
+    }
+
+    items.add(MaterialItem(
+      name: _loc.translate('tile_adhesive.materials.crosses'),
+      value: '${_result.crossesNeeded} ${_loc.translate('tile_adhesive.materials.pieces')}',
+      icon: Icons.add,
+    ));
+
+    if (_result.useSVP) {
+      items.add(MaterialItem(
+        name: _loc.translate('tile_adhesive.materials.svp'),
+        value: '${_result.svpCount} ${_loc.translate('tile_adhesive.materials.pieces')}',
+        icon: Icons.construction,
+      ));
+    }
+
+    return MaterialsCardModern(
       title: _loc.translate('tile_adhesive.materials.title'),
       titleIcon: Icons.construction,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }
@@ -909,28 +909,28 @@ class _TileAdhesiveCalculatorScreenState
   Widget _buildToolsCard() {
     const accentColor = CalculatorColors.interior;
 
-    final results = <ResultRowItem>[
-      ResultRowItem(
-        label: _loc.translate('tile_adhesive.tools.notched_trowel'),
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: _loc.translate('tile_adhesive.tools.notched_trowel'),
         value: '${_result.notchSize} мм',
         icon: Icons.handyman,
       ),
-      ResultRowItem(
-        label: _loc.translate('tile_adhesive.tools.mixing_container'),
+      MaterialItem(
+        name: _loc.translate('tile_adhesive.tools.mixing_container'),
         value: '1 ${_loc.translate('tile_adhesive.materials.pieces')}',
         icon: Icons.shopping_basket,
       ),
-      ResultRowItem(
-        label: _loc.translate('tile_adhesive.tools.mixer'),
+      MaterialItem(
+        name: _loc.translate('tile_adhesive.tools.mixer'),
         value: '1 ${_loc.translate('tile_adhesive.materials.pieces')}',
         icon: Icons.blender,
       ),
     ];
 
-    return ResultCardLight(
+    return MaterialsCardModern(
       title: _loc.translate('tile_adhesive.tools.title'),
       titleIcon: Icons.build_circle,
-      results: results,
+      items: items,
       accentColor: accentColor,
     );
   }

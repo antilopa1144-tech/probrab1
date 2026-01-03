@@ -109,20 +109,6 @@ class _HeatingResult {
   });
 }
 
-class _MaterialItem {
-  final String name;
-  final String value;
-  final String? subtitle;
-  final IconData icon;
-
-  const _MaterialItem({
-    required this.name,
-    required this.value,
-    this.subtitle,
-    required this.icon,
-  });
-}
-
 class UnderfloorHeatingCalculatorScreen extends StatefulWidget {
   final CalculatorDefinitionV2 definition;
   final Map<String, double>? initialInputs;
@@ -929,11 +915,11 @@ class _UnderfloorHeatingCalculatorScreenState
   Widget _buildMaterialsCard() {
     const accentColor = CalculatorColors.engineering;
 
-    final materials = <_MaterialItem>[];
+    final materials = <MaterialItem>[];
 
     switch (_result.systemType) {
       case HeatingSystemType.electricMat:
-        materials.add(_MaterialItem(
+        materials.add(MaterialItem(
           name: 'Нагревательный мат',
           value: '${_result.matArea!.toStringAsFixed(1)} м²',
           subtitle: '${_result.totalPower} Вт',
@@ -943,13 +929,13 @@ class _UnderfloorHeatingCalculatorScreenState
 
       case HeatingSystemType.electricCable:
         materials.addAll([
-          _MaterialItem(
+          MaterialItem(
             name: 'Нагревательный кабель',
             value: '${_result.cableLength!.toStringAsFixed(0)} м',
             subtitle: '${_result.totalPower} Вт',
             icon: Icons.cable,
           ),
-          _MaterialItem(
+          MaterialItem(
             name: 'Монтажная лента',
             value: '${(_result.heatingArea * 2).toStringAsFixed(0)} м',
             icon: Icons.straighten,
@@ -959,22 +945,22 @@ class _UnderfloorHeatingCalculatorScreenState
 
       case HeatingSystemType.infraredFilm:
         materials.addAll([
-          _MaterialItem(
+          MaterialItem(
             name: 'ИК плёнка',
             value: '${_result.filmArea!.toStringAsFixed(1)} м²',
             icon: Icons.view_module,
           ),
-          _MaterialItem(
+          MaterialItem(
             name: 'Контактные зажимы',
             value: '${_result.contactClips} шт',
             icon: Icons.link,
           ),
-          _MaterialItem(
+          MaterialItem(
             name: 'Изоляция контактов',
             value: '${_result.contactClips} шт',
             icon: Icons.bolt,
           ),
-          _MaterialItem(
+          MaterialItem(
             name: 'Теплоотражающая подложка',
             value: '${_result.area.toStringAsFixed(1)} м²',
             icon: Icons.layers,
@@ -984,38 +970,38 @@ class _UnderfloorHeatingCalculatorScreenState
 
       case HeatingSystemType.waterBased:
         materials.addAll([
-          _MaterialItem(
+          MaterialItem(
             name: 'Труба PE-RT 16мм',
             value: '${_result.pipeLength!.toStringAsFixed(0)} м',
             icon: Icons.timeline,
           ),
-          _MaterialItem(
+          MaterialItem(
             name: 'Коллектор',
             value: '${_result.collectorOutputs} вых.',
             icon: Icons.device_hub,
           ),
-          _MaterialItem(
+          MaterialItem(
             name: 'Контуров',
             value: '${_result.loopCount} шт',
             icon: Icons.loop,
           ),
-          _MaterialItem(
+          MaterialItem(
             name: 'Теплоизоляция ПСБ-35',
             value: '${_result.insulationArea!.toStringAsFixed(1)} м²',
             subtitle: '50 мм',
             icon: Icons.layers,
           ),
-          _MaterialItem(
+          MaterialItem(
             name: 'Демпферная лента',
             value: '${(_result.area * 0.4).toStringAsFixed(0)} м',
             icon: Icons.straighten,
           ),
-          _MaterialItem(
+          MaterialItem(
             name: 'Крепёж (скобы)',
             value: '${(_result.heatingArea * 10).toStringAsFixed(0)} шт',
             icon: Icons.push_pin,
           ),
-          _MaterialItem(
+          MaterialItem(
             name: 'Стяжка',
             value: '${_result.screedVolume!.toStringAsFixed(2)} м³',
             icon: Icons.foundation,
@@ -1026,17 +1012,17 @@ class _UnderfloorHeatingCalculatorScreenState
 
     // Общие материалы
     materials.addAll([
-      _MaterialItem(
+      MaterialItem(
         name: 'Терморегулятор',
         value: '${_result.thermostatCount.toStringAsFixed(0)} шт',
         icon: Icons.thermostat,
       ),
-      _MaterialItem(
+      MaterialItem(
         name: 'Датчик температуры',
         value: '${_result.sensorCount.toStringAsFixed(0)} шт',
         icon: Icons.sensors,
       ),
-      _MaterialItem(
+      MaterialItem(
         name: 'Гофротруба',
         value: '${_result.corrugatedTubeLength.toStringAsFixed(1)} м',
         subtitle: 'для датчика',
@@ -1045,114 +1031,18 @@ class _UnderfloorHeatingCalculatorScreenState
     ]);
 
     if (_result.insulationArea != null && _result.systemType != HeatingSystemType.waterBased) {
-      materials.add(_MaterialItem(
+      materials.add(MaterialItem(
         name: 'Теплоизоляция',
         value: '${_result.insulationArea!.toStringAsFixed(1)} м²',
         icon: Icons.layers,
       ));
     }
 
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Заголовок
-          Row(
-            children: [
-              Icon(Icons.construction, color: accentColor, size: 22),
-              const SizedBox(width: 10),
-              Text(
-                'Материалы',
-                style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 17,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          // Список материалов
-          ...materials.asMap().entries.map((entry) {
-            final index = entry.key;
-            final item = entry.value;
-            final isLast = index == materials.length - 1;
-            return _buildMaterialRow(item, accentColor, isLast);
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMaterialRow(_MaterialItem item, Color accentColor, bool isLast) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Row(
-            children: [
-              // Иконка
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(item.icon, color: accentColor, size: 20),
-              ),
-              const SizedBox(width: 12),
-              // Название и подзаголовок
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.name,
-                      style: CalculatorDesignSystem.bodyMedium.copyWith(
-                        color: CalculatorColors.textPrimary,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
-                      ),
-                    ),
-                    if (item.subtitle != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        item.subtitle!,
-                        style: CalculatorDesignSystem.bodySmall.copyWith(
-                          color: CalculatorColors.textSecondary,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              // Значение
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  item.value,
-                  style: CalculatorDesignSystem.titleSmall.copyWith(
-                    color: accentColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (!isLast)
-          Divider(
-            height: 1,
-            color: CalculatorColors.textSecondary.withValues(alpha: 0.15),
-          ),
-      ],
+    return MaterialsCardModern(
+      title: 'Материалы',
+      titleIcon: Icons.construction,
+      items: materials,
+      accentColor: accentColor,
     );
   }
 
@@ -1163,110 +1053,37 @@ class _UnderfloorHeatingCalculatorScreenState
     final monthlyConsumption = (_result.totalPower / 1000) * 8 * 30; // кВт⋅ч
     final seasonConsumption = monthlyConsumption * 4; // 4 месяца
 
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.info_outline, color: accentColor, size: 20),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Дополнительная информация',
-                  style: CalculatorDesignSystem.titleMedium.copyWith(
-                    color: CalculatorColors.textPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildInfoRow(
-            icon: Icons.bolt,
-            label: 'Мощность системы',
-            value: '${(_result.totalPower / 1000).toStringAsFixed(2)} кВт',
-            accentColor: accentColor,
-          ),
-          const SizedBox(height: 12),
-          _buildInfoRow(
-            icon: Icons.heat_pump,
-            label: 'Площадь обогрева',
-            value: '${_result.heatingArea.toStringAsFixed(1)} м²',
-            accentColor: accentColor,
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.only(left: 32),
-            child: Text(
-              '${_usefulAreaPercent.round()}% от общей площади (без мебели и сантехники)',
-              style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          _buildInfoRow(
-            icon: Icons.calendar_month,
-            label: 'Расход в месяц',
-            value: '~${monthlyConsumption.toStringAsFixed(0)} кВт⋅ч',
-            accentColor: accentColor,
-          ),
-          const SizedBox(height: 12),
-          _buildInfoRow(
-            icon: Icons.calendar_today,
-            label: 'Расход за сезон',
-            value: '~${seasonConsumption.toStringAsFixed(0)} кВт⋅ч',
-            accentColor: accentColor,
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.only(left: 32),
-            child: Text(
-              'При работе 8 часов в день, 4 месяца',
-              style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-        ],
+    final infoItems = <MaterialItem>[
+      MaterialItem(
+        name: 'Мощность системы',
+        value: '${(_result.totalPower / 1000).toStringAsFixed(2)} кВт',
+        icon: Icons.bolt,
       ),
-    );
-  }
+      MaterialItem(
+        name: 'Площадь обогрева',
+        value: '${_result.heatingArea.toStringAsFixed(1)} м²',
+        subtitle: '${_usefulAreaPercent.round()}% от общей (без мебели)',
+        icon: Icons.heat_pump,
+      ),
+      MaterialItem(
+        name: 'Расход в месяц',
+        value: '~${monthlyConsumption.toStringAsFixed(0)} кВт⋅ч',
+        subtitle: 'при работе 8 ч/день',
+        icon: Icons.calendar_month,
+      ),
+      MaterialItem(
+        name: 'Расход за сезон',
+        value: '~${seasonConsumption.toStringAsFixed(0)} кВт⋅ч',
+        subtitle: '4 месяца отопления',
+        icon: Icons.calendar_today,
+      ),
+    ];
 
-  Widget _buildInfoRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color accentColor,
-  }) {
-    return Row(
-      children: [
-        Icon(icon, color: accentColor.withValues(alpha: 0.7), size: 18),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            label,
-            style: CalculatorDesignSystem.bodyMedium.copyWith(
-              color: CalculatorColors.textSecondary,
-            ),
-          ),
-        ),
-        const SizedBox(width: 4),
-        Flexible(
-          child: Text(
-            value,
-            style: CalculatorDesignSystem.titleSmall.copyWith(
-              color: CalculatorColors.textPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.end,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
+    return MaterialsCardModern(
+      title: 'Доп. информация',
+      titleIcon: Icons.info_outline,
+      items: infoItems,
+      accentColor: accentColor,
     );
   }
 

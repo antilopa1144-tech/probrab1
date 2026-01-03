@@ -67,6 +67,8 @@ class HistoryCategoryResolver {
     if (id.startsWith('walls_') || id.startsWith('wall_')) {
       return HistoryCategory.walls;
     }
+    // paint_universal replaces walls_paint and wall_paint
+    if (id == 'paint_universal') return HistoryCategory.walls;
 
     final parsed =
         fallbackStoredCategory == null ? null : tryParse(fallbackStoredCategory);
