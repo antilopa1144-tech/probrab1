@@ -5,9 +5,43 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
+
+/// Helper class for accessing terrace calculator constants
+class _TerraceConstants {
+  final CalculatorConstants? _data;
+
+  _TerraceConstants(this._data);
+
+  double _getDouble(String category, String key, double defaultValue) {
+    return _data?.getDouble(category, key, defaultValue: defaultValue) ?? defaultValue;
+  }
+
+  // Margins
+  double get floorMargin => _getDouble('margins', 'floor_margin', 1.1);
+  double get roofMargin => _getDouble('margins', 'roof_margin', 1.2);
+  double get roofingMargin => _getDouble('margins', 'roofing_margin', 1.1);
+
+  // Floor materials
+  double get tileArea => _getDouble('floor_materials', 'tile_area', 0.25);
+  double get boardArea => _getDouble('floor_materials', 'board_area', 0.1);
+
+  // Railing
+  double get postStep => _getDouble('railing', 'post_step', 2.0);
+
+  // Roofing
+  double get polycarbonateSheetArea => _getDouble('roofing', 'polycarbonate_sheet_area', 6.0);
+  double get profiledSheetArea => _getDouble('roofing', 'profiled_sheet_area', 8.0);
+  double get areaPerPost => _getDouble('roofing', 'area_per_post', 9.0);
+
+  // Foundation
+  double get foundationWidth => _getDouble('foundation', 'post_width', 0.2);
+  double get foundationDepth => _getDouble('foundation', 'post_depth', 0.2);
+  double get foundationHeight => _getDouble('foundation', 'post_height', 0.5);
+}
 
 enum TerraceFloorType { decking, tile, board }
 enum TerraceRoofType { polycarbonate, profiledSheet, softRoof }
@@ -70,6 +104,9 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
   late _TerraceResult _result;
   late AppLocalizations _loc;
 
+  // TODO: Подключить к calculatorConstantsProvider для получения Remote Config
+  final _constants = _TerraceConstants(null);
+
   @override
   void initState() {
     super.initState();
@@ -109,22 +146,22 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
 
     switch (_floorType) {
       case TerraceFloorType.decking:
-        deckingArea = area * 1.1;
+        deckingArea = area * _constants.floorMargin;
         break;
       case TerraceFloorType.tile:
-        const tileArea = 0.25;
-        tilesNeeded = (area / tileArea * 1.1).ceil();
+        final tileArea = _constants.tileArea;
+        tilesNeeded = (area / tileArea * _constants.floorMargin).ceil();
         break;
       case TerraceFloorType.board:
-        const boardArea = 0.1;
-        deckingBoards = (area / boardArea * 1.1).ceil();
+        final boardArea = _constants.boardArea;
+        deckingBoards = (area / boardArea * _constants.floorMargin).ceil();
         break;
     }
 
     final perimeter = area > 0 ? sqrt(area) * 4 : 0.0;
     final railingLength = _hasRailing ? perimeter : 0.0;
     final railingPosts =
-        _hasRailing && perimeter > 0 ? (perimeter / 2.0).ceil() : 0;
+        _hasRailing && perimeter > 0 ? (perimeter / _constants.postStep).ceil() : 0;
 
     double roofArea = 0.0;
     int polycarbonateSheets = 0;
@@ -134,24 +171,27 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
     double foundationVolume = 0.0;
 
     if (_hasRoof) {
-      roofArea = area * 1.2;
+      roofArea = area * _constants.roofMargin;
 
       switch (_roofType) {
         case TerraceRoofType.polycarbonate:
-          const sheetArea = 6.0;
-          polycarbonateSheets = (roofArea / sheetArea * 1.1).ceil();
+          final sheetArea = _constants.polycarbonateSheetArea;
+          polycarbonateSheets = (roofArea / sheetArea * _constants.roofingMargin).ceil();
           break;
         case TerraceRoofType.profiledSheet:
-          const sheetArea = 8.0;
-          profiledSheets = (roofArea / sheetArea * 1.1).ceil();
+          final sheetArea = _constants.profiledSheetArea;
+          profiledSheets = (roofArea / sheetArea * _constants.roofingMargin).ceil();
           break;
         case TerraceRoofType.softRoof:
-          roofingMaterial = roofArea * 1.1;
+          roofingMaterial = roofArea * _constants.roofingMargin;
           break;
       }
 
-      roofPosts = (area / 9.0).ceil();
-      foundationVolume = roofPosts * 0.2 * 0.2 * 0.5;
+      roofPosts = (area / _constants.areaPerPost).ceil();
+      foundationVolume = roofPosts *
+          _constants.foundationWidth *
+          _constants.foundationDepth *
+          _constants.foundationHeight;
     }
 
     return _TerraceResult(

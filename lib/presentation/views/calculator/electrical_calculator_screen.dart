@@ -9,6 +9,7 @@ import '../../../core/constants/calculator_design_system.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
+import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_result_header.dart';
 import '../../widgets/calculator/calculator_scaffold.dart';
 import '../../widgets/calculator/mode_selector.dart';
@@ -32,6 +33,111 @@ enum RoomType {
 enum WiringMethod {
   hidden, // Скрытая проводка (в штробах)
   open, // Открытая (в кабель-каналах/гофре)
+}
+
+/// Вспомогательный класс для работы с константами калькулятора электрики
+class _ElectricalConstants {
+  final CalculatorConstants? _data;
+
+  const _ElectricalConstants([this._data]);
+
+  double _getDouble(String constantKey, String valueKey, double defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is num) return value.toDouble();
+    return defaultValue;
+  }
+
+  int _getInt(String constantKey, String valueKey, int defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is num) return value.toInt();
+    return defaultValue;
+  }
+
+  // Room type multipliers
+  double getRoomMultiplier(RoomType type) {
+    final defaults = {'apartment': 1.0, 'house': 1.2, 'office': 1.5};
+    return _getDouble('room_type_multipliers', type.name, defaults[type.name]!);
+  }
+
+  // Socket calculation
+  int get socketAreaDivisor => _getInt('socket_calculation', 'area_divisor', 4);
+  int get socketMinPerRoom => _getInt('socket_calculation', 'min_per_room', 3);
+  int get socketKitchenAdditional => _getInt('socket_calculation', 'kitchen_additional', 4);
+
+  // Switch calculation
+  double get switchPerRoom => _getDouble('switch_calculation', 'per_room', 1.5);
+  int get switchPerAreaDivisor => _getInt('switch_calculation', 'per_area_divisor', 20);
+
+  // Light calculation
+  int get lightPerAreaDivisor => _getInt('light_calculation', 'per_area_divisor', 6);
+  int get lightPerRoom => _getInt('light_calculation', 'per_room', 1);
+
+  // Cable lengths
+  double getCablePerLight(WiringMethod method) =>
+      method == WiringMethod.hidden
+          ? _getDouble('cable_lengths_hidden', 'light', 5.0)
+          : _getDouble('cable_lengths_open', 'light', 4.0);
+
+  double getCablePerSocket(WiringMethod method) =>
+      method == WiringMethod.hidden
+          ? _getDouble('cable_lengths_hidden', 'socket', 4.5)
+          : _getDouble('cable_lengths_open', 'socket', 3.5);
+
+  double getCablePerSwitch(WiringMethod method) =>
+      method == WiringMethod.hidden
+          ? _getDouble('cable_lengths_hidden', 'switch', 4.0)
+          : _getDouble('cable_lengths_open', 'switch', 3.0);
+
+  // Light and socket groups
+  int get maxLightsPerGroup => _getInt('light_groups', 'max_lights_per_group', 8);
+  double get cablePerLightGroup => _getDouble('light_groups', 'cable_per_group', 10.0);
+  int get maxSocketsPerGroup => _getInt('socket_groups', 'max_sockets_per_group', 6);
+  double get cablePerSocketGroup => _getDouble('socket_groups', 'cable_per_group', 10.0);
+
+  // Cable margins
+  double get cableMargin => _getDouble('cable_margins', 'standard_margin', 15.0);
+  double get switchCableFactor => _getDouble('cable_margins', 'switch_cable_factor', 0.5);
+
+  // Power consumers cable
+  double get electricStoveCable => _getDouble('power_consumers_cable', 'electric_stove', 12.0);
+  double get ovenCable => _getDouble('power_consumers_cable', 'oven', 10.0);
+  double get boilerCable => _getDouble('power_consumers_cable', 'boiler', 10.0);
+  double get washingMachineCable => _getDouble('power_consumers_cable', 'washing_machine', 8.0);
+  double get dishwasherCable => _getDouble('power_consumers_cable', 'dishwasher', 8.0);
+  double get conditionerCable => _getDouble('power_consumers_cable', 'conditioner', 12.0);
+  double get warmFloorCable => _getDouble('power_consumers_cable', 'warm_floor', 10.0);
+
+  // Conduit factors
+  double getConduitFactor(WiringMethod method) =>
+      method == WiringMethod.hidden
+          ? _getDouble('conduit_factors', 'hidden_wiring', 0.85)
+          : _getDouble('conduit_factors', 'open_wiring', 1.0);
+
+  // RCD calculation
+  int get socketGroupsPerRcd => _getInt('rcd_calculation', 'socket_groups_per_rcd', 2);
+  int get fireProtectionRcd => _getInt('rcd_calculation', 'fire_protection_rcd', 1);
+
+  // Junction boxes
+  double get boxesPerRoom => _getDouble('junction_boxes', 'per_room', 1.5);
+  int get boxesPerAreaDivisor => _getInt('junction_boxes', 'per_area_divisor', 25);
+  int get boxesPerPointsDivisor => _getInt('junction_boxes', 'per_points_divisor', 8);
+
+  // Panel modules
+  int get basePanelModules => _getInt('panel_modules', 'base_modules', 4);
+  int get breakerModules => _getInt('panel_modules', 'breaker_modules', 1);
+  int get rcdModules => _getInt('panel_modules', 'rcd_modules', 2);
+  int get difautomatModules => _getInt('panel_modules', 'difautomat_modules', 2);
+  double get panelReserveFactor => _getDouble('panel_modules', 'reserve_factor', 1.2);
 }
 
 /// Результат расчёта электрики
@@ -119,12 +225,18 @@ class _ElectricalCalculatorScreenState
   bool _withConduit = true; // Гофра/кабель-канал
   bool _withGrounding = true; // Заземление
 
+  // Константы калькулятора (null = используются hardcoded defaults)
+  late final _ElectricalConstants _constants;
+
   late _ElectricalResult _result;
   late AppLocalizations _loc;
 
   @override
   void initState() {
     super.initState();
+    // TODO: Загрузить константы из provider когда понадобится Remote Config
+    // final constants = await ref.read(calculatorConstantsProvider('electrical').future);
+    _constants = const _ElectricalConstants(null); // Используем defaults пока
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -150,41 +262,30 @@ class _ElectricalCalculatorScreenState
       // === АВТОМАТИЧЕСКИЙ РАСЧЁТ ПО ПЛОЩАДИ ===
 
       // Коэффициент для типа помещения
-      double socketMultiplier;
-      switch (_roomType) {
-        case RoomType.apartment:
-          socketMultiplier = 1.0;
-          break;
-        case RoomType.house:
-          socketMultiplier = 1.2;
-          break;
-        case RoomType.office:
-          socketMultiplier = 1.5; // Больше розеток для рабочих мест
-          break;
-      }
+      final socketMultiplier = _constants.getRoomMultiplier(_roomType);
 
       // Розетки по СП 256.1325800.2016:
       // - Жилые комнаты: 1 розетка на 4 м², но не менее 3 на комнату
       // - Кухня: минимум 4 розетки
       // - Коридор: 1 розетка на 10 м²
-      // Упрощённая формула: площадь / 4 + дополнительные на кухню/ванную
-      final socketsBase = (_area / 4 * socketMultiplier).ceil();
-      final socketsMin = _rooms * 3; // Минимум 3 на комнату
-      const socketsKitchen = 4; // Дополнительные для кухни
+      // Упрощённая формула: площадь / divisor + дополнительные на кухню/ванную
+      final socketsBase = (_area / _constants.socketAreaDivisor * socketMultiplier).ceil();
+      final socketsMin = _rooms * _constants.socketMinPerRoom; // Минимум на комнату
+      final socketsKitchen = _constants.socketKitchenAdditional; // Дополнительные для кухни
       sockets = max(socketsBase, socketsMin) + socketsKitchen;
 
       // Выключатели:
       // - Одноклавишные: 1 на комнату (основной свет)
       // - Двухклавишные: для комнат > 12 м²
       // - Проходные: для коридоров и больших комнат
-      // Упрощённо: 1.5 на комнату + 1 на каждые 20 м²
-      switches = (_rooms * 1.5 + _area / 20).ceil();
+      // Упрощённо: per_room на комнату + 1 на каждые per_area_divisor м²
+      switches = (_rooms * _constants.switchPerRoom + _area / _constants.switchPerAreaDivisor).ceil();
 
       // Светильники:
       // - Норма освещённости жилых помещений: 150-300 лк
       // - 1 точка на 5-7 м² для общего освещения
       // - + дополнительные точки для зонального света
-      lights = (_area / 6).ceil() + _rooms;
+      lights = (_area / _constants.lightPerAreaDivisor).ceil() + (_rooms * _constants.lightPerRoom);
     } else {
       // === РУЧНОЙ ВВОД ===
       sockets = _manualSockets;
@@ -205,59 +306,43 @@ class _ElectricalCalculatorScreenState
     // === РАСЧЁТ КАБЕЛЯ ===
     // Учитываем высоту потолка (2.7м) + спуски/подъёмы + горизонтальные участки
 
-    double cablePerLight;
-    double cablePerSocket;
-    double cablePerSwitch;
-
-    switch (_wiringMethod) {
-      case WiringMethod.hidden:
-        // Скрытая проводка идёт через стены, больше кабеля
-        cablePerLight = 5.0; // Потолок + стена + запас
-        cablePerSocket = 4.5; // От щитка до розетки
-        cablePerSwitch = 4.0; // Обычно ближе к двери
-        break;
-      case WiringMethod.open:
-        // Открытая проводка короче (по стенам)
-        cablePerLight = 4.0;
-        cablePerSocket = 3.5;
-        cablePerSwitch = 3.0;
-        break;
-    }
+    final cablePerLight = _constants.getCablePerLight(_wiringMethod);
+    final cablePerSocket = _constants.getCablePerSocket(_wiringMethod);
+    final cablePerSwitch = _constants.getCablePerSwitch(_wiringMethod);
 
     // Кабель ВВГнг-LS 3×1.5 для освещения
     // Группы освещения: 1 группа на 2-3 комнаты (до 10 точек, макс 2.3 кВт)
-    final lightGroups = (lights / 8).ceil();
-    final cableLight = (lights * cablePerLight + lightGroups * 10) * 1.15; // +15% запас
+    final lightGroups = (lights / _constants.maxLightsPerGroup).ceil();
+    final cableMarginMultiplier = 1 + (_constants.cableMargin / 100); // Преобразуем % в множитель
+    final cableLight = (lights * cablePerLight + lightGroups * _constants.cablePerLightGroup) * cableMarginMultiplier;
 
     // Кабель ВВГнг-LS 3×2.5 для розеток
-    // Группы розеток: макс 8 розеток на группу (до 3.5 кВт)
-    final socketGroups = (sockets / 6).ceil();
-    final cableSocket = (sockets * cablePerSocket + socketGroups * 10) * 1.15;
+    // Группы розеток: макс N розеток на группу (до 3.5 кВт)
+    final socketGroups = (sockets / _constants.maxSocketsPerGroup).ceil();
+    final cableSocket = (sockets * cablePerSocket + socketGroups * _constants.cablePerSocketGroup) * cableMarginMultiplier;
 
     // Кабель для выключателей (учтён в освещении, но добавляем на спуски)
-    final cableSwitches = switches * cablePerSwitch * 0.5; // Часть уже в освещении
+    final cableSwitches = switches * cablePerSwitch * _constants.switchCableFactor; // Часть уже в освещении
 
     // Кабель 3×4.0 и 3×6.0 для мощных потребителей
     // Каждый потребитель: ~8-12 м от щитка
     double cablePower = 0;
-    if (_hasElectricStove) cablePower += 12; // 3×6.0
-    if (_hasOven) cablePower += 10; // 3×4.0
-    if (_hasBoiler) cablePower += 10;
-    if (_hasWashingMachine) cablePower += 8;
-    if (_hasDishwasher) cablePower += 8;
-    if (_hasConditioner) cablePower += 12; // Может быть далеко
-    if (_hasWarmFloor) cablePower += 10; // Кабель до терморегулятора
-    cablePower *= 1.15; // +15% запас
+    if (_hasElectricStove) cablePower += _constants.electricStoveCable; // 3×6.0
+    if (_hasOven) cablePower += _constants.ovenCable; // 3×4.0
+    if (_hasBoiler) cablePower += _constants.boilerCable;
+    if (_hasWashingMachine) cablePower += _constants.washingMachineCable;
+    if (_hasDishwasher) cablePower += _constants.dishwasherCable;
+    if (_hasConditioner) cablePower += _constants.conditionerCable; // Может быть далеко
+    if (_hasWarmFloor) cablePower += _constants.warmFloorCable; // Кабель до терморегулятора
+    cablePower *= cableMarginMultiplier; // +margin% запас
 
     // Общая длина кабеля для гофры
     final totalCable = cableLight + cableSocket + cableSwitches + cablePower;
 
-    // Гофра: ~90% от длины кабеля (часть идёт по потолку без гофры)
+    // Гофра: зависит от типа прокладки
     double conduitLength = 0;
     if (_withConduit) {
-      conduitLength = _wiringMethod == WiringMethod.hidden
-          ? totalCable * 0.85
-          : totalCable * 1.0; // Открытая — весь кабель в канале
+      conduitLength = totalCable * _constants.getConduitFactor(_wiringMethod);
     }
 
     // === РАСЧЁТ АВТОМАТИКИ ===
@@ -271,26 +356,28 @@ class _ElectricalCalculatorScreenState
     // Дифавтоматы для мощных потребителей (защита + УЗО в одном)
     final difAutomats = powerConsumers;
 
-    // УЗО 30мА для групп розеток (1 УЗО на 2-3 группы)
-    // + 1 противопожарное УЗО 100-300мА на вводе
-    final rcdDevices = (socketGroups / 2).ceil() + 1;
+    // УЗО 30мА для групп розеток (N УЗО на группы)
+    // + противопожарное УЗО 100-300мА на вводе
+    final rcdDevices = (socketGroups / _constants.socketGroupsPerRcd).ceil() + _constants.fireProtectionRcd;
 
     // Распределительные коробки:
-    // - 1-2 на комнату для разводки
+    // - per_room на комнату для разводки
     // - Дополнительные для сложных схем
     final junctionBoxes = _inputMode == InputMode.byArea
-        ? (_rooms * 1.5 + _area / 25).ceil()
-        : ((sockets + switches) / 8).ceil();
+        ? (_rooms * _constants.boxesPerRoom + _area / _constants.boxesPerAreaDivisor).ceil()
+        : ((sockets + switches) / _constants.boxesPerPointsDivisor).ceil();
 
     // Модули в щитке:
-    // - Вводной автомат: 2 модуля
-    // - Противопожарное УЗО: 2 модуля
-    // - Реле напряжения: 2 модуля (опционально)
-    // - Автоматы: 1 модуль каждый
-    // - УЗО: 2 модуля каждый
-    // - Дифавтоматы: 2 модуля каждый
-    // + 20% резерв
-    final panelModules = ((4 + circuitBreakers + rcdDevices * 2 + difAutomats * 2) * 1.2).ceil();
+    // - Вводной автомат + противопожарное УЗО + реле напряжения: base_modules
+    // - Автоматы: breaker_modules модуль каждый
+    // - УЗО: rcd_modules модуля каждый
+    // - Дифавтоматы: difautomat_modules модуля каждый
+    // + reserve_factor% резерв
+    final panelModules = ((_constants.basePanelModules +
+            circuitBreakers * _constants.breakerModules +
+            rcdDevices * _constants.rcdModules +
+            difAutomats * _constants.difautomatModules) *
+        _constants.panelReserveFactor).ceil();
 
     return _ElectricalResult(
       area: _area,

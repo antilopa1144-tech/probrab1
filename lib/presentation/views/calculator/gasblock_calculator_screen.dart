@@ -2,10 +2,13 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
+import '../../providers/constants_provider.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
 
@@ -16,29 +19,21 @@ enum WallType {
     'Перегородка',
     'Лёгкие внутренние стены',
     Icons.view_agenda,
-    3,
-    100,
   ),
   bearing(
     'Несущая',
     'Капитальные и наружные стены',
     Icons.home_work_outlined,
-    2,
-    300,
   );
 
   final String name;
   final String description;
   final IconData icon;
-  final int reinforcementStep;
-  final int defaultThickness;
 
   const WallType(
     this.name,
     this.description,
     this.icon,
-    this.reinforcementStep,
-    this.defaultThickness,
   );
 }
 
@@ -54,21 +49,17 @@ enum BlockMaterial {
 }
 
 enum MasonryMix {
-  glue('Клей', 'Шов 2-3 мм', Icons.grain, 25.0, 0.0),
-  mortar('Раствор', 'Шов 10-12 мм', Icons.construction, 0.0, 0.2);
+  glue('Клей', 'Шов 2-3 мм', Icons.grain),
+  mortar('Раствор', 'Шов 10-12 мм', Icons.construction);
 
   final String name;
   final String description;
   final IconData icon;
-  final double glueKgPerM3;
-  final double mortarM3PerM3;
 
   const MasonryMix(
     this.name,
     this.description,
     this.icon,
-    this.glueKgPerM3,
-    this.mortarM3PerM3,
   );
 }
 
@@ -93,8 +84,86 @@ const List<BlockSizePreset> kBlockSizePresets = [
   BlockSizePreset(label: 'Свой размер', lengthCm: 0.0, heightCm: 0.0, isCustom: true),
 ];
 
-const List<int> kPartitionThicknesses = [75, 100, 150];
-const List<int> kBearingThicknesses = [200, 250, 300, 400];
+/// Helper class для работы с константами газобетонного калькулятора
+class _GasblockConstants {
+  final CalculatorConstants? _data;
+
+  const _GasblockConstants(this._data);
+
+  T _get<T>(String constantKey, String valueKey, T defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value == null) return defaultValue;
+    return value as T;
+  }
+
+  // Block sizes
+  double getBlockLength(String sizeKey) {
+    final defaults = {'600x300': 60.0, '600x250': 60.0, '625x250': 62.5};
+    return _get('block_sizes', '${sizeKey}_length', defaults[sizeKey] ?? 60.0);
+  }
+
+  double getBlockHeight(String sizeKey) {
+    final defaults = {'600x300': 30.0, '600x250': 25.0, '625x250': 25.0};
+    return _get('block_sizes', '${sizeKey}_height', defaults[sizeKey] ?? 30.0);
+  }
+
+  // Thicknesses
+  List<int> getPartitionThicknesses() {
+    return [
+      _get<int>('thicknesses', 'partition_min', 75),
+      _get<int>('thicknesses', 'partition_mid1', 100),
+      _get<int>('thicknesses', 'partition_max', 150),
+    ];
+  }
+
+  List<int> getBearingThicknesses() {
+    return [
+      _get<int>('thicknesses', 'bearing_min', 200),
+      _get<int>('thicknesses', 'bearing_mid1', 250),
+      _get<int>('thicknesses', 'bearing_mid2', 300),
+      _get<int>('thicknesses', 'bearing_max', 400),
+    ];
+  }
+
+  int getDefaultThickness(WallType type) {
+    return type == WallType.partition
+        ? _get<int>('thicknesses', 'partition_mid1', 100)
+        : _get<int>('thicknesses', 'bearing_mid2', 300);
+  }
+
+  // Glue consumption
+  double getGlueKgPerM3() => _get('glue_consumption', 'kg_per_m3', 25.0);
+  double getGlueMarginFactor() => _get('glue_consumption', 'margin_factor', 1.1);
+  int getGlueBagSizeKg() => _get('glue_consumption', 'bag_size_kg', 25);
+
+  // Mortar consumption
+  double getMortarM3PerM3() => _get('mortar_consumption', 'm3_per_m3', 0.2);
+  double getMortarMarginFactor() => _get('mortar_consumption', 'margin_factor', 1.1);
+
+  // Primer consumption
+  double getPrimerPerLayer() => _get('primer_consumption', 'per_layer', 0.2);
+  int getPrimerLayers() => _get('primer_consumption', 'layers', 2);
+
+  // Plaster consumption
+  double getPlasterPerLayer() => _get('plaster_consumption', 'per_layer', 10.0);
+  int getPlasterLayers() => _get('plaster_consumption', 'layers', 2);
+
+  // Reinforcement
+  int getReinforcementStepRows(WallType type) {
+    return type == WallType.partition
+        ? _get<int>('reinforcement', 'partition_step_rows', 3)
+        : _get<int>('reinforcement', 'bearing_step_rows', 2);
+  }
+
+  int getRodsPerRow() => _get('reinforcement', 'rods_per_row', 2);
+
+  // Mesh
+  int getMeshSides() => _get('mesh', 'sides', 2);
+  double getMeshMarginFactor() => _get('mesh', 'margin_factor', 1.05);
+}
 
 class _GasblockResult {
   final double area;
@@ -126,7 +195,7 @@ class _GasblockResult {
   });
 }
 
-class GasblockCalculatorScreen extends StatefulWidget {
+class GasblockCalculatorScreen extends ConsumerStatefulWidget {
   final CalculatorDefinitionV2 definition;
   final Map<String, double>? initialInputs;
 
@@ -137,11 +206,11 @@ class GasblockCalculatorScreen extends StatefulWidget {
   });
 
   @override
-  State<GasblockCalculatorScreen> createState() =>
+  ConsumerState<GasblockCalculatorScreen> createState() =>
       _GasblockCalculatorScreenState();
 }
 
-class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
+class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScreen> {
   InputMode _inputMode = InputMode.byDimensions;
   double _area = 15.0;
   double _length = 6.0;
@@ -166,10 +235,14 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
 
   late _GasblockResult _result;
   late AppLocalizations _loc;
+  late _GasblockConstants _constants;
 
   @override
   void initState() {
     super.initState();
+    // Загружаем константы (синхронно, из кеша или fallback на defaults)
+    final constantsAsync = ref.read(calculatorConstantsProvider('gasblock'));
+    _constants = _GasblockConstants(constantsAsync.value);
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -216,14 +289,14 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
   void _ensureThicknessOption() {
     final options = _thicknessOptions();
     if (!options.contains(_blockThickness)) {
-      _blockThickness = _wallType.defaultThickness;
+      _blockThickness = _constants.getDefaultThickness(_wallType);
     }
   }
 
   List<int> _thicknessOptions() {
     return _wallType == WallType.partition
-        ? kPartitionThicknesses
-        : kBearingThicknesses;
+        ? _constants.getPartitionThicknesses()
+        : _constants.getBearingThicknesses();
   }
 
   double _getGrossArea() {
@@ -268,25 +341,26 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
     int glueBags = 0;
     double mortarM3 = 0;
     if (_masonryMix == MasonryMix.glue) {
-      glueKg = volume * _masonryMix.glueKgPerM3 * 1.1;
-      glueBags = (glueKg / 25).ceil();
+      glueKg = volume * _constants.getGlueKgPerM3() * _constants.getGlueMarginFactor();
+      glueBags = (glueKg / _constants.getGlueBagSizeKg()).ceil();
     } else {
-      mortarM3 = volume * _masonryMix.mortarM3PerM3 * 1.1;
+      mortarM3 = volume * _constants.getMortarM3PerM3() * _constants.getMortarMarginFactor();
     }
 
     final blockHeightM = _blockHeight / 100;
     final rows = blockHeightM > 0 ? (_height / blockHeightM).ceil() : 0;
-    final reinforcementRows = _wallType.reinforcementStep > 0
-        ? (rows / _wallType.reinforcementStep).ceil()
+    final reinforcementStep = _constants.getReinforcementStepRows(_wallType);
+    final reinforcementRows = reinforcementStep > 0
+        ? (rows / reinforcementStep).ceil()
         : 0;
     final wallLength = _inputMode == InputMode.byDimensions
         ? _length
         : (_height > 0 ? netArea / _height : 0.0);
-    final reinforcementLength = reinforcementRows * wallLength * 2;
+    final reinforcementLength = reinforcementRows * wallLength * _constants.getRodsPerRow();
 
-    final primerLiters = netArea * 0.2 * 2;
-    final plasterKg = netArea * 10 * 2;
-    final meshArea = netArea * 2 * 1.05;
+    final primerLiters = netArea * _constants.getPrimerPerLayer() * _constants.getPrimerLayers();
+    final plasterKg = netArea * _constants.getPlasterPerLayer() * _constants.getPlasterLayers();
+    final meshArea = netArea * _constants.getMeshSides() * _constants.getMeshMarginFactor();
 
     return _GasblockResult(
       area: grossArea,
@@ -648,8 +722,8 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
           const SizedBox(height: 12),
           _buildOptionGrid<WallType>(
             options: WallType.values,
-            minItemWidth: 200,
-            minItemHeight: 96,
+            minItemWidth: 140,
+            minItemHeight: 72,
             itemBuilder: (type) {
               final isSelected = _wallType == type;
               return TypeSelectorCardCompact(
@@ -688,8 +762,8 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
           const SizedBox(height: 12),
           _buildOptionGrid<BlockMaterial>(
             options: BlockMaterial.values,
-            minItemWidth: 200,
-            minItemHeight: 96,
+            minItemWidth: 140,
+            minItemHeight: 72,
             itemBuilder: (material) {
               final isSelected = _blockMaterial == material;
               return TypeSelectorCardCompact(
@@ -729,14 +803,14 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
           const SizedBox(height: 12),
           _buildOptionGrid<BlockSizePreset>(
             options: kBlockSizePresets,
-            minItemWidth: 160,
-            minItemHeight: 88,
+            minItemWidth: 110,
+            minItemHeight: 64,
             itemBuilder: (preset) {
               final isSelected = _blockSizePreset == preset;
               return TypeSelectorCardCompact(
                 icon: Icons.crop_square,
                 title: preset.label,
-                subtitle: preset.isCustom ? 'Длина и высота' : null,
+                subtitle: preset.isCustom ? 'Свой размер' : null,
                 isSelected: isSelected,
                 accentColor: accentColor,
                 onTap: () {
@@ -845,8 +919,8 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
           const SizedBox(height: 12),
           _buildOptionGrid<int>(
             options: options,
-            minItemWidth: 120,
-            minItemHeight: 72,
+            minItemWidth: 80,
+            minItemHeight: 56,
             itemBuilder: (thickness) {
               final isSelected = _blockThickness == thickness;
               return TypeSelectorCardCompact(
@@ -871,8 +945,8 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
   Widget _buildMasonryMixCard() {
     const accentColor = CalculatorColors.walls;
     final mixInfo = _masonryMix == MasonryMix.glue
-        ? 'Расход: ~25 кг на 1 м³ кладки'
-        : 'Расход: ~0.2 м³ раствора на 1 м³ кладки';
+        ? 'Расход: ~${_constants.getGlueKgPerM3().toInt()} кг на 1 м³ кладки'
+        : 'Расход: ~${_constants.getMortarM3PerM3()} м³ раствора на 1 м³ кладки';
     return _card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -886,8 +960,8 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
           const SizedBox(height: 12),
           _buildOptionGrid<MasonryMix>(
             options: MasonryMix.values,
-            minItemWidth: 200,
-            minItemHeight: 88,
+            minItemWidth: 140,
+            minItemHeight: 72,
             itemBuilder: (mix) {
               final isSelected = _masonryMix == mix;
               return TypeSelectorCardCompact(
@@ -968,9 +1042,7 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
               style: CalculatorDesignSystem.bodyMedium,
             ),
             subtitle: Text(
-              _wallType == WallType.bearing
-                  ? 'Каждые 2 ряда'
-                  : 'Каждые 3 ряда',
+              'Каждые ${_constants.getReinforcementStepRows(_wallType)} ряда',
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -1001,7 +1073,7 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
               style: CalculatorDesignSystem.bodyMedium,
             ),
             subtitle: Text(
-              'Расход ~0.2 л/м² на сторону',
+              'Расход ~${_constants.getPrimerPerLayer()} л/м² на сторону',
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -1145,7 +1217,7 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
       items.add(MaterialItem(
         name: 'Клей',
         value: '${_result.glueBags} меш.',
-        subtitle: '${_result.glueKg.toStringAsFixed(0)} кг (25 кг/меш.)',
+        subtitle: '${_result.glueKg.toStringAsFixed(0)} кг (${_constants.getGlueBagSizeKg()} кг/меш.)',
         icon: Icons.grain,
       ));
     } else {
@@ -1161,7 +1233,7 @@ class _GasblockCalculatorScreenState extends State<GasblockCalculatorScreen> {
       items.add(MaterialItem(
         name: 'Армирование',
         value: '${_result.reinforcementLength.toStringAsFixed(0)} м',
-        subtitle: '2 прута по длине',
+        subtitle: '${_constants.getRodsPerRow()} прута по длине',
         icon: Icons.tune,
       ));
     }

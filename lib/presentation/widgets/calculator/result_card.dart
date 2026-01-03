@@ -483,19 +483,20 @@ class MaterialsCardModern extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Иконка в квадрате
               Container(
-                width: 36,
-                height: 36,
+                width: 32,
+                height: 32,
                 decoration: BoxDecoration(
                   color: accentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(item.icon, color: accentColor, size: 20),
+                child: Icon(item.icon, color: accentColor, size: 18),
               ),
-              const SizedBox(width: 12),
-              // Название и подзаголовок
+              const SizedBox(width: 10),
+              // Название, подзаголовок и значение в колонке
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -505,7 +506,7 @@ class MaterialsCardModern extends StatelessWidget {
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
                         color: CalculatorColors.textPrimary,
                         fontWeight: FontWeight.w500,
-                        fontSize: 15,
+                        fontSize: 14,
                       ),
                     ),
                     if (item.subtitle != null) ...[
@@ -518,23 +519,24 @@ class MaterialsCardModern extends StatelessWidget {
                         ),
                       ),
                     ],
+                    const SizedBox(height: 6),
+                    // Значение в бейдже - теперь под названием
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: accentColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        item.value,
+                        style: CalculatorDesignSystem.titleSmall.copyWith(
+                          color: accentColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
                   ],
-                ),
-              ),
-              // Значение в бейдже
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  item.value,
-                  style: CalculatorDesignSystem.titleSmall.copyWith(
-                    color: accentColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
                 ),
               ),
             ],

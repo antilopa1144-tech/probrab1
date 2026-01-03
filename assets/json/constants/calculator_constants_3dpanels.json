@@ -1,0 +1,29 @@
+{
+  "calculator_id": "3dpanels",
+  "version": "1.0.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Константы для калькулятора 3D панелей",
+  "norms": [],
+  "constants": {
+    "margins": {
+      "category": "margins",
+      "description": "Коэффициенты запаса",
+      "unit": null,
+      "values": {
+        "panels_margin": 1.1
+      }
+    },
+    "materials_consumption": {
+      "category": "materials",
+      "description": "Расход материалов на м²",
+      "unit": null,
+      "values": {
+        "glue_per_m2": 5.0,
+        "primer_per_m2": 0.18,
+        "putty_per_m2": 1.0,
+        "paint_per_m2": 0.24,
+        "varnish_per_m2": 0.08
+      }
+    }
+  }
+}

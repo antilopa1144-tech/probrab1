@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_declarations
 import 'dart:math';
 import '../../data/models/price_item.dart';
+import '../models/calculator_constant.dart';
 import './calculator_usecase.dart';
 import '../../core/exceptions/calculation_exception.dart';
 
@@ -69,6 +70,25 @@ import '../../core/exceptions/calculation_exception.dart';
 abstract class BaseCalculator implements CalculatorUseCase {
   Map<String, double>? _lastInputs;
   CalculatorResult? _lastResult;
+
+  /// Константы калькулятора (загружаются из Remote Config или локальных JSON файлов).
+  ///
+  /// Устанавливаются перед вызовом calculate() через сеттер.
+  /// Если null, используются дефолтные значения в методах getConstant*.
+  CalculatorConstants? _constants;
+
+  /// Установить константы для калькулятора.
+  ///
+  /// Вызывается перед calculate() для предоставления актуальных констант.
+  /// Пример:
+  /// ```dart
+  /// calculator.constants = await constantsRepository.getConstants('warmfloor');
+  /// final result = calculator.calculate(inputs, prices);
+  /// ```
+  set constants(CalculatorConstants? value) => _constants = value;
+
+  /// Получить текущие константы калькулятора (может быть null).
+  CalculatorConstants? get constants => _constants;
 
   /// Современные нормативы по умолчанию для всех расчётов.
   ///
@@ -347,6 +367,220 @@ abstract class BaseCalculator implements CalculatorUseCase {
     final factor = pow(10, decimals).toDouble();
     return (value * factor).round() / factor;
   }
+
+  // ============================================================================
+  // Методы работы с константами калькулятора
+  // ============================================================================
+
+  /// Получить числовое значение константы (double).
+  ///
+  /// Использует fallback стратегию:
+  /// 1. Значение из загруженных констант (_constants)
+  /// 2. Дефолтное значение (defaultValue)
+  ///
+  /// Параметры:
+  /// - [constantKey]: ключ константы (например, 'room_power')
+  /// - [valueKey]: ключ значения (например, 'bathroom')
+  /// - [defaultValue]: значение по умолчанию (обязательно для backward compatibility)
+  ///
+  /// Пример:
+  /// ```dart
+  /// final bathroomPower = getConstantDouble(
+  ///   'room_power',
+  ///   'bathroom',
+  ///   defaultValue: 180.0, // Hardcoded fallback
+  /// );
+  /// ```
+  double getConstantDouble(
+    String constantKey,
+    String valueKey, {
+    required double defaultValue,
+  }) {
+    // Если константы не загружены, используем default
+    if (_constants == null) return defaultValue;
+
+    final constant = _constants!.constants[constantKey];
+    if (constant == null) return defaultValue;
+
+    final value = constant.values[valueKey];
+    if (value == null) return defaultValue;
+
+    // Автоматическая конверсия типов
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is num) return value.toDouble();
+
+    return defaultValue;
+  }
+
+  /// Получить целочисленное значение константы (int).
+  ///
+  /// Использует fallback стратегию:
+  /// 1. Значение из загруженных констант (_constants)
+  /// 2. Дефолтное значение (defaultValue)
+  ///
+  /// Параметры:
+  /// - [constantKey]: ключ константы
+  /// - [valueKey]: ключ значения
+  /// - [defaultValue]: значение по умолчанию
+  ///
+  /// Пример:
+  /// ```dart
+  /// final minSocketsPerRoom = getConstantInt(
+  ///   'socket_calculation',
+  ///   'min_per_room',
+  ///   defaultValue: 3,
+  /// );
+  /// ```
+  int getConstantInt(
+    String constantKey,
+    String valueKey, {
+    required int defaultValue,
+  }) {
+    if (_constants == null) return defaultValue;
+
+    final constant = _constants!.constants[constantKey];
+    if (constant == null) return defaultValue;
+
+    final value = constant.values[valueKey];
+    if (value == null) return defaultValue;
+
+    // Автоматическая конверсия типов
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is num) return value.toInt();
+
+    return defaultValue;
+  }
+
+  /// Получить строковое значение константы.
+  ///
+  /// Параметры:
+  /// - [constantKey]: ключ константы
+  /// - [valueKey]: ключ значения
+  /// - [defaultValue]: значение по умолчанию
+  ///
+  /// Пример:
+  /// ```dart
+  /// final unit = getConstantString(
+  ///   'measurements',
+  ///   'power_unit',
+  ///   defaultValue: 'Вт/м²',
+  /// );
+  /// ```
+  String getConstantString(
+    String constantKey,
+    String valueKey, {
+    required String defaultValue,
+  }) {
+    if (_constants == null) return defaultValue;
+
+    final constant = _constants!.constants[constantKey];
+    if (constant == null) return defaultValue;
+
+    final value = constant.values[valueKey];
+    if (value == null) return defaultValue;
+
+    if (value is String) return value;
+    return value.toString();
+  }
+
+  /// Получить Map значений константы.
+  ///
+  /// Полезно для констант, которые содержат несколько связанных значений.
+  ///
+  /// Параметры:
+  /// - [constantKey]: ключ константы
+  /// - [defaultValue]: Map по умолчанию
+  ///
+  /// Пример:
+  /// ```dart
+  /// final roomPowers = getConstantMap(
+  ///   'room_power',
+  ///   defaultValue: {
+  ///     'bathroom': 180.0,
+  ///     'living_room': 150.0,
+  ///   },
+  /// );
+  /// final bathroomPower = roomPowers['bathroom'] as double? ?? 180.0;
+  /// ```
+  Map<String, dynamic> getConstantMap(
+    String constantKey, {
+    Map<String, dynamic>? defaultValue,
+  }) {
+    if (_constants == null) return defaultValue ?? {};
+
+    final constant = _constants!.constants[constantKey];
+    if (constant == null) return defaultValue ?? {};
+
+    return constant.values;
+  }
+
+  /// Получить коэффициент (числовое значение из категории coefficients).
+  ///
+  /// Shortcut для getConstantDouble с семантикой коэффициента.
+  ///
+  /// Пример:
+  /// ```dart
+  /// final multiplier = getCoefficient(
+  ///   'room_type_multipliers',
+  ///   'apartment',
+  ///   defaultValue: 1.0,
+  /// );
+  /// ```
+  double getCoefficient(
+    String constantKey,
+    String valueKey, {
+    required double defaultValue,
+  }) {
+    return getConstantDouble(constantKey, valueKey, defaultValue: defaultValue);
+  }
+
+  /// Получить процент запаса (из категории margins).
+  ///
+  /// Shortcut для getConstantDouble с семантикой процентного запаса.
+  ///
+  /// Пример:
+  /// ```dart
+  /// final cableMargin = getMarginPercent(
+  ///   'cable_margins',
+  ///   'standard_margin',
+  ///   defaultValue: 15.0,
+  /// );
+  /// // Использование:
+  /// final totalCable = addMargin(baseCable, cableMargin);
+  /// ```
+  double getMarginPercent(
+    String constantKey,
+    String valueKey, {
+    required double defaultValue,
+  }) {
+    return getConstantDouble(constantKey, valueKey, defaultValue: defaultValue);
+  }
+
+  /// Проверить, загружены ли константы калькулятора.
+  ///
+  /// Возвращает true если константы доступны, false если используются defaults.
+  bool get hasConstants => _constants != null;
+
+  /// Получить версию загруженных констант.
+  ///
+  /// Возвращает версию констант или null если константы не загружены.
+  String? get constantsVersion => _constants?.version;
+
+  /// Получить источник констант для отладки.
+  ///
+  /// Возвращает строку с информацией о константах.
+  String get constantsInfo {
+    if (_constants == null) {
+      return 'Using hardcoded defaults';
+    }
+    return 'Constants v${_constants!.version} (${_constants!.constants.length} items)';
+  }
+
+  // ============================================================================
+  // Конец методов работы с константами
+  // ============================================================================
 
   /// Валидация входных данных (переопределить в подклассе при необходимости).
   /// 

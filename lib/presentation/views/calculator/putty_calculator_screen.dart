@@ -2,10 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
 part 'putty_calculator_screen_state.dart';
+
+/// Helper class for accessing putty calculator constants
+class _PuttyConstants {
+  final CalculatorConstants? _data;
+
+  _PuttyConstants(this._data);
+
+  double _getDouble(String category, String key, double defaultValue) {
+    return _data?.getDouble(category, key, defaultValue: defaultValue) ?? defaultValue;
+  }
+
+  int _getInt(String category, String key, int defaultValue) {
+    return _data?.getInt(category, key, defaultValue: defaultValue) ?? defaultValue;
+  }
+
+  // Start putty
+  double get startConsumptionPerLayer => _getDouble('start_putty', 'consumption_per_layer', 1.0);
+  int get startBagWeight => _getInt('start_putty', 'bag_weight', 25);
+
+  // Finish putty
+  double get dryConsumption => _getDouble('finish_putty', 'dry_consumption', 1.2);
+  int get dryBagWeight => _getInt('finish_putty', 'dry_bag_weight', 20);
+  double get pasteConsumption => _getDouble('finish_putty', 'paste_consumption', 1.0);
+  int get pasteBucketVolume => _getInt('finish_putty', 'paste_bucket_volume', 15);
+
+  // Primer
+  double get primerConsumptionPerM2 => _getDouble('primer', 'consumption_per_m2', 0.15);
+  int get primerCanisterVolume => _getInt('primer', 'canister_volume', 10);
+
+  // Sanding
+  int get areaPerSheet => _getInt('sanding', 'area_per_sheet', 10);
+}
 
 // --- Модели данных ---
 

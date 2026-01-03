@@ -2,10 +2,65 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
+
+/// Helper class for accessing tile adhesive calculator constants
+class _TileAdhesiveConstants {
+  final CalculatorConstants? _data;
+
+  _TileAdhesiveConstants(this._data);
+
+  double _getDouble(String category, String key, double defaultValue) {
+    return _data?.getDouble(category, key, defaultValue: defaultValue) ?? defaultValue;
+  }
+
+  int _getInt(String category, String key, int defaultValue) {
+    return _data?.getInt(category, key, defaultValue: defaultValue) ?? defaultValue;
+  }
+
+  // Surface factors
+  double getSurfaceFactor(String surfaceKey) {
+    final defaults = {'wall': 1.1, 'floor': 1.0};
+    return _getDouble('surface_factors', surfaceKey, defaults[surfaceKey] ?? 1.0);
+  }
+
+  // Margins
+  double get adhesiveMargin => _getDouble('margins', 'adhesive_margin', 1.1);
+  double get groutMargin => _getDouble('margins', 'grout_margin', 1.1);
+
+  // Materials consumption
+  double get primerPerM2 => _getDouble('materials_consumption', 'primer_per_m2', 0.15);
+  double get waterproofingPerLayer => _getDouble('materials_consumption', 'waterproofing_per_layer', 0.4);
+  int get waterproofingLayers => _getInt('materials_consumption', 'waterproofing_layers', 2);
+
+  // Tile sizes
+  double getTileSize(String tileTypeKey) {
+    final defaults = {
+      'mosaic': 10.0,
+      'ceramic': 30.0,
+      'porcelain': 40.0,
+      'largeFormat': 60.0,
+    };
+    return _getDouble('tile_sizes', tileTypeKey, defaults[tileTypeKey] ?? 30.0);
+  }
+
+  // Accessories
+  int get crossesPerTile => _getInt('accessories', 'crosses_per_tile', 5);
+  int get svpClipsSmall => _getInt('accessories', 'svp_clips_small', 4);
+  int get svpClipsMedium => _getInt('accessories', 'svp_clips_medium', 3);
+  int get svpClipsLarge => _getInt('accessories', 'svp_clips_large', 2);
+  int get smallTileThreshold => _getInt('accessories', 'small_tile_threshold', 20);
+  int get largeTileThreshold => _getInt('accessories', 'large_tile_threshold', 40);
+
+  // Grout parameters
+  double get jointWidth => _getDouble('grout', 'joint_width', 3.0);
+  double get jointDepth => _getDouble('grout', 'joint_depth', 2.0);
+  double get groutDensity => _getDouble('grout', 'density', 1.6);
+}
 
 enum InputMode { byDimensions, byArea }
 enum BagWeight { kg20, kg25 }
@@ -121,6 +176,9 @@ class _TileAdhesiveCalculatorScreenState
   late _TileAdhesiveResult _result;
   late AppLocalizations _loc;
 
+  // TODO: Подключить к calculatorConstantsProvider для получения Remote Config
+  final _constants = _TileAdhesiveConstants(null);
+
   @override
   void initState() {
     super.initState();
@@ -153,14 +211,14 @@ class _TileAdhesiveCalculatorScreenState
 
     final notchSize = _tileType.notchSize;
     final coefficient = _tileType.coefficient;
-    final surfaceFactor = _surfaceType == SurfaceType.wall ? 1.1 : 1.0;
+    final surfaceFactor = _constants.getSurfaceFactor(_surfaceType.name);
 
     // Расход клея на м² (кг/м²)
     final adhesiveConsumption =
         _adhesiveBrand.baseConsumption * notchSize * coefficient * surfaceFactor;
 
-    // Общий вес с запасом +10%
-    final totalWeight = calculatedArea * adhesiveConsumption * 1.1;
+    // Общий вес с запасом
+    final totalWeight = calculatedArea * adhesiveConsumption * _constants.adhesiveMargin;
 
     // Вес мешка
     final bagWeightKg = _bagWeight == BagWeight.kg20 ? 20 : 25;
@@ -168,17 +226,11 @@ class _TileAdhesiveCalculatorScreenState
     // Количество мешков
     final bagsNeeded = (totalWeight / bagWeightKg).ceil();
 
-    // Грунтовка (0.15 л/м²)
-    final primerLiters = calculatedArea * 0.15;
+    // Грунтовка
+    final primerLiters = calculatedArea * _constants.primerPerM2;
 
     // Стандартные размеры плитки в зависимости от типа
-    final tileWidth = _tileType == TileType.mosaic
-        ? 10.0 // см
-        : _tileType == TileType.ceramic
-            ? 30.0
-            : _tileType == TileType.porcelain
-                ? 40.0
-                : 60.0; // крупноформат
+    final tileWidth = _constants.getTileSize(_tileType.name);
 
     final tileHeight = tileWidth; // квадратная плитка
 
@@ -186,39 +238,40 @@ class _TileAdhesiveCalculatorScreenState
     final tileAreaM2 = (tileWidth / 100) * (tileHeight / 100);
     final tilesCount = (calculatedArea / tileAreaM2).ceil();
 
-    // Крестики для швов: ~5 шт на плитку
-    final crossesNeeded = tilesCount * 5;
+    // Крестики для швов
+    final crossesNeeded = tilesCount * _constants.crossesPerTile;
 
     // СВП (система выравнивания плитки): количество клипс зависит от размера плитки
-    // Маленькая плитка (<20 см): 4 клипсы
-    // Средняя плитка (20-40 см): 3 клипсы
-    // Большая плитка (>40 см): 2 клипсы
     final avgTileSize = (tileWidth + tileHeight) / 2;
-    final clipsPerTile = avgTileSize < 20 ? 4 : (avgTileSize <= 40 ? 3 : 2);
+    final clipsPerTile = avgTileSize < _constants.smallTileThreshold
+        ? _constants.svpClipsSmall
+        : (avgTileSize <= _constants.largeTileThreshold
+            ? _constants.svpClipsMedium
+            : _constants.svpClipsLarge);
     final svpCount = _useSVP ? tilesCount * clipsPerTile : 0;
 
     // Расчет затирки (опционально)
     double? groutWeight;
     if (_calculateGrout) {
-      // Стандартные параметры затирки
-      const jointWidth = 3.0; // мм
-      const jointDepth = 2.0; // мм
+      // Параметры затирки из констант
+      final jointWidth = _constants.jointWidth;
+      final jointDepth = _constants.jointDepth;
+      final groutDensity = _constants.groutDensity;
       // Формула: (Длина + Ширина) / (Длина × Ширина) × Ширина_шва × Глубина_шва × Плотность × Площадь
-      // Плотность затирки ~1.6 кг/дм³
-      const groutDensity = 1.6; // кг/дм³
       final groutConsumptionPerM2 =
           ((tileWidth + tileHeight) / (tileWidth * tileHeight)) *
           jointWidth *
           jointDepth *
           groutDensity;
-      groutWeight = calculatedArea * groutConsumptionPerM2 * 1.1; // +10% запас
+      groutWeight = calculatedArea * groutConsumptionPerM2 * _constants.groutMargin;
     }
 
     // Гидроизоляция (опционально)
     double? waterproofingWeight;
     if (_useWaterproofing) {
-      // 2 слоя по 0.4 кг/м²
-      waterproofingWeight = calculatedArea * 0.4 * 2;
+      waterproofingWeight = calculatedArea *
+          _constants.waterproofingPerLayer *
+          _constants.waterproofingLayers;
     }
 
     return _TileAdhesiveResult(

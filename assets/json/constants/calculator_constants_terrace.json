@@ -1,0 +1,56 @@
+{
+  "calculator_id": "terrace",
+  "version": "1.0.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Константы для калькулятора террасы/веранды",
+  "norms": [],
+  "constants": {
+    "margins": {
+      "category": "margins",
+      "description": "Коэффициенты запаса",
+      "unit": null,
+      "values": {
+        "floor_margin": 1.1,
+        "roof_margin": 1.2,
+        "roofing_margin": 1.1
+      }
+    },
+    "floor_materials": {
+      "category": "materials",
+      "description": "Параметры напольных покрытий",
+      "unit": "м²",
+      "values": {
+        "tile_area": 0.25,
+        "board_area": 0.1
+      }
+    },
+    "railing": {
+      "category": "construction",
+      "description": "Параметры ограждения",
+      "unit": null,
+      "values": {
+        "post_step": 2.0
+      }
+    },
+    "roofing": {
+      "category": "roofing",
+      "description": "Параметры кровельных материалов",
+      "unit": "м²",
+      "values": {
+        "polycarbonate_sheet_area": 6.0,
+        "profiled_sheet_area": 8.0,
+        "area_per_post": 9.0
+      }
+    },
+    "foundation": {
+      "category": "foundation",
+      "description": "Параметры фундамента под опоры",
+      "unit": "м",
+      "values": {
+        "post_width": 0.2,
+        "post_depth": 0.2,
+        "post_height": 0.5
+      }
+    }
+  }
+}

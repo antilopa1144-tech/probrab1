@@ -2,7 +2,43 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
+import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
+
+/// Вспомогательный класс для работы с константами калькулятора штукатурки
+class _PlasterConstants {
+  final CalculatorConstants? _data;
+
+  const _PlasterConstants([this._data]);
+
+  double _getDouble(String constantKey, String valueKey, double defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is num) return value.toDouble();
+    return defaultValue;
+  }
+
+  // Consumption rates
+  double getConsumptionRate(String materialKey) {
+    final defaults = {'gypsum': 8.5, 'cement': 17.0};
+    return _getDouble('consumption_rates', materialKey, defaults[materialKey] ?? 8.5);
+  }
+
+  // Margins
+  double get materialMargin => _getDouble('margins', 'material_margin', 1.1);
+  double get meshMargin => _getDouble('margins', 'mesh_margin', 1.1);
+  double get primerMargin => _getDouble('margins', 'primer_margin', 1.1);
+
+  // Beacons
+  double get areaPerBeacon => _getDouble('beacons', 'area_per_beacon', 2.5);
+
+  // Primer
+  double get primerConsumption => _getDouble('primer', 'consumption', 0.1);
+}
 
 enum PlasterMaterial { gypsum, cement }
 enum PlasterInputMode { manual, room }
@@ -42,11 +78,6 @@ class PlasterCalculatorScreen extends StatefulWidget {
 }
 
 class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
-  static const Map<PlasterMaterial, double> _consumptionRates = {
-    PlasterMaterial.gypsum: 8.5,
-    PlasterMaterial.cement: 17.0,
-  };
-
   double _roomWidth = 4.0;
   double _roomLength = 5.0;
   double _roomHeight = 2.7;
@@ -63,9 +94,14 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
   late _PlasterResult _result;
   late AppLocalizations _loc;
 
+  // Константы калькулятора (null = используются hardcoded defaults)
+  late final _PlasterConstants _constants;
+
   @override
   void initState() {
     super.initState();
+    // TODO: Загрузить константы из provider когда понадобится Remote Config
+    _constants = const _PlasterConstants(null);
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -90,15 +126,15 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
       area = math.max(0, (2 * (_roomWidth + _roomLength) * _roomHeight) - _openingsArea);
     }
 
-    final rate = _consumptionRates[_materialType] ?? 8.5;
-    final totalWeight = area * (_thickness / 10.0) * rate * 1.1;
+    final rate = _constants.getConsumptionRate(_materialType.name);
+    final totalWeight = area * (_thickness / 10.0) * rate * _constants.materialMargin;
     return _PlasterResult(
       area: area,
       totalWeight: totalWeight,
       bags: (totalWeight / _bagWeight).ceil(),
-      beacons: _useBeacons ? (area / 2.5).ceil() : 0,
-      meshArea: _useMesh ? (area * 1.1).ceil() : 0,
-      primerLiters: double.parse((_usePrimer ? area * 0.1 * 1.1 : 0).toStringAsFixed(1)),
+      beacons: _useBeacons ? (area / _constants.areaPerBeacon).ceil() : 0,
+      meshArea: _useMesh ? (area * _constants.meshMargin).ceil() : 0,
+      primerLiters: double.parse((_usePrimer ? area * _constants.primerConsumption * _constants.primerMargin : 0).toStringAsFixed(1)),
       beaconSize: _thickness < 10 ? 6 : 10,
     );
   }

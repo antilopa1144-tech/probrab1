@@ -1,0 +1,48 @@
+{
+  "calculator_id": "putty",
+  "version": "1.0.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Константы для калькулятора шпаклёвки",
+  "norms": [
+    "СП 71.13330.2017 \"Изоляционные и отделочные покрытия\""
+  ],
+  "constants": {
+    "start_putty": {
+      "category": "materials",
+      "description": "Параметры стартовой (базовой) шпаклёвки",
+      "unit": null,
+      "values": {
+        "consumption_per_layer": 1.0,
+        "bag_weight": 25
+      }
+    },
+    "finish_putty": {
+      "category": "materials",
+      "description": "Параметры финишной шпаклёвки",
+      "unit": null,
+      "values": {
+        "dry_consumption": 1.2,
+        "dry_bag_weight": 20,
+        "paste_consumption": 1.0,
+        "paste_bucket_volume": 15
+      }
+    },
+    "primer": {
+      "category": "materials",
+      "description": "Параметры грунтовки",
+      "unit": null,
+      "values": {
+        "consumption_per_m2": 0.15,
+        "canister_volume": 10
+      }
+    },
+    "sanding": {
+      "category": "materials",
+      "description": "Параметры абразива",
+      "unit": null,
+      "values": {
+        "area_per_sheet": 10
+      }
+    }
+  }
+}

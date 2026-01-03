@@ -24,8 +24,14 @@ class CalculateWarmFloor extends BaseCalculator {
     final power = inputs['power'] ?? 150;
     final type = inputs['type'] ?? 2;
 
+    // Получаем пределы мощности из констант
+    final minPower = getConstantDouble('power_limits', 'min_power', defaultValue: 80.0);
+    final maxPower = getConstantDouble('power_limits', 'max_power', defaultValue: 200.0);
+
     if (area <= 0) return 'Площадь должна быть больше нуля';
-    if (power < 80 || power > 200) return 'Мощность должна быть от 80 до 200 Вт/м²';
+    if (power < minPower || power > maxPower) {
+      return 'Мощность должна быть от ${minPower.toInt()} до ${maxPower.toInt()} Вт/м²';
+    }
     if (type < 1 || type > 2) return 'Тип должен быть 1 (кабель) или 2 (мат)';
 
     return null;
@@ -64,19 +70,22 @@ class CalculateWarmFloor extends BaseCalculator {
 
     switch (roomType) {
       case 1: // Ванная
-        power = 180.0;
+        power = getConstantDouble('room_power', 'bathroom', defaultValue: 180.0);
         break;
       case 2: // Жилая комната
-        power = 150.0;
+        power = getConstantDouble('room_power', 'living_room', defaultValue: 150.0);
         break;
       case 3: // Кухня
-        power = 130.0;
+        power = getConstantDouble('room_power', 'kitchen', defaultValue: 130.0);
         break;
       case 4: // Балкон/лоджия
-        power = 200.0;
+        power = getConstantDouble('room_power', 'balcony', defaultValue: 200.0);
         break;
       default: // Пользовательское значение
-        power = getInput(inputs, 'power', defaultValue: 150.0, minValue: 80.0, maxValue: 200.0);
+        final minPower = getConstantDouble('power_limits', 'min_power', defaultValue: 80.0);
+        final maxPower = getConstantDouble('power_limits', 'max_power', defaultValue: 200.0);
+        final defaultPower = getConstantDouble('room_power', 'default', defaultValue: 150.0);
+        power = getInput(inputs, 'power', defaultValue: defaultPower, minValue: minPower, maxValue: maxPower);
     }
 
     final type = getIntInput(inputs, 'type', defaultValue: 2, minValue: 1, maxValue: 2);
@@ -84,7 +93,16 @@ class CalculateWarmFloor extends BaseCalculator {
 
     // Полезная площадь (не укладывается под мебель и стационарную технику)
     // Пользователь может настроить процент (50-90%)
-    final usefulAreaPercent = getInput(inputs, 'usefulAreaPercent', defaultValue: 70.0, minValue: 50.0, maxValue: 90.0);
+    final defaultUsefulPercent = getConstantDouble('useful_area', 'default', defaultValue: 70.0);
+    final minUsefulPercent = getConstantDouble('useful_area', 'min', defaultValue: 50.0);
+    final maxUsefulPercent = getConstantDouble('useful_area', 'max', defaultValue: 90.0);
+    final usefulAreaPercent = getInput(
+      inputs,
+      'usefulAreaPercent',
+      defaultValue: defaultUsefulPercent,
+      minValue: minUsefulPercent,
+      maxValue: maxUsefulPercent,
+    );
     final usefulArea = area * (usefulAreaPercent / 100);
 
     // Общая мощность системы (Вт)
@@ -97,7 +115,7 @@ class CalculateWarmFloor extends BaseCalculator {
     if (type == 1) {
       // Нагревательный кабель: длина зависит от общей мощности
       // Стандартный кабель: 17-20 Вт/м, используем 18 Вт/м
-      const cablePowerPerMeter = 18.0; // Вт/м
+      final cablePowerPerMeter = getConstantDouble('cable_power', 'standard_cable', defaultValue: 18.0); // Вт/м
       cableLength = totalPower / cablePowerPerMeter;
     } else {
       // Нагревательный мат: готовая секция с фиксированным шагом
@@ -110,16 +128,23 @@ class CalculateWarmFloor extends BaseCalculator {
 
     // Монтажная лента (для кабеля): крепление кабеля к полу
     // ~20-25 м на комнату среднего размера
-    final montageTapeLength = type == 1 ? (area * 1.5) : 0.0;
+    final montageTapeFactor = getConstantDouble('materials', 'montage_tape_factor', defaultValue: 1.5);
+    final montageTapeLength = type == 1 ? (area * montageTapeFactor) : 0.0;
 
     // Гофрированная труба для датчика температуры: ~2-3 м на терморегулятор
-    final corrugatedTubeLength = thermostats * 2.5;
+    final corrugatedTubePerThermostat = getConstantDouble(
+      'materials',
+      'corrugated_tube_per_thermostat',
+      defaultValue: 2.5,
+    );
+    final corrugatedTubeLength = thermostats * corrugatedTubePerThermostat;
 
     // Демпферная лента по периметру: периметр + 5%
-    final damperTapeLength = addMargin(perimeter, 5.0);
+    final damperTapeMargin = getMarginPercent('margins', 'damper_tape_margin', defaultValue: 5.0);
+    final damperTapeLength = addMargin(perimeter, damperTapeMargin);
 
     // УЗО (устройство защитного отключения): 1 шт на систему
-    const rcdNeeded = 1;
+    final rcdNeeded = getConstantInt('safety', 'rcd_per_system', defaultValue: 1);
 
     // Расчёт стоимости
     final cablePrice = findPrice(priceList, ['warm_floor_cable', 'cable_heating', 'heating_cable']);

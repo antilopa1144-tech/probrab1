@@ -1,0 +1,46 @@
+{
+  "calculator_id": "plaster",
+  "version": "1.0.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Константы для калькулятора штукатурки",
+  "norms": [
+    "СП 71.13330.2017 \"Изоляционные и отделочные покрытия\""
+  ],
+  "constants": {
+    "consumption_rates": {
+      "category": "materials",
+      "description": "Расход штукатурки на 1 м² при толщине 10 мм",
+      "unit": "кг/м²/см",
+      "values": {
+        "gypsum": 8.5,
+        "cement": 17.0
+      }
+    },
+    "margins": {
+      "category": "margins",
+      "description": "Коэффициенты запаса",
+      "unit": null,
+      "values": {
+        "material_margin": 1.1,
+        "mesh_margin": 1.1,
+        "primer_margin": 1.1
+      }
+    },
+    "beacons": {
+      "category": "construction",
+      "description": "Параметры маяков",
+      "unit": null,
+      "values": {
+        "area_per_beacon": 2.5
+      }
+    },
+    "primer": {
+      "category": "materials",
+      "description": "Расход грунтовки",
+      "unit": "л/м²",
+      "values": {
+        "consumption": 0.1
+      }
+    }
+  }
+}

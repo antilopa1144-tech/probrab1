@@ -6,23 +6,97 @@ import 'dart:math' as math;
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
+import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
 
+/// Вспомогательный класс для работы с константами калькулятора вагонки
+class _WoodLiningConstants {
+  final CalculatorConstants? _data;
+
+  const _WoodLiningConstants([this._data]);
+
+  double _getDouble(String constantKey, String valueKey, double defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is num) return value.toDouble();
+    return defaultValue;
+  }
+
+  int _getInt(String constantKey, String valueKey, int defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is num) return value.toInt();
+    return defaultValue;
+  }
+
+  // Lining dimensions
+  double getLiningWidth(String typeKey) {
+    final defaults = {'standard': 88.0, 'euro': 96.0, 'blockHouse': 140.0, 'imitationBar': 140.0};
+    return _getDouble('lining_types', '${typeKey}_width', defaults[typeKey] ?? 88.0);
+  }
+
+  double getLiningLength(String typeKey) {
+    final defaults = {'standard': 3.0, 'euro': 2.5, 'blockHouse': 2.0, 'imitationBar': 3.0};
+    return _getDouble('lining_types', '${typeKey}_length', defaults[typeKey] ?? 3.0);
+  }
+
+  // Fastening
+  int getFasteningPerM2(String typeKey) {
+    final defaults = {'klyaymery': 20, 'nails': 25, 'screws': 20};
+    return _getInt('fastening', typeKey, defaults[typeKey] ?? 20);
+  }
+
+  // Finish consumption
+  double getFinishConsumption(String typeKey) {
+    final defaults = {'varnish': 0.15, 'oil': 0.12, 'wax': 0.10, 'stain': 0.10};
+    return _getDouble('finish_consumption', typeKey, defaults[typeKey] ?? 0.15);
+  }
+
+  // Batten
+  double get battenStep => _getDouble('batten', 'step', 0.5);
+  double get battenMarginVertical => _getDouble('batten', 'margin_vertical', 1.1);
+  double get battenMarginHorizontal => _getDouble('batten', 'margin_horizontal', 1.1);
+  double get battenMarginDiagonal => _getDouble('batten', 'margin_diagonal', 1.3);
+
+  // Antiseptic
+  double get antisepticConsumption => _getDouble('antiseptic', 'consumption', 0.2);
+  double get antisepticMargin => _getDouble('antiseptic', 'margin', 1.1);
+
+  // Finish margin
+  double get finishMargin => _getDouble('finish_margin', 'standard', 1.1);
+
+  // Insulation
+  double get insulationMargin => _getDouble('insulation', 'margin', 1.1);
+
+  // Vapor barrier
+  double get vaporBarrierOverlapMargin => _getDouble('vapor_barrier', 'overlap_margin', 1.2);
+  double get vaporBarrierWeightPerM2 => _getDouble('vapor_barrier', 'weight_per_m2', 0.15);
+}
+
 /// Типы вагонки
 enum LiningType {
-  standard('Стандарт', 'Обычная вагонка', 88.0, 3.0, Icons.view_agenda),
-  euro('Евровагонка', 'С вентиляционными канавками', 96.0, 2.5, Icons.view_stream),
-  blockHouse('Блок-хаус', 'Имитация бревна', 140.0, 2.0, Icons.circle_outlined),
-  imitationBar('Имитация бруса', 'Прямой профиль', 140.0, 3.0, Icons.crop_square);
+  standard('Стандарт', 'Обычная вагонка', Icons.view_agenda),
+  euro('Евровагонка', 'С вентиляционными канавками', Icons.view_stream),
+  blockHouse('Блок-хаус', 'Имитация бревна', Icons.circle_outlined),
+  imitationBar('Имитация бруса', 'Прямой профиль', Icons.crop_square);
 
-  final String name;
+  final String displayName;
   final String description;
-  final double width; // мм (полезная ширина)
-  final double length; // м (стандартная длина доски)
   final IconData icon;
 
-  const LiningType(this.name, this.description, this.width, this.length, this.icon);
+  const LiningType(this.displayName, this.description, this.icon);
+
+  /// Ключ для получения значений из констант
+  String get key => name;
 }
 
 /// Породы дерева
@@ -57,28 +131,32 @@ enum MountingDirection {
 
 /// Тип крепления
 enum FasteningType {
-  klyaymery('Кляймеры', 'Скрытое крепление', 20),
-  nails('Гвозди', 'Финишные гвозди', 25),
-  screws('Саморезы', 'Надёжное крепление', 20);
+  klyaymery('Кляймеры', 'Скрытое крепление'),
+  nails('Гвозди', 'Финишные гвозди'),
+  screws('Саморезы', 'Надёжное крепление');
 
-  final String name;
+  final String displayName;
   final String description;
-  final int piecesPerM2;
 
-  const FasteningType(this.name, this.description, this.piecesPerM2);
+  const FasteningType(this.displayName, this.description);
+
+  /// Ключ для получения значений из констант
+  String get key => name;
 }
 
 /// Тип финишного покрытия
 enum FinishType {
-  varnish('Лак', 0.15),
-  oil('Масло', 0.12),
-  wax('Воск', 0.1),
-  stain('Морилка', 0.1);
+  varnish('Лак'),
+  oil('Масло'),
+  wax('Воск'),
+  stain('Морилка');
 
-  final String name;
-  final double consumption; // л/м²
+  final String displayName;
 
-  const FinishType(this.name, this.consumption);
+  const FinishType(this.displayName);
+
+  /// Ключ для получения значений из констант
+  String get key => name;
 }
 
 class _WoodLiningResult {
@@ -147,9 +225,15 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
   late _WoodLiningResult _result;
   late AppLocalizations _loc;
 
+  // Константы калькулятора (null = используются hardcoded defaults)
+  late final _WoodLiningConstants _constants;
+
   @override
   void initState() {
     super.initState();
+    // TODO: Загрузить константы из provider когда понадобится Remote Config
+    // final constants = await ref.read(calculatorConstantsProvider('woodlining').future);
+    _constants = const _WoodLiningConstants(null);
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -192,44 +276,57 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
 
     // Вагонка с запасом (используем только пользовательский запас)
     final liningArea = calculatedArea * (1 + _reserve / 100);
-    final boardAreaM2 = _liningType.length * (_liningType.width / 1000);
+    final liningLength = _constants.getLiningLength(_liningType.key);
+    final liningWidth = _constants.getLiningWidth(_liningType.key);
+    final boardAreaM2 = liningLength * (liningWidth / 1000);
     final liningPieces = (liningArea / boardAreaM2).ceil();
 
     // Обрешётка
+    final battenStep = _constants.battenStep;
     double battenLength;
     if (_mountingDirection == MountingDirection.vertical) {
-      final battenCount = (_height / 0.5).ceil();
+      final battenCount = (_height / battenStep).ceil();
       final perimeterLength = _inputMode == InputMode.byArea
           ? math.sqrt(calculatedArea) * 4
           : 2 * (_length + _width);
-      battenLength = battenCount * perimeterLength * 1.1;
+      battenLength = battenCount * perimeterLength * _constants.battenMarginVertical;
     } else if (_mountingDirection == MountingDirection.horizontal) {
       final battenCount = _inputMode == InputMode.byArea
-          ? (math.sqrt(calculatedArea) * 4 / 0.5).ceil()
-          : ((_length + _width) * 2 / 0.5).ceil();
-      battenLength = battenCount * _height * 1.1;
+          ? (math.sqrt(calculatedArea) * 4 / battenStep).ceil()
+          : ((_length + _width) * 2 / battenStep).ceil();
+      battenLength = battenCount * _height * _constants.battenMarginHorizontal;
     } else {
       final battenCount = _inputMode == InputMode.byArea
-          ? (math.sqrt(calculatedArea) * 4 / 0.5).ceil()
-          : ((_length + _width) * 2 / 0.5).ceil();
-      battenLength = battenCount * _height * 1.3;
+          ? (math.sqrt(calculatedArea) * 4 / battenStep).ceil()
+          : ((_length + _width) * 2 / battenStep).ceil();
+      battenLength = battenCount * _height * _constants.battenMarginDiagonal;
     }
 
     // Крепёж
-    final fasteners = (liningArea * _fasteningType.piecesPerM2).ceil();
+    final fasteningPerM2 = _constants.getFasteningPerM2(_fasteningType.key);
+    final fasteners = (liningArea * fasteningPerM2).ceil();
 
     // Антисептик
-    final antiseptic = _useAntiseptic ? calculatedArea * 0.2 * 1.1 : 0.0;
+    final antiseptic = _useAntiseptic
+        ? calculatedArea * _constants.antisepticConsumption * _constants.antisepticMargin
+        : 0.0;
 
     // Финишное покрытие
-    final finish = _useFinish ? calculatedArea * _finishType.consumption * 1.1 : 0.0;
+    final finishConsumption = _constants.getFinishConsumption(_finishType.key);
+    final finish = _useFinish
+        ? calculatedArea * finishConsumption * _constants.finishMargin
+        : 0.0;
 
     // Утеплитель
-    final insulation = _useInsulation ? calculatedArea * 1.1 : 0.0;
+    final insulation = _useInsulation
+        ? calculatedArea * _constants.insulationMargin
+        : 0.0;
 
-    // Пароизоляция (20% на нахлёсты)
-    final vaporBarrier = _useVaporBarrier ? calculatedArea * 1.2 : 0.0;
-    final vaporBarrierWeight = vaporBarrier * 0.15;
+    // Пароизоляция (нахлёсты из констант)
+    final vaporBarrier = _useVaporBarrier
+        ? calculatedArea * _constants.vaporBarrierOverlapMargin
+        : 0.0;
+    final vaporBarrierWeight = vaporBarrier * _constants.vaporBarrierWeightPerM2;
 
     return _WoodLiningResult(
       area: calculatedArea,
@@ -251,20 +348,20 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
     final buffer = StringBuffer();
     buffer.writeln('📊 РАСЧЁТ ВАГОНКИ\n');
     buffer.writeln('Площадь: ${_result.area.toStringAsFixed(2)} м²');
-    buffer.writeln('Тип: ${_liningType.name}');
+    buffer.writeln('Тип: ${_liningType.displayName}');
     buffer.writeln('Порода: ${_woodSpecies.name}');
     buffer.writeln('Направление: ${_mountingDirection.name}\n');
     buffer.writeln('─────────────────────');
     buffer.writeln('ОСНОВНЫЕ МАТЕРИАЛЫ:');
     buffer.writeln('• Вагонка: ${_result.liningArea.toStringAsFixed(2)} м² (${_result.liningPieces} шт)');
     buffer.writeln('• Обрешётка: ${_result.battenLength.toStringAsFixed(1)} м.п.');
-    buffer.writeln('• Крепёж: ${_result.fasteners} шт (${_fasteningType.name})');
+    buffer.writeln('• Крепёж: ${_result.fasteners} шт (${_fasteningType.displayName})');
     if (_useAntiseptic) {
       buffer.writeln('\nЗАЩИТА:');
       buffer.writeln('• Антисептик: ${_result.antiseptic.toStringAsFixed(2)} л');
     }
     if (_useFinish) {
-      buffer.writeln('• ${_finishType.name}: ${_result.finish.toStringAsFixed(2)} л');
+      buffer.writeln('• ${_finishType.displayName}: ${_result.finish.toStringAsFixed(2)} л');
     }
     if (_useInsulation || _useVaporBarrier) {
       buffer.writeln('\nИЗОЛЯЦИЯ:');
@@ -466,8 +563,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
           const SizedBox(height: 12),
           _buildOptionGrid<LiningType>(
             options: LiningType.values,
-            minItemWidth: 220,
-            minItemHeight: 96,
+            minItemWidth: 140,
+            minItemHeight: 72,
             itemBuilder: (type) {
               final isSelected = _liningType == type;
               return TypeSelectorCardCompact(
@@ -498,7 +595,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Ширина: ${_liningType.width.toInt()} мм, длина: ${_liningType.length} м',
+                    'Ширина: ${_constants.getLiningWidth(_liningType.key).toInt()} мм, длина: ${_constants.getLiningLength(_liningType.key)} м',
                     style: CalculatorDesignSystem.bodySmall.copyWith(
                       color: CalculatorColors.textSecondary,
                     ),
@@ -527,7 +624,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
           const SizedBox(height: 12),
           _buildOptionGrid<WoodSpecies>(
             options: WoodSpecies.values,
-            minItemWidth: 170,
+            minItemWidth: 130,
+            minItemHeight: 72,
             itemBuilder: (species) {
               final isSelected = _woodSpecies == species;
               return TypeSelectorCardCompact(
@@ -565,8 +663,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
           const SizedBox(height: 12),
           _buildOptionGrid<MountingDirection>(
             options: MountingDirection.values,
-            minItemWidth: 220,
-            minItemHeight: 96,
+            minItemWidth: 140,
+            minItemHeight: 72,
             itemBuilder: (direction) {
               final isSelected = _mountingDirection == direction;
               return TypeSelectorCardCompact(
@@ -604,7 +702,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
           const SizedBox(height: 12),
           _buildOptionGrid<FasteningType>(
             options: FasteningType.values,
-            minItemWidth: 200,
+            minItemWidth: 140,
+            minItemHeight: 72,
             itemBuilder: (type) {
               final isSelected = _fasteningType == type;
               return TypeSelectorCardCompact(
@@ -657,7 +756,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               style: CalculatorDesignSystem.bodyMedium,
             ),
             subtitle: Text(
-              _useFinish ? _finishType.name : 'Не используется',
+              _useFinish ? _finishType.displayName : 'Не используется',
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -674,7 +773,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
             const SizedBox(height: 8),
             _buildOptionGrid<FinishType>(
               options: FinishType.values,
-              minItemWidth: 160,
+              minItemWidth: 120,
+              minItemHeight: 64,
               itemBuilder: (finish) {
                 final isSelected = _finishType == finish;
                 return TypeSelectorCardCompact(
@@ -793,7 +893,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
             ),
             title: const Text('Пароизоляция', style: CalculatorDesignSystem.bodyMedium),
             subtitle: Text(
-              _useVaporBarrier ? 'Мембрана ~0.15 кг/м²' : 'Не используется',
+              _useVaporBarrier ? 'Мембрана ~${_constants.vaporBarrierWeightPerM2} кг/м²' : 'Не используется',
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -821,7 +921,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
             ),
             title: const Text('Антисептик', style: CalculatorDesignSystem.bodyMedium),
             subtitle: Text(
-              _useAntiseptic ? 'Расход ~0.2 л/м²' : 'Не используется',
+              _useAntiseptic ? 'Расход ~${_constants.antisepticConsumption} л/м²' : 'Не используется',
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -858,7 +958,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
       MaterialItem(
         name: 'Крепёж',
         value: '${_result.fasteners} шт',
-        subtitle: _fasteningType.name,
+        subtitle: _fasteningType.displayName,
         icon: Icons.construction,
       ),
     ];
@@ -867,16 +967,16 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
       items.add(MaterialItem(
         name: 'Антисептик',
         value: '${_result.antiseptic.toStringAsFixed(1)} л',
-        subtitle: 'Расход 0.2 л/м²',
+        subtitle: 'Расход ${_constants.antisepticConsumption} л/м²',
         icon: Icons.shield_outlined,
       ));
     }
 
     if (_useFinish) {
       items.add(MaterialItem(
-        name: _finishType.name,
+        name: _finishType.displayName,
         value: '${_result.finish.toStringAsFixed(1)} л',
-        subtitle: 'Расход ${_finishType.consumption} л/м²',
+        subtitle: 'Расход ${_constants.getFinishConsumption(_finishType.key)} л/м²',
         icon: Icons.format_paint,
       ));
     }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
+import '../../providers/constants_provider.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
 
@@ -15,41 +18,35 @@ enum TileMaterial {
     'Для стен и пола',
     'Стандартное решение',
     Icons.grid_on,
-    4.0, // кг/м² клея
   ),
   porcelain(
     'Керамогранит',
     'Прочный, для пола',
     'Износостойкий материал',
     Icons.view_module,
-    5.5, // больше клея из-за плотности
   ),
   mosaic(
     'Мозаика',
     'Декоративная отделка',
     'Сложная укладка',
     Icons.apps,
-    3.5, // меньше клея, тонкий слой
   ),
   largeFormat(
     'Крупноформат',
     '60×60 см и больше',
     'Современный дизайн',
     Icons.crop_square,
-    6.0, // больше клея для крупных плиток
   );
 
   final String name;
   final String subtitle;
   final String advantage;
   final IconData icon;
-  final double glueConsumption; // кг/м²
   const TileMaterial(
     this.name,
     this.subtitle,
     this.advantage,
     this.icon,
-    this.glueConsumption,
   );
 }
 
@@ -58,32 +55,27 @@ enum LayoutPattern {
     'Прямая',
     'Стандартная укладка',
     Icons.grid_3x3,
-    10, // % запаса
   ),
   diagonal(
     'Диагональная',
     'Под углом 45°',
     Icons.rotate_right,
-    15, // больше обрезков
   ),
   offset(
     'Вразбежку',
     'Со смещением 1/2 или 1/3',
     Icons.view_week,
-    10,
   ),
   herringbone(
     'Ёлочка',
     'Декоративная раскладка',
     Icons.trending_up,
-    20, // много обрезков
   );
 
   final String name;
   final String description;
   final IconData icon;
-  final int reservePercent;
-  const LayoutPattern(this.name, this.description, this.icon, this.reservePercent);
+  const LayoutPattern(this.name, this.description, this.icon);
 }
 
 enum RoomType {
@@ -123,6 +115,87 @@ enum RoomType {
   final String description;
   final bool needsWaterproofing;
   const RoomType(this.name, this.icon, this.description, this.needsWaterproofing);
+}
+
+/// Helper class для работы с константами калькулятора плитки
+class _TileConstants {
+  final CalculatorConstants? _data;
+
+  const _TileConstants(this._data);
+
+  T _get<T>(String constantKey, String valueKey, T defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value == null) return defaultValue;
+    return value as T;
+  }
+
+  // Glue consumption
+  double getGlueConsumption(TileMaterial material) {
+    final defaults = {
+      'ceramic': 4.0,
+      'porcelain': 5.5,
+      'mosaic': 3.5,
+      'large_format': 6.0,
+    };
+    return _get('glue_consumption', material.name, defaults[material.name] ?? 4.0);
+  }
+
+  // Layout margins
+  int getLayoutMargin(LayoutPattern pattern) {
+    final defaults = {
+      'straight': 10,
+      'diagonal': 15,
+      'offset': 10,
+      'herringbone': 20,
+    };
+    return _get<int>('layout_margins', pattern.name, defaults[pattern.name] ?? 10);
+  }
+
+  // Box sizes
+  double getBoxArea(TileMaterial material) {
+    return material == TileMaterial.mosaic
+        ? _get('box_sizes', 'mosaic', 0.5)
+        : _get('box_sizes', 'standard', 1.44);
+  }
+
+  // Glue bag size
+  int getGlueBagSize() => _get<int>('glue_bag_size', 'standard', 25);
+
+  // Grout calculation
+  double getGroutJointDepth() => _get('grout_calculation', 'joint_depth', 2.0);
+  double getGroutDensity() => _get('grout_calculation', 'grout_density', 1.6);
+  double getGroutMarginFactor() => _get('grout_calculation', 'margin_factor', 1.1);
+
+  // Primer consumption
+  double getPrimerBase() => _get('primer_consumption', 'base', 0.15);
+  double getPrimerMarginFactor() => _get('primer_consumption', 'margin_factor', 1.1);
+
+  // Crosses per tile
+  int getCrossesPerTile() => _get<int>('crosses_per_tile', 'standard', 5);
+
+  // SVP calculation
+  int getSvpClipsPerTile(double avgTileSize) {
+    final smallThreshold = _get('svp_calculation', 'small_size_threshold', 20.0);
+    final mediumThreshold = _get('svp_calculation', 'medium_size_threshold', 40.0);
+    final smallClips = _get<int>('svp_calculation', 'small_clips_per_tile', 4);
+    final mediumClips = _get<int>('svp_calculation', 'medium_clips_per_tile', 3);
+    final largeClips = _get<int>('svp_calculation', 'large_clips_per_tile', 2);
+
+    if (avgTileSize < smallThreshold) return smallClips;
+    if (avgTileSize <= mediumThreshold) return mediumClips;
+    return largeClips;
+  }
+
+  // Waterproofing
+  double getWaterproofingPerLayer() => _get('waterproofing', 'per_layer', 1.5);
+  int getWaterproofingLayers() => _get<int>('waterproofing', 'layers', 2);
+  double getWaterproofingMarginFactor() => _get('waterproofing', 'margin_factor', 1.1);
+
+  // Underlay margin
+  double getUnderlayMarginFactor() => _get('underlay_margin', 'margin_factor', 1.1);
 }
 
 class _TileResult {
@@ -187,7 +260,7 @@ class _TileResult {
   });
 }
 
-class TileCalculatorScreen extends StatefulWidget {
+class TileCalculatorScreen extends ConsumerStatefulWidget {
   final CalculatorDefinitionV2 definition;
   final Map<String, double>? initialInputs;
 
@@ -198,10 +271,10 @@ class TileCalculatorScreen extends StatefulWidget {
   });
 
   @override
-  State<TileCalculatorScreen> createState() => _TileCalculatorScreenState();
+  ConsumerState<TileCalculatorScreen> createState() => _TileCalculatorScreenState();
 }
 
-class _TileCalculatorScreenState extends State<TileCalculatorScreen> {
+class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
   InputMode _inputMode = InputMode.byArea;
   double _area = 20.0;
   double _length = 5.0;
@@ -223,10 +296,14 @@ class _TileCalculatorScreenState extends State<TileCalculatorScreen> {
 
   late _TileResult _result;
   late AppLocalizations _loc;
+  late _TileConstants _constants;
 
   @override
   void initState() {
     super.initState();
+    // Загружаем константы (синхронно, из кеша или fallback на defaults)
+    final constantsAsync = ref.read(calculatorConstantsProvider('tile'));
+    _constants = _TileConstants(constantsAsync.value);
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -257,55 +334,58 @@ class _TileCalculatorScreenState extends State<TileCalculatorScreen> {
     final tileAreaM2 = tileWidthM * tileHeightM;
 
     // Запас в зависимости от способа укладки
-    final reservePercent = _layout.reservePercent;
+    final reservePercent = _constants.getLayoutMargin(_layout);
 
     // Количество плиток с запасом
     final tilesNeeded = ((calculatedArea / tileAreaM2) * (1 + reservePercent / 100)).ceil();
     final tilesArea = tilesNeeded * tileAreaM2;
 
     // Упаковка плитки (обычно 1-1.5 м² в коробке)
-    final boxArea = _material == TileMaterial.mosaic ? 0.5 : 1.44; // м² в коробке
+    final boxArea = _constants.getBoxArea(_material);
     final boxesNeeded = (tilesArea / boxArea).ceil();
 
     // Клей (расход зависит от материала плитки) + запас 10%
-    final glueWeight = calculatedArea * _material.glueConsumption * 1.1;
-    final glueBags = (glueWeight / 25).ceil(); // мешки по 25 кг
+    final glueWeight = calculatedArea * _constants.getGlueConsumption(_material) * 1.1;
+    final glueBags = (glueWeight / _constants.getGlueBagSize()).ceil();
 
-    // Затирка + запас 10%
+    // Затирка + запас
     // Формула: (tileWidth + tileHeight) / (tileWidth × tileHeight) × jointWidth × depth × density × area
-    final jointDepth = 2.0; // мм глубина шва
-    final groutDensity = 1.6; // кг/дм³
+    final jointDepth = _constants.getGroutJointDepth();
+    final groutDensity = _constants.getGroutDensity();
     final groutConsumptionPerM2 = ((_tileWidth + _tileHeight) / (_tileWidth * _tileHeight)) *
         _jointWidth *
         jointDepth *
         groutDensity;
-    final groutWeight = calculatedArea * groutConsumptionPerM2 * 1.1;
+    final groutWeight = calculatedArea * groutConsumptionPerM2 * _constants.getGroutMarginFactor();
 
-    // Грунтовка (0.15 л/м²) + запас 10%
-    final primerLiters = calculatedArea * 0.15 * 1.1;
+    // Грунтовка + запас
+    final primerLiters = calculatedArea * _constants.getPrimerBase() * _constants.getPrimerMarginFactor();
 
-    // Крестики (5 шт на плитку)
-    final crossesNeeded = tilesNeeded * 5;
+    // Крестики
+    final crossesNeeded = tilesNeeded * _constants.getCrossesPerTile();
 
     // СВП
     int? svpCount;
     if (_useSVP) {
       // Количество клипс зависит от размера плитки
       final avgSize = (_tileWidth + _tileHeight) / 2;
-      final clipsPerTile = avgSize < 20 ? 4 : (avgSize <= 40 ? 3 : 2);
+      final clipsPerTile = _constants.getSvpClipsPerTile(avgSize);
       svpCount = tilesNeeded * clipsPerTile;
     }
 
-    // Гидроизоляция (2 слоя по 1.5 кг/м²) + запас 10%
+    // Гидроизоляция + запас
     double? waterproofingWeight;
     if (_useWaterproofing || _roomType.needsWaterproofing) {
-      waterproofingWeight = calculatedArea * 1.5 * 2 * 1.1;
+      waterproofingWeight = calculatedArea *
+          _constants.getWaterproofingPerLayer() *
+          _constants.getWaterproofingLayers() *
+          _constants.getWaterproofingMarginFactor();
     }
 
-    // Подложка для выравнивания (с запасом 10%)
+    // Подложка для выравнивания (с запасом)
     double? underlayArea;
     if (_useUnderlay) {
-      underlayArea = calculatedArea * 1.1;
+      underlayArea = calculatedArea * _constants.getUnderlayMarginFactor();
     }
 
     return _TileResult(
@@ -344,7 +424,7 @@ class _TileCalculatorScreenState extends State<TileCalculatorScreen> {
     buffer.writeln('Площадь: ${_result.area.toStringAsFixed(1)} м²');
     buffer.writeln('Материал: ${_result.material.name}');
     buffer.writeln('Размер плитки: ${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} см');
-    buffer.writeln('Способ укладки: ${_result.layout.name} (запас ${_result.layout.reservePercent}%)');
+    buffer.writeln('Способ укладки: ${_result.layout.name} (запас ${_constants.getLayoutMargin(_result.layout)}%)');
     buffer.writeln('Помещение: ${_result.roomType.name}');
     buffer.writeln();
 
@@ -1082,7 +1162,7 @@ class _TileCalculatorScreenState extends State<TileCalculatorScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '${pattern.description} • Запас +${pattern.reservePercent}%',
+                              '${pattern.description} • Запас +${_constants.getLayoutMargin(pattern)}%',
                               style: CalculatorDesignSystem.bodySmall.copyWith(
                                 color: CalculatorColors.textSecondary,
                               ),
@@ -1275,7 +1355,7 @@ class _TileCalculatorScreenState extends State<TileCalculatorScreen> {
       MaterialItem(
         name: 'Клей',
         value: '${_result.glueBags} меш.',
-        subtitle: '${_result.glueWeight.toStringAsFixed(0)} кг (25 кг/меш.)',
+        subtitle: '${_result.glueWeight.toStringAsFixed(0)} кг (${_constants.getGlueBagSize()} кг/меш.)',
         icon: Icons.shopping_bag,
       ),
       MaterialItem(
@@ -1346,7 +1426,7 @@ class _TileCalculatorScreenState extends State<TileCalculatorScreen> {
       MaterialItem(
         name: 'Способ укладки',
         value: _result.layout.name,
-        subtitle: '+${_result.layout.reservePercent}% запас',
+        subtitle: '+${_constants.getLayoutMargin(_result.layout)}% запас',
         icon: Icons.pattern,
       ),
       MaterialItem(

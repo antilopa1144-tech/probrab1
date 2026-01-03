@@ -1,0 +1,33 @@
+{
+  "calculator_id": "wallpaper",
+  "version": "1.0.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Константы для калькулятора обоев",
+  "norms": [
+    "ГОСТ 6810-2002 \"Обои\""
+  ],
+  "constants": {
+    "roll_sizes": {
+      "category": "materials",
+      "description": "Стандартные размеры рулонов",
+      "unit": "м",
+      "values": {
+        "s053x10_width": 0.53,
+        "s053x10_length": 10.0,
+        "s106x10_width": 1.06,
+        "s106x10_length": 10.0,
+        "s106x25_width": 1.06,
+        "s106x25_length": 25.0
+      }
+    },
+    "materials_consumption": {
+      "category": "materials",
+      "description": "Расход материалов",
+      "unit": null,
+      "values": {
+        "glue_per_m2": 0.25,
+        "primer_per_m2": 0.15
+      }
+    }
+  }
+}

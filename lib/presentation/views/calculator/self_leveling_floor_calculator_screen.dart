@@ -5,8 +5,45 @@ import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
+import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
+
+/// Вспомогательный класс для работы с константами калькулятора наливного пола
+class _SelfLevelingConstants {
+  final CalculatorConstants? _data;
+
+  const _SelfLevelingConstants([this._data]);
+
+  double _getDouble(String constantKey, String valueKey, double defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is num) return value.toDouble();
+    return defaultValue;
+  }
+
+  int _getInt(String constantKey, String valueKey, int defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is num) return value.toInt();
+    return defaultValue;
+  }
+
+  // Materials
+  double get primerPerM2 => _getDouble('materials_consumption', 'primer_per_m2', 0.1);
+
+  // Tools
+  double get spikeRollerArea => _getDouble('tools', 'spike_roller_area', 50.0);
+  int get spikeShoesCount => _getInt('tools', 'spike_shoes_count', 1);
+}
 
 enum InputMode { byArea, byDimensions }
 enum BagWeight { kg20, kg25 }
@@ -85,9 +122,14 @@ class _SelfLevelingFloorCalculatorScreenState
   late _SelfLevelingFloorResult _result;
   late AppLocalizations _loc;
 
+  // Константы калькулятора (null = используются hardcoded defaults)
+  late final _SelfLevelingConstants _constants;
+
   @override
   void initState() {
     super.initState();
+    // TODO: Загрузить константы из provider когда понадобится Remote Config
+    _constants = const _SelfLevelingConstants(null);
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -123,8 +165,8 @@ class _SelfLevelingFloorCalculatorScreenState
     // Количество мешков
     final bagsNeeded = (totalWeight / bagWeightKg).ceil();
 
-    // Грунтовка (0.1 л/м²)
-    final primerLiters = calculatedArea * 0.1;
+    // Грунтовка из констант
+    final primerLiters = calculatedArea * _constants.primerPerM2;
 
     // Демпферная лента (периметр комнаты)
     double damperTape;
@@ -136,11 +178,11 @@ class _SelfLevelingFloorCalculatorScreenState
       damperTape = side * 4;
     }
 
-    // Игольчатый валик (1 шт до 50 м², далее +1 на каждые 50 м²)
-    final spikeRollers = (calculatedArea / 50).ceil();
+    // Игольчатый валик из констант
+    final spikeRollers = (calculatedArea / _constants.spikeRollerArea).ceil();
 
-    // Краскоступы (1 пара всегда нужна для работы)
-    const spikeShoesCount = 1;
+    // Краскоступы из констант
+    final spikeShoesCount = _constants.spikeShoesCount;
 
     return _SelfLevelingFloorResult(
       area: calculatedArea,

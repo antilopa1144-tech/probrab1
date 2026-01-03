@@ -4,8 +4,42 @@ import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
+import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
+
+/// Вспомогательный класс для работы с константами калькулятора обоев
+class _WallpaperConstants {
+  final CalculatorConstants? _data;
+
+  const _WallpaperConstants([this._data]);
+
+  double _getDouble(String constantKey, String valueKey, double defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is num) return value.toDouble();
+    return defaultValue;
+  }
+
+  // Roll sizes
+  double getRollWidth(String sizeKey) {
+    final defaults = {'s053x10': 0.53, 's106x10': 1.06, 's106x25': 1.06};
+    return _getDouble('roll_sizes', '${sizeKey}_width', defaults[sizeKey] ?? 0.53);
+  }
+
+  double getRollLength(String sizeKey) {
+    final defaults = {'s053x10': 10.0, 's106x10': 10.0, 's106x25': 25.0};
+    return _getDouble('roll_sizes', '${sizeKey}_length', defaults[sizeKey] ?? 10.0);
+  }
+
+  // Materials consumption
+  double get gluePerM2 => _getDouble('materials_consumption', 'glue_per_m2', 0.25);
+  double get primerPerM2 => _getDouble('materials_consumption', 'primer_per_m2', 0.15);
+}
 
 enum InputMode { byArea, byRoom }
 enum WallpaperRollSize { s053x10, s106x10, s106x25, custom }
@@ -67,9 +101,15 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen> {
   late _WallpaperResult _result;
   late AppLocalizations _loc;
 
+  // Константы калькулятора (null = используются hardcoded defaults)
+  late final _WallpaperConstants _constants;
+
   @override
   void initState() {
     super.initState();
+    // TODO: Загрузить константы из provider когда понадобится Remote Config
+    // final constants = await ref.read(calculatorConstantsProvider('wallpaper').future);
+    _constants = const _WallpaperConstants(null);
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -96,26 +136,26 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen> {
     final deductedArea = wallsArea - _windowsDoors;
     final effectiveArea = deductedArea > 0 ? deductedArea : wallsArea;
 
-    // Размер рулона
+    // Размер рулона из констант
     double rollWidth;
     double rollLength;
     String rollSizeName;
 
     switch (_rollSize) {
       case WallpaperRollSize.s053x10:
-        rollWidth = 0.53;
-        rollLength = 10.0;
-        rollSizeName = '0.53×10';
+        rollWidth = _constants.getRollWidth('s053x10');
+        rollLength = _constants.getRollLength('s053x10');
+        rollSizeName = '${rollWidth.toStringAsFixed(2)}×${rollLength.toInt()}';
         break;
       case WallpaperRollSize.s106x10:
-        rollWidth = 1.06;
-        rollLength = 10.0;
-        rollSizeName = '1.06×10';
+        rollWidth = _constants.getRollWidth('s106x10');
+        rollLength = _constants.getRollLength('s106x10');
+        rollSizeName = '${rollWidth.toStringAsFixed(2)}×${rollLength.toInt()}';
         break;
       case WallpaperRollSize.s106x25:
-        rollWidth = 1.06;
-        rollLength = 25.0;
-        rollSizeName = '1.06×25';
+        rollWidth = _constants.getRollWidth('s106x25');
+        rollLength = _constants.getRollLength('s106x25');
+        rollSizeName = '${rollWidth.toStringAsFixed(2)}×${rollLength.toInt()}';
         break;
       case WallpaperRollSize.custom:
         rollWidth = _customWidth;
@@ -156,9 +196,9 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen> {
     // Добавляем запас
     rollsNeeded = (rollsNeeded * (1 + _reserve / 100)).ceil();
 
-    // Расчёт материалов
-    final glueNeededKg = (effectiveArea * 0.25).ceilToDouble();
-    final primerLiters = effectiveArea * 0.15;
+    // Расчёт материалов из констант
+    final glueNeededKg = (effectiveArea * _constants.gluePerM2).ceilToDouble();
+    final primerLiters = effectiveArea * _constants.primerPerM2;
 
     return _WallpaperResult(
       area: effectiveArea,
@@ -574,24 +614,31 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _loc.translate('wallpaper.rapport.title'),
-                    style: CalculatorDesignSystem.titleMedium.copyWith(
-                      color: CalculatorColors.textPrimary,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _loc.translate('wallpaper.rapport.title'),
+                      style: CalculatorDesignSystem.titleMedium.copyWith(
+                        color: CalculatorColors.textPrimary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _loc.translate('wallpaper.rapport.subtitle'),
-                    style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.textSecondary,
+                    const SizedBox(height: 4),
+                    Text(
+                      _loc.translate('wallpaper.rapport.subtitle'),
+                      style: CalculatorDesignSystem.bodySmall.copyWith(
+                        color: CalculatorColors.textSecondary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               Text(
                 _rapport == 0
                     ? _loc.translate('wallpaper.rapport.none')

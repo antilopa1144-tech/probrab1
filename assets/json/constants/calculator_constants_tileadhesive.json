@@ -1,0 +1,73 @@
+{
+  "calculator_id": "tileadhesive",
+  "version": "1.0.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Константы для калькулятора плиточного клея",
+  "norms": [
+    "СП 71.13330.2017 \"Изоляционные и отделочные покрытия\""
+  ],
+  "constants": {
+    "surface_factors": {
+      "category": "coefficients",
+      "description": "Коэффициенты поверхности",
+      "unit": null,
+      "values": {
+        "wall": 1.1,
+        "floor": 1.0
+      }
+    },
+    "margins": {
+      "category": "margins",
+      "description": "Коэффициенты запаса",
+      "unit": null,
+      "values": {
+        "adhesive_margin": 1.1,
+        "grout_margin": 1.1
+      }
+    },
+    "materials_consumption": {
+      "category": "materials",
+      "description": "Расход материалов",
+      "unit": null,
+      "values": {
+        "primer_per_m2": 0.15,
+        "waterproofing_per_layer": 0.4,
+        "waterproofing_layers": 2
+      }
+    },
+    "tile_sizes": {
+      "category": "tiles",
+      "description": "Стандартные размеры плитки по типам (см)",
+      "unit": "см",
+      "values": {
+        "mosaic": 10.0,
+        "ceramic": 30.0,
+        "porcelain": 40.0,
+        "largeFormat": 60.0
+      }
+    },
+    "accessories": {
+      "category": "accessories",
+      "description": "Параметры аксессуаров",
+      "unit": null,
+      "values": {
+        "crosses_per_tile": 5,
+        "svp_clips_small": 4,
+        "svp_clips_medium": 3,
+        "svp_clips_large": 2,
+        "small_tile_threshold": 20,
+        "large_tile_threshold": 40
+      }
+    },
+    "grout": {
+      "category": "grout",
+      "description": "Параметры затирки",
+      "unit": null,
+      "values": {
+        "joint_width": 3.0,
+        "joint_depth": 2.0,
+        "density": 1.6
+      }
+    }
+  }
+}

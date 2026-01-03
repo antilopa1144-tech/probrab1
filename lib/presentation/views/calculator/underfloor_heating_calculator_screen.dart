@@ -4,8 +4,77 @@ import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
+import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
+
+/// Вспомогательный класс для работы с константами калькулятора тёплого пола
+class _WarmFloorConstants {
+  final CalculatorConstants? _data;
+
+  const _WarmFloorConstants([this._data]);
+
+  double _getDouble(String constantKey, String valueKey, double defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is num) return value.toDouble();
+    return defaultValue;
+  }
+
+  int _getInt(String constantKey, String valueKey, int defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is num) return value.toInt();
+    return defaultValue;
+  }
+
+  // Room power (Вт/м²)
+  int getRoomPower(String roomKey) {
+    final defaults = {'bathroom': 180, 'living': 120, 'kitchen': 130, 'balcony': 200};
+    return _getInt('room_power', roomKey, defaults[roomKey] ?? 150);
+  }
+
+  // Pipe step for water system (мм)
+  int getPipeStep(String roomKey) {
+    final defaults = {'bathroom': 150, 'living': 150, 'kitchen': 150, 'balcony': 100};
+    return _getInt('pipe_step', roomKey, defaults[roomKey] ?? 150);
+  }
+
+  // Cable power (Вт/м)
+  double get cablePowerPerMeter => _getDouble('cable_power', 'standard_cable', 18.0);
+
+  // Useful area
+  double get usefulAreaDefault => _getDouble('useful_area', 'default', 72.0);
+  double get usefulAreaMin => _getDouble('useful_area', 'min', 50.0);
+  double get usefulAreaMax => _getDouble('useful_area', 'max', 90.0);
+
+  // Water system
+  double get pipeMargin => _getDouble('water_system', 'pipe_margin', 1.15);
+  double get maxLoopLength => _getDouble('water_system', 'max_loop_length', 100.0);
+  double get screedThickness => _getDouble('water_system', 'screed_thickness', 0.08);
+  double get damperTapePerM2 => _getDouble('water_system', 'damper_tape_per_m2', 0.4);
+  double get bracketsPerM2 => _getDouble('water_system', 'brackets_per_m2', 10.0);
+
+  // Electric cable
+  double get montageTapeMultiplier => _getDouble('electric_cable', 'montage_tape_multiplier', 2.0);
+
+  // Infrared film
+  double get filmStripArea => _getDouble('infrared_film', 'film_strip_area', 2.5);
+  int get contactsPerStrip => _getInt('infrared_film', 'contacts_per_strip', 2);
+
+  // Common materials
+  int get thermostatCount => _getInt('common_materials', 'thermostat_count', 1);
+  int get sensorCount => _getInt('common_materials', 'sensor_count', 1);
+  double get corrugatedTubeLength => _getDouble('common_materials', 'corrugated_tube_length', 2.5);
+}
 
 enum InputMode { byArea, byDimensions }
 
@@ -43,16 +112,17 @@ enum HeatingSystemType {
 }
 
 enum RoomType {
-  bathroom('Ванная / санузел', 180, 'Высокая влажность, комфорт', 150),
-  living('Жилая комната', 120, 'Основное или дополнительное отопление', 150),
-  kitchen('Кухня', 130, 'Среднее тепловыделение', 150),
-  balcony('Балкон / лоджия', 200, 'Большие теплопотери', 100);
+  bathroom('Ванная / санузел', 'Высокая влажность, комфорт'),
+  living('Жилая комната', 'Основное или дополнительное отопление'),
+  kitchen('Кухня', 'Среднее тепловыделение'),
+  balcony('Балкон / лоджия', 'Большие теплопотери');
 
-  final String name;
-  final int powerPerM2; // Вт/м² для электрического
-  final String description; // Пояснение для пользователя
-  final int pipeStep; // мм шаг укладки для водяного
-  const RoomType(this.name, this.powerPerM2, this.description, this.pipeStep);
+  final String displayName;
+  final String description;
+  const RoomType(this.displayName, this.description);
+
+  /// Ключ для получения значений из констант
+  String get key => name;
 }
 
 class _HeatingResult {
@@ -133,13 +203,20 @@ class _UnderfloorHeatingCalculatorScreenState
   HeatingSystemType _systemType = HeatingSystemType.electricMat;
   RoomType _roomType = RoomType.living;
   bool _addInsulation = false;
-  double _usefulAreaPercent = 72.0; // Процент полезной площади (50-90%)
+  late double _usefulAreaPercent;
   late _HeatingResult _result;
   late AppLocalizations _loc;
+
+  // Константы калькулятора (null = используются hardcoded defaults)
+  late final _WarmFloorConstants _constants;
 
   @override
   void initState() {
     super.initState();
+    // TODO: Загрузить константы из provider когда понадобится Remote Config
+    // final constants = await ref.read(calculatorConstantsProvider('warmfloor').future);
+    _constants = const _WarmFloorConstants(null);
+    _usefulAreaPercent = _constants.usefulAreaDefault;
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -167,13 +244,14 @@ class _UnderfloorHeatingCalculatorScreenState
     // Площадь обогрева = настраиваемый % от общей (минус мебель, сантехника)
     final heatingArea = calculatedArea * (_usefulAreaPercent / 100);
 
-    // Мощность
-    final totalPower = (heatingArea * _roomType.powerPerM2).round();
+    // Мощность из констант по типу помещения
+    final roomPower = _constants.getRoomPower(_roomType.key);
+    final totalPower = (heatingArea * roomPower).round();
 
-    // Общие материалы
-    const thermostatCount = 1.0;
-    const sensorCount = 1.0;
-    const corrugatedTubeLength = 2.5; // метров для датчика
+    // Общие материалы из констант
+    final thermostatCount = _constants.thermostatCount.toDouble();
+    final sensorCount = _constants.sensorCount.toDouble();
+    final corrugatedTubeLength = _constants.corrugatedTubeLength;
 
     double? matArea;
     double? cableLength;
@@ -193,37 +271,36 @@ class _UnderfloorHeatingCalculatorScreenState
 
       case HeatingSystemType.electricCable:
         // Кабель: длина зависит от мощности кабеля (обычно 17-20 Вт/м)
-        const cablePowerPerMeter = 18.0; // Вт/м
+        final cablePowerPerMeter = _constants.cablePowerPerMeter;
         cableLength = totalPower / cablePowerPerMeter;
         break;
 
       case HeatingSystemType.infraredFilm:
         // ИК плёнка укладывается полосами шириной 0.5 или 1.0 м
-        // Используем ширину 0.5м как наиболее распространённую
         filmArea = heatingArea;
-        // Рассчитываем количество полос: площадь / ширина полосы / длину комнаты
-        // Упрощённо: 1 полоса на каждые 2-3 м² при типичных размерах комнат
-        final filmStrips = (filmArea / 2.5).ceil();
-        // На каждую полосу: 2 контактных зажима (фаза + ноль на каждый конец)
-        contactClips = (filmStrips * 2).toInt();
+        // Рассчитываем количество полос
+        final filmStripArea = _constants.filmStripArea;
+        final filmStrips = (filmArea / filmStripArea).ceil();
+        // На каждую полосу: контактные зажимы
+        contactClips = filmStrips * _constants.contactsPerStrip;
         break;
 
       case HeatingSystemType.waterBased:
-        // Водяной: расчёт трубы по шагу укладки
-        final stepM = _roomType.pipeStep / 1000; // мм в метры
+        // Водяной: расчёт трубы по шагу укладки из констант
+        final pipeStep = _constants.getPipeStep(_roomType.key);
+        final stepM = pipeStep / 1000; // мм в метры
         final pipePerM2 = 1 / stepM; // метров трубы на м²
-        pipeLength = heatingArea * pipePerM2 * 1.15; // +15% на подводку
+        pipeLength = heatingArea * pipePerM2 * _constants.pipeMargin;
 
-        // Количество контуров (макс 100-120м на контур)
-        loopCount = (pipeLength / 100).ceil();
+        // Количество контуров
+        loopCount = (pipeLength / _constants.maxLoopLength).ceil();
         collectorOutputs = loopCount;
 
         // Теплоизоляция обязательна для водяного
         insulationArea = calculatedArea;
 
-        // Стяжка: 30мм над трубой (мин. по СП) + 16мм труба + 30мм под трубой = 76мм
-        // Рекомендуемая толщина 75-80мм для надёжного распределения тепла
-        screedVolume = calculatedArea * 0.08;
+        // Стяжка: толщина из констант
+        screedVolume = calculatedArea * _constants.screedThickness;
         break;
     }
 
@@ -266,7 +343,7 @@ class _UnderfloorHeatingCalculatorScreenState
     buffer.writeln('Площадь помещения: ${_result.area.toStringAsFixed(1)} м²');
     buffer.writeln('Площадь обогрева: ${_result.heatingArea.toStringAsFixed(1)} м²');
     buffer.writeln('Тип системы: ${_result.systemType.name}');
-    buffer.writeln('Помещение: ${_result.roomType.name}');
+    buffer.writeln('Помещение: ${_result.roomType.displayName}');
     buffer.writeln('Мощность: ${_result.totalPower} Вт');
     buffer.writeln();
 
@@ -279,7 +356,7 @@ class _UnderfloorHeatingCalculatorScreenState
         break;
       case HeatingSystemType.electricCable:
         buffer.writeln('• Нагревательный кабель: ${_result.cableLength!.toStringAsFixed(1)} м (${_result.totalPower} Вт)');
-        buffer.writeln('• Монтажная лента: ${(_result.heatingArea * 2).toStringAsFixed(0)} м');
+        buffer.writeln('• Монтажная лента: ${(_result.heatingArea * _constants.montageTapeMultiplier).toStringAsFixed(0)} м');
         break;
       case HeatingSystemType.infraredFilm:
         buffer.writeln('• ИК плёнка: ${_result.filmArea!.toStringAsFixed(1)} м²');
@@ -292,8 +369,8 @@ class _UnderfloorHeatingCalculatorScreenState
         buffer.writeln('• Коллектор: ${_result.collectorOutputs} выходов');
         buffer.writeln('• Контуров: ${_result.loopCount}');
         buffer.writeln('• Теплоизоляция ПСБ-35 (50мм): ${_result.insulationArea!.toStringAsFixed(1)} м²');
-        buffer.writeln('• Демпферная лента: ${(_result.area * 0.4).toStringAsFixed(0)} м');
-        buffer.writeln('• Крепёж (скобы): ${(_result.heatingArea * 10).toStringAsFixed(0)} шт');
+        buffer.writeln('• Демпферная лента: ${(_result.area * _constants.damperTapePerM2).toStringAsFixed(0)} м');
+        buffer.writeln('• Крепёж (скобы): ${(_result.heatingArea * _constants.bracketsPerM2).toStringAsFixed(0)} шт');
         buffer.writeln('• Стяжка: ${_result.screedVolume!.toStringAsFixed(2)} м³');
         break;
     }
@@ -757,7 +834,7 @@ class _UnderfloorHeatingCalculatorScreenState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              type.name,
+                              type.displayName,
                               style: CalculatorDesignSystem.titleSmall.copyWith(
                                 color: isSelected
                                     ? accentColor
@@ -767,7 +844,7 @@ class _UnderfloorHeatingCalculatorScreenState
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${type.description} • ${type.powerPerM2} Вт/м²',
+                              '${type.description} • ${_constants.getRoomPower(type.key)} Вт/м²',
                               style: CalculatorDesignSystem.bodySmall.copyWith(
                                 color: CalculatorColors.textSecondary,
                               ),
@@ -837,9 +914,9 @@ class _UnderfloorHeatingCalculatorScreenState
             ),
             child: Slider(
               value: _usefulAreaPercent,
-              min: 50,
-              max: 90,
-              divisions: 8,
+              min: _constants.usefulAreaMin,
+              max: _constants.usefulAreaMax,
+              divisions: ((_constants.usefulAreaMax - _constants.usefulAreaMin) / 5).round(),
               onChanged: (value) {
                 setState(() {
                   _usefulAreaPercent = value;
@@ -852,14 +929,14 @@ class _UnderfloorHeatingCalculatorScreenState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '50% (много мебели)',
+                '${_constants.usefulAreaMin.toInt()}% (много мебели)',
                 style: CalculatorDesignSystem.bodySmall.copyWith(
                   color: CalculatorColors.textSecondary,
                   fontSize: 11,
                 ),
               ),
               Text(
-                '90% (мало мебели)',
+                '${_constants.usefulAreaMax.toInt()}% (мало мебели)',
                 style: CalculatorDesignSystem.bodySmall.copyWith(
                   color: CalculatorColors.textSecondary,
                   fontSize: 11,
@@ -937,7 +1014,7 @@ class _UnderfloorHeatingCalculatorScreenState
           ),
           MaterialItem(
             name: 'Монтажная лента',
-            value: '${(_result.heatingArea * 2).toStringAsFixed(0)} м',
+            value: '${(_result.heatingArea * _constants.montageTapeMultiplier).toStringAsFixed(0)} м',
             icon: Icons.straighten,
           ),
         ]);
@@ -993,12 +1070,12 @@ class _UnderfloorHeatingCalculatorScreenState
           ),
           MaterialItem(
             name: 'Демпферная лента',
-            value: '${(_result.area * 0.4).toStringAsFixed(0)} м',
+            value: '${(_result.area * _constants.damperTapePerM2).toStringAsFixed(0)} м',
             icon: Icons.straighten,
           ),
           MaterialItem(
             name: 'Крепёж (скобы)',
-            value: '${(_result.heatingArea * 10).toStringAsFixed(0)} шт',
+            value: '${(_result.heatingArea * _constants.bracketsPerM2).toStringAsFixed(0)} шт',
             icon: Icons.push_pin,
           ),
           MaterialItem(

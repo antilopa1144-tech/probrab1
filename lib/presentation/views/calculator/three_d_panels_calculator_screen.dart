@@ -9,12 +9,41 @@ import '../../../core/constants/calculator_design_system.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
+import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_result_header.dart';
 import '../../widgets/calculator/calculator_scaffold.dart';
 import '../../widgets/calculator/calculator_text_field.dart';
 import '../../widgets/calculator/mode_selector.dart';
 import '../../widgets/calculator/result_card.dart';
 import '../../widgets/existing/hint_card.dart';
+
+/// Вспомогательный класс для работы с константами калькулятора 3D панелей
+class _PanelsConstants {
+  final CalculatorConstants? _data;
+
+  const _PanelsConstants([this._data]);
+
+  double _getDouble(String constantKey, String valueKey, double defaultValue) {
+    if (_data == null) return defaultValue;
+    final constant = _data.constants[constantKey];
+    if (constant == null) return defaultValue;
+    final value = constant.values[valueKey];
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is num) return value.toDouble();
+    return defaultValue;
+  }
+
+  // Margins
+  double get panelsMargin => _getDouble('margins', 'panels_margin', 1.1);
+
+  // Materials consumption
+  double get gluePerM2 => _getDouble('materials_consumption', 'glue_per_m2', 5.0);
+  double get primerPerM2 => _getDouble('materials_consumption', 'primer_per_m2', 0.18);
+  double get puttyPerM2 => _getDouble('materials_consumption', 'putty_per_m2', 1.0);
+  double get paintPerM2 => _getDouble('materials_consumption', 'paint_per_m2', 0.24);
+  double get varnishPerM2 => _getDouble('materials_consumption', 'varnish_per_m2', 0.08);
+}
 
 enum PanelsInputMode { byArea, byDimensions }
 
@@ -72,9 +101,14 @@ class _ThreeDPanelsCalculatorScreenState
   late _PanelsResult _result;
   late AppLocalizations _loc;
 
+  // Константы калькулятора (null = используются hardcoded defaults)
+  late final _PanelsConstants _constants;
+
   @override
   void initState() {
     super.initState();
+    // TODO: Загрузить константы из provider когда понадобится Remote Config
+    _constants = const _PanelsConstants(null);
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -112,15 +146,15 @@ class _ThreeDPanelsCalculatorScreenState
     // Размер панели в м²
     final panelArea = (_panelSize / 100) * (_panelSize / 100);
 
-    // Количество панелей с запасом 10%
-    final panelsCount = (area / panelArea * 1.1).ceil();
+    // Количество панелей с запасом из констант
+    final panelsCount = (area / panelArea * _constants.panelsMargin).ceil();
 
-    // Материалы по нормативам из usecase
-    final glueKg = area * 5.0; // 4-6 кг/м²
-    final primerLiters = area * 0.18;
-    final puttyKg = area * 1.0;
-    final paintLiters = _paintable ? area * 0.24 : 0.0; // 2 слоя по 0.12 л
-    final varnishLiters = _withVarnish ? area * 0.08 : 0.0;
+    // Материалы по нормативам из констант
+    final glueKg = area * _constants.gluePerM2;
+    final primerLiters = area * _constants.primerPerM2;
+    final puttyKg = area * _constants.puttyPerM2;
+    final paintLiters = _paintable ? area * _constants.paintPerM2 : 0.0;
+    final varnishLiters = _withVarnish ? area * _constants.varnishPerM2 : 0.0;
 
     // Периметр для молдингов
     final perimeter = _inputMode == PanelsInputMode.byDimensions

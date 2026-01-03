@@ -1,0 +1,42 @@
+{
+  "calculator_id": "common",
+  "version": "1.0.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Общие константы для всех калькуляторов",
+  "constants": {
+    "standard_margins": {
+      "category": "margins",
+      "description": "Стандартные процентные запасы для различных материалов",
+      "unit": "%",
+      "values": {
+        "materials_default": 5.0,
+        "cutting_waste": 10.0,
+        "complex_shapes": 15.0,
+        "tiles_straight": 10.0,
+        "tiles_diagonal": 15.0
+      }
+    },
+    "unit_conversions": {
+      "category": "conversion",
+      "description": "Коэффициенты преобразования единиц измерения",
+      "unit": null,
+      "values": {
+        "cm_to_meters": 0.01,
+        "mm_to_meters": 0.001,
+        "meters_to_cm": 100.0,
+        "meters_to_mm": 1000.0
+      }
+    },
+    "packaging": {
+      "category": "packaging",
+      "description": "Стандартные размеры упаковок и мешков",
+      "unit": "кг",
+      "values": {
+        "bag_25kg": 25.0,
+        "bag_30kg": 30.0,
+        "bag_40kg": 40.0,
+        "bag_50kg": 50.0
+      }
+    }
+  }
+}

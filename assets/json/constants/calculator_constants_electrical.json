@@ -1,0 +1,151 @@
+{
+  "calculator_id": "electrical",
+  "version": "1.0.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Константы для калькулятора электрики",
+  "norms": [
+    "СП 256.1325800.2016 \"Электроустановки жилых и общественных зданий\"",
+    "ПУЭ-7 \"Правила устройства электроустановок\""
+  ],
+  "constants": {
+    "room_type_multipliers": {
+      "category": "coefficients",
+      "description": "Коэффициенты количества розеток в зависимости от типа помещения",
+      "unit": null,
+      "values": {
+        "apartment": 1.0,
+        "house": 1.2,
+        "office": 1.5
+      }
+    },
+    "socket_calculation": {
+      "category": "coefficients",
+      "description": "Параметры расчёта розеток согласно СП 256.1325800.2016",
+      "unit": null,
+      "values": {
+        "area_divisor": 4,
+        "min_per_room": 3,
+        "kitchen_additional": 4
+      }
+    },
+    "switch_calculation": {
+      "category": "coefficients",
+      "description": "Параметры расчёта выключателей",
+      "unit": null,
+      "values": {
+        "per_room": 1.5,
+        "per_area_divisor": 20
+      }
+    },
+    "light_calculation": {
+      "category": "coefficients",
+      "description": "Параметры расчёта светильников (норма 150-300 лк)",
+      "unit": null,
+      "values": {
+        "per_area_divisor": 6,
+        "per_room": 1
+      }
+    },
+    "cable_lengths_hidden": {
+      "category": "materials",
+      "description": "Длина кабеля на точку при скрытой проводке",
+      "unit": "м",
+      "values": {
+        "light": 5.0,
+        "socket": 4.5,
+        "switch": 4.0
+      }
+    },
+    "cable_lengths_open": {
+      "category": "materials",
+      "description": "Длина кабеля на точку при открытой проводке",
+      "unit": "м",
+      "values": {
+        "light": 4.0,
+        "socket": 3.5,
+        "switch": 3.0
+      }
+    },
+    "light_groups": {
+      "category": "coefficients",
+      "description": "Параметры групп освещения (макс 2.3 кВт на группу)",
+      "unit": null,
+      "values": {
+        "max_lights_per_group": 8,
+        "cable_per_group": 10
+      }
+    },
+    "socket_groups": {
+      "category": "coefficients",
+      "description": "Параметры групп розеток (макс 3.5 кВт на группу)",
+      "unit": null,
+      "values": {
+        "max_sockets_per_group": 6,
+        "cable_per_group": 10
+      }
+    },
+    "cable_margins": {
+      "category": "margins",
+      "description": "Процентные запасы кабеля",
+      "unit": "%",
+      "values": {
+        "standard_margin": 15.0,
+        "switch_cable_factor": 0.5
+      }
+    },
+    "power_consumers_cable": {
+      "category": "materials",
+      "description": "Длина кабеля для мощных потребителей от щитка",
+      "unit": "м",
+      "values": {
+        "electric_stove": 12,
+        "oven": 10,
+        "boiler": 10,
+        "washing_machine": 8,
+        "dishwasher": 8,
+        "conditioner": 12,
+        "warm_floor": 10
+      }
+    },
+    "conduit_factors": {
+      "category": "materials",
+      "description": "Коэффициенты расхода гофры/кабель-канала",
+      "unit": null,
+      "values": {
+        "hidden_wiring": 0.85,
+        "open_wiring": 1.0
+      }
+    },
+    "rcd_calculation": {
+      "category": "materials",
+      "description": "Расчёт УЗО (устройств защитного отключения)",
+      "unit": null,
+      "values": {
+        "socket_groups_per_rcd": 2,
+        "fire_protection_rcd": 1
+      }
+    },
+    "junction_boxes": {
+      "category": "materials",
+      "description": "Расчёт распределительных коробок",
+      "unit": null,
+      "values": {
+        "per_room": 1.5,
+        "per_area_divisor": 25,
+        "per_points_divisor": 8
+      }
+    },
+    "panel_modules": {
+      "category": "materials",
+      "description": "Расчёт модулей в электрощитке",
+      "unit": "шт",
+      "values": {
+        "base_modules": 4,
+        "breaker_modules": 1,
+        "rcd_modules": 2,
+        "difautomat_modules": 2,
+        "reserve_factor": 1.2
+      }
+    }
+  }
+}

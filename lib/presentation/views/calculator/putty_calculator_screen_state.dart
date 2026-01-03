@@ -20,6 +20,9 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
 
   AppLocalizations get _loc => AppLocalizations.of(context);
 
+  // TODO: Подключить к calculatorConstantsProvider для получения Remote Config
+  final _constants = _PuttyConstants(null);
+
   @override
   void initState() {
     super.initState();
@@ -56,14 +59,13 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
 
     // 3. Расход материалов
 
-    // СТАРТ (База): Обычно сухая смесь (Волма, Фуген). Расход ~1.0 кг/м2 на слой 1мм.
-    final double startConsumption = 1.0 * startLayers;
+    // СТАРТ (База): Обычно сухая смесь (Волма, Фуген)
+    final double startConsumption = _constants.startConsumptionPerLayer * startLayers;
     final double startTotalWeight = netArea * startConsumption;
-    final int startBags = (startTotalWeight / 25).ceil(); // Стандарт мешок 25кг
+    final int startBags = (startTotalWeight / _constants.startBagWeight).ceil();
 
     // ФИНИШ:
-    // Сухая (Vetonit LR+): ~1.2 кг/м2/слой. Мешок 20кг.
-    // Паста (Danogips/Sheetrock): ~1.0 л/м2/слой (или ~1.6 кг). Ведро обычно 15-17л.
+    // Сухая (Vetonit LR+) или Паста (Danogips/Sheetrock)
 
     double finishTotalAmount = 0;
     int finishPacks = 0;
@@ -71,28 +73,25 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
 
     if (_finishType == FinishMaterialType.dryBag) {
       // Сухая
-      final double cons = 1.2 * finishLayers;
+      final double cons = _constants.dryConsumption * finishLayers;
       finishTotalAmount = netArea * cons;
-      finishPacks = (finishTotalAmount / 20).ceil(); // Мешок 20кг
+      finishPacks = (finishTotalAmount / _constants.dryBagWeight).ceil();
       packNameKey = 'unit.bags';
     } else {
-      // Готовая паста (считаем в литрах для простоты, т.к. ведра часто в литрах или кг)
-      // Danogips SuperFinish ~ 1л/м2 на слой
-      final double cons = 1.0 * finishLayers;
+      // Готовая паста
+      final double cons = _constants.pasteConsumption * finishLayers;
       finishTotalAmount = netArea * cons;
-      finishPacks = (finishTotalAmount / 15).ceil(); // Ведро ~15-17л
+      finishPacks = (finishTotalAmount / _constants.pasteBucketVolume).ceil();
       packNameKey = 'unit.buckets';
     }
 
     // 4. Грунтовка (межслойная + перед финишем)
-    // Считаем 0.15л на м2. Кол-во слоев грунта = слои шпатлевки + 1
-    final double primerVolume = netArea * 0.15 * (startLayers + finishLayers);
-    final int primerCanisters = (primerVolume / 10).ceil();
+    final double primerVolume = netArea * _constants.primerConsumptionPerM2 * (startLayers + finishLayers);
+    final int primerCanisters = (primerVolume / _constants.primerCanisterVolume).ceil();
 
     // 5. Абразив (Сетки/Наждачка)
-    // Примерно 1 лист на 10-15 м2 поверхности на каждый этап шлифовки
     const int sandingStages = 2; // Шлифовка базы + Шлифовка финиша
-    final int sandingSheets = ((netArea / 10) * sandingStages).ceil();
+    final int sandingSheets = ((netArea / _constants.areaPerSheet) * sandingStages).ceil();
 
     setState(() {
       _result = PuttyResult(

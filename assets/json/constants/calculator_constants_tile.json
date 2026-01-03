@@ -1,0 +1,108 @@
+{
+  "calculator_id": "tile",
+  "version": "1.0.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Константы для калькулятора плитки/керамогранита",
+  "norms": [
+    "СП 71.13330.2017 \"Изоляционные и отделочные покрытия\"",
+    "ГОСТ 13996-2019 \"Плитки керамические. Общие технические условия\""
+  ],
+  "constants": {
+    "glue_consumption": {
+      "category": "materials",
+      "description": "Расход клея в зависимости от типа плитки",
+      "unit": "кг/м²",
+      "values": {
+        "ceramic": 4.0,
+        "porcelain": 5.5,
+        "mosaic": 3.5,
+        "large_format": 6.0
+      }
+    },
+    "layout_margins": {
+      "category": "margins",
+      "description": "Процент запаса в зависимости от способа укладки",
+      "unit": "%",
+      "values": {
+        "straight": 10,
+        "diagonal": 15,
+        "offset": 10,
+        "herringbone": 20
+      }
+    },
+    "box_sizes": {
+      "category": "packaging",
+      "description": "Площадь плитки в одной коробке",
+      "unit": "м²",
+      "values": {
+        "mosaic": 0.5,
+        "standard": 1.44
+      }
+    },
+    "glue_bag_size": {
+      "category": "packaging",
+      "description": "Стандартный размер мешка клея",
+      "unit": "кг",
+      "values": {
+        "standard": 25
+      }
+    },
+    "grout_calculation": {
+      "category": "materials",
+      "description": "Параметры расчёта затирки",
+      "unit": null,
+      "values": {
+        "joint_depth": 2.0,
+        "grout_density": 1.6,
+        "margin_factor": 1.1
+      }
+    },
+    "primer_consumption": {
+      "category": "materials",
+      "description": "Расход грунтовки",
+      "unit": "л/м²",
+      "values": {
+        "base": 0.15,
+        "margin_factor": 1.1
+      }
+    },
+    "crosses_per_tile": {
+      "category": "materials",
+      "description": "Количество крестиков на одну плитку",
+      "unit": "шт",
+      "values": {
+        "standard": 5
+      }
+    },
+    "svp_calculation": {
+      "category": "materials",
+      "description": "Расчёт клипс СВП в зависимости от размера плитки",
+      "unit": "шт",
+      "values": {
+        "small_size_threshold": 20,
+        "medium_size_threshold": 40,
+        "small_clips_per_tile": 4,
+        "medium_clips_per_tile": 3,
+        "large_clips_per_tile": 2
+      }
+    },
+    "waterproofing": {
+      "category": "materials",
+      "description": "Расход гидроизоляции",
+      "unit": "кг/м²",
+      "values": {
+        "per_layer": 1.5,
+        "layers": 2,
+        "margin_factor": 1.1
+      }
+    },
+    "underlay_margin": {
+      "category": "margins",
+      "description": "Запас подложки",
+      "unit": "%",
+      "values": {
+        "margin_factor": 1.1
+      }
+    }
+  }
+}

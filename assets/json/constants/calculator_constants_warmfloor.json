@@ -1,0 +1,111 @@
+{
+  "calculator_id": "warmfloor",
+  "version": "1.1.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Константы для калькулятора тёплого пола (все типы систем)",
+  "norms": [
+    "СНиП 41-01-2003 \"Отопление, вентиляция и кондиционирование\"",
+    "ГОСТ Р 50571.7.701-2013 \"Электроустановки зданий\"",
+    "СП 60.13330.2020 \"Отопление, вентиляция и кондиционирование воздуха\""
+  ],
+  "constants": {
+    "room_power": {
+      "category": "power",
+      "description": "Рекомендуемая мощность обогрева в зависимости от типа помещения",
+      "unit": "Вт/м²",
+      "values": {
+        "bathroom": 180,
+        "living": 120,
+        "kitchen": 130,
+        "balcony": 200,
+        "default": 150
+      }
+    },
+    "pipe_step": {
+      "category": "water_system",
+      "description": "Шаг укладки трубы водяного пола в зависимости от помещения",
+      "unit": "мм",
+      "values": {
+        "bathroom": 150,
+        "living": 150,
+        "kitchen": 150,
+        "balcony": 100
+      }
+    },
+    "cable_power": {
+      "category": "electric_system",
+      "description": "Мощность нагревательного кабеля",
+      "unit": "Вт/м",
+      "values": {
+        "standard_cable": 18.0
+      }
+    },
+    "useful_area": {
+      "category": "coefficients",
+      "description": "Процент полезной площади (не укладывается под мебель)",
+      "unit": "%",
+      "values": {
+        "default": 72.0,
+        "min": 50.0,
+        "max": 90.0
+      }
+    },
+    "water_system": {
+      "category": "water_system",
+      "description": "Параметры водяного тёплого пола",
+      "unit": null,
+      "values": {
+        "pipe_margin": 1.15,
+        "max_loop_length": 100.0,
+        "screed_thickness": 0.08,
+        "damper_tape_per_m2": 0.4,
+        "brackets_per_m2": 10.0
+      }
+    },
+    "electric_cable": {
+      "category": "electric_system",
+      "description": "Параметры электрического кабельного пола",
+      "unit": null,
+      "values": {
+        "montage_tape_multiplier": 2.0
+      }
+    },
+    "infrared_film": {
+      "category": "electric_system",
+      "description": "Параметры ИК плёночного пола",
+      "unit": null,
+      "values": {
+        "film_strip_area": 2.5,
+        "contacts_per_strip": 2
+      }
+    },
+    "common_materials": {
+      "category": "materials",
+      "description": "Общие материалы для всех систем",
+      "unit": null,
+      "values": {
+        "thermostat_count": 1,
+        "sensor_count": 1,
+        "corrugated_tube_length": 2.5
+      }
+    },
+    "insulation": {
+      "category": "materials",
+      "description": "Параметры теплоизоляции",
+      "unit": "мм",
+      "values": {
+        "recommended_thickness_min": 3.0,
+        "recommended_thickness_max": 5.0,
+        "psb35_thickness": 50.0
+      }
+    },
+    "safety": {
+      "category": "safety",
+      "description": "Устройства защиты",
+      "unit": "шт",
+      "values": {
+        "rcd_per_system": 1
+      }
+    }
+  }
+}

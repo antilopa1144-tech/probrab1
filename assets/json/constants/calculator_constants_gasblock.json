@@ -1,0 +1,95 @@
+{
+  "calculator_id": "gasblock",
+  "version": "1.0.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Константы для калькулятора стен из газобетона/пеноблока",
+  "norms": [
+    "СП 15.13330.2020 \"Каменные и армокаменные конструкции\"",
+    "ГОСТ 31360-2007 \"Изделия стеновые неармированные из ячеистого бетона\""
+  ],
+  "constants": {
+    "block_sizes": {
+      "category": "materials",
+      "description": "Стандартные размеры блоков (длина x высота)",
+      "unit": "см",
+      "values": {
+        "600x300_length": 60.0,
+        "600x300_height": 30.0,
+        "600x250_length": 60.0,
+        "600x250_height": 25.0,
+        "625x250_length": 62.5,
+        "625x250_height": 25.0
+      }
+    },
+    "thicknesses": {
+      "category": "materials",
+      "description": "Стандартные толщины блоков",
+      "unit": "мм",
+      "values": {
+        "partition_min": 75,
+        "partition_mid1": 100,
+        "partition_max": 150,
+        "bearing_min": 200,
+        "bearing_mid1": 250,
+        "bearing_mid2": 300,
+        "bearing_max": 400
+      }
+    },
+    "glue_consumption": {
+      "category": "materials",
+      "description": "Расход клея для тонкошовной кладки",
+      "unit": null,
+      "values": {
+        "kg_per_m3": 25.0,
+        "margin_factor": 1.1,
+        "bag_size_kg": 25
+      }
+    },
+    "mortar_consumption": {
+      "category": "materials",
+      "description": "Расход раствора для толстошовной кладки",
+      "unit": null,
+      "values": {
+        "m3_per_m3": 0.2,
+        "margin_factor": 1.1
+      }
+    },
+    "primer_consumption": {
+      "category": "materials",
+      "description": "Расход грунтовки глубокого проникновения",
+      "unit": "л/м²",
+      "values": {
+        "per_layer": 0.2,
+        "layers": 2
+      }
+    },
+    "plaster_consumption": {
+      "category": "materials",
+      "description": "Расход штукатурки (гипсовой или цементной)",
+      "unit": "кг/м²",
+      "values": {
+        "per_layer": 10.0,
+        "layers": 2
+      }
+    },
+    "reinforcement": {
+      "category": "materials",
+      "description": "Параметры армирования кладки",
+      "unit": null,
+      "values": {
+        "partition_step_rows": 3,
+        "bearing_step_rows": 2,
+        "rods_per_row": 2
+      }
+    },
+    "mesh": {
+      "category": "materials",
+      "description": "Армирующая сетка для штукатурки",
+      "unit": null,
+      "values": {
+        "sides": 2,
+        "margin_factor": 1.05
+      }
+    }
+  }
+}

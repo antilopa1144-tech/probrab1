@@ -1,0 +1,93 @@
+{
+  "calculator_id": "woodlining",
+  "version": "1.0.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Константы для калькулятора вагонки",
+  "norms": [
+    "ГОСТ 8242-88 \"Детали профильные из древесины\"",
+    "СП 64.13330.2017 \"Деревянные конструкции\""
+  ],
+  "constants": {
+    "lining_types": {
+      "category": "materials",
+      "description": "Типы вагонки с размерами",
+      "unit": null,
+      "values": {
+        "standard_width": 88.0,
+        "standard_length": 3.0,
+        "euro_width": 96.0,
+        "euro_length": 2.5,
+        "blockhouse_width": 140.0,
+        "blockhouse_length": 2.0,
+        "imitation_bar_width": 140.0,
+        "imitation_bar_length": 3.0
+      }
+    },
+    "fastening": {
+      "category": "materials",
+      "description": "Расход крепежа на м²",
+      "unit": "шт/м²",
+      "values": {
+        "klyaymery": 20,
+        "nails": 25,
+        "screws": 20
+      }
+    },
+    "finish_consumption": {
+      "category": "materials",
+      "description": "Расход финишных покрытий",
+      "unit": "л/м²",
+      "values": {
+        "varnish": 0.15,
+        "oil": 0.12,
+        "wax": 0.10,
+        "stain": 0.10
+      }
+    },
+    "batten": {
+      "category": "construction",
+      "description": "Параметры обрешётки",
+      "unit": null,
+      "values": {
+        "step": 0.5,
+        "margin_vertical": 1.1,
+        "margin_horizontal": 1.1,
+        "margin_diagonal": 1.3
+      }
+    },
+    "antiseptic": {
+      "category": "materials",
+      "description": "Параметры антисептика",
+      "unit": null,
+      "values": {
+        "consumption": 0.2,
+        "margin": 1.1
+      }
+    },
+    "finish_margin": {
+      "category": "margins",
+      "description": "Запас на финишное покрытие",
+      "unit": null,
+      "values": {
+        "standard": 1.1
+      }
+    },
+    "insulation": {
+      "category": "materials",
+      "description": "Параметры утеплителя",
+      "unit": null,
+      "values": {
+        "margin": 1.1
+      }
+    },
+    "vapor_barrier": {
+      "category": "materials",
+      "description": "Параметры пароизоляции",
+      "unit": null,
+      "values": {
+        "overlap_margin": 1.2,
+        "weight_per_m2": 0.15
+      }
+    }
+  }
+}

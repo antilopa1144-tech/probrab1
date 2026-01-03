@@ -1,0 +1,28 @@
+{
+  "calculator_id": "selfleveling",
+  "version": "1.0.0",
+  "last_updated": "2026-01-03T00:00:00Z",
+  "description": "Константы для калькулятора наливного пола",
+  "norms": [
+    "СП 29.13330.2011 \"Полы\""
+  ],
+  "constants": {
+    "materials_consumption": {
+      "category": "materials",
+      "description": "Расход материалов",
+      "unit": null,
+      "values": {
+        "primer_per_m2": 0.1
+      }
+    },
+    "tools": {
+      "category": "tools",
+      "description": "Параметры инструментов",
+      "unit": null,
+      "values": {
+        "spike_roller_area": 50.0,
+        "spike_shoes_count": 1
+      }
+    }
+  }
+}
