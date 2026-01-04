@@ -766,7 +766,7 @@ class _UnderfloorHeatingCalculatorScreenState
                         ),
                       ),
                       if (isSelected)
-                        Icon(Icons.check_circle, color: accentColor, size: 24),
+                        const Icon(Icons.check_circle, color: accentColor, size: 24),
                     ],
                   ),
                 ),
@@ -853,7 +853,7 @@ class _UnderfloorHeatingCalculatorScreenState
                         ),
                       ),
                       if (isSelected)
-                        Icon(Icons.check_circle, color: accentColor, size: 24),
+                        const Icon(Icons.check_circle, color: accentColor, size: 24),
                     ],
                   ),
                 ),

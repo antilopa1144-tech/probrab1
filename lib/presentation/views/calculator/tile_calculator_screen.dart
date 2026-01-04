@@ -817,7 +817,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
                         ),
                       ),
                       if (isSelected)
-                        Icon(Icons.check_circle, color: accentColor, size: 24),
+                        const Icon(Icons.check_circle, color: accentColor, size: 24),
                     ],
                   ),
                 ),
@@ -933,7 +933,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
                         ),
                       ),
                       if (isSelected)
-                        Icon(Icons.check_circle, color: accentColor, size: 24),
+                        const Icon(Icons.check_circle, color: accentColor, size: 24),
                     ],
                   ),
                 ),
@@ -970,7 +970,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
             children: sizes.map((size) {
               final isSelected = _tileSizePreset == size;
               return ChoiceChip(
-                label: Text(size == 0 ? 'Свой размер' : size == 120 ? '120×60' : '${size}×$size'),
+                label: Text(size == 0 ? 'Свой размер' : size == 120 ? '120×60' : '$size×$size'),
                 selected: isSelected,
                 onSelected: (selected) {
                   setState(() {
@@ -1171,7 +1171,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
                         ),
                       ),
                       if (isSelected)
-                        Icon(Icons.check_circle, color: accentColor, size: 24),
+                        const Icon(Icons.check_circle, color: accentColor, size: 24),
                     ],
                   ),
                 ),

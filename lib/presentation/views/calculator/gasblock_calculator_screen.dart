@@ -389,7 +389,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
     buffer.writeln(
       'Размер блока: ${_blockLength.toStringAsFixed(1)}x${_blockHeight.toStringAsFixed(1)} см',
     );
-    buffer.writeln('Толщина: ${_blockThickness} мм');
+    buffer.writeln('Толщина: $_blockThickness мм');
     buffer.writeln('Кладка: ${_masonryMix.name}');
     buffer.writeln('Запас: ${_reserve.toInt()}%');
     buffer.writeln('');

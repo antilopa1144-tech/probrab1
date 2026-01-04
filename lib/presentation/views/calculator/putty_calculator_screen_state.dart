@@ -368,7 +368,7 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
                       backgroundColor: accentColor.withValues(alpha: 0.1),
                       child: Text(
                         '${index + 1}',
-                        style: TextStyle(fontSize: 10, color: accentColor, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 10, color: accentColor, fontWeight: FontWeight.bold),
                       ),
                     ),
                     const SizedBox(width: 12),

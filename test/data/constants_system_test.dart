@@ -148,7 +148,7 @@ void main() {
         ConstantCategory.conversion,
       ];
 
-      for (var category in categories) {
+      for (final category in categories) {
         expect(category.name, isNotEmpty);
       }
     });

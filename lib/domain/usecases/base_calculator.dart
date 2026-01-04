@@ -73,22 +73,15 @@ abstract class BaseCalculator implements CalculatorUseCase {
 
   /// Константы калькулятора (загружаются из Remote Config или локальных JSON файлов).
   ///
-  /// Устанавливаются перед вызовом calculate() через сеттер.
+  /// Устанавливаются перед вызовом calculate().
   /// Если null, используются дефолтные значения в методах getConstant*.
-  CalculatorConstants? _constants;
-
-  /// Установить константы для калькулятора.
   ///
-  /// Вызывается перед calculate() для предоставления актуальных констант.
-  /// Пример:
+  /// Пример использования:
   /// ```dart
   /// calculator.constants = await constantsRepository.getConstants('warmfloor');
   /// final result = calculator.calculate(inputs, prices);
   /// ```
-  set constants(CalculatorConstants? value) => _constants = value;
-
-  /// Получить текущие константы калькулятора (может быть null).
-  CalculatorConstants? get constants => _constants;
+  CalculatorConstants? constants;
 
   /// Современные нормативы по умолчанию для всех расчётов.
   ///
@@ -375,7 +368,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
   /// Получить числовое значение константы (double).
   ///
   /// Использует fallback стратегию:
-  /// 1. Значение из загруженных констант (_constants)
+  /// 1. Значение из загруженных констант (constants)
   /// 2. Дефолтное значение (defaultValue)
   ///
   /// Параметры:
@@ -397,9 +390,9 @@ abstract class BaseCalculator implements CalculatorUseCase {
     required double defaultValue,
   }) {
     // Если константы не загружены, используем default
-    if (_constants == null) return defaultValue;
+    if (constants == null) return defaultValue;
 
-    final constant = _constants!.constants[constantKey];
+    final constant = constants!.constants[constantKey];
     if (constant == null) return defaultValue;
 
     final value = constant.values[valueKey];
@@ -416,7 +409,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
   /// Получить целочисленное значение константы (int).
   ///
   /// Использует fallback стратегию:
-  /// 1. Значение из загруженных констант (_constants)
+  /// 1. Значение из загруженных констант (constants)
   /// 2. Дефолтное значение (defaultValue)
   ///
   /// Параметры:
@@ -437,9 +430,9 @@ abstract class BaseCalculator implements CalculatorUseCase {
     String valueKey, {
     required int defaultValue,
   }) {
-    if (_constants == null) return defaultValue;
+    if (constants == null) return defaultValue;
 
-    final constant = _constants!.constants[constantKey];
+    final constant = constants!.constants[constantKey];
     if (constant == null) return defaultValue;
 
     final value = constant.values[valueKey];
@@ -473,9 +466,9 @@ abstract class BaseCalculator implements CalculatorUseCase {
     String valueKey, {
     required String defaultValue,
   }) {
-    if (_constants == null) return defaultValue;
+    if (constants == null) return defaultValue;
 
-    final constant = _constants!.constants[constantKey];
+    final constant = constants!.constants[constantKey];
     if (constant == null) return defaultValue;
 
     final value = constant.values[valueKey];
@@ -508,9 +501,9 @@ abstract class BaseCalculator implements CalculatorUseCase {
     String constantKey, {
     Map<String, dynamic>? defaultValue,
   }) {
-    if (_constants == null) return defaultValue ?? {};
+    if (constants == null) return defaultValue ?? {};
 
-    final constant = _constants!.constants[constantKey];
+    final constant = constants!.constants[constantKey];
     if (constant == null) return defaultValue ?? {};
 
     return constant.values;
@@ -561,21 +554,21 @@ abstract class BaseCalculator implements CalculatorUseCase {
   /// Проверить, загружены ли константы калькулятора.
   ///
   /// Возвращает true если константы доступны, false если используются defaults.
-  bool get hasConstants => _constants != null;
+  bool get hasConstants => constants != null;
 
   /// Получить версию загруженных констант.
   ///
   /// Возвращает версию констант или null если константы не загружены.
-  String? get constantsVersion => _constants?.version;
+  String? get constantsVersion => constants?.version;
 
   /// Получить источник констант для отладки.
   ///
   /// Возвращает строку с информацией о константах.
   String get constantsInfo {
-    if (_constants == null) {
+    if (constants == null) {
       return 'Using hardcoded defaults';
     }
-    return 'Constants v${_constants!.version} (${_constants!.constants.length} items)';
+    return 'Constants v${constants!.version} (${constants!.constants.length} items)';
   }
 
   // ============================================================================
