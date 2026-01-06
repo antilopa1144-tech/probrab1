@@ -431,6 +431,7 @@ class _ModernCalculatorCatalogScreenV2State
                           palette: palette,
                           complexity: calc.complexity,
                           onTap: () => _navigateToCalculator(calc),
+                          loc: loc,
                         ),
                       );
                     },
@@ -863,6 +864,7 @@ class _CalculatorCard extends StatelessWidget {
   final _PremiumPalette palette;
   final int complexity;
   final VoidCallback onTap;
+  final AppLocalizations loc;
 
   const _CalculatorCard({
     required this.title,
@@ -873,6 +875,7 @@ class _CalculatorCard extends StatelessWidget {
     required this.palette,
     required this.complexity,
     required this.onTap,
+    required this.loc,
   });
 
   @override
@@ -887,10 +890,10 @@ class _CalculatorCard extends StatelessWidget {
     String complexityLabel;
     IconData complexityIcon;
     if (complexity <= 2) {
-      complexityLabel = 'Быстрый';
+      complexityLabel = loc.translate('catalog.complexity.quick');
       complexityIcon = Icons.bolt_rounded;
     } else {
-      complexityLabel = 'Детальный';
+      complexityLabel = loc.translate('catalog.complexity.detailed');
       complexityIcon = Icons.tune_rounded;
     }
 

@@ -19,14 +19,14 @@ class PuttyCalculatorScreenV2 extends StatefulWidget {
 enum InputMode { byArea, byDimensions }
 
 enum MaterialTier {
-  economy('Эконом', 'Бюджетный вариант', Icons.savings),
-  standard('Стандарт', 'Оптимальное качество', Icons.verified),
-  premium('Премиум', 'Лучшее качество', Icons.star);
+  economy('putty.material_tier.economy', 'putty.material_tier.economy_desc', Icons.savings),
+  standard('putty.material_tier.standard', 'putty.material_tier.standard_desc', Icons.verified),
+  premium('putty.material_tier.premium', 'putty.material_tier.premium_desc', Icons.star);
 
-  final String name;
-  final String description;
+  final String nameKey;
+  final String descriptionKey;
   final IconData icon;
-  const MaterialTier(this.name, this.description, this.icon);
+  const MaterialTier(this.nameKey, this.descriptionKey, this.icon);
 }
 
 class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
@@ -103,11 +103,11 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
     final materials = PuttyMaterialsDatabase.startMaterials;
     switch (_materialTier) {
       case MaterialTier.economy:
-        return materials.firstWhere((m) => m.brand == 'Волма', orElse: () => materials.first);
+        return materials.firstWhere((m) => m.id == 'volma_sloy', orElse: () => materials.first);
       case MaterialTier.standard:
-        return materials.firstWhere((m) => m.brand == 'Knauf', orElse: () => materials.first);
+        return materials.firstWhere((m) => m.id == 'knauf_hp_start', orElse: () => materials.first);
       case MaterialTier.premium:
-        return materials.firstWhere((m) => m.brand == 'Terraco', orElse: () => materials.first);
+        return materials.firstWhere((m) => m.id == 'terraco_handycoat_start', orElse: () => materials.first);
     }
   }
 
@@ -115,13 +115,13 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
     switch (_materialTier) {
       case MaterialTier.economy:
         final dryMaterials = PuttyMaterialsDatabase.finishDryMaterials;
-        return dryMaterials.firstWhere((m) => m.brand == 'Старатели', orElse: () => dryMaterials.first);
+        return dryMaterials.firstWhere((m) => m.id == 'starateli_finish', orElse: () => dryMaterials.first);
       case MaterialTier.standard:
         final pasteMaterials = PuttyMaterialsDatabase.finishPasteMaterials;
-        return pasteMaterials.firstWhere((m) => m.brand == 'Sheetrock', orElse: () => pasteMaterials.first);
+        return pasteMaterials.firstWhere((m) => m.id == 'sheetrock_superfinish', orElse: () => pasteMaterials.first);
       case MaterialTier.premium:
         final pasteMaterials = PuttyMaterialsDatabase.finishPasteMaterials;
-        return pasteMaterials.firstWhere((m) => m.brand == 'Terraco', orElse: () => pasteMaterials.first);
+        return pasteMaterials.firstWhere((m) => m.id == 'terraco_ready_mix', orElse: () => pasteMaterials.first);
     }
   }
 
@@ -195,33 +195,35 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
 
   String _generateExportText() {
     final result = _result;
-    final targetLabel = _isPainting ? 'Под покраску' : 'Под обои';
+    final targetLabel = _isPainting
+        ? _loc.translate('putty.export.for_painting')
+        : _loc.translate('putty.export.for_wallpaper');
 
     final buffer = StringBuffer();
-    buffer.writeln('🏠 РАСЧЁТ ШПАКЛЁВКИ');
+    buffer.writeln('🏠 ${_loc.translate('putty.export.title')}');
     buffer.writeln('═' * 40);
     buffer.writeln();
-    buffer.writeln('Цель: $targetLabel');
-    buffer.writeln('Площадь: ${result.netArea.toStringAsFixed(1)} м²');
-    buffer.writeln('Состояние стен: ${_wallCondition.name}');
-    buffer.writeln('Класс материалов: ${_materialTier.name}');
+    buffer.writeln('${_loc.translate('putty.export.target')}: $targetLabel');
+    buffer.writeln('${_loc.translate('putty.export.area')}: ${result.netArea.toStringAsFixed(1)} м²');
+    buffer.writeln('${_loc.translate('putty.export.wall_condition')}: ${_loc.translate(_wallCondition.labelKey)}');
+    buffer.writeln('${_loc.translate('putty.export.material_tier')}: ${_loc.translate(_materialTier.nameKey)}');
     buffer.writeln();
-    buffer.writeln('🛒 МАТЕРИАЛЫ:');
+    buffer.writeln('🛒 ${_loc.translate('putty.export.materials_title')}:');
     buffer.writeln('─' * 40);
     buffer.writeln(
-        '• ${result.startMaterial.fullName}: ${result.startPackages} шт (${result.startMaterial.packageSize.toInt()} ${result.startMaterial.packageUnit}) или аналог');
+        '• ${result.startMaterial.fullName}: ${result.startPackages} ${_loc.translate('common.pcs')} (${result.startMaterial.packageSize.toInt()} ${result.startMaterial.packageUnit}) ${_loc.translate('putty.materials.or_analog')}');
     buffer.writeln(
-        '• ${result.finishMaterial.fullName}: ${result.finishPackages} шт (${result.finishMaterial.packageSize.toInt()} ${result.finishMaterial.packageUnit}) или аналог');
-    buffer.writeln('• Грунтовка: ${result.primerCanisters} канистр (10 л)');
-    buffer.writeln('• Абразив: ${result.sandingSheets} листов');
+        '• ${result.finishMaterial.fullName}: ${result.finishPackages} ${_loc.translate('common.pcs')} (${result.finishMaterial.packageSize.toInt()} ${result.finishMaterial.packageUnit}) ${_loc.translate('putty.materials.or_analog')}');
+    buffer.writeln('• ${_loc.translate('putty.materials.primer')}: ${result.primerCanisters} ${_loc.translate('common.pcs')} (10 ${_loc.translate('common.liters')})');
+    buffer.writeln('• ${_loc.translate('putty.materials.abrasive')}: ${result.sandingSheets} ${_loc.translate('common.pcs')}');
     buffer.writeln();
-    buffer.writeln('⏱️ ВРЕМЯ РАБОТЫ:');
+    buffer.writeln('⏱️ ${_loc.translate('putty.export.time_title')}:');
     buffer.writeln('─' * 40);
-    buffer.writeln('• Работа: ~${result.workTimeHours} часов');
-    buffer.writeln('• С учётом сушки: ${result.totalDays} дней');
+    buffer.writeln('• ${_loc.translate('putty.export.work')}: ~${result.workTimeHours} ${_loc.translate('common.hours')}');
+    buffer.writeln('• ${_loc.translate('putty.export.with_drying')}: ${result.totalDays} ${_loc.translate('common.days')}');
     buffer.writeln();
     buffer.writeln('═' * 40);
-    buffer.writeln('Создано в Прораб AI');
+    buffer.writeln(_loc.translate('putty.export.footer'));
 
     return buffer.toString();
   }
@@ -229,7 +231,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
   void _shareCalculation() {
     final text = _generateExportText();
     SharePlus.instance.share(
-      ShareParams(text: text, subject: 'Расчёт шпаклёвки'),
+      ShareParams(text: text, subject: _loc.translate('putty.title')),
     );
   }
 
@@ -268,18 +270,18 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
         accentColor: accentColor,
         results: [
           ResultItem(
-            label: 'ПЛОЩАДЬ',
+            label: _loc.translate('putty.header.area'),
             value: '${_result.netArea.toStringAsFixed(0)} м²',
             icon: Icons.straighten,
           ),
           ResultItem(
-            label: 'СТАРТ',
-            value: '${_result.startPackages} шт',
+            label: _loc.translate('putty.header.start'),
+            value: '${_result.startPackages} ${_loc.translate('common.pcs')}',
             icon: Icons.inventory_2,
           ),
           ResultItem(
-            label: 'ФИНИШ',
-            value: '${_result.finishPackages} шт',
+            label: _loc.translate('putty.header.finish'),
+            value: '${_result.finishPackages} ${_loc.translate('common.pcs')}',
             icon: Icons.format_paint,
           ),
         ],
@@ -318,14 +320,17 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Режим ввода',
+            _loc.translate('putty.input_mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: const ['По площади', 'По размерам'],
+            options: [
+              _loc.translate('putty.input_mode.by_area'),
+              _loc.translate('putty.input_mode.by_dimensions'),
+            ],
             selectedIndex: _inputMode.index,
             onSelect: (index) {
               setState(() {
@@ -349,7 +354,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
             children: [
               Expanded(
                 child: Text(
-                  'Площадь стен',
+                  _loc.translate('putty.dimensions.wall_area'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
                     color: CalculatorColors.textSecondary,
                   ),
@@ -391,14 +396,14 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Размеры комнаты',
+            _loc.translate('putty.dimensions.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
           _buildDimensionSlider(
-            label: 'Длина',
+            label: _loc.translate('putty.dimensions.length'),
             value: _length,
             min: 1.0,
             max: 20.0,
@@ -412,7 +417,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
           ),
           const SizedBox(height: 16),
           _buildDimensionSlider(
-            label: 'Ширина',
+            label: _loc.translate('putty.dimensions.width'),
             value: _width,
             min: 1.0,
             max: 20.0,
@@ -426,7 +431,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
           ),
           const SizedBox(height: 16),
           _buildDimensionSlider(
-            label: 'Высота потолка',
+            label: _loc.translate('putty.dimensions.ceiling_height'),
             value: _height,
             min: 2.0,
             max: 4.0,
@@ -449,7 +454,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
               children: [
                 Expanded(
                   child: Text(
-                    'Площадь стен',
+                    _loc.translate('putty.dimensions.wall_area'),
                     style: CalculatorDesignSystem.bodyMedium.copyWith(
                       color: CalculatorColors.textSecondary,
                     ),
@@ -498,7 +503,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
             ),
             const SizedBox(width: 8),
             Text(
-              '${value.toStringAsFixed(1)} м',
+              '${value.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
               style: CalculatorDesignSystem.titleMedium.copyWith(
                 color: accentColor,
                 fontWeight: FontWeight.w600,
@@ -547,7 +552,9 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
           ),
           const SizedBox(height: 8),
           Text(
-            _isPainting ? '2 слоя старта + 2 слоя финиша' : '1 слой старта + 1 слой финиша',
+            _isPainting
+                ? _loc.translate('putty.target.painting.subtitle')
+                : _loc.translate('putty.target.wallpaper.subtitle'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -571,7 +578,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Влияет на толщину и расход стартовой шпаклёвки',
+            _loc.translate('putty.wall_condition_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -647,14 +654,14 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Класс материалов',
+            _loc.translate('putty.material_tier.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Автоматически подберём материалы указанного класса',
+            _loc.translate('putty.material_tier.hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -710,7 +717,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              tier.name,
+                              _loc.translate(tier.nameKey),
                               style: CalculatorDesignSystem.titleSmall.copyWith(
                                 color: isSelected ? accentColor : CalculatorColors.textPrimary,
                                 fontWeight: FontWeight.w600,
@@ -718,7 +725,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              tier.description,
+                              _loc.translate(tier.descriptionKey),
                               style: CalculatorDesignSystem.bodySmall.copyWith(
                                 color: CalculatorColors.textSecondary,
                               ),
@@ -764,14 +771,14 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Учесть окна и двери',
+                      _loc.translate('putty.openings_toggle'),
                       style: CalculatorDesignSystem.titleMedium.copyWith(
                         color: CalculatorColors.textPrimary,
                       ),
                     ),
                     if (!_showOpenings)
                       Text(
-                        'Вычтем из площади',
+                        _loc.translate('putty.openings_hint'),
                         style: CalculatorDesignSystem.bodySmall.copyWith(
                           color: CalculatorColors.textSecondary,
                         ),
@@ -796,7 +803,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Проёмы (${_openings.length})',
+                _loc.translate('putty.section.openings', {'count': _openings.length.toString()}),
                 style: CalculatorDesignSystem.titleMedium.copyWith(
                   color: CalculatorColors.textPrimary,
                 ),
@@ -807,7 +814,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
                   _update();
                 }),
                 icon: const Icon(Icons.add, size: 18),
-                label: const Text('Добавить'),
+                label: Text(_loc.translate('putty.openings_add')),
                 style: TextButton.styleFrom(foregroundColor: accentColor),
               ),
             ],
@@ -822,7 +829,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
                 children: [
                   Expanded(
                     child: _buildSmallSlider(
-                      label: 'Ш',
+                      label: _loc.translate('putty.openings_w'),
                       value: opening.width,
                       min: 0.5,
                       max: 3.0,
@@ -838,7 +845,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: _buildSmallSlider(
-                      label: 'В',
+                      label: _loc.translate('putty.openings_h'),
                       value: opening.height,
                       min: 0.5,
                       max: 3.0,
@@ -854,7 +861,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: _buildSmallSlider(
-                      label: 'Шт',
+                      label: _loc.translate('putty.openings_count'),
                       value: opening.count.toDouble(),
                       min: 1,
                       max: 10,
@@ -928,28 +935,28 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
 
     final materials = <MaterialItem>[
       MaterialItem(
-        name: '${result.startMaterial.fullName} или аналог',
-        value: '${result.startPackages} шт',
-        subtitle: '${result.startWeight.toStringAsFixed(1)} кг',
+        name: '${result.startMaterial.fullName} ${_loc.translate('putty.materials.or_analog')}',
+        value: '${result.startPackages} ${_loc.translate('common.pcs')}',
+        subtitle: '${result.startWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
         icon: Icons.inventory_2,
       ),
       MaterialItem(
-        name: '${result.finishMaterial.fullName} или аналог',
-        value: '${result.finishPackages} шт',
+        name: '${result.finishMaterial.fullName} ${_loc.translate('putty.materials.or_analog')}',
+        value: '${result.finishPackages} ${_loc.translate('common.pcs')}',
         subtitle:
             '${result.finishWeight.toStringAsFixed(1)} ${result.finishMaterial.packageUnit}',
         icon: Icons.format_paint,
       ),
       MaterialItem(
-        name: 'Грунтовка',
-        value: '${result.primerCanisters} шт',
-        subtitle: '${result.primerVolume.toStringAsFixed(1)} л • 10 л/канистра',
+        name: _loc.translate('putty.materials.primer'),
+        value: '${result.primerCanisters} ${_loc.translate('common.pcs')}',
+        subtitle: '${result.primerVolume.toStringAsFixed(1)} ${_loc.translate('common.liters')} • ${_loc.translate('putty.materials.primer_hint')}',
         icon: Icons.water_drop,
       ),
       MaterialItem(
-        name: 'Абразив (сетки)',
-        value: '${result.sandingSheets} шт',
-        subtitle: 'P120 + P180',
+        name: _loc.translate('putty.materials.abrasive'),
+        value: '${result.sandingSheets} ${_loc.translate('common.pcs')}',
+        subtitle: _loc.translate('putty.materials.abrasive_hint'),
         icon: Icons.grid_4x4,
       ),
     ];
@@ -968,15 +975,15 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
 
     final items = <MaterialItem>[
       MaterialItem(
-        name: 'Время работы',
-        value: '~${result.workTimeHours} часов',
-        subtitle: 'Чистое рабочее время',
+        name: _loc.translate('putty.work_time.work'),
+        value: '~${result.workTimeHours} ${_loc.translate('common.hours')}',
+        subtitle: _loc.translate('putty.work_time.work_hint'),
         icon: Icons.handyman,
       ),
       MaterialItem(
-        name: 'С учётом сушки',
-        value: '${result.totalDays} дней',
-        subtitle: 'Включая высыхание слоёв',
+        name: _loc.translate('putty.work_time.with_drying'),
+        value: '${result.totalDays} ${_loc.translate('common.days')}',
+        subtitle: _loc.translate('putty.work_time.with_drying_hint'),
         icon: Icons.calendar_today,
       ),
     ];
@@ -992,22 +999,22 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
   Widget _buildTipsSection() {
     final hints = <CalculatorHint>[
       if (_isPainting)
-        const CalculatorHint(
+        CalculatorHint(
           type: HintType.important,
-          message: 'Под покраску нужна идеально ровная поверхность. Используйте яркий свет для проверки.',
+          message: _loc.translate('putty.hints.painting_surface'),
         ),
       if (!_isPainting)
-        const CalculatorHint(
+        CalculatorHint(
           type: HintType.tip,
-          message: 'Под обои достаточно одного слоя старта и финиша. Обои скроют мелкие неровности.',
+          message: _loc.translate('putty.hints.wallpaper_layers'),
         ),
-      const CalculatorHint(
+      CalculatorHint(
         type: HintType.important,
-        message: 'Каждый слой должен полностью высохнуть перед нанесением следующего (обычно 24 часа).',
+        message: _loc.translate('putty.hints.drying_time'),
       ),
-      const CalculatorHint(
+      CalculatorHint(
         type: HintType.tip,
-        message: 'Грунтуйте поверхность перед каждым слоем для лучшей адгезии и снижения расхода.',
+        message: _loc.translate('putty.hints.primer_between_layers'),
       ),
     ];
 

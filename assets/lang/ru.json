@@ -33,7 +33,11 @@
     "tools": "Инструменты",
     "recent": "Недавние",
     "popular": "Популярное",
-    "results": "Результаты"
+    "results": "Результаты",
+    "complexity": {
+      "quick": "Быстрый",
+      "detailed": "Детальный"
+    }
   },
   "chart": {
     "no_data": "Нет данных",
@@ -145,7 +149,75 @@
     },
     "start_material_title": "Стартовая шпаклёвка",
     "finish_material_title": "Финишная шпаклёвка",
-    "work_time_title": "Время работы"
+    "work_time_title": "Время работы",
+    "input_mode": {
+      "title": "Режим ввода",
+      "by_area": "По площади",
+      "by_dimensions": "По размерам"
+    },
+    "dimensions": {
+      "title": "Размеры комнаты",
+      "length": "Длина",
+      "width": "Ширина",
+      "ceiling_height": "Высота потолка",
+      "wall_area": "Площадь стен"
+    },
+    "openings_toggle": "Учесть окна и двери",
+    "openings_hint": "Вычтем из площади",
+    "openings_add": "Добавить",
+    "openings_w": "Ш",
+    "openings_h": "В",
+    "openings_count": "Шт",
+    "header": {
+      "area": "ПЛОЩАДЬ",
+      "start": "СТАРТ",
+      "finish": "ФИНИШ"
+    },
+    "material_tier": {
+      "title": "Класс материалов",
+      "hint": "Автоматически подберём материалы указанного класса",
+      "economy": "Эконом",
+      "economy_desc": "Бюджетный вариант",
+      "standard": "Стандарт",
+      "standard_desc": "Оптимальное качество",
+      "premium": "Премиум",
+      "premium_desc": "Лучшее качество"
+    },
+    "materials": {
+      "or_analog": "или аналог",
+      "primer": "Грунтовка",
+      "primer_hint": "10 л/канистра",
+      "abrasive": "Абразив (сетки)",
+      "abrasive_hint": "P120 + P180"
+    },
+    "work_time": {
+      "work": "Время работы",
+      "work_hint": "Чистое рабочее время",
+      "with_drying": "С учётом сушки",
+      "with_drying_hint": "Включая высыхание слоёв"
+    },
+    "export": {
+      "title": "РАСЧЁТ ШПАКЛЁВКИ",
+      "target": "Цель",
+      "for_wallpaper": "Под обои",
+      "for_painting": "Под покраску",
+      "area": "Площадь",
+      "wall_condition": "Состояние стен",
+      "material_tier": "Класс материалов",
+      "materials_title": "МАТЕРИАЛЫ",
+      "time_title": "ВРЕМЯ РАБОТЫ",
+      "work": "Работа",
+      "with_drying": "С учётом сушки",
+      "footer": "Создано в Прораб AI"
+    },
+    "wall_condition_hint": "Влияет на толщину и расход стартовой шпаклёвки",
+    "layers_hint": "слоя старта + {finish} слоя финиша",
+    "hints": {
+      "painting_surface": "Под покраску нужна идеально ровная поверхность. Используйте яркий свет для проверки.",
+      "wallpaper_layers": "Под обои достаточно одного слоя старта и финиша. Обои скроют мелкие неровности.",
+      "drying_time": "Каждый слой должен полностью высохнуть перед нанесением следующего (обычно 24 часа).",
+      "primer_between_layers": "Грунтуйте поверхность перед каждым слоем для лучшей адгезии и снижения расхода."
+    }
   },
   "preset": {
     "bathroom_small": "Ванная мал.",
@@ -3080,7 +3152,13 @@
     "copy": "Копировать",
     "share": "Поделиться",
     "copied_to_clipboard": "Скопировано в буфер обмена",
-    "dimensions": "Размеры"
+    "dimensions": "Размеры",
+    "pcs": "шт",
+    "kg": "кг",
+    "liters": "л",
+    "hours": "ч",
+    "days": "дн",
+    "meters": "м"
   },
   "settings": {
     "title": "Настройки",
