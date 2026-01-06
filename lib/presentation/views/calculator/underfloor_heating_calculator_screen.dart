@@ -80,46 +80,46 @@ enum InputMode { byArea, byDimensions }
 
 enum HeatingSystemType {
   electricMat(
-    'Электрический мат',
-    'Под плитку, керамогранит',
-    'Простой монтаж, быстрый прогрев',
+    'warmfloor.system.electric_mat',
+    'warmfloor.system.electric_mat_desc',
+    'warmfloor.system.electric_mat_advantage',
     Icons.grid_on,
   ),
   electricCable(
-    'Электрический кабель',
-    'Универсальный, для сложных форм',
-    'Гибкая укладка, любые конфигурации',
+    'warmfloor.system.electric_cable',
+    'warmfloor.system.electric_cable_desc',
+    'warmfloor.system.electric_cable_advantage',
     Icons.cable,
   ),
   infraredFilm(
-    'ИК плёночный',
-    'Под ламинат, линолеум',
-    'Сухой монтаж, быстрая установка',
+    'warmfloor.system.infrared_film',
+    'warmfloor.system.infrared_film_desc',
+    'warmfloor.system.infrared_film_advantage',
     Icons.view_module,
   ),
   waterBased(
-    'Водяной',
-    'Экономичный, для частного дома',
-    'Низкие расходы на отопление',
+    'warmfloor.system.water_based',
+    'warmfloor.system.water_based_desc',
+    'warmfloor.system.water_based_advantage',
     Icons.waves,
   );
 
-  final String name;
-  final String subtitle;
-  final String advantage;
+  final String nameKey;
+  final String subtitleKey;
+  final String advantageKey;
   final IconData icon;
-  const HeatingSystemType(this.name, this.subtitle, this.advantage, this.icon);
+  const HeatingSystemType(this.nameKey, this.subtitleKey, this.advantageKey, this.icon);
 }
 
 enum RoomType {
-  bathroom('Ванная / санузел', 'Высокая влажность, комфорт'),
-  living('Жилая комната', 'Основное или дополнительное отопление'),
-  kitchen('Кухня', 'Среднее тепловыделение'),
-  balcony('Балкон / лоджия', 'Большие теплопотери');
+  bathroom('warmfloor.room.bathroom', 'warmfloor.room.bathroom_desc'),
+  living('warmfloor.room.living', 'warmfloor.room.living_desc'),
+  kitchen('warmfloor.room.kitchen', 'warmfloor.room.kitchen_desc'),
+  balcony('warmfloor.room.balcony', 'warmfloor.room.balcony_desc');
 
-  final String displayName;
-  final String description;
-  const RoomType(this.displayName, this.description);
+  final String nameKey;
+  final String descriptionKey;
+  const RoomType(this.nameKey, this.descriptionKey);
 
   /// Ключ для получения значений из констант
   String get key => name;
@@ -336,56 +336,56 @@ class _UnderfloorHeatingCalculatorScreenState
 
   String _generateExportText() {
     final buffer = StringBuffer();
-    buffer.writeln('📋 РАСЧЁТ ТЁПЛОГО ПОЛА');
+    buffer.writeln('📋 ${_loc.translate('warmfloor.export.title')}');
     buffer.writeln('═' * 40);
     buffer.writeln();
 
-    buffer.writeln('Площадь помещения: ${_result.area.toStringAsFixed(1)} м²');
-    buffer.writeln('Площадь обогрева: ${_result.heatingArea.toStringAsFixed(1)} м²');
-    buffer.writeln('Тип системы: ${_result.systemType.name}');
-    buffer.writeln('Помещение: ${_result.roomType.displayName}');
-    buffer.writeln('Мощность: ${_result.totalPower} Вт');
+    buffer.writeln('${_loc.translate('warmfloor.export.room_area')}: ${_result.area.toStringAsFixed(1)} м²');
+    buffer.writeln('${_loc.translate('warmfloor.export.heating_area')}: ${_result.heatingArea.toStringAsFixed(1)} м²');
+    buffer.writeln('${_loc.translate('warmfloor.export.system_type')}: ${_loc.translate(_result.systemType.nameKey)}');
+    buffer.writeln('${_loc.translate('warmfloor.export.room_type')}: ${_loc.translate(_result.roomType.nameKey)}');
+    buffer.writeln('${_loc.translate('warmfloor.export.power')}: ${_result.totalPower} ${_loc.translate('common.watt')}');
     buffer.writeln();
 
-    buffer.writeln('📦 МАТЕРИАЛЫ:');
+    buffer.writeln('📦 ${_loc.translate('warmfloor.export.materials_title')}:');
     buffer.writeln('─' * 40);
 
     switch (_result.systemType) {
       case HeatingSystemType.electricMat:
-        buffer.writeln('• Нагревательный мат: ${_result.matArea!.toStringAsFixed(1)} м² (${_result.totalPower} Вт)');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.heating_mat')}: ${_result.matArea!.toStringAsFixed(1)} м² (${_result.totalPower} ${_loc.translate('common.watt')})');
         break;
       case HeatingSystemType.electricCable:
-        buffer.writeln('• Нагревательный кабель: ${_result.cableLength!.toStringAsFixed(1)} м (${_result.totalPower} Вт)');
-        buffer.writeln('• Монтажная лента: ${(_result.heatingArea * _constants.montageTapeMultiplier).toStringAsFixed(0)} м');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.heating_cable')}: ${_result.cableLength!.toStringAsFixed(1)} ${_loc.translate('common.meters')} (${_result.totalPower} ${_loc.translate('common.watt')})');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.mounting_tape')}: ${(_result.heatingArea * _constants.montageTapeMultiplier).toStringAsFixed(0)} ${_loc.translate('common.meters')}');
         break;
       case HeatingSystemType.infraredFilm:
-        buffer.writeln('• ИК плёнка: ${_result.filmArea!.toStringAsFixed(1)} м²');
-        buffer.writeln('• Контактные зажимы: ${_result.contactClips} шт');
-        buffer.writeln('• Изоляция контактов: ${_result.contactClips} шт');
-        buffer.writeln('• Теплоотражающая подложка: ${_result.area.toStringAsFixed(1)} м²');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.ir_film')}: ${_result.filmArea!.toStringAsFixed(1)} м²');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.contact_clips')}: ${_result.contactClips} ${_loc.translate('common.pcs')}');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.contact_insulation')}: ${_result.contactClips} ${_loc.translate('common.pcs')}');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.reflective_substrate')}: ${_result.area.toStringAsFixed(1)} м²');
         break;
       case HeatingSystemType.waterBased:
-        buffer.writeln('• Труба PE-RT 16мм: ${_result.pipeLength!.toStringAsFixed(0)} м');
-        buffer.writeln('• Коллектор: ${_result.collectorOutputs} выходов');
-        buffer.writeln('• Контуров: ${_result.loopCount}');
-        buffer.writeln('• Теплоизоляция ПСБ-35 (50мм): ${_result.insulationArea!.toStringAsFixed(1)} м²');
-        buffer.writeln('• Демпферная лента: ${(_result.area * _constants.damperTapePerM2).toStringAsFixed(0)} м');
-        buffer.writeln('• Крепёж (скобы): ${(_result.heatingArea * _constants.bracketsPerM2).toStringAsFixed(0)} шт');
-        buffer.writeln('• Стяжка: ${_result.screedVolume!.toStringAsFixed(2)} м³');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.pipe_pert')}: ${_result.pipeLength!.toStringAsFixed(0)} ${_loc.translate('common.meters')}');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.collector')}: ${_result.collectorOutputs} ${_loc.translate('warmfloor.materials.outputs')}');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.loops')}: ${_result.loopCount}');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.insulation_psb')}: ${_result.insulationArea!.toStringAsFixed(1)} м²');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.damper_tape')}: ${(_result.area * _constants.damperTapePerM2).toStringAsFixed(0)} ${_loc.translate('common.meters')}');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.brackets')}: ${(_result.heatingArea * _constants.bracketsPerM2).toStringAsFixed(0)} ${_loc.translate('common.pcs')}');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.screed')}: ${_result.screedVolume!.toStringAsFixed(2)} м³');
         break;
     }
 
-    buffer.writeln('• Терморегулятор: ${_result.thermostatCount.toStringAsFixed(0)} шт');
-    buffer.writeln('• Датчик температуры: ${_result.sensorCount.toStringAsFixed(0)} шт');
-    buffer.writeln('• Гофротруба для датчика: ${_result.corrugatedTubeLength.toStringAsFixed(1)} м');
+    buffer.writeln('• ${_loc.translate('warmfloor.export.thermostat')}: ${_result.thermostatCount.toStringAsFixed(0)} ${_loc.translate('common.pcs')}');
+    buffer.writeln('• ${_loc.translate('warmfloor.export.temp_sensor')}: ${_result.sensorCount.toStringAsFixed(0)} ${_loc.translate('common.pcs')}');
+    buffer.writeln('• ${_loc.translate('warmfloor.export.corrugated_tube')}: ${_result.corrugatedTubeLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}');
 
     if (_result.insulationArea != null && _result.systemType != HeatingSystemType.waterBased) {
-      buffer.writeln('• Теплоизоляция: ${_result.insulationArea!.toStringAsFixed(1)} м²');
+      buffer.writeln('• ${_loc.translate('warmfloor.export.insulation')}: ${_result.insulationArea!.toStringAsFixed(1)} м²');
     }
 
     buffer.writeln();
     buffer.writeln('═' * 40);
-    buffer.writeln('Создано с помощью Калькулятора Стройматериалов');
+    buffer.writeln(_loc.translate('warmfloor.export.footer'));
 
     return buffer.toString();
   }
@@ -393,7 +393,7 @@ class _UnderfloorHeatingCalculatorScreenState
   void _shareCalculation() {
     final text = _generateExportText();
     SharePlus.instance.share(
-      ShareParams(text: text, subject: 'Расчёт тёплого пола'),
+      ShareParams(text: text, subject: _loc.translate('warmfloor.export.subject')),
     );
   }
 
@@ -414,7 +414,7 @@ class _UnderfloorHeatingCalculatorScreenState
     const accentColor = CalculatorColors.engineering;
 
     return CalculatorScaffold(
-      title: 'Тёплый пол',
+      title: _loc.translate('warmfloor.title'),
       accentColor: accentColor,
       actions: [
         IconButton(
@@ -432,17 +432,19 @@ class _UnderfloorHeatingCalculatorScreenState
         accentColor: accentColor,
         results: [
           ResultItem(
-            label: 'ПЛОЩАДЬ',
+            label: _loc.translate('warmfloor.header.area'),
             value: '${_result.heatingArea.toStringAsFixed(0)} м²',
             icon: Icons.straighten,
           ),
           ResultItem(
-            label: 'МОЩНОСТЬ',
+            label: _loc.translate('warmfloor.header.power'),
             value: '${(_result.totalPower / 1000).toStringAsFixed(1)} кВт',
             icon: Icons.bolt,
           ),
           ResultItem(
-            label: _result.systemType == HeatingSystemType.waterBased ? 'ТРУБА' : 'СИСТЕМА',
+            label: _result.systemType == HeatingSystemType.waterBased
+                ? _loc.translate('warmfloor.header.pipe')
+                : _loc.translate('warmfloor.header.system'),
             value: _result.systemType == HeatingSystemType.waterBased
                 ? '${_result.pipeLength!.toStringAsFixed(0)} м'
                 : _result.systemType == HeatingSystemType.electricMat
@@ -486,14 +488,17 @@ class _UnderfloorHeatingCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Режим ввода',
+            _loc.translate('warmfloor.mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: const ['По площади', 'По размерам'],
+            options: [
+              _loc.translate('warmfloor.mode.by_area'),
+              _loc.translate('warmfloor.mode.by_dimensions'),
+            ],
             selectedIndex: _inputMode.index,
             onSelect: (index) {
               setState(() {
@@ -517,7 +522,7 @@ class _UnderfloorHeatingCalculatorScreenState
             children: [
               Expanded(
                 child: Text(
-                  'Площадь помещения',
+                  _loc.translate('warmfloor.dimensions.room_area'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
                     color: CalculatorColors.textSecondary,
                   ),
@@ -559,14 +564,14 @@ class _UnderfloorHeatingCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Размеры помещения',
+            _loc.translate('warmfloor.dimensions.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
           _buildDimensionSlider(
-            label: 'Длина',
+            label: _loc.translate('warmfloor.dimensions.length'),
             value: _length,
             min: 0.5,
             max: 20.0,
@@ -580,7 +585,7 @@ class _UnderfloorHeatingCalculatorScreenState
           ),
           const SizedBox(height: 16),
           _buildDimensionSlider(
-            label: 'Ширина',
+            label: _loc.translate('warmfloor.dimensions.width'),
             value: _width,
             min: 0.5,
             max: 20.0,
@@ -603,7 +608,7 @@ class _UnderfloorHeatingCalculatorScreenState
               children: [
                 Expanded(
                   child: Text(
-                    'Площадь помещения',
+                    _loc.translate('warmfloor.dimensions.room_area'),
                     style: CalculatorDesignSystem.bodyMedium.copyWith(
                       color: CalculatorColors.textSecondary,
                     ),
@@ -679,7 +684,7 @@ class _UnderfloorHeatingCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Тип системы',
+            _loc.translate('warmfloor.system.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -737,7 +742,7 @@ class _UnderfloorHeatingCalculatorScreenState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              type.name,
+                              _loc.translate(type.nameKey),
                               style: CalculatorDesignSystem.titleSmall.copyWith(
                                 color: isSelected
                                     ? accentColor
@@ -747,7 +752,7 @@ class _UnderfloorHeatingCalculatorScreenState
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              type.subtitle,
+                              _loc.translate(type.subtitleKey),
                               style: CalculatorDesignSystem.bodySmall.copyWith(
                                 color: CalculatorColors.textSecondary,
                               ),
@@ -755,7 +760,7 @@ class _UnderfloorHeatingCalculatorScreenState
                             if (isSelected) ...[
                               const SizedBox(height: 4),
                               Text(
-                                '✓ ${type.advantage}',
+                                '✓ ${_loc.translate(type.advantageKey)}',
                                 style: CalculatorDesignSystem.bodySmall.copyWith(
                                   color: accentColor,
                                   fontWeight: FontWeight.w500,
@@ -785,14 +790,14 @@ class _UnderfloorHeatingCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Тип помещения',
+            _loc.translate('warmfloor.room.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Автоматически определяет требуемую мощность',
+            _loc.translate('warmfloor.room.title_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -834,7 +839,7 @@ class _UnderfloorHeatingCalculatorScreenState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              type.displayName,
+                              _loc.translate(type.nameKey),
                               style: CalculatorDesignSystem.titleSmall.copyWith(
                                 color: isSelected
                                     ? accentColor
@@ -844,7 +849,7 @@ class _UnderfloorHeatingCalculatorScreenState
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${type.description} • ${_constants.getRoomPower(type.key)} Вт/м²',
+                              '${_loc.translate(type.descriptionKey)} • ${_constants.getRoomPower(type.key)} Вт/м²',
                               style: CalculatorDesignSystem.bodySmall.copyWith(
                                 color: CalculatorColors.textSecondary,
                               ),
@@ -875,7 +880,7 @@ class _UnderfloorHeatingCalculatorScreenState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Площадь обогрева',
+                _loc.translate('warmfloor.useful_area.title'),
                 style: CalculatorDesignSystem.titleMedium.copyWith(
                   color: CalculatorColors.textPrimary,
                 ),
@@ -898,7 +903,7 @@ class _UnderfloorHeatingCalculatorScreenState
           ),
           const SizedBox(height: 8),
           Text(
-            'Процент площади без мебели и техники',
+            _loc.translate('warmfloor.useful_area.hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -929,14 +934,14 @@ class _UnderfloorHeatingCalculatorScreenState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${_constants.usefulAreaMin.toInt()}% (много мебели)',
+                '${_constants.usefulAreaMin.toInt()}% (${_loc.translate('warmfloor.useful_area.min_label')})',
                 style: CalculatorDesignSystem.bodySmall.copyWith(
                   color: CalculatorColors.textSecondary,
                   fontSize: 11,
                 ),
               ),
               Text(
-                '${_constants.usefulAreaMax.toInt()}% (мало мебели)',
+                '${_constants.usefulAreaMax.toInt()}% (${_loc.translate('warmfloor.useful_area.max_label')})',
                 style: CalculatorDesignSystem.bodySmall.copyWith(
                   color: CalculatorColors.textSecondary,
                   fontSize: 11,
@@ -959,14 +964,14 @@ class _UnderfloorHeatingCalculatorScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Теплоизоляция',
+                  _loc.translate('warmfloor.insulation.title'),
                   style: CalculatorDesignSystem.titleMedium.copyWith(
                     color: CalculatorColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Для 1 этажа, над подвалом',
+                  _loc.translate('warmfloor.insulation.hint'),
                   style: CalculatorDesignSystem.bodySmall.copyWith(
                     color: CalculatorColors.textSecondary,
                   ),
@@ -997,7 +1002,7 @@ class _UnderfloorHeatingCalculatorScreenState
     switch (_result.systemType) {
       case HeatingSystemType.electricMat:
         materials.add(MaterialItem(
-          name: 'Нагревательный мат',
+          name: _loc.translate('warmfloor.materials.heating_mat'),
           value: '${_result.matArea!.toStringAsFixed(1)} м²',
           subtitle: '${_result.totalPower} Вт',
           icon: Icons.grid_on,
@@ -1007,13 +1012,13 @@ class _UnderfloorHeatingCalculatorScreenState
       case HeatingSystemType.electricCable:
         materials.addAll([
           MaterialItem(
-            name: 'Нагревательный кабель',
+            name: _loc.translate('warmfloor.materials.heating_cable'),
             value: '${_result.cableLength!.toStringAsFixed(0)} м',
             subtitle: '${_result.totalPower} Вт',
             icon: Icons.cable,
           ),
           MaterialItem(
-            name: 'Монтажная лента',
+            name: _loc.translate('warmfloor.materials.mounting_tape'),
             value: '${(_result.heatingArea * _constants.montageTapeMultiplier).toStringAsFixed(0)} м',
             icon: Icons.straighten,
           ),
@@ -1023,22 +1028,22 @@ class _UnderfloorHeatingCalculatorScreenState
       case HeatingSystemType.infraredFilm:
         materials.addAll([
           MaterialItem(
-            name: 'ИК плёнка',
+            name: _loc.translate('warmfloor.materials.ir_film'),
             value: '${_result.filmArea!.toStringAsFixed(1)} м²',
             icon: Icons.view_module,
           ),
           MaterialItem(
-            name: 'Контактные зажимы',
-            value: '${_result.contactClips} шт',
+            name: _loc.translate('warmfloor.materials.contact_clips'),
+            value: '${_result.contactClips} ${_loc.translate('common.pcs')}',
             icon: Icons.link,
           ),
           MaterialItem(
-            name: 'Изоляция контактов',
-            value: '${_result.contactClips} шт',
+            name: _loc.translate('warmfloor.materials.contact_insulation'),
+            value: '${_result.contactClips} ${_loc.translate('common.pcs')}',
             icon: Icons.bolt,
           ),
           MaterialItem(
-            name: 'Теплоотражающая подложка',
+            name: _loc.translate('warmfloor.materials.reflective_substrate'),
             value: '${_result.area.toStringAsFixed(1)} м²',
             icon: Icons.layers,
           ),
@@ -1048,38 +1053,38 @@ class _UnderfloorHeatingCalculatorScreenState
       case HeatingSystemType.waterBased:
         materials.addAll([
           MaterialItem(
-            name: 'Труба PE-RT 16мм',
+            name: _loc.translate('warmfloor.materials.pipe_pert'),
             value: '${_result.pipeLength!.toStringAsFixed(0)} м',
             icon: Icons.timeline,
           ),
           MaterialItem(
-            name: 'Коллектор',
-            value: '${_result.collectorOutputs} вых.',
+            name: _loc.translate('warmfloor.materials.collector'),
+            value: '${_result.collectorOutputs} ${_loc.translate('warmfloor.materials.outputs')}',
             icon: Icons.device_hub,
           ),
           MaterialItem(
-            name: 'Контуров',
-            value: '${_result.loopCount} шт',
+            name: _loc.translate('warmfloor.materials.loops'),
+            value: '${_result.loopCount} ${_loc.translate('common.pcs')}',
             icon: Icons.loop,
           ),
           MaterialItem(
-            name: 'Теплоизоляция ПСБ-35',
+            name: _loc.translate('warmfloor.materials.insulation_psb'),
             value: '${_result.insulationArea!.toStringAsFixed(1)} м²',
             subtitle: '50 мм',
             icon: Icons.layers,
           ),
           MaterialItem(
-            name: 'Демпферная лента',
+            name: _loc.translate('warmfloor.materials.damper_tape'),
             value: '${(_result.area * _constants.damperTapePerM2).toStringAsFixed(0)} м',
             icon: Icons.straighten,
           ),
           MaterialItem(
-            name: 'Крепёж (скобы)',
-            value: '${(_result.heatingArea * _constants.bracketsPerM2).toStringAsFixed(0)} шт',
+            name: _loc.translate('warmfloor.materials.brackets'),
+            value: '${(_result.heatingArea * _constants.bracketsPerM2).toStringAsFixed(0)} ${_loc.translate('common.pcs')}',
             icon: Icons.push_pin,
           ),
           MaterialItem(
-            name: 'Стяжка',
+            name: _loc.translate('warmfloor.materials.screed'),
             value: '${_result.screedVolume!.toStringAsFixed(2)} м³',
             icon: Icons.foundation,
           ),
@@ -1090,33 +1095,33 @@ class _UnderfloorHeatingCalculatorScreenState
     // Общие материалы
     materials.addAll([
       MaterialItem(
-        name: 'Терморегулятор',
-        value: '${_result.thermostatCount.toStringAsFixed(0)} шт',
+        name: _loc.translate('warmfloor.materials.thermostat'),
+        value: '${_result.thermostatCount.toStringAsFixed(0)} ${_loc.translate('common.pcs')}',
         icon: Icons.thermostat,
       ),
       MaterialItem(
-        name: 'Датчик температуры',
-        value: '${_result.sensorCount.toStringAsFixed(0)} шт',
+        name: _loc.translate('warmfloor.materials.temp_sensor'),
+        value: '${_result.sensorCount.toStringAsFixed(0)} ${_loc.translate('common.pcs')}',
         icon: Icons.sensors,
       ),
       MaterialItem(
-        name: 'Гофротруба',
+        name: _loc.translate('warmfloor.materials.corrugated_tube'),
         value: '${_result.corrugatedTubeLength.toStringAsFixed(1)} м',
-        subtitle: 'для датчика',
+        subtitle: _loc.translate('warmfloor.materials.for_sensor'),
         icon: Icons.sensor_door,
       ),
     ]);
 
     if (_result.insulationArea != null && _result.systemType != HeatingSystemType.waterBased) {
       materials.add(MaterialItem(
-        name: 'Теплоизоляция',
+        name: _loc.translate('warmfloor.materials.insulation'),
         value: '${_result.insulationArea!.toStringAsFixed(1)} м²',
         icon: Icons.layers,
       ));
     }
 
     return MaterialsCardModern(
-      title: 'Материалы',
+      title: _loc.translate('warmfloor.materials.title'),
       titleIcon: Icons.construction,
       items: materials,
       accentColor: accentColor,
@@ -1132,32 +1137,32 @@ class _UnderfloorHeatingCalculatorScreenState
 
     final infoItems = <MaterialItem>[
       MaterialItem(
-        name: 'Мощность системы',
+        name: _loc.translate('warmfloor.info.system_power'),
         value: '${(_result.totalPower / 1000).toStringAsFixed(2)} кВт',
         icon: Icons.bolt,
       ),
       MaterialItem(
-        name: 'Площадь обогрева',
+        name: _loc.translate('warmfloor.info.heating_area'),
         value: '${_result.heatingArea.toStringAsFixed(1)} м²',
-        subtitle: '${_usefulAreaPercent.round()}% от общей (без мебели)',
+        subtitle: '${_usefulAreaPercent.round()}% ${_loc.translate('warmfloor.info.heating_area_hint')}',
         icon: Icons.heat_pump,
       ),
       MaterialItem(
-        name: 'Расход в месяц',
+        name: _loc.translate('warmfloor.info.monthly_consumption'),
         value: '~${monthlyConsumption.toStringAsFixed(0)} кВт⋅ч',
-        subtitle: 'при работе 8 ч/день',
+        subtitle: _loc.translate('warmfloor.info.monthly_hint'),
         icon: Icons.calendar_month,
       ),
       MaterialItem(
-        name: 'Расход за сезон',
+        name: _loc.translate('warmfloor.info.season_consumption'),
         value: '~${seasonConsumption.toStringAsFixed(0)} кВт⋅ч',
-        subtitle: '4 месяца отопления',
+        subtitle: _loc.translate('warmfloor.info.season_hint'),
         icon: Icons.calendar_today,
       ),
     ];
 
     return MaterialsCardModern(
-      title: 'Доп. информация',
+      title: _loc.translate('warmfloor.info.title'),
       titleIcon: Icons.info_outline,
       items: infoItems,
       accentColor: accentColor,
@@ -1170,65 +1175,65 @@ class _UnderfloorHeatingCalculatorScreenState
     switch (_result.systemType) {
       case HeatingSystemType.electricMat:
         hints.addAll([
-          const CalculatorHint(
+          CalculatorHint(
             type: HintType.important,
-            message: 'Поверхность пола должна быть ровной. Перепад высоты не более 5мм на 2м.',
+            message: _loc.translate('warmfloor.hints.mat_surface'),
           ),
-          const CalculatorHint(
+          CalculatorHint(
             type: HintType.tip,
-            message: 'Используйте программируемый терморегулятор для экономии до 30% электроэнергии.',
+            message: _loc.translate('warmfloor.hints.mat_thermostat'),
           ),
-          const CalculatorHint(
+          CalculatorHint(
             type: HintType.tip,
-            message: 'Проверьте сопротивление кабеля до и после укладки — оно должно соответствовать паспорту.',
+            message: _loc.translate('warmfloor.hints.mat_resistance'),
           ),
         ]);
         break;
       case HeatingSystemType.electricCable:
         hints.addAll([
-          const CalculatorHint(
+          CalculatorHint(
             type: HintType.important,
-            message: 'Шаг укладки кабеля должен быть 10-15 см. Не допускайте пересечения витков.',
+            message: _loc.translate('warmfloor.hints.cable_step'),
           ),
-          const CalculatorHint(
+          CalculatorHint(
             type: HintType.tip,
-            message: 'Используйте монтажную ленту для фиксации кабеля с равномерным шагом.',
+            message: _loc.translate('warmfloor.hints.cable_tape'),
           ),
-          const CalculatorHint(
+          CalculatorHint(
             type: HintType.warning,
-            message: 'Кабель нельзя резать и укорачивать! Выбирайте секцию под вашу площадь.',
+            message: _loc.translate('warmfloor.hints.cable_no_cut'),
           ),
         ]);
         break;
       case HeatingSystemType.infraredFilm:
         hints.addAll([
-          const CalculatorHint(
+          CalculatorHint(
             type: HintType.important,
-            message: 'Под ИК плёнку обязательна теплоотражающая подложка (не фольга!).',
+            message: _loc.translate('warmfloor.hints.film_substrate'),
           ),
-          const CalculatorHint(
+          CalculatorHint(
             type: HintType.tip,
-            message: 'Полосы плёнки подключайте параллельно для равномерного нагрева.',
+            message: _loc.translate('warmfloor.hints.film_parallel'),
           ),
-          const CalculatorHint(
+          CalculatorHint(
             type: HintType.warning,
-            message: 'Тщательно изолируйте все контакты битумной лентой с двух сторон.',
+            message: _loc.translate('warmfloor.hints.film_insulate'),
           ),
         ]);
         break;
       case HeatingSystemType.waterBased:
         hints.addAll([
-          const CalculatorHint(
+          CalculatorHint(
             type: HintType.important,
-            message: 'Перед заливкой стяжки обязательно проведите опрессовку системы (6 бар, 24 часа).',
+            message: _loc.translate('warmfloor.hints.water_pressure'),
           ),
-          const CalculatorHint(
+          CalculatorHint(
             type: HintType.tip,
-            message: 'Используйте трубу с кислородным барьером (PE-RT или PEX-a) для долговечности.',
+            message: _loc.translate('warmfloor.hints.water_pipe'),
           ),
-          const CalculatorHint(
+          CalculatorHint(
             type: HintType.tip,
-            message: 'Стяжка должна сохнуть минимум 28 дней. Включать систему можно только после полного высыхания.',
+            message: _loc.translate('warmfloor.hints.water_drying'),
           ),
         ]);
         break;

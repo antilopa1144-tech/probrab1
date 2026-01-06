@@ -16,49 +16,49 @@ enum InputMode { byArea, byDimensions }
 
 enum WallType {
   partition(
-    'Перегородка',
-    'Лёгкие внутренние стены',
+    'gasblock.wall_type.partition',
+    'gasblock.wall_type.partition_desc',
     Icons.view_agenda,
   ),
   bearing(
-    'Несущая',
-    'Капитальные и наружные стены',
+    'gasblock.wall_type.bearing',
+    'gasblock.wall_type.bearing_desc',
     Icons.home_work_outlined,
   );
 
-  final String name;
-  final String description;
+  final String nameKey;
+  final String descKey;
   final IconData icon;
 
   const WallType(
-    this.name,
-    this.description,
+    this.nameKey,
+    this.descKey,
     this.icon,
   );
 }
 
 enum BlockMaterial {
-  gasblock('Газоблок', 'Тёплый и лёгкий', Icons.cloud_outlined),
-  foamblock('Пеноблок', 'Доступный и тёплый', Icons.bubble_chart_outlined);
+  gasblock('gasblock.material.gasblock', 'gasblock.material.gasblock_desc', Icons.cloud_outlined),
+  foamblock('gasblock.material.foamblock', 'gasblock.material.foamblock_desc', Icons.bubble_chart_outlined);
 
-  final String name;
-  final String description;
+  final String nameKey;
+  final String descKey;
   final IconData icon;
 
-  const BlockMaterial(this.name, this.description, this.icon);
+  const BlockMaterial(this.nameKey, this.descKey, this.icon);
 }
 
 enum MasonryMix {
-  glue('Клей', 'Шов 2-3 мм', Icons.grain),
-  mortar('Раствор', 'Шов 10-12 мм', Icons.construction);
+  glue('gasblock.masonry.glue', 'gasblock.masonry.glue_desc', Icons.grain),
+  mortar('gasblock.masonry.mortar', 'gasblock.masonry.mortar_desc', Icons.construction);
 
-  final String name;
-  final String description;
+  final String nameKey;
+  final String descKey;
   final IconData icon;
 
   const MasonryMix(
-    this.name,
-    this.description,
+    this.nameKey,
+    this.descKey,
     this.icon,
   );
 }
@@ -382,50 +382,50 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
 
   String _exportText() {
     final buffer = StringBuffer();
-    buffer.writeln('РАСЧЁТ СТЕН ИЗ БЛОКОВ');
-    buffer.writeln('Площадь кладки: ${_result.netArea.toStringAsFixed(2)} м²');
-    buffer.writeln('Тип стены: ${_wallType.name}');
-    buffer.writeln('Материал: ${_blockMaterial.name}');
+    buffer.writeln(_loc.translate('gasblock.export.title'));
+    buffer.writeln('${_loc.translate('gasblock.export.masonry_area')}: ${_result.netArea.toStringAsFixed(2)} ${_loc.translate('common.sqm')}');
+    buffer.writeln('${_loc.translate('gasblock.export.wall_type')}: ${_loc.translate(_wallType.nameKey)}');
+    buffer.writeln('${_loc.translate('gasblock.export.material')}: ${_loc.translate(_blockMaterial.nameKey)}');
     buffer.writeln(
-      'Размер блока: ${_blockLength.toStringAsFixed(1)}x${_blockHeight.toStringAsFixed(1)} см',
+      '${_loc.translate('gasblock.export.block_size')}: ${_blockLength.toStringAsFixed(1)}x${_blockHeight.toStringAsFixed(1)} см',
     );
-    buffer.writeln('Толщина: $_blockThickness мм');
-    buffer.writeln('Кладка: ${_masonryMix.name}');
-    buffer.writeln('Запас: ${_reserve.toInt()}%');
+    buffer.writeln('${_loc.translate('gasblock.export.thickness')}: $_blockThickness ${_loc.translate('gasblock.thickness.mm')}');
+    buffer.writeln('${_loc.translate('gasblock.export.masonry')}: ${_loc.translate(_masonryMix.nameKey)}');
+    buffer.writeln('${_loc.translate('gasblock.export.reserve')}: ${_reserve.toInt()}%');
     buffer.writeln('');
-    buffer.writeln('Блоки: ${_result.blocks} шт');
-    buffer.writeln('Объём кладки: ${_result.volume.toStringAsFixed(2)} м³');
+    buffer.writeln('${_loc.translate('gasblock.export.blocks')}: ${_result.blocks} ${_loc.translate('common.pcs')}');
+    buffer.writeln('${_loc.translate('gasblock.export.masonry_volume')}: ${_result.volume.toStringAsFixed(2)} ${_loc.translate('common.cbm')}');
     if (_masonryMix == MasonryMix.glue) {
       buffer.writeln(
-        'Клей: ${_result.glueKg.toStringAsFixed(1)} кг (${_result.glueBags} меш.)',
+        '${_loc.translate('gasblock.export.glue')}: ${_result.glueKg.toStringAsFixed(1)} ${_loc.translate('common.kg')} (${_result.glueBags} ${_loc.translate('gasblock.export.glue_bags')})',
       );
     } else {
       buffer.writeln(
-        'Раствор: ${_result.mortarM3.toStringAsFixed(2)} м³',
+        '${_loc.translate('gasblock.export.mortar')}: ${_result.mortarM3.toStringAsFixed(2)} ${_loc.translate('common.cbm')}',
       );
     }
     if (_useReinforcement) {
       buffer.writeln(
-        'Армирование: ${_result.reinforcementLength.toStringAsFixed(1)} м',
+        '${_loc.translate('gasblock.export.reinforcement')}: ${_result.reinforcementLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
       );
     }
     if (_usePrimer) {
       buffer.writeln(
-        'Грунтовка: ${_result.primerLiters.toStringAsFixed(1)} л',
+        '${_loc.translate('gasblock.export.primer')}: ${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
       );
     }
     if (_usePlaster) {
       buffer.writeln(
-        'Штукатурка: ${_result.plasterKg.toStringAsFixed(1)} кг',
+        '${_loc.translate('gasblock.export.plaster')}: ${_result.plasterKg.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
       );
     }
     if (_useMesh) {
       buffer.writeln(
-        'Сетка: ${_result.meshArea.toStringAsFixed(1)} м²',
+        '${_loc.translate('gasblock.export.mesh')}: ${_result.meshArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
       );
     }
     if (_useLintels && _result.lintels > 0) {
-      buffer.writeln('Перемычки: ${_result.lintels} шт');
+      buffer.writeln('${_loc.translate('gasblock.export.lintels')}: ${_result.lintels} ${_loc.translate('common.pcs')}');
     }
     return buffer.toString();
   }
@@ -434,7 +434,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
     SharePlus.instance.share(
       ShareParams(
         text: _exportText(),
-        subject: _loc.translate(widget.definition.titleKey),
+        subject: _loc.translate('gasblock.export.subject'),
       ),
     );
   }
@@ -473,18 +473,18 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         accentColor: accentColor,
         results: [
           ResultItem(
-            label: 'ПЛОЩАДЬ',
-            value: '${_result.netArea.toStringAsFixed(1)} м²',
+            label: _loc.translate('gasblock.header.area'),
+            value: '${_result.netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
-            label: 'БЛОКИ',
-            value: '${_result.blocks} шт',
+            label: _loc.translate('gasblock.header.blocks'),
+            value: '${_result.blocks} ${_loc.translate('common.pcs')}',
             icon: Icons.view_module,
           ),
           ResultItem(
-            label: 'ОБЪЁМ',
-            value: '${_result.volume.toStringAsFixed(2)} м³',
+            label: _loc.translate('gasblock.header.volume'),
+            value: '${_result.volume.toStringAsFixed(2)} ${_loc.translate('common.cbm')}',
             icon: Icons.layers,
           ),
         ],
@@ -529,14 +529,17 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Режим ввода',
+            _loc.translate('gasblock.mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: const ['По площади', 'По размерам'],
+            options: [
+              _loc.translate('gasblock.mode.by_area'),
+              _loc.translate('gasblock.mode.by_dimensions'),
+            ],
             selectedIndex: _inputMode.index,
             onSelect: (index) {
               setState(() {
@@ -558,7 +561,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Размеры стены',
+            _loc.translate('gasblock.dimensions.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -566,11 +569,11 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           const SizedBox(height: 12),
           if (_inputMode == InputMode.byArea) ...[
             _buildSliderField(
-              label: 'Площадь стены',
+              label: _loc.translate('gasblock.dimensions.wall_area'),
               value: _area,
               min: 1.0,
               max: 1000.0,
-              suffix: 'м²',
+              suffix: _loc.translate('common.sqm'),
               divisions: 200,
               accentColor: accentColor,
               onChanged: (v) {
@@ -582,11 +585,11 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             ),
           ] else ...[
             _buildSliderField(
-              label: 'Длина',
+              label: _loc.translate('gasblock.dimensions.length'),
               value: _length,
               min: 0.5,
               max: 200.0,
-              suffix: 'м',
+              suffix: _loc.translate('common.meters'),
               divisions: 200,
               accentColor: accentColor,
               onChanged: (v) {
@@ -599,11 +602,11 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           ],
           const SizedBox(height: 16),
           _buildSliderField(
-            label: 'Высота',
+            label: _loc.translate('gasblock.dimensions.height'),
             value: _height,
             min: 2.0,
             max: 6.0,
-            suffix: 'м',
+            suffix: _loc.translate('common.meters'),
             divisions: 40,
             accentColor: accentColor,
             onChanged: (v) {
@@ -625,14 +628,14 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
                 children: [
                   Expanded(
                     child: Text(
-                      'Площадь стены',
+                      _loc.translate('gasblock.dimensions.wall_area'),
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
                         color: CalculatorColors.textSecondary,
                       ),
                     ),
                   ),
                   Text(
-                    '${_getGrossArea().toStringAsFixed(1)} м²',
+                    '${_getGrossArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                     style: CalculatorDesignSystem.titleMedium.copyWith(
                       color: accentColor,
                       fontWeight: FontWeight.w600,
@@ -655,18 +658,18 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Проёмы',
+            _loc.translate('gasblock.openings.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           _buildSliderField(
-            label: 'Площадь проёмов',
+            label: _loc.translate('gasblock.openings.area'),
             value: _openingsArea,
             min: 0.0,
             max: maxOpenings,
-            suffix: 'м²',
+            suffix: _loc.translate('common.sqm'),
             divisions: 100,
             accentColor: accentColor,
             onChanged: (v) {
@@ -686,14 +689,14 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               children: [
                 Expanded(
                   child: Text(
-                    'Площадь кладки',
+                    _loc.translate('gasblock.openings.masonry_area'),
                     style: CalculatorDesignSystem.bodyMedium.copyWith(
                       color: CalculatorColors.textSecondary,
                     ),
                   ),
                 ),
                 Text(
-                  '${_result.netArea.toStringAsFixed(1)} м²',
+                  '${_result.netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.titleMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.w600,
@@ -714,7 +717,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Тип стены',
+            _loc.translate('gasblock.wall_type.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -728,8 +731,8 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               final isSelected = _wallType == type;
               return TypeSelectorCardCompact(
                 icon: type.icon,
-                title: type.name,
-                subtitle: type.description,
+                title: _loc.translate(type.nameKey),
+                subtitle: _loc.translate(type.descKey),
                 isSelected: isSelected,
                 accentColor: accentColor,
                 onTap: () {
@@ -754,7 +757,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Материал блока',
+            _loc.translate('gasblock.material.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -768,8 +771,8 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               final isSelected = _blockMaterial == material;
               return TypeSelectorCardCompact(
                 icon: material.icon,
-                title: material.name,
-                subtitle: material.description,
+                title: _loc.translate(material.nameKey),
+                subtitle: _loc.translate(material.descKey),
                 isSelected: isSelected,
                 accentColor: accentColor,
                 onTap: () {
@@ -795,7 +798,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Размер блока',
+            _loc.translate('gasblock.block_size.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -809,8 +812,8 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               final isSelected = _blockSizePreset == preset;
               return TypeSelectorCardCompact(
                 icon: Icons.crop_square,
-                title: preset.label,
-                subtitle: preset.isCustom ? 'Свой размер' : null,
+                title: preset.isCustom ? _loc.translate('gasblock.block_size.custom') : preset.label,
+                subtitle: preset.isCustom ? _loc.translate('gasblock.block_size.custom') : null,
                 isSelected: isSelected,
                 accentColor: accentColor,
                 onTap: () {
@@ -839,7 +842,9 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Площадь блока: ${faceArea.toStringAsFixed(3)} м², объём: ${blockVolume.toStringAsFixed(3)} м³',
+                    _loc.translate('gasblock.block_size.info')
+                        .replaceFirst('{area}', faceArea.toStringAsFixed(3))
+                        .replaceFirst('{volume}', blockVolume.toStringAsFixed(3)),
                     style: CalculatorDesignSystem.bodySmall.copyWith(
                       color: CalculatorColors.textSecondary,
                     ),
@@ -860,14 +865,14 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Пользовательский размер',
+            _loc.translate('gasblock.block_size.custom_title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           _buildSliderField(
-            label: 'Длина блока',
+            label: _loc.translate('gasblock.block_size.block_length'),
             value: _blockLength,
             min: 50.0,
             max: 70.0,
@@ -884,7 +889,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           ),
           const SizedBox(height: 16),
           _buildSliderField(
-            label: 'Высота блока',
+            label: _loc.translate('gasblock.block_size.block_height'),
             value: _blockHeight,
             min: 20.0,
             max: 35.0,
@@ -911,7 +916,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Толщина стены',
+            _loc.translate('gasblock.thickness.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -925,7 +930,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               final isSelected = _blockThickness == thickness;
               return TypeSelectorCardCompact(
                 icon: Icons.swap_horiz,
-                title: '$thickness мм',
+                title: '$thickness ${_loc.translate('gasblock.thickness.mm')}',
                 isSelected: isSelected,
                 accentColor: accentColor,
                 onTap: () {
@@ -945,14 +950,14 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
   Widget _buildMasonryMixCard() {
     const accentColor = CalculatorColors.walls;
     final mixInfo = _masonryMix == MasonryMix.glue
-        ? 'Расход: ~${_constants.getGlueKgPerM3().toInt()} кг на 1 м³ кладки'
-        : 'Расход: ~${_constants.getMortarM3PerM3()} м³ раствора на 1 м³ кладки';
+        ? _loc.translate('gasblock.masonry.glue_consumption').replaceFirst('{value}', '${_constants.getGlueKgPerM3().toInt()}')
+        : _loc.translate('gasblock.masonry.mortar_consumption').replaceFirst('{value}', '${_constants.getMortarM3PerM3()}');
     return _card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Кладка',
+            _loc.translate('gasblock.masonry.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -966,8 +971,8 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               final isSelected = _masonryMix == mix;
               return TypeSelectorCardCompact(
                 icon: mix.icon,
-                title: mix.name,
-                subtitle: mix.description,
+                title: _loc.translate(mix.nameKey),
+                subtitle: _loc.translate(mix.descKey),
                 isSelected: isSelected,
                 accentColor: accentColor,
                 onTap: () {
@@ -995,7 +1000,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
     const accentColor = CalculatorColors.walls;
     return _card(
       child: _buildSliderField(
-        label: 'Запас на бой',
+        label: _loc.translate('gasblock.reserve.title'),
         value: _reserve,
         min: 0.0,
         max: 15.0,
@@ -1019,7 +1024,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Дополнительные материалы',
+            _loc.translate('gasblock.additional.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -1037,12 +1042,12 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
                   ? accentColor
                   : CalculatorColors.textSecondary,
             ),
-            title: const Text(
-              'Армирование',
+            title: Text(
+              _loc.translate('gasblock.additional.reinforcement'),
               style: CalculatorDesignSystem.bodyMedium,
             ),
             subtitle: Text(
-              'Каждые ${_constants.getReinforcementStepRows(_wallType)} ряда',
+              _loc.translate('gasblock.additional.reinforcement_desc').replaceFirst('{rows}', '${_constants.getReinforcementStepRows(_wallType)}'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -1068,12 +1073,12 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
                   ? accentColor
                   : CalculatorColors.textSecondary,
             ),
-            title: const Text(
-              'Грунтовка',
+            title: Text(
+              _loc.translate('gasblock.additional.primer'),
               style: CalculatorDesignSystem.bodyMedium,
             ),
             subtitle: Text(
-              'Расход ~${_constants.getPrimerPerLayer()} л/м² на сторону',
+              _loc.translate('gasblock.additional.primer_desc').replaceFirst('{value}', '${_constants.getPrimerPerLayer()}'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -1099,12 +1104,12 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
                   ? accentColor
                   : CalculatorColors.textSecondary,
             ),
-            title: const Text(
-              'Штукатурка',
+            title: Text(
+              _loc.translate('gasblock.additional.plaster'),
               style: CalculatorDesignSystem.bodyMedium,
             ),
             subtitle: Text(
-              'Слой ~5 мм на сторону',
+              _loc.translate('gasblock.additional.plaster_desc'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -1130,12 +1135,12 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
                   ? accentColor
                   : CalculatorColors.textSecondary,
             ),
-            title: const Text(
-              'Сетка',
+            title: Text(
+              _loc.translate('gasblock.additional.mesh'),
               style: CalculatorDesignSystem.bodyMedium,
             ),
             subtitle: Text(
-              'Армирование с двух сторон',
+              _loc.translate('gasblock.additional.mesh_desc'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -1161,12 +1166,12 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
                   ? accentColor
                   : CalculatorColors.textSecondary,
             ),
-            title: const Text(
-              'Перемычки',
+            title: Text(
+              _loc.translate('gasblock.additional.lintels'),
               style: CalculatorDesignSystem.bodyMedium,
             ),
             subtitle: Text(
-              'Над проёмами',
+              _loc.translate('gasblock.additional.lintels_desc'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -1182,11 +1187,11 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           if (_useLintels) ...[
             const SizedBox(height: 8),
             _buildIntSliderField(
-              label: 'Количество перемычек',
+              label: _loc.translate('gasblock.additional.lintels_count'),
               value: _lintelsCount,
               min: 0,
               max: 20,
-              suffix: 'шт',
+              suffix: _loc.translate('common.pcs'),
               accentColor: accentColor,
               onChanged: (v) {
                 setState(() {
@@ -1206,76 +1211,76 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
 
     final items = <MaterialItem>[
       MaterialItem(
-        name: 'Блоки',
-        value: '${_result.blocks} шт',
-        subtitle: 'Объём: ${_result.volume.toStringAsFixed(2)} м³',
+        name: _loc.translate('gasblock.materials.blocks'),
+        value: '${_result.blocks} ${_loc.translate('common.pcs')}',
+        subtitle: _loc.translate('gasblock.materials.blocks_volume').replaceFirst('{value}', _result.volume.toStringAsFixed(2)),
         icon: Icons.view_module,
       ),
     ];
 
     if (_masonryMix == MasonryMix.glue) {
       items.add(MaterialItem(
-        name: 'Клей',
-        value: '${_result.glueBags} меш.',
-        subtitle: '${_result.glueKg.toStringAsFixed(0)} кг (${_constants.getGlueBagSizeKg()} кг/меш.)',
+        name: _loc.translate('gasblock.materials.glue'),
+        value: '${_result.glueBags} ${_loc.translate('gasblock.materials.bags')}',
+        subtitle: '${_result.glueKg.toStringAsFixed(0)} ${_loc.translate('common.kg')} (${_constants.getGlueBagSizeKg()} ${_loc.translate('common.kg')}/${_loc.translate('gasblock.materials.bags')})',
         icon: Icons.grain,
       ));
     } else {
       items.add(MaterialItem(
-        name: 'Раствор',
-        value: '${_result.mortarM3.toStringAsFixed(2)} м³',
-        subtitle: 'Цементно-песчаный',
+        name: _loc.translate('gasblock.materials.mortar'),
+        value: '${_result.mortarM3.toStringAsFixed(2)} ${_loc.translate('common.cbm')}',
+        subtitle: _loc.translate('gasblock.materials.mortar_desc'),
         icon: Icons.construction,
       ));
     }
 
     if (_useReinforcement) {
       items.add(MaterialItem(
-        name: 'Армирование',
-        value: '${_result.reinforcementLength.toStringAsFixed(0)} м',
-        subtitle: '${_constants.getRodsPerRow()} прута по длине',
+        name: _loc.translate('gasblock.materials.reinforcement'),
+        value: '${_result.reinforcementLength.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
+        subtitle: _loc.translate('gasblock.materials.reinforcement_desc').replaceFirst('{rods}', '${_constants.getRodsPerRow()}'),
         icon: Icons.tune,
       ));
     }
 
     if (_usePrimer) {
       items.add(MaterialItem(
-        name: 'Грунтовка',
-        value: '${_result.primerLiters.toStringAsFixed(1)} л',
-        subtitle: 'Две стороны',
+        name: _loc.translate('gasblock.materials.primer'),
+        value: '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
+        subtitle: _loc.translate('gasblock.materials.primer_desc'),
         icon: Icons.water_drop,
       ));
     }
 
     if (_usePlaster) {
       items.add(MaterialItem(
-        name: 'Штукатурка',
-        value: '${_result.plasterKg.toStringAsFixed(0)} кг',
-        subtitle: 'Две стороны',
+        name: _loc.translate('gasblock.materials.plaster'),
+        value: '${_result.plasterKg.toStringAsFixed(0)} ${_loc.translate('common.kg')}',
+        subtitle: _loc.translate('gasblock.materials.plaster_desc'),
         icon: Icons.layers,
       ));
     }
 
     if (_useMesh) {
       items.add(MaterialItem(
-        name: 'Сетка',
-        value: '${_result.meshArea.toStringAsFixed(1)} м²',
-        subtitle: 'Армирование',
+        name: _loc.translate('gasblock.materials.mesh'),
+        value: '${_result.meshArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+        subtitle: _loc.translate('gasblock.materials.mesh_desc'),
         icon: Icons.grid_on,
       ));
     }
 
     if (_useLintels && _result.lintels > 0) {
       items.add(MaterialItem(
-        name: 'Перемычки',
-        value: '${_result.lintels} шт',
-        subtitle: 'Над проёмами',
+        name: _loc.translate('gasblock.materials.lintels'),
+        value: '${_result.lintels} ${_loc.translate('common.pcs')}',
+        subtitle: _loc.translate('gasblock.materials.lintels_desc'),
         icon: Icons.call_split,
       ));
     }
 
     return MaterialsCardModern(
-      title: 'Необходимые материалы',
+      title: _loc.translate('gasblock.materials.title'),
       titleIcon: Icons.construction,
       items: items,
       accentColor: accentColor,

@@ -403,46 +403,46 @@ class _ElectricalCalculatorScreenState
 
   String _exportText() {
     final buffer = StringBuffer();
-    buffer.writeln('⚡ Электрика — расчёт');
+    buffer.writeln('⚡ ${_loc.translate('electrical.export.title')}');
     buffer.writeln('');
-    buffer.writeln('Параметры:');
+    buffer.writeln('${_loc.translate('electrical.export.params')}:');
     if (_inputMode == InputMode.byArea) {
-      buffer.writeln('• Площадь: ${_result.area.toStringAsFixed(0)} м²');
-      buffer.writeln('• Комнат: ${_result.rooms}');
-      buffer.writeln('• Тип: ${_getRoomTypeName()}');
+      buffer.writeln('• ${_loc.translate('electrical.export.area')}: ${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}');
+      buffer.writeln('• ${_loc.translate('electrical.export.rooms')}: ${_result.rooms}');
+      buffer.writeln('• ${_loc.translate('electrical.export.type')}: ${_getRoomTypeName()}');
     } else {
-      buffer.writeln('• Режим: ручной ввод точек');
+      buffer.writeln('• ${_loc.translate('electrical.export.mode_manual')}');
     }
-    buffer.writeln('• Проводка: ${_wiringMethod == WiringMethod.hidden ? 'Скрытая' : 'Открытая'}');
+    buffer.writeln('• ${_loc.translate('electrical.export.wiring')}: ${_wiringMethod == WiringMethod.hidden ? _loc.translate('electrical.export.wiring_hidden') : _loc.translate('electrical.export.wiring_open')}');
 
     buffer.writeln('');
-    buffer.writeln('Точки подключения:');
-    buffer.writeln('• Розетки: ${_result.sockets} шт');
-    buffer.writeln('• Выключатели: ${_result.switches} шт');
-    buffer.writeln('• Светильники: ${_result.lights} шт');
+    buffer.writeln('${_loc.translate('electrical.export.points_title')}:');
+    buffer.writeln('• ${_loc.translate('electrical.export.sockets')}: ${_result.sockets} ${_loc.translate('common.pcs')}');
+    buffer.writeln('• ${_loc.translate('electrical.export.switches')}: ${_result.switches} ${_loc.translate('common.pcs')}');
+    buffer.writeln('• ${_loc.translate('electrical.export.lights')}: ${_result.lights} ${_loc.translate('common.pcs')}');
     if (_result.powerConsumers > 0) {
-      buffer.writeln('• Мощные потребители: ${_result.powerConsumers} шт');
+      buffer.writeln('• ${_loc.translate('electrical.export.power_consumers')}: ${_result.powerConsumers} ${_loc.translate('common.pcs')}');
     }
 
     buffer.writeln('');
-    buffer.writeln('Кабель:');
-    buffer.writeln('• ВВГнг-LS 3×1.5 (свет): ${_result.cableLight.toStringAsFixed(0)} м');
-    buffer.writeln('• ВВГнг-LS 3×2.5 (розетки): ${_result.cableSocket.toStringAsFixed(0)} м');
+    buffer.writeln('${_loc.translate('electrical.export.cable_title')}:');
+    buffer.writeln('• ${_loc.translate('electrical.export.cable_light')}: ${_result.cableLight.toStringAsFixed(0)} ${_loc.translate('common.meters')}');
+    buffer.writeln('• ${_loc.translate('electrical.export.cable_socket')}: ${_result.cableSocket.toStringAsFixed(0)} ${_loc.translate('common.meters')}');
     if (_result.cablePower > 0) {
-      buffer.writeln('• ВВГнг-LS 3×4/6 (мощные): ${_result.cablePower.toStringAsFixed(0)} м');
+      buffer.writeln('• ${_loc.translate('electrical.export.cable_power')}: ${_result.cablePower.toStringAsFixed(0)} ${_loc.translate('common.meters')}');
     }
     if (_result.conduitLength > 0) {
-      buffer.writeln('• ${_wiringMethod == WiringMethod.hidden ? 'Гофра ПВХ' : 'Кабель-канал'}: ${_result.conduitLength.toStringAsFixed(0)} м');
+      buffer.writeln('• ${_wiringMethod == WiringMethod.hidden ? _loc.translate('electrical.export.conduit_hidden') : _loc.translate('electrical.export.conduit_open')}: ${_result.conduitLength.toStringAsFixed(0)} ${_loc.translate('common.meters')}');
     }
 
     buffer.writeln('');
-    buffer.writeln('Щиток (${_result.panelModules} модулей):');
-    buffer.writeln('• Автоматы: ${_result.circuitBreakers} шт');
-    buffer.writeln('• УЗО: ${_result.rcdDevices} шт');
+    buffer.writeln('${_loc.translate('electrical.export.panel_title')} (${_result.panelModules} ${_loc.translate('electrical.export.panel_modules')}):');
+    buffer.writeln('• ${_loc.translate('electrical.export.breakers')}: ${_result.circuitBreakers} ${_loc.translate('common.pcs')}');
+    buffer.writeln('• ${_loc.translate('electrical.export.rcd')}: ${_result.rcdDevices} ${_loc.translate('common.pcs')}');
     if (_result.difAutomats > 0) {
-      buffer.writeln('• Дифавтоматы: ${_result.difAutomats} шт');
+      buffer.writeln('• ${_loc.translate('electrical.export.difautomats')}: ${_result.difAutomats} ${_loc.translate('common.pcs')}');
     }
-    buffer.writeln('• Распред. коробки: ${_result.junctionBoxes} шт');
+    buffer.writeln('• ${_loc.translate('electrical.export.junction_boxes')}: ${_result.junctionBoxes} ${_loc.translate('common.pcs')}');
 
     return buffer.toString();
   }
@@ -450,17 +450,17 @@ class _ElectricalCalculatorScreenState
   String _getRoomTypeName() {
     switch (_roomType) {
       case RoomType.apartment:
-        return 'Квартира';
+        return _loc.translate('electrical.room_type.apartment');
       case RoomType.house:
-        return 'Дом';
+        return _loc.translate('electrical.room_type.house');
       case RoomType.office:
-        return 'Офис';
+        return _loc.translate('electrical.room_type.office');
     }
   }
 
   void _share() {
     SharePlus.instance.share(
-        ShareParams(text: _exportText(), subject: 'Расчёт электрики'));
+        ShareParams(text: _exportText(), subject: _loc.translate('electrical.export.subject')));
   }
 
   void _copy() {
@@ -497,18 +497,18 @@ class _ElectricalCalculatorScreenState
         accentColor: accentColor,
         results: [
           ResultItem(
-            label: 'РОЗЕТОК',
+            label: _loc.translate('electrical.header.sockets'),
             value: '${_result.sockets}',
             icon: Icons.power,
           ),
           ResultItem(
-            label: 'КАБЕЛЬ',
-            value: '${(_result.cableLight + _result.cableSocket + _result.cablePower).toStringAsFixed(0)} м',
+            label: _loc.translate('electrical.header.cable'),
+            value: '${(_result.cableLight + _result.cableSocket + _result.cablePower).toStringAsFixed(0)} ${_loc.translate('common.meters')}',
             icon: Icons.cable,
           ),
           ResultItem(
-            label: 'ЩИТОК',
-            value: '${_result.panelModules} мод',
+            label: _loc.translate('electrical.header.panel'),
+            value: '${_result.panelModules} ${_loc.translate('electrical.header.modules')}',
             icon: Icons.dashboard,
           ),
         ],
@@ -549,14 +549,17 @@ class _ElectricalCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Режим расчёта',
+            _loc.translate('electrical.mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: const ['По площади', 'По точкам'],
+            options: [
+              _loc.translate('electrical.mode.by_area'),
+              _loc.translate('electrical.mode.by_points'),
+            ],
             selectedIndex: _inputMode.index,
             onSelect: (index) {
               setState(() {
@@ -569,8 +572,8 @@ class _ElectricalCalculatorScreenState
           const SizedBox(height: 8),
           Text(
             _inputMode == InputMode.byArea
-                ? 'Автоматический расчёт количества точек по нормативам'
-                : 'Укажите количество розеток, выключателей и светильников вручную',
+                ? _loc.translate('electrical.mode.by_area_hint')
+                : _loc.translate('electrical.mode.by_points_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -587,14 +590,18 @@ class _ElectricalCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Тип помещения',
+            _loc.translate('electrical.room_type.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: const ['Квартира', 'Дом', 'Офис'],
+            options: [
+              _loc.translate('electrical.room_type.apartment'),
+              _loc.translate('electrical.room_type.house'),
+              _loc.translate('electrical.room_type.office'),
+            ],
             selectedIndex: _roomType.index,
             onSelect: (index) {
               setState(() {
@@ -619,11 +626,11 @@ class _ElectricalCalculatorScreenState
   String _getRoomTypeDescription() {
     switch (_roomType) {
       case RoomType.apartment:
-        return 'Стандартный расчёт по СП 256.1325800.2016';
+        return _loc.translate('electrical.room_type.apartment_desc');
       case RoomType.house:
-        return 'Увеличенный расчёт (+20% точек)';
+        return _loc.translate('electrical.room_type.house_desc');
       case RoomType.office:
-        return 'Максимум розеток для рабочих мест (+50%)';
+        return _loc.translate('electrical.room_type.office_desc');
     }
   }
 
@@ -634,7 +641,7 @@ class _ElectricalCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Параметры помещения',
+            _loc.translate('electrical.area.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -642,12 +649,12 @@ class _ElectricalCalculatorScreenState
           const SizedBox(height: 16),
           // Площадь
           _buildSliderRow(
-            label: 'Общая площадь',
+            label: _loc.translate('electrical.area.total_area'),
             value: _area,
             min: 10,
             max: 300,
             divisions: 29,
-            suffix: 'м²',
+            suffix: _loc.translate('common.sqm'),
             onChanged: (v) {
               setState(() {
                 _area = v;
@@ -659,7 +666,7 @@ class _ElectricalCalculatorScreenState
           const SizedBox(height: 20),
           // Комнаты
           _buildSliderRow(
-            label: 'Количество комнат',
+            label: _loc.translate('electrical.area.rooms_count'),
             value: _rooms.toDouble(),
             min: 1,
             max: 10,
@@ -676,7 +683,7 @@ class _ElectricalCalculatorScreenState
           ),
           const SizedBox(height: 8),
           Text(
-            'Включая кухню, санузлы и коридоры',
+            _loc.translate('electrical.area.rooms_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -693,19 +700,19 @@ class _ElectricalCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Количество точек',
+            _loc.translate('electrical.points.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
           _buildSliderRow(
-            label: 'Розетки',
+            label: _loc.translate('electrical.points.sockets'),
             value: _manualSockets.toDouble(),
             min: 5,
             max: 100,
             divisions: 19,
-            suffix: 'шт',
+            suffix: _loc.translate('common.pcs'),
             isInteger: true,
             onChanged: (v) {
               setState(() {
@@ -717,12 +724,12 @@ class _ElectricalCalculatorScreenState
           ),
           const SizedBox(height: 16),
           _buildSliderRow(
-            label: 'Выключатели',
+            label: _loc.translate('electrical.points.switches'),
             value: _manualSwitches.toDouble(),
             min: 2,
             max: 30,
             divisions: 14,
-            suffix: 'шт',
+            suffix: _loc.translate('common.pcs'),
             isInteger: true,
             onChanged: (v) {
               setState(() {
@@ -734,12 +741,12 @@ class _ElectricalCalculatorScreenState
           ),
           const SizedBox(height: 16),
           _buildSliderRow(
-            label: 'Светильники',
+            label: _loc.translate('electrical.points.lights'),
             value: _manualLights.toDouble(),
             min: 2,
             max: 50,
             divisions: 24,
-            suffix: 'шт',
+            suffix: _loc.translate('common.pcs'),
             isInteger: true,
             onChanged: (v) {
               setState(() {
@@ -813,14 +820,17 @@ class _ElectricalCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Способ прокладки',
+            _loc.translate('electrical.wiring.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: const ['Скрытая', 'Открытая'],
+            options: [
+              _loc.translate('electrical.wiring.hidden'),
+              _loc.translate('electrical.wiring.open'),
+            ],
             selectedIndex: _wiringMethod.index,
             onSelect: (index) {
               setState(() {
@@ -833,8 +843,8 @@ class _ElectricalCalculatorScreenState
           const SizedBox(height: 8),
           Text(
             _wiringMethod == WiringMethod.hidden
-                ? 'В штробах под штукатуркой — стандарт для квартир и домов'
-                : 'В кабель-каналах по стенам — быстрый монтаж, легко обслуживать',
+                ? _loc.translate('electrical.wiring.hidden_desc')
+                : _loc.translate('electrical.wiring.open_desc'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -855,7 +865,7 @@ class _ElectricalCalculatorScreenState
               const Icon(Icons.bolt, color: accentColor, size: 20),
               const SizedBox(width: 8),
               Text(
-                'Мощные потребители',
+                _loc.translate('electrical.consumers.title'),
                 style: CalculatorDesignSystem.titleMedium.copyWith(
                   color: CalculatorColors.textPrimary,
                 ),
@@ -864,15 +874,15 @@ class _ElectricalCalculatorScreenState
           ),
           const SizedBox(height: 4),
           Text(
-            'Каждый требует отдельной линии с защитой',
+            _loc.translate('electrical.consumers.subtitle'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
           ),
           const SizedBox(height: 12),
           _buildConsumerChip(
-            label: 'Электроплита',
-            subtitle: '6 кВт · кабель 3×6',
+            label: _loc.translate('electrical.consumers.electric_stove'),
+            subtitle: _loc.translate('electrical.consumers.electric_stove_desc'),
             value: _hasElectricStove,
             onChanged: (v) {
               setState(() {
@@ -883,8 +893,8 @@ class _ElectricalCalculatorScreenState
             accentColor: accentColor,
           ),
           _buildConsumerChip(
-            label: 'Духовой шкаф',
-            subtitle: '3.5 кВт · кабель 3×4',
+            label: _loc.translate('electrical.consumers.oven'),
+            subtitle: _loc.translate('electrical.consumers.oven_desc'),
             value: _hasOven,
             onChanged: (v) {
               setState(() {
@@ -895,8 +905,8 @@ class _ElectricalCalculatorScreenState
             accentColor: accentColor,
           ),
           _buildConsumerChip(
-            label: 'Бойлер',
-            subtitle: '2-3 кВт · кабель 3×2.5',
+            label: _loc.translate('electrical.consumers.boiler'),
+            subtitle: _loc.translate('electrical.consumers.boiler_desc'),
             value: _hasBoiler,
             onChanged: (v) {
               setState(() {
@@ -907,8 +917,8 @@ class _ElectricalCalculatorScreenState
             accentColor: accentColor,
           ),
           _buildConsumerChip(
-            label: 'Стиральная машина',
-            subtitle: '2.5 кВт · отдельная линия',
+            label: _loc.translate('electrical.consumers.washing_machine'),
+            subtitle: _loc.translate('electrical.consumers.washing_machine_desc'),
             value: _hasWashingMachine,
             onChanged: (v) {
               setState(() {
@@ -919,8 +929,8 @@ class _ElectricalCalculatorScreenState
             accentColor: accentColor,
           ),
           _buildConsumerChip(
-            label: 'Посудомоечная машина',
-            subtitle: '2 кВт · отдельная линия',
+            label: _loc.translate('electrical.consumers.dishwasher'),
+            subtitle: _loc.translate('electrical.consumers.dishwasher_desc'),
             value: _hasDishwasher,
             onChanged: (v) {
               setState(() {
@@ -931,8 +941,8 @@ class _ElectricalCalculatorScreenState
             accentColor: accentColor,
           ),
           _buildConsumerChip(
-            label: 'Кондиционер',
-            subtitle: '2-3 кВт · кабель 3×2.5',
+            label: _loc.translate('electrical.consumers.conditioner'),
+            subtitle: _loc.translate('electrical.consumers.conditioner_desc'),
             value: _hasConditioner,
             onChanged: (v) {
               setState(() {
@@ -943,8 +953,8 @@ class _ElectricalCalculatorScreenState
             accentColor: accentColor,
           ),
           _buildConsumerChip(
-            label: 'Тёплый пол',
-            subtitle: 'Отдельная группа',
+            label: _loc.translate('electrical.consumers.warm_floor'),
+            subtitle: _loc.translate('electrical.consumers.warm_floor_desc'),
             value: _hasWarmFloor,
             onChanged: (v) {
               setState(() {
@@ -1026,7 +1036,7 @@ class _ElectricalCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Дополнительно',
+            _loc.translate('electrical.options.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -1034,11 +1044,11 @@ class _ElectricalCalculatorScreenState
           const SizedBox(height: 12),
           _buildSwitch(
             title: _wiringMethod == WiringMethod.hidden
-                ? 'Гофра ПВХ d16-20'
-                : 'Кабель-канал',
+                ? _loc.translate('electrical.options.conduit_hidden')
+                : _loc.translate('electrical.options.conduit_open'),
             subtitle: _wiringMethod == WiringMethod.hidden
-                ? 'Защита кабеля в штробах (рекомендуется ПУЭ)'
-                : 'Пластиковый короб для открытой проводки',
+                ? _loc.translate('electrical.options.conduit_hidden_desc')
+                : _loc.translate('electrical.options.conduit_open_desc'),
             value: _withConduit,
             onChanged: (value) {
               setState(() {
@@ -1049,8 +1059,8 @@ class _ElectricalCalculatorScreenState
             accentColor: accentColor,
           ),
           _buildSwitch(
-            title: 'Заземление',
-            subtitle: 'Шина PE + контур (обязательно по ПУЭ)',
+            title: _loc.translate('electrical.options.grounding'),
+            subtitle: _loc.translate('electrical.options.grounding_desc'),
             value: _withGrounding,
             onChanged: (value) {
               setState(() {
@@ -1105,40 +1115,40 @@ class _ElectricalCalculatorScreenState
     const accentColor = CalculatorColors.interior;
     final items = <MaterialItem>[
       MaterialItem(
-        name: 'Розетки',
-        value: '${_result.sockets} шт',
+        name: _loc.translate('electrical.results.sockets'),
+        value: '${_result.sockets} ${_loc.translate('common.pcs')}',
         subtitle: _inputMode == InputMode.byArea
-            ? '1 на 4 м² + кухня'
-            : 'Указано вручную',
+            ? _loc.translate('electrical.results.sockets_hint_auto')
+            : _loc.translate('electrical.results.sockets_hint_manual'),
         icon: Icons.power,
       ),
       MaterialItem(
-        name: 'Выключатели',
-        value: '${_result.switches} шт',
+        name: _loc.translate('electrical.results.switches'),
+        value: '${_result.switches} ${_loc.translate('common.pcs')}',
         subtitle: _inputMode == InputMode.byArea
-            ? '1.5 на комнату'
-            : 'Указано вручную',
+            ? _loc.translate('electrical.results.switches_hint_auto')
+            : _loc.translate('electrical.results.switches_hint_manual'),
         icon: Icons.toggle_off,
       ),
       MaterialItem(
-        name: 'Светильники',
-        value: '${_result.lights} шт',
+        name: _loc.translate('electrical.results.lights'),
+        value: '${_result.lights} ${_loc.translate('common.pcs')}',
         subtitle: _inputMode == InputMode.byArea
-            ? '1 на 6 м²'
-            : 'Указано вручную',
+            ? _loc.translate('electrical.results.lights_hint_auto')
+            : _loc.translate('electrical.results.lights_hint_manual'),
         icon: Icons.lightbulb_outline,
       ),
       if (_result.powerConsumers > 0)
         MaterialItem(
-          name: 'Мощные потребители',
-          value: '${_result.powerConsumers} шт',
-          subtitle: 'Отдельные линии',
+          name: _loc.translate('electrical.results.power_consumers'),
+          value: '${_result.powerConsumers} ${_loc.translate('common.pcs')}',
+          subtitle: _loc.translate('electrical.results.power_consumers_hint'),
           icon: Icons.bolt,
         ),
     ];
 
     return MaterialsCardModern(
-      title: 'Точки подключения',
+      title: _loc.translate('electrical.results.points_title'),
       titleIcon: Icons.electrical_services,
       items: items,
       accentColor: accentColor,
@@ -1151,49 +1161,49 @@ class _ElectricalCalculatorScreenState
 
     final items = <MaterialItem>[
       MaterialItem(
-        name: 'ВВГнг-LS 3×1.5',
-        value: '${_result.cableLight.toStringAsFixed(0)} м',
-        subtitle: 'Освещение (до 2.3 кВт)',
+        name: _loc.translate('electrical.cable.vvg_1_5'),
+        value: '${_result.cableLight.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
+        subtitle: _loc.translate('electrical.cable.vvg_1_5_desc'),
         icon: Icons.cable,
       ),
       MaterialItem(
-        name: 'ВВГнг-LS 3×2.5',
-        value: '${_result.cableSocket.toStringAsFixed(0)} м',
-        subtitle: 'Розетки (до 3.5 кВт)',
+        name: _loc.translate('electrical.cable.vvg_2_5'),
+        value: '${_result.cableSocket.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
+        subtitle: _loc.translate('electrical.cable.vvg_2_5_desc'),
         icon: Icons.cable,
       ),
       if (_result.cablePower > 0)
         MaterialItem(
-          name: 'ВВГнг-LS 3×4 / 3×6',
-          value: '${_result.cablePower.toStringAsFixed(0)} м',
-          subtitle: 'Мощные потребители',
+          name: _loc.translate('electrical.cable.vvg_4_6'),
+          value: '${_result.cablePower.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
+          subtitle: _loc.translate('electrical.cable.vvg_4_6_desc'),
           icon: Icons.cable,
         ),
       if (_result.conduitLength > 0)
         MaterialItem(
           name: _wiringMethod == WiringMethod.hidden
-              ? 'Гофра ПВХ d16-20'
-              : 'Кабель-канал',
-          value: '${_result.conduitLength.toStringAsFixed(0)} м',
-          subtitle: 'Защита кабеля',
+              ? _loc.translate('electrical.cable.conduit_hidden')
+              : _loc.translate('electrical.cable.conduit_open'),
+          value: '${_result.conduitLength.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
+          subtitle: _loc.translate('electrical.cable.conduit_desc'),
           icon: Icons.linear_scale,
         ),
       MaterialItem(
-        name: 'Распред. коробки',
-        value: '${_result.junctionBoxes} шт',
-        subtitle: 'd80 мм',
+        name: _loc.translate('electrical.cable.junction_boxes'),
+        value: '${_result.junctionBoxes} ${_loc.translate('common.pcs')}',
+        subtitle: _loc.translate('electrical.cable.junction_boxes_desc'),
         icon: Icons.check_box_outline_blank,
       ),
       MaterialItem(
-        name: 'Всего кабеля',
-        value: '${totalCable.toStringAsFixed(0)} м',
-        subtitle: 'Общая длина',
+        name: _loc.translate('electrical.cable.total'),
+        value: '${totalCable.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
+        subtitle: _loc.translate('electrical.cable.total_desc'),
         icon: Icons.summarize,
       ),
     ];
 
     return MaterialsCardModern(
-      title: 'Кабель и материалы',
+      title: _loc.translate('electrical.cable.title'),
       titleIcon: Icons.inventory_2,
       items: items,
       accentColor: accentColor,
@@ -1204,41 +1214,41 @@ class _ElectricalCalculatorScreenState
     const accentColor = CalculatorColors.interior;
     final items = <MaterialItem>[
       MaterialItem(
-        name: 'Электрощит',
-        value: 'от ${_result.panelModules} мод',
-        subtitle: 'С запасом +4 модуля',
+        name: _loc.translate('electrical.equipment.panel'),
+        value: _loc.translate('electrical.equipment.from_modules').replaceFirst('{0}', '${_result.panelModules}'),
+        subtitle: _loc.translate('electrical.equipment.panel_hint'),
         icon: Icons.dashboard,
       ),
       MaterialItem(
-        name: 'Автоматы C10-C16',
-        value: '${_result.circuitBreakers} шт',
-        subtitle: 'Свет + розетки',
+        name: _loc.translate('electrical.equipment.breakers'),
+        value: '${_result.circuitBreakers} ${_loc.translate('common.pcs')}',
+        subtitle: _loc.translate('electrical.equipment.breakers_desc'),
         icon: Icons.toggle_on,
       ),
       MaterialItem(
-        name: 'УЗО 30мА',
-        value: '${_result.rcdDevices} шт',
-        subtitle: 'Включая вводное 100мА',
+        name: _loc.translate('electrical.equipment.rcd'),
+        value: '${_result.rcdDevices} ${_loc.translate('common.pcs')}',
+        subtitle: _loc.translate('electrical.equipment.rcd_desc'),
         icon: Icons.shield,
       ),
       if (_result.difAutomats > 0)
         MaterialItem(
-          name: 'Дифавтоматы',
-          value: '${_result.difAutomats} шт',
-          subtitle: 'Для мощных потребителей',
+          name: _loc.translate('electrical.equipment.difautomat'),
+          value: '${_result.difAutomats} ${_loc.translate('common.pcs')}',
+          subtitle: _loc.translate('electrical.equipment.difautomat_desc'),
           icon: Icons.security,
         ),
       if (_result.hasGrounding)
-        const MaterialItem(
-          name: 'Заземление',
-          value: '1 компл.',
-          subtitle: 'Шина PE + контур',
+        MaterialItem(
+          name: _loc.translate('electrical.equipment.grounding'),
+          value: _loc.translate('electrical.equipment.grounding_value'),
+          subtitle: _loc.translate('electrical.equipment.grounding_desc'),
           icon: Icons.electric_bolt,
         ),
     ];
 
     return MaterialsCardModern(
-      title: 'Оборудование щитка',
+      title: _loc.translate('electrical.equipment.title'),
       titleIcon: Icons.electrical_services,
       items: items,
       accentColor: accentColor,
