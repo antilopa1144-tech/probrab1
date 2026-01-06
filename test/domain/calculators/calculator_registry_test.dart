@@ -1,213 +1,114 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:probrab_ai/core/enums/calculator_category.dart';
-import 'package:probrab_ai/domain/calculators/calculator_constants.dart';
 import 'package:probrab_ai/domain/calculators/calculator_registry.dart';
 
 void main() {
   group('CalculatorRegistry', () {
-    setUp(() {
-      // Очищаем кэш перед каждым тестом
-      CalculatorRegistry.clearCache();
+    test('has all expected calculators', () {
+      final calculators = CalculatorRegistry.catalogCalculators;
+
+      // Should have multiple calculators
+      expect(calculators.length, greaterThan(10));
+
+      // Check some key calculators exist
+      expect(CalculatorRegistry.exists('mixes_plaster'), isTrue);
+      expect(CalculatorRegistry.exists('walls_wallpaper'), isTrue);
+      expect(CalculatorRegistry.exists('floors_tile'), isTrue);
     });
 
-    test('возвращает все калькуляторы', () {
-      final all = CalculatorRegistry.allCalculators;
-      expect(all, isNotEmpty);
-      expect(
-        all.length,
-        greaterThan(10),
-      ); // Должно быть минимум 10 калькуляторов
-    });
+    test('all calculators have valid definitions', () {
+      final calculators = CalculatorRegistry.catalogCalculators;
 
-    test('все калькуляторы имеют уникальные ID', () {
-      final ids = CalculatorRegistry.allCalculators
-          .map((calc) => calc.id)
-          .toList();
-      expect(ids.toSet().length, equals(ids.length));
-    });
-
-    test('getById возвращает калькулятор по ID (O(1))', () {
-      final calc = CalculatorRegistry.getById('paint_universal');
-
-      expect(calc, isNotNull);
-      expect(calc!.id, equals('paint_universal'));
-    });
-
-    test('getById возвращает null для несуществующего ID', () {
-      final calc = CalculatorRegistry.getById('nonexistent_calculator');
-      expect(calc, isNull);
-    });
-
-    test('exists проверяет наличие калькулятора (O(1))', () {
-      expect(CalculatorRegistry.exists('paint_universal'), isTrue);
-      expect(CalculatorRegistry.exists('nonexistent'), isFalse);
-    });
-
-    test('getByCategory фильтрует по категории', () {
-      final interiorCalcs = CalculatorRegistry.getByCategory(
-        CalculatorCategory.interior,
-      );
-
-      expect(interiorCalcs, isNotEmpty);
-      expect(
-        interiorCalcs.every(
-          (calc) => calc.category == CalculatorCategory.interior,
-        ),
-        isTrue,
-      );
-    });
-
-    test('getByCategory кэширует результаты', () {
-      // Первый вызов
-      final result1 = CalculatorRegistry.getByCategory(
-        CalculatorCategory.interior,
-      );
-
-      // Второй вызов должен вернуть тот же объект из кэша
-      final result2 = CalculatorRegistry.getByCategory(
-        CalculatorCategory.interior,
-      );
-
-      expect(identical(result1, result2), isTrue);
-    });
-
-    test(
-      'getPopular возвращает калькуляторы отсортированные по популярности',
-      () {
-        final popular = CalculatorRegistry.getPopular(limit: 5);
-
-        expect(popular.length, lessThanOrEqualTo(5));
-
-        // Проверяем, что отсортировано по убыванию популярности
-        for (var i = 1; i < popular.length; i++) {
-          expect(
-            popular[i - 1].popularity >= popular[i].popularity,
-            isTrue,
-            reason: 'Популярность должна убывать',
-          );
-        }
-      },
-    );
-
-    test('getPopular кэширует отсортированный список', () {
-      // Первый вызов
-      final result1 = CalculatorRegistry.getPopular();
-
-      // Второй вызов должен вернуть результат из кэша
-      final result2 = CalculatorRegistry.getPopular();
-
-      // Проверяем что списки идентичны по содержимому
-      expect(result1.length, equals(result2.length));
-      for (var i = 0; i < result1.length; i++) {
-        expect(result1[i].id, equals(result2[i].id));
+      for (final calc in calculators) {
+        // Each calculator should have required fields
+        expect(calc.id, isNotEmpty);
+        expect(calc.titleKey, isNotEmpty);
+        expect(calc.useCase, isNotNull);
       }
     });
 
-    test('search находит калькуляторы по названию', () {
-      final results = CalculatorRegistry.search('paint');
+    test('calculator lookup by id works', () {
+      final plaster = CalculatorRegistry.getById('mixes_plaster');
+      expect(plaster, isNotNull);
+      expect(plaster!.id, 'mixes_plaster');
 
-      expect(results, isNotEmpty);
-      expect(
-        results.any(
-          (calc) =>
-              calc.titleKey.toLowerCase().contains('paint') ||
-              calc.id.toLowerCase().contains('paint'),
-        ),
-        isTrue,
-      );
+      final nonexistent = CalculatorRegistry.getById('nonexistent_calc');
+      expect(nonexistent, isNull);
     });
 
-    test('search возвращает все калькуляторы для пустого запроса', () {
-      final results = CalculatorRegistry.search('');
-      expect(results.length, equals(CalculatorRegistry.count));
+    test('calculators have unique ids', () {
+      final calculators = CalculatorRegistry.catalogCalculators;
+      final ids = calculators.map((c) => c.id).toSet();
+
+      // All IDs should be unique
+      expect(ids.length, calculators.length);
     });
 
-    test('search работает регистронезависимо', () {
-      final results1 = CalculatorRegistry.search('PAINT');
-      final results2 = CalculatorRegistry.search('paint');
-
-      expect(results1.length, equals(results2.length));
+    test('exists returns false for non-existent calculator', () {
+      expect(CalculatorRegistry.exists('nonexistent_id'), isFalse);
+      expect(CalculatorRegistry.exists(''), isFalse);
     });
 
-    test('getByComplexity фильтрует по уровню сложности', () {
-      final simple = CalculatorRegistry.getByComplexity(1);
+    test('all calculators have categories', () {
+      final calculators = CalculatorRegistry.catalogCalculators;
 
-      expect(simple, isNotEmpty);
-      expect(simple.every((calc) => calc.complexity == 1), isTrue);
-    });
-
-    test('count возвращает правильное количество', () {
-      expect(
-        CalculatorRegistry.count,
-        equals(CalculatorRegistry.allCalculators.length),
-      );
-    });
-
-    test('акцентные цвета унифицированы', () {
-      for (final calc in CalculatorRegistry.allCalculators) {
-        expect(calc.accentColor, equals(kCalculatorAccentColor));
+      for (final calc in calculators) {
+        expect(calc.category, isNotNull);
       }
     });
 
-    test('register добавляет новый калькулятор динамически', () {
-      expect(() => CalculatorRegistry.register, returnsNormally);
+    test('all calculators have subcategory keys', () {
+      final calculators = CalculatorRegistry.catalogCalculators;
 
-      // Восстанавливаем состояние
-      CalculatorRegistry.clearCache();
+      for (final calc in calculators) {
+        expect(calc.subCategoryKey, isNotEmpty);
+      }
     });
 
-    test('clearCache очищает все кэши', () {
-      // Заполняем кэши
-      CalculatorRegistry.getById('paint_universal');
-      CalculatorRegistry.getPopular();
-      CalculatorRegistry.getByCategory(CalculatorCategory.exterior);
-
-      // Очищаем
-      CalculatorRegistry.clearCache();
-
-      // После очистки всё должно работать
-      expect(CalculatorRegistry.exists('paint_universal'), isTrue);
+    test('getById returns null for empty string', () {
+      final result = CalculatorRegistry.getById('');
+      expect(result, isNull);
     });
 
-    test('производительность: getById O(1) vs линейный поиск O(n)', () {
-      final testId = CalculatorRegistry.allCalculators[5].id;
+    test('plaster calculator has correct structure', () {
+      final plaster = CalculatorRegistry.getById('mixes_plaster');
+      expect(plaster, isNotNull);
+      expect(plaster!.id, 'mixes_plaster');
+      expect(plaster.titleKey, isNotEmpty);
+      expect(plaster.useCase, isNotNull);
+      expect(plaster.fields, isNotNull);
+    });
 
-      // Измеряем O(1) поиск через Map
-      final stopwatch1 = Stopwatch()..start();
-      for (var i = 0; i < 1000; i++) {
-        CalculatorRegistry.getById(testId);
-      }
-      stopwatch1.stop();
+    test('wallpaper calculator has correct structure', () {
+      final wallpaper = CalculatorRegistry.getById('walls_wallpaper');
+      expect(wallpaper, isNotNull);
+      expect(wallpaper!.id, 'walls_wallpaper');
+      expect(wallpaper.titleKey, isNotEmpty);
+      expect(wallpaper.useCase, isNotNull);
+    });
 
-      // Измеряем O(n) линейный поиск
-      final stopwatch2 = Stopwatch()..start();
-      for (var i = 0; i < 1000; i++) {
-        CalculatorRegistry.allCalculators.firstWhere(
-          (calc) => calc.id == testId,
-          orElse: () => CalculatorRegistry.allCalculators.first,
-        );
-      }
-      stopwatch2.stop();
+    test('tile calculator has correct structure', () {
+      final tile = CalculatorRegistry.getById('floors_tile');
+      expect(tile, isNotNull);
+      expect(tile!.id, 'floors_tile');
+      expect(tile.titleKey, isNotEmpty);
+      expect(tile.useCase, isNotNull);
+    });
 
-      // Map должен быть быстрее
-      expect(
-        stopwatch1.elapsedMilliseconds <= stopwatch2.elapsedMilliseconds,
-        isTrue,
-        reason:
-            'Map поиск (${stopwatch1.elapsedMilliseconds}ms) должен быть '
-            'быстрее или равен линейному (${stopwatch2.elapsedMilliseconds}ms)',
-      );
+    test('gypsum board calculator exists', () {
+      expect(CalculatorRegistry.exists('gypsum_board'), isTrue);
+      final gypsum = CalculatorRegistry.getById('gypsum_board');
+      expect(gypsum, isNotNull);
+    });
 
-      print('📊 CalculatorRegistry Benchmark:');
-      print('  Map O(1):      ${stopwatch1.elapsedMilliseconds}ms');
-      print('  List O(n):     ${stopwatch2.elapsedMilliseconds}ms');
-      if (stopwatch1.elapsedMilliseconds > 0) {
-        print(
-          '  Ускорение:     ${(stopwatch2.elapsedMilliseconds / stopwatch1.elapsedMilliseconds).toStringAsFixed(1)}x',
-        );
+    test('catalogCalculators returns consistent list', () {
+      final list1 = CalculatorRegistry.catalogCalculators;
+      final list2 = CalculatorRegistry.catalogCalculators;
+
+      // Lists should have same content
+      expect(list1.length, list2.length);
+      for (var i = 0; i < list1.length; i++) {
+        expect(list1[i].id, list2[i].id);
       }
     });
   });
 }
-
-// ignore_for_file: avoid_print

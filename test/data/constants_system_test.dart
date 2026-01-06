@@ -23,7 +23,7 @@ void main() {
       // Check specific constants exist
       expect(constants.constants.containsKey('room_power'), true);
       expect(constants.constants.containsKey('cable_power'), true);
-      expect(constants.constants.containsKey('materials'), true);
+      expect(constants.constants.containsKey('common_materials'), true);
     });
 
     test('loads electrical constants from JSON', () async {

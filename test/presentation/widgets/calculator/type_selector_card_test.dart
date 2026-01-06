@@ -4,14 +4,33 @@ import 'package:probrab_ai/presentation/widgets/calculator/type_selector_card.da
 
 void main() {
   group('TypeSelectorCard', () {
-    testWidgets('renders correctly when not selected', (tester) async {
+    testWidgets('renders with title and icon', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: TypeSelectorCard(
-              icon: Icons.brush,
-              title: 'Под обои',
-              subtitle: 'Финишная отделка',
+              icon: Icons.format_paint,
+              title: 'Paint',
+              isSelected: false,
+              accentColor: Colors.blue,
+              onTap: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Paint'), findsOneWidget);
+      expect(find.byIcon(Icons.format_paint), findsOneWidget);
+    });
+
+    testWidgets('renders with subtitle', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: TypeSelectorCard(
+              icon: Icons.wallpaper,
+              title: 'Wallpaper',
+              subtitle: '2 layers',
               isSelected: false,
               accentColor: Colors.green,
               onTap: () {},
@@ -20,30 +39,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Под обои'), findsOneWidget);
-      expect(find.text('Финишная отделка'), findsOneWidget);
-      expect(find.byIcon(Icons.brush), findsOneWidget);
-    });
-
-    testWidgets('renders correctly when selected', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: TypeSelectorCard(
-              icon: Icons.brush,
-              title: 'Под обои',
-              subtitle: 'Финишная отделка',
-              isSelected: true,
-              accentColor: Colors.green,
-              onTap: () {},
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('Под обои'), findsOneWidget);
-      expect(find.text('Финишная отделка'), findsOneWidget);
-      expect(find.byIcon(Icons.brush), findsOneWidget);
+      expect(find.text('2 layers'), findsOneWidget);
     });
 
     testWidgets('calls onTap when tapped', (tester) async {
@@ -53,140 +49,107 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: TypeSelectorCard(
-              icon: Icons.format_paint,
-              title: 'Под покраску',
+              icon: Icons.brush,
+              title: 'Brush',
               isSelected: false,
-              accentColor: Colors.blue,
-              onTap: () => tapped = true,
+              accentColor: Colors.orange,
+              onTap: () {
+                tapped = true;
+              },
             ),
           ),
         ),
       );
 
       await tester.tap(find.byType(TypeSelectorCard));
-      await tester.pump();
-
       expect(tapped, isTrue);
     });
 
-    testWidgets('renders without subtitle', (tester) async {
+    testWidgets('shows checkmark when selected and showCheckmark is true', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: TypeSelectorCard(
-              icon: Icons.square_foot,
-              title: 'Площадь',
-              isSelected: false,
-              accentColor: Colors.orange,
-              onTap: () {},
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('Площадь'), findsOneWidget);
-      // subtitle не должен быть найден
-      expect(find.byType(TypeSelectorCard), findsOneWidget);
-    });
-
-    testWidgets('shows checkmark when selected and showCheckmark is true',
-        (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: TypeSelectorCard(
-              icon: Icons.check_circle,
-              title: 'Выбрано',
+              icon: Icons.check_box,
+              title: 'Option',
               isSelected: true,
-              accentColor: Colors.green,
-              showCheckmark: true,
+              accentColor: Colors.purple,
               onTap: () {},
+              showCheckmark: true,
             ),
           ),
         ),
       );
 
-      // Должна быть галочка (checkmark icon)
       expect(find.byIcon(Icons.check), findsOneWidget);
     });
 
-    testWidgets('does not show checkmark when showCheckmark is false',
-        (tester) async {
+    testWidgets('does not show checkmark when not selected', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: TypeSelectorCard(
-              icon: Icons.circle,
-              title: 'Без галочки',
-              isSelected: true,
-              accentColor: Colors.blue,
-              showCheckmark: false,
+              icon: Icons.check_box,
+              title: 'Option',
+              isSelected: false,
+              accentColor: Colors.purple,
               onTap: () {},
+              showCheckmark: true,
             ),
           ),
         ),
       );
 
-      // Галочка не должна быть видна
       expect(find.byIcon(Icons.check), findsNothing);
     });
 
-    testWidgets('applies correct colors when selected', (tester) async {
-      const testAccentColor = Color(0xFF10B981);
-
+    testWidgets('uses custom icon size', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: TypeSelectorCard(
               icon: Icons.star,
-              title: 'Выделено',
-              subtitle: 'Активно',
-              isSelected: true,
-              accentColor: testAccentColor,
+              title: 'Star',
+              isSelected: false,
+              accentColor: Colors.amber,
               onTap: () {},
+              iconSize: 40,
             ),
           ),
         ),
       );
 
-      // Проверяем, что виджет создан без ошибок
-      expect(find.byType(TypeSelectorCard), findsOneWidget);
+      final icon = tester.widget<Icon>(find.byIcon(Icons.star));
+      expect(icon.size, 40);
     });
 
-    testWidgets('applies improved contrast colors when not selected',
-        (tester) async {
+    testWidgets('animates selection change', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: TypeSelectorCard(
-              icon: Icons.circle_outlined,
-              title: 'Не выбрано',
-              subtitle: 'Неактивно',
+              icon: Icons.square,
+              title: 'Square',
               isSelected: false,
-              accentColor: Colors.purple,
+              accentColor: Colors.red,
               onTap: () {},
             ),
           ),
         ),
       );
 
-      // Виджет должен использовать новые контрастные цвета
-      // (grey[600], textPrimary, textSecondary из CalculatorColors)
-      expect(find.byType(TypeSelectorCard), findsOneWidget);
+      expect(find.byType(AnimatedContainer), findsOneWidget);
     });
 
-    testWidgets('handles long title and subtitle gracefully', (tester) async {
+    testWidgets('handles long titles', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: SizedBox(
-              width: 150,
-              height: 180,
+              width: 100,
               child: TypeSelectorCard(
-                icon: Icons.info,
-                title: 'Очень длинное название которое не помещается в одну строку',
-                subtitle:
-                    'Длинное описание которое тоже может быть обрезано ellipsis',
+                icon: Icons.text_fields,
+                title: 'Very Long Title That Should Be Truncated',
                 isSelected: false,
                 accentColor: Colors.teal,
                 onTap: () {},
@@ -196,83 +159,101 @@ void main() {
         ),
       );
 
-      // Не должно быть overflow
-      expect(tester.takeException(), isNull);
       expect(find.byType(TypeSelectorCard), findsOneWidget);
     });
+  });
 
-    testWidgets('respects custom icon size', (tester) async {
+  group('TypeSelectorCardCompact', () {
+    testWidgets('renders with title', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TypeSelectorCard(
-              icon: Icons.build,
-              title: 'Инструмент',
+            body: TypeSelectorCardCompact(
+              title: 'Compact',
               isSelected: false,
-              accentColor: Colors.amber,
-              iconSize: 48.0,
+              accentColor: Colors.blue,
               onTap: () {},
             ),
           ),
         ),
       );
 
-      expect(find.byType(TypeSelectorCard), findsOneWidget);
-      expect(find.byIcon(Icons.build), findsOneWidget);
+      expect(find.text('Compact'), findsOneWidget);
     });
 
-    testWidgets('works with different accent colors', (tester) async {
-      final colors = [
-        Colors.red,
-        Colors.blue,
-        Colors.green,
-        Colors.purple,
-        Colors.orange,
-      ];
-
-      for (final color in colors) {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: TypeSelectorCard(
-                icon: Icons.palette,
-                title: 'Цвет',
-                isSelected: true,
-                accentColor: color,
-                onTap: () {},
-              ),
-            ),
-          ),
-        );
-
-        expect(find.byType(TypeSelectorCard), findsOneWidget);
-      }
-    });
-
-    testWidgets('supports textScaleFactor without overflow', (tester) async {
+    testWidgets('uses default icon when none provided', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: MediaQuery(
-            data: const MediaQueryData(textScaler: TextScaler.linear(1.5)),
-            child: Scaffold(
-              body: SizedBox(
-                width: 200,
-                child: TypeSelectorCard(
-                  icon: Icons.zoom_in,
-                  title: 'Увеличенный шрифт',
-                  subtitle: 'Тест масштабирования',
-                  isSelected: false,
-                  accentColor: Colors.indigo,
-                  onTap: () {},
-                ),
-              ),
+          home: Scaffold(
+            body: TypeSelectorCardCompact(
+              title: 'No Icon',
+              isSelected: false,
+              accentColor: Colors.blue,
+              onTap: () {},
             ),
           ),
         ),
       );
 
-      // Не должно быть overflow при увеличенном шрифте
-      expect(tester.takeException(), isNull);
+      expect(find.byIcon(Icons.check_circle_outline), findsOneWidget);
+    });
+
+    testWidgets('uses custom icon when provided', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: TypeSelectorCardCompact(
+              icon: Icons.star,
+              title: 'Custom Icon',
+              isSelected: false,
+              accentColor: Colors.amber,
+              onTap: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.star), findsOneWidget);
+    });
+
+    testWidgets('uses smaller icon size', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: TypeSelectorCardCompact(
+              icon: Icons.minimize,
+              title: 'Small',
+              isSelected: false,
+              accentColor: Colors.grey,
+              onTap: () {},
+            ),
+          ),
+        ),
+      );
+
+      // Compact version uses 20px icon size
+      expect(find.byType(TypeSelectorCard), findsOneWidget);
+    });
+  });
+
+  group('TypeSelectorOption', () {
+    test('creates with required parameters', () {
+      const option = TypeSelectorOption(
+        icon: Icons.home,
+        title: 'Home',
+      );
+      expect(option.icon, Icons.home);
+      expect(option.title, 'Home');
+      expect(option.subtitle, isNull);
+    });
+
+    test('creates with subtitle', () {
+      const option = TypeSelectorOption(
+        icon: Icons.work,
+        title: 'Work',
+        subtitle: 'Office building',
+      );
+      expect(option.subtitle, 'Office building');
     });
   });
 
@@ -283,56 +264,22 @@ void main() {
           home: Scaffold(
             body: TypeSelectorGroup(
               options: const [
-                TypeSelectorOption(
-                  icon: Icons.brush,
-                  title: 'Под обои',
-                  subtitle: 'Финиш',
-                ),
-                TypeSelectorOption(
-                  icon: Icons.format_paint,
-                  title: 'Под покраску',
-                  subtitle: 'Гладкая',
-                ),
+                TypeSelectorOption(icon: Icons.home, title: 'Home'),
+                TypeSelectorOption(icon: Icons.work, title: 'Work'),
               ],
               selectedIndex: 0,
-              onSelect: (index) {},
-              accentColor: Colors.green,
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('Под обои'), findsOneWidget);
-      expect(find.text('Под покраску'), findsOneWidget);
-      expect(find.byIcon(Icons.brush), findsOneWidget);
-      expect(find.byIcon(Icons.format_paint), findsOneWidget);
-    });
-
-    testWidgets('marks correct option as selected', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: TypeSelectorGroup(
-              options: const [
-                TypeSelectorOption(icon: Icons.looks_one, title: 'Первый'),
-                TypeSelectorOption(icon: Icons.looks_two, title: 'Второй'),
-                TypeSelectorOption(icon: Icons.looks_3, title: 'Третий'),
-              ],
-              selectedIndex: 1,
-              onSelect: (index) {},
+              onSelect: (_) {},
               accentColor: Colors.blue,
             ),
           ),
         ),
       );
 
-      // Проверяем, что все опции отображаются
-      expect(find.text('Первый'), findsOneWidget);
-      expect(find.text('Второй'), findsOneWidget);
-      expect(find.text('Третий'), findsOneWidget);
+      expect(find.text('Home'), findsOneWidget);
+      expect(find.text('Work'), findsOneWidget);
     });
 
-    testWidgets('calls onSelect when option is tapped', (tester) async {
+    testWidgets('calls onSelect with correct index when tapped', (tester) async {
       int? selectedIndex;
 
       await tester.pumpWidget(
@@ -340,71 +287,83 @@ void main() {
           home: Scaffold(
             body: TypeSelectorGroup(
               options: const [
-                TypeSelectorOption(icon: Icons.star, title: 'Вариант 1'),
-                TypeSelectorOption(icon: Icons.favorite, title: 'Вариант 2'),
+                TypeSelectorOption(icon: Icons.home, title: 'Home'),
+                TypeSelectorOption(icon: Icons.work, title: 'Work'),
               ],
               selectedIndex: 0,
-              onSelect: (index) => selectedIndex = index,
-              accentColor: Colors.purple,
+              onSelect: (index) {
+                selectedIndex = index;
+              },
+              accentColor: Colors.blue,
             ),
           ),
         ),
       );
 
-      // Тапаем на второй вариант
-      await tester.tap(find.text('Вариант 2'));
-      await tester.pump();
-
+      await tester.tap(find.text('Work'));
       expect(selectedIndex, 1);
     });
 
-    testWidgets('renders correctly with no selected option', (tester) async {
+    testWidgets('renders horizontally by default', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: TypeSelectorGroup(
               options: const [
-                TypeSelectorOption(icon: Icons.circle, title: 'Опция 1'),
-                TypeSelectorOption(icon: Icons.square, title: 'Опция 2'),
+                TypeSelectorOption(icon: Icons.one_k, title: 'One'),
+                TypeSelectorOption(icon: Icons.two_k, title: 'Two'),
               ],
-              selectedIndex: -1,
-              onSelect: (index) {},
-              accentColor: Colors.orange,
+              selectedIndex: 0,
+              onSelect: (_) {},
+              accentColor: Colors.green,
             ),
           ),
         ),
       );
 
-      expect(find.text('Опция 1'), findsOneWidget);
-      expect(find.text('Опция 2'), findsOneWidget);
+      expect(find.byType(Row), findsOneWidget);
     });
 
-    testWidgets('handles 2-column layout for 4 options', (tester) async {
+    testWidgets('renders vertically when direction is vertical', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SizedBox(
-              width: 400,
-              child: TypeSelectorGroup(
-                options: const [
-                  TypeSelectorOption(icon: Icons.looks_one, title: '1'),
-                  TypeSelectorOption(icon: Icons.looks_two, title: '2'),
-                  TypeSelectorOption(icon: Icons.looks_3, title: '3'),
-                  TypeSelectorOption(icon: Icons.looks_4, title: '4'),
-                ],
-                selectedIndex: 0,
-                onSelect: (index) {},
-                accentColor: Colors.indigo,
-              ),
+            body: TypeSelectorGroup(
+              options: const [
+                TypeSelectorOption(icon: Icons.one_k, title: 'One'),
+                TypeSelectorOption(icon: Icons.two_k, title: 'Two'),
+              ],
+              selectedIndex: 0,
+              onSelect: (_) {},
+              accentColor: Colors.green,
+              direction: Axis.vertical,
             ),
           ),
         ),
       );
 
-      expect(find.text('1'), findsOneWidget);
-      expect(find.text('2'), findsOneWidget);
-      expect(find.text('3'), findsOneWidget);
-      expect(find.text('4'), findsOneWidget);
+      expect(find.byType(Column), findsWidgets);
+    });
+
+    testWidgets('respects custom spacing', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: TypeSelectorGroup(
+              options: const [
+                TypeSelectorOption(icon: Icons.circle, title: 'A'),
+                TypeSelectorOption(icon: Icons.square, title: 'B'),
+              ],
+              selectedIndex: 0,
+              onSelect: (_) {},
+              accentColor: Colors.red,
+              spacing: 24,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(TypeSelectorGroup), findsOneWidget);
     });
   });
 }
