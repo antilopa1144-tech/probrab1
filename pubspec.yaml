@@ -63,9 +63,12 @@ dependencies:
   firebase_crashlytics: ^4.0.4
   firebase_analytics: ^11.2.1
   firebase_remote_config: ^5.0.0
+  firebase_performance: ^0.10.0+7
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
   # Правила линтинга (жёсткие)
   flutter_lints: ^6.0.0

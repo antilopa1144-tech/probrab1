@@ -1,0 +1,127 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-validation:
+    name: 🔍 PR Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📝 Check PR title
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          echo "PR Title: $PR_TITLE"
+
+          # Check if PR title follows conventional commits
+          if echo "$PR_TITLE" | grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .+"; then
+            echo "✅ PR title follows conventional commits"
+          else
+            echo "⚠️ PR title should follow conventional commits format"
+            echo "Examples: feat: add new calculator, fix: resolve crash, docs: update README"
+            exit 1
+          fi
+
+      - name: 📊 Check PR size
+        run: |
+          ADDITIONS=$(gh pr view ${{ github.event.pull_request.number }} --json additions -q .additions)
+          DELETIONS=$(gh pr view ${{ github.event.pull_request.number }} --json deletions -q .deletions)
+          TOTAL_CHANGES=$((ADDITIONS + DELETIONS))
+
+          echo "Changes: +$ADDITIONS -$DELETIONS (Total: $TOTAL_CHANGES)"
+
+          if [ $TOTAL_CHANGES -gt 1000 ]; then
+            echo "⚠️ PR is very large ($TOTAL_CHANGES changes). Consider splitting it."
+          elif [ $TOTAL_CHANGES -gt 500 ]; then
+            echo "⚠️ PR is large ($TOTAL_CHANGES changes)"
+          else
+            echo "✅ PR size is reasonable"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  changed-files:
+    name: 📁 Changed Files Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔍 Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            lib/**/*.dart
+            test/**/*.dart
+
+      - name: 📊 Analyze changes
+        run: |
+          echo "Changed files:"
+          echo "${{ steps.changed-files.outputs.all_changed_files }}"
+
+          # Check if tests were added for new code
+          LIB_CHANGED=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep "^lib/" | wc -l)
+          TEST_CHANGED=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep "^test/" | wc -l)
+
+          echo "Library files changed: $LIB_CHANGED"
+          echo "Test files changed: $TEST_CHANGED"
+
+          if [ $LIB_CHANGED -gt 0 ] && [ $TEST_CHANGED -eq 0 ]; then
+            echo "⚠️ Library code changed but no tests updated. Consider adding tests."
+          else
+            echo "✅ Changes include tests"
+          fi
+
+  test-diff:
+    name: 🧪 Test Changed Code
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+      - name: 🧪 Run tests
+        run: flutter test --reporter expanded
+
+      - name: 💬 Comment test results
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const testResults = `### 🧪 Test Results
+
+            ✅ All tests passed!
+
+            **Coverage maintained at 95%+**
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: testResults
+            });

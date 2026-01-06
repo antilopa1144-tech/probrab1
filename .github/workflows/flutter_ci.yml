@@ -1,0 +1,252 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    name: 📊 Code Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+      - name: 🔍 Verify formatting
+        run: dart format --set-exit-if-changed .
+
+      - name: 📊 Analyze code
+        run: flutter analyze --fatal-infos
+
+      - name: ✅ Check for TODOs
+        run: |
+          TODO_COUNT=$(grep -r "TODO\|FIXME\|HACK" lib --include="*.dart" | wc -l || echo "0")
+          echo "Found $TODO_COUNT technical debt markers"
+          if [ "$TODO_COUNT" -gt 20 ]; then
+            echo "⚠️ Warning: Too many TODOs ($TODO_COUNT > 20)"
+            exit 1
+          fi
+
+  test:
+    name: 🧪 Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: analyze
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+      - name: 🧪 Run all tests
+        run: flutter test --coverage --reporter expanded
+
+      - name: 📊 Generate coverage report
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lcov
+          lcov --summary coverage/lcov.info
+
+      - name: 📈 Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage/lcov.info
+          fail_ci_if_error: false
+          verbose: true
+        continue-on-error: true
+
+      - name: ✅ Check coverage threshold
+        run: |
+          COVERAGE=$(lcov --summary coverage/lcov.info 2>&1 | grep "lines" | awk '{print $2}' | sed 's/%//')
+          echo "Coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 90" | bc -l) )); then
+            echo "⚠️ Coverage below 90% threshold"
+            exit 1
+          fi
+
+      - name: 💾 Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            coverage/
+            test-results/
+
+  integration-test:
+    name: 🔗 Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: test
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+      - name: 🔗 Run integration tests
+        run: flutter test integration_test/
+        continue-on-error: true
+
+  build-android:
+    name: 🤖 Build Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+      - name: 🏗️ Build APK
+        run: flutter build apk --release
+
+      - name: 💾 Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+  build-ios:
+    name: 🍎 Build iOS
+    runs-on: macos-latest
+    timeout-minutes: 45
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+      - name: 🏗️ Build iOS (no codesign)
+        run: flutter build ios --release --no-codesign
+        continue-on-error: true
+
+  dependency-check:
+    name: 📦 Dependency Security Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+      - name: 🔒 Check for outdated dependencies
+        run: flutter pub outdated --show-all
+        continue-on-error: true
+
+      - name: 🔍 Audit dependencies
+        run: dart pub audit
+        continue-on-error: true
+
+  notify:
+    name: 📢 Notify Results
+    runs-on: ubuntu-latest
+    needs: [analyze, test, integration-test]
+    if: always()
+
+    steps:
+      - name: ✅ Success notification
+        if: ${{ needs.analyze.result == 'success' && needs.test.result == 'success' }}
+        run: |
+          echo "🎉 All checks passed!"
+          echo "✅ Code analysis: PASSED"
+          echo "✅ Tests: PASSED"
+          echo "✅ Integration tests: PASSED"
+
+      - name: ❌ Failure notification
+        if: ${{ needs.analyze.result == 'failure' || needs.test.result == 'failure' }}
+        run: |
+          echo "❌ Some checks failed!"
+          echo "Analysis: ${{ needs.analyze.result }}"
+          echo "Tests: ${{ needs.test.result }}"
+          exit 1

@@ -1,0 +1,128 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.0.1)'
+        required: true
+        type: string
+
+jobs:
+  create-release:
+    name: 📦 Create Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.get_version.outputs.version }}
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏷️ Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📝 Generate changelog
+        id: changelog
+        run: |
+          echo "# Release v${{ steps.get_version.outputs.version }}" > RELEASE_NOTES.md
+          echo "" >> RELEASE_NOTES.md
+          echo "## Changes" >> RELEASE_NOTES.md
+          git log --pretty=format:"- %s (%h)" $(git describe --tags --abbrev=0 HEAD^)..HEAD >> RELEASE_NOTES.md || true
+
+      - name: 🎉 Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          release_name: Release v${{ steps.get_version.outputs.version }}
+          body_path: RELEASE_NOTES.md
+          draft: false
+          prerelease: false
+
+  build-android-release:
+    name: 🤖 Build Android Release
+    runs-on: ubuntu-latest
+    needs: create-release
+    timeout-minutes: 45
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+      - name: 🏗️ Build APK
+        run: flutter build apk --release
+
+      - name: 🏗️ Build App Bundle
+        run: flutter build appbundle --release
+
+      - name: 📤 Upload APK to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: build/app/outputs/flutter-apk/app-release.apk
+          asset_name: probrab-ai-v${{ needs.create-release.outputs.version }}-android.apk
+          asset_content_type: application/vnd.android.package-archive
+
+      - name: 📤 Upload App Bundle to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: build/app/outputs/bundle/release/app-release.aab
+          asset_name: probrab-ai-v${{ needs.create-release.outputs.version }}-android.aab
+          asset_content_type: application/octet-stream
+
+  notify-release:
+    name: 📢 Notify Release
+    runs-on: ubuntu-latest
+    needs: [create-release, build-android-release]
+    if: always()
+
+    steps:
+      - name: ✅ Release Success
+        if: ${{ needs.build-android-release.result == 'success' }}
+        run: |
+          echo "🎉 Release v${{ needs.create-release.outputs.version }} created successfully!"
+          echo "📦 Android artifacts uploaded"
+
+      - name: ❌ Release Failed
+        if: ${{ needs.build-android-release.result == 'failure' }}
+        run: |
+          echo "❌ Release build failed!"
+          exit 1

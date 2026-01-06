@@ -47,12 +47,13 @@ class AppSelectField<T> extends StatelessWidget {
               value: option.value,
               enabled: option.enabled,
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   if (option.leading != null) ...[
                     option.leading!,
                     const SizedBox(width: 8),
                   ],
-                  Flexible(child: Text(option.label)),
+                  Text(option.label),
                 ],
               ),
             ),
