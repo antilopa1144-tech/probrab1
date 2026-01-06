@@ -2,6 +2,10 @@
   "app": {
     "name": "Прораб AI"
   },
+  "action": {
+    "clear": "Очистить",
+    "reset_filters": "Сбросить фильтры"
+  },
   "button": {
     "calculate": "Рассчитать",
     "clear": "Очистить",
@@ -18,12 +22,18 @@
     "walls": "Стены",
     "floor": "Пол",
     "finish": "Отделка",
-    "wood": "Дерево"
+    "wood": "Дерево",
+    "electric": "Электрика",
+    "foundation": "Фундамент",
+    "roofing": "Кровля"
   },
   "catalog": {
     "all_calculators": "Все калькуляторы",
     "my_projects": "Мои проекты",
-    "tools": "Инструменты"
+    "tools": "Инструменты",
+    "recent": "Недавние",
+    "popular": "Популярное",
+    "results": "Результаты"
   },
   "chart": {
     "no_data": "Нет данных",
@@ -43,11 +53,17 @@
   "search": {
     "try_another_query": "Попробуйте другой запрос. Например: \"бетон\", \"обои\", \"плитка\"",
     "placeholder": "Поиск",
-    "no_results": "Ничего не найдено"
+    "no_results": "Ничего не найдено",
+    "found_count": "Найдено: {count}"
   },
   "favorites": {
     "add": "В избранное",
     "remove": "Удалить из избранного"
+  },
+  "settings": {
+    "theme": "Тема оформления",
+    "theme_dark": "Тёмная тема",
+    "theme_light": "Светлая тема"
   },
   "error": {
     "calculator_not_found": "Калькулятор \"{id}\" не найден",
@@ -116,7 +132,31 @@
       "primer_title": "Грунтовка",
       "primer_subtitle": "Межслойная",
       "primer_unit": "канистр 10л"
-    }
+    },
+    "layers_title": "Слои работ",
+    "wall_condition_title": "Состояние стен",
+    "wall_condition": {
+      "smooth": "Ровные",
+      "medium": "Средние",
+      "rough": "Кривые",
+      "smooth_desc": "Новостройка, ГКЛ",
+      "medium_desc": "Небольшие неровности",
+      "rough_desc": "Старый фонд, перепады"
+    },
+    "start_material_title": "Стартовая шпаклёвка",
+    "finish_material_title": "Финишная шпаклёвка",
+    "work_time_title": "Время работы"
+  },
+  "preset": {
+    "bathroom_small": "Ванная мал.",
+    "bathroom": "Ванная",
+    "toilet": "Туалет",
+    "kitchen_small": "Кухня мал.",
+    "kitchen": "Кухня",
+    "bedroom": "Спальня",
+    "living_room": "Гостиная",
+    "studio": "Студия",
+    "corridor": "Коридор"
   },
   "primer": {
     "title": "Грунтовка",
@@ -3122,6 +3162,50 @@
       "privacy": {
         "title": "Политика конфиденциальности"
       }
+    }
+  },
+  "tool": {
+    "mixes_plaster": {
+      "desc": "Расчёт штукатурки для выравнивания стен"
+    },
+    "dsp": {
+      "desc": "Цементно-песчаная смесь для стяжки и штукатурки"
+    },
+    "mixes_primer": {
+      "desc": "Грунтовка для подготовки поверхностей"
+    },
+    "mixes_putty": {
+      "desc": "Шпатлёвка для финишного выравнивания"
+    },
+    "paint_universal": {
+      "desc": "Краска для стен и потолков"
+    },
+    "wood": {
+      "desc": "Расчёт древесины и пиломатериалов"
+    },
+    "tile": {
+      "desc": "Плитка и клей для облицовки"
+    },
+    "laminate": {
+      "desc": "Ламинат и подложка для пола"
+    },
+    "concrete": {
+      "desc": "Бетон для различных работ"
+    },
+    "strip_foundation": {
+      "desc": "Ленточный фундамент для дома"
+    },
+    "slab_foundation": {
+      "desc": "Плитный фундамент для строения"
+    },
+    "warm_floor": {
+      "desc": "Тёплый пол электрический"
+    },
+    "metal_roofing": {
+      "desc": "Металлочерепица и профнастил"
+    },
+    "soft_roofing": {
+      "desc": "Мягкая кровля и гибкая черепица"
     }
   },
   "language": {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../views/favorites/favorite_calculators_screen.dart';
 import '../views/project/projects_list_screen.dart';
-import '../views/calculator/modern_calculator_catalog_screen.dart';
+import '../views/calculator/modern_calculator_catalog_screen_v2.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -88,7 +88,7 @@ class _MainShellState extends State<MainShell> {
           children: [
             _buildTabNavigator(
               index: MainShell.homeTabIndex,
-              child: const ModernCalculatorCatalogScreen(),
+              child: const ModernCalculatorCatalogScreenV2(),
             ),
             _buildTabNavigator(
               index: MainShell.projectsTabIndex,

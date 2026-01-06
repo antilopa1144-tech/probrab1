@@ -6,7 +6,7 @@ import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/models/calculator_definition_v2.dart';
 import '../views/calculator/pro_calculator_screen.dart';
 import '../views/calculator/plaster_calculator_screen.dart';
-import '../views/calculator/putty_calculator_screen.dart';
+import '../views/calculator/putty_calculator_screen_v2.dart';
 import '../views/calculator/gypsum_calculator_screen.dart';
 import '../views/calculator/wallpaper_calculator_screen.dart';
 import '../views/calculator/self_leveling_floor_calculator_screen.dart';
@@ -51,7 +51,7 @@ class CalculatorNavigationHelper {
     if (definition.id == 'mixes_putty') {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
-          const PuttyCalculatorScreen(),
+          const PuttyCalculatorScreenV2(),
         ),
       );
       return;
