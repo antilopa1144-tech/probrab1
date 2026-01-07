@@ -1,12 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
 import '../../../domain/models/calculator_constant.dart';
@@ -195,7 +194,14 @@ class ElectricalCalculatorScreen extends StatefulWidget {
 }
 
 class _ElectricalCalculatorScreenState
-    extends State<ElectricalCalculatorScreen> {
+    extends State<ElectricalCalculatorScreen> with ExportableMixin {
+  // ExportableMixin
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('electrical.export.subject');
+
   // Режим ввода
   InputMode _inputMode = InputMode.byArea;
 
@@ -401,7 +407,8 @@ class _ElectricalCalculatorScreenState
 
   void _update() => setState(() => _result = _calculate());
 
-  String _exportText() {
+  @override
+  String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln('⚡ ${_loc.translate('electrical.export.title')}');
     buffer.writeln('');
@@ -458,21 +465,6 @@ class _ElectricalCalculatorScreenState
     }
   }
 
-  void _share() {
-    SharePlus.instance.share(
-        ShareParams(text: _exportText(), subject: _loc.translate('electrical.export.subject')));
-  }
-
-  void _copy() {
-    Clipboard.setData(ClipboardData(text: _exportText()));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(_loc.translate('common.copied_to_clipboard')),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -481,18 +473,7 @@ class _ElectricalCalculatorScreenState
     return CalculatorScaffold(
       title: _loc.translate('calculator.engineering_electrics.title'),
       accentColor: accentColor,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.copy),
-          tooltip: _loc.translate('common.copy'),
-          onPressed: _copy,
-        ),
-        IconButton(
-          icon: const Icon(Icons.share),
-          tooltip: _loc.translate('common.share'),
-          onPressed: _share,
-        ),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,
         results: [
