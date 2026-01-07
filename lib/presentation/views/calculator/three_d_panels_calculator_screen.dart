@@ -179,26 +179,29 @@ class _ThreeDPanelsCalculatorScreenState
 
   String _exportText() {
     final buffer = StringBuffer();
-    buffer.writeln('📐 3D панели — расчёт');
-    buffer.writeln('Площадь: ${_result.area.toStringAsFixed(1)} м²');
-    buffer.writeln('Размер панели: ${_result.panelSizeCm.toStringAsFixed(0)}×${_result.panelSizeCm.toStringAsFixed(0)} см (${_result.panelArea.toStringAsFixed(3)} м²)');
-    buffer.writeln('Панелей: ${_result.panelsCount} шт');
-    buffer.writeln('Клей: ${_result.glueKg.toStringAsFixed(1)} кг');
-    buffer.writeln('Грунтовка: ${_result.primerLiters.toStringAsFixed(1)} л');
-    buffer.writeln('Шпаклёвка: ${_result.puttyKg.toStringAsFixed(1)} кг');
+    buffer.writeln(_loc.translate('three_d_panels.export.title'));
+    buffer.writeln(_loc.translate('three_d_panels.export.area').replaceFirst('{value}', _result.area.toStringAsFixed(1)));
+    buffer.writeln(_loc.translate('three_d_panels.export.panel_size')
+        .replaceFirst('{width}', _result.panelSizeCm.toStringAsFixed(0))
+        .replaceFirst('{height}', _result.panelSizeCm.toStringAsFixed(0))
+        .replaceFirst('{area}', _result.panelArea.toStringAsFixed(3)));
+    buffer.writeln(_loc.translate('three_d_panels.export.panels_count').replaceFirst('{value}', _result.panelsCount.toString()));
+    buffer.writeln(_loc.translate('three_d_panels.export.glue').replaceFirst('{value}', _result.glueKg.toStringAsFixed(1)));
+    buffer.writeln(_loc.translate('three_d_panels.export.primer').replaceFirst('{value}', _result.primerLiters.toStringAsFixed(1)));
+    buffer.writeln(_loc.translate('three_d_panels.export.putty').replaceFirst('{value}', _result.puttyKg.toStringAsFixed(1)));
     if (_result.paintLiters > 0) {
-      buffer.writeln('Краска: ${_result.paintLiters.toStringAsFixed(1)} л');
+      buffer.writeln(_loc.translate('three_d_panels.export.paint').replaceFirst('{value}', _result.paintLiters.toStringAsFixed(1)));
     }
     if (_result.varnishLiters > 0) {
-      buffer.writeln('Лак: ${_result.varnishLiters.toStringAsFixed(1)} л');
+      buffer.writeln(_loc.translate('three_d_panels.export.varnish').replaceFirst('{value}', _result.varnishLiters.toStringAsFixed(1)));
     }
-    buffer.writeln('Молдинги: ${_result.moldingLength.toStringAsFixed(1)} м (периметр)');
+    buffer.writeln(_loc.translate('three_d_panels.export.molding').replaceFirst('{value}', _result.moldingLength.toStringAsFixed(1)));
     return buffer.toString();
   }
 
   void _share() {
     SharePlus.instance
-        .share(ShareParams(text: _exportText(), subject: 'Расчёт 3D панелей'));
+        .share(ShareParams(text: _exportText(), subject: _loc.translate('three_d_panels.export.subject')));
   }
 
   void _copy() {
@@ -217,7 +220,7 @@ class _ThreeDPanelsCalculatorScreenState
     const accentColor = CalculatorColors.interior;
 
     return CalculatorScaffold(
-      title: '3D панели',
+      title: _loc.translate('three_d_panels.title'),
       accentColor: accentColor,
       actions: [
         IconButton(
@@ -235,18 +238,18 @@ class _ThreeDPanelsCalculatorScreenState
         accentColor: accentColor,
         results: [
           ResultItem(
-            label: 'ПЛОЩАДЬ',
-            value: '${_result.area.toStringAsFixed(1)} м²',
+            label: _loc.translate('three_d_panels.header.area'),
+            value: '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
-            label: 'ПАНЕЛЕЙ',
+            label: _loc.translate('three_d_panels.header.panels'),
             value: _result.panelsCount.toString(),
             icon: Icons.apps,
           ),
           ResultItem(
-            label: 'КЛЕЙ',
-            value: '${_result.glueKg.toStringAsFixed(1)} кг',
+            label: _loc.translate('three_d_panels.header.glue'),
+            value: '${_result.glueKg.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
             icon: Icons.construction,
           ),
         ],
@@ -277,14 +280,17 @@ class _ThreeDPanelsCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Режим ввода',
+            _loc.translate('three_d_panels.input_mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: const ['По площади', 'По размерам'],
+            options: [
+              _loc.translate('three_d_panels.input_mode.by_area'),
+              _loc.translate('three_d_panels.input_mode.by_dimensions'),
+            ],
             selectedIndex: _inputMode.index,
             onSelect: (index) {
               setState(() {
@@ -308,7 +314,7 @@ class _ThreeDPanelsCalculatorScreenState
             children: [
               Expanded(
                 child: Text(
-                  'Площадь стен',
+                  _loc.translate('three_d_panels.field.wall_area'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
                     color: CalculatorColors.textSecondary,
                   ),
@@ -318,7 +324,7 @@ class _ThreeDPanelsCalculatorScreenState
               ),
               const SizedBox(width: 8),
               Text(
-                '${_area.toStringAsFixed(1)} м²',
+                '${_area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.bold,
@@ -347,9 +353,9 @@ class _ThreeDPanelsCalculatorScreenState
           ),
           const SizedBox(height: 12),
           CalculatorTextField(
-            label: 'Площадь',
+            label: _loc.translate('three_d_panels.field.area'),
             value: _area,
-            suffix: 'м²',
+            suffix: _loc.translate('common.sqm'),
             minValue: 3,
             maxValue: 150,
             decimalPlaces: 1,
@@ -373,14 +379,14 @@ class _ThreeDPanelsCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Размер стены',
+            _loc.translate('three_d_panels.field.wall_size'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
           _buildDimensionSlider(
-            label: 'Длина',
+            label: _loc.translate('three_d_panels.field.length'),
             value: _length,
             min: 1.0,
             max: 12.0,
@@ -394,7 +400,7 @@ class _ThreeDPanelsCalculatorScreenState
           ),
           const SizedBox(height: 16),
           _buildDimensionSlider(
-            label: 'Высота',
+            label: _loc.translate('three_d_panels.field.height'),
             value: _height,
             min: 2.0,
             max: 4.0,
@@ -417,7 +423,7 @@ class _ThreeDPanelsCalculatorScreenState
               children: [
                 Expanded(
                   child: Text(
-                    'Площадь стен',
+                    _loc.translate('three_d_panels.field.wall_area'),
                     style: CalculatorDesignSystem.bodyMedium.copyWith(
                       color: CalculatorColors.textSecondary,
                     ),
@@ -427,7 +433,7 @@ class _ThreeDPanelsCalculatorScreenState
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} м²',
+                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -466,7 +472,7 @@ class _ThreeDPanelsCalculatorScreenState
             ),
             const SizedBox(width: 8),
             Text(
-              '${value.toStringAsFixed(1)} м',
+              '${value.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
               style: CalculatorDesignSystem.titleMedium.copyWith(
                 color: accentColor,
                 fontWeight: FontWeight.w600,
@@ -492,7 +498,7 @@ class _ThreeDPanelsCalculatorScreenState
         CalculatorTextField(
           label: label,
           value: value,
-          suffix: 'м',
+          suffix: _loc.translate('common.meters'),
           minValue: min,
           maxValue: max,
           decimalPlaces: 1,
@@ -510,14 +516,14 @@ class _ThreeDPanelsCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Размер панели',
+            _loc.translate('three_d_panels.panel_size.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Частые размеры: 50×50 см, 60×60 см, 60×30 см',
+            _loc.translate('three_d_panels.panel_size.hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -527,7 +533,7 @@ class _ThreeDPanelsCalculatorScreenState
             children: [
               Expanded(
                 child: Text(
-                  'Сторона панели',
+                  _loc.translate('three_d_panels.panel_size.side'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
                     color: CalculatorColors.textSecondary,
                   ),
@@ -535,7 +541,7 @@ class _ThreeDPanelsCalculatorScreenState
               ),
               const SizedBox(width: 8),
               Text(
-                '${_panelSize.toStringAsFixed(0)} см',
+                '${_panelSize.toStringAsFixed(0)} ${_loc.translate('common.cm')}',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.bold,
@@ -564,9 +570,9 @@ class _ThreeDPanelsCalculatorScreenState
           ),
           const SizedBox(height: 12),
           CalculatorTextField(
-            label: 'Сторона панели',
+            label: _loc.translate('three_d_panels.panel_size.side'),
             value: _panelSize,
-            suffix: 'см',
+            suffix: _loc.translate('common.cm'),
             minValue: 30,
             maxValue: 100,
             isInteger: true,
@@ -580,7 +586,7 @@ class _ThreeDPanelsCalculatorScreenState
           ),
           const SizedBox(height: 4),
           Text(
-            'Площадь панели: ${_result.panelArea.toStringAsFixed(3)} м² · Запас 10%',
+            _loc.translate('three_d_panels.panel_size.area_note').replaceFirst('{value}', _result.panelArea.toStringAsFixed(3)),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -597,7 +603,7 @@ class _ThreeDPanelsCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Отделка',
+            _loc.translate('three_d_panels.options.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -616,13 +622,13 @@ class _ThreeDPanelsCalculatorScreenState
                   : CalculatorColors.textSecondary,
             ),
             title: Text(
-              'Панели под покраску',
+              _loc.translate('three_d_panels.options.paintable'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
                 color: CalculatorColors.textPrimary,
               ),
             ),
             subtitle: Text(
-              'Добавим расход краски (2 слоя)',
+              _loc.translate('three_d_panels.options.paintable_hint'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -649,13 +655,13 @@ class _ThreeDPanelsCalculatorScreenState
                   : CalculatorColors.textSecondary,
             ),
             title: Text(
-              'Финишный лак/защита',
+              _loc.translate('three_d_panels.options.varnish'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
                 color: CalculatorColors.textPrimary,
               ),
             ),
             subtitle: Text(
-              'Рекомендуем для гипсовых и МДФ панелей',
+              _loc.translate('three_d_panels.options.varnish_hint'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -678,54 +684,54 @@ class _ThreeDPanelsCalculatorScreenState
 
     final items = <MaterialItem>[
       MaterialItem(
-        name: 'Панели 3D',
-        value: '${_result.panelsCount} шт',
-        subtitle: '${_result.panelSizeCm.toStringAsFixed(0)}×${_result.panelSizeCm.toStringAsFixed(0)} см',
+        name: _loc.translate('three_d_panels.materials.panels'),
+        value: '${_result.panelsCount} ${_loc.translate('common.pcs')}',
+        subtitle: '${_result.panelSizeCm.toStringAsFixed(0)}×${_result.panelSizeCm.toStringAsFixed(0)} ${_loc.translate('common.cm')}',
         icon: Icons.apps,
       ),
       MaterialItem(
-        name: 'Клей для панелей',
-        value: '${_result.glueKg.toStringAsFixed(1)} кг',
+        name: _loc.translate('three_d_panels.materials.glue'),
+        value: '${_result.glueKg.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
         icon: Icons.construction,
       ),
       MaterialItem(
-        name: 'Грунтовка',
-        value: '${_result.primerLiters.toStringAsFixed(1)} л',
+        name: _loc.translate('three_d_panels.materials.primer'),
+        value: '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
         icon: Icons.water_drop,
       ),
       MaterialItem(
-        name: 'Шпаклёвка',
-        value: '${_result.puttyKg.toStringAsFixed(1)} кг',
-        subtitle: 'Под основание',
+        name: _loc.translate('three_d_panels.materials.putty'),
+        value: '${_result.puttyKg.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
+        subtitle: _loc.translate('three_d_panels.materials.putty_hint'),
         icon: Icons.format_paint,
       ),
     ];
 
     if (_result.paintLiters > 0) {
       items.add(MaterialItem(
-        name: 'Краска',
-        value: '${_result.paintLiters.toStringAsFixed(1)} л',
-        subtitle: '2 слоя',
+        name: _loc.translate('three_d_panels.materials.paint'),
+        value: '${_result.paintLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
+        subtitle: _loc.translate('three_d_panels.materials.paint_hint'),
         icon: Icons.brush,
       ));
     }
 
     if (_result.varnishLiters > 0) {
       items.add(MaterialItem(
-        name: 'Лак / защитный слой',
-        value: '${_result.varnishLiters.toStringAsFixed(1)} л',
+        name: _loc.translate('three_d_panels.materials.varnish'),
+        value: '${_result.varnishLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
         icon: Icons.shield,
       ));
     }
 
     items.add(MaterialItem(
-      name: 'Молдинги / плинты',
-      value: '${_result.moldingLength.toStringAsFixed(1)} м',
+      name: _loc.translate('three_d_panels.materials.molding'),
+      value: '${_result.moldingLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
       icon: Icons.straighten,
     ));
 
     return MaterialsCardModern(
-      title: 'Материалы',
+      title: _loc.translate('three_d_panels.materials.title'),
       titleIcon: Icons.inventory_2,
       items: items,
       accentColor: accentColor,
