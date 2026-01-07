@@ -338,7 +338,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
 
   String _generateExportText() {
     final buffer = StringBuffer();
-    buffer.writeln('📋 РАСЧЁТ МАТЕРИАЛОВ ДЛЯ ГИПСОКАРТОНА');
+    buffer.writeln('📋 ${_loc.translate('gypsum.export.title')}');
     buffer.writeln('═' * 40);
     buffer.writeln();
 
@@ -355,39 +355,39 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
         constructionName = _loc.translate('gypsum.construction.ceiling');
         break;
     }
-    buffer.writeln('Тип: $constructionName');
-    buffer.writeln('Площадь: ${_result.area.toStringAsFixed(1)} м²');
+    buffer.writeln('${_loc.translate('gypsum.export.type')}: $constructionName');
+    buffer.writeln('${_loc.translate('gypsum.export.area')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
     buffer.writeln();
 
-    buffer.writeln('📦 МАТЕРИАЛЫ:');
+    buffer.writeln(_loc.translate('gypsum.export.materials_title'));
     buffer.writeln('─' * 40);
-    buffer.writeln('• ГКЛ ${_result.sheetSizeName} мм: ${_result.gklSheets} шт');
+    buffer.writeln('• ${_loc.translate('gypsum.export.gkl')} ${_result.sheetSizeName} ${_loc.translate('common.mm')}: ${_result.gklSheets} ${_loc.translate('common.pcs')}');
 
     if (_result.pnPieces > 0) {
       final String pnName = _constructionType == GypsumConstructionType.wallLining
-          ? 'ПН 28×27'
+          ? _loc.translate('gypsum.materials.pn_wall')
           : _constructionType == GypsumConstructionType.partition
-              ? 'ПН 50×40'
-              : 'ПНП 27×28';
-      buffer.writeln('• Профиль $pnName: ${_result.pnPieces} шт × 3 м');
+              ? _loc.translate('gypsum.materials.pn_partition')
+              : _loc.translate('gypsum.materials.pnp_ceiling');
+      buffer.writeln('• ${_loc.translate('gypsum.export.profile')} $pnName: ${_result.pnPieces} ${_loc.translate('common.pcs')} ${_loc.translate('gypsum.fixings.profile_length')}');
     }
 
     if (_result.ppPieces > 0) {
       final String ppName = _constructionType == GypsumConstructionType.partition
-          ? 'ПС 50×50'
-          : 'ПП 60×27';
-      buffer.writeln('• Профиль $ppName: ${_result.ppPieces} шт × 3 м');
+          ? _loc.translate('gypsum.materials.ps_partition')
+          : _loc.translate('gypsum.materials.pp_wall');
+      buffer.writeln('• ${_loc.translate('gypsum.export.profile')} $ppName: ${_result.ppPieces} ${_loc.translate('common.pcs')} ${_loc.translate('gypsum.fixings.profile_length')}');
     }
 
     if (_result.insulationArea > 0) {
-      buffer.writeln('• Минвата 50 мм: ${_result.insulationArea.toStringAsFixed(1)} м²');
+      buffer.writeln('• ${_loc.translate('gypsum.export.insulation')}: ${_result.insulationArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
     }
 
-    buffer.writeln('• Шпаклёвка Фуген: ${_result.fillerKg.toStringAsFixed(1)} кг');
-    buffer.writeln('• Грунтовка: ${_result.primerLiters.toStringAsFixed(1)} л');
+    buffer.writeln('• ${_loc.translate('gypsum.export.filler')}: ${_result.fillerKg.toStringAsFixed(1)} ${_loc.translate('common.kg')}');
+    buffer.writeln('• ${_loc.translate('gypsum.export.primer')}: ${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}');
     buffer.writeln();
 
-    buffer.writeln('🔩 КРЕПЁЖ:');
+    buffer.writeln(_loc.translate('gypsum.export.fixings_title'));
     buffer.writeln('─' * 40);
     if (_result.screwsTN25 > 0) {
       final formatted = ScrewFormatter.formatWithWeight(
@@ -395,7 +395,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
         diameter: 3.5,
         length: 25,
       );
-      buffer.writeln('• Саморезы для ГКЛ 3.5×25: $formatted');
+      buffer.writeln('• ${_loc.translate('gypsum.export.screws_gkl')} 3.5×25: $formatted');
     }
     if (_result.screwsTN35 > 0) {
       final formatted = ScrewFormatter.formatWithWeight(
@@ -403,7 +403,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
         diameter: 3.5,
         length: 35,
       );
-      buffer.writeln('• Саморезы для ГКЛ 3.5×35: $formatted');
+      buffer.writeln('• ${_loc.translate('gypsum.export.screws_gkl')} 3.5×35: $formatted');
     }
     if (_result.screwsLN > 0) {
       final formatted = ScrewFormatter.formatWithWeight(
@@ -411,31 +411,31 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
         diameter: 3.5,
         length: 9.5,
       );
-      buffer.writeln('• Саморезы по металлу 3.5×9.5: $formatted');
+      buffer.writeln('• ${_loc.translate('gypsum.export.screws_metal')} 3.5×9.5: $formatted');
     }
     if (_result.dowels > 0) {
-      buffer.writeln('• Дюбель-гвозди: ${_result.dowels} шт');
+      buffer.writeln('• ${_loc.translate('gypsum.export.dowels')}: ${_result.dowels} ${_loc.translate('common.pcs')}');
     }
     if (_result.suspensions > 0) {
-      buffer.writeln('• Подвесы прямые: ${_result.suspensions} шт');
+      buffer.writeln('• ${_loc.translate('gypsum.export.suspensions')}: ${_result.suspensions} ${_loc.translate('common.pcs')}');
     }
     if (_result.connectors > 0) {
-      buffer.writeln('• Соединители (крабы): ${_result.connectors} шт');
+      buffer.writeln('• ${_loc.translate('gypsum.export.connectors')}: ${_result.connectors} ${_loc.translate('common.pcs')}');
     }
     if (_result.sealingTape > 0) {
-      buffer.writeln('• Лента уплотнительная: ${_result.sealingTape.toStringAsFixed(1)} м');
+      buffer.writeln('• ${_loc.translate('gypsum.export.sealing_tape')}: ${_result.sealingTape.toStringAsFixed(1)} ${_loc.translate('common.meters')}');
     }
-    buffer.writeln('• Серпянка: ${_result.armatureTape.toStringAsFixed(1)} м');
+    buffer.writeln('• ${_loc.translate('gypsum.export.armature_tape')}: ${_result.armatureTape.toStringAsFixed(1)} ${_loc.translate('common.meters')}');
     buffer.writeln();
     buffer.writeln('═' * 40);
-    buffer.writeln('Создано с помощью Калькулятора Стройматериалов');
+    buffer.writeln(_loc.translate('gypsum.export.footer'));
 
     return buffer.toString();
   }
 
   void _shareCalculation() {
     final text = _generateExportText();
-    SharePlus.instance.share(ShareParams(text: text, subject: 'Расчёт материалов для гипсокартона'));
+    SharePlus.instance.share(ShareParams(text: text, subject: _loc.translate('gypsum.export.subject')));
   }
 
   void _copyToClipboard() {
@@ -474,7 +474,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
         results: [
           ResultItem(
             label: _loc.translate('gypsum.label.area').toUpperCase(),
-            value: '${_result.area.toStringAsFixed(0)} м²',
+            value: '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -484,7 +484,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
           ),
           ResultItem(
             label: _loc.translate('gypsum.summary.profile').toUpperCase(),
-            value: '${(_result.pnMeters + _result.ppMeters).toStringAsFixed(1)} м',
+            value: '${(_result.pnMeters + _result.ppMeters).toStringAsFixed(1)} ${_loc.translate('common.meters')}',
             icon: Icons.architecture,
           ),
         ],
@@ -657,7 +657,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
                 ),
               ),
               Text(
-                '${_area.toStringAsFixed(0)} м²',
+                '${_area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.bold,
@@ -753,7 +753,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
                   ),
                 ),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} м²',
+                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -788,7 +788,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
               ),
             ),
             Text(
-              '${value.toStringAsFixed(1)} м',
+              '${value.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
               style: CalculatorDesignSystem.titleMedium.copyWith(
                 color: accentColor,
                 fontWeight: FontWeight.w600,
@@ -915,8 +915,8 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
     if (_result.pnPieces > 0) {
       items.add(MaterialItem(
         name: pnProfileName,
-        value: '${_result.pnPieces} шт',
-        subtitle: '× 3 м',
+        value: '${_result.pnPieces} ${_loc.translate('common.pcs')}',
+        subtitle: _loc.translate('gypsum.fixings.profile_length'),
         icon: Icons.horizontal_rule,
       ));
     }
@@ -924,8 +924,8 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
     if (_result.ppPieces > 0) {
       items.add(MaterialItem(
         name: ppProfileName,
-        value: '${_result.ppPieces} шт',
-        subtitle: '× 3 м',
+        value: '${_result.ppPieces} ${_loc.translate('common.pcs')}',
+        subtitle: _loc.translate('gypsum.fixings.profile_length'),
         icon: Icons.architecture,
       ));
     }
@@ -933,7 +933,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
     if (_result.insulationArea > 0) {
       items.add(MaterialItem(
         name: _loc.translate('gypsum.materials.insulation'),
-        value: '${_result.insulationArea.toStringAsFixed(1)} м²',
+        value: '${_result.insulationArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
         icon: Icons.layers,
       ));
     }
@@ -1027,14 +1027,14 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
     if (_result.sealingTape > 0) {
       items.add(MaterialItem(
         name: _loc.translate('gypsum.fixings.sealing_tape'),
-        value: '${_result.sealingTape.toStringAsFixed(1)} м',
+        value: '${_result.sealingTape.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
         icon: Icons.straighten,
       ));
     }
 
     items.add(MaterialItem(
       name: _loc.translate('gypsum.fixings.armature_tape'),
-      value: '${_result.armatureTape.toStringAsFixed(1)} м',
+      value: '${_result.armatureTape.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
       icon: Icons.grid_on,
     ));
 
