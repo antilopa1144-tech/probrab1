@@ -4136,6 +4136,724 @@
       "desc": "Мягкая кровля и гибкая черепица"
     }
   },
+  "primer_calc": {
+    "title": "Грунтовка",
+    "surface": {
+      "concrete": "Бетон",
+      "concrete_desc": "Пористая поверхность",
+      "plaster": "Штукатурка",
+      "plaster_desc": "Стандартная впитываемость",
+      "drywall": "Гипсокартон",
+      "drywall_desc": "Низкая впитываемость"
+    },
+    "type": {
+      "deep": "Глубокого проникновения",
+      "deep_desc": "Для пористых поверхностей",
+      "contact": "Бетоноконтакт",
+      "contact_desc": "Для гладких поверхностей",
+      "universal": "Универсальная",
+      "universal_desc": "Для любых поверхностей"
+    },
+    "section": {
+      "primer_type": "Тип грунтовки",
+      "materials": "Необходимые материалы"
+    },
+    "mode": {
+      "manual": "По площади",
+      "room": "По комнате"
+    },
+    "label": {
+      "area": "Площадь",
+      "width": "Ширина",
+      "length": "Длина",
+      "height": "Высота",
+      "walls_area": "Площадь стен",
+      "layers": "Количество слоёв",
+      "can_size": "Объём тары"
+    },
+    "result": {
+      "area": "Площадь",
+      "liters": "Литров",
+      "cans": "Канистр"
+    },
+    "materials": {
+      "primer": "Грунтовка",
+      "cans": "Канистры"
+    },
+    "export": {
+      "title": "РАСЧЁТ ГРУНТОВКИ",
+      "area": "Площадь: {value} м²",
+      "surface": "Поверхность: {value}",
+      "primer_type": "Тип грунтовки: {value}",
+      "layers": "Слоёв: {value}",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "liters": "Грунтовка: {value} л",
+      "cans": "Канистры: {value} шт ({size} л)",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "laminate_calc": {
+    "title": "Ламинат",
+    "pattern": {
+      "straight": "Прямая укладка",
+      "straight_desc": "Минимум отходов (5%)",
+      "diagonal": "Диагональная укладка",
+      "diagonal_desc": "Больше отходов (15%)"
+    },
+    "class": {
+      "31": "31 класс",
+      "31_desc": "Для спален, кабинетов",
+      "32": "32 класс",
+      "32_desc": "Для гостиных, детских",
+      "33": "33 класс",
+      "33_desc": "Для прихожих, кухонь"
+    },
+    "section": {
+      "class": "Класс ламината",
+      "materials": "Необходимые материалы"
+    },
+    "mode": {
+      "manual": "По площади",
+      "room": "По комнате"
+    },
+    "label": {
+      "area": "Площадь пола",
+      "width": "Ширина",
+      "length": "Длина",
+      "floor_area": "Площадь пола",
+      "pack_area": "Площадь упаковки"
+    },
+    "option": {
+      "underlay": "Подложка",
+      "underlay_desc": "Рулон 10 м², +10% запас",
+      "plinth": "Плинтус",
+      "plinth_desc": "По периметру, минус дверь"
+    },
+    "result": {
+      "area": "Площадь",
+      "packs": "Упаковок",
+      "total_area": "С запасом"
+    },
+    "materials": {
+      "laminate": "Ламинат",
+      "underlay": "Подложка",
+      "plinth": "Плинтус"
+    },
+    "export": {
+      "title": "РАСЧЁТ ЛАМИНАТА",
+      "area": "Площадь: {value} м²",
+      "pattern": "Укладка: {value}",
+      "waste": "Запас на отходы: {value}%",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "packs": "Ламинат: {value} упак. ({area} м²/упак.)",
+      "underlay": "Подложка: {value} рулонов",
+      "plinth": "Плинтус: {value} шт",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "brick_calc": {
+    "title": "Кирпичная кладка",
+    "type": {
+      "single": "Одинарный",
+      "single_desc": "250×120×65 мм",
+      "one_and_half": "Полуторный",
+      "one_and_half_desc": "250×120×88 мм",
+      "double": "Двойной",
+      "double_desc": "250×120×138 мм"
+    },
+    "thickness": {
+      "half": "0.5 кирпича",
+      "one": "1 кирпич",
+      "one_half": "1.5 кирпича",
+      "two": "2 кирпича"
+    },
+    "thickness_info": "Толщина стены: {value} мм",
+    "section": {
+      "thickness": "Толщина кладки",
+      "materials": "Необходимые материалы"
+    },
+    "mode": {
+      "manual": "По площади",
+      "wall": "По стене"
+    },
+    "label": {
+      "area": "Площадь кладки",
+      "wall_width": "Длина стены",
+      "wall_height": "Высота стены",
+      "wall_area": "Площадь стены"
+    },
+    "result": {
+      "area": "Площадь",
+      "bricks": "Кирпичей",
+      "mortar": "Раствор"
+    },
+    "materials": {
+      "bricks": "Кирпич",
+      "mortar": "Раствор",
+      "bags": "мешков по 25 кг"
+    },
+    "export": {
+      "title": "РАСЧЁТ КИРПИЧНОЙ КЛАДКИ",
+      "area": "Площадь: {value} м²",
+      "brick_type": "Тип кирпича: {value}",
+      "wall_thickness": "Толщина кладки: {value}",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "bricks": "Кирпич: {value} шт",
+      "mortar": "Раствор: {value} м³",
+      "mortar_bags": "Сухая смесь: {value} мешков",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "linoleum_calc": {
+    "title": "Линолеум",
+    "type": {
+      "household": "Бытовой",
+      "household_desc": "Для спален, детских",
+      "semi_commercial": "Полукоммерческий",
+      "semi_commercial_desc": "Для гостиных, кухонь",
+      "commercial": "Коммерческий",
+      "commercial_desc": "Для офисов, магазинов"
+    },
+    "mode": { "manual": "По площади", "room": "По комнате" },
+    "label": {
+      "area": "Площадь",
+      "width": "Ширина",
+      "length": "Длина",
+      "floor_area": "Площадь пола",
+      "roll_width": "Ширина рулона"
+    },
+    "option": {
+      "tape": "Двусторонний скотч",
+      "tape_desc": "Для фиксации по периметру",
+      "plinth": "Плинтус",
+      "plinth_desc": "По периметру, минус дверь"
+    },
+    "result": { "area": "Площадь", "linoleum": "Линолеум", "plinth": "Плинтус" },
+    "materials": {
+      "linoleum": "Линолеум",
+      "tape": "Скотч двусторонний",
+      "tape_desc": "50 мм",
+      "plinth": "Плинтус"
+    },
+    "section": { "materials": "Необходимые материалы" },
+    "export": {
+      "title": "РАСЧЁТ ЛИНОЛЕУМА",
+      "area": "Площадь: {value} м²",
+      "type": "Тип: {value}",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "linoleum": "Линолеум: {value} м² (с запасом)",
+      "tape": "Скотч: {value} м.п.",
+      "plinth": "Плинтус: {value} шт",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "parquet_calc": {
+    "title": "Паркет",
+    "type": {
+      "board": "Паркетная доска",
+      "board_desc": "Трёхслойная, замковая",
+      "engineered": "Инженерная доска",
+      "engineered_desc": "Двухслойная, клеевая",
+      "massive": "Массив",
+      "massive_desc": "Цельная древесина"
+    },
+    "pattern": {
+      "straight": "Прямая",
+      "diagonal": "Диагональ",
+      "herringbone": "Ёлочка",
+      "waste_info": "Запас на отходы: {value}%"
+    },
+    "section": { "pattern": "Способ укладки", "materials": "Необходимые материалы" },
+    "mode": { "manual": "По площади", "room": "По комнате" },
+    "label": {
+      "area": "Площадь",
+      "width": "Ширина",
+      "length": "Длина",
+      "floor_area": "Площадь пола",
+      "pack_area": "Площадь упаковки"
+    },
+    "option": {
+      "underlay": "Подложка",
+      "underlay_desc": "+10% запас",
+      "plinth": "Плинтус",
+      "plinth_desc": "По периметру",
+      "glue": "Паркетный клей",
+      "glue_desc": "Для массива и инженерной доски"
+    },
+    "result": { "area": "Площадь", "packs": "Упаковок", "total_area": "С запасом" },
+    "materials": {
+      "parquet": "Паркет",
+      "underlay": "Подложка",
+      "plinth": "Плинтус",
+      "glue": "Клей"
+    },
+    "export": {
+      "title": "РАСЧЁТ ПАРКЕТА",
+      "area": "Площадь: {value} м²",
+      "type": "Тип: {value}",
+      "pattern": "Укладка: {value}",
+      "waste": "Запас: {value}%",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "packs": "Паркет: {value} упак. ({area} м²/упак.)",
+      "underlay": "Подложка: {value} м²",
+      "plinth": "Плинтус: {value} шт",
+      "glue": "Клей: {value} л",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "screed_calc": {
+    "title": "Стяжка пола",
+    "type": {
+      "cement_sand": "Цементно-песчаная",
+      "cement_sand_desc": "Классическая ЦПС",
+      "semidry": "Полусухая",
+      "semidry_desc": "Меньше воды, быстрее сохнет",
+      "concrete": "Бетонная",
+      "concrete_desc": "С щебнем, для больших нагрузок"
+    },
+    "mode": { "manual": "По площади", "room": "По комнате" },
+    "label": {
+      "area": "Площадь",
+      "width": "Ширина",
+      "length": "Длина",
+      "floor_area": "Площадь пола",
+      "thickness": "Толщина слоя"
+    },
+    "thickness_hint": "Минимум 30 мм, рекомендуется 50-70 мм",
+    "option": {
+      "mesh": "Армирующая сетка",
+      "mesh_desc": "100×100 мм, для прочности",
+      "film": "Плёнка ПЭ",
+      "film_desc": "Гидроизоляция основания"
+    },
+    "result": { "area": "Площадь", "volume": "Объём", "cement": "Цемент" },
+    "materials": {
+      "cement": "Цемент М400",
+      "sand": "Песок",
+      "mesh": "Сетка армирующая",
+      "mesh_desc": "100×100×4 мм",
+      "film": "Плёнка ПЭ",
+      "film_desc": "200 мкм"
+    },
+    "section": { "materials": "Необходимые материалы" },
+    "export": {
+      "title": "РАСЧЁТ СТЯЖКИ",
+      "area": "Площадь: {value} м²",
+      "thickness": "Толщина: {value} мм",
+      "type": "Тип: {value}",
+      "volume": "Объём: {value} м³",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "cement": "Цемент: {value} мешков (50 кг)",
+      "sand": "Песок: {value} м³",
+      "mesh": "Сетка: {value} м²",
+      "film": "Плёнка: {value} м²",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "stretch_ceiling_calc": {
+    "title": "Натяжной потолок",
+    "type": {
+      "matte": "Матовый",
+      "matte_desc": "Классический вид",
+      "glossy": "Глянцевый",
+      "glossy_desc": "Визуально увеличивает пространство",
+      "satin": "Сатиновый",
+      "satin_desc": "Мягкий блеск",
+      "fabric": "Тканевый",
+      "fabric_desc": "Экологичный, дышащий"
+    },
+    "mode": { "manual": "По площади", "room": "По комнате" },
+    "label": {
+      "area": "Площадь",
+      "width": "Ширина",
+      "length": "Длина",
+      "ceiling_area": "Площадь потолка",
+      "lights_count": "Количество светильников"
+    },
+    "lights_hint": "Рекомендуется 1 точка на 1.5-2 м²",
+    "result": { "area": "Площадь", "perimeter": "Периметр", "lights": "Светильники" },
+    "materials": {
+      "canvas": "Полотно",
+      "profile": "Профиль",
+      "profile_desc": "Багет алюминиевый",
+      "lights": "Светильники точечные",
+      "lights_desc": "GU5.3 / GU10",
+      "corners": "Уголки декоративные"
+    },
+    "section": { "materials": "Необходимые материалы" },
+    "export": {
+      "title": "РАСЧЁТ НАТЯЖНОГО ПОТОЛКА",
+      "area": "Площадь: {value} м²",
+      "type": "Тип полотна: {value}",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "canvas": "Полотно: {value} м²",
+      "profile": "Профиль: {value} м.п.",
+      "lights": "Светильники: {value} шт",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "ceiling_insulation_calc": {
+    "title": "Утепление потолка",
+    "type": {
+      "mineral_wool": "Минеральная вата",
+      "mineral_wool_desc": "Базальтовая, негорючая",
+      "styrofoam": "Пенопласт",
+      "styrofoam_desc": "ПСБ-С, лёгкий",
+      "extruded": "Экструдированный ППС",
+      "extruded_desc": "ЭППС, влагостойкий"
+    },
+    "mode": { "manual": "По площади", "room": "По комнате" },
+    "label": {
+      "area": "Площадь",
+      "width": "Ширина",
+      "length": "Длина",
+      "ceiling_area": "Площадь потолка",
+      "thickness": "Толщина утеплителя"
+    },
+    "option": {
+      "vapor_barrier": "Пароизоляция",
+      "vapor_barrier_desc": "Защита от влаги изнутри",
+      "membrane": "Мембрана",
+      "membrane_desc": "Ветрозащита снаружи"
+    },
+    "result": { "area": "Площадь", "packs": "Упаковок", "thickness": "Толщина" },
+    "materials": {
+      "insulation": "Утеплитель",
+      "vapor_barrier": "Пароизоляция",
+      "membrane": "Мембрана"
+    },
+    "section": { "materials": "Необходимые материалы" },
+    "export": {
+      "title": "РАСЧЁТ УТЕПЛЕНИЯ ПОТОЛКА",
+      "area": "Площадь: {value} м²",
+      "type": "Утеплитель: {value}",
+      "thickness": "Толщина: {value} мм",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "insulation": "Утеплитель: {value} упак.",
+      "vapor_barrier": "Пароизоляция: {value} м²",
+      "membrane": "Мембрана: {value} м²",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "plumbing_calc": {
+    "title": "Сантехника",
+    "type": {
+      "standard": "Стандарт",
+      "standard_desc": "Обычная сантехника",
+      "premium": "Премиум",
+      "premium_desc": "Премиум-класс",
+      "economy": "Эконом",
+      "economy_desc": "Бюджетный вариант"
+    },
+    "label": {
+      "bathrooms": "Ванных комнат",
+      "toilets": "Санузлов",
+      "kitchens": "Кухонь",
+      "avg_pipe_length": "Средняя длина труб"
+    },
+    "option": {
+      "hot_water": "Горячее водоснабжение",
+      "hot_water_desc": "Разводка горячей воды"
+    },
+    "result": {
+      "points": "Точек",
+      "pipes": "Труб",
+      "fittings": "Фитингов"
+    },
+    "materials": {
+      "cold_water": "Трубы ХВС",
+      "cold_water_desc": "Холодное водоснабжение",
+      "hot_water": "Трубы ГВС",
+      "hot_water_desc": "Горячее водоснабжение",
+      "sewage": "Канализация",
+      "sewage_desc": "Канализационные трубы",
+      "fittings": "Фитинги",
+      "fittings_desc": "Соединения, углы, тройники",
+      "valves": "Запорная арматура",
+      "valves_desc": "Краны, вентили"
+    },
+    "section": { "materials": "Необходимые материалы" },
+    "export": {
+      "title": "РАСЧЁТ САНТЕХНИКИ",
+      "points": "Точек подключения: {value}",
+      "type": "Тип: {value}",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "cold_water": "Трубы ХВС: {value} м",
+      "hot_water": "Трубы ГВС: {value} м",
+      "sewage": "Канализация: {value} м",
+      "fittings": "Фитинги: {value} шт.",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "ventilation_calc": {
+    "title": "Вентиляция",
+    "type": {
+      "natural": "Естественная",
+      "natural_desc": "Без вентилятора",
+      "supply": "Приточная",
+      "supply_desc": "С подачей воздуха",
+      "exhaust": "Вытяжная",
+      "exhaust_desc": "С удалением воздуха"
+    },
+    "label": {
+      "area": "Общая площадь",
+      "ceiling_height": "Высота потолка",
+      "rooms": "Количество комнат"
+    },
+    "option": {
+      "recovery": "Рекуперация",
+      "recovery_desc": "Теплообмен между потоками"
+    },
+    "result": {
+      "volume": "Объём",
+      "airflow": "Воздухообмен",
+      "ducts": "Воздуховоды"
+    },
+    "materials": {
+      "ducts": "Воздуховоды",
+      "ducts_desc": "Гибкие или жёсткие",
+      "grills": "Решётки",
+      "grills_desc": "Приточные и вытяжные",
+      "fittings": "Фасонные изделия",
+      "fittings_desc": "Колена, тройники, переходники",
+      "recuperator": "Рекуператор",
+      "recuperator_desc": "Теплообменник"
+    },
+    "section": { "materials": "Необходимые материалы" },
+    "export": {
+      "title": "РАСЧЁТ ВЕНТИЛЯЦИИ",
+      "volume": "Объём помещений: {value} м³",
+      "airflow": "Воздухообмен: {value} м³/ч",
+      "type": "Тип: {value}",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "ducts": "Воздуховоды: {value} м",
+      "grills": "Решётки: {value} шт.",
+      "fittings": "Фасонные: {value} шт.",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "basement_calc": {
+    "title": "Подвал",
+    "type": {
+      "technical": "Технический",
+      "technical_desc": "Коммуникации, хранение",
+      "living": "Жилой",
+      "living_desc": "С утеплением",
+      "garage": "Гараж",
+      "garage_desc": "Для автомобиля"
+    },
+    "label": {
+      "length": "Длина",
+      "width": "Ширина",
+      "depth": "Глубина",
+      "wall_thickness": "Толщина стен"
+    },
+    "option": {
+      "waterproof": "Гидроизоляция",
+      "waterproof_desc": "Защита от грунтовых вод",
+      "insulation": "Утепление",
+      "insulation_desc": "Теплоизоляция стен и пола",
+      "drainage": "Дренаж",
+      "drainage_desc": "Отвод воды от фундамента"
+    },
+    "result": {
+      "floor_area": "Площадь пола",
+      "concrete": "Бетон",
+      "wall_area": "Площадь стен"
+    },
+    "materials": {
+      "concrete": "Бетон",
+      "concrete_desc": "Для пола и стен",
+      "waterproof": "Гидроизоляция",
+      "waterproof_desc": "Битумная или рулонная",
+      "insulation": "Утеплитель",
+      "insulation_desc": "ЭППС или пенопласт",
+      "drainage": "Дренажная труба",
+      "drainage_desc": "С геотекстилем"
+    },
+    "section": { "materials": "Необходимые материалы" },
+    "export": {
+      "title": "РАСЧЁТ ПОДВАЛА",
+      "floor_area": "Площадь пола: {value} м²",
+      "type": "Тип: {value}",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "concrete": "Бетон: {value} м³",
+      "waterproof": "Гидроизоляция: {value} м²",
+      "insulation": "Утеплитель: {value} м²",
+      "drainage": "Дренаж: {value} м",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "blind_area_calc": {
+    "title": "Отмостка",
+    "type": {
+      "concrete": "Бетонная",
+      "concrete_desc": "Классическая",
+      "paving": "Из плитки",
+      "paving_desc": "Тротуарная плитка",
+      "soft": "Мягкая",
+      "soft_desc": "Щебень + газон"
+    },
+    "label": {
+      "house_length": "Длина дома",
+      "house_width": "Ширина дома",
+      "blind_width": "Ширина отмостки",
+      "thickness": "Толщина бетона"
+    },
+    "option": {
+      "insulation": "Утепление",
+      "insulation_desc": "ЭППС под отмостку",
+      "drainage": "Дренаж",
+      "drainage_desc": "Отвод воды от дома"
+    },
+    "result": {
+      "perimeter": "Периметр",
+      "area": "Площадь",
+      "concrete": "Бетон"
+    },
+    "materials": {
+      "concrete": "Бетон",
+      "concrete_desc": "М200-М300",
+      "paving": "Тротуарная плитка",
+      "paving_desc": "С бордюром",
+      "sand": "Песок",
+      "sand_desc": "Подушка 10 см",
+      "gravel": "Щебень",
+      "gravel_desc": "Подушка 15 см",
+      "membrane": "Мембрана",
+      "membrane_desc": "Профилированная",
+      "insulation": "Утеплитель",
+      "insulation_desc": "ЭППС 50 мм",
+      "drainage": "Дренажная труба",
+      "drainage_desc": "По периметру"
+    },
+    "section": { "materials": "Необходимые материалы" },
+    "export": {
+      "title": "РАСЧЁТ ОТМОСТКИ",
+      "perimeter": "Периметр: {value} м",
+      "area": "Площадь: {value} м²",
+      "type": "Тип: {value}",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "concrete": "Бетон: {value} м³",
+      "sand": "Песок: {value} м³",
+      "gravel": "Щебень: {value} м³",
+      "membrane": "Мембрана: {value} м²",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "slab_calc": {
+    "title": "Фундаментная плита",
+    "type": {
+      "monolithic": "Монолитная",
+      "monolithic_desc": "Классическая плита",
+      "ribbed": "Ребристая",
+      "ribbed_desc": "С рёбрами жёсткости",
+      "floating": "Плавающая",
+      "floating_desc": "На пучинистых грунтах"
+    },
+    "label": {
+      "length": "Длина",
+      "width": "Ширина",
+      "thickness": "Толщина плиты"
+    },
+    "thickness_hint": "Рекомендуется 25-40 см",
+    "option": {
+      "waterproof": "Гидроизоляция",
+      "waterproof_desc": "Защита от капиллярной влаги",
+      "insulation": "Утепление",
+      "insulation_desc": "ЭППС под плиту"
+    },
+    "result": {
+      "area": "Площадь",
+      "concrete": "Бетон",
+      "reinforcement": "Арматура"
+    },
+    "materials": {
+      "concrete": "Бетон",
+      "concrete_desc": "М300-М350",
+      "reinforcement": "Арматура",
+      "reinforcement_desc": "Сетка d12-d16",
+      "sand": "Песок",
+      "sand_desc": "Подушка 20 см",
+      "gravel": "Щебень",
+      "gravel_desc": "Подушка 15 см",
+      "waterproof": "Гидроизоляция",
+      "waterproof_desc": "Рулонная или битумная",
+      "insulation": "Утеплитель",
+      "insulation_desc": "ЭППС высокой плотности"
+    },
+    "section": { "materials": "Необходимые материалы" },
+    "export": {
+      "title": "РАСЧЁТ ФУНДАМЕНТНОЙ ПЛИТЫ",
+      "area": "Площадь: {value} м²",
+      "type": "Тип: {value}",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "concrete": "Бетон: {value} м³",
+      "reinforcement": "Арматура: {value} кг",
+      "sand": "Песок: {value} м³",
+      "gravel": "Щебень: {value} м³",
+      "waterproof": "Гидроизоляция: {value} м²",
+      "insulation": "Утеплитель: {value} м²",
+      "footer": "Создано в ПроРаб"
+    }
+  },
+  "gutters_calc": {
+    "title": "Водостоки",
+    "type": {
+      "plastic": "Пластиковые",
+      "plastic_desc": "ПВХ, лёгкие",
+      "metal": "Металлические",
+      "metal_desc": "Оцинкованная сталь",
+      "copper": "Медные",
+      "copper_desc": "Премиум-класс"
+    },
+    "label": {
+      "roof_length": "Длина крыши",
+      "roof_width": "Ширина крыши",
+      "wall_height": "Высота стены",
+      "downpipes_count": "Количество труб"
+    },
+    "downpipes_hint": "Рекомендуется 1 труба на 50 м² кровли",
+    "option": {
+      "heating": "Обогрев",
+      "heating_desc": "Кабель антиобледенения"
+    },
+    "result": {
+      "gutters": "Желоба",
+      "downpipes": "Трубы",
+      "brackets": "Кронштейнов"
+    },
+    "materials": {
+      "gutters": "Желоба",
+      "downpipes": "Водосточные трубы",
+      "downpipes_desc": "Вертикальный водоотвод",
+      "corners": "Углы желоба",
+      "corners_desc": "Внешние углы 90°",
+      "funnels": "Воронки",
+      "funnels_desc": "Соединение желоба с трубой",
+      "brackets": "Кронштейны желоба",
+      "brackets_desc": "Крепёж через 60 см",
+      "downpipe_brackets": "Хомуты трубы",
+      "downpipe_brackets_desc": "Крепёж через 1 м",
+      "elbows": "Колена",
+      "elbows_desc": "Повороты трубы",
+      "heating": "Греющий кабель",
+      "heating_desc": "Для желобов и труб"
+    },
+    "section": { "materials": "Необходимые материалы" },
+    "export": {
+      "title": "РАСЧЁТ ВОДОСТОКОВ",
+      "gutter_length": "Желоба: {value} м",
+      "downpipe_length": "Трубы: {value} м",
+      "material": "Материал: {value}",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "corners": "Углы: {value} шт.",
+      "funnels": "Воронки: {value} шт.",
+      "brackets": "Кронштейны: {value} шт.",
+      "elbows": "Колена: {value} шт.",
+      "footer": "Создано в ПроРаб"
+    }
+  },
   "language": {
     "ru": "Русский",
     "en": "English",

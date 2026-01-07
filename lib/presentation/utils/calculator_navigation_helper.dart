@@ -18,7 +18,36 @@ import '../views/calculator/terrace_calculator_screen.dart';
 import '../views/calculator/wood_lining_calculator_screen.dart';
 import '../views/calculator/gasblock_calculator_screen.dart';
 import '../views/calculator/electrical_calculator_screen.dart';
-import '../views/primer/primer_screen.dart';
+import '../views/calculator/primer_calculator_screen.dart';
+import '../views/calculator/laminate_calculator_screen.dart';
+import '../views/calculator/brick_calculator_screen.dart';
+import '../views/calculator/linoleum_calculator_screen.dart';
+import '../views/calculator/parquet_calculator_screen.dart';
+import '../views/calculator/screed_calculator_screen.dart';
+import '../views/calculator/stretch_ceiling_calculator_screen.dart';
+import '../views/calculator/ceiling_insulation_calculator_screen.dart';
+import '../views/calculator/cassette_ceiling_calculator_screen.dart';
+import '../views/calculator/rail_ceiling_calculator_screen.dart';
+import '../views/calculator/decor_plaster_calculator_screen.dart';
+import '../views/calculator/decor_stone_calculator_screen.dart';
+import '../views/calculator/mdf_panels_calculator_screen.dart';
+import '../views/calculator/pvc_panels_calculator_screen.dart';
+import '../views/calculator/attic_calculator_screen.dart';
+import '../views/calculator/balcony_calculator_screen.dart';
+import '../views/calculator/bathroom_waterproof_calculator_screen.dart';
+import '../views/calculator/doors_install_calculator_screen.dart';
+import '../views/calculator/sound_insulation_calculator_screen.dart';
+import '../views/calculator/slopes_calculator_screen.dart';
+import '../views/calculator/windows_install_calculator_screen.dart';
+import '../views/calculator/facade_panels_calculator_screen.dart';
+import '../views/calculator/fence_calculator_screen.dart';
+import '../views/calculator/stairs_calculator_screen.dart';
+import '../views/calculator/plumbing_calculator_screen.dart';
+import '../views/calculator/ventilation_calculator_screen.dart';
+import '../views/calculator/basement_calculator_screen.dart';
+import '../views/calculator/blind_area_calculator_screen.dart';
+import '../views/calculator/slab_calculator_screen.dart';
+import '../views/calculator/gutters_calculator_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
 import '../views/dsp/dsp_screen.dart';
@@ -60,7 +89,7 @@ class CalculatorNavigationHelper {
     if (definition.id == 'mixes_primer') {
       Navigator.of(context).push(
         ModernPageTransitions.scale(
-          const PrimerScreen(),
+          const PrimerCalculatorScreen(),
         ),
       );
       return;
@@ -233,6 +262,267 @@ class CalculatorNavigationHelper {
             definition: definition,
             initialInputs: initialInputs,
           ),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'floors_laminate') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const LaminateCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'partitions_brick' || definition.id == 'exterior_brick') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const BrickCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'floors_linoleum') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const LinoleumCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'floors_parquet') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const ParquetCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'floors_screed') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const ScreedCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'ceilings_stretch') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const StretchCeilingCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'ceilings_insulation') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const CeilingInsulationCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'ceilings_cassette') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const CassetteCeilingCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'ceilings_rail') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const RailCeilingCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'walls_decor_plaster') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const DecorPlasterCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'walls_decor_stone') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const DecorStoneCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'walls_mdf_panels') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const MdfPanelsCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'walls_pvc_panels') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const PvcPanelsCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'attic') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const AtticCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'balcony') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const BalconyCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'bathroom_waterproof') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const BathroomWaterproofCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'doors_install') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const DoorsInstallCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'insulation_sound') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const SoundInsulationCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'slopes_finishing') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const SlopesCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'windows_install') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const WindowsInstallCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'exterior_facade_panels') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const FacadePanelsCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'fence') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const FenceCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'stairs') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const StairsCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'engineering_plumbing') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const PlumbingCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'engineering_ventilation') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const VentilationCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'foundation_basement') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const BasementCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'foundation_blind_area') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const BlindAreaCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'foundation_slab') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const SlabCalculatorScreen(),
+        ),
+      );
+      return;
+    }
+
+    if (definition.id == 'roofing_gutters') {
+      Navigator.of(context).push(
+        ModernPageTransitions.scale(
+          const GuttersCalculatorScreen(),
         ),
       );
       return;
