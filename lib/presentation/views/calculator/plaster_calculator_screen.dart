@@ -156,7 +156,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
         results: [
           ResultItem(
             label: _loc.translate('plaster_pro.label.wall_area').toUpperCase(),
-            value: '${_result.area.toStringAsFixed(0)} м²',
+            value: '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -166,7 +166,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
           ),
           ResultItem(
             label: _loc.translate('plaster_pro.summary.weight').toUpperCase(),
-            value: '${(_result.totalWeight / 1000).toStringAsFixed(1)} т',
+            value: '${(_result.totalWeight / 1000).toStringAsFixed(1)} ${_loc.translate('common.tons')}',
             icon: Icons.scale,
           ),
         ],
@@ -195,12 +195,12 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
         TypeSelectorOption(
           icon: Icons.home_repair_service,
           title: _loc.translate('plaster_pro.material.gypsum'),
-          subtitle: '30 кг',
+          subtitle: '30 ${_loc.translate('common.kg')}',
         ),
         TypeSelectorOption(
           icon: Icons.construction,
           title: _loc.translate('plaster_pro.material.cement'),
-          subtitle: '25 кг',
+          subtitle: '25 ${_loc.translate('common.kg')}',
         ),
       ],
       selectedIndex: _materialType == PlasterMaterial.gypsum ? 0 : 1,
@@ -255,7 +255,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
               ),
             ),
             Text(
-              '${_manualArea.toStringAsFixed(0)} м²',
+              '${_manualArea.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
               style: CalculatorDesignSystem.headlineMedium.copyWith(
                 color: accentColor,
                 fontWeight: FontWeight.bold,
@@ -285,7 +285,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
                 label: _loc.translate('plaster_pro.label.width'),
                 value: _roomWidth,
                 onChanged: (v) => setState(() { _roomWidth = v; _update(); }),
-                suffix: 'м',
+                suffix: _loc.translate('common.meters'),
                 accentColor: accentColor,
                 minValue: 0.1,
                 maxValue: 100,
@@ -297,7 +297,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
                 label: _loc.translate('plaster_pro.label.length'),
                 value: _roomLength,
                 onChanged: (v) => setState(() { _roomLength = v; _update(); }),
-                suffix: 'м',
+                suffix: _loc.translate('common.meters'),
                 accentColor: accentColor,
                 minValue: 0.1,
                 maxValue: 100,
@@ -310,7 +310,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
           label: _loc.translate('plaster_pro.label.height'),
           value: _roomHeight,
           onChanged: (v) => setState(() { _roomHeight = v; _update(); }),
-          suffix: 'м',
+          suffix: _loc.translate('common.meters'),
           accentColor: accentColor,
           minValue: 1.5,
           maxValue: 10,
@@ -320,7 +320,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
           label: _loc.translate('plaster_pro.label.openings_hint'),
           value: _openingsArea,
           onChanged: (v) => setState(() { _openingsArea = v; _update(); }),
-          suffix: 'м²',
+          suffix: _loc.translate('common.sqm'),
           accentColor: accentColor,
           minValue: 0,
           maxValue: 100,
@@ -344,7 +344,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
                 ),
               ),
               Text(
-                '${_thickness.toStringAsFixed(0)} мм',
+                '${_thickness.toStringAsFixed(0)} ${_loc.translate('common.mm')}',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.bold,
@@ -388,7 +388,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
     final items = <MaterialItem>[
       MaterialItem(
         name: _loc.translate('plaster_pro.summary.weight'),
-        value: '${_result.totalWeight.toStringAsFixed(0)} кг',
+        value: '${_result.totalWeight.toStringAsFixed(0)} ${_loc.translate('common.kg')}',
         icon: Icons.scale,
       ),
     ];
@@ -396,8 +396,8 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
     if (_useBeacons) {
       items.add(MaterialItem(
         name: _loc.translate('plaster_pro.options.beacons'),
-        value: '${_result.beacons} шт',
-        subtitle: '${_result.beaconSize} мм',
+        value: '${_result.beacons} ${_loc.translate('common.pcs')}',
+        subtitle: '${_result.beaconSize} ${_loc.translate('common.mm')}',
         icon: Icons.architecture,
       ));
     }
@@ -405,7 +405,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
     if (_useMesh) {
       items.add(MaterialItem(
         name: _loc.translate('plaster_pro.spec.mesh_title'),
-        value: '${_result.meshArea} м²',
+        value: '${_result.meshArea} ${_loc.translate('common.sqm')}',
         icon: Icons.grid_on,
       ));
     }
@@ -413,7 +413,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
     if (_usePrimer) {
       items.add(MaterialItem(
         name: _loc.translate('plaster_pro.options.primer'),
-        value: '${_result.primerLiters} л',
+        value: '${_result.primerLiters} ${_loc.translate('common.liters')}',
         icon: Icons.water_drop,
       ));
     }
