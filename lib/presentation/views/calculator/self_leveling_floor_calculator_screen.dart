@@ -202,30 +202,30 @@ class _SelfLevelingFloorCalculatorScreenState
 
   String _generateExportText() {
     final buffer = StringBuffer();
-    buffer.writeln('📋 РАСЧЁТ МАТЕРИАЛОВ ДЛЯ НАЛИВНОГО ПОЛА');
+    buffer.writeln(_loc.translate('self_leveling.export.title'));
     buffer.writeln('═' * 40);
     buffer.writeln();
 
-    buffer.writeln('Площадь: ${_result.area.toStringAsFixed(1)} м²');
-    buffer.writeln('Толщина слоя: ${_result.thickness.toStringAsFixed(0)} мм');
+    buffer.writeln(_loc.translate('self_leveling.export.area').replaceFirst('{value}', _result.area.toStringAsFixed(1)));
+    buffer.writeln(_loc.translate('self_leveling.export.thickness').replaceFirst('{value}', _result.thickness.toStringAsFixed(0)));
     buffer.writeln();
 
-    buffer.writeln('📦 МАТЕРИАЛЫ:');
+    buffer.writeln(_loc.translate('self_leveling.export.materials_title'));
     buffer.writeln('─' * 40);
-    buffer.writeln('• Смесь для наливного пола: ${_result.bagsNeeded} ${_loc.translate('self_leveling.materials.bags_unit')} по ${_result.bagWeight} кг');
-    buffer.writeln('• Общий вес: ${_result.totalWeight.toStringAsFixed(1)} кг');
-    buffer.writeln('• Грунтовка: ${_result.primerLiters.toStringAsFixed(1)} л');
-    buffer.writeln('• Демпферная лента: ${_result.damperTape.toStringAsFixed(1)} м');
+    buffer.writeln('• ${_loc.translate('self_leveling.export.mixture_line').replaceFirst('{bags}', _result.bagsNeeded.toString()).replaceFirst('{weight}', _result.bagWeight.toString())}');
+    buffer.writeln('• ${_loc.translate('self_leveling.export.total_weight_line').replaceFirst('{value}', _result.totalWeight.toStringAsFixed(1))}');
+    buffer.writeln('• ${_loc.translate('self_leveling.export.primer_line').replaceFirst('{value}', _result.primerLiters.toStringAsFixed(1))}');
+    buffer.writeln('• ${_loc.translate('self_leveling.export.damper_tape_line').replaceFirst('{value}', _result.damperTape.toStringAsFixed(1))}');
     buffer.writeln();
 
-    buffer.writeln('🛠 ИНСТРУМЕНТЫ:');
+    buffer.writeln(_loc.translate('self_leveling.export.tools_title'));
     buffer.writeln('─' * 40);
-    buffer.writeln('• Игольчатый валик: ${_result.spikeRollers} шт');
-    buffer.writeln('• Краскоступы (мокроступы): ${_result.spikeShoesCount} пара');
+    buffer.writeln('• ${_loc.translate('self_leveling.export.spike_roller_line').replaceFirst('{value}', _result.spikeRollers.toString())}');
+    buffer.writeln('• ${_loc.translate('self_leveling.export.spike_shoes_line').replaceFirst('{value}', _result.spikeShoesCount.toString())}');
     buffer.writeln();
 
     buffer.writeln('═' * 40);
-    buffer.writeln('Создано с помощью Калькулятора Стройматериалов');
+    buffer.writeln(_loc.translate('self_leveling.export.footer'));
 
     return buffer.toString();
   }
@@ -233,7 +233,7 @@ class _SelfLevelingFloorCalculatorScreenState
   void _shareCalculation() {
     final text = _generateExportText();
     SharePlus.instance.share(
-      ShareParams(text: text, subject: 'Расчёт материалов для наливного пола'),
+      ShareParams(text: text, subject: _loc.translate('self_leveling.export.subject')),
     );
   }
 
@@ -273,7 +273,7 @@ class _SelfLevelingFloorCalculatorScreenState
         results: [
           ResultItem(
             label: _loc.translate('self_leveling.label.area').toUpperCase(),
-            value: '${_result.area.toStringAsFixed(0)} м²',
+            value: '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -283,7 +283,7 @@ class _SelfLevelingFloorCalculatorScreenState
           ),
           ResultItem(
             label: _loc.translate('self_leveling.summary.weight').toUpperCase(),
-            value: '${_result.totalWeight.toStringAsFixed(0)} кг',
+            value: '${_result.totalWeight.toStringAsFixed(0)} ${_loc.translate('self_leveling.materials.kg')}',
             icon: Icons.scale,
           ),
         ],
@@ -360,7 +360,7 @@ class _SelfLevelingFloorCalculatorScreenState
                 ),
               ),
               Text(
-                '${_area.toStringAsFixed(1)} м²',
+                '${_area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.bold,
@@ -442,7 +442,7 @@ class _SelfLevelingFloorCalculatorScreenState
                   ),
                 ),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} м²',
+                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -477,7 +477,7 @@ class _SelfLevelingFloorCalculatorScreenState
               ),
             ),
             Text(
-              '${value.toStringAsFixed(1)} м',
+              '${value.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
               style: CalculatorDesignSystem.titleMedium.copyWith(
                 color: accentColor,
                 fontWeight: FontWeight.w600,
@@ -525,7 +525,7 @@ class _SelfLevelingFloorCalculatorScreenState
                 ],
               ),
               Text(
-                '${_thickness.toStringAsFixed(0)} мм',
+                '${_thickness.toStringAsFixed(0)} ${_loc.translate('common.mm')}',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.bold,
@@ -667,7 +667,7 @@ class _SelfLevelingFloorCalculatorScreenState
       ),
       MaterialItem(
         name: _loc.translate('self_leveling.materials.damper_tape'),
-        value: '${_result.damperTape.toStringAsFixed(1)} м',
+        value: '${_result.damperTape.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
         icon: Icons.straighten,
       ),
     ];
