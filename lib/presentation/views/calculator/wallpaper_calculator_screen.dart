@@ -219,37 +219,46 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen> {
 
   String _generateExportText() {
     final buffer = StringBuffer();
-    buffer.writeln('📋 РАСЧЁТ МАТЕРИАЛОВ ДЛЯ ОБОЕВ');
+    buffer.writeln(_loc.translate('wallpaper.export.title'));
     buffer.writeln('═' * 40);
     buffer.writeln();
 
-    buffer.writeln('Площадь стен: ${_result.wallsArea.toStringAsFixed(1)} м²');
+    buffer.writeln(_loc.translate('wallpaper.export.walls_area')
+        .replaceFirst('{value}', _result.wallsArea.toStringAsFixed(1)));
     if (_windowsDoors > 0) {
-      buffer.writeln('Вычет (окна/двери): ${_windowsDoors.toStringAsFixed(1)} м²');
-      buffer.writeln('Площадь оклейки: ${_result.area.toStringAsFixed(1)} м²');
+      buffer.writeln(_loc.translate('wallpaper.export.deduction')
+          .replaceFirst('{value}', _windowsDoors.toStringAsFixed(1)));
+      buffer.writeln(_loc.translate('wallpaper.export.gluing_area')
+          .replaceFirst('{value}', _result.area.toStringAsFixed(1)));
     }
     if (_rapport > 0) {
-      buffer.writeln('Раппорт: $_rapport см');
+      buffer.writeln(_loc.translate('wallpaper.export.rapport')
+          .replaceFirst('{value}', _rapport.toString()));
     }
     buffer.writeln();
 
-    buffer.writeln('📦 МАТЕРИАЛЫ:');
+    buffer.writeln(_loc.translate('wallpaper.export.materials_title'));
     buffer.writeln('─' * 40);
-    buffer.writeln('• Обои ${_result.rollSizeName} м: ${_result.rollsNeeded} ${_loc.translate('wallpaper.materials.rolls_unit')}');
-    buffer.writeln('• Полос: ${_result.stripsNeeded} шт');
-    buffer.writeln('• Клей для обоев: ${_result.glueNeededKg.toStringAsFixed(1)} кг');
-    buffer.writeln('• Грунтовка: ${_result.primerLiters.toStringAsFixed(1)} л');
+    buffer.writeln(_loc.translate('wallpaper.export.rolls_line')
+        .replaceFirst('{size}', _result.rollSizeName)
+        .replaceFirst('{value}', _result.rollsNeeded.toString()));
+    buffer.writeln(_loc.translate('wallpaper.export.strips_line')
+        .replaceFirst('{value}', _result.stripsNeeded.toString()));
+    buffer.writeln(_loc.translate('wallpaper.export.glue_line')
+        .replaceFirst('{value}', _result.glueNeededKg.toStringAsFixed(1)));
+    buffer.writeln(_loc.translate('wallpaper.export.primer_line')
+        .replaceFirst('{value}', _result.primerLiters.toStringAsFixed(1)));
     buffer.writeln();
 
     buffer.writeln('═' * 40);
-    buffer.writeln('Создано с помощью Калькулятора Стройматериалов');
+    buffer.writeln(_loc.translate('wallpaper.export.footer'));
 
     return buffer.toString();
   }
 
   void _shareCalculation() {
     final text = _generateExportText();
-    SharePlus.instance.share(ShareParams(text: text, subject: 'Расчёт материалов для обоев'));
+    SharePlus.instance.share(ShareParams(text: text, subject: _loc.translate('wallpaper.export.subject')));
   }
 
   void _copyToClipboard() {
@@ -288,7 +297,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen> {
         results: [
           ResultItem(
             label: _loc.translate('wallpaper.label.area').toUpperCase(),
-            value: '${_result.area.toStringAsFixed(0)} м²',
+            value: '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -375,7 +384,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen> {
                 ),
               ),
               Text(
-                '${_area.toStringAsFixed(0)} м²',
+                '${_area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.bold,
@@ -471,7 +480,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen> {
                   ),
                 ),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} м²',
+                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -506,7 +515,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen> {
               ),
             ),
             Text(
-              '${value.toStringAsFixed(1)} м',
+              '${value.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
               style: CalculatorDesignSystem.titleMedium.copyWith(
                 color: accentColor,
                 fontWeight: FontWeight.w600,
@@ -642,7 +651,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen> {
               Text(
                 _rapport == 0
                     ? _loc.translate('wallpaper.rapport.none')
-                    : '$_rapport см',
+                    : '$_rapport ${_loc.translate('common.cm')}',
                 style: CalculatorDesignSystem.titleMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.w600,
@@ -697,7 +706,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen> {
                 ],
               ),
               Text(
-                '${_windowsDoors.toStringAsFixed(1)} м²',
+                '${_windowsDoors.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                 style: CalculatorDesignSystem.titleMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.w600,
