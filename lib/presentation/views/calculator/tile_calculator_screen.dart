@@ -14,107 +14,107 @@ enum InputMode { byArea, byDimensions }
 
 enum TileMaterial {
   ceramic(
-    'Керамическая плитка',
-    'Для стен и пола',
-    'Стандартное решение',
+    'tile.material.ceramic',
+    'tile.material.ceramic_desc',
+    'tile.material.ceramic_adv',
     Icons.grid_on,
   ),
   porcelain(
-    'Керамогранит',
-    'Прочный, для пола',
-    'Износостойкий материал',
+    'tile.material.porcelain',
+    'tile.material.porcelain_desc',
+    'tile.material.porcelain_adv',
     Icons.view_module,
   ),
   mosaic(
-    'Мозаика',
-    'Декоративная отделка',
-    'Сложная укладка',
+    'tile.material.mosaic',
+    'tile.material.mosaic_desc',
+    'tile.material.mosaic_adv',
     Icons.apps,
   ),
   largeFormat(
-    'Крупноформат',
-    '60×60 см и больше',
-    'Современный дизайн',
+    'tile.material.large_format',
+    'tile.material.large_format_desc',
+    'tile.material.large_format_adv',
     Icons.crop_square,
   );
 
-  final String name;
-  final String subtitle;
-  final String advantage;
+  final String nameKey;
+  final String subtitleKey;
+  final String advantageKey;
   final IconData icon;
   const TileMaterial(
-    this.name,
-    this.subtitle,
-    this.advantage,
+    this.nameKey,
+    this.subtitleKey,
+    this.advantageKey,
     this.icon,
   );
 }
 
 enum LayoutPattern {
   straight(
-    'Прямая',
-    'Стандартная укладка',
+    'tile.layout.straight',
+    'tile.layout.straight_desc',
     Icons.grid_3x3,
   ),
   diagonal(
-    'Диагональная',
-    'Под углом 45°',
+    'tile.layout.diagonal',
+    'tile.layout.diagonal_desc',
     Icons.rotate_right,
   ),
   offset(
-    'Вразбежку',
-    'Со смещением 1/2 или 1/3',
+    'tile.layout.offset',
+    'tile.layout.offset_desc',
     Icons.view_week,
   ),
   herringbone(
-    'Ёлочка',
-    'Декоративная раскладка',
+    'tile.layout.herringbone',
+    'tile.layout.herringbone_desc',
     Icons.trending_up,
   );
 
-  final String name;
-  final String description;
+  final String nameKey;
+  final String descKey;
   final IconData icon;
-  const LayoutPattern(this.name, this.description, this.icon);
+  const LayoutPattern(this.nameKey, this.descKey, this.icon);
 }
 
 enum RoomType {
   bathroom(
-    'Ванная / санузел',
+    'tile.room.bathroom',
     Icons.bathroom,
-    'Высокая влажность',
+    'tile.room.bathroom_desc',
     true, // нужна гидроизоляция
   ),
   kitchen(
-    'Кухня',
+    'tile.room.kitchen',
     Icons.kitchen,
-    'Средняя влажность',
+    'tile.room.kitchen_desc',
     false,
   ),
   hallway(
-    'Прихожая / коридор',
+    'tile.room.hallway',
     Icons.meeting_room,
-    'Высокая проходимость',
+    'tile.room.hallway_desc',
     false,
   ),
   living(
-    'Жилая комната',
+    'tile.room.living',
     Icons.weekend,
-    'Декоративная отделка',
+    'tile.room.living_desc',
     false,
   ),
   balcony(
-    'Балкон / терраса',
+    'tile.room.balcony',
     Icons.balcony,
-    'Перепады температур',
+    'tile.room.balcony_desc',
     true, // нужна гидроизоляция
   );
 
-  final String name;
+  final String nameKey;
   final IconData icon;
-  final String description;
+  final String descKey;
   final bool needsWaterproofing;
-  const RoomType(this.name, this.icon, this.description, this.needsWaterproofing);
+  const RoomType(this.nameKey, this.icon, this.descKey, this.needsWaterproofing);
 }
 
 /// Helper class для работы с константами калькулятора плитки
@@ -417,41 +417,41 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
 
   String _generateExportText() {
     final buffer = StringBuffer();
-    buffer.writeln('📋 РАСЧЁТ ПЛИТКИ / КЕРАМОГРАНИТА');
+    buffer.writeln('📋 ${_loc.translate('tile.export.title')}');
     buffer.writeln('═' * 40);
     buffer.writeln();
 
-    buffer.writeln('Площадь: ${_result.area.toStringAsFixed(1)} м²');
-    buffer.writeln('Материал: ${_result.material.name}');
-    buffer.writeln('Размер плитки: ${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} см');
-    buffer.writeln('Способ укладки: ${_result.layout.name} (запас ${_constants.getLayoutMargin(_result.layout)}%)');
-    buffer.writeln('Помещение: ${_result.roomType.name}');
+    buffer.writeln('${_loc.translate('tile.export.area')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+    buffer.writeln('${_loc.translate('tile.export.material')}: ${_loc.translate(_result.material.nameKey)}');
+    buffer.writeln('${_loc.translate('tile.export.tile_size')}: ${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} ${_loc.translate('common.cm')}');
+    buffer.writeln('${_loc.translate('tile.export.layout')}: ${_loc.translate(_result.layout.nameKey)} (${_loc.translate('tile.export.reserve')} ${_constants.getLayoutMargin(_result.layout)}%)');
+    buffer.writeln('${_loc.translate('tile.export.room')}: ${_loc.translate(_result.roomType.nameKey)}');
     buffer.writeln();
 
-    buffer.writeln('📦 МАТЕРИАЛЫ (с запасом):');
+    buffer.writeln(_loc.translate('tile.export.materials_title'));
     buffer.writeln('─' * 40);
-    buffer.writeln('• Плитка: ${_result.tilesNeeded} шт (${_result.tilesArea.toStringAsFixed(1)} м²)');
-    buffer.writeln('• Упаковок: ${_result.boxesNeeded} коробок');
-    buffer.writeln('• Клей плиточный: ${_result.glueBags} мешков × 25 кг (${_result.glueWeight.toStringAsFixed(1)} кг)');
-    buffer.writeln('• Затирка: ${_result.groutWeight.toStringAsFixed(1)} кг');
-    buffer.writeln('• Грунтовка: ${_result.primerLiters.toStringAsFixed(1)} л');
-    buffer.writeln('• Крестики: ${_result.crossesNeeded} шт');
+    buffer.writeln('• ${_loc.translate('tile.export.tiles')}: ${_result.tilesNeeded} ${_loc.translate('common.pcs')} (${_result.tilesArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')})');
+    buffer.writeln('• ${_loc.translate('tile.export.boxes')}: ${_result.boxesNeeded} ${_loc.translate('tile.export.boxes_unit')}');
+    buffer.writeln('• ${_loc.translate('tile.export.glue')}: ${_result.glueBags} ${_loc.translate('tile.export.glue_bags')} (${_result.glueWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')})');
+    buffer.writeln('• ${_loc.translate('tile.export.grout')}: ${_result.groutWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')}');
+    buffer.writeln('• ${_loc.translate('tile.export.primer')}: ${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}');
+    buffer.writeln('• ${_loc.translate('tile.export.crosses')}: ${_result.crossesNeeded} ${_loc.translate('common.pcs')}');
 
     if (_result.useSVP && _result.svpCount != null) {
-      buffer.writeln('• СВП: ${_result.svpCount} компл.');
+      buffer.writeln('• ${_loc.translate('tile.export.svp')}: ${_result.svpCount} ${_loc.translate('tile.export.svp_unit')}');
     }
 
     if (_result.useWaterproofing && _result.waterproofingWeight != null) {
-      buffer.writeln('• Гидроизоляция: ${_result.waterproofingWeight!.toStringAsFixed(1)} кг');
+      buffer.writeln('• ${_loc.translate('tile.export.waterproofing')}: ${_result.waterproofingWeight!.toStringAsFixed(1)} ${_loc.translate('common.kg')}');
     }
 
     if (_result.useUnderlay && _result.underlayArea != null) {
-      buffer.writeln('• Подложка: ${_result.underlayArea!.toStringAsFixed(1)} м²');
+      buffer.writeln('• ${_loc.translate('tile.export.underlay')}: ${_result.underlayArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
     }
 
     buffer.writeln();
     buffer.writeln('═' * 40);
-    buffer.writeln('Создано с помощью Калькулятора Стройматериалов');
+    buffer.writeln(_loc.translate('tile.export.footer'));
 
     return buffer.toString();
   }
@@ -459,7 +459,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
   void _shareCalculation() {
     final text = _generateExportText();
     SharePlus.instance.share(
-      ShareParams(text: text, subject: 'Расчёт плитки / керамогранита'),
+      ShareParams(text: text, subject: _loc.translate('tile.export.subject')),
     );
   }
 
@@ -480,7 +480,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
     const accentColor = CalculatorColors.interior;
 
     return CalculatorScaffold(
-      title: 'Плитка / Керамогранит',
+      title: _loc.translate('tile.title'),
       accentColor: accentColor,
       actions: [
         IconButton(
@@ -498,17 +498,17 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
         accentColor: accentColor,
         results: [
           ResultItem(
-            label: 'ПЛОЩАДЬ',
-            value: '${_result.area.toStringAsFixed(0)} м²',
+            label: _loc.translate('tile.header.area'),
+            value: '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
-            label: 'ПЛИТКА',
-            value: '${_result.tilesNeeded} шт',
+            label: _loc.translate('tile.header.tiles'),
+            value: '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
             icon: Icons.grid_on,
           ),
           ResultItem(
-            label: 'УПАКОВОК',
+            label: _loc.translate('tile.header.boxes'),
             value: '${_result.boxesNeeded}',
             icon: Icons.inventory_2,
           ),
@@ -554,14 +554,17 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Режим ввода',
+            _loc.translate('tile.mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: const ['По площади', 'По размерам'],
+            options: [
+              _loc.translate('tile.mode.by_area'),
+              _loc.translate('tile.mode.by_dimensions'),
+            ],
             selectedIndex: _inputMode.index,
             onSelect: (index) {
               setState(() {
@@ -585,7 +588,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
             children: [
               Expanded(
                 child: Text(
-                  'Площадь помещения',
+                  _loc.translate('tile.area.title'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
                     color: CalculatorColors.textSecondary,
                   ),
@@ -593,7 +596,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                '${_area.toStringAsFixed(1)} м²',
+                '${_area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.bold,
@@ -625,14 +628,14 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Размеры помещения',
+            _loc.translate('tile.dimensions.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
           _buildDimensionSlider(
-            label: 'Длина',
+            label: _loc.translate('tile.dimensions.length'),
             value: _length,
             min: 0.5,
             max: 20.0,
@@ -646,7 +649,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
           ),
           const SizedBox(height: 16),
           _buildDimensionSlider(
-            label: 'Ширина',
+            label: _loc.translate('tile.dimensions.width'),
             value: _width,
             min: 0.5,
             max: 20.0,
@@ -669,7 +672,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    'Площадь помещения',
+                    _loc.translate('tile.area.room_area'),
                     style: CalculatorDesignSystem.bodyMedium.copyWith(
                       color: CalculatorColors.textSecondary,
                     ),
@@ -677,7 +680,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} м²',
+                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -740,7 +743,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Тип помещения',
+            _loc.translate('tile.room.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -798,7 +801,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              type.name,
+                              _loc.translate(type.nameKey),
                               style: CalculatorDesignSystem.titleSmall.copyWith(
                                 color: isSelected
                                     ? accentColor
@@ -808,7 +811,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              type.description,
+                              _loc.translate(type.descKey),
                               style: CalculatorDesignSystem.bodySmall.copyWith(
                                 color: CalculatorColors.textSecondary,
                               ),
@@ -836,7 +839,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Тип материала',
+            _loc.translate('tile.material.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -904,7 +907,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              type.name,
+                              _loc.translate(type.nameKey),
                               style: CalculatorDesignSystem.titleSmall.copyWith(
                                 color: isSelected
                                     ? accentColor
@@ -914,7 +917,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              type.subtitle,
+                              _loc.translate(type.subtitleKey),
                               style: CalculatorDesignSystem.bodySmall.copyWith(
                                 color: CalculatorColors.textSecondary,
                               ),
@@ -922,7 +925,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
                             if (isSelected) ...[
                               const SizedBox(height: 4),
                               Text(
-                                '✓ ${type.advantage}',
+                                '✓ ${_loc.translate(type.advantageKey)}',
                                 style: CalculatorDesignSystem.bodySmall.copyWith(
                                   color: accentColor,
                                   fontWeight: FontWeight.w500,
@@ -958,7 +961,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Размер плитки',
+            _loc.translate('tile.size.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -970,7 +973,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
             children: sizes.map((size) {
               final isSelected = _tileSizePreset == size;
               return ChoiceChip(
-                label: Text(size == 0 ? 'Свой размер' : size == 120 ? '120×60' : '$size×$size'),
+                label: Text(size == 0 ? _loc.translate('tile.size.custom') : size == 120 ? '120×60' : '$size×$size'),
                 selected: isSelected,
                 onSelected: (selected) {
                   setState(() {
@@ -1012,7 +1015,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Пользовательский размер',
+            _loc.translate('tile.size.custom_title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -1022,7 +1025,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
             children: [
               Expanded(
                 child: Text(
-                  'Ширина',
+                  _loc.translate('tile.size.width'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
                     color: CalculatorColors.textSecondary,
                   ),
@@ -1030,7 +1033,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                '${_tileWidth.toStringAsFixed(0)} см',
+                '${_tileWidth.toStringAsFixed(0)} ${_loc.translate('common.cm')}',
                 style: CalculatorDesignSystem.titleMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.w600,
@@ -1056,7 +1059,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
             children: [
               Expanded(
                 child: Text(
-                  'Высота',
+                  _loc.translate('tile.size.height'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
                     color: CalculatorColors.textSecondary,
                   ),
@@ -1064,7 +1067,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                '${_tileHeight.toStringAsFixed(0)} см',
+                '${_tileHeight.toStringAsFixed(0)} ${_loc.translate('common.cm')}',
                 style: CalculatorDesignSystem.titleMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.w600,
@@ -1097,14 +1100,14 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Способ укладки',
+            _loc.translate('tile.layout.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Влияет на запас материала',
+            _loc.translate('tile.layout.hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -1152,7 +1155,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              pattern.name,
+                              _loc.translate(pattern.nameKey),
                               style: CalculatorDesignSystem.titleSmall.copyWith(
                                 color: isSelected
                                     ? accentColor
@@ -1162,7 +1165,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '${pattern.description} • Запас +${_constants.getLayoutMargin(pattern)}%',
+                              '${_loc.translate(pattern.descKey)} • ${_loc.translate('tile.layout.reserve').replaceFirst('{value}', '${_constants.getLayoutMargin(pattern)}')}',
                               style: CalculatorDesignSystem.bodySmall.copyWith(
                                 color: CalculatorColors.textSecondary,
                               ),
@@ -1195,14 +1198,14 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Ширина шва',
+                      _loc.translate('tile.joint.title'),
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
                         color: CalculatorColors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Влияет на расход затирки',
+                      _loc.translate('tile.joint.hint'),
                       style: CalculatorDesignSystem.bodySmall.copyWith(
                         color: CalculatorColors.textSecondary,
                         fontSize: 11,
@@ -1213,7 +1216,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                '${_jointWidth.toStringAsFixed(1)} мм',
+                '${_jointWidth.toStringAsFixed(1)} ${_loc.translate('common.mm')}',
                 style: CalculatorDesignSystem.titleMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.w600,
@@ -1246,15 +1249,15 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Дополнительные материалы',
+            _loc.translate('tile.options.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
           _buildToggle(
-            title: 'СВП (система выравнивания)',
-            subtitle: 'Клипсы и клинья для ровной укладки',
+            title: _loc.translate('tile.options.svp'),
+            subtitle: _loc.translate('tile.options.svp_desc'),
             value: _useSVP,
             onChanged: (v) {
               setState(() {
@@ -1266,10 +1269,10 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
           ),
           const SizedBox(height: 12),
           _buildToggle(
-            title: 'Гидроизоляция',
+            title: _loc.translate('tile.options.waterproofing'),
             subtitle: _roomType.needsWaterproofing
-                ? 'Рекомендуется для ${_roomType.name.toLowerCase()}'
-                : 'Для влажных помещений',
+                ? _loc.translate('tile.options.waterproofing_recommended').replaceFirst('{room}', _loc.translate(_roomType.nameKey).toLowerCase())
+                : _loc.translate('tile.options.waterproofing_desc'),
             value: _useWaterproofing || _roomType.needsWaterproofing,
             onChanged: _roomType.needsWaterproofing ? null : (v) {
               setState(() {
@@ -1281,8 +1284,8 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
           ),
           const SizedBox(height: 12),
           _buildToggle(
-            title: 'Подложка выравнивающая',
-            subtitle: 'Для неровного основания',
+            title: _loc.translate('tile.options.underlay'),
+            subtitle: _loc.translate('tile.options.underlay_desc'),
             value: _useUnderlay,
             onChanged: (v) {
               setState(() {
@@ -1341,68 +1344,68 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
 
     final items = <MaterialItem>[
       MaterialItem(
-        name: 'Плитка',
-        value: '${_result.tilesNeeded} шт',
-        subtitle: '${_result.tilesArea.toStringAsFixed(1)} м²',
+        name: _loc.translate('tile.materials.tiles'),
+        value: '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
+        subtitle: '${_result.tilesArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
         icon: Icons.grid_on,
       ),
       MaterialItem(
-        name: 'Упаковок',
+        name: _loc.translate('tile.materials.boxes'),
         value: '${_result.boxesNeeded}',
-        subtitle: 'коробок',
+        subtitle: _loc.translate('tile.materials.boxes_unit'),
         icon: Icons.inventory_2,
       ),
       MaterialItem(
-        name: 'Клей',
-        value: '${_result.glueBags} меш.',
-        subtitle: '${_result.glueWeight.toStringAsFixed(0)} кг (${_constants.getGlueBagSize()} кг/меш.)',
+        name: _loc.translate('tile.materials.glue'),
+        value: '${_result.glueBags} ${_loc.translate('tile.materials.glue_bags')}',
+        subtitle: _loc.translate('tile.materials.glue_per_bag').replaceFirst('{weight}', _result.glueWeight.toStringAsFixed(0)),
         icon: Icons.shopping_bag,
       ),
       MaterialItem(
-        name: 'Затирка',
-        value: '${_result.groutWeight.toStringAsFixed(1)} кг',
+        name: _loc.translate('tile.materials.grout'),
+        value: '${_result.groutWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
         icon: Icons.gradient,
       ),
       MaterialItem(
-        name: 'Грунтовка',
-        value: '${_result.primerLiters.toStringAsFixed(1)} л',
+        name: _loc.translate('tile.materials.primer'),
+        value: '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
         icon: Icons.water_drop,
       ),
       MaterialItem(
-        name: 'Крестики',
-        value: '${_result.crossesNeeded} шт',
+        name: _loc.translate('tile.materials.crosses'),
+        value: '${_result.crossesNeeded} ${_loc.translate('common.pcs')}',
         icon: Icons.add,
       ),
     ];
 
     if (_result.useSVP && _result.svpCount != null) {
       items.add(MaterialItem(
-        name: 'СВП',
-        value: '${_result.svpCount} компл.',
-        subtitle: 'Система выравнивания',
+        name: _loc.translate('tile.materials.svp'),
+        value: '${_result.svpCount} ${_loc.translate('tile.export.svp_unit')}',
+        subtitle: _loc.translate('tile.materials.svp_desc'),
         icon: Icons.construction,
       ));
     }
 
     if (_result.useWaterproofing && _result.waterproofingWeight != null) {
       items.add(MaterialItem(
-        name: 'Гидроизоляция',
-        value: '${_result.waterproofingWeight!.toStringAsFixed(1)} кг',
-        subtitle: '2 слоя',
+        name: _loc.translate('tile.materials.waterproofing'),
+        value: '${_result.waterproofingWeight!.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
+        subtitle: _loc.translate('tile.materials.waterproofing_layers'),
         icon: Icons.water,
       ));
     }
 
     if (_result.useUnderlay && _result.underlayArea != null) {
       items.add(MaterialItem(
-        name: 'Подложка',
-        value: '${_result.underlayArea!.toStringAsFixed(1)} м²',
+        name: _loc.translate('tile.materials.underlay'),
+        value: '${_result.underlayArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
         icon: Icons.layers,
       ));
     }
 
     return MaterialsCardModern(
-      title: 'Материалы',
+      title: _loc.translate('tile.materials.title'),
       titleIcon: Icons.construction,
       items: items,
       accentColor: accentColor,
@@ -1414,30 +1417,30 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen> {
 
     final infoItems = <MaterialItem>[
       MaterialItem(
-        name: 'Материал',
-        value: _result.material.name,
+        name: _loc.translate('tile.info.material'),
+        value: _loc.translate(_result.material.nameKey),
         icon: Icons.grid_on,
       ),
       MaterialItem(
-        name: 'Размер плитки',
-        value: '${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} см',
+        name: _loc.translate('tile.info.tile_size'),
+        value: '${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} ${_loc.translate('common.cm')}',
         icon: Icons.square_foot,
       ),
       MaterialItem(
-        name: 'Способ укладки',
-        value: _result.layout.name,
-        subtitle: '+${_constants.getLayoutMargin(_result.layout)}% запас',
+        name: _loc.translate('tile.info.layout'),
+        value: _loc.translate(_result.layout.nameKey),
+        subtitle: _loc.translate('tile.layout.reserve').replaceFirst('{value}', '${_constants.getLayoutMargin(_result.layout)}'),
         icon: Icons.pattern,
       ),
       MaterialItem(
-        name: 'Ширина шва',
-        value: '${_result.jointWidth.toStringAsFixed(1)} мм',
+        name: _loc.translate('tile.info.joint_width'),
+        value: '${_result.jointWidth.toStringAsFixed(1)} ${_loc.translate('common.mm')}',
         icon: Icons.border_style,
       ),
     ];
 
     return MaterialsCardModern(
-      title: 'Параметры расчёта',
+      title: _loc.translate('tile.info.title'),
       titleIcon: Icons.info_outline,
       items: infoItems,
       accentColor: accentColor,
