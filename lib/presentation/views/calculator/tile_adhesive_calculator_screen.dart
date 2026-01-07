@@ -67,15 +67,15 @@ enum BagWeight { kg20, kg25 }
 enum SurfaceType { wall, floor }
 
 enum TileType {
-  mosaic(6, 0.6, 'Мозаика / мелкая'),
-  ceramic(8, 0.55, 'Керамическая плитка'),
-  porcelain(10, 0.55, 'Керамогранит'),
-  largeFormat(12, 0.8, 'Крупноформат');
+  mosaic(6, 0.6, 'tile_adhesive.tile_type.mosaic'),
+  ceramic(8, 0.55, 'tile_adhesive.tile_type.ceramic'),
+  porcelain(10, 0.55, 'tile_adhesive.tile_type.porcelain'),
+  largeFormat(12, 0.8, 'tile_adhesive.tile_type.large_format');
 
   final int notchSize; // Размер зуба шпателя (мм)
   final double coefficient; // Коэффициент прижатия и нанесения
-  final String name;
-  const TileType(this.notchSize, this.coefficient, this.name);
+  final String nameKey;
+  const TileType(this.notchSize, this.coefficient, this.nameKey);
 }
 
 enum AdhesiveBrand {
@@ -299,44 +299,49 @@ class _TileAdhesiveCalculatorScreenState
 
   String _generateExportText() {
     final buffer = StringBuffer();
-    buffer.writeln('📋 РАСЧЁТ МАТЕРИАЛОВ ДЛЯ УКЛАДКИ ПЛИТКИ');
+    buffer.writeln(_loc.translate('tile_adhesive.export.title'));
     buffer.writeln('═' * 40);
     buffer.writeln();
 
-    buffer.writeln('Площадь: ${_result.area.toStringAsFixed(1)} м²');
-    buffer.writeln('Тип плитки: ${_result.tileType.name}');
-    buffer.writeln('Размер плитки: ${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} см');
-    buffer.writeln('Размер зуба шпателя: ${_result.notchSize} мм');
-    buffer.writeln('Поверхность: ${_result.surfaceType == SurfaceType.wall ? "Стена" : "Пол"}');
+    buffer.writeln(_loc.translate('tile_adhesive.export.area').replaceFirst('{value}', _result.area.toStringAsFixed(1)));
+    buffer.writeln(_loc.translate('tile_adhesive.export.tile_type').replaceFirst('{value}', _loc.translate(_result.tileType.nameKey)));
+    buffer.writeln(_loc.translate('tile_adhesive.export.tile_size')
+        .replaceFirst('{width}', _result.tileWidth.toStringAsFixed(0))
+        .replaceFirst('{height}', _result.tileHeight.toStringAsFixed(0)));
+    buffer.writeln(_loc.translate('tile_adhesive.export.notch_size').replaceFirst('{value}', _result.notchSize.toString()));
+    final surfaceKey = _result.surfaceType == SurfaceType.wall
+        ? 'tile_adhesive.export.surface_wall'
+        : 'tile_adhesive.export.surface_floor';
+    buffer.writeln(_loc.translate('tile_adhesive.export.surface').replaceFirst('{value}', _loc.translate(surfaceKey)));
     buffer.writeln();
 
-    buffer.writeln('📦 МАТЕРИАЛЫ:');
+    buffer.writeln(_loc.translate('tile_adhesive.export.materials_title'));
     buffer.writeln('─' * 40);
-    buffer.writeln('• Плиточный клей: ${_result.bagsNeeded} ${_loc.translate('tile_adhesive.materials.bags_unit')} по ${_result.bagWeight} кг');
-    buffer.writeln('• Расход: ${_result.adhesiveConsumption.toStringAsFixed(2)} кг/м²');
-    buffer.writeln('• Общий вес: ${_result.totalWeight.toStringAsFixed(1)} кг');
-    buffer.writeln('• Грунтовка: ${_result.primerLiters.toStringAsFixed(1)} л');
+    buffer.writeln('• ${_loc.translate('tile_adhesive.export.adhesive_line').replaceFirst('{bags}', _result.bagsNeeded.toString()).replaceFirst('{weight}', _result.bagWeight.toString())}');
+    buffer.writeln('• ${_loc.translate('tile_adhesive.export.consumption_line').replaceFirst('{value}', _result.adhesiveConsumption.toStringAsFixed(2))}');
+    buffer.writeln('• ${_loc.translate('tile_adhesive.export.total_weight_line').replaceFirst('{value}', _result.totalWeight.toStringAsFixed(1))}');
+    buffer.writeln('• ${_loc.translate('tile_adhesive.export.primer_line').replaceFirst('{value}', _result.primerLiters.toStringAsFixed(1))}');
     if (_result.groutWeight != null) {
-      buffer.writeln('• Затирка: ${_result.groutWeight!.toStringAsFixed(2)} кг');
+      buffer.writeln('• ${_loc.translate('tile_adhesive.export.grout_line').replaceFirst('{value}', _result.groutWeight!.toStringAsFixed(2))}');
     }
     if (_result.waterproofingWeight != null) {
-      buffer.writeln('• Гидроизоляция: ${_result.waterproofingWeight!.toStringAsFixed(1)} кг (2 слоя)');
+      buffer.writeln('• ${_loc.translate('tile_adhesive.export.waterproofing_line').replaceFirst('{value}', _result.waterproofingWeight!.toStringAsFixed(1))}');
     }
-    buffer.writeln('• Крестики: ${_result.crossesNeeded} шт');
+    buffer.writeln('• ${_loc.translate('tile_adhesive.export.crosses_line').replaceFirst('{value}', _result.crossesNeeded.toString())}');
     if (_result.useSVP) {
-      buffer.writeln('• СВП (клипсы + клинья): ${_result.svpCount} шт');
+      buffer.writeln('• ${_loc.translate('tile_adhesive.export.svp_line').replaceFirst('{value}', _result.svpCount.toString())}');
     }
     buffer.writeln();
 
-    buffer.writeln('🛠 ИНСТРУМЕНТЫ:');
+    buffer.writeln(_loc.translate('tile_adhesive.export.tools_title'));
     buffer.writeln('─' * 40);
-    buffer.writeln('• Зубчатый шпатель: ${_result.notchSize} мм');
-    buffer.writeln('• Ёмкость для замешивания');
-    buffer.writeln('• Миксер строительный');
+    buffer.writeln('• ${_loc.translate('tile_adhesive.export.trowel_line').replaceFirst('{value}', _result.notchSize.toString())}');
+    buffer.writeln('• ${_loc.translate('tile_adhesive.export.container_line')}');
+    buffer.writeln('• ${_loc.translate('tile_adhesive.export.mixer_line')}');
     buffer.writeln();
 
     buffer.writeln('═' * 40);
-    buffer.writeln('Создано с помощью Калькулятора Стройматериалов');
+    buffer.writeln(_loc.translate('tile_adhesive.export.footer'));
 
     return buffer.toString();
   }
@@ -344,7 +349,7 @@ class _TileAdhesiveCalculatorScreenState
   void _shareCalculation() {
     final text = _generateExportText();
     SharePlus.instance.share(
-      ShareParams(text: text, subject: 'Расчёт материалов для укладки плитки'),
+      ShareParams(text: text, subject: _loc.translate('tile_adhesive.export.subject')),
     );
   }
 
@@ -384,7 +389,7 @@ class _TileAdhesiveCalculatorScreenState
         results: [
           ResultItem(
             label: _loc.translate('tile_adhesive.label.area').toUpperCase(),
-            value: '${_result.area.toStringAsFixed(0)} м²',
+            value: '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -394,7 +399,7 @@ class _TileAdhesiveCalculatorScreenState
           ),
           ResultItem(
             label: _loc.translate('tile_adhesive.summary.consumption').toUpperCase(),
-            value: '${_result.adhesiveConsumption.toStringAsFixed(1)} кг/м²',
+            value: '${_result.adhesiveConsumption.toStringAsFixed(1)} ${_loc.translate('tile_adhesive.materials.kg_per_m2')}',
             icon: Icons.scale,
           ),
         ],
@@ -479,7 +484,7 @@ class _TileAdhesiveCalculatorScreenState
                 ),
               ),
               Text(
-                '${_area.toStringAsFixed(1)} м²',
+                '${_area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.bold,
@@ -561,7 +566,7 @@ class _TileAdhesiveCalculatorScreenState
                   ),
                 ),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} м²',
+                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -596,7 +601,7 @@ class _TileAdhesiveCalculatorScreenState
               ),
             ),
             Text(
-              '${value.toStringAsFixed(1)} м',
+              '${value.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
               style: CalculatorDesignSystem.titleMedium.copyWith(
                 color: accentColor,
                 fontWeight: FontWeight.w600,
@@ -669,7 +674,7 @@ class _TileAdhesiveCalculatorScreenState
           ),
           const SizedBox(height: 12),
           ModeSelectorVertical(
-            options: TileType.values.map((type) => type.name).toList(),
+            options: TileType.values.map((type) => _loc.translate(type.nameKey)).toList(),
             selectedIndex: _tileType.index,
             onSelect: (index) {
               setState(() {
@@ -965,7 +970,7 @@ class _TileAdhesiveCalculatorScreenState
     final items = <MaterialItem>[
       MaterialItem(
         name: _loc.translate('tile_adhesive.tools.notched_trowel'),
-        value: '${_result.notchSize} мм',
+        value: '${_result.notchSize} ${_loc.translate('common.mm')}',
         icon: Icons.handyman,
       ),
       MaterialItem(
