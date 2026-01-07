@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип поверхности для грунтовки
@@ -51,7 +50,15 @@ class PrimerCalculatorScreen extends StatefulWidget {
   State<PrimerCalculatorScreen> createState() => _PrimerCalculatorScreenState();
 }
 
-class _PrimerCalculatorScreenState extends State<PrimerCalculatorScreen> {
+class _PrimerCalculatorScreenState extends State<PrimerCalculatorScreen>
+    with ExportableMixin {
+  // ExportableMixin
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('primer_calc.title');
+
   // Состояние
   double _area = 30.0;
   double _roomWidth = 4.0;
@@ -115,7 +122,8 @@ class _PrimerCalculatorScreenState extends State<PrimerCalculatorScreen> {
 
   void _update() => setState(() => _result = _calculate());
 
-  String _generateExportText() {
+  @override
+  String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln(_loc.translate('primer_calc.export.title'));
     buffer.writeln('═' * 40);
@@ -142,19 +150,6 @@ class _PrimerCalculatorScreenState extends State<PrimerCalculatorScreen> {
     return buffer.toString();
   }
 
-  void _shareCalculation() {
-    final text = _generateExportText();
-    SharePlus.instance.share(ShareParams(text: text, subject: _loc.translate('primer_calc.title')));
-  }
-
-  void _copyToClipboard() {
-    final text = _generateExportText();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_loc.translate('common.copied_to_clipboard')), duration: const Duration(seconds: 2)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -162,10 +157,7 @@ class _PrimerCalculatorScreenState extends State<PrimerCalculatorScreen> {
     return CalculatorScaffold(
       title: _loc.translate('primer_calc.title'),
       accentColor: _accentColor,
-      actions: [
-        IconButton(icon: const Icon(Icons.copy), onPressed: _copyToClipboard, tooltip: _loc.translate('common.copy')),
-        IconButton(icon: const Icon(Icons.share), onPressed: _shareCalculation, tooltip: _loc.translate('common.share')),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,
         results: [
@@ -276,17 +268,14 @@ class _PrimerCalculatorScreenState extends State<PrimerCalculatorScreen> {
   }
 
   Widget _buildManualInputs() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(_loc.translate('primer_calc.label.area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
-            Text('${_area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-          ],
-        ),
-        Slider(value: _area, min: 5, max: 500, activeColor: _accentColor, onChanged: (v) { setState(() { _area = v; _update(); }); }),
-      ],
+    return CalculatorSliderField(
+      label: _loc.translate('primer_calc.label.area'),
+      value: _area,
+      min: 5,
+      max: 500,
+      suffix: _loc.translate('common.sqm'),
+      accentColor: _accentColor,
+      onChanged: (v) { setState(() { _area = v; _update(); }); },
     );
   }
 
@@ -322,23 +311,27 @@ class _PrimerCalculatorScreenState extends State<PrimerCalculatorScreen> {
     return _card(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('primer_calc.label.layers'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
-              Text('$_layers', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
+          CalculatorSliderField(
+            label: _loc.translate('primer_calc.label.layers'),
+            value: _layers.toDouble(),
+            min: 1,
+            max: 3,
+            divisions: 2,
+            suffix: '',
+            accentColor: _accentColor,
+            onChanged: (v) { setState(() { _layers = v.toInt(); _update(); }); },
           ),
-          Slider(value: _layers.toDouble(), min: 1, max: 3, divisions: 2, activeColor: _accentColor, onChanged: (v) { setState(() { _layers = v.toInt(); _update(); }); }),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('primer_calc.label.can_size'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
-              Text('${_canSize.toStringAsFixed(0)} ${_loc.translate('common.liters')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
+          CalculatorSliderField(
+            label: _loc.translate('primer_calc.label.can_size'),
+            value: _canSize,
+            min: 5,
+            max: 20,
+            divisions: 3,
+            suffix: _loc.translate('common.liters'),
+            accentColor: _accentColor,
+            onChanged: (v) { setState(() { _canSize = v; _update(); }); },
           ),
-          Slider(value: _canSize, min: 5, max: 20, divisions: 3, activeColor: _accentColor, onChanged: (v) { setState(() { _canSize = v; _update(); }); }),
         ],
       ),
     );

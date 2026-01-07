@@ -1,10 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип полотна
@@ -45,7 +44,14 @@ class StretchCeilingCalculatorScreen extends StatefulWidget {
   State<StretchCeilingCalculatorScreen> createState() => _StretchCeilingCalculatorScreenState();
 }
 
-class _StretchCeilingCalculatorScreenState extends State<StretchCeilingCalculatorScreen> {
+class _StretchCeilingCalculatorScreenState extends State<StretchCeilingCalculatorScreen>
+    with ExportableMixin {
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('stretch_ceiling_calc.title');
+
   double _area = 16.0;
   double _roomWidth = 4.0;
   double _roomLength = 4.0;
@@ -93,7 +99,8 @@ class _StretchCeilingCalculatorScreenState extends State<StretchCeilingCalculato
 
   void _update() => setState(() => _result = _calculate());
 
-  String _generateExportText() {
+  @override
+  String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln(_loc.translate('stretch_ceiling_calc.export.title'));
     buffer.writeln('═' * 40);
@@ -117,19 +124,6 @@ class _StretchCeilingCalculatorScreenState extends State<StretchCeilingCalculato
     return buffer.toString();
   }
 
-  void _shareCalculation() {
-    final text = _generateExportText();
-    SharePlus.instance.share(ShareParams(text: text, subject: _loc.translate('stretch_ceiling_calc.title')));
-  }
-
-  void _copyToClipboard() {
-    final text = _generateExportText();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_loc.translate('common.copied_to_clipboard')), duration: const Duration(seconds: 2)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -137,10 +131,7 @@ class _StretchCeilingCalculatorScreenState extends State<StretchCeilingCalculato
     return CalculatorScaffold(
       title: _loc.translate('stretch_ceiling_calc.title'),
       accentColor: _accentColor,
-      actions: [
-        IconButton(icon: const Icon(Icons.copy), onPressed: _copyToClipboard, tooltip: _loc.translate('common.copy')),
-        IconButton(icon: const Icon(Icons.share), onPressed: _shareCalculation, tooltip: _loc.translate('common.share')),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,
         results: [
@@ -218,17 +209,14 @@ class _StretchCeilingCalculatorScreenState extends State<StretchCeilingCalculato
   }
 
   Widget _buildManualInputs() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(_loc.translate('stretch_ceiling_calc.label.area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
-            Text('${_area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-          ],
-        ),
-        Slider(value: _area, min: 5, max: 100, activeColor: _accentColor, onChanged: (v) { setState(() { _area = v; _update(); }); }),
-      ],
+    return CalculatorSliderField(
+      label: _loc.translate('stretch_ceiling_calc.label.area'),
+      value: _area,
+      min: 5,
+      max: 100,
+      suffix: _loc.translate('common.sqm'),
+      accentColor: _accentColor,
+      onChanged: (v) { setState(() { _area = v; _update(); }); },
     );
   }
 
@@ -262,21 +250,17 @@ class _StretchCeilingCalculatorScreenState extends State<StretchCeilingCalculato
     return _card(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('stretch_ceiling_calc.label.lights_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
-              Text('$_lightsCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('stretch_ceiling_calc.label.lights_count'),
             value: _lightsCount.toDouble(),
             min: 0,
             max: 20,
             divisions: 20,
-            activeColor: _accentColor,
+            suffix: _loc.translate('common.pcs'),
+            accentColor: _accentColor,
             onChanged: (v) { setState(() { _lightsCount = v.toInt(); _update(); }); },
           ),
+          const SizedBox(height: 8),
           Text(
             _loc.translate('stretch_ceiling_calc.lights_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
