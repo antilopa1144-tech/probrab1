@@ -38,6 +38,7 @@ export 'mode_selector.dart';
 
 // Компоненты для ввода данных
 export 'calculator_text_field.dart';
+export 'calculator_slider_field.dart';
 export 'dynamic_list.dart';
 
 // Компоненты для результатов
