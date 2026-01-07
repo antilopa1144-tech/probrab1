@@ -214,18 +214,18 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
 
   String _floorLabel() {
     return switch (_floorType) {
-      TerraceFloorType.decking => 'Настил',
-      TerraceFloorType.tile => 'Плитка',
-      TerraceFloorType.board => 'Доска',
+      TerraceFloorType.decking => _loc.translate('terrace_calc.floor_type.decking'),
+      TerraceFloorType.tile => _loc.translate('terrace_calc.floor_type.tile'),
+      TerraceFloorType.board => _loc.translate('terrace_calc.floor_type.board'),
     };
   }
 
   String _floorValue() {
     return switch (_floorType) {
       TerraceFloorType.decking =>
-        '${_result.deckingArea.toStringAsFixed(1)} м²',
-      TerraceFloorType.tile => '${_result.tilesNeeded} шт',
-      TerraceFloorType.board => '${_result.deckingBoards} шт',
+        '${_result.deckingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+      TerraceFloorType.tile => '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
+      TerraceFloorType.board => '${_result.deckingBoards} ${_loc.translate('common.pcs')}',
     };
   }
 
@@ -239,52 +239,58 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
 
   String _roofTypeLabel() {
     return switch (_roofType) {
-      TerraceRoofType.polycarbonate => 'Поликарбонат',
-      TerraceRoofType.profiledSheet => 'Профлист',
-      TerraceRoofType.softRoof => 'Мягкая кровля',
+      TerraceRoofType.polycarbonate => _loc.translate('terrace_calc.roof.polycarbonate'),
+      TerraceRoofType.profiledSheet => _loc.translate('terrace_calc.roof.profiled_sheet'),
+      TerraceRoofType.softRoof => _loc.translate('terrace_calc.materials.soft_roof'),
     };
   }
 
   String _exportText() {
     final buffer = StringBuffer();
-    buffer.writeln('Терраса / веранда — расчёт');
-    buffer.writeln('Площадь: ${_result.area.toStringAsFixed(1)} м²');
-    buffer.writeln('Покрытие: ${_floorLabel()}');
+    buffer.writeln(_loc.translate('terrace_calc.export.title'));
+    buffer.writeln(_loc.translate('terrace_calc.export.area')
+        .replaceFirst('{value}', _result.area.toStringAsFixed(1)));
+    buffer.writeln(_loc.translate('terrace_calc.export.floor_type')
+        .replaceFirst('{value}', _floorLabel()));
     switch (_floorType) {
       case TerraceFloorType.decking:
-        buffer.writeln(
-          'Террасная доска: ${_result.deckingArea.toStringAsFixed(1)} м²',
-        );
+        buffer.writeln(_loc.translate('terrace_calc.export.decking')
+            .replaceFirst('{value}', _result.deckingArea.toStringAsFixed(1)));
         break;
       case TerraceFloorType.tile:
-        buffer.writeln('Плитка: ${_result.tilesNeeded} шт');
+        buffer.writeln(_loc.translate('terrace_calc.export.tile')
+            .replaceFirst('{value}', _result.tilesNeeded.toString()));
         break;
       case TerraceFloorType.board:
-        buffer.writeln('Настил: ${_result.deckingBoards} шт');
+        buffer.writeln(_loc.translate('terrace_calc.export.board')
+            .replaceFirst('{value}', _result.deckingBoards.toString()));
         break;
     }
     if (_hasRailing) {
-      buffer.writeln(
-        'Ограждение: ${_result.railingLength.toStringAsFixed(1)} м',
-      );
-      buffer.writeln('Столбы: ${_result.railingPosts} шт');
+      buffer.writeln(_loc.translate('terrace_calc.export.railing')
+          .replaceFirst('{value}', _result.railingLength.toStringAsFixed(1)));
+      buffer.writeln(_loc.translate('terrace_calc.export.railing_posts')
+          .replaceFirst('{value}', _result.railingPosts.toString()));
     }
     if (_hasRoof) {
-      buffer.writeln('Кровля: ${_result.roofArea.toStringAsFixed(1)} м²');
-      buffer.writeln('Тип кровли: ${_roofTypeLabel()}');
+      buffer.writeln(_loc.translate('terrace_calc.export.roof_area')
+          .replaceFirst('{value}', _result.roofArea.toStringAsFixed(1)));
+      buffer.writeln(_loc.translate('terrace_calc.export.roof_type')
+          .replaceFirst('{value}', _roofTypeLabel()));
       if (_roofType == TerraceRoofType.polycarbonate) {
-        buffer.writeln('Поликарбонат: ${_result.polycarbonateSheets} листов');
+        buffer.writeln(_loc.translate('terrace_calc.export.polycarbonate')
+            .replaceFirst('{value}', _result.polycarbonateSheets.toString()));
       } else if (_roofType == TerraceRoofType.profiledSheet) {
-        buffer.writeln('Профлист: ${_result.profiledSheets} листов');
+        buffer.writeln(_loc.translate('terrace_calc.export.profiled_sheet')
+            .replaceFirst('{value}', _result.profiledSheets.toString()));
       } else {
-        buffer.writeln(
-          'Материал: ${_result.roofingMaterial.toStringAsFixed(1)} м²',
-        );
+        buffer.writeln(_loc.translate('terrace_calc.export.soft_roof')
+            .replaceFirst('{value}', _result.roofingMaterial.toStringAsFixed(1)));
       }
-      buffer.writeln('Опорные столбы: ${_result.roofPosts} шт');
-      buffer.writeln(
-        'Бетон под опоры: ${_result.foundationVolume.toStringAsFixed(2)} м³',
-      );
+      buffer.writeln(_loc.translate('terrace_calc.export.roof_posts')
+          .replaceFirst('{value}', _result.roofPosts.toString()));
+      buffer.writeln(_loc.translate('terrace_calc.export.foundation')
+          .replaceFirst('{value}', _result.foundationVolume.toStringAsFixed(2)));
     }
     return buffer.toString();
   }
@@ -333,7 +339,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
         results: [
           ResultItem(
             label: _loc.translate('input.area'),
-            value: '${_result.area.toStringAsFixed(1)} м²',
+            value: '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -369,7 +375,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
             children: [
               Expanded(
                 child: Text(
-                  'Площадь террасы',
+                  _loc.translate('terrace_calc.field.area'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
                     color: CalculatorColors.textSecondary,
                   ),
@@ -377,7 +383,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                '${_area.toStringAsFixed(1)} м²',
+                '${_area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.bold,
@@ -408,7 +414,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
           CalculatorTextField(
             label: _loc.translate('input.area'),
             value: _area,
-            suffix: 'м²',
+            suffix: _loc.translate('common.sqm'),
             minValue: _minArea,
             maxValue: _maxArea,
             decimalPlaces: 1,
@@ -439,10 +445,10 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
           ),
           const SizedBox(height: 12),
           ModeSelectorWithIcons(
-            options: const [
-              ModeSelectorIconOption(label: 'Декинг', icon: Icons.deck),
-              ModeSelectorIconOption(label: 'Плитка', icon: Icons.grid_on),
-              ModeSelectorIconOption(label: 'Настил', icon: Icons.view_agenda),
+            options: [
+              ModeSelectorIconOption(label: _loc.translate('terrace_calc.floor_type.decking'), icon: Icons.deck),
+              ModeSelectorIconOption(label: _loc.translate('terrace_calc.floor_type.tile'), icon: Icons.grid_on),
+              ModeSelectorIconOption(label: _loc.translate('terrace_calc.floor_type.board'), icon: Icons.view_agenda),
             ],
             selectedIndex: _floorType.index,
             onSelect: (index) {
@@ -455,7 +461,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Запас 10% учтён в расчётах',
+            _loc.translate('terrace_calc.floor_type.margin_note'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -491,13 +497,13 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
                   : CalculatorColors.textSecondary,
             ),
             title: Text(
-              'Нужны перила/ограждение',
+              _loc.translate('terrace_calc.railing.toggle'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
                 color: CalculatorColors.textPrimary,
               ),
             ),
             subtitle: Text(
-              'Длина считается по периметру',
+              _loc.translate('terrace_calc.railing.hint'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -522,14 +528,14 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
                 children: [
                   Expanded(
                     child: Text(
-                      'Периметр',
+                      _loc.translate('terrace_calc.railing.perimeter'),
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
                         color: CalculatorColors.textSecondary,
                       ),
                     ),
                   ),
                   Text(
-                    '${_result.railingLength.toStringAsFixed(1)} м',
+                    '${_result.railingLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
                     style: CalculatorDesignSystem.titleMedium.copyWith(
                       color: accentColor,
                       fontWeight: FontWeight.w600,
@@ -537,7 +543,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    '${_result.railingPosts} шт',
+                    '${_result.railingPosts} ${_loc.translate('common.pcs')}',
                     style: CalculatorDesignSystem.titleMedium.copyWith(
                       color: accentColor,
                       fontWeight: FontWeight.w600,
@@ -578,13 +584,13 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
                   : CalculatorColors.textSecondary,
             ),
             title: Text(
-              'Нужна кровля',
+              _loc.translate('terrace_calc.roof.toggle'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
                 color: CalculatorColors.textPrimary,
               ),
             ),
             subtitle: Text(
-              'Учтём опоры и запас по площади',
+              _loc.translate('terrace_calc.roof.hint'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -600,17 +606,17 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
           if (_hasRoof) ...[
             const SizedBox(height: 12),
             ModeSelectorWithIcons(
-              options: const [
+              options: [
                 ModeSelectorIconOption(
-                  label: 'Поликарбонат',
+                  label: _loc.translate('terrace_calc.roof.polycarbonate'),
                   icon: Icons.cloud_queue,
                 ),
                 ModeSelectorIconOption(
-                  label: 'Профлист',
+                  label: _loc.translate('terrace_calc.roof.profiled_sheet'),
                   icon: Icons.table_chart,
                 ),
                 ModeSelectorIconOption(
-                  label: 'Мягкая',
+                  label: _loc.translate('terrace_calc.roof.soft_roof'),
                   icon: Icons.layers,
                 ),
               ],
@@ -634,14 +640,14 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
                 children: [
                   Expanded(
                     child: Text(
-                      'Площадь кровли',
+                      _loc.translate('terrace_calc.roof.area'),
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
                         color: CalculatorColors.textSecondary,
                       ),
                     ),
                   ),
                   Text(
-                    '${_result.roofArea.toStringAsFixed(1)} м²',
+                    '${_result.roofArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                     style: CalculatorDesignSystem.titleMedium.copyWith(
                       color: accentColor,
                       fontWeight: FontWeight.w600,
@@ -663,25 +669,25 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
     switch (_floorType) {
       case TerraceFloorType.decking:
         items.add(MaterialItem(
-          name: 'Террасная доска (декинг)',
-          value: '${_result.deckingArea.toStringAsFixed(1)} м²',
-          subtitle: 'с запасом 10%',
+          name: _loc.translate('terrace_calc.materials.decking'),
+          value: '${_result.deckingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          subtitle: _loc.translate('terrace_calc.materials.margin_10'),
           icon: Icons.deck,
         ));
         break;
       case TerraceFloorType.tile:
         items.add(MaterialItem(
-          name: 'Плитка для террасы',
-          value: '${_result.tilesNeeded} шт',
-          subtitle: 'с запасом 10%',
+          name: _loc.translate('terrace_calc.materials.tile'),
+          value: '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
+          subtitle: _loc.translate('terrace_calc.materials.margin_10'),
           icon: Icons.grid_on,
         ));
         break;
       case TerraceFloorType.board:
         items.add(MaterialItem(
-          name: 'Доска настила',
-          value: '${_result.deckingBoards} шт',
-          subtitle: 'с запасом 10%',
+          name: _loc.translate('terrace_calc.materials.board'),
+          value: '${_result.deckingBoards} ${_loc.translate('common.pcs')}',
+          subtitle: _loc.translate('terrace_calc.materials.margin_10'),
           icon: Icons.view_agenda,
         ));
         break;
@@ -690,15 +696,15 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
     if (_hasRailing) {
       items.addAll([
         MaterialItem(
-          name: 'Ограждение',
-          value: '${_result.railingLength.toStringAsFixed(1)} м',
-          subtitle: 'По периметру',
+          name: _loc.translate('terrace_calc.materials.railing'),
+          value: '${_result.railingLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
+          subtitle: _loc.translate('terrace_calc.materials.railing_hint'),
           icon: Icons.straighten,
         ),
         MaterialItem(
-          name: 'Столбы ограждения',
-          value: '${_result.railingPosts} шт',
-          subtitle: 'Шаг 2 м',
+          name: _loc.translate('terrace_calc.materials.railing_posts'),
+          value: '${_result.railingPosts} ${_loc.translate('common.pcs')}',
+          subtitle: _loc.translate('terrace_calc.materials.railing_posts_hint'),
           icon: Icons.flag,
         ),
       ]);
@@ -706,45 +712,45 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen> {
 
     if (_hasRoof) {
       items.add(MaterialItem(
-        name: 'Площадь кровли',
-        value: '${_result.roofArea.toStringAsFixed(1)} м²',
-        subtitle: '+20% к площади террасы',
+        name: _loc.translate('terrace_calc.materials.roof_area'),
+        value: '${_result.roofArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+        subtitle: _loc.translate('terrace_calc.materials.roof_area_hint'),
         icon: Icons.roofing,
       ));
 
       if (_roofType == TerraceRoofType.polycarbonate) {
         items.add(MaterialItem(
-          name: 'Поликарбонат',
-          value: '${_result.polycarbonateSheets} листов',
-          subtitle: '6 м² / лист',
+          name: _loc.translate('terrace_calc.materials.polycarbonate'),
+          value: '${_result.polycarbonateSheets} ${_loc.translate('common.sheets')}',
+          subtitle: _loc.translate('terrace_calc.materials.polycarbonate_hint'),
           icon: Icons.cloud_queue,
         ));
       } else if (_roofType == TerraceRoofType.profiledSheet) {
         items.add(MaterialItem(
-          name: 'Профлист',
-          value: '${_result.profiledSheets} листов',
-          subtitle: '8 м² / лист',
+          name: _loc.translate('terrace_calc.materials.profiled_sheet'),
+          value: '${_result.profiledSheets} ${_loc.translate('common.sheets')}',
+          subtitle: _loc.translate('terrace_calc.materials.profiled_sheet_hint'),
           icon: Icons.table_chart,
         ));
       } else {
         items.add(MaterialItem(
-          name: 'Мягкая кровля',
-          value: '${_result.roofingMaterial.toStringAsFixed(1)} м²',
+          name: _loc.translate('terrace_calc.materials.soft_roof'),
+          value: '${_result.roofingMaterial.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
           icon: Icons.layers,
         ));
       }
 
       items.addAll([
         MaterialItem(
-          name: 'Опорные столбы кровли',
-          value: '${_result.roofPosts} шт',
-          subtitle: '1 столб на 9 м²',
+          name: _loc.translate('terrace_calc.materials.roof_posts'),
+          value: '${_result.roofPosts} ${_loc.translate('common.pcs')}',
+          subtitle: _loc.translate('terrace_calc.materials.roof_posts_hint'),
           icon: Icons.vertical_align_bottom,
         ),
         MaterialItem(
-          name: 'Бетон под опоры',
-          value: '${_result.foundationVolume.toStringAsFixed(2)} м³',
-          subtitle: '20×20×50 см / опору',
+          name: _loc.translate('terrace_calc.materials.foundation'),
+          value: '${_result.foundationVolume.toStringAsFixed(2)} ${_loc.translate('common.cbm')}',
+          subtitle: _loc.translate('terrace_calc.materials.foundation_hint'),
           icon: Icons.foundation,
         ),
       ]);

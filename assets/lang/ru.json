@@ -2128,6 +2128,72 @@
       "kwh_per_month": "кВт⋅ч/месяц"
     }
   },
+  "terrace_calc": {
+    "title": "Терраса / Веранда",
+    "field": {
+      "area": "Площадь террасы"
+    },
+    "floor_type": {
+      "title": "Тип покрытия",
+      "decking": "Декинг",
+      "tile": "Плитка",
+      "board": "Настил",
+      "margin_note": "Запас 10% учтён в расчётах"
+    },
+    "railing": {
+      "title": "Ограждение",
+      "toggle": "Нужны перила/ограждение",
+      "hint": "Длина считается по периметру",
+      "perimeter": "Периметр"
+    },
+    "roof": {
+      "title": "Крыша",
+      "toggle": "Нужна кровля",
+      "hint": "Учтём опоры и запас по площади",
+      "area": "Площадь кровли",
+      "polycarbonate": "Поликарбонат",
+      "profiled_sheet": "Профлист",
+      "soft_roof": "Мягкая"
+    },
+    "materials": {
+      "decking": "Террасная доска (декинг)",
+      "tile": "Плитка для террасы",
+      "board": "Доска настила",
+      "margin_10": "с запасом 10%",
+      "railing": "Ограждение",
+      "railing_hint": "По периметру",
+      "railing_posts": "Столбы ограждения",
+      "railing_posts_hint": "Шаг 2 м",
+      "roof_area": "Площадь кровли",
+      "roof_area_hint": "+20% к площади террасы",
+      "polycarbonate": "Поликарбонат",
+      "polycarbonate_hint": "6 м² / лист",
+      "profiled_sheet": "Профлист",
+      "profiled_sheet_hint": "8 м² / лист",
+      "soft_roof": "Мягкая кровля",
+      "roof_posts": "Опорные столбы кровли",
+      "roof_posts_hint": "1 столб на 9 м²",
+      "foundation": "Бетон под опоры",
+      "foundation_hint": "20×20×50 см / опору"
+    },
+    "export": {
+      "title": "Терраса / веранда — расчёт",
+      "area": "Площадь: {value} м²",
+      "floor_type": "Покрытие: {value}",
+      "decking": "Террасная доска: {value} м²",
+      "tile": "Плитка: {value} шт",
+      "board": "Настил: {value} шт",
+      "railing": "Ограждение: {value} м",
+      "railing_posts": "Столбы: {value} шт",
+      "roof_area": "Кровля: {value} м²",
+      "roof_type": "Тип кровли: {value}",
+      "polycarbonate": "Поликарбонат: {value} листов",
+      "profiled_sheet": "Профлист: {value} листов",
+      "soft_roof": "Материал: {value} м²",
+      "roof_posts": "Опорные столбы: {value} шт",
+      "foundation": "Бетон под опоры: {value} м³"
+    }
+  },
   "unit": {
     "none": "-",
     "squareMeters": "м²",
@@ -3926,7 +3992,8 @@
     "mm": "мм",
     "watt": "Вт",
     "sqm": "м²",
-    "cbm": "м³"
+    "cbm": "м³",
+    "sheets": "листов"
   },
   "settings": {
     "title": "Настройки",
