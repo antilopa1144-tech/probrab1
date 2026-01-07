@@ -84,16 +84,16 @@ class _WoodLiningConstants {
 
 /// Типы вагонки
 enum LiningType {
-  standard('Стандарт', 'Обычная вагонка', Icons.view_agenda),
-  euro('Евровагонка', 'С вентиляционными канавками', Icons.view_stream),
-  blockHouse('Блок-хаус', 'Имитация бревна', Icons.circle_outlined),
-  imitationBar('Имитация бруса', 'Прямой профиль', Icons.crop_square);
+  standard('woodlining.lining_type.standard', 'woodlining.lining_type.standard_desc', Icons.view_agenda),
+  euro('woodlining.lining_type.euro', 'woodlining.lining_type.euro_desc', Icons.view_stream),
+  blockHouse('woodlining.lining_type.block_house', 'woodlining.lining_type.block_house_desc', Icons.circle_outlined),
+  imitationBar('woodlining.lining_type.imitation_bar', 'woodlining.lining_type.imitation_bar_desc', Icons.crop_square);
 
-  final String displayName;
-  final String description;
+  final String nameKey;
+  final String descKey;
   final IconData icon;
 
-  const LiningType(this.displayName, this.description, this.icon);
+  const LiningType(this.nameKey, this.descKey, this.icon);
 
   /// Ключ для получения значений из констант
   String get key => name;
@@ -101,44 +101,44 @@ enum LiningType {
 
 /// Породы дерева
 enum WoodSpecies {
-  pine('Сосна', 'Доступная, универсальная'),
-  spruce('Ель', 'Светлая, мягкая'),
-  larch('Лиственница', 'Влагостойкая, прочная'),
-  cedar('Кедр', 'Ароматная, элитная'),
-  aspen('Осина', 'Для бань и саун'),
-  alder('Ольха', 'Красивая текстура'),
-  oak('Дуб', 'Премиум качество');
+  pine('woodlining.wood_species.pine', 'woodlining.wood_species.pine_desc'),
+  spruce('woodlining.wood_species.spruce', 'woodlining.wood_species.spruce_desc'),
+  larch('woodlining.wood_species.larch', 'woodlining.wood_species.larch_desc'),
+  cedar('woodlining.wood_species.cedar', 'woodlining.wood_species.cedar_desc'),
+  aspen('woodlining.wood_species.aspen', 'woodlining.wood_species.aspen_desc'),
+  alder('woodlining.wood_species.alder', 'woodlining.wood_species.alder_desc'),
+  oak('woodlining.wood_species.oak', 'woodlining.wood_species.oak_desc');
 
-  final String name;
-  final String description;
+  final String nameKey;
+  final String descKey;
 
-  const WoodSpecies(this.name, this.description);
+  const WoodSpecies(this.nameKey, this.descKey);
 }
 
 /// Направление монтажа
 enum MountingDirection {
-  vertical('Вертикально', 'Визуально увеличивает высоту', Icons.vertical_distribute, '40×20'),
-  horizontal('Горизонтально', 'Визуально расширяет пространство', Icons.horizontal_distribute, '40×20'),
-  diagonal('Диагонально', 'Декоративный вариант', Icons.rotate_right, '40×20');
+  vertical('woodlining.mounting.vertical', 'woodlining.mounting.vertical_desc', Icons.vertical_distribute, '40×20'),
+  horizontal('woodlining.mounting.horizontal', 'woodlining.mounting.horizontal_desc', Icons.horizontal_distribute, '40×20'),
+  diagonal('woodlining.mounting.diagonal', 'woodlining.mounting.diagonal_desc', Icons.rotate_right, '40×20');
 
-  final String name;
-  final String hint;
+  final String nameKey;
+  final String descKey;
   final IconData icon;
   final String battenSize;
 
-  const MountingDirection(this.name, this.hint, this.icon, this.battenSize);
+  const MountingDirection(this.nameKey, this.descKey, this.icon, this.battenSize);
 }
 
 /// Тип крепления
 enum FasteningType {
-  klyaymery('Кляймеры', 'Скрытое крепление'),
-  nails('Гвозди', 'Финишные гвозди'),
-  screws('Саморезы', 'Надёжное крепление');
+  klyaymery('woodlining.fastening.klyaymery', 'woodlining.fastening.klyaymery_desc'),
+  nails('woodlining.fastening.nails', 'woodlining.fastening.nails_desc'),
+  screws('woodlining.fastening.screws', 'woodlining.fastening.screws_desc');
 
-  final String displayName;
-  final String description;
+  final String nameKey;
+  final String descKey;
 
-  const FasteningType(this.displayName, this.description);
+  const FasteningType(this.nameKey, this.descKey);
 
   /// Ключ для получения значений из констант
   String get key => name;
@@ -146,14 +146,14 @@ enum FasteningType {
 
 /// Тип финишного покрытия
 enum FinishType {
-  varnish('Лак'),
-  oil('Масло'),
-  wax('Воск'),
-  stain('Морилка');
+  varnish('woodlining.finish.varnish'),
+  oil('woodlining.finish.oil'),
+  wax('woodlining.finish.wax'),
+  stain('woodlining.finish.stain');
 
-  final String displayName;
+  final String nameKey;
 
-  const FinishType(this.displayName);
+  const FinishType(this.nameKey);
 
   /// Ключ для получения значений из констант
   String get key => name;
@@ -346,35 +346,35 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
 
   String _exportText() {
     final buffer = StringBuffer();
-    buffer.writeln('📊 РАСЧЁТ ВАГОНКИ\n');
-    buffer.writeln('Площадь: ${_result.area.toStringAsFixed(2)} м²');
-    buffer.writeln('Тип: ${_liningType.displayName}');
-    buffer.writeln('Порода: ${_woodSpecies.name}');
-    buffer.writeln('Направление: ${_mountingDirection.name}\n');
+    buffer.writeln('${_loc.translate('woodlining.export.title')}\n');
+    buffer.writeln(_loc.translate('woodlining.export.area').replaceFirst('{value}', _result.area.toStringAsFixed(2)));
+    buffer.writeln(_loc.translate('woodlining.export.type').replaceFirst('{value}', _loc.translate(_liningType.nameKey)));
+    buffer.writeln(_loc.translate('woodlining.export.species').replaceFirst('{value}', _loc.translate(_woodSpecies.nameKey)));
+    buffer.writeln('${_loc.translate('woodlining.export.direction').replaceFirst('{value}', _loc.translate(_mountingDirection.nameKey))}\n');
     buffer.writeln('─────────────────────');
-    buffer.writeln('ОСНОВНЫЕ МАТЕРИАЛЫ:');
-    buffer.writeln('• Вагонка: ${_result.liningArea.toStringAsFixed(2)} м² (${_result.liningPieces} шт)');
-    buffer.writeln('• Обрешётка: ${_result.battenLength.toStringAsFixed(1)} м.п.');
-    buffer.writeln('• Крепёж: ${_result.fasteners} шт (${_fasteningType.displayName})');
+    buffer.writeln(_loc.translate('woodlining.export.main_materials'));
+    buffer.writeln('• ${_loc.translate('woodlining.export.lining_line').replaceFirst('{area}', _result.liningArea.toStringAsFixed(2)).replaceFirst('{pcs}', _result.liningPieces.toString())}');
+    buffer.writeln('• ${_loc.translate('woodlining.export.batten_line').replaceFirst('{value}', _result.battenLength.toStringAsFixed(1))}');
+    buffer.writeln('• ${_loc.translate('woodlining.export.fasteners_line').replaceFirst('{count}', _result.fasteners.toString()).replaceFirst('{type}', _loc.translate(_fasteningType.nameKey))}');
     if (_useAntiseptic) {
-      buffer.writeln('\nЗАЩИТА:');
-      buffer.writeln('• Антисептик: ${_result.antiseptic.toStringAsFixed(2)} л');
+      buffer.writeln('\n${_loc.translate('woodlining.export.protection')}');
+      buffer.writeln('• ${_loc.translate('woodlining.export.antiseptic_line').replaceFirst('{value}', _result.antiseptic.toStringAsFixed(2))}');
     }
     if (_useFinish) {
-      buffer.writeln('• ${_finishType.displayName}: ${_result.finish.toStringAsFixed(2)} л');
+      buffer.writeln('• ${_loc.translate('woodlining.export.finish_line').replaceFirst('{type}', _loc.translate(_finishType.nameKey)).replaceFirst('{value}', _result.finish.toStringAsFixed(2))}');
     }
     if (_useInsulation || _useVaporBarrier) {
-      buffer.writeln('\nИЗОЛЯЦИЯ:');
+      buffer.writeln('\n${_loc.translate('woodlining.export.isolation')}');
       if (_useInsulation) {
-        buffer.writeln('• Утеплитель: ${_result.insulation.toStringAsFixed(2)} м²');
+        buffer.writeln('• ${_loc.translate('woodlining.export.insulation_line').replaceFirst('{value}', _result.insulation.toStringAsFixed(2))}');
       }
       if (_useVaporBarrier) {
-        buffer.writeln('• Пароизоляция: ${_result.vaporBarrier.toStringAsFixed(2)} м²');
+        buffer.writeln('• ${_loc.translate('woodlining.export.vapor_barrier_line').replaceFirst('{value}', _result.vaporBarrier.toStringAsFixed(2))}');
       }
     }
     buffer.writeln('\n─────────────────────');
-    buffer.writeln('Запас: ${_reserve.toInt()}%');
-    buffer.writeln('\n✨ Расчёт выполнен в ProRab');
+    buffer.writeln(_loc.translate('woodlining.export.reserve').replaceFirst('{value}', _reserve.toInt().toString()));
+    buffer.writeln('\n${_loc.translate('woodlining.export.footer')}');
     return buffer.toString();
   }
 
@@ -421,13 +421,13 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
         accentColor: accentColor,
         results: [
           ResultItem(
-            label: 'ПЛОЩАДЬ',
-            value: '${_result.area.toStringAsFixed(1)} м²',
+            label: _loc.translate('woodlining.header.area'),
+            value: '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
-            label: 'ВАГОНКА',
-            value: '${_result.liningPieces} шт',
+            label: _loc.translate('woodlining.header.lining'),
+            value: '${_result.liningPieces} ${_loc.translate('common.pcs')}',
             icon: Icons.carpenter,
           ),
         ],
@@ -463,7 +463,10 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
     const accentColor = CalculatorColors.walls;
     return _card(
       child: ModeSelector(
-        options: const ['По площади', 'По размерам'],
+        options: [
+          _loc.translate('woodlining.mode.by_area'),
+          _loc.translate('woodlining.mode.by_dimensions'),
+        ],
         selectedIndex: _inputMode.index,
         onSelect: (index) {
           setState(() {
@@ -484,11 +487,11 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
         children: [
           if (_inputMode == InputMode.byArea) ...[
             _buildSliderField(
-              label: 'Площадь стен',
+              label: _loc.translate('woodlining.field.wall_area'),
               value: _area,
               min: 1.0,
               max: 500.0,
-              suffix: 'м²',
+              suffix: _loc.translate('common.sqm'),
               accentColor: accentColor,
               onChanged: (v) {
                 setState(() {
@@ -499,11 +502,11 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
             ),
           ] else ...[
             _buildSliderField(
-              label: 'Длина',
+              label: _loc.translate('woodlining.field.length'),
               value: _length,
               min: 0.1,
               max: 50.0,
-              suffix: 'м',
+              suffix: _loc.translate('common.meters'),
               accentColor: accentColor,
               onChanged: (v) {
                 setState(() {
@@ -514,11 +517,11 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
             ),
             const SizedBox(height: 16),
             _buildSliderField(
-              label: 'Ширина',
+              label: _loc.translate('woodlining.field.width'),
               value: _width,
               min: 0.1,
               max: 50.0,
-              suffix: 'м',
+              suffix: _loc.translate('common.meters'),
               accentColor: accentColor,
               onChanged: (v) {
                 setState(() {
@@ -530,11 +533,11 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
           ],
           const SizedBox(height: 16),
           _buildSliderField(
-            label: 'Высота помещения',
+            label: _loc.translate('woodlining.field.height'),
             value: _height,
             min: 2.0,
             max: 5.0,
-            suffix: 'м',
+            suffix: _loc.translate('common.meters'),
             accentColor: accentColor,
             onChanged: (v) {
               setState(() {
@@ -555,7 +558,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Тип вагонки',
+            _loc.translate('woodlining.section.lining_type'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -569,8 +572,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               final isSelected = _liningType == type;
               return TypeSelectorCardCompact(
                 icon: type.icon,
-                title: type.name,
-                subtitle: type.description,
+                title: _loc.translate(type.nameKey),
+                subtitle: _loc.translate(type.descKey),
                 isSelected: isSelected,
                 accentColor: accentColor,
                 onTap: () {
@@ -595,7 +598,9 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Ширина: ${_constants.getLiningWidth(_liningType.key).toInt()} мм, длина: ${_constants.getLiningLength(_liningType.key)} м',
+                    _loc.translate('woodlining.info.dimensions')
+                        .replaceFirst('{width}', _constants.getLiningWidth(_liningType.key).toInt().toString())
+                        .replaceFirst('{length}', _constants.getLiningLength(_liningType.key).toString()),
                     style: CalculatorDesignSystem.bodySmall.copyWith(
                       color: CalculatorColors.textSecondary,
                     ),
@@ -616,7 +621,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Порода дерева',
+            _loc.translate('woodlining.section.wood_species'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -630,8 +635,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               final isSelected = _woodSpecies == species;
               return TypeSelectorCardCompact(
                 icon: Icons.nature,
-                title: species.name,
-                subtitle: species.description,
+                title: _loc.translate(species.nameKey),
+                subtitle: _loc.translate(species.descKey),
                 isSelected: isSelected,
                 accentColor: accentColor,
                 onTap: () {
@@ -655,7 +660,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Направление монтажа',
+            _loc.translate('woodlining.section.mounting_direction'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -669,8 +674,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               final isSelected = _mountingDirection == direction;
               return TypeSelectorCardCompact(
                 icon: direction.icon,
-                title: direction.name,
-                subtitle: direction.hint,
+                title: _loc.translate(direction.nameKey),
+                subtitle: _loc.translate(direction.descKey),
                 isSelected: isSelected,
                 accentColor: accentColor,
                 onTap: () {
@@ -694,7 +699,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Тип крепления',
+            _loc.translate('woodlining.section.fastening_type'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -708,8 +713,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               final isSelected = _fasteningType == type;
               return TypeSelectorCardCompact(
                 icon: Icons.construction,
-                title: type.name,
-                subtitle: type.description,
+                title: _loc.translate(type.nameKey),
+                subtitle: _loc.translate(type.descKey),
                 isSelected: isSelected,
                 accentColor: accentColor,
                 onTap: () {
@@ -733,7 +738,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Финишное покрытие',
+            _loc.translate('woodlining.section.finish_coating'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -751,12 +756,12 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
                   ? accentColor
                   : CalculatorColors.textSecondary,
             ),
-            title: const Text(
-              'Использовать финиш',
+            title: Text(
+              _loc.translate('woodlining.finish.use_finish'),
               style: CalculatorDesignSystem.bodyMedium,
             ),
             subtitle: Text(
-              _useFinish ? _finishType.displayName : 'Не используется',
+              _useFinish ? _loc.translate(_finishType.nameKey) : _loc.translate('woodlining.finish.not_used'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -779,7 +784,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
                 final isSelected = _finishType == finish;
                 return TypeSelectorCardCompact(
                   icon: Icons.format_paint,
-                  title: finish.name,
+                  title: _loc.translate(finish.nameKey),
                   isSelected: isSelected,
                   accentColor: accentColor,
                   onTap: () {
@@ -801,7 +806,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
     const accentColor = CalculatorColors.walls;
     return _card(
       child: _buildSliderField(
-        label: 'Запас на обрезку',
+        label: _loc.translate('woodlining.field.reserve'),
         value: _reserve,
         min: 5.0,
         max: 20.0,
@@ -824,7 +829,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Дополнительные материалы',
+            _loc.translate('woodlining.section.additional_materials'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -842,12 +847,14 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
                   ? accentColor
                   : CalculatorColors.textSecondary,
             ),
-            title: const Text(
-              'Утеплитель',
+            title: Text(
+              _loc.translate('woodlining.optional.insulation'),
               style: CalculatorDesignSystem.bodyMedium,
             ),
             subtitle: Text(
-              _useInsulation ? 'Минвата ${_insulationThickness.toInt()} мм' : 'Не используется',
+              _useInsulation
+                  ? _loc.translate('woodlining.optional.insulation_desc').replaceFirst('{value}', _insulationThickness.toInt().toString())
+                  : _loc.translate('woodlining.finish.not_used'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -863,11 +870,11 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
           if (_useInsulation) ...[
             const SizedBox(height: 8),
             _buildSliderField(
-              label: 'Толщина утеплителя',
+              label: _loc.translate('woodlining.optional.insulation_thickness'),
               value: _insulationThickness,
               min: 50.0,
               max: 200.0,
-              suffix: 'мм',
+              suffix: _loc.translate('common.mm'),
               divisions: 3,
               accentColor: accentColor,
               onChanged: (v) {
@@ -891,9 +898,11 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
                   ? accentColor
                   : CalculatorColors.textSecondary,
             ),
-            title: const Text('Пароизоляция', style: CalculatorDesignSystem.bodyMedium),
+            title: Text(_loc.translate('woodlining.optional.vapor_barrier'), style: CalculatorDesignSystem.bodyMedium),
             subtitle: Text(
-              _useVaporBarrier ? 'Мембрана ~${_constants.vaporBarrierWeightPerM2} кг/м²' : 'Не используется',
+              _useVaporBarrier
+                  ? _loc.translate('woodlining.optional.vapor_barrier_desc').replaceFirst('{value}', _constants.vaporBarrierWeightPerM2.toString())
+                  : _loc.translate('woodlining.finish.not_used'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -919,9 +928,11 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
                   ? accentColor
                   : CalculatorColors.textSecondary,
             ),
-            title: const Text('Антисептик', style: CalculatorDesignSystem.bodyMedium),
+            title: Text(_loc.translate('woodlining.optional.antiseptic'), style: CalculatorDesignSystem.bodyMedium),
             subtitle: Text(
-              _useAntiseptic ? 'Расход ~${_constants.antisepticConsumption} л/м²' : 'Не используется',
+              _useAntiseptic
+                  ? _loc.translate('woodlining.optional.antiseptic_desc').replaceFirst('{value}', _constants.antisepticConsumption.toString())
+                  : _loc.translate('woodlining.finish.not_used'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
                 color: CalculatorColors.textSecondary,
               ),
@@ -944,63 +955,63 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
 
     final items = <MaterialItem>[
       MaterialItem(
-        name: 'Вагонка',
-        value: '${_result.liningArea.toStringAsFixed(1)} м²',
-        subtitle: '${_result.liningPieces} шт',
+        name: _loc.translate('woodlining.material.lining'),
+        value: '${_result.liningArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+        subtitle: '${_result.liningPieces} ${_loc.translate('common.pcs')}',
         icon: Icons.view_agenda,
       ),
       MaterialItem(
-        name: 'Обрешётка',
-        value: '${_result.battenLength.toStringAsFixed(0)} м.п.',
-        subtitle: 'Брус ${_mountingDirection.battenSize}',
+        name: _loc.translate('woodlining.material.batten'),
+        value: '${_result.battenLength.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
+        subtitle: _loc.translate('woodlining.material.batten_desc').replaceFirst('{size}', _mountingDirection.battenSize),
         icon: Icons.view_stream,
       ),
       MaterialItem(
-        name: 'Крепёж',
-        value: '${_result.fasteners} шт',
-        subtitle: _fasteningType.displayName,
+        name: _loc.translate('woodlining.material.fasteners'),
+        value: '${_result.fasteners} ${_loc.translate('common.pcs')}',
+        subtitle: _loc.translate(_fasteningType.nameKey),
         icon: Icons.construction,
       ),
     ];
 
     if (_useAntiseptic) {
       items.add(MaterialItem(
-        name: 'Антисептик',
-        value: '${_result.antiseptic.toStringAsFixed(1)} л',
-        subtitle: 'Расход ${_constants.antisepticConsumption} л/м²',
+        name: _loc.translate('woodlining.optional.antiseptic'),
+        value: '${_result.antiseptic.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
+        subtitle: _loc.translate('woodlining.material.consumption').replaceFirst('{value}', _constants.antisepticConsumption.toString()),
         icon: Icons.shield_outlined,
       ));
     }
 
     if (_useFinish) {
       items.add(MaterialItem(
-        name: _finishType.displayName,
-        value: '${_result.finish.toStringAsFixed(1)} л',
-        subtitle: 'Расход ${_constants.getFinishConsumption(_finishType.key)} л/м²',
+        name: _loc.translate(_finishType.nameKey),
+        value: '${_result.finish.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
+        subtitle: _loc.translate('woodlining.material.consumption').replaceFirst('{value}', _constants.getFinishConsumption(_finishType.key).toString()),
         icon: Icons.format_paint,
       ));
     }
 
     if (_useInsulation) {
       items.add(MaterialItem(
-        name: 'Утеплитель',
-        value: '${_result.insulation.toStringAsFixed(1)} м²',
-        subtitle: 'Минвата ${_insulationThickness.toInt()} мм',
+        name: _loc.translate('woodlining.optional.insulation'),
+        value: '${_result.insulation.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+        subtitle: _loc.translate('woodlining.optional.insulation_desc').replaceFirst('{value}', _insulationThickness.toInt().toString()),
         icon: Icons.waves,
       ));
     }
 
     if (_useVaporBarrier) {
       items.add(MaterialItem(
-        name: 'Пароизоляция',
-        value: '${_result.vaporBarrier.toStringAsFixed(1)} м²',
-        subtitle: '~${_result.vaporBarrierWeight.toStringAsFixed(1)} кг',
+        name: _loc.translate('woodlining.optional.vapor_barrier'),
+        value: '${_result.vaporBarrier.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+        subtitle: '~${_result.vaporBarrierWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
         icon: Icons.shield,
       ));
     }
 
     return MaterialsCardModern(
-      title: 'Необходимые материалы',
+      title: _loc.translate('woodlining.section.required_materials'),
       titleIcon: Icons.construction,
       items: items,
       accentColor: accentColor,
