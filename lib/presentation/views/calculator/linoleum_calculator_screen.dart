@@ -1,9 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_linoleum_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип линолеума
@@ -38,23 +38,38 @@ class _LinoleumResult {
     required this.plinthLength,
     required this.plinthPieces,
   });
+
+  factory _LinoleumResult.fromCalculatorResult(Map<String, double> values) {
+    return _LinoleumResult(
+      area: values['area'] ?? 0,
+      areaWithWaste: values['areaWithWaste'] ?? 0,
+      rollsNeeded: values['rollsNeeded'] ?? 0,
+      rollWidth: values['rollWidth'] ?? 3.0,
+      tapeLength: values['tapeLength'] ?? 0,
+      plinthLength: values['plinthLength'] ?? 0,
+      plinthPieces: (values['plinthPieces'] ?? 0).toInt(),
+    );
+  }
 }
 
-class LinoleumCalculatorScreen extends StatefulWidget {
+class LinoleumCalculatorScreen extends ConsumerStatefulWidget {
   const LinoleumCalculatorScreen({super.key});
 
   @override
-  State<LinoleumCalculatorScreen> createState() => _LinoleumCalculatorScreenState();
+  ConsumerState<LinoleumCalculatorScreen> createState() => _LinoleumCalculatorScreenState();
 }
 
-class _LinoleumCalculatorScreenState extends State<LinoleumCalculatorScreen>
-    with ExportableMixin {
-  // ExportableMixin
+class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('linoleum_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateLinoleumV2();
 
   double _area = 20.0;
   double _roomWidth = 4.0;
@@ -77,45 +92,23 @@ class _LinoleumCalculatorScreenState extends State<LinoleumCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _LinoleumResult _calculate() {
-    double area = _area;
-    double roomWidth = _roomWidth;
-    double roomLength = _roomLength;
+    final inputs = <String, double>{
+      'rollWidth': _rollWidth,
+      'needTape': _needTape ? 1.0 : 0.0,
+      'needPlinth': _needPlinth ? 1.0 : 0.0,
+    };
 
-    if (_inputMode == LinoleumInputMode.room) {
-      area = roomWidth * roomLength;
+    if (_inputMode == LinoleumInputMode.manual) {
+      inputs['area'] = _area;
     } else {
-      final side = math.sqrt(area);
-      roomWidth = side;
-      roomLength = side;
+      inputs['roomWidth'] = _roomWidth;
+      inputs['roomLength'] = _roomLength;
     }
 
-    final areaWithWaste = area * 1.1; // +10% запас
-    final rollsNeeded = areaWithWaste / (_rollWidth * 25); // рулон 25 м.п.
-
-    // Скотч двусторонний: периметр + швы
-    double tapeLength = 0;
-    if (_needTape) {
-      tapeLength = 2 * (roomWidth + roomLength) + roomLength; // периметр + 1 шов
-    }
-
-    // Плинтус
-    double plinthLength = 0;
-    int plinthPieces = 0;
-    if (_needPlinth) {
-      plinthLength = 2 * (roomWidth + roomLength) - 0.9; // минус дверь
-      plinthPieces = (plinthLength / 2.5).ceil();
-    }
-
-    return _LinoleumResult(
-      area: area,
-      areaWithWaste: areaWithWaste,
-      rollsNeeded: rollsNeeded,
-      rollWidth: _rollWidth,
-      tapeLength: tapeLength,
-      plinthLength: plinthLength,
-      plinthPieces: plinthPieces,
-    );
+    final result = _calculator(inputs, []);
+    return _LinoleumResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
