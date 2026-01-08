@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_balcony_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип балкона
@@ -32,22 +34,38 @@ class _BalconyResult {
     required this.finishingArea,
     required this.glazingLength,
   });
+
+  factory _BalconyResult.fromCalculatorResult(Map<String, double> values) {
+    return _BalconyResult(
+      floorArea: values['floorArea'] ?? 0,
+      wallArea: values['wallArea'] ?? 0,
+      ceilingArea: values['ceilingArea'] ?? 0,
+      insulationArea: values['insulationArea'] ?? 0,
+      finishingArea: values['finishingArea'] ?? 0,
+      glazingLength: values['glazingLength'] ?? 0,
+    );
+  }
 }
 
-class BalconyCalculatorScreen extends StatefulWidget {
+class BalconyCalculatorScreen extends ConsumerStatefulWidget {
   const BalconyCalculatorScreen({super.key});
 
   @override
-  State<BalconyCalculatorScreen> createState() => _BalconyCalculatorScreenState();
+  ConsumerState<BalconyCalculatorScreen> createState() => _BalconyCalculatorScreenState();
 }
 
-class _BalconyCalculatorScreenState extends State<BalconyCalculatorScreen>
-    with ExportableMixin {
+class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('balcony_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateBalconyV2();
+
   double _length = 3.0;
   double _width = 1.2;
   double _height = 2.5;
@@ -68,40 +86,20 @@ class _BalconyCalculatorScreenState extends State<BalconyCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _BalconyResult _calculate() {
-    final floorArea = _length * _width;
-    final ceilingArea = floorArea;
+    final inputs = <String, double>{
+      'length': _length,
+      'width': _width,
+      'height': _height,
+      'balconyType': _balconyType.index.toDouble(),
+      'needInsulation': _needInsulation ? 1.0 : 0.0,
+      'needFloorFinishing': _needFloorFinishing ? 1.0 : 0.0,
+      'needWallFinishing': _needWallFinishing ? 1.0 : 0.0,
+    };
 
-    // Стены: 3 стороны (без стены дома)
-    final wallArea = 2 * _width * _height + _length * _height;
-
-    // Утепление: пол + потолок + 3 стены
-    double insulationArea = 0;
-    if (_balconyType == BalconyType.warm && _needInsulation) {
-      insulationArea = (floorArea + ceilingArea + wallArea) * 1.1;
-    }
-
-    // Отделка
-    double finishingArea = 0;
-    if (_needFloorFinishing) finishingArea += floorArea;
-    if (_needWallFinishing) finishingArea += wallArea;
-    if (_balconyType != BalconyType.open) finishingArea += ceilingArea;
-    finishingArea *= 1.1; // +10% запас
-
-    // Остекление
-    double glazingLength = 0;
-    if (_balconyType != BalconyType.open) {
-      glazingLength = _length + 2 * _width; // П-образное
-    }
-
-    return _BalconyResult(
-      floorArea: floorArea,
-      wallArea: wallArea,
-      ceilingArea: ceilingArea,
-      insulationArea: insulationArea,
-      finishingArea: finishingArea,
-      glazingLength: glazingLength,
-    );
+    final result = _calculator(inputs, []);
+    return _BalconyResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
