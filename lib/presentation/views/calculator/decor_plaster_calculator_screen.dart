@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_decor_plaster_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип декоративной штукатурки
@@ -32,22 +34,37 @@ class _DecorPlasterResult {
     required this.primerLiters,
     required this.waxKg,
   });
+
+  factory _DecorPlasterResult.fromCalculatorResult(Map<String, double> values) {
+    return _DecorPlasterResult(
+      area: values['area'] ?? 0,
+      plasterKg: values['plasterKg'] ?? 0,
+      plasterBuckets: (values['plasterBuckets'] ?? 0).toInt(),
+      primerLiters: values['primerLiters'] ?? 0,
+      waxKg: values['waxKg'] ?? 0,
+    );
+  }
 }
 
-class DecorPlasterCalculatorScreen extends StatefulWidget {
+class DecorPlasterCalculatorScreen extends ConsumerStatefulWidget {
   const DecorPlasterCalculatorScreen({super.key});
 
   @override
-  State<DecorPlasterCalculatorScreen> createState() => _DecorPlasterCalculatorScreenState();
+  ConsumerState<DecorPlasterCalculatorScreen> createState() => _DecorPlasterCalculatorScreenState();
 }
 
-class _DecorPlasterCalculatorScreenState extends State<DecorPlasterCalculatorScreen>
-    with ExportableMixin {
+class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('decor_plaster_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateDecorPlasterV2();
+
   double _area = 30.0;
   double _wallWidth = 5.0;
   double _wallHeight = 2.7;
@@ -69,41 +86,21 @@ class _DecorPlasterCalculatorScreenState extends State<DecorPlasterCalculatorScr
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _DecorPlasterResult _calculate() {
-    double area = _area;
-    if (_inputMode == DecorPlasterInputMode.room) {
-      area = _wallWidth * _wallHeight;
-    }
+    final inputs = <String, double>{
+      'area': _area,
+      'wallWidth': _wallWidth,
+      'wallHeight': _wallHeight,
+      'plasterType': _plasterType.index.toDouble(),
+      'layers': _layers.toDouble(),
+      'inputMode': _inputMode.index.toDouble(),
+      'needPrimer': _needPrimer ? 1.0 : 0.0,
+      'needWax': _needWax ? 1.0 : 0.0,
+    };
 
-    // Расход зависит от типа штукатурки
-    double consumptionPerSqm;
-    switch (_plasterType) {
-      case DecorPlasterType.venetian:
-        consumptionPerSqm = 0.4; // кг/м² на слой
-      case DecorPlasterType.bark:
-        consumptionPerSqm = 2.5; // кг/м² на слой
-      case DecorPlasterType.silk:
-        consumptionPerSqm = 0.3; // кг/м² на слой
-    }
-
-    final plasterKg = area * consumptionPerSqm * _layers * 1.1; // +10% запас
-    final plasterBuckets = (plasterKg / 25).ceil(); // ведро 25 кг
-
-    // Грунтовка: 0.15 л/м²
-    final primerLiters = _needPrimer ? area * 0.15 * 1.1 : 0.0;
-
-    // Воск/лак: 0.05 кг/м² для венецианской
-    final waxKg = _needWax && _plasterType == DecorPlasterType.venetian
-        ? area * 0.05 * 1.1
-        : 0.0;
-
-    return _DecorPlasterResult(
-      area: area,
-      plasterKg: plasterKg,
-      plasterBuckets: plasterBuckets,
-      primerLiters: primerLiters,
-      waxKg: waxKg,
-    );
+    final result = _calculator(inputs, []);
+    return _DecorPlasterResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
