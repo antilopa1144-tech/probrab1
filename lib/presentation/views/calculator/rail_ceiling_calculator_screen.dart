@@ -1,9 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_rail_ceiling_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип реечного потолка
@@ -47,22 +47,37 @@ class _RailCeilingResult {
     required this.wallProfileLength,
     required this.hangersCount,
   });
+
+  factory _RailCeilingResult.fromCalculatorResult(Map<String, double> values) {
+    return _RailCeilingResult(
+      area: values['area'] ?? 0,
+      railsCount: (values['railsCount'] ?? 0).toInt(),
+      railLength: values['railLength'] ?? 0,
+      stringerLength: values['stringerLength'] ?? 0,
+      wallProfileLength: values['wallProfileLength'] ?? 0,
+      hangersCount: (values['hangersCount'] ?? 0).toInt(),
+    );
+  }
 }
 
-class RailCeilingCalculatorScreen extends StatefulWidget {
+class RailCeilingCalculatorScreen extends ConsumerStatefulWidget {
   const RailCeilingCalculatorScreen({super.key});
 
   @override
-  State<RailCeilingCalculatorScreen> createState() => _RailCeilingCalculatorScreenState();
+  ConsumerState<RailCeilingCalculatorScreen> createState() => _RailCeilingCalculatorScreenState();
 }
 
-class _RailCeilingCalculatorScreenState extends State<RailCeilingCalculatorScreen>
-    with ExportableMixin {
+class _RailCeilingCalculatorScreenState extends ConsumerState<RailCeilingCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('rail_ceiling_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateRailCeilingV2();
 
   double _area = 12.0;
   double _roomWidth = 3.0;
@@ -83,46 +98,19 @@ class _RailCeilingCalculatorScreenState extends State<RailCeilingCalculatorScree
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _RailCeilingResult _calculate() {
-    double area = _area;
-    double roomWidth = _roomWidth;
-    double roomLength = _roomLength;
+    final inputs = <String, double>{
+      'area': _area,
+      'roomWidth': _roomWidth,
+      'roomLength': _roomLength,
+      'ceilingType': _ceilingType.index.toDouble(),
+      'railWidth': _railWidth.index.toDouble(),
+      'inputMode': _inputMode.index.toDouble(),
+    };
 
-    if (_inputMode == RailCeilingInputMode.room) {
-      area = roomWidth * roomLength;
-    } else {
-      final side = math.sqrt(area);
-      roomWidth = side;
-      roomLength = side;
-    }
-
-    final perimeter = 2 * (roomWidth + roomLength);
-
-    // Количество реек (ширина комнаты / ширина рейки + зазор 16мм)
-    final railStep = _railWidth.meters + 0.016;
-    final railsCount = (roomWidth / railStep).ceil();
-
-    // Длина реек = количество * длина комнаты + 5% запас
-    final railLength = railsCount * roomLength * 1.05;
-
-    // Стрингеры (несущие шины): через каждые 1.2 м
-    final stringerRows = (roomWidth / 1.2).ceil();
-    final stringerLength = stringerRows * roomLength * 1.1;
-
-    // Пристенный профиль = периметр + 10%
-    final wallProfileLength = perimeter * 1.1;
-
-    // Подвесы: через каждые 1.2 м по длине стрингера
-    final hangersCount = stringerRows * (roomLength / 1.2).ceil();
-
-    return _RailCeilingResult(
-      area: area,
-      railsCount: railsCount,
-      railLength: railLength,
-      stringerLength: stringerLength,
-      wallProfileLength: wallProfileLength,
-      hangersCount: hangersCount,
-    );
+    final result = _calculator(inputs, []);
+    return _RailCeilingResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
