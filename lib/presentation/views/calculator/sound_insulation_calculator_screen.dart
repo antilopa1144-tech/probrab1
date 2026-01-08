@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_sound_insulation_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип шумоизоляции
@@ -35,22 +37,38 @@ class _SoundInsulationResult {
     required this.profileLength,
     required this.hangersCount,
   });
+
+  factory _SoundInsulationResult.fromCalculatorResult(Map<String, double> values) {
+    return _SoundInsulationResult(
+      area: values['area'] ?? 0,
+      insulationArea: values['insulationArea'] ?? 0,
+      membraneArea: values['membraneArea'] ?? 0,
+      gypsumArea: values['gypsumArea'] ?? 0,
+      profileLength: values['profileLength'] ?? 0,
+      hangersCount: (values['hangersCount'] ?? 0).toInt(),
+    );
+  }
 }
 
-class SoundInsulationCalculatorScreen extends StatefulWidget {
+class SoundInsulationCalculatorScreen extends ConsumerStatefulWidget {
   const SoundInsulationCalculatorScreen({super.key});
 
   @override
-  State<SoundInsulationCalculatorScreen> createState() => _SoundInsulationCalculatorScreenState();
+  ConsumerState<SoundInsulationCalculatorScreen> createState() => _SoundInsulationCalculatorScreenState();
 }
 
-class _SoundInsulationCalculatorScreenState extends State<SoundInsulationCalculatorScreen>
-    with ExportableMixin {
+class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulationCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('sound_insulation_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateSoundInsulationV2();
+
   double _area = 20.0;
   double _thickness = 50.0; // мм
 
@@ -70,47 +88,19 @@ class _SoundInsulationCalculatorScreenState extends State<SoundInsulationCalcula
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _SoundInsulationResult _calculate() {
-    final area = _area;
+    final inputs = <String, double>{
+      'area': _area,
+      'thickness': _thickness,
+      'insulationType': _insulationType.index.toDouble(),
+      'surfaceType': _surfaceType.index.toDouble(),
+      'needGypsum': _needGypsum ? 1.0 : 0.0,
+      'needProfile': _needProfile ? 1.0 : 0.0,
+    };
 
-    // Утеплитель +10%
-    double insulationArea = 0;
-    if (_insulationType != SoundInsulationType.membrane) {
-      insulationArea = area * 1.1;
-    }
-
-    // Мембрана +15%
-    double membraneArea = 0;
-    if (_insulationType != SoundInsulationType.mineralWool) {
-      membraneArea = area * 1.15;
-    }
-
-    // Гипсокартон +10%
-    final gypsumArea = _needGypsum ? area * 1.1 : 0.0;
-
-    // Профиль
-    double profileLength = 0;
-    if (_needProfile) {
-      // Для стен: через каждые 0.6м
-      // Для потолка: через каждые 0.4м
-      final spacing = _surfaceType == SurfaceType.ceiling ? 0.4 : 0.6;
-      final rows = (area.toDouble() / spacing).ceil();
-      profileLength = rows * 3 * 1.1; // стандартные профили 3м
-    }
-
-    // Подвесы: 1 на каждые 1.2 м²
-    final hangersCount = _needProfile && _surfaceType == SurfaceType.ceiling
-        ? (area / 1.2).ceil()
-        : 0;
-
-    return _SoundInsulationResult(
-      area: area,
-      insulationArea: insulationArea,
-      membraneArea: membraneArea,
-      gypsumArea: gypsumArea,
-      profileLength: profileLength,
-      hangersCount: hangersCount,
-    );
+    final result = _calculator(inputs, []);
+    return _SoundInsulationResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());

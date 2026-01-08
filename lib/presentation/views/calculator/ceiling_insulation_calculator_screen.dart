@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_ceiling_insulation_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип утеплителя
@@ -32,22 +34,36 @@ class _CeilingInsulationResult {
     required this.vaporBarrierArea,
     required this.membraneArea,
   });
+
+  factory _CeilingInsulationResult.fromCalculatorResult(Map<String, double> values) {
+    return _CeilingInsulationResult(
+      area: values['area'] ?? 0,
+      insulationArea: values['insulationArea'] ?? 0,
+      insulationPacks: (values['insulationPacks'] ?? 0).toInt(),
+      vaporBarrierArea: values['vaporBarrierArea'] ?? 0,
+      membraneArea: values['membraneArea'] ?? 0,
+    );
+  }
 }
 
-class CeilingInsulationCalculatorScreen extends StatefulWidget {
+class CeilingInsulationCalculatorScreen extends ConsumerStatefulWidget {
   const CeilingInsulationCalculatorScreen({super.key});
 
   @override
-  State<CeilingInsulationCalculatorScreen> createState() => _CeilingInsulationCalculatorScreenState();
+  ConsumerState<CeilingInsulationCalculatorScreen> createState() => _CeilingInsulationCalculatorScreenState();
 }
 
-class _CeilingInsulationCalculatorScreenState extends State<CeilingInsulationCalculatorScreen>
-    with ExportableMixin {
+class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsulationCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('ceiling_insulation_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateCeilingInsulationV2();
 
   double _area = 20.0;
   double _roomWidth = 4.0;
@@ -70,31 +86,21 @@ class _CeilingInsulationCalculatorScreenState extends State<CeilingInsulationCal
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _CeilingInsulationResult _calculate() {
-    double area = _area;
-    if (_inputMode == CeilingInsulationInputMode.room) {
-      area = _roomWidth * _roomLength;
-    }
+    final inputs = <String, double>{
+      'area': _area,
+      'roomWidth': _roomWidth,
+      'roomLength': _roomLength,
+      'thickness': _thickness,
+      'insulationType': _insulationType.index.toDouble(),
+      'inputMode': _inputMode.index.toDouble(),
+      'needVaporBarrier': _needVaporBarrier ? 1.0 : 0.0,
+      'needMembrane': _needMembrane ? 1.0 : 0.0,
+    };
 
-    final insulationArea = area * 1.1; // +10% запас
-
-    // Расчёт упаковок (примерно 6 м² в упаковке для 100 мм)
-    final packArea = 6.0 * (100 / _thickness);
-    final insulationPacks = (insulationArea / packArea).ceil();
-
-    // Пароизоляция +15%
-    final vaporBarrierArea = _needVaporBarrier ? area * 1.15 : 0.0;
-
-    // Мембрана +15%
-    final membraneArea = _needMembrane ? area * 1.15 : 0.0;
-
-    return _CeilingInsulationResult(
-      area: area,
-      insulationArea: insulationArea,
-      insulationPacks: insulationPacks,
-      vaporBarrierArea: vaporBarrierArea,
-      membraneArea: membraneArea,
-    );
+    final result = _calculator(inputs, []);
+    return _CeilingInsulationResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
