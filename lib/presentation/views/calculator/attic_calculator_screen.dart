@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_attic_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип мансарды
@@ -32,22 +34,38 @@ class _AtticResult {
     required this.membraneArea,
     required this.gypsumArea,
   });
+
+  factory _AtticResult.fromCalculatorResult(Map<String, double> values) {
+    return _AtticResult(
+      floorArea: values['floorArea'] ?? 0,
+      roofArea: values['roofArea'] ?? 0,
+      insulationArea: values['insulationArea'] ?? 0,
+      vaporBarrierArea: values['vaporBarrierArea'] ?? 0,
+      membraneArea: values['membraneArea'] ?? 0,
+      gypsumArea: values['gypsumArea'] ?? 0,
+    );
+  }
 }
 
-class AtticCalculatorScreen extends StatefulWidget {
+class AtticCalculatorScreen extends ConsumerStatefulWidget {
   const AtticCalculatorScreen({super.key});
 
   @override
-  State<AtticCalculatorScreen> createState() => _AtticCalculatorScreenState();
+  ConsumerState<AtticCalculatorScreen> createState() => _AtticCalculatorScreenState();
 }
 
-class _AtticCalculatorScreenState extends State<AtticCalculatorScreen>
-    with ExportableMixin {
+class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('attic_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateAtticV2();
+
   double _floorLength = 8.0;
   double _floorWidth = 6.0;
   double _roofHeight = 2.5;
@@ -69,38 +87,21 @@ class _AtticCalculatorScreenState extends State<AtticCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _AtticResult _calculate() {
-    final floorArea = _floorLength * _floorWidth;
+    final inputs = <String, double>{
+      'floorLength': _floorLength,
+      'floorWidth': _floorWidth,
+      'roofHeight': _roofHeight,
+      'insulationThickness': _insulationThickness,
+      'atticType': _atticType.index.toDouble(),
+      'needVaporBarrier': _needVaporBarrier ? 1.0 : 0.0,
+      'needMembrane': _needMembrane ? 1.0 : 0.0,
+      'needGypsum': _needGypsum ? 1.0 : 0.0,
+    };
 
-    // Площадь крыши (двускатная) ≈ площадь пола × 1.4-1.6 в зависимости от высоты
-    final roofMultiplier = 1.4 + (_roofHeight / 10);
-    final roofArea = floorArea * roofMultiplier;
-
-    // Утеплитель: крыша + стены фронтонов (примерно +20%)
-    double insulationArea = 0;
-    if (_atticType != AtticType.cold) {
-      insulationArea = roofArea * 1.2 * 1.1; // +10% запас
-    }
-
-    // Пароизоляция
-    final vaporBarrierArea = _needVaporBarrier ? insulationArea * 1.15 : 0.0;
-
-    // Мембрана
-    final membraneArea = _needMembrane ? roofArea * 1.15 : 0.0;
-
-    // Гипсокартон
-    final gypsumArea = _needGypsum && _atticType == AtticType.living
-        ? roofArea * 1.1
-        : 0.0;
-
-    return _AtticResult(
-      floorArea: floorArea,
-      roofArea: roofArea,
-      insulationArea: insulationArea,
-      vaporBarrierArea: vaporBarrierArea,
-      membraneArea: membraneArea,
-      gypsumArea: gypsumArea,
-    );
+    final result = _calculator(inputs, []);
+    return _AtticResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
