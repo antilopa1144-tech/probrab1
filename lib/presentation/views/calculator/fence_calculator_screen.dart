@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_fence_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип забора
@@ -32,22 +34,37 @@ class _FenceResult {
     required this.sheetsCount,
     required this.fastenersBags,
   });
+
+  factory _FenceResult.fromCalculatorResult(Map<String, double> values) {
+    return _FenceResult(
+      fenceLength: values['fenceLength'] ?? 0,
+      fenceArea: values['fenceArea'] ?? 0,
+      postsCount: (values['postsCount'] ?? 0).toInt(),
+      lagsLength: values['lagsLength'] ?? 0,
+      sheetsCount: (values['sheetsCount'] ?? 0).toInt(),
+      fastenersBags: (values['fastenersBags'] ?? 0).toInt(),
+    );
+  }
 }
 
-class FenceCalculatorScreen extends StatefulWidget {
+class FenceCalculatorScreen extends ConsumerStatefulWidget {
   const FenceCalculatorScreen({super.key});
 
   @override
-  State<FenceCalculatorScreen> createState() => _FenceCalculatorScreenState();
+  ConsumerState<FenceCalculatorScreen> createState() => _FenceCalculatorScreenState();
 }
 
-class _FenceCalculatorScreenState extends State<FenceCalculatorScreen>
-    with ExportableMixin {
+class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('fence_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateFenceV2();
 
   double _fenceLength = 50.0;
   double _fenceHeight = 2.0;
@@ -66,42 +83,17 @@ class _FenceCalculatorScreenState extends State<FenceCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _FenceResult _calculate() {
-    final fenceLength = _fenceLength;
-    final fenceArea = fenceLength * _fenceHeight;
+    final inputs = <String, double>{
+      'fenceLength': _fenceLength,
+      'fenceHeight': _fenceHeight,
+      'postSpacing': _postSpacing,
+      'fenceType': _fenceType.index.toDouble(),
+    };
 
-    // Столбы
-    final postsCount = (fenceLength / _postSpacing).ceil() + 1;
-
-    // Лаги (поперечины): 2-3 ряда в зависимости от высоты
-    final lagsRows = _fenceHeight > 1.8 ? 3 : 2;
-    final lagsLength = fenceLength * lagsRows * 1.05;
-
-    // Листы/штакетник
-    int sheetsCount;
-    switch (_fenceType) {
-      case FenceType.profiled:
-        // Профлист 1.15м шириной
-        sheetsCount = (fenceLength / 1.1).ceil();
-      case FenceType.picket:
-        // Штакетник 10 см шириной с зазором 5 см
-        sheetsCount = (fenceLength / 0.15).ceil();
-      case FenceType.chain:
-        // Сетка в рулонах по 10м
-        sheetsCount = (fenceLength / 10).ceil();
-    }
-
-    // Крепёж: примерно 8 саморезов на м²
-    final fastenersBags = ((fenceArea * 8) / 200).ceil(); // 200 шт в упаковке
-
-    return _FenceResult(
-      fenceLength: fenceLength,
-      fenceArea: fenceArea,
-      postsCount: postsCount,
-      lagsLength: lagsLength,
-      sheetsCount: sheetsCount,
-      fastenersBags: fastenersBags,
-    );
+    final result = _calculator(inputs, []);
+    return _FenceResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
