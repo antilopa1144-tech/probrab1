@@ -1,9 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_cassette_ceiling_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип кассетного потолка
@@ -47,22 +47,37 @@ class _CassetteCeilingResult {
     required this.wallProfileLength,
     required this.hangersCount,
   });
+
+  factory _CassetteCeilingResult.fromCalculatorResult(Map<String, double> values) {
+    return _CassetteCeilingResult(
+      area: values['area'] ?? 0,
+      cassettesCount: (values['cassettesCount'] ?? 0).toInt(),
+      mainProfileLength: values['mainProfileLength'] ?? 0,
+      crossProfileLength: values['crossProfileLength'] ?? 0,
+      wallProfileLength: values['wallProfileLength'] ?? 0,
+      hangersCount: (values['hangersCount'] ?? 0).toInt(),
+    );
+  }
 }
 
-class CassetteCeilingCalculatorScreen extends StatefulWidget {
+class CassetteCeilingCalculatorScreen extends ConsumerStatefulWidget {
   const CassetteCeilingCalculatorScreen({super.key});
 
   @override
-  State<CassetteCeilingCalculatorScreen> createState() => _CassetteCeilingCalculatorScreenState();
+  ConsumerState<CassetteCeilingCalculatorScreen> createState() => _CassetteCeilingCalculatorScreenState();
 }
 
-class _CassetteCeilingCalculatorScreenState extends State<CassetteCeilingCalculatorScreen>
-    with ExportableMixin {
+class _CassetteCeilingCalculatorScreenState extends ConsumerState<CassetteCeilingCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('cassette_ceiling_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateCassetteCeilingV2();
 
   double _area = 20.0;
   double _roomWidth = 4.0;
@@ -83,49 +98,19 @@ class _CassetteCeilingCalculatorScreenState extends State<CassetteCeilingCalcula
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _CassetteCeilingResult _calculate() {
-    double area = _area;
-    double roomWidth = _roomWidth;
-    double roomLength = _roomLength;
+    final inputs = <String, double>{
+      'area': _area,
+      'roomWidth': _roomWidth,
+      'roomLength': _roomLength,
+      'ceilingType': _ceilingType.index.toDouble(),
+      'cassetteSize': _cassetteSize.index.toDouble(),
+      'inputMode': _inputMode.index.toDouble(),
+    };
 
-    if (_inputMode == CassetteCeilingInputMode.room) {
-      area = roomWidth * roomLength;
-    } else {
-      final side = math.sqrt(area);
-      roomWidth = side;
-      roomLength = side;
-    }
-
-    final perimeter = 2 * (roomWidth + roomLength);
-
-    // Количество кассет с запасом 5%
-    final cassettesCount = (area * 1.05 / _cassetteSize.area).ceil();
-
-    // Основной профиль (3.7 м на каждые 1.2 м ширины)
-    final mainProfileLength = (roomLength / 1.2).ceil() * 3.7 * (roomWidth / 3.7).ceil();
-
-    // Поперечный профиль
-    double crossProfileLength;
-    if (_cassetteSize == CassetteSize.size600x600) {
-      crossProfileLength = (roomWidth / 0.6).ceil() * roomLength;
-    } else {
-      crossProfileLength = (roomWidth / 1.2).ceil() * roomLength;
-    }
-
-    // Пристенный профиль = периметр + 10%
-    final wallProfileLength = perimeter * 1.1;
-
-    // Подвесы: 1 шт на каждые 1.2 м²
-    final hangersCount = (area / 1.2).ceil();
-
-    return _CassetteCeilingResult(
-      area: area,
-      cassettesCount: cassettesCount,
-      mainProfileLength: mainProfileLength,
-      crossProfileLength: crossProfileLength,
-      wallProfileLength: wallProfileLength,
-      hangersCount: hangersCount,
-    );
+    final result = _calculator(inputs, []);
+    return _CassetteCeilingResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
