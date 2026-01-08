@@ -1,9 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_pvc_panels_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип ПВХ панелей
@@ -36,22 +36,38 @@ class _PvcPanelsResult {
     required this.plinthLength,
     required this.plinthPieces,
   });
+
+  factory _PvcPanelsResult.fromCalculatorResult(Map<String, double> values) {
+    return _PvcPanelsResult(
+      area: values['area'] ?? 0,
+      panelsCount: (values['panelsCount'] ?? 0).toInt(),
+      profileLength: values['profileLength'] ?? 0,
+      cornerCount: (values['cornerCount'] ?? 0).toInt(),
+      plinthLength: values['plinthLength'] ?? 0,
+      plinthPieces: (values['plinthPieces'] ?? 0).toInt(),
+    );
+  }
 }
 
-class PvcPanelsCalculatorScreen extends StatefulWidget {
+class PvcPanelsCalculatorScreen extends ConsumerStatefulWidget {
   const PvcPanelsCalculatorScreen({super.key});
 
   @override
-  State<PvcPanelsCalculatorScreen> createState() => _PvcPanelsCalculatorScreenState();
+  ConsumerState<PvcPanelsCalculatorScreen> createState() => _PvcPanelsCalculatorScreenState();
 }
 
-class _PvcPanelsCalculatorScreenState extends State<PvcPanelsCalculatorScreen>
-    with ExportableMixin {
+class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('pvc_panels_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculatePvcPanelsV2();
+
   double _area = 15.0;
   double _wallWidth = 3.0;
   double _wallHeight = 2.5;
@@ -73,63 +89,21 @@ class _PvcPanelsCalculatorScreenState extends State<PvcPanelsCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _PvcPanelsResult _calculate() {
-    double area = _area;
-    double wallWidth = _wallWidth;
-    double wallHeight = _wallHeight;
+    final inputs = <String, double>{
+      'area': _area,
+      'wallWidth': _wallWidth,
+      'wallHeight': _wallHeight,
+      'panelWidth': _panelWidth,
+      'panelType': _panelType.index.toDouble(),
+      'inputMode': _inputMode.index.toDouble(),
+      'needProfile': _needProfile ? 1.0 : 0.0,
+      'needCorners': _needCorners ? 1.0 : 0.0,
+    };
 
-    if (_inputMode == PvcPanelsInputMode.dimensions) {
-      area = wallWidth * wallHeight;
-    } else {
-      final side = math.sqrt(area);
-      wallWidth = side * 1.5;
-      wallHeight = side / 1.5;
-    }
-
-    // Панели: площадь + 10% запас
-    double panelLength;
-    switch (_panelType) {
-      case PvcPanelType.wall:
-        panelLength = 2.7;
-      case PvcPanelType.ceiling:
-        panelLength = 3.0;
-      case PvcPanelType.bathroom:
-        panelLength = 2.7;
-    }
-
-    final panelArea = _panelWidth * panelLength;
-    final panelsCount = (area * 1.1 / panelArea).ceil();
-
-    // Профиль для обрешётки: через каждые 0.4м
-    double profileLength = 0;
-    if (_needProfile) {
-      final rows = (wallHeight / 0.4).ceil() + 1;
-      profileLength = rows * wallWidth * 1.1;
-    }
-
-    // Угловые профили
-    int cornerCount = 0;
-    if (_needCorners) {
-      // 4 угла по высоте помещения
-      cornerCount = (wallHeight * 4 / 3).ceil(); // 3м рейки
-    }
-
-    // Плинтус потолочный
-    double plinthLength = 0;
-    int plinthPieces = 0;
-    if (_panelType == PvcPanelType.ceiling) {
-      plinthLength = wallWidth * 2 + wallHeight * 2;
-      plinthPieces = (plinthLength / 3).ceil();
-    }
-
-    return _PvcPanelsResult(
-      area: area,
-      panelsCount: panelsCount,
-      profileLength: profileLength,
-      cornerCount: cornerCount,
-      plinthLength: plinthLength,
-      plinthPieces: plinthPieces,
-    );
+    final result = _calculator(inputs, []);
+    return _PvcPanelsResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
