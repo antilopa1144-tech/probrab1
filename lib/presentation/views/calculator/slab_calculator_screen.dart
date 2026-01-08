@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип фундаментной плиты
@@ -44,7 +43,14 @@ class SlabCalculatorScreen extends StatefulWidget {
   State<SlabCalculatorScreen> createState() => _SlabCalculatorScreenState();
 }
 
-class _SlabCalculatorScreenState extends State<SlabCalculatorScreen> {
+class _SlabCalculatorScreenState extends State<SlabCalculatorScreen>
+    with ExportableMixin {
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('slab_calc.title');
+
   double _length = 10.0;
   double _width = 8.0;
   double _thickness = 0.3;
@@ -103,7 +109,8 @@ class _SlabCalculatorScreenState extends State<SlabCalculatorScreen> {
 
   void _update() => setState(() => _result = _calculate());
 
-  String _generateExportText() {
+  @override
+  String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln(_loc.translate('slab_calc.export.title'));
     buffer.writeln('═' * 40);
@@ -137,19 +144,6 @@ class _SlabCalculatorScreenState extends State<SlabCalculatorScreen> {
     return buffer.toString();
   }
 
-  void _shareCalculation() {
-    final text = _generateExportText();
-    SharePlus.instance.share(ShareParams(text: text, subject: _loc.translate('slab_calc.title')));
-  }
-
-  void _copyToClipboard() {
-    final text = _generateExportText();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_loc.translate('common.copied_to_clipboard')), duration: const Duration(seconds: 2)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -157,10 +151,7 @@ class _SlabCalculatorScreenState extends State<SlabCalculatorScreen> {
     return CalculatorScaffold(
       title: _loc.translate('slab_calc.title'),
       accentColor: _accentColor,
-      actions: [
-        IconButton(icon: const Icon(Icons.copy), onPressed: _copyToClipboard, tooltip: _loc.translate('common.copy')),
-        IconButton(icon: const Icon(Icons.share), onPressed: _shareCalculation, tooltip: _loc.translate('common.share')),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,
         results: [

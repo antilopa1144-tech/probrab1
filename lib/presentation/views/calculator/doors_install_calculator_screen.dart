@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип двери
@@ -42,7 +41,14 @@ class DoorsInstallCalculatorScreen extends StatefulWidget {
   State<DoorsInstallCalculatorScreen> createState() => _DoorsInstallCalculatorScreenState();
 }
 
-class _DoorsInstallCalculatorScreenState extends State<DoorsInstallCalculatorScreen> {
+class _DoorsInstallCalculatorScreenState extends State<DoorsInstallCalculatorScreen>
+    with ExportableMixin {
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('doors_calc.title');
+
   int _doorsCount = 3;
   double _doorHeight = 2.0;
   double _doorWidth = 0.8;
@@ -103,7 +109,8 @@ class _DoorsInstallCalculatorScreenState extends State<DoorsInstallCalculatorScr
 
   void _update() => setState(() => _result = _calculate());
 
-  String _generateExportText() {
+  @override
+  String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln(_loc.translate('doors_calc.export.title'));
     buffer.writeln('═' * 40);
@@ -136,19 +143,6 @@ class _DoorsInstallCalculatorScreenState extends State<DoorsInstallCalculatorScr
     return buffer.toString();
   }
 
-  void _shareCalculation() {
-    final text = _generateExportText();
-    SharePlus.instance.share(ShareParams(text: text, subject: _loc.translate('doors_calc.title')));
-  }
-
-  void _copyToClipboard() {
-    final text = _generateExportText();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_loc.translate('common.copied_to_clipboard')), duration: const Duration(seconds: 2)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -156,10 +150,7 @@ class _DoorsInstallCalculatorScreenState extends State<DoorsInstallCalculatorScr
     return CalculatorScaffold(
       title: _loc.translate('doors_calc.title'),
       accentColor: _accentColor,
-      actions: [
-        IconButton(icon: const Icon(Icons.copy), onPressed: _copyToClipboard, tooltip: _loc.translate('common.copy')),
-        IconButton(icon: const Icon(Icons.share), onPressed: _shareCalculation, tooltip: _loc.translate('common.share')),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,
         results: [
