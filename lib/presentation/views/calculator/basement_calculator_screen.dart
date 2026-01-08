@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_basement_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип подвала
@@ -32,22 +34,38 @@ class _BasementResult {
     required this.insulationArea,
     required this.drainageLength,
   });
+
+  factory _BasementResult.fromCalculatorResult(Map<String, double> values) {
+    return _BasementResult(
+      floorArea: values['floorArea'] ?? 0,
+      wallArea: values['wallArea'] ?? 0,
+      concreteVolume: values['concreteVolume'] ?? 0,
+      waterproofArea: values['waterproofArea'] ?? 0,
+      insulationArea: values['insulationArea'] ?? 0,
+      drainageLength: values['drainageLength'] ?? 0,
+    );
+  }
 }
 
-class BasementCalculatorScreen extends StatefulWidget {
+class BasementCalculatorScreen extends ConsumerStatefulWidget {
   const BasementCalculatorScreen({super.key});
 
   @override
-  State<BasementCalculatorScreen> createState() => _BasementCalculatorScreenState();
+  ConsumerState<BasementCalculatorScreen> createState() => _BasementCalculatorScreenState();
 }
 
-class _BasementCalculatorScreenState extends State<BasementCalculatorScreen>
-    with ExportableMixin {
+class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('basement_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateBasementV2();
+
   double _length = 10.0;
   double _width = 8.0;
   double _depth = 2.5;
@@ -69,33 +87,21 @@ class _BasementCalculatorScreenState extends State<BasementCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _BasementResult _calculate() {
-    final floorArea = _length * _width;
-    final perimeter = 2 * (_length + _width);
-    final wallArea = perimeter * _depth;
+    final inputs = <String, double>{
+      'length': _length,
+      'width': _width,
+      'depth': _depth,
+      'wallThickness': _wallThickness,
+      'basementType': _basementType.index.toDouble(),
+      'needWaterproof': _needWaterproof ? 1.0 : 0.0,
+      'needInsulation': _needInsulation ? 1.0 : 0.0,
+      'needDrainage': _needDrainage ? 1.0 : 0.0,
+    };
 
-    // Бетон: пол + стены
-    final floorVolume = floorArea * 0.15; // 15 см толщина
-    final wallVolume = wallArea * _wallThickness;
-    final concreteVolume = (floorVolume + wallVolume) * 1.05;
-
-    // Гидроизоляция: пол + стены снаружи
-    final waterproofArea = _needWaterproof ? (floorArea + wallArea) * 1.15 : 0.0;
-
-    // Утеплитель для жилого подвала
-    final insulationArea = _needInsulation ? (floorArea + wallArea) * 1.1 : 0.0;
-
-    // Дренаж по периметру
-    final drainageLength = _needDrainage ? perimeter * 1.1 : 0.0;
-
-    return _BasementResult(
-      floorArea: floorArea,
-      wallArea: wallArea,
-      concreteVolume: concreteVolume,
-      waterproofArea: waterproofArea,
-      insulationArea: insulationArea,
-      drainageLength: drainageLength,
-    );
+    final result = _calculator(inputs, []);
+    return _BasementResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
