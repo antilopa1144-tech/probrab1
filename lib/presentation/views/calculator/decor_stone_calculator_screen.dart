@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_decor_stone_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип декоративного камня
@@ -34,22 +36,38 @@ class _DecorStoneResult {
     required this.groutKg,
     required this.primerLiters,
   });
+
+  factory _DecorStoneResult.fromCalculatorResult(Map<String, double> values) {
+    return _DecorStoneResult(
+      area: values['area'] ?? 0,
+      stoneArea: values['stoneArea'] ?? 0,
+      glueKg: values['glueKg'] ?? 0,
+      glueBags: (values['glueBags'] ?? 0).toInt(),
+      groutKg: values['groutKg'] ?? 0,
+      primerLiters: values['primerLiters'] ?? 0,
+    );
+  }
 }
 
-class DecorStoneCalculatorScreen extends StatefulWidget {
+class DecorStoneCalculatorScreen extends ConsumerStatefulWidget {
   const DecorStoneCalculatorScreen({super.key});
 
   @override
-  State<DecorStoneCalculatorScreen> createState() => _DecorStoneCalculatorScreenState();
+  ConsumerState<DecorStoneCalculatorScreen> createState() => _DecorStoneCalculatorScreenState();
 }
 
-class _DecorStoneCalculatorScreenState extends State<DecorStoneCalculatorScreen>
-    with ExportableMixin {
+class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('decor_stone_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateDecorStoneV2();
+
   double _area = 15.0;
   double _wallWidth = 4.0;
   double _wallHeight = 2.7;
@@ -71,47 +89,21 @@ class _DecorStoneCalculatorScreenState extends State<DecorStoneCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _DecorStoneResult _calculate() {
-    double area = _area;
-    if (_inputMode == DecorStoneInputMode.wall) {
-      area = _wallWidth * _wallHeight;
-    }
+    final inputs = <String, double>{
+      'area': _area,
+      'wallWidth': _wallWidth,
+      'wallHeight': _wallHeight,
+      'stoneType': _stoneType.index.toDouble(),
+      'jointWidth': _jointWidth,
+      'inputMode': _inputMode.index.toDouble(),
+      'needGrout': _needGrout ? 1.0 : 0.0,
+      'needPrimer': _needPrimer ? 1.0 : 0.0,
+    };
 
-    // Камень +10% запас
-    final stoneArea = area * 1.1;
-
-    // Расход клея зависит от типа камня
-    double gluePerSqm;
-    switch (_stoneType) {
-      case DecorStoneType.gypsum:
-        gluePerSqm = 3.0; // кг/м²
-      case DecorStoneType.concrete:
-        gluePerSqm = 5.0; // кг/м²
-      case DecorStoneType.natural:
-        gluePerSqm = 7.0; // кг/м²
-    }
-
-    final glueKg = area * gluePerSqm * 1.1;
-    final glueBags = (glueKg / 25).ceil();
-
-    // Затирка: зависит от ширины шва
-    double groutKg = 0;
-    if (_needGrout) {
-      // Примерный расход: 0.2 кг/м² на каждые 5 мм ширины шва
-      groutKg = area * (_jointWidth / 5) * 0.2 * 1.1;
-    }
-
-    // Грунтовка: 0.15 л/м²
-    final primerLiters = _needPrimer ? area * 0.15 * 1.1 : 0.0;
-
-    return _DecorStoneResult(
-      area: area,
-      stoneArea: stoneArea,
-      glueKg: glueKg,
-      glueBags: glueBags,
-      groutKg: groutKg,
-      primerLiters: primerLiters,
-    );
+    final result = _calculator(inputs, []);
+    return _DecorStoneResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
