@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_screed_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип стяжки
@@ -38,23 +40,39 @@ class _ScreedResult {
     required this.meshArea,
     required this.filmArea,
   });
+
+  factory _ScreedResult.fromCalculatorResult(Map<String, double> values) {
+    return _ScreedResult(
+      area: values['area'] ?? 0,
+      volume: values['volume'] ?? 0,
+      cementKg: values['cementKg'] ?? 0,
+      cementBags: (values['cementBags'] ?? 0).toInt(),
+      sandKg: values['sandKg'] ?? 0,
+      sandCbm: values['sandCbm'] ?? 0,
+      meshArea: values['meshArea'] ?? 0,
+      filmArea: values['filmArea'] ?? 0,
+    );
+  }
 }
 
-class ScreedCalculatorScreen extends StatefulWidget {
+class ScreedCalculatorScreen extends ConsumerStatefulWidget {
   const ScreedCalculatorScreen({super.key});
 
   @override
-  State<ScreedCalculatorScreen> createState() => _ScreedCalculatorScreenState();
+  ConsumerState<ScreedCalculatorScreen> createState() => _ScreedCalculatorScreenState();
 }
 
-class _ScreedCalculatorScreenState extends State<ScreedCalculatorScreen>
-    with ExportableMixin {
-  // ExportableMixin
+class _ScreedCalculatorScreenState extends ConsumerState<ScreedCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('screed_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateScreedV2();
 
   double _area = 20.0;
   double _roomWidth = 4.0;
@@ -77,53 +95,24 @@ class _ScreedCalculatorScreenState extends State<ScreedCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _ScreedResult _calculate() {
-    double area = _area;
-    if (_inputMode == ScreedInputMode.room) {
-      area = _roomWidth * _roomLength;
+    final inputs = <String, double>{
+      'thickness': _thickness,
+      'screedType': _screedType.index.toDouble(),
+      'needMesh': _needMesh ? 1.0 : 0.0,
+      'needFilm': _needFilm ? 1.0 : 0.0,
+    };
+
+    if (_inputMode == ScreedInputMode.manual) {
+      inputs['area'] = _area;
+    } else {
+      inputs['roomWidth'] = _roomWidth;
+      inputs['roomLength'] = _roomLength;
     }
 
-    final thicknessM = _thickness / 1000;
-    final volume = area * thicknessM;
-
-    // Расход материалов (пропорция 1:3 для ЦПС)
-    double cementKg;
-    double sandKg;
-
-    switch (_screedType) {
-      case ScreedType.cementSand:
-        // М150: ~400 кг цемента на 1 м³
-        cementKg = volume * 400;
-        sandKg = volume * 1200; // 3 части песка
-      case ScreedType.semidry:
-        // Полусухая: ~350 кг цемента
-        cementKg = volume * 350;
-        sandKg = volume * 1050;
-      case ScreedType.concrete:
-        // Бетон М200: ~300 кг цемента
-        cementKg = volume * 300;
-        sandKg = volume * 900;
-    }
-
-    final cementBags = (cementKg / 50).ceil(); // мешок 50 кг
-    final sandCbm = sandKg / 1500; // плотность песка ~1500 кг/м³
-
-    // Сетка +10%
-    final meshArea = _needMesh ? area * 1.1 : 0.0;
-
-    // Плёнка +15%
-    final filmArea = _needFilm ? area * 1.15 : 0.0;
-
-    return _ScreedResult(
-      area: area,
-      volume: volume,
-      cementKg: cementKg,
-      cementBags: cementBags,
-      sandKg: sandKg,
-      sandCbm: sandCbm,
-      meshArea: meshArea,
-      filmArea: filmArea,
-    );
+    final result = _calculator(inputs, []);
+    return _ScreedResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
