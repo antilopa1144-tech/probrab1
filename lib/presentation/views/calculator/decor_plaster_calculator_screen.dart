@@ -296,7 +296,7 @@ class _DecorPlasterCalculatorScreenState extends State<DecorPlasterCalculatorScr
             title: Text(_loc.translate('decor_plaster_calc.option.primer'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('decor_plaster_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needPrimer,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPrimer = v; _update(); }); },
           ),
           if (_plasterType == DecorPlasterType.venetian)
@@ -305,7 +305,7 @@ class _DecorPlasterCalculatorScreenState extends State<DecorPlasterCalculatorScr
               title: Text(_loc.translate('decor_plaster_calc.option.wax'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
               subtitle: Text(_loc.translate('decor_plaster_calc.option.wax_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
               value: _needWax,
-              activeColor: _accentColor,
+              activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needWax = v; _update(); }); },
             ),
         ],

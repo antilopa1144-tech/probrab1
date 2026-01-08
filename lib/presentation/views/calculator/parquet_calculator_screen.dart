@@ -352,7 +352,7 @@ class _ParquetCalculatorScreenState extends State<ParquetCalculatorScreen>
             title: Text(_loc.translate('parquet_calc.option.underlay'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('parquet_calc.option.underlay_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needUnderlay,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needUnderlay = v; _update(); }); },
           ),
           SwitchListTile(
@@ -360,7 +360,7 @@ class _ParquetCalculatorScreenState extends State<ParquetCalculatorScreen>
             title: Text(_loc.translate('parquet_calc.option.plinth'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('parquet_calc.option.plinth_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needPlinth,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPlinth = v; _update(); }); },
           ),
           SwitchListTile(
@@ -368,7 +368,7 @@ class _ParquetCalculatorScreenState extends State<ParquetCalculatorScreen>
             title: Text(_loc.translate('parquet_calc.option.glue'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('parquet_calc.option.glue_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needGlue,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needGlue = v; _update(); }); },
           ),
         ],

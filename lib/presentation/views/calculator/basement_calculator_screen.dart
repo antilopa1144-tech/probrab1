@@ -228,7 +228,7 @@ class _BasementCalculatorScreenState extends State<BasementCalculatorScreen>
             title: Text(_loc.translate('basement_calc.option.waterproof'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('basement_calc.option.waterproof_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needWaterproof,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needWaterproof = v; _update(); }); },
           ),
           SwitchListTile(
@@ -236,7 +236,7 @@ class _BasementCalculatorScreenState extends State<BasementCalculatorScreen>
             title: Text(_loc.translate('basement_calc.option.insulation'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('basement_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needInsulation,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needInsulation = v; _update(); }); },
           ),
           SwitchListTile(
@@ -244,7 +244,7 @@ class _BasementCalculatorScreenState extends State<BasementCalculatorScreen>
             title: Text(_loc.translate('basement_calc.option.drainage'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('basement_calc.option.drainage_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needDrainage,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needDrainage = v; _update(); }); },
           ),
         ],

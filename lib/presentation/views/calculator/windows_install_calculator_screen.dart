@@ -257,7 +257,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
             title: Text(_loc.translate('windows_calc.option.sill'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('windows_calc.option.sill_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needSill,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needSill = v; _update(); }); },
           ),
           SwitchListTile(
@@ -265,7 +265,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
             title: Text(_loc.translate('windows_calc.option.slopes'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('windows_calc.option.slopes_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needSlopes,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needSlopes = v; _update(); }); },
           ),
         ],

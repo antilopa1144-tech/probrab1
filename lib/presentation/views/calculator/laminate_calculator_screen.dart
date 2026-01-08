@@ -359,7 +359,7 @@ class _LaminateCalculatorScreenState extends State<LaminateCalculatorScreen>
             title: Text(_loc.translate('laminate_calc.option.underlay'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('laminate_calc.option.underlay_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needUnderlay,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needUnderlay = v; _update(); }); },
           ),
           SwitchListTile(
@@ -367,7 +367,7 @@ class _LaminateCalculatorScreenState extends State<LaminateCalculatorScreen>
             title: Text(_loc.translate('laminate_calc.option.plinth'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('laminate_calc.option.plinth_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needPlinth,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPlinth = v; _update(); }); },
           ),
         ],

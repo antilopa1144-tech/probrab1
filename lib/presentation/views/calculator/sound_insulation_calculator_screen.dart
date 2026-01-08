@@ -283,7 +283,7 @@ class _SoundInsulationCalculatorScreenState extends State<SoundInsulationCalcula
             title: Text(_loc.translate('sound_insulation_calc.option.gypsum'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('sound_insulation_calc.option.gypsum_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needGypsum,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needGypsum = v; _update(); }); },
           ),
           SwitchListTile(
@@ -291,7 +291,7 @@ class _SoundInsulationCalculatorScreenState extends State<SoundInsulationCalcula
             title: Text(_loc.translate('sound_insulation_calc.option.profile'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('sound_insulation_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needProfile,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needProfile = v; _update(); }); },
           ),
         ],

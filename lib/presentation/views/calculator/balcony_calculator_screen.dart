@@ -222,7 +222,7 @@ class _BalconyCalculatorScreenState extends State<BalconyCalculatorScreen>
               title: Text(_loc.translate('balcony_calc.option.insulation'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
               subtitle: Text(_loc.translate('balcony_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
               value: _needInsulation,
-              activeColor: _accentColor,
+              activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needInsulation = v; _update(); }); },
             ),
           SwitchListTile(
@@ -230,7 +230,7 @@ class _BalconyCalculatorScreenState extends State<BalconyCalculatorScreen>
             title: Text(_loc.translate('balcony_calc.option.floor_finishing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('balcony_calc.option.floor_finishing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needFloorFinishing,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needFloorFinishing = v; _update(); }); },
           ),
           SwitchListTile(
@@ -238,7 +238,7 @@ class _BalconyCalculatorScreenState extends State<BalconyCalculatorScreen>
             title: Text(_loc.translate('balcony_calc.option.wall_finishing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('balcony_calc.option.wall_finishing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needWallFinishing,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needWallFinishing = v; _update(); }); },
           ),
         ],

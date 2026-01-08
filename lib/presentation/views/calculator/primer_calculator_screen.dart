@@ -85,14 +85,14 @@ class _PrimerCalculatorScreenState extends State<PrimerCalculatorScreen>
   /// Расход грунтовки л/м² в зависимости от поверхности и типа
   double _getConsumptionRate() {
     // Базовый расход по типу грунтовки
-    double baseRate = switch (_primerType) {
+    final double baseRate = switch (_primerType) {
       PrimerType.deep => 0.1,
       PrimerType.contact => 0.3,
       PrimerType.universal => 0.15,
     };
 
     // Коэффициент по поверхности
-    double surfaceMultiplier = switch (_surfaceType) {
+    final double surfaceMultiplier = switch (_surfaceType) {
       PrimerSurfaceType.concrete => 1.3,    // пористый бетон
       PrimerSurfaceType.plaster => 1.0,     // штукатурка стандартно
       PrimerSurfaceType.drywall => 0.8,     // гипсокартон меньше впитывает

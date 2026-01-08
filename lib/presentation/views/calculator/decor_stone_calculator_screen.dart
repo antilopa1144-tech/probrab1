@@ -304,7 +304,7 @@ class _DecorStoneCalculatorScreenState extends State<DecorStoneCalculatorScreen>
             title: Text(_loc.translate('decor_stone_calc.option.grout'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('decor_stone_calc.option.grout_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needGrout,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needGrout = v; _update(); }); },
           ),
           SwitchListTile(
@@ -312,7 +312,7 @@ class _DecorStoneCalculatorScreenState extends State<DecorStoneCalculatorScreen>
             title: Text(_loc.translate('decor_stone_calc.option.primer'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('decor_stone_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needPrimer,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPrimer = v; _update(); }); },
           ),
         ],

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../../domain/data/putty_materials_database.dart';
 import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
@@ -29,7 +28,13 @@ enum MaterialTier {
   const MaterialTier(this.nameKey, this.descriptionKey, this.icon);
 }
 
-class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
+class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
+    with ExportableMixin {
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('putty.title');
   // === СОСТОЯНИЕ ===
   InputMode _inputMode = InputMode.byArea;
   double _area = 15.0;
@@ -100,7 +105,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
 
   // Получить материалы по тиру
   PuttyMaterial _getStartMaterialForTier() {
-    final materials = PuttyMaterialsDatabase.startMaterials;
+    const materials = PuttyMaterialsDatabase.startMaterials;
     switch (_materialTier) {
       case MaterialTier.economy:
         return materials.firstWhere((m) => m.id == 'volma_sloy', orElse: () => materials.first);
@@ -114,14 +119,14 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
   PuttyMaterial _getFinishMaterialForTier() {
     switch (_materialTier) {
       case MaterialTier.economy:
-        final dryMaterials = PuttyMaterialsDatabase.finishDryMaterials;
+        const dryMaterials = PuttyMaterialsDatabase.finishDryMaterials;
         return dryMaterials.firstWhere((m) => m.id == 'starateli_finish', orElse: () => dryMaterials.first);
       case MaterialTier.standard:
-        final pasteMaterials = PuttyMaterialsDatabase.finishPasteMaterials;
+        const pasteMaterials = PuttyMaterialsDatabase.finishPasteMaterials;
         return pasteMaterials.firstWhere((m) => m.id == 'sheetrock_superfinish', orElse: () => pasteMaterials.first);
       case MaterialTier.premium:
-        final pasteMaterials = PuttyMaterialsDatabase.finishPasteMaterials;
-        return pasteMaterials.firstWhere((m) => m.id == 'terraco_ready_mix', orElse: () => pasteMaterials.first);
+        const pasteMaterialsPremium = PuttyMaterialsDatabase.finishPasteMaterials;
+        return pasteMaterialsPremium.firstWhere((m) => m.id == 'terraco_ready_mix', orElse: () => pasteMaterialsPremium.first);
     }
   }
 
@@ -193,7 +198,8 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
 
   void _update() => setState(() => _result = _calculate());
 
-  String _generateExportText() {
+  @override
+  String generateExportText() {
     final result = _result;
     final targetLabel = _isPainting
         ? _loc.translate('putty.export.for_painting')
@@ -228,24 +234,6 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
     return buffer.toString();
   }
 
-  void _shareCalculation() {
-    final text = _generateExportText();
-    SharePlus.instance.share(
-      ShareParams(text: text, subject: _loc.translate('putty.title')),
-    );
-  }
-
-  void _copyToClipboard() {
-    final text = _generateExportText();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(_loc.translate('common.copied_to_clipboard')),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -254,18 +242,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2> {
     return CalculatorScaffold(
       title: _loc.translate('putty.title'),
       accentColor: accentColor,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.copy),
-          onPressed: _copyToClipboard,
-          tooltip: _loc.translate('common.copy'),
-        ),
-        IconButton(
-          icon: const Icon(Icons.share),
-          onPressed: _shareCalculation,
-          tooltip: _loc.translate('common.share'),
-        ),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,
         results: [

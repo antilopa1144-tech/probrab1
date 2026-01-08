@@ -315,7 +315,7 @@ class _PvcPanelsCalculatorScreenState extends State<PvcPanelsCalculatorScreen>
             title: Text(_loc.translate('pvc_panels_calc.option.profile'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('pvc_panels_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needProfile,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needProfile = v; _update(); }); },
           ),
           SwitchListTile(
@@ -323,7 +323,7 @@ class _PvcPanelsCalculatorScreenState extends State<PvcPanelsCalculatorScreen>
             title: Text(_loc.translate('pvc_panels_calc.option.corners'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('pvc_panels_calc.option.corners_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needCorners,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needCorners = v; _update(); }); },
           ),
         ],

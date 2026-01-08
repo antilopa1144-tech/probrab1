@@ -1,11 +1,10 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../providers/constants_provider.dart';
@@ -210,7 +209,13 @@ class GasblockCalculatorScreen extends ConsumerStatefulWidget {
       _GasblockCalculatorScreenState();
 }
 
-class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScreen> {
+class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScreen>
+    with ExportableConsumerMixin {
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('gasblock.export.subject');
   InputMode _inputMode = InputMode.byDimensions;
   double _area = 15.0;
   double _length = 6.0;
@@ -380,7 +385,8 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
 
   void _update() => setState(() => _result = _calculate());
 
-  String _exportText() {
+  @override
+  String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln(_loc.translate('gasblock.export.title'));
     buffer.writeln('${_loc.translate('gasblock.export.masonry_area')}: ${_result.netArea.toStringAsFixed(2)} ${_loc.translate('common.sqm')}');
@@ -430,25 +436,6 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
     return buffer.toString();
   }
 
-  void _share() {
-    SharePlus.instance.share(
-      ShareParams(
-        text: _exportText(),
-        subject: _loc.translate('gasblock.export.subject'),
-      ),
-    );
-  }
-
-  void _copy() {
-    Clipboard.setData(ClipboardData(text: _exportText()));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(_loc.translate('common.copied_to_clipboard')),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -457,18 +444,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.copy),
-          tooltip: _loc.translate('common.copy'),
-          onPressed: _copy,
-        ),
-        IconButton(
-          icon: const Icon(Icons.share),
-          tooltip: _loc.translate('common.share'),
-          onPressed: _share,
-        ),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,
         results: [

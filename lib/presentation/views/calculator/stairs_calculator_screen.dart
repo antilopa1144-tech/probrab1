@@ -72,7 +72,7 @@ class _StairsCalculatorScreenState extends State<StairsCalculatorScreen>
 
   _StairsResult _calculate() {
     // Оптимальная высота ступени 15-20 см
-    final optimalStepHeight = 0.17; // 17 см
+    const optimalStepHeight = 0.17; // 17 см
     final stepsCount = (_floorHeight / optimalStepHeight).ceil();
     final stepHeight = _floorHeight / stepsCount;
 
@@ -235,7 +235,7 @@ class _StairsCalculatorScreenState extends State<StairsCalculatorScreen>
             title: Text(_loc.translate('stairs_calc.option.railing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('stairs_calc.option.railing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needRailing,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needRailing = v; _update(); }); },
           ),
           if (_needRailing)
@@ -244,7 +244,7 @@ class _StairsCalculatorScreenState extends State<StairsCalculatorScreen>
               title: Text(_loc.translate('stairs_calc.option.both_sides'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
               subtitle: Text(_loc.translate('stairs_calc.option.both_sides_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
               value: _needBothSides,
-              activeColor: _accentColor,
+              activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needBothSides = v; _update(); }); },
             ),
         ],

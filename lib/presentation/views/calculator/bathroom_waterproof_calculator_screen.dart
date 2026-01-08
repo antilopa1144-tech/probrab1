@@ -270,7 +270,7 @@ class _BathroomWaterproofCalculatorScreenState extends State<BathroomWaterproofC
             title: Text(_loc.translate('waterproof_calc.option.primer'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('waterproof_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needPrimer,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPrimer = v; _update(); }); },
           ),
           SwitchListTile(
@@ -278,7 +278,7 @@ class _BathroomWaterproofCalculatorScreenState extends State<BathroomWaterproofC
             title: Text(_loc.translate('waterproof_calc.option.tape'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('waterproof_calc.option.tape_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needTape,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needTape = v; _update(); }); },
           ),
         ],

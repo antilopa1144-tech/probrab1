@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 import 'dart:math' as math;
 
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
 import '../../../domain/models/calculator_constant.dart';
@@ -202,7 +201,13 @@ class WoodLiningCalculatorScreen extends StatefulWidget {
       _WoodLiningCalculatorScreenState();
 }
 
-class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen> {
+class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
+    with ExportableMixin {
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate(widget.definition.titleKey);
   InputMode _inputMode = InputMode.byArea;
   double _area = 20.0;
   double _length = 5.0;
@@ -344,7 +349,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
 
   void _update() => setState(() => _result = _calculate());
 
-  String _exportText() {
+  @override
+  String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln('${_loc.translate('woodlining.export.title')}\n');
     buffer.writeln(_loc.translate('woodlining.export.area').replaceFirst('{value}', _result.area.toStringAsFixed(2)));
@@ -378,25 +384,6 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
     return buffer.toString();
   }
 
-  void _share() {
-    SharePlus.instance.share(
-      ShareParams(
-        text: _exportText(),
-        subject: _loc.translate(widget.definition.titleKey),
-      ),
-    );
-  }
-
-  void _copy() {
-    Clipboard.setData(ClipboardData(text: _exportText()));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(_loc.translate('common.copied_to_clipboard')),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -405,18 +392,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.copy),
-          tooltip: _loc.translate('common.copy'),
-          onPressed: _copy,
-        ),
-        IconButton(
-          icon: const Icon(Icons.share),
-          tooltip: _loc.translate('common.share'),
-          onPressed: _share,
-        ),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,
         results: [

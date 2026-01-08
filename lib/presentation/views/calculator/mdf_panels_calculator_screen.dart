@@ -299,7 +299,7 @@ class _MdfPanelsCalculatorScreenState extends State<MdfPanelsCalculatorScreen>
             title: Text(_loc.translate('mdf_panels_calc.option.profile'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('mdf_panels_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needProfile,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needProfile = v; _update(); }); },
           ),
           SwitchListTile(
@@ -307,7 +307,7 @@ class _MdfPanelsCalculatorScreenState extends State<MdfPanelsCalculatorScreen>
             title: Text(_loc.translate('mdf_panels_calc.option.plinth'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('mdf_panels_calc.option.plinth_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needPlinth,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPlinth = v; _update(); }); },
           ),
         ],

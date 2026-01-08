@@ -229,7 +229,7 @@ class _VentilationCalculatorScreenState extends State<VentilationCalculatorScree
         title: Text(_loc.translate('ventilation_calc.option.recovery'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
         subtitle: Text(_loc.translate('ventilation_calc.option.recovery_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
         value: _needRecovery,
-        activeColor: _accentColor,
+        activeTrackColor: _accentColor,
         onChanged: (v) { setState(() { _needRecovery = v; _update(); }); },
       ),
     );

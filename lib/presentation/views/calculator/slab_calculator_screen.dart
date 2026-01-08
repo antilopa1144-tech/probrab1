@@ -248,7 +248,7 @@ class _SlabCalculatorScreenState extends State<SlabCalculatorScreen>
             title: Text(_loc.translate('slab_calc.option.waterproof'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('slab_calc.option.waterproof_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needWaterproof,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needWaterproof = v; _update(); }); },
           ),
           SwitchListTile(
@@ -256,7 +256,7 @@ class _SlabCalculatorScreenState extends State<SlabCalculatorScreen>
             title: Text(_loc.translate('slab_calc.option.insulation'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('slab_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needInsulation,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needInsulation = v; _update(); }); },
           ),
         ],

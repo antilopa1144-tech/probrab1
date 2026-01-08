@@ -259,7 +259,7 @@ class _DoorsInstallCalculatorScreenState extends State<DoorsInstallCalculatorScr
             title: Text(_loc.translate('doors_calc.option.casing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('doors_calc.option.casing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needCasing,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needCasing = v; _update(); }); },
           ),
           SwitchListTile(
@@ -267,7 +267,7 @@ class _DoorsInstallCalculatorScreenState extends State<DoorsInstallCalculatorScr
             title: Text(_loc.translate('doors_calc.option.threshold'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('doors_calc.option.threshold_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needThreshold,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needThreshold = v; _update(); }); },
           ),
         ],

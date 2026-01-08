@@ -241,7 +241,7 @@ class _GuttersCalculatorScreenState extends State<GuttersCalculatorScreen>
         title: Text(_loc.translate('gutters_calc.option.heating'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
         subtitle: Text(_loc.translate('gutters_calc.option.heating_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
         value: _needHeating,
-        activeColor: _accentColor,
+        activeTrackColor: _accentColor,
         onChanged: (v) { setState(() { _needHeating = v; _update(); }); },
       ),
     );

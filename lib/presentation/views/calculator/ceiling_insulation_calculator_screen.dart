@@ -278,7 +278,7 @@ class _CeilingInsulationCalculatorScreenState extends State<CeilingInsulationCal
             title: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needVaporBarrier,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needVaporBarrier = v; _update(); }); },
           ),
           SwitchListTile(
@@ -286,7 +286,7 @@ class _CeilingInsulationCalculatorScreenState extends State<CeilingInsulationCal
             title: Text(_loc.translate('ceiling_insulation_calc.option.membrane'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('ceiling_insulation_calc.option.membrane_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needMembrane,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needMembrane = v; _update(); }); },
           ),
         ],

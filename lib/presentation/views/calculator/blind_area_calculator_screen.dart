@@ -225,7 +225,7 @@ class _BlindAreaCalculatorScreenState extends State<BlindAreaCalculatorScreen>
             title: Text(_loc.translate('blind_area_calc.option.insulation'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('blind_area_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needInsulation,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needInsulation = v; _update(); }); },
           ),
           SwitchListTile(
@@ -233,7 +233,7 @@ class _BlindAreaCalculatorScreenState extends State<BlindAreaCalculatorScreen>
             title: Text(_loc.translate('blind_area_calc.option.drainage'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('blind_area_calc.option.drainage_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needDrainage,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needDrainage = v; _update(); }); },
           ),
         ],

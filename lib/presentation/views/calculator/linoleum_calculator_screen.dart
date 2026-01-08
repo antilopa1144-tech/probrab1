@@ -292,7 +292,7 @@ class _LinoleumCalculatorScreenState extends State<LinoleumCalculatorScreen>
             title: Text(_loc.translate('linoleum_calc.option.tape'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('linoleum_calc.option.tape_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needTape,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needTape = v; _update(); }); },
           ),
           SwitchListTile(
@@ -300,7 +300,7 @@ class _LinoleumCalculatorScreenState extends State<LinoleumCalculatorScreen>
             title: Text(_loc.translate('linoleum_calc.option.plinth'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('linoleum_calc.option.plinth_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needPlinth,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPlinth = v; _update(); }); },
           ),
         ],

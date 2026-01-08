@@ -120,7 +120,7 @@ class _BrickCalculatorScreenState extends State<BrickCalculatorScreen>
     final bricksNeeded = (area * bricksPerSqm * 1.05).ceil(); // +5% запас
 
     // Расход раствора (примерно 0.2-0.25 м³ на 1000 кирпичей для толщины 1 кирпич)
-    final mortarPerBrick = 0.00025; // м³ на кирпич
+    const mortarPerBrick = 0.00025; // м³ на кирпич
     final thicknessMultiplier = switch (_wallThickness) {
       WallThickness.half => 0.6,
       WallThickness.one => 1.0,

@@ -254,7 +254,7 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen>
         title: Text(_loc.translate('plumbing_calc.option.hot_water'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
         subtitle: Text(_loc.translate('plumbing_calc.option.hot_water_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
         value: _needHotWater,
-        activeColor: _accentColor,
+        activeTrackColor: _accentColor,
         onChanged: (v) { setState(() { _needHotWater = v; _update(); }); },
       ),
     );

@@ -320,7 +320,7 @@ class _ScreedCalculatorScreenState extends State<ScreedCalculatorScreen>
             title: Text(_loc.translate('screed_calc.option.mesh'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('screed_calc.option.mesh_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needMesh,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needMesh = v; _update(); }); },
           ),
           SwitchListTile(
@@ -328,7 +328,7 @@ class _ScreedCalculatorScreenState extends State<ScreedCalculatorScreen>
             title: Text(_loc.translate('screed_calc.option.film'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('screed_calc.option.film_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needFilm,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needFilm = v; _update(); }); },
           ),
         ],

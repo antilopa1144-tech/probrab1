@@ -139,7 +139,7 @@ class _SlopesCalculatorScreenState extends State<SlopesCalculatorScreen>
         results: [
           ResultItem(
             label: _loc.translate('slopes_calc.result.windows').toUpperCase(),
-            value: '${_windowsCount} ${_loc.translate('common.pcs')}',
+            value: '$_windowsCount ${_loc.translate('common.pcs')}',
             icon: Icons.window,
           ),
           ResultItem(
@@ -258,7 +258,7 @@ class _SlopesCalculatorScreenState extends State<SlopesCalculatorScreen>
             title: Text(_loc.translate('slopes_calc.option.corners'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('slopes_calc.option.corners_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needCorners,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needCorners = v; _update(); }); },
           ),
           SwitchListTile(
@@ -266,7 +266,7 @@ class _SlopesCalculatorScreenState extends State<SlopesCalculatorScreen>
             title: Text(_loc.translate('slopes_calc.option.primer'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
             subtitle: Text(_loc.translate('slopes_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
             value: _needPrimer,
-            activeColor: _accentColor,
+            activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPrimer = v; _update(); }); },
           ),
         ],
