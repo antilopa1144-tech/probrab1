@@ -1,9 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_parquet_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип паркета
@@ -51,23 +51,39 @@ class _ParquetResult {
     required this.plinthPieces,
     required this.glueLiters,
   });
+
+  factory _ParquetResult.fromCalculatorResult(Map<String, double> values) {
+    return _ParquetResult(
+      area: values['area'] ?? 0,
+      areaWithWaste: values['areaWithWaste'] ?? 0,
+      packsNeeded: (values['packsNeeded'] ?? 0).toInt(),
+      packArea: values['packArea'] ?? 2.0,
+      underlayArea: values['underlayArea'] ?? 0,
+      plinthLength: values['plinthLength'] ?? 0,
+      plinthPieces: (values['plinthPieces'] ?? 0).toInt(),
+      glueLiters: values['glueLiters'] ?? 0,
+    );
+  }
 }
 
-class ParquetCalculatorScreen extends StatefulWidget {
+class ParquetCalculatorScreen extends ConsumerStatefulWidget {
   const ParquetCalculatorScreen({super.key});
 
   @override
-  State<ParquetCalculatorScreen> createState() => _ParquetCalculatorScreenState();
+  ConsumerState<ParquetCalculatorScreen> createState() => _ParquetCalculatorScreenState();
 }
 
-class _ParquetCalculatorScreenState extends State<ParquetCalculatorScreen>
-    with ExportableMixin {
-  // ExportableMixin
+class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('parquet_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateParquetV2();
 
   double _area = 20.0;
   double _roomWidth = 4.0;
@@ -92,47 +108,25 @@ class _ParquetCalculatorScreenState extends State<ParquetCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _ParquetResult _calculate() {
-    double area = _area;
-    double roomWidth = _roomWidth;
-    double roomLength = _roomLength;
+    final inputs = <String, double>{
+      'pattern': _pattern.index.toDouble(),
+      'packArea': _packArea,
+      'needUnderlay': _needUnderlay ? 1.0 : 0.0,
+      'needPlinth': _needPlinth ? 1.0 : 0.0,
+      'needGlue': _needGlue ? 1.0 : 0.0,
+    };
 
-    if (_inputMode == ParquetInputMode.room) {
-      area = roomWidth * roomLength;
+    if (_inputMode == ParquetInputMode.manual) {
+      inputs['area'] = _area;
     } else {
-      final side = math.sqrt(area);
-      roomWidth = side;
-      roomLength = side;
+      inputs['roomWidth'] = _roomWidth;
+      inputs['roomLength'] = _roomLength;
     }
 
-    final wasteMultiplier = 1 + (_pattern.wastePercent / 100);
-    final areaWithWaste = area * wasteMultiplier;
-    final packsNeeded = (areaWithWaste / _packArea).ceil();
-
-    // Подложка +10%
-    final underlayArea = _needUnderlay ? area * 1.1 : 0.0;
-
-    // Плинтус
-    double plinthLength = 0;
-    int plinthPieces = 0;
-    if (_needPlinth) {
-      plinthLength = 2 * (roomWidth + roomLength) - 0.9;
-      plinthPieces = (plinthLength / 2.5).ceil();
-    }
-
-    // Клей (0.3-0.5 кг/м² → ~0.25 л/м²)
-    final glueLiters = _needGlue ? area * 0.25 : 0.0;
-
-    return _ParquetResult(
-      area: area,
-      areaWithWaste: areaWithWaste,
-      packsNeeded: packsNeeded,
-      packArea: _packArea,
-      underlayArea: underlayArea,
-      plinthLength: plinthLength,
-      plinthPieces: plinthPieces,
-      glueLiters: glueLiters,
-    );
+    final result = _calculator(inputs, []);
+    return _ParquetResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
