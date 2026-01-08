@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_gutters_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Материал водостока
@@ -24,6 +26,7 @@ class _GuttersResult {
   final int bracketsCount;
   final int downpipeBrackets;
   final int elbowsCount;
+  final double heatingLength;
 
   const _GuttersResult({
     required this.gutterLength,
@@ -33,23 +36,41 @@ class _GuttersResult {
     required this.bracketsCount,
     required this.downpipeBrackets,
     required this.elbowsCount,
+    required this.heatingLength,
   });
+
+  factory _GuttersResult.fromCalculatorResult(Map<String, double> values) {
+    return _GuttersResult(
+      gutterLength: values['gutterLength'] ?? 0,
+      downpipeLength: values['downpipeLength'] ?? 0,
+      cornersCount: (values['cornersCount'] ?? 0).toInt(),
+      funnelsCount: (values['funnelsCount'] ?? 0).toInt(),
+      bracketsCount: (values['bracketsCount'] ?? 0).toInt(),
+      downpipeBrackets: (values['downpipeBrackets'] ?? 0).toInt(),
+      elbowsCount: (values['elbowsCount'] ?? 0).toInt(),
+      heatingLength: values['heatingLength'] ?? 0,
+    );
+  }
 }
 
-class GuttersCalculatorScreen extends StatefulWidget {
+class GuttersCalculatorScreen extends ConsumerStatefulWidget {
   const GuttersCalculatorScreen({super.key});
 
   @override
-  State<GuttersCalculatorScreen> createState() => _GuttersCalculatorScreenState();
+  ConsumerState<GuttersCalculatorScreen> createState() => _GuttersCalculatorScreenState();
 }
 
-class _GuttersCalculatorScreenState extends State<GuttersCalculatorScreen>
-    with ExportableMixin {
+class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('gutters_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateGuttersV2();
 
   double _roofLength = 10.0;
   double _roofWidth = 8.0;
@@ -70,40 +91,18 @@ class _GuttersCalculatorScreenState extends State<GuttersCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _GuttersResult _calculate() {
-    // Периметр крыши (желоба по периметру)
-    final perimeter = 2 * (_roofLength + _roofWidth);
+    final inputs = <String, double>{
+      'roofLength': _roofLength,
+      'roofWidth': _roofWidth,
+      'wallHeight': _wallHeight,
+      'downpipesCount': _downpipesCount.toDouble(),
+      'needHeating': _needHeating ? 1.0 : 0.0,
+    };
 
-    // Длина желобов с запасом на соединения
-    final gutterLength = perimeter * 1.05;
-
-    // Водосточные трубы
-    final downpipeLength = _downpipesCount * _wallHeight * 1.1;
-
-    // Углы: 4 внешних
-    const cornersCount = 4;
-
-    // Воронки: по количеству водосточных труб
-    final funnelsCount = _downpipesCount;
-
-    // Кронштейны для желобов: через 0.6 м
-    final bracketsCount = (perimeter / 0.6).ceil();
-
-    // Хомуты для труб: через 1 м + верх и низ
-    final downpipeBrackets = _downpipesCount * ((_wallHeight / 1).ceil() + 2);
-
-    // Колена: 2 на каждую трубу (верхнее и нижнее)
-    final elbowsCount = _downpipesCount * 2;
-
-    return _GuttersResult(
-      gutterLength: gutterLength,
-      downpipeLength: downpipeLength,
-      cornersCount: cornersCount,
-      funnelsCount: funnelsCount,
-      bracketsCount: bracketsCount,
-      downpipeBrackets: downpipeBrackets,
-      elbowsCount: elbowsCount,
-    );
+    final result = _calculator(inputs, []);
+    return _GuttersResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
@@ -294,10 +293,9 @@ class _GuttersCalculatorScreenState extends State<GuttersCalculatorScreen>
     ];
 
     if (_needHeating) {
-      final heatingLength = _result.gutterLength + _result.downpipeLength;
       items.add(MaterialItem(
         name: _loc.translate('gutters_calc.materials.heating'),
-        value: '${heatingLength.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
+        value: '${_result.heatingLength.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
         subtitle: _loc.translate('gutters_calc.materials.heating_desc'),
         icon: Icons.electric_bolt,
       ));
