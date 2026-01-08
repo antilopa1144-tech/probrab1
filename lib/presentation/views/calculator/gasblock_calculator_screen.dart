@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_consumer_mixin.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
+import '../../../domain/usecases/calculate_gasblock_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../providers/constants_provider.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
@@ -192,6 +193,23 @@ class _GasblockResult {
     required this.meshArea,
     required this.lintels,
   });
+
+  factory _GasblockResult.fromCalculatorResult(Map<String, double> values) {
+    return _GasblockResult(
+      area: values['grossArea'] ?? 0,
+      netArea: values['netArea'] ?? 0,
+      blocks: (values['blocksCount'] ?? 0).toInt(),
+      volume: values['volume'] ?? 0,
+      glueKg: values['glueKg'] ?? 0,
+      glueBags: (values['glueBags'] ?? 0).toInt(),
+      mortarM3: values['mortarM3'] ?? 0,
+      reinforcementLength: values['reinforcementLength'] ?? 0,
+      primerLiters: values['primerLiters'] ?? 0,
+      plasterKg: values['plasterKg'] ?? 0,
+      meshArea: values['meshArea'] ?? 0,
+      lintels: (values['lintelsCount'] ?? 0).toInt(),
+    );
+  }
 }
 
 class GasblockCalculatorScreen extends ConsumerStatefulWidget {
@@ -216,6 +234,10 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
 
   @override
   String get exportSubject => _loc.translate('gasblock.export.subject');
+
+  // Domain layer calculator
+  final _calculator = CalculateGasblockV2();
+
   InputMode _inputMode = InputMode.byDimensions;
   double _area = 15.0;
   double _length = 6.0;
@@ -316,71 +338,31 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
     return _blockFaceArea() * (_blockThickness / 1000);
   }
 
+  /// Использует domain layer для расчёта
   _GasblockResult _calculate() {
-    final grossArea = _getGrossArea();
-    final openings = math.min(_openingsArea, grossArea);
-    final netArea = math.max(0.0, grossArea - openings);
-    if (netArea <= 0) {
-      return const _GasblockResult(
-        area: 0,
-        netArea: 0,
-        blocks: 0,
-        volume: 0,
-        glueKg: 0,
-        glueBags: 0,
-        mortarM3: 0,
-        reinforcementLength: 0,
-        primerLiters: 0,
-        plasterKg: 0,
-        meshArea: 0,
-        lintels: 0,
-      );
-    }
+    final inputs = <String, double>{
+      'inputMode': _inputMode == InputMode.byArea ? 0.0 : 1.0,
+      'area': _area,
+      'length': _length,
+      'height': _height,
+      'openingsArea': _openingsArea,
+      'wallType': _wallType.index.toDouble(),
+      'blockMaterial': _blockMaterial.index.toDouble(),
+      'blockLength': _blockLength,
+      'blockHeight': _blockHeight,
+      'blockThickness': _blockThickness.toDouble(),
+      'masonryMix': _masonryMix.index.toDouble(),
+      'reserve': _reserve,
+      'useReinforcement': _useReinforcement ? 1.0 : 0.0,
+      'usePrimer': _usePrimer ? 1.0 : 0.0,
+      'usePlaster': _usePlaster ? 1.0 : 0.0,
+      'useMesh': _useMesh ? 1.0 : 0.0,
+      'useLintels': _useLintels ? 1.0 : 0.0,
+      'lintelsCount': _lintelsCount.toDouble(),
+    };
 
-    final blockFaceArea = _blockFaceArea();
-    final reserveFactor = 1 + _reserve / 100;
-    final blocksNeeded = (netArea / blockFaceArea * reserveFactor).ceil();
-    final volume = netArea * (_blockThickness / 1000);
-
-    double glueKg = 0;
-    int glueBags = 0;
-    double mortarM3 = 0;
-    if (_masonryMix == MasonryMix.glue) {
-      glueKg = volume * _constants.getGlueKgPerM3() * _constants.getGlueMarginFactor();
-      glueBags = (glueKg / _constants.getGlueBagSizeKg()).ceil();
-    } else {
-      mortarM3 = volume * _constants.getMortarM3PerM3() * _constants.getMortarMarginFactor();
-    }
-
-    final blockHeightM = _blockHeight / 100;
-    final rows = blockHeightM > 0 ? (_height / blockHeightM).ceil() : 0;
-    final reinforcementStep = _constants.getReinforcementStepRows(_wallType);
-    final reinforcementRows = reinforcementStep > 0
-        ? (rows / reinforcementStep).ceil()
-        : 0;
-    final wallLength = _inputMode == InputMode.byDimensions
-        ? _length
-        : (_height > 0 ? netArea / _height : 0.0);
-    final reinforcementLength = reinforcementRows * wallLength * _constants.getRodsPerRow();
-
-    final primerLiters = netArea * _constants.getPrimerPerLayer() * _constants.getPrimerLayers();
-    final plasterKg = netArea * _constants.getPlasterPerLayer() * _constants.getPlasterLayers();
-    final meshArea = netArea * _constants.getMeshSides() * _constants.getMeshMarginFactor();
-
-    return _GasblockResult(
-      area: grossArea,
-      netArea: netArea,
-      blocks: blocksNeeded,
-      volume: volume,
-      glueKg: glueKg,
-      glueBags: glueBags,
-      mortarM3: mortarM3,
-      reinforcementLength: _useReinforcement ? reinforcementLength : 0.0,
-      primerLiters: _usePrimer ? primerLiters : 0,
-      plasterKg: _usePlaster ? plasterKg : 0,
-      meshArea: _useMesh ? meshArea : 0,
-      lintels: _useLintels ? _lintelsCount : 0,
-    );
+    final result = _calculator(inputs, []);
+    return _GasblockResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
