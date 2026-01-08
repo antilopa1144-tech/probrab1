@@ -1,9 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_laminate_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Способ укладки ламината
@@ -30,6 +30,7 @@ enum LaminateClass {
 
 enum LaminateInputMode { manual, room }
 
+/// Результат расчёта ламината
 class _LaminateResult {
   final double area;
   final double areaWithWaste;
@@ -50,23 +51,39 @@ class _LaminateResult {
     required this.plinthLength,
     required this.plinthPieces,
   });
+
+  factory _LaminateResult.fromCalculatorResult(Map<String, double> values) {
+    return _LaminateResult(
+      area: values['area'] ?? 0,
+      areaWithWaste: values['areaWithWaste'] ?? 0,
+      packsNeeded: (values['packsNeeded'] ?? 0).toInt(),
+      packArea: values['packArea'] ?? 2.4,
+      underlayArea: values['underlayArea'] ?? 0,
+      underlayRolls: (values['underlayRolls'] ?? 0).toInt(),
+      plinthLength: values['plinthLength'] ?? 0,
+      plinthPieces: (values['plinthPieces'] ?? 0).toInt(),
+    );
+  }
 }
 
-class LaminateCalculatorScreen extends StatefulWidget {
+class LaminateCalculatorScreen extends ConsumerStatefulWidget {
   const LaminateCalculatorScreen({super.key});
 
   @override
-  State<LaminateCalculatorScreen> createState() => _LaminateCalculatorScreenState();
+  ConsumerState<LaminateCalculatorScreen> createState() => _LaminateCalculatorScreenState();
 }
 
-class _LaminateCalculatorScreenState extends State<LaminateCalculatorScreen>
-    with ExportableMixin {
-  // ExportableMixin
+class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('laminate_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateLaminateV2();
 
   // Состояние
   double _area = 20.0;
@@ -91,52 +108,30 @@ class _LaminateCalculatorScreenState extends State<LaminateCalculatorScreen>
     _result = _calculate();
   }
 
-  /// Процент отходов в зависимости от способа укладки
-  double _getWastePercent() {
-    return switch (_pattern) {
-      LaminatePattern.straight => 0.05, // 5%
-      LaminatePattern.diagonal => 0.15,  // 15%
+  /// Использует domain layer для расчёта
+  _LaminateResult _calculate() {
+    final inputs = <String, double>{
+      'pattern': _pattern.index.toDouble(),
+      'packArea': _packArea,
+      'needUnderlay': _needUnderlay ? 1.0 : 0.0,
+      'needPlinth': _needPlinth ? 1.0 : 0.0,
     };
+
+    // Передаём либо площадь, либо размеры комнаты
+    if (_inputMode == LaminateInputMode.manual) {
+      inputs['area'] = _area;
+    } else {
+      inputs['roomWidth'] = _roomWidth;
+      inputs['roomLength'] = _roomLength;
+    }
+
+    final result = _calculator(inputs, []);
+    return _LaminateResult.fromCalculatorResult(result.values);
   }
 
-  _LaminateResult _calculate() {
-    double area = _area;
-    if (_inputMode == LaminateInputMode.room) {
-      area = _roomWidth * _roomLength;
-    }
-
-    final wastePercent = _getWastePercent();
-    final areaWithWaste = area * (1 + wastePercent);
-    final packsNeeded = (areaWithWaste / _packArea).ceil();
-
-    // Подложка: +10% запас
-    final underlayArea = area * 1.1;
-    final underlayRolls = (underlayArea / 10).ceil(); // рулон = 10 м²
-
-    // Плинтус: периметр - дверной проём (~1м)
-    double plinthLength = 0;
-    int plinthPieces = 0;
-    if (_needPlinth) {
-      if (_inputMode == LaminateInputMode.room) {
-        plinthLength = 2 * (_roomWidth + _roomLength) - 1.0;
-      } else {
-        // Приближённый периметр из площади (квадратная комната)
-        final side = area > 0 ? math.sqrt(area) : 0.0;
-        plinthLength = 4 * side - 1.0;
-      }
-      plinthPieces = (plinthLength / 2.5).ceil(); // плинтус = 2.5 м
-    }
-
-    return _LaminateResult(
-      area: area,
-      areaWithWaste: areaWithWaste,
-      packsNeeded: packsNeeded,
-      packArea: _packArea,
-      underlayArea: underlayArea,
-      underlayRolls: _needUnderlay ? underlayRolls : 0,
-      plinthLength: plinthLength,
-      plinthPieces: plinthPieces,
-    );
+  /// Процент отходов для экспорта
+  double _getWastePercent() {
+    return _pattern == LaminatePattern.straight ? 0.05 : 0.15;
   }
 
   void _update() => setState(() => _result = _calculate());
