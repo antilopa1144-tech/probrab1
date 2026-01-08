@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_doors_install_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип двери
@@ -23,6 +25,7 @@ class _DoorsResult {
   final int handlesCount;
   final double foamCans;
   final double casingMeters;
+  final int thresholdCount;
 
   const _DoorsResult({
     required this.doorsCount,
@@ -31,23 +34,40 @@ class _DoorsResult {
     required this.handlesCount,
     required this.foamCans,
     required this.casingMeters,
+    required this.thresholdCount,
   });
+
+  factory _DoorsResult.fromCalculatorResult(Map<String, double> values) {
+    return _DoorsResult(
+      doorsCount: (values['doorsCount'] ?? 0).toInt(),
+      framesCount: (values['framesCount'] ?? 0).toInt(),
+      hingesCount: (values['hingesCount'] ?? 0).toInt(),
+      handlesCount: (values['handlesCount'] ?? 0).toInt(),
+      foamCans: values['foamCans'] ?? 0,
+      casingMeters: values['casingMeters'] ?? 0,
+      thresholdCount: (values['thresholdCount'] ?? 0).toInt(),
+    );
+  }
 }
 
-class DoorsInstallCalculatorScreen extends StatefulWidget {
+class DoorsInstallCalculatorScreen extends ConsumerStatefulWidget {
   const DoorsInstallCalculatorScreen({super.key});
 
   @override
-  State<DoorsInstallCalculatorScreen> createState() => _DoorsInstallCalculatorScreenState();
+  ConsumerState<DoorsInstallCalculatorScreen> createState() => _DoorsInstallCalculatorScreenState();
 }
 
-class _DoorsInstallCalculatorScreenState extends State<DoorsInstallCalculatorScreen>
-    with ExportableMixin {
+class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('doors_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateDoorsInstallV2();
 
   int _doorsCount = 3;
   double _doorHeight = 2.0;
@@ -68,43 +88,19 @@ class _DoorsInstallCalculatorScreenState extends State<DoorsInstallCalculatorScr
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _DoorsResult _calculate() {
-    final doorsCount = _doorsCount;
-    final framesCount = doorsCount;
+    final inputs = <String, double>{
+      'doorsCount': _doorsCount.toDouble(),
+      'doorHeight': _doorHeight,
+      'doorWidth': _doorWidth,
+      'doorType': _doorType.index.toDouble(),
+      'needCasing': _needCasing ? 1.0 : 0.0,
+      'needThreshold': _needThreshold ? 1.0 : 0.0,
+    };
 
-    // Петли: 2-3 на дверь в зависимости от типа
-    int hingesPerDoor;
-    switch (_doorType) {
-      case DoorType.interior:
-        hingesPerDoor = 2;
-      case DoorType.entrance:
-        hingesPerDoor = 3;
-      case DoorType.glass:
-        hingesPerDoor = 2;
-    }
-    final hingesCount = doorsCount * hingesPerDoor;
-
-    // Ручки: 1 комплект на дверь
-    final handlesCount = doorsCount;
-
-    // Пена: 1 баллон на 2 двери
-    final foamCans = (doorsCount / 2).ceil().toDouble();
-
-    // Наличники: периметр двери × 2 стороны
-    double casingMeters = 0;
-    if (_needCasing) {
-      final doorPerimeter = 2 * _doorHeight + _doorWidth;
-      casingMeters = doorPerimeter * 2 * doorsCount * 1.1; // +10% запас
-    }
-
-    return _DoorsResult(
-      doorsCount: doorsCount,
-      framesCount: framesCount,
-      hingesCount: hingesCount,
-      handlesCount: handlesCount,
-      foamCans: foamCans,
-      casingMeters: casingMeters,
-    );
+    final result = _calculator(inputs, []);
+    return _DoorsResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
