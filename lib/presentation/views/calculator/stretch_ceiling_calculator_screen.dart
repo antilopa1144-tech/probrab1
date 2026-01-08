@@ -1,9 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_stretch_ceiling_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип полотна
@@ -35,22 +35,36 @@ class _StretchCeilingResult {
     required this.lightsCount,
     required this.cornersCount,
   });
+
+  factory _StretchCeilingResult.fromCalculatorResult(Map<String, double> values) {
+    return _StretchCeilingResult(
+      area: values['area'] ?? 0,
+      perimeter: values['perimeter'] ?? 0,
+      profileLength: values['profileLength'] ?? 0,
+      lightsCount: (values['lightsCount'] ?? 0).toInt(),
+      cornersCount: (values['cornersCount'] ?? 4).toInt(),
+    );
+  }
 }
 
-class StretchCeilingCalculatorScreen extends StatefulWidget {
+class StretchCeilingCalculatorScreen extends ConsumerStatefulWidget {
   const StretchCeilingCalculatorScreen({super.key});
 
   @override
-  State<StretchCeilingCalculatorScreen> createState() => _StretchCeilingCalculatorScreenState();
+  ConsumerState<StretchCeilingCalculatorScreen> createState() => _StretchCeilingCalculatorScreenState();
 }
 
-class _StretchCeilingCalculatorScreenState extends State<StretchCeilingCalculatorScreen>
-    with ExportableMixin {
+class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('stretch_ceiling_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateStretchCeilingV2();
 
   double _area = 16.0;
   double _roomWidth = 4.0;
@@ -71,30 +85,19 @@ class _StretchCeilingCalculatorScreenState extends State<StretchCeilingCalculato
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _StretchCeilingResult _calculate() {
-    double area = _area;
-    double roomWidth = _roomWidth;
-    double roomLength = _roomLength;
+    final inputs = <String, double>{
+      'area': _area,
+      'roomWidth': _roomWidth,
+      'roomLength': _roomLength,
+      'lightsCount': _lightsCount.toDouble(),
+      'ceilingType': _ceilingType.index.toDouble(),
+      'inputMode': _inputMode.index.toDouble(),
+    };
 
-    if (_inputMode == StretchCeilingInputMode.room) {
-      area = roomWidth * roomLength;
-    } else {
-      final side = math.sqrt(area);
-      roomWidth = side;
-      roomLength = side;
-    }
-
-    final perimeter = 2 * (roomWidth + roomLength);
-    final profileLength = perimeter * 1.1; // +10% запас
-    const cornersCount = 4;
-
-    return _StretchCeilingResult(
-      area: area,
-      perimeter: perimeter,
-      profileLength: profileLength,
-      lightsCount: _lightsCount,
-      cornersCount: cornersCount,
-    );
+    final result = _calculator(inputs, []);
+    return _StretchCeilingResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
