@@ -1,14 +1,13 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_electrical_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
-import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_result_header.dart';
 import '../../widgets/calculator/calculator_scaffold.dart';
 import '../../widgets/calculator/mode_selector.dart';
@@ -32,111 +31,6 @@ enum RoomType {
 enum WiringMethod {
   hidden, // Скрытая проводка (в штробах)
   open, // Открытая (в кабель-каналах/гофре)
-}
-
-/// Вспомогательный класс для работы с константами калькулятора электрики
-class _ElectricalConstants {
-  final CalculatorConstants? _data;
-
-  const _ElectricalConstants([this._data]);
-
-  double _getDouble(String constantKey, String valueKey, double defaultValue) {
-    if (_data == null) return defaultValue;
-    final constant = _data.constants[constantKey];
-    if (constant == null) return defaultValue;
-    final value = constant.values[valueKey];
-    if (value is double) return value;
-    if (value is int) return value.toDouble();
-    if (value is num) return value.toDouble();
-    return defaultValue;
-  }
-
-  int _getInt(String constantKey, String valueKey, int defaultValue) {
-    if (_data == null) return defaultValue;
-    final constant = _data.constants[constantKey];
-    if (constant == null) return defaultValue;
-    final value = constant.values[valueKey];
-    if (value is int) return value;
-    if (value is double) return value.toInt();
-    if (value is num) return value.toInt();
-    return defaultValue;
-  }
-
-  // Room type multipliers
-  double getRoomMultiplier(RoomType type) {
-    final defaults = {'apartment': 1.0, 'house': 1.2, 'office': 1.5};
-    return _getDouble('room_type_multipliers', type.name, defaults[type.name]!);
-  }
-
-  // Socket calculation
-  int get socketAreaDivisor => _getInt('socket_calculation', 'area_divisor', 4);
-  int get socketMinPerRoom => _getInt('socket_calculation', 'min_per_room', 3);
-  int get socketKitchenAdditional => _getInt('socket_calculation', 'kitchen_additional', 4);
-
-  // Switch calculation
-  double get switchPerRoom => _getDouble('switch_calculation', 'per_room', 1.5);
-  int get switchPerAreaDivisor => _getInt('switch_calculation', 'per_area_divisor', 20);
-
-  // Light calculation
-  int get lightPerAreaDivisor => _getInt('light_calculation', 'per_area_divisor', 6);
-  int get lightPerRoom => _getInt('light_calculation', 'per_room', 1);
-
-  // Cable lengths
-  double getCablePerLight(WiringMethod method) =>
-      method == WiringMethod.hidden
-          ? _getDouble('cable_lengths_hidden', 'light', 5.0)
-          : _getDouble('cable_lengths_open', 'light', 4.0);
-
-  double getCablePerSocket(WiringMethod method) =>
-      method == WiringMethod.hidden
-          ? _getDouble('cable_lengths_hidden', 'socket', 4.5)
-          : _getDouble('cable_lengths_open', 'socket', 3.5);
-
-  double getCablePerSwitch(WiringMethod method) =>
-      method == WiringMethod.hidden
-          ? _getDouble('cable_lengths_hidden', 'switch', 4.0)
-          : _getDouble('cable_lengths_open', 'switch', 3.0);
-
-  // Light and socket groups
-  int get maxLightsPerGroup => _getInt('light_groups', 'max_lights_per_group', 8);
-  double get cablePerLightGroup => _getDouble('light_groups', 'cable_per_group', 10.0);
-  int get maxSocketsPerGroup => _getInt('socket_groups', 'max_sockets_per_group', 6);
-  double get cablePerSocketGroup => _getDouble('socket_groups', 'cable_per_group', 10.0);
-
-  // Cable margins
-  double get cableMargin => _getDouble('cable_margins', 'standard_margin', 15.0);
-  double get switchCableFactor => _getDouble('cable_margins', 'switch_cable_factor', 0.5);
-
-  // Power consumers cable
-  double get electricStoveCable => _getDouble('power_consumers_cable', 'electric_stove', 12.0);
-  double get ovenCable => _getDouble('power_consumers_cable', 'oven', 10.0);
-  double get boilerCable => _getDouble('power_consumers_cable', 'boiler', 10.0);
-  double get washingMachineCable => _getDouble('power_consumers_cable', 'washing_machine', 8.0);
-  double get dishwasherCable => _getDouble('power_consumers_cable', 'dishwasher', 8.0);
-  double get conditionerCable => _getDouble('power_consumers_cable', 'conditioner', 12.0);
-  double get warmFloorCable => _getDouble('power_consumers_cable', 'warm_floor', 10.0);
-
-  // Conduit factors
-  double getConduitFactor(WiringMethod method) =>
-      method == WiringMethod.hidden
-          ? _getDouble('conduit_factors', 'hidden_wiring', 0.85)
-          : _getDouble('conduit_factors', 'open_wiring', 1.0);
-
-  // RCD calculation
-  int get socketGroupsPerRcd => _getInt('rcd_calculation', 'socket_groups_per_rcd', 2);
-  int get fireProtectionRcd => _getInt('rcd_calculation', 'fire_protection_rcd', 1);
-
-  // Junction boxes
-  double get boxesPerRoom => _getDouble('junction_boxes', 'per_room', 1.5);
-  int get boxesPerAreaDivisor => _getInt('junction_boxes', 'per_area_divisor', 25);
-  int get boxesPerPointsDivisor => _getInt('junction_boxes', 'per_points_divisor', 8);
-
-  // Panel modules
-  int get basePanelModules => _getInt('panel_modules', 'base_modules', 4);
-  int get breakerModules => _getInt('panel_modules', 'breaker_modules', 1);
-  int get rcdModules => _getInt('panel_modules', 'rcd_modules', 2);
-  int get difautomatModules => _getInt('panel_modules', 'difautomat_modules', 2);
-  double get panelReserveFactor => _getDouble('panel_modules', 'reserve_factor', 1.2);
 }
 
 /// Результат расчёта электрики
@@ -176,9 +70,30 @@ class _ElectricalResult {
     required this.powerConsumers,
     required this.hasGrounding,
   });
+
+  factory _ElectricalResult.fromCalculatorResult(Map<String, double> values) {
+    return _ElectricalResult(
+      area: values['area'] ?? 50.0,
+      rooms: (values['rooms'] ?? 2).toInt(),
+      sockets: (values['sockets'] ?? 0).toInt(),
+      switches: (values['switches'] ?? 0).toInt(),
+      lights: (values['lights'] ?? 0).toInt(),
+      cableLight: values['cableLight'] ?? 0,
+      cableSocket: values['cableSocket'] ?? 0,
+      cablePower: values['cablePower'] ?? 0,
+      conduitLength: values['conduitLength'] ?? 0,
+      circuitBreakers: (values['circuitBreakers'] ?? 0).toInt(),
+      rcdDevices: (values['rcdDevices'] ?? 0).toInt(),
+      difAutomats: (values['difAutomats'] ?? 0).toInt(),
+      junctionBoxes: (values['junctionBoxes'] ?? 0).toInt(),
+      panelModules: (values['panelModules'] ?? 0).toInt(),
+      powerConsumers: (values['powerConsumers'] ?? 0).toInt(),
+      hasGrounding: (values['withGrounding'] ?? 1) == 1,
+    );
+  }
 }
 
-class ElectricalCalculatorScreen extends StatefulWidget {
+class ElectricalCalculatorScreen extends ConsumerStatefulWidget {
   final CalculatorDefinitionV2 definition;
   final Map<String, double>? initialInputs;
 
@@ -189,18 +104,21 @@ class ElectricalCalculatorScreen extends StatefulWidget {
   });
 
   @override
-  State<ElectricalCalculatorScreen> createState() =>
+  ConsumerState<ElectricalCalculatorScreen> createState() =>
       _ElectricalCalculatorScreenState();
 }
 
 class _ElectricalCalculatorScreenState
-    extends State<ElectricalCalculatorScreen> with ExportableMixin {
-  // ExportableMixin
+    extends ConsumerState<ElectricalCalculatorScreen> with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('electrical.export.subject');
+
+  // Domain layer calculator
+  final _calculator = CalculateElectricalV2();
 
   // Режим ввода
   InputMode _inputMode = InputMode.byArea;
@@ -231,18 +149,12 @@ class _ElectricalCalculatorScreenState
   bool _withConduit = true; // Гофра/кабель-канал
   bool _withGrounding = true; // Заземление
 
-  // Константы калькулятора (null = используются hardcoded defaults)
-  late final _ElectricalConstants _constants;
-
   late _ElectricalResult _result;
   late AppLocalizations _loc;
 
   @override
   void initState() {
     super.initState();
-    // TODO: Загрузить константы из provider когда понадобится Remote Config
-    // final constants = await ref.read(calculatorConstantsProvider('electrical').future);
-    _constants = const _ElectricalConstants(null); // Используем defaults пока
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -259,150 +171,30 @@ class _ElectricalCalculatorScreenState
     }
   }
 
+  /// Использует domain layer для расчёта
   _ElectricalResult _calculate() {
-    int sockets;
-    int switches;
-    int lights;
+    final inputs = <String, double>{
+      'inputMode': _inputMode.index.toDouble(),
+      'area': _area,
+      'rooms': _rooms.toDouble(),
+      'manualSockets': _manualSockets.toDouble(),
+      'manualSwitches': _manualSwitches.toDouble(),
+      'manualLights': _manualLights.toDouble(),
+      'roomType': _roomType.index.toDouble(),
+      'wiringMethod': _wiringMethod.index.toDouble(),
+      'hasElectricStove': _hasElectricStove ? 1.0 : 0.0,
+      'hasOven': _hasOven ? 1.0 : 0.0,
+      'hasBoiler': _hasBoiler ? 1.0 : 0.0,
+      'hasWashingMachine': _hasWashingMachine ? 1.0 : 0.0,
+      'hasDishwasher': _hasDishwasher ? 1.0 : 0.0,
+      'hasConditioner': _hasConditioner ? 1.0 : 0.0,
+      'hasWarmFloor': _hasWarmFloor ? 1.0 : 0.0,
+      'withConduit': _withConduit ? 1.0 : 0.0,
+      'withGrounding': _withGrounding ? 1.0 : 0.0,
+    };
 
-    if (_inputMode == InputMode.byArea) {
-      // === АВТОМАТИЧЕСКИЙ РАСЧЁТ ПО ПЛОЩАДИ ===
-
-      // Коэффициент для типа помещения
-      final socketMultiplier = _constants.getRoomMultiplier(_roomType);
-
-      // Розетки по СП 256.1325800.2016:
-      // - Жилые комнаты: 1 розетка на 4 м², но не менее 3 на комнату
-      // - Кухня: минимум 4 розетки
-      // - Коридор: 1 розетка на 10 м²
-      // Упрощённая формула: площадь / divisor + дополнительные на кухню/ванную
-      final socketsBase = (_area / _constants.socketAreaDivisor * socketMultiplier).ceil();
-      final socketsMin = _rooms * _constants.socketMinPerRoom; // Минимум на комнату
-      final socketsKitchen = _constants.socketKitchenAdditional; // Дополнительные для кухни
-      sockets = max(socketsBase, socketsMin) + socketsKitchen;
-
-      // Выключатели:
-      // - Одноклавишные: 1 на комнату (основной свет)
-      // - Двухклавишные: для комнат > 12 м²
-      // - Проходные: для коридоров и больших комнат
-      // Упрощённо: per_room на комнату + 1 на каждые per_area_divisor м²
-      switches = (_rooms * _constants.switchPerRoom + _area / _constants.switchPerAreaDivisor).ceil();
-
-      // Светильники:
-      // - Норма освещённости жилых помещений: 150-300 лк
-      // - 1 точка на 5-7 м² для общего освещения
-      // - + дополнительные точки для зонального света
-      lights = (_area / _constants.lightPerAreaDivisor).ceil() + (_rooms * _constants.lightPerRoom);
-    } else {
-      // === РУЧНОЙ ВВОД ===
-      sockets = _manualSockets;
-      switches = _manualSwitches;
-      lights = _manualLights;
-    }
-
-    // === РАСЧЁТ МОЩНЫХ ПОТРЕБИТЕЛЕЙ ===
-    int powerConsumers = 0;
-    if (_hasElectricStove) powerConsumers++;
-    if (_hasOven) powerConsumers++;
-    if (_hasBoiler) powerConsumers++;
-    if (_hasWashingMachine) powerConsumers++;
-    if (_hasDishwasher) powerConsumers++;
-    if (_hasConditioner) powerConsumers++;
-    if (_hasWarmFloor) powerConsumers++;
-
-    // === РАСЧЁТ КАБЕЛЯ ===
-    // Учитываем высоту потолка (2.7м) + спуски/подъёмы + горизонтальные участки
-
-    final cablePerLight = _constants.getCablePerLight(_wiringMethod);
-    final cablePerSocket = _constants.getCablePerSocket(_wiringMethod);
-    final cablePerSwitch = _constants.getCablePerSwitch(_wiringMethod);
-
-    // Кабель ВВГнг-LS 3×1.5 для освещения
-    // Группы освещения: 1 группа на 2-3 комнаты (до 10 точек, макс 2.3 кВт)
-    final lightGroups = (lights / _constants.maxLightsPerGroup).ceil();
-    final cableMarginMultiplier = 1 + (_constants.cableMargin / 100); // Преобразуем % в множитель
-    final cableLight = (lights * cablePerLight + lightGroups * _constants.cablePerLightGroup) * cableMarginMultiplier;
-
-    // Кабель ВВГнг-LS 3×2.5 для розеток
-    // Группы розеток: макс N розеток на группу (до 3.5 кВт)
-    final socketGroups = (sockets / _constants.maxSocketsPerGroup).ceil();
-    final cableSocket = (sockets * cablePerSocket + socketGroups * _constants.cablePerSocketGroup) * cableMarginMultiplier;
-
-    // Кабель для выключателей (учтён в освещении, но добавляем на спуски)
-    final cableSwitches = switches * cablePerSwitch * _constants.switchCableFactor; // Часть уже в освещении
-
-    // Кабель 3×4.0 и 3×6.0 для мощных потребителей
-    // Каждый потребитель: ~8-12 м от щитка
-    double cablePower = 0;
-    if (_hasElectricStove) cablePower += _constants.electricStoveCable; // 3×6.0
-    if (_hasOven) cablePower += _constants.ovenCable; // 3×4.0
-    if (_hasBoiler) cablePower += _constants.boilerCable;
-    if (_hasWashingMachine) cablePower += _constants.washingMachineCable;
-    if (_hasDishwasher) cablePower += _constants.dishwasherCable;
-    if (_hasConditioner) cablePower += _constants.conditionerCable; // Может быть далеко
-    if (_hasWarmFloor) cablePower += _constants.warmFloorCable; // Кабель до терморегулятора
-    cablePower *= cableMarginMultiplier; // +margin% запас
-
-    // Общая длина кабеля для гофры
-    final totalCable = cableLight + cableSocket + cableSwitches + cablePower;
-
-    // Гофра: зависит от типа прокладки
-    double conduitLength = 0;
-    if (_withConduit) {
-      conduitLength = totalCable * _constants.getConduitFactor(_wiringMethod);
-    }
-
-    // === РАСЧЁТ АВТОМАТИКИ ===
-
-    // Группы автоматов:
-    // - Освещение: C10A (1 на 2-3 комнаты)
-    // - Розетки: C16A (1 группа на 6-8 розеток)
-    // - Мощные потребители: C25A или C32A (отдельная линия каждому)
-    final circuitBreakers = lightGroups + socketGroups;
-
-    // Дифавтоматы для мощных потребителей (защита + УЗО в одном)
-    final difAutomats = powerConsumers;
-
-    // УЗО 30мА для групп розеток (N УЗО на группы)
-    // + противопожарное УЗО 100-300мА на вводе
-    final rcdDevices = (socketGroups / _constants.socketGroupsPerRcd).ceil() + _constants.fireProtectionRcd;
-
-    // Распределительные коробки:
-    // - per_room на комнату для разводки
-    // - Дополнительные для сложных схем
-    final junctionBoxes = _inputMode == InputMode.byArea
-        ? (_rooms * _constants.boxesPerRoom + _area / _constants.boxesPerAreaDivisor).ceil()
-        : ((sockets + switches) / _constants.boxesPerPointsDivisor).ceil();
-
-    // Модули в щитке:
-    // - Вводной автомат + противопожарное УЗО + реле напряжения: base_modules
-    // - Автоматы: breaker_modules модуль каждый
-    // - УЗО: rcd_modules модуля каждый
-    // - Дифавтоматы: difautomat_modules модуля каждый
-    // + reserve_factor% резерв
-    final panelModules = ((_constants.basePanelModules +
-            circuitBreakers * _constants.breakerModules +
-            rcdDevices * _constants.rcdModules +
-            difAutomats * _constants.difautomatModules) *
-        _constants.panelReserveFactor).ceil();
-
-    return _ElectricalResult(
-      area: _area,
-      rooms: _rooms,
-      sockets: sockets,
-      switches: switches,
-      lights: lights,
-      cableLight: cableLight + cableSwitches,
-      cableSocket: cableSocket,
-      cablePower: cablePower,
-      conduitLength: conduitLength,
-      circuitBreakers: circuitBreakers,
-      rcdDevices: rcdDevices,
-      difAutomats: difAutomats,
-      junctionBoxes: junctionBoxes,
-      panelModules: panelModules,
-      powerConsumers: powerConsumers,
-      hasGrounding: _withGrounding,
-    );
+    final result = _calculator(inputs, []);
+    return _ElectricalResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
