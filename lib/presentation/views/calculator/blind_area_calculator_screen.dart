@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_blind_area_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип отмостки
@@ -23,6 +25,9 @@ class _BlindAreaResult {
   final double sandVolume;
   final double gravelVolume;
   final double membranArea;
+  final double insulationArea;
+  final double drainageLength;
+  final double pavingArea;
 
   const _BlindAreaResult({
     required this.totalArea,
@@ -31,23 +36,45 @@ class _BlindAreaResult {
     required this.sandVolume,
     required this.gravelVolume,
     required this.membranArea,
+    required this.insulationArea,
+    required this.drainageLength,
+    required this.pavingArea,
   });
+
+  factory _BlindAreaResult.fromCalculatorResult(Map<String, double> values) {
+    return _BlindAreaResult(
+      totalArea: values['totalArea'] ?? 0,
+      perimeter: values['perimeter'] ?? 0,
+      concreteVolume: values['concreteVolume'] ?? 0,
+      sandVolume: values['sandVolume'] ?? 0,
+      gravelVolume: values['gravelVolume'] ?? 0,
+      membranArea: values['membranArea'] ?? 0,
+      insulationArea: values['insulationArea'] ?? 0,
+      drainageLength: values['drainageLength'] ?? 0,
+      pavingArea: values['pavingArea'] ?? 0,
+    );
+  }
 }
 
-class BlindAreaCalculatorScreen extends StatefulWidget {
+class BlindAreaCalculatorScreen extends ConsumerStatefulWidget {
   const BlindAreaCalculatorScreen({super.key});
 
   @override
-  State<BlindAreaCalculatorScreen> createState() => _BlindAreaCalculatorScreenState();
+  ConsumerState<BlindAreaCalculatorScreen> createState() => _BlindAreaCalculatorScreenState();
 }
 
-class _BlindAreaCalculatorScreenState extends State<BlindAreaCalculatorScreen>
-    with ExportableMixin {
+class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('blind_area_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateBlindAreaV2();
+
   double _houseLength = 10.0;
   double _houseWidth = 8.0;
   double _blindAreaWidth = 1.0;
@@ -68,36 +95,20 @@ class _BlindAreaCalculatorScreenState extends State<BlindAreaCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _BlindAreaResult _calculate() {
-    // Периметр дома
-    final perimeter = 2 * (_houseLength + _houseWidth);
+    final inputs = <String, double>{
+      'houseLength': _houseLength,
+      'houseWidth': _houseWidth,
+      'blindAreaWidth': _blindAreaWidth,
+      'thickness': _thickness,
+      'blindAreaType': _blindAreaType.index.toDouble(),
+      'needInsulation': _needInsulation ? 1.0 : 0.0,
+      'needDrainage': _needDrainage ? 1.0 : 0.0,
+    };
 
-    // Площадь отмостки
-    final totalArea = perimeter * _blindAreaWidth;
-
-    // Бетон (для бетонной отмостки)
-    double concreteVolume = 0;
-    if (_blindAreaType == BlindAreaType.concrete) {
-      concreteVolume = totalArea * _thickness * 1.05;
-    }
-
-    // Песчаная подушка (10 см)
-    final sandVolume = totalArea * 0.1 * 1.1;
-
-    // Щебень (15 см)
-    final gravelVolume = totalArea * 0.15 * 1.1;
-
-    // Мембрана с запасом на нахлёсты
-    final membranArea = totalArea * 1.15;
-
-    return _BlindAreaResult(
-      totalArea: totalArea,
-      perimeter: perimeter,
-      concreteVolume: concreteVolume,
-      sandVolume: sandVolume,
-      gravelVolume: gravelVolume,
-      membranArea: membranArea,
-    );
+    final result = _calculator(inputs, []);
+    return _BlindAreaResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
