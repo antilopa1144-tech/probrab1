@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_brick.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип кирпича
@@ -30,35 +32,57 @@ enum WallThickness {
 
 enum BrickInputMode { manual, wall }
 
+/// Результат расчёта кирпичной кладки
 class _BrickResult {
   final double area;
   final int bricksNeeded;
   final double mortarVolume;    // м³
   final int mortarBags;         // мешки по 25 кг
+  final int brickLength;
+  final int brickWidth;
+  final int brickHeight;
 
   const _BrickResult({
     required this.area,
     required this.bricksNeeded,
     required this.mortarVolume,
     required this.mortarBags,
+    required this.brickLength,
+    required this.brickWidth,
+    required this.brickHeight,
   });
+
+  factory _BrickResult.fromCalculatorResult(Map<String, double> values) {
+    return _BrickResult(
+      area: values['area'] ?? 0,
+      bricksNeeded: (values['bricksNeeded'] ?? 0).toInt(),
+      mortarVolume: values['mortarVolume'] ?? 0,
+      mortarBags: (values['mortarBags'] ?? 0).toInt(),
+      brickLength: (values['brickLength'] ?? 250).toInt(),
+      brickWidth: (values['brickWidth'] ?? 120).toInt(),
+      brickHeight: (values['brickHeight'] ?? 65).toInt(),
+    );
+  }
 }
 
-class BrickCalculatorScreen extends StatefulWidget {
+class BrickCalculatorScreen extends ConsumerStatefulWidget {
   const BrickCalculatorScreen({super.key});
 
   @override
-  State<BrickCalculatorScreen> createState() => _BrickCalculatorScreenState();
+  ConsumerState<BrickCalculatorScreen> createState() => _BrickCalculatorScreenState();
 }
 
-class _BrickCalculatorScreenState extends State<BrickCalculatorScreen>
-    with ExportableMixin {
-  // ExportableMixin
+class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('brick_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateBrick();
 
   // Состояние
   double _area = 20.0;
@@ -74,70 +98,29 @@ class _BrickCalculatorScreenState extends State<BrickCalculatorScreen>
 
   static const _accentColor = CalculatorColors.walls;
 
-  // Размеры кирпича (мм): длина x ширина x высота
-  static const _brickSizes = {
-    BrickType.single: (250, 120, 65),
-    BrickType.oneAndHalf: (250, 120, 88),
-    BrickType.double: (250, 120, 138),
-  };
-
-  // Количество кирпичей на 1 м² кладки (с учётом швов)
-  Map<BrickType, Map<WallThickness, int>> get _bricksPerSqm => {
-    BrickType.single: {
-      WallThickness.half: 51,
-      WallThickness.one: 102,
-      WallThickness.oneAndHalf: 153,
-      WallThickness.two: 204,
-    },
-    BrickType.oneAndHalf: {
-      WallThickness.half: 39,
-      WallThickness.one: 78,
-      WallThickness.oneAndHalf: 117,
-      WallThickness.two: 156,
-    },
-    BrickType.double: {
-      WallThickness.half: 26,
-      WallThickness.one: 52,
-      WallThickness.oneAndHalf: 78,
-      WallThickness.two: 104,
-    },
-  };
-
   @override
   void initState() {
     super.initState();
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _BrickResult _calculate() {
-    double area = _area;
-    if (_inputMode == BrickInputMode.wall) {
-      area = _wallWidth * _wallHeight;
+    final inputs = <String, double>{
+      'brickType': _brickType.index.toDouble(),
+      'wallThickness': _wallThickness.index.toDouble(),
+    };
+
+    // Передаём либо площадь, либо размеры стены
+    if (_inputMode == BrickInputMode.manual) {
+      inputs['area'] = _area;
+    } else {
+      inputs['wallWidth'] = _wallWidth;
+      inputs['wallHeight'] = _wallHeight;
     }
 
-    // Количество кирпичей
-    final bricksPerSqm = _bricksPerSqm[_brickType]![_wallThickness]!;
-    final bricksNeeded = (area * bricksPerSqm * 1.05).ceil(); // +5% запас
-
-    // Расход раствора (примерно 0.2-0.25 м³ на 1000 кирпичей для толщины 1 кирпич)
-    const mortarPerBrick = 0.00025; // м³ на кирпич
-    final thicknessMultiplier = switch (_wallThickness) {
-      WallThickness.half => 0.6,
-      WallThickness.one => 1.0,
-      WallThickness.oneAndHalf => 1.4,
-      WallThickness.two => 1.8,
-    };
-    final mortarVolume = bricksNeeded * mortarPerBrick * thicknessMultiplier;
-
-    // Мешки (1 мешок 25 кг ≈ 0.015 м³ раствора)
-    final mortarBags = (mortarVolume / 0.015).ceil();
-
-    return _BrickResult(
-      area: area,
-      bricksNeeded: bricksNeeded,
-      mortarVolume: mortarVolume,
-      mortarBags: mortarBags,
-    );
+    final result = _calculator(inputs, []);
+    return _BrickResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
@@ -329,12 +312,11 @@ class _BrickCalculatorScreenState extends State<BrickCalculatorScreen>
   }
 
   Widget _buildMaterialsCard() {
-    final brickSize = _brickSizes[_brickType]!;
     final items = <MaterialItem>[
       MaterialItem(
         name: _loc.translate('brick_calc.materials.bricks'),
         value: '${_result.bricksNeeded} ${_loc.translate('common.pcs')}',
-        subtitle: '${brickSize.$1}×${brickSize.$2}×${brickSize.$3} ${_loc.translate('common.mm')}',
+        subtitle: '${_result.brickLength}×${_result.brickWidth}×${_result.brickHeight} ${_loc.translate('common.mm')}',
         icon: Icons.grid_view,
       ),
       MaterialItem(
