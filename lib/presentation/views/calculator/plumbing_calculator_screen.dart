@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип сантехники
@@ -42,7 +41,14 @@ class PlumbingCalculatorScreen extends StatefulWidget {
   State<PlumbingCalculatorScreen> createState() => _PlumbingCalculatorScreenState();
 }
 
-class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen> {
+class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen>
+    with ExportableMixin {
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('plumbing_calc.title');
+
   int _bathroomsCount = 1;
   int _toiletsCount = 1;
   int _kitchensCount = 1;
@@ -96,7 +102,8 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen> {
 
   void _update() => setState(() => _result = _calculate());
 
-  String _generateExportText() {
+  @override
+  String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln(_loc.translate('plumbing_calc.export.title'));
     buffer.writeln('═' * 40);
@@ -124,19 +131,6 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen> {
     return buffer.toString();
   }
 
-  void _shareCalculation() {
-    final text = _generateExportText();
-    SharePlus.instance.share(ShareParams(text: text, subject: _loc.translate('plumbing_calc.title')));
-  }
-
-  void _copyToClipboard() {
-    final text = _generateExportText();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_loc.translate('common.copied_to_clipboard')), duration: const Duration(seconds: 2)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -144,10 +138,7 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen> {
     return CalculatorScaffold(
       title: _loc.translate('plumbing_calc.title'),
       accentColor: _accentColor,
-      actions: [
-        IconButton(icon: const Icon(Icons.copy), onPressed: _copyToClipboard, tooltip: _loc.translate('common.copy')),
-        IconButton(icon: const Icon(Icons.share), onPressed: _shareCalculation, tooltip: _loc.translate('common.share')),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,
         results: [

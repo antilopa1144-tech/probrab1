@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип вентиляции
@@ -40,7 +39,14 @@ class VentilationCalculatorScreen extends StatefulWidget {
   State<VentilationCalculatorScreen> createState() => _VentilationCalculatorScreenState();
 }
 
-class _VentilationCalculatorScreenState extends State<VentilationCalculatorScreen> {
+class _VentilationCalculatorScreenState extends State<VentilationCalculatorScreen>
+    with ExportableMixin {
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('ventilation_calc.title');
+
   double _roomArea = 50.0;
   double _ceilingHeight = 2.7;
   int _roomsCount = 4;
@@ -95,7 +101,8 @@ class _VentilationCalculatorScreenState extends State<VentilationCalculatorScree
 
   void _update() => setState(() => _result = _calculate());
 
-  String _generateExportText() {
+  @override
+  String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln(_loc.translate('ventilation_calc.export.title'));
     buffer.writeln('═' * 40);
@@ -121,19 +128,6 @@ class _VentilationCalculatorScreenState extends State<VentilationCalculatorScree
     return buffer.toString();
   }
 
-  void _shareCalculation() {
-    final text = _generateExportText();
-    SharePlus.instance.share(ShareParams(text: text, subject: _loc.translate('ventilation_calc.title')));
-  }
-
-  void _copyToClipboard() {
-    final text = _generateExportText();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_loc.translate('common.copied_to_clipboard')), duration: const Duration(seconds: 2)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -141,10 +135,7 @@ class _VentilationCalculatorScreenState extends State<VentilationCalculatorScree
     return CalculatorScaffold(
       title: _loc.translate('ventilation_calc.title'),
       accentColor: _accentColor,
-      actions: [
-        IconButton(icon: const Icon(Icons.copy), onPressed: _copyToClipboard, tooltip: _loc.translate('common.copy')),
-        IconButton(icon: const Icon(Icons.share), onPressed: _shareCalculation, tooltip: _loc.translate('common.share')),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,
         results: [

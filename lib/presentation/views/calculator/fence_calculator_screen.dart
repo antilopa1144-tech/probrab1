@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип забора
@@ -42,7 +41,14 @@ class FenceCalculatorScreen extends StatefulWidget {
   State<FenceCalculatorScreen> createState() => _FenceCalculatorScreenState();
 }
 
-class _FenceCalculatorScreenState extends State<FenceCalculatorScreen> {
+class _FenceCalculatorScreenState extends State<FenceCalculatorScreen>
+    with ExportableMixin {
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('fence_calc.title');
+
   double _fenceLength = 50.0;
   double _fenceHeight = 2.0;
   double _postSpacing = 2.5;
@@ -100,7 +106,8 @@ class _FenceCalculatorScreenState extends State<FenceCalculatorScreen> {
 
   void _update() => setState(() => _result = _calculate());
 
-  String _generateExportText() {
+  @override
+  String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln(_loc.translate('fence_calc.export.title'));
     buffer.writeln('═' * 40);
@@ -128,19 +135,6 @@ class _FenceCalculatorScreenState extends State<FenceCalculatorScreen> {
     return buffer.toString();
   }
 
-  void _shareCalculation() {
-    final text = _generateExportText();
-    SharePlus.instance.share(ShareParams(text: text, subject: _loc.translate('fence_calc.title')));
-  }
-
-  void _copyToClipboard() {
-    final text = _generateExportText();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_loc.translate('common.copied_to_clipboard')), duration: const Duration(seconds: 2)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -148,10 +142,7 @@ class _FenceCalculatorScreenState extends State<FenceCalculatorScreen> {
     return CalculatorScaffold(
       title: _loc.translate('fence_calc.title'),
       accentColor: _accentColor,
-      actions: [
-        IconButton(icon: const Icon(Icons.copy), onPressed: _copyToClipboard, tooltip: _loc.translate('common.copy')),
-        IconButton(icon: const Icon(Icons.share), onPressed: _shareCalculation, tooltip: _loc.translate('common.share')),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,
         results: [
