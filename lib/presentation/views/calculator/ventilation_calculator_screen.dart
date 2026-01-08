@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_ventilation_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип вентиляции
@@ -22,6 +24,7 @@ class _VentilationResult {
   final double ductLength;
   final int grillsCount;
   final int fittingsCount;
+  final int recuperatorCount;
 
   const _VentilationResult({
     required this.roomVolume,
@@ -29,23 +32,39 @@ class _VentilationResult {
     required this.ductLength,
     required this.grillsCount,
     required this.fittingsCount,
+    required this.recuperatorCount,
   });
+
+  factory _VentilationResult.fromCalculatorResult(Map<String, double> values) {
+    return _VentilationResult(
+      roomVolume: values['roomVolume'] ?? 0,
+      airflowRequired: values['airflowRequired'] ?? 0,
+      ductLength: values['ductLength'] ?? 0,
+      grillsCount: (values['grillsCount'] ?? 0).toInt(),
+      fittingsCount: (values['fittingsCount'] ?? 0).toInt(),
+      recuperatorCount: (values['recuperatorCount'] ?? 0).toInt(),
+    );
+  }
 }
 
-class VentilationCalculatorScreen extends StatefulWidget {
+class VentilationCalculatorScreen extends ConsumerStatefulWidget {
   const VentilationCalculatorScreen({super.key});
 
   @override
-  State<VentilationCalculatorScreen> createState() => _VentilationCalculatorScreenState();
+  ConsumerState<VentilationCalculatorScreen> createState() => _VentilationCalculatorScreenState();
 }
 
-class _VentilationCalculatorScreenState extends State<VentilationCalculatorScreen>
-    with ExportableMixin {
+class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('ventilation_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateVentilationV2();
 
   double _roomArea = 50.0;
   double _ceilingHeight = 2.7;
@@ -65,38 +84,18 @@ class _VentilationCalculatorScreenState extends State<VentilationCalculatorScree
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _VentilationResult _calculate() {
-    final roomVolume = _roomArea * _ceilingHeight;
+    final inputs = <String, double>{
+      'roomArea': _roomArea,
+      'ceilingHeight': _ceilingHeight,
+      'roomsCount': _roomsCount.toDouble(),
+      'ventilationType': _ventilationType.index.toDouble(),
+      'needRecovery': _needRecovery ? 1.0 : 0.0,
+    };
 
-    // Кратность воздухообмена зависит от типа
-    double exchangeRate;
-    switch (_ventilationType) {
-      case VentilationType.natural:
-        exchangeRate = 1.0;
-      case VentilationType.supply:
-        exchangeRate = 2.0;
-      case VentilationType.exhaust:
-        exchangeRate = 1.5;
-    }
-
-    final airflowRequired = roomVolume * exchangeRate;
-
-    // Воздуховоды: примерно 3м на комнату + магистраль
-    final ductLength = _roomsCount * 3 + (_roomArea / 10) * 1.15;
-
-    // Решётки: по 2 на комнату (приток + вытяжка)
-    final grillsCount = _roomsCount * 2;
-
-    // Фитинги: колена, тройники, переходники
-    final fittingsCount = _roomsCount * 3 + 4;
-
-    return _VentilationResult(
-      roomVolume: roomVolume,
-      airflowRequired: airflowRequired,
-      ductLength: ductLength,
-      grillsCount: grillsCount,
-      fittingsCount: fittingsCount,
-    );
+    final result = _calculator(inputs, []);
+    return _VentilationResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
