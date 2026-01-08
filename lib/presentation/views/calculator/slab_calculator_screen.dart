@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_slab_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип фундаментной плиты
@@ -34,22 +36,38 @@ class _SlabResult {
     required this.waterproofArea,
     required this.insulationArea,
   });
+
+  factory _SlabResult.fromCalculatorResult(Map<String, double> values) {
+    return _SlabResult(
+      slabArea: values['slabArea'] ?? 0,
+      concreteVolume: values['concreteVolume'] ?? 0,
+      reinforcementWeight: values['reinforcementWeight'] ?? 0,
+      sandVolume: values['sandVolume'] ?? 0,
+      gravelVolume: values['gravelVolume'] ?? 0,
+      waterproofArea: values['waterproofArea'] ?? 0,
+      insulationArea: values['insulationArea'] ?? 0,
+    );
+  }
 }
 
-class SlabCalculatorScreen extends StatefulWidget {
+class SlabCalculatorScreen extends ConsumerStatefulWidget {
   const SlabCalculatorScreen({super.key});
 
   @override
-  State<SlabCalculatorScreen> createState() => _SlabCalculatorScreenState();
+  ConsumerState<SlabCalculatorScreen> createState() => _SlabCalculatorScreenState();
 }
 
-class _SlabCalculatorScreenState extends State<SlabCalculatorScreen>
-    with ExportableMixin {
+class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('slab_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateSlabV2();
 
   double _length = 10.0;
   double _width = 8.0;
@@ -70,41 +88,19 @@ class _SlabCalculatorScreenState extends State<SlabCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _SlabResult _calculate() {
-    final slabArea = _length * _width;
+    final inputs = <String, double>{
+      'length': _length,
+      'width': _width,
+      'thickness': _thickness,
+      'slabType': _slabType.index.toDouble(),
+      'needWaterproof': _needWaterproof ? 1.0 : 0.0,
+      'needInsulation': _needInsulation ? 1.0 : 0.0,
+    };
 
-    // Бетон
-    double concreteVolume = slabArea * _thickness;
-    if (_slabType == SlabType.ribbed) {
-      // Добавляем рёбра жёсткости
-      concreteVolume *= 1.15;
-    }
-    concreteVolume *= 1.02; // запас на потери
-
-    // Арматура: ~80-100 кг на м³ бетона
-    final reinforcementWeight = concreteVolume * 90;
-
-    // Песчаная подушка (20 см)
-    final sandVolume = slabArea * 0.2 * 1.1;
-
-    // Щебень (15 см)
-    final gravelVolume = slabArea * 0.15 * 1.1;
-
-    // Гидроизоляция
-    final waterproofArea = _needWaterproof ? slabArea * 1.15 : 0.0;
-
-    // Утеплитель под плиту
-    final insulationArea = _needInsulation ? slabArea * 1.05 : 0.0;
-
-    return _SlabResult(
-      slabArea: slabArea,
-      concreteVolume: concreteVolume,
-      reinforcementWeight: reinforcementWeight,
-      sandVolume: sandVolume,
-      gravelVolume: gravelVolume,
-      waterproofArea: waterproofArea,
-      insulationArea: insulationArea,
-    );
+    final result = _calculator(inputs, []);
+    return _SlabResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
