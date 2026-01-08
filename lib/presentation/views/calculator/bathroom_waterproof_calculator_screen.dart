@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_bathroom_waterproof_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип гидроизоляции
@@ -32,22 +34,38 @@ class _WaterproofResult {
     required this.primerLiters,
     required this.tapeMeters,
   });
+
+  factory _WaterproofResult.fromCalculatorResult(Map<String, double> values) {
+    return _WaterproofResult(
+      floorArea: values['floorArea'] ?? 0,
+      wallArea: values['wallArea'] ?? 0,
+      totalArea: values['totalArea'] ?? 0,
+      waterproofKg: values['waterproofKg'] ?? 0,
+      primerLiters: values['primerLiters'] ?? 0,
+      tapeMeters: values['tapeMeters'] ?? 0,
+    );
+  }
 }
 
-class BathroomWaterproofCalculatorScreen extends StatefulWidget {
+class BathroomWaterproofCalculatorScreen extends ConsumerStatefulWidget {
   const BathroomWaterproofCalculatorScreen({super.key});
 
   @override
-  State<BathroomWaterproofCalculatorScreen> createState() => _BathroomWaterproofCalculatorScreenState();
+  ConsumerState<BathroomWaterproofCalculatorScreen> createState() => _BathroomWaterproofCalculatorScreenState();
 }
 
-class _BathroomWaterproofCalculatorScreenState extends State<BathroomWaterproofCalculatorScreen>
-    with ExportableMixin {
+class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWaterproofCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('waterproof_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateBathroomWaterproofV2();
+
   double _length = 2.5;
   double _width = 1.8;
   double _wallHeight = 0.2; // высота захода на стены
@@ -68,39 +86,20 @@ class _BathroomWaterproofCalculatorScreenState extends State<BathroomWaterproofC
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _WaterproofResult _calculate() {
-    final floorArea = _length * _width;
-    final perimeter = 2 * (_length + _width);
-    final wallArea = perimeter * _wallHeight;
-    final totalArea = (floorArea + wallArea) * 1.1; // +10% запас
+    final inputs = <String, double>{
+      'length': _length,
+      'width': _width,
+      'wallHeight': _wallHeight,
+      'waterproofType': _waterproofType.index.toDouble(),
+      'layers': _layers.toDouble(),
+      'needPrimer': _needPrimer ? 1.0 : 0.0,
+      'needTape': _needTape ? 1.0 : 0.0,
+    };
 
-    // Расход гидроизоляции
-    double consumptionPerSqm;
-    switch (_waterproofType) {
-      case WaterproofType.liquid:
-        consumptionPerSqm = 1.5; // кг/м² на слой
-      case WaterproofType.roll:
-        consumptionPerSqm = 1.0; // м²/м² (рулонная)
-      case WaterproofType.cement:
-        consumptionPerSqm = 3.0; // кг/м² на слой
-    }
-
-    final waterproofKg = totalArea * consumptionPerSqm * _layers;
-
-    // Грунтовка: 0.2 л/м²
-    final primerLiters = _needPrimer ? totalArea * 0.2 : 0.0;
-
-    // Лента: периметр + углы + стыки
-    final tapeMeters = _needTape ? perimeter * 1.3 : 0.0;
-
-    return _WaterproofResult(
-      floorArea: floorArea,
-      wallArea: wallArea,
-      totalArea: totalArea,
-      waterproofKg: waterproofKg,
-      primerLiters: primerLiters,
-      tapeMeters: tapeMeters,
-    );
+    final result = _calculator(inputs, []);
+    return _WaterproofResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
