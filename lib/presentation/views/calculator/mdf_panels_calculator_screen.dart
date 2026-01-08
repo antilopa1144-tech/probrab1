@@ -1,9 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_mdf_panels_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип МДФ панелей
@@ -36,22 +36,38 @@ class _MdfPanelsResult {
     required this.plinthLength,
     required this.plinthPieces,
   });
+
+  factory _MdfPanelsResult.fromCalculatorResult(Map<String, double> values) {
+    return _MdfPanelsResult(
+      area: values['area'] ?? 0,
+      panelsCount: (values['panelsCount'] ?? 0).toInt(),
+      profileLength: values['profileLength'] ?? 0,
+      clipsCount: (values['clipsCount'] ?? 0).toInt(),
+      plinthLength: values['plinthLength'] ?? 0,
+      plinthPieces: (values['plinthPieces'] ?? 0).toInt(),
+    );
+  }
 }
 
-class MdfPanelsCalculatorScreen extends StatefulWidget {
+class MdfPanelsCalculatorScreen extends ConsumerStatefulWidget {
   const MdfPanelsCalculatorScreen({super.key});
 
   @override
-  State<MdfPanelsCalculatorScreen> createState() => _MdfPanelsCalculatorScreenState();
+  ConsumerState<MdfPanelsCalculatorScreen> createState() => _MdfPanelsCalculatorScreenState();
 }
 
-class _MdfPanelsCalculatorScreenState extends State<MdfPanelsCalculatorScreen>
-    with ExportableMixin {
+class _MdfPanelsCalculatorScreenState extends ConsumerState<MdfPanelsCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('mdf_panels_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateMdfPanelsV2();
+
   double _area = 20.0;
   double _wallWidth = 4.0;
   double _wallHeight = 2.7;
@@ -73,49 +89,21 @@ class _MdfPanelsCalculatorScreenState extends State<MdfPanelsCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _MdfPanelsResult _calculate() {
-    double area = _area;
-    double wallWidth = _wallWidth;
-    double wallHeight = _wallHeight;
+    final inputs = <String, double>{
+      'area': _area,
+      'wallWidth': _wallWidth,
+      'wallHeight': _wallHeight,
+      'panelWidth': _panelWidth,
+      'panelType': _panelType.index.toDouble(),
+      'inputMode': _inputMode.index.toDouble(),
+      'needProfile': _needProfile ? 1.0 : 0.0,
+      'needPlinth': _needPlinth ? 1.0 : 0.0,
+    };
 
-    if (_inputMode == MdfPanelsInputMode.wall) {
-      area = wallWidth * wallHeight;
-    } else {
-      final side = math.sqrt(area);
-      wallWidth = side * 1.5;
-      wallHeight = side / 1.5;
-    }
-
-    // Панели: площадь + 10% запас, делим на площадь одной панели
-    final panelArea = _panelWidth * 2.7; // стандартная длина 2.7м
-    final panelsCount = (area * 1.1 / panelArea).ceil();
-
-    // Профиль для обрешётки: через каждые 0.5м + периметр
-    double profileLength = 0;
-    if (_needProfile) {
-      final horizontalProfiles = (wallHeight / 0.5).ceil() + 1;
-      profileLength = horizontalProfiles * wallWidth * 1.1;
-    }
-
-    // Кляймеры: 5 шт на панель
-    final clipsCount = panelsCount * 5;
-
-    // Плинтус
-    double plinthLength = 0;
-    int plinthPieces = 0;
-    if (_needPlinth) {
-      plinthLength = wallWidth * 2 + 2; // периметр примерно
-      plinthPieces = (plinthLength / 2.7).ceil();
-    }
-
-    return _MdfPanelsResult(
-      area: area,
-      panelsCount: panelsCount,
-      profileLength: profileLength,
-      clipsCount: clipsCount,
-      plinthLength: plinthLength,
-      plinthPieces: plinthPieces,
-    );
+    final result = _calculator(inputs, []);
+    return _MdfPanelsResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
