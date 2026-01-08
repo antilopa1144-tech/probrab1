@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип декоративного камня
@@ -44,7 +43,13 @@ class DecorStoneCalculatorScreen extends StatefulWidget {
   State<DecorStoneCalculatorScreen> createState() => _DecorStoneCalculatorScreenState();
 }
 
-class _DecorStoneCalculatorScreenState extends State<DecorStoneCalculatorScreen> {
+class _DecorStoneCalculatorScreenState extends State<DecorStoneCalculatorScreen>
+    with ExportableMixin {
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('decor_stone_calc.title');
   double _area = 15.0;
   double _wallWidth = 4.0;
   double _wallHeight = 2.7;
@@ -111,7 +116,8 @@ class _DecorStoneCalculatorScreenState extends State<DecorStoneCalculatorScreen>
 
   void _update() => setState(() => _result = _calculate());
 
-  String _generateExportText() {
+  @override
+  String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln(_loc.translate('decor_stone_calc.export.title'));
     buffer.writeln('═' * 40);
@@ -141,19 +147,6 @@ class _DecorStoneCalculatorScreenState extends State<DecorStoneCalculatorScreen>
     return buffer.toString();
   }
 
-  void _shareCalculation() {
-    final text = _generateExportText();
-    SharePlus.instance.share(ShareParams(text: text, subject: _loc.translate('decor_stone_calc.title')));
-  }
-
-  void _copyToClipboard() {
-    final text = _generateExportText();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_loc.translate('common.copied_to_clipboard')), duration: const Duration(seconds: 2)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -161,10 +154,7 @@ class _DecorStoneCalculatorScreenState extends State<DecorStoneCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate('decor_stone_calc.title'),
       accentColor: _accentColor,
-      actions: [
-        IconButton(icon: const Icon(Icons.copy), onPressed: _copyToClipboard, tooltip: _loc.translate('common.copy')),
-        IconButton(icon: const Icon(Icons.share), onPressed: _shareCalculation, tooltip: _loc.translate('common.share')),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,
         results: [
@@ -244,17 +234,14 @@ class _DecorStoneCalculatorScreenState extends State<DecorStoneCalculatorScreen>
   }
 
   Widget _buildManualInputs() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(_loc.translate('decor_stone_calc.label.area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
-            Text('${_area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-          ],
-        ),
-        Slider(value: _area, min: 1, max: 100, activeColor: _accentColor, onChanged: (v) { setState(() { _area = v; _update(); }); }),
-      ],
+    return CalculatorSliderField(
+      label: _loc.translate('decor_stone_calc.label.area'),
+      value: _area,
+      min: 1,
+      max: 100,
+      suffix: _loc.translate('common.sqm'),
+      accentColor: _accentColor,
+      onChanged: (v) { setState(() { _area = v; _update(); }); },
     );
   }
 
@@ -288,21 +275,17 @@ class _DecorStoneCalculatorScreenState extends State<DecorStoneCalculatorScreen>
     return _card(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('decor_stone_calc.label.joint_width'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
-              Text('${_jointWidth.toStringAsFixed(0)} ${_loc.translate('common.mm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('decor_stone_calc.label.joint_width'),
             value: _jointWidth,
             min: 0,
             max: 20,
             divisions: 20,
-            activeColor: _accentColor,
+            suffix: _loc.translate('common.mm'),
+            accentColor: _accentColor,
             onChanged: (v) { setState(() { _jointWidth = v; _update(); }); },
           ),
+          const SizedBox(height: 8),
           Text(
             _loc.translate('decor_stone_calc.joint_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),

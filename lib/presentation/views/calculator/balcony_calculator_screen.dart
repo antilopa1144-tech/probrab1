@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип балкона
@@ -42,7 +41,13 @@ class BalconyCalculatorScreen extends StatefulWidget {
   State<BalconyCalculatorScreen> createState() => _BalconyCalculatorScreenState();
 }
 
-class _BalconyCalculatorScreenState extends State<BalconyCalculatorScreen> {
+class _BalconyCalculatorScreenState extends State<BalconyCalculatorScreen>
+    with ExportableMixin {
+  @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('balcony_calc.title');
   double _length = 3.0;
   double _width = 1.2;
   double _height = 2.5;
@@ -101,7 +106,8 @@ class _BalconyCalculatorScreenState extends State<BalconyCalculatorScreen> {
 
   void _update() => setState(() => _result = _calculate());
 
-  String _generateExportText() {
+  @override
+  String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln(_loc.translate('balcony_calc.export.title'));
     buffer.writeln('═' * 40);
@@ -129,19 +135,6 @@ class _BalconyCalculatorScreenState extends State<BalconyCalculatorScreen> {
     return buffer.toString();
   }
 
-  void _shareCalculation() {
-    final text = _generateExportText();
-    SharePlus.instance.share(ShareParams(text: text, subject: _loc.translate('balcony_calc.title')));
-  }
-
-  void _copyToClipboard() {
-    final text = _generateExportText();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(_loc.translate('common.copied_to_clipboard')), duration: const Duration(seconds: 2)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
@@ -149,10 +142,7 @@ class _BalconyCalculatorScreenState extends State<BalconyCalculatorScreen> {
     return CalculatorScaffold(
       title: _loc.translate('balcony_calc.title'),
       accentColor: _accentColor,
-      actions: [
-        IconButton(icon: const Icon(Icons.copy), onPressed: _copyToClipboard, tooltip: _loc.translate('common.copy')),
-        IconButton(icon: const Icon(Icons.share), onPressed: _shareCalculation, tooltip: _loc.translate('common.share')),
-      ],
+      actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,
         results: [
