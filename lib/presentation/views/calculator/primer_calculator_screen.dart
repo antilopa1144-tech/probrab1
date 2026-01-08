@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_primer_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип поверхности для грунтовки
@@ -29,6 +31,7 @@ enum PrimerType {
 
 enum PrimerInputMode { manual, room }
 
+/// Результат расчёта грунтовки
 class _PrimerResult {
   final double area;
   final double litersNeeded;
@@ -41,23 +44,35 @@ class _PrimerResult {
     required this.cansNeeded,
     required this.canSize,
   });
+
+  factory _PrimerResult.fromCalculatorResult(Map<String, double> values) {
+    return _PrimerResult(
+      area: values['area'] ?? 0,
+      litersNeeded: values['litersNeeded'] ?? 0,
+      cansNeeded: (values['cansNeeded'] ?? 0).toInt(),
+      canSize: values['canSize'] ?? 10,
+    );
+  }
 }
 
-class PrimerCalculatorScreen extends StatefulWidget {
+class PrimerCalculatorScreen extends ConsumerStatefulWidget {
   const PrimerCalculatorScreen({super.key});
 
   @override
-  State<PrimerCalculatorScreen> createState() => _PrimerCalculatorScreenState();
+  ConsumerState<PrimerCalculatorScreen> createState() => _PrimerCalculatorScreenState();
 }
 
-class _PrimerCalculatorScreenState extends State<PrimerCalculatorScreen>
-    with ExportableMixin {
-  // ExportableMixin
+class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('primer_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculatePrimerV2();
 
   // Состояние
   double _area = 30.0;
@@ -82,42 +97,26 @@ class _PrimerCalculatorScreenState extends State<PrimerCalculatorScreen>
     _result = _calculate();
   }
 
-  /// Расход грунтовки л/м² в зависимости от поверхности и типа
-  double _getConsumptionRate() {
-    // Базовый расход по типу грунтовки
-    final double baseRate = switch (_primerType) {
-      PrimerType.deep => 0.1,
-      PrimerType.contact => 0.3,
-      PrimerType.universal => 0.15,
-    };
-
-    // Коэффициент по поверхности
-    final double surfaceMultiplier = switch (_surfaceType) {
-      PrimerSurfaceType.concrete => 1.3,    // пористый бетон
-      PrimerSurfaceType.plaster => 1.0,     // штукатурка стандартно
-      PrimerSurfaceType.drywall => 0.8,     // гипсокартон меньше впитывает
-    };
-
-    return baseRate * surfaceMultiplier;
-  }
-
+  /// Использует domain layer для расчёта
   _PrimerResult _calculate() {
-    double area = _area;
-    if (_inputMode == PrimerInputMode.room) {
-      // Площадь стен = периметр × высота
-      area = 2 * (_roomWidth + _roomLength) * _roomHeight;
+    final inputs = <String, double>{
+      'surfaceType': _surfaceType.index.toDouble(),
+      'primerType': _primerType.index.toDouble(),
+      'layers': _layers.toDouble(),
+      'canSize': _canSize,
+    };
+
+    // Передаём либо площадь, либо размеры комнаты
+    if (_inputMode == PrimerInputMode.manual) {
+      inputs['area'] = _area;
+    } else {
+      inputs['roomWidth'] = _roomWidth;
+      inputs['roomLength'] = _roomLength;
+      inputs['roomHeight'] = _roomHeight;
     }
 
-    final consumptionRate = _getConsumptionRate();
-    final litersNeeded = area * consumptionRate * _layers * 1.1; // +10% запас
-    final cansNeeded = (litersNeeded / _canSize).ceil();
-
-    return _PrimerResult(
-      area: area,
-      litersNeeded: litersNeeded,
-      cansNeeded: cansNeeded,
-      canSize: _canSize,
-    );
+    final result = _calculator(inputs, []);
+    return _PrimerResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
