@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_consumer_mixin.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
+import '../../../domain/usecases/calculate_gypsum_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../providers/constants_provider.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
@@ -59,6 +60,37 @@ class _GypsumResult {
     required this.fillerKg,
     required this.primerLiters,
   });
+
+  factory _GypsumResult.fromCalculatorResult(Map<String, double> values, GypsumSheetSize sheetSize) {
+    final sheetSizeNames = {
+      GypsumSheetSize.s2000x1200: '2000×1200',
+      GypsumSheetSize.s2500x1200: '2500×1200',
+      GypsumSheetSize.s2700x1200: '2700×1200',
+      GypsumSheetSize.s3000x1200: '3000×1200',
+    };
+    return _GypsumResult(
+      area: values['calculatedArea'] ?? 0,
+      gklSheets: (values['gklSheets'] ?? 0).toInt(),
+      sheetArea: values['sheetArea'] ?? 0,
+      sheetSizeName: sheetSizeNames[sheetSize] ?? '2500×1200',
+      constructionType: (values['constructionType'] ?? 0).toInt() + 1,
+      pnPieces: (values['pnPieces'] ?? 0).toInt(),
+      pnMeters: values['pnMeters'] ?? 0,
+      ppPieces: (values['ppPieces'] ?? 0).toInt(),
+      ppMeters: values['ppMeters'] ?? 0,
+      screwsTN25: (values['screwsTN25'] ?? 0).toInt(),
+      screwsTN35: (values['screwsTN35'] ?? 0).toInt(),
+      screwsLN: (values['screwsLN'] ?? 0).toInt(),
+      dowels: (values['dowels'] ?? 0).toInt(),
+      suspensions: (values['suspensions'] ?? 0).toInt(),
+      connectors: (values['connectors'] ?? 0).toInt(),
+      insulationArea: values['insulationArea'] ?? 0,
+      sealingTape: values['sealingTape'] ?? 0,
+      armatureTape: values['armatureTape'] ?? 0,
+      fillerKg: values['fillerKg'] ?? 0,
+      primerLiters: values['primerLiters'] ?? 0,
+    );
+  }
 }
 
 /// Helper class for accessing gypsum calculator constants with type safety and fallbacks
@@ -162,6 +194,10 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
 
   @override
   String get exportSubject => _loc.translate('gypsum.export.subject');
+
+  // Domain layer calculator
+  final _calculator = CalculateGypsumV2();
+
   InputMode _inputMode = InputMode.byArea;
   double _area = 20.0;
   double _length = 4.0;
@@ -224,119 +260,23 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
     }
   }
 
+  /// Использует domain layer для расчёта
   _GypsumResult _calculate() {
-    // Получаем площадь в зависимости от режима ввода
-    final calculatedArea = _getCalculatedArea();
+    final inputs = <String, double>{
+      'inputMode': _inputMode == InputMode.byArea ? 0.0 : 1.0,
+      'area': _area,
+      'length': _length,
+      'width': _width,
+      'height': _height,
+      'constructionType': _constructionType.index.toDouble(),
+      'gklType': _gklType.index.toDouble(),
+      'sheetSize': _sheetSize.index.toDouble(),
+      'layers': _layers.toDouble(),
+      'useInsulation': _useInsulation ? 1.0 : 0.0,
+    };
 
-    // Определяем площадь листа в зависимости от выбранного размера
-    final sheetArea = _constants.getSheetArea(_sheetSize);
-    String sheetSizeName;
-    switch (_sheetSize) {
-      case GypsumSheetSize.s2000x1200:
-        sheetSizeName = '2000×1200';
-        break;
-      case GypsumSheetSize.s2500x1200:
-        sheetSizeName = '2500×1200';
-        break;
-      case GypsumSheetSize.s2700x1200:
-        sheetSizeName = '2700×1200';
-        break;
-      case GypsumSheetSize.s3000x1200:
-        sheetSizeName = '3000×1200';
-        break;
-    }
-
-    double gklMultiplier = _constants.getGklBaseMultiplier();
-
-    if (_constructionType == GypsumConstructionType.partition) {
-      gklMultiplier *= _constants.getGklPartitionMultiplier();
-    }
-
-    final gklArea = calculatedArea * _layers * gklMultiplier;
-    final gklSheets = (gklArea / sheetArea).ceil();
-
-    // Стандартная длина профиля
-    final profileLength = _constants.getProfileLength();
-
-    double pnMeters = 0;
-    double ppMeters = 0;
-    int pnPieces = 0;
-    int ppPieces = 0;
-    int screwsTN25 = 0;
-    int screwsTN35 = 0;
-    int screwsLN = 0;
-    int dowels = 0;
-    int suspensions = 0;
-    int connectors = 0;
-    double sealingTape = 0;
-
-    if (_constructionType == GypsumConstructionType.wallLining) {
-      pnMeters = calculatedArea * _constants.getWallLiningPnMeters();
-      ppMeters = calculatedArea * _constants.getWallLiningPpMeters();
-      pnPieces = (pnMeters / profileLength).ceil();
-      ppPieces = (ppMeters / profileLength).ceil();
-      suspensions = (calculatedArea * _constants.getWallLiningSuspensions()).ceil();
-      dowels = (calculatedArea * _constants.getWallLiningDowels()).ceil();
-      screwsTN25 = (calculatedArea * _constants.getWallLiningScrewsTN25()).ceil();
-      screwsLN = (calculatedArea * _constants.getWallLiningScrewsLN()).ceil();
-      sealingTape = calculatedArea * _constants.getWallLiningSealingTape();
-    } else if (_constructionType == GypsumConstructionType.partition) {
-      pnMeters = calculatedArea * _constants.getPartitionPnMeters();
-      ppMeters = calculatedArea * _constants.getPartitionPpMeters();
-      pnPieces = (pnMeters / profileLength).ceil();
-      ppPieces = (ppMeters / profileLength).ceil();
-      dowels = (calculatedArea * _constants.getPartitionDowels()).ceil();
-      screwsTN25 = (calculatedArea * _constants.getPartitionScrewsTN25()).ceil();
-      screwsLN = (calculatedArea * _constants.getPartitionScrewsLN()).ceil();
-      sealingTape = calculatedArea * _constants.getPartitionSealingTape();
-    } else if (_constructionType == GypsumConstructionType.ceiling) {
-      pnMeters = calculatedArea * _constants.getCeilingPnMeters();
-      ppMeters = calculatedArea * _constants.getCeilingPpMeters();
-      pnPieces = (pnMeters / profileLength).ceil();
-      ppPieces = (ppMeters / profileLength).ceil();
-      suspensions = (calculatedArea * _constants.getCeilingSuspensions()).ceil();
-      connectors = (calculatedArea * _constants.getCeilingConnectors()).ceil();
-      dowels = (suspensions * _constants.getCeilingDowelsPerSuspension());
-      screwsTN25 = (calculatedArea * _constants.getCeilingScrewsTN25()).ceil();
-      screwsLN = (calculatedArea * _constants.getCeilingScrewsLN()).ceil();
-    }
-
-    if (_layers == 2) {
-      final multiplier = _constructionType == GypsumConstructionType.partition
-          ? _constants.getSecondLayerPartitionMultiplier()
-          : 1;
-      screwsTN35 = (calculatedArea * _constants.getSecondLayerScrewsTN35() * multiplier).ceil();
-    }
-
-    final insulationArea = _useInsulation ? calculatedArea * _constants.getInsulationMargin() : 0.0;
-    final armatureTape = calculatedArea * _constants.getArmatureTape();
-    final fillerKg = calculatedArea * (_constructionType == GypsumConstructionType.partition
-        ? _constants.getFillerPartition()
-        : _constants.getFillerStandard()) * _layers;
-    final primerLiters = calculatedArea * _constants.getPrimer();
-
-    return _GypsumResult(
-      area: calculatedArea,
-      gklSheets: gklSheets,
-      sheetArea: sheetArea,
-      sheetSizeName: sheetSizeName,
-      constructionType: _constructionType.index + 1,
-      pnPieces: pnPieces,
-      pnMeters: pnMeters,
-      ppPieces: ppPieces,
-      ppMeters: ppMeters,
-      screwsTN25: screwsTN25,
-      screwsTN35: screwsTN35,
-      screwsLN: screwsLN,
-      dowels: dowels,
-      suspensions: suspensions,
-      connectors: connectors,
-      insulationArea: insulationArea,
-      sealingTape: sealingTape,
-      armatureTape: armatureTape,
-      fillerKg: fillerKg,
-      primerLiters: primerLiters,
-    );
+    final result = _calculator(inputs, []);
+    return _GypsumResult.fromCalculatorResult(result.values, _sheetSize);
   }
 
   void _update() => setState(() => _result = _calculate());
