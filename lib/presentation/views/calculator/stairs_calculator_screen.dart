@@ -1,9 +1,9 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_stairs_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип лестницы
@@ -25,6 +25,7 @@ class _StairsResult {
   final double stairsLength;
   final double stringerLength;
   final double railingLength;
+  final bool isComfortable;
 
   const _StairsResult({
     required this.stepsCount,
@@ -33,23 +34,40 @@ class _StairsResult {
     required this.stairsLength,
     required this.stringerLength,
     required this.railingLength,
+    required this.isComfortable,
   });
+
+  factory _StairsResult.fromCalculatorResult(Map<String, double> values) {
+    return _StairsResult(
+      stepsCount: (values['stepsCount'] ?? 0).toInt(),
+      stepHeight: values['stepHeight'] ?? 0,
+      stepDepth: values['stepDepth'] ?? 0,
+      stairsLength: values['stairsLength'] ?? 0,
+      stringerLength: values['stringerLength'] ?? 0,
+      railingLength: values['railingLength'] ?? 0,
+      isComfortable: (values['isComfortable'] ?? 0) == 1.0,
+    );
+  }
 }
 
-class StairsCalculatorScreen extends StatefulWidget {
+class StairsCalculatorScreen extends ConsumerStatefulWidget {
   const StairsCalculatorScreen({super.key});
 
   @override
-  State<StairsCalculatorScreen> createState() => _StairsCalculatorScreenState();
+  ConsumerState<StairsCalculatorScreen> createState() => _StairsCalculatorScreenState();
 }
 
-class _StairsCalculatorScreenState extends State<StairsCalculatorScreen>
-    with ExportableMixin {
+class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('stairs_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateStairsV2();
 
   double _floorHeight = 2.8;
   double _openingLength = 4.0;
@@ -70,45 +88,18 @@ class _StairsCalculatorScreenState extends State<StairsCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _StairsResult _calculate() {
-    // Оптимальная высота ступени 15-20 см
-    const optimalStepHeight = 0.17; // 17 см
-    final stepsCount = (_floorHeight / optimalStepHeight).ceil();
-    final stepHeight = _floorHeight / stepsCount;
+    final inputs = <String, double>{
+      'floorHeight': _floorHeight,
+      'stairsWidth': _stairsWidth,
+      'stairsType': _stairsType.index.toDouble(),
+      'needRailing': _needRailing ? 1.0 : 0.0,
+      'needBothSides': _needBothSides ? 1.0 : 0.0,
+    };
 
-    // Глубина ступени: формула 2h + d = 60-64 см
-    final stepDepth = 0.62 - 2 * stepHeight;
-    final clampedDepth = stepDepth.clamp(0.25, 0.35);
-
-    // Длина лестницы
-    double stairsLength;
-    switch (_stairsType) {
-      case StairsType.straight:
-        stairsLength = stepsCount * clampedDepth;
-      case StairsType.lShaped:
-        stairsLength = stepsCount * clampedDepth * 0.75; // с площадкой
-      case StairsType.uShaped:
-        stairsLength = stepsCount * clampedDepth * 0.55; // компактнее
-    }
-
-    // Длина косоура (по теореме Пифагора)
-    final stringerLength = math.sqrt(_floorHeight * _floorHeight + stairsLength * stairsLength) * 1.1;
-
-    // Перила
-    double railingLength = 0;
-    if (_needRailing) {
-      railingLength = stairsLength + 0.5; // + 0.5м на верхнюю площадку
-      if (_needBothSides) railingLength *= 2;
-    }
-
-    return _StairsResult(
-      stepsCount: stepsCount,
-      stepHeight: stepHeight,
-      stepDepth: clampedDepth,
-      stairsLength: stairsLength,
-      stringerLength: stringerLength,
-      railingLength: railingLength,
-    );
+    final result = _calculator(inputs, []);
+    return _StairsResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
@@ -270,7 +261,7 @@ class _StairsCalculatorScreenState extends State<StairsCalculatorScreen>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: _result.stepHeight >= 0.15 && _result.stepHeight <= 0.20
+              color: _result.isComfortable
                   ? Colors.green.withValues(alpha: 0.1)
                   : Colors.orange.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -278,18 +269,14 @@ class _StairsCalculatorScreenState extends State<StairsCalculatorScreen>
             child: Row(
               children: [
                 Icon(
-                  _result.stepHeight >= 0.15 && _result.stepHeight <= 0.20
-                      ? Icons.check_circle
-                      : Icons.warning,
-                  color: _result.stepHeight >= 0.15 && _result.stepHeight <= 0.20
-                      ? Colors.green
-                      : Colors.orange,
+                  _result.isComfortable ? Icons.check_circle : Icons.warning,
+                  color: _result.isComfortable ? Colors.green : Colors.orange,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    _result.stepHeight >= 0.15 && _result.stepHeight <= 0.20
+                    _result.isComfortable
                         ? _loc.translate('stairs_calc.hint.optimal')
                         : _loc.translate('stairs_calc.hint.adjust'),
                     style: CalculatorDesignSystem.bodySmall,
