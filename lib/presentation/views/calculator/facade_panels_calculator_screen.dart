@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_facade_panels_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип фасадных панелей
@@ -32,22 +34,36 @@ class _FacadePanelsResult {
     required this.cornersCount,
     required this.startersCount,
   });
+
+  factory _FacadePanelsResult.fromCalculatorResult(Map<String, double> values) {
+    return _FacadePanelsResult(
+      wallArea: values['wallArea'] ?? 0,
+      panelsArea: values['panelsArea'] ?? 0,
+      profileLength: values['profileLength'] ?? 0,
+      insulationArea: values['insulationArea'] ?? 0,
+      cornersCount: (values['cornersCount'] ?? 0).toInt(),
+      startersCount: (values['startersCount'] ?? 0).toInt(),
+    );
+  }
 }
 
-class FacadePanelsCalculatorScreen extends StatefulWidget {
+class FacadePanelsCalculatorScreen extends ConsumerStatefulWidget {
   const FacadePanelsCalculatorScreen({super.key});
 
   @override
-  State<FacadePanelsCalculatorScreen> createState() => _FacadePanelsCalculatorScreenState();
+  ConsumerState<FacadePanelsCalculatorScreen> createState() => _FacadePanelsCalculatorScreenState();
 }
 
-class _FacadePanelsCalculatorScreenState extends State<FacadePanelsCalculatorScreen>
-    with ExportableMixin {
+class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalculatorScreen>
+    with ExportableConsumerMixin {
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('facade_panels_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateFacadePanelsV2();
 
   double _wallLength = 40.0; // периметр дома
   double _wallHeight = 3.0;
@@ -68,38 +84,19 @@ class _FacadePanelsCalculatorScreenState extends State<FacadePanelsCalculatorScr
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _FacadePanelsResult _calculate() {
-    final grossArea = _wallLength * _wallHeight;
-    final wallArea = grossArea - _openingsArea;
+    final inputs = <String, double>{
+      'wallLength': _wallLength,
+      'wallHeight': _wallHeight,
+      'openingsArea': _openingsArea,
+      'panelType': _panelType.index.toDouble(),
+      'needInsulation': _needInsulation ? 1.0 : 0.0,
+      'needProfile': _needProfile ? 1.0 : 0.0,
+    };
 
-    // Панели +10% запас
-    final panelsArea = wallArea * 1.1;
-
-    // Профиль для обрешётки
-    double profileLength = 0;
-    if (_needProfile) {
-      // Вертикальные направляющие через 0.6м
-      final verticals = (_wallLength / 0.6).ceil();
-      profileLength = verticals * _wallHeight * 1.1;
-    }
-
-    // Утеплитель
-    final insulationArea = _needInsulation ? wallArea * 1.05 : 0.0;
-
-    // Углы: 4 внешних угла × высота стены
-    final cornersCount = (4 * _wallHeight / 3).ceil(); // профили 3м
-
-    // Стартовые планки: периметр
-    final startersCount = (_wallLength / 3).ceil();
-
-    return _FacadePanelsResult(
-      wallArea: wallArea,
-      panelsArea: panelsArea,
-      profileLength: profileLength,
-      insulationArea: insulationArea,
-      cornersCount: cornersCount,
-      startersCount: startersCount,
-    );
+    final result = _calculator(inputs, []);
+    return _FacadePanelsResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
