@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
+import '../../../domain/usecases/calculate_slopes_v2.dart';
+import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип откосов
@@ -30,22 +32,36 @@ class _SlopesResult {
     required this.primerLiters,
     required this.sealantTubes,
   });
+
+  factory _SlopesResult.fromCalculatorResult(Map<String, double> values) {
+    return _SlopesResult(
+      totalArea: values['totalArea'] ?? 0,
+      materialArea: values['materialArea'] ?? 0,
+      cornerLength: values['cornerLength'] ?? 0,
+      primerLiters: values['primerLiters'] ?? 0,
+      sealantTubes: values['sealantTubes'] ?? 0,
+    );
+  }
 }
 
-class SlopesCalculatorScreen extends StatefulWidget {
+class SlopesCalculatorScreen extends ConsumerStatefulWidget {
   const SlopesCalculatorScreen({super.key});
 
   @override
-  State<SlopesCalculatorScreen> createState() => _SlopesCalculatorScreenState();
+  ConsumerState<SlopesCalculatorScreen> createState() => _SlopesCalculatorScreenState();
 }
 
-class _SlopesCalculatorScreenState extends State<SlopesCalculatorScreen>
-    with ExportableMixin {
+class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
+    with ExportableConsumerMixin {
+  // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate('slopes_calc.title');
+
+  // Domain layer calculator
+  final _calculator = CalculateSlopesV2();
 
   int _windowsCount = 3;
   double _windowWidth = 1.4;
@@ -67,32 +83,20 @@ class _SlopesCalculatorScreenState extends State<SlopesCalculatorScreen>
     _result = _calculate();
   }
 
+  /// Использует domain layer для расчёта
   _SlopesResult _calculate() {
-    // Площадь откосов на одно окно: 2 боковых + 1 верхний
-    final sideArea = 2 * _windowHeight * _slopeDepth;
-    final topArea = _windowWidth * _slopeDepth;
-    final areaPerWindow = sideArea + topArea;
+    final inputs = <String, double>{
+      'windowsCount': _windowsCount.toDouble(),
+      'windowWidth': _windowWidth,
+      'windowHeight': _windowHeight,
+      'slopeDepth': _slopeDepth,
+      'slopesType': _slopesType.index.toDouble(),
+      'needCorners': _needCorners ? 1.0 : 0.0,
+      'needPrimer': _needPrimer ? 1.0 : 0.0,
+    };
 
-    final totalArea = areaPerWindow * _windowsCount;
-    final materialArea = totalArea * 1.15; // +15% запас
-
-    // Уголки: периметр окна без нижней части
-    final perimeterPerWindow = 2 * _windowHeight + _windowWidth;
-    final cornerLength = _needCorners ? perimeterPerWindow * _windowsCount * 1.1 : 0.0;
-
-    // Грунтовка: 0.15 л/м²
-    final primerLiters = _needPrimer ? totalArea * 0.15 : 0.0;
-
-    // Герметик: 1 туба на 2-3 окна
-    final sealantTubes = (_windowsCount / 2.5).ceil().toDouble();
-
-    return _SlopesResult(
-      totalArea: totalArea,
-      materialArea: materialArea,
-      cornerLength: cornerLength,
-      primerLiters: primerLiters,
-      sealantTubes: sealantTubes,
-    );
+    final result = _calculator(inputs, []);
+    return _SlopesResult.fromCalculatorResult(result.values);
   }
 
   void _update() => setState(() => _result = _calculate());
