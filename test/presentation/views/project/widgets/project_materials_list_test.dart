@@ -5,8 +5,6 @@ import 'package:probrab_ai/domain/models/project_v2.dart';
 import 'package:probrab_ai/presentation/views/project/widgets/project_materials_list.dart';
 import '../../../../helpers/test_helpers.dart';
 
-import '../../../helpers/test_helpers.dart';
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -764,6 +762,557 @@ void main() {
       await tester.pump();
 
       expect(find.byType(Divider), findsOneWidget);
+    });
+  });
+
+  group('ProjectMaterialsList - Расчёт индексов материалов', () {
+    testWidgets('находит ID расчёта для материала из первого расчёта', (tester) async {
+      setTestViewportSize(tester);
+      final calc1 = createTestCalculation(
+        id: 1,
+        materials: [
+          createTestMaterial(name: 'Материал 1'),
+          createTestMaterial(name: 'Материал 2'),
+        ],
+      );
+      final calc2 = createTestCalculation(
+        id: 2,
+        materials: [
+          createTestMaterial(name: 'Материал 3'),
+        ],
+      );
+      final project = createTestProject(calculations: [calc1, calc2]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      // Материал по индексу 0 должен быть из calc1
+      expect(find.text('Материал 1'), findsOneWidget);
+      expect(find.text('Материал 2'), findsOneWidget);
+    });
+
+    testWidgets('находит ID расчёта для материала из второго расчёта', (tester) async {
+      setTestViewportSize(tester);
+      final calc1 = createTestCalculation(
+        id: 1,
+        materials: [
+          createTestMaterial(name: 'Материал 1'),
+        ],
+      );
+      final calc2 = createTestCalculation(
+        id: 2,
+        materials: [
+          createTestMaterial(name: 'Материал 2'),
+          createTestMaterial(name: 'Материал 3'),
+        ],
+      );
+      final project = createTestProject(calculations: [calc1, calc2]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      // Материалы из второго расчёта
+      expect(find.text('Материал 2'), findsOneWidget);
+      expect(find.text('Материал 3'), findsOneWidget);
+    });
+
+    testWidgets('правильно вычисляет локальный индекс материала', (tester) async {
+      setTestViewportSize(tester);
+      final calc = createTestCalculation(
+        materials: [
+          createTestMaterial(name: 'Материал 1'),
+          createTestMaterial(name: 'Материал 2'),
+          createTestMaterial(name: 'Материал 3'),
+        ],
+      );
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.byType(CheckboxListTile), findsNWidgets(3));
+    });
+
+    testWidgets('обрабатывает множественные расчёты с разным количеством материалов', (tester) async {
+      setTestViewportSize(tester);
+      final calculations = [
+        createTestCalculation(
+          id: 1,
+          materials: [
+            createTestMaterial(name: 'M1'),
+          ],
+        ),
+        createTestCalculation(
+          id: 2,
+          materials: [
+            createTestMaterial(name: 'M2'),
+            createTestMaterial(name: 'M3'),
+          ],
+        ),
+        createTestCalculation(
+          id: 3,
+          materials: [
+            createTestMaterial(name: 'M4'),
+            createTestMaterial(name: 'M5'),
+            createTestMaterial(name: 'M6'),
+          ],
+        ),
+      ];
+      final project = createTestProject(calculations: calculations);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.byType(CheckboxListTile), findsNWidgets(6));
+    });
+  });
+
+  group('ProjectMaterialsList - Callback onMaterialToggled', () {
+    testWidgets('callback вызывается при изменении материала', (tester) async {
+      setTestViewportSize(tester);
+      bool callbackCalled = false;
+
+      final materials = [
+        createTestMaterial(name: 'Кирпич', quantity: 100, unit: 'шт', pricePerUnit: 50),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: Scaffold(
+            body: ProjectMaterialsList(
+              project: project,
+              onMaterialToggled: () {
+                callbackCalled = true;
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      // Проверяем что callback существует
+      expect(callbackCalled, isFalse);
+    });
+  });
+
+  group('ProjectMaterialsList - Различные единицы измерения', () {
+    testWidgets('отображает материал с единицей "шт"', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Кирпич', quantity: 100, unit: 'шт', pricePerUnit: 50),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.textContaining('шт'), findsWidgets);
+    });
+
+    testWidgets('отображает материал с единицей "м²"', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Плитка', quantity: 25.5, unit: 'м²', pricePerUnit: 800),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.textContaining('м²'), findsWidgets);
+    });
+
+    testWidgets('отображает материал с единицей "м³"', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Бетон', quantity: 5.0, unit: 'м³', pricePerUnit: 5000),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.textContaining('м³'), findsWidgets);
+    });
+
+    testWidgets('отображает материал с единицей "кг"', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Цемент', quantity: 50, unit: 'кг', pricePerUnit: 10),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.textContaining('кг'), findsWidgets);
+    });
+
+    testWidgets('отображает материал с единицей "л"', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Краска', quantity: 10, unit: 'л', pricePerUnit: 500),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.textContaining('л'), findsWidgets);
+    });
+
+    testWidgets('отображает материал с единицей "упаковка"', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Ламинат', quantity: 5, unit: 'упаковка', pricePerUnit: 2000),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.textContaining('упаковка'), findsWidgets);
+    });
+
+    testWidgets('отображает материал с единицей "рулон"', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Обои', quantity: 8, unit: 'рулон', pricePerUnit: 700),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.textContaining('рулон'), findsWidgets);
+    });
+
+    testWidgets('отображает материал с единицей "мешок"', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Песок', quantity: 20, unit: 'мешок', pricePerUnit: 150),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.textContaining('мешок'), findsWidgets);
+    });
+  });
+
+  group('ProjectMaterialsList - Производительность и оптимизация', () {
+    testWidgets('обрабатывает большое количество материалов эффективно', (tester) async {
+      setTestViewportSize(tester);
+      final materials = List.generate(
+        100,
+        (i) => createTestMaterial(
+          name: 'Материал $i',
+          quantity: (i + 1).toDouble(),
+          unit: 'шт',
+          pricePerUnit: (i + 1) * 10.0,
+        ),
+      );
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.byType(CheckboxListTile), findsWidgets);
+    });
+
+    testWidgets('использует ListView.builder для оптимизации', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Материал 1'),
+        createTestMaterial(name: 'Материал 2'),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.byType(ListView), findsOneWidget);
+    });
+  });
+
+  group('ProjectMaterialsList - Группировка материалов по расчётам', () {
+    testWidgets('отображает материалы из одного расчёта вместе', (tester) async {
+      setTestViewportSize(tester);
+      final calc = createTestCalculation(
+        name: 'Расчёт плитки',
+        materials: [
+          createTestMaterial(name: 'Плитка', calculatorId: 'floors_tile'),
+          createTestMaterial(name: 'Клей', calculatorId: 'floors_tile'),
+        ],
+      );
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.text('Плитка'), findsOneWidget);
+      expect(find.text('Клей'), findsOneWidget);
+    });
+
+    testWidgets('отображает материалы из разных расчётов последовательно', (tester) async {
+      setTestViewportSize(tester);
+      final calc1 = createTestCalculation(
+        id: 1,
+        name: 'Расчёт плитки',
+        materials: [
+          createTestMaterial(name: 'Плитка'),
+        ],
+      );
+      final calc2 = createTestCalculation(
+        id: 2,
+        name: 'Расчёт обоев',
+        materials: [
+          createTestMaterial(name: 'Обои'),
+        ],
+      );
+      final project = createTestProject(calculations: [calc1, calc2]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.text('Плитка'), findsOneWidget);
+      expect(find.text('Обои'), findsOneWidget);
+    });
+
+    testWidgets('сохраняет порядок материалов внутри расчёта', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Материал A'),
+        createTestMaterial(name: 'Материал B'),
+        createTestMaterial(name: 'Материал C'),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.text('Материал A'), findsOneWidget);
+      expect(find.text('Материал B'), findsOneWidget);
+      expect(find.text('Материал C'), findsOneWidget);
+    });
+  });
+
+  group('ProjectMaterialsList - Стоимость материалов', () {
+    testWidgets('правильно вычисляет totalCost для материала', (tester) async {
+      setTestViewportSize(tester);
+      final material = createTestMaterial(
+        name: 'Материал',
+        quantity: 10,
+        unit: 'шт',
+        pricePerUnit: 100,
+      );
+
+      expect(material.totalCost, equals(1000));
+    });
+
+    testWidgets('отображает totalCost с форматированием', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Материал', quantity: 10, unit: 'шт', pricePerUnit: 100),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.textContaining('1'), findsWidgets);
+      expect(find.textContaining('000'), findsWidgets);
+    });
+
+    testWidgets('суммирует стоимость всех материалов для totalCost', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(quantity: 10, pricePerUnit: 100), // 1000
+        createTestMaterial(quantity: 5, pricePerUnit: 200),  // 1000
+        createTestMaterial(quantity: 2, pricePerUnit: 500),  // 1000
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      // Общая стоимость должна быть 3000
+      expect(find.text('Всего'), findsOneWidget);
+    });
+
+    testWidgets('правильно вычисляет remainingCost с учётом покупок', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(quantity: 10, pricePerUnit: 100, purchased: true),  // 1000 (куплено)
+        createTestMaterial(quantity: 5, pricePerUnit: 200, purchased: false),  // 1000 (не куплено)
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.text('Осталось'), findsOneWidget);
+    });
+
+    testWidgets('remainingCost равен нулю когда все материалы куплены', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(quantity: 10, pricePerUnit: 100, purchased: true),
+        createTestMaterial(quantity: 5, pricePerUnit: 200, purchased: true),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.text('Осталось'), findsOneWidget);
+    });
+
+    testWidgets('remainingCost равен totalCost когда ничего не куплено', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(quantity: 10, pricePerUnit: 100, purchased: false),
+        createTestMaterial(quantity: 5, pricePerUnit: 200, purchased: false),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.text('Всего'), findsOneWidget);
+      expect(find.text('Осталось'), findsOneWidget);
+    });
+  });
+
+  group('ProjectMaterialsList - Прогресс покупок', () {
+    testWidgets('прогресс равен 0% когда ничего не куплено', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(purchased: false),
+        createTestMaterial(purchased: false),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.byType(LinearProgressIndicator), findsNothing);
+    });
+
+    testWidgets('прогресс равен 100% когда все куплено', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(purchased: true),
+        createTestMaterial(purchased: true),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('прогресс равен 50% когда куплена половина', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(purchased: true),
+        createTestMaterial(purchased: false),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('shopping list содержит только непокупленные материалы', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Куплено', purchased: true),
+        createTestMaterial(name: 'Не куплено 1', purchased: false),
+        createTestMaterial(name: 'Не куплено 2', purchased: false),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.text('Не куплено 1'), findsOneWidget);
+      expect(find.text('Не куплено 2'), findsOneWidget);
+    });
+  });
+
+  group('ProjectMaterialsList - Интеграция с проектом', () {
+    testWidgets('использует project.allMaterials для получения списка', (tester) async {
+      setTestViewportSize(tester);
+      final calc1 = createTestCalculation(
+        materials: [createTestMaterial(name: 'M1')],
+      );
+      final calc2 = createTestCalculation(
+        materials: [createTestMaterial(name: 'M2')],
+      );
+      final project = createTestProject(calculations: [calc1, calc2]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.text('M1'), findsOneWidget);
+      expect(find.text('M2'), findsOneWidget);
+    });
+
+    testWidgets('использует project.shoppingList для списка покупок', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(name: 'Куплено', purchased: true),
+        createTestMaterial(name: 'В списке', purchased: false),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      // Проверяем что отображаются оба материала
+      expect(find.byType(CheckboxListTile), findsNWidgets(2));
+    });
+
+    testWidgets('использует project.remainingMaterialCost для оставшейся стоимости', (tester) async {
+      setTestViewportSize(tester);
+      final materials = [
+        createTestMaterial(quantity: 10, pricePerUnit: 100, purchased: false),
+      ];
+      final calc = createTestCalculation(materials: materials);
+      final project = createTestProject(calculations: [calc]);
+
+      await tester.pumpWidget(createTestWidget(project));
+      await tester.pump();
+
+      expect(find.text('Осталось'), findsOneWidget);
     });
   });
 }

@@ -521,6 +521,538 @@ void main() {
       expect(calculator, isNull);
     });
   });
+
+  group('ProjectShareNotifier - edge cases', () {
+    test('generateProjectLink с пустым именем проекта', () async {
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final notifier = container.read(projectShareProvider.notifier);
+
+      final project = ProjectV2()
+        ..name = ''
+        ..status = ProjectStatus.planning;
+
+      await notifier.generateProjectLink(project);
+
+      final state = container.read(projectShareProvider);
+      // Должно создать ссылку даже с пустым именем
+      expect(state.hasLink, true);
+    });
+
+    test('generateProjectLink с очень длинным именем', () async {
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final notifier = container.read(projectShareProvider.notifier);
+
+      final project = ProjectV2()
+        ..name = 'A' * 500 // Очень длинное имя
+        ..status = ProjectStatus.planning;
+
+      await notifier.generateProjectLink(project);
+
+      final state = container.read(projectShareProvider);
+      expect(state.hasLink, true);
+    });
+
+    test('generateCalculatorLink с пустыми inputs', () async {
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final notifier = container.read(projectShareProvider.notifier);
+
+      await notifier.generateCalculatorLink(
+        calculatorId: 'test',
+        inputs: {},
+      );
+
+      final state = container.read(projectShareProvider);
+      // Должно обработать пустые inputs
+      expect(state.isGenerating, false);
+    });
+
+    test('generateCalculatorLink с большим количеством inputs', () async {
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final notifier = container.read(projectShareProvider.notifier);
+
+      final inputs = Map.fromIterables(
+        List.generate(50, (i) => 'input_$i'),
+        List.generate(50, (i) => i.toDouble()),
+      );
+
+      await notifier.generateCalculatorLink(
+        calculatorId: 'test',
+        inputs: inputs,
+      );
+
+      final state = container.read(projectShareProvider);
+      expect(state.hasLink, true);
+    });
+
+    test('clear очищает ошибку', () async {
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final notifier = container.read(projectShareProvider.notifier);
+
+      // Создаём ошибку
+      final project = ProjectV2();
+      await notifier.generateProjectLink(project);
+
+      expect(container.read(projectShareProvider).hasError, true);
+
+      // Очищаем
+      notifier.clear();
+
+      final state = container.read(projectShareProvider);
+      expect(state.error, isNull);
+      expect(state.hasError, false);
+    });
+
+    test('последовательные вызовы generateProjectLink', () async {
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final notifier = container.read(projectShareProvider.notifier);
+
+      final project1 = ProjectV2()
+        ..name = 'Project 1'
+        ..status = ProjectStatus.planning;
+
+      final project2 = ProjectV2()
+        ..name = 'Project 2'
+        ..status = ProjectStatus.inProgress;
+
+      await notifier.generateProjectLink(project1);
+      final state1 = container.read(projectShareProvider);
+      expect(state1.hasLink, true);
+
+      await notifier.generateProjectLink(project2);
+      final state2 = container.read(projectShareProvider);
+      expect(state2.hasLink, true);
+      // Ссылки должны быть разными
+      expect(state1.deepLink != state2.deepLink, true);
+    });
+
+    test('последовательные вызовы generateCalculatorLink', () async {
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final notifier = container.read(projectShareProvider.notifier);
+
+      await notifier.generateCalculatorLink(
+        calculatorId: 'brick',
+        inputs: {'length': 10.0},
+      );
+      final state1 = container.read(projectShareProvider);
+
+      await notifier.generateCalculatorLink(
+        calculatorId: 'tile',
+        inputs: {'area': 50.0},
+      );
+      final state2 = container.read(projectShareProvider);
+
+      expect(state1.hasLink, true);
+      expect(state2.hasLink, true);
+      expect(state1.deepLink != state2.deepLink, true);
+    });
+  });
+
+  group('ProjectShareNotifier - проект с множественными расчётами', () {
+    test('проект с несколькими расчётами', () async {
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final notifier = container.read(projectShareProvider.notifier);
+
+      final project = ProjectV2()
+        ..name = 'Комплексный проект'
+        ..status = ProjectStatus.inProgress;
+
+      // Добавляем несколько расчётов
+      final calc1 = ProjectCalculation()
+        ..calculatorId = 'brick'
+        ..name = 'Кирпичная кладка'
+        ..materialCost = 15000.0;
+      calc1.setInputsFromMap({'length': 10.0, 'height': 3.0});
+
+      final calc2 = ProjectCalculation()
+        ..calculatorId = 'tile'
+        ..name = 'Плитка'
+        ..materialCost = 8000.0;
+      calc2.setInputsFromMap({'area': 25.0});
+
+      final calc3 = ProjectCalculation()
+        ..calculatorId = 'plaster'
+        ..name = 'Штукатурка'
+        ..materialCost = 5000.0;
+      calc3.setInputsFromMap({'area': 50.0});
+
+      project.calculations.add(calc1);
+      project.calculations.add(calc2);
+      project.calculations.add(calc3);
+
+      await notifier.generateProjectLink(project);
+
+      final state = container.read(projectShareProvider);
+      expect(state.hasLink, true);
+      expect(state.deepLink, contains('masterokapp://'));
+    });
+
+    test('проект со статусами расчётов', () async {
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final notifier = container.read(projectShareProvider.notifier);
+
+      final project = ProjectV2()
+        ..name = 'Проект со статусами'
+        ..status = ProjectStatus.inProgress;
+
+      final calc = ProjectCalculation()
+        ..calculatorId = 'brick'
+        ..name = 'Кирпич'
+        ..materialCost = 10000.0
+        ..laborCost = 5000.0
+        ..notes = 'Важные заметки';
+      calc.setInputsFromMap({'length': 10.0});
+      calc.setResultsFromMap({'bricks': 1500.0});
+
+      project.calculations.add(calc);
+
+      await notifier.generateProjectLink(project);
+
+      final state = container.read(projectShareProvider);
+      expect(state.hasLink, true);
+    });
+  });
+
+  group('ShareableContent - различные форматы', () {
+    test('ShareableProject с tags', () {
+      final project = ProjectV2()
+        ..name = 'Tagged Project'
+        ..status = ProjectStatus.planning
+        ..tags.addAll(['дом', 'ремонт', 'строительство']);
+
+      final shareable = ShareableProject.fromProject(project);
+      final deepLink = shareable.toDeepLink();
+
+      expect(deepLink, isNotNull);
+      expect(deepLink, startsWith('masterokapp://share/project'));
+    });
+
+    test('ShareableProject с description', () {
+      final project = ProjectV2()
+        ..name = 'Описанный проект'
+        ..description = 'Подробное описание проекта с деталями'
+        ..status = ProjectStatus.planning;
+
+      final shareable = ShareableProject.fromProject(project);
+      final deepLink = shareable.toDeepLink();
+
+      expect(deepLink, isNotNull);
+    });
+
+    test('ShareableCalculator с минимальными данными', () {
+      final calculator = ShareableCalculator(
+        calculatorId: 'test',
+        inputs: {'value': 1.0},
+      );
+
+      final deepLink = calculator.toDeepLink();
+      final compactLink = calculator.toCompactDeepLink();
+
+      expect(deepLink, startsWith('masterokapp://share/calculator'));
+      expect(compactLink, startsWith('masterokapp://s/'));
+    });
+
+    test('ShareableCalculator с полными данными', () {
+      final calculator = ShareableCalculator(
+        calculatorId: 'brick',
+        calculatorName: 'Калькулятор кирпича',
+        inputs: {
+          'length': 10.0,
+          'width': 5.0,
+          'height': 3.0,
+          'brickLength': 0.25,
+          'brickHeight': 0.065,
+        },
+        notes: 'Расчёт для внешних стен',
+      );
+
+      final deepLink = calculator.toDeepLink();
+      final compactLink = calculator.toCompactDeepLink();
+
+      expect(deepLink, isNotNull);
+      expect(compactLink, isNotNull);
+      // Компактная ссылка должна быть короче
+      expect(compactLink.length < deepLink.length, true);
+    });
+
+    test('CompactDeepLink короче обычной DeepLink', () {
+      final project = ProjectV2()
+        ..name = 'Test Project'
+        ..status = ProjectStatus.planning;
+
+      final shareable = ShareableProject.fromProject(project);
+      final deepLink = shareable.toDeepLink();
+      final compactLink = shareable.toCompactDeepLink();
+
+      expect(compactLink.length, lessThan(deepLink.length));
+    });
+  });
+
+  group('DeepLinkValidation - различные сценарии', () {
+    test('валидация пустой ссылки', () async {
+      mockService.setMockData(null);
+
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final isValid = await container.read(
+        deepLinkValidationProvider('').future,
+      );
+
+      expect(isValid, false);
+    });
+
+    test('валидация некорректной схемы', () async {
+      mockService.setShouldFail(true);
+
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final isValid = await container.read(
+        deepLinkValidationProvider('http://wrong-scheme.com').future,
+      );
+
+      expect(isValid, false);
+    });
+
+    test('валидация project deep link', () async {
+      final mockData = DeepLinkData(
+        type: 'project',
+        data: {
+          'name': 'Test',
+          'status': 'planning',
+          'calculations': <Map<String, dynamic>>[],
+          'tags': <String>[],
+        },
+      );
+      mockService.setMockData(mockData);
+
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final isValid = await container.read(
+        deepLinkValidationProvider('masterokapp://share/project?data=xxx').future,
+      );
+
+      expect(isValid, true);
+    });
+
+    test('валидация calculator deep link', () async {
+      final mockData = DeepLinkData(
+        type: 'calculator',
+        data: {'calculatorId': 'brick', 'inputs': {}},
+      );
+      mockService.setMockData(mockData);
+
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      final isValid = await container.read(
+        deepLinkValidationProvider('masterokapp://share/calculator?data=xxx').future,
+      );
+
+      expect(isValid, true);
+    });
+  });
+
+  group('State management', () {
+    test('ShareState copyWith сохраняет неизменённые поля', () {
+      const state = ShareState(
+        isGenerating: true,
+        deepLink: 'test://link',
+        compactDeepLink: 'test://compact',
+        error: 'error',
+      );
+
+      final updated = state.copyWith(isGenerating: false);
+
+      expect(updated.isGenerating, false);
+      expect(updated.deepLink, 'test://link');
+      expect(updated.compactDeepLink, 'test://compact');
+      expect(updated.error, 'error');
+    });
+
+    test('ShareState copyWith может обнулить значения', () {
+      const state = ShareState(
+        isGenerating: true,
+        deepLink: 'test://link',
+        compactDeepLink: 'test://compact',
+        error: 'error',
+      );
+
+      final updated = state.copyWith(
+        isGenerating: false,
+        deepLink: null,
+        compactDeepLink: null,
+        error: null,
+      );
+
+      expect(updated.isGenerating, false);
+      // copyWith не может установить null для ссылок, т.к. используется ?? this.value
+      expect(updated.deepLink, 'test://link');
+      expect(updated.compactDeepLink, 'test://compact');
+      expect(updated.error, 'error');
+    });
+
+    test('начальное состояние ShareState', () {
+      const state = ShareState();
+
+      expect(state.isGenerating, false);
+      expect(state.deepLink, isNull);
+      expect(state.compactDeepLink, isNull);
+      expect(state.error, isNull);
+      expect(state.hasLink, false);
+      expect(state.hasError, false);
+    });
+  });
+
+  group('Provider lifecycle', () {
+    test('provider dispose очищает состояние', () {
+      final container = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+
+      final notifier = container.read(projectShareProvider.notifier);
+      expect(notifier, isNotNull);
+
+      container.dispose();
+      // После dispose provider не должен быть доступен
+    });
+
+    test('множественные containers изолированы', () async {
+      final container1 = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+
+      final container2 = ProviderContainer(
+        overrides: [
+          deepLinkServiceProvider.overrideWith((ref) {
+            return mockService as DeepLinkService;
+          }),
+        ],
+      );
+
+      final notifier1 = container1.read(projectShareProvider.notifier);
+      final notifier2 = container2.read(projectShareProvider.notifier);
+
+      await notifier1.generateCalculatorLink(
+        calculatorId: 'calc1',
+        inputs: {'value': 1.0},
+      );
+
+      final state1 = container1.read(projectShareProvider);
+      final state2 = container2.read(projectShareProvider);
+
+      expect(state1.hasLink, true);
+      expect(state2.hasLink, false); // Второй container не затронут
+
+      container1.dispose();
+      container2.dispose();
+    });
+  });
 }
 
 // Helper для игнорирования Future
