@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/input_group_card.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('InputGroupCard', () {
     testWidgets('renders child widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -19,6 +22,7 @@ void main() {
     });
 
     testWidgets('renders title when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -35,6 +39,7 @@ void main() {
     });
 
     testWidgets('renders subtitle when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -53,6 +58,7 @@ void main() {
 
     testWidgets('does not render title section when no title or trailing',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -69,6 +75,7 @@ void main() {
     });
 
     testWidgets('renders trailing widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -90,6 +97,7 @@ void main() {
 
     testWidgets('renders title section when only trailing is provided',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -105,6 +113,7 @@ void main() {
     });
 
     testWidgets('applies custom padding', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -120,6 +129,7 @@ void main() {
     });
 
     testWidgets('renders all elements together', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -149,6 +159,7 @@ void main() {
     });
 
     testWidgets('uses Column as layout', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -164,6 +175,7 @@ void main() {
     });
 
     testWidgets('applies theme styles to title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),

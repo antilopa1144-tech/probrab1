@@ -21,9 +21,7 @@ void main() {
 
   group('ProCalculatorScreen', () {
     testWidgets('renders correctly', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setTestViewportSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
@@ -36,9 +34,7 @@ void main() {
     });
 
     testWidgets('shows Scaffold structure', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setTestViewportSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
@@ -51,9 +47,7 @@ void main() {
     });
 
     testWidgets('shows Card widgets', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setTestViewportSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
@@ -66,9 +60,7 @@ void main() {
     });
 
     testWidgets('uses scrollable layout', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setTestViewportSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
@@ -81,9 +73,7 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setTestViewportSize(tester);
 
       await tester.pumpWidget(
         createTestApp(

@@ -12,6 +12,7 @@ void main() {
 
   group('DecorPlasterCalculatorScreen - рендеринг виджетов', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает заголовок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -51,6 +54,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -66,6 +70,7 @@ void main() {
 
   group('DecorPlasterCalculatorScreen - селектор типа штукатурки', () {
     testWidgets('отображает типы декоративной штукатурки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -81,6 +86,7 @@ void main() {
     });
 
     testWidgets('можно выбрать венецианскую штукатурку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -99,6 +105,7 @@ void main() {
     });
 
     testWidgets('можно выбрать штукатурку короед', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -117,6 +124,7 @@ void main() {
     });
 
     testWidgets('можно выбрать шелковую штукатурку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -137,6 +145,7 @@ void main() {
 
   group('DecorPlasterCalculatorScreen - режимы ввода', () {
     testWidgets('отображает селектор режима ввода', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -150,6 +159,7 @@ void main() {
     });
 
     testWidgets('можно переключиться на режим ввода стены', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -168,6 +178,7 @@ void main() {
     });
 
     testWidgets('отображает слайдер площади в ручном режиме', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -180,6 +191,7 @@ void main() {
     });
 
     testWidgets('отображает поля ширины и высоты в режиме стены', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -200,6 +212,7 @@ void main() {
 
   group('DecorPlasterCalculatorScreen - слайдеры и опции', () {
     testWidgets('можно регулировать количество слоев', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -218,6 +231,7 @@ void main() {
     });
 
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -230,6 +244,7 @@ void main() {
     });
 
     testWidgets('можно включить/выключить грунтовку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -253,6 +268,7 @@ void main() {
 
   group('DecorPlasterCalculatorScreen - карточка материалов', () {
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -265,6 +281,7 @@ void main() {
     });
 
     testWidgets('отображает материалы с иконками', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -280,6 +297,7 @@ void main() {
 
   group('DecorPlasterCalculatorScreen - действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -296,6 +314,7 @@ void main() {
     });
 
     testWidgets('можно прокручивать содержимое', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -314,6 +333,7 @@ void main() {
 
   group('DecorPlasterCalculatorScreen - жизненный цикл', () {
     testWidgets('инициализируется с результатами по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),
@@ -326,6 +346,7 @@ void main() {
     });
 
     testWidgets('корректно освобождает ресурсы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorPlasterCalculatorScreen(),

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/common/empty_state.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('EmptyState', () {
     testWidgets('renders with title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -17,6 +20,7 @@ void main() {
     });
 
     testWidgets('renders with description', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -29,6 +33,7 @@ void main() {
     });
 
     testWidgets('renders with icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -41,6 +46,7 @@ void main() {
     });
 
     testWidgets('renders action button when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -57,6 +63,7 @@ void main() {
     });
 
     testWidgets('calls onAction when button is tapped', (tester) async {
+      setTestViewportSize(tester);
       bool actionCalled = false;
 
       await tester.pumpWidget(
@@ -77,6 +84,7 @@ void main() {
     });
 
     testWidgets('hides button when actionLabel is null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -91,6 +99,7 @@ void main() {
     });
 
     testWidgets('hides button when onAction is null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -105,6 +114,7 @@ void main() {
     });
 
     testWidgets('renders custom child widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -119,6 +129,7 @@ void main() {
     });
 
     testWidgets('renders with all properties', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -140,6 +151,7 @@ void main() {
     });
 
     testWidgets('centers content', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -152,6 +164,7 @@ void main() {
     });
 
     testWidgets('has padding around content', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -164,6 +177,7 @@ void main() {
     });
 
     testWidgets('centers title text', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -177,6 +191,7 @@ void main() {
     });
 
     testWidgets('centers description text', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -190,6 +205,7 @@ void main() {
     });
 
     testWidgets('icon has correct size', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

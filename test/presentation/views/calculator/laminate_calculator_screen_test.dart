@@ -12,6 +12,7 @@ void main() {
 
   group('LaminateCalculatorScreen - рендеринг виджетов', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает заголовок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -50,6 +53,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -65,6 +69,7 @@ void main() {
 
   group('LaminateCalculatorScreen - селектор способа укладки', () {
     testWidgets('отображает способы укладки ламината', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -79,6 +84,7 @@ void main() {
     });
 
     testWidgets('можно выбрать прямую укладку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -97,6 +103,7 @@ void main() {
     });
 
     testWidgets('можно выбрать диагональную укладку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -117,6 +124,7 @@ void main() {
 
   group('LaminateCalculatorScreen - селектор класса ламината', () {
     testWidgets('отображает селектор класса', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -130,6 +138,7 @@ void main() {
     });
 
     testWidgets('можно выбрать класс 31', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -148,6 +157,7 @@ void main() {
     });
 
     testWidgets('можно выбрать класс 32', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -166,6 +176,7 @@ void main() {
     });
 
     testWidgets('можно выбрать класс 33', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -186,6 +197,7 @@ void main() {
 
   group('LaminateCalculatorScreen - режимы ввода', () {
     testWidgets('отображает селектор режима ввода', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -198,6 +210,7 @@ void main() {
     });
 
     testWidgets('можно переключиться на режим ввода комнаты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -216,6 +229,7 @@ void main() {
     });
 
     testWidgets('отображает слайдер площади в ручном режиме', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -228,6 +242,7 @@ void main() {
     });
 
     testWidgets('отображает поля ширины и длины в режиме комнаты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -248,6 +263,7 @@ void main() {
 
   group('LaminateCalculatorScreen - площадь упаковки и опции', () {
     testWidgets('можно регулировать площадь упаковки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -266,6 +282,7 @@ void main() {
     });
 
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -278,6 +295,7 @@ void main() {
     });
 
     testWidgets('можно включить/выключить подложку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -299,6 +317,7 @@ void main() {
     });
 
     testWidgets('можно включить/выключить плинтус', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -322,6 +341,7 @@ void main() {
 
   group('LaminateCalculatorScreen - карточка материалов', () {
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -334,6 +354,7 @@ void main() {
     });
 
     testWidgets('отображает материалы с иконками', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -349,6 +370,7 @@ void main() {
 
   group('LaminateCalculatorScreen - действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -365,6 +387,7 @@ void main() {
     });
 
     testWidgets('можно прокручивать содержимое', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -383,6 +406,7 @@ void main() {
 
   group('LaminateCalculatorScreen - жизненный цикл', () {
     testWidgets('инициализируется с результатами по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),
@@ -395,6 +419,7 @@ void main() {
     });
 
     testWidgets('корректно освобождает ресурсы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LaminateCalculatorScreen(),

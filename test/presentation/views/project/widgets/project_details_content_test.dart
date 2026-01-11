@@ -6,6 +6,8 @@ import 'package:probrab_ai/presentation/views/project/widgets/project_info_card.
 
 import '../../../../helpers/test_helpers.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ProjectDetailsContent', () {
     late ProjectV2 testProject;
@@ -55,6 +57,7 @@ void main() {
     }
 
     testWidgets('renders project name in app bar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(buildTestWidget(project: testProject));
       await tester.pumpAndSettle();
 
@@ -62,6 +65,7 @@ void main() {
     });
 
     testWidgets('renders TabBar with three tabs', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(buildTestWidget(project: testProject));
       await tester.pumpAndSettle();
 
@@ -70,6 +74,7 @@ void main() {
     });
 
     testWidgets('shows calculations tab with count', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(buildTestWidget(project: testProject));
       await tester.pumpAndSettle();
 
@@ -78,6 +83,7 @@ void main() {
     });
 
     testWidgets('shows materials tab with count', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(buildTestWidget(project: testProject));
       await tester.pumpAndSettle();
 
@@ -85,6 +91,7 @@ void main() {
     });
 
     testWidgets('shows checklists tab', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(buildTestWidget(project: testProject));
       await tester.pumpAndSettle();
 
@@ -93,6 +100,7 @@ void main() {
     });
 
     testWidgets('renders ProjectInfoCard in calculations tab', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(buildTestWidget(project: testProject));
       await tester.pumpAndSettle();
 
@@ -101,6 +109,7 @@ void main() {
 
     testWidgets('shows add calculation button in calculations tab',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(buildTestWidget(project: testProject));
       await tester.pumpAndSettle();
 
@@ -109,6 +118,7 @@ void main() {
 
     testWidgets('calls onAddCalculation when add button is pressed',
         (tester) async {
+      setTestViewportSize(tester);
       bool addCalled = false;
 
       await tester.pumpWidget(buildTestWidget(
@@ -124,6 +134,7 @@ void main() {
     });
 
     testWidgets('calls onToggleFavorite when star is pressed', (tester) async {
+      setTestViewportSize(tester);
       bool toggled = false;
 
       await tester.pumpWidget(buildTestWidget(
@@ -139,6 +150,7 @@ void main() {
     });
 
     testWidgets('shows filled star when project is favorite', (tester) async {
+      setTestViewportSize(tester);
       testProject.isFavorite = true;
 
       await tester.pumpWidget(buildTestWidget(project: testProject));
@@ -148,6 +160,7 @@ void main() {
     });
 
     testWidgets('calls onEdit when edit button is pressed', (tester) async {
+      setTestViewportSize(tester);
       bool editCalled = false;
 
       await tester.pumpWidget(buildTestWidget(
@@ -181,6 +194,7 @@ void main() {
 
     testWidgets('calls onExport when export menu item is selected',
         (tester) async {
+      setTestViewportSize(tester);
       bool exportCalled = false;
 
       await tester.pumpWidget(buildTestWidget(
@@ -203,6 +217,7 @@ void main() {
 
     testWidgets('calls onChangeStatus when status menu item is selected',
         (tester) async {
+      setTestViewportSize(tester);
       bool statusCalled = false;
 
       await tester.pumpWidget(buildTestWidget(
@@ -224,6 +239,7 @@ void main() {
     });
 
     testWidgets('has edit button with correct tooltip', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(buildTestWidget(project: testProject));
       await tester.pumpAndSettle();
 
@@ -235,6 +251,7 @@ void main() {
 
     testWidgets('favorite button has correct tooltip when not favorite',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(buildTestWidget(project: testProject));
       await tester.pumpAndSettle();
 
@@ -246,6 +263,7 @@ void main() {
 
     testWidgets('favorite button has correct tooltip when favorite',
         (tester) async {
+      setTestViewportSize(tester);
       testProject.isFavorite = true;
 
       await tester.pumpWidget(buildTestWidget(project: testProject));
@@ -258,6 +276,7 @@ void main() {
     });
 
     testWidgets('can switch to materials tab', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(buildTestWidget(project: testProject));
       await tester.pumpAndSettle();
 

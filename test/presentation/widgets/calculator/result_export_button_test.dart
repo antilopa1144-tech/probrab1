@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/result_export_button.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ResultExportButton -', () {
     testWidgets('отображает кнопку экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -18,6 +21,7 @@ void main() {
     });
 
     testWidgets('показывает меню при нажатии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -37,6 +41,7 @@ void main() {
     });
 
     testWidgets('показывает только указанные опции', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -57,6 +62,7 @@ void main() {
     });
 
     testWidgets('вызывает onShare callback', (tester) async {
+      setTestViewportSize(tester);
       var called = false;
 
       await tester.pumpWidget(
@@ -79,6 +85,7 @@ void main() {
     });
 
     testWidgets('вызывает onCopy callback', (tester) async {
+      setTestViewportSize(tester);
       var called = false;
 
       await tester.pumpWidget(
@@ -101,6 +108,7 @@ void main() {
     });
 
     testWidgets('вызывает onExportCsv callback', (tester) async {
+      setTestViewportSize(tester);
       var called = false;
 
       await tester.pumpWidget(
@@ -123,6 +131,7 @@ void main() {
     });
 
     testWidgets('вызывает onExportPdf callback', (tester) async {
+      setTestViewportSize(tester);
       var called = false;
 
       await tester.pumpWidget(
@@ -145,6 +154,7 @@ void main() {
     });
 
     testWidgets('отключается когда enabled=false', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -163,6 +173,7 @@ void main() {
     });
 
     testWidgets('активна когда enabled=true', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -181,6 +192,7 @@ void main() {
     });
 
     testWidgets('использует кастомный tooltip', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -199,6 +211,7 @@ void main() {
     });
 
     testWidgets('использует дефолтный tooltip', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -215,6 +228,7 @@ void main() {
     });
 
     testWidgets('показывает все опции когда все callbacks указаны', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -238,6 +252,7 @@ void main() {
     });
 
     testWidgets('показывает иконки в меню', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -261,6 +276,7 @@ void main() {
     });
 
     testWidgets('не вызывает callback если он null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -280,6 +296,7 @@ void main() {
     });
 
     testWidgets('каждый callback вызывается независимо', (tester) async {
+      setTestViewportSize(tester);
       var shareCalled = 0;
       var copyCalled = 0;
       var csvCalled = 0;
@@ -335,6 +352,7 @@ void main() {
     });
 
     testWidgets('может быть вызвана несколько раз', (tester) async {
+      setTestViewportSize(tester);
       var callCount = 0;
 
       await tester.pumpWidget(

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_slider_field.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('CalculatorSliderField', () {
     testWidgets('отображает label', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -25,6 +28,7 @@ void main() {
     });
 
     testWidgets('отображает значение с суффиксом', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -45,6 +49,7 @@ void main() {
     });
 
     testWidgets('форматирует целые числа без десятичных', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -66,6 +71,7 @@ void main() {
     });
 
     testWidgets('форматирует значение с decimalPlaces', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -87,6 +93,7 @@ void main() {
     });
 
     testWidgets('скрывает значение когда showValue=false', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -109,6 +116,7 @@ void main() {
     });
 
     testWidgets('отображает слайдер', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -129,6 +137,7 @@ void main() {
     });
 
     testWidgets('вызывает onChanged при перемещении слайдера', (tester) async {
+      setTestViewportSize(tester);
       double currentValue = 50;
 
       await tester.pumpWidget(
@@ -161,6 +170,7 @@ void main() {
     });
 
     testWidgets('применяет divisions к слайдеру', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -183,6 +193,7 @@ void main() {
     });
 
     testWidgets('применяет accentColor к слайдеру', (tester) async {
+      setTestViewportSize(tester);
       const testColor = Colors.purple;
 
       await tester.pumpWidget(
@@ -206,6 +217,7 @@ void main() {
     });
 
     testWidgets('корректно работает с минимальным значением', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -226,6 +238,7 @@ void main() {
     });
 
     testWidgets('корректно работает с максимальным значением', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -246,6 +259,7 @@ void main() {
     });
 
     testWidgets('обрабатывает длинный label с overflow', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -271,6 +285,7 @@ void main() {
     });
 
     testWidgets('обрабатывает decimalPlaces=1', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -294,6 +309,7 @@ void main() {
 
   group('CalculatorSliderFieldCompact', () {
     testWidgets('отображает label', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -313,6 +329,7 @@ void main() {
     });
 
     testWidgets('не отображает значение', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -333,6 +350,7 @@ void main() {
     });
 
     testWidgets('отображает слайдер', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -352,6 +370,7 @@ void main() {
     });
 
     testWidgets('вызывает onChanged при перемещении слайдера', (tester) async {
+      setTestViewportSize(tester);
       double currentValue = 50;
 
       await tester.pumpWidget(
@@ -382,6 +401,7 @@ void main() {
     });
 
     testWidgets('применяет divisions к слайдеру', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -403,6 +423,7 @@ void main() {
     });
 
     testWidgets('применяет accentColor к слайдеру', (tester) async {
+      setTestViewportSize(tester);
       const testColor = Colors.orange;
 
       await tester.pumpWidget(
@@ -425,6 +446,7 @@ void main() {
     });
 
     testWidgets('корректно работает с min/max', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

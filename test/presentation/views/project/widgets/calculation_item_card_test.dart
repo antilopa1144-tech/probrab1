@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/models/project_v2.dart';
 import 'package:probrab_ai/presentation/views/project/widgets/calculation_item_card.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('CalculationItemCard', () {
     late ProjectCalculation testCalculation;
@@ -17,6 +19,7 @@ void main() {
     });
 
     testWidgets('renders calculation name', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -32,6 +35,7 @@ void main() {
     });
 
     testWidgets('renders calculator id', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -47,6 +51,7 @@ void main() {
     });
 
     testWidgets('renders creation date', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -62,6 +67,7 @@ void main() {
     });
 
     testWidgets('calls onDelete when delete button is pressed', (tester) async {
+      setTestViewportSize(tester);
       bool deleted = false;
 
       await tester.pumpWidget(
@@ -84,6 +90,7 @@ void main() {
     testWidgets(
       'widget accepts onTap callback',
       (tester) async {
+        setTestViewportSize(tester);
         // Just verify the widget can be created with onTap without error
         // when localization is set up (see integration tests)
         expect(
@@ -98,6 +105,7 @@ void main() {
     );
 
     testWidgets('shows notes when present', (tester) async {
+      setTestViewportSize(tester);
       testCalculation.notes = 'Some calculation notes';
 
       await tester.pumpWidget(
@@ -115,6 +123,7 @@ void main() {
     });
 
     testWidgets('hides notes when null', (tester) async {
+      setTestViewportSize(tester);
       testCalculation.notes = null;
 
       await tester.pumpWidget(
@@ -133,6 +142,7 @@ void main() {
     });
 
     testWidgets('renders results when present', (tester) async {
+      setTestViewportSize(tester);
       final kvPair1 = KeyValuePair()
         ..key = 'area'
         ..value = 25.5;
@@ -156,6 +166,7 @@ void main() {
     });
 
     testWidgets('is wrapped in a Card', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -171,6 +182,7 @@ void main() {
     });
 
     testWidgets('shows delete tooltip', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

@@ -12,6 +12,7 @@ void main() {
 
   group('VentilationCalculatorScreen - рендеринг базовой структуры', () {
     testWidgets('отрисовывается без ошибок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -23,6 +24,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -32,6 +34,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -41,6 +44,7 @@ void main() {
     });
 
     testWidgets('имеет кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -53,6 +57,7 @@ void main() {
 
   group('VentilationCalculatorScreen - селектор типа вентиляции', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -62,6 +67,7 @@ void main() {
     });
 
     testWidgets('отображает все типы вентиляции', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -73,6 +79,7 @@ void main() {
     });
 
     testWidgets('можно выбрать естественную вентиляцию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -88,6 +95,7 @@ void main() {
     });
 
     testWidgets('можно выбрать приточную вентиляцию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -103,6 +111,7 @@ void main() {
     });
 
     testWidgets('можно выбрать вытяжную вентиляцию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -120,6 +129,7 @@ void main() {
 
   group('VentilationCalculatorScreen - параметры помещения', () {
     testWidgets('отображает слайдеры для параметров', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -129,6 +139,7 @@ void main() {
     });
 
     testWidgets('можно изменить площадь помещения', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -144,6 +155,7 @@ void main() {
     });
 
     testWidgets('можно изменить высоту потолка', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -159,6 +171,7 @@ void main() {
     });
 
     testWidgets('можно изменить количество комнат', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -176,6 +189,7 @@ void main() {
 
   group('VentilationCalculatorScreen - опции', () {
     testWidgets('отображает переключатель рекуператора', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -185,6 +199,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию рекуператора', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -206,6 +221,7 @@ void main() {
 
   group('VentilationCalculatorScreen - результаты', () {
     testWidgets('отображает объем помещения', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -216,6 +232,7 @@ void main() {
     });
 
     testWidgets('отображает требуемый воздухообмен', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -226,6 +243,7 @@ void main() {
     });
 
     testWidgets('отображает длину воздуховодов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -236,6 +254,7 @@ void main() {
     });
 
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -251,6 +270,7 @@ void main() {
 
   group('VentilationCalculatorScreen - взаимодействие', () {
     testWidgets('можно скроллить контент', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -264,6 +284,7 @@ void main() {
     });
 
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -277,6 +298,7 @@ void main() {
     });
 
     testWidgets('виджет корректно удаляется', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -292,6 +314,7 @@ void main() {
 
   group('VentilationCalculatorScreen - единицы измерения', () {
     testWidgets('отображает квадратные метры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -301,6 +324,7 @@ void main() {
     });
 
     testWidgets('отображает метры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -310,6 +334,7 @@ void main() {
     });
 
     testWidgets('отображает штуки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );

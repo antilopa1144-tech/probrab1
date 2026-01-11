@@ -10,6 +10,7 @@ void main() {
 
   group('NewHomeScreen', () {
     testWidgets('renders correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
       await tester.pump();
@@ -19,6 +20,7 @@ void main() {
     });
 
     testWidgets('displays app title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
       await tester.pump();
@@ -28,6 +30,7 @@ void main() {
     });
 
     testWidgets('has search field', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
       await tester.pump();
@@ -37,6 +40,7 @@ void main() {
     });
 
     testWidgets('displays quick access section', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
       await tester.pump();
@@ -46,6 +50,7 @@ void main() {
     });
 
     testWidgets('displays categories section', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
       await tester.pump();
@@ -55,6 +60,7 @@ void main() {
     });
 
     testWidgets('search field accepts input', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
       await tester.pump();
@@ -68,6 +74,7 @@ void main() {
     });
 
     testWidgets('search clear button appears when typing', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
       await tester.pump();
@@ -82,6 +89,7 @@ void main() {
     });
 
     testWidgets('can clear search', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
       await tester.pump();
@@ -99,6 +107,7 @@ void main() {
     });
 
     testWidgets('has favorites button', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
       await tester.pump();
@@ -108,6 +117,7 @@ void main() {
     });
 
     testWidgets('displays calculator categories grid', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
       await tester.pump();
@@ -118,6 +128,7 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
       await tester.pump();
@@ -129,6 +140,7 @@ void main() {
 
     group('Тесты поиска с debounce', () {
       testWidgets('debounce задерживает обновление поиска', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
         await tester.pump();
@@ -148,6 +160,7 @@ void main() {
       });
 
       testWidgets('быстрый ввод сбрасывает debounce', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
         await tester.pump();
@@ -185,6 +198,7 @@ void main() {
       });
 
       testWidgets('пустой поиск показывает empty state', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
         await tester.pump();
@@ -249,6 +263,7 @@ void main() {
 
     group('Тесты секции категорий', () {
       testWidgets('секция категорий отображает сетку', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
         await tester.pump();
@@ -300,6 +315,7 @@ void main() {
       });
 
       testWidgets('тап по кнопке избранного открывает список', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
         await tester.pump();
@@ -425,6 +441,7 @@ void main() {
       });
 
       testWidgets('кнопка "Открыть калькулятор" работает', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
         await tester.pump();
@@ -501,6 +518,7 @@ void main() {
 
     group('Тесты чипов недавних калькуляторов', () {
       testWidgets('секция "Часто считают" отображается', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
         await tester.pump();
@@ -511,6 +529,7 @@ void main() {
       });
 
       testWidgets('чипы недавних калькуляторов кликабельны', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(createTestApp(child: const NewHomeScreen()));
 
         await tester.pump();

@@ -10,6 +10,7 @@ void main() {
 
   group('ChecklistDetailsScreen', () {
     testWidgets('показывает индикатор загрузки при старте', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ChecklistDetailsScreen(checklistId: 1),
@@ -21,6 +22,7 @@ void main() {
     });
 
     testWidgets('содержит AppBar с заголовком Чек-лист при загрузке', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ChecklistDetailsScreen(checklistId: 1),
@@ -32,6 +34,7 @@ void main() {
     });
 
     testWidgets('checklistId передаётся в widget', (tester) async {
+      setTestViewportSize(tester);
       const testId = 42;
 
       await tester.pumpWidget(
@@ -47,6 +50,7 @@ void main() {
     });
 
     testWidgets('имеет Scaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ChecklistDetailsScreen(checklistId: 1),
@@ -57,6 +61,7 @@ void main() {
     });
 
     testWidgets('индикатор загрузки центрирован', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ChecklistDetailsScreen(checklistId: 1),

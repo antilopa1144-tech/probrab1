@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/common/app_card.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('AppCard', () {
     testWidgets('renders child widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -19,6 +22,7 @@ void main() {
     });
 
     testWidgets('wraps child in Card widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -33,6 +37,7 @@ void main() {
     });
 
     testWidgets('applies default padding', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -53,6 +58,7 @@ void main() {
     });
 
     testWidgets('applies custom padding', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -74,6 +80,7 @@ void main() {
     });
 
     testWidgets('applies margin', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -90,6 +97,7 @@ void main() {
     });
 
     testWidgets('applies custom color', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -106,6 +114,7 @@ void main() {
     });
 
     testWidgets('applies custom elevation', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -122,6 +131,7 @@ void main() {
     });
 
     testWidgets('renders complex child widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -144,6 +154,7 @@ void main() {
     });
 
     testWidgets('renders with all properties', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

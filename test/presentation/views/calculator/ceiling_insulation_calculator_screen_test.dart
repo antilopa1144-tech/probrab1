@@ -12,6 +12,7 @@ void main() {
 
   group('CeilingInsulationCalculatorScreen виджет рендеринг', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -49,6 +52,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -64,6 +68,7 @@ void main() {
 
   group('CeilingInsulationCalculatorScreen выбор типа утеплителя', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -76,6 +81,7 @@ void main() {
     });
 
     testWidgets('отображает иконки типов утеплителя', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -90,6 +96,7 @@ void main() {
     });
 
     testWidgets('можно выбрать минеральную вату', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -108,6 +115,7 @@ void main() {
     });
 
     testWidgets('можно выбрать пенопласт', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -128,6 +136,7 @@ void main() {
 
   group('CeilingInsulationCalculatorScreen режимы ввода', () {
     testWidgets('отображает ModeSelector', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -140,6 +149,7 @@ void main() {
     });
 
     testWidgets('можно переключить режим ввода', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -160,6 +170,7 @@ void main() {
 
   group('CeilingInsulationCalculatorScreen поля ввода', () {
     testWidgets('отображает слайдер площади в режиме manual', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -172,6 +183,7 @@ void main() {
     });
 
     testWidgets('отображает поля длины и ширины в режиме room', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -190,6 +202,7 @@ void main() {
     });
 
     testWidgets('можно изменить слайдер толщины', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -210,6 +223,7 @@ void main() {
 
   group('CeilingInsulationCalculatorScreen слайдер толщины', () {
     testWidgets('отображает слайдер толщины утеплителя', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -225,6 +239,7 @@ void main() {
 
   group('CeilingInsulationCalculatorScreen переключатели опций', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -237,6 +252,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию пароизоляции', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -255,6 +271,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию мембраны', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -275,6 +292,7 @@ void main() {
 
   group('CeilingInsulationCalculatorScreen результаты', () {
     testWidgets('отображает результаты площади', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -287,6 +305,7 @@ void main() {
     });
 
     testWidgets('отображает количество упаковок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -299,6 +318,7 @@ void main() {
     });
 
     testWidgets('отображает иконки результатов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -315,6 +335,7 @@ void main() {
 
   group('CeilingInsulationCalculatorScreen список материалов', () {
     testWidgets('отображает MaterialsCardModern', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -327,6 +348,7 @@ void main() {
     });
 
     testWidgets('можно прокрутить до материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -345,6 +367,7 @@ void main() {
 
   group('CeilingInsulationCalculatorScreen действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -363,6 +386,7 @@ void main() {
     });
 
     testWidgets('кнопка поделиться существует', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),
@@ -378,6 +402,7 @@ void main() {
 
   group('CeilingInsulationCalculatorScreen корректно освобождает ресурсы', () {
     testWidgets('корректно dispose', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CeilingInsulationCalculatorScreen(),

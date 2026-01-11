@@ -25,6 +25,7 @@ void main() {
     });
 
     testWidgets('renders correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -42,6 +43,7 @@ void main() {
     });
 
     testWidgets('displays AppBar with section title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -60,6 +62,7 @@ void main() {
     });
 
     testWidgets('displays area title in subtitle', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -77,6 +80,7 @@ void main() {
     });
 
     testWidgets('has ListView for work items', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -94,6 +98,7 @@ void main() {
     });
 
     testWidgets('displays work item cards', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -114,6 +119,7 @@ void main() {
     });
 
     testWidgets('displays work item titles', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -134,6 +140,7 @@ void main() {
     });
 
     testWidgets('displays calculator button for items with calculator', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -154,6 +161,7 @@ void main() {
     });
 
     testWidgets('shows tips section when available', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -176,6 +184,7 @@ void main() {
     });
 
     testWidgets('displays in development message for items without calculator', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -200,6 +209,7 @@ void main() {
     });
 
     testWidgets('AppBar is displayed', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -217,6 +227,7 @@ void main() {
     });
 
     testWidgets('can tap calculator button', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -242,6 +253,7 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(

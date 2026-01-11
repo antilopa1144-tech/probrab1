@@ -12,6 +12,7 @@ void main() {
 
   group('AtticCalculatorScreen виджет рендеринг', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -49,6 +52,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -64,6 +68,7 @@ void main() {
 
   group('AtticCalculatorScreen выбор типа мансарды', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -76,6 +81,7 @@ void main() {
     });
 
     testWidgets('отображает иконки типов мансарды', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -90,6 +96,7 @@ void main() {
     });
 
     testWidgets('можно выбрать тип холодная мансарда', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -108,6 +115,7 @@ void main() {
     });
 
     testWidgets('можно выбрать тип теплая мансарда', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -128,6 +136,7 @@ void main() {
 
   group('AtticCalculatorScreen поля ввода размеров', () {
     testWidgets('отображает поля ввода длины и ширины', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -141,6 +150,7 @@ void main() {
     });
 
     testWidgets('отображает поле ввода высоты крыши', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -153,6 +163,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorTextField виджеты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -167,6 +178,7 @@ void main() {
 
   group('AtticCalculatorScreen слайдер толщины утеплителя', () {
     testWidgets('отображает слайдер толщины утеплителя для теплой мансарды', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -179,6 +191,7 @@ void main() {
     });
 
     testWidgets('можно изменить толщину утеплителя', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -197,6 +210,7 @@ void main() {
     });
 
     testWidgets('отображает значение толщины в мм', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -211,6 +225,7 @@ void main() {
 
   group('AtticCalculatorScreen переключатели опций', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -223,6 +238,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию пароизоляции', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -241,6 +257,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию мембраны', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -261,6 +278,7 @@ void main() {
 
   group('AtticCalculatorScreen результаты', () {
     testWidgets('отображает результаты площади пола', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -273,6 +291,7 @@ void main() {
     });
 
     testWidgets('отображает иконки результатов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -287,6 +306,7 @@ void main() {
     });
 
     testWidgets('обновляет результаты при изменении длины', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -305,6 +325,7 @@ void main() {
 
   group('AtticCalculatorScreen список материалов', () {
     testWidgets('отображает MaterialsCardModern', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -317,6 +338,7 @@ void main() {
     });
 
     testWidgets('отображает иконку списка материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -329,6 +351,7 @@ void main() {
     });
 
     testWidgets('можно прокрутить до материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -347,6 +370,7 @@ void main() {
 
   group('AtticCalculatorScreen действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -365,6 +389,7 @@ void main() {
     });
 
     testWidgets('кнопка поделиться существует', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),
@@ -380,6 +405,7 @@ void main() {
 
   group('AtticCalculatorScreen корректно освобождает ресурсы', () {
     testWidgets('корректно dispose', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const AtticCalculatorScreen(),

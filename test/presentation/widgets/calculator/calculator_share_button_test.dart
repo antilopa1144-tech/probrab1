@@ -10,6 +10,7 @@ void main() {
     String generateTestText() => 'Результат расчёта:\nПлощадь: 100 м²\nМатериалы: 500 кг';
 
     testWidgets('должен отображать IconButton по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -26,6 +27,7 @@ void main() {
 
     testWidgets('должен отображать FilledButton когда asIconButton = false',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -44,6 +46,7 @@ void main() {
     });
 
     testWidgets('должен использовать кастомную иконку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -59,6 +62,7 @@ void main() {
     });
 
     testWidgets('должен показывать tooltip', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -76,6 +80,7 @@ void main() {
 
     testWidgets('должен открывать ShareOptionsDialog при нажатии',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -95,6 +100,7 @@ void main() {
 
     testWidgets('должен показывать QR опцию когда generateQrData предоставлен',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -115,6 +121,7 @@ void main() {
 
     testWidgets('не должен показывать QR опцию без generateQrData',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -133,6 +140,7 @@ void main() {
 
     testWidgets('должен копировать в буфер обмена при выборе Copy',
         (tester) async {
+      setTestViewportSize(tester);
       // Setup test clipboard
       final List<MethodCall> log = <MethodCall>[];
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -171,6 +179,7 @@ void main() {
     });
 
     testWidgets('должен вызывать onCopied callback', (tester) async {
+      setTestViewportSize(tester);
       var copyCallbackCalled = false;
 
       await tester.pumpWidget(
@@ -197,6 +206,7 @@ void main() {
 
     testWidgets('должен вызывать onShared callback при шаринге',
         (tester) async {
+      setTestViewportSize(tester);
       var shareCallbackCalled = false;
 
       await tester.pumpWidget(
@@ -223,6 +233,7 @@ void main() {
 
     testWidgets('должен вызывать onQrOpened callback при открытии QR',
         (tester) async {
+      setTestViewportSize(tester);
       var qrCallbackCalled = false;
 
       await tester.pumpWidget(
@@ -250,6 +261,7 @@ void main() {
 
     testWidgets('должен показывать QR диалог при выборе QR опции',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -273,6 +285,7 @@ void main() {
 
     testWidgets('должен показывать предупреждение если QR данные пустые',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -299,6 +312,7 @@ void main() {
 
     testWidgets('должен показывать предупреждение если QR данные null',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -323,6 +337,7 @@ void main() {
     });
 
     testWidgets('должен закрывать диалог при отмене', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -345,6 +360,7 @@ void main() {
     });
 
     testWidgets('должен использовать subject при шаринге', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -371,6 +387,7 @@ void main() {
     String generateTestText() => 'Test calculation result';
 
     testWidgets('должен отображать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -386,6 +403,7 @@ void main() {
     });
 
     testWidgets('должен копировать текст при нажатии', (tester) async {
+      setTestViewportSize(tester);
       final List<MethodCall> log = <MethodCall>[];
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.platform,
@@ -420,6 +438,7 @@ void main() {
     });
 
     testWidgets('должен вызывать onCopied callback', (tester) async {
+      setTestViewportSize(tester);
       var callbackCalled = false;
 
       await tester.pumpWidget(
@@ -442,6 +461,7 @@ void main() {
     });
 
     testWidgets('должен использовать кастомный tooltip', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -462,6 +482,7 @@ void main() {
     String generateTestText() => 'Quick share test';
 
     testWidgets('должен отображать кнопку шаринга', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -477,6 +498,7 @@ void main() {
     });
 
     testWidgets('должен делать share сразу без диалога', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -495,6 +517,7 @@ void main() {
     });
 
     testWidgets('должен вызывать onShared callback', (tester) async {
+      setTestViewportSize(tester);
       var callbackCalled = false;
 
       await tester.pumpWidget(
@@ -518,6 +541,7 @@ void main() {
     });
 
     testWidgets('должен использовать subject', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -537,6 +561,7 @@ void main() {
     });
 
     testWidgets('должен использовать кастомный tooltip', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -555,6 +580,7 @@ void main() {
 
   group('Integration Tests', () {
     testWidgets('должны работать все три кнопки вместе', (tester) async {
+      setTestViewportSize(tester);
       String generateText() => 'Test';
       var copyCount = 0;
       var shareCount = 0;
@@ -602,6 +628,7 @@ void main() {
     });
 
     testWidgets('должны правильно генерировать разный текст', (tester) async {
+      setTestViewportSize(tester);
       var callCount = 0;
       String generateText() {
         callCount++;

@@ -169,6 +169,17 @@ Widget createTestApp({
   );
 }
 
+/// Настраивает размер экрана для тестов (решает проблему layout overflow)
+/// Вызывать ПЕРЕД pumpWidget в testWidgets
+void setTestViewportSize(
+  WidgetTester tester, {
+  double width = 1200,
+  double height = 2000,
+}) {
+  tester.view.physicalSize = Size(width, height);
+  tester.view.devicePixelRatio = 1.0;
+}
+
 /// Настраивает mock для SharedPreferences и PackageInfo
 void setupMocks({
   Map<String, Object>? sharedPreferencesValues,
@@ -184,6 +195,14 @@ void setupMocks({
     version: appVersion,
     buildNumber: buildNumber,
     buildSignature: 'test-signature',
+  );
+}
+
+/// Оборачивает widget в SingleChildScrollView для избежания overflow
+/// Используется для больших виджетов в тестах
+Widget makeScrollable(Widget child) {
+  return SingleChildScrollView(
+    child: child,
   );
 }
 

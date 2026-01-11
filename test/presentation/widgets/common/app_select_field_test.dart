@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/common/app_select_field.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('SelectOption', () {
     test('creates with required parameters', () {
@@ -29,6 +31,7 @@ void main() {
 
   group('AppSelectField', () {
     testWidgets('renders dropdown', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -50,6 +53,7 @@ void main() {
     });
 
     testWidgets('renders with label', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -72,6 +76,7 @@ void main() {
     });
 
     testWidgets('renders with hint', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -93,6 +98,7 @@ void main() {
     });
 
     testWidgets('shows selected value', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -115,6 +121,7 @@ void main() {
     });
 
     testWidgets('calls onChanged when option is selected', (tester) async {
+      setTestViewportSize(tester);
       int? selectedValue;
 
       await tester.pumpWidget(
@@ -148,6 +155,7 @@ void main() {
     });
 
     testWidgets('disables dropdown when enabled is false', (tester) async {
+      setTestViewportSize(tester);
       int? selectedValue;
 
       await tester.pumpWidget(
@@ -178,6 +186,7 @@ void main() {
     });
 
     testWidgets('renders options with leading widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -205,6 +214,7 @@ void main() {
     });
 
     testWidgets('handles string type options', (tester) async {
+      setTestViewportSize(tester);
       String? selectedValue;
 
       await tester.pumpWidget(
@@ -236,6 +246,7 @@ void main() {
     });
 
     testWidgets('renders multiple options', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

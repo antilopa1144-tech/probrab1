@@ -12,6 +12,7 @@ void main() {
 
   group('BasementCalculatorScreen виджет рендеринг', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -49,6 +52,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -64,6 +68,7 @@ void main() {
 
   group('BasementCalculatorScreen выбор типа подвала', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -76,6 +81,7 @@ void main() {
     });
 
     testWidgets('отображает иконки типов подвала', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -90,6 +96,7 @@ void main() {
     });
 
     testWidgets('можно выбрать технический подвал', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -108,6 +115,7 @@ void main() {
     });
 
     testWidgets('можно выбрать жилой подвал', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -128,6 +136,7 @@ void main() {
 
   group('BasementCalculatorScreen поля ввода размеров', () {
     testWidgets('отображает поля ввода длины и ширины', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -141,6 +150,7 @@ void main() {
     });
 
     testWidgets('отображает поле ввода глубины', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -153,6 +163,7 @@ void main() {
     });
 
     testWidgets('отображает поле ввода толщины стены', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -165,6 +176,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorTextField виджеты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -179,6 +191,7 @@ void main() {
 
   group('BasementCalculatorScreen переключатели опций', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -191,6 +204,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию гидроизоляции', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -209,6 +223,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию утепления', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -227,6 +242,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию дренажа', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -247,6 +263,7 @@ void main() {
 
   group('BasementCalculatorScreen результаты', () {
     testWidgets('отображает результаты площади и объема', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -260,6 +277,7 @@ void main() {
     });
 
     testWidgets('отображает иконки результатов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -276,6 +294,7 @@ void main() {
 
   group('BasementCalculatorScreen список материалов', () {
     testWidgets('отображает MaterialsCardModern', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -288,6 +307,7 @@ void main() {
     });
 
     testWidgets('можно прокрутить до материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -306,6 +326,7 @@ void main() {
 
   group('BasementCalculatorScreen действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -324,6 +345,7 @@ void main() {
     });
 
     testWidgets('кнопка поделиться существует', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),
@@ -339,6 +361,7 @@ void main() {
 
   group('BasementCalculatorScreen корректно освобождает ресурсы', () {
     testWidgets('корректно dispose', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BasementCalculatorScreen(),

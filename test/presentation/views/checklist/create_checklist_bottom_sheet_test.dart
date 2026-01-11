@@ -5,6 +5,8 @@ import 'package:probrab_ai/domain/models/checklist.dart';
 import 'package:probrab_ai/domain/models/checklist_template.dart';
 import 'package:probrab_ai/presentation/views/checklist/create_checklist_bottom_sheet.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('CreateChecklistBottomSheet', () {
     Widget createTestWidget({int? projectId}) {
@@ -32,6 +34,7 @@ void main() {
     }
 
     testWidgets('отображает заголовок в AppBar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -43,6 +46,7 @@ void main() {
     });
 
     testWidgets('отображает кнопку закрытия', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -51,6 +55,7 @@ void main() {
     });
 
     testWidgets('отображает первый шаблон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -60,6 +65,7 @@ void main() {
     });
 
     testWidgets('отображает описание первого шаблона', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -69,6 +75,7 @@ void main() {
     });
 
     testWidgets('отображает количество задач', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -78,6 +85,7 @@ void main() {
     });
 
     testWidgets('выбранный шаблон показывает галочку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -95,6 +103,7 @@ void main() {
     });
 
     testWidgets('можно переключать выбор шаблона', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -116,6 +125,7 @@ void main() {
     });
 
     testWidgets('закрывается по кнопке X', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -129,6 +139,7 @@ void main() {
     });
 
     testWidgets('отображает иконку задачи на кнопке', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -137,6 +148,7 @@ void main() {
     });
 
     testWidgets('отображает иконку категории шаблона', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -146,6 +158,7 @@ void main() {
     });
 
     testWidgets('принимает projectId без ошибок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(projectId: 42));
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -154,6 +167,7 @@ void main() {
     });
 
     testWidgets('содержит ListView для прокрутки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -162,6 +176,7 @@ void main() {
     });
 
     testWidgets('содержит DraggableScrollableSheet', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -170,6 +185,7 @@ void main() {
     });
 
     testWidgets('отображает Divider', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -178,6 +194,7 @@ void main() {
     });
 
     testWidgets('шаблоны отображаются в Card', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget());
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
@@ -188,6 +205,7 @@ void main() {
 
   group('CreateChecklistBottomSheet.show', () {
     testWidgets('статический метод show открывает bottom sheet', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -212,6 +230,7 @@ void main() {
     });
 
     testWidgets('статический метод show принимает projectId', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(

@@ -10,6 +10,7 @@ void main() {
 
     testWidgets('должен отображать QR код с базовыми параметрами',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -24,6 +25,7 @@ void main() {
 
     testWidgets('должен использовать правильный размер по умолчанию',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('должен использовать кастомный размер', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -54,6 +57,7 @@ void main() {
 
     testWidgets('должен использовать правильные цвета по умолчанию',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -68,6 +72,7 @@ void main() {
     });
 
     testWidgets('должен использовать кастомные цвета', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -87,6 +92,7 @@ void main() {
     });
 
     testWidgets('должен отображать контейнер по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -106,6 +112,7 @@ void main() {
 
     testWidgets('должен использовать правильный уровень коррекции ошибок',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -123,6 +130,7 @@ void main() {
 
     group('QrCodeWidget.plain конструктор', () {
       testWidgets('должен создавать QR код без контейнера', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const Scaffold(
@@ -143,6 +151,7 @@ void main() {
 
       testWidgets('должен использовать размер 200 по умолчанию',
           (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const Scaffold(
@@ -159,6 +168,7 @@ void main() {
 
     group('QrCodeWidget.small конструктор', () {
       testWidgets('должен создавать маленький QR код', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const Scaffold(
@@ -173,6 +183,7 @@ void main() {
       });
 
       testWidgets('должен использовать уровень коррекции L', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const Scaffold(
@@ -188,6 +199,7 @@ void main() {
 
       testWidgets('должен иметь маленькое встроенное изображение',
           (tester) async {
+        setTestViewportSize(tester);
         const logo = AssetImage('assets/icons/app_icon.png');
 
         await tester.pumpWidget(
@@ -209,6 +221,7 @@ void main() {
 
     group('QrCodeWidget.large конструктор', () {
       testWidgets('должен создавать большой QR код', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: Scaffold(
@@ -223,6 +236,7 @@ void main() {
       });
 
       testWidgets('должен использовать уровень коррекции H', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: Scaffold(
@@ -238,6 +252,7 @@ void main() {
 
       testWidgets('должен иметь большое встроенное изображение',
           (tester) async {
+        setTestViewportSize(tester);
         const logo = AssetImage('assets/icons/app_icon.png');
 
         await tester.pumpWidget(
@@ -257,6 +272,7 @@ void main() {
       });
 
       testWidgets('должен иметь контейнер с тенью', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: Scaffold(
@@ -277,6 +293,7 @@ void main() {
     });
 
     testWidgets('должен отображать встроенное изображение', (tester) async {
+      setTestViewportSize(tester);
       const logo = AssetImage('assets/icons/app_icon.png');
 
       await tester.pumpWidget(
@@ -297,6 +314,7 @@ void main() {
     });
 
     testWidgets('должен использовать кастомные отступы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -318,6 +336,7 @@ void main() {
 
     testWidgets('должен использовать кастомное скругление углов',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -339,6 +358,7 @@ void main() {
     });
 
     testWidgets('должен использовать кастомную тень', (tester) async {
+      setTestViewportSize(tester);
       final customShadow = [
         BoxShadow(
           color: Colors.red.withValues(alpha: 0.5),
@@ -370,6 +390,7 @@ void main() {
     });
 
     testWidgets('должен правильно обрабатывать пустые данные', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -382,6 +403,7 @@ void main() {
     });
 
     testWidgets('должен правильно обрабатывать длинные данные', (tester) async {
+      setTestViewportSize(tester);
       const longData = 'https://example.com/very/long/url/with/many/'
           'segments/and/parameters?param1=value1&param2=value2'
           '&param3=value3&param4=value4&param5=value5';
@@ -400,6 +422,7 @@ void main() {
 
     group('QrCodeStyles расширение', () {
       testWidgets('forProject должен создавать большой QR код', (tester) async {
+        setTestViewportSize(tester);
         const logo = AssetImage('assets/icons/app_icon.png');
 
         await tester.pumpWidget(
@@ -421,6 +444,7 @@ void main() {
 
       testWidgets('forCalculator должен создавать средний QR код',
           (tester) async {
+        setTestViewportSize(tester);
         const logo = AssetImage('assets/icons/app_icon.png');
 
         await tester.pumpWidget(
@@ -442,6 +466,7 @@ void main() {
       });
 
       testWidgets('preview должен создавать маленький QR код', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: Scaffold(
@@ -458,6 +483,7 @@ void main() {
 
     testWidgets('должен правильно работать с различными уровнями коррекции',
         (tester) async {
+      setTestViewportSize(tester);
       for (final level in [
         QrErrorCorrectLevel.L,
         QrErrorCorrectLevel.M,
@@ -483,6 +509,7 @@ void main() {
 
     testWidgets('должен корректно отображаться в разных размерах',
         (tester) async {
+      setTestViewportSize(tester);
       for (final size in [50.0, 100.0, 200.0, 300.0, 500.0]) {
         await tester.pumpWidget(
           createTestApp(
@@ -503,6 +530,7 @@ void main() {
 
     testWidgets('должен вычислять размер встроенного изображения по умолчанию',
         (tester) async {
+      setTestViewportSize(tester);
       const logo = AssetImage('assets/icons/app_icon.png');
 
       await tester.pumpWidget(
@@ -527,6 +555,7 @@ void main() {
     });
 
     testWidgets('должен работать без встроенного изображения', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(

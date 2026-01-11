@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/common/section_header.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('SectionHeader', () {
     testWidgets('renders with title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -17,6 +20,7 @@ void main() {
     });
 
     testWidgets('renders with subtitle', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -32,6 +36,7 @@ void main() {
     });
 
     testWidgets('hides subtitle when null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -45,6 +50,7 @@ void main() {
     });
 
     testWidgets('renders trailing widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -63,6 +69,7 @@ void main() {
     });
 
     testWidgets('trailing button is tappable', (tester) async {
+      setTestViewportSize(tester);
       bool tapped = false;
 
       await tester.pumpWidget(
@@ -86,6 +93,7 @@ void main() {
     });
 
     testWidgets('hides trailing when null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -98,6 +106,7 @@ void main() {
     });
 
     testWidgets('renders with all properties', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -119,6 +128,7 @@ void main() {
     });
 
     testWidgets('uses Row layout', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -131,6 +141,7 @@ void main() {
     });
 
     testWidgets('title is expanded to fill available space', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -146,6 +157,7 @@ void main() {
     });
 
     testWidgets('title and subtitle are in Column', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -161,6 +173,7 @@ void main() {
     });
 
     testWidgets('renders with TextButton trailing', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

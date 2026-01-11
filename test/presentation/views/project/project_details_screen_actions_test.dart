@@ -12,6 +12,7 @@ void main() {
     });
 
     testWidgets('отображает основные элементы экрана', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('показывает индикатор загрузки при инициализации', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -36,6 +38,7 @@ void main() {
     });
 
     testWidgets('FutureBuilder обрабатывает состояние ожидания', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -47,6 +50,7 @@ void main() {
     });
 
     testWidgets('отображает AppBar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 999),
@@ -60,6 +64,7 @@ void main() {
     });
 
     testWidgets('AppBar содержит кнопку назад', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -74,6 +79,7 @@ void main() {
     });
 
     testWidgets('показывает сообщение об ошибке для несуществующего проекта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 99999),
@@ -92,6 +98,7 @@ void main() {
     });
 
     testWidgets('Scaffold имеет body', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -105,6 +112,7 @@ void main() {
     });
 
     testWidgets('FutureBuilder отображает состояние загрузки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -118,6 +126,7 @@ void main() {
     });
 
     testWidgets('экран корректно создается с валидным projectId', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -131,6 +140,7 @@ void main() {
     });
 
     testWidgets('Consumer правильно обрабатывает providers', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -150,6 +160,7 @@ void main() {
     });
 
     testWidgets('AppBar может содержать actions', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -164,6 +175,7 @@ void main() {
     });
 
     testWidgets('обрабатывает разные projectId корректно', (tester) async {
+      setTestViewportSize(tester);
       // Тест с разными ID
       for (int id in [1, 2, 100]) {
         await tester.pumpWidget(
@@ -182,6 +194,7 @@ void main() {
     });
 
     testWidgets('CircularProgressIndicator центрирован', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -206,6 +219,7 @@ void main() {
     });
 
     testWidgets('имеет правильную иерархию виджетов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -221,6 +235,7 @@ void main() {
     });
 
     testWidgets('Scaffold содержит все необходимые компоненты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -237,6 +252,7 @@ void main() {
     });
 
     testWidgets('FutureBuilder обрабатывает Future<ProjectV2?>', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -250,6 +266,7 @@ void main() {
     });
 
     testWidgets('правильно работает с ProviderScope', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -263,6 +280,7 @@ void main() {
     });
 
     testWidgets('поддерживает различные состояния загрузки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -285,6 +303,7 @@ void main() {
     });
 
     testWidgets('корректно обрабатывает пересоздание виджета', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -306,6 +325,7 @@ void main() {
     });
 
     testWidgets('изменение projectId создает новый виджет', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -333,6 +353,7 @@ void main() {
     });
 
     testWidgets('обрабатывает состояние "нет данных"', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 999999),
@@ -346,6 +367,7 @@ void main() {
     });
 
     testWidgets('показывает индикатор при первой загрузке', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -357,6 +379,7 @@ void main() {
     });
 
     testWidgets('завершает загрузку за разумное время', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -377,6 +400,7 @@ void main() {
     });
 
     testWidgets('работает с MaterialApp', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ProjectDetailsScreen(projectId: 1),
@@ -391,6 +415,7 @@ void main() {
     });
 
     testWidgets('поддерживает темную тему', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -406,6 +431,7 @@ void main() {
     });
 
     testWidgets('поддерживает светлую тему', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -421,6 +447,7 @@ void main() {
     });
 
     testWidgets('корректно работает в Navigator stack', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Navigator(

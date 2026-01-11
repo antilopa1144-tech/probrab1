@@ -88,6 +88,7 @@ void main() {
     });
 
     testWidgets('renders without error', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -103,6 +104,7 @@ void main() {
     });
 
     testWidgets('shows loading indicator initially', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -118,6 +120,7 @@ void main() {
     });
 
     testWidgets('shows Scaffold structure', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -133,6 +136,7 @@ void main() {
     });
 
     testWidgets('shows project not found for invalid id', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -150,6 +154,7 @@ void main() {
     });
 
     testWidgets('has initial loading state', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -165,6 +170,7 @@ void main() {
     });
 
     testWidgets('shows FAB for adding calculations', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -180,6 +186,7 @@ void main() {
     });
 
     testWidgets('FAB has add icon', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -195,6 +202,7 @@ void main() {
     });
 
     testWidgets('handles null project gracefully', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -212,6 +220,7 @@ void main() {
     });
 
     testWidgets('shows error state for repository error', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -231,6 +240,7 @@ void main() {
     });
 
     testWidgets('displays FutureBuilder', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -246,6 +256,7 @@ void main() {
     });
 
     testWidgets('accepts projectId parameter', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -262,6 +273,7 @@ void main() {
     });
 
     testWidgets('can tap FAB when loading', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -281,6 +293,7 @@ void main() {
     });
 
     testWidgets('renders with ConsumerStatefulWidget', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -297,6 +310,7 @@ void main() {
     });
 
     testWidgets('shows not found UI when project null', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -320,6 +334,7 @@ void main() {
     });
 
     testWidgets('shows not found text for null project', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -341,6 +356,7 @@ void main() {
     });
 
     testWidgets('shows back button for not found project', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -380,6 +396,7 @@ void main() {
     });
 
     testWidgets('loads project data on init', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -398,6 +415,7 @@ void main() {
     });
 
     testWidgets('favorite project displays correctly', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -418,6 +436,7 @@ void main() {
     });
 
     testWidgets('completed project displays correctly', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -438,6 +457,7 @@ void main() {
     });
 
     testWidgets('inProgress project displays correctly', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -458,6 +478,7 @@ void main() {
     });
 
     testWidgets('onHold project displays correctly', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -478,6 +499,7 @@ void main() {
     });
 
     testWidgets('cancelled project displays correctly', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -498,6 +520,7 @@ void main() {
     });
 
     testWidgets('project without description displays correctly', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -518,6 +541,7 @@ void main() {
     });
 
     testWidgets('project with notes displays correctly', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -538,6 +562,7 @@ void main() {
     });
 
     testWidgets('project with color displays correctly', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -558,6 +583,7 @@ void main() {
     });
 
     testWidgets('project with empty tags displays correctly', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -584,6 +610,7 @@ void main() {
     });
 
     testWidgets('transitions from loading to data state', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -615,6 +642,7 @@ void main() {
     });
 
     testWidgets('transitions from loading to error state', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -637,6 +665,7 @@ void main() {
     });
 
     testWidgets('transitions from loading to not found state', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -659,6 +688,7 @@ void main() {
     });
 
     testWidgets('error state shows refresh button', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -681,6 +711,7 @@ void main() {
     });
 
     testWidgets('error state shows error text', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -703,6 +734,7 @@ void main() {
     });
 
     testWidgets('error state shows retry button', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -744,6 +776,7 @@ void main() {
     });
 
     testWidgets('использует FutureBuilder для загрузки проекта', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -759,6 +792,7 @@ void main() {
     });
 
     testWidgets('FAB всегда видна', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -774,6 +808,7 @@ void main() {
     });
 
     testWidgets('можно тапнуть на FAB во время загрузки', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -791,6 +826,7 @@ void main() {
     });
 
     testWidgets('загружается с правильным projectId', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -810,6 +846,7 @@ void main() {
     });
 
     testWidgets('имеет Scaffold в body', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -825,6 +862,7 @@ void main() {
     });
 
     testWidgets('состояние not found показывает правильную иконку', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -845,6 +883,7 @@ void main() {
     });
 
     testWidgets('состояние ошибки показывает правильную иконку', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -867,6 +906,7 @@ void main() {
     });
 
     testWidgets('использует ConsumerStatefulWidget', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -883,6 +923,7 @@ void main() {
     });
 
     testWidgets('вызывает initState при создании', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -899,6 +940,7 @@ void main() {
     });
 
     testWidgets('проект с максимальным количеством тегов', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -919,6 +961,7 @@ void main() {
     });
 
     testWidgets('проект со всеми полями заполненными', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -942,6 +985,7 @@ void main() {
     });
 
     testWidgets('обрабатывает очень длинное имя проекта', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -962,6 +1006,7 @@ void main() {
     });
 
     testWidgets('обрабатывает очень длинное описание проекта', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -982,6 +1027,7 @@ void main() {
     });
 
     testWidgets('переходит из loading в data state', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -1005,6 +1051,7 @@ void main() {
     });
 
     testWidgets('проект с датой создания в будущем', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -1025,6 +1072,7 @@ void main() {
     });
 
     testWidgets('проект с очень старой датой создания', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -1045,6 +1093,7 @@ void main() {
     });
 
     testWidgets('тест всех статусов проекта в одном тесте', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);

@@ -12,6 +12,7 @@ void main() {
 
   group('SoundInsulationCalculatorScreen - рендеринг базовой структуры', () {
     testWidgets('отрисовывается без ошибок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -23,6 +24,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -32,6 +34,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -41,6 +44,7 @@ void main() {
     });
 
     testWidgets('имеет кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -53,6 +57,7 @@ void main() {
 
   group('SoundInsulationCalculatorScreen - селектор типа изоляции', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -62,6 +67,7 @@ void main() {
     });
 
     testWidgets('отображает все типы изоляции', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -73,6 +79,7 @@ void main() {
     });
 
     testWidgets('можно выбрать минеральную вату', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -88,6 +95,7 @@ void main() {
     });
 
     testWidgets('можно выбрать мембрану', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -103,6 +111,7 @@ void main() {
     });
 
     testWidgets('можно выбрать комбинированную изоляцию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -120,6 +129,7 @@ void main() {
 
   group('SoundInsulationCalculatorScreen - селектор поверхности', () {
     testWidgets('отображает ModeSelector для типа поверхности', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -129,6 +139,7 @@ void main() {
     });
 
     testWidgets('можно выбрать стену', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -144,6 +155,7 @@ void main() {
     });
 
     testWidgets('можно выбрать потолок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -161,6 +173,7 @@ void main() {
 
   group('SoundInsulationCalculatorScreen - параметры', () {
     testWidgets('отображает слайдер площади', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -170,6 +183,7 @@ void main() {
     });
 
     testWidgets('можно изменить площадь', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -185,6 +199,7 @@ void main() {
     });
 
     testWidgets('можно изменить толщину', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -202,6 +217,7 @@ void main() {
 
   group('SoundInsulationCalculatorScreen - опции', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -211,6 +227,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию гипсокартона', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -230,6 +247,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию профиля', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -251,6 +269,7 @@ void main() {
 
   group('SoundInsulationCalculatorScreen - результаты', () {
     testWidgets('отображает площадь в результатах', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -261,6 +280,7 @@ void main() {
     });
 
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -276,6 +296,7 @@ void main() {
 
   group('SoundInsulationCalculatorScreen - взаимодействие', () {
     testWidgets('можно скроллить контент', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -289,6 +310,7 @@ void main() {
     });
 
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -302,6 +324,7 @@ void main() {
     });
 
     testWidgets('виджет корректно удаляется', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -317,6 +340,7 @@ void main() {
 
   group('SoundInsulationCalculatorScreen - единицы измерения', () {
     testWidgets('отображает квадратные метры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );
@@ -326,6 +350,7 @@ void main() {
     });
 
     testWidgets('отображает миллиметры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SoundInsulationCalculatorScreen()),
       );

@@ -12,6 +12,7 @@ void main() {
 
   group('WindowsInstallCalculatorScreen - рендеринг базовой структуры', () {
     testWidgets('отрисовывается без ошибок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -23,6 +24,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -32,6 +34,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -41,6 +44,7 @@ void main() {
     });
 
     testWidgets('имеет кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -53,6 +57,7 @@ void main() {
 
   group('WindowsInstallCalculatorScreen - селектор типа окна', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -62,6 +67,7 @@ void main() {
     });
 
     testWidgets('отображает все типы окон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -73,6 +79,7 @@ void main() {
     });
 
     testWidgets('можно выбрать одностворчатое окно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -88,6 +95,7 @@ void main() {
     });
 
     testWidgets('можно выбрать двустворчатое окно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -103,6 +111,7 @@ void main() {
     });
 
     testWidgets('можно выбрать трехстворчатое окно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -120,6 +129,7 @@ void main() {
 
   group('WindowsInstallCalculatorScreen - количество окон', () {
     testWidgets('отображает слайдер для количества окон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -129,6 +139,7 @@ void main() {
     });
 
     testWidgets('можно изменить количество окон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -146,6 +157,7 @@ void main() {
 
   group('WindowsInstallCalculatorScreen - размеры окна', () {
     testWidgets('отображает поля для ширины и высоты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -155,6 +167,7 @@ void main() {
     });
 
     testWidgets('отображает общую площадь окон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -166,6 +179,7 @@ void main() {
 
   group('WindowsInstallCalculatorScreen - опции', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -175,6 +189,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию подоконника', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -194,6 +209,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию откосов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -215,6 +231,7 @@ void main() {
 
   group('WindowsInstallCalculatorScreen - результаты', () {
     testWidgets('отображает количество окон в результатах', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -225,6 +242,7 @@ void main() {
     });
 
     testWidgets('отображает площадь окон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -235,6 +253,7 @@ void main() {
     });
 
     testWidgets('отображает количество пены', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -244,6 +263,7 @@ void main() {
     });
 
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -259,6 +279,7 @@ void main() {
 
   group('WindowsInstallCalculatorScreen - взаимодействие', () {
     testWidgets('можно скроллить контент', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -272,6 +293,7 @@ void main() {
     });
 
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -285,6 +307,7 @@ void main() {
     });
 
     testWidgets('виджет корректно удаляется', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -300,6 +323,7 @@ void main() {
 
   group('WindowsInstallCalculatorScreen - единицы измерения', () {
     testWidgets('отображает сантиметры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -309,6 +333,7 @@ void main() {
     });
 
     testWidgets('отображает квадратные метры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );
@@ -318,6 +343,7 @@ void main() {
     });
 
     testWidgets('отображает метры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const WindowsInstallCalculatorScreen()),
       );

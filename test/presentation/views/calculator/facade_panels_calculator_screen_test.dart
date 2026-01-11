@@ -12,6 +12,7 @@ void main() {
 
   group('FacadePanelsCalculatorScreen - рендеринг виджетов', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает заголовок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -51,6 +54,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -66,6 +70,7 @@ void main() {
 
   group('FacadePanelsCalculatorScreen - селектор типа панелей', () {
     testWidgets('отображает типы фасадных панелей', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -81,6 +86,7 @@ void main() {
     });
 
     testWidgets('можно выбрать виниловые панели', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -99,6 +105,7 @@ void main() {
     });
 
     testWidgets('можно выбрать металлические панели', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -117,6 +124,7 @@ void main() {
     });
 
     testWidgets('можно выбрать фиброцементные панели', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -137,6 +145,7 @@ void main() {
 
   group('FacadePanelsCalculatorScreen - размеры здания', () {
     testWidgets('отображает поля для ввода размеров', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -151,6 +160,7 @@ void main() {
     });
 
     testWidgets('отображает слайдер площади проемов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -164,6 +174,7 @@ void main() {
     });
 
     testWidgets('можно регулировать площадь проемов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -182,6 +193,7 @@ void main() {
     });
 
     testWidgets('отображает подсказку о проемах', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -196,6 +208,7 @@ void main() {
 
   group('FacadePanelsCalculatorScreen - опции', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -208,6 +221,7 @@ void main() {
     });
 
     testWidgets('можно включить/выключить утепление', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -229,6 +243,7 @@ void main() {
     });
 
     testWidgets('можно включить/выключить профиль', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -252,6 +267,7 @@ void main() {
 
   group('FacadePanelsCalculatorScreen - карточка материалов', () {
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -264,6 +280,7 @@ void main() {
     });
 
     testWidgets('отображает материалы с иконками', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -282,6 +299,7 @@ void main() {
 
   group('FacadePanelsCalculatorScreen - действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -298,6 +316,7 @@ void main() {
     });
 
     testWidgets('можно прокручивать содержимое', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -316,6 +335,7 @@ void main() {
 
   group('FacadePanelsCalculatorScreen - жизненный цикл', () {
     testWidgets('инициализируется с результатами по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),
@@ -328,6 +348,7 @@ void main() {
     });
 
     testWidgets('корректно освобождает ресурсы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FacadePanelsCalculatorScreen(),

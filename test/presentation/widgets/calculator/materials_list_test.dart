@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/materials_list.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('MaterialItem', () {
     test('creates with required parameters', () {
@@ -30,6 +32,7 @@ void main() {
 
   group('MaterialsList', () {
     testWidgets('renders empty when items is empty', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -43,6 +46,7 @@ void main() {
     });
 
     testWidgets('renders single item', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -60,6 +64,7 @@ void main() {
     });
 
     testWidgets('renders multiple items', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -83,6 +88,7 @@ void main() {
     });
 
     testWidgets('renders value without unit when unit is null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -100,6 +106,7 @@ void main() {
     });
 
     testWidgets('uses Column as layout', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -116,6 +123,7 @@ void main() {
     });
 
     testWidgets('applies theme styles', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),

@@ -10,6 +10,7 @@ void main() {
 
   group('ModernCalculatorCatalogScreen', () {
     testWidgets('renders correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ModernCalculatorCatalogScreen(),
@@ -23,6 +24,7 @@ void main() {
     });
 
     testWidgets('has search field', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ModernCalculatorCatalogScreen(),
@@ -36,6 +38,7 @@ void main() {
     });
 
     testWidgets('has category filter buttons', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ModernCalculatorCatalogScreen(),
@@ -50,6 +53,7 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ModernCalculatorCatalogScreen(),
@@ -68,6 +72,7 @@ void main() {
     });
 
     testWidgets('search field is functional', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ModernCalculatorCatalogScreen(),
@@ -85,6 +90,7 @@ void main() {
     });
 
     testWidgets('has scrollable content', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ModernCalculatorCatalogScreen(),

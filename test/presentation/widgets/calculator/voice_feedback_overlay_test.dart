@@ -6,6 +6,7 @@ import '../../../helpers/test_helpers.dart';
 void main() {
   group('VoiceFeedbackOverlay -', () {
     testWidgets('не отображается в idle состоянии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -21,6 +22,7 @@ void main() {
     });
 
     testWidgets('отображается в listening состоянии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -36,6 +38,7 @@ void main() {
     });
 
     testWidgets('отображается в processing состоянии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -51,6 +54,7 @@ void main() {
     });
 
     testWidgets('отображается в success состоянии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -66,6 +70,7 @@ void main() {
     });
 
     testWidgets('отображается в error состоянии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -81,6 +86,7 @@ void main() {
     });
 
     testWidgets('показывает распознанный текст', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -97,6 +103,7 @@ void main() {
     });
 
     testWidgets('показывает сообщение об ошибке', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -113,6 +120,7 @@ void main() {
     });
 
     testWidgets('показывает кнопку отмены в listening', (tester) async {
+      setTestViewportSize(tester);
       var cancelCalled = false;
 
       await tester.pumpWidget(
@@ -137,6 +145,7 @@ void main() {
     });
 
     testWidgets('скрывает кнопку отмены в success состоянии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -152,6 +161,7 @@ void main() {
     });
 
     testWidgets('скрывает кнопку отмены в error состоянии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -167,6 +177,7 @@ void main() {
     });
 
     testWidgets('анимация пульсации работает в listening', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -189,6 +200,7 @@ void main() {
     });
 
     testWidgets('анимация пульсации работает в processing', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -207,6 +219,7 @@ void main() {
     });
 
     testWidgets('анимация не работает когда showPulse = false', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -225,6 +238,7 @@ void main() {
     });
 
     testWidgets('переход между состояниями работает корректно', (tester) async {
+      setTestViewportSize(tester);
       VoiceFeedbackState currentState = VoiceFeedbackState.listening;
 
       await tester.pumpWidget(
@@ -261,6 +275,7 @@ void main() {
     });
 
     testWidgets('отображает overlay с полупрозрачным фоном', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -282,6 +297,7 @@ void main() {
     });
 
     testWidgets('контейнер имеет закругленные углы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -305,6 +321,7 @@ void main() {
     });
 
     testWidgets('не показывает распознанный текст если он пустой', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -320,6 +337,7 @@ void main() {
     });
 
     testWidgets('все иконки корректно отображаются для всех состояний', (tester) async {
+      setTestViewportSize(tester);
       final states = [
         VoiceFeedbackState.listening,
         VoiceFeedbackState.processing,
@@ -352,6 +370,7 @@ void main() {
     });
 
     testWidgets('показывает кнопку отмены в processing', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -367,6 +386,7 @@ void main() {
     });
 
     testWidgets('обновляет анимацию при изменении состояния', (tester) async {
+      setTestViewportSize(tester);
       VoiceFeedbackState state = VoiceFeedbackState.listening;
 
       await tester.pumpWidget(
@@ -403,6 +423,7 @@ void main() {
     });
 
     testWidgets('отображает ошибку с иконкой и сообщением', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -422,6 +443,7 @@ void main() {
     });
 
     testWidgets('контейнер с ошибкой имеет правильное оформление', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -447,6 +469,7 @@ void main() {
     });
 
     testWidgets('распознанный текст отображается в контейнере', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(

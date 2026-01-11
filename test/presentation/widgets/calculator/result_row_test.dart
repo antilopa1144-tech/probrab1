@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/result_row.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ResultRowData', () {
     test('creates with required parameters', () {
@@ -33,6 +35,7 @@ void main() {
 
   group('ResultRow', () {
     testWidgets('renders label and value', (tester) async {
+      setTestViewportSize(tester);
       const data = ResultRowData(
         label: 'Tiles needed',
         value: '250',
@@ -51,6 +54,7 @@ void main() {
     });
 
     testWidgets('renders value with unit', (tester) async {
+      setTestViewportSize(tester);
       const data = ResultRowData(
         label: 'Area',
         value: '25.0',
@@ -70,6 +74,7 @@ void main() {
     });
 
     testWidgets('renders subtitle when provided', (tester) async {
+      setTestViewportSize(tester);
       const data = ResultRowData(
         label: 'Volume',
         value: '12.5',
@@ -91,6 +96,7 @@ void main() {
     });
 
     testWidgets('does not render subtitle when null', (tester) async {
+      setTestViewportSize(tester);
       const data = ResultRowData(
         label: 'Count',
         value: '100',
@@ -109,6 +115,7 @@ void main() {
     });
 
     testWidgets('uses Row as root widget', (tester) async {
+      setTestViewportSize(tester);
       const data = ResultRowData(
         label: 'Test',
         value: '123',
@@ -126,6 +133,7 @@ void main() {
     });
 
     testWidgets('applies theme styles', (tester) async {
+      setTestViewportSize(tester);
       const data = ResultRowData(
         label: 'Styled',
         value: '999',
@@ -146,6 +154,7 @@ void main() {
     });
 
     testWidgets('handles long label text', (tester) async {
+      setTestViewportSize(tester);
       const data = ResultRowData(
         label: 'Very long label text that might overflow in narrow containers',
         value: '42',
@@ -171,6 +180,7 @@ void main() {
     });
 
     testWidgets('handles numeric values', (tester) async {
+      setTestViewportSize(tester);
       const data = ResultRowData(
         label: 'Price',
         value: '15,000.50',

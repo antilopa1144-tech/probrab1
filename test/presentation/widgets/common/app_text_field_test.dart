@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/common/app_text_field.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('AppTextField', () {
     testWidgets('renders basic text field', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -17,6 +20,7 @@ void main() {
     });
 
     testWidgets('renders with label', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -29,6 +33,7 @@ void main() {
     });
 
     testWidgets('renders with hint', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -41,6 +46,7 @@ void main() {
     });
 
     testWidgets('renders with helper text', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -53,6 +59,7 @@ void main() {
     });
 
     testWidgets('renders with error text', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -65,6 +72,7 @@ void main() {
     });
 
     testWidgets('calls onChanged when text changes', (tester) async {
+      setTestViewportSize(tester);
       String? changedValue;
 
       await tester.pumpWidget(
@@ -84,6 +92,7 @@ void main() {
     });
 
     testWidgets('uses provided controller', (tester) async {
+      setTestViewportSize(tester);
       final controller = TextEditingController(text: 'initial value');
 
       await tester.pumpWidget(
@@ -99,6 +108,7 @@ void main() {
     });
 
     testWidgets('respects enabled property', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -112,6 +122,7 @@ void main() {
     });
 
     testWidgets('respects obscureText property for passwords', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -125,6 +136,7 @@ void main() {
     });
 
     testWidgets('renders with prefix icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -139,6 +151,7 @@ void main() {
     });
 
     testWidgets('renders with suffix icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -153,6 +166,7 @@ void main() {
     });
 
     testWidgets('respects maxLines property', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -166,6 +180,7 @@ void main() {
     });
 
     testWidgets('respects keyboardType property', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -179,6 +194,7 @@ void main() {
     });
 
     testWidgets('respects textInputAction property', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -192,6 +208,7 @@ void main() {
     });
 
     testWidgets('passes onEditingComplete to TextField', (tester) async {
+      setTestViewportSize(tester);
       void onComplete() {}
 
       await tester.pumpWidget(

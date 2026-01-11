@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/measurement_diagram.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('DiagramType', () {
     test('has all expected values', () {
@@ -22,6 +24,7 @@ void main() {
 
   group('MeasurementDiagram', () {
     testWidgets('renders room diagram', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -38,6 +41,7 @@ void main() {
     });
 
     testWidgets('renders wall diagram', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -53,6 +57,7 @@ void main() {
     });
 
     testWidgets('renders floor diagram', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -68,6 +73,7 @@ void main() {
     });
 
     testWidgets('renders roof diagram', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -83,6 +89,7 @@ void main() {
     });
 
     testWidgets('uses default values when not provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -98,6 +105,7 @@ void main() {
     });
 
     testWidgets('applies custom height', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -117,6 +125,7 @@ void main() {
     });
 
     testWidgets('uses default height of 180', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -135,6 +144,7 @@ void main() {
     });
 
     testWidgets('accepts highlights parameter', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -154,6 +164,7 @@ void main() {
     });
 
     testWidgets('accepts labelFormatter parameter', (tester) async {
+      setTestViewportSize(tester);
       String formatter(String key, double value) => '$key: ${value.toStringAsFixed(2)} m';
 
       await tester.pumpWidget(
@@ -175,6 +186,7 @@ void main() {
     });
 
     testWidgets('wall diagram accepts length as width fallback', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -190,6 +202,7 @@ void main() {
     });
 
     testWidgets('roof diagram accepts width as span fallback', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -205,6 +218,7 @@ void main() {
     });
 
     testWidgets('applies theme colors', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
@@ -221,6 +235,7 @@ void main() {
     });
 
     testWidgets('stores values correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -241,6 +256,7 @@ void main() {
     });
 
     testWidgets('stores type correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

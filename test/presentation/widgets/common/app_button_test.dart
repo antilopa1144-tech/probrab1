@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/common/app_button.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('AppButtonVariant', () {
     test('has all expected variants', () {
@@ -14,6 +16,7 @@ void main() {
 
   group('AppButton', () {
     testWidgets('renders with label', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -29,6 +32,7 @@ void main() {
     });
 
     testWidgets('calls onPressed when tapped', (tester) async {
+      setTestViewportSize(tester);
       bool pressed = false;
 
       await tester.pumpWidget(
@@ -49,6 +53,7 @@ void main() {
     });
 
     testWidgets('does not call onPressed when null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -64,6 +69,7 @@ void main() {
     });
 
     testWidgets('renders primary variant with FilledButton', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -80,6 +86,7 @@ void main() {
     });
 
     testWidgets('renders secondary variant with OutlinedButton', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -96,6 +103,7 @@ void main() {
     });
 
     testWidgets('renders text variant with TextButton', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -112,6 +120,7 @@ void main() {
     });
 
     testWidgets('shows loading indicator when isLoading is true', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -128,6 +137,7 @@ void main() {
     });
 
     testWidgets('disables button when isLoading is true', (tester) async {
+      setTestViewportSize(tester);
       bool pressed = false;
 
       await tester.pumpWidget(
@@ -149,6 +159,7 @@ void main() {
     });
 
     testWidgets('renders with leading widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -165,6 +176,7 @@ void main() {
     });
 
     testWidgets('renders with trailing widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -181,6 +193,7 @@ void main() {
     });
 
     testWidgets('renders with both leading and trailing', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -199,6 +212,7 @@ void main() {
     });
 
     testWidgets('hides leading when loading', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -217,6 +231,7 @@ void main() {
     });
 
     testWidgets('defaults to primary variant', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

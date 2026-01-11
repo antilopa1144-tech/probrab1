@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_text_field.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   // Helper function to wrap widgets in ProviderScope (required for Riverpod)
   Widget wrapWithProviders(Widget child) {
@@ -17,6 +19,7 @@ void main() {
 
   group('CalculatorTextField - Voice Input Integration', () {
     testWidgets('показывает кнопку микрофона по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       double value = 0.0;
 
       await tester.pumpWidget(
@@ -34,6 +37,7 @@ void main() {
 
     testWidgets('не показывает кнопку микрофона если enableVoiceInput=false',
         (tester) async {
+      setTestViewportSize(tester);
       double value = 0.0;
 
       await tester.pumpWidget(
@@ -51,6 +55,7 @@ void main() {
     });
 
     testWidgets('обновляет значение через ручной ввод', (tester) async {
+      setTestViewportSize(tester);
       double value = 5.0;
 
       await tester.pumpWidget(
@@ -71,6 +76,7 @@ void main() {
     });
 
     testWidgets('применяет minValue к ручному вводу', (tester) async {
+      setTestViewportSize(tester);
       double value = 5.0;
 
       await tester.pumpWidget(
@@ -93,6 +99,7 @@ void main() {
 
     testWidgets('обрабатывает запятую как десятичный разделитель',
         (tester) async {
+      setTestViewportSize(tester);
       double value = 0.0;
 
       await tester.pumpWidget(
@@ -115,6 +122,7 @@ void main() {
 
   group('RoomDimensionsFields - Интеграция', () {
     testWidgets('создаёт три поля для размеров комнаты', (tester) async {
+      setTestViewportSize(tester);
       double length = 4.0;
       double width = 3.0;
       double height = 2.7;
@@ -139,6 +147,7 @@ void main() {
     });
 
     testWidgets('все три поля имеют кнопки микрофона', (tester) async {
+      setTestViewportSize(tester);
       double length = 4.0;
       double width = 3.0;
       double height = 2.7;

@@ -6,6 +6,7 @@ import '../../../helpers/test_helpers.dart';
 void main() {
   group('ShareOptionsDialog Tests', () {
     testWidgets('должен отображать заголовок по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ShareOptionsDialog(),
@@ -16,6 +17,7 @@ void main() {
     });
 
     testWidgets('должен отображать кастомный заголовок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ShareOptionsDialog(
@@ -28,6 +30,7 @@ void main() {
     });
 
     testWidgets('должен отображать подзаголовок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ShareOptionsDialog(
@@ -41,6 +44,7 @@ void main() {
 
     testWidgets('должен отображать опции Copy и Share по умолчанию',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ShareOptionsDialog(),
@@ -57,6 +61,7 @@ void main() {
     });
 
     testWidgets('не должен показывать QR опцию по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ShareOptionsDialog(),
@@ -69,6 +74,7 @@ void main() {
 
     testWidgets('должен показывать QR опцию когда showQrOption = true',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ShareOptionsDialog(
@@ -83,6 +89,7 @@ void main() {
     });
 
     testWidgets('должен отображать кнопку Отмена', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ShareOptionsDialog(),
@@ -94,6 +101,7 @@ void main() {
 
     testWidgets('должен возвращать ShareAction.copy при выборе Copy',
         (tester) async {
+      setTestViewportSize(tester);
       ShareAction? result;
 
       await tester.pumpWidget(
@@ -123,6 +131,7 @@ void main() {
 
     testWidgets('должен возвращать ShareAction.share при выборе Share',
         (tester) async {
+      setTestViewportSize(tester);
       ShareAction? result;
 
       await tester.pumpWidget(
@@ -152,6 +161,7 @@ void main() {
 
     testWidgets('должен возвращать ShareAction.qr при выборе QR',
         (tester) async {
+      setTestViewportSize(tester);
       ShareAction? result;
 
       await tester.pumpWidget(
@@ -180,6 +190,7 @@ void main() {
     });
 
     testWidgets('должен возвращать null при нажатии Отмена', (tester) async {
+      setTestViewportSize(tester);
       ShareAction? result;
 
       await tester.pumpWidget(
@@ -208,6 +219,7 @@ void main() {
     });
 
     testWidgets('должен закрываться при нажатии на backdrop', (tester) async {
+      setTestViewportSize(tester);
       ShareAction? result;
 
       await tester.pumpWidget(
@@ -237,6 +249,7 @@ void main() {
     });
 
     testWidgets('должен использовать кастомные метки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ShareOptionsDialog(
@@ -255,6 +268,7 @@ void main() {
 
     testWidgets('должен отображать все элементы с правильным стилем',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ShareOptionsDialog(
@@ -274,6 +288,7 @@ void main() {
     });
 
     testWidgets('должен правильно работать в разных темах', (tester) async {
+      setTestViewportSize(tester);
       // Light theme
       await tester.pumpWidget(
         MaterialApp(
@@ -298,6 +313,7 @@ void main() {
 
   group('showShareOptionsDialog функция', () {
     testWidgets('должна открывать диалог', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Builder(
@@ -316,6 +332,7 @@ void main() {
     });
 
     testWidgets('должна передавать параметры в диалог', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Builder(
@@ -341,6 +358,7 @@ void main() {
     });
 
     testWidgets('должна возвращать выбранное действие', (tester) async {
+      setTestViewportSize(tester);
       ShareAction? result;
 
       await tester.pumpWidget(
@@ -368,6 +386,7 @@ void main() {
 
   group('CompactShareOptionsDialog Tests', () {
     testWidgets('должен отображать компактный диалог', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CompactShareOptionsDialog(),
@@ -380,6 +399,7 @@ void main() {
     });
 
     testWidgets('должен отображать опции Copy и Share', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CompactShareOptionsDialog(),
@@ -394,6 +414,7 @@ void main() {
     });
 
     testWidgets('не должен показывать QR по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CompactShareOptionsDialog(),
@@ -405,6 +426,7 @@ void main() {
 
     testWidgets('должен показывать QR когда showQrOption = true',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CompactShareOptionsDialog(
@@ -418,6 +440,7 @@ void main() {
     });
 
     testWidgets('должен возвращать правильное действие', (tester) async {
+      setTestViewportSize(tester);
       ShareAction? result;
 
       await tester.pumpWidget(
@@ -446,6 +469,7 @@ void main() {
     });
 
     testWidgets('должен работать со всеми опциями', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CompactShareOptionsDialog(
@@ -476,6 +500,7 @@ void main() {
 
   group('Edge Cases', () {
     testWidgets('должен работать с очень длинными заголовками', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ShareOptionsDialog(
@@ -490,6 +515,7 @@ void main() {
     });
 
     testWidgets('должен работать с пустыми строками', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ShareOptionsDialog(
@@ -504,6 +530,7 @@ void main() {
     });
 
     testWidgets('должен работать при множественных открытиях', (tester) async {
+      setTestViewportSize(tester);
       ShareAction? result;
 
       await tester.pumpWidget(
@@ -536,6 +563,7 @@ void main() {
 
     testWidgets('должен правильно работать при быстрых нажатиях',
         (tester) async {
+      setTestViewportSize(tester);
       ShareAction? lastResult;
 
       await tester.pumpWidget(

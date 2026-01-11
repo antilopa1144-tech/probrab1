@@ -11,6 +11,7 @@ void main() {
 
   group('CalculatorCatalogScreen', () {
     testWidgets('renders calculator catalog', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CalculatorCatalogScreen(),
@@ -24,6 +25,7 @@ void main() {
     });
 
     testWidgets('has search field', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CalculatorCatalogScreen(),
@@ -38,6 +40,7 @@ void main() {
     });
 
     testWidgets('has AppBar with title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CalculatorCatalogScreen(),
@@ -50,6 +53,7 @@ void main() {
     });
 
     testWidgets('renders list of calculators', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CalculatorCatalogScreen(),
@@ -64,6 +68,7 @@ void main() {
     });
 
     testWidgets('search field shows clear button when has text', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CalculatorCatalogScreen(),
@@ -85,6 +90,7 @@ void main() {
     });
 
     testWidgets('clear button clears search text', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CalculatorCatalogScreen(),
@@ -108,6 +114,7 @@ void main() {
     });
 
     testWidgets('renders with subCategoryKey filter', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CalculatorCatalogScreen(
@@ -123,6 +130,7 @@ void main() {
     });
 
     testWidgets('shows no results message when search yields nothing', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CalculatorCatalogScreen(),
@@ -141,6 +149,7 @@ void main() {
     });
 
     testWidgets('calculator cards have favorite toggle', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CalculatorCatalogScreen(),
@@ -155,6 +164,7 @@ void main() {
     });
 
     testWidgets('tapping favorite toggles state', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CalculatorCatalogScreen(),
@@ -176,6 +186,7 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CalculatorCatalogScreen(),
@@ -196,6 +207,7 @@ void main() {
     });
 
     testWidgets('debounces search input', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CalculatorCatalogScreen(),
@@ -220,6 +232,7 @@ void main() {
 
   group('CalculatorCatalogScreen with specific calculators', () {
     testWidgets('renders calculator list from registry', (tester) async {
+      setTestViewportSize(tester);
       // Verify the registry has calculators
       expect(CalculatorRegistry.catalogCalculators.isNotEmpty, true);
 
@@ -236,6 +249,7 @@ void main() {
     });
 
     testWidgets('registry has expected calculators', (tester) async {
+      setTestViewportSize(tester);
       final calculators = CalculatorRegistry.catalogCalculators;
 
       // Should have multiple calculators

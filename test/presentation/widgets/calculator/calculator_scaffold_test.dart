@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_scaffold.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('CalculatorScaffold', () {
     testWidgets('renders with title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: CalculatorScaffold(
@@ -22,6 +25,7 @@ void main() {
     });
 
     testWidgets('has AppBar with accent color', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: CalculatorScaffold(
@@ -37,6 +41,7 @@ void main() {
     });
 
     testWidgets('shows back button by default', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: CalculatorScaffold(
@@ -52,6 +57,7 @@ void main() {
     });
 
     testWidgets('hides back button when showBackButton is false', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: CalculatorScaffold(
@@ -68,6 +74,7 @@ void main() {
     });
 
     testWidgets('renders with result header', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: CalculatorScaffold(
@@ -87,6 +94,7 @@ void main() {
     });
 
     testWidgets('renders children in scrollable area', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: CalculatorScaffold(
@@ -108,6 +116,7 @@ void main() {
     });
 
     testWidgets('renders actions in AppBar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: CalculatorScaffold(
@@ -128,6 +137,7 @@ void main() {
     });
 
     testWidgets('renders floating action button', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: CalculatorScaffold(
@@ -147,6 +157,7 @@ void main() {
     });
 
     testWidgets('renders bottom navigation bar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: CalculatorScaffold(
@@ -165,6 +176,7 @@ void main() {
     });
 
     testWidgets('accepts custom body padding', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: CalculatorScaffold(
@@ -184,6 +196,7 @@ void main() {
 
   group('CalculatorScaffoldSimple', () {
     testWidgets('renders correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: CalculatorScaffoldSimple(
@@ -201,6 +214,7 @@ void main() {
     });
 
     testWidgets('renders actions', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: CalculatorScaffoldSimple(
@@ -221,6 +235,7 @@ void main() {
     });
 
     testWidgets('accepts custom body padding', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: CalculatorScaffoldSimple(

@@ -23,6 +23,7 @@ void main() {
 
   group('ThreeDPanelsCalculatorScreen', () {
     testWidgets('renders correctly', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -38,6 +39,7 @@ void main() {
     });
 
     testWidgets('shows Scaffold structure', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -53,6 +55,7 @@ void main() {
     });
 
     testWidgets('shows input fields', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -68,6 +71,7 @@ void main() {
     });
 
     testWidgets('uses scrollable layout', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -83,6 +87,7 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);

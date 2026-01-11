@@ -3,9 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/result_details_list.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/result_row.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ResultDetailsList', () {
     testWidgets('renders empty when items is empty', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -19,6 +22,7 @@ void main() {
     });
 
     testWidgets('renders single item', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -37,6 +41,7 @@ void main() {
     });
 
     testWidgets('renders multiple items', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -58,6 +63,7 @@ void main() {
     });
 
     testWidgets('applies custom padding', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -76,6 +82,7 @@ void main() {
     });
 
     testWidgets('uses default padding when not specified', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -92,6 +99,7 @@ void main() {
     });
 
     testWidgets('uses Column as layout', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -108,6 +116,7 @@ void main() {
     });
 
     testWidgets('adds spacing between items', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -126,6 +135,7 @@ void main() {
     });
 
     testWidgets('renders items with subtitles', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

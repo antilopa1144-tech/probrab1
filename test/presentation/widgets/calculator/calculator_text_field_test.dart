@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_text_field.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('CalculatorTextField', () {
     testWidgets('renders correctly with basic properties', (tester) async {
+      setTestViewportSize(tester);
       double testValue = 10.0;
 
       await tester.pumpWidget(
@@ -27,6 +30,7 @@ void main() {
     });
 
     testWidgets('calls onChanged when value is entered', (tester) async {
+      setTestViewportSize(tester);
       const double testValue = 5.0;
       double? changedValue;
 
@@ -51,6 +55,7 @@ void main() {
     });
 
     testWidgets('handles integer mode correctly', (tester) async {
+      setTestViewportSize(tester);
       const double testValue = 5.0;
 
       await tester.pumpWidget(
@@ -74,6 +79,7 @@ void main() {
     });
 
     testWidgets('shows suffix when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -93,6 +99,7 @@ void main() {
     });
 
     testWidgets('shows hint when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -113,6 +120,7 @@ void main() {
     });
 
     testWidgets('shows icon when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -132,6 +140,7 @@ void main() {
     });
 
     testWidgets('enforces minValue constraint', (tester) async {
+      setTestViewportSize(tester);
       const double testValue = 5.0;
       double? finalValue;
 
@@ -158,6 +167,7 @@ void main() {
     });
 
     testWidgets('enforces maxValue constraint', (tester) async {
+      setTestViewportSize(tester);
       const double testValue = 50.0;
       double? finalValue;
 
@@ -184,6 +194,7 @@ void main() {
     });
 
     testWidgets('handles empty input as 0', (tester) async {
+      setTestViewportSize(tester);
       double? changedValue;
 
       await tester.pumpWidget(
@@ -207,6 +218,7 @@ void main() {
     });
 
     testWidgets('respects decimal places setting', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -226,6 +238,7 @@ void main() {
     });
 
     testWidgets('handles disabled state', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -246,6 +259,7 @@ void main() {
     });
 
     testWidgets('applies custom accent color', (tester) async {
+      setTestViewportSize(tester);
       const customColor = Color(0xFFFF5722);
 
       await tester.pumpWidget(
@@ -268,6 +282,7 @@ void main() {
     });
 
     testWidgets('has proper textAlignVertical and isDense', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -291,6 +306,7 @@ void main() {
 
     testWidgets('text does not overflow with increased textScaleFactor',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -316,6 +332,7 @@ void main() {
     });
 
     testWidgets('handles invalid input gracefully', (tester) async {
+      setTestViewportSize(tester);
       double? changedValue;
 
       await tester.pumpWidget(
@@ -344,6 +361,7 @@ void main() {
 
   group('CalculatorTextFieldCompact', () {
     testWidgets('renders correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -365,6 +383,7 @@ void main() {
 
   group('RoomDimensionsFields', () {
     testWidgets('renders all three dimension fields', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(
@@ -390,6 +409,7 @@ void main() {
     });
 
     testWidgets('calls callbacks on value change', (tester) async {
+      setTestViewportSize(tester);
       double? newLength;
 
       await tester.pumpWidget(

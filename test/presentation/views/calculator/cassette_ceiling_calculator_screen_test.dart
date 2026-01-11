@@ -12,6 +12,7 @@ void main() {
 
   group('CassetteCeilingCalculatorScreen виджет рендеринг', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -49,6 +52,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -64,6 +68,7 @@ void main() {
 
   group('CassetteCeilingCalculatorScreen выбор типа потолка', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -76,6 +81,7 @@ void main() {
     });
 
     testWidgets('отображает иконки типов потолка', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -90,6 +96,7 @@ void main() {
     });
 
     testWidgets('можно выбрать металлический потолок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -108,6 +115,7 @@ void main() {
     });
 
     testWidgets('можно выбрать зеркальный потолок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -128,6 +136,7 @@ void main() {
 
   group('CassetteCeilingCalculatorScreen выбор размера кассеты', () {
     testWidgets('отображает кнопки выбора размера кассеты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -142,6 +151,7 @@ void main() {
     });
 
     testWidgets('можно выбрать размер кассеты 600x600', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -160,6 +170,7 @@ void main() {
     });
 
     testWidgets('можно выбрать размер кассеты 600x1200', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -180,6 +191,7 @@ void main() {
 
   group('CassetteCeilingCalculatorScreen режимы ввода', () {
     testWidgets('отображает ModeSelector', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -192,6 +204,7 @@ void main() {
     });
 
     testWidgets('можно переключить режим ввода', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -212,6 +225,7 @@ void main() {
 
   group('CassetteCeilingCalculatorScreen поля ввода', () {
     testWidgets('отображает слайдер площади в режиме manual', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -231,6 +245,7 @@ void main() {
     });
 
     testWidgets('отображает поля длины и ширины в режиме room', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -243,6 +258,7 @@ void main() {
     });
 
     testWidgets('можно изменить слайдер площади', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -270,6 +286,7 @@ void main() {
 
   group('CassetteCeilingCalculatorScreen результаты', () {
     testWidgets('отображает результаты площади', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -282,6 +299,7 @@ void main() {
     });
 
     testWidgets('отображает результаты количества кассет', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -294,6 +312,7 @@ void main() {
     });
 
     testWidgets('отображает иконки результатов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -310,6 +329,7 @@ void main() {
 
   group('CassetteCeilingCalculatorScreen список материалов', () {
     testWidgets('отображает MaterialsCardModern', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -322,6 +342,7 @@ void main() {
     });
 
     testWidgets('можно прокрутить до материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -340,6 +361,7 @@ void main() {
 
   group('CassetteCeilingCalculatorScreen действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -358,6 +380,7 @@ void main() {
     });
 
     testWidgets('кнопка поделиться существует', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),
@@ -373,6 +396,7 @@ void main() {
 
   group('CassetteCeilingCalculatorScreen корректно освобождает ресурсы', () {
     testWidgets('корректно dispose', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const CassetteCeilingCalculatorScreen(),

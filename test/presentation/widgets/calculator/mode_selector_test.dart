@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/mode_selector.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ModeSelector', () {
     testWidgets('renders with two options', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -22,6 +25,7 @@ void main() {
     });
 
     testWidgets('renders with three options', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -40,6 +44,7 @@ void main() {
     });
 
     testWidgets('calls onSelect when tapped', (tester) async {
+      setTestViewportSize(tester);
       int? selectedIndex;
 
       await tester.pumpWidget(
@@ -59,6 +64,7 @@ void main() {
     });
 
     testWidgets('accepts custom accent color', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -76,6 +82,7 @@ void main() {
     });
 
     testWidgets('accepts custom height', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -95,6 +102,7 @@ void main() {
 
   group('ModeSelectorWithIcons', () {
     testWidgets('renders with icons', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -117,6 +125,7 @@ void main() {
     });
 
     testWidgets('renders without icons', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -137,6 +146,7 @@ void main() {
     });
 
     testWidgets('calls onSelect when tapped', (tester) async {
+      setTestViewportSize(tester);
       int? selectedIndex;
 
       await tester.pumpWidget(
@@ -161,6 +171,7 @@ void main() {
 
   group('ModeSelectorVertical', () {
     testWidgets('renders vertically', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -179,6 +190,7 @@ void main() {
     });
 
     testWidgets('shows check icon for selected option', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -195,6 +207,7 @@ void main() {
     });
 
     testWidgets('calls onSelect when tapped', (tester) async {
+      setTestViewportSize(tester);
       int? selectedIndex;
 
       await tester.pumpWidget(
@@ -214,6 +227,7 @@ void main() {
     });
 
     testWidgets('accepts custom accent color', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

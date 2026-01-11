@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/result_summary_card.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ResultSummaryCard', () {
     testWidgets('renders label and value', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -21,6 +24,7 @@ void main() {
     });
 
     testWidgets('renders value with unit', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -39,6 +43,7 @@ void main() {
     });
 
     testWidgets('does not render unit when null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -57,6 +62,7 @@ void main() {
     });
 
     testWidgets('renders icon when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -73,6 +79,7 @@ void main() {
     });
 
     testWidgets('does not render icon when null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -88,6 +95,7 @@ void main() {
     });
 
     testWidgets('renders all elements together', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -108,6 +116,7 @@ void main() {
     });
 
     testWidgets('uses Card as base widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -123,6 +132,7 @@ void main() {
     });
 
     testWidgets('applies theme colors', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(
@@ -142,6 +152,7 @@ void main() {
     });
 
     testWidgets('handles large values', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

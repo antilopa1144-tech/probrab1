@@ -10,6 +10,7 @@ void main() {
 
   group('MainShell', () {
     testWidgets('renders correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const MainShell()));
 
       await tester.pump();
@@ -19,6 +20,7 @@ void main() {
     });
 
     testWidgets('displays bottom navigation bar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const MainShell()));
 
       await tester.pump();
@@ -28,6 +30,7 @@ void main() {
     });
 
     testWidgets('has three navigation tabs', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const MainShell()));
 
       await tester.pump();
@@ -41,6 +44,7 @@ void main() {
     });
 
     testWidgets('starts with home tab selected', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const MainShell()));
 
       await tester.pump();
@@ -54,6 +58,7 @@ void main() {
     });
 
     testWidgets('has IndexedStack for tab content', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const MainShell()));
 
       await tester.pump();
@@ -63,6 +68,7 @@ void main() {
     });
 
     testWidgets('can switch to projects tab', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const MainShell()));
 
       await tester.pump();
@@ -81,6 +87,7 @@ void main() {
     });
 
     testWidgets('can switch to favorites tab', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const MainShell()));
 
       await tester.pump();
@@ -99,6 +106,7 @@ void main() {
     });
 
     testWidgets('has Scaffold widgets', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const MainShell()));
 
       await tester.pump();
@@ -109,6 +117,7 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const MainShell()));
 
       await tester.pump();
@@ -122,6 +131,7 @@ void main() {
       testWidgets(
         'повторный тап на текущую вкладку сбрасывает стек навигации',
         (tester) async {
+          setTestViewportSize(tester);
           await tester.pumpWidget(createTestApp(child: const MainShell()));
 
           await tester.pump();
@@ -180,6 +190,7 @@ void main() {
       });
 
       testWidgets('каждая вкладка имеет свой Navigator', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(createTestApp(child: const MainShell()));
 
         await tester.pump();
@@ -192,6 +203,7 @@ void main() {
 
     group('Тесты обработки back button', () {
       testWidgets('PopScope правильно обрабатывается', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(createTestApp(child: const MainShell()));
 
         await tester.pump();
@@ -244,6 +256,7 @@ void main() {
 
     group('Тесты иконок навигации', () {
       testWidgets('все вкладки имеют правильные иконки', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(createTestApp(child: const MainShell()));
 
         await tester.pump();
@@ -256,6 +269,7 @@ void main() {
       });
 
       testWidgets('вкладки имеют правильные подписи', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(createTestApp(child: const MainShell()));
 
         await tester.pump();

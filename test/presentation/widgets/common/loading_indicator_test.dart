@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/common/loading_indicator.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('LoadingIndicator', () {
     testWidgets('renders CircularProgressIndicator', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -17,6 +20,7 @@ void main() {
     });
 
     testWidgets('uses default size of 32', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -31,6 +35,7 @@ void main() {
     });
 
     testWidgets('applies custom size', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -45,6 +50,7 @@ void main() {
     });
 
     testWidgets('uses default strokeWidth of 3', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -60,6 +66,7 @@ void main() {
     });
 
     testWidgets('applies custom strokeWidth', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -75,6 +82,7 @@ void main() {
     });
 
     testWidgets('applies custom color', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -91,6 +99,7 @@ void main() {
     });
 
     testWidgets('uses null valueColor when no color specified', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -106,6 +115,7 @@ void main() {
     });
 
     testWidgets('centers the indicator', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -118,6 +128,7 @@ void main() {
     });
 
     testWidgets('renders with all custom properties', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

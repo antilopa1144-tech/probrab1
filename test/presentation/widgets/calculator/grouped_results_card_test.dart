@@ -8,6 +8,7 @@ import '../../../helpers/test_helpers.dart';
 void main() {
   group('GroupedResultsCard', () {
     testWidgets('renders nothing when results is empty', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Builder(
@@ -29,6 +30,7 @@ void main() {
     });
 
     testWidgets('renders materials group', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Builder(
@@ -55,6 +57,7 @@ void main() {
     });
 
     testWidgets('renders consumables group', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Builder(
@@ -81,6 +84,7 @@ void main() {
     });
 
     testWidgets('renders additional group', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Builder(
@@ -107,6 +111,7 @@ void main() {
     });
 
     testWidgets('excludes primary key from results', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Builder(
@@ -134,6 +139,7 @@ void main() {
     });
 
     testWidgets('filters out zero values', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Builder(
@@ -160,6 +166,7 @@ void main() {
     });
 
     testWidgets('formats screw dimensions correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Builder(

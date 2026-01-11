@@ -23,6 +23,7 @@ void main() {
     });
 
     testWidgets('renders correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -39,6 +40,7 @@ void main() {
     });
 
     testWidgets('displays AppBar with area title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -56,6 +58,7 @@ void main() {
     });
 
     testWidgets('displays area subtitle', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -72,6 +75,7 @@ void main() {
     });
 
     testWidgets('has GridView for sections', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -88,6 +92,7 @@ void main() {
     });
 
     testWidgets('displays section cards', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -107,6 +112,7 @@ void main() {
     });
 
     testWidgets('can tap on section card', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -135,6 +141,7 @@ void main() {
     });
 
     testWidgets('AppBar is displayed', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -152,6 +159,7 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(

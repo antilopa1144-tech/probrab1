@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/input_field_row.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('InputFieldRow', () {
     testWidgets('renders label and field', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -21,6 +24,7 @@ void main() {
     });
 
     testWidgets('shows required asterisk when required is true', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -38,6 +42,7 @@ void main() {
     });
 
     testWidgets('does not show asterisk when required is false', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -55,6 +60,7 @@ void main() {
     });
 
     testWidgets('shows helper text when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -72,6 +78,7 @@ void main() {
     });
 
     testWidgets('does not show helper text when null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -89,6 +96,7 @@ void main() {
     });
 
     testWidgets('renders all elements together', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -109,6 +117,7 @@ void main() {
     });
 
     testWidgets('uses Column as root widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -124,6 +133,7 @@ void main() {
     });
 
     testWidgets('accepts custom field widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -145,6 +155,7 @@ void main() {
     });
 
     testWidgets('applies theme styles', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
@@ -163,6 +174,7 @@ void main() {
     });
 
     testWidgets('required defaults to false', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

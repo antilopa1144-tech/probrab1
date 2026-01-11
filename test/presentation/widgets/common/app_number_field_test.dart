@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/common/app_number_field.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('AppNumberField', () {
     testWidgets('renders with value', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -20,6 +23,7 @@ void main() {
     });
 
     testWidgets('renders with label', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -36,6 +40,7 @@ void main() {
     });
 
     testWidgets('shows required asterisk when required is true', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -53,6 +58,7 @@ void main() {
     });
 
     testWidgets('renders with unit suffix', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -69,6 +75,7 @@ void main() {
     });
 
     testWidgets('renders increment and decrement buttons', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -85,6 +92,7 @@ void main() {
     });
 
     testWidgets('increment button increases value', (tester) async {
+      setTestViewportSize(tester);
       double currentValue = 10;
 
       await tester.pumpWidget(
@@ -113,6 +121,7 @@ void main() {
     });
 
     testWidgets('decrement button decreases value', (tester) async {
+      setTestViewportSize(tester);
       double currentValue = 10;
 
       await tester.pumpWidget(
@@ -141,6 +150,7 @@ void main() {
     });
 
     testWidgets('respects step value', (tester) async {
+      setTestViewportSize(tester);
       double currentValue = 10;
 
       await tester.pumpWidget(
@@ -170,6 +180,7 @@ void main() {
     });
 
     testWidgets('clamps value to min', (tester) async {
+      setTestViewportSize(tester);
       double currentValue = 0;
 
       await tester.pumpWidget(
@@ -199,6 +210,7 @@ void main() {
     });
 
     testWidgets('clamps value to max', (tester) async {
+      setTestViewportSize(tester);
       double currentValue = 100;
 
       await tester.pumpWidget(
@@ -228,6 +240,7 @@ void main() {
     });
 
     testWidgets('shows min and max labels when specified', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -246,6 +259,7 @@ void main() {
     });
 
     testWidgets('shows helper text instead of min/max', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -262,6 +276,7 @@ void main() {
     });
 
     testWidgets('disables buttons when enabled is false', (tester) async {
+      setTestViewportSize(tester);
       double currentValue = 10;
 
       await tester.pumpWidget(
@@ -286,6 +301,7 @@ void main() {
     });
 
     testWidgets('formats decimal values correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -301,6 +317,7 @@ void main() {
     });
 
     testWidgets('formats integer values without decimal', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

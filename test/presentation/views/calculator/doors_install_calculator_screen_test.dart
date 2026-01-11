@@ -12,6 +12,7 @@ void main() {
 
   group('DoorsInstallCalculatorScreen - рендеринг виджетов', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает заголовок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -50,6 +53,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -65,6 +69,7 @@ void main() {
 
   group('DoorsInstallCalculatorScreen - селектор типа дверей', () {
     testWidgets('отображает типы дверей', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -80,6 +85,7 @@ void main() {
     });
 
     testWidgets('можно выбрать межкомнатную дверь', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -98,6 +104,7 @@ void main() {
     });
 
     testWidgets('можно выбрать входную дверь', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -116,6 +123,7 @@ void main() {
     });
 
     testWidgets('можно выбрать стеклянную дверь', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -136,6 +144,7 @@ void main() {
 
   group('DoorsInstallCalculatorScreen - количество дверей', () {
     testWidgets('отображает слайдер количества дверей', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -149,6 +158,7 @@ void main() {
     });
 
     testWidgets('можно регулировать количество дверей', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -169,6 +179,7 @@ void main() {
 
   group('DoorsInstallCalculatorScreen - размеры дверей', () {
     testWidgets('отображает поля для ввода размеров', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -183,6 +194,7 @@ void main() {
     });
 
     testWidgets('отображает заголовок размеров двери', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -195,6 +207,7 @@ void main() {
     });
 
     testWidgets('отображает единицы измерения в см', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -209,6 +222,7 @@ void main() {
 
   group('DoorsInstallCalculatorScreen - опции', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -221,6 +235,7 @@ void main() {
     });
 
     testWidgets('можно включить/выключить наличники', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -242,6 +257,7 @@ void main() {
     });
 
     testWidgets('можно включить/выключить порог', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -265,6 +281,7 @@ void main() {
 
   group('DoorsInstallCalculatorScreen - карточка материалов', () {
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -277,6 +294,7 @@ void main() {
     });
 
     testWidgets('отображает материалы с иконками', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -296,6 +314,7 @@ void main() {
 
   group('DoorsInstallCalculatorScreen - действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -312,6 +331,7 @@ void main() {
     });
 
     testWidgets('можно прокручивать содержимое', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -330,6 +350,7 @@ void main() {
 
   group('DoorsInstallCalculatorScreen - жизненный цикл', () {
     testWidgets('инициализируется с результатами по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -342,6 +363,7 @@ void main() {
     });
 
     testWidgets('корректно освобождает ресурсы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),

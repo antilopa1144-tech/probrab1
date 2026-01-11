@@ -11,6 +11,7 @@ void main() {
 
   group('ObjectSelectorScreen', () {
     testWidgets('renders correctly for house', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.house),
@@ -24,6 +25,7 @@ void main() {
     });
 
     testWidgets('renders correctly for flat', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.flat),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('renders correctly for garage', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.garage),
@@ -50,6 +53,7 @@ void main() {
     });
 
     testWidgets('displays AppBar with title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.house),
@@ -64,6 +68,7 @@ void main() {
     });
 
     testWidgets('displays correct title for flat', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.flat),
@@ -77,6 +82,7 @@ void main() {
     });
 
     testWidgets('displays correct title for garage', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.garage),
@@ -90,6 +96,7 @@ void main() {
     });
 
     testWidgets('has GridView for areas', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.house),
@@ -103,6 +110,7 @@ void main() {
     });
 
     testWidgets('displays area cards', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.house),
@@ -117,6 +125,7 @@ void main() {
     });
 
     testWidgets('shows empty state when no areas available', (tester) async {
+      setTestViewportSize(tester);
       // Garage might have fewer areas
       await tester.pumpWidget(
         createTestApp(
@@ -136,6 +145,7 @@ void main() {
     });
 
     testWidgets('AppBar is displayed', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.house),
@@ -149,6 +159,7 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.house),

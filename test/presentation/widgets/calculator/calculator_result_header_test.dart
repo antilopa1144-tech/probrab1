@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_result_header.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('CalculatorResultHeader', () {
     testWidgets('renders correctly with 2 results (white card mode)',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -27,6 +30,7 @@ void main() {
     });
 
     testWidgets('renders correctly with 3 results', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -48,6 +52,7 @@ void main() {
     });
 
     testWidgets('renders correctly with 4 results (maximum)', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -71,6 +76,7 @@ void main() {
     });
 
     testWidgets('renders icons when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -98,6 +104,7 @@ void main() {
     });
 
     testWidgets('handles very long values with FittedBox', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -127,6 +134,7 @@ void main() {
     });
 
     testWidgets('colored variant renders without white card', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -146,6 +154,7 @@ void main() {
     });
 
     testWidgets('supports textScaleFactor without overflow', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: MediaQuery(
@@ -171,6 +180,7 @@ void main() {
     });
 
     testWidgets('label supports 2 lines for long text', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -202,6 +212,7 @@ void main() {
     });
 
     testWidgets('applies correct colors in white card mode', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -224,6 +235,7 @@ void main() {
     });
 
     testWidgets('applies correct colors in colored mode', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

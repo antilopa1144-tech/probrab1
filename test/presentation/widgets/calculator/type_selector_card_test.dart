@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/type_selector_card.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('TypeSelectorCard', () {
     testWidgets('renders with title and icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -24,6 +27,7 @@ void main() {
     });
 
     testWidgets('renders with subtitle', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -43,6 +47,7 @@ void main() {
     });
 
     testWidgets('calls onTap when tapped', (tester) async {
+      setTestViewportSize(tester);
       bool tapped = false;
 
       await tester.pumpWidget(
@@ -66,6 +71,7 @@ void main() {
     });
 
     testWidgets('shows checkmark when selected and showCheckmark is true', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -85,6 +91,7 @@ void main() {
     });
 
     testWidgets('does not show checkmark when not selected', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -104,6 +111,7 @@ void main() {
     });
 
     testWidgets('uses custom icon size', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -124,6 +132,7 @@ void main() {
     });
 
     testWidgets('animates selection change', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -142,6 +151,7 @@ void main() {
     });
 
     testWidgets('handles long titles', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -165,6 +175,7 @@ void main() {
 
   group('TypeSelectorCardCompact', () {
     testWidgets('renders with title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -182,6 +193,7 @@ void main() {
     });
 
     testWidgets('uses default icon when none provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -199,6 +211,7 @@ void main() {
     });
 
     testWidgets('uses custom icon when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -217,6 +230,7 @@ void main() {
     });
 
     testWidgets('uses smaller icon size', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -259,6 +273,7 @@ void main() {
 
   group('TypeSelectorGroup', () {
     testWidgets('renders all options', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -280,6 +295,7 @@ void main() {
     });
 
     testWidgets('calls onSelect with correct index when tapped', (tester) async {
+      setTestViewportSize(tester);
       int? selectedIndex;
 
       await tester.pumpWidget(
@@ -305,6 +321,7 @@ void main() {
     });
 
     testWidgets('renders horizontally by default', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -325,6 +342,7 @@ void main() {
     });
 
     testWidgets('renders vertically when direction is vertical', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -346,6 +364,7 @@ void main() {
     });
 
     testWidgets('respects custom spacing', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

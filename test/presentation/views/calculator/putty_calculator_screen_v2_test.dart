@@ -12,6 +12,7 @@ void main() {
 
   group('PuttyCalculatorScreenV2 - рендеринг базовой структуры', () {
     testWidgets('отрисовывается без ошибок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -23,6 +24,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -32,6 +34,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -41,6 +44,7 @@ void main() {
     });
 
     testWidgets('имеет кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -53,6 +57,7 @@ void main() {
 
   group('PuttyCalculatorScreenV2 - режим ввода', () {
     testWidgets('отображает переключатель режимов ввода', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -62,6 +67,7 @@ void main() {
     });
 
     testWidgets('можно переключиться на ввод по площади', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -77,6 +83,7 @@ void main() {
     });
 
     testWidgets('можно переключиться на ввод по размерам', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -94,6 +101,7 @@ void main() {
 
   group('PuttyCalculatorScreenV2 - ввод площади', () {
     testWidgets('отображает слайдер площади в режиме по площади', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -110,6 +118,7 @@ void main() {
     });
 
     testWidgets('можно изменить площадь', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -127,6 +136,7 @@ void main() {
 
   group('PuttyCalculatorScreenV2 - ввод размеров', () {
     testWidgets('отображает слайдеры размеров в режиме по размерам', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -143,6 +153,7 @@ void main() {
     });
 
     testWidgets('отображает рассчитанную площадь', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -155,6 +166,7 @@ void main() {
 
   group('PuttyCalculatorScreenV2 - целевая отделка', () {
     testWidgets('отображает переключатель цели отделки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -164,6 +176,7 @@ void main() {
     });
 
     testWidgets('можно выбрать под обои', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -183,6 +196,7 @@ void main() {
     });
 
     testWidgets('можно выбрать под покраску', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -204,6 +218,7 @@ void main() {
 
   group('PuttyCalculatorScreenV2 - состояние стен', () {
     testWidgets('отображает селектор состояния стен', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -217,6 +232,7 @@ void main() {
     });
 
     testWidgets('можно выбрать состояние стены', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -238,6 +254,7 @@ void main() {
 
   group('PuttyCalculatorScreenV2 - класс материалов', () {
     testWidgets('отображает селектор класса материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -251,6 +268,7 @@ void main() {
     });
 
     testWidgets('отображает иконки классов материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -266,6 +284,7 @@ void main() {
     });
 
     testWidgets('можно выбрать класс материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -287,6 +306,7 @@ void main() {
 
   group('PuttyCalculatorScreenV2 - проемы', () {
     testWidgets('отображает переключатель проемов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -300,6 +320,7 @@ void main() {
     });
 
     testWidgets('можно раскрыть секцию проемов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -321,6 +342,7 @@ void main() {
 
   group('PuttyCalculatorScreenV2 - результаты', () {
     testWidgets('отображает площадь в результатах', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -330,6 +352,7 @@ void main() {
     });
 
     testWidgets('отображает количество стартовой шпаклевки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -339,6 +362,7 @@ void main() {
     });
 
     testWidgets('отображает количество финишной шпаклевки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -348,6 +372,7 @@ void main() {
     });
 
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -361,6 +386,7 @@ void main() {
     });
 
     testWidgets('отображает карточку времени работ', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -376,6 +402,7 @@ void main() {
 
   group('PuttyCalculatorScreenV2 - подсказки', () {
     testWidgets('отображает секцию подсказок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -391,6 +418,7 @@ void main() {
 
   group('PuttyCalculatorScreenV2 - взаимодействие', () {
     testWidgets('можно скроллить контент', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -404,6 +432,7 @@ void main() {
     });
 
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -417,6 +446,7 @@ void main() {
     });
 
     testWidgets('виджет корректно удаляется', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -432,6 +462,7 @@ void main() {
 
   group('PuttyCalculatorScreenV2 - единицы измерения', () {
     testWidgets('отображает квадратные метры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -441,6 +472,7 @@ void main() {
     });
 
     testWidgets('отображает метры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -457,6 +489,7 @@ void main() {
     });
 
     testWidgets('отображает килограммы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -470,6 +503,7 @@ void main() {
     });
 
     testWidgets('отображает литры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );

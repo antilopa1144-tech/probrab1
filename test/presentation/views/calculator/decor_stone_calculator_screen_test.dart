@@ -12,6 +12,7 @@ void main() {
 
   group('DecorStoneCalculatorScreen - рендеринг виджетов', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает заголовок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -51,6 +54,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -66,6 +70,7 @@ void main() {
 
   group('DecorStoneCalculatorScreen - селектор типа камня', () {
     testWidgets('отображает типы декоративного камня', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -81,6 +86,7 @@ void main() {
     });
 
     testWidgets('можно выбрать гипсовый камень', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -99,6 +105,7 @@ void main() {
     });
 
     testWidgets('можно выбрать бетонный камень', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -117,6 +124,7 @@ void main() {
     });
 
     testWidgets('можно выбрать натуральный камень', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -137,6 +145,7 @@ void main() {
 
   group('DecorStoneCalculatorScreen - режимы ввода', () {
     testWidgets('отображает селектор режима ввода', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -150,6 +159,7 @@ void main() {
     });
 
     testWidgets('можно переключиться на режим ввода стены', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -168,6 +178,7 @@ void main() {
     });
 
     testWidgets('отображает слайдер площади в ручном режиме', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -180,6 +191,7 @@ void main() {
     });
 
     testWidgets('отображает поля ширины и высоты в режиме стены', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -200,6 +212,7 @@ void main() {
 
   group('DecorStoneCalculatorScreen - регулировка ширины шва', () {
     testWidgets('можно регулировать ширину шва', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -218,6 +231,7 @@ void main() {
     });
 
     testWidgets('отображает подсказку для ширины шва', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -232,6 +246,7 @@ void main() {
 
   group('DecorStoneCalculatorScreen - опции', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -244,6 +259,7 @@ void main() {
     });
 
     testWidgets('можно включить/выключить затирку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -265,6 +281,7 @@ void main() {
     });
 
     testWidgets('можно включить/выключить грунтовку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -288,6 +305,7 @@ void main() {
 
   group('DecorStoneCalculatorScreen - карточка материалов', () {
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -300,6 +318,7 @@ void main() {
     });
 
     testWidgets('отображает материалы с иконками', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -316,6 +335,7 @@ void main() {
 
   group('DecorStoneCalculatorScreen - действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -332,6 +352,7 @@ void main() {
     });
 
     testWidgets('можно прокручивать содержимое', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -350,6 +371,7 @@ void main() {
 
   group('DecorStoneCalculatorScreen - жизненный цикл', () {
     testWidgets('инициализируется с результатами по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),
@@ -362,6 +384,7 @@ void main() {
     });
 
     testWidgets('корректно освобождает ресурсы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const DecorStoneCalculatorScreen(),

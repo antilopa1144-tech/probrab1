@@ -12,6 +12,7 @@ void main() {
 
   group('LinoleumCalculatorScreen - рендеринг виджетов', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает заголовок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -51,6 +54,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -66,6 +70,7 @@ void main() {
 
   group('LinoleumCalculatorScreen - селектор типа линолеума', () {
     testWidgets('отображает типы линолеума', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -81,6 +86,7 @@ void main() {
     });
 
     testWidgets('можно выбрать бытовой линолеум', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -99,6 +105,7 @@ void main() {
     });
 
     testWidgets('можно выбрать полукоммерческий линолеум', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -117,6 +124,7 @@ void main() {
     });
 
     testWidgets('можно выбрать коммерческий линолеум', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -137,6 +145,7 @@ void main() {
 
   group('LinoleumCalculatorScreen - режимы ввода', () {
     testWidgets('отображает селектор режима ввода', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -150,6 +159,7 @@ void main() {
     });
 
     testWidgets('можно переключиться на режим ввода комнаты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -168,6 +178,7 @@ void main() {
     });
 
     testWidgets('отображает слайдер площади в ручном режиме', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -180,6 +191,7 @@ void main() {
     });
 
     testWidgets('отображает поля ширины и длины в режиме комнаты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -200,6 +212,7 @@ void main() {
 
   group('LinoleumCalculatorScreen - ширина рулона и опции', () {
     testWidgets('можно регулировать ширину рулона', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -218,6 +231,7 @@ void main() {
     });
 
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -230,6 +244,7 @@ void main() {
     });
 
     testWidgets('можно включить/выключить двусторонний скотч', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -251,6 +266,7 @@ void main() {
     });
 
     testWidgets('можно включить/выключить плинтус', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -274,6 +290,7 @@ void main() {
 
   group('LinoleumCalculatorScreen - карточка материалов', () {
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -286,6 +303,7 @@ void main() {
     });
 
     testWidgets('отображает материалы с иконками', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -302,6 +320,7 @@ void main() {
 
   group('LinoleumCalculatorScreen - действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -318,6 +337,7 @@ void main() {
     });
 
     testWidgets('можно прокручивать содержимое', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -336,6 +356,7 @@ void main() {
 
   group('LinoleumCalculatorScreen - жизненный цикл', () {
     testWidgets('инициализируется с результатами по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),
@@ -348,6 +369,7 @@ void main() {
     });
 
     testWidgets('корректно освобождает ресурсы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const LinoleumCalculatorScreen(),

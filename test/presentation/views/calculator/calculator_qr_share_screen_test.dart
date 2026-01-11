@@ -36,6 +36,7 @@ void main() {
 
   group('CalculatorQrShareScreen', () {
     testWidgets('отображает заголовок AppBar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -44,6 +45,7 @@ void main() {
     });
 
     testWidgets('отображает название калькулятора из displayName', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(),
         calculatorDisplayName: 'Тестовый калькулятор',
@@ -54,6 +56,7 @@ void main() {
     });
 
     testWidgets('отображает название из calculator.calculatorName если displayName null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(calculatorName: 'Калькулятор плитки'),
       ));
@@ -63,6 +66,7 @@ void main() {
     });
 
     testWidgets('отображает QR код', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -70,6 +74,7 @@ void main() {
     });
 
     testWidgets('отображает переключатель компактного формата', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -77,6 +82,7 @@ void main() {
     });
 
     testWidgets('переключатель компактного формата включен по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -85,6 +91,7 @@ void main() {
     });
 
     testWidgets('отображает кнопку шаринга в AppBar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -92,6 +99,7 @@ void main() {
     });
 
     testWidgets('отображает иконку ссылки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -99,6 +107,7 @@ void main() {
     });
 
     testWidgets('отображает иконку информации', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -106,6 +115,7 @@ void main() {
     });
 
     testWidgets('отображает иконку ввода', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -113,6 +123,7 @@ void main() {
     });
 
     testWidgets('страница прокручивается', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -120,6 +131,7 @@ void main() {
     });
 
     testWidgets('содержит Card для информации', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -127,6 +139,7 @@ void main() {
     });
 
     testWidgets('ссылка отображается в SelectableText', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -134,6 +147,7 @@ void main() {
     });
 
     testWidgets('отображает кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -141,6 +155,7 @@ void main() {
     });
 
     testWidgets('QR код в контейнере с белым фоном', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -149,6 +164,7 @@ void main() {
     });
 
     testWidgets('QR код имеет размер 280', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -157,6 +173,7 @@ void main() {
     });
 
     testWidgets('отображает входные данные калькулятора', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {'area': 25.0}),
       ));
@@ -167,6 +184,7 @@ void main() {
     });
 
     testWidgets('форматирует целые значения без десятичных', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {'count': 10.0}),
       ));
@@ -177,6 +195,7 @@ void main() {
     });
 
     testWidgets('переключение формата работает', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -200,6 +219,7 @@ void main() {
     });
 
     testWidgets('обрабатывает пустые входные данные', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {}),
       ));
@@ -210,6 +230,7 @@ void main() {
     });
 
     testWidgets('обрабатывает null calculatorName', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(calculatorName: null),
       ));
@@ -222,6 +243,7 @@ void main() {
 
   group('CalculatorQrShareScreen - Форматирование значений', () {
     testWidgets('форматирует дробные значения корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {'area': 25.567, 'width': 3.14159}),
       ));
@@ -233,6 +255,7 @@ void main() {
     });
 
     testWidgets('удаляет trailing zeros', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {'value1': 10.00, 'value2': 5.50, 'value3': 3.100}),
       ));
@@ -244,6 +267,7 @@ void main() {
     });
 
     testWidgets('обрабатывает очень маленькие числа', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {'tiny': 0.01, 'small': 0.001}),
       ));
@@ -253,6 +277,7 @@ void main() {
     });
 
     testWidgets('обрабатывает нулевые значения', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {'zero': 0.0, 'value': 10.0}),
       ));
@@ -263,6 +288,7 @@ void main() {
     });
 
     testWidgets('обрабатывает отрицательные значения', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {'negative': -5.0, 'positive': 10.0}),
       ));
@@ -272,6 +298,7 @@ void main() {
     });
 
     testWidgets('обрабатывает очень большие числа', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {'big': 9999999.99}),
       ));
@@ -299,6 +326,7 @@ void main() {
     });
 
     testWidgets('нажатие кнопки копирования показывает SnackBar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -316,6 +344,7 @@ void main() {
     });
 
     testWidgets('кнопка шаринга работает без ошибок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -328,6 +357,7 @@ void main() {
 
   group('CalculatorQrShareScreen - Множественные входные данные', () {
     testWidgets('отображает несколько входных параметров', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {
           'area': 100.5,
@@ -347,6 +377,7 @@ void main() {
     });
 
     testWidgets('обрабатывает известные ключи параметров', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {
           'area': 50.0,
@@ -362,6 +393,7 @@ void main() {
     });
 
     testWidgets('обрабатывает неизвестные ключи параметров', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {
           'myCustomParam': 42.0,
@@ -377,6 +409,7 @@ void main() {
     });
 
     testWidgets('форматирует camelCase параметры в читаемый текст', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {
           'roomArea': 50.0,
@@ -392,6 +425,7 @@ void main() {
 
   group('CalculatorQrShareScreen - QR параметры', () {
     testWidgets('QR код имеет правильный errorCorrectionLevel', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -400,6 +434,7 @@ void main() {
     });
 
     testWidgets('QR код имеет auto версию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -408,6 +443,7 @@ void main() {
     });
 
     testWidgets('QR код имеет embedded image со стилем', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -420,6 +456,7 @@ void main() {
 
   group('CalculatorQrShareScreen - Прокрутка и навигация', () {
     testWidgets('прокрутка до конца страницы работает', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -435,6 +472,7 @@ void main() {
     });
 
     testWidgets('все основные секции видны после прокрутки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -463,6 +501,7 @@ void main() {
 
   group('CalculatorQrShareScreen - Сложные сценарии', () {
     testWidgets('displayName приоритетнее calculatorName', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(calculatorName: 'Name1'),
         calculatorDisplayName: 'Name2',
@@ -474,6 +513,7 @@ void main() {
     });
 
     testWidgets('использует calculatorName если displayName null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(calculatorName: 'CalcName'),
         calculatorDisplayName: null,
@@ -484,6 +524,7 @@ void main() {
     });
 
     testWidgets('множественное переключение формата', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -502,6 +543,7 @@ void main() {
     });
 
     testWidgets('двойное переключение возвращает исходное состояние', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -520,6 +562,7 @@ void main() {
     });
 
     testWidgets('калькулятор с notes отображается без ошибок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(notes: 'Тестовые заметки'),
       ));
@@ -529,6 +572,7 @@ void main() {
     });
 
     testWidgets('калькулятор без notes отображается без ошибок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(notes: null),
       ));
@@ -538,6 +582,7 @@ void main() {
     });
 
     testWidgets('разные calculatorId не ломают виджет', (tester) async {
+      setTestViewportSize(tester);
       final calculators = [
         createTestCalculator(calculatorId: 'tile'),
         createTestCalculator(calculatorId: 'brick'),
@@ -555,6 +600,7 @@ void main() {
 
   group('CalculatorQrShareScreen - Edge cases', () {
     testWidgets('обрабатывает пустую строку в calculatorName', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(calculatorName: ''),
       ));
@@ -564,6 +610,7 @@ void main() {
     });
 
     testWidgets('обрабатывает очень длинное название', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(
           calculatorName: 'Очень длинное название калькулятора ' * 5,
@@ -575,6 +622,7 @@ void main() {
     });
 
     testWidgets('обрабатывает специальные символы в названии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(calculatorName: 'Калькулятор №1 (тест)'),
       ));
@@ -584,6 +632,7 @@ void main() {
     });
 
     testWidgets('обрабатывает много входных параметров', (tester) async {
+      setTestViewportSize(tester);
       final inputs = <String, double>{};
       for (int i = 0; i < 20; i++) {
         inputs['param$i'] = i.toDouble();
@@ -598,6 +647,7 @@ void main() {
     });
 
     testWidgets('обрабатывает параметры с очень длинными именами', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(
         createTestCalculator(inputs: {
           'veryLongParameterNameThatShouldStillWork': 42.0,
@@ -611,6 +661,7 @@ void main() {
 
   group('CalculatorQrShareScreen - Визуальные элементы', () {
     testWidgets('содержит FilledButton для копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -625,6 +676,7 @@ void main() {
     });
 
     testWidgets('все Card виджеты отображаются', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -632,6 +684,7 @@ void main() {
     });
 
     testWidgets('основной контейнер с QR имеет декорацию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
@@ -643,6 +696,7 @@ void main() {
     });
 
     testWidgets('SelectableText позволяет выделить текст', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 

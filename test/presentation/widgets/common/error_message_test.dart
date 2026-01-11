@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/common/error_message.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ErrorMessage', () {
     testWidgets('renders with message', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -17,6 +20,7 @@ void main() {
     });
 
     testWidgets('shows default error icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -29,6 +33,7 @@ void main() {
     });
 
     testWidgets('shows custom icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -44,6 +49,7 @@ void main() {
     });
 
     testWidgets('shows action button when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -61,6 +67,7 @@ void main() {
     });
 
     testWidgets('hides action button when actionLabel is null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -76,6 +83,7 @@ void main() {
     });
 
     testWidgets('hides action button when onAction is null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -91,6 +99,7 @@ void main() {
     });
 
     testWidgets('calls onAction when button is tapped', (tester) async {
+      setTestViewportSize(tester);
       bool actionCalled = false;
 
       await tester.pumpWidget(
@@ -112,6 +121,7 @@ void main() {
     });
 
     testWidgets('centers message text', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -125,6 +135,7 @@ void main() {
     });
 
     testWidgets('renders in Column layout', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -137,6 +148,7 @@ void main() {
     });
 
     testWidgets('uses error color for icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(colorScheme: const ColorScheme.light()),
@@ -151,6 +163,7 @@ void main() {
     });
 
     testWidgets('renders with custom icon and action', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

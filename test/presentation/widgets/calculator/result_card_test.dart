@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/result_card.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ResultRowItem', () {
     test('creates with required parameters', () {
@@ -28,6 +30,7 @@ void main() {
 
   group('ResultCard', () {
     testWidgets('renders with title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -44,6 +47,7 @@ void main() {
     });
 
     testWidgets('renders with title icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -61,6 +65,7 @@ void main() {
     });
 
     testWidgets('renders result items', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -83,6 +88,7 @@ void main() {
     });
 
     testWidgets('renders result item with subtitle', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -107,6 +113,7 @@ void main() {
     });
 
     testWidgets('renders result item with icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -129,6 +136,7 @@ void main() {
     });
 
     testWidgets('renders total row', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -152,6 +160,7 @@ void main() {
     });
 
     testWidgets('renders footer widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -169,6 +178,7 @@ void main() {
     });
 
     testWidgets('accepts custom background color', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -188,6 +198,7 @@ void main() {
 
   group('ResultCardLight', () {
     testWidgets('renders with title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -204,6 +215,7 @@ void main() {
     });
 
     testWidgets('renders with title icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -221,6 +233,7 @@ void main() {
     });
 
     testWidgets('renders result items', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -241,6 +254,7 @@ void main() {
     });
 
     testWidgets('renders total row', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -259,6 +273,7 @@ void main() {
     });
 
     testWidgets('renders footer', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -305,6 +320,7 @@ void main() {
 
   group('MaterialsCardModern', () {
     testWidgets('renders with title and icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -323,6 +339,7 @@ void main() {
     });
 
     testWidgets('renders material items', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -346,6 +363,7 @@ void main() {
     });
 
     testWidgets('renders item with subtitle', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -370,6 +388,7 @@ void main() {
     });
 
     testWidgets('shows dividers between items', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

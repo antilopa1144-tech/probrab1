@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/input_group.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('InputGroup', () {
     testWidgets('renders with title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -21,6 +24,7 @@ void main() {
     });
 
     testWidgets('renders with icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -37,6 +41,7 @@ void main() {
     });
 
     testWidgets('renders multiple children', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -58,6 +63,7 @@ void main() {
     });
 
     testWidgets('renders trailing widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -77,6 +83,7 @@ void main() {
     });
 
     testWidgets('accepts custom accent color', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -95,6 +102,7 @@ void main() {
     });
 
     testWidgets('accepts custom background color', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -111,6 +119,7 @@ void main() {
     });
 
     testWidgets('renders without shadow when showShadow is false', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -127,6 +136,7 @@ void main() {
     });
 
     testWidgets('collapsible group starts expanded by default', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -143,6 +153,7 @@ void main() {
     });
 
     testWidgets('collapsible group can start collapsed', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -161,6 +172,7 @@ void main() {
     });
 
     testWidgets('collapsible group can be toggled', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -186,6 +198,7 @@ void main() {
     });
 
     testWidgets('accepts custom padding', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -204,6 +217,7 @@ void main() {
 
   group('InputGroupSimple', () {
     testWidgets('renders with title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -220,6 +234,7 @@ void main() {
     });
 
     testWidgets('renders with icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -236,6 +251,7 @@ void main() {
     });
 
     testWidgets('renders trailing widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -255,6 +271,7 @@ void main() {
     });
 
     testWidgets('accepts custom accent color', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -275,6 +292,7 @@ void main() {
 
   group('InputGroupColored', () {
     testWidgets('renders with title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -292,6 +310,7 @@ void main() {
     });
 
     testWidgets('renders with icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -309,6 +328,7 @@ void main() {
     });
 
     testWidgets('renders trailing widget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -326,6 +346,7 @@ void main() {
     });
 
     testWidgets('uses accent color for icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

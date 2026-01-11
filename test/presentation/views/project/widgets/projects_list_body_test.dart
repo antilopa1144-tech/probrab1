@@ -4,6 +4,8 @@ import 'package:probrab_ai/domain/models/project_v2.dart';
 import 'package:probrab_ai/presentation/views/project/widgets/projects_list_body.dart';
 import 'package:probrab_ai/presentation/views/project/widgets/project_card.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ProjectsListBody', () {
     late List<ProjectV2> testProjects;
@@ -73,6 +75,7 @@ void main() {
     });
 
     testWidgets('renders list of projects', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -104,6 +107,7 @@ void main() {
 
     testWidgets('shows favorites filter chip when showFavoritesOnly is true',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -133,6 +137,7 @@ void main() {
 
     testWidgets('shows status filter chip when filterStatus is set',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -162,6 +167,7 @@ void main() {
 
     testWidgets('shows search filter chip when searchQuery is not empty',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -191,6 +197,7 @@ void main() {
 
     testWidgets('shows filtered count when hasActiveFilters is true',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -220,6 +227,7 @@ void main() {
 
     testWidgets('hides filter info when hasActiveFilters is false',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -250,6 +258,7 @@ void main() {
 
     testWidgets('calls onClearFavorites when favorites chip is deleted',
         (tester) async {
+      setTestViewportSize(tester);
       bool cleared = false;
 
       await tester.pumpWidget(
@@ -293,6 +302,7 @@ void main() {
 
     testWidgets('calls onClearSearch when search chip is deleted',
         (tester) async {
+      setTestViewportSize(tester);
       bool cleared = false;
 
       await tester.pumpWidget(
@@ -332,6 +342,7 @@ void main() {
 
     testWidgets('calls onOpenProject when project card is tapped',
         (tester) async {
+      setTestViewportSize(tester);
       ProjectV2? openedProject;
 
       await tester.pumpWidget(
@@ -365,6 +376,7 @@ void main() {
     });
 
     testWidgets('calls onDeleteProject when delete is pressed', (tester) async {
+      setTestViewportSize(tester);
       ProjectV2? deletedProject;
 
       await tester.pumpWidget(
@@ -398,6 +410,7 @@ void main() {
     });
 
     testWidgets('calls onToggleFavorite when star is pressed', (tester) async {
+      setTestViewportSize(tester);
       ProjectV2? toggledProject;
 
       await tester.pumpWidget(
@@ -432,6 +445,7 @@ void main() {
     });
 
     testWidgets('renders empty list when filtered is empty', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -460,6 +474,7 @@ void main() {
     });
 
     testWidgets('shows multiple filter chips simultaneously', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

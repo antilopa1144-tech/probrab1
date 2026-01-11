@@ -6,6 +6,7 @@ import '../../../helpers/test_helpers.dart';
 void main() {
   group('AnimatedMicIcon -', () {
     testWidgets('отображается в idle состоянии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -21,6 +22,7 @@ void main() {
     });
 
     testWidgets('отображается в listening состоянии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -35,6 +37,7 @@ void main() {
     });
 
     testWidgets('отображается в processing состоянии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -49,6 +52,7 @@ void main() {
     });
 
     testWidgets('изменяет иконку при переходе между состояниями', (tester) async {
+      setTestViewportSize(tester);
       MicIconState currentState = MicIconState.idle;
 
       await tester.pumpWidget(
@@ -85,6 +89,7 @@ void main() {
     });
 
     testWidgets('пульсирует в listening состоянии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -107,6 +112,7 @@ void main() {
     });
 
     testWidgets('вращается в processing состоянии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -125,6 +131,7 @@ void main() {
     });
 
     testWidgets('применяет пользовательский размер', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -150,6 +157,7 @@ void main() {
     });
 
     testWidgets('применяет пользовательский цвет', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -166,6 +174,7 @@ void main() {
     });
 
     testWidgets('показывает фон по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -195,6 +204,7 @@ void main() {
     });
 
     testWidgets('скрывает фон когда showBackground = false', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -217,6 +227,7 @@ void main() {
     });
 
     testWidgets('вызывает callback при нажатии', (tester) async {
+      setTestViewportSize(tester);
       var tapped = false;
 
       await tester.pumpWidget(
@@ -239,6 +250,7 @@ void main() {
     });
 
     testWidgets('не реагирует на нажатие когда onTap = null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -254,6 +266,7 @@ void main() {
     });
 
     testWidgets('анимация перехода работает между состояниями', (tester) async {
+      setTestViewportSize(tester);
       MicIconState state = MicIconState.idle;
 
       await tester.pumpWidget(
@@ -290,6 +303,7 @@ void main() {
     });
 
     testWidgets('останавливает анимации при переходе в idle', (tester) async {
+      setTestViewportSize(tester);
       MicIconState state = MicIconState.listening;
 
       await tester.pumpWidget(
@@ -326,6 +340,7 @@ void main() {
     });
 
     testWidgets('применяет пользовательский цвет фона', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -342,6 +357,7 @@ void main() {
     });
 
     testWidgets('размер иконки пропорционален размеру контейнера', (tester) async {
+      setTestViewportSize(tester);
       const containerSize = 100.0;
       const expectedIconSize = containerSize * 0.6;
 
@@ -361,6 +377,7 @@ void main() {
     });
 
     testWidgets('переход от listening к processing работает', (tester) async {
+      setTestViewportSize(tester);
       MicIconState state = MicIconState.listening;
 
       await tester.pumpWidget(
@@ -397,6 +414,7 @@ void main() {
     });
 
     testWidgets('все состояния отображают правильные иконки', (tester) async {
+      setTestViewportSize(tester);
       final stateIcons = {
         MicIconState.idle: Icons.mic_none_rounded,
         MicIconState.listening: Icons.mic_rounded,
@@ -419,6 +437,7 @@ void main() {
     });
 
     testWidgets('border отображается с правильным цветом', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -448,6 +467,7 @@ void main() {
     });
 
     testWidgets('анимация scale применяется в listening', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -467,6 +487,7 @@ void main() {
 
   group('AnimatedMicButton -', () {
     testWidgets('отображается с заданным состоянием', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -483,6 +504,7 @@ void main() {
     });
 
     testWidgets('отображает tooltip по умолчанию для idle', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -498,6 +520,7 @@ void main() {
     });
 
     testWidgets('отображает tooltip по умолчанию для listening', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -513,6 +536,7 @@ void main() {
     });
 
     testWidgets('отображает tooltip по умолчанию для processing', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -528,6 +552,7 @@ void main() {
     });
 
     testWidgets('использует пользовательский tooltip', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -544,6 +569,7 @@ void main() {
     });
 
     testWidgets('применяет пользовательский размер', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -562,6 +588,7 @@ void main() {
     });
 
     testWidgets('вызывает callback при нажатии', (tester) async {
+      setTestViewportSize(tester);
       var pressed = false;
 
       await tester.pumpWidget(
@@ -584,6 +611,7 @@ void main() {
     });
 
     testWidgets('применяет пользовательский цвет иконки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -602,6 +630,7 @@ void main() {
     });
 
     testWidgets('работает без callback', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -617,6 +646,7 @@ void main() {
     });
 
     testWidgets('отображает все состояния корректно', (tester) async {
+      setTestViewportSize(tester);
       for (final state in MicIconState.values) {
         await tester.pumpWidget(
           createTestApp(

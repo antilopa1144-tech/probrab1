@@ -5,6 +5,8 @@ import 'package:probrab_ai/domain/models/project_v2.dart';
 import 'package:probrab_ai/presentation/views/project/qr_share_screen.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -61,6 +63,7 @@ void main() {
 
   group('QRShareScreen - Основное отображение', () {
     testWidgets('отображает заголовок AppBar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -68,6 +71,7 @@ void main() {
     });
 
     testWidgets('отображает название проекта', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(name: 'Мой ремонт');
       await tester.pumpWidget(createTestWidget(project));
       await tester.pump();
@@ -76,6 +80,7 @@ void main() {
     });
 
     testWidgets('отображает описание проекта если есть', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(description: 'Описание проекта');
       await tester.pumpWidget(createTestWidget(project));
       await tester.pump();
@@ -84,6 +89,7 @@ void main() {
     });
 
     testWidgets('не отображает описание если его нет', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(description: null);
       await tester.pumpWidget(createTestWidget(project));
       await tester.pump();
@@ -93,6 +99,7 @@ void main() {
     });
 
     testWidgets('отображает QR код', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -100,6 +107,7 @@ void main() {
     });
 
     testWidgets('страница прокручивается', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -107,6 +115,7 @@ void main() {
     });
 
     testWidgets('содержит Card для информации', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -116,6 +125,7 @@ void main() {
 
   group('QRShareScreen - QR код генерация', () {
     testWidgets('QR код имеет правильные параметры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -127,6 +137,7 @@ void main() {
     });
 
     testWidgets('QR код содержит данные', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -135,6 +146,7 @@ void main() {
     });
 
     testWidgets('QR код имеет embedded image', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -145,6 +157,7 @@ void main() {
     });
 
     testWidgets('QR код в контейнере с белым фоном и тенью', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -159,6 +172,7 @@ void main() {
 
   group('QRShareScreen - Информация о проекте', () {
     testWidgets('отображает количество расчётов', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(calculationsCount: 3);
       await tester.pumpWidget(createTestWidget(project));
       await tester.pump();
@@ -168,6 +182,7 @@ void main() {
     });
 
     testWidgets('отображает стоимость материалов', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(
         calculationsCount: 1,
         materialCost: 15000,
@@ -181,6 +196,7 @@ void main() {
     });
 
     testWidgets('отображает стоимость работ', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(
         calculationsCount: 1,
         laborCost: 25000,
@@ -193,6 +209,7 @@ void main() {
     });
 
     testWidgets('отображает нулевые стоимости для пустого проекта', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(calculationsCount: 0);
       await tester.pumpWidget(createTestWidget(project));
       await tester.pump();
@@ -201,6 +218,7 @@ void main() {
     });
 
     testWidgets('отображает иконки для информации', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -212,6 +230,7 @@ void main() {
 
   group('QRShareScreen - Переключатель компактного формата', () {
     testWidgets('отображает переключатель компактного формата', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -221,6 +240,7 @@ void main() {
     });
 
     testWidgets('переключатель компактного формата включен по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -229,6 +249,7 @@ void main() {
     });
 
     testWidgets('переключение компактного формата работает', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -244,6 +265,7 @@ void main() {
 
   group('QRShareScreen - Прямая ссылка', () {
     testWidgets('отображает секцию прямой ссылки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -252,6 +274,7 @@ void main() {
     });
 
     testWidgets('ссылка отображается в SelectableText', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -259,6 +282,7 @@ void main() {
     });
 
     testWidgets('отображает кнопку копирования ссылки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -275,6 +299,7 @@ void main() {
     });
 
     testWidgets('нажатие кнопки копирования показывает SnackBar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -294,6 +319,7 @@ void main() {
     });
 
     testWidgets('ссылка отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(name: 'Тест');
       await tester.pumpWidget(createTestWidget(project));
       await tester.pump();
@@ -304,6 +330,7 @@ void main() {
 
   group('QRShareScreen - Кнопка шаринга', () {
     testWidgets('отображает кнопку шаринга в AppBar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -311,6 +338,7 @@ void main() {
     });
 
     testWidgets('кнопка шаринга имеет tooltip', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -321,6 +349,7 @@ void main() {
     });
 
     testWidgets('нажатие кнопки шаринга вызывает share', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -335,6 +364,7 @@ void main() {
 
   group('QRShareScreen - Инструкция', () {
     testWidgets('отображает инструкцию по шарингу', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -350,6 +380,7 @@ void main() {
     });
 
     testWidgets('инструкция содержит шаги', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -367,6 +398,7 @@ void main() {
     });
 
     testWidgets('инструкция в primaryContainer', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -388,6 +420,7 @@ void main() {
     });
 
     testWidgets('_InfoRow правильно форматирует числа', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(
         calculationsCount: 1,
         materialCost: 123456.789,
@@ -402,6 +435,7 @@ void main() {
 
   group('QRShareScreen - Сложные сценарии', () {
     testWidgets('проект с несколькими расчетами отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(
         name: 'Большой проект',
         description: 'Многоэтажный дом',
@@ -420,6 +454,7 @@ void main() {
     });
 
     testWidgets('прокрутка до конца страницы работает', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -436,6 +471,7 @@ void main() {
     });
 
     testWidgets('двойное переключение формата возвращает исходное состояние', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestProject()));
       await tester.pump();
 
@@ -450,6 +486,7 @@ void main() {
     });
 
     testWidgets('проект без описания не ломает layout', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(
         name: 'Проект без описания',
         description: null,
@@ -462,6 +499,7 @@ void main() {
     });
 
     testWidgets('проект с пустым названием отображается', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(name: '');
       await tester.pumpWidget(createTestWidget(project));
       await tester.pump();
@@ -471,6 +509,7 @@ void main() {
     });
 
     testWidgets('обработка очень больших чисел в стоимости', (tester) async {
+      setTestViewportSize(tester);
       final project = createTestProject(
         calculationsCount: 1,
         materialCost: 9999999.99,

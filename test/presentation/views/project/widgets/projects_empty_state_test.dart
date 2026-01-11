@@ -3,9 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/models/project_v2.dart';
 import 'package:probrab_ai/presentation/views/project/widgets/projects_empty_state.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ProjectsEmptyState', () {
     testWidgets('shows default empty message', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -24,6 +27,7 @@ void main() {
     });
 
     testWidgets('shows search not found message when searching', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -41,6 +45,7 @@ void main() {
     });
 
     testWidgets('shows favorites empty message', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -58,6 +63,7 @@ void main() {
     });
 
     testWidgets('shows filter empty message when status filter is active', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -75,6 +81,7 @@ void main() {
     });
 
     testWidgets('does not show create hint when searching', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -91,6 +98,7 @@ void main() {
     });
 
     testWidgets('does not show create hint when filtering by favorites', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -107,6 +115,7 @@ void main() {
     });
 
     testWidgets('does not show create hint when filtering by status', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -123,6 +132,7 @@ void main() {
     });
 
     testWidgets('centers content', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -141,6 +151,7 @@ void main() {
     });
 
     testWidgets('search has priority over favorites filter', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -159,6 +170,7 @@ void main() {
     });
 
     testWidgets('renders with all project statuses', (tester) async {
+      setTestViewportSize(tester);
       for (final status in ProjectStatus.values) {
         await tester.pumpWidget(
           MaterialApp(

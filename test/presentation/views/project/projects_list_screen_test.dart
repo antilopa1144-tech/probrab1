@@ -14,6 +14,7 @@ void main() {
     });
 
     testWidgets('renders without error', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -26,6 +27,7 @@ void main() {
     });
 
     testWidgets('shows app bar with title', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -38,6 +40,7 @@ void main() {
     });
 
     testWidgets('shows Scaffold structure', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -51,6 +54,7 @@ void main() {
     });
 
     testWidgets('shows favorites icon in app bar', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -63,6 +67,7 @@ void main() {
     });
 
     testWidgets('shows filter icon in app bar', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -75,6 +80,7 @@ void main() {
     });
 
     testWidgets('shows search bar', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -88,6 +94,7 @@ void main() {
     });
 
     testWidgets('can toggle favorites filter', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -103,6 +110,7 @@ void main() {
     });
 
     testWidgets('shows SearchBar widget', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -115,6 +123,7 @@ void main() {
     });
 
     testWidgets('показывает иконку сканирования QR кода', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -127,6 +136,7 @@ void main() {
     });
 
     testWidgets('показывает FAB для создания нового проекта', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -140,6 +150,7 @@ void main() {
     });
 
     testWidgets('FAB имеет иконку добавления', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -152,6 +163,7 @@ void main() {
     });
 
     testWidgets('можно переключить фильтр избранных', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -174,6 +186,7 @@ void main() {
     });
 
     testWidgets('можно открыть меню фильтров по статусу', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -190,6 +203,7 @@ void main() {
     });
 
     testWidgets('поиск изменяет query state', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -207,6 +221,7 @@ void main() {
     });
 
     testWidgets('показывает кнопку очистки при наличии текста поиска', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -226,6 +241,7 @@ void main() {
     });
 
     testWidgets('можно очистить текст поиска кнопкой', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -247,6 +263,7 @@ void main() {
     });
 
     testWidgets('показывает CircularProgressIndicator при загрузке', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -259,6 +276,7 @@ void main() {
     });
 
     testWidgets('показывает PreferredSize для SearchBar', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -271,6 +289,7 @@ void main() {
     });
 
     testWidgets('AppBar содержит несколько action кнопок', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -285,6 +304,7 @@ void main() {
     });
 
     testWidgets('SearchBar имеет правильный hint text', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -297,6 +317,7 @@ void main() {
     });
 
     testWidgets('имеет tooltip для иконки избранных', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -315,6 +336,7 @@ void main() {
     });
 
     testWidgets('имеет tooltip для иконки QR сканера', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -333,6 +355,7 @@ void main() {
     });
 
     testWidgets('имеет tooltip для фильтра по статусу', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -348,6 +371,7 @@ void main() {
     });
 
     testWidgets('FAB является extended типа', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -365,6 +389,7 @@ void main() {
     });
 
     testWidgets('звёздочка меняет цвет при активации', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -382,6 +407,7 @@ void main() {
     });
 
     testWidgets('использует ConsumerStatefulWidget', (tester) async {
+      setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);

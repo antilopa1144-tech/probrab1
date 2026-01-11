@@ -32,6 +32,7 @@ void main() {
 
   group('HomeMainScreen', () {
     testWidgets('renders correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const HomeMainScreen(),
@@ -48,6 +49,7 @@ void main() {
     });
 
     testWidgets('displays app title in AppBar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const HomeMainScreen(),
@@ -64,6 +66,7 @@ void main() {
     });
 
     testWidgets('has AppBar with menu button', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const HomeMainScreen(),
@@ -81,6 +84,7 @@ void main() {
     });
 
     testWidgets('has search field', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const HomeMainScreen(),
@@ -97,6 +101,7 @@ void main() {
     });
 
     testWidgets('displays hero section', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const HomeMainScreen(),
@@ -113,6 +118,7 @@ void main() {
     });
 
     testWidgets('displays categories section', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const HomeMainScreen(),
@@ -129,6 +135,7 @@ void main() {
     });
 
     testWidgets('displays history section', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const HomeMainScreen(),
@@ -155,6 +162,7 @@ void main() {
     });
 
     testWidgets('has RefreshIndicator', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const HomeMainScreen(),
@@ -171,6 +179,7 @@ void main() {
     });
 
     testWidgets('search field accepts input', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const HomeMainScreen(),
@@ -191,6 +200,7 @@ void main() {
     });
 
     testWidgets('can open menu', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const HomeMainScreen(),
@@ -214,6 +224,7 @@ void main() {
     });
 
     testWidgets('displays object grid', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const HomeMainScreen(),
@@ -231,6 +242,7 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const HomeMainScreen(),
@@ -280,6 +292,7 @@ void main() {
       });
 
       testWidgets('очистка поиска убирает кнопку clear', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const HomeMainScreen(),
@@ -309,6 +322,7 @@ void main() {
       });
 
       testWidgets('поиск фильтрует категории объектов', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const HomeMainScreen(),
@@ -331,6 +345,7 @@ void main() {
       });
 
       testWidgets('пустой поиск показывает empty state', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const HomeMainScreen(),
@@ -355,6 +370,7 @@ void main() {
 
     group('Тесты меню действий', () {
       testWidgets('меню открывается и показывает все пункты', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const HomeMainScreen(),
@@ -380,6 +396,7 @@ void main() {
       });
 
       testWidgets('навигация в проекты работает', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const HomeMainScreen(),
@@ -407,6 +424,7 @@ void main() {
 
     group('Тесты истории расчётов', () {
       testWidgets('пустая история показывает empty state', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const HomeMainScreen(),
@@ -430,6 +448,7 @@ void main() {
       });
 
       testWidgets('секция истории имеет кнопку "Показать все"', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const HomeMainScreen(),
@@ -475,6 +494,7 @@ void main() {
 
     group('Тесты обновления (pull to refresh)', () {
       testWidgets('pull to refresh обновляет историю', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const HomeMainScreen(),
@@ -530,6 +550,7 @@ void main() {
 
     group('Тесты навигации по карточкам', () {
       testWidgets('тап по карточке объекта вызывает навигацию', (tester) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const HomeMainScreen(),

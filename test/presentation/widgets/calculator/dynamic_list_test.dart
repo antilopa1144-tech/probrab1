@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/dynamic_list.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('OpeningData', () {
     test('creates with default values', () {
@@ -25,6 +27,7 @@ void main() {
 
   group('DynamicList', () {
     testWidgets('renders items', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -43,6 +46,7 @@ void main() {
     });
 
     testWidgets('renders with title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -61,6 +65,7 @@ void main() {
     });
 
     testWidgets('shows add button', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -79,6 +84,7 @@ void main() {
     });
 
     testWidgets('calls onAdd when add button is pressed', (tester) async {
+      setTestViewportSize(tester);
       bool addCalled = false;
 
       await tester.pumpWidget(
@@ -102,6 +108,7 @@ void main() {
     });
 
     testWidgets('shows remove buttons when can remove', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -120,6 +127,7 @@ void main() {
     });
 
     testWidgets('hides remove buttons when at minItems', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -138,6 +146,7 @@ void main() {
     });
 
     testWidgets('calls onRemove when remove button is pressed', (tester) async {
+      setTestViewportSize(tester);
       int? removedIndex;
 
       await tester.pumpWidget(
@@ -161,6 +170,7 @@ void main() {
     });
 
     testWidgets('shows item indices when showIndex is true', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -180,6 +190,7 @@ void main() {
     });
 
     testWidgets('hides add button when at maxItems', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -199,6 +210,7 @@ void main() {
     });
 
     testWidgets('uses custom add button text', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -218,6 +230,7 @@ void main() {
     });
 
     testWidgets('uses custom add button icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -239,6 +252,7 @@ void main() {
 
   group('DynamicListSimple', () {
     testWidgets('renders items', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -257,6 +271,7 @@ void main() {
     });
 
     testWidgets('shows add button when under maxItems', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -275,6 +290,7 @@ void main() {
     });
 
     testWidgets('shows remove icons when can remove', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -293,6 +309,7 @@ void main() {
     });
 
     testWidgets('uses custom add button text', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

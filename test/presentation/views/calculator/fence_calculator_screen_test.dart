@@ -12,6 +12,7 @@ void main() {
 
   group('FenceCalculatorScreen - рендеринг виджетов', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает заголовок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -51,6 +54,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -66,6 +70,7 @@ void main() {
 
   group('FenceCalculatorScreen - селектор типа забора', () {
     testWidgets('отображает типы заборов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -81,6 +86,7 @@ void main() {
     });
 
     testWidgets('можно выбрать профнастил', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -99,6 +105,7 @@ void main() {
     });
 
     testWidgets('можно выбрать штакетник', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -117,6 +124,7 @@ void main() {
     });
 
     testWidgets('можно выбрать сетку-рабицу', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -137,6 +145,7 @@ void main() {
 
   group('FenceCalculatorScreen - размеры забора', () {
     testWidgets('отображает слайдеры размеров', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -151,6 +160,7 @@ void main() {
     });
 
     testWidgets('можно регулировать длину забора', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -169,6 +179,7 @@ void main() {
     });
 
     testWidgets('можно регулировать высоту забора', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -189,6 +200,7 @@ void main() {
 
   group('FenceCalculatorScreen - расстояние между столбами', () {
     testWidgets('отображает слайдер расстояния между столбами', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -201,6 +213,7 @@ void main() {
     });
 
     testWidgets('можно регулировать расстояние между столбами', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -219,6 +232,7 @@ void main() {
     });
 
     testWidgets('отображает подсказку о расстоянии между столбами', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -233,6 +247,7 @@ void main() {
 
   group('FenceCalculatorScreen - карточка материалов', () {
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -245,6 +260,7 @@ void main() {
     });
 
     testWidgets('отображает материалы с иконками', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -263,6 +279,7 @@ void main() {
 
   group('FenceCalculatorScreen - действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -279,6 +296,7 @@ void main() {
     });
 
     testWidgets('можно прокручивать содержимое', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -297,6 +315,7 @@ void main() {
 
   group('FenceCalculatorScreen - жизненный цикл', () {
     testWidgets('инициализируется с результатами по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),
@@ -309,6 +328,7 @@ void main() {
     });
 
     testWidgets('корректно освобождает ресурсы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const FenceCalculatorScreen(),

@@ -12,6 +12,7 @@ void main() {
 
   group('SlopesCalculatorScreen - рендеринг базовой структуры', () {
     testWidgets('отрисовывается без ошибок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -23,6 +24,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -32,6 +34,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -41,6 +44,7 @@ void main() {
     });
 
     testWidgets('имеет кнопки экспорта в AppBar', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -53,6 +57,7 @@ void main() {
 
   group('SlopesCalculatorScreen - селектор типа откосов', () {
     testWidgets('отображает TypeSelectorGroup для выбора типа', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -62,6 +67,7 @@ void main() {
     });
 
     testWidgets('отображает иконки для всех типов откосов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -74,6 +80,7 @@ void main() {
     });
 
     testWidgets('можно выбрать тип гипсокартон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -89,6 +96,7 @@ void main() {
     });
 
     testWidgets('можно выбрать тип штукатурка', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -104,6 +112,7 @@ void main() {
     });
 
     testWidgets('можно выбрать тип сэндвич-панели', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -121,6 +130,7 @@ void main() {
 
   group('SlopesCalculatorScreen - количество окон', () {
     testWidgets('отображает слайдер для количества окон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -130,6 +140,7 @@ void main() {
     });
 
     testWidgets('можно изменить количество окон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -147,6 +158,7 @@ void main() {
 
   group('SlopesCalculatorScreen - размеры окна', () {
     testWidgets('отображает поля для ширины и высоты окна', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -156,6 +168,7 @@ void main() {
     });
 
     testWidgets('отображает слайдер глубины откоса', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -165,6 +178,7 @@ void main() {
     });
 
     testWidgets('можно изменить глубину откоса', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -182,6 +196,7 @@ void main() {
 
   group('SlopesCalculatorScreen - опции', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -191,6 +206,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию уголков', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -210,6 +226,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию грунтовки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -231,6 +248,7 @@ void main() {
 
   group('SlopesCalculatorScreen - результаты', () {
     testWidgets('отображает количество окон в результатах', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -241,6 +259,7 @@ void main() {
     });
 
     testWidgets('отображает площадь откосов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -251,6 +270,7 @@ void main() {
     });
 
     testWidgets('отображает MaterialsCardModern', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -266,6 +286,7 @@ void main() {
 
   group('SlopesCalculatorScreen - взаимодействие', () {
     testWidgets('можно скроллить контент', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -279,6 +300,7 @@ void main() {
     });
 
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -292,6 +314,7 @@ void main() {
     });
 
     testWidgets('виджет корректно удаляется', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -307,6 +330,7 @@ void main() {
 
   group('SlopesCalculatorScreen - единицы измерения', () {
     testWidgets('отображает единицы измерения сантиметры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );
@@ -316,6 +340,7 @@ void main() {
     });
 
     testWidgets('отображает единицы измерения метры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const SlopesCalculatorScreen()),
       );

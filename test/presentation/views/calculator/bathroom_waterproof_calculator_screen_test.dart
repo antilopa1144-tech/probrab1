@@ -12,6 +12,7 @@ void main() {
 
   group('BathroomWaterproofCalculatorScreen виджет рендеринг', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -49,6 +52,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -64,6 +68,7 @@ void main() {
 
   group('BathroomWaterproofCalculatorScreen выбор типа гидроизоляции', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -76,6 +81,7 @@ void main() {
     });
 
     testWidgets('отображает иконки типов гидроизоляции', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -90,6 +96,7 @@ void main() {
     });
 
     testWidgets('можно выбрать жидкую гидроизоляцию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -108,6 +115,7 @@ void main() {
     });
 
     testWidgets('можно выбрать рулонную гидроизоляцию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -128,6 +136,7 @@ void main() {
 
   group('BathroomWaterproofCalculatorScreen поля ввода размеров', () {
     testWidgets('отображает поля ввода длины и ширины', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -141,6 +150,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorTextField виджеты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -155,6 +165,7 @@ void main() {
 
   group('BathroomWaterproofCalculatorScreen слайдеры', () {
     testWidgets('отображает слайдер высоты захода на стены', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -168,6 +179,7 @@ void main() {
     });
 
     testWidgets('отображает слайдер количества слоев', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -180,6 +192,7 @@ void main() {
     });
 
     testWidgets('можно изменить слайдер высоты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -198,6 +211,7 @@ void main() {
     });
 
     testWidgets('можно изменить количество слоев', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -218,6 +232,7 @@ void main() {
 
   group('BathroomWaterproofCalculatorScreen переключатели опций', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -230,6 +245,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию грунтовки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -248,6 +264,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию ленты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -268,6 +285,7 @@ void main() {
 
   group('BathroomWaterproofCalculatorScreen результаты', () {
     testWidgets('отображает результаты площади', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -280,6 +298,7 @@ void main() {
     });
 
     testWidgets('отображает результаты в кг', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -292,6 +311,7 @@ void main() {
     });
 
     testWidgets('отображает иконки результатов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -308,6 +328,7 @@ void main() {
 
   group('BathroomWaterproofCalculatorScreen список материалов', () {
     testWidgets('отображает MaterialsCardModern', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -320,6 +341,7 @@ void main() {
     });
 
     testWidgets('можно прокрутить до материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -338,6 +360,7 @@ void main() {
 
   group('BathroomWaterproofCalculatorScreen действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -356,6 +379,7 @@ void main() {
     });
 
     testWidgets('кнопка поделиться существует', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),
@@ -371,6 +395,7 @@ void main() {
 
   group('BathroomWaterproofCalculatorScreen корректно освобождает ресурсы', () {
     testWidgets('корректно dispose', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BathroomWaterproofCalculatorScreen(),

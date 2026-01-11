@@ -12,6 +12,7 @@ void main() {
     });
 
     testWidgets('отображает иконку микрофона по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -30,6 +31,7 @@ void main() {
     });
 
     testWidgets('отображает CircularProgressIndicator во время прослушивания', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           overrides: [
@@ -55,6 +57,7 @@ void main() {
     });
 
     testWidgets('кнопка отключена во время прослушивания', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           overrides: [
@@ -80,6 +83,7 @@ void main() {
     });
 
     testWidgets('использует пользовательский размер', (tester) async {
+      setTestViewportSize(tester);
       const customSize = 32.0;
 
       await tester.pumpWidget(
@@ -100,6 +104,7 @@ void main() {
     });
 
     testWidgets('использует пользовательский цвет иконки', (tester) async {
+      setTestViewportSize(tester);
       const customColor = Colors.red;
 
       await tester.pumpWidget(
@@ -120,6 +125,7 @@ void main() {
     });
 
     testWidgets('отображает tooltip', (tester) async {
+      setTestViewportSize(tester);
       const tooltipText = 'Нажмите для голосового ввода';
 
       await tester.pumpWidget(
@@ -140,6 +146,7 @@ void main() {
     });
 
     testWidgets('использует tooltip по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -157,6 +164,7 @@ void main() {
     });
 
     testWidgets('кнопка имеет правильные constraints', (tester) async {
+      setTestViewportSize(tester);
       const size = 24.0;
 
       await tester.pumpWidget(
@@ -177,6 +185,7 @@ void main() {
     });
 
     testWidgets('кнопка имеет нулевой padding', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -194,6 +203,7 @@ void main() {
     });
 
     testWidgets('CircularProgressIndicator имеет правильные параметры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           overrides: [
@@ -221,6 +231,7 @@ void main() {
     });
 
     testWidgets('нажатие на кнопку запускает голосовой ввод', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -242,6 +253,7 @@ void main() {
     });
 
     testWidgets('является ConsumerWidget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -259,6 +271,7 @@ void main() {
     });
 
     testWidgets('работает с разными размерами', (tester) async {
+      setTestViewportSize(tester);
       for (final size in [16.0, 24.0, 32.0, 48.0]) {
         await tester.pumpWidget(
           createTestApp(
@@ -287,6 +300,7 @@ void main() {
     });
 
     testWidgets('отображает заголовок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -301,6 +315,7 @@ void main() {
     });
 
     testWidgets('отображает иконку микрофона', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -315,6 +330,7 @@ void main() {
     });
 
     testWidgets('отображает статус "Инициализация..."', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -329,6 +345,7 @@ void main() {
     });
 
     testWidgets('отображает подсказку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -346,6 +363,7 @@ void main() {
     });
 
     testWidgets('отображает кнопку "Отмена"', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -360,6 +378,7 @@ void main() {
     });
 
     testWidgets('имеет анимацию пульсации', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -375,6 +394,7 @@ void main() {
     });
 
     testWidgets('закрывается при нажатии "Отмена"', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: Builder(
@@ -409,6 +429,7 @@ void main() {
     });
 
     testWidgets('является ConsumerStatefulWidget', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -423,6 +444,7 @@ void main() {
     });
 
     testWidgets('Dialog имеет правильную форму', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -438,6 +460,7 @@ void main() {
     });
 
     testWidgets('содержит правильную структуру', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -455,6 +478,7 @@ void main() {
     });
 
     testWidgets('иконка микрофона имеет правильный размер', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -470,6 +494,7 @@ void main() {
     });
 
     testWidgets('контейнер с микрофоном имеет правильный размер', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -485,6 +510,7 @@ void main() {
     });
 
     testWidgets('отображает статус "Говорите..." когда слушает', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           overrides: [

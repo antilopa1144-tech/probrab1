@@ -12,6 +12,7 @@ void main() {
 
   group('StretchCeilingCalculatorScreen - рендеринг базовой структуры', () {
     testWidgets('отрисовывается без ошибок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -23,6 +24,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -32,6 +34,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -41,6 +44,7 @@ void main() {
     });
 
     testWidgets('имеет кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -53,6 +57,7 @@ void main() {
 
   group('StretchCeilingCalculatorScreen - селектор типа потолка', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -62,6 +67,7 @@ void main() {
     });
 
     testWidgets('отображает все типы полотна', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -74,6 +80,7 @@ void main() {
     });
 
     testWidgets('можно выбрать матовое полотно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -89,6 +96,7 @@ void main() {
     });
 
     testWidgets('можно выбрать глянцевое полотно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -104,6 +112,7 @@ void main() {
     });
 
     testWidgets('можно выбрать сатиновое полотно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -119,6 +128,7 @@ void main() {
     });
 
     testWidgets('можно выбрать тканевое полотно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -136,6 +146,7 @@ void main() {
 
   group('StretchCeilingCalculatorScreen - режим ввода', () {
     testWidgets('отображает переключатель режимов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -145,6 +156,7 @@ void main() {
     });
 
     testWidgets('можно переключиться на ручной ввод площади', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -160,6 +172,7 @@ void main() {
     });
 
     testWidgets('можно переключиться на ввод размеров комнаты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -177,6 +190,7 @@ void main() {
 
   group('StretchCeilingCalculatorScreen - ввод размеров комнаты', () {
     testWidgets('отображает поля для длины и ширины', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -186,6 +200,7 @@ void main() {
     });
 
     testWidgets('отображает рассчитанную площадь', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -197,6 +212,7 @@ void main() {
 
   group('StretchCeilingCalculatorScreen - количество светильников', () {
     testWidgets('отображает слайдер для светильников', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -206,6 +222,7 @@ void main() {
     });
 
     testWidgets('можно изменить количество светильников', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -221,6 +238,7 @@ void main() {
     });
 
     testWidgets('отображает подсказку о светильниках', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -236,6 +254,7 @@ void main() {
 
   group('StretchCeilingCalculatorScreen - результаты', () {
     testWidgets('отображает площадь потолка', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -246,6 +265,7 @@ void main() {
     });
 
     testWidgets('отображает периметр', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -255,6 +275,7 @@ void main() {
     });
 
     testWidgets('отображает количество светильников в результатах', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -264,6 +285,7 @@ void main() {
     });
 
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -279,6 +301,7 @@ void main() {
 
   group('StretchCeilingCalculatorScreen - взаимодействие', () {
     testWidgets('можно скроллить контент', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -292,6 +315,7 @@ void main() {
     });
 
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -305,6 +329,7 @@ void main() {
     });
 
     testWidgets('виджет корректно удаляется', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -320,6 +345,7 @@ void main() {
 
   group('StretchCeilingCalculatorScreen - единицы измерения', () {
     testWidgets('отображает квадратные метры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -329,6 +355,7 @@ void main() {
     });
 
     testWidgets('отображает метры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -338,6 +365,7 @@ void main() {
     });
 
     testWidgets('отображает штуки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );

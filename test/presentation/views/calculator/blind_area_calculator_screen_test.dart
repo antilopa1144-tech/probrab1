@@ -12,6 +12,7 @@ void main() {
 
   group('BlindAreaCalculatorScreen виджет рендеринг', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -49,6 +52,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -64,6 +68,7 @@ void main() {
 
   group('BlindAreaCalculatorScreen выбор типа отмостки', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -76,6 +81,7 @@ void main() {
     });
 
     testWidgets('отображает иконки типов отмостки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -90,6 +96,7 @@ void main() {
     });
 
     testWidgets('можно выбрать бетонную отмостку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -108,6 +115,7 @@ void main() {
     });
 
     testWidgets('можно выбрать брусчатку', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -128,6 +136,7 @@ void main() {
 
   group('BlindAreaCalculatorScreen поля ввода размеров', () {
     testWidgets('отображает поля ввода длины и ширины дома', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -141,6 +150,7 @@ void main() {
     });
 
     testWidgets('отображает поле ввода ширины отмостки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -153,6 +163,7 @@ void main() {
     });
 
     testWidgets('отображает поле ввода толщины', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -165,6 +176,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorTextField виджеты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -179,6 +191,7 @@ void main() {
 
   group('BlindAreaCalculatorScreen переключатели опций', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -191,6 +204,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию утепления', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -209,6 +223,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию дренажа', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -229,6 +244,7 @@ void main() {
 
   group('BlindAreaCalculatorScreen результаты', () {
     testWidgets('отображает результаты периметра', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -241,6 +257,7 @@ void main() {
     });
 
     testWidgets('отображает результаты площади и объема', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -254,6 +271,7 @@ void main() {
     });
 
     testWidgets('отображает иконки результатов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -270,6 +288,7 @@ void main() {
 
   group('BlindAreaCalculatorScreen список материалов', () {
     testWidgets('отображает MaterialsCardModern', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -282,6 +301,7 @@ void main() {
     });
 
     testWidgets('можно прокрутить до материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -300,6 +320,7 @@ void main() {
 
   group('BlindAreaCalculatorScreen действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -318,6 +339,7 @@ void main() {
     });
 
     testWidgets('кнопка поделиться существует', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),
@@ -333,6 +355,7 @@ void main() {
 
   group('BlindAreaCalculatorScreen корректно освобождает ресурсы', () {
     testWidgets('корректно dispose', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BlindAreaCalculatorScreen(),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/preset_chips.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('Preset', () {
     test('creates with required parameters', () {
@@ -27,6 +29,7 @@ void main() {
 
   group('PresetChips', () {
     testWidgets('renders nothing when presets is empty', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -42,6 +45,7 @@ void main() {
     });
 
     testWidgets('renders action chips for each preset', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -60,6 +64,7 @@ void main() {
     });
 
     testWidgets('displays preset icons', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -77,6 +82,7 @@ void main() {
     });
 
     testWidgets('displays preset label when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -98,6 +104,7 @@ void main() {
     });
 
     testWidgets('calls onPresetSelected with values when chip is tapped', (tester) async {
+      setTestViewportSize(tester);
       Map<String, double>? selectedValues;
 
       await tester.pumpWidget(
@@ -125,6 +132,7 @@ void main() {
     });
 
     testWidgets('uses labelBuilder when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -143,6 +151,7 @@ void main() {
     });
 
     testWidgets('formats dimensions as LxWxH when no label', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -163,6 +172,7 @@ void main() {
     });
 
     testWidgets('scrolls horizontally', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -184,6 +194,7 @@ void main() {
     });
 
     testWidgets('formats integer values without decimal', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

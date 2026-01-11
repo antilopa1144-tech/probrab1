@@ -12,6 +12,7 @@ void main() {
     });
 
     testWidgets('отображает базовые элементы интерфейса', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -29,6 +30,7 @@ void main() {
     });
 
     testWidgets('отображает иконку сканера', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -42,6 +44,7 @@ void main() {
     });
 
     testWidgets('отображает MobileScanner виджет', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -55,6 +58,7 @@ void main() {
     });
 
     testWidgets('отображает рамку сканирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -68,6 +72,7 @@ void main() {
     });
 
     testWidgets('переключает фонарик при нажатии', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -86,6 +91,7 @@ void main() {
     });
 
     testWidgets('кнопка переключения камеры работает', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -104,6 +110,7 @@ void main() {
     });
 
     testWidgets('отображает Stack с несколькими слоями', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -117,6 +124,7 @@ void main() {
     });
 
     testWidgets('отображает градиент внизу экрана', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -130,6 +138,7 @@ void main() {
     });
 
     testWidgets('AppBar содержит корректные actions', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -148,6 +157,7 @@ void main() {
     });
 
     testWidgets('закрывается при нажатии кнопки назад', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -165,6 +175,7 @@ void main() {
     });
 
     testWidgets('рамка сканирования имеет правильные размеры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -179,6 +190,7 @@ void main() {
     });
 
     testWidgets('инструкции отображаются в Column', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -194,6 +206,7 @@ void main() {
     });
 
     testWidgets('текст инструкций имеет правильный стиль', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -211,6 +224,7 @@ void main() {
     });
 
     testWidgets('контейнер с градиентом имеет правильные параметры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -225,6 +239,7 @@ void main() {
     });
 
     testWidgets('Scaffold имеет правильную структуру', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -242,6 +257,7 @@ void main() {
     });
 
     testWidgets('иконка сканера имеет правильный размер', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -258,6 +274,7 @@ void main() {
     });
 
     testWidgets('все кнопки доступны для взаимодействия', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -271,6 +288,7 @@ void main() {
     });
 
     testWidgets('экран имеет темный оверлей', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -290,6 +308,7 @@ void main() {
     });
 
     testWidgets('показывает индикатор загрузки во время обработки', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -303,6 +322,7 @@ void main() {
     });
 
     testWidgets('рамка сканирования отрисовывается правильно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -323,6 +343,7 @@ void main() {
     });
 
     testWidgets('MobileScanner настроен с правильными параметрами', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),
@@ -337,6 +358,7 @@ void main() {
     });
 
     testWidgets('экран содержит все необходимые слои', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const QRScanScreen(),

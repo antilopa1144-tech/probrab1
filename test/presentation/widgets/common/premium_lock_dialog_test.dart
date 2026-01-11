@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/common/premium_lock_dialog.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('PremiumLockDialog', () {
     testWidgets('отображает название функции', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -20,6 +23,7 @@ void main() {
     });
 
     testWidgets('отображает описание если указано', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -36,6 +40,7 @@ void main() {
 
     testWidgets('отображает описание по умолчанию если не указано',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -53,6 +58,7 @@ void main() {
     });
 
     testWidgets('отображает иконку замка', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -67,6 +73,7 @@ void main() {
     });
 
     testWidgets('отображает список преимуществ Premium', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -84,6 +91,7 @@ void main() {
     });
 
     testWidgets('отображает кнопку Отмена', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -98,6 +106,7 @@ void main() {
     });
 
     testWidgets('отображает кнопку Получить Premium', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -113,6 +122,7 @@ void main() {
     });
 
     testWidgets('отображает иконки галочек для преимуществ', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -133,6 +143,7 @@ void main() {
 
   group('PremiumLockDialog.show', () {
     testWidgets('возвращает false при нажатии Отмена', (tester) async {
+      setTestViewportSize(tester);
       bool? result;
 
       await tester.pumpWidget(
@@ -169,6 +180,7 @@ void main() {
 
     testWidgets('кнопка Получить Premium закрывает диалог с true',
         (tester) async {
+      setTestViewportSize(tester);
       bool? result;
 
       await tester.pumpWidget(
@@ -211,6 +223,7 @@ void main() {
     });
 
     testWidgets('возвращает false при закрытии диалога', (tester) async {
+      setTestViewportSize(tester);
       bool? result;
 
       await tester.pumpWidget(
@@ -244,6 +257,7 @@ void main() {
     });
 
     testWidgets('передаёт description в диалог', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Builder(

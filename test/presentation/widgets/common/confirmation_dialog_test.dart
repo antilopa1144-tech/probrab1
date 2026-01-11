@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/common/confirmation_dialog.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ConfirmationDialog', () {
     testWidgets('renders with title and message', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -37,6 +40,7 @@ void main() {
     });
 
     testWidgets('renders confirm and cancel buttons', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -69,6 +73,7 @@ void main() {
     });
 
     testWidgets('calls onConfirm when confirm button is tapped', (tester) async {
+      setTestViewportSize(tester);
       bool confirmed = false;
 
       await tester.pumpWidget(
@@ -107,6 +112,7 @@ void main() {
     });
 
     testWidgets('calls onCancel when cancel button is tapped', (tester) async {
+      setTestViewportSize(tester);
       bool cancelled = false;
 
       await tester.pumpWidget(
@@ -146,6 +152,7 @@ void main() {
     });
 
     testWidgets('closes dialog when confirm button is tapped', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -182,6 +189,7 @@ void main() {
     });
 
     testWidgets('closes dialog when cancel button is tapped', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -218,6 +226,7 @@ void main() {
     });
 
     testWidgets('uses error colors when destructive is true', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -250,6 +259,7 @@ void main() {
     });
 
     testWidgets('uses normal style when destructive is false', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

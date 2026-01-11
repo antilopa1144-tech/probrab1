@@ -12,6 +12,7 @@ void main() {
 
   group('BalconyCalculatorScreen виджет рендеринг', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -49,6 +52,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -64,6 +68,7 @@ void main() {
 
   group('BalconyCalculatorScreen выбор типа балкона', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -76,6 +81,7 @@ void main() {
     });
 
     testWidgets('отображает иконки типов балкона', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -90,6 +96,7 @@ void main() {
     });
 
     testWidgets('можно выбрать открытый балкон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -108,6 +115,7 @@ void main() {
     });
 
     testWidgets('можно выбрать теплый балкон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -128,6 +136,7 @@ void main() {
 
   group('BalconyCalculatorScreen поля ввода размеров', () {
     testWidgets('отображает поля ввода длины и ширины', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -141,6 +150,7 @@ void main() {
     });
 
     testWidgets('отображает поле ввода высоты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -153,6 +163,7 @@ void main() {
     });
 
     testWidgets('отображает CalculatorTextField виджеты', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -167,6 +178,7 @@ void main() {
 
   group('BalconyCalculatorScreen переключатели опций', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -179,6 +191,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию утепления пола', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -197,6 +210,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию отделки стен', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -217,6 +231,7 @@ void main() {
 
   group('BalconyCalculatorScreen результаты', () {
     testWidgets('отображает результаты площади пола', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -229,6 +244,7 @@ void main() {
     });
 
     testWidgets('отображает иконки результатов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -245,6 +261,7 @@ void main() {
 
   group('BalconyCalculatorScreen список материалов', () {
     testWidgets('отображает MaterialsCardModern', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -257,6 +274,7 @@ void main() {
     });
 
     testWidgets('можно прокрутить до материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -275,6 +293,7 @@ void main() {
 
   group('BalconyCalculatorScreen действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -293,6 +312,7 @@ void main() {
     });
 
     testWidgets('кнопка поделиться существует', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),
@@ -308,6 +328,7 @@ void main() {
 
   group('BalconyCalculatorScreen корректно освобождает ресурсы', () {
     testWidgets('корректно dispose', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const BalconyCalculatorScreen(),

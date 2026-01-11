@@ -12,6 +12,7 @@ void main() {
 
   group('StairsCalculatorScreen - рендеринг базовой структуры', () {
     testWidgets('отрисовывается без ошибок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -23,6 +24,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorScaffold', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -32,6 +34,7 @@ void main() {
     });
 
     testWidgets('содержит CalculatorResultHeader', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -41,6 +44,7 @@ void main() {
     });
 
     testWidgets('имеет кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -53,6 +57,7 @@ void main() {
 
   group('StairsCalculatorScreen - селектор типа лестницы', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -62,6 +67,7 @@ void main() {
     });
 
     testWidgets('отображает иконки типов лестниц', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -73,6 +79,7 @@ void main() {
     });
 
     testWidgets('можно выбрать прямую лестницу', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -88,6 +95,7 @@ void main() {
     });
 
     testWidgets('можно выбрать Г-образную лестницу', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -103,6 +111,7 @@ void main() {
     });
 
     testWidgets('можно выбрать П-образную лестницу', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -120,6 +129,7 @@ void main() {
 
   group('StairsCalculatorScreen - размеры', () {
     testWidgets('отображает поля для ввода размеров', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -129,6 +139,7 @@ void main() {
     });
 
     testWidgets('можно изменить высоту этажа', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -144,6 +155,7 @@ void main() {
 
   group('StairsCalculatorScreen - параметры ступеней', () {
     testWidgets('отображает рассчитанные параметры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -157,6 +169,7 @@ void main() {
     });
 
     testWidgets('отображает индикатор комфортности', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -176,6 +189,7 @@ void main() {
 
   group('StairsCalculatorScreen - опции', () {
     testWidgets('отображает переключатели опций', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -185,6 +199,7 @@ void main() {
     });
 
     testWidgets('можно переключить опцию перил', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -204,6 +219,7 @@ void main() {
     });
 
     testWidgets('опция перил с двух сторон отображается условно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -216,6 +232,7 @@ void main() {
 
   group('StairsCalculatorScreen - результаты', () {
     testWidgets('отображает количество ступеней', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -226,6 +243,7 @@ void main() {
     });
 
     testWidgets('отображает высоту ступени', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -236,6 +254,7 @@ void main() {
     });
 
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -251,6 +270,7 @@ void main() {
 
   group('StairsCalculatorScreen - взаимодействие', () {
     testWidgets('можно скроллить контент', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -264,6 +284,7 @@ void main() {
     });
 
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -277,6 +298,7 @@ void main() {
     });
 
     testWidgets('виджет корректно удаляется', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -292,6 +314,7 @@ void main() {
 
   group('StairsCalculatorScreen - единицы измерения', () {
     testWidgets('отображает метры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );
@@ -301,6 +324,7 @@ void main() {
     });
 
     testWidgets('отображает сантиметры', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(child: const StairsCalculatorScreen()),
       );

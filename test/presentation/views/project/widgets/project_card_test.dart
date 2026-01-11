@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/models/project_v2.dart';
 import 'package:probrab_ai/presentation/views/project/widgets/project_card.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ProjectCard', () {
     late ProjectV2 testProject;
@@ -20,6 +22,7 @@ void main() {
     });
 
     testWidgets('renders project name', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -37,6 +40,7 @@ void main() {
     });
 
     testWidgets('renders project description', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -54,6 +58,7 @@ void main() {
     });
 
     testWidgets('shows first tag', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -71,6 +76,7 @@ void main() {
     });
 
     testWidgets('calls onTap when card is tapped', (tester) async {
+      setTestViewportSize(tester);
       bool tapped = false;
 
       await tester.pumpWidget(
@@ -91,6 +97,7 @@ void main() {
     });
 
     testWidgets('calls onDelete when delete button is pressed', (tester) async {
+      setTestViewportSize(tester);
       bool deleted = false;
 
       await tester.pumpWidget(
@@ -111,6 +118,7 @@ void main() {
     });
 
     testWidgets('calls onToggleFavorite when star is pressed', (tester) async {
+      setTestViewportSize(tester);
       bool toggled = false;
 
       await tester.pumpWidget(
@@ -131,6 +139,7 @@ void main() {
     });
 
     testWidgets('shows filled star when project is favorite', (tester) async {
+      setTestViewportSize(tester);
       testProject.isFavorite = true;
 
       await tester.pumpWidget(
@@ -151,6 +160,7 @@ void main() {
     });
 
     testWidgets('shows status chip for planning', (tester) async {
+      setTestViewportSize(tester);
       testProject.status = ProjectStatus.planning;
 
       await tester.pumpWidget(
@@ -170,6 +180,7 @@ void main() {
     });
 
     testWidgets('shows status chip for inProgress', (tester) async {
+      setTestViewportSize(tester);
       testProject.status = ProjectStatus.inProgress;
 
       await tester.pumpWidget(
@@ -189,6 +200,7 @@ void main() {
     });
 
     testWidgets('shows status chip for completed', (tester) async {
+      setTestViewportSize(tester);
       testProject.status = ProjectStatus.completed;
 
       await tester.pumpWidget(
@@ -208,6 +220,7 @@ void main() {
     });
 
     testWidgets('shows status chip for onHold', (tester) async {
+      setTestViewportSize(tester);
       testProject.status = ProjectStatus.onHold;
 
       await tester.pumpWidget(
@@ -227,6 +240,7 @@ void main() {
     });
 
     testWidgets('shows status chip for cancelled', (tester) async {
+      setTestViewportSize(tester);
       testProject.status = ProjectStatus.cancelled;
 
       await tester.pumpWidget(
@@ -246,6 +260,7 @@ void main() {
     });
 
     testWidgets('hides description when empty', (tester) async {
+      setTestViewportSize(tester);
       testProject.description = null;
 
       await tester.pumpWidget(
@@ -266,6 +281,7 @@ void main() {
     });
 
     testWidgets('formats date correctly', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

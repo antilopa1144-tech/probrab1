@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_header.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('CalculatorHeader', () {
     testWidgets('renders title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -19,6 +22,7 @@ void main() {
     });
 
     testWidgets('renders title and subtitle', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -35,6 +39,7 @@ void main() {
     });
 
     testWidgets('does not render subtitle when null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -51,6 +56,7 @@ void main() {
     });
 
     testWidgets('renders icon when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -67,6 +73,7 @@ void main() {
     });
 
     testWidgets('does not render icon when null', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -81,6 +88,7 @@ void main() {
     });
 
     testWidgets('renders trailing widget when provided', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -100,6 +108,7 @@ void main() {
     });
 
     testWidgets('renders all optional parameters together', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -123,6 +132,7 @@ void main() {
     });
 
     testWidgets('uses Row as root layout', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -137,6 +147,7 @@ void main() {
     });
 
     testWidgets('applies theme text styles', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
@@ -154,6 +165,7 @@ void main() {
     });
 
     testWidgets('applies primary color to icon', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(
@@ -173,6 +185,7 @@ void main() {
     });
 
     testWidgets('handles long title', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -196,6 +209,7 @@ void main() {
     });
 
     testWidgets('uses Expanded for title area', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(

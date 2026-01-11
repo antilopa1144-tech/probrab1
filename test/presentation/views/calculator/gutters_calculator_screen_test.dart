@@ -12,6 +12,7 @@ void main() {
 
   group('GuttersCalculatorScreen - рендеринг виджетов', () {
     testWidgets('отображается корректно', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -25,6 +26,7 @@ void main() {
     });
 
     testWidgets('отображает заголовок', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -37,6 +39,7 @@ void main() {
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -51,6 +54,7 @@ void main() {
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -66,6 +70,7 @@ void main() {
 
   group('GuttersCalculatorScreen - селектор материала', () {
     testWidgets('отображает типы материалов водостока', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -81,6 +86,7 @@ void main() {
     });
 
     testWidgets('можно выбрать пластиковый водосток', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -99,6 +105,7 @@ void main() {
     });
 
     testWidgets('можно выбрать металлический водосток', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -117,6 +124,7 @@ void main() {
     });
 
     testWidgets('можно выбрать медный водосток', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -137,6 +145,7 @@ void main() {
 
   group('GuttersCalculatorScreen - размеры крыши', () {
     testWidgets('отображает поля для ввода размеров крыши', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -152,6 +161,7 @@ void main() {
     });
 
     testWidgets('отображает слайдер количества водостоков', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -165,6 +175,7 @@ void main() {
     });
 
     testWidgets('можно регулировать количество водостоков', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -183,6 +194,7 @@ void main() {
     });
 
     testWidgets('отображает подсказку о водостоках', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -197,6 +209,7 @@ void main() {
 
   group('GuttersCalculatorScreen - опции обогрева', () {
     testWidgets('отображает переключатель обогрева', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -210,6 +223,7 @@ void main() {
     });
 
     testWidgets('можно включить/выключить обогрев', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -233,6 +247,7 @@ void main() {
 
   group('GuttersCalculatorScreen - карточка материалов', () {
     testWidgets('отображает карточку материалов', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -245,6 +260,7 @@ void main() {
     });
 
     testWidgets('отображает материалы с иконками', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -264,6 +280,7 @@ void main() {
 
   group('GuttersCalculatorScreen - действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -280,6 +297,7 @@ void main() {
     });
 
     testWidgets('можно прокручивать содержимое', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -298,6 +316,7 @@ void main() {
 
   group('GuttersCalculatorScreen - жизненный цикл', () {
     testWidgets('инициализируется с результатами по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),
@@ -310,6 +329,7 @@ void main() {
     });
 
     testWidgets('корректно освобождает ресурсы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
           child: const GuttersCalculatorScreen(),

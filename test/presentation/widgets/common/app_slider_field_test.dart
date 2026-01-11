@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/common/app_slider_field.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('AppSliderField', () {
     testWidgets('renders slider', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -22,6 +25,7 @@ void main() {
     });
 
     testWidgets('renders with label', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -40,6 +44,7 @@ void main() {
     });
 
     testWidgets('shows current value', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -58,6 +63,7 @@ void main() {
     });
 
     testWidgets('shows value with unit', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -77,6 +83,7 @@ void main() {
     });
 
     testWidgets('shows min value label', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -94,6 +101,7 @@ void main() {
     });
 
     testWidgets('shows max value label with unit', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -112,6 +120,7 @@ void main() {
     });
 
     testWidgets('calls onChanged when slider is moved', (tester) async {
+      setTestViewportSize(tester);
       double changedValue = 0;
 
       await tester.pumpWidget(
@@ -137,6 +146,7 @@ void main() {
     });
 
     testWidgets('respects divisions', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -156,6 +166,7 @@ void main() {
     });
 
     testWidgets('clamps value within range', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -174,6 +185,7 @@ void main() {
     });
 
     testWidgets('calls onChangeEnd when provided', (tester) async {
+      setTestViewportSize(tester);
       double endValue = 0;
 
       await tester.pumpWidget(
@@ -204,6 +216,7 @@ void main() {
     });
 
     testWidgets('formats integer values without decimal', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -222,6 +235,7 @@ void main() {
     });
 
     testWidgets('formats decimal values with one decimal place', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -240,6 +254,7 @@ void main() {
     });
 
     testWidgets('renders without label', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -257,6 +272,7 @@ void main() {
     });
 
     testWidgets('uses correct slider properties', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

@@ -5,9 +5,12 @@ import 'package:probrab_ai/domain/models/premium_subscription.dart';
 import 'package:probrab_ai/presentation/providers/premium_provider.dart';
 import 'package:probrab_ai/presentation/widgets/common/premium_badge.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('PremiumBadge', () {
     testWidgets('не отображается для бесплатных пользователей', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -28,6 +31,7 @@ void main() {
     });
 
     testWidgets('отображается для Premium пользователей', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -46,6 +50,7 @@ void main() {
     });
 
     testWidgets('отображает иконку и текст по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -72,6 +77,7 @@ void main() {
     });
 
     testWidgets('скрывает текст когда showLabel = false', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -90,6 +96,7 @@ void main() {
     });
 
     testWidgets('использует кастомный iconSize', (tester) async {
+      setTestViewportSize(tester);
       const customSize = 30.0;
 
       await tester.pumpWidget(
@@ -111,6 +118,7 @@ void main() {
     });
 
     testWidgets('использует кастомный padding', (tester) async {
+      setTestViewportSize(tester);
       const customPadding = EdgeInsets.all(20);
 
       await tester.pumpWidget(
@@ -137,6 +145,7 @@ void main() {
     });
 
     testWidgets('использует padding по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -163,6 +172,7 @@ void main() {
     });
 
     testWidgets('имеет градиентный фон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -190,6 +200,7 @@ void main() {
     });
 
     testWidgets('имеет закругленные углы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -214,6 +225,7 @@ void main() {
     });
 
     testWidgets('текст имеет правильный стиль', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -237,6 +249,7 @@ void main() {
 
   group('PremiumUpgradeButton', () {
     testWidgets('не отображается для Premium пользователей', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -256,6 +269,7 @@ void main() {
     });
 
     testWidgets('отображается для бесплатных пользователей', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -273,6 +287,7 @@ void main() {
     });
 
     testWidgets('отображает полную версию по умолчанию', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -294,6 +309,7 @@ void main() {
 
     testWidgets('отображает компактную версию когда compact = true',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -313,6 +329,7 @@ void main() {
     });
 
     testWidgets('компактная версия имеет tooltip', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -333,6 +350,7 @@ void main() {
 
     testWidgets('вызывает onTap при нажатии на полную версию',
         (tester) async {
+      setTestViewportSize(tester);
       bool tapped = false;
 
       await tester.pumpWidget(
@@ -358,6 +376,7 @@ void main() {
 
     testWidgets('вызывает onTap при нажатии на компактную версию',
         (tester) async {
+      setTestViewportSize(tester);
       bool tapped = false;
 
       await tester.pumpWidget(
@@ -383,6 +402,7 @@ void main() {
     });
 
     testWidgets('полная версия имеет градиентный фон', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -407,6 +427,7 @@ void main() {
     });
 
     testWidgets('полная версия имеет тень', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -434,6 +455,7 @@ void main() {
 
   group('PremiumFeatureCard', () {
     testWidgets('отображает все элементы', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -456,6 +478,7 @@ void main() {
 
     testWidgets('иконка функции отображается в круглом контейнере',
         (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -480,6 +503,7 @@ void main() {
     });
 
     testWidgets('кнопка вызывает onUpgrade при нажатии', (tester) async {
+      setTestViewportSize(tester);
       bool upgraded = false;
 
       await tester.pumpWidget(
@@ -502,6 +526,7 @@ void main() {
     });
 
     testWidgets('отображается в Card виджете', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -518,6 +543,7 @@ void main() {
     });
 
     testWidgets('иконка имеет правильный размер', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -537,6 +563,7 @@ void main() {
     });
 
     testWidgets('контейнер иконки имеет правильный размер', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -562,6 +589,7 @@ void main() {
 
   group('SubscriptionExpiryIndicator', () {
     testWidgets('не отображается когда подписка не активна', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -583,6 +611,7 @@ void main() {
     });
 
     testWidgets('не отображается для lifetime подписки', (tester) async {
+      setTestViewportSize(tester);
       final subscription = PremiumSubscription(
         isActive: true,
         type: SubscriptionType.lifetime,
@@ -613,6 +642,7 @@ void main() {
 
     testWidgets('не отображается если до окончания больше 7 дней',
         (tester) async {
+      setTestViewportSize(tester);
       final subscription = PremiumSubscription(
         isActive: true,
         type: SubscriptionType.monthly,
@@ -643,6 +673,7 @@ void main() {
 
     testWidgets('отображается когда подписка истекает через 5 дней',
         (tester) async {
+      setTestViewportSize(tester);
       // Используем фиксированную дату для избежания проблем с округлением
       final now = DateTime.now();
       final expiryDate = DateTime(now.year, now.month, now.day + 5);
@@ -678,6 +709,7 @@ void main() {
     });
 
     testWidgets('показывает правильное склонение для 1 дня', (tester) async {
+      setTestViewportSize(tester);
       final now = DateTime.now();
       // Добавляем 36 часов чтобы гарантировать что будет минимум 1 полный день
       final expiryDate = now.add(const Duration(hours: 36));
@@ -713,6 +745,7 @@ void main() {
     });
 
     testWidgets('показывает правильное склонение для 2 дней', (tester) async {
+      setTestViewportSize(tester);
       final now = DateTime.now();
       final expiryDate = DateTime(now.year, now.month, now.day).add(const Duration(days: 2, hours: 12));
 
@@ -747,6 +780,7 @@ void main() {
     });
 
     testWidgets('показывает правильное склонение для 5 дней', (tester) async {
+      setTestViewportSize(tester);
       final now = DateTime.now();
       final expiryDate = DateTime(now.year, now.month, now.day).add(const Duration(days: 5, hours: 12));
 
@@ -781,6 +815,7 @@ void main() {
     });
 
     testWidgets('показывает сообщение для истекшей подписки', (tester) async {
+      setTestViewportSize(tester);
       final subscription = PremiumSubscription(
         isActive: true,
         type: SubscriptionType.monthly,
@@ -810,6 +845,7 @@ void main() {
     });
 
     testWidgets('имеет оранжевое оформление', (tester) async {
+      setTestViewportSize(tester);
       final subscription = PremiumSubscription(
         isActive: true,
         type: SubscriptionType.monthly,
@@ -844,6 +880,7 @@ void main() {
     });
 
     testWidgets('корректно обрабатывает loading состояние', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -867,6 +904,7 @@ void main() {
     });
 
     testWidgets('корректно обрабатывает error состояние', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [

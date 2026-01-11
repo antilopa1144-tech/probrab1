@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/models/project_v2.dart';
 import 'package:probrab_ai/presentation/views/project/widgets/project_info_card.dart';
 
+import '../../../helpers/test_helpers.dart';
+
 void main() {
   group('ProjectInfoCard', () {
     late ProjectV2 testProject;
@@ -21,6 +23,7 @@ void main() {
     });
 
     testWidgets('renders description', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -35,6 +38,7 @@ void main() {
     });
 
     testWidgets('renders creation date', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -50,6 +54,7 @@ void main() {
     });
 
     testWidgets('renders update date', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -65,6 +70,7 @@ void main() {
     });
 
     testWidgets('renders material cost section', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -80,6 +86,7 @@ void main() {
     });
 
     testWidgets('renders labor cost section', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -95,6 +102,7 @@ void main() {
     });
 
     testWidgets('renders tags', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -110,6 +118,7 @@ void main() {
     });
 
     testWidgets('renders notes section', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -125,6 +134,7 @@ void main() {
     });
 
     testWidgets('hides notes section when notes is null', (tester) async {
+      setTestViewportSize(tester);
       testProject.notes = null;
 
       await tester.pumpWidget(
@@ -141,6 +151,7 @@ void main() {
     });
 
     testWidgets('hides description when empty', (tester) async {
+      setTestViewportSize(tester);
       testProject.description = null;
 
       await tester.pumpWidget(
@@ -158,6 +169,7 @@ void main() {
     });
 
     testWidgets('hides tags section when tags is empty', (tester) async {
+      setTestViewportSize(tester);
       testProject.tags = [];
 
       await tester.pumpWidget(
@@ -174,6 +186,7 @@ void main() {
     });
 
     testWidgets('is wrapped in a Card', (tester) async {
+      setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
