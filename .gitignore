@@ -59,3 +59,20 @@ key.properties
 
 # Isar native library for tests
 libisar.dll
+
+# Additional build artifacts to ignore
+**/build/
+**/Build/
+**/.gradle/
+**/gradle-wrapper.jar
+**/*.iml
+**/.idea/
+**/.vscode/settings.json
+**/.vscode/launch.json
+**/local.properties
+
+# Generated files
+**/*.g.dart
+**/*.freezed.dart
+**/*.gr.dart
+
