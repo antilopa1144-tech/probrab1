@@ -49,7 +49,7 @@ class RemoteConfigService {
       await _remoteConfig!.fetchAndActivate();
     } catch (e) {
       if (kDebugMode) {
-        print('Remote Config initialization error: $e');
+        debugPrint('Remote Config initialization error: $e');
       }
     }
   }
@@ -116,7 +116,7 @@ class RemoteConfigService {
       return await config.fetchAndActivate();
     } catch (e) {
       if (kDebugMode) {
-        print('Remote Config refresh error: $e');
+        debugPrint('Remote Config refresh error: $e');
       }
       return false;
     }

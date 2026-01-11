@@ -10,6 +10,7 @@ import '../../../core/errors/global_error_handler.dart';
 import '../../providers/project_v2_provider.dart';
 import '../../utils/calculator_navigation_helper.dart';
 import 'widgets/project_details_content.dart';
+import 'qr_share_screen.dart';
 
 part 'project_details_screen_actions.dart';
 
@@ -110,8 +111,10 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen>
             onAddCalculation: () => _addCalculation(project),
             onExport: () => _exportProject(project),
             onChangeStatus: () => _changeStatus(project),
+            onShareQR: () => _shareViaQR(project),
             onOpenCalculation: _openCalculation,
             onDeleteCalculation: _deleteCalculation,
+            onRefresh: _refreshProject,
           );
         },
       ),

@@ -4,28 +4,50 @@ import '../../../../core/localization/app_localizations.dart';
 import '../../../../domain/models/project_v2.dart';
 
 /// Карточка расчёта проекта.
-class CalculationItemCard extends StatelessWidget {
+class CalculationItemCard extends StatefulWidget {
   final ProjectCalculation calculation;
   final VoidCallback? onTap;
   final VoidCallback onDelete;
+  final bool expandByDefault;
 
   const CalculationItemCard({
     super.key,
     required this.calculation,
     this.onTap,
     required this.onDelete,
+    this.expandByDefault = false,
   });
+
+  @override
+  State<CalculationItemCard> createState() => _CalculationItemCardState();
+}
+
+class _CalculationItemCardState extends State<CalculationItemCard> {
+  late bool _isExpanded;
+  static const int _previewResultCount = 3;
+
+  @override
+  void initState() {
+    super.initState();
+    _isExpanded = widget.expandByDefault;
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final dateFormat = DateFormat('dd.MM.yyyy HH:mm');
-    final results = calculation.resultsMap;
+    final results = widget.calculation.resultsMap;
+
+    // Determine which results to show
+    final entriesToShow = _isExpanded
+        ? results.entries.toList()
+        : results.entries.take(_previewResultCount).toList();
+    final hasMoreResults = results.length > _previewResultCount;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
-        onTap: onTap,
+        onTap: widget.onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -39,14 +61,14 @@ class CalculationItemCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          calculation.name,
+                          widget.calculation.name,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          calculation.calculatorId,
+                          widget.calculation.calculatorId,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -56,7 +78,7 @@ class CalculationItemCard extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete_outline_rounded),
-                    onPressed: onDelete,
+                    onPressed: widget.onDelete,
                     tooltip: 'Удалить',
                   ),
                 ],
@@ -71,7 +93,7 @@ class CalculationItemCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    dateFormat.format(calculation.createdAt),
+                    dateFormat.format(widget.calculation.createdAt),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -82,16 +104,18 @@ class CalculationItemCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 const Divider(),
                 const SizedBox(height: 8),
-                ...results.entries.take(3).map((entry) {
+                ...entriesToShow.map((entry) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          _formatResultKey(entry.key),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                        Expanded(
+                          child: Text(
+                            _formatResultKey(entry.key),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ),
                         Text(
@@ -104,12 +128,42 @@ class CalculationItemCard extends StatelessWidget {
                     ),
                   );
                 }),
+                if (hasMoreResults) ...[
+                  const SizedBox(height: 4),
+                  Center(
+                    child: TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _isExpanded = !_isExpanded;
+                        });
+                      },
+                      icon: Icon(
+                        _isExpanded
+                            ? Icons.expand_less
+                            : Icons.expand_more,
+                        size: 18,
+                      ),
+                      label: Text(
+                        _isExpanded
+                            ? AppLocalizations.of(context)
+                                .translate('button.show_less')
+                            : AppLocalizations.of(context).translate(
+                                'button.show_more',
+                              ).replaceAll(
+                                '{count}',
+                                (results.length - _previewResultCount)
+                                    .toString(),
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
               ],
-              if (calculation.notes != null &&
-                  calculation.notes!.isNotEmpty) ...[
+              if (widget.calculation.notes != null &&
+                  widget.calculation.notes!.isNotEmpty) ...[
                 const SizedBox(height: 12),
                 Text(
-                  calculation.notes!,
+                  widget.calculation.notes!,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontStyle: FontStyle.italic,
@@ -118,7 +172,7 @@ class CalculationItemCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
-              if (onTap != null) ...[
+              if (widget.onTap != null) ...[
                 const SizedBox(height: 12),
                 const Divider(),
                 const SizedBox(height: 8),
@@ -126,7 +180,7 @@ class CalculationItemCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton.icon(
-                      onPressed: onTap,
+                      onPressed: widget.onTap,
                       icon: const Icon(Icons.open_in_new, size: 18),
                       label: Text(
                         AppLocalizations.of(

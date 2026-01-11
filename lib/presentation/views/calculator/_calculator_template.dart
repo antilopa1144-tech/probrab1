@@ -153,7 +153,9 @@ class _TemplateCalculatorScreenState extends State<TemplateCalculatorScreen> {
   @override
   void initState() {
     super.initState();
-    // TODO: Загрузить константы из provider когда понадобится Remote Config
+    // TODO: Подключить Remote Config константы (см. пример в gasblock_calculator_screen.dart:271)
+    // final constantsAsync = ref.read(calculatorConstantsProvider('template'));
+    // _constants = _TemplateConstants(constantsAsync.value);
     _constants = const _TemplateConstants(null);
     _applyInitialInputs();
     _result = _calculate();

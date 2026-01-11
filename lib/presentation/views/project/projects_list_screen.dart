@@ -4,6 +4,7 @@ import '../../../domain/models/project_v2.dart';
 import '../../../core/errors/global_error_handler.dart';
 import '../../providers/project_v2_provider.dart';
 import 'project_details_screen.dart';
+import 'qr_scan_screen.dart';
 import 'widgets/projects_empty_state.dart';
 import 'widgets/projects_list_body.dart';
 
@@ -36,6 +37,11 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen>
       appBar: AppBar(
         title: const Text('Проекты'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.qr_code_scanner_rounded),
+            tooltip: 'Сканировать QR код',
+            onPressed: _scanQRCode,
+          ),
           IconButton(
             icon: Icon(
               _showFavoritesOnly ? Icons.star : Icons.star_border,

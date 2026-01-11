@@ -116,7 +116,7 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
     final finishTypeLabel = _finishType == FinishMaterialType.dryBag ? 'сухая смесь' : 'готовая паста';
 
     final buffer = StringBuffer();
-    buffer.writeln('🏠 РАСЧЁТ ШПАКЛЁВКИ');
+    buffer.writeln('РАСЧЁТ ШПАКЛЁВКИ');
     buffer.writeln('═' * 40);
     buffer.writeln();
 
@@ -125,12 +125,12 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
     buffer.writeln('Площадь: ${r.netArea.toStringAsFixed(1)} м²');
     buffer.writeln();
 
-    buffer.writeln('🛒 МАТЕРИАЛЫ:');
+    buffer.writeln('МАТЕРИАЛЫ:');
     buffer.writeln('─' * 40);
-    buffer.writeln('• Стартовая шпатлёвка: ${r.startBags} мешков (25 кг)');
-    buffer.writeln('• Финишная шпатлёвка: ${r.finishPacks} ${_finishType == FinishMaterialType.dryBag ? "мешков (20 кг)" : "вёдер (15 л)"}');
-    buffer.writeln('• Грунтовка: ${r.primerCanisters} канистр (10 л)');
-    buffer.writeln('• Абразив: ${r.sandingSheets} листов');
+    buffer.writeln('- Стартовая шпатлёвка: ${r.startBags} мешков (25 кг)');
+    buffer.writeln('- Финишная шпатлёвка: ${r.finishPacks} ${_finishType == FinishMaterialType.dryBag ? "мешков (20 кг)" : "вёдер (15 л)"}');
+    buffer.writeln('- Грунтовка: ${r.primerCanisters} канистр (10 л)');
+    buffer.writeln('- Абразив: ${r.sandingSheets} листов');
 
     buffer.writeln();
     buffer.writeln('═' * 40);

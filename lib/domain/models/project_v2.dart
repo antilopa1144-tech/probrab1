@@ -25,11 +25,11 @@ class ProjectV2 {
   /// Расчёты в проекте
   final calculations = IsarLinks<ProjectCalculation>();
 
-  /// Общая стоимость проекта (материалы)
+  /// Общая стоимость проекта (материалы) - uses effectiveMaterialCost
   double get totalMaterialCost {
     double total = 0;
     for (final calc in calculations) {
-      total += calc.materialCost ?? 0;
+      total += calc.effectiveMaterialCost; // CHANGED: Use new getter
     }
     return total;
   }
@@ -45,6 +45,31 @@ class ProjectV2 {
 
   /// Общая стоимость проекта
   double get totalCost => totalMaterialCost + totalLaborCost;
+
+  /// Get all materials across all calculations in project (NEW)
+  @ignore
+  List<ProjectMaterial> get allMaterials {
+    final materials = <ProjectMaterial>[];
+    for (final calc in calculations) {
+      materials.addAll(calc.materials);
+    }
+    return materials;
+  }
+
+  /// Get shopping list (unpurchased materials) (NEW)
+  @ignore
+  List<ProjectMaterial> get shoppingList {
+    return allMaterials.where((m) => !m.purchased).toList();
+  }
+
+  /// Get total cost of unpurchased materials (NEW)
+  @ignore
+  double get remainingMaterialCost {
+    return shoppingList.fold<double>(
+      0,
+      (sum, material) => sum + material.totalCost,
+    );
+  }
 
   /// Избранный проект
   late bool isFavorite;
@@ -109,11 +134,14 @@ class ProjectCalculation {
   /// Результаты расчёта (как список пар ключ-значение)
   late List<KeyValuePair> results;
 
-  /// Стоимость материалов
+  /// Стоимость материалов (aggregate cost)
   double? materialCost;
 
   /// Стоимость работ
   double? laborCost;
+
+  /// Детальный список материалов (NEW)
+  late List<ProjectMaterial> materials;
 
   /// Дата создания
   late DateTime createdAt;
@@ -133,8 +161,27 @@ class ProjectCalculation {
     name = '';
     inputs = [];
     results = [];
+    materials = []; // Initialize empty materials list
     createdAt = DateTime.now();
     updatedAt = DateTime.now();
+  }
+
+  /// Get total cost from detailed materials
+  @ignore
+  double get detailedMaterialCost {
+    return materials.fold<double>(
+      0,
+      (sum, material) => sum + material.totalCost,
+    );
+  }
+
+  /// Get effective material cost (prefer detailed, fallback to aggregate)
+  @ignore
+  double get effectiveMaterialCost {
+    if (materials.isNotEmpty) {
+      return detailedMaterialCost;
+    }
+    return materialCost ?? 0;
   }
 
   /// Получить входные данные как Map

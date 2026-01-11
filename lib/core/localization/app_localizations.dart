@@ -8,43 +8,20 @@ class AppLocalizations {
   final Locale locale;
   late Map<String, dynamic> _localizedStrings;
   late Map<String, String> _flattenedStrings;
-  final Map<String, Map<String, String>> _fallbackStrings = {};
-
-  static const List<String> _cisLangCodes = [
-    'kk',
-    'ky',
-    'tg',
-    'tk',
-    'uz',
-  ];
 
   AppLocalizations(this.locale);
 
   /// Загрузка JSON из assets в память.
   Future<bool> load() async {
-    _fallbackStrings.clear();
-    _flattenedStrings = await _loadAndFlatten(locale.languageCode);
-
-    // Для языков СНГ используем русский как fallback
-    if (_cisLangCodes.contains(locale.languageCode)) {
-      _fallbackStrings['ru'] = await _loadAndFlatten('ru');
-    }
+    // Всегда загружаем русский язык
+    _flattenedStrings = await _loadAndFlatten('ru');
     return true;
   }
 
   /// Получение строки по ключу с поддержкой вложенных структур и ключей с точками.
   String translate(String key, [Map<String, String>? params]) {
-    String? value = _flattenedStrings[key];
-    if (value == null || value.isEmpty) {
-      // Для языков СНГ используем русский как fallback
-      if (_cisLangCodes.contains(locale.languageCode)) {
-        value = _fallbackStrings['ru']?[key];
-      }
-    }
     // Если не нашли перевод, возвращаем сам ключ
-    value ??= key;
-
-    var resolved = value;
+    var resolved = _flattenedStrings[key] ?? key;
     if (params != null && params.isNotEmpty) {
       for (final entry in params.entries) {
         resolved = resolved.replaceAll('{${entry.key}}', entry.value);
@@ -92,14 +69,8 @@ class AppLocalizations {
   }
 
   /// Доступные локали.
-  /// Поддерживаются только русский язык и языки СНГ.
   static const List<Locale> supportedLocales = [
-    Locale('ru'), // Русский (основной)
-    Locale('kk'), // Казахский
-    Locale('ky'), // Киргизский
-    Locale('tg'), // Таджикский
-    Locale('tk'), // Туркменский
-    Locale('uz'), // Узбекский
+    Locale('ru'), // Русский
   ];
 }
 

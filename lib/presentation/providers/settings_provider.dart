@@ -18,7 +18,7 @@ class AppSettings {
     this.notificationsEnabled = true,
     this.unitSystem = 'metric',
     this.showTips = true,
-    this.darkMode = true,
+    this.darkMode = false,
   });
 
   AppSettings copyWith({
@@ -61,7 +61,7 @@ class AppSettings {
       notificationsEnabled: json['notificationsEnabled'] ?? true,
       unitSystem: json['unitSystem'] ?? 'metric',
       showTips: json['showTips'] ?? true,
-      darkMode: json['darkMode'] ?? true,
+      darkMode: json['darkMode'] ?? false,
     );
   }
 }
@@ -81,7 +81,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     final notificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
     final unitSystem = prefs.getString('unitSystem') ?? 'metric';
     final showTips = prefs.getBool('showTips') ?? true;
-    final darkMode = prefs.getBool('darkMode') ?? true;
+    final darkMode = prefs.getBool('darkMode') ?? false;
 
     state = AppSettings(
       region: region,

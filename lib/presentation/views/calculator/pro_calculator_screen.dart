@@ -307,7 +307,16 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
     final value = inputs[field.key] ?? field.defaultValue;
     final min = field.minValue ?? 0;
     final max = field.maxValue ?? 100;
+    final step = field.step ?? 1;
     final unitLabel = _loc.translate('unit.${field.unitType.name}');
+    final range = max - min;
+    int? divisions;
+    if (step > 0 && range > 0) {
+      final raw = range / step;
+      if (raw.isFinite && raw >= 1) {
+        divisions = raw.round();
+      }
+    }
 
     return Column(
       children: [
@@ -368,7 +377,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
                   value: value.clamp(min, max),
                   min: min,
                   max: max,
-                  divisions: ((max - min) / (field.step ?? 1)).round(),
+                  divisions: divisions,
                   onChanged: (v) => _updateValue(field.key, v),
                 ),
               ),

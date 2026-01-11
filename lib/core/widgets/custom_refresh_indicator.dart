@@ -16,25 +16,7 @@ class CustomRefreshIndicator extends StatefulWidget {
   State<CustomRefreshIndicator> createState() => _CustomRefreshIndicatorState();
 }
 
-class _CustomRefreshIndicatorState extends State<CustomRefreshIndicator>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
+class _CustomRefreshIndicatorState extends State<CustomRefreshIndicator> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(

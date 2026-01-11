@@ -164,11 +164,11 @@ class CalculateElectricalV2 extends BaseCalculator {
     }
 
     // Мощные потребители
-    int powerConsumers = hasElectricStove + hasOven + hasBoiler +
+    final powerConsumers = hasElectricStove + hasOven + hasBoiler +
         hasWashingMachine + hasDishwasher + hasConditioner + hasWarmFloor;
 
     // Расчёт кабеля
-    final cableMarginMultiplier = 1 + (cableMarginPercent / 100);
+    const cableMarginMultiplier = 1 + (cableMarginPercent / 100);
 
     // Кабель 3×1.5 для освещения
     final lightGroups = (lights / maxLightsPerGroup).ceil();

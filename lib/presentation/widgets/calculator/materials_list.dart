@@ -42,12 +42,18 @@ class MaterialsList extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text(
-                    item.unit == null
-                        ? item.value
-                        : '${item.value} ${item.unit}',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+                  Flexible(
+                    child: Text(
+                      item.unit == null
+                          ? item.value
+                          : '${item.value} ${item.unit}',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.end,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
                     ),
                   ),
                 ],

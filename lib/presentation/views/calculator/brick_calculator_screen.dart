@@ -66,7 +66,12 @@ class _BrickResult {
 }
 
 class BrickCalculatorScreen extends ConsumerStatefulWidget {
-  const BrickCalculatorScreen({super.key});
+  final Map<String, double>? initialInputs;
+
+  const BrickCalculatorScreen({
+    super.key,
+    this.initialInputs,
+  });
 
   @override
   ConsumerState<BrickCalculatorScreen> createState() => _BrickCalculatorScreenState();
@@ -101,7 +106,36 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
   @override
   void initState() {
     super.initState();
+    _applyInitialInputs();
     _result = _calculate();
+  }
+
+  void _applyInitialInputs() {
+    final initial = widget.initialInputs;
+    if (initial == null) return;
+
+    if (initial['area'] != null) _area = initial['area']!.clamp(1.0, 10000.0);
+    if (initial['wallWidth'] != null) _wallWidth = initial['wallWidth']!.clamp(0.1, 100.0);
+    if (initial['wallHeight'] != null) _wallHeight = initial['wallHeight']!.clamp(0.1, 50.0);
+
+    if (initial['brickType'] != null) {
+      final type = initial['brickType']!.toInt();
+      if (type >= 0 && type < BrickType.values.length) {
+        _brickType = BrickType.values[type];
+      }
+    }
+
+    if (initial['wallThickness'] != null) {
+      final thickness = initial['wallThickness']!.toInt();
+      if (thickness >= 0 && thickness < WallThickness.values.length) {
+        _wallThickness = WallThickness.values[thickness];
+      }
+    }
+
+    if (initial['inputMode'] != null) {
+      final mode = initial['inputMode']!.toInt();
+      _inputMode = mode == 0 ? BrickInputMode.manual : BrickInputMode.wall;
+    }
   }
 
   /// Использует domain layer для расчёта
@@ -124,6 +158,21 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
   }
 
   void _update() => setState(() => _result = _calculate());
+
+  @override
+  String? get calculatorId => 'brick';
+
+  @override
+  Map<String, dynamic>? getCurrentInputs() {
+    return {
+      'area': _area,
+      'wallWidth': _wallWidth,
+      'wallHeight': _wallHeight,
+      'brickType': _brickType.index.toDouble(),
+      'wallThickness': _wallThickness.index.toDouble(),
+      'inputMode': (_inputMode == BrickInputMode.manual ? 0 : 1).toDouble(),
+    };
+  }
 
   @override
   String generateExportText() {

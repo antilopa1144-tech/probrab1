@@ -170,6 +170,7 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
 
   void _addCalculation(ProjectV2 project) async {
     final allCalcs = CalculatorRegistry.allCalculators;
+    final loc = AppLocalizations.of(context);
 
     if (allCalcs.isEmpty) {
       if (mounted) {
@@ -185,27 +186,88 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
 
     final selectedCalcId = await showDialog<String>(
       context: context,
-      builder: (context) => SimpleDialog(
-        title: const Text('Выберите калькулятор'),
-        children: allCalcs.map((calc) {
-          return SimpleDialogOption(
-            onPressed: () => Navigator.pop(context, calc.id),
-            child: ListTile(
-              leading: const Icon(Icons.calculate_rounded),
-              title: Text(calc.titleKey),
-              subtitle: Text(calc.descriptionKey ?? ''),
+      builder: (dialogContext) {
+        String? selected;
+        return StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            title: const Text('Выберите калькулятор'),
+            content: SizedBox(
+              width: double.maxFinite,
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: allCalcs.length,
+                itemBuilder: (context, index) {
+                  final calc = allCalcs[index];
+                  return RadioListTile<String>(
+                    value: calc.id,
+                    groupValue: selected,
+                    title: Text(loc.translate(calc.titleKey)),
+                    subtitle: calc.descriptionKey != null
+                        ? Text(loc.translate(calc.descriptionKey!))
+                        : null,
+                    secondary: const Icon(Icons.calculate_rounded),
+                    onChanged: (value) => setState(() => selected = value),
+                  );
+                },
+              ),
             ),
-          );
-        }).toList(),
-      ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('Отмена'),
+              ),
+              FilledButton(
+                onPressed: selected != null
+                    ? () => Navigator.pop(dialogContext, selected)
+                    : null,
+                child: const Text('Выбрать'),
+              ),
+            ],
+          ),
+        );
+      },
     );
 
     if (selectedCalcId != null) {
       final calcDef = CalculatorRegistry.getById(selectedCalcId);
       if (calcDef != null && mounted) {
-        // Navigate to calculator screen
-        // When calculators start returning result payloads, hook them here to save into the project
-        CalculatorNavigationHelper.navigateToCalculator(context, calcDef);
+        // Navigate to calculator and await result
+        final result = await CalculatorNavigationHelper.navigateToCalculator(
+          context,
+          calcDef,
+          projectId: project.id,
+        );
+
+        // If user saved the calculation, add it to project
+        if (result != null && mounted) {
+          try {
+            final calculation = result.toProjectCalculation();
+            await ref
+                .read(projectRepositoryV2Provider)
+                .addCalculationToProject(project.id, calculation);
+
+            _refreshProject();
+
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Расчёт "${calculation.name}" добавлен'),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          } catch (e, stack) {
+            if (mounted) {
+              GlobalErrorHandler.handle(
+                context,
+                e,
+                stackTrace: stack,
+                contextMessage: 'Ошибка сохранения расчёта в проект',
+              );
+            }
+          }
+        }
       }
     }
   }
@@ -432,6 +494,17 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
         return 'Завершён';
       case ProjectStatus.cancelled:
         return 'Отменён';
+    }
+  }
+
+  void _shareViaQR(ProjectV2 project) async {
+    if (mounted) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => QRShareScreen(project: project),
+        ),
+      );
     }
   }
 }

@@ -2362,17 +2362,24 @@ const ProjectCalculationSchema = CollectionSchema(
       name: r'materialCost',
       type: IsarType.double,
     ),
-    r'name': PropertySchema(id: 5, name: r'name', type: IsarType.string),
-    r'notes': PropertySchema(id: 6, name: r'notes', type: IsarType.string),
+    r'materials': PropertySchema(
+      id: 5,
+      name: r'materials',
+      type: IsarType.objectList,
+
+      target: r'ProjectMaterial',
+    ),
+    r'name': PropertySchema(id: 6, name: r'name', type: IsarType.string),
+    r'notes': PropertySchema(id: 7, name: r'notes', type: IsarType.string),
     r'results': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'results',
       type: IsarType.objectList,
 
       target: r'KeyValuePair',
     ),
     r'updatedAt': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
@@ -2407,7 +2414,10 @@ const ProjectCalculationSchema = CollectionSchema(
       linkName: r'calculations',
     ),
   },
-  embeddedSchemas: {r'KeyValuePair': KeyValuePairSchema},
+  embeddedSchemas: {
+    r'KeyValuePair': KeyValuePairSchema,
+    r'ProjectMaterial': ProjectMaterialSchema,
+  },
 
   getId: _projectCalculationGetId,
   getLinks: _projectCalculationGetLinks,
@@ -2428,6 +2438,18 @@ int _projectCalculationEstimateSize(
     for (var i = 0; i < object.inputs.length; i++) {
       final value = object.inputs[i];
       bytesCount += KeyValuePairSchema.estimateSize(value, offsets, allOffsets);
+    }
+  }
+  bytesCount += 3 + object.materials.length * 3;
+  {
+    final offsets = allOffsets[ProjectMaterial]!;
+    for (var i = 0; i < object.materials.length; i++) {
+      final value = object.materials[i];
+      bytesCount += ProjectMaterialSchema.estimateSize(
+        value,
+        offsets,
+        allOffsets,
+      );
     }
   }
   bytesCount += 3 + object.name.length * 3;
@@ -2464,15 +2486,21 @@ void _projectCalculationSerialize(
   );
   writer.writeDouble(offsets[3], object.laborCost);
   writer.writeDouble(offsets[4], object.materialCost);
-  writer.writeString(offsets[5], object.name);
-  writer.writeString(offsets[6], object.notes);
+  writer.writeObjectList<ProjectMaterial>(
+    offsets[5],
+    allOffsets,
+    ProjectMaterialSchema.serialize,
+    object.materials,
+  );
+  writer.writeString(offsets[6], object.name);
+  writer.writeString(offsets[7], object.notes);
   writer.writeObjectList<KeyValuePair>(
-    offsets[7],
+    offsets[8],
     allOffsets,
     KeyValuePairSchema.serialize,
     object.results,
   );
-  writer.writeDateTime(offsets[8], object.updatedAt);
+  writer.writeDateTime(offsets[9], object.updatedAt);
 }
 
 ProjectCalculation _projectCalculationDeserialize(
@@ -2495,17 +2523,25 @@ ProjectCalculation _projectCalculationDeserialize(
       [];
   object.laborCost = reader.readDoubleOrNull(offsets[3]);
   object.materialCost = reader.readDoubleOrNull(offsets[4]);
-  object.name = reader.readString(offsets[5]);
-  object.notes = reader.readStringOrNull(offsets[6]);
+  object.materials =
+      reader.readObjectList<ProjectMaterial>(
+        offsets[5],
+        ProjectMaterialSchema.deserialize,
+        allOffsets,
+        ProjectMaterial(),
+      ) ??
+      [];
+  object.name = reader.readString(offsets[6]);
+  object.notes = reader.readStringOrNull(offsets[7]);
   object.results =
       reader.readObjectList<KeyValuePair>(
-        offsets[7],
+        offsets[8],
         KeyValuePairSchema.deserialize,
         allOffsets,
         KeyValuePair(),
       ) ??
       [];
-  object.updatedAt = reader.readDateTime(offsets[8]);
+  object.updatedAt = reader.readDateTime(offsets[9]);
   return object;
 }
 
@@ -2534,10 +2570,19 @@ P _projectCalculationDeserializeProp<P>(
     case 4:
       return (reader.readDoubleOrNull(offset)) as P;
     case 5:
-      return (reader.readString(offset)) as P;
+      return (reader.readObjectList<ProjectMaterial>(
+                offset,
+                ProjectMaterialSchema.deserialize,
+                allOffsets,
+                ProjectMaterial(),
+              ) ??
+              [])
+          as P;
     case 6:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 7:
+      return (reader.readStringOrNull(offset)) as P;
+    case 8:
       return (reader.readObjectList<KeyValuePair>(
                 offset,
                 KeyValuePairSchema.deserialize,
@@ -2546,7 +2591,7 @@ P _projectCalculationDeserializeProp<P>(
               ) ??
               [])
           as P;
-    case 8:
+    case 9:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3199,6 +3244,59 @@ extension ProjectCalculationQueryFilter
   }
 
   QueryBuilder<ProjectCalculation, ProjectCalculation, QAfterFilterCondition>
+  materialsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'materials', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<ProjectCalculation, ProjectCalculation, QAfterFilterCondition>
+  materialsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'materials', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<ProjectCalculation, ProjectCalculation, QAfterFilterCondition>
+  materialsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'materials', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<ProjectCalculation, ProjectCalculation, QAfterFilterCondition>
+  materialsLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'materials', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<ProjectCalculation, ProjectCalculation, QAfterFilterCondition>
+  materialsLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'materials', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<ProjectCalculation, ProjectCalculation, QAfterFilterCondition>
+  materialsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'materials',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<ProjectCalculation, ProjectCalculation, QAfterFilterCondition>
   nameEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -3617,6 +3715,13 @@ extension ProjectCalculationQueryObject
   }
 
   QueryBuilder<ProjectCalculation, ProjectCalculation, QAfterFilterCondition>
+  materialsElement(FilterQuery<ProjectMaterial> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'materials');
+    });
+  }
+
+  QueryBuilder<ProjectCalculation, ProjectCalculation, QAfterFilterCondition>
   resultsElement(FilterQuery<KeyValuePair> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'results');
@@ -3949,6 +4054,13 @@ extension ProjectCalculationQueryProperty
   materialCostProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'materialCost');
+    });
+  }
+
+  QueryBuilder<ProjectCalculation, List<ProjectMaterial>, QQueryOperations>
+  materialsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'materials');
     });
   }
 

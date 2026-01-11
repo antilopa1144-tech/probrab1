@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
+import 'voice_input_button.dart';
 
 /// Стандартизированное текстовое поле для калькуляторов
 ///
@@ -59,6 +60,9 @@ class CalculatorTextField extends StatefulWidget {
   /// Фоновый цвет
   final Color? fillColor;
 
+  /// Включить голосовой ввод
+  final bool enableVoiceInput;
+
   const CalculatorTextField({
     super.key,
     required this.label,
@@ -74,6 +78,7 @@ class CalculatorTextField extends StatefulWidget {
     this.enabled = true,
     this.accentColor,
     this.fillColor,
+    this.enableVoiceInput = true,
   });
 
   @override
@@ -133,12 +138,72 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
       value = widget.maxValue!;
     }
 
+    if (value != parsed) {
+      final formatted = _formatValue(value);
+      if (_controller.text != formatted) {
+        _controller.value = TextEditingValue(
+          text: formatted,
+          selection: TextSelection.collapsed(offset: formatted.length),
+        );
+      }
+    }
+
     widget.onChanged(value);
+  }
+
+  void _handleVoiceInput(double value) {
+    // Применяем то же форматирование и валидацию, что и для ручного ввода
+    double validatedValue = value;
+    if (widget.minValue != null && validatedValue < widget.minValue!) {
+      validatedValue = widget.minValue!;
+    }
+    if (widget.maxValue != null && validatedValue > widget.maxValue!) {
+      validatedValue = widget.maxValue!;
+    }
+
+    // Обновляем контроллер
+    _controller.text = _formatValue(validatedValue);
+
+    // Вызываем callback
+    widget.onChanged(validatedValue);
   }
 
   @override
   Widget build(BuildContext context) {
     final accent = widget.accentColor ?? CalculatorColors.interior;
+    final allowNegative = widget.minValue != null && widget.minValue! < 0;
+
+    // Создаём suffix виджет (текст + кнопка микрофона)
+    Widget? suffixWidget;
+    if (widget.enableVoiceInput && widget.enabled) {
+      if (widget.suffix != null) {
+        // И текст, и кнопка
+        suffixWidget = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.suffix!,
+              style: CalculatorDesignSystem.bodySmall.copyWith(
+                color: CalculatorColors.textSecondary,
+              ),
+            ),
+            const SizedBox(width: 4),
+            VoiceInputButton(
+              onNumberRecognized: _handleVoiceInput,
+              size: 20,
+              iconColor: accent,
+            ),
+          ],
+        );
+      } else {
+        // Только кнопка
+        suffixWidget = VoiceInputButton(
+          onNumberRecognized: _handleVoiceInput,
+          size: 20,
+          iconColor: accent,
+        );
+      }
+    }
 
     return TextField(
       controller: _controller,
@@ -146,19 +211,24 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
       enabled: widget.enabled,
       keyboardType: TextInputType.numberWithOptions(
         decimal: !widget.isInteger,
-        signed: widget.minValue != null && widget.minValue! < 0,
+        signed: allowNegative,
       ),
       inputFormatters: [
         if (widget.isInteger)
-          FilteringTextInputFormatter.digitsOnly
+          FilteringTextInputFormatter.allow(
+            RegExp(allowNegative ? r'^-?\d*$' : r'^\d*$'),
+          )
         else
-          FilteringTextInputFormatter.allow(RegExp(r'^\d*[.,]?\d*$')),
+          FilteringTextInputFormatter.allow(
+            RegExp(allowNegative ? r'^-?\d*[.,]?\d*$' : r'^\d*[.,]?\d*$'),
+          ),
       ],
       textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(
         labelText: widget.label,
         hintText: widget.hint,
-        suffixText: widget.suffix,
+        suffixText: suffixWidget == null ? widget.suffix : null,
+        suffixIcon: suffixWidget,
         prefixIcon: widget.icon != null
             ? Icon(widget.icon, size: 20, color: accent)
             : null,

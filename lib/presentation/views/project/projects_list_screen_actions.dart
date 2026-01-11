@@ -68,15 +68,20 @@ mixin ProjectsListActions on ConsumerState<ProjectsListScreen> {
           ..updatedAt = DateTime.now()
           ..status = ProjectStatus.planning;
 
-        await ref
+        final projectId = await ref
             .read(projectV2NotifierProvider.notifier)
             .createProject(project);
 
-        if (mounted) {
+        if (mounted && projectId != null) {
+          project.id = projectId;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Проект "${project.name}" создан'),
               behavior: SnackBarBehavior.floating,
+              action: SnackBarAction(
+                label: 'Открыть',
+                onPressed: () => _navigateToDetails(project),
+              ),
             ),
           );
         }
@@ -254,6 +259,29 @@ mixin ProjectsListActions on ConsumerState<ProjectsListScreen> {
         return 'Завершён';
       case ProjectStatus.cancelled:
         return 'Отменён';
+    }
+  }
+
+  void _scanQRCode() async {
+    if (mounted) {
+      final result = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const QRScanScreen(),
+        ),
+      );
+
+      // Если QR код успешно отсканирован и проект импортирован
+      if (result == true && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Проект успешно импортирован'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        // Обновить список проектов
+        ref.invalidate(allProjectsProvider);
+      }
     }
   }
 }

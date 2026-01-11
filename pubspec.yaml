@@ -62,6 +62,16 @@ dependencies:
   firebase_analytics: ^11.2.1
   firebase_remote_config: ^5.0.0
   firebase_performance: ^0.10.0+7
+  # Криптография для Deep Links
+  crypto: ^3.0.3
+  # Deep Links для работы с QR кодами и ссылками
+  app_links: ^6.3.2
+  # QR код генератор
+  qr_flutter: ^4.1.0
+  # QR код сканер
+  mobile_scanner: ^5.2.3
+  # Распознавание речи для голосового ввода размеров
+  speech_to_text: ^7.0.0
 
 dev_dependencies:
   flutter_test:
@@ -78,12 +88,13 @@ dev_dependencies:
   path_provider_platform_interface: ^2.1.2
   plugin_platform_interface: ^2.1.7
 
-flutter_icons:
+flutter_launcher_icons:
   android: true
   ios: false
   image_path: "assets/icons/app_icon.png"
-  adaptive_icon_background: "#121212"
-  adaptive_icon_foreground: "assets/icons/app_icon.png"
+  adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
+  adaptive_icon_background: "#11161B"
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true

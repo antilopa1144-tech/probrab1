@@ -21,7 +21,7 @@ class CalculateBrick extends BaseCalculator {
   /// Количество кирпичей на 1 м² кладки (с учётом швов 10 мм).
   ///
   /// Ключ: brickType (0, 1, 2)
-  /// Значение: Map<wallThickness, bricksPerSqm>
+  /// Значение: Map wallThickness -> bricksPerSqm
   static const Map<int, Map<int, int>> bricksPerSqm = {
     // Одинарный кирпич 250×120×65 мм
     0: {

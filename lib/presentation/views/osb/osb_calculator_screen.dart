@@ -409,12 +409,12 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
       accentColor: accentColor,
       actions: [
         IconButton(
-          icon: const Icon(Icons.copy),
+          icon: const Icon(Icons.copy_rounded),
           onPressed: _copyToClipboard,
           tooltip: _loc.translate('common.copy'),
         ),
         IconButton(
-          icon: const Icon(Icons.share),
+          icon: const Icon(Icons.share_rounded),
           onPressed: _shareCalculation,
           tooltip: _loc.translate('common.share'),
         ),

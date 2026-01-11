@@ -20,8 +20,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FrameTimingLogger.maybeInit();
 
-  // Инициализация Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Инициализация Firebase (с обработкой дублирования)
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    }
+  } catch (e) {
+    // Firebase уже инициализирован нативно через google-services.json
+    debugPrint('Firebase already initialized: $e');
+  }
   final prefs = await SharedPreferences.getInstance();
 
   // Передача Flutter ошибок в Crashlytics
@@ -107,6 +114,7 @@ class _HomeSelectorState extends ConsumerState<_HomeSelector> {
 
   Future<void> _checkOnboarding() async {
     final shouldShow = await OnboardingScreen.shouldShow();
+    if (!mounted) return;
     setState(() {
       _showOnboarding = shouldShow;
       _isLoading = false;

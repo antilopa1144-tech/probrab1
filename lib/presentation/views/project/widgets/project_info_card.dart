@@ -156,7 +156,7 @@ class _CostColumn extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          '${format.format(value)} ?',
+          '${format.format(value)} ₽',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: color,

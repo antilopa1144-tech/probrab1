@@ -163,12 +163,50 @@ class _ElectricalCalculatorScreenState
     final initial = widget.initialInputs;
     if (initial == null) return;
 
+    if (initial['inputMode'] != null) {
+      final mode = initial['inputMode']!.toInt();
+      _inputMode = mode == 0 ? InputMode.byArea : InputMode.byPoints;
+    }
+
     if (initial['area'] != null) {
       _area = initial['area']!.clamp(10.0, 500.0);
     }
     if (initial['rooms'] != null) {
       _rooms = initial['rooms']!.round().clamp(1, 20);
     }
+    if (initial['manualSockets'] != null) {
+      _manualSockets = initial['manualSockets']!.round().clamp(0, 200);
+    }
+    if (initial['manualSwitches'] != null) {
+      _manualSwitches = initial['manualSwitches']!.round().clamp(0, 100);
+    }
+    if (initial['manualLights'] != null) {
+      _manualLights = initial['manualLights']!.round().clamp(0, 100);
+    }
+
+    if (initial['roomType'] != null) {
+      final type = initial['roomType']!.toInt();
+      if (type >= 0 && type < RoomType.values.length) {
+        _roomType = RoomType.values[type];
+      }
+    }
+
+    if (initial['wiringMethod'] != null) {
+      final method = initial['wiringMethod']!.toInt();
+      if (method >= 0 && method < WiringMethod.values.length) {
+        _wiringMethod = WiringMethod.values[method];
+      }
+    }
+
+    if (initial['hasElectricStove'] != null) _hasElectricStove = initial['hasElectricStove']! > 0;
+    if (initial['hasOven'] != null) _hasOven = initial['hasOven']! > 0;
+    if (initial['hasBoiler'] != null) _hasBoiler = initial['hasBoiler']! > 0;
+    if (initial['hasWashingMachine'] != null) _hasWashingMachine = initial['hasWashingMachine']! > 0;
+    if (initial['hasDishwasher'] != null) _hasDishwasher = initial['hasDishwasher']! > 0;
+    if (initial['hasConditioner'] != null) _hasConditioner = initial['hasConditioner']! > 0;
+    if (initial['hasWarmFloor'] != null) _hasWarmFloor = initial['hasWarmFloor']! > 0;
+    if (initial['withConduit'] != null) _withConduit = initial['withConduit']! > 0;
+    if (initial['withGrounding'] != null) _withGrounding = initial['withGrounding']! > 0;
   }
 
   /// Использует domain layer для расчёта
@@ -198,6 +236,32 @@ class _ElectricalCalculatorScreenState
   }
 
   void _update() => setState(() => _result = _calculate());
+
+  @override
+  String? get calculatorId => 'electrical';
+
+  @override
+  Map<String, dynamic>? getCurrentInputs() {
+    return {
+      'inputMode': (_inputMode == InputMode.byArea ? 0 : 1).toDouble(),
+      'area': _area,
+      'rooms': _rooms.toDouble(),
+      'manualSockets': _manualSockets.toDouble(),
+      'manualSwitches': _manualSwitches.toDouble(),
+      'manualLights': _manualLights.toDouble(),
+      'roomType': _roomType.index.toDouble(),
+      'wiringMethod': _wiringMethod.index.toDouble(),
+      'hasElectricStove': _hasElectricStove ? 1.0 : 0.0,
+      'hasOven': _hasOven ? 1.0 : 0.0,
+      'hasBoiler': _hasBoiler ? 1.0 : 0.0,
+      'hasWashingMachine': _hasWashingMachine ? 1.0 : 0.0,
+      'hasDishwasher': _hasDishwasher ? 1.0 : 0.0,
+      'hasConditioner': _hasConditioner ? 1.0 : 0.0,
+      'hasWarmFloor': _hasWarmFloor ? 1.0 : 0.0,
+      'withConduit': _withConduit ? 1.0 : 0.0,
+      'withGrounding': _withGrounding ? 1.0 : 0.0,
+    };
+  }
 
   @override
   String generateExportText() {

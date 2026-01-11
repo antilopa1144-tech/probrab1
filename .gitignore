@@ -52,3 +52,10 @@ GoogleService-Info.plist
 .env
 firebase-debug.log
 scripts/
+
+# Release signing
+key.properties
+*.jks
+
+# Isar native library for tests
+libisar.dll

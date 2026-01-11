@@ -49,10 +49,16 @@ class ResultRow extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        Text(
-          data.unit == null ? data.value : '${data.value} ${data.unit}',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
+        Flexible(
+          child: Text(
+            data.unit == null ? data.value : '${data.value} ${data.unit}',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.end,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
           ),
         ),
       ],

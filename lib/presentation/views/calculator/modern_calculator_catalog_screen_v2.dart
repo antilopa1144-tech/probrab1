@@ -12,6 +12,9 @@ import '../../config/catalog_config.dart';
 import '../../providers/recent_calculators_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../utils/calculator_navigation_helper.dart';
+import '../tools/unit_converter_bottom_sheet.dart';
+import '../checklist/create_checklist_bottom_sheet.dart';
+import '../checklist/checklist_details_screen.dart';
 
 /// Улучшенный каталог калькуляторов с недавними и популярными секциями.
 class ModernCalculatorCatalogScreenV2 extends ConsumerStatefulWidget {
@@ -196,6 +199,35 @@ class _ModernCalculatorCatalogScreenV2State
           ),
         ),
         actions: [
+          IconButton(
+            onPressed: () {
+              UnitConverterBottomSheet.show(context);
+            },
+            icon: Icon(
+              Icons.calculate_outlined,
+              color: palette.textMuted,
+              size: 22,
+            ),
+            tooltip: 'Конвертер единиц',
+          ),
+          IconButton(
+            onPressed: () async {
+              final checklist = await CreateChecklistBottomSheet.show(context);
+              if (checklist != null && context.mounted) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ChecklistDetailsScreen(checklistId: checklist.id),
+                  ),
+                );
+              }
+            },
+            icon: Icon(
+              Icons.checklist_rounded,
+              color: palette.textMuted,
+              size: 22,
+            ),
+            tooltip: 'Чек-листы ремонта',
+          ),
           IconButton(
             onPressed: () {
               // TODO: Открыть настройки
@@ -708,7 +740,7 @@ class _RecentCalculatorChip extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: Container(
         width: 140,
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: palette.surface,
           borderRadius: BorderRadius.circular(16),
@@ -719,8 +751,8 @@ class _RecentCalculatorChip extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 36,
-              height: 36,
+              width: 32,
+              height: 32,
               decoration: BoxDecoration(
                 color: iconColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
@@ -728,18 +760,18 @@ class _RecentCalculatorChip extends StatelessWidget {
               child: Icon(
                 toolData?.icon ?? Icons.calculate_rounded,
                 color: iconColor,
-                size: 20,
+                size: 18,
               ),
             ),
-            const Spacer(),
+            const SizedBox(height: 6),
             Text(
               loc.translate(calc.titleKey),
               style: GoogleFonts.manrope(
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: palette.textPrimary,
               ),
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ],
@@ -914,58 +946,78 @@ class _CalculatorCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: iconSurface,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: iconColor.withValues(
-                            alpha: palette.isDark ? 0.3 : 0.2,
-                          ),
-                        ),
-                      ),
-                      child: Icon(
-                        icon,
-                        color: iconColor.withValues(alpha: 0.9),
-                        size: 26,
-                      ),
-                    ),
-                    const Spacer(),
-                    // Индикатор сложности
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: palette.surfaceMuted,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            complexityIcon,
-                            size: 12,
-                            color: palette.textMuted,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            complexityLabel,
-                            style: GoogleFonts.manrope(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: palette.textMuted,
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isCompact = constraints.maxWidth < 140;
+                    final iconBox = isCompact ? 42.0 : 48.0;
+                    final iconSize = isCompact ? 22.0 : 26.0;
+                    final badgePadding = isCompact
+                        ? const EdgeInsets.symmetric(horizontal: 6, vertical: 4)
+                        : const EdgeInsets.symmetric(horizontal: 8, vertical: 4);
+
+                    return Row(
+                      children: [
+                        Container(
+                          width: iconBox,
+                          height: iconBox,
+                          decoration: BoxDecoration(
+                            color: iconSurface,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: iconColor.withValues(
+                                alpha: palette.isDark ? 0.3 : 0.2,
+                              ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
+                          child: Icon(
+                            icon,
+                            color: iconColor.withValues(alpha: 0.9),
+                            size: iconSize,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Container(
+                                padding: badgePadding,
+                                decoration: BoxDecoration(
+                                  color: palette.surfaceMuted,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      complexityIcon,
+                                      size: 12,
+                                      color: palette.textMuted,
+                                    ),
+                                    if (!isCompact) ...[
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        complexityLabel,
+                                        style: GoogleFonts.manrope(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w600,
+                                          color: palette.textMuted,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        softWrap: false,
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 const Spacer(),
                 Text(

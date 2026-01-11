@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../data/models/calculation.dart';
 import '../../domain/models/project_v2.dart';
+import '../../domain/models/checklist.dart';
 
 /// Единая точка инициализации Isar со всеми схемами.
 final isarProvider = FutureProvider<Isar>((ref) async {
@@ -18,7 +19,13 @@ final isarProvider = FutureProvider<Isar>((ref) async {
   final dir = await getApplicationDocumentsDirectory();
 
   return Isar.open(
-    [ProjectV2Schema, ProjectCalculationSchema, CalculationSchema],
+    [
+      ProjectV2Schema,
+      ProjectCalculationSchema,
+      CalculationSchema,
+      RenovationChecklistSchema,
+      ChecklistItemSchema,
+    ],
     directory: dir.path,
     name: 'probrab_ai',
   );

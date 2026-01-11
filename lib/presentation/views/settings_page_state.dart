@@ -481,22 +481,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   void _showClearCacheDialog(BuildContext context) {
     final loc = AppLocalizations.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text(loc.translate('settings.data.clear_cache.dialog_title')),
         content: Text(loc.translate('settings.data.clear_cache.dialog_body')),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: Text(loc.translate('button.cancel')),
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context);
-              
+              Navigator.pop(dialogContext);
+
               // Показываем индикатор загрузки
-              ScaffoldMessenger.of(context).showSnackBar(
+              if (!mounted) return;
+              scaffoldMessenger.showSnackBar(
                 SnackBar(
                   content: Row(
                     children: [
@@ -519,8 +521,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               // реальная очистка временных файлов)
               await Future.delayed(const Duration(milliseconds: 800));
               
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
+              if (mounted) {
+                scaffoldMessenger.showSnackBar(
                   SnackBar(
                     content: Row(
                       children: [

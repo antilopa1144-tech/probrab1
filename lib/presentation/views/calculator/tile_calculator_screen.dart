@@ -316,11 +316,43 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
   void _applyInitialInputs() {
     final initial = widget.initialInputs;
     if (initial == null) return;
+
     if (initial['area'] != null) _area = initial['area']!.clamp(1.0, 1000.0);
-    if (initial['length'] != null) {
-      _length = initial['length']!.clamp(0.1, 100.0);
-    }
+    if (initial['length'] != null) _length = initial['length']!.clamp(0.1, 100.0);
     if (initial['width'] != null) _width = initial['width']!.clamp(0.1, 100.0);
+    if (initial['tileWidth'] != null) _tileWidth = initial['tileWidth']!.clamp(5.0, 200.0);
+    if (initial['tileHeight'] != null) _tileHeight = initial['tileHeight']!.clamp(5.0, 200.0);
+    if (initial['jointWidth'] != null) _jointWidth = initial['jointWidth']!.clamp(0.0, 20.0);
+
+    if (initial['inputMode'] != null) {
+      final mode = initial['inputMode']!.toInt();
+      _inputMode = mode == 0 ? InputMode.byArea : InputMode.byDimensions;
+    }
+
+    if (initial['material'] != null) {
+      final mat = initial['material']!.toInt();
+      if (mat >= 0 && mat < TileMaterial.values.length) {
+        _material = TileMaterial.values[mat];
+      }
+    }
+
+    if (initial['layout'] != null) {
+      final layout = initial['layout']!.toInt();
+      if (layout >= 0 && layout < LayoutPattern.values.length) {
+        _layout = LayoutPattern.values[layout];
+      }
+    }
+
+    if (initial['roomType'] != null) {
+      final room = initial['roomType']!.toInt();
+      if (room >= 0 && room < RoomType.values.length) {
+        _roomType = RoomType.values[room];
+      }
+    }
+
+    if (initial['useSVP'] != null) _useSVP = initial['useSVP']! > 0;
+    if (initial['useWaterproofing'] != null) _useWaterproofing = initial['useWaterproofing']! > 0;
+    if (initial['useUnderlay'] != null) _useUnderlay = initial['useUnderlay']! > 0;
   }
 
   double _getCalculatedArea() {
@@ -419,6 +451,28 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
   }
 
   void _update() => setState(() => _result = _calculate());
+
+  @override
+  String? get calculatorId => 'tile';
+
+  @override
+  Map<String, dynamic>? getCurrentInputs() {
+    return {
+      'inputMode': (_inputMode == InputMode.byArea ? 0 : 1).toDouble(),
+      'area': _area,
+      'length': _length,
+      'width': _width,
+      'tileWidth': _tileWidth,
+      'tileHeight': _tileHeight,
+      'jointWidth': _jointWidth,
+      'material': _material.index.toDouble(),
+      'layout': _layout.index.toDouble(),
+      'roomType': _roomType.index.toDouble(),
+      'useSVP': _useSVP ? 1.0 : 0.0,
+      'useWaterproofing': _useWaterproofing ? 1.0 : 0.0,
+      'useUnderlay': _useUnderlay ? 1.0 : 0.0,
+    };
+  }
 
   @override
   String generateExportText() {

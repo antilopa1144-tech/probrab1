@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Probrab Ai</string>
+	<string>Мастерок</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -45,5 +45,24 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Приложение использует микрофон для голосового ввода размеров в калькуляторы.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Приложение использует распознавание речи для автоматического ввода чисел голосом.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>ru.masterok.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>masterokapp</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>masterokapp</string>
+	</array>
 </dict>
 </plist>

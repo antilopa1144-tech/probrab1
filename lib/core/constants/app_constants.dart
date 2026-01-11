@@ -1,7 +1,7 @@
 /// Основные константы приложения.
 class AppConstants {
   // Название приложения
-  static const String appName = 'Прораб AI';
+  static const String appName = 'Мастерок';
   static const String appVersion = '1.0.0';
 
   // Цвета по умолчанию
@@ -41,5 +41,5 @@ class AppConstants {
 
   // Экспорт
   static const String exportFilePrefix = 'probrab_ai';
-  static const String pdfAuthor = 'Прораб AI';
+  static const String pdfAuthor = 'Мастерок';
 }

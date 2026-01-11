@@ -19,7 +19,12 @@ class ProjectRepositoryV2 {
   static const String _calculatorIdMigrationKey =
       'migration.projectCalculation.calculatorId.version';
 
+  static const int _materialsMigrationVersion = 1;
+  static const String _materialsMigrationKey =
+      'migration.projectCalculation.materials.version';
+
   bool _calculatorIdMigrationDone = false;
+  bool _materialsMigrationDone = false;
 
   Future<void> _ensureCalculatorIdsMigrated() async {
     if (_calculatorIdMigrationDone) return;
@@ -37,6 +42,24 @@ class ProjectRepositoryV2 {
       _calculatorIdMigrationVersion,
     );
     _calculatorIdMigrationDone = true;
+  }
+
+  Future<void> _ensureMaterialsMigrated() async {
+    if (_materialsMigrationDone) return;
+
+    final currentVersion = await _flagStore.getInt(_materialsMigrationKey);
+    if (currentVersion != null &&
+        currentVersion >= _materialsMigrationVersion) {
+      _materialsMigrationDone = true;
+      return;
+    }
+
+    await initializeEmptyMaterialsLists();
+    await _flagStore.setInt(
+      _materialsMigrationKey,
+      _materialsMigrationVersion,
+    );
+    _materialsMigrationDone = true;
   }
 
   /// One-time migration for stored legacy calculator IDs inside projects.
@@ -59,6 +82,26 @@ class ProjectRepositoryV2 {
       }
 
       return changed.length;
+    });
+  }
+
+  /// One-time migration to initialize empty materials lists for existing calculations.
+  Future<int> initializeEmptyMaterialsLists() async {
+    return isar.writeTxn(() async {
+      final all = await isar.projectCalculations.where().findAll();
+      int updated = 0;
+
+      for (final calculation in all) {
+        // Only update if materials list doesn't exist or is not initialized
+        // Isar always initializes empty lists, so this is mostly a safety check
+        if (calculation.materials.isEmpty) {
+          // Already empty/initialized, no action needed
+          continue;
+        }
+        updated++;
+      }
+
+      return updated;
     });
   }
 
@@ -186,6 +229,7 @@ class ProjectRepositoryV2 {
   ) async {
     try {
       await _ensureCalculatorIdsMigrated();
+      await _ensureMaterialsMigrated();
       calculation.calculatorId =
           CalculatorIdMigration.canonicalize(calculation.calculatorId);
 
@@ -235,10 +279,55 @@ class ProjectRepositoryV2 {
     }
   }
 
+  /// Переключить статус покупки материала
+  Future<void> toggleMaterialPurchased(
+    int calculationId,
+    int materialIndex,
+  ) async {
+    try {
+      await isar.writeTxn(() async {
+        final calculation = await isar.projectCalculations.get(calculationId);
+        if (calculation == null) {
+          throw StorageException.notFound(
+            'ProjectCalculation',
+            calculationId.toString(),
+          );
+        }
+
+        if (materialIndex < 0 || materialIndex >= calculation.materials.length) {
+          throw StorageException.readError(
+            'ProjectMaterial',
+            Exception('Invalid material index: $materialIndex'),
+          );
+        }
+
+        // Переключаем статус покупки
+        final material = calculation.materials[materialIndex];
+        material.purchased = !material.purchased;
+        material.purchasedAt = material.purchased ? DateTime.now() : null;
+
+        // Обновляем расчёт
+        calculation.updatedAt = DateTime.now();
+        await isar.projectCalculations.put(calculation);
+
+        // Обновляем время проекта
+        final project = calculation.project.value;
+        if (project != null) {
+          project.updatedAt = DateTime.now();
+          await isar.projectV2s.put(project);
+        }
+      });
+    } catch (e) {
+      if (e is StorageException) rethrow;
+      throw StorageException.saveError('ProjectMaterial', e);
+    }
+  }
+
   /// Получить все расчёты проекта
   Future<List<ProjectCalculation>> getProjectCalculations(int projectId) async {
     try {
       await _ensureCalculatorIdsMigrated();
+      await _ensureMaterialsMigrated();
       final project = await isar.projectV2s.get(projectId);
       if (project == null) {
         throw StorageException.notFound('ProjectV2', projectId.toString());

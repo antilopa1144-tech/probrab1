@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:app_links/app_links.dart';
+import '../../core/services/deep_link_service.dart';
 import '../views/favorites/favorite_calculators_screen.dart';
 import '../views/project/projects_list_screen.dart';
 import '../views/calculator/modern_calculator_catalog_screen_v2.dart';
@@ -17,11 +20,81 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = MainShell.homeTabIndex;
   bool _navChangeScheduled = false;
+  StreamSubscription<Uri>? _deepLinkSubscription;
 
   final List<GlobalKey<NavigatorState>> _navigatorKeys = List.generate(
     3,
     (_) => GlobalKey<NavigatorState>(),
   );
+
+  @override
+  void initState() {
+    super.initState();
+    _initDeepLinks();
+  }
+
+  @override
+  void dispose() {
+    _deepLinkSubscription?.cancel();
+    super.dispose();
+  }
+
+  /// Инициализация Deep Links
+  Future<void> _initDeepLinks() async {
+    final appLinks = AppLinks();
+
+    // Обработка начальной ссылки (когда приложение открыто через Deep Link)
+    try {
+      final initialUri = await appLinks.getInitialLink();
+      if (initialUri != null && mounted) {
+        _handleDeepLink(initialUri);
+      }
+    } catch (e) {
+      debugPrint('Error getting initial link: $e');
+    }
+
+    // Подписка на входящие Deep Links (когда приложение уже открыто)
+    _deepLinkSubscription = appLinks.uriLinkStream.listen(
+      (uri) {
+        if (mounted) {
+          _handleDeepLink(uri);
+        }
+      },
+      onError: (error) {
+        debugPrint('Deep link error: $error');
+      },
+    );
+  }
+
+  /// Обработка Deep Link
+  Future<void> _handleDeepLink(Uri uri) async {
+    try {
+      final deepLinkData = await DeepLinkService.instance.handleDeepLink(uri);
+
+      if (deepLinkData != null && mounted) {
+        // Переключаемся на вкладку проектов
+        setState(() => _currentIndex = MainShell.projectsTabIndex);
+
+        // Ждём следующий фрейм, чтобы вкладка отрисовалась
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        if (mounted) {
+          final handler = DeepLinkHandler(context);
+          await handler.handle(deepLinkData);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error handling deep link: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка обработки ссылки: $e'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    }
+  }
 
   void _onNavigationStackChanged() {
     if (!mounted) return;

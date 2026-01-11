@@ -575,6 +575,8 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                   children: [
                     Text(
                       loc.translate(calc.titleKey),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -584,6 +586,8 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                     const SizedBox(height: 2),
                     Text(
                       loc.translate(calc.subCategoryKey),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 14,
                         color: Color(0xFF71717A),
@@ -592,24 +596,36 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                   ],
                 ),
               ),
-              IconButton(
-                tooltip: isFavorite ? 'Убрать из избранного' : 'В избранное',
-                onPressed: () => ref
-                    .read(favoritesProvider.notifier)
-                    .toggleFavorite(calc.id),
-                icon: Icon(
-                  isFavorite
-                      ? Icons.star_rounded
-                      : Icons.star_outline_rounded,
-                  color: const Color(0xFF71717A),
+              SizedBox(
+                width: 36,
+                height: 36,
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  tooltip: isFavorite ? 'Убрать из избранного' : 'В избранное',
+                  onPressed: () => ref
+                      .read(favoritesProvider.notifier)
+                      .toggleFavorite(calc.id),
+                  icon: Icon(
+                    isFavorite
+                        ? Icons.star_rounded
+                        : Icons.star_outline_rounded,
+                    size: 22,
+                    color: const Color(0xFF71717A),
+                  ),
                 ),
               ),
-              IconButton(
-                tooltip: 'Пресеты',
-                onPressed: () => _showCalculatorPresets(calc),
-                icon: const Icon(
-                  Icons.more_horiz_rounded,
-                  color: Color(0xFF52525B),
+              SizedBox(
+                width: 36,
+                height: 36,
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  tooltip: 'Пресеты',
+                  onPressed: () => _showCalculatorPresets(calc),
+                  icon: const Icon(
+                    Icons.more_horiz_rounded,
+                    size: 22,
+                    color: Color(0xFF52525B),
+                  ),
                 ),
               ),
             ],

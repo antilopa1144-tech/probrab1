@@ -73,22 +73,33 @@ class CalculatorSliderField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
-              style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textSecondary,
+            Expanded(
+              child: Text(
+                label,
+                style: CalculatorDesignSystem.bodyMedium.copyWith(
+                  color: CalculatorColors.textSecondary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-            if (showValue)
-              Text(
-                '$displayValue $suffix',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
+            if (showValue) ...[
+              const SizedBox(width: 12),
+              Flexible(
+                child: Text(
+                  '$displayValue $suffix',
+                  style: CalculatorDesignSystem.headlineMedium.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.end,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
                 ),
               ),
+            ],
           ],
         ),
         Slider(

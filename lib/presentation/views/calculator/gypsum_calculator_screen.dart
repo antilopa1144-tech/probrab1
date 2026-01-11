@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/localization/app_localizations.dart';
-import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
 import '../../../domain/usecases/calculate_gypsum_v2.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
-import '../../providers/constants_provider.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../widgets/existing/hint_card.dart';
 import '../../utils/screw_formatter.dart';
@@ -93,86 +91,6 @@ class _GypsumResult {
   }
 }
 
-/// Helper class for accessing gypsum calculator constants with type safety and fallbacks
-class _GypsumConstants {
-  final CalculatorConstants? _data;
-
-  const _GypsumConstants(this._data);
-
-  T _get<T>(String constantKey, String valueKey, T defaultValue) {
-    if (_data == null) return defaultValue;
-    final constant = _data.constants[constantKey];
-    if (constant == null) return defaultValue;
-    final value = constant.values[valueKey];
-    if (value == null) return defaultValue;
-    if (value is T) return value;
-    if (T == double && value is int) return value.toDouble() as T;
-    if (T == int && value is double) return value.toInt() as T;
-    return defaultValue;
-  }
-
-  // Sheet sizes - returns area in m² for given sheet size
-  double getSheetArea(GypsumSheetSize size) {
-    final sizeMap = {
-      GypsumSheetSize.s2000x1200: 's2000x1200',
-      GypsumSheetSize.s2500x1200: 's2500x1200',
-      GypsumSheetSize.s2700x1200: 's2700x1200',
-      GypsumSheetSize.s3000x1200: 's3000x1200',
-    };
-    final defaultAreas = {
-      GypsumSheetSize.s2000x1200: 2.4,
-      GypsumSheetSize.s2500x1200: 3.0,
-      GypsumSheetSize.s2700x1200: 3.24,
-      GypsumSheetSize.s3000x1200: 3.6,
-    };
-    return _get('sheet_sizes', sizeMap[size]!, defaultAreas[size]!);
-  }
-
-  // GKL multipliers
-  double getGklBaseMultiplier() => _get('gkl_multiplier', 'base', 1.05);
-  double getGklPartitionMultiplier() => _get('gkl_multiplier', 'partition', 2.0);
-
-  // Profile standard length
-  double getProfileLength() => _get('profile_length', 'standard', 3.0);
-
-  // Wall lining constants (облицовка стен)
-  double getWallLiningPnMeters() => _get('wall_lining', 'pn_meters', 0.8);
-  double getWallLiningPpMeters() => _get('wall_lining', 'pp_meters', 2.0);
-  double getWallLiningSuspensions() => _get('wall_lining', 'suspensions', 1.3);
-  double getWallLiningDowels() => _get('wall_lining', 'dowels', 1.6);
-  int getWallLiningScrewsTN25() => _get<int>('wall_lining', 'screws_tn25', 34);
-  int getWallLiningScrewsLN() => _get<int>('wall_lining', 'screws_ln', 4);
-  double getWallLiningSealingTape() => _get('wall_lining', 'sealing_tape', 0.8);
-
-  // Partition constants (перегородки)
-  double getPartitionPnMeters() => _get('partition', 'pn_meters', 0.7);
-  double getPartitionPpMeters() => _get('partition', 'pp_meters', 2.0);
-  double getPartitionDowels() => _get('partition', 'dowels', 1.5);
-  int getPartitionScrewsTN25() => _get<int>('partition', 'screws_tn25', 50);
-  int getPartitionScrewsLN() => _get<int>('partition', 'screws_ln', 4);
-  double getPartitionSealingTape() => _get('partition', 'sealing_tape', 1.2);
-
-  // Ceiling constants (потолки)
-  double getCeilingPnMeters() => _get('ceiling', 'pn_meters', 0.4);
-  double getCeilingPpMeters() => _get('ceiling', 'pp_meters', 3.3);
-  double getCeilingSuspensions() => _get('ceiling', 'suspensions', 0.7);
-  double getCeilingConnectors() => _get('ceiling', 'connectors', 2.4);
-  int getCeilingDowelsPerSuspension() => _get<int>('ceiling', 'dowels_per_suspension', 2);
-  int getCeilingScrewsTN25() => _get<int>('ceiling', 'screws_tn25', 23);
-  int getCeilingScrewsLN() => _get<int>('ceiling', 'screws_ln', 7);
-
-  // Second layer constants
-  int getSecondLayerScrewsTN35() => _get<int>('second_layer', 'screws_tn35', 17);
-  int getSecondLayerPartitionMultiplier() => _get<int>('second_layer', 'partition_multiplier', 2);
-
-  // Materials
-  double getInsulationMargin() => _get('materials', 'insulation_margin', 1.05);
-  double getArmatureTape() => _get('materials', 'armature_tape', 1.2);
-  double getFillerStandard() => _get('materials', 'filler_standard', 0.3);
-  double getFillerPartition() => _get('materials', 'filler_partition', 0.6);
-  double getPrimer() => _get('materials', 'primer', 0.1);
-}
-
 class GypsumCalculatorScreen extends ConsumerStatefulWidget {
   final CalculatorDefinitionV2 definition;
   final Map<String, double>? initialInputs;
@@ -210,14 +128,13 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
   GypsumSheetSize _sheetSize = GypsumSheetSize.s2500x1200;
   late _GypsumResult _result;
   late AppLocalizations _loc;
-  late _GypsumConstants _constants;
 
   @override
   void initState() {
     super.initState();
-    // Initialize constants from provider
-    final constantsAsync = ref.read(calculatorConstantsProvider('gypsum'));
-    _constants = _GypsumConstants(constantsAsync.value);
+    // TODO: Подключить константы из Remote Config через _GypsumConstants
+    // final constantsAsync = ref.read(calculatorConstantsProvider('gypsum'));
+    // _calculator.constants = constantsAsync.value;
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -280,6 +197,25 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
   }
 
   void _update() => setState(() => _result = _calculate());
+
+  @override
+  String? get calculatorId => 'gypsum';
+
+  @override
+  Map<String, dynamic>? getCurrentInputs() {
+    return {
+      'inputMode': _inputMode == InputMode.byArea ? 0.0 : 1.0,
+      'area': _area,
+      'length': _length,
+      'width': _width,
+      'height': _height,
+      'construction_type': (_constructionType.index + 1).toDouble(),
+      'gkl_type': (_gklType.index + 1).toDouble(),
+      'sheet_size': _sheetSize.index.toDouble(),
+      'layers': _layers.toDouble(),
+      'useInsulation': _useInsulation ? 1.0 : 0.0,
+    };
+  }
 
   @override
   String generateExportText() {
