@@ -147,8 +147,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Should have at least one button (either enabled or disabled)
-      expect(find.byType(FilledButton), findsAtLeastNWidgets(1));
+      // Should have calculator button text (either open calculator or in development)
+      final hasCalculatorText = find.text('work.screen.open_calculator').evaluate().isNotEmpty ||
+          find.text('work.screen.in_development').evaluate().isNotEmpty;
+      expect(hasCalculatorText, isTrue);
     });
 
     testWidgets('shows tips section when available', (tester) async {

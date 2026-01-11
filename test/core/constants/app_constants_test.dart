@@ -5,7 +5,7 @@ void main() {
   group('AppConstants', () {
     group('App Info', () {
       test('appName is correct', () {
-        expect(AppConstants.appName, 'Прораб AI');
+        expect(AppConstants.appName, 'Мастерок');
       });
 
       test('appVersion is correct', () {
@@ -122,7 +122,7 @@ void main() {
       });
 
       test('pdfAuthor is correct', () {
-        expect(AppConstants.pdfAuthor, 'Прораб AI');
+        expect(AppConstants.pdfAuthor, 'Мастерок');
       });
     });
   });

@@ -27,7 +27,7 @@ void main() {
         // 20 * 1.1 = 22 m²
         expect(result.values['areaWithWaste'], closeTo(22.0, 0.1));
         // rollArea = 3 * 25 = 75 m², rollsNeeded = 22 / 75 = 0.293
-        expect(result.values['rollsNeeded'], closeTo(0.293, 0.01));
+        expect(result.values['rollsNeeded']!, closeTo(0.293, 0.01));
         expect(result.values['area'], equals(20.0));
         expect(result.values['wastePercent'], equals(10.0));
       });
@@ -208,7 +208,7 @@ void main() {
 
           // With 10% waste, areaWithWaste = rollArea * 1.1
           // rollsNeeded = areaWithWaste / rollArea = 1.1
-          expect(result.values['rollsNeeded'], closeTo(1.1, 0.01));
+          expect(result.values['rollsNeeded']!, closeTo(1.1, 0.01));
         });
       }
     });
@@ -250,7 +250,7 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
 
         expect(result.values['areaWithWaste'], greaterThan(0));
-        expect(result.values['rollsNeeded'], greaterThan(0));
+        expect(result.values['rollsNeeded']!, greaterThan(0));
       });
 
       test('handles large area correctly', () {
@@ -266,7 +266,7 @@ void main() {
         // 500 * 1.1 = 550 m²
         expect(result.values['areaWithWaste'], closeTo(550.0, 0.1));
         // rollArea = 4 * 25 = 100, rollsNeeded = 550 / 100 = 5.5
-        expect(result.values['rollsNeeded'], closeTo(5.5, 0.01));
+        expect(result.values['rollsNeeded']!, closeTo(5.5, 0.01));
       });
     });
 

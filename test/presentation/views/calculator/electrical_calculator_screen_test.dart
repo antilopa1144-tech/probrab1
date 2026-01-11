@@ -1,45 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:probrab_ai/domain/calculators/calculator_registry.dart';
 import 'package:probrab_ai/domain/models/calculator_definition_v2.dart';
-import 'package:probrab_ai/presentation/providers/constants_provider.dart';
 import 'package:probrab_ai/presentation/views/calculator/electrical_calculator_screen.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/mode_selector.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_result_header.dart';
 import 'package:probrab_ai/presentation/widgets/existing/hint_card.dart';
 
+import '../../../helpers/calculator_test_helpers.dart';
 import '../../../helpers/test_helpers.dart';
-
-/// Mock constants for testing
-final _mockConstantsOverrides = <Override>[
-  calculatorConstantsProvider('electrical').overrideWith((ref) async => null),
-  calculatorConstantsProvider('common').overrideWith((ref) async => null),
-];
 
 void main() {
   late CalculatorDefinitionV2 testDefinition;
 
   setUpAll(() {
     setupMocks();
-
-    final realDefinition = CalculatorRegistry.getById('engineering_electrics');
-    if (realDefinition == null) {
-      throw StateError('engineering_electrics calculator not found in registry');
-    }
-    testDefinition = realDefinition;
+    testDefinition = getCalculatorDefinition('engineering_electrics');
   });
 
   group('ElectricalCalculatorScreen', () {
     testWidgets('renders correctly', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pump();
@@ -48,14 +33,12 @@ void main() {
     });
 
     testWidgets('shows Scaffold structure', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pump();
@@ -64,14 +47,12 @@ void main() {
     });
 
     testWidgets('shows input sliders', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pump();
@@ -80,14 +61,12 @@ void main() {
     });
 
     testWidgets('shows Cards for sections', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pump();
@@ -96,14 +75,12 @@ void main() {
     });
 
     testWidgets('uses scrollable layout', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pump();
@@ -112,14 +89,12 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pump();
@@ -127,7 +102,7 @@ void main() {
       await tester.pumpWidget(
         createTestApp(
           child: const SizedBox.shrink(),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
 
@@ -135,14 +110,12 @@ void main() {
     });
 
     testWidgets('can interact with slider', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
@@ -157,14 +130,12 @@ void main() {
     });
 
     testWidgets('shows InkWell for selections', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
@@ -173,14 +144,12 @@ void main() {
     });
 
     testWidgets('can scroll content', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
@@ -193,14 +162,12 @@ void main() {
     });
 
     testWidgets('shows IconButton for actions', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
@@ -209,9 +176,7 @@ void main() {
     });
 
     testWidgets('accepts initial inputs', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
@@ -221,7 +186,7 @@ void main() {
               'rooms': 5.0,
             },
           ),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pump();
@@ -230,9 +195,7 @@ void main() {
     });
 
     testWidgets('accepts initial area inputs', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
@@ -243,7 +206,7 @@ void main() {
               'rooms': 4.0,
             },
           ),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pump();
@@ -254,14 +217,12 @@ void main() {
 
   group('ElectricalCalculatorScreen Room Types', () {
     testWidgets('shows room type selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
@@ -271,14 +232,12 @@ void main() {
     });
 
     testWidgets('can select different room type', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
@@ -295,14 +254,12 @@ void main() {
 
   group('ElectricalCalculatorScreen Wiring Method', () {
     testWidgets('shows ModeSelector for wiring method', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
@@ -313,14 +270,12 @@ void main() {
 
   group('ElectricalCalculatorScreen Input Mode', () {
     testWidgets('shows input mode selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
@@ -331,14 +286,12 @@ void main() {
 
   group('ElectricalCalculatorScreen Options', () {
     testWidgets('shows Switch for power consumers', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
@@ -350,14 +303,12 @@ void main() {
     });
 
     testWidgets('can toggle switch', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
@@ -377,14 +328,12 @@ void main() {
 
   group('ElectricalCalculatorScreen Materials', () {
     testWidgets('shows materials section', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
@@ -396,14 +345,12 @@ void main() {
 
   group('ElectricalCalculatorScreen Tips', () {
     testWidgets('shows tips section', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
@@ -417,51 +364,45 @@ void main() {
 
   group('ElectricalCalculatorScreen Actions', () {
     testWidgets('shows copy button', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.copy), findsOneWidget);
+      expect(find.byIcon(Icons.copy_rounded), findsOneWidget);
     });
 
     testWidgets('shows share button', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.share), findsOneWidget);
+      expect(find.byIcon(Icons.share_rounded), findsOneWidget);
     });
 
     testWidgets('can tap copy button', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.copy));
+      await tester.tap(find.byIcon(Icons.copy_rounded));
       await tester.pumpAndSettle();
 
       expect(find.byType(SnackBar), findsOneWidget);
@@ -470,14 +411,12 @@ void main() {
 
   group('ElectricalCalculatorScreen Result Header', () {
     testWidgets('shows CalculatorResultHeader', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: ElectricalCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.electrical,
         ),
       );
       await tester.pumpAndSettle();

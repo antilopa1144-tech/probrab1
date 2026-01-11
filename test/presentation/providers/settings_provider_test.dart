@@ -16,7 +16,7 @@ void main() {
       expect(settings.notificationsEnabled, true);
       expect(settings.unitSystem, 'metric');
       expect(settings.showTips, true);
-      expect(settings.darkMode, true);
+      expect(settings.darkMode, false);
     });
 
     test('copyWith creates new instance with updated values', () {
@@ -102,7 +102,7 @@ void main() {
       expect(settings.notificationsEnabled, true);
       expect(settings.unitSystem, 'metric');
       expect(settings.showTips, true);
-      expect(settings.darkMode, true);
+      expect(settings.darkMode, false);
     });
 
     test('fromJson handles partial data', () {

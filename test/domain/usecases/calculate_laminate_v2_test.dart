@@ -28,7 +28,7 @@ void main() {
         // 20 * 1.05 = 21 m²
         expect(result.values['areaWithWaste'], closeTo(21.0, 0.1));
         // ceil(21 / 2.4) = 9
-        expect(result.values['packsNeeded'], equals(9));
+        expect(result.values['packsNeeded']!, equals(9));
         expect(result.values['area'], equals(20.0));
         expect(result.values['wastePercent'], equals(5.0));
       });
@@ -248,7 +248,7 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        expect(result.values['packsNeeded'], greaterThan(0));
+        expect(result.values['packsNeeded']!, greaterThan(0));
         expect(result.values['underlayRolls'], greaterThan(0));
       });
 
@@ -264,7 +264,7 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
 
         // 500 * 1.15 = 575, ceil(575/2.4) = 240 packs
-        expect(result.values['packsNeeded'], equals(240));
+        expect(result.values['packsNeeded']!, equals(240));
         // underlay = 500 * 1.1 = 550, ceil(550/10) = 55 rolls
         expect(result.values['underlayRolls'], equals(55));
       });
@@ -368,7 +368,7 @@ void main() {
         // Area = 20 m²
         expect(result.values['area'], equals(20.0));
         // With 5% waste = 21 m², need 9 packs
-        expect(result.values['packsNeeded'], equals(9));
+        expect(result.values['packsNeeded']!, equals(9));
         // Underlay: 22 m², need 3 rolls
         expect(result.values['underlayRolls'], equals(3));
         // Plinth: 17m, need 7 pieces

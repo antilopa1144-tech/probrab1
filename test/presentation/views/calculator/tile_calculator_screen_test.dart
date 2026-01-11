@@ -1,43 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:probrab_ai/domain/calculators/calculator_registry.dart';
 import 'package:probrab_ai/domain/models/calculator_definition_v2.dart';
-import 'package:probrab_ai/presentation/providers/constants_provider.dart';
 import 'package:probrab_ai/presentation/views/calculator/tile_calculator_screen.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_widgets.dart';
-import '../../../helpers/test_helpers.dart';
 
-/// Mock constants for testing
-final _mockConstantsOverrides = <Override>[
-  calculatorConstantsProvider('tile').overrideWith((ref) async => null),
-  calculatorConstantsProvider('common').overrideWith((ref) async => null),
-];
+import '../../../helpers/test_helpers.dart';
+import '../../../helpers/calculator_test_helpers.dart';
 
 void main() {
   late CalculatorDefinitionV2 testDefinition;
 
   setUpAll(() {
     setupMocks();
-
-    // Use real definition from registry
-    final realDefinition = CalculatorRegistry.getById('floors_tile');
-    if (realDefinition == null) {
-      throw StateError('floors_tile calculator not found in registry');
-    }
-    testDefinition = realDefinition;
+    testDefinition = getCalculatorDefinition('floors_tile');
   });
 
   group('TileCalculatorScreen', () {
     testWidgets('renders correctly', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
 
@@ -48,14 +33,12 @@ void main() {
     });
 
     testWidgets('has tile material selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
 
@@ -67,33 +50,29 @@ void main() {
     });
 
     testWidgets('has share and copy buttons', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
 
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.byIcon(Icons.share), findsOneWidget);
-      expect(find.byIcon(Icons.copy), findsOneWidget);
+      expect(find.byIcon(Icons.share_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.copy_rounded), findsOneWidget);
     });
 
     testWidgets('has sliders for adjustments', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
 
@@ -104,14 +83,12 @@ void main() {
     });
 
     testWidgets('shows results in header', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
 
@@ -119,13 +96,12 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Should display area
-      expect(find.textContaining('м²'), findsWidgets);
+      // TestAppLocalizations returns keys, so we search for localization key
+      expect(find.textContaining('common.sqm'), findsWidgets);
     });
 
     testWidgets('accepts initial inputs', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
@@ -137,7 +113,7 @@ void main() {
               'width': 4.0,
             },
           ),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
 
@@ -148,14 +124,12 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
 
@@ -164,7 +138,7 @@ void main() {
       await tester.pumpWidget(
         createTestApp(
           child: const SizedBox.shrink(),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
 
@@ -172,14 +146,12 @@ void main() {
     });
 
     testWidgets('can interact with slider', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -194,14 +166,12 @@ void main() {
     });
 
     testWidgets('can scroll content', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -214,14 +184,12 @@ void main() {
     });
 
     testWidgets('shows InkWell for selections', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -232,30 +200,27 @@ void main() {
 
   group('TileCalculatorScreen input modes', () {
     testWidgets('shows input mode selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Режим ввода'), findsOneWidget);
+      // TestAppLocalizations returns keys, so we search for localization key
+      expect(find.textContaining('tile.mode'), findsWidgets);
     });
 
     testWidgets('has ModeSelector widget', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -264,22 +229,20 @@ void main() {
     });
 
     testWidgets('can switch between area and dimensions mode', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Find and tap the "По размерам" button
-      final byDimensionsText = find.text('По размерам');
+      // Find and tap the "by dimensions" button using localization key
+      final byDimensionsText = find.textContaining('tile.mode.by_dimensions');
       if (byDimensionsText.evaluate().isNotEmpty) {
-        await tester.tap(byDimensionsText);
+        await tester.tap(byDimensionsText.first);
         await tester.pumpAndSettle();
       }
 
@@ -289,14 +252,12 @@ void main() {
 
   group('TileCalculatorScreen material selection', () {
     testWidgets('shows material selector icons', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -307,20 +268,18 @@ void main() {
     });
 
     testWidgets('can select ceramic material', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Find ceramic text and tap
-      final ceramic = find.text('Керамическая плитка');
+      // Find ceramic using localization key
+      final ceramic = find.textContaining('tile.type.ceramic');
       if (ceramic.evaluate().isNotEmpty) {
         await tester.tap(ceramic.first);
         await tester.pumpAndSettle();
@@ -330,20 +289,18 @@ void main() {
     });
 
     testWidgets('can select porcelain material', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Find porcelain text and tap
-      final porcelain = find.text('Керамогранит');
+      // Find porcelain using localization key
+      final porcelain = find.textContaining('tile.type.porcelain');
       if (porcelain.evaluate().isNotEmpty) {
         await tester.tap(porcelain.first);
         await tester.pumpAndSettle();
@@ -355,14 +312,12 @@ void main() {
 
   group('TileCalculatorScreen room types', () {
     testWidgets('shows room type selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -373,20 +328,18 @@ void main() {
     });
 
     testWidgets('can select bathroom room type', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Find bathroom option and tap
-      final bathroom = find.text('Ванная / санузел');
+      // Find bathroom option using localization key
+      final bathroom = find.textContaining('tile.room.bathroom');
       if (bathroom.evaluate().isNotEmpty) {
         await tester.tap(bathroom.first);
         await tester.pumpAndSettle();
@@ -396,20 +349,18 @@ void main() {
     });
 
     testWidgets('can select kitchen room type', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Find kitchen option and tap
-      final kitchen = find.text('Кухня');
+      // Find kitchen option using localization key
+      final kitchen = find.textContaining('tile.room.kitchen');
       if (kitchen.evaluate().isNotEmpty) {
         await tester.tap(kitchen.first);
         await tester.pumpAndSettle();
@@ -421,14 +372,12 @@ void main() {
 
   group('TileCalculatorScreen layout patterns', () {
     testWidgets('shows layout pattern selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -439,20 +388,18 @@ void main() {
     });
 
     testWidgets('can select straight layout', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Find straight pattern and tap
-      final straight = find.text('Прямая');
+      // Find straight pattern using localization key
+      final straight = find.textContaining('tile.layout.straight');
       if (straight.evaluate().isNotEmpty) {
         await tester.tap(straight.first);
         await tester.pumpAndSettle();
@@ -462,20 +409,18 @@ void main() {
     });
 
     testWidgets('can select diagonal layout', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Find diagonal pattern and tap
-      final diagonal = find.text('Диагональная');
+      // Find diagonal pattern using localization key
+      final diagonal = find.textContaining('tile.layout.diagonal');
       if (diagonal.evaluate().isNotEmpty) {
         await tester.tap(diagonal.first);
         await tester.pumpAndSettle();
@@ -487,14 +432,12 @@ void main() {
 
   group('TileCalculatorScreen options', () {
     testWidgets('shows option toggles', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -504,14 +447,12 @@ void main() {
     });
 
     testWidgets('can toggle SVP option', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -534,31 +475,27 @@ void main() {
 
   group('TileCalculatorScreen tile size', () {
     testWidgets('shows tile size preset selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Check for common tile sizes
-      expect(find.textContaining('см'), findsWidgets);
+      // Check for tile size presets (search for widget types instead of text)
+      expect(find.byType(ChoiceChip), findsWidgets);
     });
 
     testWidgets('can change tile size preset', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -576,19 +513,17 @@ void main() {
 
   group('TileCalculatorScreen actions', () {
     testWidgets('can tap copy button', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      final copyButton = find.byIcon(Icons.copy);
+      final copyButton = find.byIcon(Icons.copy_rounded);
       expect(copyButton, findsOneWidget);
 
       await tester.tap(copyButton);
@@ -599,19 +534,17 @@ void main() {
     });
 
     testWidgets('can tap share button', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      final shareButton = find.byIcon(Icons.share);
+      final shareButton = find.byIcon(Icons.share_rounded);
       expect(shareButton, findsOneWidget);
 
       // Just verify button exists, share may not work in test
@@ -621,48 +554,42 @@ void main() {
 
   group('TileCalculatorScreen results', () {
     testWidgets('shows tiles count in result', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Should show tiles count
-      expect(find.textContaining('шт'), findsWidgets);
+      // Should show tiles count (TestAppLocalizations returns keys)
+      expect(find.textContaining('common.pcs'), findsWidgets);
     });
 
     testWidgets('shows boxes count in result', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Should show boxes label
-      expect(find.text('УПАКОВОК'), findsOneWidget);
+      // Should show boxes label (TestAppLocalizations returns keys)
+      expect(find.textContaining('boxes'), findsWidgets);
     });
 
     testWidgets('shows material results after scroll', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -676,14 +603,12 @@ void main() {
     });
 
     testWidgets('updates results when area changes', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -701,14 +626,12 @@ void main() {
 
   group('TileCalculatorScreen additional info', () {
     testWidgets('shows tips section', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -722,14 +645,12 @@ void main() {
     });
 
     testWidgets('shows HintCard widgets', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -744,14 +665,12 @@ void main() {
     });
 
     testWidgets('shows CalculatorResultHeader', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -760,14 +679,12 @@ void main() {
     });
 
     testWidgets('shows CalculatorScaffold', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
@@ -778,20 +695,18 @@ void main() {
 
   group('TileCalculatorScreen joint width', () {
     testWidgets('can adjust joint width slider', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: TileCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.tile,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Find joint width text
-      final jointText = find.textContaining('мм');
+      // Find joint width (TestAppLocalizations returns keys)
+      final jointText = find.textContaining('common.mm');
       expect(jointText, findsWidgets);
 
       // Drag a slider

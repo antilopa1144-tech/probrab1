@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:probrab_ai/domain/calculators/calculator_registry.dart';
 import 'package:probrab_ai/domain/models/calculator_definition_v2.dart';
 import 'package:probrab_ai/presentation/views/calculator/plaster_calculator_screen.dart';
+import '../../../helpers/calculator_test_helpers.dart';
 import '../../../helpers/test_helpers.dart';
 
 void main() {
@@ -10,19 +10,15 @@ void main() {
 
   setUpAll(() {
     setupMocks();
-
-    // Use real definition from registry
-    final realDefinition = CalculatorRegistry.getById('mixes_plaster');
-    if (realDefinition == null) {
-      throw StateError('mixes_plaster calculator not found in registry');
-    }
-    testDefinition = realDefinition;
+    testDefinition = getCalculatorDefinition('mixes_plaster');
   });
 
   group('PlasterCalculatorScreen', () {
     testWidgets('renders correctly', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -34,8 +30,10 @@ void main() {
     });
 
     testWidgets('has material type selector', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -49,8 +47,10 @@ void main() {
     });
 
     testWidgets('has input mode selector', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -64,8 +64,10 @@ void main() {
     });
 
     testWidgets('has thickness slider', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -78,8 +80,10 @@ void main() {
     });
 
     testWidgets('shows results header', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -88,12 +92,15 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Should display wall area, bags count, weight
-      expect(find.textContaining('м²'), findsWidgets);
+      // TestAppLocalizations returns keys, so we search for localization key
+      expect(find.textContaining('common.sqm'), findsWidgets);
     });
 
     testWidgets('switching material type updates calculation', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -110,8 +117,10 @@ void main() {
     });
 
     testWidgets('has beacons toggle option', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -124,8 +133,10 @@ void main() {
     });
 
     testWidgets('has mesh toggle option', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -137,8 +148,10 @@ void main() {
     });
 
     testWidgets('has primer toggle option', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -151,8 +164,10 @@ void main() {
     });
 
     testWidgets('accepts initial inputs', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(
             definition: testDefinition,
             initialInputs: const {
@@ -170,8 +185,10 @@ void main() {
     });
 
     testWidgets('accepts initial inputs with cement type', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(
             definition: testDefinition,
             initialInputs: const {
@@ -189,8 +206,10 @@ void main() {
     });
 
     testWidgets('shows beacons in spec by default', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -203,8 +222,10 @@ void main() {
     });
 
     testWidgets('does not show mesh in spec by default', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -217,8 +238,10 @@ void main() {
     });
 
     testWidgets('shows primer in spec by default', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -231,8 +254,10 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -241,6 +266,7 @@ void main() {
 
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: const SizedBox.shrink(),
         ),
       );
@@ -249,8 +275,10 @@ void main() {
     });
 
     testWidgets('slider interaction works', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -272,8 +300,10 @@ void main() {
 
   group('PlasterCalculatorScreen room mode', () {
     testWidgets('switching to room mode shows room inputs', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );
@@ -292,8 +322,10 @@ void main() {
     });
 
     testWidgets('room mode has openings area field', (tester) async {
+      setupTestScreenSize(tester);
       await tester.pumpWidget(
         createTestApp(
+          overrides: CalculatorMockOverrides.plaster,
           child: PlasterCalculatorScreen(definition: testDefinition),
         ),
       );

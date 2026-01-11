@@ -1,44 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:probrab_ai/domain/calculators/calculator_registry.dart';
 import 'package:probrab_ai/domain/models/calculator_definition_v2.dart';
-import 'package:probrab_ai/presentation/providers/constants_provider.dart';
 import 'package:probrab_ai/presentation/views/calculator/gypsum_calculator_screen.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_widgets.dart';
 import 'package:probrab_ai/presentation/widgets/existing/hint_card.dart';
 
 import '../../../helpers/test_helpers.dart';
-
-/// Mock constants for testing
-final _mockConstantsOverrides = <Override>[
-  calculatorConstantsProvider('gypsum').overrideWith((ref) async => null),
-  calculatorConstantsProvider('common').overrideWith((ref) async => null),
-];
+import '../../../helpers/calculator_test_helpers.dart';
 
 void main() {
   late CalculatorDefinitionV2 testDefinition;
 
   setUpAll(() {
     setupMocks();
-
-    final realDefinition = CalculatorRegistry.getById('gypsum_board');
-    if (realDefinition == null) {
-      throw StateError('gypsum_board calculator not found in registry');
-    }
-    testDefinition = realDefinition;
+    testDefinition = getCalculatorDefinition('gypsum_board');
   });
 
   group('GypsumCalculatorScreen', () {
     testWidgets('renders correctly', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pump();
@@ -47,14 +32,12 @@ void main() {
     });
 
     testWidgets('shows Scaffold structure', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pump();
@@ -63,14 +46,12 @@ void main() {
     });
 
     testWidgets('shows input fields', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pump();
@@ -79,14 +60,12 @@ void main() {
     });
 
     testWidgets('shows Cards for sections', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pump();
@@ -95,14 +74,12 @@ void main() {
     });
 
     testWidgets('uses scrollable layout', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pump();
@@ -111,19 +88,15 @@ void main() {
     });
 
     testWidgets('accepts initial inputs', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(
             definition: testDefinition,
-            initialInputs: const {
-              'area': 50.0,
-            },
+            initialInputs: const {'area': 50.0},
           ),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pump();
@@ -132,20 +105,15 @@ void main() {
     });
 
     testWidgets('accepts initial layers input', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(
             definition: testDefinition,
-            initialInputs: const {
-              'area': 30.0,
-              'layers': 2.0,
-            },
+            initialInputs: const {'area': 30.0, 'layers': 2.0},
           ),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pump();
@@ -154,20 +122,15 @@ void main() {
     });
 
     testWidgets('accepts initial construction_type input', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(
             definition: testDefinition,
-            initialInputs: const {
-              'area': 25.0,
-              'construction_type': 2.0,
-            },
+            initialInputs: const {'area': 25.0, 'construction_type': 2.0},
           ),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pump();
@@ -176,20 +139,15 @@ void main() {
     });
 
     testWidgets('accepts initial gkl_type input', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(
             definition: testDefinition,
-            initialInputs: const {
-              'area': 40.0,
-              'gkl_type': 2.0,
-            },
+            initialInputs: const {'area': 40.0, 'gkl_type': 2.0},
           ),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pump();
@@ -198,14 +156,12 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pump();
@@ -213,7 +169,7 @@ void main() {
       await tester.pumpWidget(
         createTestApp(
           child: const SizedBox.shrink(),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
 
@@ -221,14 +177,12 @@ void main() {
     });
 
     testWidgets('can interact with slider', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
@@ -243,14 +197,12 @@ void main() {
     });
 
     testWidgets('shows InkWell for type selection', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
@@ -259,14 +211,12 @@ void main() {
     });
 
     testWidgets('can scroll content', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
@@ -279,14 +229,12 @@ void main() {
     });
 
     testWidgets('shows IconButton for actions', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
@@ -297,14 +245,12 @@ void main() {
 
   group('GypsumCalculatorScreen Construction Types', () {
     testWidgets('shows TypeSelectorGroup', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
@@ -313,19 +259,16 @@ void main() {
     });
 
     testWidgets('can select partition type', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Find TypeSelectorCard widgets and tap the second one (partition)
       final typeCards = find.byType(TypeSelectorCard);
       if (typeCards.evaluate().length > 1) {
         await tester.tap(typeCards.at(1));
@@ -336,19 +279,16 @@ void main() {
     });
 
     testWidgets('can select ceiling type', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
 
-      // Find TypeSelectorCard widgets and tap the third one (ceiling)
       final typeCards = find.byType(TypeSelectorCard);
       if (typeCards.evaluate().length > 2) {
         await tester.tap(typeCards.at(2));
@@ -361,14 +301,12 @@ void main() {
 
   group('GypsumCalculatorScreen GKL Types', () {
     testWidgets('shows GKL type selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
@@ -379,14 +317,12 @@ void main() {
 
   group('GypsumCalculatorScreen Sheet Size', () {
     testWidgets('shows sheet size selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
@@ -397,33 +333,28 @@ void main() {
 
   group('GypsumCalculatorScreen Input Mode', () {
     testWidgets('shows input mode selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
 
-      // ModeSelector for input mode
       expect(find.byType(ModeSelector), findsWidgets);
     });
   });
 
   group('GypsumCalculatorScreen Options', () {
     testWidgets('shows layers slider', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
@@ -432,14 +363,12 @@ void main() {
     });
 
     testWidgets('shows insulation switch', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
@@ -448,14 +377,12 @@ void main() {
     });
 
     testWidgets('can toggle insulation switch', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
@@ -469,14 +396,12 @@ void main() {
 
   group('GypsumCalculatorScreen Materials', () {
     testWidgets('shows MaterialsCardModern', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
@@ -487,14 +412,12 @@ void main() {
 
   group('GypsumCalculatorScreen Tips', () {
     testWidgets('shows tips section', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
@@ -508,68 +431,59 @@ void main() {
 
   group('GypsumCalculatorScreen Actions', () {
     testWidgets('shows copy button', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.copy), findsOneWidget);
+      expect(find.byIcon(Icons.copy_rounded), findsOneWidget);
     });
 
     testWidgets('shows share button', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.share), findsOneWidget);
+      expect(find.byIcon(Icons.share_rounded), findsOneWidget);
     });
 
     testWidgets('can tap copy button', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.copy));
+      await tester.tap(find.byIcon(Icons.copy_rounded));
       await tester.pumpAndSettle();
 
-      // Should show snackbar
       expect(find.byType(SnackBar), findsOneWidget);
     });
   });
 
   group('GypsumCalculatorScreen Result Header', () {
     testWidgets('shows CalculatorResultHeader', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GypsumCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gypsum,
         ),
       );
       await tester.pumpAndSettle();

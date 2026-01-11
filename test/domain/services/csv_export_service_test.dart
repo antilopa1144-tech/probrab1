@@ -1,7 +1,133 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:probrab_ai/domain/models/export_data.dart';
+import 'package:probrab_ai/domain/services/csv_export_service.dart';
+
+// Mock path provider для тестов
+class MockPathProviderPlatform extends Fake
+    with MockPlatformInterfaceMixin
+    implements PathProviderPlatform {
+  final String tempPath;
+
+  MockPathProviderPlatform(this.tempPath);
+
+  @override
+  Future<String?> getApplicationDocumentsPath() async => tempPath;
+
+  @override
+  Future<String?> getTemporaryPath() async => tempPath;
+}
 
 void main() {
+  late Directory tempDir;
+
+  setUpAll(() async {
+    tempDir = await Directory.systemTemp.createTemp('csv_export_test_');
+    PathProviderPlatform.instance = MockPathProviderPlatform(tempDir.path);
+  });
+
+  tearDownAll(() async {
+    try {
+      await tempDir.delete(recursive: true);
+    } catch (_) {}
+  });
+
+  group('CsvExportService integration', () {
+    late CsvExportService service;
+
+    setUp(() {
+      service = CsvExportService();
+    });
+
+    test('exportToCsv создаёт файл', () async {
+      final data = ExportData(
+        projectName: 'IntegrationTest',
+        createdAt: DateTime.now(),
+        calculations: [],
+        totalMaterialCost: 100.0,
+        totalLaborCost: 50.0,
+        totalCost: 150.0,
+      );
+
+      final file = await service.exportToCsv(data, filename: 'integration_test.csv');
+
+      expect(await file.exists(), isTrue);
+      final content = await file.readAsString();
+      expect(content, contains('IntegrationTest'));
+    });
+
+    test('exportToCsv с данными расчётов', () async {
+      final data = ExportData(
+        projectName: 'CalcTest',
+        createdAt: DateTime(2024, 6, 15),
+        calculations: [
+          const ExportCalculation(
+            calculatorName: 'Тест',
+            inputs: {'area': 25.0},
+            results: {'result': 50.0},
+            materialCost: 1000.0,
+            laborCost: 500.0,
+          ),
+        ],
+        totalMaterialCost: 1000.0,
+        totalLaborCost: 500.0,
+        totalCost: 1500.0,
+      );
+
+      final file = await service.exportToCsv(data, filename: 'calc_test.csv');
+      final content = await file.readAsString();
+
+      expect(content, contains('CalcTest'));
+      expect(content, contains('Тест'));
+      expect(content, contains('25.00'));
+      expect(content, contains('1500.00'));
+    });
+
+    test('getExportDirectory создаёт директорию', () async {
+      final path = await service.getExportDirectory();
+
+      expect(path, contains('exports'));
+      expect(await Directory(path).exists(), isTrue);
+    });
+
+    test('deleteExportedFile удаляет файл', () async {
+      final data = ExportData(
+        projectName: 'ToDelete',
+        createdAt: DateTime.now(),
+        calculations: [],
+        totalMaterialCost: 0,
+        totalLaborCost: 0,
+        totalCost: 0,
+      );
+
+      final file = await service.exportToCsv(data, filename: 'to_delete_test.csv');
+      expect(await file.exists(), isTrue);
+
+      await service.deleteExportedFile(file.path);
+      expect(await file.exists(), isFalse);
+    });
+
+    test('CSV экранирует специальные символы', () async {
+      final data = ExportData(
+        projectName: 'Test, "with" special\nchars',
+        createdAt: DateTime.now(),
+        calculations: [],
+        totalMaterialCost: 0,
+        totalLaborCost: 0,
+        totalCost: 0,
+      );
+
+      final file = await service.exportToCsv(data, filename: 'special_chars.csv');
+      final content = await file.readAsString();
+
+      // Должны быть экранированы кавычки
+      expect(content, contains('""with""'));
+    });
+  });
+
   group('CsvExportService', () {
     group('_convertToCsv', () {
       test('converts simple rows to CSV', () {

@@ -4,11 +4,14 @@ import 'package:probrab_ai/domain/models/project_v2.dart';
 import 'package:probrab_ai/presentation/views/project/widgets/project_details_content.dart';
 import 'package:probrab_ai/presentation/views/project/widgets/project_info_card.dart';
 
+import '../../../../helpers/test_helpers.dart';
+
 void main() {
   group('ProjectDetailsContent', () {
     late ProjectV2 testProject;
 
     setUp(() {
+      setupMocks();
       testProject = ProjectV2()
         ..id = 1
         ..name = 'Test Project'
@@ -21,108 +24,85 @@ void main() {
         ..notes = 'Some notes';
     });
 
-    testWidgets('renders project name in app bar', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
+    Widget buildTestWidget({
+      required ProjectV2 project,
+      VoidCallback? onToggleFavorite,
+      VoidCallback? onEdit,
+      VoidCallback? onAddCalculation,
+      VoidCallback? onExport,
+      VoidCallback? onShareQR,
+      VoidCallback? onChangeStatus,
+      void Function(ProjectCalculation)? onOpenCalculation,
+      void Function(ProjectCalculation)? onDeleteCalculation,
+      VoidCallback? onRefresh,
+    }) {
+      return createTestApp(
+        child: Scaffold(
+          body: ProjectDetailsContent(
+            project: project,
+            onToggleFavorite: onToggleFavorite ?? () {},
+            onEdit: onEdit ?? () {},
+            onAddCalculation: onAddCalculation ?? () {},
+            onExport: onExport ?? () {},
+            onShareQR: onShareQR ?? () {},
+            onChangeStatus: onChangeStatus ?? () {},
+            onOpenCalculation: onOpenCalculation ?? (_) {},
+            onDeleteCalculation: onDeleteCalculation ?? (_) {},
+            onRefresh: onRefresh ?? () {},
           ),
         ),
       );
+    }
+
+    testWidgets('renders project name in app bar', (tester) async {
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
 
       expect(find.text('Test Project'), findsOneWidget);
     });
 
-    testWidgets('renders ProjectInfoCard', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
+    testWidgets('renders TabBar with three tabs', (tester) async {
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(TabBar), findsOneWidget);
+      expect(find.byType(Tab), findsNWidgets(3));
+    });
+
+    testWidgets('shows calculations tab with count', (tester) async {
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
+
+      // Проверяем текст первой вкладки - "Расчёты (0)" для пустого проекта
+      expect(find.text('Расчёты (0)'), findsOneWidget);
+    });
+
+    testWidgets('shows materials tab with count', (tester) async {
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Материалы (0)'), findsOneWidget);
+    });
+
+    testWidgets('shows checklists tab', (tester) async {
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
+
+      // Вкладка чек-листов (в табе)
+      expect(find.byType(Tab), findsNWidgets(3));
+    });
+
+    testWidgets('renders ProjectInfoCard in calculations tab', (tester) async {
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
 
       expect(find.byType(ProjectInfoCard), findsOneWidget);
     });
 
-    testWidgets('shows empty state when no calculations', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('Нет расчётов'), findsOneWidget);
-      expect(find.text('Добавьте первый расчёт'), findsOneWidget);
-    });
-
-    testWidgets('shows "Расчёты" section header', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('Расчёты'), findsOneWidget);
-    });
-
-    testWidgets('shows add calculation button', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
+    testWidgets('shows add calculation button in calculations tab',
+        (tester) async {
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
 
       expect(find.text('Добавить'), findsOneWidget);
     });
@@ -131,24 +111,13 @@ void main() {
         (tester) async {
       bool addCalled = false;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () => addCalled = true,
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(buildTestWidget(
+        project: testProject,
+        onAddCalculation: () => addCalled = true,
+      ));
+      await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Добавить'));
+      await tester.tap(find.text('Добавить').first);
       await tester.pumpAndSettle();
 
       expect(addCalled, isTrue);
@@ -157,22 +126,11 @@ void main() {
     testWidgets('calls onToggleFavorite when star is pressed', (tester) async {
       bool toggled = false;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () => toggled = true,
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(buildTestWidget(
+        project: testProject,
+        onToggleFavorite: () => toggled = true,
+      ));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.star_border));
       await tester.pumpAndSettle();
@@ -183,22 +141,8 @@ void main() {
     testWidgets('shows filled star when project is favorite', (tester) async {
       testProject.isFavorite = true;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.star), findsOneWidget);
     });
@@ -206,22 +150,11 @@ void main() {
     testWidgets('calls onEdit when edit button is pressed', (tester) async {
       bool editCalled = false;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () => editCalled = true,
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(buildTestWidget(
+        project: testProject,
+        onEdit: () => editCalled = true,
+      ));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.edit_rounded));
       await tester.pumpAndSettle();
@@ -229,54 +162,37 @@ void main() {
       expect(editCalled, isTrue);
     });
 
-    testWidgets('shows popup menu with export and status options',
+    testWidgets('shows popup menu with export, qr and status options',
         (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(PopupMenuButton<String>));
+      // Ищем PopupMenuButton без generic типа
+      final popupFinder = find.byWidgetPredicate(
+        (widget) => widget is PopupMenuButton,
+      );
+      await tester.tap(popupFinder);
       await tester.pumpAndSettle();
 
       expect(find.text('Экспортировать'), findsOneWidget);
       expect(find.text('Изменить статус'), findsOneWidget);
+      expect(find.text('Поделиться QR кодом'), findsOneWidget);
     });
 
     testWidgets('calls onExport when export menu item is selected',
         (tester) async {
       bool exportCalled = false;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () => exportCalled = true,
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(buildTestWidget(
+        project: testProject,
+        onExport: () => exportCalled = true,
+      ));
+      await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(PopupMenuButton<String>));
+      final popupFinder = find.byWidgetPredicate(
+        (widget) => widget is PopupMenuButton,
+      );
+      await tester.tap(popupFinder);
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Экспортировать'));
@@ -289,24 +205,16 @@ void main() {
         (tester) async {
       bool statusCalled = false;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () => statusCalled = true,
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(buildTestWidget(
+        project: testProject,
+        onChangeStatus: () => statusCalled = true,
+      ));
+      await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(PopupMenuButton<String>));
+      final popupFinder = find.byWidgetPredicate(
+        (widget) => widget is PopupMenuButton,
+      );
+      await tester.tap(popupFinder);
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Изменить статус'));
@@ -315,51 +223,9 @@ void main() {
       expect(statusCalled, isTrue);
     });
 
-    // Note: Testing calculations list requires Isar database setup
-    // which is complex for unit tests. The CalculationItemCard is tested
-    // separately in calculation_item_card_test.dart.
-    // Here we just verify the widget accepts the project without error.
-    testWidgets('widget renders without error when project has no calculations',
-        (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
-
-      // Empty state is shown
-      expect(find.text('Нет расчётов'), findsOneWidget);
-      expect(find.byIcon(Icons.calculate_outlined), findsOneWidget);
-    });
-
     testWidgets('has edit button with correct tooltip', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
 
       final iconButton = tester.widget<IconButton>(
         find.widgetWithIcon(IconButton, Icons.edit_rounded),
@@ -369,22 +235,8 @@ void main() {
 
     testWidgets('favorite button has correct tooltip when not favorite',
         (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
 
       final iconButton = tester.widget<IconButton>(
         find.widgetWithIcon(IconButton, Icons.star_border),
@@ -396,27 +248,26 @@ void main() {
         (tester) async {
       testProject.isFavorite = true;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProjectDetailsContent(
-              project: testProject,
-              onToggleFavorite: () {},
-              onEdit: () {},
-              onAddCalculation: () {},
-              onExport: () {},
-              onChangeStatus: () {},
-              onOpenCalculation: (_) {},
-              onDeleteCalculation: (_) {},
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
 
       final iconButton = tester.widget<IconButton>(
         find.widgetWithIcon(IconButton, Icons.star),
       );
       expect(iconButton.tooltip, 'Убрать из избранного');
+    });
+
+    testWidgets('can switch to materials tab', (tester) async {
+      await tester.pumpWidget(buildTestWidget(project: testProject));
+      await tester.pumpAndSettle();
+
+      // Нажимаем на вкладку "Материалы" (используем точный текст таба)
+      await tester.tap(find.text('Материалы (0)'));
+      await tester.pumpAndSettle();
+
+      // После переключения вкладки, ProjectInfoCard не должен быть виден
+      // (он только на вкладке расчётов), проверяем что TabBarView работает
+      expect(find.byType(TabBarView), findsOneWidget);
     });
   });
 }

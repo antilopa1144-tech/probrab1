@@ -9,7 +9,7 @@ void main() {
     });
 
     test('has correct app name', () {
-      expect(AppConstants.appName, equals('Прораб AI'));
+      expect(AppConstants.appName, equals('Мастерок'));
     });
 
     test('has all required regions', () {

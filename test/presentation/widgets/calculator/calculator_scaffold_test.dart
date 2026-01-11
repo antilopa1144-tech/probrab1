@@ -115,7 +115,7 @@ void main() {
             accentColor: Colors.blue,
             actions: [
               IconButton(
-                icon: const Icon(Icons.share),
+                icon: const Icon(Icons.share_rounded),
                 onPressed: () {},
               ),
             ],
@@ -124,7 +124,7 @@ void main() {
         ),
       );
 
-      expect(find.byIcon(Icons.share), findsOneWidget);
+      expect(find.byIcon(Icons.share_rounded), findsOneWidget);
     });
 
     testWidgets('renders floating action button', (tester) async {
@@ -208,7 +208,7 @@ void main() {
             accentColor: Colors.purple,
             actions: [
               IconButton(
-                icon: const Icon(Icons.copy),
+                icon: const Icon(Icons.copy_rounded),
                 onPressed: () {},
               ),
             ],
@@ -217,7 +217,7 @@ void main() {
         ),
       );
 
-      expect(find.byIcon(Icons.copy), findsOneWidget);
+      expect(find.byIcon(Icons.copy_rounded), findsOneWidget);
     });
 
     testWidgets('accepts custom body padding', (tester) async {

@@ -58,8 +58,8 @@ void main() {
 
         // Double brick should need fewer bricks
         expect(
-          doubleResult.values['bricksNeeded']!,
-          lessThan(singleResult.values['bricksNeeded']!),
+          doubleResult.values['bricksNeeded'],
+          lessThan(singleResult.values['bricksNeeded'] ?? 0),
         );
       });
 
@@ -149,8 +149,8 @@ void main() {
         // 2-brick wall has higher multiplier but also 4x bricks
         // So mortar should be significantly higher
         expect(
-          twoResult.values['mortarVolume']!,
-          greaterThan(oneResult.values['mortarVolume']! * 3),
+          twoResult.values['mortarVolume'],
+          greaterThan((oneResult.values['mortarVolume'] ?? 0) * 3),
         );
       });
 
@@ -387,7 +387,7 @@ void main() {
         final result = calculator(inputs, priceList);
 
         expect(result.totalPrice, isNotNull);
-        expect(result.totalPrice!, greaterThan(0));
+        expect(result.totalPrice, greaterThan(0));
       });
 
       test('returns null price when no prices available', () {

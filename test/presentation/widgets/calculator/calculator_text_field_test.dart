@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_text_field.dart';
 
@@ -8,12 +9,14 @@ void main() {
       double testValue = 10.0;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Длина (м)',
-              value: testValue,
-              onChanged: (value) => testValue = value,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Длина (м)',
+                value: testValue,
+                onChanged: (value) => testValue = value,
+              ),
             ),
           ),
         ),
@@ -28,12 +31,14 @@ void main() {
       double? changedValue;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Ширина (м)',
-              value: testValue,
-              onChanged: (value) => changedValue = value,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Ширина (м)',
+                value: testValue,
+                onChanged: (value) => changedValue = value,
+              ),
             ),
           ),
         ),
@@ -49,13 +54,15 @@ void main() {
       const double testValue = 5.0;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Количество',
-              value: testValue,
-              onChanged: (value) {},
-              isInteger: true,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Количество',
+                value: testValue,
+                onChanged: (value) {},
+                isInteger: true,
+              ),
             ),
           ),
         ),
@@ -68,13 +75,15 @@ void main() {
 
     testWidgets('shows suffix when provided', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Площадь',
-              value: 25.5,
-              onChanged: (value) {},
-              suffix: 'м²',
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Площадь',
+                value: 25.5,
+                onChanged: (value) {},
+                suffix: 'м²',
+              ),
             ),
           ),
         ),
@@ -85,13 +94,15 @@ void main() {
 
     testWidgets('shows hint when provided', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Высота',
-              value: 0.0,
-              onChanged: (value) {},
-              hint: 'Введите высоту',
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Высота',
+                value: 0.0,
+                onChanged: (value) {},
+                hint: 'Введите высоту',
+              ),
             ),
           ),
         ),
@@ -103,13 +114,15 @@ void main() {
 
     testWidgets('shows icon when provided', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Длина',
-              value: 10.0,
-              onChanged: (value) {},
-              icon: Icons.straighten,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Длина',
+                value: 10.0,
+                onChanged: (value) {},
+                icon: Icons.straighten,
+              ),
             ),
           ),
         ),
@@ -123,13 +136,15 @@ void main() {
       double? finalValue;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Площадь',
-              value: testValue,
-              onChanged: (value) => finalValue = value,
-              minValue: 10.0,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Площадь',
+                value: testValue,
+                onChanged: (value) => finalValue = value,
+                minValue: 10.0,
+              ),
             ),
           ),
         ),
@@ -147,13 +162,15 @@ void main() {
       double? finalValue;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Площадь',
-              value: testValue,
-              onChanged: (value) => finalValue = value,
-              maxValue: 100.0,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Площадь',
+                value: testValue,
+                onChanged: (value) => finalValue = value,
+                maxValue: 100.0,
+              ),
             ),
           ),
         ),
@@ -170,12 +187,14 @@ void main() {
       double? changedValue;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Значение',
-              value: 10.0,
-              onChanged: (value) => changedValue = value,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Значение',
+                value: 10.0,
+                onChanged: (value) => changedValue = value,
+              ),
             ),
           ),
         ),
@@ -189,13 +208,15 @@ void main() {
 
     testWidgets('respects decimal places setting', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Точность',
-              value: 3.14159,
-              onChanged: (value) {},
-              decimalPlaces: 2,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Точность',
+                value: 3.14159,
+                onChanged: (value) {},
+                decimalPlaces: 2,
+              ),
             ),
           ),
         ),
@@ -206,13 +227,15 @@ void main() {
 
     testWidgets('handles disabled state', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Заблокировано',
-              value: 5.0,
-              onChanged: (value) {},
-              enabled: false,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Заблокировано',
+                value: 5.0,
+                onChanged: (value) {},
+                enabled: false,
+              ),
             ),
           ),
         ),
@@ -226,13 +249,15 @@ void main() {
       const customColor = Color(0xFFFF5722);
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Цветное поле',
-              value: 10.0,
-              onChanged: (value) {},
-              accentColor: customColor,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Цветное поле',
+                value: 10.0,
+                onChanged: (value) {},
+                accentColor: customColor,
+              ),
             ),
           ),
         ),
@@ -244,12 +269,14 @@ void main() {
 
     testWidgets('has proper textAlignVertical and isDense', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Тест выравнивания',
-              value: 10.0,
-              onChanged: (value) {},
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Тест выравнивания',
+                value: 10.0,
+                onChanged: (value) {},
+              ),
             ),
           ),
         ),
@@ -265,16 +292,18 @@ void main() {
     testWidgets('text does not overflow with increased textScaleFactor',
         (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: MediaQuery(
-            data: const MediaQueryData(textScaler: TextScaler.linear(1.5)),
-            child: Scaffold(
-              body: SizedBox(
-                width: 250,
-                child: CalculatorTextField(
-                  label: 'Длинный лейбл для теста',
-                  value: 123456.78,
-                  onChanged: (value) {},
+        ProviderScope(
+          child: MaterialApp(
+            home: MediaQuery(
+              data: const MediaQueryData(textScaler: TextScaler.linear(1.5)),
+              child: Scaffold(
+                body: SizedBox(
+                  width: 250,
+                  child: CalculatorTextField(
+                    label: 'Длинный лейбл для теста',
+                    value: 123456.78,
+                    onChanged: (value) {},
+                  ),
                 ),
               ),
             ),
@@ -290,12 +319,14 @@ void main() {
       double? changedValue;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextField(
-              label: 'Значение',
-              value: 10.0,
-              onChanged: (value) => changedValue = value,
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextField(
+                label: 'Значение',
+                value: 10.0,
+                onChanged: (value) => changedValue = value,
+              ),
             ),
           ),
         ),
@@ -314,12 +345,14 @@ void main() {
   group('CalculatorTextFieldCompact', () {
     testWidgets('renders correctly', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: CalculatorTextFieldCompact(
-              label: 'Компактное',
-              value: 5.0,
-              onChanged: (value) {},
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: CalculatorTextFieldCompact(
+                label: 'Компактное',
+                value: 5.0,
+                onChanged: (value) {},
+              ),
             ),
           ),
         ),
@@ -333,15 +366,17 @@ void main() {
   group('RoomDimensionsFields', () {
     testWidgets('renders all three dimension fields', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: RoomDimensionsFields(
-              length: 4.0,
-              width: 3.0,
-              height: 2.7,
-              onLengthChanged: (value) {},
-              onWidthChanged: (value) {},
-              onHeightChanged: (value) {},
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: RoomDimensionsFields(
+                length: 4.0,
+                width: 3.0,
+                height: 2.7,
+                onLengthChanged: (value) {},
+                onWidthChanged: (value) {},
+                onHeightChanged: (value) {},
+              ),
             ),
           ),
         ),
@@ -358,15 +393,17 @@ void main() {
       double? newLength;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: RoomDimensionsFields(
-              length: 4.0,
-              width: 3.0,
-              height: 2.7,
-              onLengthChanged: (value) => newLength = value,
-              onWidthChanged: (value) {},
-              onHeightChanged: (value) {},
+        ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: RoomDimensionsFields(
+                length: 4.0,
+                width: 3.0,
+                height: 2.7,
+                onLengthChanged: (value) => newLength = value,
+                onWidthChanged: (value) {},
+                onHeightChanged: (value) {},
+              ),
             ),
           ),
         ),

@@ -1,42 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:probrab_ai/domain/calculators/calculator_registry.dart';
 import 'package:probrab_ai/domain/models/calculator_definition_v2.dart';
-import 'package:probrab_ai/presentation/providers/constants_provider.dart';
 import 'package:probrab_ai/presentation/views/calculator/wallpaper_calculator_screen.dart';
+import '../../../helpers/calculator_test_helpers.dart';
 import '../../../helpers/test_helpers.dart';
-
-/// Mock constants for testing
-final _mockConstantsOverrides = <Override>[
-  calculatorConstantsProvider('wallpaper').overrideWith((ref) async => null),
-  calculatorConstantsProvider('common').overrideWith((ref) async => null),
-];
 
 void main() {
   late CalculatorDefinitionV2 testDefinition;
 
   setUpAll(() {
     setupMocks();
-
-    // Use real definition from registry
-    final realDefinition = CalculatorRegistry.getById('walls_wallpaper');
-    if (realDefinition == null) {
-      throw StateError('walls_wallpaper calculator not found in registry');
-    }
-    testDefinition = realDefinition;
+    testDefinition = getCalculatorDefinition('walls_wallpaper');
   });
 
   group('WallpaperCalculatorScreen', () {
     testWidgets('renders correctly', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: WallpaperCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.wallpaper,
         ),
       );
 
@@ -47,14 +31,12 @@ void main() {
     });
 
     testWidgets('has input mode selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: WallpaperCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.wallpaper,
         ),
       );
 
@@ -67,14 +49,12 @@ void main() {
     });
 
     testWidgets('has roll size selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: WallpaperCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.wallpaper,
         ),
       );
 
@@ -85,14 +65,12 @@ void main() {
     });
 
     testWidgets('shows results header', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: WallpaperCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.wallpaper,
         ),
       );
 
@@ -100,37 +78,34 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Should display area, rolls count
-      expect(find.textContaining('м²'), findsWidgets);
+      // TestAppLocalizations returns keys, so we search for localization key
+      expect(find.textContaining('common.sqm'), findsWidgets);
     });
 
     testWidgets('has share and copy buttons', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: WallpaperCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.wallpaper,
         ),
       );
 
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.byIcon(Icons.share), findsOneWidget);
-      expect(find.byIcon(Icons.copy), findsOneWidget);
+      expect(find.byIcon(Icons.share_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.copy_rounded), findsOneWidget);
     });
 
     testWidgets('has sliders for adjustments', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: WallpaperCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.wallpaper,
         ),
       );
 
@@ -141,9 +116,7 @@ void main() {
     });
 
     testWidgets('accepts initial inputs', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
@@ -156,7 +129,7 @@ void main() {
               'height': 2.8,
             },
           ),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.wallpaper,
         ),
       );
 
@@ -167,14 +140,12 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: WallpaperCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.wallpaper,
         ),
       );
 
@@ -183,7 +154,7 @@ void main() {
       await tester.pumpWidget(
         createTestApp(
           child: const SizedBox.shrink(),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.wallpaper,
         ),
       );
 
@@ -191,14 +162,12 @@ void main() {
     });
 
     testWidgets('can interact with slider', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: WallpaperCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.wallpaper,
         ),
       );
       await tester.pumpAndSettle();
@@ -213,14 +182,12 @@ void main() {
     });
 
     testWidgets('can scroll content', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: WallpaperCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.wallpaper,
         ),
       );
       await tester.pumpAndSettle();
@@ -233,14 +200,12 @@ void main() {
     });
 
     testWidgets('shows InkWell for selections', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: WallpaperCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.wallpaper,
         ),
       );
       await tester.pumpAndSettle();

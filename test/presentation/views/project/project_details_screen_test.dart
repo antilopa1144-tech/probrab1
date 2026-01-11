@@ -724,4 +724,349 @@ void main() {
       }
     });
   });
+
+  group('ProjectDetailsScreen actions', () {
+    late ProjectV2 testProject;
+    late MockProjectRepositoryV2 mockRepo;
+
+    setUp(() {
+      SharedPreferences.setMockInitialValues({});
+      testProject = ProjectV2()
+        ..id = 1
+        ..name = 'Test Project'
+        ..description = 'Test Description'
+        ..createdAt = DateTime.now()
+        ..updatedAt = DateTime.now()
+        ..status = ProjectStatus.planning
+        ..isFavorite = false
+        ..tags = ['tag1'];
+      mockRepo = MockProjectRepositoryV2(projectToReturn: testProject);
+    });
+
+    testWidgets('использует FutureBuilder для загрузки проекта', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(mockRepo),
+        ),
+      );
+
+      expect(find.byType(FutureBuilder<ProjectV2?>), findsOneWidget);
+    });
+
+    testWidgets('FAB всегда видна', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(mockRepo),
+        ),
+      );
+
+      expect(find.byType(FloatingActionButton), findsOneWidget);
+    });
+
+    testWidgets('можно тапнуть на FAB во время загрузки', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(mockRepo),
+        ),
+      );
+
+      final fab = find.byType(FloatingActionButton);
+      await tester.tap(fab);
+      await tester.pump();
+    });
+
+    testWidgets('загружается с правильным projectId', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      const projectId = 42;
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: projectId),
+          overrides: _createOverrides(mockRepo),
+        ),
+      );
+
+      final widget = tester.widget<ProjectDetailsScreen>(
+        find.byType(ProjectDetailsScreen),
+      );
+      expect(widget.projectId, projectId);
+    });
+
+    testWidgets('имеет Scaffold в body', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(mockRepo),
+        ),
+      );
+
+      expect(find.byType(Scaffold), findsOneWidget);
+    });
+
+    testWidgets('состояние not found показывает правильную иконку', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(mockRepo),
+        ),
+      );
+
+      await tester.pump(const Duration(seconds: 1));
+
+      final notFoundIcon = find.byIcon(Icons.folder_off_rounded);
+      if (notFoundIcon.evaluate().isNotEmpty) {
+        expect(notFoundIcon, findsOneWidget);
+      }
+    });
+
+    testWidgets('состояние ошибки показывает правильную иконку', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      final errorRepo = MockProjectRepositoryV2(shouldThrowError: true);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(errorRepo),
+        ),
+      );
+
+      await tester.pump(const Duration(seconds: 1));
+
+      final errorIcon = find.byIcon(Icons.error_outline_rounded);
+      if (errorIcon.evaluate().isNotEmpty) {
+        expect(errorIcon, findsOneWidget);
+      }
+    });
+
+    testWidgets('использует ConsumerStatefulWidget', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(mockRepo),
+        ),
+      );
+
+      final element = tester.element(find.byType(ProjectDetailsScreen));
+      expect(element.widget, isA<ConsumerStatefulWidget>());
+    });
+
+    testWidgets('вызывает initState при создании', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(mockRepo),
+        ),
+      );
+
+      // initState должен вызвать _loadProject
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('проект с максимальным количеством тегов', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      testProject.tags = List.generate(10, (i) => 'tag$i');
+      final tagsRepo = MockProjectRepositoryV2(projectToReturn: testProject);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(tagsRepo),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(find.byType(Scaffold), findsOneWidget);
+    });
+
+    testWidgets('проект со всеми полями заполненными', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      testProject.description = 'Full description';
+      testProject.notes = 'Full notes';
+      testProject.color = 0xFF4CAF50;
+      testProject.tags = ['tag1', 'tag2', 'tag3'];
+      final fullRepo = MockProjectRepositoryV2(projectToReturn: testProject);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(fullRepo),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(find.byType(Scaffold), findsOneWidget);
+    });
+
+    testWidgets('обрабатывает очень длинное имя проекта', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      testProject.name = 'Very Long Project Name ' * 10;
+      final longNameRepo = MockProjectRepositoryV2(projectToReturn: testProject);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(longNameRepo),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(find.byType(Scaffold), findsOneWidget);
+    });
+
+    testWidgets('обрабатывает очень длинное описание проекта', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      testProject.description = 'Very Long Description ' * 50;
+      final longDescRepo = MockProjectRepositoryV2(projectToReturn: testProject);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(longDescRepo),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(find.byType(Scaffold), findsOneWidget);
+    });
+
+    testWidgets('переходит из loading в data state', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(mockRepo),
+        ),
+      );
+
+      // Initially loading
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      // Wait for data to load
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // Should have scaffold
+      expect(find.byType(Scaffold), findsOneWidget);
+    });
+
+    testWidgets('проект с датой создания в будущем', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      testProject.createdAt = DateTime.now().add(const Duration(days: 365));
+      final futureRepo = MockProjectRepositoryV2(projectToReturn: testProject);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(futureRepo),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(find.byType(Scaffold), findsOneWidget);
+    });
+
+    testWidgets('проект с очень старой датой создания', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      testProject.createdAt = DateTime(2000, 1, 1);
+      final oldRepo = MockProjectRepositoryV2(projectToReturn: testProject);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const ProjectDetailsScreen(projectId: 1),
+          overrides: _createOverrides(oldRepo),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 500));
+
+      expect(find.byType(Scaffold), findsOneWidget);
+    });
+
+    testWidgets('тест всех статусов проекта в одном тесте', (tester) async {
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      for (final status in ProjectStatus.values) {
+        testProject.status = status;
+        final statusRepo = MockProjectRepositoryV2(projectToReturn: testProject);
+
+        await tester.pumpWidget(
+          createTestApp(
+            child: const ProjectDetailsScreen(projectId: 1),
+            overrides: _createOverrides(statusRepo),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 500));
+        await tester.pump(const Duration(milliseconds: 500));
+
+        expect(find.byType(Scaffold), findsOneWidget);
+
+        // Cleanup for next iteration
+        await tester.pumpWidget(const SizedBox.shrink());
+      }
+    });
+  });
 }

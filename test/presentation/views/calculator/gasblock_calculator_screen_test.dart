@@ -1,43 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:probrab_ai/domain/calculators/calculator_registry.dart';
 import 'package:probrab_ai/domain/models/calculator_definition_v2.dart';
-import 'package:probrab_ai/presentation/providers/constants_provider.dart';
 import 'package:probrab_ai/presentation/views/calculator/gasblock_calculator_screen.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_widgets.dart';
 
 import '../../../helpers/test_helpers.dart';
-
-/// Mock constants for testing
-final _mockConstantsOverrides = <Override>[
-  calculatorConstantsProvider('gasblock').overrideWith((ref) async => null),
-  calculatorConstantsProvider('common').overrideWith((ref) async => null),
-];
+import '../../../helpers/calculator_test_helpers.dart';
 
 void main() {
   late CalculatorDefinitionV2 testDefinition;
 
   setUpAll(() {
     setupMocks();
-
-    final realDefinition = CalculatorRegistry.getById('partitions_blocks');
-    if (realDefinition == null) {
-      throw StateError('partitions_blocks calculator not found in registry');
-    }
-    testDefinition = realDefinition;
+    testDefinition = getCalculatorDefinition('partitions_blocks');
   });
 
   group('GasblockCalculatorScreen', () {
     testWidgets('renders correctly', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pump();
@@ -46,14 +31,12 @@ void main() {
     });
 
     testWidgets('shows Scaffold structure', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pump();
@@ -62,14 +45,12 @@ void main() {
     });
 
     testWidgets('shows input sliders', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pump();
@@ -78,14 +59,12 @@ void main() {
     });
 
     testWidgets('uses Cards for sections', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pump();
@@ -94,14 +73,12 @@ void main() {
     });
 
     testWidgets('uses scrollable layout', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pump();
@@ -110,14 +87,12 @@ void main() {
     });
 
     testWidgets('disposes correctly', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pump();
@@ -125,7 +100,7 @@ void main() {
       await tester.pumpWidget(
         createTestApp(
           child: const SizedBox.shrink(),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
 
@@ -133,14 +108,12 @@ void main() {
     });
 
     testWidgets('can interact with slider', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -155,14 +128,12 @@ void main() {
     });
 
     testWidgets('shows InkWell for type selection', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -171,14 +142,12 @@ void main() {
     });
 
     testWidgets('can scroll content', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -191,14 +160,12 @@ void main() {
     });
 
     testWidgets('shows IconButton for actions', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -207,9 +174,7 @@ void main() {
     });
 
     testWidgets('accepts initial inputs', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
@@ -219,7 +184,7 @@ void main() {
               'area': 50.0,
             },
           ),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pump();
@@ -230,30 +195,27 @@ void main() {
 
   group('GasblockCalculatorScreen input modes', () {
     testWidgets('shows input mode selector', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Режим ввода'), findsOneWidget);
+      // TestAppLocalizations returns keys, so we verify widget exists instead
+      expect(find.byType(ModeSelector), findsWidgets);
     });
 
     testWidgets('has ModeSelector widget', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -262,21 +224,23 @@ void main() {
     });
 
     testWidgets('can switch between area and dimensions mode', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      final byDimensionsText = find.text('По размерам');
-      if (byDimensionsText.evaluate().isNotEmpty) {
-        await tester.tap(byDimensionsText);
+      // Use ModeSelector widget instead of Russian text
+      final modeSelectorItems = find.descendant(
+        of: find.byType(ModeSelector),
+        matching: find.byType(InkWell),
+      );
+      if (modeSelectorItems.evaluate().length > 1) {
+        await tester.tap(modeSelectorItems.at(1));
         await tester.pumpAndSettle();
       }
 
@@ -286,14 +250,12 @@ void main() {
 
   group('GasblockCalculatorScreen wall types', () {
     testWidgets('shows wall type icons', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -303,21 +265,20 @@ void main() {
     });
 
     testWidgets('can select partition wall type', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      final partition = find.text('Перегородка');
-      if (partition.evaluate().isNotEmpty) {
-        await tester.tap(partition.first);
+      // Use TypeSelectorCard instead of Russian text
+      final typeCards = find.byType(TypeSelectorCard);
+      if (typeCards.evaluate().isNotEmpty) {
+        await tester.tap(typeCards.first);
         await tester.pumpAndSettle();
       }
 
@@ -325,21 +286,20 @@ void main() {
     });
 
     testWidgets('can select bearing wall type', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      final bearing = find.text('Несущая');
-      if (bearing.evaluate().isNotEmpty) {
-        await tester.tap(bearing.first);
+      // Use TypeSelectorCard instead of Russian text
+      final typeCards = find.byType(TypeSelectorCard);
+      if (typeCards.evaluate().length > 1) {
+        await tester.tap(typeCards.at(1));
         await tester.pumpAndSettle();
       }
 
@@ -349,14 +309,12 @@ void main() {
 
   group('GasblockCalculatorScreen block materials', () {
     testWidgets('shows block material icons', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -366,44 +324,56 @@ void main() {
     });
 
     testWidgets('can select gasblock material', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      final gasblock = find.text('Газоблок');
-      if (gasblock.evaluate().isNotEmpty) {
-        await tester.tap(gasblock.first);
-        await tester.pumpAndSettle();
+      // Use ModeSelector instead of Russian text - material selector
+      final modeSelectors = find.byType(ModeSelector);
+      if (modeSelectors.evaluate().length > 1) {
+        final materialSelector = modeSelectors.at(1);
+        final items = find.descendant(
+          of: materialSelector,
+          matching: find.byType(InkWell),
+        );
+        if (items.evaluate().isNotEmpty) {
+          await tester.tap(items.first);
+          await tester.pumpAndSettle();
+        }
       }
 
       expect(find.byType(GasblockCalculatorScreen), findsOneWidget);
     });
 
     testWidgets('can select foamblock material', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      final foamblock = find.text('Пеноблок');
-      if (foamblock.evaluate().isNotEmpty) {
-        await tester.tap(foamblock.first);
-        await tester.pumpAndSettle();
+      // Use ModeSelector instead of Russian text - material selector
+      final modeSelectors = find.byType(ModeSelector);
+      if (modeSelectors.evaluate().length > 1) {
+        final materialSelector = modeSelectors.at(1);
+        final items = find.descendant(
+          of: materialSelector,
+          matching: find.byType(InkWell),
+        );
+        if (items.evaluate().length > 1) {
+          await tester.tap(items.at(1));
+          await tester.pumpAndSettle();
+        }
       }
 
       expect(find.byType(GasblockCalculatorScreen), findsOneWidget);
@@ -412,14 +382,12 @@ void main() {
 
   group('GasblockCalculatorScreen masonry mix', () {
     testWidgets('shows masonry mix icons', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -428,44 +396,56 @@ void main() {
     });
 
     testWidgets('can select glue masonry mix', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      final glue = find.text('Клей');
-      if (glue.evaluate().isNotEmpty) {
-        await tester.tap(glue.first);
-        await tester.pumpAndSettle();
+      // Use ModeSelector instead of Russian text - masonry selector
+      final modeSelectors = find.byType(ModeSelector);
+      if (modeSelectors.evaluate().length > 2) {
+        final masonrySelector = modeSelectors.at(2);
+        final items = find.descendant(
+          of: masonrySelector,
+          matching: find.byType(InkWell),
+        );
+        if (items.evaluate().isNotEmpty) {
+          await tester.tap(items.first);
+          await tester.pumpAndSettle();
+        }
       }
 
       expect(find.byType(GasblockCalculatorScreen), findsOneWidget);
     });
 
     testWidgets('can select mortar masonry mix', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      final mortar = find.text('Раствор');
-      if (mortar.evaluate().isNotEmpty) {
-        await tester.tap(mortar.first);
-        await tester.pumpAndSettle();
+      // Use ModeSelector instead of Russian text - masonry selector
+      final modeSelectors = find.byType(ModeSelector);
+      if (modeSelectors.evaluate().length > 2) {
+        final masonrySelector = modeSelectors.at(2);
+        final items = find.descendant(
+          of: masonrySelector,
+          matching: find.byType(InkWell),
+        );
+        if (items.evaluate().length > 1) {
+          await tester.tap(items.at(1));
+          await tester.pumpAndSettle();
+        }
       }
 
       expect(find.byType(GasblockCalculatorScreen), findsOneWidget);
@@ -474,14 +454,12 @@ void main() {
 
   group('GasblockCalculatorScreen options', () {
     testWidgets('shows option switches', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -494,14 +472,12 @@ void main() {
     });
 
     testWidgets('can toggle options', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -522,51 +498,45 @@ void main() {
 
   group('GasblockCalculatorScreen actions', () {
     testWidgets('has copy button', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.copy), findsOneWidget);
+      expect(find.byIcon(Icons.copy_rounded), findsOneWidget);
     });
 
     testWidgets('has share button', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.share), findsOneWidget);
+      expect(find.byIcon(Icons.share_rounded), findsOneWidget);
     });
 
     testWidgets('can tap copy button', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      final copyButton = find.byIcon(Icons.copy);
+      final copyButton = find.byIcon(Icons.copy_rounded);
       await tester.tap(copyButton);
       await tester.pumpAndSettle();
 
@@ -576,46 +546,42 @@ void main() {
 
   group('GasblockCalculatorScreen results', () {
     testWidgets('shows blocks count in result', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('шт'), findsWidgets);
+      // TestAppLocalizations returns keys, so we search for localization key
+      expect(find.textContaining('common.pcs'), findsWidgets);
     });
 
     testWidgets('shows area result', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('м²'), findsWidgets);
+      // TestAppLocalizations returns keys, so we search for localization key
+      expect(find.textContaining('common.sqm'), findsWidgets);
     });
 
     testWidgets('shows CalculatorResultHeader', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -624,14 +590,12 @@ void main() {
     });
 
     testWidgets('shows CalculatorScaffold', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -640,14 +604,12 @@ void main() {
     });
 
     testWidgets('updates results when area changes', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -664,14 +626,12 @@ void main() {
 
   group('GasblockCalculatorScreen materials', () {
     testWidgets('shows materials after scroll', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -684,14 +644,12 @@ void main() {
     });
 
     testWidgets('shows tips section', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -706,14 +664,12 @@ void main() {
 
   group('GasblockCalculatorScreen block size', () {
     testWidgets('shows block size presets', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
@@ -723,14 +679,12 @@ void main() {
     });
 
     testWidgets('can change block size preset', (tester) async {
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
+      setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
           child: GasblockCalculatorScreen(definition: testDefinition),
-          overrides: _mockConstantsOverrides,
+          overrides: CalculatorMockOverrides.gasblock,
         ),
       );
       await tester.pumpAndSettle();
