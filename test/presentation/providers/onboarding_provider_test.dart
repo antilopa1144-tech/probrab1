@@ -102,7 +102,7 @@ void main() {
         OnboardingStep(id: 'step2', title: 'Step 2', description: 'Desc 2', order: 1),
       ];
 
-      final state = OnboardingState(
+      const state = OnboardingState(
         steps: steps,
         currentStepIndex: 1,
       );
@@ -115,7 +115,7 @@ void main() {
         OnboardingStep(id: 'step1', title: 'Step 1', description: 'Desc 1', order: 0),
       ];
 
-      final state = OnboardingState(
+      const state = OnboardingState(
         steps: steps,
         currentStepIndex: 5,
       );
@@ -129,8 +129,8 @@ void main() {
         OnboardingStep(id: 'step2', title: 'Step 2', description: 'Desc 2', order: 1),
       ];
 
-      final state1 = OnboardingState(steps: steps, currentStepIndex: 0);
-      final state2 = OnboardingState(steps: steps, currentStepIndex: 1);
+      const state1 = OnboardingState(steps: steps, currentStepIndex: 0);
+      const state2 = OnboardingState(steps: steps, currentStepIndex: 1);
 
       expect(state1.isFirstStep, true);
       expect(state2.isFirstStep, false);
@@ -142,8 +142,8 @@ void main() {
         OnboardingStep(id: 'step2', title: 'Step 2', description: 'Desc 2', order: 1),
       ];
 
-      final state1 = OnboardingState(steps: steps, currentStepIndex: 0);
-      final state2 = OnboardingState(steps: steps, currentStepIndex: 1);
+      const state1 = OnboardingState(steps: steps, currentStepIndex: 0);
+      const state2 = OnboardingState(steps: steps, currentStepIndex: 1);
 
       expect(state1.isLastStep, false);
       expect(state2.isLastStep, true);
@@ -155,8 +155,8 @@ void main() {
         OnboardingStep(id: 'step2', title: 'Step 2', description: 'Desc 2', order: 1),
       ];
 
-      final state1 = OnboardingState(steps: steps, currentStepIndex: 0);
-      final state2 = OnboardingState(steps: steps, currentStepIndex: 1);
+      const state1 = OnboardingState(steps: steps, currentStepIndex: 0);
+      const state2 = OnboardingState(steps: steps, currentStepIndex: 1);
 
       expect(state1.hasNextStep, true);
       expect(state2.hasNextStep, false);
@@ -168,8 +168,8 @@ void main() {
         OnboardingStep(id: 'step2', title: 'Step 2', description: 'Desc 2', order: 1),
       ];
 
-      final state1 = OnboardingState(steps: steps, currentStepIndex: 0);
-      final state2 = OnboardingState(steps: steps, currentStepIndex: 1);
+      const state1 = OnboardingState(steps: steps, currentStepIndex: 0);
+      const state2 = OnboardingState(steps: steps, currentStepIndex: 1);
 
       expect(state1.hasPreviousStep, false);
       expect(state2.hasPreviousStep, true);
@@ -182,7 +182,7 @@ void main() {
         OnboardingStep(id: 'step3', title: 'Step 3', description: 'Desc 3', order: 2),
       ];
 
-      final state = OnboardingState(steps: steps);
+      const state = OnboardingState(steps: steps);
 
       expect(state.totalSteps, 3);
     });
@@ -195,9 +195,9 @@ void main() {
         OnboardingStep(id: 'step4', title: 'Step 4', description: 'Desc 4', order: 3),
       ];
 
-      final state1 = OnboardingState(steps: steps, currentStepIndex: 0);
-      final state2 = OnboardingState(steps: steps, currentStepIndex: 1);
-      final state3 = OnboardingState(steps: steps, currentStepIndex: 3);
+      const state1 = OnboardingState(steps: steps, currentStepIndex: 0);
+      const state2 = OnboardingState(steps: steps, currentStepIndex: 1);
+      const state3 = OnboardingState(steps: steps, currentStepIndex: 3);
 
       expect(state1.progress, 0.25);
       expect(state2.progress, 0.5);
@@ -211,7 +211,7 @@ void main() {
     });
 
     test('isStepViewed проверяет просмотренные шаги', () {
-      final state = OnboardingState(
+      const state = OnboardingState(
         viewedSteps: {'step1', 'step3'},
       );
 
@@ -221,7 +221,7 @@ void main() {
     });
 
     test('viewedStepsCount возвращает количество просмотренных шагов', () {
-      final state = OnboardingState(
+      const state = OnboardingState(
         viewedSteps: {'step1', 'step2', 'step3'},
       );
 
@@ -234,12 +234,12 @@ void main() {
         OnboardingStep(id: 'step2', title: 'Step 2', description: 'Desc 2', order: 1),
       ];
 
-      final state1 = OnboardingState(
+      const state1 = OnboardingState(
         steps: steps,
         viewedSteps: {'step1'},
       );
 
-      final state2 = OnboardingState(
+      const state2 = OnboardingState(
         steps: steps,
         viewedSteps: {'step1', 'step2'},
       );

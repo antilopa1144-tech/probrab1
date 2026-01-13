@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../common/share_options_dialog.dart';
 
 /// Callback для генерации текста экспорта
@@ -57,18 +58,20 @@ class CalculatorShareButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+
     if (asIconButton) {
       return IconButton(
         icon: Icon(icon),
         onPressed: () => _showShareOptions(context),
-        tooltip: tooltip ?? 'Поделиться',
+        tooltip: tooltip ?? loc.translate('common.share'),
       );
     }
 
     return FilledButton.icon(
       onPressed: () => _showShareOptions(context),
       icon: Icon(icon),
-      label: Text(label ?? 'Поделиться'),
+      label: Text(label ?? loc.translate('common.share')),
     );
   }
 
@@ -109,10 +112,11 @@ class CalculatorShareButton extends StatelessWidget {
     await Clipboard.setData(ClipboardData(text: text));
 
     if (context.mounted) {
+      final loc = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Скопировано в буфер обмена'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(loc.translate('common.copied_to_clipboard')),
+          duration: const Duration(seconds: 2),
         ),
       );
       onCopied?.call();
@@ -131,11 +135,12 @@ class CalculatorShareButton extends StatelessWidget {
   }
 
   void _showQrCode(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final qrData = generateQrData?.call();
     if (qrData == null || qrData.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('QR код недоступен для текущих данных'),
+        SnackBar(
+          content: Text(loc.translate('common.qr_not_available')),
           backgroundColor: Colors.orange,
         ),
       );
@@ -147,14 +152,14 @@ class CalculatorShareButton extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('QR код расчёта'),
+        title: Text(loc.translate('common.qr_code_title')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Отсканируйте QR код для импорта данных',
+            Text(
+              loc.translate('common.qr_scan_instruction'),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 14),
             ),
             const SizedBox(height: 16),
             Container(
@@ -170,7 +175,7 @@ class CalculatorShareButton extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Данные: ${qrData.length} символов',
+              loc.translate('common.qr_data_size').replaceAll('{size}', '${qrData.length}'),
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
@@ -178,7 +183,7 @@ class CalculatorShareButton extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Закрыть'),
+            child: Text(loc.translate('button.close')),
           ),
         ],
       ),
@@ -201,10 +206,11 @@ class CalculatorCopyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return IconButton(
       icon: const Icon(Icons.copy),
       onPressed: () => _copyToClipboard(context),
-      tooltip: tooltip ?? 'Копировать',
+      tooltip: tooltip ?? loc.translate('common.copy'),
     );
   }
 
@@ -213,10 +219,11 @@ class CalculatorCopyButton extends StatelessWidget {
     await Clipboard.setData(ClipboardData(text: text));
 
     if (context.mounted) {
+      final loc = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Скопировано в буфер обмена'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(loc.translate('common.copied_to_clipboard')),
+          duration: const Duration(seconds: 2),
         ),
       );
       onCopied?.call();
@@ -241,10 +248,11 @@ class CalculatorQuickShareButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return IconButton(
       icon: const Icon(Icons.share),
       onPressed: _share,
-      tooltip: tooltip ?? 'Поделиться',
+      tooltip: tooltip ?? loc.translate('common.share'),
     );
   }
 

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/models/project_v2.dart';
 import 'package:probrab_ai/presentation/views/project/widgets/project_card.dart';
 
-import '../../../helpers/test_helpers.dart';
+import '../../../../helpers/test_helpers.dart';
 
 void main() {
   group('ProjectCard', () {

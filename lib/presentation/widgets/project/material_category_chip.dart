@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
+import '../../../core/localization/app_localizations.dart';
 
 /// Категории материалов для проектов
 enum MaterialCategory {
-  cement('Цемент', Icons.construction_rounded, Colors.grey),
-  brick('Кирпич', Icons.view_comfy_rounded, Colors.red),
-  tile('Плитка', Icons.grid_on_rounded, Colors.blue),
-  paint('Краска', Icons.format_paint_rounded, Colors.purple),
-  wood('Дерево', Icons.forest_rounded, Colors.brown),
-  metal('Металл', Icons.hardware_rounded, Colors.blueGrey),
-  electrical('Электрика', Icons.electric_bolt_rounded, Colors.amber),
-  plumbing('Сантехника', Icons.plumbing_rounded, Colors.cyan),
-  insulation('Изоляция', Icons.layers_rounded, Colors.green),
-  other('Другое', Icons.category_rounded, Colors.orange);
+  cement(Icons.construction_rounded, Colors.grey),
+  brick(Icons.view_comfy_rounded, Colors.red),
+  tile(Icons.grid_on_rounded, Colors.blue),
+  paint(Icons.format_paint_rounded, Colors.purple),
+  wood(Icons.forest_rounded, Colors.brown),
+  metal(Icons.hardware_rounded, Colors.blueGrey),
+  electrical(Icons.electric_bolt_rounded, Colors.amber),
+  plumbing(Icons.plumbing_rounded, Colors.cyan),
+  insulation(Icons.layers_rounded, Colors.green),
+  other(Icons.category_rounded, Colors.orange);
 
-  final String label;
   final IconData icon;
   final Color color;
 
-  const MaterialCategory(this.label, this.icon, this.color);
+  const MaterialCategory(this.icon, this.color);
+
+  /// Получить локализованную метку
+  String getLabel(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    return loc.translate('common.category_$name');
+  }
 }
 
 /// Chip для выбора категории материала
@@ -64,7 +70,7 @@ class MaterialCategoryChip extends StatelessWidget {
             SizedBox(width: compact ? 4 : 6),
           ],
           Text(
-            category.label,
+            category.getLabel(context),
             style: theme.textTheme.labelMedium?.copyWith(
               fontSize: compact ? 12 : 14,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
@@ -193,10 +199,11 @@ class _MaterialCategorySelectionDialogState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return AlertDialog(
       title: Text(
-        widget.multiSelect ? 'Выберите категории' : 'Выберите категорию',
+        loc.translate('common.select_categories'),
         style: theme.textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.bold,
         ),
@@ -212,7 +219,7 @@ class _MaterialCategorySelectionDialogState
                 child: Row(
                   children: [
                     Text(
-                      'Выбрано: ${_selectedCategories.length}',
+                      loc.translate('common.selected_count').replaceAll('{count}', '${_selectedCategories.length}'),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -224,7 +231,7 @@ class _MaterialCategorySelectionDialogState
                           _selectedCategories.clear();
                         });
                       },
-                      child: const Text('Очистить'),
+                      child: Text(loc.translate('common.clear')),
                     ),
                   ],
                 ),
@@ -244,11 +251,11 @@ class _MaterialCategorySelectionDialogState
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Отмена'),
+          child: Text(loc.translate('button.cancel')),
         ),
         FilledButton(
           onPressed: () => Navigator.of(context).pop(_selectedCategories),
-          child: const Text('Применить'),
+          child: Text(loc.translate('common.apply')),
         ),
       ],
     );

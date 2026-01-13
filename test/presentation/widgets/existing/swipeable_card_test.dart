@@ -231,13 +231,12 @@ void main() {
 
     testWidgets('работает с onDuplicate коллбэком', (tester) async {
       setTestViewportSize(tester);
-      bool called = false;
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: SwipeableCard(
-              onDuplicate: () => called = true,
+              onDuplicate: () {},
               child: const Text('Content'),
             ),
           ),
@@ -433,7 +432,7 @@ void main() {
       );
 
       // Свайп влево
-      var gesture = await tester.startGesture(const Offset(300, 100));
+      final gesture = await tester.startGesture(const Offset(300, 100));
       await gesture.moveBy(const Offset(-150, 0));
       await tester.pump();
       await gesture.up();

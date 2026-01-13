@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/localization/app_localizations.dart';
 
 /// Виджет кнопки экспорта результатов калькулятора
 class ResultExportButton extends StatelessWidget {
@@ -21,45 +22,47 @@ class ResultExportButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+
     return PopupMenuButton<ExportAction>(
       enabled: enabled,
-      tooltip: tooltip ?? 'Экспорт результатов',
+      tooltip: tooltip ?? loc.translate('common.export_results'),
       icon: const Icon(Icons.file_upload_outlined),
       onSelected: (action) => _handleAction(action),
       itemBuilder: (context) => [
         if (onShare != null)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: ExportAction.share,
             child: ListTile(
-              leading: Icon(Icons.share_rounded),
-              title: Text('Поделиться'),
+              leading: const Icon(Icons.share_rounded),
+              title: Text(loc.translate('common.share')),
               contentPadding: EdgeInsets.zero,
             ),
           ),
         if (onCopy != null)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: ExportAction.copy,
             child: ListTile(
-              leading: Icon(Icons.copy_rounded),
-              title: Text('Скопировать'),
+              leading: const Icon(Icons.copy_rounded),
+              title: Text(loc.translate('common.copy')),
               contentPadding: EdgeInsets.zero,
             ),
           ),
         if (onExportCsv != null)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: ExportAction.csv,
             child: ListTile(
-              leading: Icon(Icons.table_chart_outlined),
-              title: Text('Экспорт в CSV'),
+              leading: const Icon(Icons.table_chart_outlined),
+              title: Text(loc.translate('common.export_csv')),
               contentPadding: EdgeInsets.zero,
             ),
           ),
         if (onExportPdf != null)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: ExportAction.pdf,
             child: ListTile(
-              leading: Icon(Icons.picture_as_pdf_outlined),
-              title: Text('Экспорт в PDF'),
+              leading: const Icon(Icons.picture_as_pdf_outlined),
+              title: Text(loc.translate('common.export_pdf')),
               contentPadding: EdgeInsets.zero,
             ),
           ),

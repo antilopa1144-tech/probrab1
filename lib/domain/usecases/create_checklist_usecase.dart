@@ -30,7 +30,7 @@ class CreateChecklistUseCase {
       ..createdAt = DateTime.now()
       ..updatedAt = DateTime.now();
 
-    return await _repository.createChecklist(checklist);
+    return _repository.createChecklist(checklist);
   }
 
   /// Создать чек-лист из шаблона
@@ -41,7 +41,7 @@ class CreateChecklistUseCase {
     required ChecklistTemplate template,
     int? projectId,
   }) async {
-    return await _repository.createChecklistFromTemplate(
+    return _repository.createChecklistFromTemplate(
       template,
       projectId: projectId,
     );

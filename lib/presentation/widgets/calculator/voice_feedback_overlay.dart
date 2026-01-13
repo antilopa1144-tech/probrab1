@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/localization/app_localizations.dart';
 
 /// Состояния feedback overlay
 enum VoiceFeedbackState {
@@ -115,6 +116,7 @@ class _VoiceFeedbackOverlayState extends State<VoiceFeedbackOverlay>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     if (widget.state == VoiceFeedbackState.idle) {
       return const SizedBox.shrink();
@@ -168,7 +170,7 @@ class _VoiceFeedbackOverlayState extends State<VoiceFeedbackOverlay>
                 const SizedBox(height: 24),
                 TextButton(
                   onPressed: widget.onCancel,
-                  child: const Text('Отмена'),
+                  child: Text(loc.translate('button.cancel')),
                 ),
               ],
             ],
@@ -225,6 +227,7 @@ class _VoiceFeedbackOverlayState extends State<VoiceFeedbackOverlay>
   }
 
   Widget _buildRecognizedTextSection(ThemeData theme) {
+    final loc = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -235,7 +238,7 @@ class _VoiceFeedbackOverlayState extends State<VoiceFeedbackOverlay>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Распознано:',
+            loc.translate('common.recognized'),
             style: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -311,17 +314,18 @@ class _VoiceFeedbackOverlayState extends State<VoiceFeedbackOverlay>
   }
 
   String _getStatusText() {
+    final loc = AppLocalizations.of(context);
     switch (widget.state) {
       case VoiceFeedbackState.idle:
-        return 'Готов к прослушиванию';
+        return loc.translate('common.ready_to_listen');
       case VoiceFeedbackState.listening:
-        return 'Говорите...';
+        return loc.translate('common.listening');
       case VoiceFeedbackState.processing:
-        return 'Обрабатываем...';
+        return loc.translate('common.processing');
       case VoiceFeedbackState.success:
-        return 'Готово!';
+        return loc.translate('common.done');
       case VoiceFeedbackState.error:
-        return 'Ошибка';
+        return loc.translate('common.error');
     }
   }
 }

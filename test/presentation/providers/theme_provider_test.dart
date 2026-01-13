@@ -44,7 +44,7 @@ void main() {
     });
 
     test('getBrightness возвращает светлую яркость для light режима', () {
-      final state = ThemeState(
+      const state = ThemeState(
         themeMode: AppThemeMode.light,
         useSystemTheme: false,
       );
@@ -53,7 +53,7 @@ void main() {
     });
 
     test('getBrightness возвращает тёмную яркость для dark режима', () {
-      final state = ThemeState(
+      const state = ThemeState(
         themeMode: AppThemeMode.dark,
         useSystemTheme: false,
       );
@@ -62,7 +62,7 @@ void main() {
     });
 
     test('getBrightness возвращает системную яркость для system режима', () {
-      final state = ThemeState(
+      const state = ThemeState(
         themeMode: AppThemeMode.system,
         useSystemTheme: false,
       );
@@ -72,11 +72,11 @@ void main() {
     });
 
     test('isDark определяет тёмную тему', () {
-      final lightState = ThemeState(
+      const lightState = ThemeState(
         themeMode: AppThemeMode.light,
         useSystemTheme: false,
       );
-      final darkState = ThemeState(
+      const darkState = ThemeState(
         themeMode: AppThemeMode.dark,
         useSystemTheme: false,
       );
@@ -86,11 +86,11 @@ void main() {
     });
 
     test('isLight определяет светлую тему', () {
-      final lightState = ThemeState(
+      const lightState = ThemeState(
         themeMode: AppThemeMode.light,
         useSystemTheme: false,
       );
-      final darkState = ThemeState(
+      const darkState = ThemeState(
         themeMode: AppThemeMode.dark,
         useSystemTheme: false,
       );
@@ -100,7 +100,7 @@ void main() {
     });
 
     test('toJson сериализует состояние', () {
-      final state = ThemeState(
+      const state = ThemeState(
         themeMode: AppThemeMode.dark,
         primaryColor: Colors.blue,
         useSystemTheme: false,

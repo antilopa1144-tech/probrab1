@@ -535,7 +535,7 @@ void main() {
       });
 
       test('создает HttpMetric для длинного URL', () {
-        final longUrl = 'https://api.example.com/' + 'path/' * 50 + 'endpoint';
+        final longUrl = 'https://api.example.com/${'path/' * 50}endpoint';
         final metric = PerformanceMonitoringService.newHttpMetric(
           url: longUrl,
           method: HttpMethod.Get,
@@ -845,7 +845,7 @@ void main() {
         final result = await PerformanceMonitoringService.traceScreenLoad(
           screenName: 'outer',
           load: () async {
-            return await PerformanceMonitoringService.traceCalculation(
+            return PerformanceMonitoringService.traceCalculation(
               calculatorId: 'inner',
               calculation: () async => 42,
             );

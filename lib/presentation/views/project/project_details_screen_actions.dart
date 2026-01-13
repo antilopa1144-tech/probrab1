@@ -201,13 +201,13 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
                   final calc = allCalcs[index];
                   return RadioListTile<String>(
                     value: calc.id,
-                    groupValue: selected,
+                    groupValue: selected, // ignore: deprecated_member_use
                     title: Text(loc.translate(calc.titleKey)),
                     subtitle: calc.descriptionKey != null
                         ? Text(loc.translate(calc.descriptionKey!))
                         : null,
                     secondary: const Icon(Icons.calculate_rounded),
-                    onChanged: (value) => setState(() => selected = value),
+                    onChanged: (value) => setState(() => selected = value), // ignore: deprecated_member_use
                   );
                 },
               ),

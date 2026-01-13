@@ -70,8 +70,8 @@ void main() {
 
       test('использует кастомный символ валюты', () {
         expect(
-          NumberFormatter.formatCurrency(1000, currencySymbol: '\$'),
-          equals('1 000,00 \$'),
+          NumberFormatter.formatCurrency(1000, currencySymbol: r'$'),
+          equals(r'1 000,00 $'),
         );
         expect(
           NumberFormatter.formatCurrency(1000, currencySymbol: '€'),
@@ -288,8 +288,8 @@ void main() {
       test('парсит валюту с кастомным символом', () {
         expect(
           NumberFormatter.parseCurrency(
-            '1,000 \$',
-            currencySymbol: '\$',
+            r'1,000 $',
+            currencySymbol: r'$',
             thousandsSeparator: ',',
           ),
           equals(1000),
@@ -300,8 +300,8 @@ void main() {
       test('использует кастомные разделители', () {
         expect(
           NumberFormatter.parseCurrency(
-            '1,234.56 \$',
-            currencySymbol: '\$',
+            r'1,234.56 $',
+            currencySymbol: r'$',
             thousandsSeparator: ',',
             decimalSeparator: '.',
           ),
@@ -392,11 +392,11 @@ void main() {
         expect(
           NumberFormatter.formatCurrency(
             amount,
-            currencySymbol: '\$',
+            currencySymbol: r'$',
             thousandsSeparator: ',',
             decimalSeparator: '.',
           ),
-          equals('1,234.56 \$'),
+          equals(r'1,234.56 $'),
         );
 
         // Евро

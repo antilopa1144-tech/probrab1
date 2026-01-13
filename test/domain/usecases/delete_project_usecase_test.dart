@@ -81,7 +81,7 @@ void main() {
       await repository.addCalculationToProject(projectId, calculation);
 
       // Проверяем что расчёт добавлен
-      var calculations = await repository.getProjectCalculations(projectId);
+      final calculations = await repository.getProjectCalculations(projectId);
       expect(calculations.length, 1);
 
       // Act
@@ -114,7 +114,7 @@ void main() {
       }
 
       // Проверяем что все добавлены
-      var calculations = await repository.getProjectCalculations(projectId);
+      final calculations = await repository.getProjectCalculations(projectId);
       expect(calculations.length, 5);
 
       // Act

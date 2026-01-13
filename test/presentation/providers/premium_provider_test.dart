@@ -10,7 +10,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           currentSubscriptionProvider.overrideWith(
-            (ref) => Stream<PremiumSubscription>.empty(),
+            (ref) => const Stream<PremiumSubscription>.empty(),
           ),
         ],
       );
@@ -107,7 +107,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           currentSubscriptionProvider.overrideWith(
-            (ref) => Stream<PremiumSubscription>.empty(),
+            (ref) => const Stream<PremiumSubscription>.empty(),
           ),
         ],
       );

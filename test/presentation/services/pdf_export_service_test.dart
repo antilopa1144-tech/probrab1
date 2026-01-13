@@ -1,8 +1,9 @@
+// ignore_for_file: avoid_dynamic_calls
+
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/data/models/calculation.dart';
-import 'package:probrab_ai/presentation/services/pdf_export_service.dart';
 
 void main() {
   group('PdfExportService', () {

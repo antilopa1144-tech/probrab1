@@ -204,7 +204,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     final index = state.steps.indexWhere((step) => step.id == stepId);
     if (index == -1) return false;
 
-    return await goToStep(index);
+    return goToStep(index);
   }
 
   /// Отметить шаг как просмотренный
@@ -284,7 +284,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
   Future<bool> goToFirstUnviewedStep() async {
     for (int i = 0; i < state.steps.length; i++) {
       if (!state.viewedSteps.contains(state.steps[i].id)) {
-        return await goToStep(i);
+        return goToStep(i);
       }
     }
     return false;

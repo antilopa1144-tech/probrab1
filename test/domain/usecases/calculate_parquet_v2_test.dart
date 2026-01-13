@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_checks
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_parquet_v2.dart';
 import 'package:probrab_ai/data/models/price_item.dart';

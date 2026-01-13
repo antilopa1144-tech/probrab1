@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_dynamic_calls
+
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/models/qr_code_data.dart';

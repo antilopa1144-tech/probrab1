@@ -78,6 +78,7 @@ class ShareProjectUseCase {
       final file = File(filePath);
       await file.writeAsString('PDF generation not implemented yet');
 
+      // ignore: deprecated_member_use
       await Share.shareXFiles(
         [XFile(filePath)],
         subject: 'Проект ${project.name}',

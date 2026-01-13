@@ -251,8 +251,8 @@ void main() {
       ) async {
         await tester.pumpWidget(
           createTestApp(
-            child: _TestExportableWidget(
-              payload: const CalculatorResultPayload(
+            child: const _TestExportableWidget(
+              payload: CalculatorResultPayload(
                 calculatorId: 'test',
                 calculatorName: 'Test',
                 inputs: {},
@@ -273,7 +273,7 @@ void main() {
       ) async {
         await tester.pumpWidget(
           createTestApp(
-            child: _TestExportableWidget(
+            child: const _TestExportableWidget(
               isFromProject: true,
               payload: CalculatorResultPayload(
                 calculatorId: 'test',
@@ -296,7 +296,7 @@ void main() {
       ) async {
         await tester.pumpWidget(
           createTestApp(
-            child: _TestExportableWidget(
+            child: const _TestExportableWidget(
               isFromProject: true,
               payload: CalculatorResultPayload(
                 calculatorId: 'test',
@@ -338,8 +338,8 @@ void main() {
       ) async {
         await tester.pumpWidget(
           createTestApp(
-            child: _TestExportableWidget(
-              payload: const CalculatorResultPayload(
+            child: const _TestExportableWidget(
+              payload: CalculatorResultPayload(
                 calculatorId: 'test',
                 calculatorName: 'Test',
                 inputs: {},
@@ -380,7 +380,7 @@ void main() {
       ) async {
         await tester.pumpWidget(
           createTestApp(
-            child: _TestExportableWidget(
+            child: const _TestExportableWidget(
               calculatorId: 'test_calc',
               inputs: {'area': 10.0},
               isFromProject: true,
@@ -408,7 +408,7 @@ void main() {
       testWidgets('кнопка сохранения идет первой', (tester) async {
         await tester.pumpWidget(
           createTestApp(
-            child: _TestExportableWidget(
+            child: const _TestExportableWidget(
               isFromProject: true,
               payload: CalculatorResultPayload(
                 calculatorId: 'test',
@@ -478,7 +478,7 @@ void main() {
       testWidgets('кнопка сохранения имеет tooltip', (tester) async {
         await tester.pumpWidget(
           createTestApp(
-            child: _TestExportableWidget(
+            child: const _TestExportableWidget(
               isFromProject: true,
               payload: CalculatorResultPayload(
                 calculatorId: 'test',

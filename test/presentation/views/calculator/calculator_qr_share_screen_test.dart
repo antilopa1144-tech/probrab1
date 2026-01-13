@@ -313,7 +313,7 @@ void main() {
       setupMocks();
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.platform, (message) async {
-        if (message?.method == 'Clipboard.setData') {
+        if (message.method == 'Clipboard.setData') {
           return null;
         }
         return null;

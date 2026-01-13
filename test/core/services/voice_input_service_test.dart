@@ -536,12 +536,10 @@ void main() {
     group('callback scenarios', () {
       test('вызывает onResult callback с корректными данными', () async {
         var callbackInvoked = false;
-        VoiceRecognitionResult? result;
 
         await service.startListening(
           onResult: (r) {
             callbackInvoked = true;
-            result = r;
           },
         );
 
@@ -900,7 +898,7 @@ void main() {
         await service.requestPermission();
         await service.checkPermission();
 
-        expect(() async => await service.checkPermission(), returnsNormally);
+        expect(() async => service.checkPermission(), returnsNormally);
       });
     });
 

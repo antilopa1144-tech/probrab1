@@ -81,7 +81,7 @@ void main() {
 
     test('создаёт чек-листы разных категорий', () async {
       // Arrange
-      final categories = ChecklistCategory.values;
+      const categories = ChecklistCategory.values;
 
       // Act & Assert
       for (final category in categories) {
@@ -262,10 +262,11 @@ void main() {
       final result = await useCase.executeFromTemplate(template: template);
 
       // Assert
-      for (var i = 0; i < result.items.length - 1; i++) {
+      final itemsList = result.items.toList();
+      for (var i = 0; i < itemsList.length - 1; i++) {
         expect(
-          result.items[i].order,
-          lessThan(result.items[i + 1].order),
+          itemsList[i].order,
+          lessThan(itemsList[i + 1].order),
         );
       }
     });
@@ -283,16 +284,17 @@ void main() {
       // Act
       final result = await useCase.executeWithItems(
         name: 'Пользовательский чек-лист',
-        category: ChecklistCategory.other,
+        category: ChecklistCategory.general,
         itemTitles: itemTitles,
       );
 
       // Assert
       expect(result.name, 'Пользовательский чек-лист');
       expect(result.items.length, 3);
-      expect(result.items[0].title, 'Задача 1');
-      expect(result.items[1].title, 'Задача 2');
-      expect(result.items[2].title, 'Задача 3');
+      final itemsList = result.items.toList();
+      expect(itemsList[0].title, 'Задача 1');
+      expect(itemsList[1].title, 'Задача 2');
+      expect(itemsList[2].title, 'Задача 3');
     });
 
     test('бросает ArgumentError при пустом названии', () async {
@@ -329,7 +331,7 @@ void main() {
 
       // Assert
       expect(result.items.length, 1);
-      expect(result.items[0].title, 'Единственная задача');
+      expect(result.items.first.title, 'Единственная задача');
     });
 
     test('пропускает пустые элементы', () async {
@@ -350,8 +352,9 @@ void main() {
 
       // Assert - пустые элементы должны быть пропущены
       expect(result.items.length, 2);
-      expect(result.items[0].title, 'Задача 1');
-      expect(result.items[1].title, 'Задача 2');
+      final itemsList = result.items.toList();
+      expect(itemsList[0].title, 'Задача 1');
+      expect(itemsList[1].title, 'Задача 2');
     });
 
     test('создаёт чек-лист с большим количеством элементов', () async {
@@ -361,14 +364,15 @@ void main() {
       // Act
       final result = await useCase.executeWithItems(
         name: 'Большой чек-лист',
-        category: ChecklistCategory.other,
+        category: ChecklistCategory.general,
         itemTitles: itemTitles,
       );
 
       // Assert
       expect(result.items.length, 50);
-      expect(result.items[0].title, 'Задача 1');
-      expect(result.items[49].title, 'Задача 50');
+      final itemsList = result.items.toList();
+      expect(itemsList[0].title, 'Задача 1');
+      expect(itemsList[49].title, 'Задача 50');
     });
 
     test('создаёт чек-лист с description и projectId', () async {
@@ -399,10 +403,11 @@ void main() {
       );
 
       // Assert
-      for (var i = 0; i < result.items.length - 1; i++) {
+      final itemsList = result.items.toList();
+      for (var i = 0; i < itemsList.length - 1; i++) {
         expect(
-          result.items[i].order,
-          lessThan(result.items[i + 1].order),
+          itemsList[i].order,
+          lessThan(itemsList[i + 1].order),
         );
       }
     });
@@ -423,9 +428,10 @@ void main() {
       );
 
       // Assert
-      expect(result.items[0].title, 'Купить материалы 🛒');
-      expect(result.items[1].title, 'Демонтаж старого покрытия');
-      expect(result.items[2].title, 'Подготовка поверхности (выравнивание)');
+      final itemsList = result.items.toList();
+      expect(itemsList[0].title, 'Купить материалы 🛒');
+      expect(itemsList[1].title, 'Демонтаж старого покрытия');
+      expect(itemsList[2].title, 'Подготовка поверхности (выравнивание)');
     });
   });
 
@@ -539,7 +545,7 @@ void main() {
       // Act
       final result = await useCase.execute(
         name: 'A',
-        category: ChecklistCategory.other,
+        category: ChecklistCategory.general,
       );
 
       // Assert
@@ -592,8 +598,9 @@ void main() {
       );
 
       // Assert
-      expect(result.items[0].title, longTitle);
-      expect(result.items[0].title.length, greaterThan(500));
+      final firstItem = result.items.first;
+      expect(firstItem.title, longTitle);
+      expect(firstItem.title.length, greaterThan(500));
     });
 
     test('executeWithItems со списком из 100 элементов', () async {
@@ -603,14 +610,15 @@ void main() {
       // Act
       final result = await useCase.executeWithItems(
         name: 'Огромный чек-лист',
-        category: ChecklistCategory.other,
+        category: ChecklistCategory.general,
         itemTitles: itemTitles,
       );
 
       // Assert
       expect(result.items.length, 100);
-      expect(result.items[0].title, 'Задача 1');
-      expect(result.items[99].title, 'Задача 100');
+      final itemsList = result.items.toList();
+      expect(itemsList[0].title, 'Задача 1');
+      expect(itemsList[99].title, 'Задача 100');
     });
 
     test('executeWithItems с элементами только из пробелов', () async {

@@ -204,7 +204,7 @@ void main() {
 
         await tester.pumpWidget(
           createTestApp(
-            child: Scaffold(
+            child: const Scaffold(
               body: QrCodeWidget.small(
                 data: testData,
                 embeddedImage: logo,

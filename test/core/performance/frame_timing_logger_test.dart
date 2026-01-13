@@ -51,10 +51,10 @@ void main() {
     test('не изменяет состояние между вызовами', () {
       // Вызываем несколько раз и проверяем консистентность
       FrameTimingLogger.maybeInit();
-      final firstCall = true; // Нет exception
+      const firstCall = true; // Нет exception
 
       FrameTimingLogger.maybeInit();
-      final secondCall = true; // Нет exception
+      const secondCall = true; // Нет exception
 
       expect(firstCall, equals(secondCall));
     });

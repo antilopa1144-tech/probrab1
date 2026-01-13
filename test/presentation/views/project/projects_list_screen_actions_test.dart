@@ -151,25 +151,25 @@ void main() {
   group('ProjectsListActions - Фильтрация проектов', () {
     test('_hasActiveFilters возвращает false когда нет активных фильтров', () {
       // Проверяем начальное состояние
-      final hasFilters = false; // _showFavoritesOnly = false, _filterStatus = null, _searchQuery = ''
+      const hasFilters = false; // _showFavoritesOnly = false, _filterStatus = null, _searchQuery = ''
       expect(hasFilters, isFalse);
     });
 
     test('_hasActiveFilters возвращает true когда включен фильтр избранного', () {
       // _showFavoritesOnly = true
-      final hasFilters = true;
+      const hasFilters = true;
       expect(hasFilters, isTrue);
     });
 
     test('_hasActiveFilters возвращает true когда установлен фильтр статуса', () {
       // _filterStatus = ProjectStatus.planning
-      final hasFilters = true;
+      const hasFilters = true;
       expect(hasFilters, isTrue);
     });
 
     test('_hasActiveFilters возвращает true когда есть поисковый запрос', () {
       // _searchQuery = 'test'
-      final hasFilters = true;
+      const hasFilters = true;
       expect(hasFilters, isTrue);
     });
 
@@ -252,7 +252,7 @@ void main() {
           ..status = ProjectStatus.completed,
       ];
 
-      final query = 'ремонт';
+      const query = 'ремонт';
       final filtered = projects.where((p) => p.name.toLowerCase().contains(query.toLowerCase())).toList();
       expect(filtered.length, equals(2));
     });
@@ -276,7 +276,7 @@ void main() {
           ..status = ProjectStatus.completed,
       ];
 
-      final query = 'ремонт';
+      const query = 'ремонт';
       final filtered = projects.where((p) =>
         (p.description?.toLowerCase().contains(query.toLowerCase()) ?? false)
       ).toList();
@@ -302,7 +302,7 @@ void main() {
           ..status = ProjectStatus.completed,
       ];
 
-      final query = 'квартира';
+      const query = 'квартира';
       final filtered = projects.where((p) =>
         p.tags.any((tag) => tag.toLowerCase().contains(query.toLowerCase()))
       ).toList();
@@ -344,7 +344,7 @@ void main() {
           ..status = ProjectStatus.planning,
       ];
 
-      final query = 'несуществующий проект';
+      const query = 'несуществующий проект';
       final filtered = projects.where((p) =>
         p.name.toLowerCase().contains(query.toLowerCase())
       ).toList();
@@ -364,7 +364,7 @@ void main() {
           ..status = ProjectStatus.planning,
       ];
 
-      final query = 'ремонт';
+      const query = 'ремонт';
       final filtered = projects.where((p) =>
         p.name.toLowerCase().contains(query.toLowerCase())
       ).toList();
@@ -375,9 +375,9 @@ void main() {
   group('ProjectsListActions - Состояние фильтров', () {
     test('начальное состояние фильтров корректно', () {
       // При инициализации:
-      final showFavoritesOnly = false;
-      final filterStatus = null;
-      final searchQuery = '';
+      const showFavoritesOnly = false;
+      const filterStatus = null;
+      const searchQuery = '';
 
       expect(showFavoritesOnly, isFalse);
       expect(filterStatus, isNull);
@@ -453,7 +453,7 @@ void main() {
     });
 
     test('имя проекта обязательно', () {
-      final name = 'Тестовый проект';
+      const name = 'Тестовый проект';
       expect(name.isNotEmpty, isTrue);
     });
 
@@ -488,14 +488,14 @@ void main() {
     });
 
     test('проект может иметь заметки', () {
-      final notes = 'Важные заметки о проекте';
+      const notes = 'Важные заметки о проекте';
       expect(notes.isNotEmpty, isTrue);
     });
   });
 
   group('ProjectsListActions - Edge cases', () {
     test('обрабатывает проект с пустым названием после trim', () {
-      final name = '   ';
+      const name = '   ';
       final trimmed = name.trim();
       expect(trimmed.isEmpty, isTrue);
     });
@@ -506,28 +506,28 @@ void main() {
     });
 
     test('обрабатывает проект с специальными символами в названии', () {
-      final name = 'Проект #1 @ Офис (2024)';
+      const name = 'Проект #1 @ Офис (2024)';
       expect(name.isNotEmpty, isTrue);
     });
 
     test('обрабатывает проект с эмодзи в названии', () {
-      final name = 'Проект 🏠 Дом';
+      const name = 'Проект 🏠 Дом';
       expect(name.isNotEmpty, isTrue);
     });
 
     test('обрабатывает поисковый запрос с пробелами', () {
-      final query = '  тест  ';
+      const query = '  тест  ';
       final trimmed = query.trim();
       expect(trimmed, equals('тест'));
     });
 
     test('обрабатывает пустой поисковый запрос', () {
-      final query = '';
+      const query = '';
       expect(query.isEmpty, isTrue);
     });
 
     test('обрабатывает проект без описания', () {
-      final description = null;
+      const description = null;
       expect(description, isNull);
     });
 
@@ -537,12 +537,12 @@ void main() {
     });
 
     test('обрабатывает проект без заметок', () {
-      final notes = null;
+      const notes = null;
       expect(notes, isNull);
     });
 
     test('обрабатывает проект с пустым описанием после trim', () {
-      final description = '   ';
+      const description = '   ';
       final trimmed = description.trim();
       expect(trimmed.isEmpty, isTrue);
     });

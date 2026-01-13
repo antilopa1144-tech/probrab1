@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/localization/app_localizations.dart';
 
 /// Возможные действия при шаринге
 enum ShareAction {
@@ -45,9 +46,10 @@ class ShareOptionsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return AlertDialog(
-      title: Text(title ?? 'Поделиться результатом'),
+      title: Text(title ?? loc.translate('common.share_result')),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,15 +65,15 @@ class ShareOptionsDialog extends StatelessWidget {
           ],
           _OptionTile(
             icon: Icons.copy_rounded,
-            title: copyLabel ?? 'Копировать',
-            subtitle: 'Скопировать текст в буфер обмена',
+            title: copyLabel ?? loc.translate('common.copy'),
+            subtitle: loc.translate('common.copy_to_clipboard'),
             onTap: () => Navigator.pop(context, ShareAction.copy),
           ),
           const SizedBox(height: 8),
           _OptionTile(
             icon: Icons.share_rounded,
-            title: shareLabel ?? 'Поделиться',
-            subtitle: 'Отправить через мессенджер или email',
+            title: shareLabel ?? loc.translate('common.share'),
+            subtitle: loc.translate('common.send_via_messenger'),
             onTap: () => Navigator.pop(context, ShareAction.share),
           ),
           if (showQrOption) ...[
@@ -79,7 +81,7 @@ class ShareOptionsDialog extends StatelessWidget {
             _OptionTile(
               icon: Icons.qr_code_2_rounded,
               title: qrLabel ?? 'QR код',
-              subtitle: 'Показать QR код для сканирования',
+              subtitle: loc.translate('common.show_qr_to_scan'),
               onTap: () => Navigator.pop(context, ShareAction.qr),
             ),
           ],
@@ -88,7 +90,7 @@ class ShareOptionsDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Отмена'),
+          child: Text(loc.translate('button.cancel')),
         ),
       ],
     );
@@ -199,9 +201,10 @@ class CompactShareOptionsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return SimpleDialog(
-      title: const Text('Поделиться'),
+      title: Text(loc.translate('common.share')),
       children: [
         SimpleDialogOption(
           onPressed: () => Navigator.pop(context, ShareAction.copy),
@@ -209,7 +212,7 @@ class CompactShareOptionsDialog extends StatelessWidget {
             children: [
               Icon(Icons.copy_rounded, color: theme.colorScheme.primary),
               const SizedBox(width: 16),
-              const Text('Копировать'),
+              Text(loc.translate('common.copy')),
             ],
           ),
         ),
@@ -219,7 +222,7 @@ class CompactShareOptionsDialog extends StatelessWidget {
             children: [
               Icon(Icons.share_rounded, color: theme.colorScheme.primary),
               const SizedBox(width: 16),
-              const Text('Поделиться'),
+              Text(loc.translate('common.share')),
             ],
           ),
         ),

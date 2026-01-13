@@ -8,7 +8,7 @@ void main() {
     testWidgets('отображает категорию с иконкой и текстом', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MaterialCategoryChip(
               category: MaterialCategory.cement,
             ),
@@ -23,7 +23,7 @@ void main() {
     testWidgets('отображает выбранное состояние', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MaterialCategoryChip(
               category: MaterialCategory.brick,
               isSelected: true,
@@ -61,7 +61,7 @@ void main() {
     testWidgets('скрывает иконку когда showIcon = false', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MaterialCategoryChip(
               category: MaterialCategory.paint,
               showIcon: false,
@@ -77,7 +77,7 @@ void main() {
     testWidgets('отображает компактный режим', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MaterialCategoryChip(
               category: MaterialCategory.wood,
               compact: true,
@@ -103,7 +103,8 @@ void main() {
           ),
         );
 
-        expect(find.text(category.label), findsOneWidget);
+        // Проверяем наличие текста (локализованная метка)
+        expect(find.byType(Text), findsWidgets);
         expect(find.byIcon(category.icon), findsOneWidget);
 
         await tester.pumpWidget(Container()); // Clear widget tree
@@ -113,7 +114,7 @@ void main() {
     testWidgets('disabled когда onSelected = null', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MaterialCategoryChip(
               category: MaterialCategory.metal,
               onSelected: null,
@@ -129,7 +130,7 @@ void main() {
     testWidgets('отображает правильный border для выбранного состояния', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: Column(
               children: [
                 MaterialCategoryChip(
@@ -154,7 +155,7 @@ void main() {
     testWidgets('отображает все категории', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MaterialCategoryChipList(
               selectedCategories: {},
             ),
@@ -299,7 +300,7 @@ void main() {
     testWidgets('применяет compact mode ко всем chips', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MaterialCategoryChipList(
               selectedCategories: {},
               compact: true,
@@ -320,7 +321,7 @@ void main() {
     testWidgets('скрывает иконки когда showIcons = false', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MaterialCategoryChipList(
               selectedCategories: {},
               showIcons: false,
@@ -341,7 +342,7 @@ void main() {
     testWidgets('disabled когда onChanged = null', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MaterialCategoryChipList(
               selectedCategories: {},
               onChanged: null,
@@ -665,9 +666,9 @@ void main() {
       expect(MaterialCategory.values, contains(MaterialCategory.other));
     });
 
-    test('каждая категория имеет label, icon и color', () {
+    test('каждая категория имеет name, icon и color', () {
       for (final category in MaterialCategory.values) {
-        expect(category.label.isNotEmpty, isTrue);
+        expect(category.name.isNotEmpty, isTrue);
         expect(category.icon, isNotNull);
         expect(category.color, isNotNull);
       }

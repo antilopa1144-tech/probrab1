@@ -4,7 +4,7 @@ import 'package:probrab_ai/domain/models/premium_subscription.dart';
 void main() {
   group('PremiumSubscription', () {
     test('создаётся с обязательными полями', () {
-      final subscription = PremiumSubscription(
+      const subscription = PremiumSubscription(
         isActive: true,
         type: SubscriptionType.monthly,
       );
@@ -405,12 +405,12 @@ void main() {
     });
 
     test('оператор == возвращает false для разных подписок', () {
-      final subscription1 = PremiumSubscription(
+      const subscription1 = PremiumSubscription(
         isActive: true,
         type: SubscriptionType.monthly,
       );
 
-      final subscription2 = PremiumSubscription(
+      const subscription2 = PremiumSubscription(
         isActive: true,
         type: SubscriptionType.yearly,
       );
@@ -419,7 +419,7 @@ void main() {
     });
 
     test('оператор == возвращает true для идентичного объекта', () {
-      final subscription = PremiumSubscription(
+      const subscription = PremiumSubscription(
         isActive: true,
         type: SubscriptionType.monthly,
       );
@@ -448,12 +448,12 @@ void main() {
     });
 
     test('hashCode разный для разных объектов', () {
-      final subscription1 = PremiumSubscription(
+      const subscription1 = PremiumSubscription(
         isActive: true,
         type: SubscriptionType.monthly,
       );
 
-      final subscription2 = PremiumSubscription(
+      const subscription2 = PremiumSubscription(
         isActive: true,
         type: SubscriptionType.yearly,
       );

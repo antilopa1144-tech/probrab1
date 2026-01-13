@@ -518,7 +518,7 @@ void main() {
         version: '1.0.0',
         lastUpdated: DateTime.now(),
         constants: {
-          'room_power': CalculatorConstant(
+          'room_power': const CalculatorConstant(
             key: 'room_power',
             category: ConstantCategory.power,
             description: 'Мощность по типу помещения',
@@ -556,7 +556,7 @@ void main() {
         version: '1.0.0',
         lastUpdated: DateTime.now(),
         constants: {
-          'margin': CalculatorConstant(
+          'margin': const CalculatorConstant(
             key: 'margin',
             category: ConstantCategory.margins,
             description: 'Запас материала',
@@ -712,7 +712,7 @@ void main() {
         version: '1.0.0',
         lastUpdated: DateTime.now(),
         constants: {
-          'standard_margin': CalculatorConstant(
+          'standard_margin': const CalculatorConstant(
             key: 'standard_margin',
             category: ConstantCategory.margins,
             description: 'Стандартный запас',
@@ -794,7 +794,7 @@ void main() {
         version: '1.0.0',
         lastUpdated: DateTime.now(),
         constants: {
-          'room_power': CalculatorConstant(
+          'room_power': const CalculatorConstant(
             key: 'room_power',
             category: ConstantCategory.power,
             description: 'Мощность',
@@ -889,7 +889,7 @@ void main() {
         version: '1.0.0',
         lastUpdated: DateTime.now(),
         constants: {
-          'values': CalculatorConstant(
+          'values': const CalculatorConstant(
             key: 'values',
             category: ConstantCategory.coefficients,
             description: 'Тестовые значения',
@@ -945,7 +945,7 @@ void main() {
         version: '1.0.0',
         lastUpdated: DateTime.now(),
         constants: {
-          'values': CalculatorConstant(
+          'values': const CalculatorConstant(
             key: 'values',
             category: ConstantCategory.coefficients,
             description: 'Тестовые значения',
@@ -1022,7 +1022,7 @@ void main() {
         version: '1.0.0',
         lastUpdated: DateTime.now(),
         constants: {
-          'margin': CalculatorConstant(
+          'margin': const CalculatorConstant(
             key: 'margin',
             category: ConstantCategory.margins,
             description: 'Запас',
@@ -1036,7 +1036,7 @@ void main() {
         version: '2.0.0',
         lastUpdated: DateTime.now(),
         constants: {
-          'power': CalculatorConstant(
+          'power': const CalculatorConstant(
             key: 'power',
             category: ConstantCategory.power,
             description: 'Мощность',

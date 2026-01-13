@@ -570,7 +570,7 @@ void main() {
     test('payload с специальными символами в названии', () {
       const payload = CalculatorResultPayload(
         calculatorId: 'special_chars',
-        calculatorName: 'Название с "кавычками" и апострофами и символами: @#\$%',
+        calculatorName: r'Название с "кавычками" и апострофами и символами: @#$%',
         inputs: {'value': 1.0},
         results: {'result': 2.0},
       );

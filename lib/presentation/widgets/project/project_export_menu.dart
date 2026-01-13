@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../core/localization/app_localizations.dart';
 
 /// Callback для экспорта в PDF
 typedef OnExportPDF = Future<void> Function();
@@ -31,40 +32,42 @@ class ProjectExportMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+
     return PopupMenuButton<String>(
       icon: Icon(icon),
-      tooltip: tooltip ?? 'Экспорт',
+      tooltip: tooltip ?? loc.translate('common.export_results'),
       itemBuilder: (context) => [
         if (onExportPDF != null)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'pdf',
             child: Row(
               children: [
-                Icon(Icons.picture_as_pdf),
-                SizedBox(width: 12),
-                Text('Экспорт в PDF'),
+                const Icon(Icons.picture_as_pdf),
+                const SizedBox(width: 12),
+                Text(loc.translate('common.export_pdf')),
               ],
             ),
           ),
         if (onExportCSV != null)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'csv',
             child: Row(
               children: [
-                Icon(Icons.table_chart),
-                SizedBox(width: 12),
-                Text('Экспорт в CSV'),
+                const Icon(Icons.table_chart),
+                const SizedBox(width: 12),
+                Text(loc.translate('common.export_csv')),
               ],
             ),
           ),
         if (onShare != null)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'share',
             child: Row(
               children: [
-                Icon(Icons.share),
-                SizedBox(width: 12),
-                Text('Поделиться'),
+                const Icon(Icons.share),
+                const SizedBox(width: 12),
+                Text(loc.translate('common.share')),
               ],
             ),
           ),
@@ -98,7 +101,8 @@ class ProjectExportMenu extends StatelessWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        _showErrorSnackBar(context, 'Ошибка экспорта: $e');
+        final loc = AppLocalizations.of(context);
+        _showErrorSnackBar(context, loc.translate('common.export_error').replaceAll('{error}', '$e'));
       }
     }
   }

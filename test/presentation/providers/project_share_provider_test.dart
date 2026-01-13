@@ -1036,7 +1036,6 @@ void main() {
       );
 
       final notifier1 = container1.read(projectShareProvider.notifier);
-      final notifier2 = container2.read(projectShareProvider.notifier);
 
       await notifier1.generateCalculatorLink(
         calculatorId: 'calc1',

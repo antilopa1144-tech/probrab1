@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/localization/app_localizations.dart';
 
 /// Состояния анимированного микрофона
 enum MicIconState {
@@ -269,7 +270,7 @@ class AnimatedMicButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-      message: tooltip ?? _getTooltipForState(),
+      message: tooltip ?? _getTooltipForState(context),
       child: AnimatedMicIcon(
         state: state,
         size: size,
@@ -279,14 +280,15 @@ class AnimatedMicButton extends StatelessWidget {
     );
   }
 
-  String _getTooltipForState() {
+  String _getTooltipForState(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     switch (state) {
       case MicIconState.idle:
-        return 'Начать голосовой ввод';
+        return loc.translate('common.start_voice_input');
       case MicIconState.listening:
-        return 'Слушаю...';
+        return loc.translate('common.listening_short');
       case MicIconState.processing:
-        return 'Обработка...';
+        return loc.translate('common.processing_short');
     }
   }
 }

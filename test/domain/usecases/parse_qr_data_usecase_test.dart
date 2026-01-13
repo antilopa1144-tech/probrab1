@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_dynamic_calls
+
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/parse_qr_data_usecase.dart';
@@ -126,7 +128,7 @@ void main() {
       });
 
       test('обрабатывает невалидный base64', () async {
-        final qrData = 'masterokapp://share/project?data=invalid!!!';
+        const qrData = 'masterokapp://share/project?data=invalid!!!';
 
         final result = await useCase.parseQRData(qrData);
 
@@ -134,7 +136,7 @@ void main() {
       });
 
       test('обрабатывает отсутствие параметра data', () async {
-        final qrData = 'masterokapp://share/project';
+        const qrData = 'masterokapp://share/project';
 
         final result = await useCase.parseQRData(qrData);
 
@@ -144,7 +146,7 @@ void main() {
 
     group('validateQRFormat', () {
       test('возвращает true для валидного полного формата', () async {
-        final qrData = 'masterokapp://share/project?data=abc123';
+        const qrData = 'masterokapp://share/project?data=abc123';
 
         final result = await useCase.validateQRFormat(qrData);
 
@@ -153,7 +155,7 @@ void main() {
       });
 
       test('возвращает true для валидного компактного формата', () async {
-        final qrData = 'masterokapp://s/hash123?d=abc123';
+        const qrData = 'masterokapp://s/hash123?d=abc123';
 
         final result = await useCase.validateQRFormat(qrData);
 
@@ -314,7 +316,7 @@ void main() {
       });
 
       test('обрабатывает невалидный JSON', () async {
-        final invalidJson = 'not valid json at all';
+        const invalidJson = 'not valid json at all';
         final encoded = base64Url.encode(utf8.encode(invalidJson));
         final qrData = 'masterokapp://share/project?data=$encoded';
 
@@ -414,7 +416,7 @@ void main() {
       });
 
       test('обрабатывает компактный формат с отсутствием параметра d', () async {
-        final qrData = 'masterokapp://s/hash123';
+        const qrData = 'masterokapp://s/hash123';
 
         final result = await useCase.parseQRData(qrData);
 
@@ -648,7 +650,7 @@ void main() {
       });
 
       test('обрабатывает очень короткий base64', () async {
-        final qrData = 'masterokapp://share/project?data=a';
+        const qrData = 'masterokapp://share/project?data=a';
 
         final result = await useCase.parseQRData(qrData);
 
@@ -656,7 +658,7 @@ void main() {
       });
 
       test('обрабатывает base64 с невалидными символами', () async {
-        final qrData = 'masterokapp://share/project?data=!!!invalid!!!';
+        const qrData = 'masterokapp://share/project?data=!!!invalid!!!';
 
         final result = await useCase.parseQRData(qrData);
 
