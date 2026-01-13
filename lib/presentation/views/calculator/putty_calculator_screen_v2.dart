@@ -274,6 +274,8 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
         const SizedBox(height: 16),
         _buildMaterialTierSelector(),
         const SizedBox(height: 16),
+        _buildMaterialDetailsSection(),
+        const SizedBox(height: 16),
         _buildOpeningsToggle(),
         if (_showOpenings) ...[
           const SizedBox(height: 16),
@@ -718,6 +720,159 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
               ),
             );
           }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMaterialDetailsSection() {
+    const accentColor = CalculatorColors.interior;
+    return InputGroup(
+      title: _loc.translate('putty.material_details'),
+      icon: Icons.inventory_2_outlined,
+      accentColor: accentColor,
+      isCollapsible: true,
+      initiallyExpanded: false,
+      children: [
+        Text(
+          _loc.translate('putty.material_details_hint'),
+          style: CalculatorDesignSystem.bodySmall.copyWith(
+            color: CalculatorColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 16),
+        _buildMaterialsTable(
+          title: _loc.translate('putty.start_materials'),
+          materials: _getStartMaterialsForTier(),
+        ),
+        const SizedBox(height: 16),
+        _buildMaterialsTable(
+          title: _loc.translate('putty.finish_materials'),
+          materials: _getFinishMaterialsForTier(),
+        ),
+      ],
+    );
+  }
+
+  List<PuttyMaterial> _getStartMaterialsForTier() {
+    const allStart = PuttyMaterialsDatabase.startMaterials;
+
+    switch (_materialTier) {
+      case MaterialTier.economy:
+        return allStart.where((m) =>
+          m.id.contains('volma') || m.id.contains('starateli')
+        ).take(2).toList();
+      case MaterialTier.standard:
+        return allStart.where((m) =>
+          m.id.contains('knauf') || m.id.contains('weber')
+        ).take(2).toList();
+      case MaterialTier.premium:
+        return allStart.where((m) =>
+          m.id.contains('terraco') || m.id.contains('ceresit')
+        ).take(2).toList();
+    }
+  }
+
+  List<PuttyMaterial> _getFinishMaterialsForTier() {
+    switch (_materialTier) {
+      case MaterialTier.economy:
+        const dryMaterials = PuttyMaterialsDatabase.finishDryMaterials;
+        return dryMaterials.where((m) =>
+          m.id.contains('starateli') || m.id.contains('volma')
+        ).take(2).toList();
+      case MaterialTier.standard:
+        const pasteMaterials = PuttyMaterialsDatabase.finishPasteMaterials;
+        return pasteMaterials.where((m) =>
+          m.id.contains('sheetrock') || m.id.contains('knauf')
+        ).take(2).toList();
+      case MaterialTier.premium:
+        const pasteMaterials = PuttyMaterialsDatabase.finishPasteMaterials;
+        return pasteMaterials.where((m) =>
+          m.id.contains('terraco') || m.id.contains('ceresit')
+        ).take(2).toList();
+    }
+  }
+
+  Widget _buildMaterialsTable({
+    required String title,
+    required List<PuttyMaterial> materials,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: CalculatorDesignSystem.titleMedium.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ...materials.map((m) => Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Бренд и название
+                Text(
+                  m.fullName,
+                  style: CalculatorDesignSystem.titleSmall.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Расход
+                _buildDetailRow(
+                  Icons.straighten,
+                  _loc.translate('putty.consumption'),
+                  '${m.consumptionPerMm} кг/м²·мм',
+                ),
+                // Фасовка
+                _buildDetailRow(
+                  Icons.inventory_2_outlined,
+                  _loc.translate('putty.package'),
+                  '${m.packageSize} ${m.packageUnit}',
+                ),
+                // Толщина слоя
+                _buildDetailRow(
+                  Icons.height,
+                  _loc.translate('putty.layer_thickness'),
+                  '${m.minLayerThickness.toInt()}–${m.maxLayerThickness.toInt()} мм',
+                ),
+                // Время высыхания
+                _buildDetailRow(
+                  Icons.schedule,
+                  _loc.translate('putty.drying_time'),
+                  '${m.dryingTimeHours} ч',
+                ),
+              ],
+            ),
+          ),
+        )),
+      ],
+    );
+  }
+
+  Widget _buildDetailRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: Colors.grey[600]),
+          const SizedBox(width: 8),
+          Text(
+            '$label: ',
+            style: CalculatorDesignSystem.bodySmall.copyWith(
+              color: Colors.grey[600],
+            ),
+          ),
+          Text(
+            value,
+            style: CalculatorDesignSystem.bodySmall.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );

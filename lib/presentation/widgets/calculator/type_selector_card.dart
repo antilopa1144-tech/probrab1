@@ -128,27 +128,33 @@ class TypeSelectorCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             // Заголовок
-            Text(
-              title,
-              style: CalculatorDesignSystem.titleSmall.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isSelected ? darkColor : CalculatorColors.textPrimary,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.center,
+              child: Text(
+                title,
+                style: CalculatorDesignSystem.titleSmall.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: isSelected ? darkColor : CalculatorColors.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
               ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
             // Подзаголовок (если есть)
             if (subtitle != null) ...[
               const SizedBox(height: 4),
-              Text(
-                subtitle!,
-                style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: isSelected ? accentColor : CalculatorColors.textSecondary,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.center,
+                child: Text(
+                  subtitle!,
+                  style: CalculatorDesignSystem.bodySmall.copyWith(
+                    color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ],

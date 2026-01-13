@@ -173,6 +173,277 @@ void main() {
     });
   });
 
+  group('TypeSelectorCard - FittedBox text scaling', () {
+    testWidgets('renders short text without scaling (5 chars)', (tester) async {
+      setTestViewportSize(tester);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 120,
+              child: TypeSelectorCard(
+                icon: Icons.home,
+                title: 'Дом',
+                isSelected: false,
+                accentColor: Colors.blue,
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Verify card renders
+      expect(find.byType(TypeSelectorCard), findsOneWidget);
+      expect(find.text('Дом'), findsOneWidget);
+      // Verify FittedBox is present
+      expect(find.byType(FittedBox), findsWidgets);
+    });
+
+    testWidgets('renders medium text (10 chars)', (tester) async {
+      setTestViewportSize(tester);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 120,
+              child: TypeSelectorCard(
+                icon: Icons.business,
+                title: 'Офисное',
+                isSelected: false,
+                accentColor: Colors.green,
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(TypeSelectorCard), findsOneWidget);
+      expect(find.text('Офисное'), findsOneWidget);
+      expect(find.byType(FittedBox), findsWidgets);
+    });
+
+    testWidgets('scales down long text (17 chars like "Полукоммерческий")', (tester) async {
+      setTestViewportSize(tester);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 120,
+              child: TypeSelectorCard(
+                icon: Icons.store,
+                title: 'Полукоммерческий',
+                isSelected: false,
+                accentColor: Colors.orange,
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Card should render without overflow
+      expect(find.byType(TypeSelectorCard), findsOneWidget);
+      expect(find.text('Полукоммерческий'), findsOneWidget);
+      // FittedBox should be scaling the text
+      expect(find.byType(FittedBox), findsWidgets);
+    });
+
+    testWidgets('scales down very long text (25+ chars)', (tester) async {
+      setTestViewportSize(tester);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 120,
+              child: TypeSelectorCard(
+                icon: Icons.apartment,
+                title: 'Коммерческий высоконагруженный',
+                isSelected: false,
+                accentColor: Colors.red,
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(TypeSelectorCard), findsOneWidget);
+      expect(find.text('Коммерческий высоконагруженный'), findsOneWidget);
+      expect(find.byType(FittedBox), findsWidgets);
+    });
+
+    testWidgets('handles subtitle with FittedBox', (tester) async {
+      setTestViewportSize(tester);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 120,
+              child: TypeSelectorCard(
+                icon: Icons.layers,
+                title: 'Полукоммерческий',
+                subtitle: 'Средняя нагрузка',
+                isSelected: false,
+                accentColor: Colors.purple,
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(TypeSelectorCard), findsOneWidget);
+      expect(find.text('Полукоммерческий'), findsOneWidget);
+      expect(find.text('Средняя нагрузка'), findsOneWidget);
+      // Both title and subtitle should have FittedBox
+      expect(find.byType(FittedBox), findsWidgets);
+    });
+
+    testWidgets('works on narrow screen 320px with 3 cards in row', (tester) async {
+      tester.view.physicalSize = const Size(320, 568);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Row(
+              children: [
+                Expanded(
+                  child: TypeSelectorCard(
+                    icon: Icons.home,
+                    title: 'Бытовой',
+                    isSelected: true,
+                    accentColor: Colors.blue,
+                    onTap: () {},
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TypeSelectorCard(
+                    icon: Icons.business,
+                    title: 'Полукоммерческий',
+                    isSelected: false,
+                    accentColor: Colors.blue,
+                    onTap: () {},
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TypeSelectorCard(
+                    icon: Icons.store,
+                    title: 'Коммерческий',
+                    isSelected: false,
+                    accentColor: Colors.blue,
+                    onTap: () {},
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      // All 3 cards should render without overflow
+      expect(find.byType(TypeSelectorCard), findsNWidgets(3));
+      expect(find.text('Бытовой'), findsOneWidget);
+      expect(find.text('Полукоммерческий'), findsOneWidget);
+      expect(find.text('Коммерческий'), findsOneWidget);
+    });
+
+    testWidgets('works on medium screen 360px', (tester) async {
+      tester.view.physicalSize = const Size(360, 640);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Row(
+              children: [
+                Expanded(
+                  child: TypeSelectorCard(
+                    icon: Icons.layers,
+                    title: 'Полукоммерческий',
+                    subtitle: 'Средняя нагрузка',
+                    isSelected: false,
+                    accentColor: Colors.orange,
+                    onTap: () {},
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(TypeSelectorCard), findsOneWidget);
+      expect(find.text('Полукоммерческий'), findsOneWidget);
+    });
+
+    testWidgets('works on large screen 400px', (tester) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Row(
+              children: [
+                Expanded(
+                  child: TypeSelectorCard(
+                    icon: Icons.apartment,
+                    title: 'Коммерческий высоконагруженный',
+                    isSelected: false,
+                    accentColor: Colors.red,
+                    onTap: () {},
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(TypeSelectorCard), findsOneWidget);
+    });
+
+    testWidgets('FittedBox uses scaleDown fit mode', (tester) async {
+      setTestViewportSize(tester);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 120,
+              child: TypeSelectorCard(
+                icon: Icons.store,
+                title: 'Полукоммерческий',
+                isSelected: false,
+                accentColor: Colors.orange,
+                onTap: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Find FittedBox widgets
+      final fittedBoxes = tester.widgetList<FittedBox>(find.byType(FittedBox));
+      // At least one FittedBox should use BoxFit.scaleDown
+      expect(
+        fittedBoxes.any((fb) => fb.fit == BoxFit.scaleDown),
+        isTrue,
+        reason: 'FittedBox should use BoxFit.scaleDown for adaptive scaling',
+      );
+    });
+  });
+
   group('TypeSelectorCardCompact', () {
     testWidgets('renders with title', (tester) async {
       setTestViewportSize(tester);

@@ -120,6 +120,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final mediaQuery = MediaQuery.of(context);
     final availableUnits = _service.getUnitsByCategory(_selectedCategory);
@@ -207,8 +208,8 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                         ),
                       ],
                       decoration: InputDecoration(
-                        labelText: 'Значение',
-                        hintText: 'Введите число',
+                        labelText: loc.translate('unit_converter.value'),
+                        hintText: loc.translate('unit_converter.value_hint'),
                         prefixIcon: const Icon(Icons.edit_rounded),
                         border: const OutlineInputBorder(),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -232,9 +233,9 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                       key: ValueKey('from_${_fromUnit?.id}'),
                       initialValue: _fromUnit,
                       isExpanded: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Из',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: loc.translate('unit_converter.from'),
+                        border: const OutlineInputBorder(),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                       items: availableUnits.map((unit) {
@@ -262,7 +263,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                       child: IconButton.filledTonal(
                         onPressed: _swapUnits,
                         icon: const Icon(Icons.swap_vert_rounded),
-                        tooltip: 'Поменять местами',
+                        tooltip: loc.translate('unit_converter.swap'),
                       ),
                     ),
 
@@ -273,9 +274,9 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                       key: ValueKey('to_${_toUnit?.id}'),
                       initialValue: _toUnit,
                       isExpanded: true,
-                      decoration: const InputDecoration(
-                        labelText: 'В',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: loc.translate('unit_converter.to'),
+                        border: const OutlineInputBorder(),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                       items: availableUnits.map((unit) {
@@ -308,7 +309,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Результат',
+                                loc.translate('unit_converter.result'),
                                 style: theme.textTheme.labelMedium?.copyWith(
                                   color: theme.colorScheme.onPrimaryContainer,
                                 ),
@@ -338,7 +339,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                       Row(
                         children: [
                           Text(
-                            'История',
+                            loc.translate('unit_converter.history'),
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -347,7 +348,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                           TextButton.icon(
                             onPressed: _clearHistory,
                             icon: const Icon(Icons.delete_outline_rounded),
-                            label: const Text('Очистить'),
+                            label: Text(loc.translate('unit_converter.clear')),
                           ),
                           IconButton(
                             onPressed: () {
@@ -383,7 +384,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                     // Популярные конвертации
                     const SizedBox(height: 24),
                     Text(
-                      'Популярные конвертации',
+                      loc.translate('unit_converter.popular_conversions'),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),

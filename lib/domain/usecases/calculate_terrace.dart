@@ -13,10 +13,10 @@ import './base_calculator.dart';
 ///
 /// Поля:
 /// - area: площадь террасы (м2)
-/// - floorType: тип покрытия пола (1 - декинг, 2 - плитка, 3 - настил)
+/// - floorType: тип покрытия пола (1 - декинг, 2 - плитка, 3 - настил, 4 - керамогранит, 5 - ДПК, 6 - массив дерева, 7 - резиновая плитка)
 /// - railing: ограждение (0 - нет, 1 - да)
 /// - roof: кровля (0 - нет, 1 - да)
-/// - roofType: тип кровли (1 - поликарбонат, 2 - профлист, 3 - мягкая кровля)
+/// - roofType: тип кровли (1 - поликарбонат, 2 - профлист, 3 - мягкая кровля, 4 - ондулин, 5 - металлочерепица, 6 - стекло)
 class CalculateTerrace extends BaseCalculator {
   @override
   CalculatorResult calculate(
@@ -31,7 +31,7 @@ class CalculateTerrace extends BaseCalculator {
       'floorType',
       defaultValue: 1,
       minValue: 1,
-      maxValue: 3,
+      maxValue: 7,
     );
     final railing = getIntInput(
       inputs,
@@ -47,7 +47,7 @@ class CalculateTerrace extends BaseCalculator {
       'roofType',
       defaultValue: 1,
       minValue: 1,
-      maxValue: 3,
+      maxValue: 6,
     );
 
     final floorArea = area;
@@ -56,14 +56,33 @@ class CalculateTerrace extends BaseCalculator {
     double tilesNeeded = 0.0;
     double deckingBoards = 0.0;
 
-    if (floorType == 1) {
-      deckingArea = floorArea * 1.1;
-    } else if (floorType == 2) {
-      const tileArea = 0.25;
-      tilesNeeded = (floorArea / tileArea * 1.1).ceil().toDouble();
-    } else if (floorType == 3) {
-      const boardArea = 0.1;
-      deckingBoards = (floorArea / boardArea * 1.1).ceil().toDouble();
+    // Расчёт материала пола в зависимости от типа
+    switch (floorType) {
+      case 1: // Декинг
+        deckingArea = floorArea * 1.1;
+        break;
+      case 2: // Плитка (50x50 см)
+        const tileArea = 0.25;
+        tilesNeeded = (floorArea / tileArea * 1.1).ceil().toDouble();
+        break;
+      case 3: // Доска
+        const boardArea = 0.1;
+        deckingBoards = (floorArea / boardArea * 1.1).ceil().toDouble();
+        break;
+      case 4: // Керамогранит (60x60 см)
+        const porcelainArea = 0.36;
+        tilesNeeded = (floorArea / porcelainArea * 1.1).ceil().toDouble();
+        break;
+      case 5: // ДПК (древесно-полимерный композит)
+        deckingArea = floorArea * 1.1;
+        break;
+      case 6: // Массив дерева (больше отходов)
+        deckingArea = floorArea * 1.1 * 1.15;
+        break;
+      case 7: // Резиновая плитка (50x50 см)
+        const rubberArea = 0.25;
+        tilesNeeded = (floorArea / rubberArea * 1.1).ceil().toDouble();
+        break;
     }
 
     final railingLength = railing == 1 && perimeter > 0 ? perimeter : 0.0;
@@ -80,16 +99,34 @@ class CalculateTerrace extends BaseCalculator {
     if (roof == 1) {
       roofArea = area * 1.2;
 
-      if (roofType == 1) {
-        const sheetArea = 6.0;
-        polycarbonateSheets =
-            (roofArea / sheetArea * 1.1).ceil().toDouble();
-      } else if (roofType == 2) {
-        const sheetArea = 8.0;
-        profiledSheets =
-            (roofArea / sheetArea * 1.1).ceil().toDouble();
-      } else if (roofType == 3) {
-        roofingMaterial = roofArea * 1.1;
+      // Расчёт материала кровли в зависимости от типа
+      switch (roofType) {
+        case 1: // Поликарбонат
+          const sheetArea = 6.0;
+          polycarbonateSheets =
+              (roofArea / sheetArea * 1.1).ceil().toDouble();
+          break;
+        case 2: // Профнастил
+          const sheetArea = 8.0;
+          profiledSheets =
+              (roofArea / sheetArea * 1.1).ceil().toDouble();
+          break;
+        case 3: // Мягкая кровля
+          roofingMaterial = roofArea * 1.1;
+          break;
+        case 4: // Ондулин (стандартный лист 1.9 м²)
+          const ondSheetArea = 1.9;
+          profiledSheets =
+              (roofArea / ondSheetArea * 1.15).ceil().toDouble();
+          break;
+        case 5: // Металлочерепица
+          roofingMaterial = roofArea * 1.2;
+          break;
+        case 6: // Стеклянная крыша
+          const glassSheetArea = 2.0;
+          polycarbonateSheets =
+              (roofArea / glassSheetArea * 1.1).ceil().toDouble();
+          break;
       }
     }
 
@@ -109,6 +146,22 @@ class CalculateTerrace extends BaseCalculator {
     final boardPrice = findPrice(
       priceList,
       ['board', 'wood', 'timber'],
+    )?.price;
+    final porcelainPrice = findPrice(
+      priceList,
+      ['porcelain_tile', 'tile_porcelain', 'porcelain'],
+    )?.price;
+    final wpcPrice = findPrice(
+      priceList,
+      ['wpc', 'composite_decking', 'wood_plastic_composite'],
+    )?.price;
+    final solidWoodPrice = findPrice(
+      priceList,
+      ['solid_wood', 'larch', 'oak', 'hardwood'],
+    )?.price;
+    final rubberTilesPrice = findPrice(
+      priceList,
+      ['rubber_tiles', 'rubber_flooring', 'modular_rubber'],
     )?.price;
     final railingPrice = findPrice(
       priceList,
@@ -130,6 +183,18 @@ class CalculateTerrace extends BaseCalculator {
       priceList,
       ['soft_roofing', 'roofing_material'],
     )?.price;
+    final ondulinPrice = findPrice(
+      priceList,
+      ['ondulin', 'ondulina', 'bitumen_sheet'],
+    )?.price;
+    final metalTilePrice = findPrice(
+      priceList,
+      ['metal_tile', 'metal_roofing', 'metallocherepitsa'],
+    )?.price;
+    final glassPrice = findPrice(
+      priceList,
+      ['glass', 'tempered_glass', 'glass_roof'],
+    )?.price;
     final concretePrice = findPrice(
       priceList,
       ['concrete', 'concrete_m300'],
@@ -137,12 +202,43 @@ class CalculateTerrace extends BaseCalculator {
 
     double? totalPrice;
 
-    if (floorType == 1 && deckingPrice != null) {
-      totalPrice = deckingArea * deckingPrice;
-    } else if (floorType == 2 && tilePrice != null) {
-      totalPrice = tilesNeeded * tilePrice;
-    } else if (floorType == 3 && boardPrice != null) {
-      totalPrice = deckingBoards * boardPrice;
+    // Расчёт стоимости пола в зависимости от типа
+    switch (floorType) {
+      case 1: // Декинг
+        if (deckingPrice != null) {
+          totalPrice = deckingArea * deckingPrice;
+        }
+        break;
+      case 2: // Плитка
+        if (tilePrice != null) {
+          totalPrice = tilesNeeded * tilePrice;
+        }
+        break;
+      case 3: // Доска
+        if (boardPrice != null) {
+          totalPrice = deckingBoards * boardPrice;
+        }
+        break;
+      case 4: // Керамогранит
+        if (porcelainPrice != null) {
+          totalPrice = tilesNeeded * porcelainPrice;
+        }
+        break;
+      case 5: // ДПК
+        if (wpcPrice != null) {
+          totalPrice = deckingArea * wpcPrice;
+        }
+        break;
+      case 6: // Массив дерева
+        if (solidWoodPrice != null) {
+          totalPrice = deckingArea * solidWoodPrice;
+        }
+        break;
+      case 7: // Резиновая плитка
+        if (rubberTilesPrice != null) {
+          totalPrice = tilesNeeded * rubberTilesPrice;
+        }
+        break;
     }
 
     if (railingPrice != null && railingLength > 0) {
@@ -152,18 +248,42 @@ class CalculateTerrace extends BaseCalculator {
       totalPrice = (totalPrice ?? 0) + railingPosts * postPrice;
     }
 
-    if (roofType == 1 &&
-        polycarbonatePrice != null &&
-        polycarbonateSheets > 0) {
-      totalPrice =
-          (totalPrice ?? 0) + polycarbonateSheets * polycarbonatePrice;
-    } else if (roofType == 2 &&
-        profiledSheetPrice != null &&
-        profiledSheets > 0) {
-      totalPrice =
-          (totalPrice ?? 0) + profiledSheets * profiledSheetPrice;
-    } else if (roofType == 3 && roofingPrice != null && roofingMaterial > 0) {
-      totalPrice = (totalPrice ?? 0) + roofingMaterial * roofingPrice;
+    // Расчёт стоимости крыши в зависимости от типа
+    if (roof == 1) {
+      switch (roofType) {
+        case 1: // Поликарбонат
+          if (polycarbonatePrice != null && polycarbonateSheets > 0) {
+            totalPrice =
+                (totalPrice ?? 0) + polycarbonateSheets * polycarbonatePrice;
+          }
+          break;
+        case 2: // Профнастил
+          if (profiledSheetPrice != null && profiledSheets > 0) {
+            totalPrice =
+                (totalPrice ?? 0) + profiledSheets * profiledSheetPrice;
+          }
+          break;
+        case 3: // Мягкая кровля
+          if (roofingPrice != null && roofingMaterial > 0) {
+            totalPrice = (totalPrice ?? 0) + roofingMaterial * roofingPrice;
+          }
+          break;
+        case 4: // Ондулин
+          if (ondulinPrice != null && profiledSheets > 0) {
+            totalPrice = (totalPrice ?? 0) + profiledSheets * ondulinPrice;
+          }
+          break;
+        case 5: // Металлочерепица
+          if (metalTilePrice != null && roofingMaterial > 0) {
+            totalPrice = (totalPrice ?? 0) + roofingMaterial * metalTilePrice;
+          }
+          break;
+        case 6: // Стеклянная крыша
+          if (glassPrice != null && polycarbonateSheets > 0) {
+            totalPrice = (totalPrice ?? 0) + polycarbonateSheets * glassPrice;
+          }
+          break;
+      }
     }
 
     if (postPrice != null && roofPosts > 0) {

@@ -42,8 +42,24 @@ class _TerraceConstants {
   double get foundationHeight => _getDouble('foundation', 'post_height', 0.5);
 }
 
-enum TerraceFloorType { decking, tile, board }
-enum TerraceRoofType { polycarbonate, profiledSheet, softRoof }
+enum TerraceFloorType {
+  decking,      // Декинг (существующий)
+  tile,         // Керамическая плитка (существующий)
+  board,        // Доска (существующий)
+  porcelain,    // Керамогранит (НОВЫЙ)
+  wpc,          // ДПК - древесно-полимерный композит (НОВЫЙ)
+  solidWood,    // Массив дерева (НОВЫЙ)
+  rubberTiles,  // Резиновые покрытия (НОВЫЙ)
+}
+
+enum TerraceRoofType {
+  polycarbonate,  // Поликарбонат (существующий)
+  profiledSheet,  // Профнастил (существующий)
+  softRoof,       // Мягкая кровля (существующий)
+  ondulin,        // Ондулин (НОВЫЙ)
+  metalTile,      // Металлочерепица (НОВЫЙ)
+  glass,          // Стеклянная крыша (НОВЫЙ)
+}
 
 class _TerraceResult {
   final double area;
@@ -154,12 +170,26 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
         deckingArea = area * _constants.floorMargin;
         break;
       case TerraceFloorType.tile:
-        final tileArea = _constants.tileArea;
+        final tileArea = _constants.tileArea; // 50x50cm
         tilesNeeded = (area / tileArea * _constants.floorMargin).ceil();
         break;
       case TerraceFloorType.board:
         final boardArea = _constants.boardArea;
         deckingBoards = (area / boardArea * _constants.floorMargin).ceil();
+        break;
+      case TerraceFloorType.porcelain:
+        const porcelainArea = 0.36; // 60x60cm
+        tilesNeeded = (area / porcelainArea * _constants.floorMargin).ceil();
+        break;
+      case TerraceFloorType.wpc:
+        deckingArea = area * _constants.floorMargin;
+        break;
+      case TerraceFloorType.solidWood:
+        deckingArea = area * _constants.floorMargin * 1.15; // Больше отходов
+        break;
+      case TerraceFloorType.rubberTiles:
+        const rubberArea = 0.25; // 50x50cm
+        tilesNeeded = (area / rubberArea * _constants.floorMargin).ceil();
         break;
     }
 
@@ -189,6 +219,17 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
           break;
         case TerraceRoofType.softRoof:
           roofingMaterial = roofArea * _constants.roofingMargin;
+          break;
+        case TerraceRoofType.ondulin:
+          const ondSheetArea = 1.9; // Стандартный лист
+          profiledSheets = (roofArea / ondSheetArea * 1.15).ceil();
+          break;
+        case TerraceRoofType.metalTile:
+          roofingMaterial = roofArea * 1.2; // м²
+          break;
+        case TerraceRoofType.glass:
+          const glassSheetArea = 2.0;
+          polycarbonateSheets = (roofArea / glassSheetArea * _constants.roofingMargin).ceil();
           break;
       }
 
@@ -222,6 +263,10 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
       TerraceFloorType.decking => _loc.translate('terrace_calc.floor_type.decking'),
       TerraceFloorType.tile => _loc.translate('terrace_calc.floor_type.tile'),
       TerraceFloorType.board => _loc.translate('terrace_calc.floor_type.board'),
+      TerraceFloorType.porcelain => _loc.translate('terrace.floor.porcelain'),
+      TerraceFloorType.wpc => _loc.translate('terrace.floor.wpc'),
+      TerraceFloorType.solidWood => _loc.translate('terrace.floor.solidWood'),
+      TerraceFloorType.rubberTiles => _loc.translate('terrace.floor.rubberTiles'),
     };
   }
 
@@ -231,6 +276,12 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
         '${_result.deckingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
       TerraceFloorType.tile => '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
       TerraceFloorType.board => '${_result.deckingBoards} ${_loc.translate('common.pcs')}',
+      TerraceFloorType.porcelain => '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
+      TerraceFloorType.wpc =>
+        '${_result.deckingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+      TerraceFloorType.solidWood =>
+        '${_result.deckingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+      TerraceFloorType.rubberTiles => '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
     };
   }
 
@@ -239,6 +290,10 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
       TerraceFloorType.decking => Icons.deck,
       TerraceFloorType.tile => Icons.grid_on,
       TerraceFloorType.board => Icons.view_agenda,
+      TerraceFloorType.porcelain => Icons.texture,
+      TerraceFloorType.wpc => Icons.dashboard,
+      TerraceFloorType.solidWood => Icons.park,
+      TerraceFloorType.rubberTiles => Icons.apps,
     };
   }
 
@@ -247,6 +302,9 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
       TerraceRoofType.polycarbonate => _loc.translate('terrace_calc.roof.polycarbonate'),
       TerraceRoofType.profiledSheet => _loc.translate('terrace_calc.roof.profiled_sheet'),
       TerraceRoofType.softRoof => _loc.translate('terrace_calc.materials.soft_roof'),
+      TerraceRoofType.ondulin => _loc.translate('terrace.roof.ondulin'),
+      TerraceRoofType.metalTile => _loc.translate('terrace.roof.metal_tile'),
+      TerraceRoofType.glass => _loc.translate('terrace.roof.glass'),
     };
   }
 
@@ -270,6 +328,18 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
       case TerraceFloorType.board:
         buffer.writeln(_loc.translate('terrace_calc.export.board')
             .replaceFirst('{value}', _result.deckingBoards.toString()));
+        break;
+      case TerraceFloorType.porcelain:
+        buffer.writeln('${_loc.translate('terrace.floor.porcelain')}: ${_result.tilesNeeded} ${_loc.translate('common.pcs')}');
+        break;
+      case TerraceFloorType.wpc:
+        buffer.writeln('${_loc.translate('terrace.floor.wpc')}: ${_result.deckingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+        break;
+      case TerraceFloorType.solidWood:
+        buffer.writeln('${_loc.translate('terrace.floor.solidWood')}: ${_result.deckingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+        break;
+      case TerraceFloorType.rubberTiles:
+        buffer.writeln('${_loc.translate('terrace.floor.rubberTiles')}: ${_result.tilesNeeded} ${_loc.translate('common.pcs')}');
         break;
     }
     if (_hasRailing) {
@@ -665,6 +735,38 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
           value: '${_result.deckingBoards} ${_loc.translate('common.pcs')}',
           subtitle: _loc.translate('terrace_calc.materials.margin_10'),
           icon: Icons.view_agenda,
+        ));
+        break;
+      case TerraceFloorType.porcelain:
+        items.add(MaterialItem(
+          name: _loc.translate('terrace.floor.porcelain'),
+          value: '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
+          subtitle: _loc.translate('terrace_calc.materials.margin_10'),
+          icon: Icons.texture,
+        ));
+        break;
+      case TerraceFloorType.wpc:
+        items.add(MaterialItem(
+          name: _loc.translate('terrace.floor.wpc'),
+          value: '${_result.deckingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          subtitle: _loc.translate('terrace_calc.materials.margin_10'),
+          icon: Icons.dashboard,
+        ));
+        break;
+      case TerraceFloorType.solidWood:
+        items.add(MaterialItem(
+          name: _loc.translate('terrace.floor.solidWood'),
+          value: '${_result.deckingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          subtitle: _loc.translate('terrace_calc.materials.margin_10'),
+          icon: Icons.park,
+        ));
+        break;
+      case TerraceFloorType.rubberTiles:
+        items.add(MaterialItem(
+          name: _loc.translate('terrace.floor.rubberTiles'),
+          value: '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
+          subtitle: _loc.translate('terrace_calc.materials.margin_10'),
+          icon: Icons.apps,
         ));
         break;
     }
