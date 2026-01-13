@@ -77,3 +77,4 @@ libisar.dll
 **/*.gr.dart
 
 *.isar-lck
+*.isar
