@@ -3,6 +3,7 @@
     "name": "Мастерок"
   },
   "action": {
+    "add": "Добавить",
     "clear": "Очистить",
     "reset_filters": "Сбросить фильтры"
   },
@@ -36,6 +37,8 @@
     "recent": "Недавние",
     "popular": "Популярное",
     "results": "Результаты",
+    "unit_converter_tooltip": "Конвертер единиц",
+    "checklist_tooltip": "Чек-листы ремонта",
     "complexity": {
       "quick": "Быстрый",
       "detailed": "Детальный"
@@ -1193,6 +1196,7 @@
   },
   "project": {
     "calculations": "Расчёты",
+    "checklists": "Чек-листы",
     "created": "Создан",
     "export": "Экспортировать",
     "labor": "Работы",
@@ -4370,6 +4374,7 @@
     "yes": "Да",
     "no": "Нет",
     "loading": "Загрузка...",
+    "calculation_error": "Ошибка расчёта. Проверьте введённые данные.",
     "feature_in_development": "Функция в разработке",
     "tips": "Полезные советы",
     "copy": "Копировать",
@@ -4383,15 +4388,6 @@
     "qr_scan_instruction": "Отсканируйте QR код для импорта данных",
     "qr_data_size": "Данные: {size} символов",
     "qr_not_available": "QR код недоступен для текущих данных",
-    "recognized": "Распознано:",
-    "ready_to_listen": "Готов к прослушиванию",
-    "listening": "Говорите...",
-    "processing": "Обрабатываем...",
-    "done": "Готово!",
-    "error": "Ошибка",
-    "start_voice_input": "Начать голосовой ввод",
-    "listening_short": "Слушаю...",
-    "processing_short": "Обработка...",
     "share_result": "Поделиться результатом",
     "copy_to_clipboard": "Скопировать текст в буфер обмена",
     "send_via_messenger": "Отправить через мессенджер или email",

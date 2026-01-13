@@ -208,7 +208,7 @@ class _ModernCalculatorCatalogScreenV2State
               color: palette.textMuted,
               size: 22,
             ),
-            tooltip: 'Конвертер единиц',
+            tooltip: loc.translate('catalog.unit_converter_tooltip'),
           ),
           IconButton(
             onPressed: () async {
@@ -226,7 +226,7 @@ class _ModernCalculatorCatalogScreenV2State
               color: palette.textMuted,
               size: 22,
             ),
-            tooltip: 'Чек-листы ремонта',
+            tooltip: loc.translate('catalog.checklist_tooltip'),
           ),
           IconButton(
             onPressed: () {

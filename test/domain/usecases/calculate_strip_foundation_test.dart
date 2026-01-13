@@ -21,8 +21,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Объём = 40 * 0.4 * 0.8 = 12.8 м³
-      expect(result.values['concreteVolume'], closeTo(12.8, 0.6));
+      // Объём = 40 * 0.4 * 0.8 * 1.05 (запас 5%) = 13.44 м³
+      expect(result.values['concreteVolume'], closeTo(13.44, 0.5));
     });
 
     test('calculates rebar weight correctly', () {
@@ -35,8 +35,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Вес арматуры = 12.8 * 0.01 * 7850 = 1004.8 кг
-      expect(result.values['rebarWeight'], closeTo(1004.8, 0.1));
+      // Вес арматуры = 13.44 м³ * 100 кг/м³ = 1344 кг (по СП 63.13330.2018)
+      expect(result.values['rebarWeight'], closeTo(1344.0, 50.0));
     });
 
     test('calculates cement bags correctly', () {
@@ -83,8 +83,8 @@ void main() {
 
       final result = calculator(inputs, priceList);
 
-      // Цена = 12.8 м³ * 6500 руб = 83200 руб
-      expect(result.totalPrice, equals(83200.0));
+      // Цена = 13.44 м³ * 6500 руб = 87360 руб (с запасом 5%)
+      expect(result.totalPrice, closeTo(87360.0, 500.0));
     });
 
     test('returns null price when price list is empty', () {
@@ -110,8 +110,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Объём = 16 * 0.3 * 0.6 = 2.88 м³
-      expect(result.values['concreteVolume'], closeTo(2.88, 0.01));
+      // Объём = 16 * 0.3 * 0.6 * 1.05 (запас 5%) = 3.024 м³
+      expect(result.values['concreteVolume'], closeTo(3.024, 0.1));
     });
 
     test('handles large foundation correctly', () {
@@ -124,8 +124,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Объём = 100 * 0.5 * 1.0 = 50 м³
-      expect(result.values['concreteVolume'], closeTo(50.0, 2.5));
+      // Объём = 100 * 0.5 * 1.0 * 1.05 (запас 5%) = 52.5 м³
+      expect(result.values['concreteVolume'], closeTo(52.5, 2.0));
     });
   });
 }

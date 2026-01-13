@@ -181,7 +181,6 @@ class _TileAdhesiveCalculatorScreenState
   late _TileAdhesiveResult _result;
   late AppLocalizations _loc;
 
-  // TODO: Подключить к calculatorConstantsProvider для получения Remote Config
   final _constants = _TileAdhesiveConstants(null);
 
   @override

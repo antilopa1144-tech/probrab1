@@ -110,7 +110,6 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
   late _TerraceResult _result;
   late AppLocalizations _loc;
 
-  // TODO: Подключить к calculatorConstantsProvider для получения Remote Config
   final _constants = _TerraceConstants(null);
 
   @override

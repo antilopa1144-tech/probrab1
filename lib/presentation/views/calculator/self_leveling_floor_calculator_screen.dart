@@ -135,7 +135,6 @@ class _SelfLevelingFloorCalculatorScreenState
   @override
   void initState() {
     super.initState();
-    // TODO: Загрузить константы из provider когда понадобится Remote Config
     _constants = const _SelfLevelingConstants(null);
     _applyInitialInputs();
     _result = _calculate();

@@ -20,7 +20,6 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
 
   AppLocalizations get _loc => AppLocalizations.of(context);
 
-  // TODO: Подключить к calculatorConstantsProvider для получения Remote Config
   final _constants = _PuttyConstants(null);
 
   @override

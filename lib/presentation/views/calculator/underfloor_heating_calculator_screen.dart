@@ -218,8 +218,6 @@ class _UnderfloorHeatingCalculatorScreenState
   @override
   void initState() {
     super.initState();
-    // TODO: Загрузить константы из provider когда понадобится Remote Config
-    // final constants = await ref.read(calculatorConstantsProvider('warmfloor').future);
     _constants = const _WarmFloorConstants(null);
     _usefulAreaPercent = _constants.usefulAreaDefault;
     _applyInitialInputs();

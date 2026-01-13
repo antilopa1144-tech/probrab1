@@ -132,9 +132,6 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
   @override
   void initState() {
     super.initState();
-    // TODO: Подключить константы из Remote Config через _GypsumConstants
-    // final constantsAsync = ref.read(calculatorConstantsProvider('gypsum'));
-    // _calculator.constants = constantsAsync.value;
     _applyInitialInputs();
     _result = _calculate();
   }

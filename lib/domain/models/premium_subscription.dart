@@ -217,9 +217,6 @@ enum PremiumFeature {
   /// Сравнение цен материалов
   priceComparison,
 
-  /// Голосовой ввод размеров
-  voiceInput,
-
   /// QR-коды для проектов
   qrCodes,
 
@@ -254,8 +251,6 @@ extension PremiumFeatureExtension on PremiumFeature {
         return 'premium.feature.expert_tips';
       case PremiumFeature.priceComparison:
         return 'premium.feature.price_comparison';
-      case PremiumFeature.voiceInput:
-        return 'premium.feature.voice_input';
       case PremiumFeature.qrCodes:
         return 'premium.feature.qr_codes';
       case PremiumFeature.deepLinks:
@@ -286,8 +281,6 @@ extension PremiumFeatureExtension on PremiumFeature {
         return '💡';
       case PremiumFeature.priceComparison:
         return '💰';
-      case PremiumFeature.voiceInput:
-        return '🎤';
       case PremiumFeature.qrCodes:
         return '📱';
       case PremiumFeature.deepLinks:

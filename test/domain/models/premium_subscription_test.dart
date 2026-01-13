@@ -507,7 +507,6 @@ void main() {
       expect(PremiumFeature.values, contains(PremiumFeature.cloudSync));
       expect(PremiumFeature.values, contains(PremiumFeature.expertTips));
       expect(PremiumFeature.values, contains(PremiumFeature.priceComparison));
-      expect(PremiumFeature.values, contains(PremiumFeature.voiceInput));
       expect(PremiumFeature.values, contains(PremiumFeature.qrCodes));
       expect(PremiumFeature.values, contains(PremiumFeature.deepLinks));
       expect(PremiumFeature.values, contains(PremiumFeature.checklists));
@@ -533,8 +532,6 @@ void main() {
           'premium.feature.expert_tips');
       expect(PremiumFeature.priceComparison.localizationKey,
           'premium.feature.price_comparison');
-      expect(PremiumFeature.voiceInput.localizationKey,
-          'premium.feature.voice_input');
       expect(PremiumFeature.qrCodes.localizationKey,
           'premium.feature.qr_codes');
       expect(PremiumFeature.deepLinks.localizationKey,
@@ -554,7 +551,6 @@ void main() {
       expect(PremiumFeature.cloudSync.icon, '☁️');
       expect(PremiumFeature.expertTips.icon, '💡');
       expect(PremiumFeature.priceComparison.icon, '💰');
-      expect(PremiumFeature.voiceInput.icon, '🎤');
       expect(PremiumFeature.qrCodes.icon, '📱');
       expect(PremiumFeature.deepLinks.icon, '🔗');
       expect(PremiumFeature.checklists.icon, '✅');

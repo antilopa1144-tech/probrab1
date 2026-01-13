@@ -236,8 +236,6 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
   @override
   void initState() {
     super.initState();
-    // TODO: Загрузить константы из provider когда понадобится Remote Config
-    // final constants = await ref.read(calculatorConstantsProvider('woodlining').future);
     _constants = const _WoodLiningConstants(null);
     _applyInitialInputs();
     _result = _calculate();

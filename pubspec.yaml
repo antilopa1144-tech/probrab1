@@ -70,8 +70,6 @@ dependencies:
   qr_flutter: ^4.1.0
   # QR код сканер
   mobile_scanner: ^5.2.3
-  # Распознавание речи для голосового ввода размеров
-  speech_to_text: ^7.0.0
 
 dev_dependencies:
   flutter_test:

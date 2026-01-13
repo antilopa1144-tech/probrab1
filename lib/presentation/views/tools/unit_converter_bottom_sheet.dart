@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/unit_conversion.dart';
 import '../../../domain/services/unit_converter_service.dart';
 
@@ -153,7 +154,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                 child: Row(
                   children: [
                     Text(
-                      'Конвертер единиц',
+                      AppLocalizations.of(context).translate('catalog.unit_converter_tooltip'),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),

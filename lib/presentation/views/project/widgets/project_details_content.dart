@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../domain/models/project_v2.dart';
 import '../../../../domain/models/checklist.dart';
 import '../../../../data/repositories/checklist_repository.dart';
@@ -75,8 +76,8 @@ class _ProjectDetailsContentState extends ConsumerState<ProjectDetailsContent>
                 ),
                 onPressed: widget.onToggleFavorite,
                 tooltip: widget.project.isFavorite
-                    ? 'Убрать из избранного'
-                    : 'Добавить в избранное',
+                    ? AppLocalizations.of(context).translate('favorites.remove')
+                    : AppLocalizations.of(context).translate('favorites.add'),
               ),
               IconButton(
                 icon: const Icon(Icons.edit_rounded),
@@ -136,15 +137,15 @@ class _ProjectDetailsContentState extends ConsumerState<ProjectDetailsContent>
               tabs: [
                 Tab(
                   icon: const Icon(Icons.calculate_outlined),
-                  text: 'Расчёты (${widget.project.calculations.length})',
+                  text: '${AppLocalizations.of(context).translate('project.calculations')} (${widget.project.calculations.length})',
                 ),
                 Tab(
                   icon: const Icon(Icons.shopping_cart_outlined),
-                  text: 'Материалы (${widget.project.allMaterials.length})',
+                  text: '${AppLocalizations.of(context).translate('project.materials')} (${widget.project.allMaterials.length})',
                 ),
-                const Tab(
-                  icon: Icon(Icons.checklist_rounded),
-                  text: 'Чек-листы',
+                Tab(
+                  icon: const Icon(Icons.checklist_rounded),
+                  text: AppLocalizations.of(context).translate('project.checklists'),
                 ),
               ],
             ),
@@ -322,12 +323,12 @@ class _ChecklistsTab extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Row(
                 children: [
-                  Text('Чек-листы', style: theme.textTheme.titleLarge),
+                  Text(AppLocalizations.of(context).translate('project.checklists'), style: theme.textTheme.titleLarge),
                   const Spacer(),
                   TextButton.icon(
                     onPressed: () => _addChecklist(context, ref),
                     icon: const Icon(Icons.add_rounded),
-                    label: const Text('Добавить'),
+                    label: Text(AppLocalizations.of(context).translate('action.add')),
                   ),
                 ],
               ),

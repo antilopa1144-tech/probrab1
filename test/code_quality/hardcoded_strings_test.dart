@@ -34,9 +34,7 @@ void main() {
       'underfloor_heating_calculator_screen.dart',
       'wallpaper_calculator_screen.dart',
       'wood_lining_calculator_screen.dart',
-      // TODO: Локализовать эти файлы
       'modern_calculator_catalog_screen_v2.dart',
-      'voice_input_button.dart',
       'premium_badge.dart',
       'premium_lock_dialog.dart',
     };

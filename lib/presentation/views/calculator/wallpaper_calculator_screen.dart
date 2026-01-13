@@ -114,8 +114,6 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
   @override
   void initState() {
     super.initState();
-    // TODO: Загрузить константы из provider когда понадобится Remote Config
-    // final constants = await ref.read(calculatorConstantsProvider('wallpaper').future);
     _constants = const _WallpaperConstants(null);
     _applyInitialInputs();
     _result = _calculate();

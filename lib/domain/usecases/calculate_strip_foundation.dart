@@ -7,8 +7,8 @@ import './base_calculator.dart';
 /// Калькулятор ленточного фундамента.
 ///
 /// Нормативы:
-/// - СНиП 52-01-2003 "Бетонные и железобетонные конструкции"
-/// - СНиП 3.03.01-87 "Несущие и ограждающие конструкции"
+/// - СП 63.13330.2018 "Бетонные и железобетонные конструкции"
+/// - СП 70.13330.2012 "Несущие и ограждающие конструкции"
 ///
 /// Поля:
 /// - area: площадь контура (м²), используется для оценки периметра
@@ -68,32 +68,37 @@ class CalculateStripFoundation extends BaseCalculator {
       maxValue: 3.0,
     );
 
-    // Объём бетона для фундамента
-    final concreteVolume = perimeter * width * height;
+    // Объём бетона для фундамента (с запасом 5% на разлив)
+    const concreteWastePercent = 5.0;
+    final concreteVolume = perimeter * width * height * (1 + concreteWastePercent / 100);
 
-    // Армирование (СНиП 52-01-2003):
+    // Армирование (СП 63.13330.2018):
     // - Продольная арматура: 4-6 стержней диаметром 12-14 мм
     // - Поперечные хомуты: диаметр 8-10 мм, шаг 30-40 см
-    // Общий вес арматуры: ~80-120 кг на м³ бетона
-    final rebarWeight = concreteVolume * 0.01 * 7850;
+    // Общий вес арматуры: ~100 кг на м³ бетона (норма 80-120 кг/м³)
+    final rebarWeight = concreteVolume * 100;
 
     // Количество стержней продольной арматуры (4-6 шт, по 2-3 сверху и снизу)
     const longitudinalBars = 6;
     final longitudinalLength = perimeter * longitudinalBars;
 
-    // Опалубка: площадь боковых поверхностей
-    final formworkArea = perimeter * height * 2; // обе стороны
+    // Опалубка: площадь боковых поверхностей (с запасом 10% на раскрой)
+    const formworkWastePercent = 10.0;
+    final formworkArea = perimeter * height * 2 * (1 + formworkWastePercent / 100);
 
-    // Гидроизоляция: площадь дна и боковых стенок
-    final waterproofingArea = (perimeter * width) + (perimeter * height * 2);
+    // Гидроизоляция: площадь дна и боковых стенок (с запасом 15% на перекат и стыки)
+    const waterproofingWastePercent = 15.0;
+    final waterproofingArea = ((perimeter * width) + (perimeter * height * 2)) * (1 + waterproofingWastePercent / 100);
 
-    // Песчаная подушка (обычно толщина 15-20 см)
+    // Песчаная подушка (толщина 15-20 см, запас 10%)
     const sandCushionThickness = 0.15; // м
-    final sandVolume = perimeter * width * sandCushionThickness;
+    const sandWastePercent = 10.0;
+    final sandVolume = perimeter * width * sandCushionThickness * (1 + sandWastePercent / 100);
 
-    // Щебень для подушки (обычно 10-15 см поверх песка)
+    // Щебень для подушки (10-15 см поверх песка, запас 10%)
     const gravelThickness = 0.1; // м
-    final gravelVolume = perimeter * width * gravelThickness;
+    const gravelWastePercent = 10.0;
+    final gravelVolume = perimeter * width * gravelThickness * (1 + gravelWastePercent / 100);
 
     // Если делать бетон самостоятельно:
     // Для М300: цемент М400 (330 кг/м³), песок (0.6 м³), щебень (0.8 м³)
