@@ -76,3 +76,4 @@ libisar.dll
 **/*.freezed.dart
 **/*.gr.dart
 
+*.isar-lck
