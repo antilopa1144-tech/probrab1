@@ -300,6 +300,22 @@ void main() {
       expect(find.byType(MaterialsCardModern), findsOneWidget);
     });
 
+    testWidgets('отображает карточку советов', (tester) async {
+      setTestViewportSize(tester);
+      await tester.pumpWidget(
+        createTestApp(
+          child: const BlindAreaCalculatorScreen(),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Должна быть иконка лампочки для советов
+      expect(find.byIcon(Icons.lightbulb_outline), findsOneWidget);
+      // Должны быть иконки галочек для элементов советов
+      expect(find.byIcon(Icons.check_circle_outline), findsWidgets);
+    });
+
     testWidgets('можно прокрутить до материалов', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(

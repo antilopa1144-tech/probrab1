@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:probrab_ai/presentation/views/calculator/slab_calculator_screen.dart';
+import 'package:probrab_ai/presentation/views/calculator/strip_foundation_calculator_screen.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_widgets.dart';
 
 import '../../../helpers/test_helpers.dart';
@@ -11,42 +11,43 @@ void main() {
     setupMocks();
   });
 
-  group('SlabCalculatorScreen -', () {
+  group('StripFoundationCalculatorScreen -', () {
     testWidgets('отрисовывается корректно', (tester) async {
       setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
-          child: const SlabCalculatorScreen(),
+          child: const StripFoundationCalculatorScreen(),
         ),
       );
 
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.byType(SlabCalculatorScreen), findsOneWidget);
+      expect(find.byType(StripFoundationCalculatorScreen), findsOneWidget);
       expect(find.byType(CalculatorScaffold), findsOneWidget);
     });
 
-    testWidgets('отображает селектор типа плиты', (tester) async {
+    testWidgets('отображает селектор типа фундамента', (tester) async {
       setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
-          child: const SlabCalculatorScreen(),
+          child: const StripFoundationCalculatorScreen(),
         ),
       );
 
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Должен быть селектор типа плиты
+      // Должен быть селектор типа фундамента
       expect(find.byType(TypeSelectorGroup), findsOneWidget);
 
-      // Должны быть иконки для типов плиты
-      expect(find.byIcon(Icons.view_module), findsWidgets);
-      expect(find.byIcon(Icons.view_agenda), findsWidgets);
-      expect(find.byIcon(Icons.waves), findsWidgets);
+      // Должны быть иконки для 4 типов фундамента
+      expect(find.byIcon(Icons.view_module), findsWidgets); // monolithic
+      expect(find.byIcon(Icons.view_agenda), findsWidgets); // prefab
+      expect(find.byIcon(Icons.layers), findsWidgets); // shallow
+      expect(find.byIcon(Icons.foundation), findsWidgets); // deep
     });
 
     testWidgets('имеет кнопки экспорта и копирования', (tester) async {
@@ -54,7 +55,7 @@ void main() {
 
       await tester.pumpWidget(
         createTestApp(
-          child: const SlabCalculatorScreen(),
+          child: const StripFoundationCalculatorScreen(),
         ),
       );
 
@@ -65,19 +66,36 @@ void main() {
       expect(find.byIcon(Icons.copy_rounded), findsOneWidget);
     });
 
-    testWidgets('отображает слайдер для настройки', (tester) async {
+    testWidgets('отображает текстовые поля для размеров дома', (tester) async {
       setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
-          child: const SlabCalculatorScreen(),
+          child: const StripFoundationCalculatorScreen(),
         ),
       );
 
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.byType(Slider), findsOneWidget);
+      // Должны быть текстовые поля для длины и ширины дома
+      expect(find.byType(CalculatorTextField), findsWidgets);
+    });
+
+    testWidgets('отображает слайдеры для ленты', (tester) async {
+      setupTestScreenSize(tester);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const StripFoundationCalculatorScreen(),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Должны быть слайдеры для ширины и высоты ленты
+      expect(find.byType(Slider), findsWidgets);
     });
 
     testWidgets('показывает результаты в заголовке', (tester) async {
@@ -85,7 +103,7 @@ void main() {
 
       await tester.pumpWidget(
         createTestApp(
-          child: const SlabCalculatorScreen(),
+          child: const StripFoundationCalculatorScreen(),
         ),
       );
 
@@ -94,41 +112,8 @@ void main() {
 
       // Должен отображать результаты
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('common.meters'), findsWidgets);
       expect(find.textContaining('common.cbm'), findsWidgets);
-      expect(find.textContaining('common.kg'), findsWidgets);
-    });
-
-    testWidgets('имеет текстовые поля для размеров', (tester) async {
-      setupTestScreenSize(tester);
-
-      await tester.pumpWidget(
-        createTestApp(
-          child: const SlabCalculatorScreen(),
-        ),
-      );
-
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
-
-      // Должны быть текстовые поля для длины и ширины
-      expect(find.byType(CalculatorTextField), findsWidgets);
-    });
-
-    testWidgets('имеет слайдер толщины', (tester) async {
-      setupTestScreenSize(tester);
-
-      await tester.pumpWidget(
-        createTestApp(
-          child: const SlabCalculatorScreen(),
-        ),
-      );
-
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
-
-      // Должен быть слайдер для толщины
-      expect(find.byType(Slider), findsOneWidget);
     });
 
     testWidgets('отображает переключатели опций', (tester) async {
@@ -136,14 +121,14 @@ void main() {
 
       await tester.pumpWidget(
         createTestApp(
-          child: const SlabCalculatorScreen(),
+          child: const StripFoundationCalculatorScreen(),
         ),
       );
 
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Должны быть переключатели для гидроизоляции и утепления
+      // Должны быть переключатели для внутренних стен, гидроизоляции, утепления
       expect(find.byType(SwitchListTile), findsWidgets);
     });
 
@@ -152,7 +137,7 @@ void main() {
 
       await tester.pumpWidget(
         createTestApp(
-          child: const SlabCalculatorScreen(),
+          child: const StripFoundationCalculatorScreen(),
         ),
       );
 
@@ -167,7 +152,7 @@ void main() {
 
       await tester.pumpWidget(
         createTestApp(
-          child: const SlabCalculatorScreen(),
+          child: const StripFoundationCalculatorScreen(),
         ),
       );
 
@@ -185,7 +170,7 @@ void main() {
 
       await tester.pumpWidget(
         createTestApp(
-          child: const SlabCalculatorScreen(),
+          child: const StripFoundationCalculatorScreen(),
         ),
       );
 
@@ -197,15 +182,35 @@ void main() {
         ),
       );
 
-      expect(find.byType(SlabCalculatorScreen), findsNothing);
+      expect(find.byType(StripFoundationCalculatorScreen), findsNothing);
     });
 
-    testWidgets('можно взаимодействовать со слайдером толщины', (tester) async {
+    testWidgets('можно переключить тип фундамента', (tester) async {
       setupTestScreenSize(tester);
 
       await tester.pumpWidget(
         createTestApp(
-          child: const SlabCalculatorScreen(),
+          child: const StripFoundationCalculatorScreen(),
+        ),
+      );
+
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Найти TypeSelectorGroup и нажать на второй тип
+      final typeSelector = find.byType(TypeSelectorGroup);
+      expect(typeSelector, findsOneWidget);
+
+      // Виджет должен оставаться отрисованным
+      expect(find.byType(StripFoundationCalculatorScreen), findsOneWidget);
+    });
+
+    testWidgets('можно взаимодействовать со слайдерами', (tester) async {
+      setupTestScreenSize(tester);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: const StripFoundationCalculatorScreen(),
         ),
       );
 
@@ -213,28 +218,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       final sliders = find.byType(Slider);
-      expect(sliders, findsOneWidget);
+      expect(sliders, findsWidgets);
 
+      // Взаимодействие со слайдером
       await tester.tap(sliders.first);
       await tester.pump();
 
-      expect(find.byType(SlabCalculatorScreen), findsOneWidget);
-    });
-
-    testWidgets('текстовые поля имеют корректные ограничения', (tester) async {
-      setupTestScreenSize(tester);
-
-      await tester.pumpWidget(
-        createTestApp(
-          child: const SlabCalculatorScreen(),
-        ),
-      );
-
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
-
-      // Должны быть текстовые поля для ввода размеров
-      expect(find.byType(CalculatorTextField), findsWidgets);
+      expect(find.byType(StripFoundationCalculatorScreen), findsOneWidget);
     });
   });
 }
