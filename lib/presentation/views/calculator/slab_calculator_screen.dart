@@ -80,7 +80,7 @@ class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
   late _SlabResult _result;
   late AppLocalizations _loc;
 
-  static const _accentColor = CalculatorColors.interior;
+  static const _accentColor = CalculatorColors.foundation;
 
   @override
   void initState() {
@@ -176,6 +176,8 @@ class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -311,6 +313,72 @@ class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
       titleIcon: Icons.receipt_long,
       items: items,
       accentColor: _accentColor,
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_slabType) {
+      case SlabType.monolithic:
+        tips.addAll([
+          _loc.translate('slab_calc.tip.monolithic_1'),
+          _loc.translate('slab_calc.tip.monolithic_2'),
+        ]);
+        break;
+      case SlabType.ribbed:
+        tips.addAll([
+          _loc.translate('slab_calc.tip.ribbed_1'),
+          _loc.translate('slab_calc.tip.ribbed_2'),
+        ]);
+        break;
+      case SlabType.floating:
+        tips.addAll([
+          _loc.translate('slab_calc.tip.floating_1'),
+          _loc.translate('slab_calc.tip.floating_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('slab_calc.tip.common'));
+
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.lightbulb_outline, size: 20, color: CalculatorColors.textSecondary),
+              const SizedBox(width: 8),
+              Text(
+                _loc.translate('common.tips'),
+                style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...tips.map(_buildTipItem),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTipItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.check_circle_outline, size: 16, color: _accentColor),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -79,7 +79,7 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
   late _BasementResult _result;
   late AppLocalizations _loc;
 
-  static const _accentColor = CalculatorColors.interior;
+  static const _accentColor = CalculatorColors.foundation;
 
   @override
   void initState() {
@@ -175,6 +175,8 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -300,6 +302,72 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
       titleIcon: Icons.receipt_long,
       items: items,
       accentColor: _accentColor,
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_basementType) {
+      case BasementType.technical:
+        tips.addAll([
+          _loc.translate('basement_calc.tip.technical_1'),
+          _loc.translate('basement_calc.tip.technical_2'),
+        ]);
+        break;
+      case BasementType.living:
+        tips.addAll([
+          _loc.translate('basement_calc.tip.living_1'),
+          _loc.translate('basement_calc.tip.living_2'),
+        ]);
+        break;
+      case BasementType.garage:
+        tips.addAll([
+          _loc.translate('basement_calc.tip.garage_1'),
+          _loc.translate('basement_calc.tip.garage_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('basement_calc.tip.common'));
+
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.lightbulb_outline, size: 20, color: CalculatorColors.textSecondary),
+              const SizedBox(width: 8),
+              Text(
+                _loc.translate('common.tips'),
+                style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...tips.map(_buildTipItem),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTipItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.check_circle_outline, size: 16, color: _accentColor),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

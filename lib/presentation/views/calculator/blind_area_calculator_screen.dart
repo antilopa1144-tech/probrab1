@@ -87,7 +87,7 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
   late _BlindAreaResult _result;
   late AppLocalizations _loc;
 
-  static const _accentColor = CalculatorColors.interior;
+  static const _accentColor = CalculatorColors.foundation;
 
   @override
   void initState() {
@@ -180,6 +180,8 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -317,6 +319,72 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
       titleIcon: Icons.receipt_long,
       items: items,
       accentColor: _accentColor,
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_blindAreaType) {
+      case BlindAreaType.concrete:
+        tips.addAll([
+          _loc.translate('blind_area_calc.tip.concrete_1'),
+          _loc.translate('blind_area_calc.tip.concrete_2'),
+        ]);
+        break;
+      case BlindAreaType.paving:
+        tips.addAll([
+          _loc.translate('blind_area_calc.tip.paving_1'),
+          _loc.translate('blind_area_calc.tip.paving_2'),
+        ]);
+        break;
+      case BlindAreaType.soft:
+        tips.addAll([
+          _loc.translate('blind_area_calc.tip.soft_1'),
+          _loc.translate('blind_area_calc.tip.soft_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('blind_area_calc.tip.common'));
+
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.lightbulb_outline, size: 20, color: CalculatorColors.textSecondary),
+              const SizedBox(width: 8),
+              Text(
+                _loc.translate('common.tips'),
+                style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...tips.map(_buildTipItem),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTipItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.check_circle_outline, size: 16, color: _accentColor),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
