@@ -490,20 +490,41 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
             ),
           ),
           const SizedBox(height: 12),
-          ModeSelectorWithIcons(
-            options: [
-              ModeSelectorIconOption(label: _loc.translate('terrace_calc.floor_type.decking'), icon: Icons.deck),
-              ModeSelectorIconOption(label: _loc.translate('terrace_calc.floor_type.tile'), icon: Icons.grid_on),
-              ModeSelectorIconOption(label: _loc.translate('terrace_calc.floor_type.board'), icon: Icons.view_agenda),
-            ],
-            selectedIndex: _floorType.index,
-            onSelect: (index) {
-              setState(() {
-                _floorType = TerraceFloorType.values[index];
-                _update();
-              });
-            },
-            accentColor: accentColor,
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: TerraceFloorType.values.map((type) {
+              final isSelected = _floorType == type;
+              return ChoiceChip(
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _getFloorTypeIconForType(type),
+                      size: 16,
+                      color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(_getFloorTypeLabelForType(type)),
+                  ],
+                ),
+                selected: isSelected,
+                selectedColor: accentColor.withValues(alpha: 0.2),
+                labelStyle: TextStyle(
+                  color: isSelected ? accentColor : CalculatorColors.textPrimary,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+                side: BorderSide(
+                  color: isSelected ? accentColor : Colors.grey.shade300,
+                ),
+                onSelected: (_) {
+                  setState(() {
+                    _floorType = type;
+                    _update();
+                  });
+                },
+              );
+            }).toList(),
           ),
           const SizedBox(height: 8),
           Text(
@@ -515,6 +536,52 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
         ],
       ),
     );
+  }
+
+  String _getFloorTypeLabelForType(TerraceFloorType type) {
+    return switch (type) {
+      TerraceFloorType.decking => _loc.translate('terrace_calc.floor_type.decking'),
+      TerraceFloorType.tile => _loc.translate('terrace_calc.floor_type.tile'),
+      TerraceFloorType.board => _loc.translate('terrace_calc.floor_type.board'),
+      TerraceFloorType.porcelain => _loc.translate('terrace.floor.porcelain'),
+      TerraceFloorType.wpc => _loc.translate('terrace.floor.wpc'),
+      TerraceFloorType.solidWood => _loc.translate('terrace.floor.solidWood'),
+      TerraceFloorType.rubberTiles => _loc.translate('terrace.floor.rubberTiles'),
+    };
+  }
+
+  IconData _getFloorTypeIconForType(TerraceFloorType type) {
+    return switch (type) {
+      TerraceFloorType.decking => Icons.deck,
+      TerraceFloorType.tile => Icons.grid_on,
+      TerraceFloorType.board => Icons.view_agenda,
+      TerraceFloorType.porcelain => Icons.texture,
+      TerraceFloorType.wpc => Icons.dashboard,
+      TerraceFloorType.solidWood => Icons.park,
+      TerraceFloorType.rubberTiles => Icons.apps,
+    };
+  }
+
+  String _getRoofTypeLabelForType(TerraceRoofType type) {
+    return switch (type) {
+      TerraceRoofType.polycarbonate => _loc.translate('terrace_calc.roof.polycarbonate'),
+      TerraceRoofType.profiledSheet => _loc.translate('terrace_calc.roof.profiled_sheet'),
+      TerraceRoofType.softRoof => _loc.translate('terrace_calc.materials.soft_roof'),
+      TerraceRoofType.ondulin => _loc.translate('terrace.roof.ondulin'),
+      TerraceRoofType.metalTile => _loc.translate('terrace.roof.metal_tile'),
+      TerraceRoofType.glass => _loc.translate('terrace.roof.glass'),
+    };
+  }
+
+  IconData _getRoofTypeIconForType(TerraceRoofType type) {
+    return switch (type) {
+      TerraceRoofType.polycarbonate => Icons.cloud_queue,
+      TerraceRoofType.profiledSheet => Icons.table_chart,
+      TerraceRoofType.softRoof => Icons.layers,
+      TerraceRoofType.ondulin => Icons.view_module,
+      TerraceRoofType.metalTile => Icons.roofing,
+      TerraceRoofType.glass => Icons.window,
+    };
   }
 
   Widget _buildRailingCard() {
@@ -651,29 +718,41 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
           ),
           if (_hasRoof) ...[
             const SizedBox(height: 12),
-            ModeSelectorWithIcons(
-              options: [
-                ModeSelectorIconOption(
-                  label: _loc.translate('terrace_calc.roof.polycarbonate'),
-                  icon: Icons.cloud_queue,
-                ),
-                ModeSelectorIconOption(
-                  label: _loc.translate('terrace_calc.roof.profiled_sheet'),
-                  icon: Icons.table_chart,
-                ),
-                ModeSelectorIconOption(
-                  label: _loc.translate('terrace_calc.roof.soft_roof'),
-                  icon: Icons.layers,
-                ),
-              ],
-              selectedIndex: _roofType.index,
-              onSelect: (index) {
-                setState(() {
-                  _roofType = TerraceRoofType.values[index];
-                  _update();
-                });
-              },
-              accentColor: accentColor,
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: TerraceRoofType.values.map((type) {
+                final isSelected = _roofType == type;
+                return ChoiceChip(
+                  label: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        _getRoofTypeIconForType(type),
+                        size: 16,
+                        color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(_getRoofTypeLabelForType(type)),
+                    ],
+                  ),
+                  selected: isSelected,
+                  selectedColor: accentColor.withValues(alpha: 0.2),
+                  labelStyle: TextStyle(
+                    color: isSelected ? accentColor : CalculatorColors.textPrimary,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  ),
+                  side: BorderSide(
+                    color: isSelected ? accentColor : Colors.grey.shade300,
+                  ),
+                  onSelected: (_) {
+                    setState(() {
+                      _roofType = type;
+                      _update();
+                    });
+                  },
+                );
+              }).toList(),
             ),
             const SizedBox(height: 12),
             Container(

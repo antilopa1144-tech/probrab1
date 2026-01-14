@@ -10,6 +10,7 @@ import 'strip_foundation_calculator_v2.dart';
 import 'slab_foundation_calculator_v2.dart';
 import 'metal_roofing_calculator_v2.dart';
 import 'soft_roofing_calculator_v2.dart';
+import 'unified_roofing_calculator_v2.dart';
 import 'warm_floor_calculator_v2.dart';
 import 'parquet_calculator_v2.dart';
 import 'bathroom_tile_calculator_v2.dart';
@@ -83,6 +84,7 @@ class CalculatorRegistry {
     // Кровля
     metalRoofingCalculatorV2,
     softRoofingCalculatorV2,
+    unifiedRoofingCalculatorV2,
 
     // Инженерные системы
     warmFloorCalculatorV2,

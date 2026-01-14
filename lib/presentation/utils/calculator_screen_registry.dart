@@ -44,6 +44,7 @@ import '../views/calculator/basement_calculator_screen.dart';
 import '../views/calculator/blind_area_calculator_screen.dart';
 import '../views/calculator/slab_calculator_screen.dart';
 import '../views/calculator/gutters_calculator_screen.dart';
+import '../views/calculator/roofing_unified_calculator_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
 import '../views/dsp/dsp_screen.dart';
@@ -181,6 +182,10 @@ class CalculatorScreenRegistry {
 
     // Кровля
     'roofing_gutters': (_, _) => const GuttersCalculatorScreen(),
+    'roofing_unified': (def, inputs) => RoofingUnifiedCalculatorScreen(
+          definition: def,
+          initialInputs: inputs,
+        ),
   };
 
   /// Получить экран калькулятора по ID.

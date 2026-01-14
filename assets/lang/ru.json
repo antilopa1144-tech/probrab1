@@ -926,6 +926,13 @@
       "title": "Мягкая кровля",
       "description": "Расчёт материалов: Мягкая кровля"
     },
+    "roofing_unified": {
+      "title": "Кровля (единый)",
+      "description": "Расчёт кровельных материалов всех типов",
+      "export": {
+        "title": "Расчёт кровли"
+      }
+    },
     "sheeting_osb_plywood": {
       "title": "ОСБ",
       "description": "Расчёт листов ОСБ и крепежа"
@@ -2393,6 +2400,19 @@
       "foundation": "Бетон под опоры: {value} м³"
     }
   },
+  "terrace": {
+    "floor": {
+      "porcelain": "Керамогранит",
+      "wpc": "ДПК",
+      "solidWood": "Массив",
+      "rubberTiles": "Резина"
+    },
+    "roof": {
+      "ondulin": "Ондулин",
+      "metal_tile": "Металлочерепица",
+      "glass": "Стекло"
+    }
+  },
   "unit": {
     "none": "-",
     "squareMeters": "м²",
@@ -2808,6 +2828,30 @@
       }
     },
     "roofing": {
+      "type": {
+        "metal_tile": "Металлочерепица",
+        "soft": "Мягкая кровля",
+        "profiled": "Профнастил",
+        "ondulin": "Ондулин",
+        "slate": "Шифер",
+        "ceramic": "Керамическая черепица"
+      },
+      "realArea": "Реальная площадь",
+      "sheets": "Листов",
+      "packs": "Упаковок",
+      "tiles": "Черепицы",
+      "waterproofing": "Гидроизоляция",
+      "battens": "Обрешётка",
+      "ridge": "Конёк",
+      "slope_hint": "Уклон влияет на площадь покрытия",
+      "sheet_dimensions": "Размеры листа",
+      "additional_params": "Дополнительные параметры",
+      "optional_hint": "Оставьте 0 для автоматического расчёта",
+      "margin_10": "С запасом 10%",
+      "margin_15": "С запасом 15%",
+      "pack_3sqm": "1 упаковка = 3 м²",
+      "tiles_12sqm": "~12 шт/м²",
+      "battens_hint": "Погонные метры бруса 50×50",
       "ustanavlivayte_zheloba_s_uklonom": "Устанавливайте желоба с уклоном 3-5 мм на 1 м.",
       "kronshteyny_montiruyutsya_cherez_kazhdye": "Кронштейны монтируются через каждые 50-60 см.",
       "na_kazhdye_10_m": "На каждые 10 м² крыши — 1 водосточная труба.",
@@ -3021,6 +3065,7 @@
     "roofArea": "Площадь кровли",
     "roofLength": "Длина кровли",
     "roofType": "Тип кровли",
+    "roofingType": "Тип кровли",
     "room_width": "Ширина комнаты",
     "rooms": "Комнаты",
     "screwsPerM2": "Саморезов на м²",
@@ -4482,6 +4527,7 @@
     "cbm": "м³",
     "cbm_h": "м³/ч",
     "sheets": "листов",
+    "packs": "упак.",
     "tons": "т"
   },
   "tool": {

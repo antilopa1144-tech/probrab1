@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/constants/calculator_design_system.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/unit_conversion.dart';
 import '../../../domain/services/unit_converter_service.dart';
@@ -207,11 +208,11 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                           RegExp(r'^\d*\.?\d*'),
                         ),
                       ],
-                      decoration: InputDecoration(
-                        labelText: loc.translate('unit_converter.value'),
-                        hintText: loc.translate('unit_converter.value_hint'),
+                      decoration: CalculatorDesignSystem.inputDecoration(
+                        label: loc.translate('unit_converter.value'),
+                        hint: loc.translate('unit_converter.value_hint'),
+                      ).copyWith(
                         prefixIcon: const Icon(Icons.edit_rounded),
-                        border: const OutlineInputBorder(),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         suffixIcon: _inputController.text.isNotEmpty
                             ? IconButton(
@@ -233,9 +234,9 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                       key: ValueKey('from_${_fromUnit?.id}'),
                       initialValue: _fromUnit,
                       isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: loc.translate('unit_converter.from'),
-                        border: const OutlineInputBorder(),
+                      decoration: CalculatorDesignSystem.inputDecoration(
+                        label: loc.translate('unit_converter.from'),
+                      ).copyWith(
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                       items: availableUnits.map((unit) {
@@ -274,9 +275,9 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                       key: ValueKey('to_${_toUnit?.id}'),
                       initialValue: _toUnit,
                       isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: loc.translate('unit_converter.to'),
-                        border: const OutlineInputBorder(),
+                      decoration: CalculatorDesignSystem.inputDecoration(
+                        label: loc.translate('unit_converter.to'),
+                      ).copyWith(
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                       items: availableUnits.map((unit) {
