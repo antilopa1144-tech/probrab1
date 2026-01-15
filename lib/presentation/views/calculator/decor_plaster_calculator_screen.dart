@@ -174,6 +174,8 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -343,6 +345,39 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
       titleIcon: Icons.receipt_long,
       items: items,
       accentColor: _accentColor,
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_plasterType) {
+      case DecorPlasterType.venetian:
+        tips.addAll([
+          _loc.translate('decor_plaster_calc.tip.venetian_1'),
+          _loc.translate('decor_plaster_calc.tip.venetian_2'),
+        ]);
+        break;
+      case DecorPlasterType.bark:
+        tips.addAll([
+          _loc.translate('decor_plaster_calc.tip.bark_1'),
+          _loc.translate('decor_plaster_calc.tip.bark_2'),
+        ]);
+        break;
+      case DecorPlasterType.silk:
+        tips.addAll([
+          _loc.translate('decor_plaster_calc.tip.silk_1'),
+          _loc.translate('decor_plaster_calc.tip.silk_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('decor_plaster_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

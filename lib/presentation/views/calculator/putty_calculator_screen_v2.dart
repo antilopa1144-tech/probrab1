@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../../domain/data/putty_materials_database.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 
 /// Упрощённый калькулятор шпаклёвки V2 с выбором класса материалов
 class PuttyCalculatorScreenV2 extends StatefulWidget {
@@ -286,7 +284,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
         const SizedBox(height: 16),
         _buildWorkTimeCard(),
         const SizedBox(height: 24),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -1128,42 +1126,33 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
     );
   }
 
-  Widget _buildTipsSection() {
-    final hints = <CalculatorHint>[
-      if (_isPainting)
-        CalculatorHint(
-          type: HintType.important,
-          message: _loc.translate('putty.hints.painting_surface'),
-        ),
-      if (!_isPainting)
-        CalculatorHint(
-          type: HintType.tip,
-          message: _loc.translate('putty.hints.wallpaper_layers'),
-        ),
-      CalculatorHint(
-        type: HintType.important,
-        message: _loc.translate('putty.hints.drying_time'),
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        message: _loc.translate('putty.hints.primer_between_layers'),
-      ),
-    ];
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.interior;
+    final tips = <String>[];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        HintsList(hints: hints),
-      ],
+    if (_isPainting) {
+      tips.addAll([
+        _loc.translate('putty.hints.painting_surface'),
+        _loc.translate('putty_calc.tip.painting_1'),
+      ]);
+    } else {
+      tips.addAll([
+        _loc.translate('putty.hints.wallpaper_layers'),
+        _loc.translate('putty_calc.tip.wallpaper_1'),
+      ]);
+    }
+
+    tips.addAll([
+      _loc.translate('putty.hints.drying_time'),
+      _loc.translate('putty.hints.primer_between_layers'),
+    ]);
+
+    tips.add(_loc.translate('putty_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

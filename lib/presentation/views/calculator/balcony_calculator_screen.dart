@@ -169,8 +169,43 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_balconyType) {
+      case BalconyType.open:
+        tips.addAll([
+          _loc.translate('balcony_calc.tip.open_1'),
+          _loc.translate('balcony_calc.tip.open_2'),
+        ]);
+        break;
+      case BalconyType.glazed:
+        tips.addAll([
+          _loc.translate('balcony_calc.tip.glazed_1'),
+          _loc.translate('balcony_calc.tip.glazed_2'),
+        ]);
+        break;
+      case BalconyType.warm:
+        tips.addAll([
+          _loc.translate('balcony_calc.tip.warm_1'),
+          _loc.translate('balcony_calc.tip.warm_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('balcony_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

@@ -10,7 +10,6 @@ import '../../../domain/usecases/calculate_gasblock_v2.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../providers/constants_provider.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 
 enum InputMode { byArea, byDimensions }
 
@@ -474,7 +473,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         const SizedBox(height: 16),
         _buildMaterialsCard(),
         const SizedBox(height: 16),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -1245,24 +1244,17 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
     );
   }
 
-  Widget _buildTipsSection() {
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.walls;
     final hints = widget.definition.beforeHints;
     if (hints.isEmpty) return const SizedBox.shrink();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        HintsList(hints: hints),
-      ],
+    final tips = hints.map((h) => h.message ?? _loc.translate(h.messageKey ?? '')).toList();
+
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

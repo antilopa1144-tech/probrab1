@@ -4,10 +4,8 @@ import 'dart:math' as math;
 import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 
 /// Вспомогательный класс для работы с константами калькулятора вагонки
 class _WoodLiningConstants {
@@ -427,7 +425,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
         const SizedBox(height: 16),
         _buildMaterialsCard(),
         const SizedBox(height: 16),
-        _buildHints(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -1026,30 +1024,48 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
     );
   }
 
-  Widget _buildHints() {
-    return const HintsList(
-      hints: [
-        CalculatorHint(
-          type: HintType.important,
-          messageKey: 'hint.wood.surface_preparation',
-        ),
-        CalculatorHint(
-          type: HintType.tip,
-          messageKey: 'hint.wood.batten_installation',
-        ),
-        CalculatorHint(
-          type: HintType.tip,
-          messageKey: 'hint.wood.lining_installation',
-        ),
-        CalculatorHint(
-          type: HintType.warning,
-          messageKey: 'hint.wood.moisture_control',
-        ),
-        CalculatorHint(
-          type: HintType.tip,
-          messageKey: 'hint.wood.finish_application',
-        ),
-      ],
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.walls;
+    final tips = <String>[];
+
+    switch (_liningType) {
+      case LiningType.standard:
+        tips.addAll([
+          _loc.translate('woodlining_calc.tip.standard_1'),
+          _loc.translate('woodlining_calc.tip.standard_2'),
+        ]);
+        break;
+      case LiningType.euro:
+        tips.addAll([
+          _loc.translate('woodlining_calc.tip.euro_1'),
+          _loc.translate('woodlining_calc.tip.euro_2'),
+        ]);
+        break;
+      case LiningType.blockHouse:
+        tips.addAll([
+          _loc.translate('woodlining_calc.tip.blockhouse_1'),
+          _loc.translate('woodlining_calc.tip.blockhouse_2'),
+        ]);
+        break;
+      case LiningType.imitationBar:
+        tips.addAll([
+          _loc.translate('woodlining_calc.tip.imitation_1'),
+          _loc.translate('woodlining_calc.tip.imitation_2'),
+        ]);
+        break;
+    }
+
+    tips.addAll([
+      _loc.translate('hint.wood.surface_preparation'),
+      _loc.translate('hint.wood.moisture_control'),
+    ]);
+
+    tips.add(_loc.translate('woodlining_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

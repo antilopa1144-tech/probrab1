@@ -4,10 +4,8 @@ import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../providers/constants_provider.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 
 enum InputMode { byArea, byDimensions }
 
@@ -572,7 +570,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
         const SizedBox(height: 16),
         _buildAdditionalInfoCard(),
         const SizedBox(height: 24),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -1478,44 +1476,20 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     );
   }
 
-  Widget _buildTipsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        const HintsList(
-          hints: [
-            CalculatorHint(
-              type: HintType.important,
-              messageKey: 'hint.tile.surface_preparation',
-            ),
-            CalculatorHint(
-              type: HintType.tip,
-              messageKey: 'hint.tile.layout_planning',
-            ),
-            CalculatorHint(
-              type: HintType.tip,
-              messageKey: 'hint.tile.adhesive_application',
-            ),
-            CalculatorHint(
-              type: HintType.warning,
-              messageKey: 'hint.tile.diagonal_cutting',
-            ),
-            CalculatorHint(
-              type: HintType.important,
-              messageKey: 'hint.tile.waterproofing_required',
-            ),
-          ],
-        ),
-      ],
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.interior;
+    final tips = <String>[
+      _loc.translate('hint.tile.surface_preparation'),
+      _loc.translate('hint.tile.layout_planning'),
+      _loc.translate('hint.tile.adhesive_application'),
+      _loc.translate('hint.tile.diagonal_cutting'),
+      _loc.translate('hint.tile.waterproofing_required'),
+    ];
+
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

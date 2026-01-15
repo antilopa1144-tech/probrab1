@@ -168,8 +168,31 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+    switch (_panelType) {
+      case FacadePanelType.vinyl:
+        tips.add(_loc.translate('facade_panels_calc.tip.vinyl_1'));
+        tips.add(_loc.translate('facade_panels_calc.tip.vinyl_2'));
+      case FacadePanelType.metal:
+        tips.add(_loc.translate('facade_panels_calc.tip.metal_1'));
+        tips.add(_loc.translate('facade_panels_calc.tip.metal_2'));
+      case FacadePanelType.fiber:
+        tips.add(_loc.translate('facade_panels_calc.tip.fiber_1'));
+        tips.add(_loc.translate('facade_panels_calc.tip.fiber_2'));
+    }
+    tips.add(_loc.translate('facade_panels_calc.tip.common'));
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

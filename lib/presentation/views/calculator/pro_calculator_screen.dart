@@ -7,12 +7,10 @@ import '../../../core/exceptions/calculation_exception.dart';
 import '../../../core/services/calculator_memory_service.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_field.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../../data/models/price_item.dart';
 import '../../providers/price_provider.dart';
 import '../../widgets/calculator/grouped_results_card.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 
 class ProCalculatorState {
   final Map<String, double> inputs;
@@ -218,20 +216,32 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
     final beforeHints = widget.definition.getBeforeHints(calcState.inputs);
     final afterHints = calcState.results != null
         ? widget.definition.getAfterHints(calcState.inputs, calcState.results!)
-        : const <CalculatorHint>[];
+        : const [];
+
+    // Convert hints to tips strings
+    final beforeTips = beforeHints.map((h) => h.message ?? _loc.translate(h.messageKey ?? '')).toList();
+    final afterTips = afterHints.map<String>((h) => h.message ?? _loc.translate(h.messageKey ?? '')).toList();
 
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
       resultHeader: calcState.results != null ? _buildResultHeader(calcState.results, accentColor) : null,
       children: [
-        if (beforeHints.isNotEmpty) HintsList(hints: beforeHints),
-        if (beforeHints.isNotEmpty) const SizedBox(height: 16),
+        if (beforeTips.isNotEmpty) TipsCard(
+          tips: beforeTips,
+          accentColor: accentColor,
+          title: _loc.translate('common.tips'),
+        ),
+        if (beforeTips.isNotEmpty) const SizedBox(height: 16),
         ..._buildInputFields(calcState.inputs),
         const SizedBox(height: 16),
         if (calcState.results != null) _buildDetailsCard(calcState.results),
-        if (afterHints.isNotEmpty) const SizedBox(height: 16),
-        if (afterHints.isNotEmpty) HintsList(hints: afterHints),
+        if (afterTips.isNotEmpty) const SizedBox(height: 16),
+        if (afterTips.isNotEmpty) TipsCard(
+          tips: afterTips,
+          accentColor: accentColor,
+          title: _loc.translate('common.tips'),
+        ),
         const SizedBox(height: 20),
       ],
     );

@@ -182,6 +182,8 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
         // _buildSummaryCard(),
         // const SizedBox(height: 16),
         _buildSpecCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -422,6 +424,34 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
       titleIcon: Icons.receipt_long,
       items: items,
       accentColor: accentColor,
+    );
+  }
+
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.walls;
+    final tips = <String>[];
+
+    switch (_materialType) {
+      case PlasterMaterial.gypsum:
+        tips.addAll([
+          _loc.translate('plaster_calc.tip.gypsum_1'),
+          _loc.translate('plaster_calc.tip.gypsum_2'),
+        ]);
+        break;
+      case PlasterMaterial.cement:
+        tips.addAll([
+          _loc.translate('plaster_calc.tip.cement_1'),
+          _loc.translate('plaster_calc.tip.cement_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('plaster_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

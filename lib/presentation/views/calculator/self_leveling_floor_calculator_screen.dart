@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 
 /// Вспомогательный класс для работы с константами калькулятора наливного пола
 class _SelfLevelingConstants {
@@ -285,7 +283,7 @@ class _SelfLevelingFloorCalculatorScreenState
         const SizedBox(height: 16),
         _buildToolsCard(),
         const SizedBox(height: 24),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -682,44 +680,20 @@ class _SelfLevelingFloorCalculatorScreenState
     );
   }
 
-  Widget _buildTipsSection() {
-    const hints = [
-      CalculatorHint(
-        type: HintType.important,
-        messageKey: 'hint.self_leveling.surface_preparation',
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.self_leveling.primer_required',
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.self_leveling.spike_roller',
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.self_leveling.mixing_temperature',
-      ),
-      CalculatorHint(
-        type: HintType.warning,
-        messageKey: 'hint.self_leveling.drying_time',
-      ),
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.interior;
+    final tips = <String>[
+      _loc.translate('hint.self_leveling.surface_preparation'),
+      _loc.translate('hint.self_leveling.primer_required'),
+      _loc.translate('hint.self_leveling.spike_roller'),
+      _loc.translate('hint.self_leveling.mixing_temperature'),
+      _loc.translate('hint.self_leveling.drying_time'),
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        const HintsList(hints: hints),
-      ],
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

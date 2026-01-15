@@ -172,8 +172,31 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+    switch (_gutterMaterial) {
+      case GutterMaterial.plastic:
+        tips.add(_loc.translate('gutters_calc.tip.plastic_1'));
+        tips.add(_loc.translate('gutters_calc.tip.plastic_2'));
+      case GutterMaterial.metal:
+        tips.add(_loc.translate('gutters_calc.tip.metal_1'));
+        tips.add(_loc.translate('gutters_calc.tip.metal_2'));
+      case GutterMaterial.copper:
+        tips.add(_loc.translate('gutters_calc.tip.copper_1'));
+        tips.add(_loc.translate('gutters_calc.tip.copper_2'));
+    }
+    tips.add(_loc.translate('gutters_calc.tip.common'));
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

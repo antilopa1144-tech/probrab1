@@ -182,8 +182,43 @@ class _RailCeilingCalculatorScreenState extends ConsumerState<RailCeilingCalcula
         _buildAreaCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_ceilingType) {
+      case RailCeilingType.aluminum:
+        tips.addAll([
+          _loc.translate('rail_ceiling_calc.tip.aluminum_1'),
+          _loc.translate('rail_ceiling_calc.tip.aluminum_2'),
+        ]);
+        break;
+      case RailCeilingType.steel:
+        tips.addAll([
+          _loc.translate('rail_ceiling_calc.tip.steel_1'),
+          _loc.translate('rail_ceiling_calc.tip.steel_2'),
+        ]);
+        break;
+      case RailCeilingType.plastic:
+        tips.addAll([
+          _loc.translate('rail_ceiling_calc.tip.plastic_1'),
+          _loc.translate('rail_ceiling_calc.tip.plastic_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('rail_ceiling_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

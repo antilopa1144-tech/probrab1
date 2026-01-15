@@ -176,8 +176,43 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
         _buildParametersCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_stairsType) {
+      case StairsType.straight:
+        tips.addAll([
+          _loc.translate('stairs_calc.tip.straight_1'),
+          _loc.translate('stairs_calc.tip.straight_2'),
+        ]);
+        break;
+      case StairsType.lShaped:
+        tips.addAll([
+          _loc.translate('stairs_calc.tip.l_shaped_1'),
+          _loc.translate('stairs_calc.tip.l_shaped_2'),
+        ]);
+        break;
+      case StairsType.uShaped:
+        tips.addAll([
+          _loc.translate('stairs_calc.tip.u_shaped_1'),
+          _loc.translate('stairs_calc.tip.u_shaped_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('stairs_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

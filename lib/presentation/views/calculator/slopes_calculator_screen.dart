@@ -168,6 +168,8 @@ class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -318,6 +320,39 @@ class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
       titleIcon: Icons.receipt_long,
       items: items,
       accentColor: _accentColor,
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_slopesType) {
+      case SlopesType.plaster:
+        tips.addAll([
+          _loc.translate('slopes_calc.tip.plaster_1'),
+          _loc.translate('slopes_calc.tip.plaster_2'),
+        ]);
+        break;
+      case SlopesType.gypsum:
+        tips.addAll([
+          _loc.translate('slopes_calc.tip.gypsum_1'),
+          _loc.translate('slopes_calc.tip.gypsum_2'),
+        ]);
+        break;
+      case SlopesType.sandwich:
+        tips.addAll([
+          _loc.translate('slopes_calc.tip.sandwich_1'),
+          _loc.translate('slopes_calc.tip.sandwich_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('slopes_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

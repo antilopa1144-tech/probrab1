@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 
 /// Вспомогательный класс для работы с константами калькулятора тёплого пола
 class _WarmFloorConstants {
@@ -450,7 +448,7 @@ class _UnderfloorHeatingCalculatorScreenState
         const SizedBox(height: 16),
         _buildAdditionalInfoCard(),
         const SizedBox(height: 24),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -1144,90 +1142,45 @@ class _UnderfloorHeatingCalculatorScreenState
     );
   }
 
-  Widget _buildTipsSection() {
-    final hints = <CalculatorHint>[];
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.engineering;
+    final tips = <String>[];
 
     switch (_result.systemType) {
       case HeatingSystemType.electricMat:
-        hints.addAll([
-          CalculatorHint(
-            type: HintType.important,
-            message: _loc.translate('warmfloor.hints.mat_surface'),
-          ),
-          CalculatorHint(
-            type: HintType.tip,
-            message: _loc.translate('warmfloor.hints.mat_thermostat'),
-          ),
-          CalculatorHint(
-            type: HintType.tip,
-            message: _loc.translate('warmfloor.hints.mat_resistance'),
-          ),
+        tips.addAll([
+          _loc.translate('warmfloor.hints.mat_surface'),
+          _loc.translate('warmfloor.hints.mat_thermostat'),
+          _loc.translate('warmfloor.hints.mat_resistance'),
         ]);
         break;
       case HeatingSystemType.electricCable:
-        hints.addAll([
-          CalculatorHint(
-            type: HintType.important,
-            message: _loc.translate('warmfloor.hints.cable_step'),
-          ),
-          CalculatorHint(
-            type: HintType.tip,
-            message: _loc.translate('warmfloor.hints.cable_tape'),
-          ),
-          CalculatorHint(
-            type: HintType.warning,
-            message: _loc.translate('warmfloor.hints.cable_no_cut'),
-          ),
+        tips.addAll([
+          _loc.translate('warmfloor.hints.cable_step'),
+          _loc.translate('warmfloor.hints.cable_tape'),
+          _loc.translate('warmfloor.hints.cable_no_cut'),
         ]);
         break;
       case HeatingSystemType.infraredFilm:
-        hints.addAll([
-          CalculatorHint(
-            type: HintType.important,
-            message: _loc.translate('warmfloor.hints.film_substrate'),
-          ),
-          CalculatorHint(
-            type: HintType.tip,
-            message: _loc.translate('warmfloor.hints.film_parallel'),
-          ),
-          CalculatorHint(
-            type: HintType.warning,
-            message: _loc.translate('warmfloor.hints.film_insulate'),
-          ),
+        tips.addAll([
+          _loc.translate('warmfloor.hints.film_substrate'),
+          _loc.translate('warmfloor.hints.film_parallel'),
+          _loc.translate('warmfloor.hints.film_insulate'),
         ]);
         break;
       case HeatingSystemType.waterBased:
-        hints.addAll([
-          CalculatorHint(
-            type: HintType.important,
-            message: _loc.translate('warmfloor.hints.water_pressure'),
-          ),
-          CalculatorHint(
-            type: HintType.tip,
-            message: _loc.translate('warmfloor.hints.water_pipe'),
-          ),
-          CalculatorHint(
-            type: HintType.tip,
-            message: _loc.translate('warmfloor.hints.water_drying'),
-          ),
+        tips.addAll([
+          _loc.translate('warmfloor.hints.water_pressure'),
+          _loc.translate('warmfloor.hints.water_pipe'),
+          _loc.translate('warmfloor.hints.water_drying'),
         ]);
         break;
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        HintsList(hints: hints),
-      ],
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

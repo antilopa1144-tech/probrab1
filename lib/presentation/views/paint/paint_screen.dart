@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 
 /// Экран расчета краски (Интерьер/Фасад)
 class PaintScreen extends StatefulWidget {
@@ -328,7 +326,7 @@ class _PaintScreenState extends State<PaintScreen> {
         const SizedBox(height: 24),
 
         // Подсказки
-        _buildTipsSection(),
+        _buildTipsCard(),
 
         const SizedBox(height: 20),
       ],
@@ -429,36 +427,18 @@ class _PaintScreenState extends State<PaintScreen> {
     ];
   }
 
-  Widget _buildTipsSection() {
-    const hints = [
-      CalculatorHint(
-        type: HintType.important,
-        messageKey: 'hint.paint.primer_first',
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.paint.dry_between_layers',
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.paint.temperature',
-      ),
+  Widget _buildTipsCard() {
+    final accentColor = _paintType == 0 ? CalculatorColors.interior : CalculatorColors.facade;
+    final tips = <String>[
+      _loc.translate('hint.paint.primer_first'),
+      _loc.translate('hint.paint.dry_between_layers'),
+      _loc.translate('hint.paint.temperature'),
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        const HintsList(hints: hints),
-      ],
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

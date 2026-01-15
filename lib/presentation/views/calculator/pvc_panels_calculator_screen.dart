@@ -179,8 +179,43 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_panelType) {
+      case PvcPanelType.wall:
+        tips.addAll([
+          _loc.translate('pvc_panels_calc.tip.wall_1'),
+          _loc.translate('pvc_panels_calc.tip.wall_2'),
+        ]);
+        break;
+      case PvcPanelType.ceiling:
+        tips.addAll([
+          _loc.translate('pvc_panels_calc.tip.ceiling_1'),
+          _loc.translate('pvc_panels_calc.tip.ceiling_2'),
+        ]);
+        break;
+      case PvcPanelType.bathroom:
+        tips.addAll([
+          _loc.translate('pvc_panels_calc.tip.bathroom_1'),
+          _loc.translate('pvc_panels_calc.tip.bathroom_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('pvc_panels_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

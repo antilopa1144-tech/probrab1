@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../../domain/usecases/calculate_gypsum_v2.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 import '../../utils/screw_formatter.dart';
 
 enum GypsumConstructionType { wallLining, partition, ceiling }
@@ -358,7 +356,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
         const SizedBox(height: 16),
         _buildFixingsCard(),
         const SizedBox(height: 24),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -898,27 +896,18 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
     );
   }
 
-  Widget _buildTipsSection() {
-    const hints = [
-      CalculatorHint(type: HintType.important, messageKey: 'hint.gypsum.choose_gklv_for_wet'),
-      CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.screw_depth_1mm'),
-      CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.joints_offset'),
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.walls;
+    final tips = <String>[
+      _loc.translate('hint.gypsum.choose_gklv_for_wet'),
+      _loc.translate('hint.gypsum.screw_depth_1mm'),
+      _loc.translate('hint.gypsum.joints_offset'),
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        const HintsList(hints: hints),
-      ],
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

@@ -603,35 +603,30 @@ class PuttyCalculatorScreenState extends State<PuttyCalculatorScreen> {
   }
 
   Widget _buildTipsSection() {
-    const hints = [
-      CalculatorHint(
-        type: HintType.important,
-        messageKey: 'hint.putty.layer_thickness',
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.putty.sanding',
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.putty.primer_between',
-      ),
-    ];
+    const accentColor = CalculatorColors.interior;
+    final tips = <String>[];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        const HintsList(hints: hints),
-      ],
+    switch (_target) {
+      case FinishTarget.wallpaper:
+        tips.addAll([
+          _loc.translate('putty_calc.tip.wallpaper_1'),
+          _loc.translate('putty_calc.tip.wallpaper_2'),
+        ]);
+        break;
+      case FinishTarget.painting:
+        tips.addAll([
+          _loc.translate('putty_calc.tip.painting_1'),
+          _loc.translate('putty_calc.tip.painting_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('putty_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

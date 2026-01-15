@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_constant.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 part 'putty_calculator_screen_state.dart';
 
 /// Helper class for accessing putty calculator constants

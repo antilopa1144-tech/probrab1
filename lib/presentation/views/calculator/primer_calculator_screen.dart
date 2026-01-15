@@ -187,6 +187,8 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -357,6 +359,39 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
       titleIcon: Icons.receipt_long,
       items: items,
       accentColor: _accentColor,
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_surfaceType) {
+      case PrimerSurfaceType.concrete:
+        tips.addAll([
+          _loc.translate('primer_calc.tip.concrete_1'),
+          _loc.translate('primer_calc.tip.concrete_2'),
+        ]);
+        break;
+      case PrimerSurfaceType.plaster:
+        tips.addAll([
+          _loc.translate('primer_calc.tip.plaster_1'),
+          _loc.translate('primer_calc.tip.plaster_2'),
+        ]);
+        break;
+      case PrimerSurfaceType.drywall:
+        tips.addAll([
+          _loc.translate('primer_calc.tip.drywall_1'),
+          _loc.translate('primer_calc.tip.drywall_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('primer_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

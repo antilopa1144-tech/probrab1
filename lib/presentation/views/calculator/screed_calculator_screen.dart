@@ -190,8 +190,43 @@ class _ScreedCalculatorScreenState extends ConsumerState<ScreedCalculatorScreen>
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_screedType) {
+      case ScreedType.cementSand:
+        tips.addAll([
+          _loc.translate('screed_calc.tip.cement_sand_1'),
+          _loc.translate('screed_calc.tip.cement_sand_2'),
+        ]);
+        break;
+      case ScreedType.semidry:
+        tips.addAll([
+          _loc.translate('screed_calc.tip.semidry_1'),
+          _loc.translate('screed_calc.tip.semidry_2'),
+        ]);
+        break;
+      case ScreedType.concrete:
+        tips.addAll([
+          _loc.translate('screed_calc.tip.concrete_1'),
+          _loc.translate('screed_calc.tip.concrete_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('screed_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

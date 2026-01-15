@@ -173,8 +173,43 @@ class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWat
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_waterproofType) {
+      case WaterproofType.liquid:
+        tips.addAll([
+          _loc.translate('waterproof_calc.tip.liquid_1'),
+          _loc.translate('waterproof_calc.tip.liquid_2'),
+        ]);
+        break;
+      case WaterproofType.roll:
+        tips.addAll([
+          _loc.translate('waterproof_calc.tip.roll_1'),
+          _loc.translate('waterproof_calc.tip.roll_2'),
+        ]);
+        break;
+      case WaterproofType.cement:
+        tips.addAll([
+          _loc.translate('waterproof_calc.tip.cement_1'),
+          _loc.translate('waterproof_calc.tip.cement_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('waterproof_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

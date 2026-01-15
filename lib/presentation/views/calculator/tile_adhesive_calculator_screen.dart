@@ -4,9 +4,7 @@ import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 
 /// Helper class for accessing tile adhesive calculator constants
 class _TileAdhesiveConstants {
@@ -407,7 +405,7 @@ class _TileAdhesiveCalculatorScreenState
         const SizedBox(height: 16),
         _buildToolsCard(),
         const SizedBox(height: 24),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -969,44 +967,20 @@ class _TileAdhesiveCalculatorScreenState
     );
   }
 
-  Widget _buildTipsSection() {
-    const hints = [
-      CalculatorHint(
-        type: HintType.important,
-        messageKey: 'hint.tile_adhesive.surface_preparation',
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.tile_adhesive.notch_size',
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.tile_adhesive.mixing',
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.tile_adhesive.application',
-      ),
-      CalculatorHint(
-        type: HintType.warning,
-        messageKey: 'hint.tile_adhesive.working_time',
-      ),
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.interior;
+    final tips = <String>[
+      _loc.translate('hint.tile_adhesive.surface_preparation'),
+      _loc.translate('hint.tile_adhesive.notch_size'),
+      _loc.translate('hint.tile_adhesive.mixing'),
+      _loc.translate('hint.tile_adhesive.application'),
+      _loc.translate('hint.tile_adhesive.working_time'),
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        const HintsList(hints: hints),
-      ],
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

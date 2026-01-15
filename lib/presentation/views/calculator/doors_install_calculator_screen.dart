@@ -177,8 +177,43 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_doorType) {
+      case DoorType.interior:
+        tips.addAll([
+          _loc.translate('doors_calc.tip.interior_1'),
+          _loc.translate('doors_calc.tip.interior_2'),
+        ]);
+        break;
+      case DoorType.entrance:
+        tips.addAll([
+          _loc.translate('doors_calc.tip.entrance_1'),
+          _loc.translate('doors_calc.tip.entrance_2'),
+        ]);
+        break;
+      case DoorType.glass:
+        tips.addAll([
+          _loc.translate('doors_calc.tip.glass_1'),
+          _loc.translate('doors_calc.tip.glass_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('doors_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

@@ -163,8 +163,49 @@ class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingC
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_ceilingType) {
+      case StretchCeilingType.matte:
+        tips.addAll([
+          _loc.translate('stretch_ceiling_calc.tip.matte_1'),
+          _loc.translate('stretch_ceiling_calc.tip.matte_2'),
+        ]);
+        break;
+      case StretchCeilingType.glossy:
+        tips.addAll([
+          _loc.translate('stretch_ceiling_calc.tip.glossy_1'),
+          _loc.translate('stretch_ceiling_calc.tip.glossy_2'),
+        ]);
+        break;
+      case StretchCeilingType.satin:
+        tips.addAll([
+          _loc.translate('stretch_ceiling_calc.tip.satin_1'),
+          _loc.translate('stretch_ceiling_calc.tip.satin_2'),
+        ]);
+        break;
+      case StretchCeilingType.fabric:
+        tips.addAll([
+          _loc.translate('stretch_ceiling_calc.tip.fabric_1'),
+          _loc.translate('stretch_ceiling_calc.tip.fabric_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('stretch_ceiling_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

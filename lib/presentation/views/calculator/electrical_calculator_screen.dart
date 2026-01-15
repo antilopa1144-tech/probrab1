@@ -7,12 +7,11 @@ import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_electrical_v2.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_result_header.dart';
 import '../../widgets/calculator/calculator_scaffold.dart';
 import '../../widgets/calculator/mode_selector.dart';
 import '../../widgets/calculator/result_card.dart';
-import '../../widgets/existing/hint_card.dart';
+import '../../widgets/calculator/tips_card.dart';
 
 /// Режим ввода данных
 enum InputMode {
@@ -373,7 +372,7 @@ class _ElectricalCalculatorScreenState
         const SizedBox(height: 16),
         _buildEquipmentCard(),
         const SizedBox(height: 16),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -1092,40 +1091,19 @@ class _ElectricalCalculatorScreenState
     );
   }
 
-  Widget _buildTipsSection() {
-    final hints = <CalculatorHint>[
-      const CalculatorHint(
-        type: HintType.warning,
-        messageKey: 'hint.engineering.raboty_dolzhen_vypolnyat_kvalifitsirovannyy',
-      ),
-      const CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.engineering.ispolzuyte_kabel_secheniem_ne',
-      ),
-      const CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.engineering.ustanovite_uzo_dlya_zaschity',
-      ),
-      const CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.engineering.proverte_vse_soedineniya_pered',
-      ),
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.interior;
+    final tips = <String>[
+      _loc.translate('hint.engineering.raboty_dolzhen_vypolnyat_kvalifitsirovannyy'),
+      _loc.translate('hint.engineering.ispolzuyte_kabel_secheniem_ne'),
+      _loc.translate('hint.engineering.ustanovite_uzo_dlya_zaschity'),
+      _loc.translate('hint.engineering.proverte_vse_soedineniya_pered'),
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        HintsList(hints: hints),
-      ],
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

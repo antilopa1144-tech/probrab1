@@ -177,6 +177,8 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -351,6 +353,39 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
       titleIcon: Icons.receipt_long,
       items: items,
       accentColor: _accentColor,
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_stoneType) {
+      case DecorStoneType.gypsum:
+        tips.addAll([
+          _loc.translate('decor_stone_calc.tip.gypsum_1'),
+          _loc.translate('decor_stone_calc.tip.gypsum_2'),
+        ]);
+        break;
+      case DecorStoneType.concrete:
+        tips.addAll([
+          _loc.translate('decor_stone_calc.tip.concrete_1'),
+          _loc.translate('decor_stone_calc.tip.concrete_2'),
+        ]);
+        break;
+      case DecorStoneType.natural:
+        tips.addAll([
+          _loc.translate('decor_stone_calc.tip.natural_1'),
+          _loc.translate('decor_stone_calc.tip.natural_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('decor_stone_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

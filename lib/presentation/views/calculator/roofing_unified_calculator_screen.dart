@@ -7,7 +7,6 @@ import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_unified_roofing.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 
 /// Единый калькулятор кровли
 ///
@@ -258,7 +257,7 @@ class _RoofingUnifiedCalculatorScreenState
         const SizedBox(height: 16),
         _buildMaterialsCard(),
         const SizedBox(height: 16),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -641,24 +640,55 @@ class _RoofingUnifiedCalculatorScreenState
     );
   }
 
-  Widget _buildTipsSection() {
-    final hints = widget.definition.beforeHints;
-    if (hints.isEmpty) return const SizedBox.shrink();
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.roofing;
+    final tips = <String>[];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        HintsList(hints: hints),
-      ],
+    switch (_roofingType) {
+      case RoofingType.metalTile:
+        tips.addAll([
+          _loc.translate('roofing_calc.tip.metal_tile_1'),
+          _loc.translate('roofing_calc.tip.metal_tile_2'),
+        ]);
+        break;
+      case RoofingType.softRoofing:
+        tips.addAll([
+          _loc.translate('roofing_calc.tip.soft_1'),
+          _loc.translate('roofing_calc.tip.soft_2'),
+        ]);
+        break;
+      case RoofingType.profiledSheet:
+        tips.addAll([
+          _loc.translate('roofing_calc.tip.profiled_1'),
+          _loc.translate('roofing_calc.tip.profiled_2'),
+        ]);
+        break;
+      case RoofingType.ondulin:
+        tips.addAll([
+          _loc.translate('roofing_calc.tip.ondulin_1'),
+          _loc.translate('roofing_calc.tip.ondulin_2'),
+        ]);
+        break;
+      case RoofingType.slate:
+        tips.addAll([
+          _loc.translate('roofing_calc.tip.slate_1'),
+          _loc.translate('roofing_calc.tip.slate_2'),
+        ]);
+        break;
+      case RoofingType.ceramicTile:
+        tips.addAll([
+          _loc.translate('roofing_calc.tip.ceramic_1'),
+          _loc.translate('roofing_calc.tip.ceramic_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('roofing_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

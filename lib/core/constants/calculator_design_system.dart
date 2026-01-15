@@ -215,7 +215,12 @@ class CalculatorDesignSystem {
     ),
     contentPadding: inputPadding,
     labelStyle: const TextStyle(
-      fontSize: 12,
+      fontSize: 14,
+      color: Color(0xFF64748B),
+    ),
+    floatingLabelStyle: const TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
       color: Color(0xFF64748B),
     ),
   );

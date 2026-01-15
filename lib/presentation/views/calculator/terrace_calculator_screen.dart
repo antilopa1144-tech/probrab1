@@ -7,7 +7,6 @@ import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 
 /// Helper class for accessing terrace calculator constants
 class _TerraceConstants {
@@ -406,7 +405,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
         const SizedBox(height: 16),
         _buildMaterialsCard(),
         const SizedBox(height: 16),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -921,24 +920,51 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
     );
   }
 
-  Widget _buildTipsSection() {
-    final hints = widget.definition.beforeHints;
-    if (hints.isEmpty) return const SizedBox.shrink();
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.facade;
+    final tips = <String>[];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        HintsList(hints: hints),
-      ],
+    switch (_floorType) {
+      case TerraceFloorType.decking:
+        tips.addAll([
+          _loc.translate('terrace_calc.tip.decking_1'),
+          _loc.translate('terrace_calc.tip.decking_2'),
+        ]);
+        break;
+      case TerraceFloorType.tile:
+      case TerraceFloorType.porcelain:
+        tips.addAll([
+          _loc.translate('terrace_calc.tip.tile_1'),
+          _loc.translate('terrace_calc.tip.tile_2'),
+        ]);
+        break;
+      case TerraceFloorType.board:
+      case TerraceFloorType.solidWood:
+        tips.addAll([
+          _loc.translate('terrace_calc.tip.wood_1'),
+          _loc.translate('terrace_calc.tip.wood_2'),
+        ]);
+        break;
+      case TerraceFloorType.wpc:
+        tips.addAll([
+          _loc.translate('terrace_calc.tip.wpc_1'),
+          _loc.translate('terrace_calc.tip.wpc_2'),
+        ]);
+        break;
+      case TerraceFloorType.rubberTiles:
+        tips.addAll([
+          _loc.translate('terrace_calc.tip.rubber_1'),
+          _loc.translate('terrace_calc.tip.rubber_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('terrace_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

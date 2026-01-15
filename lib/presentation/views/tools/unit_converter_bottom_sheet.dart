@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../core/constants/calculator_design_system.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/unit_conversion.dart';
 import '../../../domain/services/unit_converter_service.dart';
@@ -208,12 +207,16 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                           RegExp(r'^\d*\.?\d*'),
                         ),
                       ],
-                      decoration: CalculatorDesignSystem.inputDecoration(
-                        label: loc.translate('unit_converter.value'),
-                        hint: loc.translate('unit_converter.value_hint'),
-                      ).copyWith(
+                      decoration: InputDecoration(
+                        hintText: loc.translate('unit_converter.value'),
+                        filled: true,
+                        fillColor: const Color(0xFFF1F5F9),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                         prefixIcon: const Icon(Icons.edit_rounded),
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
                         suffixIcon: _inputController.text.isNotEmpty
                             ? IconButton(
                                 icon: const Icon(Icons.clear_rounded),
@@ -227,17 +230,22 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                       onChanged: (_) => _performConversion(),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
                     // Конвертация: From → To
                     DropdownButtonFormField<Unit>(
                       key: ValueKey('from_${_fromUnit?.id}'),
                       initialValue: _fromUnit,
                       isExpanded: true,
-                      decoration: CalculatorDesignSystem.inputDecoration(
-                        label: loc.translate('unit_converter.from'),
-                      ).copyWith(
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                      decoration: InputDecoration(
+                        hintText: loc.translate('unit_converter.from'),
+                        filled: true,
+                        fillColor: const Color(0xFFF1F5F9),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
                       items: availableUnits.map((unit) {
                         return DropdownMenuItem(
@@ -275,10 +283,15 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                       key: ValueKey('to_${_toUnit?.id}'),
                       initialValue: _toUnit,
                       isExpanded: true,
-                      decoration: CalculatorDesignSystem.inputDecoration(
-                        label: loc.translate('unit_converter.to'),
-                      ).copyWith(
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                      decoration: InputDecoration(
+                        hintText: loc.translate('unit_converter.to'),
+                        filled: true,
+                        fillColor: const Color(0xFFF1F5F9),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
                       items: availableUnits.map((unit) {
                         return DropdownMenuItem(

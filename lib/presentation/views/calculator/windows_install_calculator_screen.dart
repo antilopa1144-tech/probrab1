@@ -167,8 +167,43 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_windowType) {
+      case WindowType.single:
+        tips.addAll([
+          _loc.translate('windows_calc.tip.single_1'),
+          _loc.translate('windows_calc.tip.single_2'),
+        ]);
+        break;
+      case WindowType.double_:
+        tips.addAll([
+          _loc.translate('windows_calc.tip.double_1'),
+          _loc.translate('windows_calc.tip.double_2'),
+        ]);
+        break;
+      case WindowType.triple:
+        tips.addAll([
+          _loc.translate('windows_calc.tip.triple_1'),
+          _loc.translate('windows_calc.tip.triple_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('windows_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

@@ -342,43 +342,10 @@ class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
 
     tips.add(_loc.translate('slab_calc.tip.common'));
 
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.lightbulb_outline, size: 20, color: CalculatorColors.textSecondary),
-              const SizedBox(width: 8),
-              Text(
-                _loc.translate('common.tips'),
-                style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ...tips.map(_buildTipItem),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTipItem(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.check_circle_outline, size: 16, color: _accentColor),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
-            ),
-          ),
-        ],
-      ),
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

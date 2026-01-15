@@ -178,8 +178,43 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_linoleumType) {
+      case LinoleumType.household:
+        tips.addAll([
+          _loc.translate('linoleum_calc.tip.household_1'),
+          _loc.translate('linoleum_calc.tip.household_2'),
+        ]);
+        break;
+      case LinoleumType.semiCommercial:
+        tips.addAll([
+          _loc.translate('linoleum_calc.tip.semi_commercial_1'),
+          _loc.translate('linoleum_calc.tip.semi_commercial_2'),
+        ]);
+        break;
+      case LinoleumType.commercial:
+        tips.addAll([
+          _loc.translate('linoleum_calc.tip.commercial_1'),
+          _loc.translate('linoleum_calc.tip.commercial_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('linoleum_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

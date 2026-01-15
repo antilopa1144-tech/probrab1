@@ -206,8 +206,37 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_pattern) {
+      case LaminatePattern.straight:
+        tips.addAll([
+          _loc.translate('laminate_calc.tip.straight_1'),
+          _loc.translate('laminate_calc.tip.straight_2'),
+        ]);
+        break;
+      case LaminatePattern.diagonal:
+        tips.addAll([
+          _loc.translate('laminate_calc.tip.diagonal_1'),
+          _loc.translate('laminate_calc.tip.diagonal_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('laminate_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

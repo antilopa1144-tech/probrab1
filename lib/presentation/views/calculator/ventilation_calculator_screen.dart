@@ -163,8 +163,43 @@ class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalcula
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_ventilationType) {
+      case VentilationType.natural:
+        tips.addAll([
+          _loc.translate('ventilation_calc.tip.natural_1'),
+          _loc.translate('ventilation_calc.tip.natural_2'),
+        ]);
+        break;
+      case VentilationType.supply:
+        tips.addAll([
+          _loc.translate('ventilation_calc.tip.supply_1'),
+          _loc.translate('ventilation_calc.tip.supply_2'),
+        ]);
+        break;
+      case VentilationType.exhaust:
+        tips.addAll([
+          _loc.translate('ventilation_calc.tip.exhaust_1'),
+          _loc.translate('ventilation_calc.tip.exhaust_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('ventilation_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

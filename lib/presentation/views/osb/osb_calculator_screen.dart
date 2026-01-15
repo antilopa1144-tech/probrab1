@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 import '../../utils/screw_formatter.dart';
 
 enum OsbConstructionType { wall, floor, roof, partition, sip, formwork }
@@ -460,7 +458,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
         const SizedBox(height: 16),
         if (_hasAdditionalMaterials()) _buildAdditionalMaterialsCard(),
         if (_hasAdditionalMaterials()) const SizedBox(height: 24),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -1060,36 +1058,18 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
     );
   }
 
-  Widget _buildTipsSection() {
-    const hints = [
-      CalculatorHint(
-        type: HintType.important,
-        messageKey: 'hint.osb.class_for_wet',
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.osb.gap_3mm',
-      ),
-      CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.osb.thickness_by_step',
-      ),
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.walls;
+    final tips = <String>[
+      _loc.translate('hint.osb.class_for_wet'),
+      _loc.translate('hint.osb.gap_3mm'),
+      _loc.translate('hint.osb.thickness_by_step'),
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        const HintsList(hints: hints),
-      ],
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

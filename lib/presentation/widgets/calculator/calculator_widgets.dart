@@ -45,6 +45,10 @@ export 'dynamic_list.dart';
 // Включает: ResultCard, ResultCardLight, MaterialsCardModern, MaterialItem
 export 'result_card.dart';
 
+// Полезные советы
+// Включает: TipsCard, TipsSection
+export 'tips_card.dart';
+
 // Константы
 export '../../../core/constants/calculator_colors.dart';
 export '../../../core/constants/calculator_design_system.dart';

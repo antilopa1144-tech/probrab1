@@ -237,6 +237,8 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
         _buildAreaCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -381,6 +383,39 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
       titleIcon: Icons.receipt_long,
       items: items,
       accentColor: _accentColor,
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_brickType) {
+      case BrickType.single:
+        tips.addAll([
+          _loc.translate('brick_calc.tip.single_1'),
+          _loc.translate('brick_calc.tip.single_2'),
+        ]);
+        break;
+      case BrickType.oneAndHalf:
+        tips.addAll([
+          _loc.translate('brick_calc.tip.one_half_1'),
+          _loc.translate('brick_calc.tip.one_half_2'),
+        ]);
+        break;
+      case BrickType.double:
+        tips.addAll([
+          _loc.translate('brick_calc.tip.double_1'),
+          _loc.translate('brick_calc.tip.double_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('brick_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

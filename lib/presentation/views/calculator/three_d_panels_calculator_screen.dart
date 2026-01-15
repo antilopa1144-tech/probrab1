@@ -2,19 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/calculator_colors.dart';
-import '../../../core/constants/calculator_design_system.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../../domain/models/calculator_constant.dart';
-import '../../widgets/calculator/calculator_result_header.dart';
-import '../../widgets/calculator/calculator_scaffold.dart';
-import '../../widgets/calculator/calculator_text_field.dart';
-import '../../widgets/calculator/mode_selector.dart';
-import '../../widgets/calculator/result_card.dart';
-import '../../widgets/existing/hint_card.dart';
+import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Вспомогательный класс для работы с константами калькулятора 3D панелей
 class _PanelsConstants {
@@ -247,7 +239,7 @@ class _ThreeDPanelsCalculatorScreenState
         const SizedBox(height: 16),
         _buildMaterialsCard(),
         const SizedBox(height: 16),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -718,36 +710,18 @@ class _ThreeDPanelsCalculatorScreenState
     );
   }
 
-  Widget _buildTipsSection() {
-    final hints = <CalculatorHint>[
-      const CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.walls.proverte_rovnost_sten_pered',
-      ),
-      const CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya_2',
-      ),
-      const CalculatorHint(
-        type: HintType.tip,
-        messageKey: 'hint.walls.nachinayte_montazh_ot_tsentra',
-      ),
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.interior;
+    final tips = <String>[
+      _loc.translate('hint.walls.proverte_rovnost_sten_pered'),
+      _loc.translate('hint.walls.ispolzuyte_spetsialnyy_kley_dlya_2'),
+      _loc.translate('hint.walls.nachinayte_montazh_ot_tsentra'),
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        HintsList(hints: hints),
-      ],
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

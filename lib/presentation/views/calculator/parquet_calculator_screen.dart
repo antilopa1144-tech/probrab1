@@ -207,8 +207,43 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_parquetType) {
+      case ParquetType.board:
+        tips.addAll([
+          _loc.translate('parquet_calc.tip.board_1'),
+          _loc.translate('parquet_calc.tip.board_2'),
+        ]);
+        break;
+      case ParquetType.engineered:
+        tips.addAll([
+          _loc.translate('parquet_calc.tip.engineered_1'),
+          _loc.translate('parquet_calc.tip.engineered_2'),
+        ]);
+        break;
+      case ParquetType.massive:
+        tips.addAll([
+          _loc.translate('parquet_calc.tip.massive_1'),
+          _loc.translate('parquet_calc.tip.massive_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('parquet_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

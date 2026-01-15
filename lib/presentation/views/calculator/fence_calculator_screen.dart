@@ -163,8 +163,31 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
         _buildSpacingCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+    switch (_fenceType) {
+      case FenceType.profiled:
+        tips.add(_loc.translate('fence_calc.tip.profiled_1'));
+        tips.add(_loc.translate('fence_calc.tip.profiled_2'));
+      case FenceType.picket:
+        tips.add(_loc.translate('fence_calc.tip.picket_1'));
+        tips.add(_loc.translate('fence_calc.tip.picket_2'));
+      case FenceType.chain:
+        tips.add(_loc.translate('fence_calc.tip.chain_1'));
+        tips.add(_loc.translate('fence_calc.tip.chain_2'));
+    }
+    tips.add(_loc.translate('fence_calc.tip.common'));
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

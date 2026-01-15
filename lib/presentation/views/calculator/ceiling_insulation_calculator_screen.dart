@@ -174,8 +174,43 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_insulationType) {
+      case CeilingInsulationType.mineralWool:
+        tips.addAll([
+          _loc.translate('ceiling_insulation_calc.tip.mineral_wool_1'),
+          _loc.translate('ceiling_insulation_calc.tip.mineral_wool_2'),
+        ]);
+        break;
+      case CeilingInsulationType.styrofoam:
+        tips.addAll([
+          _loc.translate('ceiling_insulation_calc.tip.styrofoam_1'),
+          _loc.translate('ceiling_insulation_calc.tip.styrofoam_2'),
+        ]);
+        break;
+      case CeilingInsulationType.extrudedPPS:
+        tips.addAll([
+          _loc.translate('ceiling_insulation_calc.tip.extruded_1'),
+          _loc.translate('ceiling_insulation_calc.tip.extruded_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('ceiling_insulation_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

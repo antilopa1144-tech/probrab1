@@ -177,8 +177,43 @@ class _MdfPanelsCalculatorScreenState extends ConsumerState<MdfPanelsCalculatorS
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_panelType) {
+      case MdfPanelType.standard:
+        tips.addAll([
+          _loc.translate('mdf_panels_calc.tip.standard_1'),
+          _loc.translate('mdf_panels_calc.tip.standard_2'),
+        ]);
+        break;
+      case MdfPanelType.laminated:
+        tips.addAll([
+          _loc.translate('mdf_panels_calc.tip.laminated_1'),
+          _loc.translate('mdf_panels_calc.tip.laminated_2'),
+        ]);
+        break;
+      case MdfPanelType.veneer:
+        tips.addAll([
+          _loc.translate('mdf_panels_calc.tip.veneer_1'),
+          _loc.translate('mdf_panels_calc.tip.veneer_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('mdf_panels_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

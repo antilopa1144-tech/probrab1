@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_hint.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-import '../../widgets/existing/hint_card.dart';
 
 /// Вспомогательный класс для работы с константами калькулятора обоев
 class _WallpaperConstants {
@@ -310,7 +308,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
         const SizedBox(height: 16),
         _buildMaterialsCard(),
         const SizedBox(height: 24),
-        _buildTipsSection(),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
     );
@@ -790,27 +788,18 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     );
   }
 
-  Widget _buildTipsSection() {
-    const hints = [
-      CalculatorHint(type: HintType.important, messageKey: 'hint.wallpaper.check_batch_number'),
-      CalculatorHint(type: HintType.tip, messageKey: 'hint.wallpaper.start_from_window'),
-      CalculatorHint(type: HintType.tip, messageKey: 'hint.wallpaper.temperature_humidity'),
+  Widget _buildTipsCard() {
+    const accentColor = CalculatorColors.interior;
+    final tips = <String>[
+      _loc.translate('hint.wallpaper.check_batch_number'),
+      _loc.translate('hint.wallpaper.start_from_window'),
+      _loc.translate('hint.wallpaper.temperature_humidity'),
     ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            _loc.translate('common.tips'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-        ),
-        const HintsList(hints: hints),
-      ],
+    return TipsCard(
+      tips: tips,
+      accentColor: accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

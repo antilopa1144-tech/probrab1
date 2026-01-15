@@ -183,8 +183,43 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_atticType) {
+      case AtticType.cold:
+        tips.addAll([
+          _loc.translate('attic_calc.tip.cold_1'),
+          _loc.translate('attic_calc.tip.cold_2'),
+        ]);
+        break;
+      case AtticType.warm:
+        tips.addAll([
+          _loc.translate('attic_calc.tip.warm_1'),
+          _loc.translate('attic_calc.tip.warm_2'),
+        ]);
+        break;
+      case AtticType.living:
+        tips.addAll([
+          _loc.translate('attic_calc.tip.living_1'),
+          _loc.translate('attic_calc.tip.living_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('attic_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 

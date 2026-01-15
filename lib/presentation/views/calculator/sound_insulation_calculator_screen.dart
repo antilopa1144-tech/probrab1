@@ -180,8 +180,43 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
+        const SizedBox(height: 16),
+        _buildTipsCard(),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildTipsCard() {
+    final tips = <String>[];
+
+    switch (_insulationType) {
+      case SoundInsulationType.mineralWool:
+        tips.addAll([
+          _loc.translate('sound_insulation_calc.tip.mineral_wool_1'),
+          _loc.translate('sound_insulation_calc.tip.mineral_wool_2'),
+        ]);
+        break;
+      case SoundInsulationType.membrane:
+        tips.addAll([
+          _loc.translate('sound_insulation_calc.tip.membrane_1'),
+          _loc.translate('sound_insulation_calc.tip.membrane_2'),
+        ]);
+        break;
+      case SoundInsulationType.combined:
+        tips.addAll([
+          _loc.translate('sound_insulation_calc.tip.combined_1'),
+          _loc.translate('sound_insulation_calc.tip.combined_2'),
+        ]);
+        break;
+    }
+
+    tips.add(_loc.translate('sound_insulation_calc.tip.common'));
+
+    return TipsCard(
+      tips: tips,
+      accentColor: _accentColor,
+      title: _loc.translate('common.tips'),
     );
   }
 
