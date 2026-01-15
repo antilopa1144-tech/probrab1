@@ -51,7 +51,6 @@ google-services.json
 GoogleService-Info.plist
 .env
 firebase-debug.log
-scripts/
 
 # Release signing
 key.properties
