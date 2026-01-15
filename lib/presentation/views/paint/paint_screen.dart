@@ -38,15 +38,15 @@ class _PaintScreenState extends State<PaintScreen> {
   final List<List<Map<String, dynamic>>> _surfaces = [
     // Интерьер
     [
-      {'name': 'Гладкая (х1.0)', 'factor': 1.0},
-      {'name': 'Обои (х1.2)', 'factor': 1.2},
-      {'name': 'Фактурная (х1.4)', 'factor': 1.4},
+      {'name': 'Гладкая', 'subtitle': 'х1.0', 'factor': 1.0},
+      {'name': 'Обои', 'subtitle': 'х1.2', 'factor': 1.2},
+      {'name': 'Рельеф', 'subtitle': 'х1.4', 'factor': 1.4},
     ],
     // Фасад
     [
-      {'name': 'Бетон (х1.0)', 'factor': 1.0},
-      {'name': 'Кирпич (х1.15)', 'factor': 1.15},
-      {'name': 'Короед (х1.4)', 'factor': 1.4},
+      {'name': 'Бетон', 'subtitle': 'х1.0', 'factor': 1.0},
+      {'name': 'Кирпич', 'subtitle': 'х1.15', 'factor': 1.15},
+      {'name': 'Короед', 'subtitle': 'х1.4', 'factor': 1.4},
     ],
   ];
 
@@ -81,7 +81,7 @@ class _PaintScreenState extends State<PaintScreen> {
     buffer.writeln();
 
     buffer.writeln('Тип: ${_paintType == 0 ? "Интерьер" : "Фасад"}');
-    buffer.writeln('Поверхность: ${surface['name']}');
+    buffer.writeln('Поверхность: ${surface['name']} (${surface['subtitle']})');
     buffer.writeln('Площадь: ${netArea.toStringAsFixed(1)} м²');
     buffer.writeln();
 
@@ -207,7 +207,7 @@ class _PaintScreenState extends State<PaintScreen> {
           options: _surfaces[_paintType].map((s) => TypeSelectorOption(
             icon: Icons.texture,
             title: s['name'] as String,
-            subtitle: '',
+            subtitle: s['subtitle'] as String,
           )).toList(),
           selectedIndex: _surfaceIndex,
           onSelect: (index) => setState(() => _surfaceIndex = index),

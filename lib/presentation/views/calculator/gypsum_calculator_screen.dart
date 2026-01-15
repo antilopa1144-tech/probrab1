@@ -9,6 +9,7 @@ import '../../utils/screw_formatter.dart';
 
 enum GypsumConstructionType { wallLining, partition, ceiling }
 enum GypsumGKLType { standard, moisture, fire }
+enum GypsumThickness { t9_5, t12_5 }
 enum GypsumSheetSize { s2000x1200, s2500x1200, s2700x1200, s3000x1200 }
 enum InputMode { byArea, byRoom }
 
@@ -33,6 +34,8 @@ class _GypsumResult {
   final double armatureTape;
   final double fillerKg;
   final double primerLiters;
+  final double sheetWeight;
+  final double totalWeight;
 
   const _GypsumResult({
     required this.area,
@@ -55,6 +58,8 @@ class _GypsumResult {
     required this.armatureTape,
     required this.fillerKg,
     required this.primerLiters,
+    required this.sheetWeight,
+    required this.totalWeight,
   });
 
   factory _GypsumResult.fromCalculatorResult(Map<String, double> values, GypsumSheetSize sheetSize) {
@@ -85,6 +90,8 @@ class _GypsumResult {
       armatureTape: values['armatureTape'] ?? 0,
       fillerKg: values['fillerKg'] ?? 0,
       primerLiters: values['primerLiters'] ?? 0,
+      sheetWeight: values['sheetWeight'] ?? 0,
+      totalWeight: values['totalWeight'] ?? 0,
     );
   }
 }
@@ -123,6 +130,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
   bool _useInsulation = false;
   GypsumConstructionType _constructionType = GypsumConstructionType.wallLining;
   GypsumGKLType _gklType = GypsumGKLType.standard;
+  GypsumThickness _thickness = GypsumThickness.t12_5;
   GypsumSheetSize _sheetSize = GypsumSheetSize.s2500x1200;
   late _GypsumResult _result;
   late AppLocalizations _loc;
@@ -182,6 +190,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
       'height': _height,
       'constructionType': _constructionType.index.toDouble(),
       'gklType': _gklType.index.toDouble(),
+      'thickness': _thickness.index.toDouble(),
       'sheetSize': _sheetSize.index.toDouble(),
       'layers': _layers.toDouble(),
       'useInsulation': _useInsulation ? 1.0 : 0.0,
@@ -206,6 +215,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
       'height': _height,
       'construction_type': (_constructionType.index + 1).toDouble(),
       'gkl_type': (_gklType.index + 1).toDouble(),
+      'thickness': _thickness.index.toDouble(),
       'sheet_size': _sheetSize.index.toDouble(),
       'layers': _layers.toDouble(),
       'useInsulation': _useInsulation ? 1.0 : 0.0,
@@ -344,6 +354,8 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
         const SizedBox(height: 16),
         _buildGKLTypeSelector(),
         const SizedBox(height: 16),
+        _buildThicknessSelector(),
+        const SizedBox(height: 16),
         _buildSheetSizeSelector(),
         const SizedBox(height: 16),
         _buildInputModeSelector(),
@@ -416,6 +428,38 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
             onSelect: (index) {
               setState(() {
                 _gklType = GypsumGKLType.values[index];
+                _update();
+              });
+            },
+            accentColor: accentColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThicknessSelector() {
+    const accentColor = CalculatorColors.walls;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('gypsum.thickness.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: [
+              _loc.translate('gypsum.thickness.t9_5'),
+              _loc.translate('gypsum.thickness.t12_5'),
+            ],
+            selectedIndex: _thickness.index,
+            onSelect: (index) {
+              setState(() {
+                _thickness = GypsumThickness.values[index];
                 _update();
               });
             },
@@ -753,12 +797,21 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
       ppProfileName = _loc.translate('gypsum.materials.pp_ceiling');
     }
 
+    // Формируем subtitle с размером и весом листа
+    final sheetSubtitle = '${_result.sheetSizeName}, ${_result.sheetWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')}/${_loc.translate('gypsum.materials.sheet')}';
+
     final items = <MaterialItem>[
       MaterialItem(
         name: _loc.translate('gypsum.materials.gkl_sheets'),
         value: '${_result.gklSheets} ${_loc.translate('gypsum.materials.sheets_unit')}',
-        subtitle: _result.sheetSizeName,
+        subtitle: sheetSubtitle,
         icon: Icons.dashboard,
+      ),
+      MaterialItem(
+        name: _loc.translate('gypsum.materials.total_weight'),
+        value: '${_result.totalWeight.toStringAsFixed(0)} ${_loc.translate('common.kg')}',
+        subtitle: _loc.translate('gypsum.materials.weight_info'),
+        icon: Icons.fitness_center,
       ),
     ];
 

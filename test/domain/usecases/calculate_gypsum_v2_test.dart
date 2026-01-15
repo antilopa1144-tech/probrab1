@@ -187,20 +187,44 @@ void main() {
       });
 
       test('partition has more screws', () {
+        // Use thickness 0 (9.5mm) to get TN25 screws
         final wallLining = calculator({
           'area': 20.0,
           'constructionType': 0.0,
+          'thickness': 0.0, // 9.5mm -> TN25
         }, emptyPriceList);
 
         final partition = calculator({
           'area': 20.0,
           'constructionType': 1.0,
+          'thickness': 0.0, // 9.5mm -> TN25
         }, emptyPriceList);
 
         // Partition: 50/sqm vs Wall lining: 34/sqm
         expect(
           partition.values['screwsTN25'],
           greaterThan(wallLining.values['screwsTN25']!),
+        );
+      });
+
+      test('partition has more screws (12.5mm uses TN35)', () {
+        // Default thickness 1 (12.5mm) -> TN35 screws
+        final wallLining = calculator({
+          'area': 20.0,
+          'constructionType': 0.0,
+          'thickness': 1.0, // 12.5mm -> TN35
+        }, emptyPriceList);
+
+        final partition = calculator({
+          'area': 20.0,
+          'constructionType': 1.0,
+          'thickness': 1.0, // 12.5mm -> TN35
+        }, emptyPriceList);
+
+        // Partition: 50/sqm vs Wall lining: 34/sqm
+        expect(
+          partition.values['screwsTN35'],
+          greaterThan(wallLining.values['screwsTN35']!),
         );
       });
 
@@ -260,19 +284,43 @@ void main() {
     });
 
     group('Layers', () {
-      test('second layer adds TN35 screws', () {
+      test('second layer adds TN35 screws (for 9.5mm sheets)', () {
+        // For 9.5mm thickness, first layer uses TN25, second layer adds TN35
         final oneLayer = calculator({
           'area': 20.0,
           'layers': 1.0,
+          'thickness': 0.0, // 9.5mm -> TN25 for first layer
         }, emptyPriceList);
 
         final twoLayers = calculator({
           'area': 20.0,
           'layers': 2.0,
+          'thickness': 0.0, // 9.5mm -> TN25 + TN35 for second layer
         }, emptyPriceList);
 
         expect(oneLayer.values['screwsTN35'], equals(0.0));
         expect(twoLayers.values['screwsTN35'], greaterThan(0));
+      });
+
+      test('12.5mm sheets use TN35 for all layers', () {
+        // For 12.5mm thickness, both layers use TN35
+        final oneLayer = calculator({
+          'area': 20.0,
+          'layers': 1.0,
+          'thickness': 1.0, // 12.5mm -> TN35
+        }, emptyPriceList);
+
+        final twoLayers = calculator({
+          'area': 20.0,
+          'layers': 2.0,
+          'thickness': 1.0, // 12.5mm -> TN35 for both
+        }, emptyPriceList);
+
+        // Both have TN35
+        expect(oneLayer.values['screwsTN35'], greaterThan(0));
+        expect(oneLayer.values['screwsTN25'], equals(0.0));
+        // Two layers has more TN35
+        expect(twoLayers.values['screwsTN35'], greaterThan(oneLayer.values['screwsTN35']!));
       });
 
       test('partition two layers doubles TN35 screws', () {
@@ -424,6 +472,61 @@ void main() {
       test('fire resistant type (2)', () {
         final result = calculator({'gklType': 2.0}, emptyPriceList);
         expect(result.values['gklType'], equals(2.0));
+      });
+    });
+
+    group('Thickness and weight', () {
+      test('9.5mm thickness uses TN25 screws', () {
+        final result = calculator({
+          'area': 20.0,
+          'thickness': 0.0, // 9.5mm
+        }, emptyPriceList);
+
+        expect(result.values['thickness'], equals(0.0));
+        expect(result.values['screwsTN25'], greaterThan(0));
+        expect(result.values['screwsTN35'], equals(0.0));
+      });
+
+      test('12.5mm thickness uses TN35 screws', () {
+        final result = calculator({
+          'area': 20.0,
+          'thickness': 1.0, // 12.5mm
+        }, emptyPriceList);
+
+        expect(result.values['thickness'], equals(1.0));
+        expect(result.values['screwsTN25'], equals(0.0));
+        expect(result.values['screwsTN35'], greaterThan(0));
+      });
+
+      test('sheet weight depends on thickness and size', () {
+        // 9.5mm, 2500x1200 = 22.5 kg
+        final thin = calculator({
+          'thickness': 0.0,
+          'sheetSize': 1.0,
+        }, emptyPriceList);
+
+        // 12.5mm, 2500x1200 = 29 kg
+        final thick = calculator({
+          'thickness': 1.0,
+          'sheetSize': 1.0,
+        }, emptyPriceList);
+
+        expect(thin.values['sheetWeight'], equals(22.5));
+        expect(thick.values['sheetWeight'], equals(29.0));
+      });
+
+      test('total weight is sheet weight times count', () {
+        final result = calculator({
+          'area': 30.0,
+          'thickness': 1.0,
+          'sheetSize': 1.0, // 3.0 sqm, 29 kg each
+        }, emptyPriceList);
+
+        final sheets = result.values['gklSheets']!;
+        final sheetWeight = result.values['sheetWeight']!;
+        final totalWeight = result.values['totalWeight']!;
+
+        expect(totalWeight, equals(sheets * sheetWeight));
       });
     });
 

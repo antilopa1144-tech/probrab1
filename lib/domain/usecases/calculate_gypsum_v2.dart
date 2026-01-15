@@ -12,6 +12,7 @@ import 'calculator_usecase.dart';
 /// - height: высота комнаты м (default: 2.7)
 /// - constructionType: 0 = облицовка стен, 1 = перегородка, 2 = потолок (default: 0)
 /// - gklType: 0 = стандартный, 1 = влагостойкий, 2 = огнестойкий (default: 0)
+/// - thickness: 0 = 9.5 мм, 1 = 12.5 мм (default: 1)
 /// - sheetSize: 0 = 2000x1200, 1 = 2500x1200, 2 = 2700x1200, 3 = 3000x1200 (default: 1)
 /// - layers: 1 или 2 (default: 1)
 /// - useInsulation: 0/1 (default: 0)
@@ -35,6 +36,8 @@ import 'calculator_usecase.dart';
 /// - armatureTape: армирующая лента м
 /// - fillerKg: шпаклёвка кг
 /// - primerLiters: грунтовка л
+/// - sheetWeight: вес одного листа кг
+/// - totalWeight: общий вес ГКЛ кг
 class CalculateGypsumV2 extends BaseCalculator {
   // Sheet sizes (area in m²)
   static const Map<int, double> sheetAreas = {
@@ -42,6 +45,14 @@ class CalculateGypsumV2 extends BaseCalculator {
     1: 3.0,   // 2500x1200
     2: 3.24,  // 2700x1200
     3: 3.6,   // 3000x1200
+  };
+
+  // Sheet weights by thickness and size (kg)
+  // thickness: 0 = 9.5mm, 1 = 12.5mm
+  // size: 0 = 2000x1200, 1 = 2500x1200, 2 = 2700x1200, 3 = 3000x1200
+  static const Map<int, Map<int, double>> sheetWeights = {
+    0: {0: 18.0, 1: 22.5, 2: 24.3, 3: 27.0},   // 9.5mm (~7.5 кг/м²)
+    1: {0: 23.0, 1: 29.0, 2: 31.3, 3: 34.7},   // 12.5mm (~9.6 кг/м²)
   };
 
   // GKL multipliers
@@ -105,6 +116,7 @@ class CalculateGypsumV2 extends BaseCalculator {
     // Construction settings
     final constructionType = getInput(inputs, 'constructionType', defaultValue: 0.0, minValue: 0.0, maxValue: 2.0).round();
     final gklType = getInput(inputs, 'gklType', defaultValue: 0.0, minValue: 0.0, maxValue: 2.0).round();
+    final thickness = getInput(inputs, 'thickness', defaultValue: 1.0, minValue: 0.0, maxValue: 1.0).round(); // 0 = 9.5mm, 1 = 12.5mm
     final sheetSizeIndex = getInput(inputs, 'sheetSize', defaultValue: 1.0, minValue: 0.0, maxValue: 3.0).round();
     final layers = getInput(inputs, 'layers', defaultValue: 1.0, minValue: 1.0, maxValue: 2.0).round();
     final useInsulation = getInput(inputs, 'useInsulation', defaultValue: 0.0, minValue: 0.0, maxValue: 1.0) >= 0.5;
@@ -155,6 +167,8 @@ class CalculateGypsumV2 extends BaseCalculator {
     int connectors = 0;
     double sealingTape = 0;
 
+    // Calculate base screw count based on construction type
+    int baseScrewCount = 0;
     switch (constructionType) {
       case 0: // Wall lining
         pnMeters = calculatedArea * wallLiningPnMeters;
@@ -163,7 +177,7 @@ class CalculateGypsumV2 extends BaseCalculator {
         ppPieces = (ppMeters / profileLength).ceil();
         suspensions = (calculatedArea * wallLiningSuspensions).ceil();
         dowels = (calculatedArea * wallLiningDowels).ceil();
-        screwsTN25 = (calculatedArea * wallLiningScrewsTN25).ceil();
+        baseScrewCount = (calculatedArea * wallLiningScrewsTN25).ceil();
         screwsLN = (calculatedArea * wallLiningScrewsLN).ceil();
         sealingTape = calculatedArea * wallLiningSealingTape;
         break;
@@ -173,7 +187,7 @@ class CalculateGypsumV2 extends BaseCalculator {
         pnPieces = (pnMeters / profileLength).ceil();
         ppPieces = (ppMeters / profileLength).ceil();
         dowels = (calculatedArea * partitionDowels).ceil();
-        screwsTN25 = (calculatedArea * partitionScrewsTN25).ceil();
+        baseScrewCount = (calculatedArea * partitionScrewsTN25).ceil();
         screwsLN = (calculatedArea * partitionScrewsLN).ceil();
         sealingTape = calculatedArea * partitionSealingTape;
         break;
@@ -185,15 +199,27 @@ class CalculateGypsumV2 extends BaseCalculator {
         suspensions = (calculatedArea * ceilingSuspensions).ceil();
         connectors = (calculatedArea * ceilingConnectors).ceil();
         dowels = suspensions * ceilingDowelsPerSuspension;
-        screwsTN25 = (calculatedArea * ceilingScrewsTN25).ceil();
+        baseScrewCount = (calculatedArea * ceilingScrewsTN25).ceil();
         screwsLN = (calculatedArea * ceilingScrewsLN).ceil();
         break;
     }
 
-    // Second layer screws
+    // Assign screws based on thickness:
+    // 9.5mm -> TN25 (25mm screws)
+    // 12.5mm -> TN35 (35mm screws)
+    if (thickness == 0) {
+      // 9.5mm sheets use TN25
+      screwsTN25 = baseScrewCount;
+    } else {
+      // 12.5mm sheets use TN35
+      screwsTN35 = baseScrewCount;
+    }
+
+    // Second layer always uses TN35 (needs to go through 2 sheets)
     if (layers == 2) {
       final multiplier = constructionType == 1 ? secondLayerPartitionMultiplier : 1;
-      screwsTN35 = (calculatedArea * secondLayerScrewsTN35 * multiplier).ceil();
+      final secondLayerScrews = (calculatedArea * secondLayerScrewsTN35 * multiplier).ceil();
+      screwsTN35 += secondLayerScrews;
     }
 
     // Materials
@@ -201,6 +227,10 @@ class CalculateGypsumV2 extends BaseCalculator {
     final armatureTape = calculatedArea * armatureTapePerSqm;
     final fillerKg = calculatedArea * (constructionType == 1 ? fillerPartition : fillerStandard) * layers;
     final primerLiters = calculatedArea * primerPerSqm;
+
+    // Sheet weight calculation based on thickness and size
+    final sheetWeight = sheetWeights[thickness]?[sheetSizeIndex] ?? 29.0;
+    final totalWeight = sheetWeight * gklSheets;
 
     // Build output values
     final values = <String, double>{
@@ -232,6 +262,9 @@ class CalculateGypsumV2 extends BaseCalculator {
       'armatureTape': armatureTape,
       'fillerKg': fillerKg,
       'primerLiters': primerLiters,
+      'thickness': thickness.toDouble(),
+      'sheetWeight': sheetWeight,
+      'totalWeight': totalWeight,
     };
 
     // Calculate total price if prices available

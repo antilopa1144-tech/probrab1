@@ -79,12 +79,19 @@ class TypeSelectorCard extends StatelessWidget {
     final lightColor = _getLightColor(accentColor);
     final darkColor = _getDarkColor(accentColor);
 
+    // Уменьшаем размеры если есть subtitle для экономии места
+    final hasSubtitle = subtitle != null && subtitle!.isNotEmpty;
+    final effectiveIconSize = hasSubtitle ? (iconSize * 0.75) : iconSize;
+    final titleFontSize = hasSubtitle ? 10.0 : 14.0;
+    final subtitleFontSize = 9.0;
+    final padding = hasSubtitle ? 8.0 : 12.0;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: CalculatorDesignSystem.animationDurationFast,
         curve: CalculatorDesignSystem.animationCurve,
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
           color: isSelected ? lightColor : Colors.grey[50],
           border: Border.all(
@@ -105,7 +112,7 @@ class TypeSelectorCard extends StatelessWidget {
                 Icon(
                   icon,
                   color: isSelected ? darkColor : Colors.grey[600],
-                  size: iconSize,
+                  size: effectiveIconSize,
                 ),
                 if (showCheckmark && isSelected)
                   Positioned(
@@ -126,35 +133,33 @@ class TypeSelectorCard extends StatelessWidget {
                   ),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: hasSubtitle ? 4 : 8),
             // Заголовок
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.center,
-              child: Text(
-                title,
-                style: CalculatorDesignSystem.titleSmall.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isSelected ? darkColor : CalculatorColors.textPrimary,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: titleFontSize,
+                fontWeight: FontWeight.w600,
+                color: isSelected ? darkColor : CalculatorColors.textPrimary,
               ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             // Подзаголовок (если есть)
-            if (subtitle != null) ...[
-              const SizedBox(height: 4),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.center,
-                child: Text(
-                  subtitle!,
-                  style: CalculatorDesignSystem.bodySmall.copyWith(
-                    color: isSelected ? accentColor : CalculatorColors.textSecondary,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
+            if (hasSubtitle) ...[
+              const SizedBox(height: 2),
+              Text(
+                subtitle!,
+                style: TextStyle(
+                  fontSize: subtitleFontSize,
+                  fontWeight: FontWeight.w400,
+                  height: 1.0,
+                  color: isSelected ? accentColor : CalculatorColors.textSecondary,
                 ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ],

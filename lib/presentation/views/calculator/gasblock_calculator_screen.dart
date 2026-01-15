@@ -80,7 +80,7 @@ const List<BlockSizePreset> kBlockSizePresets = [
   BlockSizePreset(label: '600x300', lengthCm: 60.0, heightCm: 30.0),
   BlockSizePreset(label: '600x250', lengthCm: 60.0, heightCm: 25.0),
   BlockSizePreset(label: '625x250', lengthCm: 62.5, heightCm: 25.0),
-  BlockSizePreset(label: 'Свой размер', lengthCm: 0.0, heightCm: 0.0, isCustom: true),
+  BlockSizePreset(label: 'Свой', lengthCm: 0.0, heightCm: 0.0, isCustom: true),
 ];
 
 /// Helper class для работы с константами газобетонного калькулятора

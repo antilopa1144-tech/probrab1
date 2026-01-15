@@ -239,9 +239,9 @@
       "smooth": "Ровные",
       "medium": "Средние",
       "rough": "Кривые",
-      "smooth_desc": "Новостройка, ГКЛ",
-      "medium_desc": "Небольшие неровности",
-      "rough_desc": "Старый фонд, перепады"
+      "smooth_desc": "Новостройка",
+      "medium_desc": "Неровности",
+      "rough_desc": "Старый фонд"
     },
     "start_material_title": "Стартовая шпаклёвка",
     "finish_material_title": "Финишная шпаклёвка",
@@ -273,11 +273,11 @@
       "title": "Класс материалов",
       "hint": "Автоматически подберём материалы указанного класса",
       "economy": "Эконом",
-      "economy_desc": "Бюджетный вариант",
+      "economy_desc": "Бюджетный",
       "standard": "Стандарт",
-      "standard_desc": "Оптимальное качество",
+      "standard_desc": "Оптимальный",
       "premium": "Премиум",
-      "premium_desc": "Лучшее качество"
+      "premium_desc": "Лучшее"
     },
     "materials": {
       "or_analog": "или аналог",
@@ -1856,7 +1856,7 @@
     },
     "construction": {
       "wall_lining": "Облицовка стен",
-      "wall_lining_desc": "Обшивка на каркасе",
+      "wall_lining_desc": "На каркасе",
       "partition": "Перегородка",
       "partition_desc": "С обеих сторон",
       "ceiling": "Потолок",
@@ -1867,6 +1867,11 @@
       "standard": "ГКЛ",
       "moisture": "ГКЛВ",
       "fire": "ГКЛО"
+    },
+    "thickness": {
+      "title": "Толщина листа",
+      "t9_5": "9.5 мм",
+      "t12_5": "12.5 мм"
     },
     "sheet_size": {
       "title": "Размер листа",
@@ -1911,7 +1916,10 @@
       "filler": "Шпаклёвка Фуген",
       "primer": "Грунтовка",
       "kg": "кг",
-      "liters": "л"
+      "liters": "л",
+      "sheet": "лист",
+      "total_weight": "Общий вес ГКЛ",
+      "weight_info": "Для планирования доставки"
     },
     "fixings": {
       "title": "Крепёж",
@@ -3650,38 +3658,38 @@
         "title": "Терраса / Веранда",
         "floor": {
           "decking": "Декинг",
-          "decking_desc": "Террасная доска из композита",
+          "decking_desc": "Композит",
           "tile": "Плитка",
-          "tile_desc": "Керамическая плитка для улицы",
+          "tile_desc": "Керамика",
           "board": "Доска",
-          "board_desc": "Обрезная доска",
+          "board_desc": "Обрезная",
           "porcelain": "Керамогранит",
-          "porcelain_desc": "Морозостойкий керамогранит",
+          "porcelain_desc": "Морозостойкий",
           "wpc": "ДПК",
-          "wpc_desc": "Древесно-полимерный композит",
-          "solidWood": "Массив дерева",
-          "solidWood_desc": "Лиственница, дуб",
-          "rubberTiles": "Резиновая плитка",
-          "rubberTiles_desc": "Модульное резиновое покрытие"
+          "wpc_desc": "Композит",
+          "solidWood": "Массив",
+          "solidWood_desc": "Дуб/листв.",
+          "rubberTiles": "Резина",
+          "rubberTiles_desc": "Модульная"
         },
         "roof": {
           "polycarbonate": "Поликарбонат",
-          "polycarbonate_desc": "Сотовый или монолитный",
+          "polycarbonate_desc": "Сотовый/литой",
           "profiledSheet": "Профнастил",
-          "profiledSheet_desc": "Металлический профлист",
-          "softRoof": "Мягкая кровля",
-          "softRoof_desc": "Гибкая черепица",
+          "profiledSheet_desc": "Металл",
+          "softRoof": "Мягкая",
+          "softRoof_desc": "Гибкая",
           "ondulin": "Ондулин",
-          "ondulin_desc": "Битумные волнистые листы",
+          "ondulin_desc": "Битумный",
           "metalTile": "Металлочерепица",
-          "metalTile_desc": "Профилированная сталь",
-          "glass": "Стеклянная крыша",
-          "glass_desc": "Закалённое стекло"
+          "metalTile_desc": "Сталь",
+          "glass": "Стекло",
+          "glass_desc": "Закалённое"
         },
         "construction_details": "Конструкция",
         "joist_spacing": "Шаг лаг",
         "waterproofing": "Гидроизоляция",
-        "waterproofing_desc": "Защита каркаса от влаги",
+        "waterproofing_desc": "Защита каркаса",
         "joists": "Лаги",
         "posts": "Опорные столбы",
         "fasteners": "Крепёж",
@@ -3887,9 +3895,9 @@
       "apartment": "Квартира",
       "house": "Дом",
       "office": "Офис",
-      "apartment_desc": "Стандартный расчёт по СП 256.1325800.2016",
-      "house_desc": "Увеличенный расчёт (+20% точек)",
-      "office_desc": "Максимум розеток для рабочих мест (+50%)"
+      "apartment_desc": "Стандарт СП",
+      "house_desc": "+20% точек",
+      "office_desc": "+50% розеток"
     },
     "area": {
       "title": "Параметры помещения",
@@ -3907,35 +3915,35 @@
       "title": "Способ прокладки",
       "hidden": "Скрытая",
       "open": "Открытая",
-      "hidden_desc": "В штробах под штукатуркой — стандарт для квартир и домов",
-      "open_desc": "В кабель-каналах по стенам — быстрый монтаж, легко обслуживать"
+      "hidden_desc": "В штробах",
+      "open_desc": "Кабель-каналы"
     },
     "consumers": {
       "title": "Мощные потребители",
       "subtitle": "Каждый требует отдельной линии с защитой",
       "electric_stove": "Электроплита",
-      "electric_stove_desc": "6 кВт · кабель 3×6",
+      "electric_stove_desc": "6 кВт",
       "oven": "Духовой шкаф",
-      "oven_desc": "3.5 кВт · кабель 3×4",
+      "oven_desc": "3.5 кВт, 3×4",
       "boiler": "Бойлер",
-      "boiler_desc": "2-3 кВт · кабель 3×2.5",
+      "boiler_desc": "2-3 кВт",
       "washing_machine": "Стиральная машина",
-      "washing_machine_desc": "2.5 кВт · отдельная линия",
+      "washing_machine_desc": "2.5 кВт",
       "dishwasher": "Посудомоечная машина",
-      "dishwasher_desc": "2 кВт · отдельная линия",
+      "dishwasher_desc": "2 кВт",
       "conditioner": "Кондиционер",
-      "conditioner_desc": "2-3 кВт · кабель 3×2.5",
+      "conditioner_desc": "2-3 кВт",
       "warm_floor": "Тёплый пол",
-      "warm_floor_desc": "Отдельная группа"
+      "warm_floor_desc": "Отдельно"
     },
     "options": {
       "title": "Дополнительно",
       "conduit_hidden": "Гофра ПВХ d16-20",
-      "conduit_hidden_desc": "Защита кабеля в штробах (рекомендуется ПУЭ)",
+      "conduit_hidden_desc": "Защита кабеля",
       "conduit_open": "Кабель-канал",
-      "conduit_open_desc": "Пластиковый короб для открытой проводки",
+      "conduit_open_desc": "Короб ПВХ",
       "grounding": "Заземление",
-      "grounding_desc": "Шина PE + контур (обязательно по ПУЭ)"
+      "grounding_desc": "Шина PE"
     },
     "results": {
       "points_title": "Точки подключения",
@@ -3954,11 +3962,11 @@
     "cable": {
       "title": "Кабель и материалы",
       "vvg_1_5": "ВВГнг-LS 3×1.5",
-      "vvg_1_5_desc": "Освещение (до 2.3 кВт)",
+      "vvg_1_5_desc": "Свет",
       "vvg_2_5": "ВВГнг-LS 3×2.5",
-      "vvg_2_5_desc": "Розетки (до 3.5 кВт)",
+      "vvg_2_5_desc": "Розетки",
       "vvg_4_6": "ВВГнг-LS 3×4 / 3×6",
-      "vvg_4_6_desc": "Мощные потребители",
+      "vvg_4_6_desc": "Мощные",
       "conduit_hidden": "Гофра ПВХ d16-20",
       "conduit_open": "Кабель-канал",
       "conduit_desc": "Защита кабеля",
@@ -3975,12 +3983,12 @@
       "breakers": "Автоматы C10-C16",
       "breakers_desc": "Свет + розетки",
       "rcd": "УЗО 30мА",
-      "rcd_desc": "Включая вводное 100мА",
+      "rcd_desc": "С вводным",
       "difautomat": "Дифавтоматы",
-      "difautomat_desc": "Для мощных потребителей",
+      "difautomat_desc": "Для мощных",
       "grounding": "Заземление",
       "grounding_value": "1 компл.",
-      "grounding_desc": "Шина PE + контур"
+      "grounding_desc": "Шина PE"
     },
     "export": {
       "title": "Электрика — расчёт",
@@ -4037,16 +4045,16 @@
     "wall_type": {
       "title": "Тип стены",
       "partition": "Перегородка",
-      "partition_desc": "Лёгкие внутренние стены",
+      "partition_desc": "Внутренние",
       "bearing": "Несущая",
-      "bearing_desc": "Капитальные и наружные стены"
+      "bearing_desc": "Наружные"
     },
     "material": {
       "title": "Материал блока",
       "gasblock": "Газоблок",
       "gasblock_desc": "Тёплый и лёгкий",
       "foamblock": "Пеноблок",
-      "foamblock_desc": "Доступный и тёплый"
+      "foamblock_desc": "Доступный"
     },
     "block_size": {
       "title": "Размер блока",
@@ -4079,9 +4087,9 @@
       "primer": "Грунтовка",
       "primer_desc": "Расход ~{value} л/м² на сторону",
       "plaster": "Штукатурка",
-      "plaster_desc": "Слой ~5 мм на сторону",
+      "plaster_desc": "~5 мм/сторону",
       "mesh": "Сетка",
-      "mesh_desc": "Армирование с двух сторон",
+      "mesh_desc": "С двух сторон",
       "lintels": "Перемычки",
       "lintels_desc": "Над проёмами",
       "lintels_count": "Количество перемычек"
@@ -4094,7 +4102,7 @@
       "glue_desc": "{kg} кг ({bags_size} кг/меш.)",
       "bags": "меш.",
       "mortar": "Раствор",
-      "mortar_desc": "Цементно-песчаный",
+      "mortar_desc": "ЦПС",
       "reinforcement": "Армирование",
       "reinforcement_desc": "{rods} прута по длине",
       "primer": "Грунтовка",
@@ -4152,29 +4160,29 @@
     "room": {
       "title": "Тип помещения",
       "bathroom": "Ванная / санузел",
-      "bathroom_desc": "Высокая влажность",
+      "bathroom_desc": "Влажный",
       "kitchen": "Кухня",
-      "kitchen_desc": "Средняя влажность",
+      "kitchen_desc": "Средняя влажн.",
       "hallway": "Прихожая / коридор",
-      "hallway_desc": "Высокая проходимость",
+      "hallway_desc": "Проходимость",
       "living": "Жилая комната",
-      "living_desc": "Декоративная отделка",
+      "living_desc": "Декоративная",
       "balcony": "Балкон / терраса",
-      "balcony_desc": "Перепады температур"
+      "balcony_desc": "Перепады t°"
     },
     "material": {
       "title": "Тип материала",
       "ceramic": "Керамическая плитка",
-      "ceramic_desc": "Для стен и пола",
+      "ceramic_desc": "Стены и пол",
       "ceramic_adv": "Стандартное решение",
       "porcelain": "Керамогранит",
-      "porcelain_desc": "Прочный, для пола",
+      "porcelain_desc": "Прочный",
       "porcelain_adv": "Износостойкий материал",
       "mosaic": "Мозаика",
-      "mosaic_desc": "Декоративная отделка",
+      "mosaic_desc": "Декоративная",
       "mosaic_adv": "Сложная укладка",
       "large_format": "Крупноформат",
-      "large_format_desc": "60×60 см и больше",
+      "large_format_desc": "60×60+",
       "large_format_adv": "Современный дизайн"
     },
     "size": {
@@ -4189,13 +4197,13 @@
       "hint": "Влияет на запас материала",
       "reserve": "+{value}% запас",
       "straight": "Прямая",
-      "straight_desc": "Стандартная укладка",
+      "straight_desc": "Стандарт",
       "diagonal": "Диагональная",
-      "diagonal_desc": "Под углом 45°",
+      "diagonal_desc": "45°",
       "offset": "Вразбежку",
-      "offset_desc": "Со смещением 1/2 или 1/3",
+      "offset_desc": "Смещение 1/2",
       "herringbone": "Ёлочка",
-      "herringbone_desc": "Декоративная раскладка"
+      "herringbone_desc": "Декор"
     },
     "joint": {
       "title": "Ширина шва",
@@ -4204,12 +4212,12 @@
     "options": {
       "title": "Дополнительные материалы",
       "svp": "СВП (система выравнивания)",
-      "svp_desc": "Клипсы и клинья для ровной укладки",
+      "svp_desc": "СВП",
       "waterproofing": "Гидроизоляция",
-      "waterproofing_desc": "Для влажных помещений",
+      "waterproofing_desc": "Влажные",
       "waterproofing_recommended": "Рекомендуется для {room}",
       "underlay": "Подложка выравнивающая",
-      "underlay_desc": "Для неровного основания"
+      "underlay_desc": "Неровности"
     },
     "materials": {
       "title": "Материалы",
@@ -4223,7 +4231,7 @@
       "primer": "Грунтовка",
       "crosses": "Крестики",
       "svp": "СВП",
-      "svp_desc": "Система выравнивания",
+      "svp_desc": "Выравнивание",
       "waterproofing": "Гидроизоляция",
       "waterproofing_layers": "2 слоя",
       "underlay": "Подложка"
@@ -4282,29 +4290,29 @@
     "system": {
       "title": "Тип системы",
       "electric_mat": "Электрический мат",
-      "electric_mat_desc": "Под плитку, керамогранит",
+      "electric_mat_desc": "Под плитку",
       "electric_mat_advantage": "Простой монтаж, быстрый прогрев",
-      "electric_cable": "Электрический кабель",
-      "electric_cable_desc": "Универсальный, для сложных форм",
+      "electric_cable": "Кабель",
+      "electric_cable_desc": "Универсальный",
       "electric_cable_advantage": "Гибкая укладка, любые конфигурации",
-      "infrared_film": "ИК плёночный",
-      "infrared_film_desc": "Под ламинат, линолеум",
+      "infrared_film": "ИК плёнка",
+      "infrared_film_desc": "Под ламинат",
       "infrared_film_advantage": "Сухой монтаж, быстрая установка",
       "water_based": "Водяной",
-      "water_based_desc": "Экономичный, для частного дома",
+      "water_based_desc": "Для дома",
       "water_based_advantage": "Низкие расходы на отопление"
     },
     "room": {
       "title": "Тип помещения",
       "title_hint": "Автоматически определяет требуемую мощность",
       "bathroom": "Ванная / санузел",
-      "bathroom_desc": "Высокая влажность, комфорт",
+      "bathroom_desc": "Влажный",
       "living": "Жилая комната",
-      "living_desc": "Основное или дополнительное отопление",
+      "living_desc": "Основное/доп.",
       "kitchen": "Кухня",
-      "kitchen_desc": "Среднее тепловыделение",
-      "balcony": "Балкон / лоджия",
-      "balcony_desc": "Большие теплопотери"
+      "kitchen_desc": "Среднее тепло",
+      "balcony": "Балкон",
+      "balcony_desc": "Теплопотери"
     },
     "useful_area": {
       "title": "Площадь обогрева",
@@ -4420,45 +4428,45 @@
     },
     "lining_type": {
       "standard": "Стандарт",
-      "standard_desc": "Обычная вагонка",
+      "standard_desc": "Обычная",
       "euro": "Евровагонка",
-      "euro_desc": "С вентиляционными канавками",
+      "euro_desc": "Вент. канавки",
       "block_house": "Блок-хаус",
-      "block_house_desc": "Имитация бревна",
+      "block_house_desc": "Под бревно",
       "imitation_bar": "Имитация бруса",
       "imitation_bar_desc": "Прямой профиль"
     },
     "wood_species": {
       "pine": "Сосна",
-      "pine_desc": "Доступная, универсальная",
+      "pine_desc": "Универсальная",
       "spruce": "Ель",
       "spruce_desc": "Светлая, мягкая",
       "larch": "Лиственница",
-      "larch_desc": "Влагостойкая, прочная",
+      "larch_desc": "Влагостойкая",
       "cedar": "Кедр",
-      "cedar_desc": "Ароматная, элитная",
+      "cedar_desc": "Ароматная",
       "aspen": "Осина",
-      "aspen_desc": "Для бань и саун",
+      "aspen_desc": "Бани, сауны",
       "alder": "Ольха",
-      "alder_desc": "Красивая текстура",
+      "alder_desc": "Красивая",
       "oak": "Дуб",
-      "oak_desc": "Премиум качество"
+      "oak_desc": "Премиум"
     },
     "mounting": {
       "vertical": "Вертикально",
-      "vertical_desc": "Визуально увеличивает высоту",
+      "vertical_desc": "↑ Высота",
       "horizontal": "Горизонтально",
-      "horizontal_desc": "Визуально расширяет пространство",
+      "horizontal_desc": "↔ Ширина",
       "diagonal": "Диагонально",
-      "diagonal_desc": "Декоративный вариант"
+      "diagonal_desc": "Декор"
     },
     "fastening": {
       "klyaymery": "Кляймеры",
-      "klyaymery_desc": "Скрытое крепление",
+      "klyaymery_desc": "Скрытое",
       "nails": "Гвозди",
-      "nails_desc": "Финишные гвозди",
+      "nails_desc": "Финишные",
       "screws": "Саморезы",
-      "screws_desc": "Надёжное крепление"
+      "screws_desc": "Надёжные"
     },
     "finish": {
       "varnish": "Лак",
@@ -4639,19 +4647,19 @@
     "title": "Грунтовка",
     "surface": {
       "concrete": "Бетон",
-      "concrete_desc": "Пористая поверхность",
+      "concrete_desc": "Пористый",
       "plaster": "Штукатурка",
-      "plaster_desc": "Стандартная впитываемость",
+      "plaster_desc": "Средняя",
       "drywall": "Гипсокартон",
-      "drywall_desc": "Низкая впитываемость"
+      "drywall_desc": "Низкая"
     },
     "type": {
       "deep": "Глубокого проникновения",
-      "deep_desc": "Для пористых поверхностей",
+      "deep_desc": "Пористые",
       "contact": "Бетоноконтакт",
-      "contact_desc": "Для гладких поверхностей",
+      "contact_desc": "Гладкие",
       "universal": "Универсальная",
-      "universal_desc": "Для любых поверхностей"
+      "universal_desc": "Любые"
     },
     "section": {
       "primer_type": "Тип грунтовки",
@@ -4704,17 +4712,17 @@
     "title": "Ламинат",
     "pattern": {
       "straight": "Прямая укладка",
-      "straight_desc": "Минимум отходов (5%)",
+      "straight_desc": "Отходы ~5%",
       "diagonal": "Диагональная укладка",
-      "diagonal_desc": "Больше отходов (15%)"
+      "diagonal_desc": "Отходы ~15%"
     },
     "class": {
       "31": "31 класс",
-      "31_desc": "Для спален, кабинетов",
+      "31_desc": "Спальни",
       "32": "32 класс",
-      "32_desc": "Для гостиных, детских",
+      "32_desc": "Гостиные",
       "33": "33 класс",
-      "33_desc": "Для прихожих, кухонь"
+      "33_desc": "Прихожие"
     },
     "section": {
       "class": "Класс ламината",
@@ -4733,9 +4741,9 @@
     },
     "option": {
       "underlay": "Подложка",
-      "underlay_desc": "Рулон 10 м², +10% запас",
+      "underlay_desc": "+10% запас",
       "plinth": "Плинтус",
-      "plinth_desc": "По периметру, минус дверь"
+      "plinth_desc": "Минус дверь"
     },
     "result": {
       "area": "Площадь",
@@ -4832,11 +4840,11 @@
     "title": "Линолеум",
     "type": {
       "household": "Бытовой",
-      "household_desc": "Для спален, детских",
+      "household_desc": "Для спален",
       "semi_commercial": "Полукоммерческий",
-      "semi_commercial_desc": "Для гостиных, кухонь",
+      "semi_commercial_desc": "Гостиные",
       "commercial": "Коммерческий",
-      "commercial_desc": "Для офисов, магазинов"
+      "commercial_desc": "Офисы"
     },
     "mode": {
       "manual": "По площади",
@@ -4851,9 +4859,9 @@
     },
     "option": {
       "tape": "Двусторонний скотч",
-      "tape_desc": "Для фиксации по периметру",
+      "tape_desc": "По периметру",
       "plinth": "Плинтус",
-      "plinth_desc": "По периметру, минус дверь"
+      "plinth_desc": "Минус дверь"
     },
     "result": {
       "area": "Площадь",
@@ -4893,11 +4901,11 @@
     "title": "Паркет",
     "type": {
       "board": "Паркетная доска",
-      "board_desc": "Трёхслойная, замковая",
+      "board_desc": "Трёхслойная",
       "engineered": "Инженерная доска",
-      "engineered_desc": "Двухслойная, клеевая",
+      "engineered_desc": "Двухслойная",
       "massive": "Массив",
-      "massive_desc": "Цельная древесина"
+      "massive_desc": "Цельное дерево"
     },
     "pattern": {
       "straight": "Прямая",
@@ -4926,7 +4934,7 @@
       "plinth": "Плинтус",
       "plinth_desc": "По периметру",
       "glue": "Паркетный клей",
-      "glue_desc": "Для массива и инженерной доски"
+      "glue_desc": "Для массива"
     },
     "result": {
       "area": "Площадь",
@@ -4966,11 +4974,11 @@
     "title": "Стяжка пола",
     "type": {
       "cement_sand": "Цементно-песчаная",
-      "cement_sand_desc": "Классическая ЦПС",
+      "cement_sand_desc": "ЦПС",
       "semidry": "Полусухая",
-      "semidry_desc": "Меньше воды, быстрее сохнет",
+      "semidry_desc": "Быстрее сохнет",
       "concrete": "Бетонная",
-      "concrete_desc": "С щебнем, для больших нагрузок"
+      "concrete_desc": "С щебнем"
     },
     "mode": {
       "manual": "По площади",
@@ -4986,9 +4994,9 @@
     "thickness_hint": "Минимум 30 мм, рекомендуется 50-70 мм",
     "option": {
       "mesh": "Армирующая сетка",
-      "mesh_desc": "100×100 мм, для прочности",
+      "mesh_desc": "100×100 мм",
       "film": "Плёнка ПЭ",
-      "film_desc": "Гидроизоляция основания"
+      "film_desc": "Гидроизоляция"
     },
     "result": {
       "area": "Площадь",
@@ -5033,13 +5041,13 @@
     "title": "Натяжной потолок",
     "type": {
       "matte": "Матовый",
-      "matte_desc": "Классический вид",
-      "glossy": "Глянцевый",
-      "glossy_desc": "Визуально увеличивает пространство",
-      "satin": "Сатиновый",
-      "satin_desc": "Мягкий блеск",
-      "fabric": "Тканевый",
-      "fabric_desc": "Экологичный, дышащий"
+      "matte_desc": "Классика",
+      "glossy": "Глянец",
+      "glossy_desc": "↑ Объём",
+      "satin": "Сатин",
+      "satin_desc": "Блеск",
+      "fabric": "Ткань",
+      "fabric_desc": "Эко"
     },
     "mode": {
       "manual": "По площади",
@@ -5061,7 +5069,7 @@
     "materials": {
       "canvas": "Полотно",
       "profile": "Профиль",
-      "profile_desc": "Багет алюминиевый",
+      "profile_desc": "Алюминиевый",
       "lights": "Светильники точечные",
       "lights_desc": "GU5.3 / GU10",
       "corners": "Уголки декоративные"
@@ -5095,11 +5103,11 @@
     "title": "Утепление потолка",
     "type": {
       "mineral_wool": "Минеральная вата",
-      "mineral_wool_desc": "Базальтовая, негорючая",
+      "mineral_wool_desc": "Базальтовая",
       "styrofoam": "Пенопласт",
       "styrofoam_desc": "ПСБ-С, лёгкий",
       "extruded": "Экструдированный ППС",
-      "extruded_desc": "ЭППС, влагостойкий"
+      "extruded_desc": "Влагостойкий"
     },
     "mode": {
       "manual": "По площади",
@@ -5114,9 +5122,9 @@
     },
     "option": {
       "vapor_barrier": "Пароизоляция",
-      "vapor_barrier_desc": "Защита от влаги изнутри",
+      "vapor_barrier_desc": "От влаги",
       "membrane": "Мембрана",
-      "membrane_desc": "Ветрозащита снаружи"
+      "membrane_desc": "Ветрозащита"
     },
     "result": {
       "area": "Площадь",
@@ -5156,11 +5164,11 @@
     "title": "Сантехника",
     "type": {
       "standard": "Стандарт",
-      "standard_desc": "Обычная сантехника",
+      "standard_desc": "Обычная",
       "premium": "Премиум",
-      "premium_desc": "Премиум-класс",
+      "premium_desc": "Премиум",
       "economy": "Эконом",
-      "economy_desc": "Бюджетный вариант"
+      "economy_desc": "Бюджетный"
     },
     "label": {
       "bathrooms": "Ванных комнат",
@@ -5170,7 +5178,7 @@
     },
     "option": {
       "hot_water": "Горячее водоснабжение",
-      "hot_water_desc": "Разводка горячей воды"
+      "hot_water_desc": "Разводка ГВС"
     },
     "result": {
       "points": "Точек",
@@ -5179,13 +5187,13 @@
     },
     "materials": {
       "cold_water": "Трубы ХВС",
-      "cold_water_desc": "Холодное водоснабжение",
+      "cold_water_desc": "Разводка ХВС",
       "hot_water": "Трубы ГВС",
-      "hot_water_desc": "Горячее водоснабжение",
+      "hot_water_desc": "Разводка ГВС",
       "sewage": "Канализация",
-      "sewage_desc": "Канализационные трубы",
+      "sewage_desc": "Отвод стоков",
       "fittings": "Фитинги",
-      "fittings_desc": "Соединения, углы, тройники",
+      "fittings_desc": "Соединения",
       "valves": "Запорная арматура",
       "valves_desc": "Краны, вентили"
     },
@@ -5219,9 +5227,9 @@
       "natural": "Естественная",
       "natural_desc": "Без вентилятора",
       "supply": "Приточная",
-      "supply_desc": "С подачей воздуха",
+      "supply_desc": "Подача воздуха",
       "exhaust": "Вытяжная",
-      "exhaust_desc": "С удалением воздуха"
+      "exhaust_desc": "Вытяжка"
     },
     "label": {
       "area": "Общая площадь",
@@ -5230,7 +5238,7 @@
     },
     "option": {
       "recovery": "Рекуперация",
-      "recovery_desc": "Теплообмен между потоками"
+      "recovery_desc": "Теплообмен"
     },
     "result": {
       "volume": "Объём",
@@ -5239,11 +5247,11 @@
     },
     "materials": {
       "ducts": "Воздуховоды",
-      "ducts_desc": "Гибкие или жёсткие",
+      "ducts_desc": "Гибкие/жёсткие",
       "grills": "Решётки",
-      "grills_desc": "Приточные и вытяжные",
+      "grills_desc": "Приток/вытяжка",
       "fittings": "Фасонные изделия",
-      "fittings_desc": "Колена, тройники, переходники",
+      "fittings_desc": "Колена",
       "recuperator": "Рекуператор",
       "recuperator_desc": "Теплообменник"
     },
@@ -5275,7 +5283,7 @@
     "title": "Подвал",
     "type": {
       "technical": "Технический",
-      "technical_desc": "Коммуникации, хранение",
+      "technical_desc": "Хранение",
       "living": "Жилой",
       "living_desc": "С утеплением",
       "garage": "Гараж",
@@ -5289,11 +5297,11 @@
     },
     "option": {
       "waterproof": "Гидроизоляция",
-      "waterproof_desc": "Защита от грунтовых вод",
+      "waterproof_desc": "От влаги",
       "insulation": "Утепление",
-      "insulation_desc": "Теплоизоляция стен и пола",
+      "insulation_desc": "Стены и пол",
       "drainage": "Дренаж",
-      "drainage_desc": "Отвод воды от фундамента"
+      "drainage_desc": "Отвод воды"
     },
     "result": {
       "floor_area": "Площадь пола",
@@ -5304,9 +5312,9 @@
       "concrete": "Бетон",
       "concrete_desc": "Для пола и стен",
       "waterproof": "Гидроизоляция",
-      "waterproof_desc": "Битумная или рулонная",
+      "waterproof_desc": "Битум/рулон",
       "insulation": "Утеплитель",
-      "insulation_desc": "ЭППС или пенопласт",
+      "insulation_desc": "ЭППС",
       "drainage": "Дренажная труба",
       "drainage_desc": "С геотекстилем"
     },
@@ -5340,7 +5348,7 @@
       "concrete": "Бетонная",
       "concrete_desc": "Классическая",
       "paving": "Из плитки",
-      "paving_desc": "Тротуарная плитка",
+      "paving_desc": "Плитка",
       "soft": "Мягкая",
       "soft_desc": "Щебень + газон"
     },
@@ -5352,9 +5360,9 @@
     },
     "option": {
       "insulation": "Утепление",
-      "insulation_desc": "ЭППС под отмостку",
+      "insulation_desc": "ЭППС",
       "drainage": "Дренаж",
-      "drainage_desc": "Отвод воды от дома"
+      "drainage_desc": "Отвод воды"
     },
     "result": {
       "perimeter": "Периметр",
@@ -5371,7 +5379,7 @@
       "gravel": "Щебень",
       "gravel_desc": "Подушка 15 см",
       "membrane": "Мембрана",
-      "membrane_desc": "Профилированная",
+      "membrane_desc": "Профильная",
       "insulation": "Утеплитель",
       "insulation_desc": "ЭППС 50 мм",
       "drainage": "Дренажная труба",
@@ -5406,11 +5414,11 @@
     "title": "Фундаментная плита",
     "type": {
       "monolithic": "Монолитная",
-      "monolithic_desc": "Классическая плита",
+      "monolithic_desc": "Классика",
       "ribbed": "Ребристая",
-      "ribbed_desc": "С рёбрами жёсткости",
+      "ribbed_desc": "С рёбрами",
       "floating": "Плавающая",
-      "floating_desc": "На пучинистых грунтах"
+      "floating_desc": "Для пучения"
     },
     "label": {
       "length": "Длина",
@@ -5420,9 +5428,9 @@
     "thickness_hint": "Рекомендуется 25-40 см",
     "option": {
       "waterproof": "Гидроизоляция",
-      "waterproof_desc": "Защита от капиллярной влаги",
+      "waterproof_desc": "От влаги",
       "insulation": "Утепление",
-      "insulation_desc": "ЭППС под плиту"
+      "insulation_desc": "ЭППС"
     },
     "result": {
       "area": "Площадь",
@@ -5439,9 +5447,9 @@
       "gravel": "Щебень",
       "gravel_desc": "Подушка 15 см",
       "waterproof": "Гидроизоляция",
-      "waterproof_desc": "Рулонная или битумная",
+      "waterproof_desc": "Рулонная",
       "insulation": "Утеплитель",
-      "insulation_desc": "ЭППС высокой плотности"
+      "insulation_desc": "ЭППС плотный"
     },
     "section": {
       "materials": "Необходимые материалы"
@@ -5473,13 +5481,13 @@
     "title": "Ленточный фундамент",
     "type": {
       "monolithic": "Монолитный",
-      "monolithic_desc": "Заливается на месте",
+      "monolithic_desc": "Заливной",
       "prefab": "Сборный (ФБС)",
-      "prefab_desc": "Из бетонных блоков",
+      "prefab_desc": "Блоки ФБС",
       "shallow": "Мелкозаглубленный",
-      "shallow_desc": "Для лёгких строений",
+      "shallow_desc": "МЗЛФ",
       "deep": "Заглубленный",
-      "deep_desc": "Ниже глубины промерзания"
+      "deep_desc": "Глубокий"
     },
     "house_dimensions": "Размеры дома",
     "house_length": "Длина",
@@ -5491,13 +5499,13 @@
     "shallow_hint": "МЗЛФ: глубина 30-70 см, для непучинистых грунтов",
     "deep_hint": "Заглубленный: ниже глубины промерзания (1-2 м)",
     "internal_walls": "Внутренние несущие стены",
-    "internal_walls_desc": "Добавить ленту под внутренние стены",
+    "internal_walls_desc": "Внутренние",
     "internal_walls_length": "Длина внутренних стен",
     "option": {
       "waterproof": "Гидроизоляция",
-      "waterproof_desc": "Защита от грунтовых вод",
+      "waterproof_desc": "От влаги",
       "insulation": "Утепление",
-      "insulation_desc": "ЭППС по периметру"
+      "insulation_desc": "ЭППС"
     },
     "result": {
       "perimeter": "Периметр",
@@ -5513,17 +5521,17 @@
       "formwork": "Опалубка",
       "formwork_desc": "Доска или ОСБ",
       "fbs": "Блоки ФБС",
-      "fbs_desc": "2400×600×580 мм",
+      "fbs_desc": "Блоки",
       "mortar": "Раствор",
-      "mortar_desc": "Для швов между блоками",
+      "mortar_desc": "Швы",
       "sand": "Песок",
       "sand_desc": "Подушка 15 см",
       "gravel": "Щебень",
       "gravel_desc": "Подушка 10 см",
       "waterproof": "Гидроизоляция",
-      "waterproof_desc": "Рулонная или обмазочная",
+      "waterproof_desc": "Рулонная",
       "insulation": "Утеплитель",
-      "insulation_desc": "ЭППС 50-100 мм"
+      "insulation_desc": "ЭППС"
     },
     "section": {
       "materials": "Необходимые материалы"
@@ -5562,7 +5570,7 @@
       "plastic": "Пластиковые",
       "plastic_desc": "ПВХ, лёгкие",
       "metal": "Металлические",
-      "metal_desc": "Оцинкованная сталь",
+      "metal_desc": "Оцинковка",
       "copper": "Медные",
       "copper_desc": "Премиум-класс"
     },
@@ -5575,7 +5583,7 @@
     "downpipes_hint": "Рекомендуется 1 труба на 50 м² кровли",
     "option": {
       "heating": "Обогрев",
-      "heating_desc": "Кабель антиобледенения"
+      "heating_desc": "Кабель"
     },
     "result": {
       "gutters": "Желоба",
@@ -5585,19 +5593,19 @@
     "materials": {
       "gutters": "Желоба",
       "downpipes": "Водосточные трубы",
-      "downpipes_desc": "Вертикальный водоотвод",
+      "downpipes_desc": "Водоотвод",
       "corners": "Углы желоба",
-      "corners_desc": "Внешние углы 90°",
+      "corners_desc": "90°",
       "funnels": "Воронки",
-      "funnels_desc": "Соединение желоба с трубой",
+      "funnels_desc": "Желоб → труба",
       "brackets": "Кронштейны желоба",
-      "brackets_desc": "Крепёж через 60 см",
+      "brackets_desc": "Шаг 60 см",
       "downpipe_brackets": "Хомуты трубы",
-      "downpipe_brackets_desc": "Крепёж через 1 м",
+      "downpipe_brackets_desc": "Шаг 1 м",
       "elbows": "Колена",
-      "elbows_desc": "Повороты трубы",
+      "elbows_desc": "Повороты",
       "heating": "Греющий кабель",
-      "heating_desc": "Для желобов и труб"
+      "heating_desc": "Для желобов"
     },
     "section": {
       "materials": "Необходимые материалы"
@@ -5630,9 +5638,9 @@
       "cold": "Холодная",
       "cold_desc": "Без утепления",
       "warm": "Тёплая",
-      "warm_desc": "Утепление кровли",
+      "warm_desc": "С утеплением",
       "living": "Жилая",
-      "living_desc": "С отделкой и утеплением"
+      "living_desc": "Полная отделка"
     },
     "label": {
       "length": "Длина",
@@ -5642,9 +5650,9 @@
     },
     "option": {
       "vapor_barrier": "Пароизоляция",
-      "vapor_barrier_desc": "Защита от влаги изнутри",
+      "vapor_barrier_desc": "От влаги",
       "membrane": "Мембрана",
-      "membrane_desc": "Ветрозащита снаружи",
+      "membrane_desc": "Ветрозащита",
       "gypsum": "Гипсокартон",
       "gypsum_desc": "Обшивка ГКЛ"
     },
@@ -5656,7 +5664,7 @@
     "materials": {
       "insulation": "Утеплитель",
       "vapor_barrier": "Пароизоляция",
-      "vapor_barrier_desc": "Плёнка/мембрана",
+      "vapor_barrier_desc": "Плёнка",
       "membrane": "Мембрана",
       "membrane_desc": "Ветрозащитная",
       "gypsum": "Гипсокартон",
@@ -5705,11 +5713,11 @@
     },
     "option": {
       "insulation": "Утепление",
-      "insulation_desc": "Утепление стен и пола",
+      "insulation_desc": "Стены и пол",
       "floor_finishing": "Отделка пола",
-      "floor_finishing_desc": "Напольное покрытие",
+      "floor_finishing_desc": "Покрытие",
       "wall_finishing": "Отделка стен",
-      "wall_finishing_desc": "Обшивка и панели"
+      "wall_finishing_desc": "Панели"
     },
     "result": {
       "floor_area": "Площадь пола",
@@ -5718,11 +5726,11 @@
     },
     "materials": {
       "glazing": "Остекление",
-      "glazing_desc": "Профиль и стеклопакеты",
+      "glazing_desc": "Стеклопакеты",
       "insulation": "Утеплитель",
-      "insulation_desc": "Для стен и пола",
+      "insulation_desc": "Стены и пол",
       "finishing": "Отделочные материалы",
-      "finishing_desc": "Для пола и стен"
+      "finishing_desc": "Пол и стены"
     },
     "section": {
       "materials": "Необходимые материалы"
@@ -5750,12 +5758,12 @@
   "cassette_ceiling_calc": {
     "title": "Кассетный потолок",
     "type": {
-      "metal": "Металлический",
-      "metal_desc": "Алюминий или сталь",
-      "mirror": "Зеркальный",
-      "mirror_desc": "Отражающая поверхность",
-      "perforated": "Перфорированный",
-      "perforated_desc": "С отверстиями для вентиляции"
+      "metal": "Металл",
+      "metal_desc": "Алюминий/сталь",
+      "mirror": "Зеркало",
+      "mirror_desc": "Отражающий",
+      "perforated": "Перфо",
+      "perforated_desc": "Вентиляция"
     },
     "mode": {
       "manual": "По площади",
@@ -5814,11 +5822,11 @@
     "title": "Декоративная штукатурка",
     "type": {
       "bark": "Короед",
-      "bark_desc": "Фактура бороздками",
+      "bark_desc": "Фактурная",
       "silk": "Шёлковая",
       "silk_desc": "Мягкий блеск",
       "venetian": "Венецианская",
-      "venetian_desc": "Эффект мрамора"
+      "venetian_desc": "Под мрамор"
     },
     "mode": {
       "manual": "По площади",
@@ -5834,9 +5842,9 @@
     "layers_hint": "Обычно 2–3 слоя",
     "option": {
       "primer": "Грунтовка",
-      "primer_desc": "Улучшает адгезию",
+      "primer_desc": "Адгезия",
       "wax": "Воск",
-      "wax_desc": "Защитное покрытие"
+      "wax_desc": "Защита"
     },
     "result": {
       "area": "Площадь",
@@ -5846,9 +5854,9 @@
     "materials": {
       "plaster": "Штукатурка",
       "primer": "Грунтовка",
-      "primer_desc": "Расход ~0,1 л/м²",
+      "primer_desc": "~0,1 л/м²",
       "wax": "Воск",
-      "wax_desc": "Финишная защита"
+      "wax_desc": "Финиш"
     },
     "section": {
       "materials": "Необходимые материалы"
@@ -5878,11 +5886,11 @@
     "title": "Декоративный камень",
     "type": {
       "gypsum": "Гипсовый",
-      "gypsum_desc": "Лёгкий, для интерьера",
+      "gypsum_desc": "Интерьер",
       "concrete": "Бетонный",
-      "concrete_desc": "Прочный, для фасада",
+      "concrete_desc": "Для фасада",
       "natural": "Натуральный",
-      "natural_desc": "Природный камень"
+      "natural_desc": "Природный"
     },
     "mode": {
       "manual": "По площади",
@@ -5898,9 +5906,9 @@
     "joint_hint": "Ширина шва влияет на расход",
     "option": {
       "grout": "Затирка",
-      "grout_desc": "Заполнение швов",
+      "grout_desc": "Для швов",
       "primer": "Грунтовка",
-      "primer_desc": "Подготовка основания"
+      "primer_desc": "Основание"
     },
     "result": {
       "area": "Площадь",
@@ -5913,7 +5921,7 @@
       "grout": "Затирка",
       "grout_desc": "Для швов",
       "primer": "Грунтовка",
-      "primer_desc": "Глубокого проникновения"
+      "primer_desc": "Глубокое"
     },
     "section": {
       "materials": "Необходимые материалы"
@@ -5943,11 +5951,11 @@
     "title": "Установка дверей",
     "type": {
       "entrance": "Входная",
-      "entrance_desc": "Уличная/квартирная",
+      "entrance_desc": "Уличная",
       "glass": "Стеклянная",
-      "glass_desc": "Стекло и перегородки",
+      "glass_desc": "Перегородки",
       "interior": "Межкомнатная",
-      "interior_desc": "Стандартные двери"
+      "interior_desc": "Стандартная"
     },
     "label": {
       "door_size": "Размер двери",
@@ -5957,9 +5965,9 @@
     },
     "option": {
       "casing": "Наличники",
-      "casing_desc": "Обрамление проёма",
+      "casing_desc": "Обрамление",
       "threshold": "Порог",
-      "threshold_desc": "Пороговая планка"
+      "threshold_desc": "Планка"
     },
     "result": {
       "doors": "Двери",
@@ -5969,15 +5977,15 @@
     "materials": {
       "doors": "Двери",
       "frames": "Коробки",
-      "frames_desc": "Дверная коробка",
+      "frames_desc": "Коробка",
       "hinges": "Петли",
-      "hinges_desc": "Комплект на дверь",
+      "hinges_desc": "Комплект",
       "handles": "Ручки",
-      "handles_desc": "Комплект на дверь",
+      "handles_desc": "Комплект",
       "foam": "Монтажная пена",
       "foam_desc": "Баллон ~30 л",
       "casing": "Наличники",
-      "casing_desc": "По периметру проёма"
+      "casing_desc": "По периметру"
     },
     "section": {
       "materials": "Необходимые материалы"
@@ -6011,9 +6019,9 @@
       "vinyl": "Виниловые",
       "vinyl_desc": "Сайдинг ПВХ",
       "metal": "Металлические",
-      "metal_desc": "Сталь или алюминий",
+      "metal_desc": "Сталь/алюминий",
       "fiber": "Фиброцементные",
-      "fiber_desc": "Прочные панели"
+      "fiber_desc": "Прочные"
     },
     "label": {
       "perimeter": "Периметр",
@@ -6023,9 +6031,9 @@
     "openings_hint": "Площадь проёмов вычитается",
     "option": {
       "insulation": "Утепление",
-      "insulation_desc": "Утеплитель под панели",
+      "insulation_desc": "Под панели",
       "profile": "Профиль",
-      "profile_desc": "Обрешётка/направляющие"
+      "profile_desc": "Обрешётка"
     },
     "result": {
       "wall_area": "Площадь стен",
@@ -6039,7 +6047,7 @@
       "insulation": "Утеплитель",
       "insulation_desc": "Минвата/ЭППС",
       "corners": "Угловые элементы",
-      "corners_desc": "Внешние и внутренние",
+      "corners_desc": "Внеш./внутр.",
       "starters": "Стартовый профиль",
       "starters_desc": "Нижняя планка"
     },
@@ -6071,9 +6079,9 @@
     "title": "Забор",
     "type": {
       "profiled": "Профнастил",
-      "profiled_desc": "Листы профнастила",
+      "profiled_desc": "Металл, прочный",
       "picket": "Штакетник",
-      "picket_desc": "Металлический/деревянный",
+      "picket_desc": "Металл/дерево",
       "chain": "Сетка-рабица",
       "chain_desc": "Рулоны сетки"
     },
@@ -6129,9 +6137,9 @@
       "standard": "Стандартные",
       "standard_desc": "Обычные МДФ",
       "laminated": "Ламинированные",
-      "laminated_desc": "С защитным слоем",
+      "laminated_desc": "Защитный слой",
       "veneer": "Шпонированные",
-      "veneer_desc": "Натуральный шпон"
+      "veneer_desc": "Шпон"
     },
     "mode": {
       "manual": "По площади",
@@ -6146,9 +6154,9 @@
     },
     "option": {
       "profile": "Профиль",
-      "profile_desc": "Обрешётка/направляющие",
+      "profile_desc": "Обрешётка",
       "plinth": "Плинтус",
-      "plinth_desc": "Нижний плинтус"
+      "plinth_desc": "Внизу"
     },
     "result": {
       "area": "Площадь",
@@ -6210,9 +6218,9 @@
     },
     "option": {
       "profile": "Профиль",
-      "profile_desc": "Обрешётка/направляющие",
+      "profile_desc": "Обрешётка",
       "corners": "Уголки",
-      "corners_desc": "Внутренние и наружные"
+      "corners_desc": "Внутр./наруж."
     },
     "result": {
       "area": "Площадь",
@@ -6224,7 +6232,7 @@
       "profile": "Профиль",
       "profile_desc": "Обрешётка",
       "corners": "Уголки",
-      "corners_desc": "Внутренние и наружные",
+      "corners_desc": "Внутр./наруж.",
       "plinth": "Плинтус"
     },
     "section": {
@@ -6255,7 +6263,7 @@
     "title": "Реечный потолок",
     "type": {
       "aluminum": "Алюминиевый",
-      "aluminum_desc": "Лёгкий и не ржавеет",
+      "aluminum_desc": "Лёгкий",
       "steel": "Стальной",
       "steel_desc": "Прочный",
       "plastic": "Пластиковый",
@@ -6331,9 +6339,9 @@
     },
     "option": {
       "corners": "Уголки",
-      "corners_desc": "Угловой профиль",
+      "corners_desc": "Угловой",
       "primer": "Грунтовка",
-      "primer_desc": "Подготовка основания"
+      "primer_desc": "Основание"
     },
     "result": {
       "windows": "Окна",
@@ -6343,9 +6351,9 @@
     "materials": {
       "material": "Материал откосов",
       "corners": "Уголки",
-      "corners_desc": "Перфорированный уголок",
+      "corners_desc": "Перфорир.",
       "primer": "Грунтовка",
-      "primer_desc": "Расход ~0,2 л/м²",
+      "primer_desc": "~0,2 л/м²",
       "sealant": "Герметик",
       "sealant_desc": "Силикон/акрил"
     },
@@ -6381,7 +6389,7 @@
       "membrane": "Мембрана",
       "membrane_desc": "Тонкий слой",
       "combined": "Комбинированная",
-      "combined_desc": "Вата + мембрана"
+      "combined_desc": "Вата+мембрана"
     },
     "surface": {
       "wall": "Стены",
@@ -6397,7 +6405,7 @@
       "gypsum": "Гипсокартон",
       "gypsum_desc": "Обшивка ГКЛ",
       "profile": "Профиль",
-      "profile_desc": "Каркас/направляющие"
+      "profile_desc": "Каркас"
     },
     "result": {
       "area": "Площадь",
@@ -6407,7 +6415,7 @@
     "materials": {
       "insulation": "Звукоизоляция",
       "membrane": "Мембрана",
-      "membrane_desc": "Звукоизоляционная",
+      "membrane_desc": "Звукоизоляц.",
       "gypsum": "Гипсокартон",
       "gypsum_desc": "Листы ГКЛ",
       "profile": "Профиль",
@@ -6445,7 +6453,7 @@
       "straight": "Прямая",
       "straight_desc": "Один марш",
       "l_shaped": "Г-образная",
-      "l_shaped_desc": "С площадкой/поворотом",
+      "l_shaped_desc": "С площадкой",
       "u_shaped": "П-образная",
       "u_shaped_desc": "Два марша"
     },
@@ -6456,9 +6464,9 @@
     },
     "option": {
       "railing": "Перила",
-      "railing_desc": "Ограждение лестницы",
+      "railing_desc": "Ограждение",
       "both_sides": "С двух сторон",
-      "both_sides_desc": "Перила с двух сторон"
+      "both_sides_desc": "Двусторонние"
     },
     "section": {
       "calculated_params": "Расчётные параметры",
@@ -6541,20 +6549,20 @@
     },
     "type": {
       "a": "Тип A",
-      "a_desc": "Базовый вариант",
+      "a_desc": "Базовый",
       "b": "Тип B",
-      "b_desc": "Улучшенный вариант"
+      "b_desc": "Улучшенный"
     }
   },
   "waterproof_calc": {
     "title": "Гидроизоляция",
     "type": {
       "cement": "Цементная",
-      "cement_desc": "Цементно-полимерная",
+      "cement_desc": "ЦПС",
       "liquid": "Жидкая",
-      "liquid_desc": "Мастика/обмазочная",
+      "liquid_desc": "Мастика",
       "roll": "Рулонная",
-      "roll_desc": "Рулонные материалы"
+      "roll_desc": "Плёнка"
     },
     "label": {
       "layers": "Слоёв",
@@ -6566,9 +6574,9 @@
     "wall_height_hint": "Высота захода на стены",
     "option": {
       "primer": "Грунтовка",
-      "primer_desc": "Улучшает адгезию",
+      "primer_desc": "Адгезия",
       "tape": "Лента",
-      "tape_desc": "Гидроизоляционная лента"
+      "tape_desc": "Для швов"
     },
     "result": {
       "floor_area": "Площадь пола",
@@ -6578,9 +6586,9 @@
     "materials": {
       "waterproof": "Гидроизоляция",
       "primer": "Грунтовка",
-      "primer_desc": "Расход ~0,2 л/м²",
+      "primer_desc": "~0,2 л/м²",
       "tape": "Лента",
-      "tape_desc": "Для углов и швов"
+      "tape_desc": "Углы и швы"
     },
     "section": {
       "materials": "Необходимые материалы"
@@ -6625,9 +6633,9 @@
     },
     "option": {
       "sill": "Подоконник",
-      "sill_desc": "Учитывать подоконники",
+      "sill_desc": "Подоконники",
       "slopes": "Откосы",
-      "slopes_desc": "Учитывать откосы"
+      "slopes_desc": "Отделка"
     },
     "result": {
       "area": "Площадь",
@@ -6639,7 +6647,7 @@
       "anchors": "Анкера",
       "anchors_desc": "Крепёж",
       "foam": "Пена",
-      "foam_desc": "Баллон ~10 п.м.",
+      "foam_desc": "Баллон",
       "sealant": "Герметик",
       "sealant_desc": "Тубы",
       "sill": "Подоконник",

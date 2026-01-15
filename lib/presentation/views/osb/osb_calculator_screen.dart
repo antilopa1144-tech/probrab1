@@ -527,7 +527,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
             Expanded(
               child: TypeSelectorCard(
                 icon: Icons.view_week,
-                title: 'Перегородка',
+                title: 'Стена',
                 subtitle: 'Двойная',
                 isSelected: _constructionType == OsbConstructionType.partition,
                 accentColor: accentColor,
