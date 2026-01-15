@@ -80,7 +80,7 @@ class CalculatorDesignSystem {
 
   /// Текст в результатах header (верхняя панель)
   static const headerLabel = TextStyle(
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: FontWeight.bold,
     letterSpacing: 0.8,
   );
