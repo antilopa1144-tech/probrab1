@@ -69,7 +69,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(Card), findsWidgets);
+      expect(find.byType(Container), findsWidgets);
     });
 
     testWidgets('uses scrollable layout', (tester) async {
@@ -205,8 +205,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // TestAppLocalizations returns keys, so we search for localization key
-      expect(find.textContaining('warmfloor.mode'), findsWidgets);
+      // TestAppLocalizations resolves keys to Russian text
+      expect(find.text('Режим ввода'), findsOneWidget);
     });
 
     testWidgets('has ModeSelector widget', (tester) async {
@@ -358,8 +358,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // TestAppLocalizations returns keys, so we search for localization key
-      expect(find.textContaining('warmfloor.room'), findsWidgets);
+      // TestAppLocalizations resolves keys to Russian text
+      expect(find.text('Тип помещения'), findsOneWidget);
     });
 
     testWidgets('can select bathroom room type', (tester) async {

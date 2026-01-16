@@ -17,48 +17,79 @@ const ProjectV2Schema = CollectionSchema(
   name: r'ProjectV2',
   id: 7097011670257546866,
   properties: {
-    r'color': PropertySchema(id: 0, name: r'color', type: IsarType.long),
-    r'createdAt': PropertySchema(
+    r'address': PropertySchema(id: 0, name: r'address', type: IsarType.string),
+    r'budgetSpent': PropertySchema(
       id: 1,
+      name: r'budgetSpent',
+      type: IsarType.double,
+    ),
+    r'budgetTotal': PropertySchema(
+      id: 2,
+      name: r'budgetTotal',
+      type: IsarType.double,
+    ),
+    r'color': PropertySchema(id: 3, name: r'color', type: IsarType.long),
+    r'createdAt': PropertySchema(
+      id: 4,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
+    r'deadline': PropertySchema(
+      id: 5,
+      name: r'deadline',
+      type: IsarType.dateTime,
+    ),
     r'description': PropertySchema(
-      id: 2,
+      id: 6,
       name: r'description',
       type: IsarType.string,
     ),
     r'isFavorite': PropertySchema(
-      id: 3,
+      id: 7,
       name: r'isFavorite',
       type: IsarType.bool,
     ),
-    r'name': PropertySchema(id: 4, name: r'name', type: IsarType.string),
-    r'notes': PropertySchema(id: 5, name: r'notes', type: IsarType.string),
+    r'name': PropertySchema(id: 8, name: r'name', type: IsarType.string),
+    r'notes': PropertySchema(id: 9, name: r'notes', type: IsarType.string),
     r'status': PropertySchema(
-      id: 6,
+      id: 10,
       name: r'status',
       type: IsarType.string,
       enumMap: _ProjectV2statusEnumValueMap,
     ),
-    r'tags': PropertySchema(id: 7, name: r'tags', type: IsarType.stringList),
+    r'tags': PropertySchema(id: 11, name: r'tags', type: IsarType.stringList),
+    r'tasksCompleted': PropertySchema(
+      id: 12,
+      name: r'tasksCompleted',
+      type: IsarType.long,
+    ),
+    r'tasksTotal': PropertySchema(
+      id: 13,
+      name: r'tasksTotal',
+      type: IsarType.long,
+    ),
+    r'thumbnailUrl': PropertySchema(
+      id: 14,
+      name: r'thumbnailUrl',
+      type: IsarType.string,
+    ),
     r'totalCost': PropertySchema(
-      id: 8,
+      id: 15,
       name: r'totalCost',
       type: IsarType.double,
     ),
     r'totalLaborCost': PropertySchema(
-      id: 9,
+      id: 16,
       name: r'totalLaborCost',
       type: IsarType.double,
     ),
     r'totalMaterialCost': PropertySchema(
-      id: 10,
+      id: 17,
       name: r'totalMaterialCost',
       type: IsarType.double,
     ),
     r'updatedAt': PropertySchema(
-      id: 11,
+      id: 18,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
@@ -120,6 +151,12 @@ int _projectV2EstimateSize(
 ) {
   var bytesCount = offsets.last;
   {
+    final value = object.address;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.description;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -140,6 +177,12 @@ int _projectV2EstimateSize(
       bytesCount += value.length * 3;
     }
   }
+  {
+    final value = object.thumbnailUrl;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -149,18 +192,25 @@ void _projectV2Serialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.color);
-  writer.writeDateTime(offsets[1], object.createdAt);
-  writer.writeString(offsets[2], object.description);
-  writer.writeBool(offsets[3], object.isFavorite);
-  writer.writeString(offsets[4], object.name);
-  writer.writeString(offsets[5], object.notes);
-  writer.writeString(offsets[6], object.status.name);
-  writer.writeStringList(offsets[7], object.tags);
-  writer.writeDouble(offsets[8], object.totalCost);
-  writer.writeDouble(offsets[9], object.totalLaborCost);
-  writer.writeDouble(offsets[10], object.totalMaterialCost);
-  writer.writeDateTime(offsets[11], object.updatedAt);
+  writer.writeString(offsets[0], object.address);
+  writer.writeDouble(offsets[1], object.budgetSpent);
+  writer.writeDouble(offsets[2], object.budgetTotal);
+  writer.writeLong(offsets[3], object.color);
+  writer.writeDateTime(offsets[4], object.createdAt);
+  writer.writeDateTime(offsets[5], object.deadline);
+  writer.writeString(offsets[6], object.description);
+  writer.writeBool(offsets[7], object.isFavorite);
+  writer.writeString(offsets[8], object.name);
+  writer.writeString(offsets[9], object.notes);
+  writer.writeString(offsets[10], object.status.name);
+  writer.writeStringList(offsets[11], object.tags);
+  writer.writeLong(offsets[12], object.tasksCompleted);
+  writer.writeLong(offsets[13], object.tasksTotal);
+  writer.writeString(offsets[14], object.thumbnailUrl);
+  writer.writeDouble(offsets[15], object.totalCost);
+  writer.writeDouble(offsets[16], object.totalLaborCost);
+  writer.writeDouble(offsets[17], object.totalMaterialCost);
+  writer.writeDateTime(offsets[18], object.updatedAt);
 }
 
 ProjectV2 _projectV2Deserialize(
@@ -170,18 +220,25 @@ ProjectV2 _projectV2Deserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = ProjectV2();
-  object.color = reader.readLongOrNull(offsets[0]);
-  object.createdAt = reader.readDateTime(offsets[1]);
-  object.description = reader.readStringOrNull(offsets[2]);
+  object.address = reader.readStringOrNull(offsets[0]);
+  object.budgetSpent = reader.readDouble(offsets[1]);
+  object.budgetTotal = reader.readDouble(offsets[2]);
+  object.color = reader.readLongOrNull(offsets[3]);
+  object.createdAt = reader.readDateTime(offsets[4]);
+  object.deadline = reader.readDateTimeOrNull(offsets[5]);
+  object.description = reader.readStringOrNull(offsets[6]);
   object.id = id;
-  object.isFavorite = reader.readBool(offsets[3]);
-  object.name = reader.readString(offsets[4]);
-  object.notes = reader.readStringOrNull(offsets[5]);
+  object.isFavorite = reader.readBool(offsets[7]);
+  object.name = reader.readString(offsets[8]);
+  object.notes = reader.readStringOrNull(offsets[9]);
   object.status =
-      _ProjectV2statusValueEnumMap[reader.readStringOrNull(offsets[6])] ??
+      _ProjectV2statusValueEnumMap[reader.readStringOrNull(offsets[10])] ??
       ProjectStatus.planning;
-  object.tags = reader.readStringList(offsets[7]) ?? [];
-  object.updatedAt = reader.readDateTime(offsets[11]);
+  object.tags = reader.readStringList(offsets[11]) ?? [];
+  object.tasksCompleted = reader.readLong(offsets[12]);
+  object.tasksTotal = reader.readLong(offsets[13]);
+  object.thumbnailUrl = reader.readStringOrNull(offsets[14]);
+  object.updatedAt = reader.readDateTime(offsets[18]);
   return object;
 }
 
@@ -193,30 +250,44 @@ P _projectV2DeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 2:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 3:
-      return (reader.readBool(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 4:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 5:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 6:
+      return (reader.readStringOrNull(offset)) as P;
+    case 7:
+      return (reader.readBool(offset)) as P;
+    case 8:
+      return (reader.readString(offset)) as P;
+    case 9:
+      return (reader.readStringOrNull(offset)) as P;
+    case 10:
       return (_ProjectV2statusValueEnumMap[reader.readStringOrNull(offset)] ??
               ProjectStatus.planning)
           as P;
-    case 7:
-      return (reader.readStringList(offset) ?? []) as P;
-    case 8:
-      return (reader.readDouble(offset)) as P;
-    case 9:
-      return (reader.readDouble(offset)) as P;
-    case 10:
-      return (reader.readDouble(offset)) as P;
     case 11:
+      return (reader.readStringList(offset) ?? []) as P;
+    case 12:
+      return (reader.readLong(offset)) as P;
+    case 13:
+      return (reader.readLong(offset)) as P;
+    case 14:
+      return (reader.readStringOrNull(offset)) as P;
+    case 15:
+      return (reader.readDouble(offset)) as P;
+    case 16:
+      return (reader.readDouble(offset)) as P;
+    case 17:
+      return (reader.readDouble(offset)) as P;
+    case 18:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -229,6 +300,7 @@ const _ProjectV2statusEnumValueMap = {
   r'onHold': r'onHold',
   r'completed': r'completed',
   r'cancelled': r'cancelled',
+  r'problem': r'problem',
 };
 const _ProjectV2statusValueEnumMap = {
   r'planning': ProjectStatus.planning,
@@ -236,6 +308,7 @@ const _ProjectV2statusValueEnumMap = {
   r'onHold': ProjectStatus.onHold,
   r'completed': ProjectStatus.completed,
   r'cancelled': ProjectStatus.cancelled,
+  r'problem': ProjectStatus.problem,
 };
 
 Id _projectV2GetId(ProjectV2 object) {
@@ -505,6 +578,319 @@ extension ProjectV2QueryWhere
 
 extension ProjectV2QueryFilter
     on QueryBuilder<ProjectV2, ProjectV2, QFilterCondition> {
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> addressIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'address'),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> addressIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'address'),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> addressEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'address',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> addressGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'address',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> addressLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'address',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> addressBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'address',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> addressStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'address',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> addressEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'address',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> addressContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'address',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> addressMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'address',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> addressIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'address', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  addressIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'address', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> budgetSpentEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'budgetSpent',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  budgetSpentGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'budgetSpent',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> budgetSpentLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'budgetSpent',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> budgetSpentBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'budgetSpent',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> budgetTotalEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'budgetTotal',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  budgetTotalGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'budgetTotal',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> budgetTotalLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'budgetTotal',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> budgetTotalBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'budgetTotal',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> colorIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -628,6 +1014,82 @@ extension ProjectV2QueryFilter
       return query.addFilterCondition(
         FilterCondition.between(
           property: r'createdAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> deadlineIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'deadline'),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  deadlineIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'deadline'),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> deadlineEqualTo(
+    DateTime? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'deadline', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> deadlineGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'deadline',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> deadlineLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'deadline',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> deadlineBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'deadline',
           lower: lower,
           includeLower: includeLower,
           upper: upper,
@@ -1525,6 +1987,280 @@ extension ProjectV2QueryFilter
     });
   }
 
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  tasksCompletedEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'tasksCompleted', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  tasksCompletedGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tasksCompleted',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  tasksCompletedLessThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tasksCompleted',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  tasksCompletedBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tasksCompleted',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> tasksTotalEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'tasksTotal', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  tasksTotalGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tasksTotal',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> tasksTotalLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tasksTotal',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> tasksTotalBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tasksTotal',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  thumbnailUrlIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'thumbnailUrl'),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  thumbnailUrlIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'thumbnailUrl'),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> thumbnailUrlEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'thumbnailUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  thumbnailUrlGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'thumbnailUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  thumbnailUrlLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'thumbnailUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> thumbnailUrlBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'thumbnailUrl',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  thumbnailUrlStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'thumbnailUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  thumbnailUrlEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'thumbnailUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  thumbnailUrlContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'thumbnailUrl',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> thumbnailUrlMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'thumbnailUrl',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  thumbnailUrlIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'thumbnailUrl', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition>
+  thumbnailUrlIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'thumbnailUrl', value: ''),
+      );
+    });
+  }
+
   QueryBuilder<ProjectV2, ProjectV2, QAfterFilterCondition> totalCostEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -1876,6 +2612,42 @@ extension ProjectV2QueryLinks
 }
 
 extension ProjectV2QuerySortBy on QueryBuilder<ProjectV2, ProjectV2, QSortBy> {
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByAddress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'address', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByAddressDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'address', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByBudgetSpent() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'budgetSpent', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByBudgetSpentDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'budgetSpent', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByBudgetTotal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'budgetTotal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByBudgetTotalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'budgetTotal', Sort.desc);
+    });
+  }
+
   QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByColor() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'color', Sort.asc);
@@ -1897,6 +2669,18 @@ extension ProjectV2QuerySortBy on QueryBuilder<ProjectV2, ProjectV2, QSortBy> {
   QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByDeadline() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deadline', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByDeadlineDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deadline', Sort.desc);
     });
   }
 
@@ -1960,6 +2744,42 @@ extension ProjectV2QuerySortBy on QueryBuilder<ProjectV2, ProjectV2, QSortBy> {
     });
   }
 
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByTasksCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'tasksCompleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByTasksCompletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'tasksCompleted', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByTasksTotal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'tasksTotal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByTasksTotalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'tasksTotal', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByThumbnailUrl() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'thumbnailUrl', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByThumbnailUrlDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'thumbnailUrl', Sort.desc);
+    });
+  }
+
   QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> sortByTotalCost() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalCost', Sort.asc);
@@ -2012,6 +2832,42 @@ extension ProjectV2QuerySortBy on QueryBuilder<ProjectV2, ProjectV2, QSortBy> {
 
 extension ProjectV2QuerySortThenBy
     on QueryBuilder<ProjectV2, ProjectV2, QSortThenBy> {
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByAddress() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'address', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByAddressDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'address', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByBudgetSpent() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'budgetSpent', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByBudgetSpentDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'budgetSpent', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByBudgetTotal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'budgetTotal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByBudgetTotalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'budgetTotal', Sort.desc);
+    });
+  }
+
   QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByColor() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'color', Sort.asc);
@@ -2033,6 +2889,18 @@ extension ProjectV2QuerySortThenBy
   QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByDeadline() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deadline', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByDeadlineDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'deadline', Sort.desc);
     });
   }
 
@@ -2108,6 +2976,42 @@ extension ProjectV2QuerySortThenBy
     });
   }
 
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByTasksCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'tasksCompleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByTasksCompletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'tasksCompleted', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByTasksTotal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'tasksTotal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByTasksTotalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'tasksTotal', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByThumbnailUrl() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'thumbnailUrl', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByThumbnailUrlDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'thumbnailUrl', Sort.desc);
+    });
+  }
+
   QueryBuilder<ProjectV2, ProjectV2, QAfterSortBy> thenByTotalCost() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalCost', Sort.asc);
@@ -2160,6 +3064,26 @@ extension ProjectV2QuerySortThenBy
 
 extension ProjectV2QueryWhereDistinct
     on QueryBuilder<ProjectV2, ProjectV2, QDistinct> {
+  QueryBuilder<ProjectV2, ProjectV2, QDistinct> distinctByAddress({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'address', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QDistinct> distinctByBudgetSpent() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'budgetSpent');
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QDistinct> distinctByBudgetTotal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'budgetTotal');
+    });
+  }
+
   QueryBuilder<ProjectV2, ProjectV2, QDistinct> distinctByColor() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'color');
@@ -2169,6 +3093,12 @@ extension ProjectV2QueryWhereDistinct
   QueryBuilder<ProjectV2, ProjectV2, QDistinct> distinctByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'createdAt');
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QDistinct> distinctByDeadline() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'deadline');
     });
   }
 
@@ -2216,6 +3146,26 @@ extension ProjectV2QueryWhereDistinct
     });
   }
 
+  QueryBuilder<ProjectV2, ProjectV2, QDistinct> distinctByTasksCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'tasksCompleted');
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QDistinct> distinctByTasksTotal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'tasksTotal');
+    });
+  }
+
+  QueryBuilder<ProjectV2, ProjectV2, QDistinct> distinctByThumbnailUrl({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'thumbnailUrl', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<ProjectV2, ProjectV2, QDistinct> distinctByTotalCost() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'totalCost');
@@ -2249,6 +3199,24 @@ extension ProjectV2QueryProperty
     });
   }
 
+  QueryBuilder<ProjectV2, String?, QQueryOperations> addressProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'address');
+    });
+  }
+
+  QueryBuilder<ProjectV2, double, QQueryOperations> budgetSpentProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'budgetSpent');
+    });
+  }
+
+  QueryBuilder<ProjectV2, double, QQueryOperations> budgetTotalProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'budgetTotal');
+    });
+  }
+
   QueryBuilder<ProjectV2, int?, QQueryOperations> colorProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'color');
@@ -2258,6 +3226,12 @@ extension ProjectV2QueryProperty
   QueryBuilder<ProjectV2, DateTime, QQueryOperations> createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'createdAt');
+    });
+  }
+
+  QueryBuilder<ProjectV2, DateTime?, QQueryOperations> deadlineProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'deadline');
     });
   }
 
@@ -2294,6 +3268,24 @@ extension ProjectV2QueryProperty
   QueryBuilder<ProjectV2, List<String>, QQueryOperations> tagsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tags');
+    });
+  }
+
+  QueryBuilder<ProjectV2, int, QQueryOperations> tasksCompletedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'tasksCompleted');
+    });
+  }
+
+  QueryBuilder<ProjectV2, int, QQueryOperations> tasksTotalProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'tasksTotal');
+    });
+  }
+
+  QueryBuilder<ProjectV2, String?, QQueryOperations> thumbnailUrlProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'thumbnailUrl');
     });
   }
 

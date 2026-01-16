@@ -49,7 +49,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Should have category filter labels
-      expect(find.text('category.all'), findsOneWidget);
+      expect(find.text('Все'), findsOneWidget);
     });
 
     testWidgets('disposes correctly', (tester) async {

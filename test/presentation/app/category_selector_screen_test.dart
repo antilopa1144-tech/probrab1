@@ -24,6 +24,7 @@ void main() {
 
     testWidgets('renders correctly', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -41,6 +42,7 @@ void main() {
 
     testWidgets('displays AppBar with area title', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -54,11 +56,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.byType(AppBar), findsOneWidget);
-      expect(find.text(testArea.title), findsOneWidget);
+      // testArea.title is a localization key, the screen translates it
+      expect(find.text('Внутренняя отделка'), findsOneWidget);
     });
 
     testWidgets('displays area subtitle', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -71,11 +75,13 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.text(testArea.subtitle), findsOneWidget);
+      // testArea.subtitle is a localization key, the screen translates it
+      expect(find.text('Стены, потолки, полы, перегородки и окна'), findsOneWidget);
     });
 
     testWidgets('has GridView for sections', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -93,6 +99,7 @@ void main() {
 
     testWidgets('displays section cards', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -113,6 +120,7 @@ void main() {
 
     testWidgets('can tap on section card', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -126,8 +134,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       if (testArea.sections.isNotEmpty) {
-        final sectionTitle = testArea.sections.first.title;
-        final sectionCard = find.text(sectionTitle);
+        // Section titles are localization keys that get translated
+        // Find translated section title 'Стены' (walls)
+        final sectionCard = find.text('Стены');
 
         if (sectionCard.evaluate().isNotEmpty) {
           await tester.tap(sectionCard);
@@ -142,6 +151,7 @@ void main() {
 
     testWidgets('AppBar is displayed', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(
@@ -160,6 +170,7 @@ void main() {
 
     testWidgets('disposes correctly', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: CategorySelectorScreen(

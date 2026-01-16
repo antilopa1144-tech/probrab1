@@ -343,7 +343,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
         ],
       ),
     );

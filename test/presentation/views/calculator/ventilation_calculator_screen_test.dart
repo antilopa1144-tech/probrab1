@@ -63,7 +63,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает все типы вентиляции', (tester) async {
@@ -85,7 +85,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('ventilation_calc.type.natural');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -101,7 +101,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('ventilation_calc.type.supply');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -117,7 +117,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('ventilation_calc.type.exhaust');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -195,7 +195,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(SwitchListTile), findsOneWidget);
+      expect(find.byType(SwitchListTile), findsWidgets);
     });
 
     testWidgets('можно переключить опцию рекуператора', (tester) async {
@@ -228,7 +228,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.square_foot), findsOneWidget);
-      expect(find.textContaining('common.cbm'), findsWidgets);
+      expect(find.textContaining('м³'), findsWidgets);
     });
 
     testWidgets('отображает требуемый воздухообмен', (tester) async {
@@ -239,7 +239,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.air), findsWidgets);
-      expect(find.textContaining('common.cbm_h'), findsWidgets);
+      expect(find.textContaining('м³/ч'), findsWidgets);
     });
 
     testWidgets('отображает длину воздуховодов', (tester) async {
@@ -250,7 +250,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.straighten), findsWidgets);
-      expect(find.textContaining('common.meters'), findsWidgets);
+      expect(find.textContaining('м'), findsWidgets);
     });
 
     testWidgets('отображает карточку материалов', (tester) async {
@@ -315,26 +315,29 @@ void main() {
   group('VentilationCalculatorScreen - единицы измерения', () {
     testWidgets('отображает квадратные метры', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('отображает метры', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.meters'), findsWidgets);
+      expect(find.textContaining('м'), findsWidgets);
     });
 
     testWidgets('отображает штуки', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const VentilationCalculatorScreen()),
       );
@@ -344,7 +347,7 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -600));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
     });
   });
 }

@@ -17,8 +17,8 @@ void main() {
         ),
       );
 
-      // Should show the key as fallback text
-      expect(find.textContaining('chart.no_data'), findsOneWidget);
+      // Should show localized "Нет данных" text
+      expect(find.text('Нет данных'), findsOneWidget);
     });
 
     testWidgets('renders with material data', (tester) async {
@@ -93,8 +93,8 @@ void main() {
         ),
       );
 
-      // Shows no data key as fallback
-      expect(find.textContaining('chart.no_data'), findsOneWidget);
+      // Should show localized "Нет данных" text
+      expect(find.text('Нет данных'), findsOneWidget);
     });
 
     testWidgets('renders with cost data', (tester) async {

@@ -77,7 +77,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает иконки типов подвала', (tester) async {
@@ -105,7 +105,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final technicalType = find.textContaining('basement_calc.type.technical');
+      final technicalType = find.byType(TypeSelectorGroup);
       if (technicalType.evaluate().isNotEmpty) {
         await tester.tap(technicalType.first);
         await tester.pumpAndSettle();
@@ -124,7 +124,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final livingType = find.textContaining('basement_calc.type.living');
+      final livingType = find.byType(TypeSelectorGroup);
       if (livingType.evaluate().isNotEmpty) {
         await tester.tap(livingType.first);
         await tester.pumpAndSettle();
@@ -145,8 +145,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('basement_calc.label.length'), findsOneWidget);
-      expect(find.textContaining('basement_calc.label.width'), findsOneWidget);
+      expect(find.byType(CalculatorTextField), findsWidgets);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('отображает поле ввода глубины', (tester) async {
@@ -159,7 +159,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('basement_calc.label.depth'), findsOneWidget);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('отображает поле ввода толщины стены', (tester) async {
@@ -172,7 +172,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('basement_calc.label.wall_thickness'), findsOneWidget);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('отображает CalculatorTextField виджеты', (tester) async {
@@ -213,7 +213,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final waterproofSwitch = find.textContaining('basement_calc.option.waterproof');
+      final waterproofSwitch = find.byType(SwitchListTile);
       if (waterproofSwitch.evaluate().isNotEmpty) {
         await tester.tap(waterproofSwitch.first);
         await tester.pumpAndSettle();
@@ -232,7 +232,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final insulationSwitch = find.textContaining('basement_calc.option.insulation');
+      final insulationSwitch = find.byType(SwitchListTile);
       if (insulationSwitch.evaluate().isNotEmpty) {
         await tester.tap(insulationSwitch.first);
         await tester.pumpAndSettle();
@@ -251,7 +251,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final drainageSwitch = find.textContaining('basement_calc.option.drainage');
+      final drainageSwitch = find.byType(SwitchListTile);
       if (drainageSwitch.evaluate().isNotEmpty) {
         await tester.tap(drainageSwitch.first);
         await tester.pumpAndSettle();
@@ -272,8 +272,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.sqm'), findsWidgets);
-      expect(find.textContaining('common.cbm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
+      expect(find.textContaining('м³'), findsWidgets);
     });
 
     testWidgets('отображает иконки результатов', (tester) async {

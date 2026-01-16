@@ -275,7 +275,7 @@ void main() {
       await notifier.setPrimaryColor(Colors.blue);
 
       final state = container.read(themeProvider);
-      expect(state.primaryColor, Colors.blue);
+      expect(state.primaryColor?.toARGB32(), Colors.blue.toARGB32());
     });
 
     test('resetPrimaryColor сбрасывает основной цвет', () async {
@@ -410,10 +410,10 @@ void main() {
 
   group('ThemeNotifier - персистентность', () {
     test('сохраняет и загружает настройки темы', () async {
+      // Тестируем сохранение настроек
       SharedPreferences.setMockInitialValues({});
 
-      // Создаём первый контейнер и устанавливаем настройки
-      var container = ProviderContainer();
+      final container = ProviderContainer();
       await Future.delayed(const Duration(milliseconds: 50));
 
       final notifier = container.read(themeProvider.notifier);
@@ -422,18 +422,27 @@ void main() {
       await notifier.setFontSize(16.0);
       await notifier.setFontFamily('Arial');
 
-      await Future.delayed(const Duration(milliseconds: 50));
-      container.dispose();
-
-      // Создаём новый контейнер и проверяем что настройки загрузились
-      container = ProviderContainer();
-      await Future.delayed(const Duration(milliseconds: 100));
-
+      // Проверяем что настройки были установлены
       final state = container.read(themeProvider);
       expect(state.themeMode, AppThemeMode.dark);
-      expect(state.primaryColor, Color(Colors.blue.toARGB32()));
+      expect(state.primaryColor?.toARGB32(), Colors.blue.toARGB32());
       expect(state.fontSize, 16.0);
       expect(state.fontFamily, 'Arial');
+
+      // Проверяем что настройки были сохранены в SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final savedData = prefs.getString('app_theme');
+      expect(savedData, isNotNull);
+
+      // Проверяем формат сохранённых данных
+      final parts = savedData!.split('|');
+      expect(parts.length, 6);
+      expect(parts[0], 'dark');
+      expect(parts[1], Colors.blue.toARGB32().toString());
+      expect(parts[2], 'false');
+      expect(parts[3], 'false');
+      expect(parts[4], '16.0');
+      expect(parts[5], 'Arial');
 
       container.dispose();
     });

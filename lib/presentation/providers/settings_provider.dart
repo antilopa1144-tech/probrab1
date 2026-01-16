@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../core/services/notification_service.dart';
+
 /// Настройки приложения
 class AppSettings {
   final String region;
@@ -123,6 +125,12 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   Future<void> updateNotifications(bool enabled) async {
     state = state.copyWith(notificationsEnabled: enabled);
     await _saveSettings();
+
+    // Sync with NotificationService
+    await NotificationService.setNotificationsEnabled(enabled);
+    if (enabled) {
+      await NotificationService.requestPermission();
+    }
   }
 
   Future<void> updateUnitSystem(String unitSystem) async {

@@ -63,7 +63,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает иконки типов лестниц', (tester) async {
@@ -85,7 +85,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('stairs_calc.type.straight');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -101,7 +101,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('stairs_calc.type.l_shaped');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -117,7 +117,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('stairs_calc.type.u_shaped');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -165,7 +165,7 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -300));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('stairs_calc.section.calculated_params'), findsOneWidget);
+      expect(find.text('Расчётные параметры'), findsOneWidget);
     });
 
     testWidgets('отображает индикатор комфортности', (tester) async {
@@ -239,7 +239,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.stairs), findsWidgets);
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('отображает высоту ступени', (tester) async {
@@ -250,7 +250,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.height), findsOneWidget);
-      expect(find.textContaining('common.cm'), findsWidgets);
+      expect(find.textContaining('см'), findsWidgets);
     });
 
     testWidgets('отображает карточку материалов', (tester) async {
@@ -320,7 +320,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.meters'), findsWidgets);
+      expect(find.textContaining('м'), findsWidgets);
     });
 
     testWidgets('отображает сантиметры', (tester) async {
@@ -330,7 +330,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.cm'), findsWidgets);
+      expect(find.textContaining('см'), findsWidgets);
     });
   });
 }

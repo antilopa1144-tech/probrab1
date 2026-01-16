@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
+import '../../../core/localization/app_localizations.dart';
 
 /// Карточка полезных советов для калькуляторов.
 ///
@@ -51,7 +52,7 @@ class TipsCard extends StatelessWidget {
   /// Акцентный цвет для чек-марок
   final Color accentColor;
 
-  /// Заголовок карточки (по умолчанию 'Полезные советы')
+  /// Заголовок карточки (по умолчанию из локализации 'common.tips')
   final String? title;
 
   /// Иконка заголовка (по умолчанию lightbulb_outline)
@@ -71,6 +72,9 @@ class TipsCard extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    final loc = AppLocalizations.of(context);
+    final displayTitle = title ?? loc.translate('common.tips');
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -88,7 +92,7 @@ class TipsCard extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  title ?? 'Полезные советы',
+                  displayTitle,
                   style: CalculatorDesignSystem.titleMedium.copyWith(
                     color: CalculatorColors.textPrimary,
                   ),

@@ -35,7 +35,7 @@ void main() {
 
       await tester.pump();
 
-      expect(find.textContaining('gutters_calc'), findsWidgets);
+      expect(find.textContaining('Водостоки'), findsWidgets);
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
@@ -49,8 +49,8 @@ void main() {
       await tester.pump();
 
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.meters'), findsWidgets);
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      expect(find.textContaining('м'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
@@ -79,7 +79,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
       expect(find.byIcon(Icons.water_drop), findsWidgets); // plastic
       expect(find.byIcon(Icons.iron), findsWidgets); // metal
       expect(find.byIcon(Icons.brightness_7), findsWidgets); // copper
@@ -95,7 +95,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final plasticOption = find.textContaining('gutters_calc.type.plastic');
+      final plasticOption = find.byType(TypeSelectorGroup);
       if (plasticOption.evaluate().isNotEmpty) {
         await tester.tap(plasticOption.first);
         await tester.pumpAndSettle();
@@ -114,7 +114,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final metalOption = find.textContaining('gutters_calc.type.metal');
+      final metalOption = find.byType(TypeSelectorGroup);
       if (metalOption.evaluate().isNotEmpty) {
         await tester.tap(metalOption.first);
         await tester.pumpAndSettle();
@@ -133,7 +133,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final copperOption = find.textContaining('gutters_calc.type.copper');
+      final copperOption = find.byType(TypeSelectorGroup);
       if (copperOption.evaluate().isNotEmpty) {
         await tester.tap(copperOption.first);
         await tester.pumpAndSettle();
@@ -155,9 +155,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(CalculatorTextField), findsWidgets);
-      expect(find.textContaining('gutters_calc.label.roof_length'), findsWidgets);
-      expect(find.textContaining('gutters_calc.label.roof_width'), findsWidgets);
-      expect(find.textContaining('gutters_calc.label.wall_height'), findsWidgets);
+      expect(find.textContaining('Длина крыши'), findsWidgets);
+      expect(find.textContaining('Ширина крыши'), findsWidgets);
+      expect(find.textContaining('Высота стены'), findsWidgets);
     });
 
     testWidgets('отображает слайдер количества водостоков', (tester) async {
@@ -171,7 +171,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(Slider), findsWidgets);
-      expect(find.textContaining('gutters_calc.label.downpipes_count'), findsWidgets);
+      expect(find.textContaining('Количество труб'), findsWidgets);
     });
 
     testWidgets('можно регулировать количество водостоков', (tester) async {
@@ -203,7 +203,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('gutters_calc.downpipes_hint'), findsWidgets);
+      expect(find.textContaining('Рекомендуется 1 труба'), findsWidgets);
     });
   });
 
@@ -219,7 +219,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(SwitchListTile), findsWidgets);
-      expect(find.textContaining('gutters_calc.option.heating'), findsWidgets);
+      expect(find.textContaining('Обогрев'), findsWidgets);
     });
 
     testWidgets('можно включить/выключить обогрев', (tester) async {
@@ -232,7 +232,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final heatingSwitch = find.textContaining('gutters_calc.option.heating');
+      final heatingSwitch = find.byType(SwitchListTile);
       if (heatingSwitch.evaluate().isNotEmpty) {
         final switches = find.byType(Switch);
         if (switches.evaluate().isNotEmpty) {

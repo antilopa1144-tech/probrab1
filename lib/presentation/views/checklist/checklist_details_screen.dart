@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/database/database_provider.dart' show isarProvider;
-import '../../../data/repositories/checklist_repository.dart';
 import '../../../domain/models/checklist.dart';
+import '../../../presentation/providers/checklist_provider.dart';
 
-/// Экран деталей чек-листа
-class ChecklistDetailsScreen extends ConsumerStatefulWidget {
+/// Экран деталей чек-листа (переписан для использования Riverpod провайдеров)
+class ChecklistDetailsScreen extends ConsumerWidget {
   final int checklistId;
 
   const ChecklistDetailsScreen({
@@ -14,77 +13,265 @@ class ChecklistDetailsScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ChecklistDetailsScreen> createState() =>
-      _ChecklistDetailsScreenState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final checklistAsync = ref.watch(checklistProvider(checklistId));
+
+    return checklistAsync.when(
+      loading: () => Scaffold(
+        appBar: AppBar(
+          title: const Text('Чек-лист'),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (error, stack) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Чек-лист'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline_rounded,
+                size: 64,
+                color: theme.colorScheme.error,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Чек-лист не найден',
+                style: theme.textTheme.titleMedium,
+              ),
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.arrow_back),
+                label: const Text('Назад'),
+              ),
+            ],
+          ),
+        ),
+      ),
+      data: (checklist) {
+        if (checklist == null) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Чек-лист'),
+            ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline_rounded,
+                    size: 64,
+                    color: theme.colorScheme.error,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Чек-лист не найден',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 24),
+                  FilledButton.icon(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.arrow_back),
+                    label: const Text('Назад'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return _ChecklistDetailsContent(
+          checklist: checklist,
+        );
+      },
+    );
+  }
 }
 
-class _ChecklistDetailsScreenState
-    extends ConsumerState<ChecklistDetailsScreen> {
-  RenovationChecklist? _checklist;
-  List<ChecklistItem> _items = [];
-  bool _isLoading = true;
-  String? _error;
+/// Контент экрана деталей чек-листа
+class _ChecklistDetailsContent extends ConsumerWidget {
+  final RenovationChecklist checklist;
+
+  const _ChecklistDetailsContent({
+    required this.checklist,
+  });
 
   @override
-  void initState() {
-    super.initState();
-    _loadChecklist();
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final items = checklist.items.toList();
+    final completedCount = items.where((i) => i.isCompleted).length;
+    final totalCount = items.length;
+    final progress = totalCount > 0 ? completedCount / totalCount : 0.0;
 
-  Future<void> _loadChecklist() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      final isar = await ref.read(isarProvider.future);
-      final repository = ChecklistRepository(isar);
-
-      final checklist = await repository.getChecklistById(widget.checklistId);
-      if (checklist == null) {
-        setState(() {
-          _error = 'Чек-лист не найден';
-          _isLoading = false;
-        });
-        return;
-      }
-
-      final items = await repository.getChecklistItems(widget.checklistId);
-
-      setState(() {
-        _checklist = checklist;
-        _items = items;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = 'Ошибка загрузки: $e';
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _toggleItem(ChecklistItem item) async {
-    try {
-      final isar = await ref.read(isarProvider.future);
-      final repository = ChecklistRepository(isar);
-
-      await repository.toggleChecklistItem(item.id);
-      await _loadChecklist();
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Ошибка: $e'),
-            backgroundColor: Colors.red,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(checklist.name),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_rounded),
+            onPressed: () => _editChecklistName(context, ref, checklist),
+            tooltip: 'Редактировать название',
           ),
-        );
-      }
-    }
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert_rounded),
+            onSelected: (value) {
+              if (value == 'delete') {
+                _deleteChecklist(context, ref, checklist);
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    Icon(Icons.delete_rounded, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text('Удалить чек-лист', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Progress card
+          Card(
+            margin: const EdgeInsets.all(16),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.task_alt_rounded,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Прогресс',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${(progress * 100).round()}%',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: theme.colorScheme.onPrimaryContainer,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      minHeight: 8,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    '$completedCount из $totalCount',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Tasks list or empty state
+          Expanded(
+            child: items.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.checklist_rounded,
+                            size: 80,
+                            color: theme.colorScheme.primary.withValues(alpha: 0.5),
+                          ),
+                          const SizedBox(height: 24),
+                          Text(
+                            'Список задач пуст',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Добавьте первую задачу, чтобы начать отслеживать прогресс вашего ремонта',
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          FilledButton.icon(
+                            onPressed: () => _addNewTask(context, ref, checklist),
+                            icon: const Icon(Icons.add_rounded),
+                            label: const Text('Добавить первую задачу'),
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      return _ChecklistItemCard(
+                        item: item,
+                        checklistId: checklist.id,
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _addNewTask(context, ref, checklist),
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('Добавить задачу'),
+      ),
+    );
   }
 
-  Future<void> _addNewTask() async {
+  Future<void> _addNewTask(BuildContext context, WidgetRef ref, RenovationChecklist checklist) async {
     final controller = TextEditingController();
 
     final result = await showDialog<String>(
@@ -123,25 +310,20 @@ class _ChecklistDetailsScreenState
       ),
     );
 
-    if (result != null && result.isNotEmpty) {
+    if (result != null && result.isNotEmpty && context.mounted) {
       try {
-        final isar = await ref.read(isarProvider.future);
-        final repository = ChecklistRepository(isar);
+        await ref.read(checklistNotifierProvider.notifier).addItem(
+              checklistId: checklist.id,
+              title: result,
+            );
 
-        await repository.createChecklistItem(
-          checklistId: widget.checklistId,
-          title: result,
-        );
-
-        await _loadChecklist();
-
-        if (mounted) {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Задача добавлена')),
           );
         }
       } catch (e) {
-        if (mounted) {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Ошибка: $e'),
@@ -153,10 +335,8 @@ class _ChecklistDetailsScreenState
     }
   }
 
-  Future<void> _editChecklistName() async {
-    if (_checklist == null) return;
-
-    final controller = TextEditingController(text: _checklist!.name);
+  Future<void> _editChecklistName(BuildContext context, WidgetRef ref, RenovationChecklist checklist) async {
+    final controller = TextEditingController(text: checklist.name);
 
     final result = await showDialog<String>(
       context: context,
@@ -188,22 +368,18 @@ class _ChecklistDetailsScreenState
       ),
     );
 
-    if (result != null && result.isNotEmpty && result != _checklist!.name) {
+    if (result != null && result.isNotEmpty && result != checklist.name && context.mounted) {
       try {
-        final isar = await ref.read(isarProvider.future);
-        final repository = ChecklistRepository(isar);
+        checklist.name = result;
+        await ref.read(checklistNotifierProvider.notifier).updateChecklist(checklist);
 
-        _checklist!.name = result;
-        await repository.updateChecklist(_checklist!);
-        await _loadChecklist();
-
-        if (mounted) {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Название обновлено')),
           );
         }
       } catch (e) {
-        if (mounted) {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Ошибка: $e'),
@@ -215,7 +391,259 @@ class _ChecklistDetailsScreenState
     }
   }
 
-  Future<void> _editTask(ChecklistItem item) async {
+  Future<void> _deleteChecklist(BuildContext context, WidgetRef ref, RenovationChecklist checklist) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Удалить чек-лист?'),
+        content: const Text(
+          'Это действие нельзя отменить. Все задачи будут удалены.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Отмена'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: const Text('Удалить'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        await ref.read(checklistNotifierProvider.notifier).deleteChecklist(checklist.id);
+
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Чек-лист удалён')),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Ошибка: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
+  }
+}
+
+/// Карточка элемента чек-листа
+class _ChecklistItemCard extends ConsumerWidget {
+  final ChecklistItem item;
+  final int checklistId;
+
+  const _ChecklistItemCard({
+    required this.item,
+    required this.checklistId,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
+    return Dismissible(
+      key: Key('checklist_item_${item.id}'),
+      background: Container(
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 24),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(
+          Icons.check_circle_rounded,
+          color: theme.colorScheme.onPrimaryContainer,
+        ),
+      ),
+      secondaryBackground: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 24),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.errorContainer,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(
+          Icons.delete_rounded,
+          color: theme.colorScheme.onErrorContainer,
+        ),
+      ),
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.endToStart) {
+          // Swipe to delete
+          return _confirmDeleteTask(context, item);
+        } else {
+          // Swipe to toggle
+          await _toggleItem(context, ref, item);
+          return false;
+        }
+      },
+      child: Card(
+        margin: const EdgeInsets.only(bottom: 12),
+        child: InkWell(
+          onLongPress: () => _showTaskOptions(context, ref, item),
+          borderRadius: BorderRadius.circular(12),
+          child: CheckboxListTile(
+            value: item.isCompleted,
+            onChanged: (_) => _toggleItem(context, ref, item),
+            title: Text(
+              item.title,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                decoration: item.isCompleted ? TextDecoration.lineThrough : null,
+                color: item.isCompleted
+                    ? theme.colorScheme.onSurfaceVariant
+                    : theme.colorScheme.onSurface,
+              ),
+            ),
+            subtitle: item.description != null && item.description!.isNotEmpty
+                ? Text(
+                    item.description!,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  )
+                : null,
+            secondary: item.priority == ChecklistPriority.high
+                ? Icon(
+                    Icons.priority_high_rounded,
+                    color: theme.colorScheme.error,
+                  )
+                : null,
+            controlAffinity: ListTileControlAffinity.leading,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _toggleItem(BuildContext context, WidgetRef ref, ChecklistItem item) async {
+    try {
+      await ref.read(checklistNotifierProvider.notifier).toggleItem(item.id);
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<bool> _confirmDeleteTask(BuildContext context, ChecklistItem item) async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Удалить задачу?'),
+            content: Text('Удалить "${item.title}"?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Отмена'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
+                child: const Text('Удалить'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
+  Future<void> _deleteTask(BuildContext context, WidgetRef ref, ChecklistItem item) async {
+    try {
+      await ref.read(checklistNotifierProvider.notifier).deleteItem(item.id);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Задача удалена')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showTaskOptions(BuildContext context, WidgetRef ref, ChecklistItem item) {
+    final theme = Theme.of(context);
+
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                item.title,
+                style: theme.textTheme.titleMedium,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.edit_rounded),
+              title: const Text('Редактировать'),
+              onTap: () {
+                Navigator.of(context).pop();
+                _editTask(context, ref, item);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_rounded, color: Colors.red),
+              title: const Text('Удалить', style: TextStyle(color: Colors.red)),
+              onTap: () async {
+                Navigator.of(context).pop();
+                if (context.mounted) {
+                  final confirmed = await _confirmDeleteTask(context, item);
+                  if (confirmed && context.mounted) {
+                    _deleteTask(context, ref, item);
+                  }
+                }
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _editTask(BuildContext context, WidgetRef ref, ChecklistItem item) async {
     final controller = TextEditingController(text: item.title);
     final descController = TextEditingController(text: item.description ?? '');
 
@@ -267,24 +695,19 @@ class _ChecklistDetailsScreenState
       ),
     );
 
-    if (result != null && result['title']!.isNotEmpty) {
+    if (result != null && result['title']!.isNotEmpty && context.mounted) {
       try {
-        final isar = await ref.read(isarProvider.future);
-        final repository = ChecklistRepository(isar);
-
         item.title = result['title']!;
-        item.description =
-            result['description']!.isEmpty ? null : result['description'];
-        await repository.updateChecklistItem(item);
-        await _loadChecklist();
+        item.description = result['description']!.isEmpty ? null : result['description'];
+        await ref.read(checklistNotifierProvider.notifier).updateItem(item);
 
-        if (mounted) {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Задача обновлена')),
           );
         }
       } catch (e) {
-        if (mounted) {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Ошибка: $e'),
@@ -294,415 +717,5 @@ class _ChecklistDetailsScreenState
         }
       }
     }
-  }
-
-  Future<bool> _confirmDeleteTask(ChecklistItem item) async {
-    return await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Удалить задачу?'),
-            content: Text('Удалить "${item.title}"?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Отмена'),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                style: FilledButton.styleFrom(
-                  backgroundColor: Colors.red,
-                ),
-                child: const Text('Удалить'),
-              ),
-            ],
-          ),
-        ) ??
-        false;
-  }
-
-  Future<void> _deleteTask(ChecklistItem item) async {
-    try {
-      final isar = await ref.read(isarProvider.future);
-      final repository = ChecklistRepository(isar);
-
-      await repository.deleteChecklistItem(item.id);
-      await _loadChecklist();
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Задача удалена')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Ошибка: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  void _showTaskOptions(ChecklistItem item) {
-    final theme = Theme.of(context);
-
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 12),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(
-                item.title,
-                style: theme.textTheme.titleMedium,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.edit_rounded),
-              title: const Text('Редактировать'),
-              onTap: () {
-                Navigator.of(context).pop();
-                _editTask(item);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete_rounded, color: Colors.red),
-              title:
-                  const Text('Удалить', style: TextStyle(color: Colors.red)),
-              onTap: () async {
-                Navigator.of(context).pop();
-                final confirmed = await _confirmDeleteTask(item);
-                if (confirmed) {
-                  _deleteTask(item);
-                }
-              },
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _deleteChecklist() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Удалить чек-лист?'),
-        content: const Text(
-          'Это действие нельзя отменить. Все задачи будут удалены.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Отмена'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
-            child: const Text('Удалить'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      try {
-        final isar = await ref.read(isarProvider.future);
-        final repository = ChecklistRepository(isar);
-
-        await repository.deleteChecklist(widget.checklistId);
-
-        if (mounted) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Чек-лист удалён')),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Ошибка: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    if (_isLoading) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Чек-лист'),
-        ),
-        body: const Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
-    if (_error != null || _checklist == null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Чек-лист'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline_rounded,
-                size: 64,
-                color: theme.colorScheme.error,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                _error ?? 'Чек-лист не найден',
-                style: theme.textTheme.titleMedium,
-              ),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.arrow_back),
-                label: const Text('Назад'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_checklist!.name),
-        actions: [
-          PopupMenuButton(
-            icon: const Icon(Icons.more_vert_rounded),
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'edit_name',
-                child: Row(
-                  children: [
-                    Icon(Icons.edit_rounded),
-                    SizedBox(width: 12),
-                    Text('Изменить название'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'delete',
-                child: Row(
-                  children: [
-                    Icon(Icons.delete_rounded, color: Colors.red),
-                    SizedBox(width: 12),
-                    Text('Удалить', style: TextStyle(color: Colors.red)),
-                  ],
-                ),
-              ),
-            ],
-            onSelected: (value) {
-              switch (value) {
-                case 'edit_name':
-                  _editChecklistName();
-                  break;
-                case 'delete':
-                  _deleteChecklist();
-                  break;
-              }
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Progress card
-          Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Прогресс',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: theme.colorScheme.onPrimaryContainer,
-                      ),
-                    ),
-                    Text(
-                      '${_checklist!.completedItems} из ${_checklist!.totalItems}',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: theme.colorScheme.onPrimaryContainer,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: LinearProgressIndicator(
-                    value: _checklist!.progress,
-                    minHeight: 8,
-                    backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      theme.colorScheme.primary,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    '${_checklist!.progressPercent}%',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Tasks list
-          Expanded(
-            child: _items.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.checklist_rounded,
-                          size: 64,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Нет задач',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Нажмите + чтобы добавить задачу',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 80),
-                    itemCount: _items.length,
-                    itemBuilder: (context, index) {
-                      final item = _items[index];
-                      return Dismissible(
-                        key: Key('task_${item.id}'),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 20),
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.delete_rounded,
-                            color: Colors.white,
-                          ),
-                        ),
-                        confirmDismiss: (_) => _confirmDeleteTask(item),
-                        onDismissed: (_) => _deleteTask(item),
-                        child: GestureDetector(
-                          onLongPress: () => _showTaskOptions(item),
-                          child: Card(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 4,
-                            ),
-                            child: CheckboxListTile(
-                              value: item.isCompleted,
-                              onChanged: (_) => _toggleItem(item),
-                              title: Text(
-                                item.title,
-                                style: item.isCompleted
-                                    ? const TextStyle(
-                                        decoration: TextDecoration.lineThrough,
-                                        color: Colors.grey,
-                                      )
-                                    : null,
-                              ),
-                              subtitle: item.description != null
-                                  ? Text(
-                                      item.description!,
-                                      style: item.isCompleted
-                                          ? const TextStyle(
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                              color: Colors.grey,
-                                            )
-                                          : null,
-                                    )
-                                  : null,
-                              secondary: item.isCompleted
-                                  ? Icon(
-                                      Icons.check_circle_rounded,
-                                      color: theme.colorScheme.primary,
-                                    )
-                                  : Icon(
-                                      Icons.radio_button_unchecked_rounded,
-                                      color: theme.colorScheme.onSurfaceVariant,
-                                    ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addNewTask,
-        icon: const Icon(Icons.add_rounded),
-        label: const Text('Добавить задачу'),
-      ),
-    );
   }
 }

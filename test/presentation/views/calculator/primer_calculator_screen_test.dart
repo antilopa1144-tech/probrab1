@@ -41,7 +41,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Должен быть селектор типа поверхности
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
 
       // Должны быть иконки для типов поверхности
       expect(find.byIcon(Icons.foundation), findsWidgets);
@@ -94,8 +94,8 @@ void main() {
 
       // Должен отображать результаты
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.sqm'), findsWidgets);
-      expect(find.textContaining('common.liters'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
+      expect(find.textContaining('л'), findsWidgets);
     });
 
     testWidgets('имеет селектор типа грунтовки', (tester) async {

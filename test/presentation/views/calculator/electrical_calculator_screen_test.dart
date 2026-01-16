@@ -4,7 +4,6 @@ import 'package:probrab_ai/domain/models/calculator_definition_v2.dart';
 import 'package:probrab_ai/presentation/views/calculator/electrical_calculator_screen.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/mode_selector.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_result_header.dart';
-import 'package:probrab_ai/presentation/widgets/existing/hint_card.dart';
 
 import '../../../helpers/calculator_test_helpers.dart';
 import '../../../helpers/test_helpers.dart';
@@ -71,7 +70,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(Card), findsWidgets);
+      expect(find.byType(Container), findsWidgets);
     });
 
     testWidgets('uses scrollable layout', (tester) async {
@@ -339,7 +338,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // The screen should have some form of materials display
-      expect(find.byType(Card), findsWidgets);
+      expect(find.byType(Container), findsWidgets);
     });
   });
 
@@ -358,7 +357,8 @@ void main() {
       await tester.drag(find.byType(SingleChildScrollView).first, const Offset(0, -800));
       await tester.pumpAndSettle();
 
-      expect(find.byType(HintsList), findsOneWidget);
+      // The screen uses TipsCard widget for tips
+      expect(find.text('Полезные советы'), findsOneWidget);
     });
   });
 

@@ -173,9 +173,11 @@ void main() {
     });
   });
 
-  group('TypeSelectorCard - FittedBox text scaling', () {
-    testWidgets('renders short text without scaling (5 chars)', (tester) async {
+  group('TypeSelectorCard - text overflow handling', () {
+    testWidgets('renders short text correctly (5 chars)', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -196,12 +198,15 @@ void main() {
       // Verify card renders
       expect(find.byType(TypeSelectorCard), findsOneWidget);
       expect(find.text('Дом'), findsOneWidget);
-      // Verify FittedBox is present
-      expect(find.byType(FittedBox), findsWidgets);
+      // Text widget handles overflow with ellipsis
+      final textWidget = tester.widget<Text>(find.text('Дом'));
+      expect(textWidget.overflow, TextOverflow.ellipsis);
     });
 
-    testWidgets('renders medium text (10 chars)', (tester) async {
+    testWidgets('renders medium text correctly (10 chars)', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -221,11 +226,14 @@ void main() {
 
       expect(find.byType(TypeSelectorCard), findsOneWidget);
       expect(find.text('Офисное'), findsOneWidget);
-      expect(find.byType(FittedBox), findsWidgets);
+      final textWidget = tester.widget<Text>(find.text('Офисное'));
+      expect(textWidget.maxLines, 1);
     });
 
-    testWidgets('scales down long text (17 chars like "Полукоммерческий")', (tester) async {
+    testWidgets('handles long text with ellipsis (17 chars like "Полукоммерческий")', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -246,12 +254,15 @@ void main() {
       // Card should render without overflow
       expect(find.byType(TypeSelectorCard), findsOneWidget);
       expect(find.text('Полукоммерческий'), findsOneWidget);
-      // FittedBox should be scaling the text
-      expect(find.byType(FittedBox), findsWidgets);
+      // Text uses ellipsis for overflow
+      final textWidget = tester.widget<Text>(find.text('Полукоммерческий'));
+      expect(textWidget.overflow, TextOverflow.ellipsis);
     });
 
-    testWidgets('scales down very long text (25+ chars)', (tester) async {
+    testWidgets('handles very long text with ellipsis (25+ chars)', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -271,11 +282,15 @@ void main() {
 
       expect(find.byType(TypeSelectorCard), findsOneWidget);
       expect(find.text('Коммерческий высоконагруженный'), findsOneWidget);
-      expect(find.byType(FittedBox), findsWidgets);
+      final textWidget = tester.widget<Text>(find.text('Коммерческий высоконагруженный'));
+      expect(textWidget.maxLines, 1);
+      expect(textWidget.overflow, TextOverflow.ellipsis);
     });
 
-    testWidgets('handles subtitle with FittedBox', (tester) async {
+    testWidgets('handles subtitle with ellipsis overflow', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -297,8 +312,11 @@ void main() {
       expect(find.byType(TypeSelectorCard), findsOneWidget);
       expect(find.text('Полукоммерческий'), findsOneWidget);
       expect(find.text('Средняя нагрузка'), findsOneWidget);
-      // Both title and subtitle should have FittedBox
-      expect(find.byType(FittedBox), findsWidgets);
+      // Both title and subtitle use ellipsis overflow
+      final titleWidget = tester.widget<Text>(find.text('Полукоммерческий'));
+      final subtitleWidget = tester.widget<Text>(find.text('Средняя нагрузка'));
+      expect(titleWidget.overflow, TextOverflow.ellipsis);
+      expect(subtitleWidget.overflow, TextOverflow.ellipsis);
     });
 
     testWidgets('works on narrow screen 320px with 3 cards in row', (tester) async {
@@ -414,8 +432,10 @@ void main() {
       expect(find.byType(TypeSelectorCard), findsOneWidget);
     });
 
-    testWidgets('FittedBox uses scaleDown fit mode', (tester) async {
+    testWidgets('text uses ellipsis overflow instead of scaling', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -433,13 +453,17 @@ void main() {
         ),
       );
 
-      // Find FittedBox widgets
-      final fittedBoxes = tester.widgetList<FittedBox>(find.byType(FittedBox));
-      // At least one FittedBox should use BoxFit.scaleDown
+      // Find Text widgets and verify they use ellipsis overflow
+      final textWidget = tester.widget<Text>(find.text('Полукоммерческий'));
       expect(
-        fittedBoxes.any((fb) => fb.fit == BoxFit.scaleDown),
-        isTrue,
-        reason: 'FittedBox should use BoxFit.scaleDown for adaptive scaling',
+        textWidget.overflow,
+        TextOverflow.ellipsis,
+        reason: 'Text should use ellipsis overflow for long text',
+      );
+      expect(
+        textWidget.maxLines,
+        1,
+        reason: 'Text should be limited to single line',
       );
     });
   });

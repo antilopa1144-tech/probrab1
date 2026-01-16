@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/data/models/calculation.dart';
 import 'package:probrab_ai/data/repositories/calculation_repository.dart';
+import 'package:probrab_ai/presentation/app/category_selector_screen.dart';
 import 'package:probrab_ai/presentation/app/home_main.dart';
 import 'package:probrab_ai/presentation/providers/calculation_provider.dart';
+import 'package:probrab_ai/presentation/views/project/projects_list_screen.dart';
 import '../../helpers/test_helpers.dart';
 
 /// Mock repository для тестирования без Isar
@@ -131,7 +133,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.text('home.sections.categories.title'), findsOneWidget);
+      expect(find.text('Категории работ'), findsOneWidget);
     });
 
     testWidgets('displays history section', (tester) async {
@@ -158,7 +160,7 @@ void main() {
       await tester.pump();
 
       // History section should be visible after scroll
-      expect(find.text('home.sections.history.title'), findsOneWidget);
+      expect(find.text('История расчётов'), findsOneWidget);
     });
 
     testWidgets('has RefreshIndicator', (tester) async {
@@ -270,6 +272,7 @@ void main() {
       testWidgets('поиск показывает результаты при вводе запроса', (
         tester,
       ) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const HomeMainScreen(),
@@ -288,7 +291,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 100));
 
         // Проверяем, что показывается заголовок результатов поиска
-        expect(find.text('home.search.results.title'), findsOneWidget);
+        expect(find.text('Найденные калькуляторы'), findsOneWidget);
       });
 
       testWidgets('очистка поиска убирает кнопку clear', (tester) async {
@@ -335,13 +338,13 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
 
-        // Вводим поисковый запрос
-        await tester.enterText(find.byType(TextField), 'interior');
+        // Вводим поисковый запрос на русском (будет искать по категориям)
+        await tester.enterText(find.byType(TextField), 'внутр');
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
 
-        // Должна остаться GridView с объектами
-        expect(find.byType(GridView), findsOneWidget);
+        // После поиска экран должен отображаться корректно
+        expect(find.byType(HomeMainScreen), findsOneWidget);
       });
 
       testWidgets('пустой поиск показывает empty state', (tester) async {
@@ -364,7 +367,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 100));
 
         // Должен отображаться empty state
-        expect(find.text('search.no_results'), findsOneWidget);
+        expect(find.text('Ничего не найдено'), findsOneWidget);
       });
     });
 
@@ -388,11 +391,12 @@ void main() {
         await tester.pumpAndSettle();
 
         // Проверяем наличие всех пунктов меню
-        expect(find.text('workflow.screen.title'), findsOneWidget);
-        expect(find.text('home.menu.projects'), findsOneWidget);
-        expect(find.text('home.menu.reminders'), findsOneWidget);
-        expect(find.text('home.menu.history'), findsOneWidget);
-        expect(find.text('home.menu.settings'), findsOneWidget);
+        expect(find.text('Планировщик работ'), findsOneWidget);
+        expect(find.text('Проекты'), findsOneWidget);
+        expect(find.text('Напоминания'), findsOneWidget);
+        // В меню есть "История расчётов", а также секция на странице с тем же названием
+        expect(find.text('История расчётов'), findsAtLeastNWidgets(1));
+        expect(find.text('Настройки'), findsOneWidget);
       });
 
       testWidgets('навигация в проекты работает', (tester) async {
@@ -414,11 +418,11 @@ void main() {
         await tester.pumpAndSettle();
 
         // Нажимаем на "Проекты"
-        await tester.tap(find.text('home.menu.projects'));
+        await tester.tap(find.text('Проекты'));
         await tester.pumpAndSettle();
 
-        // Проверяем, что HomeMainScreen все еще есть (навигация push, а не replace)
-        expect(find.byType(HomeMainScreen), findsOneWidget);
+        // После навигации должен отображаться экран проектов (ProjectsListScreen)
+        expect(find.byType(ProjectsListScreen), findsOneWidget);
       });
     });
 
@@ -444,7 +448,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 100));
 
         // Должен быть empty state для истории
-        expect(find.text('home.history.empty.title'), findsOneWidget);
+        expect(find.text('История пока пуста'), findsOneWidget);
       });
 
       testWidgets('секция истории имеет кнопку "Показать все"', (tester) async {
@@ -467,7 +471,7 @@ void main() {
         await tester.pump();
 
         // Должна быть кнопка действия
-        expect(find.text('home.sections.history.action'), findsOneWidget);
+        expect(find.text('Все расчёты'), findsOneWidget);
       });
     });
 
@@ -475,6 +479,7 @@ void main() {
       testWidgets('кнопка избранного не отображается когда список пуст', (
         tester,
       ) async {
+        setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
             child: const HomeMainScreen(),
@@ -574,8 +579,8 @@ void main() {
           await tester.tap(gridItems.first);
           await tester.pumpAndSettle();
 
-          // После навигации HomeMainScreen должен все еще существовать
-          expect(find.byType(HomeMainScreen), findsOneWidget);
+          // После навигации должен отображаться CategorySelectorScreen
+          expect(find.byType(CategorySelectorScreen), findsOneWidget);
         }
       });
     });

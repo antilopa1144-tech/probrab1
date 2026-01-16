@@ -9,6 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../helpers/test_helpers.dart';
 
 void main() {
+  setUpAll(() {
+    setupMocks();
+  });
+
   group('TimelineScreen', () {
     setUp(() {
       SharedPreferences.setMockInitialValues({});
@@ -41,7 +45,7 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 200));
 
-      expect(find.text('workflow.timeline.no_plan'), findsOneWidget);
+      expect(find.text('Нет плана работ'), findsOneWidget);
     });
 
     testWidgets('shows app bar with title', (tester) async {
@@ -54,7 +58,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('workflow.timeline.title'), findsWidgets);
+      expect(find.text('Временная линия'), findsWidgets);
     });
 
     testWidgets('shows timeline when plan exists', (tester) async {
@@ -134,9 +138,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       // Should show statistics labels
-      expect(find.text('workflow.timeline.start'), findsOneWidget);
-      expect(find.text('workflow.timeline.end'), findsOneWidget);
-      expect(find.text('workflow.timeline.days'), findsOneWidget);
+      expect(find.text('Начало'), findsOneWidget);
+      expect(find.text('Окончание'), findsOneWidget);
+      expect(find.text('Дней'), findsOneWidget);
     });
 
     testWidgets('shows calendar icon in app bar', (tester) async {
@@ -203,7 +207,7 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text('workflow.timeline.critical_path'), findsOneWidget);
+      expect(find.text('Критический путь'), findsOneWidget);
     });
 
     testWidgets('shows check icon for completed steps', (tester) async {

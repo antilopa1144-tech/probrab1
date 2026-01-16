@@ -384,22 +384,15 @@ final defaultOnboardingSteps = [
   const OnboardingStep(
     id: 'calculators',
     title: 'Калькуляторы',
-    description: 'Быстро рассчитывайте необходимое количество материалов для ваших проектов',
+    description: 'Быстро рассчитывайте необходимое количество материалов для ваших ремонтов',
     imageAsset: 'assets/onboarding/calculators.png',
     order: 1,
-  ),
-  const OnboardingStep(
-    id: 'projects',
-    title: 'Проекты',
-    description: 'Сохраняйте расчёты и управляйте своими строительными проектами',
-    imageAsset: 'assets/onboarding/projects.png',
-    order: 2,
   ),
   const OnboardingStep(
     id: 'ready',
     title: 'Готово!',
     description: 'Начните использовать приложение прямо сейчас',
     imageAsset: 'assets/onboarding/ready.png',
-    order: 3,
+    order: 2,
   ),
 ];

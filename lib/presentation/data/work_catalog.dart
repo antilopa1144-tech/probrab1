@@ -655,13 +655,13 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'roof_metal',
             title: 'work.item.roof_metal.title',
             icon: Icons.home,
-            calculatorId: 'roofing_metal',
+            calculatorId: 'roofing_unified',
           ),
           WorkItemDefinition(
             id: 'roof_soft',
             title: 'work.item.roof_soft.title',
             icon: Icons.home_work_outlined,
-            calculatorId: 'roofing_soft',
+            calculatorId: 'roofing_unified',
           ),
           WorkItemDefinition(
             id: 'roof_gutters',

@@ -70,7 +70,7 @@ lib/
 4. **Документировать сложную логику** — комментарии для неочевидного кода
 5. **Использовать типизацию** — никаких `dynamic` без крайней необходимости
 6. **Обрабатывать ошибки** — graceful degradation, понятные сообщения
-7. Можешь пользоваться скриптами для быстроты работы - dead_code_detector
+7. Пользуйся скриптами для быстроты работы - dead_code_detector
 calculator_coverage_report
 unused_assets_cleaner
 generate_changelog

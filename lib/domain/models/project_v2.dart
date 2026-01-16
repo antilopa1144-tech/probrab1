@@ -2,7 +2,7 @@ import 'package:isar_community/isar.dart';
 
 part 'project_v2.g.dart';
 
-/// Проект ремонта (улучшенная версия).
+/// Проект ремонта (улучшенная версия с Dashboard).
 @collection
 class ProjectV2 {
   /// ID проекта
@@ -15,12 +15,33 @@ class ProjectV2 {
   /// Описание проекта
   String? description;
 
+  /// Адрес объекта
+  String? address;
+
+  /// URL изображения проекта
+  String? thumbnailUrl;
+
   /// Дата создания
   @Index()
   late DateTime createdAt;
 
   /// Дата последнего изменения
   late DateTime updatedAt;
+
+  /// Дедлайн проекта
+  DateTime? deadline;
+
+  /// Общий бюджет проекта
+  late double budgetTotal;
+
+  /// Потраченный бюджет
+  late double budgetSpent;
+
+  /// Всего задач в проекте
+  late int tasksTotal;
+
+  /// Выполненных задач
+  late int tasksCompleted;
 
   /// Расчёты в проекте
   final calculations = IsarLinks<ProjectCalculation>();
@@ -94,7 +115,86 @@ class ProjectV2 {
     isFavorite = false;
     tags = [];
     status = ProjectStatus.planning;
+    budgetTotal = 0;
+    budgetSpent = 0;
+    tasksTotal = 0;
+    tasksCompleted = 0;
   }
+
+  // ─────────────────────────────────────────────────────────────────
+  // Вычисляемые геттеры для Dashboard
+  // ─────────────────────────────────────────────────────────────────
+
+  /// Прогресс проекта (0.0 - 1.0)
+  /// Рассчитывается по задачам или материалам
+  @ignore
+  double get progress {
+    if (tasksTotal > 0) {
+      return tasksCompleted / tasksTotal;
+    }
+    // Fallback: считаем по купленным материалам
+    final materials = allMaterials;
+    if (materials.isNotEmpty) {
+      final purchased = materials.where((m) => m.purchased).length;
+      return purchased / materials.length;
+    }
+    return 0;
+  }
+
+  /// Процент прогресса (0 - 100)
+  @ignore
+  int get progressPercent => (progress * 100).round();
+
+  /// Превышен ли бюджет
+  @ignore
+  bool get isOverBudget => budgetTotal > 0 && budgetSpent > budgetTotal;
+
+  /// Процент использования бюджета
+  @ignore
+  double get budgetUtilization {
+    if (budgetTotal <= 0) return 0;
+    return budgetSpent / budgetTotal;
+  }
+
+  /// Осталось дней до дедлайна
+  @ignore
+  int get daysLeft {
+    if (deadline == null) return -1;
+    return deadline!.difference(DateTime.now()).inDays;
+  }
+
+  /// Дедлайн близко (менее 7 дней)
+  @ignore
+  bool get isDeadlineClose {
+    final days = daysLeft;
+    return days >= 0 && days <= 7;
+  }
+
+  /// Дедлайн просрочен
+  @ignore
+  bool get isDeadlineOverdue {
+    if (deadline == null) return false;
+    return DateTime.now().isAfter(deadline!);
+  }
+
+  /// Есть проблемы (статус problem, превышен бюджет или просрочен дедлайн)
+  @ignore
+  bool get hasProblems {
+    return status == ProjectStatus.problem ||
+        status == ProjectStatus.cancelled ||
+        isOverBudget ||
+        isDeadlineOverdue;
+  }
+
+  /// Требует внимания (близкий дедлайн или бюджет > 90%)
+  @ignore
+  bool get needsAttention {
+    return isDeadlineClose || (budgetUtilization > 0.9 && !isOverBudget);
+  }
+
+  /// Оставшийся бюджет
+  @ignore
+  double get budgetRemaining => budgetTotal - budgetSpent;
 }
 
 /// Статус проекта
@@ -113,6 +213,9 @@ enum ProjectStatus {
 
   /// Отменён
   cancelled,
+
+  /// Проблема (требует внимания)
+  problem,
 }
 
 /// Расчёт в проекте.

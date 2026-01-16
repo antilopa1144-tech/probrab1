@@ -126,11 +126,6 @@ class _PremiumActiveView extends StatelessWidget {
           description: '3D панели, тёплый пол, деревянная вагонка и другие',
         ),
         const _FeatureItem(
-          icon: Icons.folder_rounded,
-          title: 'Неограниченное количество проектов',
-          description: 'Создавайте сколько угодно проектов',
-        ),
-        const _FeatureItem(
           icon: Icons.picture_as_pdf_rounded,
           title: 'Экспорт в PDF',
           description: 'Сохраняйте расчёты в PDF документы',
@@ -138,12 +133,12 @@ class _PremiumActiveView extends StatelessWidget {
         const _FeatureItem(
           icon: Icons.list_alt_rounded,
           title: 'Детальные списки материалов',
-          description: 'Полные списки с ценами и количеством',
+          description: 'Полные списки с количеством',
         ),
         const _FeatureItem(
           icon: Icons.qr_code_rounded,
-          title: 'QR-коды проектов',
-          description: 'Делитесь проектами через QR-коды',
+          title: 'QR-коды расчётов',
+          description: 'Делитесь расчётами через QR-коды',
         ),
         const _FeatureItem(
           icon: Icons.mic_rounded,
@@ -232,11 +227,6 @@ class _PremiumOffersView extends ConsumerWidget {
           description: '3D панели, тёплый пол, деревянная вагонка и другие',
         ),
         const _FeatureItem(
-          icon: Icons.folder_rounded,
-          title: 'Неограниченное количество проектов',
-          description: 'Создавайте сколько угодно проектов',
-        ),
-        const _FeatureItem(
           icon: Icons.picture_as_pdf_rounded,
           title: 'Экспорт в PDF',
           description: 'Сохраняйте расчёты в PDF документы',
@@ -244,12 +234,12 @@ class _PremiumOffersView extends ConsumerWidget {
         const _FeatureItem(
           icon: Icons.list_alt_rounded,
           title: 'Детальные списки материалов',
-          description: 'Полные списки с ценами и количеством',
+          description: 'Полные списки с количеством',
         ),
         const _FeatureItem(
           icon: Icons.qr_code_rounded,
-          title: 'QR-коды проектов',
-          description: 'Делитесь проектами через QR-коды',
+          title: 'QR-коды расчётов',
+          description: 'Делитесь расчётами через QR-коды',
         ),
         const _FeatureItem(
           icon: Icons.mic_rounded,

@@ -5,11 +5,14 @@ import 'package:probrab_ai/domain/models/premium_subscription.dart';
 import 'package:probrab_ai/presentation/providers/premium_provider.dart';
 
 /// Mock PremiumService для тестирования
-class MockPremiumService {
+/// Расширяет PremiumService для совместимости с провайдером
+class MockPremiumService extends PremiumService {
   PremiumSubscription _mockSubscription = const PremiumSubscription.free();
   bool _shouldThrowOnPurchase = false;
   bool _shouldThrowOnRestore = false;
   List<PremiumProduct> _mockProducts = [];
+
+  MockPremiumService() : super.forTesting();
 
   void setMockSubscription(PremiumSubscription subscription) {
     _mockSubscription = subscription;
@@ -27,24 +30,31 @@ class MockPremiumService {
     _mockProducts = products;
   }
 
+  @override
   PremiumSubscription get currentSubscription => _mockSubscription;
 
+  @override
   bool get isPremium => _mockSubscription.isActive && !_mockSubscription.isExpired;
 
+  @override
   Stream<PremiumSubscription> get subscriptionStream => Stream.value(_mockSubscription);
 
+  @override
   bool hasAccess(PremiumFeature feature) => isPremium;
 
+  @override
   bool hasCalculatorAccess(String calculatorId) {
     const premiumCalculators = {'three_d_panels', 'underfloor_heating'};
     if (!premiumCalculators.contains(calculatorId)) return true;
     return isPremium;
   }
 
+  @override
   Future<int> getProjectLimit() async {
     return isPremium ? -1 : 3;
   }
 
+  @override
   Future<List<PremiumProduct>> getAvailableProducts() async {
     if (_mockProducts.isNotEmpty) return _mockProducts;
     return [
@@ -76,6 +86,7 @@ class MockPremiumService {
     ];
   }
 
+  @override
   Future<bool> purchaseProduct(String productId) async {
     if (_shouldThrowOnPurchase) {
       throw Exception('Purchase failed');
@@ -83,6 +94,7 @@ class MockPremiumService {
     return true;
   }
 
+  @override
   Future<bool> restorePurchases() async {
     if (_shouldThrowOnRestore) {
       throw Exception('Restore failed');
@@ -90,6 +102,7 @@ class MockPremiumService {
     return true;
   }
 
+  @override
   Future<void> cancelSubscription() async {
     // Mock implementation
   }
@@ -286,7 +299,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           premiumServiceProvider.overrideWith((ref) async {
-            return mockService as PremiumService;
+            return mockService;
           }),
         ],
       );
@@ -307,7 +320,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           premiumServiceProvider.overrideWith((ref) async {
-            return mockService as PremiumService;
+            return mockService;
           }),
         ],
       );
@@ -327,7 +340,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           premiumServiceProvider.overrideWith((ref) async {
-            return mockService as PremiumService;
+            return mockService;
           }),
         ],
       );
@@ -348,7 +361,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           premiumServiceProvider.overrideWith((ref) async {
-            return mockService as PremiumService;
+            return mockService;
           }),
         ],
       );
@@ -368,7 +381,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           premiumServiceProvider.overrideWith((ref) async {
-            return mockService as PremiumService;
+            return mockService;
           }),
         ],
       );

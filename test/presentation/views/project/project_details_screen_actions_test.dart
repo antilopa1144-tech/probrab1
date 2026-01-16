@@ -14,6 +14,7 @@ void main() {
     testWidgets('_getStatusIcon возвращает корректные иконки для всех статусов',
         (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       // Проверяем что для каждого статуса есть своя иконка
       final statusIcons = {
@@ -22,6 +23,7 @@ void main() {
         ProjectStatus.onHold: Icons.pause_circle_outline_rounded,
         ProjectStatus.completed: Icons.check_circle_outline_rounded,
         ProjectStatus.cancelled: Icons.cancel_outlined,
+        ProjectStatus.problem: Icons.warning_amber_rounded,
       };
 
       for (final status in ProjectStatus.values) {
@@ -33,6 +35,7 @@ void main() {
     testWidgets('_getStatusColor возвращает корректные цвета для всех статусов',
         (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       // Проверяем что для каждого статуса есть свой цвет
       final statusColors = {
@@ -41,6 +44,7 @@ void main() {
         ProjectStatus.onHold: Colors.grey,
         ProjectStatus.completed: Colors.green,
         ProjectStatus.cancelled: Colors.red,
+        ProjectStatus.problem: Colors.deepOrange,
       };
 
       for (final status in ProjectStatus.values) {
@@ -52,6 +56,7 @@ void main() {
     testWidgets('_getStatusLabel возвращает корректные метки для всех статусов',
         (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       // Проверяем что для каждого статуса есть своя метка
       final statusLabels = {
@@ -60,6 +65,7 @@ void main() {
         ProjectStatus.onHold: 'Приостановлен',
         ProjectStatus.completed: 'Завершён',
         ProjectStatus.cancelled: 'Отменён',
+        ProjectStatus.problem: 'Проблема',
       };
 
       for (final status in ProjectStatus.values) {
@@ -126,20 +132,23 @@ void main() {
 
     testWidgets('ProjectStatus имеет все необходимые значения', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       // Проверяем что enum содержит все ожидаемые значения
-      expect(ProjectStatus.values.length, equals(5),
-          reason: 'ProjectStatus должен иметь 5 значений');
+      expect(ProjectStatus.values.length, equals(6),
+          reason: 'ProjectStatus должен иметь 6 значений');
 
       expect(ProjectStatus.values, contains(ProjectStatus.planning));
       expect(ProjectStatus.values, contains(ProjectStatus.inProgress));
       expect(ProjectStatus.values, contains(ProjectStatus.onHold));
       expect(ProjectStatus.values, contains(ProjectStatus.completed));
       expect(ProjectStatus.values, contains(ProjectStatus.cancelled));
+      expect(ProjectStatus.values, contains(ProjectStatus.problem));
     });
 
     testWidgets('ProjectStatus можно итерировать', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       int count = 0;
       for (final status in ProjectStatus.values) {
@@ -147,7 +156,7 @@ void main() {
         count++;
       }
 
-      expect(count, equals(5));
+      expect(count, equals(6));
     });
 
     testWidgets('ProjectStatus имеет корректные имена', (tester) async {

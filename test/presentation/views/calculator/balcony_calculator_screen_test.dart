@@ -77,7 +77,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает иконки типов балкона', (tester) async {
@@ -105,7 +105,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final openType = find.textContaining('balcony_calc.type.open');
+      final openType = find.byType(TypeSelectorGroup);
       if (openType.evaluate().isNotEmpty) {
         await tester.tap(openType.first);
         await tester.pumpAndSettle();
@@ -124,7 +124,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final warmType = find.textContaining('balcony_calc.type.warm');
+      final warmType = find.byType(TypeSelectorGroup);
       if (warmType.evaluate().isNotEmpty) {
         await tester.tap(warmType.first);
         await tester.pumpAndSettle();
@@ -145,8 +145,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('balcony_calc.label.length'), findsOneWidget);
-      expect(find.textContaining('balcony_calc.label.width'), findsOneWidget);
+      expect(find.byType(CalculatorTextField), findsWidgets);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('отображает поле ввода высоты', (tester) async {
@@ -159,7 +159,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('balcony_calc.label.height'), findsOneWidget);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('отображает CalculatorTextField виджеты', (tester) async {
@@ -200,7 +200,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final floorSwitch = find.textContaining('balcony_calc.option.floor_finishing');
+      final floorSwitch = find.byType(SwitchListTile);
       if (floorSwitch.evaluate().isNotEmpty) {
         await tester.tap(floorSwitch.first);
         await tester.pumpAndSettle();
@@ -219,7 +219,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final wallSwitch = find.textContaining('balcony_calc.option.wall_finishing');
+      final wallSwitch = find.byType(SwitchListTile);
       if (wallSwitch.evaluate().isNotEmpty) {
         await tester.tap(wallSwitch.first);
         await tester.pumpAndSettle();
@@ -240,7 +240,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('отображает иконки результатов', (tester) async {

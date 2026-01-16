@@ -69,7 +69,7 @@ void main() {
       expect(find.text('20.01.2024 14:45'), findsOneWidget);
     });
 
-    testWidgets('renders material cost section', (tester) async {
+    testWidgets('renders calendar icon for creation date', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
@@ -81,11 +81,10 @@ void main() {
         ),
       );
 
-      expect(find.text('Материалы'), findsOneWidget);
-      expect(find.byIcon(Icons.shopping_cart_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.calendar_today_rounded), findsOneWidget);
     });
 
-    testWidgets('renders labor cost section', (tester) async {
+    testWidgets('renders update icon for update date', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         MaterialApp(
@@ -97,8 +96,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Работы'), findsOneWidget);
-      expect(find.byIcon(Icons.handyman_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.update_rounded), findsOneWidget);
     });
 
     testWidgets('renders tags', (tester) async {

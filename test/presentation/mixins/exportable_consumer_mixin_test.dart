@@ -63,6 +63,19 @@ class _TestExportableWidgetState extends ConsumerState<_TestExportableWidget>
 void main() {
   setUpAll(() {
     setupMocks();
+    // Mock clipboard для тестирования
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform, (message) async {
+      if (message.method == 'Clipboard.setData') {
+        return null;
+      }
+      return null;
+    });
+  });
+
+  tearDownAll(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform, null);
   });
 
   group('ExportableConsumerMixin', () {
@@ -106,16 +119,17 @@ void main() {
         await tester.tap(find.byIcon(Icons.copy_rounded));
         await tester.pumpAndSettle();
 
-        // Должен появиться снэкбар с сообщением
-        expect(find.text('common.copied_to_clipboard'), findsOneWidget);
+        // Должен появиться снэкбар с сообщением (translated)
+        expect(find.text('Скопировано в буфер обмена'), findsOneWidget);
       });
 
       testWidgets('скопированный текст содержит правильные данные', (
         tester,
       ) async {
-        // Мокируем буфер обмена
+        // Мокируем буфер обмена с логированием
         final List<MethodCall> log = <MethodCall>[];
-        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(
           SystemChannels.platform,
           (MethodCall methodCall) async {
             log.add(methodCall);
@@ -451,9 +465,9 @@ void main() {
         final copyButton = find.widgetWithIcon(IconButton, Icons.copy_rounded);
         expect(copyButton, findsOneWidget);
 
-        // Проверяем наличие tooltip
+        // Проверяем наличие tooltip (translated)
         final iconButton = tester.widget<IconButton>(copyButton);
-        expect(iconButton.tooltip, 'common.copy');
+        expect(iconButton.tooltip, 'Копировать');
       });
 
       testWidgets('кнопка отправки имеет tooltip', (tester) async {
@@ -470,9 +484,9 @@ void main() {
         );
         expect(shareButton, findsOneWidget);
 
-        // Проверяем наличие tooltip
+        // Проверяем наличие tooltip (translated)
         final iconButton = tester.widget<IconButton>(shareButton);
-        expect(iconButton.tooltip, 'common.share');
+        expect(iconButton.tooltip, 'Поделиться');
       });
 
       testWidgets('кнопка сохранения имеет tooltip', (tester) async {
@@ -496,9 +510,9 @@ void main() {
         final saveButton = find.widgetWithIcon(IconButton, Icons.save_rounded);
         expect(saveButton, findsOneWidget);
 
-        // Проверяем наличие tooltip
+        // Проверяем наличие tooltip (translated)
         final iconButton = tester.widget<IconButton>(saveButton);
-        expect(iconButton.tooltip, 'button.save_to_project');
+        expect(iconButton.tooltip, 'Сохранить в проект');
       });
     });
 

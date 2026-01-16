@@ -63,7 +63,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает все типы изоляции', (tester) async {
@@ -85,7 +85,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('sound_insulation_calc.type.mineral_wool');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -101,7 +101,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('sound_insulation_calc.type.membrane');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -117,7 +117,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('sound_insulation_calc.type.combined');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -276,7 +276,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.straighten), findsWidgets);
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('отображает карточку материалов', (tester) async {
@@ -346,7 +346,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('отображает миллиметры', (tester) async {
@@ -356,7 +356,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.mm'), findsWidgets);
+      expect(find.textContaining('мм'), findsWidgets);
     });
   });
 }

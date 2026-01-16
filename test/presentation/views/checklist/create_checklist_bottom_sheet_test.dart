@@ -201,6 +201,30 @@ void main() {
 
       expect(find.byType(Card), findsWidgets);
     });
+
+    test('ChecklistTemplates содержит 8 шаблонов включая новые', () {
+      // Проверяем, что теперь 8 шаблонов (5 старых + 3 новых)
+      expect(ChecklistTemplates.all.length, equals(8));
+
+      // Проверяем наличие новых шаблонов по ID
+      final ids = ChecklistTemplates.all.map((t) => t.id).toList();
+      expect(ids, contains('hallway_renovation'));
+      expect(ids, contains('balcony_renovation'));
+      expect(ids, contains('facade_renovation'));
+
+      // Проверяем правильность категорий
+      final hallway = ChecklistTemplates.findById('hallway_renovation');
+      expect(hallway, isNotNull);
+      expect(hallway!.category, equals(ChecklistCategory.hallway));
+
+      final balcony = ChecklistTemplates.findById('balcony_renovation');
+      expect(balcony, isNotNull);
+      expect(balcony!.category, equals(ChecklistCategory.balcony));
+
+      final facade = ChecklistTemplates.findById('facade_renovation');
+      expect(facade, isNotNull);
+      expect(facade!.category, equals(ChecklistCategory.facade));
+    });
   });
 
   group('CreateChecklistBottomSheet.show', () {

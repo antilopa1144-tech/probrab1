@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../domain/models/project_v2.dart';
-import 'project_card.dart';
+import 'dashboard_project_card.dart';
 
 /// Основной список проектов с фильтрами и результатами.
 class ProjectsListBody extends StatelessWidget {
@@ -93,7 +93,7 @@ class ProjectsListBody extends StatelessWidget {
             itemCount: filtered.length,
             itemBuilder: (context, index) {
               final project = filtered[index];
-              return ProjectCard(
+              return DashboardProjectCard(
                 project: project,
                 onTap: () => onOpenProject(project),
                 onDelete: () => onDeleteProject(project),

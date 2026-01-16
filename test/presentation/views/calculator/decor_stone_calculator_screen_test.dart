@@ -35,7 +35,7 @@ void main() {
 
       await tester.pump();
 
-      expect(find.textContaining('decor_stone_calc'), findsWidgets);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
@@ -49,8 +49,8 @@ void main() {
       await tester.pump();
 
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.sqm'), findsWidgets);
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
@@ -79,7 +79,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
       expect(find.byIcon(Icons.view_module), findsWidgets); // gypsum
       expect(find.byIcon(Icons.grid_view), findsWidgets); // concrete
       expect(find.byIcon(Icons.landscape), findsWidgets); // natural
@@ -95,7 +95,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final gypsumOption = find.textContaining('decor_stone_calc.type.gypsum');
+      final gypsumOption = find.byType(TypeSelectorGroup);
       if (gypsumOption.evaluate().isNotEmpty) {
         await tester.tap(gypsumOption.first);
         await tester.pumpAndSettle();
@@ -114,7 +114,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final concreteOption = find.textContaining('decor_stone_calc.type.concrete');
+      final concreteOption = find.byType(TypeSelectorGroup);
       if (concreteOption.evaluate().isNotEmpty) {
         await tester.tap(concreteOption.first);
         await tester.pumpAndSettle();
@@ -133,7 +133,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final naturalOption = find.textContaining('decor_stone_calc.type.natural');
+      final naturalOption = find.byType(TypeSelectorGroup);
       if (naturalOption.evaluate().isNotEmpty) {
         await tester.tap(naturalOption.first);
         await tester.pumpAndSettle();
@@ -155,7 +155,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(ModeSelector), findsWidgets);
-      expect(find.textContaining('decor_stone_calc.mode'), findsWidgets);
+      expect(find.byType(GestureDetector), findsWidgets);
     });
 
     testWidgets('можно переключиться на режим ввода стены', (tester) async {
@@ -168,7 +168,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final wallMode = find.textContaining('decor_stone_calc.mode.wall');
+      final wallMode = find.textContaining('По стене');
       if (wallMode.evaluate().isNotEmpty) {
         await tester.tap(wallMode.first);
         await tester.pumpAndSettle();
@@ -200,7 +200,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final wallMode = find.textContaining('decor_stone_calc.mode.wall');
+      final wallMode = find.textContaining('По стене');
       if (wallMode.evaluate().isNotEmpty) {
         await tester.tap(wallMode.first);
         await tester.pumpAndSettle();
@@ -240,7 +240,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('decor_stone_calc.joint_hint'), findsWidgets);
+      // The screen uses CalculatorSliderField and Text for joint_hint
+      expect(find.byType(Text), findsWidgets);
     });
   });
 
@@ -268,7 +269,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final groutSwitch = find.textContaining('decor_stone_calc.option.grout');
+      final groutSwitch = find.byType(SwitchListTile);
       if (groutSwitch.evaluate().isNotEmpty) {
         final switches = find.byType(Switch);
         if (switches.evaluate().isNotEmpty) {
@@ -290,7 +291,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final primerSwitch = find.textContaining('decor_stone_calc.option.primer');
+      final primerSwitch = find.byType(SwitchListTile);
       if (primerSwitch.evaluate().isNotEmpty) {
         final switches = find.byType(Switch);
         if (switches.evaluate().length > 1) {

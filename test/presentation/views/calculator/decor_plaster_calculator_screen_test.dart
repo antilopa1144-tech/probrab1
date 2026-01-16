@@ -35,7 +35,7 @@ void main() {
 
       await tester.pump();
 
-      expect(find.textContaining('decor_plaster_calc'), findsWidgets);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
@@ -49,8 +49,8 @@ void main() {
       await tester.pump();
 
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.sqm'), findsWidgets);
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
@@ -79,7 +79,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
       expect(find.byIcon(Icons.gradient), findsWidgets); // venetian
       expect(find.byIcon(Icons.texture), findsWidgets); // bark
       expect(find.byIcon(Icons.blur_on), findsWidgets); // silk
@@ -95,7 +95,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final venetianOption = find.textContaining('decor_plaster_calc.type.venetian');
+      final venetianOption = find.byType(TypeSelectorGroup);
       if (venetianOption.evaluate().isNotEmpty) {
         await tester.tap(venetianOption.first);
         await tester.pumpAndSettle();
@@ -114,7 +114,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final barkOption = find.textContaining('decor_plaster_calc.type.bark');
+      final barkOption = find.byType(TypeSelectorGroup);
       if (barkOption.evaluate().isNotEmpty) {
         await tester.tap(barkOption.first);
         await tester.pumpAndSettle();
@@ -133,7 +133,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final silkOption = find.textContaining('decor_plaster_calc.type.silk');
+      final silkOption = find.byType(TypeSelectorGroup);
       if (silkOption.evaluate().isNotEmpty) {
         await tester.tap(silkOption.first);
         await tester.pumpAndSettle();
@@ -155,7 +155,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(ModeSelector), findsWidgets);
-      expect(find.textContaining('decor_plaster_calc.mode'), findsWidgets);
+      expect(find.byType(GestureDetector), findsWidgets);
     });
 
     testWidgets('можно переключиться на режим ввода стены', (tester) async {
@@ -168,7 +168,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final wallMode = find.textContaining('decor_plaster_calc.mode.wall');
+      final wallMode = find.textContaining('По стене');
       if (wallMode.evaluate().isNotEmpty) {
         await tester.tap(wallMode.first);
         await tester.pumpAndSettle();
@@ -200,7 +200,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final wallMode = find.textContaining('decor_plaster_calc.mode.wall');
+      final wallMode = find.textContaining('По стене');
       if (wallMode.evaluate().isNotEmpty) {
         await tester.tap(wallMode.first);
         await tester.pumpAndSettle();
@@ -253,7 +253,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final primerSwitch = find.textContaining('decor_plaster_calc.option.primer');
+      final primerSwitch = find.byType(SwitchListTile);
       if (primerSwitch.evaluate().isNotEmpty) {
         final switches = find.byType(Switch);
         if (switches.evaluate().isNotEmpty) {

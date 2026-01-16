@@ -36,28 +36,6 @@ class ProjectInfoCard extends StatelessWidget {
               label: 'Обновлён',
               value: dateFormat.format(project.updatedAt),
             ),
-            const Divider(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: _CostColumn(
-                    icon: Icons.shopping_cart_outlined,
-                    label: 'Материалы',
-                    value: project.totalMaterialCost,
-                    color: Colors.blue,
-                  ),
-                ),
-                Expanded(
-                  child: _CostColumn(
-                    icon: Icons.handyman_outlined,
-                    label: 'Работы',
-                    value: project.totalLaborCost,
-                    color: Colors.orange,
-                  ),
-                ),
-              ],
-            ),
-            const Divider(height: 24),
             if (project.tags.isNotEmpty) ...[
               const SizedBox(height: 16),
               Wrap(
@@ -126,43 +104,3 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-class _CostColumn extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final double value;
-  final Color color;
-
-  const _CostColumn({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final format = NumberFormat('#,##0', 'ru_RU');
-
-    return Column(
-      children: [
-        Icon(icon, color: color, size: 32),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          '${format.format(value)} ₽',
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-      ],
-    );
-  }
-}

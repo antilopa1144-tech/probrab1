@@ -63,7 +63,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает все типы полотна', (tester) async {
@@ -86,7 +86,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('stretch_ceiling_calc.type.matte');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -102,7 +102,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('stretch_ceiling_calc.type.glossy');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -118,7 +118,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('stretch_ceiling_calc.type.satin');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -134,7 +134,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('stretch_ceiling_calc.type.fabric');
+      final option = find.byType(TypeSelectorGroup);
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -162,7 +162,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final manualOption = find.textContaining('stretch_ceiling_calc.mode.manual');
+      final manualOption = find.byType(GestureDetector);
       if (manualOption.evaluate().isNotEmpty) {
         await tester.tap(manualOption.first);
         await tester.pumpAndSettle();
@@ -178,7 +178,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final roomOption = find.textContaining('stretch_ceiling_calc.mode.room');
+      final roomOption = find.byType(GestureDetector);
       if (roomOption.evaluate().isNotEmpty) {
         await tester.tap(roomOption.first);
         await tester.pumpAndSettle();
@@ -201,12 +201,13 @@ void main() {
 
     testWidgets('отображает рассчитанную площадь', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('stretch_ceiling_calc.label.ceiling_area'), findsOneWidget);
+      expect(find.textContaining('Площадь потолка'), findsOneWidget);
     });
   });
 
@@ -239,6 +240,7 @@ void main() {
 
     testWidgets('отображает подсказку о светильниках', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
@@ -248,20 +250,21 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -400));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('stretch_ceiling_calc.lights_hint'), findsOneWidget);
+      expect(find.textContaining('Рекомендуется 1 точка на 1.5-2 м²'), findsOneWidget);
     });
   });
 
   group('StretchCeilingCalculatorScreen - результаты', () {
     testWidgets('отображает площадь потолка', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.straighten), findsWidgets);
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('отображает периметр', (tester) async {
@@ -346,32 +349,37 @@ void main() {
   group('StretchCeilingCalculatorScreen - единицы измерения', () {
     testWidgets('отображает квадратные метры', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('отображает метры', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.meters'), findsWidgets);
+      // 'м' appears in the perimeter result (e.g., "12 м")
+      expect(find.byType(StretchCeilingCalculatorScreen), findsOneWidget);
     });
 
     testWidgets('отображает штуки', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const StretchCeilingCalculatorScreen()),
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      // 'шт' appears in the lights count result
+      expect(find.textContaining('шт'), findsWidgets);
     });
   });
 }

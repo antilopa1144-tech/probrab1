@@ -150,6 +150,22 @@ class ProjectRepositoryV2 {
   Future<void> deleteProject(int id) async {
     try {
       await isar.writeTxn(() async {
+        // Получаем проект для доступа к расчётам
+        final project = await isar.projectV2s.get(id);
+        if (project == null) {
+          throw StorageException.notFound('ProjectV2', id.toString());
+        }
+
+        // Загружаем связанные расчёты
+        await project.calculations.load();
+
+        // Удаляем все расчёты проекта (cascade delete)
+        final calculationIds = project.calculations.map((c) => c.id).toList();
+        if (calculationIds.isNotEmpty) {
+          await isar.projectCalculations.deleteAll(calculationIds);
+        }
+
+        // Удаляем сам проект
         final success = await isar.projectV2s.delete(id);
         if (!success) {
           throw StorageException.notFound('ProjectV2', id.toString());
@@ -228,8 +244,7 @@ class ProjectRepositoryV2 {
     ProjectCalculation calculation,
   ) async {
     try {
-      await _ensureCalculatorIdsMigrated();
-      await _ensureMaterialsMigrated();
+      // Канонизируем calculatorId без миграций (миграции выполняются при старте)
       calculation.calculatorId =
           CalculatorIdMigration.canonicalize(calculation.calculatorId);
 
@@ -239,12 +254,13 @@ class ProjectRepositoryV2 {
           throw StorageException.notFound('ProjectV2', projectId.toString());
         }
 
-        // Сохраняем расчёт
+        // Сохраняем расчёт сначала
         await isar.projectCalculations.put(calculation);
 
-        // Связываем с проектом
-        calculation.project.value = project;
-        await calculation.project.save();
+        // Связываем через прямую связь (IsarLinks), а не через backlink
+        // Backlink calculation.project управляется автоматически
+        project.calculations.add(calculation);
+        await project.calculations.save();
 
         // Обновляем время проекта
         project.updatedAt = DateTime.now();

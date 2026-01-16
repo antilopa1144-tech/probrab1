@@ -41,7 +41,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Должен быть селектор типа паркета
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
 
       // Должны быть иконки для типов паркета
       expect(find.byIcon(Icons.view_stream), findsWidgets);
@@ -94,7 +94,7 @@ void main() {
 
       // Должен отображать результаты
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('имеет селектор способа укладки', (tester) async {

@@ -41,7 +41,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Должен быть селектор типа плиты
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
 
       // Должны быть иконки для типов плиты
       expect(find.byIcon(Icons.view_module), findsWidgets);
@@ -94,9 +94,9 @@ void main() {
 
       // Должен отображать результаты
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.sqm'), findsWidgets);
-      expect(find.textContaining('common.cbm'), findsWidgets);
-      expect(find.textContaining('common.kg'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
+      expect(find.textContaining('м³'), findsWidgets);
+      expect(find.textContaining('кг'), findsWidgets);
     });
 
     testWidgets('имеет текстовые поля для размеров', (tester) async {

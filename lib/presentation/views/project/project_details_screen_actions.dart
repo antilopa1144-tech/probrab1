@@ -72,8 +72,15 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
           ..description = descriptionController.text.trim().isEmpty
               ? null
               : descriptionController.text.trim()
+          ..address = project.address
+          ..thumbnailUrl = project.thumbnailUrl
           ..createdAt = project.createdAt
           ..updatedAt = DateTime.now()
+          ..deadline = project.deadline
+          ..budgetTotal = project.budgetTotal
+          ..budgetSpent = project.budgetSpent
+          ..tasksTotal = project.tasksTotal
+          ..tasksCompleted = project.tasksCompleted
           ..status = project.status
           ..isFavorite = project.isFavorite
           ..tags = project.tags
@@ -132,8 +139,15 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
           ..id = project.id
           ..name = project.name
           ..description = project.description
+          ..address = project.address
+          ..thumbnailUrl = project.thumbnailUrl
           ..createdAt = project.createdAt
           ..updatedAt = DateTime.now()
+          ..deadline = project.deadline
+          ..budgetTotal = project.budgetTotal
+          ..budgetSpent = project.budgetSpent
+          ..tasksTotal = project.tasksTotal
+          ..tasksCompleted = project.tasksCompleted
           ..status = newStatus
           ..isFavorite = project.isFavorite
           ..tags = project.tags
@@ -430,8 +444,15 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
         ..id = project.id
         ..name = project.name
         ..description = project.description
+        ..address = project.address
+        ..thumbnailUrl = project.thumbnailUrl
         ..createdAt = project.createdAt
         ..updatedAt = DateTime.now()
+        ..deadline = project.deadline
+        ..budgetTotal = project.budgetTotal
+        ..budgetSpent = project.budgetSpent
+        ..tasksTotal = project.tasksTotal
+        ..tasksCompleted = project.tasksCompleted
         ..status = project.status
         ..isFavorite = !project.isFavorite
         ..tags = project.tags
@@ -464,6 +485,8 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
         return Icons.check_circle_outline_rounded;
       case ProjectStatus.cancelled:
         return Icons.cancel_outlined;
+      case ProjectStatus.problem:
+        return Icons.warning_amber_rounded;
     }
   }
 
@@ -479,6 +502,8 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
         return Colors.green;
       case ProjectStatus.cancelled:
         return Colors.red;
+      case ProjectStatus.problem:
+        return Colors.deepOrange;
     }
   }
 
@@ -494,6 +519,8 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
         return 'Завершён';
       case ProjectStatus.cancelled:
         return 'Отменён';
+      case ProjectStatus.problem:
+        return 'Проблема';
     }
   }
 
@@ -506,5 +533,70 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
         ),
       );
     }
+  }
+
+  void _exportProjectToPdf(ProjectV2 project) async {
+    try {
+      await PdfExportService.exportProject(project, context);
+    } catch (e, stack) {
+      if (mounted) {
+        GlobalErrorHandler.handle(
+          context,
+          e,
+          stackTrace: stack,
+          contextMessage: 'Export project to PDF',
+        );
+      }
+    }
+  }
+
+  void _showExportOptions(ProjectV2 project) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                AppLocalizations.of(context).translate('project.export'),
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.picture_as_pdf_rounded),
+              title: const Text('Экспорт в PDF'),
+              subtitle: const Text('Полный отчёт с графиками'),
+              onTap: () {
+                Navigator.pop(context);
+                _exportProjectToPdf(project);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.table_chart_rounded),
+              title: const Text('Экспорт в CSV'),
+              subtitle: const Text('Таблица для Excel'),
+              onTap: () {
+                Navigator.pop(context);
+                _exportProject(project);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.qr_code_rounded),
+              title: const Text('Поделиться QR-кодом'),
+              subtitle: const Text('Для передачи на другое устройство'),
+              onTap: () {
+                Navigator.pop(context);
+                _shareViaQR(project);
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
   }
 }

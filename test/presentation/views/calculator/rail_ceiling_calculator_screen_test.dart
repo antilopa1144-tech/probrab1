@@ -41,7 +41,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Должен быть селектор типа потолка
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
 
       // Должны быть иконки для типов потолка
       expect(find.byIcon(Icons.view_column), findsWidgets);
@@ -95,8 +95,8 @@ void main() {
 
       // Должен отображать результаты
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.sqm'), findsWidgets);
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('имеет селектор ширины рейки', (tester) async {
@@ -112,7 +112,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Должны быть варианты выбора ширины рейки
-      expect(find.textContaining('common.mm'), findsWidgets);
+      expect(find.textContaining('мм'), findsWidgets);
     });
 
     testWidgets('имеет селектор режима ввода площади', (tester) async {
@@ -214,7 +214,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Должны быть варианты ширины рейки
-      expect(find.textContaining('common.mm'), findsWidgets);
+      expect(find.textContaining('мм'), findsWidgets);
     });
   });
 }

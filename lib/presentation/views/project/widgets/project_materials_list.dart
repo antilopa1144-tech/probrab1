@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../domain/models/project_v2.dart';
 import '../../../providers/project_v2_provider.dart';
 
@@ -18,7 +19,7 @@ class ProjectMaterialsList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final format = NumberFormat('#,##0', 'ru_RU');
+    final loc = AppLocalizations.of(context);
     final materials = project.allMaterials;
 
     if (materials.isEmpty) {
@@ -35,14 +36,14 @@ class ProjectMaterialsList extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Нет материалов',
+                loc.translate('project.materials_empty'),
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Добавьте расчёты с детальным списком материалов',
+                loc.translate('project.materials_empty_hint'),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -55,8 +56,6 @@ class ProjectMaterialsList extends ConsumerWidget {
     }
 
     final shoppingList = project.shoppingList;
-    final totalCost = materials.fold<double>(0, (sum, m) => sum + m.totalCost);
-    final remainingCost = project.remainingMaterialCost;
 
     return Card(
       margin: const EdgeInsets.all(16),
@@ -77,36 +76,15 @@ class ProjectMaterialsList extends ConsumerWidget {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Материалы',
+                      loc.translate('project.materials'),
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _CostInfo(
-                        label: 'Всего',
-                        value: totalCost,
-                        color: Colors.blue,
-                        format: format,
-                      ),
-                    ),
-                    Expanded(
-                      child: _CostInfo(
-                        label: 'Осталось',
-                        value: remainingCost,
-                        color: Colors.orange,
-                        format: format,
-                      ),
-                    ),
-                  ],
-                ),
                 if (shoppingList.isNotEmpty) ...[
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
                   LinearProgressIndicator(
                     value: 1 - (shoppingList.length / materials.length),
                     backgroundColor:
@@ -131,6 +109,7 @@ class ProjectMaterialsList extends ConsumerWidget {
                 material: material,
                 materialIndex: _findMaterialIndexInCalculation(index),
                 calculationId: calculationId,
+                loc: loc,
                 onToggle: () async {
                   if (calculationId != null) {
                     await ref
@@ -177,55 +156,18 @@ class ProjectMaterialsList extends ConsumerWidget {
   }
 }
 
-class _CostInfo extends StatelessWidget {
-  final String label;
-  final double value;
-  final Color color;
-  final NumberFormat format;
-
-  const _CostInfo({
-    required this.label,
-    required this.value,
-    required this.color,
-    required this.format,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          '${format.format(value)} ₽',
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _MaterialTile extends StatelessWidget {
   final ProjectMaterial material;
   final int materialIndex;
   final int? calculationId;
+  final AppLocalizations loc;
   final VoidCallback onToggle;
 
   const _MaterialTile({
     required this.material,
     required this.materialIndex,
     required this.calculationId,
+    required this.loc,
     required this.onToggle,
   });
 
@@ -248,36 +190,29 @@ class _MaterialTile extends StatelessWidget {
         ),
       ),
       subtitle: Text(
-        '${format.format(material.quantity)} ${material.unit} × ${format.format(material.pricePerUnit)} ₽',
+        '${format.format(material.quantity)} ${material.unit}',
         style: TextStyle(
           decoration: isPurchased ? TextDecoration.lineThrough : null,
           color: theme.colorScheme.onSurfaceVariant,
         ),
       ),
-      secondary: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(
-            '${format.format(material.totalCost)} ₽',
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              decoration: isPurchased ? TextDecoration.lineThrough : null,
-              color: isPurchased
-                  ? theme.colorScheme.onSurfaceVariant
-                  : theme.colorScheme.primary,
-            ),
-          ),
-          if (material.calculatorId != null)
-            Text(
-              material.calculatorId!,
+      secondary: material.calculatorId != null
+          ? Text(
+              _formatCalculatorId(material.calculatorId!),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 10,
               ),
-            ),
-        ],
-      ),
+            )
+          : null,
     );
+  }
+
+  String _formatCalculatorId(String calculatorId) {
+    final localized = loc.translate('share.calculator_names.$calculatorId');
+    if (localized != 'share.calculator_names.$calculatorId') {
+      return localized;
+    }
+    return calculatorId;
   }
 }

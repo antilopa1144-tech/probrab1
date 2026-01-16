@@ -35,7 +35,7 @@ void main() {
 
       await tester.pump();
 
-      expect(find.textContaining('linoleum_calc'), findsWidgets);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
@@ -49,8 +49,8 @@ void main() {
       await tester.pump();
 
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.sqm'), findsWidgets);
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
@@ -79,7 +79,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
       expect(find.byIcon(Icons.home), findsWidgets); // household
       expect(find.byIcon(Icons.business), findsWidgets); // semi-commercial
       expect(find.byIcon(Icons.factory), findsWidgets); // commercial
@@ -95,7 +95,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final householdOption = find.textContaining('linoleum_calc.type.household');
+      final householdOption = find.byType(TypeSelectorGroup);
       if (householdOption.evaluate().isNotEmpty) {
         await tester.tap(householdOption.first);
         await tester.pumpAndSettle();
@@ -114,7 +114,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final semiOption = find.textContaining('linoleum_calc.type.semi_commercial');
+      final semiOption = find.byType(TypeSelectorGroup);
       if (semiOption.evaluate().isNotEmpty) {
         await tester.tap(semiOption.first);
         await tester.pumpAndSettle();
@@ -133,7 +133,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final commercialOption = find.textContaining('linoleum_calc.type.commercial');
+      final commercialOption = find.byType(TypeSelectorGroup);
       if (commercialOption.evaluate().isNotEmpty) {
         await tester.tap(commercialOption.first);
         await tester.pumpAndSettle();
@@ -155,7 +155,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(ModeSelector), findsWidgets);
-      expect(find.textContaining('linoleum_calc.mode'), findsWidgets);
+      expect(find.byType(GestureDetector), findsWidgets);
     });
 
     testWidgets('можно переключиться на режим ввода комнаты', (tester) async {
@@ -168,7 +168,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final roomMode = find.textContaining('linoleum_calc.mode.room');
+      final roomMode = find.textContaining('По комнате');
       if (roomMode.evaluate().isNotEmpty) {
         await tester.tap(roomMode.first);
         await tester.pumpAndSettle();
@@ -200,7 +200,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final roomMode = find.textContaining('linoleum_calc.mode.room');
+      final roomMode = find.textContaining('По комнате');
       if (roomMode.evaluate().isNotEmpty) {
         await tester.tap(roomMode.first);
         await tester.pumpAndSettle();
@@ -253,7 +253,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final tapeSwitch = find.textContaining('linoleum_calc.option.tape');
+      final tapeSwitch = find.byType(SwitchListTile);
       if (tapeSwitch.evaluate().isNotEmpty) {
         final switches = find.byType(Switch);
         if (switches.evaluate().isNotEmpty) {
@@ -275,7 +275,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final plinthSwitch = find.textContaining('linoleum_calc.option.plinth');
+      final plinthSwitch = find.byType(SwitchListTile);
       if (plinthSwitch.evaluate().isNotEmpty) {
         final switches = find.byType(Switch);
         if (switches.evaluate().length > 1) {

@@ -9,6 +9,8 @@ void main() {
 
   group('PremiumService', () {
     setUp(() {
+      // Сбрасываем singleton перед каждым тестом для изоляции
+      PremiumService.resetInstance();
       SharedPreferences.setMockInitialValues({});
     });
 
@@ -327,7 +329,9 @@ void main() {
         final startDate = sub.startDate;
         if (expiryDate != null && startDate != null) {
           final diff = expiryDate.difference(startDate);
-          expect(diff.inDays, greaterThanOrEqualTo(365));
+          // 364-366 дней в зависимости от високосного года
+          expect(diff.inDays, greaterThanOrEqualTo(364));
+          expect(diff.inDays, lessThanOrEqualTo(366));
         }
       });
 

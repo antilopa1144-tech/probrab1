@@ -13,6 +13,7 @@ void main() {
   group('PuttyCalculatorScreenV2 - рендеринг базовой структуры', () {
     testWidgets('отрисовывается без ошибок', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -25,6 +26,7 @@ void main() {
 
     testWidgets('содержит CalculatorScaffold', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -35,6 +37,7 @@ void main() {
 
     testWidgets('содержит CalculatorResultHeader', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -45,6 +48,7 @@ void main() {
 
     testWidgets('имеет кнопки экспорта', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -58,6 +62,7 @@ void main() {
   group('PuttyCalculatorScreenV2 - режим ввода', () {
     testWidgets('отображает переключатель режимов ввода', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -68,12 +73,14 @@ void main() {
 
     testWidgets('можно переключиться на ввод по площади', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('putty.input_mode.by_area');
+      // 'По площади' is the translated value for putty.input_mode.by_area
+      final option = find.textContaining('По площади');
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -84,12 +91,14 @@ void main() {
 
     testWidgets('можно переключиться на ввод по размерам', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('putty.input_mode.by_dimensions');
+      // 'По размерам' is the translated value for putty.input_mode.by_dimensions
+      final option = find.textContaining('По размерам');
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -102,13 +111,15 @@ void main() {
   group('PuttyCalculatorScreenV2 - ввод площади', () {
     testWidgets('отображает слайдер площади в режиме по площади', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
       await tester.pumpAndSettle();
 
       // Switch to by_area mode first
-      final areaMode = find.textContaining('putty.input_mode.by_area');
+      // 'По площади' is the translated value for putty.input_mode.by_area
+      final areaMode = find.textContaining('По площади');
       if (areaMode.evaluate().isNotEmpty) {
         await tester.tap(areaMode.first);
         await tester.pumpAndSettle();
@@ -119,6 +130,7 @@ void main() {
 
     testWidgets('можно изменить площадь', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -137,13 +149,14 @@ void main() {
   group('PuttyCalculatorScreenV2 - ввод размеров', () {
     testWidgets('отображает слайдеры размеров в режиме по размерам', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
       await tester.pumpAndSettle();
 
       // Switch to by_dimensions mode
-      final dimensionsMode = find.textContaining('putty.input_mode.by_dimensions');
+      final dimensionsMode = find.textContaining('По размерам');
       if (dimensionsMode.evaluate().isNotEmpty) {
         await tester.tap(dimensionsMode.first);
         await tester.pumpAndSettle();
@@ -154,29 +167,34 @@ void main() {
 
     testWidgets('отображает рассчитанную площадь', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
       await tester.pumpAndSettle();
 
-      // Default mode is by_dimensions (room)
-      expect(find.textContaining('putty.dimensions.wall_area'), findsWidgets);
+      // Default mode is by_area, area card shows wall area text
+      // The text 'Площадь стен' is displayed
+      expect(find.textContaining('Площадь стен'), findsWidgets);
     });
   });
 
   group('PuttyCalculatorScreenV2 - целевая отделка', () {
     testWidgets('отображает переключатель цели отделки', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('putty.section.finish_goal'), findsOneWidget);
+      // 'Цель финиша' is the translated value for putty.section.finish_goal
+      expect(find.textContaining('Цель финиша'), findsOneWidget);
     });
 
     testWidgets('можно выбрать под обои', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -186,7 +204,8 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -300));
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('putty.target.wallpaper.title');
+      // 'Под обои' is the translated value for putty.target.wallpaper.title
+      final option = find.textContaining('Под обои');
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -197,6 +216,7 @@ void main() {
 
     testWidgets('можно выбрать под покраску', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -206,7 +226,8 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -300));
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('putty.target.painting.title');
+      // 'Под покраску' is the translated value for putty.target.painting.title
+      final option = find.textContaining('Под покраску');
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -219,6 +240,7 @@ void main() {
   group('PuttyCalculatorScreenV2 - состояние стен', () {
     testWidgets('отображает селектор состояния стен', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -228,11 +250,13 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -400));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('putty.wall_condition_title'), findsOneWidget);
+      // 'Состояние стен' is the translated value for putty.wall_condition_title
+      expect(find.textContaining('Состояние стен'), findsOneWidget);
     });
 
     testWidgets('можно выбрать состояние стены', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -255,6 +279,7 @@ void main() {
   group('PuttyCalculatorScreenV2 - класс материалов', () {
     testWidgets('отображает селектор класса материалов', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -264,11 +289,13 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -700));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('putty.material_tier.title'), findsOneWidget);
+      // 'Класс материалов' is the translated value for putty.material_tier.title
+      expect(find.textContaining('Класс материалов'), findsOneWidget);
     });
 
     testWidgets('отображает иконки классов материалов', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -285,6 +312,7 @@ void main() {
 
     testWidgets('можно выбрать класс материалов', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -294,7 +322,8 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -750));
       await tester.pumpAndSettle();
 
-      final option = find.textContaining('putty.material_tier.economy');
+      // 'Эконом' is the translated value for putty.material_tier.economy
+      final option = find.textContaining('Эконом');
       if (option.evaluate().isNotEmpty) {
         await tester.tap(option.first);
         await tester.pumpAndSettle();
@@ -307,6 +336,7 @@ void main() {
   group('PuttyCalculatorScreenV2 - проемы', () {
     testWidgets('отображает переключатель проемов', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -316,11 +346,13 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -1000));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('putty.openings_toggle'), findsOneWidget);
+      // 'Учесть окна и двери' is the translated value for putty.openings_toggle
+      expect(find.textContaining('Учесть окна и двери'), findsOneWidget);
     });
 
     testWidgets('можно раскрыть секцию проемов', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -330,7 +362,8 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -1000));
       await tester.pumpAndSettle();
 
-      final toggle = find.textContaining('putty.openings_toggle');
+      // 'Учесть окна и двери' is the translated value for putty.openings_toggle
+      final toggle = find.textContaining('Учесть окна и двери');
       if (toggle.evaluate().isNotEmpty) {
         await tester.tap(toggle.first);
         await tester.pumpAndSettle();
@@ -343,6 +376,7 @@ void main() {
   group('PuttyCalculatorScreenV2 - результаты', () {
     testWidgets('отображает площадь в результатах', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -353,6 +387,7 @@ void main() {
 
     testWidgets('отображает количество стартовой шпаклевки', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -363,6 +398,7 @@ void main() {
 
     testWidgets('отображает количество финишной шпаклевки', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -373,6 +409,7 @@ void main() {
 
     testWidgets('отображает карточку материалов', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -387,6 +424,7 @@ void main() {
 
     testWidgets('отображает карточку времени работ', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -396,13 +434,16 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -1400));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('putty.work_time_title'), findsOneWidget);
+      // 'Время работы' is the translated value for putty.work_time_title
+      // Multiple widgets may contain this text (title and items)
+      expect(find.textContaining('Время работы'), findsWidgets);
     });
   });
 
   group('PuttyCalculatorScreenV2 - подсказки', () {
     testWidgets('отображает секцию подсказок', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -412,13 +453,15 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -1600));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.tips'), findsOneWidget);
+      // 'Полезные советы' is the translated value for common.tips
+      expect(find.textContaining('Полезные советы'), findsOneWidget);
     });
   });
 
   group('PuttyCalculatorScreenV2 - взаимодействие', () {
     testWidgets('можно скроллить контент', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -433,6 +476,7 @@ void main() {
 
     testWidgets('можно нажать кнопку копирования', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -447,6 +491,7 @@ void main() {
 
     testWidgets('виджет корректно удаляется', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -463,6 +508,7 @@ void main() {
   group('PuttyCalculatorScreenV2 - единицы измерения', () {
     testWidgets('отображает квадратные метры', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -473,23 +519,27 @@ void main() {
 
     testWidgets('отображает метры', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
       await tester.pumpAndSettle();
 
       // Switch to by_dimensions mode to see meters
-      final dimensionsMode = find.textContaining('putty.input_mode.by_dimensions');
+      // 'По размерам' is the translated value for putty.input_mode.by_dimensions
+      final dimensionsMode = find.textContaining('По размерам');
       if (dimensionsMode.evaluate().isNotEmpty) {
         await tester.tap(dimensionsMode.first);
         await tester.pumpAndSettle();
       }
 
-      expect(find.textContaining('common.meters'), findsWidgets);
+      // 'м' is the translated value for common.meters
+      expect(find.textContaining(' м'), findsWidgets);
     });
 
     testWidgets('отображает килограммы', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -499,11 +549,13 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -1200));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.kg'), findsWidgets);
+      // 'кг' is the translated value for common.kg
+      expect(find.textContaining('кг'), findsWidgets);
     });
 
     testWidgets('отображает литры', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(child: const PuttyCalculatorScreenV2()),
       );
@@ -513,7 +565,8 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -1200));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.liters'), findsWidgets);
+      // 'л' is the translated value for common.liters
+      expect(find.textContaining(' л'), findsWidgets);
     });
   });
 }

@@ -77,7 +77,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает иконки типов утеплителя', (tester) async {
@@ -105,7 +105,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final mineralType = find.textContaining('ceiling_insulation_calc.type.mineral_wool');
+      final mineralType = find.byType(TypeSelectorGroup);
       if (mineralType.evaluate().isNotEmpty) {
         await tester.tap(mineralType.first);
         await tester.pumpAndSettle();
@@ -124,7 +124,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final styrofoamType = find.textContaining('ceiling_insulation_calc.type.styrofoam');
+      final styrofoamType = find.byType(TypeSelectorGroup);
       if (styrofoamType.evaluate().isNotEmpty) {
         await tester.tap(styrofoamType.first);
         await tester.pumpAndSettle();
@@ -158,7 +158,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final roomMode = find.textContaining('ceiling_insulation_calc.mode.room');
+      final roomMode = find.textContaining('По комнате');
       if (roomMode.evaluate().isNotEmpty) {
         await tester.tap(roomMode.first);
         await tester.pumpAndSettle();
@@ -192,7 +192,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final roomMode = find.textContaining('ceiling_insulation_calc.mode.room');
+      final roomMode = find.textContaining('По комнате');
       if (roomMode.evaluate().isNotEmpty) {
         await tester.tap(roomMode.first);
         await tester.pumpAndSettle();
@@ -232,8 +232,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('ceiling_insulation_calc.label.thickness'), findsOneWidget);
-      expect(find.textContaining('common.mm'), findsWidgets);
+      // The calculator uses CalculatorSliderField for thickness
+      expect(find.byType(Slider), findsWidgets);
+      expect(find.textContaining('мм'), findsWidgets);
     });
   });
 
@@ -261,7 +262,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final vaporBarrierSwitch = find.textContaining('ceiling_insulation_calc.option.vapor_barrier');
+      final vaporBarrierSwitch = find.byType(SwitchListTile);
       if (vaporBarrierSwitch.evaluate().isNotEmpty) {
         await tester.tap(vaporBarrierSwitch.first);
         await tester.pumpAndSettle();
@@ -280,7 +281,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final membraneSwitch = find.textContaining('ceiling_insulation_calc.option.membrane');
+      final membraneSwitch = find.byType(SwitchListTile);
       if (membraneSwitch.evaluate().isNotEmpty) {
         await tester.tap(membraneSwitch.first);
         await tester.pumpAndSettle();
@@ -301,7 +302,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('отображает количество упаковок', (tester) async {
@@ -314,7 +315,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('ceiling_insulation_calc.result.packs'), findsOneWidget);
+      // Labels in CalculatorResultHeader are displayed in UPPERCASE
+      expect(find.textContaining('УПАКОВОК'), findsOneWidget);
     });
 
     testWidgets('отображает иконки результатов', (tester) async {

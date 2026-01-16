@@ -28,7 +28,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('onboarding.skip'), findsOneWidget);
+      expect(find.text('Пропустить'), findsOneWidget);
     });
 
     testWidgets('shows next button', (tester) async {
@@ -37,7 +37,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('onboarding.next'), findsOneWidget);
+      expect(find.text('Далее'), findsOneWidget);
     });
 
     testWidgets('shows page indicators', (tester) async {
@@ -60,7 +60,7 @@ void main() {
       expect(find.text('Выберите объект'), findsOneWidget);
 
       // Tap next
-      await tester.tap(find.text('onboarding.next'));
+      await tester.tap(find.text('Далее'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
@@ -96,19 +96,19 @@ void main() {
       expect(find.text('Выберите объект'), findsOneWidget);
 
       // Navigate to page 2 using button
-      await tester.tap(find.text('onboarding.next'));
+      await tester.tap(find.text('Далее'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
       expect(find.text('Рассчитайте материалы'), findsOneWidget);
 
       // Navigate to page 3
-      await tester.tap(find.text('onboarding.next'));
+      await tester.tap(find.text('Далее'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
       expect(find.text('Сохраните в проект'), findsOneWidget);
 
       // Navigate to page 4
-      await tester.tap(find.text('onboarding.next'));
+      await tester.tap(find.text('Далее'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
       expect(find.text('Поделитесь сметой'), findsOneWidget);
@@ -122,12 +122,12 @@ void main() {
 
       // Navigate to last page using next button
       for (int i = 0; i < 3; i++) {
-        await tester.tap(find.text('onboarding.next'));
+        await tester.tap(find.text('Далее'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 600));
       }
 
-      expect(find.text('onboarding.start'), findsOneWidget);
+      expect(find.text('Начать'), findsOneWidget);
     });
   });
 

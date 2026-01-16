@@ -70,6 +70,12 @@ dependencies:
   qr_flutter: ^4.1.0
   # QR код сканер
   mobile_scanner: ^5.2.3
+  # Календарь для отображения дедлайнов
+  table_calendar: ^3.1.3
+  # Локальные уведомления о дедлайнах
+  flutter_local_notifications: ^18.0.1
+  # Работа с часовыми поясами для уведомлений
+  timezone: ^0.10.0
 
 dev_dependencies:
   flutter_test:

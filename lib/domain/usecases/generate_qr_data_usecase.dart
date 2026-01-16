@@ -8,6 +8,11 @@ class GenerateQRDataUseCase {
     ProjectV2 project, {
     bool compact = true,
   }) async {
+    // Проверяем обязательные поля
+    if (project.name.isEmpty) {
+      throw QRGenerationException('Project name is required');
+    }
+
     try {
       final shareableProject = ShareableProject.fromProject(project);
       return compact

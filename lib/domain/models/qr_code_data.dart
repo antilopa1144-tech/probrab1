@@ -75,11 +75,18 @@ class QRCodeData {
     // Simplified compression: remove whitespace and shorten keys
     final compressedData = _compressData(data);
 
+    // Create the compressed QRCodeData first, then generate checksum from it
+    final compressedQRData = QRCodeData(
+      type: type,
+      data: compressedData,
+      compressed: true,
+    );
+
     return QRCodeData(
       type: type,
       data: compressedData,
       compressed: true,
-      checksum: _generateChecksum(),
+      checksum: compressedQRData._generateChecksum(),
     );
   }
 
@@ -238,10 +245,36 @@ class QRCodeData {
   int get hashCode {
     return Object.hash(
       type,
-      data.hashCode,
+      _mapHashCode(data),
       compressed,
       checksum,
     );
+  }
+
+  int _mapHashCode(Map<String, dynamic> map) {
+    var hash = 0;
+    for (final entry in map.entries) {
+      final valueHash = _valueHashCode(entry.value);
+      hash = hash ^ Object.hash(entry.key, valueHash);
+    }
+    return hash;
+  }
+
+  int _valueHashCode(dynamic value) {
+    if (value is Map<String, dynamic>) {
+      return _mapHashCode(value);
+    } else if (value is List) {
+      return _listHashCode(value);
+    }
+    return value.hashCode;
+  }
+
+  int _listHashCode(List list) {
+    var hash = 0;
+    for (var i = 0; i < list.length; i++) {
+      hash = hash ^ Object.hash(i, _valueHashCode(list[i]));
+    }
+    return hash;
   }
 
   bool _mapsEqual(Map<String, dynamic> a, Map<String, dynamic> b) {
@@ -250,11 +283,26 @@ class QRCodeData {
       if (!b.containsKey(key)) return false;
       final valueA = a[key];
       final valueB = b[key];
-      if (valueA is Map && valueB is Map) {
-        if (!_mapsEqual(valueA.cast<String, dynamic>(), valueB.cast<String, dynamic>())) {
-          return false;
-        }
-      } else if (valueA != valueB) {
+      if (!_valuesEqual(valueA, valueB)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _valuesEqual(dynamic a, dynamic b) {
+    if (a is Map<String, dynamic> && b is Map<String, dynamic>) {
+      return _mapsEqual(a, b);
+    } else if (a is List && b is List) {
+      return _listsEqual(a, b);
+    }
+    return a == b;
+  }
+
+  bool _listsEqual(List a, List b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (!_valuesEqual(a[i], b[i])) {
         return false;
       }
     }

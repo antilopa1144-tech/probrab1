@@ -6,6 +6,10 @@ import 'package:probrab_ai/presentation/views/project/widgets/calculation_item_c
 import '../../../../helpers/test_helpers.dart';
 
 void main() {
+  setUpAll(() {
+    setupMocks();
+  });
+
   group('CalculationItemCard', () {
     late ProjectCalculation testCalculation;
 
@@ -20,9 +24,10 @@ void main() {
 
     testWidgets('renders calculation name', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: CalculationItemCard(
               calculation: testCalculation,
               onDelete: () {},
@@ -36,9 +41,10 @@ void main() {
 
     testWidgets('renders calculator id', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: CalculationItemCard(
               calculation: testCalculation,
               onDelete: () {},
@@ -52,9 +58,10 @@ void main() {
 
     testWidgets('renders creation date', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: CalculationItemCard(
               calculation: testCalculation,
               onDelete: () {},
@@ -68,11 +75,12 @@ void main() {
 
     testWidgets('calls onDelete when delete button is pressed', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       bool deleted = false;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: CalculationItemCard(
               calculation: testCalculation,
               onDelete: () => deleted = true,
@@ -85,14 +93,12 @@ void main() {
       expect(deleted, isTrue);
     });
 
-    // Note: onTap test is skipped because it requires AppLocalizations setup
-    // The widget uses localization for the button text when onTap is provided
     testWidgets(
       'widget accepts onTap callback',
       (tester) async {
         setTestViewportSize(tester);
+        addTearDown(tester.view.resetPhysicalSize);
         // Just verify the widget can be created with onTap without error
-        // when localization is set up (see integration tests)
         expect(
           () => CalculationItemCard(
             calculation: testCalculation,
@@ -106,11 +112,12 @@ void main() {
 
     testWidgets('shows notes when present', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       testCalculation.notes = 'Some calculation notes';
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: CalculationItemCard(
               calculation: testCalculation,
               onDelete: () {},
@@ -124,11 +131,12 @@ void main() {
 
     testWidgets('hides notes when null', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       testCalculation.notes = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: CalculationItemCard(
               calculation: testCalculation,
               onDelete: () {},
@@ -143,6 +151,7 @@ void main() {
 
     testWidgets('renders results when present', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       final kvPair1 = KeyValuePair()
         ..key = 'area'
         ..value = 25.5;
@@ -152,8 +161,8 @@ void main() {
       testCalculation.results = [kvPair1, kvPair2];
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: CalculationItemCard(
               calculation: testCalculation,
               onDelete: () {},
@@ -167,9 +176,10 @@ void main() {
 
     testWidgets('is wrapped in a Card', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: CalculationItemCard(
               calculation: testCalculation,
               onDelete: () {},
@@ -183,9 +193,10 @@ void main() {
 
     testWidgets('shows delete tooltip', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: CalculationItemCard(
               calculation: testCalculation,
               onDelete: () {},

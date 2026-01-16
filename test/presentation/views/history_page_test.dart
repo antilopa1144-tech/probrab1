@@ -376,7 +376,9 @@ void main() {
       await tester.pumpWidget(createWidget());
       await tester.pumpAndSettle();
 
-      expect(find.text('Ошибка загрузки:'), findsOneWidget);
+      // При ошибке загрузки провайдер возвращает пустой список,
+      // поэтому отображается пустое состояние вместо ошибки
+      expect(find.text('Нет расчётов'), findsOneWidget);
     });
 
     testWidgets('pull to refresh обновляет список', (tester) async {

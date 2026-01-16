@@ -73,17 +73,278 @@ void main() {
 
   group('ProjectStatus', () {
     test('has all expected values', () {
-      expect(ProjectStatus.values.length, 5);
+      expect(ProjectStatus.values.length, 6);
       expect(ProjectStatus.values, contains(ProjectStatus.planning));
       expect(ProjectStatus.values, contains(ProjectStatus.inProgress));
       expect(ProjectStatus.values, contains(ProjectStatus.onHold));
       expect(ProjectStatus.values, contains(ProjectStatus.completed));
       expect(ProjectStatus.values, contains(ProjectStatus.cancelled));
+      expect(ProjectStatus.values, contains(ProjectStatus.problem));
     });
 
     test('planning is the default', () {
       final project = ProjectV2();
       expect(project.status, ProjectStatus.planning);
+    });
+  });
+
+  group('Dashboard Features', () {
+    group('progress', () {
+      test('returns 0 when no tasks', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..tasksTotal = 0
+          ..tasksCompleted = 0;
+
+        expect(project.progress, 0);
+        expect(project.progressPercent, 0);
+      });
+
+      test('calculates based on tasks', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..tasksTotal = 10
+          ..tasksCompleted = 5;
+
+        expect(project.progress, 0.5);
+        expect(project.progressPercent, 50);
+      });
+
+      test('returns 100% when all tasks completed', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..tasksTotal = 10
+          ..tasksCompleted = 10;
+
+        expect(project.progress, 1.0);
+        expect(project.progressPercent, 100);
+      });
+    });
+
+    group('budget', () {
+      test('isOverBudget returns false when under budget', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..budgetTotal = 100000
+          ..budgetSpent = 50000;
+
+        expect(project.isOverBudget, false);
+      });
+
+      test('isOverBudget returns true when over budget', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..budgetTotal = 100000
+          ..budgetSpent = 120000;
+
+        expect(project.isOverBudget, true);
+      });
+
+      test('isOverBudget returns false when budget is 0', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..budgetTotal = 0
+          ..budgetSpent = 50000;
+
+        expect(project.isOverBudget, false);
+      });
+
+      test('budgetUtilization calculates correctly', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..budgetTotal = 100000
+          ..budgetSpent = 75000;
+
+        expect(project.budgetUtilization, 0.75);
+      });
+
+      test('budgetUtilization returns 0 when no budget', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..budgetTotal = 0
+          ..budgetSpent = 50000;
+
+        expect(project.budgetUtilization, 0);
+      });
+
+      test('budgetRemaining calculates correctly', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..budgetTotal = 100000
+          ..budgetSpent = 30000;
+
+        expect(project.budgetRemaining, 70000);
+      });
+
+      test('budgetRemaining can be negative', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..budgetTotal = 100000
+          ..budgetSpent = 120000;
+
+        expect(project.budgetRemaining, -20000);
+      });
+    });
+
+    group('deadline', () {
+      test('daysLeft returns -1 when no deadline', () {
+        final project = ProjectV2()..name = 'Test';
+
+        expect(project.daysLeft, -1);
+      });
+
+      test('daysLeft returns positive for future deadline', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..deadline = DateTime.now().add(const Duration(days: 10));
+
+        expect(project.daysLeft, greaterThanOrEqualTo(9));
+        expect(project.daysLeft, lessThanOrEqualTo(10));
+      });
+
+      test('isDeadlineClose returns true within 7 days', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..deadline = DateTime.now().add(const Duration(days: 3));
+
+        expect(project.isDeadlineClose, true);
+      });
+
+      test('isDeadlineClose returns false beyond 7 days', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..deadline = DateTime.now().add(const Duration(days: 14));
+
+        expect(project.isDeadlineClose, false);
+      });
+
+      test('isDeadlineOverdue returns true for past deadline', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..deadline = DateTime.now().subtract(const Duration(days: 1));
+
+        expect(project.isDeadlineOverdue, true);
+      });
+
+      test('isDeadlineOverdue returns false for future deadline', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..deadline = DateTime.now().add(const Duration(days: 7));
+
+        expect(project.isDeadlineOverdue, false);
+      });
+
+      test('isDeadlineOverdue returns false when no deadline', () {
+        final project = ProjectV2()..name = 'Test';
+
+        expect(project.isDeadlineOverdue, false);
+      });
+    });
+
+    group('hasProblems', () {
+      test('returns true when status is problem', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..status = ProjectStatus.problem;
+
+        expect(project.hasProblems, true);
+      });
+
+      test('returns true when status is cancelled', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..status = ProjectStatus.cancelled;
+
+        expect(project.hasProblems, true);
+      });
+
+      test('returns true when over budget', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..budgetTotal = 100000
+          ..budgetSpent = 120000;
+
+        expect(project.hasProblems, true);
+      });
+
+      test('returns true when deadline overdue', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..deadline = DateTime.now().subtract(const Duration(days: 1));
+
+        expect(project.hasProblems, true);
+      });
+
+      test('returns false when no problems', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..status = ProjectStatus.inProgress
+          ..budgetTotal = 100000
+          ..budgetSpent = 50000;
+
+        expect(project.hasProblems, false);
+      });
+    });
+
+    group('needsAttention', () {
+      test('returns true when deadline is close', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..deadline = DateTime.now().add(const Duration(days: 3));
+
+        expect(project.needsAttention, true);
+      });
+
+      test('returns true when budget > 90%', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..budgetTotal = 100000
+          ..budgetSpent = 95000;
+
+        expect(project.needsAttention, true);
+      });
+
+      test('returns false when all is good', () {
+        final project = ProjectV2()
+          ..name = 'Test'
+          ..budgetTotal = 100000
+          ..budgetSpent = 50000
+          ..deadline = DateTime.now().add(const Duration(days: 30));
+
+        expect(project.needsAttention, false);
+      });
+    });
+  });
+
+  group('effectiveMaterialCost', () {
+    test('uses materialCost when no materials', () {
+      final calc = ProjectCalculation()..materialCost = 5000;
+
+      expect(calc.effectiveMaterialCost, 5000);
+    });
+
+    test('uses detailed materials when available', () {
+      final calc = ProjectCalculation()
+        ..materialCost = 1000
+        ..materials = [
+          ProjectMaterial()
+            ..name = 'Material 1'
+            ..quantity = 10
+            ..pricePerUnit = 100,
+          ProjectMaterial()
+            ..name = 'Material 2'
+            ..quantity = 5
+            ..pricePerUnit = 200,
+        ];
+
+      // 10*100 + 5*200 = 2000
+      expect(calc.effectiveMaterialCost, 2000);
+    });
+
+    test('returns 0 when no cost data', () {
+      final calc = ProjectCalculation();
+
+      expect(calc.effectiveMaterialCost, 0);
     });
   });
 

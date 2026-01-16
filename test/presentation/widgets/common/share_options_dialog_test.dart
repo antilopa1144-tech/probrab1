@@ -291,9 +291,15 @@ void main() {
       setTestViewportSize(tester);
       // Light theme
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.light(),
-          home: const ShareOptionsDialog(),
+        createTestApp(
+          child: Builder(
+            builder: (context) {
+              return Theme(
+                data: ThemeData.light(),
+                child: const ShareOptionsDialog(),
+              );
+            },
+          ),
         ),
       );
 
@@ -301,9 +307,15 @@ void main() {
 
       // Dark theme
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.dark(),
-          home: const ShareOptionsDialog(),
+        createTestApp(
+          child: Builder(
+            builder: (context) {
+              return Theme(
+                data: ThemeData.dark(),
+                child: const ShareOptionsDialog(),
+              );
+            },
+          ),
         ),
       );
 

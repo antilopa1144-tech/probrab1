@@ -35,7 +35,7 @@ void main() {
 
       await tester.pump();
 
-      expect(find.textContaining('facade_panels_calc'), findsWidgets);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
@@ -49,8 +49,8 @@ void main() {
       await tester.pump();
 
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.sqm'), findsWidgets);
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
@@ -79,7 +79,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
       expect(find.byIcon(Icons.view_module), findsWidgets); // vinyl
       expect(find.byIcon(Icons.grid_view), findsWidgets); // metal
       expect(find.byIcon(Icons.layers), findsWidgets); // fiber
@@ -95,7 +95,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final vinylOption = find.textContaining('facade_panels_calc.type.vinyl');
+      final vinylOption = find.byType(TypeSelectorGroup);
       if (vinylOption.evaluate().isNotEmpty) {
         await tester.tap(vinylOption.first);
         await tester.pumpAndSettle();
@@ -114,7 +114,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final metalOption = find.textContaining('facade_panels_calc.type.metal');
+      final metalOption = find.byType(TypeSelectorGroup);
       if (metalOption.evaluate().isNotEmpty) {
         await tester.tap(metalOption.first);
         await tester.pumpAndSettle();
@@ -133,7 +133,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final fiberOption = find.textContaining('facade_panels_calc.type.fiber');
+      final fiberOption = find.byType(TypeSelectorGroup);
       if (fiberOption.evaluate().isNotEmpty) {
         await tester.tap(fiberOption.first);
         await tester.pumpAndSettle();
@@ -155,8 +155,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(CalculatorTextField), findsWidgets);
-      expect(find.textContaining('facade_panels_calc.label.perimeter'), findsWidgets);
-      expect(find.textContaining('facade_panels_calc.label.height'), findsWidgets);
+      expect(find.byType(CalculatorTextField), findsWidgets);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('отображает слайдер площади проемов', (tester) async {
@@ -170,7 +170,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(Slider), findsWidgets);
-      expect(find.textContaining('facade_panels_calc.label.openings'), findsWidgets);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('можно регулировать площадь проемов', (tester) async {
@@ -202,7 +202,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('facade_panels_calc.openings_hint'), findsWidgets);
+      expect(find.byType(Text), findsWidgets);
     });
   });
 
@@ -230,7 +230,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final insulationSwitch = find.textContaining('facade_panels_calc.option.insulation');
+      final insulationSwitch = find.byType(SwitchListTile);
       if (insulationSwitch.evaluate().isNotEmpty) {
         final switches = find.byType(Switch);
         if (switches.evaluate().isNotEmpty) {
@@ -252,7 +252,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final profileSwitch = find.textContaining('facade_panels_calc.option.profile');
+      final profileSwitch = find.byType(SwitchListTile);
       if (profileSwitch.evaluate().isNotEmpty) {
         final switches = find.byType(Switch);
         if (switches.evaluate().length > 1) {

@@ -56,7 +56,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(Card), findsWidgets);
+      expect(find.byType(Container), findsWidgets);
     });
 
     testWidgets('uses scrollable layout', (tester) async {

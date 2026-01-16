@@ -30,6 +30,7 @@ class ThemeState {
   ThemeState copyWith({
     AppThemeMode? themeMode,
     Color? primaryColor,
+    bool clearPrimaryColor = false,
     bool? useSystemTheme,
     bool? useDynamicColors,
     double? fontSize,
@@ -37,7 +38,7 @@ class ThemeState {
   }) {
     return ThemeState(
       themeMode: themeMode ?? this.themeMode,
-      primaryColor: primaryColor ?? this.primaryColor,
+      primaryColor: clearPrimaryColor ? null : (primaryColor ?? this.primaryColor),
       useSystemTheme: useSystemTheme ?? this.useSystemTheme,
       useDynamicColors: useDynamicColors ?? this.useDynamicColors,
       fontSize: fontSize ?? this.fontSize,
@@ -216,7 +217,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
 
   /// Сбросить основной цвет
   Future<void> resetPrimaryColor() async {
-    state = state.copyWith(primaryColor: null);
+    state = state.copyWith(clearPrimaryColor: true);
     await _saveTheme();
   }
 

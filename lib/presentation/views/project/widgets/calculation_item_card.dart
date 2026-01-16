@@ -35,6 +35,7 @@ class _CalculationItemCardState extends State<CalculationItemCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final dateFormat = DateFormat('dd.MM.yyyy HH:mm');
     final results = widget.calculation.resultsMap;
 
@@ -68,7 +69,7 @@ class _CalculationItemCardState extends State<CalculationItemCard> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          widget.calculation.calculatorId,
+                          _formatCalculatorId(widget.calculation.calculatorId, loc),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -112,7 +113,7 @@ class _CalculationItemCardState extends State<CalculationItemCard> {
                       children: [
                         Expanded(
                           child: Text(
-                            _formatResultKey(entry.key),
+                            _formatResultKey(entry.key, loc),
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -198,7 +199,14 @@ class _CalculationItemCardState extends State<CalculationItemCard> {
     );
   }
 
-  String _formatResultKey(String key) {
+  String _formatResultKey(String key, AppLocalizations loc) {
+    // Пробуем найти локализованное название
+    final localized = loc.translate('share.result_labels.$key');
+    if (localized != 'share.result_labels.$key') {
+      return localized;
+    }
+
+    // Фallback: форматируем snake_case в Title Case
     return key
         .replaceAll('_', ' ')
         .split(' ')
@@ -206,6 +214,15 @@ class _CalculationItemCardState extends State<CalculationItemCard> {
           (word) => word.isEmpty ? '' : word[0].toUpperCase() + word.substring(1),
         )
         .join(' ');
+  }
+
+  String _formatCalculatorId(String calculatorId, AppLocalizations loc) {
+    // Пробуем найти локализованное название калькулятора
+    final localized = loc.translate('share.calculator_names.$calculatorId');
+    if (localized != 'share.calculator_names.$calculatorId') {
+      return localized;
+    }
+    return calculatorId;
   }
 
   String _formatResultValue(String key, double value) {

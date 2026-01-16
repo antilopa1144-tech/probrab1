@@ -66,7 +66,7 @@ void main() {
       });
 
       test('headerLabel has correct properties', () {
-        expect(CalculatorDesignSystem.headerLabel.fontSize, 10);
+        expect(CalculatorDesignSystem.headerLabel.fontSize, 12);
         expect(CalculatorDesignSystem.headerLabel.fontWeight, FontWeight.bold);
         expect(CalculatorDesignSystem.headerLabel.letterSpacing, 0.8);
       });

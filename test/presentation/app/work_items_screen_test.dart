@@ -26,6 +26,7 @@ void main() {
 
     testWidgets('renders correctly', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -44,6 +45,7 @@ void main() {
 
     testWidgets('displays AppBar with section title', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -58,11 +60,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.byType(AppBar), findsOneWidget);
-      expect(find.text(testSection.title), findsOneWidget);
+      // Section title is translated from 'work.section.interior.walls.title' to 'Стены'
+      expect(find.text('Стены'), findsOneWidget);
     });
 
     testWidgets('displays area title in subtitle', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -76,11 +80,13 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.text(testArea.title), findsOneWidget);
+      // Area title is translated from 'work.area.interior.title' to 'Внутренняя отделка'
+      expect(find.text('Внутренняя отделка'), findsOneWidget);
     });
 
     testWidgets('has ListView for work items', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -99,6 +105,7 @@ void main() {
 
     testWidgets('displays work item cards', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -120,6 +127,7 @@ void main() {
 
     testWidgets('displays work item titles', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -134,13 +142,14 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       if (testSection.items.isNotEmpty) {
-        final itemTitle = testSection.items.first.title;
-        expect(find.text(itemTitle), findsOneWidget);
+        // First item 'work.item.walls_top.title' translates to 'Стены (ТОП-использование)'
+        expect(find.text('Стены (ТОП-использование)'), findsOneWidget);
       }
     });
 
     testWidgets('displays calculator button for items with calculator', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -154,14 +163,15 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Should have calculator button text (either open calculator or in development)
-      final hasCalculatorText = find.text('work.screen.open_calculator').evaluate().isNotEmpty ||
-          find.text('work.screen.in_development').evaluate().isNotEmpty;
+      // Should have calculator button text (either translated to 'Открыть калькулятор' or 'В разработке')
+      final hasCalculatorText = find.text('Открыть калькулятор').evaluate().isNotEmpty ||
+          find.text('В разработке').evaluate().isNotEmpty;
       expect(hasCalculatorText, isTrue);
     });
 
     testWidgets('shows tips section when available', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -185,6 +195,7 @@ void main() {
 
     testWidgets('displays in development message for items without calculator', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -204,12 +215,14 @@ void main() {
       );
 
       if (hasItemsWithoutCalculator) {
-        expect(find.text('work.screen.in_development'), findsAtLeastNWidgets(1));
+        // 'work.screen.in_development' translates to 'В разработке'
+        expect(find.text('В разработке'), findsAtLeastNWidgets(1));
       }
     });
 
     testWidgets('AppBar is displayed', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -228,6 +241,7 @@ void main() {
 
     testWidgets('can tap calculator button', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(
@@ -254,6 +268,7 @@ void main() {
 
     testWidgets('disposes correctly', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: WorkItemsScreen(

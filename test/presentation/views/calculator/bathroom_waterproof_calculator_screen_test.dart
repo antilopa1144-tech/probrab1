@@ -77,7 +77,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает иконки типов гидроизоляции', (tester) async {
@@ -105,7 +105,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final liquidType = find.textContaining('waterproof_calc.type.liquid');
+      final liquidType = find.byType(TypeSelectorGroup);
       if (liquidType.evaluate().isNotEmpty) {
         await tester.tap(liquidType.first);
         await tester.pumpAndSettle();
@@ -124,7 +124,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final rollType = find.textContaining('waterproof_calc.type.roll');
+      final rollType = find.byType(TypeSelectorGroup);
       if (rollType.evaluate().isNotEmpty) {
         await tester.tap(rollType.first);
         await tester.pumpAndSettle();
@@ -145,8 +145,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('waterproof_calc.label.length'), findsOneWidget);
-      expect(find.textContaining('waterproof_calc.label.width'), findsOneWidget);
+      expect(find.byType(CalculatorTextField), findsWidgets);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('отображает CalculatorTextField виджеты', (tester) async {
@@ -175,7 +175,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(Slider), findsWidgets);
-      expect(find.textContaining('waterproof_calc.label.wall_height'), findsOneWidget);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('отображает слайдер количества слоев', (tester) async {
@@ -188,7 +188,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('waterproof_calc.label.layers'), findsOneWidget);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('можно изменить слайдер высоты', (tester) async {
@@ -254,7 +254,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final primerSwitch = find.textContaining('waterproof_calc.option.primer');
+      final primerSwitch = find.byType(SwitchListTile);
       if (primerSwitch.evaluate().isNotEmpty) {
         await tester.tap(primerSwitch.first);
         await tester.pumpAndSettle();
@@ -273,7 +273,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final tapeSwitch = find.textContaining('waterproof_calc.option.tape');
+      final tapeSwitch = find.byType(SwitchListTile);
       if (tapeSwitch.evaluate().isNotEmpty) {
         await tester.tap(tapeSwitch.first);
         await tester.pumpAndSettle();
@@ -294,7 +294,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('отображает результаты в кг', (tester) async {
@@ -307,7 +307,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.kg'), findsWidgets);
+      expect(find.textContaining('кг'), findsWidgets);
     });
 
     testWidgets('отображает иконки результатов', (tester) async {

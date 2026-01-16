@@ -49,6 +49,10 @@ export 'result_card.dart';
 // Включает: TipsCard, TipsSection
 export 'tips_card.dart';
 
+// Кнопка добавления в проект
+// Включает: AddToProjectButton, CalculationData, MaterialData
+export 'add_to_project_button.dart';
+
 // Константы
 export '../../../core/constants/calculator_colors.dart';
 export '../../../core/constants/calculator_design_system.dart';

@@ -126,6 +126,8 @@ class _StatusChip extends StatelessWidget {
         return Icons.check_circle_outline_rounded;
       case ProjectStatus.cancelled:
         return Icons.cancel_outlined;
+      case ProjectStatus.problem:
+        return Icons.warning_amber_rounded;
     }
   }
 
@@ -141,6 +143,8 @@ class _StatusChip extends StatelessWidget {
         return Colors.green;
       case ProjectStatus.cancelled:
         return Colors.red;
+      case ProjectStatus.problem:
+        return Colors.deepOrange;
     }
   }
 
@@ -156,6 +160,8 @@ class _StatusChip extends StatelessWidget {
         return 'Завершён';
       case ProjectStatus.cancelled:
         return 'Отменён';
+      case ProjectStatus.problem:
+        return 'Проблема';
     }
   }
 }

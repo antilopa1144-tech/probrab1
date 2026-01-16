@@ -267,16 +267,34 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Navigate to step 3 (step 2 index)
-      for (int i = 0; i < 2; i++) {
-        final nextButton = find.text('Далее');
-        if (nextButton.evaluate().isNotEmpty) {
-          await tester.tap(nextButton.first);
-          await tester.pumpAndSettle();
+      // Navigate to step 3 by tapping on step headers (using onStepTapped)
+      // The stepper has step headers that can be tapped directly
+      final stepper = tester.widget<Stepper>(find.byType(Stepper));
+      expect(stepper.onStepTapped, isNotNull);
+
+      // Tap on the 3rd step header (index 2)
+      // The step title "Проверка" is the translated value for smart_project.step.confirm.title
+      final step3Finder = find.text('Проверка');
+      if (step3Finder.evaluate().isNotEmpty) {
+        await tester.tap(step3Finder.first, warnIfMissed: false);
+        await tester.pumpAndSettle();
+      } else {
+        // Fallback: use stepper's callback directly by navigating via button
+        for (int i = 0; i < 2; i++) {
+          final nextButton = find.text('Далее');
+          if (nextButton.evaluate().isNotEmpty) {
+            await tester.ensureVisible(nextButton.first);
+            await tester.pumpAndSettle();
+            await tester.tap(nextButton.first, warnIfMissed: false);
+            await tester.pumpAndSettle();
+          }
         }
       }
 
-      expect(find.text('Рассчитать'), findsWidgets);
+      // On step 3 (index 2), the button text changes to "Рассчитать"
+      // The button text depends on the localization
+      final calculateButton = find.text('Рассчитать');
+      expect(calculateButton, findsWidgets);
     });
 
     testWidgets('выполняет расчёт при нажатии кнопки', (tester) async {
@@ -428,12 +446,15 @@ void main() {
       for (int i = 0; i < 2; i++) {
         final nextButton = find.text('Далее');
         if (nextButton.evaluate().isNotEmpty) {
-          await tester.tap(nextButton.first);
+          await tester.ensureVisible(nextButton.first);
+          await tester.pumpAndSettle();
+          await tester.tap(nextButton.first, warnIfMissed: false);
           await tester.pumpAndSettle();
         }
       }
 
-      // Should show units like "м"
+      // Should show units like "м" (meters abbreviation in Russian)
+      // The step 3 shows dimensions like "10 м x 8 м x 3 м"
       expect(find.textContaining('м'), findsWidgets);
     });
   });

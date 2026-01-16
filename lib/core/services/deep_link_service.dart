@@ -18,6 +18,10 @@ class DeepLinkService {
 
   DeepLinkService._();
 
+  /// Конструктор для тестирования
+  @visibleForTesting
+  DeepLinkService.forTesting();
+
   final StreamController<DeepLinkData> _linkController =
       StreamController<DeepLinkData>.broadcast();
 
@@ -319,6 +323,8 @@ class _ProjectPreviewDialog extends StatelessWidget {
         return 'Завершён';
       case ProjectStatus.cancelled:
         return 'Отменён';
+      case ProjectStatus.problem:
+        return 'Проблема';
     }
   }
 }

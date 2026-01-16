@@ -61,14 +61,6 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
                 ),
               ),
               PopupMenuItem(
-                value: 'projects',
-                child: ListTile(
-                  leading: const Icon(Icons.folder_outlined),
-                  title: Text(loc.translate('home.menu.projects')),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                ),
-              ),
-              PopupMenuItem(
                 value: 'reminders',
                 child: ListTile(
                   leading: const Icon(Icons.notifications_outlined),
@@ -99,13 +91,6 @@ class _HomeMainScreenState extends ConsumerState<HomeMainScreen> {
                   Navigator.of(context).push(
                     ModernPageTransitions.slideRight(
                       const WorkflowPlannerScreen(),
-                    ),
-                  );
-                  break;
-                case 'projects':
-                  Navigator.of(context).push(
-                    ModernPageTransitions.slideRight(
-                      const ProjectsListScreen(),
                     ),
                   );
                   break;

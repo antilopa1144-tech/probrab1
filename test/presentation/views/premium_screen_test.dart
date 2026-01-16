@@ -81,6 +81,10 @@ class MockPremiumService implements PremiumService {
 }
 
 void main() {
+  setUpAll(() {
+    setupMocks();
+  });
+
   group('PremiumScreen', () {
     late MockPremiumService mockService;
 
@@ -149,6 +153,7 @@ void main() {
     });
 
     testWidgets('показывает предложения для бесплатной версии', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -163,6 +168,7 @@ void main() {
     });
 
     testWidgets('показывает список функций Premium', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -179,6 +185,7 @@ void main() {
     });
 
     testWidgets('показывает карточки продуктов', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -195,6 +202,7 @@ void main() {
     });
 
     testWidgets('показывает цены продуктов', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -211,6 +219,7 @@ void main() {
     });
 
     testWidgets('показывает badge Рекомендуем для годовой подписки', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -225,6 +234,7 @@ void main() {
     });
 
     testWidgets('показывает badge Лучшая цена для lifetime', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -239,6 +249,7 @@ void main() {
     });
 
     testWidgets('показывает кнопку восстановить покупки', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -253,6 +264,7 @@ void main() {
     });
 
     testWidgets('показывает активную подписку', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(
         PremiumSubscription(
           isActive: true,
@@ -274,6 +286,7 @@ void main() {
     });
 
     testWidgets('показывает тип активной подписки', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(
         PremiumSubscription(
           isActive: true,
@@ -295,7 +308,9 @@ void main() {
     });
 
     testWidgets('показывает дату окончания подписки', (tester) async {
-      final expiryDate = DateTime(2025, 12, 31);
+      setTestViewportSize(tester);
+      // Используем будущую дату, чтобы подписка не считалась истекшей
+      final expiryDate = DateTime.now().add(const Duration(days: 30));
       mockService.setSubscription(
         PremiumSubscription(
           isActive: true,
@@ -318,6 +333,7 @@ void main() {
     });
 
     testWidgets('показывает кнопку управления подпиской для активной', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(
         PremiumSubscription(
           isActive: true,
@@ -339,6 +355,7 @@ void main() {
     });
 
     testWidgets('не показывает кнопку управления для lifetime', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(
         PremiumSubscription(
           isActive: true,
@@ -360,6 +377,7 @@ void main() {
     });
 
     testWidgets('показывает доступные функции для активной подписки', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(
         PremiumSubscription(
           isActive: true,
@@ -381,9 +399,10 @@ void main() {
     });
 
     testWidgets('обрабатывает ошибку загрузки', (tester) async {
+      setTestViewportSize(tester);
       final overrides = [
-        premiumServiceProvider.overrideWith((ref) async {
-          throw Exception('Test error');
+        currentSubscriptionProvider.overrideWith((ref) {
+          return Stream<PremiumSubscription>.error(Exception('Test error'));
         }),
       ];
 
@@ -400,6 +419,7 @@ void main() {
     });
 
     testWidgets('показывает все иконки функций', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -418,6 +438,7 @@ void main() {
     });
 
     testWidgets('отображает градиент для активной подписки', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(
         PremiumSubscription(
           isActive: true,
@@ -440,6 +461,7 @@ void main() {
     });
 
     testWidgets('показывает скидку для продукта', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -454,6 +476,7 @@ void main() {
     });
 
     testWidgets('показывает текст разблокировки возможностей', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -471,6 +494,7 @@ void main() {
     });
 
     testWidgets('отображает ListView для предложений', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -485,6 +509,7 @@ void main() {
     });
 
     testWidgets('использует FilledButton для покупки', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -499,6 +524,7 @@ void main() {
     });
 
     testWidgets('показывает snackbar после успешной покупки', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(
@@ -515,6 +541,7 @@ void main() {
     });
 
     testWidgets('проверяет тип подписки monthly', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(
         PremiumSubscription(
           isActive: true,
@@ -536,6 +563,7 @@ void main() {
     });
 
     testWidgets('проверяет тип подписки lifetime', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(
         PremiumSubscription(
           isActive: true,
@@ -557,6 +585,7 @@ void main() {
     });
 
     testWidgets('показывает Card для каждого продукта', (tester) async {
+      setTestViewportSize(tester);
       mockService.setSubscription(const PremiumSubscription.free());
 
       await tester.pumpWidget(

@@ -12,6 +12,7 @@ void main() {
   group('ObjectSelectorScreen', () {
     testWidgets('renders correctly for house', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.house),
@@ -26,6 +27,7 @@ void main() {
 
     testWidgets('renders correctly for flat', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.flat),
@@ -40,6 +42,7 @@ void main() {
 
     testWidgets('renders correctly for garage', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.garage),
@@ -54,6 +57,7 @@ void main() {
 
     testWidgets('displays AppBar with title', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.house),
@@ -64,11 +68,12 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.byType(AppBar), findsOneWidget);
-      expect(find.text('workflow.object.home'), findsOneWidget);
+      expect(find.text('Дом'), findsOneWidget);
     });
 
     testWidgets('displays correct title for flat', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.flat),
@@ -78,11 +83,12 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.text('workflow.object.flat'), findsOneWidget);
+      expect(find.text('Квартира'), findsOneWidget);
     });
 
     testWidgets('displays correct title for garage', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.garage),
@@ -92,11 +98,12 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.text('workflow.object.garage'), findsOneWidget);
+      expect(find.text('Гараж'), findsOneWidget);
     });
 
     testWidgets('has GridView for areas', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.house),
@@ -111,6 +118,7 @@ void main() {
 
     testWidgets('displays area cards', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.house),
@@ -126,6 +134,7 @@ void main() {
 
     testWidgets('shows empty state when no areas available', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       // Garage might have fewer areas
       await tester.pumpWidget(
         createTestApp(
@@ -139,13 +148,14 @@ void main() {
       // Should either show grid or empty state
       expect(
         find.byType(GridView).evaluate().isNotEmpty ||
-            find.text('work.screen.no_categories').evaluate().isNotEmpty,
+            find.text('Категории для этого объекта появятся позже').evaluate().isNotEmpty,
         isTrue,
       );
     });
 
     testWidgets('AppBar is displayed', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.house),
@@ -160,6 +170,7 @@ void main() {
 
     testWidgets('disposes correctly', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const ObjectSelectorScreen(objectType: ObjectType.house),

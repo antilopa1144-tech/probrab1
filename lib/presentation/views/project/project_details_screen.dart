@@ -8,6 +8,7 @@ import '../../../domain/services/csv_export_service.dart';
 import '../../../domain/calculators/calculator_registry.dart';
 import '../../../core/errors/global_error_handler.dart';
 import '../../providers/project_v2_provider.dart';
+import '../../services/pdf_export_service.dart';
 import '../../utils/calculator_navigation_helper.dart';
 import 'widgets/project_details_content.dart';
 import 'qr_share_screen.dart';
@@ -46,16 +47,20 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      body: FutureBuilder<ProjectV2?>(
-        future: _projectFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return FutureBuilder<ProjectV2?>(
+      future: _projectFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Загрузка...')),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
 
-          if (snapshot.hasError) {
-            return Center(
+        if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Ошибка')),
+            body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -77,13 +82,16 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen>
                   ),
                 ],
               ),
-            );
-          }
+            ),
+          );
+        }
 
-          final project = snapshot.data;
+        final project = snapshot.data;
 
-          if (project == null) {
-            return Center(
+        if (project == null) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Проект')),
+            body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -101,32 +109,96 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen>
                   ),
                 ],
               ),
-            );
-          }
+            ),
+          );
+        }
 
-          return ProjectDetailsContent(
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(project.name),
+            actions: [
+              // Избранное
+              IconButton(
+                icon: Icon(
+                  project.isFavorite ? Icons.star : Icons.star_border,
+                  color: project.isFavorite ? Colors.amber : null,
+                ),
+                onPressed: () => _toggleFavorite(project),
+                tooltip: project.isFavorite
+                    ? AppLocalizations.of(context).translate('favorites.remove')
+                    : AppLocalizations.of(context).translate('favorites.add'),
+              ),
+              // Редактировать
+              IconButton(
+                icon: const Icon(Icons.edit_rounded),
+                onPressed: () => _editProjectInfo(project),
+                tooltip: 'Редактировать',
+              ),
+              // Меню
+              PopupMenuButton(
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'qr',
+                    child: Row(
+                      children: [
+                        Icon(Icons.qr_code_rounded),
+                        SizedBox(width: 12),
+                        Flexible(child: Text('Поделиться QR кодом')),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'export',
+                    child: Row(
+                      children: [
+                        Icon(Icons.share_rounded),
+                        SizedBox(width: 12),
+                        Flexible(child: Text('Экспортировать')),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'status',
+                    child: Row(
+                      children: [
+                        Icon(Icons.flag_rounded),
+                        SizedBox(width: 12),
+                        Flexible(child: Text('Изменить статус')),
+                      ],
+                    ),
+                  ),
+                ],
+                onSelected: (value) {
+                  switch (value) {
+                    case 'qr':
+                      _shareViaQR(project);
+                      break;
+                    case 'export':
+                      _showExportOptions(project);
+                      break;
+                    case 'status':
+                      _changeStatus(project);
+                      break;
+                  }
+                },
+              ),
+            ],
+          ),
+          body: ProjectDetailsContent(
             project: project,
-            onToggleFavorite: () => _toggleFavorite(project),
-            onEdit: () => _editProjectInfo(project),
             onAddCalculation: () => _addCalculation(project),
-            onExport: () => _exportProject(project),
-            onChangeStatus: () => _changeStatus(project),
-            onShareQR: () => _shareViaQR(project),
             onOpenCalculation: _openCalculation,
             onDeleteCalculation: _deleteCalculation,
+            onMaterialToggled: _refreshProject,
             onRefresh: _refreshProject,
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final project = await _projectFuture;
-          if (project != null) {
-            _addCalculation(project);
-          }
-        },
-        child: const Icon(Icons.add_rounded),
-      ),
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () => _addCalculation(project),
+            icon: const Icon(Icons.add_rounded),
+            label: const Text('Добавить расчёт'),
+          ),
+        );
+      },
     );
   }
 

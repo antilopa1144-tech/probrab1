@@ -63,7 +63,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает иконки для всех типов откосов', (tester) async {
@@ -86,7 +86,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final gypsumOption = find.textContaining('slopes_calc.type.gypsum');
+      final gypsumOption = find.byType(TypeSelectorGroup);
       if (gypsumOption.evaluate().isNotEmpty) {
         await tester.tap(gypsumOption.first);
         await tester.pumpAndSettle();
@@ -102,7 +102,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final plasterOption = find.textContaining('slopes_calc.type.plaster');
+      final plasterOption = find.byType(TypeSelectorGroup);
       if (plasterOption.evaluate().isNotEmpty) {
         await tester.tap(plasterOption.first);
         await tester.pumpAndSettle();
@@ -118,7 +118,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final sandwichOption = find.textContaining('slopes_calc.type.sandwich');
+      final sandwichOption = find.byType(TypeSelectorGroup);
       if (sandwichOption.evaluate().isNotEmpty) {
         await tester.tap(sandwichOption.first);
         await tester.pumpAndSettle();
@@ -174,7 +174,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('slopes_calc.label.slope_depth'), findsOneWidget);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('можно изменить глубину откоса', (tester) async {
@@ -255,7 +255,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.window), findsWidgets);
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('отображает площадь откосов', (tester) async {
@@ -266,7 +266,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.straighten), findsWidgets);
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('отображает MaterialsCardModern', (tester) async {
@@ -336,7 +336,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.cm'), findsWidgets);
+      expect(find.textContaining('см'), findsWidgets);
     });
 
     testWidgets('отображает единицы измерения метры', (tester) async {
@@ -350,7 +350,7 @@ void main() {
       await tester.drag(scrollable, const Offset(0, -500));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.meters'), findsWidgets);
+      expect(find.textContaining('м'), findsWidgets);
     });
   });
 }

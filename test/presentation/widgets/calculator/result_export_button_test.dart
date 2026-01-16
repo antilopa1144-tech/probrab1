@@ -5,12 +5,18 @@ import 'package:probrab_ai/presentation/widgets/calculator/result_export_button.
 import '../../../helpers/test_helpers.dart';
 
 void main() {
+  setUpAll(() {
+    setupMocks();
+  });
+
   group('ResultExportButton -', () {
     testWidgets('отображает кнопку экспорта', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: const Scaffold(
             body: ResultExportButton(),
           ),
         ),
@@ -22,9 +28,11 @@ void main() {
 
     testWidgets('показывает меню при нажатии', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: ResultExportButton(
               onShare: () {},
               onCopy: () {},
@@ -37,14 +45,16 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Поделиться'), findsOneWidget);
-      expect(find.text('Скопировать'), findsOneWidget);
+      expect(find.text('Копировать'), findsOneWidget);
     });
 
     testWidgets('показывает только указанные опции', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: ResultExportButton(
               onShare: () {},
             ),
@@ -56,18 +66,19 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Поделиться'), findsOneWidget);
-      expect(find.text('Скопировать'), findsNothing);
+      expect(find.text('Копировать'), findsNothing);
       expect(find.text('Экспорт в CSV'), findsNothing);
       expect(find.text('Экспорт в PDF'), findsNothing);
     });
 
     testWidgets('вызывает onShare callback', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       var called = false;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: ResultExportButton(
               onShare: () => called = true,
             ),
@@ -86,11 +97,12 @@ void main() {
 
     testWidgets('вызывает onCopy callback', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       var called = false;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: ResultExportButton(
               onCopy: () => called = true,
             ),
@@ -101,7 +113,7 @@ void main() {
       await tester.tap(find.byType(PopupMenuButton<ExportAction>));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Скопировать'));
+      await tester.tap(find.text('Копировать'));
       await tester.pumpAndSettle();
 
       expect(called, true);
@@ -109,11 +121,12 @@ void main() {
 
     testWidgets('вызывает onExportCsv callback', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       var called = false;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: ResultExportButton(
               onExportCsv: () => called = true,
             ),
@@ -132,11 +145,12 @@ void main() {
 
     testWidgets('вызывает onExportPdf callback', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       var called = false;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: ResultExportButton(
               onExportPdf: () => called = true,
             ),
@@ -155,9 +169,11 @@ void main() {
 
     testWidgets('отключается когда enabled=false', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: const Scaffold(
             body: ResultExportButton(
               enabled: false,
             ),
@@ -174,9 +190,11 @@ void main() {
 
     testWidgets('активна когда enabled=true', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: const Scaffold(
             body: ResultExportButton(
               enabled: true,
             ),
@@ -193,9 +211,11 @@ void main() {
 
     testWidgets('использует кастомный tooltip', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: const Scaffold(
             body: ResultExportButton(
               tooltip: 'Custom tooltip',
             ),
@@ -212,9 +232,11 @@ void main() {
 
     testWidgets('использует дефолтный tooltip', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: const Scaffold(
             body: ResultExportButton(),
           ),
         ),
@@ -229,9 +251,11 @@ void main() {
 
     testWidgets('показывает все опции когда все callbacks указаны', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: ResultExportButton(
               onShare: () {},
               onCopy: () {},
@@ -246,16 +270,18 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Поделиться'), findsOneWidget);
-      expect(find.text('Скопировать'), findsOneWidget);
+      expect(find.text('Копировать'), findsOneWidget);
       expect(find.text('Экспорт в CSV'), findsOneWidget);
       expect(find.text('Экспорт в PDF'), findsOneWidget);
     });
 
     testWidgets('показывает иконки в меню', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: ResultExportButton(
               onShare: () {},
               onCopy: () {},
@@ -277,9 +303,11 @@ void main() {
 
     testWidgets('не вызывает callback если он null', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: ResultExportButton(
               onShare: () {},
             ),
@@ -292,19 +320,20 @@ void main() {
 
       // Только Share доступен, другие опции не показаны
       expect(find.text('Поделиться'), findsOneWidget);
-      expect(find.text('Скопировать'), findsNothing);
+      expect(find.text('Копировать'), findsNothing);
     });
 
     testWidgets('каждый callback вызывается независимо', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       var shareCalled = 0;
       var copyCalled = 0;
       var csvCalled = 0;
       var pdfCalled = 0;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: ResultExportButton(
               onShare: () => shareCalled++,
               onCopy: () => copyCalled++,
@@ -327,7 +356,7 @@ void main() {
       // Тест Copy
       await tester.tap(find.byType(PopupMenuButton<ExportAction>));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Скопировать'));
+      await tester.tap(find.text('Копировать'));
       await tester.pumpAndSettle();
 
       expect(copyCalled, 1);
@@ -353,11 +382,12 @@ void main() {
 
     testWidgets('может быть вызвана несколько раз', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       var callCount = 0;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
+        createTestApp(
+          child: Scaffold(
             body: ResultExportButton(
               onShare: () => callCount++,
             ),

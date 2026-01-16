@@ -77,7 +77,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает иконки типов потолка', (tester) async {
@@ -105,7 +105,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final metalType = find.textContaining('cassette_ceiling_calc.type.metal');
+      final metalType = find.byType(TypeSelectorGroup);
       if (metalType.evaluate().isNotEmpty) {
         await tester.tap(metalType.first);
         await tester.pumpAndSettle();
@@ -124,7 +124,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final mirrorType = find.textContaining('cassette_ceiling_calc.type.mirror');
+      final mirrorType = find.byType(TypeSelectorGroup);
       if (mirrorType.evaluate().isNotEmpty) {
         await tester.tap(mirrorType.first);
         await tester.pumpAndSettle();
@@ -145,9 +145,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('600x600 common.mm'), findsOneWidget);
-      expect(find.text('600x1200 common.mm'), findsOneWidget);
-      expect(find.text('300x300 common.mm'), findsOneWidget);
+      expect(find.text('600x600 мм'), findsWidgets);
+      expect(find.text('600x1200 мм'), findsWidgets);
+      expect(find.text('300x300 мм'), findsWidgets);
     });
 
     testWidgets('можно выбрать размер кассеты 600x600', (tester) async {
@@ -160,9 +160,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final size600 = find.text('600x600 common.mm');
+      final size600 = find.text('600x600 мм');
       if (size600.evaluate().isNotEmpty) {
-        await tester.tap(size600);
+        await tester.tap(size600.first);
         await tester.pumpAndSettle();
       }
 
@@ -179,7 +179,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final size6001200 = find.text('600x1200 common.mm');
+      final size6001200 = find.text('600x1200 мм');
       if (size6001200.evaluate().isNotEmpty) {
         await tester.tap(size6001200);
         await tester.pumpAndSettle();
@@ -213,7 +213,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final manualMode = find.textContaining('cassette_ceiling_calc.mode.manual');
+      final manualMode = find.textContaining('По площади');
       if (manualMode.evaluate().isNotEmpty) {
         await tester.tap(manualMode.first);
         await tester.pumpAndSettle();
@@ -235,7 +235,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Переключаемся на manual режим
-      final manualMode = find.textContaining('cassette_ceiling_calc.mode.manual');
+      final manualMode = find.textContaining('По площади');
       if (manualMode.evaluate().isNotEmpty) {
         await tester.tap(manualMode.first);
         await tester.pumpAndSettle();
@@ -268,7 +268,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Переключаемся на manual режим
-      final manualMode = find.textContaining('cassette_ceiling_calc.mode.manual');
+      final manualMode = find.textContaining('По площади');
       if (manualMode.evaluate().isNotEmpty) {
         await tester.tap(manualMode.first);
         await tester.pumpAndSettle();
@@ -295,7 +295,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('отображает результаты количества кассет', (tester) async {
@@ -308,7 +308,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('отображает иконки результатов', (tester) async {

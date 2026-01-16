@@ -6,12 +6,15 @@ import 'package:probrab_ai/presentation/views/tools/unit_converter_bottom_sheet.
 import '../../../helpers/test_helpers.dart';
 
 void main() {
-  group('UnitConverterBottomSheet', () {
-    setUp(() {
-      setupMocks();
-    });
+  setUpAll(() {
+    setupMocks();
+  });
 
+  group('UnitConverterBottomSheet', () {
     testWidgets('отображает базовые элементы интерфейса', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -26,13 +29,16 @@ void main() {
       expect(find.text('Конвертер единиц'), findsOneWidget);
       expect(find.byIcon(Icons.close_rounded), findsOneWidget);
       expect(find.byType(TabBar), findsOneWidget);
-      expect(find.text('Значение'), findsOneWidget);
-      expect(find.text('Из'), findsOneWidget);
-      expect(find.text('В'), findsOneWidget);
+      // TextField и DropdownButtonFormField используют hintText, проверяем наличие виджетов
+      expect(find.byType(TextField), findsOneWidget);
+      expect(find.byType(DropdownButtonFormField<Unit>), findsNWidgets(2));
       expect(find.byIcon(Icons.swap_vert_rounded), findsOneWidget);
     });
 
     testWidgets('отображает все категории в табах', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -52,6 +58,9 @@ void main() {
     });
 
     testWidgets('выполняет конвертацию при вводе значения', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -73,6 +82,9 @@ void main() {
     });
 
     testWidgets('меняет единицы местами при нажатии swap', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -88,9 +100,8 @@ void main() {
       await tester.enterText(textField, '5');
       await tester.pumpAndSettle();
 
-      // Получаем начальный результат
-      final initialResultText = find.textContaining('м²').first;
-      expect(initialResultText, findsOneWidget);
+      // Проверяем, что результат содержит единицы площади
+      expect(find.textContaining('м²'), findsWidgets);
 
       // Нажимаем swap
       final swapButton = find.byIcon(Icons.swap_vert_rounded);
@@ -102,6 +113,9 @@ void main() {
     });
 
     testWidgets('переключается между категориями', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -122,6 +136,9 @@ void main() {
     });
 
     testWidgets('очищает поле ввода при нажатии кнопки очистки', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -146,6 +163,9 @@ void main() {
     });
 
     testWidgets('отображает историю конвертаций', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -170,6 +190,9 @@ void main() {
     });
 
     testWidgets('разворачивает и сворачивает историю', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -197,6 +220,9 @@ void main() {
     });
 
     testWidgets('очищает историю конвертаций', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -221,6 +247,9 @@ void main() {
     });
 
     testWidgets('отображает популярные конвертации', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -237,6 +266,9 @@ void main() {
     });
 
     testWidgets('применяет популярную конвертацию при нажатии', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -259,6 +291,9 @@ void main() {
     });
 
     testWidgets('закрывается при нажатии кнопки закрытия', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: Builder(
@@ -288,6 +323,9 @@ void main() {
     });
 
     testWidgets('изменяет единицу "Из" через dropdown', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -304,6 +342,9 @@ void main() {
     });
 
     testWidgets('изменяет единицу "В" через dropdown', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -320,6 +361,9 @@ void main() {
     });
 
     testWidgets('проверяет DraggableScrollableSheet', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -335,6 +379,9 @@ void main() {
     });
 
     testWidgets('отображает handle для перетаскивания', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -351,6 +398,9 @@ void main() {
     });
 
     testWidgets('конвертирует площадь корректно', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -371,6 +421,9 @@ void main() {
     });
 
     testWidgets('показывает корректный формат результата', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -395,6 +448,9 @@ void main() {
     });
 
     testWidgets('ограничивает историю до 10 записей', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(
@@ -419,6 +475,9 @@ void main() {
     });
 
     testWidgets('принимает только числовой ввод', (tester) async {
+      setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         createTestApp(
           child: const Scaffold(

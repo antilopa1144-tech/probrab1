@@ -11,6 +11,7 @@ void main() {
   group('ProjectsListActions - Helper Methods - Статусы', () {
     testWidgets('_getStatusIcon возвращает корректные иконки для всех статусов', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       final statusIcons = {
         ProjectStatus.planning: Icons.edit_note_rounded,
@@ -18,6 +19,7 @@ void main() {
         ProjectStatus.onHold: Icons.pause_circle_outline_rounded,
         ProjectStatus.completed: Icons.check_circle_outline_rounded,
         ProjectStatus.cancelled: Icons.cancel_outlined,
+        ProjectStatus.problem: Icons.warning_amber_rounded,
       };
 
       for (final status in ProjectStatus.values) {
@@ -28,6 +30,7 @@ void main() {
 
     testWidgets('_getStatusColor возвращает корректные цвета для всех статусов', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       final statusColors = {
         ProjectStatus.planning: Colors.blue,
@@ -35,6 +38,7 @@ void main() {
         ProjectStatus.onHold: Colors.grey,
         ProjectStatus.completed: Colors.green,
         ProjectStatus.cancelled: Colors.red,
+        ProjectStatus.problem: Colors.deepOrange,
       };
 
       for (final status in ProjectStatus.values) {
@@ -45,6 +49,7 @@ void main() {
 
     testWidgets('_getStatusLabel возвращает корректные метки для всех статусов', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       final statusLabels = {
         ProjectStatus.planning: 'Планирование',
@@ -52,6 +57,7 @@ void main() {
         ProjectStatus.onHold: 'Приостановлен',
         ProjectStatus.completed: 'Завершён',
         ProjectStatus.cancelled: 'Отменён',
+        ProjectStatus.problem: 'Проблема',
       };
 
       for (final status in ProjectStatus.values) {
@@ -64,6 +70,7 @@ void main() {
 
     testWidgets('все статусы имеют уникальные иконки', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       final statusIcons = {
         ProjectStatus.planning: Icons.edit_note_rounded,
@@ -71,6 +78,7 @@ void main() {
         ProjectStatus.onHold: Icons.pause_circle_outline_rounded,
         ProjectStatus.completed: Icons.check_circle_outline_rounded,
         ProjectStatus.cancelled: Icons.cancel_outlined,
+        ProjectStatus.problem: Icons.warning_amber_rounded,
       };
 
       final iconSet = statusIcons.values.toSet();
@@ -80,6 +88,7 @@ void main() {
 
     testWidgets('все статусы имеют уникальные цвета', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       final statusColors = {
         ProjectStatus.planning: Colors.blue,
@@ -87,6 +96,7 @@ void main() {
         ProjectStatus.onHold: Colors.grey,
         ProjectStatus.completed: Colors.green,
         ProjectStatus.cancelled: Colors.red,
+        ProjectStatus.problem: Colors.deepOrange,
       };
 
       final colorSet = statusColors.values.toSet();
@@ -96,6 +106,7 @@ void main() {
 
     testWidgets('все статусы имеют уникальные метки', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       final statusLabels = {
         ProjectStatus.planning: 'Планирование',
@@ -103,6 +114,7 @@ void main() {
         ProjectStatus.onHold: 'Приостановлен',
         ProjectStatus.completed: 'Завершён',
         ProjectStatus.cancelled: 'Отменён',
+        ProjectStatus.problem: 'Проблема',
       };
 
       final labelSet = statusLabels.values.toSet();
@@ -114,19 +126,22 @@ void main() {
   group('ProjectsListActions - ProjectStatus', () {
     testWidgets('ProjectStatus имеет все необходимые значения', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
-      expect(ProjectStatus.values.length, equals(5),
-          reason: 'ProjectStatus должен иметь 5 значений');
+      expect(ProjectStatus.values.length, equals(6),
+          reason: 'ProjectStatus должен иметь 6 значений');
 
       expect(ProjectStatus.values, contains(ProjectStatus.planning));
       expect(ProjectStatus.values, contains(ProjectStatus.inProgress));
       expect(ProjectStatus.values, contains(ProjectStatus.onHold));
       expect(ProjectStatus.values, contains(ProjectStatus.completed));
       expect(ProjectStatus.values, contains(ProjectStatus.cancelled));
+      expect(ProjectStatus.values, contains(ProjectStatus.problem));
     });
 
     testWidgets('ProjectStatus можно итерировать', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       int count = 0;
       for (final status in ProjectStatus.values) {
@@ -134,17 +149,19 @@ void main() {
         count++;
       }
 
-      expect(count, equals(5));
+      expect(count, equals(6));
     });
 
     testWidgets('каждый статус имеет корректный индекс', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
 
       expect(ProjectStatus.planning.index, equals(0));
       expect(ProjectStatus.inProgress.index, equals(1));
       expect(ProjectStatus.onHold.index, equals(2));
       expect(ProjectStatus.completed.index, equals(3));
       expect(ProjectStatus.cancelled.index, equals(4));
+      expect(ProjectStatus.problem.index, equals(5));
     });
   });
 

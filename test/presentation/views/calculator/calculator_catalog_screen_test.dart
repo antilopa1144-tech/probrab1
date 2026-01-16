@@ -145,7 +145,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       // Should show "no results" message
-      expect(find.text('search.no_results'), findsOneWidget);
+      expect(find.text('Ничего не найдено'), findsOneWidget);
     });
 
     testWidgets('calculator cards have favorite toggle', (tester) async {

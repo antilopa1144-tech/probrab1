@@ -64,12 +64,53 @@ void _installAssetBundleMock() {
   });
 }
 
+/// Загружает локализацию из JSON-файла для тестов
+Map<String, dynamic>? _cachedTranslations;
+
+Map<String, dynamic>? _syncLoadTranslations() {
+  if (_cachedTranslations != null) return _cachedTranslations;
+
+  final root = _findProjectRoot();
+  final file = File('${root.path}${Platform.pathSeparator}assets${Platform.pathSeparator}lang${Platform.pathSeparator}ru.json');
+
+  if (file.existsSync()) {
+    final content = file.readAsStringSync();
+    _cachedTranslations = json.decode(content) as Map<String, dynamic>;
+    return _cachedTranslations;
+  }
+
+  return null;
+}
+
+String _getNestedValue(Map<String, dynamic> map, String key) {
+  final parts = key.split('.');
+  dynamic current = map;
+
+  for (final part in parts) {
+    if (current is Map<String, dynamic> && current.containsKey(part)) {
+      current = current[part];
+    } else {
+      return key; // Return key if not found
+    }
+  }
+
+  return current is String ? current : key;
+}
+
 class TestAppLocalizations extends AppLocalizations {
   TestAppLocalizations(super.locale);
 
   @override
   String translate(String key, [Map<String, String>? params]) {
-    var resolved = key;
+    final translations = _syncLoadTranslations();
+    String resolved;
+
+    if (translations != null) {
+      resolved = _getNestedValue(translations, key);
+    } else {
+      resolved = key;
+    }
+
     if (params != null && params.isNotEmpty) {
       for (final entry in params.entries) {
         resolved = resolved.replaceAll('{${entry.key}}', entry.value);
@@ -218,5 +259,37 @@ Future<void> pumpAndSettleWithTimeout(
   final steps = (timeout.inMilliseconds / 100).ceil();
   for (int i = 0; i < steps; i++) {
     await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
+// ============================================================================
+// Riverpod + Stream Test Helpers
+// ============================================================================
+
+/// Надёжное ожидание загрузки данных для Stream-провайдеров
+///
+/// Проблема: Isar watch() + asyncMap() не эмитит события синхронно в тестах.
+/// Решение: Использовать фиксированные pump с таймаутом.
+///
+/// Использование:
+/// ```dart
+/// await tester.pumpWidget(...);
+/// await pumpForStream(tester); // Вместо pumpAndSettle
+/// expect(find.text('...'), findsOneWidget);
+/// ```
+Future<void> pumpForStream(
+  WidgetTester tester, {
+  int pumps = 20,
+  Duration interval = const Duration(milliseconds: 50),
+}) async {
+  // Первый pump для запуска виджетов
+  await tester.pump();
+
+  // Pump для обработки микрозадач
+  await tester.pump(Duration.zero);
+
+  // Несколько pump с интервалами для Stream событий
+  for (int i = 0; i < pumps; i++) {
+    await tester.pump(interval);
   }
 }

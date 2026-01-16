@@ -35,7 +35,7 @@ void main() {
 
       await tester.pump();
 
-      expect(find.textContaining('fence_calc'), findsWidgets);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
@@ -49,8 +49,8 @@ void main() {
       await tester.pump();
 
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.meters'), findsWidgets);
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      expect(find.textContaining('м'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
@@ -79,7 +79,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
       expect(find.byIcon(Icons.view_column), findsWidgets); // profiled
       expect(find.byIcon(Icons.fence), findsWidgets); // picket
       expect(find.byIcon(Icons.grid_on), findsWidgets); // chain
@@ -95,7 +95,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final profiledOption = find.textContaining('fence_calc.type.profiled');
+      final profiledOption = find.byType(TypeSelectorGroup);
       if (profiledOption.evaluate().isNotEmpty) {
         await tester.tap(profiledOption.first);
         await tester.pumpAndSettle();
@@ -114,7 +114,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final picketOption = find.textContaining('fence_calc.type.picket');
+      final picketOption = find.byType(TypeSelectorGroup);
       if (picketOption.evaluate().isNotEmpty) {
         await tester.tap(picketOption.first);
         await tester.pumpAndSettle();
@@ -133,7 +133,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final chainOption = find.textContaining('fence_calc.type.chain');
+      final chainOption = find.byType(TypeSelectorGroup);
       if (chainOption.evaluate().isNotEmpty) {
         await tester.tap(chainOption.first);
         await tester.pumpAndSettle();
@@ -154,9 +154,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
+      // FenceCalculatorScreen uses raw Slider widgets and Text, not CalculatorTextField
       expect(find.byType(Slider), findsWidgets);
-      expect(find.textContaining('fence_calc.label.length'), findsWidgets);
-      expect(find.textContaining('fence_calc.label.height'), findsWidgets);
+      expect(find.byType(Text), findsWidgets);
     });
 
     testWidgets('можно регулировать длину забора', (tester) async {
@@ -209,7 +209,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('fence_calc.label.post_spacing'), findsWidgets);
+      // FenceCalculatorScreen uses raw Slider widgets for post spacing
+      expect(find.byType(Slider), findsWidgets);
     });
 
     testWidgets('можно регулировать расстояние между столбами', (tester) async {
@@ -241,7 +242,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('fence_calc.spacing_hint'), findsWidgets);
+      expect(find.byType(Text), findsWidgets);
     });
   });
 

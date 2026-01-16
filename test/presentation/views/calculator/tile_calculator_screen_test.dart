@@ -97,7 +97,7 @@ void main() {
 
       // Should display area
       // TestAppLocalizations returns keys, so we search for localization key
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('accepts initial inputs', (tester) async {
@@ -210,8 +210,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // TestAppLocalizations returns keys, so we search for localization key
-      expect(find.textContaining('tile.mode'), findsWidgets);
+      // TestAppLocalizations resolves keys to Russian text
+      expect(find.text('Режим ввода'), findsOneWidget);
     });
 
     testWidgets('has ModeSelector widget', (tester) async {
@@ -565,7 +565,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should show tiles count (TestAppLocalizations returns keys)
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('shows boxes count in result', (tester) async {
@@ -579,8 +579,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Should show boxes label (TestAppLocalizations returns keys)
-      expect(find.textContaining('boxes'), findsWidgets);
+      // TestAppLocalizations resolves keys to Russian text
+      // Header shows "УПАКОВОК" (tile.header.boxes)
+      expect(find.text('УПАКОВОК'), findsOneWidget);
     });
 
     testWidgets('shows material results after scroll', (tester) async {
@@ -706,7 +707,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find joint width (TestAppLocalizations returns keys)
-      final jointText = find.textContaining('common.mm');
+      final jointText = find.textContaining('мм');
       expect(jointText, findsWidgets);
 
       // Drag a slider

@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/core/responsive/responsive_layout.dart';
 
+import '../../helpers/test_helpers.dart';
+
 void main() {
+  setUpAll(() {
+    setupMocks();
+  });
   group('ResponsiveBreakpoints', () {
     testWidgets('identifies phone for narrow screens', (tester) async {
       await tester.pumpWidget(
@@ -93,8 +98,8 @@ void main() {
 
   group('ResponsiveLayout', () {
     testWidgets('shows phone layout on narrow screens', (tester) async {
-      tester.view.physicalSize = const Size(400, 800);
-      tester.view.devicePixelRatio = 1.0;
+      setTestViewportSize(tester, width: 400, height: 800);
+      addTearDown(tester.view.resetPhysicalSize);
 
       await tester.pumpWidget(
         const MaterialApp(
@@ -111,16 +116,16 @@ void main() {
       expect(find.text('Phone'), findsOneWidget);
       expect(find.text('Tablet'), findsNothing);
       expect(find.text('Desktop'), findsNothing);
-
-      addTearDown(tester.view.reset);
     });
 
     testWidgets('shows tablet layout on medium screens', (tester) async {
+      setTestViewportSize(tester, width: 700, height: 1000);
+      addTearDown(tester.view.resetPhysicalSize);
+
       await tester.pumpWidget(
         const MaterialApp(
-          home: MediaQuery(
-            data: MediaQueryData(size: Size(700, 1000)),
-            child: ResponsiveLayout(
+          home: Scaffold(
+            body: ResponsiveLayout(
               phone: Text('Phone'),
               tablet: Text('Tablet'),
               desktop: Text('Desktop'),
@@ -135,8 +140,8 @@ void main() {
     });
 
     testWidgets('shows desktop layout on wide screens', (tester) async {
-      tester.view.physicalSize = const Size(1200, 800);
-      tester.view.devicePixelRatio = 1.0;
+      setTestViewportSize(tester, width: 1200, height: 800);
+      addTearDown(tester.view.resetPhysicalSize);
 
       await tester.pumpWidget(
         const MaterialApp(
@@ -153,8 +158,6 @@ void main() {
       expect(find.text('Phone'), findsNothing);
       expect(find.text('Tablet'), findsNothing);
       expect(find.text('Desktop'), findsOneWidget);
-
-      addTearDown(tester.view.reset);
     });
 
     testWidgets('falls back to phone when tablet not provided', (tester) async {
@@ -581,7 +584,16 @@ void main() {
         ),
       );
 
-      expect(find.byType(ConstrainedBox), findsOneWidget);
+      // Find the ConstrainedBox that is a child of Center (from ResponsiveConstrainedBox)
+      final centerFinder = find.byType(Center);
+      expect(centerFinder, findsWidgets);
+      final constrainedBoxFinder = find.descendant(
+        of: centerFinder.first,
+        matching: find.byType(ConstrainedBox),
+      );
+      expect(constrainedBoxFinder, findsOneWidget);
+      final constrainedBox = tester.widget<ConstrainedBox>(constrainedBoxFinder);
+      expect(constrainedBox.constraints.maxWidth, equals(350));
       expect(find.text('Content'), findsOneWidget);
     });
 
@@ -598,8 +610,15 @@ void main() {
         ),
       );
 
-      expect(find.byType(ConstrainedBox), findsOneWidget);
-      final constrainedBox = tester.widget<ConstrainedBox>(find.byType(ConstrainedBox));
+      // Find the ConstrainedBox that is a child of Center (from ResponsiveConstrainedBox)
+      final centerFinder = find.byType(Center);
+      expect(centerFinder, findsWidgets);
+      final constrainedBoxFinder = find.descendant(
+        of: centerFinder.first,
+        matching: find.byType(ConstrainedBox),
+      );
+      expect(constrainedBoxFinder, findsOneWidget);
+      final constrainedBox = tester.widget<ConstrainedBox>(constrainedBoxFinder);
       expect(constrainedBox.constraints.maxWidth, equals(600));
     });
 
@@ -616,8 +635,15 @@ void main() {
         ),
       );
 
-      expect(find.byType(ConstrainedBox), findsOneWidget);
-      final constrainedBox = tester.widget<ConstrainedBox>(find.byType(ConstrainedBox));
+      // Find the ConstrainedBox that is a child of Center (from ResponsiveConstrainedBox)
+      final centerFinder = find.byType(Center);
+      expect(centerFinder, findsWidgets);
+      final constrainedBoxFinder = find.descendant(
+        of: centerFinder.first,
+        matching: find.byType(ConstrainedBox),
+      );
+      expect(constrainedBoxFinder, findsOneWidget);
+      final constrainedBox = tester.widget<ConstrainedBox>(constrainedBoxFinder);
       expect(constrainedBox.constraints.maxWidth, equals(800));
     });
 
@@ -633,8 +659,16 @@ void main() {
         ),
       );
 
-      expect(find.byType(ConstrainedBox), findsOneWidget);
-      final constrainedBox = tester.widget<ConstrainedBox>(find.byType(ConstrainedBox));
+      // Find the ConstrainedBox that is a child of Center (from ResponsiveConstrainedBox)
+      // Default tabletMaxWidth is 700
+      final centerFinder = find.byType(Center);
+      expect(centerFinder, findsWidgets);
+      final constrainedBoxFinder = find.descendant(
+        of: centerFinder.first,
+        matching: find.byType(ConstrainedBox),
+      );
+      expect(constrainedBoxFinder, findsOneWidget);
+      final constrainedBox = tester.widget<ConstrainedBox>(constrainedBoxFinder);
       expect(constrainedBox.constraints.maxWidth, equals(700));
     });
 

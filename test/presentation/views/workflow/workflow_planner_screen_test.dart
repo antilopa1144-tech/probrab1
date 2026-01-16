@@ -17,7 +17,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('workflow.screen.title'), findsOneWidget);
+      expect(find.text('Планировщик работ'), findsOneWidget);
     });
 
     testWidgets('shows empty state when no object type', (tester) async {
@@ -26,7 +26,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('workflow.screen.empty_title'), findsOneWidget);
+      expect(find.text('Выберите тип объекта для создания плана'), findsOneWidget);
       expect(find.byIcon(Icons.work_outline), findsOneWidget);
     });
 
@@ -36,7 +36,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('workflow.screen.create_plan'), findsOneWidget);
+      expect(find.text('Создать план'), findsOneWidget);
     });
 
     testWidgets('shows plan when object type provided', (tester) async {
@@ -63,9 +63,9 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('workflow.screen.stats.total_steps'), findsOneWidget);
-      expect(find.text('workflow.screen.stats.completed'), findsOneWidget);
-      expect(find.text('workflow.screen.stats.days'), findsOneWidget);
+      expect(find.text('Всего шагов'), findsOneWidget);
+      expect(find.text('Выполнено'), findsOneWidget);
+      expect(find.text('Дней'), findsOneWidget);
     });
 
     testWidgets('shows stat icons', (tester) async {
@@ -116,13 +116,13 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.text('workflow.screen.create_plan'));
+      await tester.tap(find.text('Создать план'));
       await tester.pumpAndSettle();
 
-      expect(find.text('workflow.screen.choose_object'), findsOneWidget);
-      expect(find.text('workflow.object.home'), findsOneWidget);
-      expect(find.text('workflow.object.flat'), findsOneWidget);
-      expect(find.text('workflow.object.garage'), findsOneWidget);
+      expect(find.text('Выберите тип объекта'), findsOneWidget);
+      expect(find.text('Дом'), findsOneWidget);
+      expect(find.text('Квартира'), findsOneWidget);
+      expect(find.text('Гараж'), findsOneWidget);
     });
 
     testWidgets('selecting home in dialog creates plan', (tester) async {
@@ -135,10 +135,10 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.text('workflow.screen.create_plan'));
+      await tester.tap(find.text('Создать план'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('workflow.object.home'));
+      await tester.tap(find.text('Дом'));
       await tester.pumpAndSettle();
 
       // Should now show the plan
@@ -151,7 +151,7 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.text('workflow.screen.create_plan'));
+      await tester.tap(find.text('Создать план'));
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.house), findsOneWidget);

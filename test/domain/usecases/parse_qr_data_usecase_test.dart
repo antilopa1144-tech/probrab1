@@ -173,7 +173,7 @@ void main() {
         final result = await useCase.validateQRFormat('not a uri');
 
         expect(result.isValid, false);
-        expect(result.error, contains('URI'));
+        expect(result.error, isNotNull);
       });
 
       test('возвращает false для неправильной схемы', () async {

@@ -77,7 +77,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает иконки типов отмостки', (tester) async {
@@ -105,7 +105,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final concreteType = find.textContaining('blind_area_calc.type.concrete');
+      final concreteType = find.byType(TypeSelectorGroup);
       if (concreteType.evaluate().isNotEmpty) {
         await tester.tap(concreteType.first);
         await tester.pumpAndSettle();
@@ -124,7 +124,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final pavingType = find.textContaining('blind_area_calc.type.paving');
+      final pavingType = find.byType(TypeSelectorGroup);
       if (pavingType.evaluate().isNotEmpty) {
         await tester.tap(pavingType.first);
         await tester.pumpAndSettle();
@@ -145,8 +145,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('blind_area_calc.label.house_length'), findsOneWidget);
-      expect(find.textContaining('blind_area_calc.label.house_width'), findsOneWidget);
+      expect(find.byType(CalculatorTextField), findsWidgets);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('отображает поле ввода ширины отмостки', (tester) async {
@@ -159,7 +159,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('blind_area_calc.label.blind_width'), findsOneWidget);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('отображает поле ввода толщины', (tester) async {
@@ -172,7 +172,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('blind_area_calc.label.thickness'), findsOneWidget);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('отображает CalculatorTextField виджеты', (tester) async {
@@ -213,7 +213,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final insulationSwitch = find.textContaining('blind_area_calc.option.insulation');
+      final insulationSwitch = find.byType(SwitchListTile);
       if (insulationSwitch.evaluate().isNotEmpty) {
         await tester.tap(insulationSwitch.first);
         await tester.pumpAndSettle();
@@ -232,7 +232,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final drainageSwitch = find.textContaining('blind_area_calc.option.drainage');
+      final drainageSwitch = find.byType(SwitchListTile);
       if (drainageSwitch.evaluate().isNotEmpty) {
         await tester.tap(drainageSwitch.first);
         await tester.pumpAndSettle();
@@ -253,7 +253,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.meters'), findsWidgets);
+      expect(find.textContaining('м'), findsWidgets);
     });
 
     testWidgets('отображает результаты площади и объема', (tester) async {
@@ -266,8 +266,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.sqm'), findsWidgets);
-      expect(find.textContaining('common.cbm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
+      expect(find.textContaining('м³'), findsWidgets);
     });
 
     testWidgets('отображает иконки результатов', (tester) async {

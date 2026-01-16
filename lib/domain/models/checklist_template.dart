@@ -77,6 +77,9 @@ class ChecklistTemplates {
         bathroomRenovation,
         kitchenRenovation,
         livingRoomRenovation,
+        hallwayRenovation,
+        balconyRenovation,
+        facadeRenovation,
         generalRenovation,
       ];
 
@@ -338,6 +341,223 @@ class ChecklistTemplates {
           ChecklistTemplateItem(
             title: 'Уборка помещения',
             description: 'Генеральная уборка',
+          ),
+        ],
+      );
+
+  /// Шаблон: Ремонт прихожей
+  static ChecklistTemplate get hallwayRenovation => const ChecklistTemplate(
+        id: 'hallway_renovation',
+        name: 'Ремонт прихожей',
+        description: 'Чек-лист для ремонта прихожей и коридора',
+        category: ChecklistCategory.hallway,
+        items: [
+          ChecklistTemplateItem(
+            title: 'Освобождение помещения',
+            description: 'Вынести мебель, обувь, одежду',
+            priority: ChecklistPriority.high,
+          ),
+          ChecklistTemplateItem(
+            title: 'Демонтаж старого покрытия',
+            description: 'Снять обои, удалить старую краску',
+          ),
+          ChecklistTemplateItem(
+            title: 'Замена входной двери',
+            description: 'Установка новой входной двери с замками',
+            priority: ChecklistPriority.high,
+          ),
+          ChecklistTemplateItem(
+            title: 'Электромонтажные работы',
+            description: 'Проводка для освещения, выключатели, розетки',
+            priority: ChecklistPriority.high,
+          ),
+          ChecklistTemplateItem(
+            title: 'Выравнивание стен',
+            description: 'Штукатурка и шпаклевка стен',
+          ),
+          ChecklistTemplateItem(
+            title: 'Грунтовка стен',
+            description: 'Нанести грунтовку перед финишной отделкой',
+          ),
+          ChecklistTemplateItem(
+            title: 'Монтаж потолка',
+            description: 'Натяжной потолок или покраска',
+          ),
+          ChecklistTemplateItem(
+            title: 'Напольное покрытие',
+            description: 'Стяжка, укладка плитки или ламината',
+          ),
+          ChecklistTemplateItem(
+            title: 'Финишная отделка стен',
+            description: 'Обои, декоративная штукатурка или покраска',
+          ),
+          ChecklistTemplateItem(
+            title: 'Установка плинтусов',
+            description: 'Монтаж напольных плинтусов',
+          ),
+          ChecklistTemplateItem(
+            title: 'Установка вешалок и полок',
+            description: 'Монтаж крючков для одежды, полок для обуви',
+          ),
+          ChecklistTemplateItem(
+            title: 'Зеркало',
+            description: 'Повесить зеркало',
+          ),
+          ChecklistTemplateItem(
+            title: 'Освещение',
+            description: 'Установка светильников, бра',
+          ),
+          ChecklistTemplateItem(
+            title: 'Уборка помещения',
+            description: 'Генеральная уборка',
+          ),
+        ],
+      );
+
+  /// Шаблон: Ремонт балкона
+  static ChecklistTemplate get balconyRenovation => const ChecklistTemplate(
+        id: 'balcony_renovation',
+        name: 'Ремонт балкона/лоджии',
+        description: 'Чек-лист для утепления и отделки балкона',
+        category: ChecklistCategory.balcony,
+        items: [
+          ChecklistTemplateItem(
+            title: 'Остекление балкона',
+            description: 'Установка окон (холодное или тёплое остекление)',
+            priority: ChecklistPriority.high,
+          ),
+          ChecklistTemplateItem(
+            title: 'Укрепление парапета',
+            description: 'Усиление основания под остекление (если требуется)',
+            priority: ChecklistPriority.high,
+          ),
+          ChecklistTemplateItem(
+            title: 'Гидроизоляция',
+            description: 'Обработка пола и стыков гидроизоляцией',
+            priority: ChecklistPriority.high,
+          ),
+          ChecklistTemplateItem(
+            title: 'Утепление пола',
+            description: 'Укладка утеплителя, стяжка',
+          ),
+          ChecklistTemplateItem(
+            title: 'Утепление стен',
+            description: 'Монтаж утеплителя на стены и парапет',
+          ),
+          ChecklistTemplateItem(
+            title: 'Утепление потолка',
+            description: 'Укладка утеплителя на потолок',
+          ),
+          ChecklistTemplateItem(
+            title: 'Электромонтаж',
+            description: 'Проводка для освещения, розетки (если нужны)',
+          ),
+          ChecklistTemplateItem(
+            title: 'Обшивка стен',
+            description: 'Вагонка, пластиковые панели или гипсокартон',
+          ),
+          ChecklistTemplateItem(
+            title: 'Отделка потолка',
+            description: 'Вагонка, панели или натяжной потолок',
+          ),
+          ChecklistTemplateItem(
+            title: 'Напольное покрытие',
+            description: 'Ламинат, плитка или линолеум',
+          ),
+          ChecklistTemplateItem(
+            title: 'Установка плинтусов',
+            description: 'Монтаж напольных плинтусов',
+          ),
+          ChecklistTemplateItem(
+            title: 'Установка подоконника',
+            description: 'Монтаж широкого подоконника (если требуется)',
+          ),
+          ChecklistTemplateItem(
+            title: 'Сушилка для белья',
+            description: 'Установка сушилки (если предусмотрено)',
+          ),
+          ChecklistTemplateItem(
+            title: 'Освещение',
+            description: 'Установка светильников',
+          ),
+          ChecklistTemplateItem(
+            title: 'Уборка',
+            description: 'Уборка балкона',
+          ),
+        ],
+      );
+
+  /// Шаблон: Ремонт фасада
+  static ChecklistTemplate get facadeRenovation => const ChecklistTemplate(
+        id: 'facade_renovation',
+        name: 'Ремонт фасада',
+        description: 'Чек-лист для наружного ремонта здания',
+        category: ChecklistCategory.facade,
+        items: [
+          ChecklistTemplateItem(
+            title: 'Обследование фасада',
+            description: 'Оценка состояния, выявление повреждений',
+            priority: ChecklistPriority.high,
+          ),
+          ChecklistTemplateItem(
+            title: 'Получение разрешений',
+            description: 'Согласование работ с управляющей компанией',
+            priority: ChecklistPriority.high,
+          ),
+          ChecklistTemplateItem(
+            title: 'Установка лесов',
+            description: 'Монтаж строительных лесов или вышки',
+            priority: ChecklistPriority.high,
+          ),
+          ChecklistTemplateItem(
+            title: 'Очистка фасада',
+            description: 'Удаление старой штукатурки, краски, загрязнений',
+          ),
+          ChecklistTemplateItem(
+            title: 'Ремонт трещин',
+            description: 'Заделка трещин и швов',
+            priority: ChecklistPriority.high,
+          ),
+          ChecklistTemplateItem(
+            title: 'Грунтовка поверхности',
+            description: 'Нанесение глубокопроникающей грунтовки',
+          ),
+          ChecklistTemplateItem(
+            title: 'Утепление фасада',
+            description: 'Монтаж утеплителя (пенопласт, минвата)',
+          ),
+          ChecklistTemplateItem(
+            title: 'Армирование',
+            description: 'Установка армирующей сетки',
+          ),
+          ChecklistTemplateItem(
+            title: 'Оштукатуривание',
+            description: 'Нанесение штукатурного слоя',
+          ),
+          ChecklistTemplateItem(
+            title: 'Финишная отделка',
+            description: 'Декоративная штукатурка или покраска',
+          ),
+          ChecklistTemplateItem(
+            title: 'Отделка цоколя',
+            description: 'Облицовка цоколя камнем или плиткой',
+          ),
+          ChecklistTemplateItem(
+            title: 'Отливы',
+            description: 'Установка отливов на окна',
+          ),
+          ChecklistTemplateItem(
+            title: 'Водосточная система',
+            description: 'Монтаж или ремонт водостоков',
+            priority: ChecklistPriority.high,
+          ),
+          ChecklistTemplateItem(
+            title: 'Демонтаж лесов',
+            description: 'Разборка строительных лесов',
+          ),
+          ChecklistTemplateItem(
+            title: 'Уборка территории',
+            description: 'Вывоз строительного мусора, уборка',
           ),
         ],
       );

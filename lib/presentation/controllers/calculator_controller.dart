@@ -83,6 +83,15 @@ class CalculatorController {
       }
     }
 
+    // Валидация каждого поля (min/max значения)
+    for (final field in definition.fields) {
+      final value = inputs[field.key];
+      final fieldError = FieldValidator.validate(field, value);
+      if (fieldError != null) {
+        return fieldError.getUserMessage();
+      }
+    }
+
     // Валидация логических ограничений
     final logicalError = FieldValidator.validateLogical(inputs);
     if (logicalError != null) {

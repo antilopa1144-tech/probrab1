@@ -1,188 +1,341 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/localization/app_localizations.dart';
+import 'package:intl/intl.dart';
 import '../../../../domain/models/project_v2.dart';
 import '../../../../domain/models/checklist.dart';
 import '../../../../data/repositories/checklist_repository.dart';
 import '../../../providers/checklist_provider.dart';
 import 'calculation_item_card.dart';
-import 'project_info_card.dart';
 import 'project_materials_list.dart';
 import '../../checklist/checklist_details_screen.dart';
+import '../../checklist/create_checklist_bottom_sheet.dart';
 
 /// Основной контент экрана деталей проекта.
-class ProjectDetailsContent extends ConsumerStatefulWidget {
+///
+/// Простой скроллируемый список с секциями:
+/// 1. INFO - основная информация о проекте
+/// 2. TASKS - расчёты проекта
+/// 3. SHOPPING LIST - материалы с чекбоксами
+/// 4. CHECKLISTS - чек-листы (если есть)
+class ProjectDetailsContent extends ConsumerWidget {
   final ProjectV2 project;
-  final VoidCallback onToggleFavorite;
-  final VoidCallback onEdit;
   final VoidCallback onAddCalculation;
-  final VoidCallback onExport;
-  final VoidCallback onChangeStatus;
-  final VoidCallback onShareQR;
   final void Function(ProjectCalculation) onOpenCalculation;
   final void Function(ProjectCalculation) onDeleteCalculation;
+  final VoidCallback onMaterialToggled;
   final VoidCallback onRefresh;
 
   const ProjectDetailsContent({
     super.key,
     required this.project,
-    required this.onToggleFavorite,
-    required this.onEdit,
     required this.onAddCalculation,
-    required this.onExport,
-    required this.onChangeStatus,
-    required this.onShareQR,
     required this.onOpenCalculation,
     required this.onDeleteCalculation,
+    required this.onMaterialToggled,
     required this.onRefresh,
   });
 
   @override
-  ConsumerState<ProjectDetailsContent> createState() =>
-      _ProjectDetailsContentState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ListView(
+      padding: const EdgeInsets.only(bottom: 100),
+      children: [
+        // 1. Секция INFO (основная информация)
+        _ProjectInfoSection(project: project),
+
+        // 2. Секция TASKS (расчёты)
+        _ProjectTasksSection(
+          project: project,
+          onAddCalculation: onAddCalculation,
+          onOpenCalculation: onOpenCalculation,
+          onDeleteCalculation: onDeleteCalculation,
+        ),
+
+        // 3. Секция SHOPPING LIST (материалы)
+        ProjectMaterialsList(
+          project: project,
+          onMaterialToggled: onMaterialToggled,
+        ),
+
+        // 4. Секция CHECKLISTS (чек-листы) - только если есть ID проекта
+        if (project.id > 0)
+          _ProjectChecklistsSection(
+            projectId: project.id,
+            onRefresh: onRefresh,
+          ),
+      ],
+    );
+  }
 }
 
-class _ProjectDetailsContentState extends ConsumerState<ProjectDetailsContent>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+// ═══════════════════════════════════════════════════════════════════════════
+// Секция 1: Основная информация
+// ═══════════════════════════════════════════════════════════════════════════
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
+/// Секция с основной информацией о проекте.
+class _ProjectInfoSection extends StatelessWidget {
+  final ProjectV2 project;
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+  const _ProjectInfoSection({required this.project});
 
   @override
   Widget build(BuildContext context) {
-    return NestedScrollView(
-      headerSliverBuilder: (context, innerBoxIsScrolled) {
-        return [
-          SliverAppBar(
-            title: Text(widget.project.name),
-            pinned: true,
-            floating: true,
-            forceElevated: innerBoxIsScrolled,
-            actions: [
-              IconButton(
-                icon: Icon(
-                  widget.project.isFavorite ? Icons.star : Icons.star_border,
-                  color: widget.project.isFavorite ? Colors.amber : null,
-                ),
-                onPressed: widget.onToggleFavorite,
-                tooltip: widget.project.isFavorite
-                    ? AppLocalizations.of(context).translate('favorites.remove')
-                    : AppLocalizations.of(context).translate('favorites.add'),
-              ),
-              IconButton(
-                icon: const Icon(Icons.edit_rounded),
-                onPressed: widget.onEdit,
-                tooltip: 'Редактировать',
-              ),
-              PopupMenuButton(
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 'qr',
-                    child: Row(
-                      children: [
-                        Icon(Icons.qr_code_rounded),
-                        SizedBox(width: 12),
-                        Flexible(child: Text('Поделиться QR кодом')),
-                      ],
-                    ),
+    final theme = Theme.of(context);
+    final dateFormat = DateFormat('dd MMMM yyyy', 'ru');
+
+    return Card(
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Заголовок секции
+            Row(
+              children: [
+                Icon(Icons.info_outline, color: theme.colorScheme.primary),
+                const SizedBox(width: 12),
+                Text(
+                  'Информация',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  const PopupMenuItem(
-                    value: 'export',
-                    child: Row(
-                      children: [
-                        Icon(Icons.share_rounded),
-                        SizedBox(width: 12),
-                        Flexible(child: Text('Экспортировать')),
-                      ],
-                    ),
-                  ),
-                  const PopupMenuItem(
-                    value: 'status',
-                    child: Row(
-                      children: [
-                        Icon(Icons.flag_rounded),
-                        SizedBox(width: 12),
-                        Flexible(child: Text('Изменить статус')),
-                      ],
-                    ),
-                  ),
-                ],
-                onSelected: (value) {
-                  switch (value) {
-                    case 'qr':
-                      widget.onShareQR();
-                      break;
-                    case 'export':
-                      widget.onExport();
-                      break;
-                    case 'status':
-                      widget.onChangeStatus();
-                      break;
-                  }
-                },
-              ),
-            ],
-            bottom: TabBar(
-              controller: _tabController,
-              tabs: [
-                Tab(
-                  icon: const Icon(Icons.calculate_outlined),
-                  text: '${AppLocalizations.of(context).translate('project.calculations')} (${widget.project.calculations.length})',
-                ),
-                Tab(
-                  icon: const Icon(Icons.shopping_cart_outlined),
-                  text: '${AppLocalizations.of(context).translate('project.materials')} (${widget.project.allMaterials.length})',
-                ),
-                Tab(
-                  icon: const Icon(Icons.checklist_rounded),
-                  text: AppLocalizations.of(context).translate('project.checklists'),
                 ),
               ],
             ),
-          ),
-        ];
-      },
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _CalculationsTab(
-            project: widget.project,
-            onAddCalculation: widget.onAddCalculation,
-            onOpenCalculation: widget.onOpenCalculation,
-            onDeleteCalculation: widget.onDeleteCalculation,
-          ),
-          _MaterialsTab(
-            project: widget.project,
-            onMaterialToggled: widget.onRefresh,
-          ),
-          _ChecklistsTab(
-            projectId: widget.project.id,
-            onRefresh: widget.onRefresh,
-          ),
-        ],
+            const SizedBox(height: 16),
+
+            // Статус
+            _InfoRow(
+              icon: Icons.flag_outlined,
+              label: 'Статус',
+              value: _StatusChip(status: project.status),
+            ),
+
+            // Адрес (если есть)
+            if (project.address != null && project.address!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              _InfoRow(
+                icon: Icons.location_on_outlined,
+                label: 'Адрес',
+                value: Text(project.address!),
+              ),
+            ],
+
+            // Дедлайн (если есть)
+            if (project.deadline != null) ...[
+              const SizedBox(height: 12),
+              _InfoRow(
+                icon: Icons.event_outlined,
+                label: 'Дедлайн',
+                value: Row(
+                  children: [
+                    Text(dateFormat.format(project.deadline!)),
+                    if (project.isDeadlineOverdue) ...[
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.warning_amber_rounded,
+                        size: 18,
+                        color: theme.colorScheme.error,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+
+            // Описание (если есть)
+            if (project.description != null &&
+                project.description!.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 16),
+              Text(
+                project.description!,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+
+            // Теги (если есть)
+            if (project.tags.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: project.tags.map((tag) {
+                  return Chip(
+                    label: Text(tag),
+                    visualDensity: VisualDensity.compact,
+                  );
+                }).toList(),
+              ),
+            ],
+
+            // Даты создания/обновления
+            const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Создан: ${DateFormat('dd.MM.yyyy').format(project.createdAt)}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                Text(
+                  'Обновлён: ${DateFormat('dd.MM.yyyy').format(project.updatedAt)}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-/// Вкладка с расчётами
-class _CalculationsTab extends StatelessWidget {
+/// Строка информации с иконкой, лейблом и значением.
+class _InfoRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Widget value;
+
+  const _InfoRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 20, color: theme.colorScheme.onSurfaceVariant),
+        const SizedBox(width: 12),
+        SizedBox(
+          width: 80,
+          child: Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+        Expanded(
+          child: DefaultTextStyle(
+            style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ) ??
+                const TextStyle(),
+            child: value,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Чип статуса проекта.
+class _StatusChip extends StatelessWidget {
+  final ProjectStatus status;
+
+  const _StatusChip({required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      avatar: Icon(
+        _getStatusIcon(status),
+        size: 18,
+        color: Colors.white,
+      ),
+      label: Text(_getStatusLabel(status)),
+      backgroundColor: _getStatusColor(status),
+      labelStyle: const TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w600,
+      ),
+      visualDensity: VisualDensity.compact,
+    );
+  }
+
+  IconData _getStatusIcon(ProjectStatus status) {
+    switch (status) {
+      case ProjectStatus.planning:
+        return Icons.edit_note_rounded;
+      case ProjectStatus.inProgress:
+        return Icons.construction_rounded;
+      case ProjectStatus.onHold:
+        return Icons.pause_circle_outline_rounded;
+      case ProjectStatus.completed:
+        return Icons.check_circle_outline_rounded;
+      case ProjectStatus.cancelled:
+        return Icons.cancel_outlined;
+      case ProjectStatus.problem:
+        return Icons.warning_amber_rounded;
+    }
+  }
+
+  Color _getStatusColor(ProjectStatus status) {
+    switch (status) {
+      case ProjectStatus.planning:
+        return Colors.blue;
+      case ProjectStatus.inProgress:
+        return Colors.orange;
+      case ProjectStatus.onHold:
+        return Colors.grey;
+      case ProjectStatus.completed:
+        return Colors.green;
+      case ProjectStatus.cancelled:
+        return Colors.red;
+      case ProjectStatus.problem:
+        return Colors.deepOrange;
+    }
+  }
+
+  String _getStatusLabel(ProjectStatus status) {
+    switch (status) {
+      case ProjectStatus.planning:
+        return 'Планирование';
+      case ProjectStatus.inProgress:
+        return 'В работе';
+      case ProjectStatus.onHold:
+        return 'На паузе';
+      case ProjectStatus.completed:
+        return 'Завершён';
+      case ProjectStatus.cancelled:
+        return 'Отменён';
+      case ProjectStatus.problem:
+        return 'Проблема';
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Секция 2: Задачи (Расчёты)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Секция с расчётами проекта.
+class _ProjectTasksSection extends StatelessWidget {
   final ProjectV2 project;
   final VoidCallback onAddCalculation;
   final void Function(ProjectCalculation) onOpenCalculation;
   final void Function(ProjectCalculation) onDeleteCalculation;
 
-  const _CalculationsTab({
+  const _ProjectTasksSection({
     required this.project,
     required this.onAddCalculation,
     required this.onOpenCalculation,
@@ -194,105 +347,105 @@ class _CalculationsTab extends StatelessWidget {
     final theme = Theme.of(context);
     final calculations = project.calculations.toList();
 
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(child: ProjectInfoCard(project: project)),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-            child: Row(
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Заголовок + кнопка добавить
+            Row(
               children: [
-                Text('Расчёты', style: theme.textTheme.titleLarge),
+                Icon(
+                  Icons.checklist_outlined,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Задачи',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  ' (${calculations.length})',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
                 const Spacer(),
-                TextButton.icon(
+                IconButton(
+                  icon: const Icon(Icons.add_circle_outline),
                   onPressed: onAddCalculation,
-                  icon: const Icon(Icons.add_rounded),
-                  label: const Text('Добавить'),
+                  tooltip: 'Добавить расчёт',
                 ),
               ],
             ),
-          ),
-        ),
-        if (calculations.isEmpty)
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.calculate_outlined,
-                    size: 64,
-                    color: theme.colorScheme.outline,
+
+            const SizedBox(height: 16),
+            const Divider(height: 1),
+
+            // Список расчётов или пустое состояние
+            if (calculations.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 32),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.calculate_outlined,
+                        size: 48,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Нет расчётов',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Добавьте расчёт из калькулятора',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Нет расчётов',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Добавьте первый расчёт',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        else
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final calc = calculations[index];
-                  return CalculationItemCard(
+                ),
+              )
+            else
+              ...calculations.map((calc) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: CalculationItemCard(
                     calculation: calc,
                     onTap: () => onOpenCalculation(calc),
                     onDelete: () => onDeleteCalculation(calc),
-                  );
-                },
-                childCount: calculations.length,
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-/// Вкладка с материалами
-class _MaterialsTab extends StatelessWidget {
-  final ProjectV2 project;
-  final VoidCallback onMaterialToggled;
-
-  const _MaterialsTab({
-    required this.project,
-    required this.onMaterialToggled,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: 100),
-      child: ProjectMaterialsList(
-        project: project,
-        onMaterialToggled: onMaterialToggled,
+                    expandByDefault: false,
+                  ),
+                );
+              }),
+          ],
+        ),
       ),
     );
   }
 }
 
-/// Вкладка с чек-листами
-class _ChecklistsTab extends ConsumerWidget {
+// ═══════════════════════════════════════════════════════════════════════════
+// Секция 4: Чек-листы
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Секция с чек-листами проекта.
+class _ProjectChecklistsSection extends ConsumerWidget {
   final int projectId;
   final VoidCallback onRefresh;
 
-  const _ChecklistsTab({
+  const _ProjectChecklistsSection({
     required this.projectId,
     required this.onRefresh,
   });
@@ -304,94 +457,158 @@ class _ChecklistsTab extends ConsumerWidget {
     final checklistsAsync = ref.watch(projectChecklistsProvider(projectId));
 
     return checklistsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(
-        child: Text('Ошибка: $error'),
-      ),
-      data: (checklists) => CustomScrollView(
-        slivers: [
-          // Статистика чек-листов
-          SliverToBoxAdapter(
-            child: _ChecklistStatsCard(
-              projectId: projectId,
-              repository: repository,
-            ),
-          ),
-          // Заголовок с кнопкой добавления
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Row(
-                children: [
-                  Text(AppLocalizations.of(context).translate('project.checklists'), style: theme.textTheme.titleLarge),
-                  const Spacer(),
-                  TextButton.icon(
-                    onPressed: () => _addChecklist(context, ref),
-                    icon: const Icon(Icons.add_rounded),
-                    label: Text(AppLocalizations.of(context).translate('action.add')),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Список чек-листов или пустое состояние
-          if (checklists.isEmpty)
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      loading: () => const SizedBox.shrink(),
+      error: (error, stack) => const SizedBox.shrink(),
+      data: (checklists) {
+        if (checklists.isEmpty) return const SizedBox.shrink();
+
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Заголовок + кнопки добавить
+                Row(
                   children: [
                     Icon(
                       Icons.checklist_rounded,
-                      size: 64,
-                      color: theme.colorScheme.outline,
+                      color: theme.colorScheme.primary,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(width: 12),
                     Text(
-                      'Нет чек-листов',
+                      'Чек-листы',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      ' (${checklists.length})',
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Добавьте чек-лист для отслеживания работ',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                    const Spacer(),
+                    // Кнопка создания из шаблона
+                    IconButton(
+                      icon: const Icon(Icons.library_add_rounded),
+                      onPressed: () => _addChecklistFromTemplate(context, ref),
+                      tooltip: 'Создать из шаблона',
                     ),
-                    const SizedBox(height: 24),
-                    FilledButton.icon(
+                    // Кнопка создания пустого
+                    IconButton(
+                      icon: const Icon(Icons.add_circle_outline),
                       onPressed: () => _addChecklist(context, ref),
-                      icon: const Icon(Icons.add_rounded),
-                      label: const Text('Создать чек-лист'),
+                      tooltip: 'Создать пустой чек-лист',
                     ),
                   ],
                 ),
-              ),
-            )
-          else
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final checklist = checklists[index];
-                    return _ChecklistCard(
+
+                // Статистика (если есть задачи)
+                FutureBuilder<ChecklistStats>(
+                  future: repository.getProjectStats(projectId),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) return const SizedBox.shrink();
+
+                    final stats = snapshot.data!;
+                    if (stats.totalItems == 0) return const SizedBox.shrink();
+
+                    return Column(
+                      children: [
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${stats.completedItems} / ${stats.totalItems}',
+                                    style: theme.textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                  ),
+                                  Text(
+                                    'задач выполнено',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: theme.colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              '${stats.progressPercent}%',
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: _getProgressColor(stats.progress, theme),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        LinearProgressIndicator(
+                          value: stats.progress,
+                          backgroundColor:
+                              theme.colorScheme.surfaceContainerHighest,
+                          color: _getProgressColor(stats.progress, theme),
+                          minHeight: 6,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 16),
+                const Divider(height: 1),
+
+                // Список чек-листов
+                ...checklists.map((checklist) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: _ChecklistCard(
                       checklist: checklist,
                       onTap: () => _openChecklist(context, checklist),
                       onDelete: () =>
                           _deleteChecklist(context, ref, checklist),
-                    );
-                  },
-                  childCount: checklists.length,
-                ),
-              ),
+                    ),
+                  );
+                }),
+              ],
             ),
-        ],
-      ),
+          ),
+        );
+      },
     );
+  }
+
+  Color _getProgressColor(double progress, ThemeData theme) {
+    if (progress >= 1.0) return Colors.green;
+    if (progress >= 0.7) return Colors.blue;
+    if (progress >= 0.3) return Colors.orange;
+    return theme.colorScheme.primary;
+  }
+
+  Future<void> _addChecklistFromTemplate(BuildContext context, WidgetRef ref) async {
+    // Импортируем CreateChecklistBottomSheet
+    final checklist = await CreateChecklistBottomSheet.show(
+      context,
+      projectId: projectId,
+    );
+
+    if (checklist != null && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Чек-лист "${checklist.name}" создан из шаблона'),
+          action: SnackBarAction(
+            label: 'Открыть',
+            onPressed: () => _openChecklist(context, checklist),
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> _addChecklist(BuildContext context, WidgetRef ref) async {
@@ -475,7 +692,7 @@ class _ChecklistsTab extends ConsumerWidget {
       ),
     );
 
-    if (result != null) {
+    if (result != null && context.mounted) {
       final repository = ref.read(checklistRepositoryProvider);
       final checklist = RenovationChecklist()
         ..name = result['name'] as String
@@ -490,13 +707,11 @@ class _ChecklistsTab extends ConsumerWidget {
       final createdChecklist = await repository.createChecklist(checklist);
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Чек-лист создан'),
-            action: SnackBarAction(
-              label: 'Открыть',
-              onPressed: () => _openChecklist(context, createdChecklist),
-            ),
+        // Автоматически открываем чек-лист и показываем подсказку о добавлении задач
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChecklistDetailsScreen(checklistId: createdChecklist.id),
           ),
         );
       }
@@ -540,10 +755,9 @@ class _ChecklistsTab extends ConsumerWidget {
       ),
     );
 
-    if (confirm == true) {
+    if (confirm == true && context.mounted) {
       final repository = ref.read(checklistRepositoryProvider);
       await repository.deleteChecklist(checklist.id);
-      // StreamProvider автоматически обновится
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -554,124 +768,7 @@ class _ChecklistsTab extends ConsumerWidget {
   }
 }
 
-/// Карточка статистики чек-листов проекта
-class _ChecklistStatsCard extends StatelessWidget {
-  final int projectId;
-  final ChecklistRepository repository;
-
-  const _ChecklistStatsCard({
-    required this.projectId,
-    required this.repository,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return FutureBuilder<ChecklistStats>(
-      future: repository.getProjectStats(projectId),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const SizedBox.shrink();
-        }
-
-        final stats = snapshot.data!;
-        if (stats.totalItems == 0) {
-          return const SizedBox.shrink();
-        }
-
-        return Card(
-          margin: const EdgeInsets.all(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.analytics_outlined,
-                      color: theme.colorScheme.primary,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Прогресс работ',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${stats.completedItems} / ${stats.totalItems}',
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary,
-                            ),
-                          ),
-                          Text(
-                            'задач выполнено',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: 80,
-                      height: 80,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          CircularProgressIndicator(
-                            value: stats.progress,
-                            strokeWidth: 8,
-                            backgroundColor:
-                                theme.colorScheme.surfaceContainerHighest,
-                            color: _getProgressColor(stats.progress, theme),
-                          ),
-                          Text(
-                            '${stats.progressPercent}%',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                LinearProgressIndicator(
-                  value: stats.progress,
-                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                  color: _getProgressColor(stats.progress, theme),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Color _getProgressColor(double progress, ThemeData theme) {
-    if (progress >= 1.0) return Colors.green;
-    if (progress >= 0.7) return Colors.blue;
-    if (progress >= 0.3) return Colors.orange;
-    return theme.colorScheme.primary;
-  }
-}
-
-/// Карточка чек-листа
+/// Карточка чек-листа.
 class _ChecklistCard extends StatelessWidget {
   final RenovationChecklist checklist;
   final VoidCallback onTap;
@@ -688,7 +785,14 @@ class _ChecklistCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: theme.colorScheme.outlineVariant,
+          width: 1,
+        ),
+      ),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -737,10 +841,14 @@ class _ChecklistCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: LinearProgressIndicator(
-                      value: checklist.progress,
-                      backgroundColor:
-                          theme.colorScheme.surfaceContainerHighest,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: checklist.progress,
+                        backgroundColor:
+                            theme.colorScheme.surfaceContainerHighest,
+                        minHeight: 6,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),

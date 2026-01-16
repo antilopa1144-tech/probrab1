@@ -43,9 +43,9 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // By room and by area modes
-      expect(find.text('wallpaper.input_mode.by_room'), findsOneWidget);
-      expect(find.text('wallpaper.input_mode.by_area'), findsOneWidget);
+      // By room and by area modes - using actual Russian localization text
+      expect(find.text('По комнате'), findsOneWidget);
+      expect(find.text('По площади'), findsOneWidget);
     });
 
     testWidgets('has roll size selector', (tester) async {
@@ -61,7 +61,8 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.text('wallpaper.roll_size.title'), findsOneWidget);
+      // Using actual Russian localization text
+      expect(find.text('Размер рулона'), findsOneWidget);
     });
 
     testWidgets('shows results header', (tester) async {
@@ -79,7 +80,7 @@ void main() {
 
       // Should display area, rolls count
       // TestAppLocalizations returns keys, so we search for localization key
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('has share and copy buttons', (tester) async {

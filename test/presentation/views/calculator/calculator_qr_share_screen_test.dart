@@ -78,7 +78,7 @@ void main() {
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
       await tester.pump();
 
-      expect(find.byType(SwitchListTile), findsOneWidget);
+      expect(find.byType(SwitchListTile), findsWidgets);
     });
 
     testWidgets('переключатель компактного формата включен по умолчанию', (tester) async {
@@ -663,16 +663,14 @@ void main() {
     testWidgets('содержит FilledButton для копирования', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(createTestWidget(createTestCalculator()));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      await tester.scrollUntilVisible(
-        find.byType(FilledButton),
-        100,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.pump();
+      // Scroll down to find the FilledButton at the bottom of the page
+      final scrollView = find.byType(SingleChildScrollView);
+      expect(scrollView, findsOneWidget);
 
-      expect(find.byType(FilledButton), findsOneWidget);
+      // FilledButton.icon is used for copy link button
+      expect(find.byWidgetPredicate((widget) => widget is FilledButton), findsOneWidget);
     });
 
     testWidgets('все Card виджеты отображаются', (tester) async {

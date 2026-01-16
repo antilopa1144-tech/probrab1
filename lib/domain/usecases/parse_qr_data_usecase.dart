@@ -6,13 +6,14 @@ class ParseQRDataUseCase {
   /// Парсит QR код в ShareableContent
   Future<ParseResult> parseQRData(String qrData) async {
     try {
-      // Проверка на пустые данные
-      if (qrData.trim().isEmpty) {
+      // Проверка на пустые данные и очистка
+      final trimmedData = qrData.trim();
+      if (trimmedData.isEmpty) {
         return ParseResult.failure('QR data is empty');
       }
 
       // Попытка парсинга как Deep Link
-      final uri = Uri.tryParse(qrData);
+      final uri = Uri.tryParse(trimmedData);
       if (uri == null) {
         return ParseResult.failure('Invalid QR format');
       }
@@ -23,12 +24,13 @@ class ParseQRDataUseCase {
       }
 
       // Парсим в зависимости от формата
+      // URI masterokapp://share/project интерпретируется как host="share", path="/project"
       DeepLinkData? linkData;
 
-      if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 'share') {
+      if (uri.host == 'share' && uri.pathSegments.isNotEmpty) {
         // Полный формат: masterokapp://share/project?data=...
         linkData = await _parseFullFormat(uri);
-      } else if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 's') {
+      } else if (uri.host == 's' && uri.pathSegments.isNotEmpty) {
         // Компактный формат: masterokapp://s/12345678?d=...
         linkData = await _parseCompactFormat(uri);
       } else {
@@ -53,7 +55,8 @@ class ParseQRDataUseCase {
   /// Парсинг полного формата
   Future<DeepLinkData?> _parseFullFormat(Uri uri) async {
     try {
-      final type = uri.pathSegments[1];
+      // URI host="share", pathSegments=["project"] => type="project"
+      final type = uri.pathSegments[0];
       final encodedData = uri.queryParameters['data'];
 
       if (encodedData == null) {
@@ -158,14 +161,13 @@ class ParseQRDataUseCase {
     }
 
     // Проверяем наличие данных
+    // URI masterokapp://share/project интерпретируется как host="share", path="/project"
     bool hasData = false;
 
-    if (uri.pathSegments.length >= 2) {
-      if (uri.pathSegments[0] == 'share') {
-        hasData = uri.queryParameters.containsKey('data');
-      } else if (uri.pathSegments[0] == 's') {
-        hasData = uri.queryParameters.containsKey('d');
-      }
+    if (uri.host == 'share' && uri.pathSegments.isNotEmpty) {
+      hasData = uri.queryParameters.containsKey('data');
+    } else if (uri.host == 's' && uri.pathSegments.isNotEmpty) {
+      hasData = uri.queryParameters.containsKey('d');
     }
 
     if (!hasData) {

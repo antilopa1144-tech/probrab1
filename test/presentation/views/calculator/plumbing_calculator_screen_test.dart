@@ -41,7 +41,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Должен быть селектор типа сантехники
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
 
       // Должны быть иконки для типов сантехники
       expect(find.byIcon(Icons.water_drop), findsWidgets);
@@ -94,8 +94,8 @@ void main() {
 
       // Должен отображать результаты
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.pcs'), findsWidgets);
-      expect(find.textContaining('common.meters'), findsWidgets);
+      expect(find.textContaining('шт'), findsWidgets);
+      expect(find.textContaining('м'), findsWidgets);
     });
 
     testWidgets('имеет счетчики для помещений', (tester) async {
@@ -128,7 +128,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Должен быть переключатель для горячей воды
-      expect(find.byType(SwitchListTile), findsOneWidget);
+      expect(find.byType(SwitchListTile), findsWidgets);
     });
 
     testWidgets('отображает карточку материалов', (tester) async {

@@ -25,6 +25,12 @@ final checklistProvider = StreamProvider.family<RenovationChecklist?, int>((ref,
   return repository.watchChecklist(id);
 });
 
+/// Provider для элементов чек-листа
+final checklistItemsProvider = FutureProvider.family<List<ChecklistItem>, int>((ref, checklistId) async {
+  final repository = ref.watch(checklistRepositoryProvider);
+  return repository.getChecklistItems(checklistId);
+});
+
 /// Provider для чек-листов проекта
 final projectChecklistsProvider = StreamProvider.family<List<RenovationChecklist>, int>((ref, projectId) {
   final repository = ref.watch(checklistRepositoryProvider);

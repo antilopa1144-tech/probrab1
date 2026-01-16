@@ -67,15 +67,15 @@ void main() {
       expect(find.byType(IndexedStack), findsOneWidget);
     });
 
-    testWidgets('can switch to projects tab', (tester) async {
+    testWidgets('can switch to checklists tab', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(createTestApp(child: const MainShell()));
 
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Tap projects tab
-      await tester.tap(find.text('Проекты'));
+      // Tap checklists tab
+      await tester.tap(find.text('Чек-листы'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
@@ -83,7 +83,7 @@ void main() {
         find.byType(BottomNavigationBar),
       );
 
-      expect(bottomNav.currentIndex, MainShell.projectsTabIndex);
+      expect(bottomNav.currentIndex, MainShell.checklistsTabIndex);
     });
 
     testWidgets('can switch to favorites tab', (tester) async {
@@ -158,15 +158,15 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
 
-        // Переключаемся на Проекты
-        await tester.tap(find.text('Проекты'));
+        // Переключаемся на Чек-листы
+        await tester.tap(find.text('Чек-листы'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
 
         var bottomNav = tester.widget<BottomNavigationBar>(
           find.byType(BottomNavigationBar),
         );
-        expect(bottomNav.currentIndex, MainShell.projectsTabIndex);
+        expect(bottomNav.currentIndex, MainShell.checklistsTabIndex);
 
         // Переключаемся на Избранное
         await tester.tap(find.text('Избранное'));
@@ -196,8 +196,10 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
 
-        // Должно быть несколько Navigator (по одному на вкладку)
-        expect(find.byType(Navigator), findsAtLeastNWidgets(3));
+        // IndexedStack рендерит только активную вкладку, поэтому видно:
+        // 1 Navigator от MaterialApp + 1 Navigator от активной вкладки = 2
+        // Но MainShell создаёт 3 NavigatorKey для всех вкладок
+        expect(find.byType(Navigator), findsAtLeastNWidgets(2));
       });
     });
 
@@ -209,8 +211,12 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
 
-        // Проверяем наличие PopScope
-        expect(find.byType(PopScope), findsOneWidget);
+        // Проверяем наличие PopScope (используем predicate для поиска
+        // независимо от generic типа)
+        final popScopeFinder = find.byWidgetPredicate(
+          (widget) => widget.runtimeType.toString().startsWith('PopScope'),
+        );
+        expect(popScopeFinder, findsAtLeastNWidgets(1));
       });
     });
 
@@ -242,15 +248,15 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
 
-        // Переключаемся на проекты
-        await tester.tap(find.text('Проекты'));
+        // Переключаемся на чек-листы
+        await tester.tap(find.text('Чек-листы'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
 
         final indexedStack = tester.widget<IndexedStack>(
           find.byType(IndexedStack),
         );
-        expect(indexedStack.index, MainShell.projectsTabIndex);
+        expect(indexedStack.index, MainShell.checklistsTabIndex);
       });
     });
 
@@ -264,7 +270,7 @@ void main() {
 
         // Проверяем наличие иконок
         expect(find.byIcon(Icons.home_rounded), findsOneWidget);
-        expect(find.byIcon(Icons.folder_rounded), findsOneWidget);
+        expect(find.byIcon(Icons.checklist_rounded), findsOneWidget);
         expect(find.byIcon(Icons.star_rounded), findsOneWidget);
       });
 
@@ -276,7 +282,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 100));
 
         expect(find.text('Главная'), findsOneWidget);
-        expect(find.text('Проекты'), findsOneWidget);
+        expect(find.text('Чек-листы'), findsOneWidget);
         expect(find.text('Избранное'), findsOneWidget);
       });
     });
@@ -291,7 +297,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 100));
 
         // Переключаемся на другую вкладку и возвращаемся
-        await tester.tap(find.text('Проекты'));
+        await tester.tap(find.text('Чек-листы'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
 

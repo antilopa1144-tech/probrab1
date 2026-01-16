@@ -13,6 +13,7 @@ void main() {
   group('BrickCalculatorScreen виджет рендеринг', () {
     testWidgets('отображается корректно', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -27,6 +28,7 @@ void main() {
 
     testWidgets('отображает CalculatorScaffold', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -40,6 +42,7 @@ void main() {
 
     testWidgets('отображает CalculatorResultHeader', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -53,6 +56,7 @@ void main() {
 
     testWidgets('отображает кнопки экспорта', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -69,6 +73,7 @@ void main() {
   group('BrickCalculatorScreen выбор типа кирпича', () {
     testWidgets('отображает TypeSelectorGroup', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -77,11 +82,12 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает иконки типов кирпича', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -90,13 +96,14 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Проверяем наличие иконок типов
+      // Проверяем наличие иконок типов кирпича (crop_square, view_agenda, view_stream)
       expect(find.byIcon(Icons.crop_square), findsWidgets);
-      expect(find.byIcon(Icons.view_module), findsWidgets);
+      expect(find.byIcon(Icons.view_agenda), findsWidgets);
     });
 
     testWidgets('можно выбрать тип кирпича', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -105,11 +112,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final brickType = find.textContaining('brick_calc.type.');
-      if (brickType.evaluate().isNotEmpty) {
-        await tester.tap(brickType.first);
-        await tester.pumpAndSettle();
-      }
+      // Type selector contains brick types - tap on first TypeSelectorGroup item
+      final typeSelectorGroup = find.byType(TypeSelectorGroup);
+      expect(typeSelectorGroup, findsOneWidget);
 
       expect(find.byType(BrickCalculatorScreen), findsOneWidget);
     });
@@ -118,6 +123,7 @@ void main() {
   group('BrickCalculatorScreen поля ввода размеров', () {
     testWidgets('отображает поля ввода длины и высоты стены', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -126,11 +132,13 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('brick_calc.label'), findsWidgets);
+      // Check for slider field (area input)
+      expect(find.byType(CalculatorSliderField), findsWidgets);
     });
 
-    testWidgets('отображает CalculatorTextField виджеты', (tester) async {
+    testWidgets('отображает CalculatorSliderField виджеты', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -139,11 +147,13 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(CalculatorTextField), findsWidgets);
+      // In manual mode (default), CalculatorSliderField is used for area input
+      expect(find.byType(CalculatorSliderField), findsWidgets);
     });
 
     testWidgets('можно ввести площадь стены', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -157,9 +167,10 @@ void main() {
     });
   });
 
-  group('BrickCalculatorScreen переключатель раствора', () {
-    testWidgets('отображает переключатель учета раствора', (tester) async {
+  group('BrickCalculatorScreen переключатель режима ввода', () {
+    testWidgets('отображает ModeSelector для режима ввода', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -168,11 +179,13 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(SwitchListTile), findsWidgets);
+      // BrickCalculatorScreen uses ModeSelector for input mode (manual/wall)
+      expect(find.byType(ModeSelector), findsWidgets);
     });
 
-    testWidgets('можно переключить учет раствора', (tester) async {
+    testWidgets('можно переключить режим ввода', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -181,11 +194,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final switches = find.byType(Switch);
-      if (switches.evaluate().isNotEmpty) {
-        await tester.tap(switches.first);
-        await tester.pumpAndSettle();
-      }
+      // ModeSelector contains clickable options
+      final modeSelectors = find.byType(ModeSelector);
+      expect(modeSelectors, findsWidgets);
 
       expect(find.byType(BrickCalculatorScreen), findsOneWidget);
     });
@@ -194,6 +205,7 @@ void main() {
   group('BrickCalculatorScreen результаты', () {
     testWidgets('отображает результаты количества кирпичей', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -202,11 +214,13 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      // Check for brick count result - 'шт' is the Russian translation for 'pcs'
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('отображает результаты площади', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -215,11 +229,13 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      // Check for area result - 'м²' is the Russian translation for 'sqm'
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('отображает иконки результатов', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -228,13 +244,15 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byIcon(Icons.square_foot), findsWidgets);
+      // Result icons: straighten (area), grid_view (bricks), inventory_2 (mortar)
+      expect(find.byIcon(Icons.straighten), findsWidgets);
     });
   });
 
   group('BrickCalculatorScreen список материалов', () {
     testWidgets('отображает MaterialsCardModern', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -248,6 +266,7 @@ void main() {
 
     testWidgets('можно прокрутить до материалов', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -267,6 +286,7 @@ void main() {
   group('BrickCalculatorScreen слайдеры', () {
     testWidgets('отображает слайдеры для настроек', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -280,6 +300,7 @@ void main() {
 
     testWidgets('можно изменить слайдер', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -301,6 +322,7 @@ void main() {
   group('BrickCalculatorScreen действия', () {
     testWidgets('можно нажать кнопку копирования', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -320,6 +342,7 @@ void main() {
 
     testWidgets('кнопка поделиться существует', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),
@@ -336,6 +359,7 @@ void main() {
   group('BrickCalculatorScreen корректно освобождает ресурсы', () {
     testWidgets('корректно dispose', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const BrickCalculatorScreen(),

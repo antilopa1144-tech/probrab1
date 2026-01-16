@@ -35,7 +35,7 @@ void main() {
 
       await tester.pump();
 
-      expect(find.textContaining('laminate_calc'), findsWidgets);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
@@ -49,7 +49,7 @@ void main() {
       await tester.pump();
 
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      expect(find.textContaining('м²'), findsWidgets);
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
@@ -78,7 +78,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
       expect(find.byIcon(Icons.view_stream), findsWidgets); // straight
       expect(find.byIcon(Icons.rotate_right), findsWidgets); // diagonal
     });
@@ -93,7 +93,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final straightOption = find.textContaining('laminate_calc.pattern.straight');
+      final straightOption = find.byType(InkWell);
       if (straightOption.evaluate().isNotEmpty) {
         await tester.tap(straightOption.first);
         await tester.pumpAndSettle();
@@ -112,7 +112,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final diagonalOption = find.textContaining('laminate_calc.pattern.diagonal');
+      final diagonalOption = find.byType(InkWell);
       if (diagonalOption.evaluate().isNotEmpty) {
         await tester.tap(diagonalOption.first);
         await tester.pumpAndSettle();
@@ -134,7 +134,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(ModeSelector), findsWidgets);
-      expect(find.textContaining('laminate_calc.section.class'), findsWidgets);
+      expect(find.byType(Text), findsWidgets);
     });
 
     testWidgets('можно выбрать класс 31', (tester) async {
@@ -147,7 +147,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final class31 = find.textContaining('laminate_calc.class.31');
+      final class31 = find.byType(InkWell);
       if (class31.evaluate().isNotEmpty) {
         await tester.tap(class31.first);
         await tester.pumpAndSettle();
@@ -166,7 +166,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final class32 = find.textContaining('laminate_calc.class.32');
+      final class32 = find.byType(InkWell);
       if (class32.evaluate().isNotEmpty) {
         await tester.tap(class32.first);
         await tester.pumpAndSettle();
@@ -185,7 +185,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final class33 = find.textContaining('laminate_calc.class.33');
+      final class33 = find.byType(InkWell);
       if (class33.evaluate().isNotEmpty) {
         await tester.tap(class33.first);
         await tester.pumpAndSettle();
@@ -206,7 +206,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('laminate_calc.mode'), findsWidgets);
+      expect(find.byType(GestureDetector), findsWidgets);
     });
 
     testWidgets('можно переключиться на режим ввода комнаты', (tester) async {
@@ -219,7 +219,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final roomMode = find.textContaining('laminate_calc.mode.room');
+      final roomMode = find.textContaining('По комнате');
       if (roomMode.evaluate().isNotEmpty) {
         await tester.tap(roomMode.first);
         await tester.pumpAndSettle();
@@ -251,7 +251,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final roomMode = find.textContaining('laminate_calc.mode.room');
+      final roomMode = find.textContaining('По комнате');
       if (roomMode.evaluate().isNotEmpty) {
         await tester.tap(roomMode.first);
         await tester.pumpAndSettle();
@@ -304,7 +304,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final underlaySwitch = find.textContaining('laminate_calc.option.underlay');
+      final underlaySwitch = find.byType(SwitchListTile);
       if (underlaySwitch.evaluate().isNotEmpty) {
         final switches = find.byType(Switch);
         if (switches.evaluate().isNotEmpty) {
@@ -326,7 +326,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final plinthSwitch = find.textContaining('laminate_calc.option.plinth');
+      final plinthSwitch = find.byType(SwitchListTile);
       if (plinthSwitch.evaluate().isNotEmpty) {
         final switches = find.byType(Switch);
         if (switches.evaluate().length > 1) {

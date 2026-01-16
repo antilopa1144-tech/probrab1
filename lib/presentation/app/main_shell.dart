@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:app_links/app_links.dart';
 import '../../core/services/deep_link_service.dart';
 import '../views/favorites/favorite_calculators_screen.dart';
-import '../views/project/projects_list_screen.dart';
+import '../views/checklist/checklists_list_screen.dart';
 import '../views/calculator/modern_calculator_catalog_screen_v2.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
   static const int homeTabIndex = 0;
-  static const int projectsTabIndex = 1;
+  static const int checklistsTabIndex = 1;
   static const int favoritesTabIndex = 2;
 
   @override
@@ -72,16 +72,8 @@ class _MainShellState extends State<MainShell> {
       final deepLinkData = await DeepLinkService.instance.handleDeepLink(uri);
 
       if (deepLinkData != null && mounted) {
-        // Переключаемся на вкладку проектов
-        setState(() => _currentIndex = MainShell.projectsTabIndex);
-
-        // Ждём следующий фрейм, чтобы вкладка отрисовалась
-        await Future.delayed(const Duration(milliseconds: 100));
-
-        if (mounted) {
-          final handler = DeepLinkHandler(context);
-          await handler.handle(deepLinkData);
-        }
+        final handler = DeepLinkHandler(context);
+        await handler.handle(deepLinkData);
       }
     } catch (e) {
       debugPrint('Error handling deep link: $e');
@@ -164,8 +156,8 @@ class _MainShellState extends State<MainShell> {
               child: const ModernCalculatorCatalogScreenV2(),
             ),
             _buildTabNavigator(
-              index: MainShell.projectsTabIndex,
-              child: const ProjectsListScreen(),
+              index: MainShell.checklistsTabIndex,
+              child: const ChecklistsListScreen(),
             ),
             _buildTabNavigator(
               index: MainShell.favoritesTabIndex,
@@ -182,8 +174,8 @@ class _MainShellState extends State<MainShell> {
               label: 'Главная',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.folder_rounded),
-              label: 'Проекты',
+              icon: Icon(Icons.checklist_rounded),
+              label: 'Чек-листы',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.star_rounded),

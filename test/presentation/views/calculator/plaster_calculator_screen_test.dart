@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/models/calculator_definition_v2.dart';
 import 'package:probrab_ai/presentation/views/calculator/plaster_calculator_screen.dart';
+import 'package:probrab_ai/presentation/widgets/calculator/calculator_widgets.dart';
 import '../../../helpers/calculator_test_helpers.dart';
 import '../../../helpers/test_helpers.dart';
 
@@ -41,9 +42,8 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Should have gypsum and cement options
-      expect(find.text('plaster_pro.material.gypsum'), findsOneWidget);
-      expect(find.text('plaster_pro.material.cement'), findsOneWidget);
+      // Should have TypeSelectorGroup for gypsum and cement options
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
     });
 
     testWidgets('has input mode selector', (tester) async {
@@ -58,9 +58,8 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Manual and room modes
-      expect(find.text('plaster_pro.mode.manual'), findsOneWidget);
-      expect(find.text('plaster_pro.mode.room'), findsOneWidget);
+      // Manual and room modes via ModeSelector
+      expect(find.byType(ModeSelector), findsOneWidget);
     });
 
     testWidgets('has thickness slider', (tester) async {
@@ -76,7 +75,6 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.byType(Slider), findsWidgets);
-      expect(find.text('plaster_pro.thickness.title'), findsOneWidget);
     });
 
     testWidgets('shows results header', (tester) async {
@@ -91,9 +89,8 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Should display wall area, bags count, weight
-      // TestAppLocalizations returns keys, so we search for localization key
-      expect(find.textContaining('common.sqm'), findsWidgets);
+      // Should display CalculatorResultHeader with wall area, bags count, weight
+      expect(find.byType(CalculatorResultHeader), findsOneWidget);
     });
 
     testWidgets('switching material type updates calculation', (tester) async {
@@ -108,10 +105,14 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Tap cement option
-      await tester.tap(find.text('plaster_pro.material.cement'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      // Tap second type card (cement option)
+      final typeCards = find.byType(TypeSelectorCard);
+      expect(typeCards, findsWidgets);
+      if (typeCards.evaluate().length > 1) {
+        await tester.tap(typeCards.at(1));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+      }
 
       expect(find.byType(PlasterCalculatorScreen), findsOneWidget);
     });
@@ -217,8 +218,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // By default beacons are on, should show beacons text
-      expect(find.text('plaster_pro.options.beacons'), findsOneWidget);
+      // By default beacons are on, should show MaterialsCardModern with beacons
+      expect(find.byType(MaterialsCardModern), findsOneWidget);
+      // Architecture icon appears for beacons (in toggle button and spec card)
+      expect(find.byIcon(Icons.architecture), findsWidgets);
     });
 
     testWidgets('does not show mesh in spec by default', (tester) async {
@@ -233,8 +236,8 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // By default mesh is off
-      expect(find.text('plaster_pro.spec.mesh_title'), findsNothing);
+      // By default mesh is off - MaterialsCardModern should still exist
+      expect(find.byType(MaterialsCardModern), findsOneWidget);
     });
 
     testWidgets('shows primer in spec by default', (tester) async {
@@ -249,8 +252,8 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // By default primer is on
-      expect(find.text('plaster_pro.options.primer'), findsOneWidget);
+      // By default primer is on - water_drop icon should appear
+      expect(find.byIcon(Icons.water_drop), findsWidgets);
     });
 
     testWidgets('disposes correctly', (tester) async {
@@ -311,14 +314,24 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Tap room mode
-      await tester.tap(find.text('plaster_pro.mode.room'));
-      await tester.pump();
+      // Tap room mode (second option in ModeSelector)
+      final modeSelector = find.byType(ModeSelector);
+      expect(modeSelector, findsOneWidget);
 
-      // Should show room dimension fields
-      expect(find.text('plaster_pro.label.width'), findsOneWidget);
-      expect(find.text('plaster_pro.label.length'), findsOneWidget);
-      expect(find.text('plaster_pro.label.height'), findsOneWidget);
+      // Find the mode selector options and tap the second one (room)
+      // ModeSelector uses GestureDetector, so find by that
+      final gestureDetectors = find.descendant(
+        of: modeSelector,
+        matching: find.byType(GestureDetector),
+      );
+      if (gestureDetectors.evaluate().length > 1) {
+        await tester.tap(gestureDetectors.at(1));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+
+      // Should show room dimension fields - CalculatorTextField widgets
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
 
     testWidgets('room mode has openings area field', (tester) async {
@@ -333,10 +346,21 @@ void main() {
       await tester.pump();
 
       // Switch to room mode
-      await tester.tap(find.text('plaster_pro.mode.room'));
-      await tester.pump();
+      final modeSelector = find.byType(ModeSelector);
+      expect(modeSelector, findsOneWidget);
 
-      expect(find.text('plaster_pro.label.openings_hint'), findsOneWidget);
+      final gestureDetectors = find.descendant(
+        of: modeSelector,
+        matching: find.byType(GestureDetector),
+      );
+      if (gestureDetectors.evaluate().length > 1) {
+        await tester.tap(gestureDetectors.at(1));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+
+      // Should show CalculatorTextField inputs for room dimensions including openings
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
   });
 }

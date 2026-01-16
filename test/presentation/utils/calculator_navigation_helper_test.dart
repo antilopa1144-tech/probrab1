@@ -223,20 +223,22 @@ void main() {
       });
 
       test('возвращает true для всех Premium калькуляторов', () {
+        // Premium calculator IDs as defined in CalculatorNavigationHelper._isPremiumCalculator
+        // These map to screen registry IDs: walls_3d_panels, floors_warm, mixes_tile_glue, walls_wood
         expect(
-          CalculatorNavigationHelper.hasCustomScreen('three_d_panels'),
+          CalculatorNavigationHelper.hasCustomScreen('walls_3d_panels'),
           isTrue,
         );
         expect(
-          CalculatorNavigationHelper.hasCustomScreen('underfloor_heating'),
+          CalculatorNavigationHelper.hasCustomScreen('floors_warm'),
           isTrue,
         );
         expect(
-          CalculatorNavigationHelper.hasCustomScreen('tile_adhesive_v2'),
+          CalculatorNavigationHelper.hasCustomScreen('mixes_tile_glue'),
           isTrue,
         );
         expect(
-          CalculatorNavigationHelper.hasCustomScreen('wood_lining'),
+          CalculatorNavigationHelper.hasCustomScreen('walls_wood'),
           isTrue,
         );
       });
@@ -309,18 +311,20 @@ void main() {
       testWidgets('возвращает null для несуществующего калькулятора', (tester) async {
         setTestViewportSize(tester);
         await tester.pumpWidget(
-          MaterialApp(
-            home: Builder(
+          createTestApp(
+            child: Builder(
               builder: (context) {
-                return ElevatedButton(
-                  onPressed: () async {
-                    final result = await CalculatorNavigationHelper.navigateToCalculatorById(
-                      context,
-                      'non_existent_xyz',
-                    );
-                    expect(result, isNull);
-                  },
-                  child: const Text('Test'),
+                return Scaffold(
+                  body: ElevatedButton(
+                    onPressed: () async {
+                      final result = await CalculatorNavigationHelper.navigateToCalculatorById(
+                        context,
+                        'non_existent_xyz',
+                      );
+                      expect(result, isNull);
+                    },
+                    child: const Text('Test'),
+                  ),
                 );
               },
             ),

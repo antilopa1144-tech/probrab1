@@ -294,7 +294,16 @@ class ChecklistRepository {
 
   /// Наблюдать за всеми чек-листами
   Stream<List<RenovationChecklist>> watchAllChecklists() {
-    return _isar.renovationChecklists.where().watch(fireImmediately: true);
+    return _isar.renovationChecklists
+        .where()
+        .watch(fireImmediately: true)
+        .asyncMap((checklists) async {
+      // Загружаем items для каждого чек-листа
+      for (final checklist in checklists) {
+        await checklist.items.load();
+      }
+      return checklists;
+    });
   }
 
   /// Наблюдать за чек-листом
@@ -303,7 +312,12 @@ class ChecklistRepository {
         .where()
         .idEqualTo(id)
         .watch(fireImmediately: true)
-        .map((list) => list.isEmpty ? null : list.first);
+        .asyncMap((list) async {
+      if (list.isEmpty) return null;
+      final checklist = list.first;
+      await checklist.items.load();
+      return checklist;
+    });
   }
 
   /// Наблюдать за чек-листами проекта
@@ -311,7 +325,14 @@ class ChecklistRepository {
     return _isar.renovationChecklists
         .filter()
         .projectIdEqualTo(projectId)
-        .watch(fireImmediately: true);
+        .watch(fireImmediately: true)
+        .asyncMap((checklists) async {
+      // Загружаем items для каждого чек-листа
+      for (final checklist in checklists) {
+        await checklist.items.load();
+      }
+      return checklists;
+    });
   }
 }
 

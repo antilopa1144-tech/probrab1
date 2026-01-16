@@ -32,6 +32,10 @@ class PremiumService {
 
   PremiumService._();
 
+  /// Конструктор для тестирования - позволяет создавать mock-версии сервиса
+  @visibleForTesting
+  PremiumService.forTesting();
+
   /// Инициализация сервиса
   Future<void> _initialize() async {
     _prefs = await SharedPreferences.getInstance();
@@ -312,6 +316,13 @@ class PremiumService {
     await _prefs?.remove(_subscriptionKey);
     await _prefs?.remove(_debugPremiumKey);
     _subscriptionController.add(_currentSubscription);
+  }
+
+  /// Сбросить singleton instance (только для тестирования)
+  @visibleForTesting
+  static void resetInstance() {
+    _instance = null;
+    _prefs = null;
   }
 
   /// Dispose

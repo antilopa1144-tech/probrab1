@@ -416,7 +416,8 @@ void main() {
       await tester.tap(find.text('Show Dialog'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Выберите категорию'), findsOneWidget);
+      // Dialog always uses plural "Выберите категории" for both single and multi-select
+      expect(find.text('Выберите категории'), findsOneWidget);
     });
 
     testWidgets('показывает начальный выбор', (tester) async {

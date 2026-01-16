@@ -7,6 +7,7 @@ import 'package:probrab_ai/domain/usecases/calculator_usecase.dart';
 import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 import 'package:probrab_ai/core/enums/calculator_category.dart';
 import 'package:probrab_ai/core/enums/unit_type.dart';
+import 'package:probrab_ai/core/cache/calculation_cache.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/presentation/providers/price_provider.dart';
 
@@ -47,6 +48,9 @@ void main() {
     late CalculatorController controller;
 
     setUp(() {
+      // Очищаем кэш перед каждым тестом для изоляции
+      CalculationCache().clear();
+
       container = ProviderContainer(
         overrides: [
           priceListProvider.overrideWith((ref) async => [
@@ -160,9 +164,10 @@ void main() {
         expect(result['result'], closeTo(313.65, 0.01));
       });
 
-      test('выполняет расчет с необязательным полем = 0', () async {
+      test('выполняет расчет с необязательным полем равным минимальному значению', () async {
         final definition = createTestDefinition();
-        final inputs = {'area': 50.0, 'thickness': 0.0};
+        // Используем минимальное допустимое значение для thickness (minValue: 1)
+        final inputs = {'area': 50.0, 'thickness': 1.0};
 
         final result = await controller.calculate(
           definition: definition,
@@ -171,7 +176,7 @@ void main() {
         );
 
         expect(result, isA<Map<String, double>>());
-        expect(result['result'], 0.0);
+        expect(result['result'], 50.0); // 50.0 * 1.0 = 50.0
       });
 
       test('возвращает результат с правильными ключами', () async {

@@ -41,7 +41,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       // Должен быть селектор типа фундамента
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
 
       // Должны быть иконки для 4 типов фундамента
       expect(find.byIcon(Icons.view_module), findsWidgets); // monolithic
@@ -112,8 +112,8 @@ void main() {
 
       // Должен отображать результаты
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.meters'), findsWidgets);
-      expect(find.textContaining('common.cbm'), findsWidgets);
+      expect(find.textContaining('м'), findsWidgets);
+      expect(find.textContaining('м³'), findsWidgets);
     });
 
     testWidgets('отображает переключатели опций', (tester) async {

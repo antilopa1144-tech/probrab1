@@ -27,6 +27,7 @@ void main() {
 
     testWidgets('отображает заголовок', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -35,11 +36,13 @@ void main() {
 
       await tester.pump();
 
-      expect(find.textContaining('doors_calc'), findsWidgets);
+      // Check for translated title "Установка дверей"
+      expect(find.textContaining('Установка дверей'), findsWidgets);
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -49,7 +52,8 @@ void main() {
       await tester.pump();
 
       expect(find.byType(CalculatorResultHeader), findsOneWidget);
-      expect(find.textContaining('common.pcs'), findsWidgets);
+      // Check for translated unit "шт"
+      expect(find.textContaining('шт'), findsWidgets);
     });
 
     testWidgets('отображает кнопки экспорта', (tester) async {
@@ -78,7 +82,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsOneWidget);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
       expect(find.byIcon(Icons.door_front_door), findsWidgets); // interior
       expect(find.byIcon(Icons.door_sliding), findsWidgets); // entrance
       expect(find.byIcon(Icons.window), findsWidgets); // glass
@@ -94,7 +98,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final interiorOption = find.textContaining('doors_calc.type.interior');
+      final interiorOption = find.byType(TypeSelectorGroup);
       if (interiorOption.evaluate().isNotEmpty) {
         await tester.tap(interiorOption.first);
         await tester.pumpAndSettle();
@@ -113,7 +117,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final entranceOption = find.textContaining('doors_calc.type.entrance');
+      final entranceOption = find.byType(TypeSelectorGroup);
       if (entranceOption.evaluate().isNotEmpty) {
         await tester.tap(entranceOption.first);
         await tester.pumpAndSettle();
@@ -132,7 +136,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final glassOption = find.textContaining('doors_calc.type.glass');
+      final glassOption = find.byType(TypeSelectorGroup);
       if (glassOption.evaluate().isNotEmpty) {
         await tester.tap(glassOption.first);
         await tester.pumpAndSettle();
@@ -145,6 +149,7 @@ void main() {
   group('DoorsInstallCalculatorScreen - количество дверей', () {
     testWidgets('отображает слайдер количества дверей', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -154,7 +159,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(Slider), findsWidgets);
-      expect(find.textContaining('doors_calc.label.doors_count'), findsWidgets);
+      // Check for translated label "Количество дверей"
+      expect(find.textContaining('Количество дверей'), findsWidgets);
     });
 
     testWidgets('можно регулировать количество дверей', (tester) async {
@@ -180,6 +186,7 @@ void main() {
   group('DoorsInstallCalculatorScreen - размеры дверей', () {
     testWidgets('отображает поля для ввода размеров', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -189,12 +196,14 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(CalculatorTextField), findsWidgets);
-      expect(find.textContaining('doors_calc.label.width'), findsWidgets);
-      expect(find.textContaining('doors_calc.label.height'), findsWidgets);
+      // Check for translated labels "Ширина" and "Высота"
+      expect(find.textContaining('Ширина'), findsWidgets);
+      expect(find.textContaining('Высота'), findsWidgets);
     });
 
     testWidgets('отображает заголовок размеров двери', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -203,11 +212,13 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('doors_calc.label.door_size'), findsWidgets);
+      // Check for translated label "Размер двери"
+      expect(find.textContaining('Размер двери'), findsWidgets);
     });
 
     testWidgets('отображает единицы измерения в см', (tester) async {
       setTestViewportSize(tester);
+      addTearDown(tester.view.resetPhysicalSize);
       await tester.pumpWidget(
         createTestApp(
           child: const DoorsInstallCalculatorScreen(),
@@ -216,7 +227,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('common.cm'), findsWidgets);
+      // Check for translated unit "см"
+      expect(find.textContaining('см'), findsWidgets);
     });
   });
 
@@ -244,7 +256,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final casingSwitch = find.textContaining('doors_calc.option.casing');
+      final casingSwitch = find.byType(SwitchListTile);
       if (casingSwitch.evaluate().isNotEmpty) {
         final switches = find.byType(Switch);
         if (switches.evaluate().isNotEmpty) {
@@ -266,7 +278,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final thresholdSwitch = find.textContaining('doors_calc.option.threshold');
+      final thresholdSwitch = find.byType(SwitchListTile);
       if (thresholdSwitch.evaluate().isNotEmpty) {
         final switches = find.byType(Switch);
         if (switches.evaluate().length > 1) {

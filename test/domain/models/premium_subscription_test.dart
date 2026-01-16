@@ -498,7 +498,7 @@ void main() {
 
   group('PremiumFeature', () {
     test('имеет все необходимые функции', () {
-      expect(PremiumFeature.values.length, 13);
+      expect(PremiumFeature.values.length, 12);
       expect(PremiumFeature.values, contains(PremiumFeature.advancedCalculators));
       expect(PremiumFeature.values, contains(PremiumFeature.unlimitedProjects));
       expect(PremiumFeature.values, contains(PremiumFeature.pdfExport));

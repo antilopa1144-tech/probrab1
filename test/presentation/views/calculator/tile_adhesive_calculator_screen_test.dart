@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/models/calculator_definition_v2.dart';
 import 'package:probrab_ai/presentation/views/calculator/tile_adhesive_calculator_screen.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_widgets.dart';
-import 'package:probrab_ai/presentation/widgets/existing/hint_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../helpers/calculator_test_helpers.dart';
@@ -73,7 +72,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(Card), findsWidgets);
+      expect(find.byType(Container), findsWidgets);
     });
 
     testWidgets('uses scrollable layout', (tester) async {
@@ -316,7 +315,8 @@ void main() {
       await tester.drag(find.byType(SingleChildScrollView).first, const Offset(0, -500));
       await tester.pumpAndSettle();
 
-      expect(find.byType(HintsList), findsOneWidget);
+      // The screen uses TipsCard widget for tips section
+      expect(find.byType(TipsCard), findsOneWidget);
     });
   });
 
