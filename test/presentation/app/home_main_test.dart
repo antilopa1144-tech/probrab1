@@ -5,7 +5,6 @@ import 'package:probrab_ai/data/repositories/calculation_repository.dart';
 import 'package:probrab_ai/presentation/app/category_selector_screen.dart';
 import 'package:probrab_ai/presentation/app/home_main.dart';
 import 'package:probrab_ai/presentation/providers/calculation_provider.dart';
-import 'package:probrab_ai/presentation/views/project/projects_list_screen.dart';
 import '../../helpers/test_helpers.dart';
 
 /// Mock repository для тестирования без Isar
@@ -392,37 +391,10 @@ void main() {
 
         // Проверяем наличие всех пунктов меню
         expect(find.text('Планировщик работ'), findsOneWidget);
-        expect(find.text('Проекты'), findsOneWidget);
         expect(find.text('Напоминания'), findsOneWidget);
         // В меню есть "История расчётов", а также секция на странице с тем же названием
         expect(find.text('История расчётов'), findsAtLeastNWidgets(1));
         expect(find.text('Настройки'), findsOneWidget);
-      });
-
-      testWidgets('навигация в проекты работает', (tester) async {
-        setTestViewportSize(tester);
-        await tester.pumpWidget(
-          createTestApp(
-            child: const HomeMainScreen(),
-            overrides: [
-              calculationRepositoryProvider.overrideWithValue(mockRepository),
-            ],
-          ),
-        );
-
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 100));
-
-        // Открываем меню
-        await tester.tap(find.byIcon(Icons.menu_rounded));
-        await tester.pumpAndSettle();
-
-        // Нажимаем на "Проекты"
-        await tester.tap(find.text('Проекты'));
-        await tester.pumpAndSettle();
-
-        // После навигации должен отображаться экран проектов (ProjectsListScreen)
-        expect(find.byType(ProjectsListScreen), findsOneWidget);
       });
     });
 

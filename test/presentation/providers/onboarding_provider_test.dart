@@ -1127,11 +1127,10 @@ void main() {
       notifier.setSteps(defaultOnboardingSteps);
 
       final state = container.read(onboardingProvider);
-      expect(state.steps.length, 4);
+      expect(state.steps.length, 3);
       expect(state.steps[0].id, 'welcome');
       expect(state.steps[1].id, 'calculators');
-      expect(state.steps[2].id, 'projects');
-      expect(state.steps[3].id, 'ready');
+      expect(state.steps[2].id, 'ready');
 
       container.dispose();
     });

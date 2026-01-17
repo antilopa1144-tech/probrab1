@@ -180,7 +180,6 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Расширенные калькуляторы'), findsWidgets);
-      expect(find.text('Неограниченное количество проектов'), findsWidgets);
       expect(find.text('Экспорт в PDF'), findsWidgets);
     });
 
@@ -431,8 +430,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.calculate_rounded), findsWidgets);
-      expect(find.byIcon(Icons.folder_rounded), findsWidgets);
       expect(find.byIcon(Icons.picture_as_pdf_rounded), findsWidgets);
+      expect(find.byIcon(Icons.list_alt_rounded), findsWidgets);
       expect(find.byIcon(Icons.qr_code_rounded), findsWidgets);
       expect(find.byIcon(Icons.mic_rounded), findsWidgets);
     });

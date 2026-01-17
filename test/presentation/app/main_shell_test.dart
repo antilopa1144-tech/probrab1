@@ -268,10 +268,20 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
 
-        // Проверяем наличие иконок
-        expect(find.byIcon(Icons.home_rounded), findsOneWidget);
-        expect(find.byIcon(Icons.checklist_rounded), findsOneWidget);
-        expect(find.byIcon(Icons.star_rounded), findsOneWidget);
+        // Проверяем наличие иконок в BottomNavigationBar
+        final bottomNavFinder = find.byType(BottomNavigationBar);
+        expect(
+          find.descendant(of: bottomNavFinder, matching: find.byIcon(Icons.home_rounded)),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(of: bottomNavFinder, matching: find.byIcon(Icons.checklist_rounded)),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(of: bottomNavFinder, matching: find.byIcon(Icons.star_rounded)),
+          findsOneWidget,
+        );
       });
 
       testWidgets('вкладки имеют правильные подписи', (tester) async {
