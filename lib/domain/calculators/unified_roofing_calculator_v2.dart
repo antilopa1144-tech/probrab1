@@ -104,21 +104,21 @@ final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
   beforeHints: [
     const CalculatorHint(
       type: HintType.tip,
-      messageKey: 'hint.roofing.uchityvayte_uklon_kryshi_pri',
+      messageKey: 'roofing.uchityvayte_uklon_kryshi_pri',
     ),
     const CalculatorHint(
       type: HintType.tip,
-      messageKey: 'hint.roofing.ne_zabudte_pro_gidroizolyatsiyu',
+      messageKey: 'roofing.ne_zabudte_pro_gidroizolyatsiyu',
     ),
     const CalculatorHint(
       type: HintType.tip,
-      messageKey: 'hint.roofing.ukladyvayte_listy_s_nahlestom',
+      messageKey: 'roofing.ukladyvayte_listy_s_nahlestom',
     ),
   ],
   afterHints: [
     const CalculatorHint(
       type: HintType.tip,
-      messageKey: 'hint.roofing.ispolzuyte_spetsialnye_samorezy_s',
+      messageKey: 'roofing.ispolzuyte_spetsialnye_samorezy_s',
     ),
   ],
   useCase: CalculateUnifiedRoofing(),

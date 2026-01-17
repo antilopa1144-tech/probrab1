@@ -47,8 +47,21 @@ final concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
   beforeHints: const [
     CalculatorHint(
       type: HintType.tip,
-      messageKey:
-          'Если заказываете готовый бетон, обычно имеет смысл добавить запас 3–7% на потери и неровности.',
+      messageKey: 'hint.concrete.before.reserve',
+    ),
+    CalculatorHint(
+      type: HintType.info,
+      messageKey: 'hint.concrete.before.grade',
+    ),
+  ],
+  afterHints: const [
+    CalculatorHint(
+      type: HintType.important,
+      messageKey: 'hint.concrete.after.curing',
+    ),
+    CalculatorHint(
+      type: HintType.warning,
+      messageKey: 'hint.concrete.after.temperature',
     ),
   ],
 );

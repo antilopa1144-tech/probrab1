@@ -56,8 +56,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Клей = 50 * 0.22 = 11 кг
-      expect(result.values['glueNeeded'], closeTo(11.0, 0.6));
+      // Клей (сухая смесь) = 50 м² × 0.008 кг/м² = 0.4 кг = 400 г
+      expect(result.values['glueNeeded'], closeTo(0.4, 0.05));
     });
 
     test('handles rapport correctly', () {

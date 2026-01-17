@@ -115,10 +115,15 @@ class CalculateLinoleum extends BaseCalculator {
       coldWeldingTubes > 0 ? calculateCost(coldWeldingTubes.toDouble(), coldWeldingPrice?.price) : null,
     ];
 
+    // Погонные метры: количество полос × длина одной полосы
+    final linearMeters = roundBulk(cutsNeeded * cutLength);
+
     return createResult(
       values: {
         'area': roundBulk(area),
         'linoleumAreaNeeded': finalLinoleumArea,
+        'linearMeters': linearMeters,
+        'rollWidth': rollWidth,
         'cutsNeeded': cutsNeeded.toDouble(),
         'cutLength': roundBulk(cutLength),
         if (coldWeldingTubes > 0) 'coldWeldingTubes': coldWeldingTubes.toDouble(),

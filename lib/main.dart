@@ -15,6 +15,7 @@ import 'presentation/providers/settings_provider.dart';
 import 'core/errors/global_error_handler.dart';
 import 'presentation/views/onboarding/onboarding_screen.dart';
 import 'core/performance/frame_timing_logger.dart';
+import 'core/utils/keyboard_dismiss_observer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,6 +90,7 @@ class ProbuilderApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
+      navigatorObservers: [KeyboardDismissObserver()],
       home: const _HomeSelector(),
     );
   }

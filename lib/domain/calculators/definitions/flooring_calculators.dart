@@ -11,9 +11,9 @@ import '../calculator_constants.dart';
 import '../../usecases/calculate_laminate.dart';
 import '../../usecases/calculate_linoleum.dart';
 import '../../usecases/calculate_parquet.dart';
-import '../../usecases/calculate_screed.dart';
+// calculate_screed.dart - не используется, калькулятор в screed_calculator_v2.dart
 import '../../usecases/calculate_self_leveling_floor.dart';
-import '../../usecases/calculate_tile.dart';
+// calculate_tile.dart - не используется, калькулятор в tile_calculator_v2.dart
 import '../../usecases/calculate_warm_floor.dart';
 
 final List<CalculatorDefinitionV2> flooringCalculators = [
@@ -205,71 +205,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         'parquet',
       ],
     ),
-  CalculatorDefinitionV2(
-      id: 'floors_screed',
-      titleKey: 'calculator.floors_screed.title',
-      descriptionKey: 'calculator.floors_screed.description',
-      category: CalculatorCategory.interior,
-      subCategoryKey: 'subcategory.floors',
-      fields: [
-        const CalculatorField(
-          key: 'area',
-          labelKey: 'input.area',
-          unitType: UnitType.squareMeters,
-          inputType: FieldInputType.number,
-          defaultValue: 0.0,
-          minValue: 1.0,
-          maxValue: 1000.0,
-          required: true,
-          order: 1,
-        ),
-        const CalculatorField(
-          key: 'thickness',
-          labelKey: 'input.thickness',
-          unitType: UnitType.millimeters,
-          inputType: FieldInputType.number,
-          defaultValue: 50.0,
-          minValue: 20.0,
-          maxValue: 200.0,
-          required: true,
-          order: 2,
-        ),
-        const CalculatorField(
-          key: 'cementGrade',
-          labelKey: 'input.cementGrade',
-          unitType: UnitType.meters,
-          inputType: FieldInputType.number,
-          defaultValue: 400.0,
-          minValue: 300.0,
-          maxValue: 600.0,
-          required: true,
-          order: 3,
-        ),
-      ],
-      beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pered_zalivkoy_proverte_uroven'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_mayaki_dlya_kontrolya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.vyderzhite_styazhku_ne_menee'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pri_tolschine_bolee_50'),
-      ],
-      afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pered_zalivkoy_proverte_uroven'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_mayaki_dlya_kontrolya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.vyderzhite_styazhku_ne_menee'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pri_tolschine_bolee_50'),
-      ],
-      useCase: CalculateScreed(),
-      accentColor: kCalculatorAccentColor,
-      complexity: 2,
-      popularity: 10,
-      tags: [
-        'screed',
-        'tag.vnutrennyaya_otdelka',
-        'tag.poly',
-        'floors',
-        'floors_screed',
-      ],
-    ),
+  // Дубликат floors_screed удалён - используется screed_calculator_v2.dart
   CalculatorDefinitionV2(
       id: 'floors_self_leveling',
       titleKey: 'calculator.floors_self_leveling.title',
@@ -321,82 +257,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         'floors_self_leveling',
       ],
     ),
-  CalculatorDefinitionV2(
-      id: 'floors_tile',
-      titleKey: 'calculator.floors_tile.title',
-      descriptionKey: 'calculator.floors_tile.description',
-      category: CalculatorCategory.interior,
-      subCategoryKey: 'subcategory.floors',
-      fields: [
-        const CalculatorField(
-          key: 'area',
-          labelKey: 'input.area',
-          unitType: UnitType.squareMeters,
-          inputType: FieldInputType.number,
-          defaultValue: 0.0,
-          minValue: 0.5,
-          maxValue: 500.0,
-          required: true,
-          order: 1,
-        ),
-        const CalculatorField(
-          key: 'tileWidth',
-          labelKey: 'input.tileWidth',
-          unitType: UnitType.centimeters,
-          inputType: FieldInputType.number,
-          defaultValue: 30.0,
-          minValue: 10.0,
-          maxValue: 120.0,
-          required: true,
-          order: 2,
-        ),
-        const CalculatorField(
-          key: 'tileHeight',
-          labelKey: 'input.tileHeight',
-          unitType: UnitType.centimeters,
-          inputType: FieldInputType.number,
-          defaultValue: 30.0,
-          minValue: 10.0,
-          maxValue: 120.0,
-          required: true,
-          order: 3,
-        ),
-        const CalculatorField(
-          key: 'jointWidth',
-          labelKey: 'input.jointWidth',
-          unitType: UnitType.meters,
-          inputType: FieldInputType.number,
-          defaultValue: 3.0,
-          minValue: 1.0,
-          maxValue: 10.0,
-          required: true,
-          order: 4,
-        ),
-      ],
-      beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_krestiki_dlya_ravnomernogo'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.proverte_rovnost_osnovaniya_perepad_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.zatirku_vybirayte_po_tsvetu'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.kley_nanosite_zubchatym_shpatelem'),
-      ],
-      afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_krestiki_dlya_ravnomernogo'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.proverte_rovnost_osnovaniya_perepad_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.zatirku_vybirayte_po_tsvetu'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.kley_nanosite_zubchatym_shpatelem'),
-      ],
-      useCase: CalculateTile(),
-      accentColor: kCalculatorAccentColor,
-      complexity: 2,
-      popularity: 10,
-      tags: [
-        'tag.vnutrennyaya_otdelka',
-        'tag.poly',
-        'floors',
-        'tile',
-        'floors_tile',
-      ],
-    ),
+  // Дубликат floors_tile удалён - используется tile_calculator_v2.dart
   CalculatorDefinitionV2(
       id: 'floors_warm',
       titleKey: 'calculator.floors_warm.title',

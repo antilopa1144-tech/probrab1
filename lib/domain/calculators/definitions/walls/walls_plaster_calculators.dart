@@ -116,6 +116,22 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: true,
           order: 3,
         ),
+        const CalculatorField(
+          key: 'canSize',
+          labelKey: 'input.canSize',
+          hintKey: 'input.canSize.hint',
+          unitType: UnitType.liters,
+          inputType: FieldInputType.select,
+          defaultValue: 10.0,
+          required: false,
+          order: 4,
+          options: [
+            FieldOption(value: 5, labelKey: 'input.canSize.5l'),
+            FieldOption(value: 10, labelKey: 'input.canSize.10l'),
+            FieldOption(value: 15, labelKey: 'input.canSize.15l'),
+            FieldOption(value: 20, labelKey: 'input.canSize.20l'),
+          ],
+        ),
       ],
       beforeHints: [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.gruntovka_uluchshaet_adgeziyu_materialov'),

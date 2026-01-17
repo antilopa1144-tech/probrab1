@@ -767,11 +767,11 @@ class _RecentCalculatorChip extends StatelessWidget {
             Text(
               loc.translate(calc.titleKey),
               style: GoogleFonts.manrope(
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: palette.textPrimary,
               ),
-              maxLines: 1,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ],

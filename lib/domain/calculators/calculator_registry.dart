@@ -12,7 +12,7 @@ import 'unified_roofing_calculator_v2.dart';
 import 'warm_floor_calculator_v2.dart';
 import 'parquet_calculator_v2.dart';
 import 'bathroom_tile_calculator_v2.dart';
-import 'plinth_calculator_v2.dart';
+// plinth_calculator_v2.dart удалён - калькулятор плинтуса больше не нужен
 import 'concrete_universal_calculator_v2.dart';
 import 'sheeting_osb_plywood_calculator_v2.dart';
 import 'dsp_calculator_v2.dart';
@@ -75,7 +75,7 @@ class CalculatorRegistry {
     screedCalculatorV2,
     selfLevelingFloorCalculatorV2,
     tileCalculatorV2,
-    plinthCalculatorV2,
+    // plinthCalculatorV2 удалён - калькулятор плинтуса больше не нужен
     sheetingOsbPlywoodCalculatorV2,
     dspCalculatorV2,
 

@@ -59,6 +59,8 @@ class CalculateLaminate extends BaseCalculator {
     final packArea = getInput(inputs, 'packArea', defaultValue: 2.0, minValue: 0.5, maxValue: 3.0);
     final reserve = getInput(inputs, 'reserve', defaultValue: 7.0, minValue: 5.0, maxValue: 15.0);
     final underlayType = getIntInput(inputs, 'underlayType', defaultValue: 3, minValue: 2, maxValue: 5);
+    final laminateClass = getIntInput(inputs, 'laminateClass', defaultValue: 32, minValue: 31, maxValue: 34);
+    final laminateThickness = getIntInput(inputs, 'laminateThickness', defaultValue: 8, minValue: 6, maxValue: 14);
 
     // Количество упаковок ламината с запасом (reserve%)
     final packsNeeded = calculateUnitsNeeded(area, packArea, marginPercent: reserve);
@@ -102,6 +104,8 @@ class CalculateLaminate extends BaseCalculator {
         'wedgesNeeded': wedgesNeeded.toDouble(),
         'vaporBarrierArea': vaporBarrierArea,
         'doorThresholds': doorThresholds.toDouble(),
+        'laminateClass': laminateClass.toDouble(),
+        'laminateThickness': laminateThickness.toDouble(),
       },
       totalPrice: sumCosts(costs),
     );

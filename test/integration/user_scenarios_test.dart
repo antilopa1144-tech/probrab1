@@ -211,17 +211,16 @@ void main() {
       // 1) Найти калькулятор через поиск и открыть.
       await _openCalculatorViaSearch(
         tester,
-        query: 'плинтус',
-        title: 'Плинтус',
+        query: 'бетон',
+        title: 'Универсальный бетон',
       );
       final isProScreen = find.byType(ProCalculatorScreen).evaluate().isNotEmpty;
 
       if (isProScreen) {
-        await tester.enterText(_numberFieldWithLabel('Длина'), '5');
+        await tester.enterText(_numberFieldWithLabel('Объём бетона'), '5');
         await tester.pump(const Duration(milliseconds: 50));
-        await tester.enterText(_numberFieldWithLabel('Ширина'), '4');
         await pumpAndSettleWithTimeout(tester, timeout: const Duration(seconds: 2));
-        expect(find.textContaining('ПЛИНТУС'), findsWidgets);
+        expect(find.textContaining('БЕТОН'), findsWidgets);
       } else {
         // 2) Сделать расчёт без ввода (не должно ругаться "сразу при открытии").
         expect(find.textContaining('Поле "'), findsNothing);
