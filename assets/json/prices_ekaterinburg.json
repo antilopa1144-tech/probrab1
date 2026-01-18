@@ -12,5 +12,6 @@
     "price": 90,
     "unit": "м",
     "imageUrl": ""
-  }
+  },
+  { "sku": "laminate", "name": "Ламинат", "price": 950, "unit": "м²", "imageUrl": "" }
 ]

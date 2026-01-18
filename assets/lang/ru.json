@@ -1401,6 +1401,10 @@
     "boards": "Доски",
     "brushes": "Кисти",
     "brushesNeeded": "Кистей",
+    "cans_5l": "Канистры 5 л",
+    "cans_10l": "Канистры 10 л",
+    "cans_15l": "Канистры 15 л",
+    "cans_20l": "Канистры 20 л",
     "cableLength": "Длина кабеля",
     "ceilingProfileLength": "Длина потолочных профилей",
     "clips": "Клипсы",
@@ -1428,6 +1432,7 @@
     "insulationVolume": "Объём утеплителя",
     "layers": "Слои",
     "length": "Длина",
+    "linearMeters": "Погонные метры",
     "mastic": "Мастики",
     "matArea": "Площадь мата",
     "montageTapeLength": "Длина монтажной ленты",
@@ -1476,6 +1481,11 @@
     "tiles": "Плитка",
     "title": "Результаты расчёта",
     "totalPower": "Общая мощность",
+    "totalLiters": "Всего литров",
+    "totalCans": "Всего канистр",
+    "excess": "Излишек",
+    "traysNeeded": "Кювет для валика",
+    "dryingTime": "Время высыхания (ч)",
     "underlayArea": "Площадь подложки",
     "underlayment": "Подкладочного ковра",
     "valleyLength": "Длина ендовы",
@@ -3279,6 +3289,12 @@
     "bag_weight.hint": "Вес одного мешка в килограммах (обычно 25, 40 или 50 кг)",
     "bag_weight.20kg": "20 кг",
     "bag_weight.25kg": "25 кг",
+    "canSize": "Размер канистры",
+    "canSize.hint": "Выберите предпочтительный размер канистры",
+    "canSize.5l": "5 л",
+    "canSize.10l": "10 л",
+    "canSize.15l": "15 л",
+    "canSize.20l": "20 л",
     "windows_area": "Площадь окон",
     "windows_area.hint": "Площадь оконных проёмов в м²",
     "doors_area": "Площадь дверей",
@@ -3473,20 +3489,6 @@
     "endLength.hint": "Длина торцевых участков в м",
     "height.hint": "Высота в м",
     "insulationThickness.hint": "Толщина утеплителя в мм",
-    "laminateClass": "Класс ламината",
-    "laminateClass.31": "Класс 31 (низкая нагрузка)",
-    "laminateClass.32": "Класс 32 (средняя нагрузка)",
-    "laminateClass.33": "Класс 33 (высокая нагрузка)",
-    "laminateClass.34": "Класс 34 (очень высокая нагрузка)",
-    "laminateClass.hint": "Выберите класс износостойкости",
-    "laminateThickness": "Толщина ламината",
-    "laminateThickness.6mm": "6 мм",
-    "laminateThickness.7mm": "7 мм",
-    "laminateThickness.8mm": "8 мм (стандарт)",
-    "laminateThickness.10mm": "10 мм",
-    "laminateThickness.12mm": "12 мм",
-    "laminateThickness.14mm": "14 мм",
-    "laminateThickness.hint": "Выберите толщину ламината",
     "length.hint": "Длина в м",
     "overlap.hint": "Размер нахлёста полотен в см",
     "packArea.hint": "Площадь покрытия одной упаковки в м²",
@@ -3526,6 +3528,20 @@
     "tileSize.custom": "Свой размер",
     "tileSize.hint": "Выберите размер плитки",
     "type.hint": "Выберите тип",
+    "laminateClass": "Класс ламината",
+    "laminateClass.31": "Класс 31 (низкая нагрузка)",
+    "laminateClass.32": "Класс 32 (средняя нагрузка)",
+    "laminateClass.33": "Класс 33 (высокая нагрузка)",
+    "laminateClass.34": "Класс 34 (очень высокая нагрузка)",
+    "laminateClass.hint": "Выберите класс износостойкости",
+    "laminateThickness": "Толщина ламината",
+    "laminateThickness.6mm": "6 мм",
+    "laminateThickness.7mm": "7 мм",
+    "laminateThickness.8mm": "8 мм (стандарт)",
+    "laminateThickness.10mm": "10 мм",
+    "laminateThickness.12mm": "12 мм",
+    "laminateThickness.14mm": "14 мм",
+    "laminateThickness.hint": "Выберите толщину ламината",
     "underlayType": "Толщина подложки",
     "underlayType.2mm": "2 мм",
     "underlayType.3mm": "3 мм",
@@ -4959,7 +4975,10 @@
     },
     "materials": {
       "primer": "Грунтовка",
-      "cans": "Канистры"
+      "cans": "Канистры",
+      "total": "Всего",
+      "excess": "Излишек",
+      "excess_desc": "Останется после работы"
     },
     "export": {
       "title": "РАСЧЁТ ГРУНТОВКИ",
@@ -4991,27 +5010,58 @@
       "diagonal_desc": "Отходы ~15%"
     },
     "class": {
-      "31": "31 класс",
-      "31_desc": "Спальни",
-      "32": "32 класс",
-      "32_desc": "Гостиные",
-      "33": "33 класс",
-      "33_desc": "Прихожие"
+      "ac3": "Спальня",
+      "ac3_desc": "31 класс (AC3) — для жилых комнат со средней нагрузкой",
+      "ac4": "Кухня",
+      "ac4_desc": "32 класс (AC4) — для жилых помещений с высокой нагрузкой",
+      "ac5": "Офис",
+      "ac5_desc": "33 класс (AC5) — для коммерческих помещений",
+      "ac6": "Спортзал",
+      "ac6_desc": "34 класс (AC6) — для помещений с очень высокой нагрузкой"
+    },
+    "type": {
+      "hdf": "Стандарт",
+      "hdf_desc": "Классический ламинат (HDF) из древесноволокнистой плиты",
+      "spc": "Влагостойкий",
+      "spc_desc": "Водостойкий ламинат (SPC) с каменно-полимерной основой",
+      "hpl": "Усиленный",
+      "hpl_desc": "Ламинат повышенной прочности (HPL) для коммерческих помещений"
     },
     "section": {
-      "class": "Класс ламината",
+      "class": "Класс износостойкости",
+      "type": "Тип ламината",
+      "package": "Параметры упаковки",
       "materials": "Необходимые материалы"
     },
     "mode": {
       "manual": "По площади",
       "room": "По комнате"
     },
+    "pack_mode": {
+      "preset": "Бренд",
+      "dimensions": "Размеры",
+      "custom": "Вручную",
+      "preset_hint": "Выберите популярный бренд с готовыми параметрами",
+      "dimensions_hint": "Укажите размеры досок и количество в упаковке",
+      "custom_hint": "Введите площадь упаковки вручную (если известна)"
+    },
+    "preset": {
+      "quick_step": "Quick-Step",
+      "kronospan": "Kronospan",
+      "tarkett": "Tarkett",
+      "egger": "Egger",
+      "vinilam": "Vinilam",
+      "berry_alloc": "Berry Alloc"
+    },
     "label": {
       "area": "Площадь пола",
       "width": "Ширина",
       "length": "Длина",
       "floor_area": "Площадь пола",
-      "pack_area": "Площадь упаковки"
+      "pack_area": "Площадь упаковки",
+      "board_length": "Длина доски",
+      "board_width": "Ширина доски",
+      "boards_per_pack": "Досок в упаковке"
     },
     "option": {
       "underlay": "Подложка",
@@ -5028,6 +5078,9 @@
       "laminate": "Ламинат",
       "underlay": "Подложка",
       "plinth": "Плинтус"
+    },
+    "unit": {
+      "packs": "упак."
     },
     "export": {
       "title": "РАСЧЁТ ЛАМИНАТА",
@@ -5144,6 +5197,8 @@
     },
     "materials": {
       "linoleum": "Линолеум",
+      "linear_meters": "Погонные метры",
+      "roll_width": "Ширина рулона",
       "tape": "Скотч двусторонний",
       "tape_desc": "50 мм",
       "plinth": "Плинтус"

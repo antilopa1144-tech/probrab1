@@ -17,18 +17,53 @@ enum LaminatePattern {
   const LaminatePattern(this.nameKey, this.descKey, this.icon);
 }
 
-/// Класс ламината
+/// Класс износостойкости ламината (AC rating)
 enum LaminateClass {
-  class31('laminate_calc.class.31', 'laminate_calc.class.31_desc'),
-  class32('laminate_calc.class.32', 'laminate_calc.class.32_desc'),
-  class33('laminate_calc.class.33', 'laminate_calc.class.33_desc');
+  ac3('laminate_calc.class.ac3', 'laminate_calc.class.ac3_desc'),
+  ac4('laminate_calc.class.ac4', 'laminate_calc.class.ac4_desc'),
+  ac5('laminate_calc.class.ac5', 'laminate_calc.class.ac5_desc'),
+  ac6('laminate_calc.class.ac6', 'laminate_calc.class.ac6_desc');
 
   final String nameKey;
   final String descKey;
   const LaminateClass(this.nameKey, this.descKey);
 }
 
+/// Вид (тип) ламината
+enum LaminateType {
+  hdf('laminate_calc.type.hdf', 'laminate_calc.type.hdf_desc'),
+  spc('laminate_calc.type.spc', 'laminate_calc.type.spc_desc'),
+  hpl('laminate_calc.type.hpl', 'laminate_calc.type.hpl_desc');
+
+  final String nameKey;
+  final String descKey;
+  const LaminateType(this.nameKey, this.descKey);
+}
+
 enum LaminateInputMode { manual, room }
+
+/// Режим ввода площади упаковки
+enum PackAreaInputMode { preset, dimensions, custom }
+
+/// Пресеты упаковок популярных брендов
+enum LaminatePackagePreset {
+  quickStep('laminate_calc.preset.quick_step', 1220, 184, 9),
+  kronospan('laminate_calc.preset.kronospan', 1380, 193, 8),
+  tarkett('laminate_calc.preset.tarkett', 1292, 194, 7),
+  egger('laminate_calc.preset.egger', 1292, 193, 9),
+  vinilam('laminate_calc.preset.vinilam', 1220, 180, 10),
+  berry('laminate_calc.preset.berry_alloc', 1210, 190, 8);
+
+  final String nameKey;
+  final int lengthMm;
+  final int widthMm;
+  final int boardsPerPack;
+
+  const LaminatePackagePreset(this.nameKey, this.lengthMm, this.widthMm, this.boardsPerPack);
+
+  /// Площадь упаковки в м²
+  double get packArea => (lengthMm * widthMm * boardsPerPack) / 1000000;
+}
 
 /// Результат расчёта ламината
 class _LaminateResult {
@@ -92,8 +127,19 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
   double _packArea = 2.4; // м² в упаковке
 
   LaminatePattern _pattern = LaminatePattern.straight;
-  LaminateClass _laminateClass = LaminateClass.class32;
+  LaminateClass _laminateClass = LaminateClass.ac4;
+  LaminateType _laminateType = LaminateType.hdf;
   LaminateInputMode _inputMode = LaminateInputMode.manual;
+
+  // Режим ввода площади упаковки
+  PackAreaInputMode _packAreaMode = PackAreaInputMode.preset;
+  LaminatePackagePreset _selectedPreset = LaminatePackagePreset.quickStep;
+
+  // Кастомные размеры досок
+  double _boardLength = 1220.0; // мм
+  double _boardWidth = 184.0; // мм
+  int _boardsPerPack = 9;
+
   bool _needUnderlay = true;
   bool _needPlinth = true;
 
@@ -105,7 +151,27 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
   @override
   void initState() {
     super.initState();
+    _updatePackArea();
     _result = _calculate();
+  }
+
+  /// Обновляет площадь упаковки в зависимости от режима
+  void _updatePackArea() {
+    switch (_packAreaMode) {
+      case PackAreaInputMode.preset:
+        _packArea = _selectedPreset.packArea;
+        // Синхронизируем размеры досок для отображения в режиме "Размеры"
+        _boardLength = _selectedPreset.lengthMm.toDouble();
+        _boardWidth = _selectedPreset.widthMm.toDouble();
+        _boardsPerPack = _selectedPreset.boardsPerPack;
+        break;
+      case PackAreaInputMode.dimensions:
+        _packArea = (_boardLength * _boardWidth * _boardsPerPack) / 1000000;
+        break;
+      case PackAreaInputMode.custom:
+        // Площадь задана вручную, ничего не делаем
+        break;
+    }
   }
 
   /// Использует domain layer для расчёта
@@ -115,6 +181,8 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
       'packArea': _packArea,
       'needUnderlay': _needUnderlay ? 1.0 : 0.0,
       'needPlinth': _needPlinth ? 1.0 : 0.0,
+      'laminateClass': _laminateClass.index.toDouble(),
+      'laminateType': _laminateType.index.toDouble(),
     };
 
     // Передаём либо площадь, либо размеры комнаты
@@ -201,7 +269,11 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
         const SizedBox(height: 16),
         _buildClassSelector(),
         const SizedBox(height: 16),
+        _buildTypeSelector(),
+        const SizedBox(height: 16),
         _buildAreaCard(),
+        const SizedBox(height: 16),
+        _buildPackageCard(),
         const SizedBox(height: 16),
         _buildOptionsCard(),
         const SizedBox(height: 16),
@@ -289,6 +361,37 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
     );
   }
 
+  Widget _buildTypeSelector() {
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('laminate_calc.section.type'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: LaminateType.values.map((t) => _loc.translate(t.nameKey)).toList(),
+            selectedIndex: _laminateType.index,
+            onSelect: (index) {
+              setState(() {
+                _laminateType = LaminateType.values[index];
+                _update();
+              });
+            },
+            accentColor: _accentColor,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _loc.translate(_laminateType.descKey),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAreaCard() {
     return _card(
       child: Column(
@@ -357,27 +460,240 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
     );
   }
 
+  Widget _buildPackageCard() {
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('laminate_calc.section.package'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: [
+              _loc.translate('laminate_calc.pack_mode.preset'),
+              _loc.translate('laminate_calc.pack_mode.dimensions'),
+              _loc.translate('laminate_calc.pack_mode.custom'),
+            ],
+            selectedIndex: _packAreaMode.index,
+            onSelect: (index) {
+              setState(() {
+                _packAreaMode = PackAreaInputMode.values[index];
+                _updatePackArea();
+                _update();
+              });
+            },
+            accentColor: _accentColor,
+          ),
+          const SizedBox(height: 16),
+          if (_packAreaMode == PackAreaInputMode.preset) _buildPresetInput(),
+          if (_packAreaMode == PackAreaInputMode.dimensions) _buildDimensionsInput(),
+          if (_packAreaMode == PackAreaInputMode.custom) _buildCustomInput(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPresetInput() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _loc.translate('laminate_calc.pack_mode.preset_hint'),
+          style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+        ),
+        const SizedBox(height: 12),
+        ...LaminatePackagePreset.values.map((preset) {
+          final isSelected = _selectedPreset == preset;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  _selectedPreset = preset;
+                  // Обновляем размеры досок при выборе пресета для синхронизации
+                  _boardLength = preset.lengthMm.toDouble();
+                  _boardWidth = preset.widthMm.toDouble();
+                  _boardsPerPack = preset.boardsPerPack;
+                  _updatePackArea();
+                  _update();
+                });
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isSelected ? _accentColor.withValues(alpha: 0.1) : Colors.transparent,
+                  border: Border.all(
+                    color: isSelected ? _accentColor : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                    width: isSelected ? 2 : 1,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _loc.translate(preset.nameKey),
+                            style: CalculatorDesignSystem.bodyMedium.copyWith(
+                              color: CalculatorColors.textPrimary,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${preset.lengthMm}×${preset.widthMm} мм, ${preset.boardsPerPack} ${_loc.translate('common.pcs')}',
+                            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      '${preset.packArea.toStringAsFixed(2)} ${_loc.translate('common.sqm')}',
+                      style: CalculatorDesignSystem.bodyLarge.copyWith(
+                        color: isSelected ? _accentColor : CalculatorColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildDimensionsInput() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _loc.translate('laminate_calc.pack_mode.dimensions_hint'),
+          style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: CalculatorTextField(
+                label: _loc.translate('laminate_calc.label.board_length'),
+                value: _boardLength,
+                onChanged: (v) {
+                  setState(() {
+                    _boardLength = v;
+                    _updatePackArea();
+                    _update();
+                  });
+                },
+                suffix: _loc.translate('common.mm'),
+                accentColor: _accentColor,
+                minValue: 300,
+                maxValue: 2000,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: CalculatorTextField(
+                label: _loc.translate('laminate_calc.label.board_width'),
+                value: _boardWidth,
+                onChanged: (v) {
+                  setState(() {
+                    _boardWidth = v;
+                    _updatePackArea();
+                    _update();
+                  });
+                },
+                suffix: _loc.translate('common.mm'),
+                accentColor: _accentColor,
+                minValue: 100,
+                maxValue: 300,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        CalculatorTextField(
+          label: _loc.translate('laminate_calc.label.boards_per_pack'),
+          value: _boardsPerPack.toDouble(),
+          onChanged: (v) {
+            setState(() {
+              _boardsPerPack = v.toInt();
+              _updatePackArea();
+              _update();
+            });
+          },
+          suffix: _loc.translate('common.pcs'),
+          accentColor: _accentColor,
+          minValue: 1,
+          maxValue: 20,
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: _accentColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                _loc.translate('laminate_calc.label.pack_area'),
+                style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary),
+              ),
+              Text(
+                '${_packArea.toStringAsFixed(2)} ${_loc.translate('common.sqm')}',
+                style: CalculatorDesignSystem.headlineMedium.copyWith(
+                  color: _accentColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCustomInput() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _loc.translate('laminate_calc.pack_mode.custom_hint'),
+          style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+        ),
+        const SizedBox(height: 12),
+        CalculatorSliderField(
+          label: _loc.translate('laminate_calc.label.pack_area'),
+          value: _packArea,
+          min: 1.0,
+          max: 4.0,
+          divisions: 30,
+          suffix: _loc.translate('common.sqm'),
+          accentColor: _accentColor,
+          decimalPlaces: 2,
+          onChanged: (v) {
+            setState(() {
+              _packArea = v;
+              _update();
+            });
+          },
+        ),
+      ],
+    );
+  }
+
   Widget _buildOptionsCard() {
     return _card(
       child: Column(
         children: [
-          CalculatorSliderField(
-            label: _loc.translate('laminate_calc.label.pack_area'),
-            value: _packArea,
-            min: 1.5,
-            max: 4.0,
-            divisions: 10,
-            suffix: _loc.translate('common.sqm'),
-            accentColor: _accentColor,
-            decimalPlaces: 1,
-            onChanged: (v) {
-              setState(() {
-                _packArea = v;
-                _update();
-              });
-            },
-          ),
-          const SizedBox(height: 8),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('laminate_calc.option.underlay'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
@@ -403,7 +719,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
     final items = <MaterialItem>[
       MaterialItem(
         name: _loc.translate('laminate_calc.materials.laminate'),
-        value: '${_result.packsNeeded} ${_loc.translate('common.pcs')}',
+        value: '${_result.packsNeeded} ${_loc.translate('laminate_calc.unit.packs')}',
         subtitle: '${_result.areaWithWaste.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
         icon: Icons.layers,
       ),

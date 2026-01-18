@@ -74,6 +74,9 @@ class CalculateLinoleumV2 extends BaseCalculator {
     // Площадь с запасом
     final areaWithWaste = area * (1 + wastePercent / 100);
 
+    // Погонные метры: площадь с запасом / ширина рулона
+    final linearMeters = areaWithWaste / rollWidth;
+
     // Количество рулонов
     final rollArea = rollWidth * rollLength;
     final rollsNeeded = areaWithWaste / rollArea;
@@ -114,6 +117,7 @@ class CalculateLinoleumV2 extends BaseCalculator {
         'rollWidth': rollWidth,
         'rollLength': rollLength,
         'rollsNeeded': rollsNeeded,
+        'linearMeters': linearMeters,
         'needTape': needTape ? 1.0 : 0.0,
         'tapeLength': tapeLength,
         'needPlinth': needPlinth ? 1.0 : 0.0,

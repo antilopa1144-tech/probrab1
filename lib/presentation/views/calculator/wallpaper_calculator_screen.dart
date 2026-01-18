@@ -35,7 +35,8 @@ class _WallpaperConstants {
   }
 
   // Materials consumption
-  double get gluePerM2 => _getDouble('materials_consumption', 'glue_per_m2', 0.25);
+  // Клей обойный - СУХАЯ СМЕСЬ (разводится водой): ~8 г/м² = 0.008 кг/м²
+  double get gluePerM2 => _getDouble('materials_consumption', 'glue_per_m2', 0.008);
   double get primerPerM2 => _getDouble('materials_consumption', 'primer_per_m2', 0.15);
 }
 
@@ -200,8 +201,10 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     rollsNeeded = (rollsNeeded * (1 + _reserve / 100)).ceil();
 
     // Расчёт материалов из констант
-    final glueNeededKg = (effectiveArea * _constants.gluePerM2).ceilToDouble();
-    final primerLiters = effectiveArea * _constants.primerPerM2;
+    // Клей - сухая смесь, показываем точное значение без округления вверх
+    final glueNeededKg = effectiveArea * _constants.gluePerM2;
+    // Грунтовка: 0.1 л/м² (стандартный расход)
+    final primerLiters = effectiveArea * 0.1;
 
     return _WallpaperResult(
       area: effectiveArea,
@@ -770,7 +773,10 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
       ),
       MaterialItem(
         name: _loc.translate('wallpaper.materials.glue'),
-        value: '${_result.glueNeededKg.toStringAsFixed(1)} ${_loc.translate('wallpaper.materials.kg')}',
+        // Показываем в граммах если меньше 1 кг
+        value: _result.glueNeededKg < 1
+            ? '${(_result.glueNeededKg * 1000).toStringAsFixed(0)} г'
+            : '${_result.glueNeededKg.toStringAsFixed(1)} ${_loc.translate('wallpaper.materials.kg')}',
         icon: Icons.colorize,
       ),
       MaterialItem(

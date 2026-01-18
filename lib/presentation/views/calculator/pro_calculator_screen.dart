@@ -219,8 +219,8 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
         : const [];
 
     // Convert hints to tips strings
-    final beforeTips = beforeHints.map((h) => h.message ?? _loc.translate(h.messageKey ?? '')).toList();
-    final afterTips = afterHints.map<String>((h) => h.message ?? _loc.translate(h.messageKey ?? '')).toList();
+    final beforeTips = beforeHints.map((dynamic h) => (h.message ?? _loc.translate(h.messageKey ?? '')) as String).toList();
+    final afterTips = afterHints.map((dynamic h) => (h.message ?? _loc.translate(h.messageKey ?? '')) as String).toList();
 
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),

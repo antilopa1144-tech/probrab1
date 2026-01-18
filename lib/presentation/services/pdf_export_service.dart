@@ -338,7 +338,7 @@ class PdfExportService {
             margin: const pw.EdgeInsets.only(top: 10),
             child: pw.Text(
               '${loc.translate('app.name')} • ${dateFormat.format(DateTime.now())}',
-              style: pw.TextStyle(
+              style: const pw.TextStyle(
                 fontSize: 10,
                 color: PdfColors.grey600,
               ),
@@ -360,9 +360,9 @@ class PdfExportService {
   ) {
     return pw.Container(
       padding: const pw.EdgeInsets.all(12),
-      decoration: pw.BoxDecoration(
+      decoration: const pw.BoxDecoration(
         color: PdfColors.grey100,
-        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+        borderRadius: pw.BorderRadius.all(pw.Radius.circular(8)),
       ),
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,

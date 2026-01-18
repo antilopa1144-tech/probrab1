@@ -25,6 +25,7 @@ class _LinoleumResult {
   final double areaWithWaste;
   final double rollsNeeded;
   final double rollWidth;
+  final double linearMeters;
   final double tapeLength;
   final double plinthLength;
   final int plinthPieces;
@@ -34,6 +35,7 @@ class _LinoleumResult {
     required this.areaWithWaste,
     required this.rollsNeeded,
     required this.rollWidth,
+    required this.linearMeters,
     required this.tapeLength,
     required this.plinthLength,
     required this.plinthPieces,
@@ -45,6 +47,7 @@ class _LinoleumResult {
       areaWithWaste: values['areaWithWaste'] ?? 0,
       rollsNeeded: values['rollsNeeded'] ?? 0,
       rollWidth: values['rollWidth'] ?? 3.0,
+      linearMeters: values['linearMeters'] ?? 0,
       tapeLength: values['tapeLength'] ?? 0,
       plinthLength: values['plinthLength'] ?? 0,
       plinthPieces: (values['plinthPieces'] ?? 0).toInt(),
@@ -344,6 +347,13 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
         subtitle: _loc.translate(_linoleumType.nameKey),
         icon: Icons.layers,
       ),
+      if (_result.linearMeters > 0)
+        MaterialItem(
+          name: _loc.translate('linoleum_calc.materials.linear_meters'),
+          value: '${_result.linearMeters.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
+          subtitle: '${_loc.translate('linoleum_calc.materials.roll_width')}: ${_result.rollWidth.toStringAsFixed(1)} м',
+          icon: Icons.straighten,
+        ),
     ];
 
     if (_needTape && _result.tapeLength > 0) {

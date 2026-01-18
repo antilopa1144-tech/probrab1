@@ -7,7 +7,7 @@ import './base_calculator.dart';
 /// Калькулятор ламината.
 ///
 /// Рассчитывает количество ламината, подложки и плинтуса
-/// с учётом способа укладки и площади помещения.
+/// с учётом способа укладки, класса износостойкости и типа ламината.
 ///
 /// Нормативы:
 /// - СП 29.13330.2011 "Полы"
@@ -20,6 +20,8 @@ import './base_calculator.dart';
 /// - needPlinth: нужен ли плинтус (0/1)
 /// - roomWidth: ширина комнаты (м), опционально
 /// - roomLength: длина комнаты (м), опционально
+/// - laminateClass: класс износостойкости AC (0=AC3, 1=AC4, 2=AC5, 3=AC6)
+/// - laminateType: тип ламината (0=HDF, 1=SPC, 2=HPL)
 class CalculateLaminateV2 extends BaseCalculator {
   /// Процент отходов по способу укладки
   static const Map<int, double> wastePercent = {
@@ -110,7 +112,7 @@ class CalculateLaminateV2 extends BaseCalculator {
       plinthPieces = (plinthTotalLength / plinthLength).ceil();
     }
 
-    // Расчёт стоимости
+    // Расчёт стоимости (цены не используются, только для совместимости с системой)
     final laminatePrice = findPrice(priceList, ['laminate', 'laminate_pack', 'ламинат']);
     final underlayPrice = findPrice(priceList, ['underlay', 'underlay_roll', 'подложка']);
     final plinthPrice = findPrice(priceList, ['plinth', 'плинтус']);

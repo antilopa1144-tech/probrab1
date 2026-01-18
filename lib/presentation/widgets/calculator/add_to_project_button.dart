@@ -14,10 +14,10 @@ class CalculationData {
   /// Название расчёта (например, 'Шпатлёвка - Спальня')
   final String name;
 
-  /// Входные данные как Map<String, double>
+  /// Входные данные как Map&lt;String, double&gt;
   final Map<String, double> inputs;
 
-  /// Результаты расчёта как Map<String, double>
+  /// Результаты расчёта как Map&lt;String, double&gt;
   final Map<String, double> results;
 
   /// Общая стоимость материалов

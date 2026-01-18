@@ -354,6 +354,198 @@ void main() {
       }
     });
 
+    group('Package presets and custom dimensions', () {
+      test('Quick-Step preset (1220x184x9) = 2.02 m²', () {
+        // Quick-Step: 1220×184 мм, 9 досок
+        const expectedPackArea = (1220 * 184 * 9) / 1000000;
+        expect(expectedPackArea, closeTo(2.02, 0.01));
+
+        final inputs = {
+          'area': 20.0,
+          'pattern': 0.0,
+          'packArea': expectedPackArea,
+          'needUnderlay': 0.0,
+          'needPlinth': 0.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 20 * 1.05 = 21 m²
+        // ceil(21 / 2.02) = 11 packs
+        expect(result.values['packsNeeded']!, equals(11));
+      });
+
+      test('Kronospan preset (1380x193x8) = 2.13 m²', () {
+        // Kronospan: 1380×193 мм, 8 досок
+        const expectedPackArea = (1380 * 193 * 8) / 1000000;
+        expect(expectedPackArea, closeTo(2.13, 0.01));
+
+        final inputs = {
+          'area': 20.0,
+          'pattern': 0.0,
+          'packArea': expectedPackArea,
+          'needUnderlay': 0.0,
+          'needPlinth': 0.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 20 * 1.05 = 21 m²
+        // ceil(21 / 2.13) = 10 packs
+        expect(result.values['packsNeeded']!, equals(10));
+      });
+
+      test('Tarkett preset (1292x194x7) = 1.75 m²', () {
+        // Tarkett: 1292×194 мм, 7 досок
+        const expectedPackArea = (1292 * 194 * 7) / 1000000;
+        expect(expectedPackArea, closeTo(1.75, 0.01));
+
+        final inputs = {
+          'area': 20.0,
+          'pattern': 0.0,
+          'packArea': expectedPackArea,
+          'needUnderlay': 0.0,
+          'needPlinth': 0.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 20 * 1.05 = 21 m²
+        // ceil(21 / 1.75) = 12 packs
+        expect(result.values['packsNeeded']!, equals(12));
+      });
+
+      test('Egger preset (1292x193x9) = 2.24 m²', () {
+        // Egger: 1292×193 мм, 9 досок
+        const expectedPackArea = (1292 * 193 * 9) / 1000000;
+        expect(expectedPackArea, closeTo(2.24, 0.01));
+
+        final inputs = {
+          'area': 20.0,
+          'pattern': 0.0,
+          'packArea': expectedPackArea,
+          'needUnderlay': 0.0,
+          'needPlinth': 0.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 20 * 1.05 = 21 m²
+        // ceil(21 / 2.24) = 10 packs
+        expect(result.values['packsNeeded']!, equals(10));
+      });
+
+      test('Vinilam preset (1220x180x10) = 2.20 m²', () {
+        // Vinilam: 1220×180 мм, 10 досок
+        const expectedPackArea = (1220 * 180 * 10) / 1000000;
+        expect(expectedPackArea, closeTo(2.20, 0.01));
+
+        final inputs = {
+          'area': 20.0,
+          'pattern': 0.0,
+          'packArea': expectedPackArea,
+          'needUnderlay': 0.0,
+          'needPlinth': 0.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 20 * 1.05 = 21 m²
+        // ceil(21 / 2.20) = 10 packs
+        expect(result.values['packsNeeded']!, equals(10));
+      });
+
+      test('Berry Alloc preset (1210x190x8) = 1.84 m²', () {
+        // Berry Alloc: 1210×190 мм, 8 досок
+        const expectedPackArea = (1210 * 190 * 8) / 1000000;
+        expect(expectedPackArea, closeTo(1.84, 0.01));
+
+        final inputs = {
+          'area': 20.0,
+          'pattern': 0.0,
+          'packArea': expectedPackArea,
+          'needUnderlay': 0.0,
+          'needPlinth': 0.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 20 * 1.05 = 21 m²
+        // ceil(21 / 1.84) = 12 packs
+        expect(result.values['packsNeeded']!, equals(12));
+      });
+
+      test('custom board dimensions - small boards', () {
+        // Small boards: 800×120 мм, 15 досок
+        const customPackArea = (800 * 120 * 15) / 1000000; // 1.44 m²
+
+        final inputs = {
+          'area': 20.0,
+          'pattern': 0.0,
+          'packArea': customPackArea,
+          'needUnderlay': 0.0,
+          'needPlinth': 0.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 20 * 1.05 = 21 m²
+        // ceil(21 / 1.44) = 15 packs
+        expect(result.values['packsNeeded']!, equals(15));
+      });
+
+      test('custom board dimensions - large boards', () {
+        // Large boards: 1800×240 мм, 6 досок
+        const customPackArea = (1800 * 240 * 6) / 1000000; // 2.592 m²
+
+        final inputs = {
+          'area': 20.0,
+          'pattern': 0.0,
+          'packArea': customPackArea,
+          'needUnderlay': 0.0,
+          'needPlinth': 0.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 20 * 1.05 = 21 m²
+        // ceil(21 / 2.592) = 9 packs
+        expect(result.values['packsNeeded']!, equals(9));
+      });
+
+      test('different presets yield different pack counts', () {
+        const area = 50.0;
+        const pattern = 0.0; // straight
+
+        // Quick-Step (2.02 m²)
+        final quickStepInputs = {
+          'area': area,
+          'pattern': pattern,
+          'packArea': (1220 * 184 * 9) / 1000000,
+          'needUnderlay': 0.0,
+          'needPlinth': 0.0,
+        };
+
+        // Tarkett (1.75 m²) - smaller pack
+        final tarkettInputs = {
+          'area': area,
+          'pattern': pattern,
+          'packArea': (1292 * 194 * 7) / 1000000,
+          'needUnderlay': 0.0,
+          'needPlinth': 0.0,
+        };
+
+        final quickStepResult = calculator(quickStepInputs, emptyPriceList);
+        final tarkettResult = calculator(tarkettInputs, emptyPriceList);
+
+        // Smaller pack area = more packs needed
+        expect(
+          tarkettResult.values['packsNeeded']!,
+          greaterThan(quickStepResult.values['packsNeeded']!),
+        );
+      });
+    });
+
     group('Full scenario tests', () {
       test('typical room installation', () {
         final inputs = {

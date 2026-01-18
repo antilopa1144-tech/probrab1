@@ -83,7 +83,7 @@ class TypeSelectorCard extends StatelessWidget {
     final hasSubtitle = subtitle != null && subtitle!.isNotEmpty;
     final effectiveIconSize = hasSubtitle ? (iconSize * 0.75) : iconSize;
     final titleFontSize = hasSubtitle ? 10.0 : 14.0;
-    final subtitleFontSize = 9.0;
+    const subtitleFontSize = 9.0;
     final padding = hasSubtitle ? 8.0 : 12.0;
 
     return GestureDetector(

@@ -37,6 +37,49 @@ class CalculatePrimerV2 extends BaseCalculator {
   /// Запас на потери (%)
   static const double wastePercent = 10.0;
 
+  /// Доступные размеры канистр (л)
+  static const List<double> availableCanSizes = [5.0, 10.0, 20.0];
+
+  /// Оптимальный подбор канистр с минимальным излишком
+  static Map<double, int> selectOptimalCans(double litersNeeded, double preferredCanSize) {
+    final result = <double, int>{};
+
+    // Если нужно меньше минимальной канистры - берём одну минимальную
+    if (litersNeeded <= availableCanSizes.first) {
+      result[availableCanSizes.first] = 1;
+      return result;
+    }
+
+    // Используем предпочтительный размер
+    if (preferredCanSize > 0 && availableCanSizes.contains(preferredCanSize)) {
+      final fullCans = (litersNeeded / preferredCanSize).floor();
+      final remainder = litersNeeded - fullCans * preferredCanSize;
+
+      if (fullCans > 0) {
+        result[preferredCanSize] = fullCans;
+      }
+
+      // Для остатка ищем минимальную канистру, которая покроет его
+      if (remainder > 0) {
+        for (final size in availableCanSizes) {
+          if (size >= remainder) {
+            result[size] = (result[size] ?? 0) + 1;
+            break;
+          }
+        }
+        // Если ни одна не подошла, берём ещё одну предпочтительного размера
+        if (remainder > availableCanSizes.last) {
+          result[preferredCanSize] = (result[preferredCanSize] ?? 0) + 1;
+        }
+      }
+    } else {
+      // Просто делим на выбранный размер
+      result[preferredCanSize] = (litersNeeded / preferredCanSize).ceil();
+    }
+
+    return result;
+  }
+
   @override
   String? validateInputs(Map<String, double> inputs) {
     final baseError = super.validateInputs(inputs);
@@ -87,25 +130,46 @@ class CalculatePrimerV2 extends BaseCalculator {
     // Количество грунтовки с запасом
     final litersNeeded = area * consumptionRate * layers * (1 + wastePercent / 100);
 
-    // Количество канистр
-    final cansNeeded = (litersNeeded / canSize).ceil();
+    // Оптимальный подбор канистр
+    final optimalCans = selectOptimalCans(litersNeeded, canSize);
+
+    // Общее количество канистр и литров
+    int totalCans = 0;
+    double totalLiters = 0;
+    for (final entry in optimalCans.entries) {
+      totalCans += entry.value;
+      totalLiters += entry.key * entry.value;
+    }
+
+    // Излишек
+    final excess = totalLiters - litersNeeded;
 
     // Расчёт стоимости
     final primerPrice = findPrice(priceList, ['primer', 'primer_deep', 'primer_contact', 'primer_universal', 'грунтовка']);
 
-    final totalPrice = calculateCost(cansNeeded.toDouble(), primerPrice?.price);
+    final totalPrice = calculateCost(totalLiters, primerPrice?.price);
+
+    // Формируем результат
+    final values = <String, double>{
+      'area': area,
+      'surfaceType': surfaceType.toDouble(),
+      'primerType': primerType.toDouble(),
+      'layers': layers.toDouble(),
+      'consumptionRate': consumptionRate,
+      'litersNeeded': litersNeeded,
+      'cansNeeded': totalCans.toDouble(),
+      'canSize': canSize,
+      'totalLiters': totalLiters,
+      'excess': excess,
+    };
+
+    // Добавляем информацию о каждом размере канистр
+    for (final entry in optimalCans.entries) {
+      values['cans_${entry.key.toInt()}l'] = entry.value.toDouble();
+    }
 
     return createResult(
-      values: {
-        'area': area,
-        'surfaceType': surfaceType.toDouble(),
-        'primerType': primerType.toDouble(),
-        'layers': layers.toDouble(),
-        'consumptionRate': consumptionRate,
-        'litersNeeded': litersNeeded,
-        'cansNeeded': cansNeeded.toDouble(),
-        'canSize': canSize,
-      },
+      values: values,
       totalPrice: totalPrice,
     );
   }

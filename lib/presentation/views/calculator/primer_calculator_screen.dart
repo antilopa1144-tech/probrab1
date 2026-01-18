@@ -37,12 +37,22 @@ class _PrimerResult {
   final double litersNeeded;
   final int cansNeeded;
   final double canSize;
+  final double totalLiters;
+  final double excess;
+  final int cans5l;
+  final int cans10l;
+  final int cans20l;
 
   const _PrimerResult({
     required this.area,
     required this.litersNeeded,
     required this.cansNeeded,
     required this.canSize,
+    required this.totalLiters,
+    required this.excess,
+    required this.cans5l,
+    required this.cans10l,
+    required this.cans20l,
   });
 
   factory _PrimerResult.fromCalculatorResult(Map<String, double> values) {
@@ -51,6 +61,11 @@ class _PrimerResult {
       litersNeeded: values['litersNeeded'] ?? 0,
       cansNeeded: (values['cansNeeded'] ?? 0).toInt(),
       canSize: values['canSize'] ?? 10,
+      totalLiters: values['totalLiters'] ?? 0,
+      excess: values['excess'] ?? 0,
+      cans5l: (values['cans_5l'] ?? 0).toInt(),
+      cans10l: (values['cans_10l'] ?? 0).toInt(),
+      cans20l: (values['cans_20l'] ?? 0).toInt(),
     );
   }
 }
@@ -346,13 +361,30 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
         subtitle: _loc.translate(_primerType.nameKey),
         icon: Icons.water_drop,
       ),
-      MaterialItem(
-        name: _loc.translate('primer_calc.materials.cans'),
-        value: '${_result.cansNeeded} ${_loc.translate('common.pcs')}',
-        subtitle: '${_result.canSize.toStringAsFixed(0)} ${_loc.translate('common.liters')}',
-        icon: Icons.inventory_2,
-      ),
     ];
+
+    // Показываем оптимальный подбор канистр
+    final cansInfo = <String>[];
+    if (_result.cans5l > 0) cansInfo.add('${_result.cans5l}×5л');
+    if (_result.cans10l > 0) cansInfo.add('${_result.cans10l}×10л');
+    if (_result.cans20l > 0) cansInfo.add('${_result.cans20l}×20л');
+
+    items.add(MaterialItem(
+      name: _loc.translate('primer_calc.materials.cans'),
+      value: cansInfo.isNotEmpty ? cansInfo.join(' + ') : '${_result.cansNeeded} ${_loc.translate('common.pcs')}',
+      subtitle: '${_loc.translate('primer_calc.materials.total')}: ${_result.totalLiters.toStringAsFixed(0)} ${_loc.translate('common.liters')}',
+      icon: Icons.inventory_2,
+    ));
+
+    // Показываем излишек если есть
+    if (_result.excess > 0.5) {
+      items.add(MaterialItem(
+        name: _loc.translate('primer_calc.materials.excess'),
+        value: '${_result.excess.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
+        subtitle: _loc.translate('primer_calc.materials.excess_desc'),
+        icon: Icons.warning_amber,
+      ));
+    }
 
     return MaterialsCardModern(
       title: _loc.translate('primer_calc.section.materials'),
