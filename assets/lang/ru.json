@@ -2595,6 +2595,19 @@
   },
   "terrace_calc": {
     "title": "Терраса / Веранда",
+    "input_mode": {
+      "manual": "Площадь",
+      "dimensions": "Размеры"
+    },
+    "label": {
+      "area": "Площадь",
+      "length": "Длина",
+      "width": "Ширина",
+      "calculated_area": "Площадь"
+    },
+    "section": {
+      "area": "Площадь"
+    },
     "field": {
       "area": "Площадь террасы"
     },
@@ -3170,6 +3183,28 @@
       }
     },
     "roofing_calc": {
+      "input_mode": {
+        "manual": "Площадь",
+        "dimensions": "Размеры"
+      },
+      "label": {
+        "area": "Площадь",
+        "length": "Длина",
+        "width": "Ширина",
+        "calculated_area": "Площадь",
+        "slope": "Уклон крыши",
+        "sheetWidth": "Ширина листа",
+        "sheetLength": "Длина листа",
+        "ridgeLength": "Длина конька",
+        "valleyLength": "Длина ендовы",
+        "roofingType": "Тип кровли"
+      },
+      "section": {
+        "area": "Площадь",
+        "slope": "Уклон",
+        "dimensions": "Размеры листа",
+        "additional": "Дополнительно"
+      },
       "tip": {
         "metal_tile_1": "Укладывайте металлочерепицу снизу вверх с нахлёстом 150-200 мм",
         "metal_tile_2": "Используйте саморезы с EPDM прокладками — 6-8 шт/м²",
@@ -6725,8 +6760,15 @@
       "ceiling": "Потолок",
       "floor": "Пол"
     },
+    "input_mode": {
+      "manual": "Площадь",
+      "dimensions": "Размеры"
+    },
     "label": {
       "area": "Площадь",
+      "length": "Длина",
+      "height": "Высота",
+      "calculated_area": "Площадь",
       "surface": "Поверхность",
       "thickness": "Толщина слоя"
     },
@@ -6753,6 +6795,7 @@
       "hangers_desc": "Крепёж"
     },
     "section": {
+      "area": "Площадь",
       "materials": "Необходимые материалы"
     },
     "export": {

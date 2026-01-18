@@ -21,6 +21,9 @@ enum SoundInsulationType {
 /// Тип поверхности
 enum SurfaceType { wall, ceiling, floor }
 
+/// Режим ввода площади
+enum SoundInsulationInputMode { manual, dimensions }
+
 class _SoundInsulationResult {
   final double area;
   final double insulationArea;
@@ -69,7 +72,10 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
   // Domain layer calculator
   final _calculator = CalculateSoundInsulationV2();
 
+  SoundInsulationInputMode _inputMode = SoundInsulationInputMode.manual;
   double _area = 20.0;
+  double _length = 5.0; // м
+  double _height = 2.7; // м
   double _thickness = 50.0; // мм
 
   SoundInsulationType _insulationType = SoundInsulationType.mineralWool;
@@ -88,10 +94,18 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
     _result = _calculate();
   }
 
+  /// Возвращает рассчитанную площадь в зависимости от режима ввода
+  double _getCalculatedArea() {
+    if (_inputMode == SoundInsulationInputMode.manual) return _area;
+    return _length * _height;
+  }
+
   /// Использует domain layer для расчёта
   _SoundInsulationResult _calculate() {
+    final calculatedArea = _getCalculatedArea();
+
     final inputs = <String, double>{
-      'area': _area,
+      'area': calculatedArea,
       'thickness': _thickness,
       'insulationType': _insulationType.index.toDouble(),
       'surfaceType': _surfaceType.index.toDouble(),
@@ -272,14 +286,106 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
 
   Widget _buildAreaCard() {
     return _card(
-      child: CalculatorSliderField(
-        label: _loc.translate('sound_insulation_calc.label.area'),
-        value: _area,
-        min: 5,
-        max: 100,
-        suffix: _loc.translate('common.sqm'),
-        accentColor: _accentColor,
-        onChanged: (v) { setState(() { _area = v; _update(); }); },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('sound_insulation_calc.section.area'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: [
+              _loc.translate('sound_insulation_calc.input_mode.manual'),
+              _loc.translate('sound_insulation_calc.input_mode.dimensions'),
+            ],
+            selectedIndex: _inputMode.index,
+            onSelect: (index) {
+              setState(() {
+                _inputMode = SoundInsulationInputMode.values[index];
+                _update();
+              });
+            },
+            accentColor: _accentColor,
+          ),
+          const SizedBox(height: 16),
+          if (_inputMode == SoundInsulationInputMode.manual)
+            CalculatorSliderField(
+              label: _loc.translate('sound_insulation_calc.label.area'),
+              value: _area,
+              min: 5,
+              max: 100,
+              suffix: _loc.translate('common.sqm'),
+              accentColor: _accentColor,
+              onChanged: (v) { setState(() { _area = v; _update(); }); },
+            )
+          else
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: CalculatorTextField(
+                        label: _loc.translate('sound_insulation_calc.label.length'),
+                        value: _length,
+                        onChanged: (v) {
+                          setState(() {
+                            _length = v;
+                            _update();
+                          });
+                        },
+                        suffix: _loc.translate('common.meters'),
+                        accentColor: _accentColor,
+                        minValue: 1,
+                        maxValue: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CalculatorTextField(
+                        label: _loc.translate('sound_insulation_calc.label.height'),
+                        value: _height,
+                        onChanged: (v) {
+                          setState(() {
+                            _height = v;
+                            _update();
+                          });
+                        },
+                        suffix: _loc.translate('common.meters'),
+                        accentColor: _accentColor,
+                        minValue: 2,
+                        maxValue: 4,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: _accentColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _loc.translate('sound_insulation_calc.label.calculated_area'),
+                        style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary),
+                      ),
+                      Text(
+                        '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                        style: CalculatorDesignSystem.headlineMedium.copyWith(
+                          color: _accentColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+        ],
       ),
     );
   }

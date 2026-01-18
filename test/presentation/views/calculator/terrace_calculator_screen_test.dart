@@ -57,7 +57,16 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(TextField), findsWidgets);
+      // По умолчанию в режиме manual - есть слайдер
+      expect(find.byType(Slider), findsWidgets);
+
+      // Переключаемся в режим dimensions для проверки TextField
+      final dimensionsButton = find.text('Размеры');
+      if (dimensionsButton.evaluate().isNotEmpty) {
+        await tester.tap(dimensionsButton);
+        await tester.pumpAndSettle();
+        expect(find.byType(TextField), findsWidgets);
+      }
     });
 
     testWidgets('uses scrollable layout', (tester) async {
@@ -104,6 +113,11 @@ void main() {
           overrides: CalculatorMockOverrides.terrace,
         ),
       );
+      await tester.pumpAndSettle();
+
+      // Переключаемся в режим dimensions где есть TextField
+      final dimensionsButton = find.text('Размеры');
+      await tester.tap(dimensionsButton);
       await tester.pumpAndSettle();
 
       final textField = find.byType(TextField).first;

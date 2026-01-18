@@ -51,6 +51,9 @@ enum TerraceFloorType {
   rubberTiles,  // Резиновые покрытия (НОВЫЙ)
 }
 
+/// Режим ввода площади
+enum TerraceInputMode { manual, dimensions }
+
 enum TerraceRoofType {
   polycarbonate,  // Поликарбонат (существующий)
   profiledSheet,  // Профнастил (существующий)
@@ -116,7 +119,10 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
   static const double _minArea = 4.0;
   static const double _maxArea = 200.0;
 
+  TerraceInputMode _inputMode = TerraceInputMode.manual;
   double _area = 18.0;
+  double _length = 5.0; // м
+  double _width = 4.0; // м
   TerraceFloorType _floorType = TerraceFloorType.decking;
   bool _hasRailing = true;
   bool _hasRoof = false;
@@ -157,8 +163,13 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
     }
   }
 
+  double _getCalculatedArea() {
+    if (_inputMode == TerraceInputMode.manual) return _area;
+    return _length * _width;
+  }
+
   _TerraceResult _calculate() {
-    final area = _area;
+    final area = _getCalculatedArea();
 
     double deckingArea = 0.0;
     int tilesNeeded = 0;
@@ -415,62 +426,113 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
     const accentColor = CalculatorColors.facade;
     return _card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _loc.translate('terrace_calc.field.area'),
-                  style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${_area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          SliderTheme(
-            data: SliderThemeData(
-              activeTrackColor: accentColor,
-              inactiveTrackColor: accentColor.withValues(alpha: 0.2),
-              thumbColor: accentColor,
+          Text(
+            _loc.translate('terrace_calc.section.area'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
             ),
-            child: Slider(
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: [
+              _loc.translate('terrace_calc.input_mode.manual'),
+              _loc.translate('terrace_calc.input_mode.dimensions'),
+            ],
+            selectedIndex: _inputMode.index,
+            onSelect: (index) {
+              setState(() {
+                _inputMode = TerraceInputMode.values[index];
+                _update();
+              });
+            },
+            accentColor: accentColor,
+          ),
+          const SizedBox(height: 16),
+          if (_inputMode == TerraceInputMode.manual)
+            CalculatorSliderField(
+              label: _loc.translate('terrace_calc.label.area'),
               value: _area,
               min: _minArea,
               max: _maxArea,
-              divisions: ((_maxArea - _minArea) * 2).round(),
+              suffix: _loc.translate('common.sqm'),
+              accentColor: accentColor,
               onChanged: (v) {
                 setState(() {
                   _area = v;
                   _update();
                 });
               },
+            )
+          else
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: CalculatorTextField(
+                        label: _loc.translate('terrace_calc.label.length'),
+                        value: _length,
+                        onChanged: (v) {
+                          setState(() {
+                            _length = v;
+                            _update();
+                          });
+                        },
+                        suffix: _loc.translate('common.meters'),
+                        accentColor: accentColor,
+                        minValue: 1,
+                        maxValue: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CalculatorTextField(
+                        label: _loc.translate('terrace_calc.label.width'),
+                        value: _width,
+                        onChanged: (v) {
+                          setState(() {
+                            _width = v;
+                            _update();
+                          });
+                        },
+                        suffix: _loc.translate('common.meters'),
+                        accentColor: accentColor,
+                        minValue: 1,
+                        maxValue: 20,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _loc.translate('terrace_calc.label.calculated_area'),
+                        style: CalculatorDesignSystem.bodyMedium.copyWith(
+                          color: CalculatorColors.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                        style: CalculatorDesignSystem.headlineMedium.copyWith(
+                          color: accentColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 12),
-          CalculatorTextField(
-            label: _loc.translate('input.area'),
-            value: _area,
-            suffix: _loc.translate('common.sqm'),
-            minValue: _minArea,
-            maxValue: _maxArea,
-            decimalPlaces: 1,
-            accentColor: accentColor,
-            onChanged: (value) {
-              setState(() {
-                _area = value;
-                _update();
-              });
-            },
-          ),
         ],
       ),
     );

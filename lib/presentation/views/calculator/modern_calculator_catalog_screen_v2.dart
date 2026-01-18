@@ -28,6 +28,7 @@ class ModernCalculatorCatalogScreenV2 extends ConsumerStatefulWidget {
 class _ModernCalculatorCatalogScreenV2State
     extends ConsumerState<ModernCalculatorCatalogScreenV2> {
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   Timer? _debounce;
   String _query = '';
   String _activeCategory = 'all';
@@ -36,6 +37,7 @@ class _ModernCalculatorCatalogScreenV2State
   void dispose() {
     _debounce?.cancel();
     _searchController.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -149,6 +151,9 @@ class _ModernCalculatorCatalogScreenV2State
   }
 
   void _navigateToCalculator(CalculatorDefinitionV2 calc) {
+    // Снимаем фокус с поля поиска, чтобы при возврате не открывалась клавиатура
+    _searchFocusNode.unfocus();
+
     // Добавляем в историю недавних
     ref.read(recentCalculatorsProvider.notifier).addRecent(calc.id);
     // Переходим на экран калькулятора
@@ -332,7 +337,7 @@ class _ModernCalculatorCatalogScreenV2State
               ),
               SliverToBoxAdapter(
                 child: SizedBox(
-                  height: 100,
+                  height: 110,
                   child: ListView.separated(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     scrollDirection: Axis.horizontal,
@@ -555,6 +560,7 @@ class _ModernCalculatorCatalogScreenV2State
           Expanded(
             child: TextField(
               controller: _searchController,
+              focusNode: _searchFocusNode,
               onChanged: _onSearchChanged,
               cursorColor: palette.accent,
               style: GoogleFonts.manrope(
@@ -749,6 +755,7 @@ class _RecentCalculatorChip extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 32,
@@ -764,15 +771,18 @@ class _RecentCalculatorChip extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-            Text(
-              loc.translate(calc.titleKey),
-              style: GoogleFonts.manrope(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: palette.textPrimary,
+            Expanded(
+              child: Text(
+                loc.translate(calc.titleKey),
+                style: GoogleFonts.manrope(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: palette.textPrimary,
+                  height: 1.2,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

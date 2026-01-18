@@ -45,7 +45,10 @@ class _RoofingUnifiedCalculatorScreenState
   static const double _minSlope = 5.0;
   static const double _maxSlope = 60.0;
 
-  double _area = 100.0;
+  RoofingUnifiedInputMode _inputMode = RoofingUnifiedInputMode.manual;
+  double _area = 20.0;
+  double _length = 5.0; // м
+  double _width = 4.0; // м
   double _slope = 30.0;
   double _ridgeLength = 0.0;
   double _valleyLength = 0.0;
@@ -90,6 +93,24 @@ class _RoofingUnifiedCalculatorScreenState
       _roofingType = RoofingType.values[raw];
     }
   }
+
+  
+
+  /// Возвращает рассчитанную площадь в зависимости от режима ввода
+
+
+  double _getCalculatedArea() {
+
+
+    if (_inputMode == RoofingUnifiedInputMode.manual) return _area;
+
+
+    return _length * _width;
+
+
+  }
+
+
 
   _RoofingResult _calculate() {
     final slopeFactor = 1 / cos(_slope * pi / 180);
@@ -187,9 +208,9 @@ class _RoofingUnifiedCalculatorScreenState
   String generateExportText() {
     final buffer = StringBuffer();
     buffer.writeln(_loc.translate('roofing_unified.export.title'));
-    buffer.writeln('${_loc.translate('input.area')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
-    buffer.writeln('${_loc.translate('input.slope')}: ${_slope.toStringAsFixed(0)}°');
-    buffer.writeln('${_loc.translate('input.roofingType')}: ${_getRoofingTypeLabel(_roofingType)}');
+    buffer.writeln('${_loc.translate('roofing_calc.label.area')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+    buffer.writeln('${_loc.translate('roofing_calc.label.slope')}: ${_slope.toStringAsFixed(0)}°');
+    buffer.writeln('${_loc.translate('roofing_calc.label.roofingType')}: ${_getRoofingTypeLabel(_roofingType)}');
     buffer.writeln('${_loc.translate('roofing.realArea')}: ${_result.realArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
 
     switch (_roofingType) {
@@ -270,7 +291,7 @@ class _RoofingUnifiedCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            _loc.translate('input.roofingType'),
+            _loc.translate('roofing_calc.label.roofingType'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -321,62 +342,113 @@ class _RoofingUnifiedCalculatorScreenState
     const accentColor = CalculatorColors.roofing;
     return _card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _loc.translate('input.area'),
-                  style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${_area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          SliderTheme(
-            data: SliderThemeData(
-              activeTrackColor: accentColor,
-              inactiveTrackColor: accentColor.withValues(alpha: 0.2),
-              thumbColor: accentColor,
+          Text(
+            _loc.translate('roofing_calc.section.area'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
             ),
-            child: Slider(
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: [
+              _loc.translate('roofing_calc.input_mode.manual'),
+              _loc.translate('roofing_calc.input_mode.dimensions'),
+            ],
+            selectedIndex: _inputMode.index,
+            onSelect: (index) {
+              setState(() {
+                _inputMode = RoofingUnifiedInputMode.values[index];
+                _update();
+              });
+            },
+            accentColor: accentColor,
+          ),
+          const SizedBox(height: 16),
+          if (_inputMode == RoofingUnifiedInputMode.manual)
+            CalculatorSliderField(
+              label: _loc.translate('roofing_calc.label.area'),
               value: _area,
               min: _minArea,
               max: _maxArea,
-              divisions: ((_maxArea - _minArea) * 2).round(),
+              suffix: _loc.translate('common.sqm'),
+              accentColor: accentColor,
               onChanged: (v) {
                 setState(() {
                   _area = v;
                   _update();
                 });
               },
+            )
+          else
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: CalculatorTextField(
+                        label: _loc.translate('roofing_calc.label.length'),
+                        value: _length,
+                        onChanged: (v) {
+                          setState(() {
+                            _length = v;
+                            _update();
+                          });
+                        },
+                        suffix: _loc.translate('common.meters'),
+                        accentColor: accentColor,
+                        minValue: 1,
+                        maxValue: 30,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CalculatorTextField(
+                        label: _loc.translate('roofing_calc.label.width'),
+                        value: _width,
+                        onChanged: (v) {
+                          setState(() {
+                            _width = v;
+                            _update();
+                          });
+                        },
+                        suffix: _loc.translate('common.meters'),
+                        accentColor: accentColor,
+                        minValue: 1,
+                        maxValue: 30,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _loc.translate('roofing_calc.label.calculated_area'),
+                        style: CalculatorDesignSystem.bodyMedium.copyWith(
+                          color: CalculatorColors.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                        style: CalculatorDesignSystem.headlineMedium.copyWith(
+                          color: accentColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 12),
-          CalculatorTextField(
-            label: _loc.translate('input.area'),
-            value: _area,
-            suffix: _loc.translate('common.sqm'),
-            minValue: _minArea,
-            maxValue: _maxArea,
-            decimalPlaces: 1,
-            accentColor: accentColor,
-            onChanged: (value) {
-              setState(() {
-                _area = value;
-                _update();
-              });
-            },
-          ),
         ],
       ),
     );
@@ -391,7 +463,7 @@ class _RoofingUnifiedCalculatorScreenState
             children: [
               Expanded(
                 child: Text(
-                  _loc.translate('input.slope'),
+                  _loc.translate('roofing_calc.label.slope'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
                     color: CalculatorColors.textSecondary,
                   ),
@@ -455,7 +527,7 @@ class _RoofingUnifiedCalculatorScreenState
             children: [
               Expanded(
                 child: CalculatorTextField(
-                  label: _loc.translate('input.sheetWidth'),
+                  label: _loc.translate('roofing_calc.label.sheetWidth'),
                   value: _sheetWidth,
                   suffix: _loc.translate('common.meters'),
                   minValue: 0.5,
@@ -473,7 +545,7 @@ class _RoofingUnifiedCalculatorScreenState
               const SizedBox(width: 12),
               Expanded(
                 child: CalculatorTextField(
-                  label: _loc.translate('input.sheetLength'),
+                  label: _loc.translate('roofing_calc.label.sheetLength'),
                   value: _sheetLength,
                   suffix: _loc.translate('common.meters'),
                   minValue: 1.0,
@@ -509,7 +581,7 @@ class _RoofingUnifiedCalculatorScreenState
           ),
           const SizedBox(height: 12),
           CalculatorTextField(
-            label: _loc.translate('input.ridgeLength'),
+            label: _loc.translate('roofing_calc.label.ridgeLength'),
             value: _ridgeLength,
             suffix: _loc.translate('common.meters'),
             minValue: 0,
@@ -525,7 +597,7 @@ class _RoofingUnifiedCalculatorScreenState
           ),
           const SizedBox(height: 12),
           CalculatorTextField(
-            label: _loc.translate('input.valleyLength'),
+            label: _loc.translate('roofing_calc.label.valleyLength'),
             value: _valleyLength,
             suffix: _loc.translate('common.meters'),
             minValue: 0,
@@ -701,6 +773,10 @@ class _RoofingUnifiedCalculatorScreenState
     );
   }
 }
+
+
+/// Режим ввода площади
+enum RoofingUnifiedInputMode { manual, dimensions }
 
 class _RoofingResult {
   final double area;
