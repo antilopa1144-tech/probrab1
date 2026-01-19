@@ -19,7 +19,7 @@ import '../views/calculator/laminate_calculator_screen.dart';
 import '../views/calculator/brick_calculator_screen.dart';
 import '../views/calculator/linoleum_calculator_screen.dart';
 import '../views/calculator/parquet_calculator_screen.dart';
-import '../views/calculator/screed_calculator_screen.dart';
+import '../views/calculator/screed_unified_calculator_screen.dart';
 import '../views/calculator/stretch_ceiling_calculator_screen.dart';
 import '../views/calculator/ceiling_insulation_calculator_screen.dart';
 import '../views/calculator/cassette_ceiling_calculator_screen.dart';
@@ -48,7 +48,7 @@ import '../views/calculator/gutters_calculator_screen.dart';
 import '../views/calculator/roofing_unified_calculator_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
-import '../views/dsp/dsp_screen.dart';
+// dsp_screen.dart удалён - объединён с screed_unified_calculator_screen.dart
 import '../views/osb/osb_calculator_screen.dart';
 
 /// Функция-билдер для создания экрана калькулятора.
@@ -77,7 +77,7 @@ class CalculatorScreenRegistry {
         ),
 
     // Листовые материалы
-    'dsp': (_, _) => const DspScreen(),
+    // 'dsp' перемещён в секцию "Полы" и объединён с floors_screed_unified
     'sheeting_osb_plywood': (def, inputs) => OsbCalculatorScreen(
           definition: def,
           initialInputs: inputs,
@@ -130,7 +130,10 @@ class CalculatorScreenRegistry {
     'floors_laminate': (_, _) => const LaminateCalculatorScreen(),
     'floors_linoleum': (_, _) => const LinoleumCalculatorScreen(),
     'floors_parquet': (_, _) => const ParquetCalculatorScreen(),
-    'floors_screed': (_, _) => const ScreedCalculatorScreen(),
+    'floors_screed_unified': (_, _) => const ScreedUnifiedCalculatorScreen(),
+    // Алиасы для обратной совместимости
+    'floors_screed': (_, _) => const ScreedUnifiedCalculatorScreen(),
+    'dsp': (_, _) => const ScreedUnifiedCalculatorScreen(),
     'floors_warm': (def, inputs) => UnderfloorHeatingCalculatorScreen(
           definition: def,
           initialInputs: inputs,

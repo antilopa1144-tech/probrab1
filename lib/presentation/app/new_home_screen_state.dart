@@ -50,9 +50,10 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
   }
 
   void _openCalculator(CalculatorDefinitionV2 calc) {
-    if (calc.id == 'dsp') {
+    // dsp объединён с floors_screed_unified, но оставляем для совместимости
+    if (calc.id == 'dsp' || calc.id == 'floors_screed') {
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => const DspScreen(),
+        builder: (context) => const ScreedUnifiedCalculatorScreen(),
       ));
     } else {
       CalculatorNavigationHelper.navigateToCalculator(context, calc);

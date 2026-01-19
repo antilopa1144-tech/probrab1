@@ -1,7 +1,7 @@
 import '../models/calculator_definition_v2.dart';
 import 'paint_universal_calculator_v2.dart';
 import 'laminate_calculator_v2.dart';
-import 'screed_calculator_v2.dart';
+import 'screed_unified_calculator_v2.dart';
 import 'tile_calculator_v2.dart';
 import 'wallpaper_calculator_v2.dart';
 import 'linoleum_calculator_v2.dart';
@@ -11,11 +11,11 @@ import 'slab_foundation_calculator_v2.dart';
 import 'unified_roofing_calculator_v2.dart';
 import 'warm_floor_calculator_v2.dart';
 import 'parquet_calculator_v2.dart';
-import 'bathroom_tile_calculator_v2.dart';
+// bathroom_tile_calculator_v2.dart удалён - дублирует floors_tile (tile_calculator_v2.dart)
 // plinth_calculator_v2.dart удалён - калькулятор плинтуса больше не нужен
 import 'concrete_universal_calculator_v2.dart';
 import 'sheeting_osb_plywood_calculator_v2.dart';
-import 'dsp_calculator_v2.dart';
+// dsp_calculator_v2.dart удалён - объединён с screed_unified_calculator_v2.dart
 import 'definitions/index.dart';
 import 'calculator_search_index.dart';
 
@@ -72,12 +72,12 @@ class CalculatorRegistry {
     // Полы
     laminateCalculatorV2,
     linoleumCalculatorV2,
-    screedCalculatorV2,
+    screedUnifiedCalculatorV2, // Объединённый калькулятор (заменяет screedCalculatorV2 и dspCalculatorV2)
     selfLevelingFloorCalculatorV2,
     tileCalculatorV2,
     // plinthCalculatorV2 удалён - калькулятор плинтуса больше не нужен
     sheetingOsbPlywoodCalculatorV2,
-    dspCalculatorV2,
+    // dspCalculatorV2 удалён - объединён с screedUnifiedCalculatorV2
 
     // Кровля
     unifiedRoofingCalculatorV2,
@@ -87,9 +87,7 @@ class CalculatorRegistry {
 
     // Полы (дополнительные)
     parquetCalculatorV2,
-
-    // Отделка (дополнительные)
-    bathroomTileCalculatorV2,
+    // bathroomTileCalculatorV2 удалён - дублирует floors_tile
   ];
 
   /// Все доступные калькуляторы (версия 2)

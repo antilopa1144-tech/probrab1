@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../dsp/dsp_screen.dart';
+import 'screed_unified_calculator_screen.dart';
 import '../paint/paint_screen.dart';
 import '../wood/wood_screen.dart';
 import '../primer/primer_screen.dart';
@@ -124,9 +124,9 @@ class _CalculatorCatalogScreenState
                             .toggleFavorite(calc.id),
                         onOpen: () {
                           // Специальные экраны с новым дизайном
-                          if (calc.id == 'dsp') {
+                          if (calc.id == 'dsp' || calc.id == 'floors_screed' || calc.id == 'floors_screed_unified') {
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const DspScreen(),
+                              builder: (context) => const ScreedUnifiedCalculatorScreen(),
                             ));
                           } else if (calc.id == 'paint' || calc.id == 'paint_universal') {
                             Navigator.of(context).push(MaterialPageRoute(

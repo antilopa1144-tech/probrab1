@@ -170,12 +170,12 @@ class _RoofingUnifiedCalculatorScreenState
 
   String _getRoofingTypeLabel(RoofingType type) {
     return switch (type) {
-      RoofingType.metalTile => _loc.translate('roofing.type.metal_tile'),
-      RoofingType.softRoofing => _loc.translate('roofing.type.soft'),
-      RoofingType.profiledSheet => _loc.translate('roofing.type.profiled'),
-      RoofingType.ondulin => _loc.translate('roofing.type.ondulin'),
-      RoofingType.slate => _loc.translate('roofing.type.slate'),
-      RoofingType.ceramicTile => _loc.translate('roofing.type.ceramic'),
+      RoofingType.metalTile => _loc.translate('hint.roofing.type.metal_tile'),
+      RoofingType.softRoofing => _loc.translate('hint.roofing.type.soft'),
+      RoofingType.profiledSheet => _loc.translate('hint.roofing.type.profiled'),
+      RoofingType.ondulin => _loc.translate('hint.roofing.type.ondulin'),
+      RoofingType.slate => _loc.translate('hint.roofing.type.slate'),
+      RoofingType.ceramicTile => _loc.translate('hint.roofing.type.ceramic'),
     };
   }
 
@@ -211,28 +211,28 @@ class _RoofingUnifiedCalculatorScreenState
     buffer.writeln('${_loc.translate('roofing_calc.label.area')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
     buffer.writeln('${_loc.translate('roofing_calc.label.slope')}: ${_slope.toStringAsFixed(0)}°');
     buffer.writeln('${_loc.translate('roofing_calc.label.roofingType')}: ${_getRoofingTypeLabel(_roofingType)}');
-    buffer.writeln('${_loc.translate('roofing.realArea')}: ${_result.realArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+    buffer.writeln('${_loc.translate('hint.roofing.realArea')}: ${_result.realArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
 
     switch (_roofingType) {
       case RoofingType.metalTile:
       case RoofingType.profiledSheet:
       case RoofingType.ondulin:
       case RoofingType.slate:
-        buffer.writeln('${_loc.translate('roofing.sheets')}: ${_result.sheetsNeeded}');
+        buffer.writeln('${_loc.translate('hint.roofing.sheets')}: ${_result.sheetsNeeded}');
         break;
       case RoofingType.softRoofing:
-        buffer.writeln('${_loc.translate('roofing.packs')}: ${_result.packsNeeded}');
+        buffer.writeln('${_loc.translate('hint.roofing.packs')}: ${_result.packsNeeded}');
         break;
       case RoofingType.ceramicTile:
-        buffer.writeln('${_loc.translate('roofing.tiles')}: ${_result.tilesNeeded}');
+        buffer.writeln('${_loc.translate('hint.roofing.tiles')}: ${_result.tilesNeeded}');
         break;
     }
 
-    buffer.writeln('${_loc.translate('roofing.waterproofing')}: ${_result.waterproofingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+    buffer.writeln('${_loc.translate('hint.roofing.waterproofing')}: ${_result.waterproofingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
     if (_result.battensLength > 0) {
-      buffer.writeln('${_loc.translate('roofing.battens')}: ${_result.battensLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}');
+      buffer.writeln('${_loc.translate('hint.roofing.battens')}: ${_result.battensLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}');
     }
-    buffer.writeln('${_loc.translate('roofing.ridge')}: ${_result.ridgeLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}');
+    buffer.writeln('${_loc.translate('hint.roofing.ridge')}: ${_result.ridgeLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}');
 
     return buffer.toString();
   }
@@ -250,7 +250,7 @@ class _RoofingUnifiedCalculatorScreenState
         accentColor: accentColor,
         results: [
           ResultItem(
-            label: _loc.translate('roofing.realArea'),
+            label: _loc.translate('hint.roofing.realArea'),
             value: '${_result.realArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
             icon: Icons.square_foot,
           ),
@@ -500,7 +500,7 @@ class _RoofingUnifiedCalculatorScreenState
           ),
           const SizedBox(height: 8),
           Text(
-            _loc.translate('roofing.slope_hint'),
+            _loc.translate('hint.roofing.slope_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -517,7 +517,7 @@ class _RoofingUnifiedCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            _loc.translate('roofing.sheet_dimensions'),
+            _loc.translate('hint.roofing.sheet_dimensions'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -574,7 +574,7 @@ class _RoofingUnifiedCalculatorScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            _loc.translate('roofing.additional_params'),
+            _loc.translate('hint.roofing.additional_params'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.textPrimary,
             ),
@@ -613,7 +613,7 @@ class _RoofingUnifiedCalculatorScreenState
           ),
           const SizedBox(height: 8),
           Text(
-            _loc.translate('roofing.optional_hint'),
+            _loc.translate('hint.roofing.optional_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.textSecondary,
             ),
@@ -631,49 +631,49 @@ class _RoofingUnifiedCalculatorScreenState
     switch (_roofingType) {
       case RoofingType.metalTile:
         items.add(MaterialItem(
-          name: _loc.translate('roofing.type.metal_tile'),
+          name: _loc.translate('hint.roofing.type.metal_tile'),
           value: '${_result.sheetsNeeded} ${_loc.translate('common.sheets')}',
-          subtitle: _loc.translate('roofing.margin_10'),
+          subtitle: _loc.translate('hint.roofing.margin_10'),
           icon: Icons.roofing,
         ));
         break;
       case RoofingType.softRoofing:
         items.add(MaterialItem(
-          name: _loc.translate('roofing.type.soft'),
+          name: _loc.translate('hint.roofing.type.soft'),
           value: '${_result.packsNeeded} ${_loc.translate('common.packs')}',
-          subtitle: _loc.translate('roofing.pack_3sqm'),
+          subtitle: _loc.translate('hint.roofing.pack_3sqm'),
           icon: Icons.layers,
         ));
         break;
       case RoofingType.profiledSheet:
         items.add(MaterialItem(
-          name: _loc.translate('roofing.type.profiled'),
+          name: _loc.translate('hint.roofing.type.profiled'),
           value: '${_result.sheetsNeeded} ${_loc.translate('common.sheets')}',
-          subtitle: _loc.translate('roofing.margin_10'),
+          subtitle: _loc.translate('hint.roofing.margin_10'),
           icon: Icons.table_chart,
         ));
         break;
       case RoofingType.ondulin:
         items.add(MaterialItem(
-          name: _loc.translate('roofing.type.ondulin'),
+          name: _loc.translate('hint.roofing.type.ondulin'),
           value: '${_result.sheetsNeeded} ${_loc.translate('common.sheets')}',
-          subtitle: _loc.translate('roofing.margin_15'),
+          subtitle: _loc.translate('hint.roofing.margin_15'),
           icon: Icons.view_module,
         ));
         break;
       case RoofingType.slate:
         items.add(MaterialItem(
-          name: _loc.translate('roofing.type.slate'),
+          name: _loc.translate('hint.roofing.type.slate'),
           value: '${_result.sheetsNeeded} ${_loc.translate('common.sheets')}',
-          subtitle: _loc.translate('roofing.margin_10'),
+          subtitle: _loc.translate('hint.roofing.margin_10'),
           icon: Icons.grid_view,
         ));
         break;
       case RoofingType.ceramicTile:
         items.add(MaterialItem(
-          name: _loc.translate('roofing.type.ceramic'),
+          name: _loc.translate('hint.roofing.type.ceramic'),
           value: '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
-          subtitle: _loc.translate('roofing.tiles_12sqm'),
+          subtitle: _loc.translate('hint.roofing.tiles_12sqm'),
           icon: Icons.grid_on,
         ));
         break;
@@ -681,25 +681,25 @@ class _RoofingUnifiedCalculatorScreenState
 
     // Гидроизоляция
     items.add(MaterialItem(
-      name: _loc.translate('roofing.waterproofing'),
+      name: _loc.translate('hint.roofing.waterproofing'),
       value: '${_result.waterproofingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-      subtitle: _loc.translate('roofing.margin_10'),
+      subtitle: _loc.translate('hint.roofing.margin_10'),
       icon: Icons.water_drop,
     ));
 
     // Обрешётка
     if (_result.battensLength > 0) {
       items.add(MaterialItem(
-        name: _loc.translate('roofing.battens'),
+        name: _loc.translate('hint.roofing.battens'),
         value: '${_result.battensLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
-        subtitle: _loc.translate('roofing.battens_hint'),
+        subtitle: _loc.translate('hint.roofing.battens_hint'),
         icon: Icons.view_agenda,
       ));
     }
 
     // Конёк
     items.add(MaterialItem(
-      name: _loc.translate('roofing.ridge'),
+      name: _loc.translate('hint.roofing.ridge'),
       value: '${_result.ridgeLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
       icon: Icons.horizontal_rule,
     ));

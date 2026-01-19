@@ -21,7 +21,7 @@ class _PaintScreenState extends State<PaintScreen> {
   double _roomHeight = 2.7;
   double _openingsArea = 4.0;
 
-  int _inputMode = 0; // 0: комната, 1: площадь вручную
+  int _inputMode = 0; // 0: площадь вручную, 1: комната
   double _manualArea = 30.0;
 
   // 0: Интерьер, 1: Фасад
@@ -51,7 +51,7 @@ class _PaintScreenState extends State<PaintScreen> {
   ];
 
   double _getArea() {
-    if (_inputMode == 1) return _manualArea;
+    if (_inputMode == 0) return _manualArea;
     return (_roomWidth + _roomLength) * 2 * _roomHeight - _openingsArea;
   }
 
@@ -347,15 +347,15 @@ class _PaintScreenState extends State<PaintScreen> {
           const SizedBox(height: 12),
           ModeSelector(
             options: [
-              _loc.translate('plaster_pro.mode.room'),
               _loc.translate('plaster_pro.mode.manual'),
+              _loc.translate('plaster_pro.mode.room'),
             ],
             selectedIndex: _inputMode,
             onSelect: (index) => setState(() => _inputMode = index),
             accentColor: accentColor,
           ),
           const SizedBox(height: 16),
-          if (_inputMode == 0) ..._buildRoomInputs(accentColor) else ..._buildManualInputs(accentColor),
+          if (_inputMode == 0) ..._buildManualInputs(accentColor) else ..._buildRoomInputs(accentColor),
         ],
       ),
     );

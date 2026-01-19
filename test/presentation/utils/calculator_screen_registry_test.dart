@@ -16,7 +16,7 @@ import 'package:probrab_ai/presentation/views/calculator/electrical_calculator_s
 import 'package:probrab_ai/presentation/views/calculator/tile_calculator_screen.dart';
 import 'package:probrab_ai/presentation/views/calculator/laminate_calculator_screen.dart';
 import 'package:probrab_ai/presentation/views/calculator/linoleum_calculator_screen.dart';
-import 'package:probrab_ai/presentation/views/dsp/dsp_screen.dart';
+import 'package:probrab_ai/presentation/views/calculator/screed_unified_calculator_screen.dart';
 import 'package:probrab_ai/presentation/views/osb/osb_calculator_screen.dart';
 import 'package:probrab_ai/presentation/views/paint/paint_screen.dart';
 import 'package:probrab_ai/presentation/views/wood/wood_screen.dart';
@@ -121,10 +121,10 @@ void main() {
   });
 
   group('CalculatorScreenRegistry - Листовые материалы', () {
-    test('build возвращает DspScreen для dsp', () {
+    test('build возвращает ScreedUnifiedCalculatorScreen для dsp', () {
       final definition = _createTestDefinition(id: 'dsp');
       final result = CalculatorScreenRegistry.build('dsp', definition, null);
-      expect(result, isA<DspScreen>());
+      expect(result, isA<ScreedUnifiedCalculatorScreen>());
     });
 
     test('build возвращает OsbCalculatorScreen для sheeting_osb_plywood', () {

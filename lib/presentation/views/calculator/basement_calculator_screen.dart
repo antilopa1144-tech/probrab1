@@ -203,6 +203,31 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
     );
   }
 
+  /// Возвращает рекомендуемую толщину стены для текущего типа подвала
+  int _getRecommendedWallThickness() {
+    switch (_basementType) {
+      case BasementType.technical:
+        return 20; // Технический подвал - минимальная толщина
+      case BasementType.living:
+        return 30; // Жилой - требует утепления и комфорта
+      case BasementType.garage:
+        return 25; // Гараж - средняя нагрузка
+    }
+  }
+
+  /// Подсказка по толщине стен
+  String _getWallThicknessHint() {
+    final recommended = _getRecommendedWallThickness();
+    final current = (_wallThickness * 100).round();
+
+    if (current < recommended) {
+      return '★ Рекомендуется от $recommended см';
+    } else if (current == recommended) {
+      return '★ Оптимально для ${_loc.translate(_basementType.nameKey).toLowerCase()}';
+    }
+    return '';
+  }
+
   Widget _buildDimensionsCard() {
     return _card(
       child: Column(
@@ -219,7 +244,7 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
             children: [
               Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.depth'), value: _depth, onChanged: (v) { setState(() { _depth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1.5, maxValue: 4)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.wall_thickness'), value: _wallThickness * 100, onChanged: (v) { setState(() { _wallThickness = v / 100; _update(); }); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 20, maxValue: 50)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.wall_thickness'), value: _wallThickness * 100, onChanged: (v) { setState(() { _wallThickness = v / 100; _update(); }); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 15, maxValue: 60, hint: _getWallThicknessHint())),
             ],
           ),
         ],

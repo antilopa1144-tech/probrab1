@@ -7,7 +7,24 @@ import '../../widgets/calculator/calculator_widgets.dart';
 import '../../utils/screw_formatter.dart';
 
 enum OsbConstructionType { wall, floor, roof, partition, sip, formwork }
-enum OsbSheetSize { s2500x1250, s1220x2440, s2800x1250, s3000x1250, s2440x1220, custom }
+
+/// Стандартные размеры листов ОСБ на российском рынке.
+/// Формат: длина × ширина (мм).
+enum OsbSheetSize {
+  /// 2500×1250 мм (3.125 м²) — самый популярный в России
+  s2500x1250,
+  /// 2440×1220 мм (2.977 м²) — американский стандарт, популярен
+  s2440x1220,
+  /// 2500×1250 мм шпунтованная (3.125 м²) — для пола
+  s2500x625,
+  /// 2800×1250 мм (3.5 м²) — увеличенный
+  s2800x1250,
+  /// 3000×1500 мм (4.5 м²) — большой формат
+  s3000x1500,
+  /// 2440×590 мм (1.44 м²) — узкий для пола
+  s2440x590,
+}
+
 enum InputMode { byArea, byDimensions }
 
 class _OsbResult {
@@ -118,30 +135,30 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
         sheetWidth = 1.25;
         sheetSizeName = '2500×1250';
         break;
-      case OsbSheetSize.s1220x2440:
+      case OsbSheetSize.s2440x1220:
         sheetLength = 2.44;
         sheetWidth = 1.22;
-        sheetSizeName = '1220×2440';
+        sheetSizeName = '2440×1220';
+        break;
+      case OsbSheetSize.s2500x625:
+        sheetLength = 2.50;
+        sheetWidth = 0.625;
+        sheetSizeName = '2500×625';
         break;
       case OsbSheetSize.s2800x1250:
         sheetLength = 2.80;
         sheetWidth = 1.25;
         sheetSizeName = '2800×1250';
         break;
-      case OsbSheetSize.s3000x1250:
+      case OsbSheetSize.s3000x1500:
         sheetLength = 3.00;
-        sheetWidth = 1.25;
-        sheetSizeName = '3000×1250';
+        sheetWidth = 1.50;
+        sheetSizeName = '3000×1500';
         break;
-      case OsbSheetSize.s2440x1220:
+      case OsbSheetSize.s2440x590:
         sheetLength = 2.44;
-        sheetWidth = 1.22;
-        sheetSizeName = '2440×1220';
-        break;
-      case OsbSheetSize.custom:
-        sheetLength = 2.50;
-        sheetWidth = 1.25;
-        sheetSizeName = 'Пользовательский';
+        sheetWidth = 0.59;
+        sheetSizeName = '2440×590';
         break;
     }
 
@@ -194,31 +211,29 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
 
     final screwsNeeded = (effectiveArea * screwsPerM2).ceil();
 
-    // Размер самореза
+    // Размер самореза (оптимизировано для стандартных толщин 9, 12, 15, 18, 22)
     double screwDiameter;
     double screwLength;
     if (_thickness <= 9) {
       screwDiameter = 3.5;
       screwLength = 35;
-    } else if (_thickness <= 10) {
-      screwDiameter = 4.0;
-      screwLength = 40;
     } else if (_thickness <= 12) {
+      screwDiameter = 4.0;
+      screwLength = 45;
+    } else if (_thickness <= 15) {
       screwDiameter = 4.2;
-      screwLength = 50;
+      screwLength = 55;
     } else if (_thickness <= 18) {
       screwDiameter = 4.5;
       screwLength = 60;
     } else {
-      screwDiameter = 4.5;
+      // 22 мм и более
+      screwDiameter = 4.8;
       screwLength = 75;
     }
 
-    // Рекомендованная толщина для пола
-    int? recommendedThickness;
-    if (_constructionType == OsbConstructionType.floor) {
-      recommendedThickness = 18; // Базовая рекомендация
-    }
+    // Рекомендованная толщина вычисляется динамически в _getRecommendedThickness()
+    final recommendedThickness = _getRecommendedThickness();
 
     // Дополнительные материалы
     double windBarrierArea = 0.0;
@@ -592,11 +607,12 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
           const SizedBox(height: 12),
           ModeSelectorVertical(
             options: const [
-              '2500×1250 мм (3.1 м²)',
-              '1220×2440 мм (3.0 м²)',
+              '2500×1250 мм (3.1 м²) — стандарт',
+              '2440×1220 мм (3.0 м²) — США',
+              '2500×625 мм (1.6 м²) — шпунт/пол',
               '2800×1250 мм (3.5 м²)',
-              '3000×1250 мм (3.8 м²)',
-              '2440×1220 мм (3.0 м²)',
+              '3000×1500 мм (4.5 м²) — большой',
+              '2440×590 мм (1.4 м²) — узкий/пол',
             ],
             selectedIndex: _sheetSize.index,
             onSelect: (index) {
@@ -612,8 +628,50 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
     );
   }
 
+  /// Стандартные толщины ОСБ, доступные на рынке.
+  /// 6 мм и 10 мм убраны как редко встречающиеся.
+  static const List<int> _availableThicknesses = [9, 12, 15, 18, 22];
+
+  /// Рекомендуемые толщины для разных типов конструкций.
+  int? _getRecommendedThickness() {
+    switch (_constructionType) {
+      case OsbConstructionType.wall:
+        return 9; // Минимум для стен
+      case OsbConstructionType.floor:
+        return 18; // Пол требует жёсткости (при шаге лаг 400-600 мм)
+      case OsbConstructionType.roof:
+        return 12; // Кровля - средняя нагрузка
+      case OsbConstructionType.partition:
+        return 12; // Перегородки - двойная обшивка
+      case OsbConstructionType.sip:
+        return 12; // СИП-панели стандарт
+      case OsbConstructionType.formwork:
+        return 18; // Опалубка - высокая нагрузка бетона
+    }
+  }
+
+  /// Подсказка по применению для выбранной толщины.
+  String _getThicknessHint(int thickness) {
+    switch (thickness) {
+      case 9:
+        return 'Стены, потолки';
+      case 12:
+        return 'Кровля, СИП, перегородки';
+      case 15:
+        return 'Пол (шаг лаг до 400 мм)';
+      case 18:
+        return 'Пол (шаг лаг до 600 мм)';
+      case 22:
+        return 'Пол с нагрузкой, опалубка';
+      default:
+        return '';
+    }
+  }
+
   Widget _buildThicknessSelector() {
     const accentColor = CalculatorColors.walls;
+    final recommended = _getRecommendedThickness();
+
     return _card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -626,25 +684,40 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: const ['6 мм', '9 мм', '10 мм', '12 мм', '15 мм', '18 мм', '22 мм'],
+            options: _availableThicknesses.map((t) {
+              final isRecommended = t == recommended;
+              return isRecommended ? '$t мм ★' : '$t мм';
+            }).toList(),
             selectedIndex: _getThicknessIndex(),
             onSelect: (index) {
               setState(() {
-                _thickness = [6, 9, 10, 12, 15, 18, 22][index];
+                _thickness = _availableThicknesses[index];
                 _update();
               });
             },
             accentColor: accentColor,
           ),
-          if (_result.recommendedThickness != null) ...[
-            const SizedBox(height: 12),
-            Row(
+          const SizedBox(height: 12),
+          // Подсказка по текущей толщине
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
               children: [
-                const Icon(Icons.recommend, color: CalculatorColors.walls, size: 18),
+                Icon(
+                  _thickness == recommended ? Icons.check_circle : Icons.info_outline,
+                  color: _thickness == recommended ? Colors.green : accentColor,
+                  size: 18,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Рекомендуемая толщина: ${_result.recommendedThickness} мм',
+                    _thickness == recommended
+                        ? 'Рекомендовано: ${_getThicknessHint(_thickness)}'
+                        : _getThicknessHint(_thickness),
                     style: CalculatorDesignSystem.bodySmall.copyWith(
                       color: CalculatorColors.textSecondary,
                     ),
@@ -652,16 +725,21 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
                 ),
               ],
             ),
-          ],
+          ),
         ],
       ),
     );
   }
 
   int _getThicknessIndex() {
-    const thicknesses = [6, 9, 10, 12, 15, 18, 22];
-    final index = thicknesses.indexOf(_thickness);
-    return index >= 0 ? index : 1;
+    final index = _availableThicknesses.indexOf(_thickness);
+    // Если текущая толщина не в списке, выбираем ближайшую
+    if (index >= 0) return index;
+    // Найти ближайшую толщину
+    for (int i = 0; i < _availableThicknesses.length; i++) {
+      if (_availableThicknesses[i] >= _thickness) return i;
+    }
+    return _availableThicknesses.length - 1;
   }
 
   Widget _buildInputModeSelector() {

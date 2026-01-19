@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_plaster.dart';
 import 'package:probrab_ai/domain/usecases/calculate_tile.dart';
-import 'package:probrab_ai/domain/usecases/calculate_screed.dart';
+import 'package:probrab_ai/domain/usecases/calculate_screed_unified.dart';
 import '../helpers/test_helpers.dart';
 
 void main() {
@@ -53,16 +53,18 @@ void main() {
       expect(result.values['groutNeeded'], greaterThan(0));
     });
 
-    test('CalculateScreed calculates price with cement and sand', () {
-      final calculator = CalculateScreed();
+    test('CalculateScreedUnified calculates price with cement and sand', () {
+      final calculator = CalculateScreedUnified();
       final inputs = {
+        'inputMode': 0.0,
         'area': 20.0,
         'thickness': 50.0,
-        'cementGrade': 400.0,
+        'screedType': 0.0, // ЦПС
+        'materialType': 1.0, // Самозамес
       };
-      
+
       final priceList = createTestPriceList({
-        'cement_m400': 300.0, // 300 руб/мешок
+        'cement': 300.0, // 300 руб/мешок
         'sand': 500.0, // 500 руб/м³
       });
 
@@ -70,10 +72,10 @@ void main() {
 
       expect(result.totalPrice, isNotNull);
       expect(result.totalPrice, greaterThan(0));
-      
+
       // Проверяем количество материалов
       expect(result.values['cementBags'], greaterThan(0));
-      expect(result.values['sandVolume'], greaterThan(0));
+      expect(result.values['sandCbm'], greaterThan(0));
     });
 
     test('calculator handles missing prices gracefully', () {
@@ -111,23 +113,23 @@ void main() {
 
     test('multiple calculators work with same price list', () {
       final priceList = createStandardTestPriceList();
-      
+
       final plasterCalc = CalculatePlaster();
       final tileCalc = CalculateTile();
-      final screedCalc = CalculateScreed();
+      final screedCalc = CalculateScreedUnified();
 
       final plasterResult = plasterCalc(
         {'area': 50.0, 'thickness': 10.0},
         priceList,
       );
-      
+
       final tileResult = tileCalc(
         {'area': 10.0, 'tileWidth': 30.0, 'tileHeight': 30.0},
         priceList,
       );
-      
+
       final screedResult = screedCalc(
-        {'area': 20.0, 'thickness': 50.0},
+        {'inputMode': 0.0, 'area': 20.0, 'thickness': 50.0, 'screedType': 0.0, 'materialType': 1.0},
         priceList,
       );
 

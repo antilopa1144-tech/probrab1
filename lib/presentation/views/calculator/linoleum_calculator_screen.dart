@@ -18,8 +18,6 @@ enum LinoleumType {
   const LinoleumType(this.nameKey, this.descKey, this.icon);
 }
 
-enum LinoleumInputMode { manual, room }
-
 class _LinoleumResult {
   final double area;
   final double areaWithWaste;
@@ -29,6 +27,7 @@ class _LinoleumResult {
   final double tapeLength;
   final double plinthLength;
   final int plinthPieces;
+  final double marginCm;
 
   const _LinoleumResult({
     required this.area,
@@ -39,6 +38,7 @@ class _LinoleumResult {
     required this.tapeLength,
     required this.plinthLength,
     required this.plinthPieces,
+    required this.marginCm,
   });
 
   factory _LinoleumResult.fromCalculatorResult(Map<String, double> values) {
@@ -51,6 +51,7 @@ class _LinoleumResult {
       tapeLength: values['tapeLength'] ?? 0,
       plinthLength: values['plinthLength'] ?? 0,
       plinthPieces: (values['plinthPieces'] ?? 0).toInt(),
+      marginCm: values['marginCm'] ?? 20.0,
     );
   }
 }
@@ -74,13 +75,15 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
   // Domain layer calculator
   final _calculator = CalculateLinoleumV2();
 
-  double _area = 20.0;
+  // Размеры комнаты
   double _roomWidth = 4.0;
   double _roomLength = 5.0;
+
+  // Параметры
   double _rollWidth = 3.0; // м
+  double _marginCm = 20.0; // запас в см
 
   LinoleumType _linoleumType = LinoleumType.semiCommercial;
-  LinoleumInputMode _inputMode = LinoleumInputMode.manual;
   bool _needPlinth = true;
   bool _needTape = true;
 
@@ -98,17 +101,13 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
   /// Использует domain layer для расчёта
   _LinoleumResult _calculate() {
     final inputs = <String, double>{
+      'roomWidth': _roomWidth,
+      'roomLength': _roomLength,
       'rollWidth': _rollWidth,
+      'marginCm': _marginCm,
       'needTape': _needTape ? 1.0 : 0.0,
       'needPlinth': _needPlinth ? 1.0 : 0.0,
     };
-
-    if (_inputMode == LinoleumInputMode.manual) {
-      inputs['area'] = _area;
-    } else {
-      inputs['roomWidth'] = _roomWidth;
-      inputs['roomLength'] = _roomLength;
-    }
 
     final result = _calculator(inputs, []);
     return _LinoleumResult.fromCalculatorResult(result.values);
@@ -122,10 +121,12 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
     buffer.writeln(_loc.translate('linoleum_calc.export.title'));
     buffer.writeln('═' * 40);
     buffer.writeln();
+    buffer.writeln('Комната: ${_roomWidth.toStringAsFixed(1)} × ${_roomLength.toStringAsFixed(1)} м');
     buffer.writeln(_loc.translate('linoleum_calc.export.area')
         .replaceFirst('{value}', _result.area.toStringAsFixed(1)));
     buffer.writeln(_loc.translate('linoleum_calc.export.type')
         .replaceFirst('{value}', _loc.translate(_linoleumType.nameKey)));
+    buffer.writeln('Запас: +${_marginCm.toStringAsFixed(0)} см');
     buffer.writeln();
     buffer.writeln(_loc.translate('linoleum_calc.export.materials_title'));
     buffer.writeln('─' * 40);
@@ -176,7 +177,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
       children: [
         _buildTypeSelector(),
         const SizedBox(height: 16),
-        _buildAreaCard(),
+        _buildRoomDimensionsCard(),
         const SizedBox(height: 16),
         _buildOptionsCard(),
         const SizedBox(height: 16),
@@ -239,73 +240,99 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
     );
   }
 
-  Widget _buildAreaCard() {
+  Widget _buildRoomDimensionsCard() {
     return _card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ModeSelector(
-            options: [
-              _loc.translate('linoleum_calc.mode.manual'),
-              _loc.translate('linoleum_calc.mode.room'),
-            ],
-            selectedIndex: _inputMode.index,
-            onSelect: (index) {
-              setState(() {
-                _inputMode = LinoleumInputMode.values[index];
-                _update();
-              });
-            },
-            accentColor: _accentColor,
+          Text(
+            'Размеры комнаты',
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
           ),
-          const SizedBox(height: 20),
-          _inputMode == LinoleumInputMode.manual ? _buildManualInputs() : _buildRoomInputs(),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: CalculatorTextField(
+                  label: _loc.translate('linoleum_calc.label.width'),
+                  value: _roomWidth,
+                  onChanged: (v) {
+                    setState(() {
+                      _roomWidth = v;
+                      _update();
+                    });
+                  },
+                  suffix: _loc.translate('common.meters'),
+                  accentColor: _accentColor,
+                  minValue: 1,
+                  maxValue: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: CalculatorTextField(
+                  label: _loc.translate('linoleum_calc.label.length'),
+                  value: _roomLength,
+                  onChanged: (v) {
+                    setState(() {
+                      _roomLength = v;
+                      _update();
+                    });
+                  },
+                  suffix: _loc.translate('common.meters'),
+                  accentColor: _accentColor,
+                  minValue: 1,
+                  maxValue: 20,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: _accentColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _loc.translate('linoleum_calc.label.floor_area'),
+                  style: CalculatorDesignSystem.bodyMedium.copyWith(
+                    color: CalculatorColors.textSecondary,
+                  ),
+                ),
+                Text(
+                  '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                  style: CalculatorDesignSystem.headlineMedium.copyWith(
+                    color: _accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildManualInputs() {
-    return CalculatorSliderField(
-      label: _loc.translate('linoleum_calc.label.area'),
-      value: _area,
-      min: 5,
-      max: 200,
-      suffix: _loc.translate('common.sqm'),
-      accentColor: _accentColor,
-      onChanged: (v) { setState(() { _area = v; _update(); }); },
-    );
-  }
-
-  Widget _buildRoomInputs() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(child: CalculatorTextField(label: _loc.translate('linoleum_calc.label.width'), value: _roomWidth, onChanged: (v) { setState(() { _roomWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
-            const SizedBox(width: 12),
-            Expanded(child: CalculatorTextField(label: _loc.translate('linoleum_calc.label.length'), value: _roomLength, onChanged: (v) { setState(() { _roomLength = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: _accentColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('linoleum_calc.label.floor_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
-              Text('${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
   Widget _buildOptionsCard() {
     return _card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            'Параметры',
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Ширина рулона
           CalculatorSliderField(
             label: _loc.translate('linoleum_calc.label.roll_width'),
             value: _rollWidth,
@@ -315,24 +342,106 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
             suffix: _loc.translate('common.meters'),
             accentColor: _accentColor,
             decimalPlaces: 1,
-            onChanged: (v) { setState(() { _rollWidth = v; _update(); }); },
+            onChanged: (v) {
+              setState(() {
+                _rollWidth = v;
+                _update();
+              });
+            },
+          ),
+          const SizedBox(height: 16),
+          // Запас
+          CalculatorSliderField(
+            label: 'Запас по краям',
+            value: _marginCm,
+            min: 0,
+            max: 50,
+            divisions: 10,
+            suffix: 'см',
+            accentColor: _accentColor,
+            decimalPlaces: 0,
+            onChanged: (v) {
+              setState(() {
+                _marginCm = v;
+                _update();
+              });
+            },
+          ),
+          const SizedBox(height: 8),
+          // Подсказка про запас
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: _accentColor.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  _marginCm >= 20 ? Icons.check_circle : Icons.info_outline,
+                  color: _marginCm >= 20 ? Colors.green : _accentColor,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _marginCm >= 20
+                        ? 'Рекомендуемый запас для подрезки'
+                        : 'Рекомендуется минимум 20 см',
+                    style: CalculatorDesignSystem.bodySmall.copyWith(
+                      color: CalculatorColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 8),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('linoleum_calc.option.tape'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('linoleum_calc.option.tape_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(
+              _loc.translate('linoleum_calc.option.tape'),
+              style: CalculatorDesignSystem.bodyMedium.copyWith(
+                color: CalculatorColors.textPrimary,
+              ),
+            ),
+            subtitle: Text(
+              _loc.translate('linoleum_calc.option.tape_desc'),
+              style: CalculatorDesignSystem.bodySmall.copyWith(
+                color: CalculatorColors.textSecondary,
+              ),
+            ),
             value: _needTape,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needTape = v; _update(); }); },
+            onChanged: (v) {
+              setState(() {
+                _needTape = v;
+                _update();
+              });
+            },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('linoleum_calc.option.plinth'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('linoleum_calc.option.plinth_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(
+              _loc.translate('linoleum_calc.option.plinth'),
+              style: CalculatorDesignSystem.bodyMedium.copyWith(
+                color: CalculatorColors.textPrimary,
+              ),
+            ),
+            subtitle: Text(
+              _loc.translate('linoleum_calc.option.plinth_desc'),
+              style: CalculatorDesignSystem.bodySmall.copyWith(
+                color: CalculatorColors.textSecondary,
+              ),
+            ),
             value: _needPlinth,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needPlinth = v; _update(); }); },
+            onChanged: (v) {
+              setState(() {
+                _needPlinth = v;
+                _update();
+              });
+            },
           ),
         ],
       ),
