@@ -122,6 +122,11 @@ split_definitions
 - Глубокой вложенности (>3 уровня)
 - Magic numbers — использовать константы
 
+### Файлы которые НИКОГДА не коммитить
+- `*.isar-lck` — lock-файлы базы данных
+- `*.isar` — файлы базы данных (кроме тестовых фикстур)
+- `test_checklist_*.isar*` — временные тестовые файлы
+
 ---
 
 ## Стандарты качества
@@ -203,3 +208,55 @@ dart run build_runner build --delete-conflicting-outputs
 - Будь общительным, а если видишь некорректные действия в приложении или при добавлении новых, предложи идеи.
 
 Ты работаешь над реальным продуктом, который используют люди. Каждое изменение должно улучшать их опыт.
+
+---
+
+---
+
+## Аудит и автофикс калькуляторов
+
+При работе с калькуляторами ОБЯЗАТЕЛЬНО используй skill:
+- `.claude/skills/prorab-calculator-auditor/SKILL.md` — чеклист проверки
+- `.claude/skills/prorab-calculator-auditor/references/standards.md` — нормы ГОСТ/СНиП
+
+### Скрипты аудита
+```bash
+# Проверить что будет исправлено (без изменений)
+python .claude/skills/prorab-calculator-auditor/scripts/autofixer.py . --fix-all --dry-run
+
+# Автофикс стилей (Colors → Theme, EdgeInsets → AppSpacing)
+python .claude/skills/prorab-calculator-auditor/scripts/autofixer.py . --fix-style
+
+# Автофикс локализации
+python .claude/skills/prorab-calculator-auditor/scripts/autofixer.py . --fix-l10n
+
+# Сгенерировать тесты для калькуляторов
+python .claude/skills/prorab-calculator-auditor/scripts/autofixer.py . --generate-tests
+
+# Анализ формул на соответствие ГОСТ/СНиП
+python .claude/skills/prorab-calculator-auditor/scripts/autofixer.py . --analyze-formulas
+
+# Полный аудит проекта
+python .claude/skills/prorab-calculator-auditor/scripts/auditor.py . --all
+```
+
+### Известные баги (ИСПРАВИТЬ!)
+
+| Калькулятор | Проблема | Решение |
+|-------------|----------|---------|
+| Кассетный потолок | Профили не растут с площадью | main=2.0 м.п./м², cross=1.35 м.п./м², подвесы=2.5 шт/м² |
+| Шпатлёвка | Финиш не соответствует классу | Эконом→Волма, Стандарт→Knauf, Премиум→Sheetrock |
+| Вагонка | Режим "По размерам" считает неверно | Убрать режим, оставить только "По площади" |
+| Утепление ЭППС | Добавлена пароизоляция | Убрать — ЭППС паронепроницаем |
+| ИК тёплый пол | Нет выбора ширины плёнки | Добавить 50/80/100 см, вывод в погонных метрах |
+
+### Ключевые нормы расхода
+
+| Материал | Норма | Единица |
+|----------|-------|---------|
+| Саморезы ГКЛ | 23-34 (станд. 29) | шт/м² |
+| Подвесы потолок ГКЛ | 0.7-1.5 (станд. 1.0) | шт/м² |
+| Подвесы кассетный | 2.0-3.0 (станд. 2.5) | шт/м² |
+| Дюбели утеплитель | 5-8 (станд. 6) | шт/м² |
+
+Полный справочник: `.claude/skills/prorab-calculator-auditor/references/standards.md`

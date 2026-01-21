@@ -77,3 +77,7 @@ libisar.dll
 
 *.isar-lck
 *.isar
+test_checklist_*.isar*
+test_create_checklist_*.isar*
+test_delete_proj_*.isar*
+test_save_calc_*.isar*
