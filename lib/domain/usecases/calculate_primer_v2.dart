@@ -144,10 +144,10 @@ class CalculatePrimerV2 extends BaseCalculator {
     // Излишек
     final excess = totalLiters - litersNeeded;
 
-    // Расчёт стоимости
+    // Расчёт стоимости (цена за канистру, не за литр)
     final primerPrice = findPrice(priceList, ['primer', 'primer_deep', 'primer_contact', 'primer_universal', 'грунтовка']);
 
-    final totalPrice = calculateCost(totalLiters, primerPrice?.price);
+    final totalPrice = calculateCost(totalCans.toDouble(), primerPrice?.price);
 
     // Формируем результат
     final values = <String, double>{

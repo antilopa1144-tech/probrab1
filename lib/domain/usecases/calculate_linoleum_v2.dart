@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
@@ -5,9 +7,13 @@ import './base_calculator.dart';
 /// Калькулятор линолеума.
 ///
 /// Рассчитывает количество линолеума, двустороннего скотча и плинтуса.
-/// Использует размеры комнаты (ширина × длина) для точного расчёта.
+///
+/// Поддерживает два режима ввода:
+/// 1. По размерам комнаты (roomWidth × roomLength) — точный расчёт
+/// 2. По площади (area) — приблизительный расчёт для квадратной комнаты
 ///
 /// Поля:
+/// - area: площадь (м²) — альтернатива размерам комнаты
 /// - roomWidth: ширина комнаты (м)
 /// - roomLength: длина комнаты (м)
 /// - rollWidth: ширина рулона (м), 2-5 м
@@ -32,11 +38,16 @@ class CalculateLinoleumV2 extends BaseCalculator {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
+    final area = inputs['area'];
     final roomWidth = inputs['roomWidth'];
     final roomLength = inputs['roomLength'];
 
-    if (roomWidth == null || roomLength == null) {
-      return 'Необходимо указать размеры комнаты';
+    // Нужны или размеры комнаты, или площадь
+    final hasRoomDimensions = roomWidth != null && roomLength != null;
+    final hasArea = area != null && area > 0;
+
+    if (!hasRoomDimensions && !hasArea) {
+      return 'Необходимо указать размеры комнаты или площадь';
     }
 
     return null;
@@ -53,12 +64,32 @@ class CalculateLinoleumV2 extends BaseCalculator {
     final needTape = getIntInput(inputs, 'needTape', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
     final needPlinth = getIntInput(inputs, 'needPlinth', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
 
-    // Размеры комнаты
-    final roomWidth = getInput(inputs, 'roomWidth', defaultValue: 4.0, minValue: 0.5, maxValue: 30);
-    final roomLength = getInput(inputs, 'roomLength', defaultValue: 5.0, minValue: 0.5, maxValue: 30);
+    // Размеры комнаты — из roomWidth/roomLength или вычисляем из area
+    final double roomWidth;
+    final double roomLength;
+    final double area;
 
-    // Чистая площадь комнаты
-    final area = roomWidth * roomLength;
+    final inputArea = inputs['area'];
+    final inputRoomWidth = inputs['roomWidth'];
+    final inputRoomLength = inputs['roomLength'];
+
+    if (inputRoomWidth != null && inputRoomLength != null) {
+      // Приоритет размерам комнаты
+      roomWidth = getInput(inputs, 'roomWidth', defaultValue: 4.0, minValue: 0.5, maxValue: 30);
+      roomLength = getInput(inputs, 'roomLength', defaultValue: 5.0, minValue: 0.5, maxValue: 30);
+      area = roomWidth * roomLength;
+    } else if (inputArea != null && inputArea > 0) {
+      // Если только площадь — аппроксимируем квадратной комнатой
+      area = getInput(inputs, 'area', defaultValue: 20.0, minValue: 1.0, maxValue: 500);
+      final side = math.sqrt(area);
+      roomWidth = side;
+      roomLength = side;
+    } else {
+      // Дефолтные значения
+      roomWidth = 4.0;
+      roomLength = 5.0;
+      area = roomWidth * roomLength;
+    }
 
     // Запас в метрах (добавляется к длине и ширине)
     final marginM = marginCm / 100;

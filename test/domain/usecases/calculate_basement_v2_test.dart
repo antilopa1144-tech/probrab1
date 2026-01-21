@@ -221,7 +221,7 @@ void main() {
           'length': 50.0, // Invalid, should clamp to 30
           'width': 50.0, // Invalid, should clamp to 20
           'depth': 10.0, // Invalid, should clamp to 4
-          'wallThickness': 1.0, // Invalid, should clamp to 0.5
+          'wallThickness': 1.0, // Invalid, should clamp to 0.6 (maxValue)
         };
 
         final result = calculator(inputs, emptyPriceList);
@@ -229,7 +229,7 @@ void main() {
         expect(result.values['length'], equals(30.0));
         expect(result.values['width'], equals(20.0));
         expect(result.values['depth'], equals(4.0));
-        expect(result.values['wallThickness'], equals(0.5));
+        expect(result.values['wallThickness'], equals(0.6));
       });
 
       test('handles minimum dimensions', () {

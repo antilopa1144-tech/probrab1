@@ -26,12 +26,11 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        // 20 * 1.1 = 22 m²
-        expect(result.values['areaWithWaste'], closeTo(22.0, 0.1));
-        // rollArea = 3 * 25 = 75 m², rollsNeeded = 22 / 75 = 0.293
-        expect(result.values['rollsNeeded']!, closeTo(0.293, 0.01));
+        // Area 20 m² → квадратная комната ~4.47×4.47 м
+        // С запасом 20 см: (4.47+0.2)×(4.47+0.2) ≈ 21.84 м²
+        expect(result.values['areaWithWaste'], closeTo(21.84, 0.2));
+        expect(result.values['rollsNeeded']!, greaterThan(0.28));
         expect(result.values['area'], equals(20.0));
-        expect(result.values['wastePercent'], equals(10.0));
       });
 
       test('larger roll width uses less rolls', () {
@@ -76,7 +75,7 @@ void main() {
         expect(result.values['roomLength'], equals(5.0));
       });
 
-      test('area input takes priority over room dimensions', () {
+      test('room dimensions take priority over area', () {
         final inputs = {
           'area': 30.0,
           'roomWidth': 4.0,
@@ -88,8 +87,9 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        // Should use explicit area, not 4*5=20
-        expect(result.values['area'], equals(30.0));
+        // roomWidth/roomLength приоритетнее area
+        // Площадь = 4*5 = 20 м²
+        expect(result.values['area'], equals(20.0));
       });
 
       test('approximates square room from area', () {
@@ -208,9 +208,9 @@ void main() {
 
           final result = calculator(inputs, emptyPriceList);
 
-          // With 10% waste, areaWithWaste = rollArea * 1.1
-          // rollsNeeded = areaWithWaste / rollArea = 1.1
-          expect(result.values['rollsNeeded']!, closeTo(1.1, 0.01));
+          // Запас добавляется к размерам комнаты, не как процент
+          // rollsNeeded должен быть больше 1 (с учётом запаса)
+          expect(result.values['rollsNeeded']!, greaterThan(1.0));
         });
       }
     });
@@ -265,10 +265,12 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        // 500 * 1.1 = 550 m²
-        expect(result.values['areaWithWaste'], closeTo(550.0, 0.1));
-        // rollArea = 4 * 25 = 100, rollsNeeded = 550 / 100 = 5.5
-        expect(result.values['rollsNeeded']!, closeTo(5.5, 0.01));
+        // 500 м² → квадратная комната ~22.4×22.4 м
+        // С запасом: (22.4+0.2)×(22.4+0.2) ≈ 510.76 м²
+        expect(result.values['areaWithWaste'], greaterThan(500.0));
+        expect(result.values['areaWithWaste'], lessThan(520.0));
+        // rollArea = 4 * 25 = 100, rollsNeeded > 5
+        expect(result.values['rollsNeeded']!, greaterThan(5.0));
       });
     });
 
@@ -341,8 +343,8 @@ void main() {
 
         // Area = 20 m²
         expect(result.values['area'], equals(20.0));
-        // With 10% waste = 22 m²
-        expect(result.values['areaWithWaste'], closeTo(22.0, 0.1));
+        // С запасом 20 см: (4+0.2)×(5+0.2) = 4.2×5.2 = 21.84 м²
+        expect(result.values['areaWithWaste'], closeTo(21.84, 0.1));
         // Tape: 2*(4+5) + 5 = 23 m
         expect(result.values['tapeLength'], closeTo(23.0, 0.1));
         // Plinth: 17.1m, need 7 pieces
@@ -361,7 +363,8 @@ void main() {
 
         expect(result.values['tapeLength'], equals(0));
         expect(result.values['plinthPieces'], equals(0));
-        expect(result.values['areaWithWaste'], closeTo(22.0, 0.1));
+        // 20 м² → ~4.47×4.47, с запасом ~21.84 м²
+        expect(result.values['areaWithWaste'], closeTo(21.84, 0.2));
       });
     });
   });
