@@ -2,74 +2,98 @@ import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
 
-/// Тип материала для стяжки
-enum ScreedMaterialType {
-  /// Готовая сухая смесь (ЦПС М300 или М150)
-  readyMix,
+/// Тип сухой смеси для стяжки
+enum ScreedMixType {
+  /// ЦПС - цементно-песчаная смесь (мелкая фракция)
+  cps,
 
-  /// Самозамес: цемент + песок
-  selfMix,
+  /// Пескобетон (крупная фракция с гравием)
+  peskobeton,
 }
 
-/// Объединённый калькулятор стяжки пола.
+/// Марки ЦПС
+enum CpsMarka {
+  /// М100 — для выравнивания, под плитку (расход ~15 кг/м²/см)
+  m100,
+
+  /// М150 — универсальная, стяжка до 50 мм (расход ~17 кг/м²/см)
+  m150,
+
+  /// М200 — высокопрочная, стяжка 50-100 мм (расход ~18 кг/м²/см)
+  m200,
+}
+
+/// Марки Пескобетона
+enum PeskobetonMarka {
+  /// М200 — для стяжки в жилых помещениях (расход ~19 кг/м²/см)
+  m200,
+
+  /// М300 — стандарт, для стяжки и заливки (расход ~20 кг/м²/см)
+  m300,
+
+  /// М400 — высокопрочный, для гаражей и складов (расход ~22 кг/м²/см)
+  m400,
+}
+
+/// Калькулятор стяжки пола (ЦПС / Пескобетон).
 ///
-/// Поддерживает:
-/// - 3 типа стяжки: цементно-песчаная, полусухая, бетонная
-/// - 2 способа: готовая сухая смесь (ЦПС) или самозамес (цемент + песок)
-/// - 2 режима ввода площади: вручную или по размерам комнаты
-/// - Расчёт армирующей сетки, демпферной ленты, маяков, плёнки
-/// - Расчёт стоимости с учётом текущих цен
+/// Рассчитывает количество сухой смеси для стяжки пола по СП 29.13330.2011.
 ///
-/// Поля:
+/// ## Поддерживаемые типы смесей:
+///
+/// **ЦПС (цементно-песчаная смесь):**
+/// - М100 — выравнивание, расход 15 кг/м²/см
+/// - М150 — универсальная, расход 17 кг/м²/см
+/// - М200 — высокопрочная, расход 18 кг/м²/см
+///
+/// **Пескобетон:**
+/// - М200 — жилые помещения, расход 19 кг/м²/см
+/// - М300 — стандарт, расход 20 кг/м²/см
+/// - М400 — высокопрочный, расход 22 кг/м²/см
+///
+/// ## Входные параметры:
 /// - inputMode: режим ввода (0 = по площади, 1 = по комнате)
 /// - area: площадь (м²) — для режима 0
 /// - roomWidth, roomLength: размеры комнаты (м) — для режима 1
-/// - thickness: толщина слоя (мм), 30-150
-/// - screedType: тип стяжки (0=ЦПС, 1=полусухая, 2=бетонная)
-/// - materialType: способ (0=готовая смесь, 1=самозамес)
-/// - mixGrade: марка смеси (0=М300, 1=М150) — только для готовой смеси
-/// - bagWeight: вес мешка (кг) — только для готовой смеси
-/// - needMesh: нужна ли армирующая сетка (0/1)
-/// - needFilm: нужна ли плёнка ПЭ (0/1)
-/// - needTape: нужна ли демпферная лента (0/1)
-/// - needBeacons: нужны ли маяки (0/1)
+/// - thickness: толщина слоя (мм), 10-150
+/// - mixType: тип смеси (0=ЦПС, 1=Пескобетон)
+/// - cpsMarka: марка ЦПС (0=М100, 1=М150, 2=М200)
+/// - peskobetonMarka: марка Пескобетона (0=М200, 1=М300, 2=М400)
+/// - bagWeight: вес мешка (кг)
+/// - needMesh, needFilm, needTape, needBeacons: опции (0/1)
 class CalculateScreedUnified extends BaseCalculator {
   // ==========================================================================
-  // Константы для самозамеса (цемент + песок)
+  // Расход сухой смеси по СП 29.13330.2011 (кг на м² при толщине 10 мм)
   // ==========================================================================
 
-  /// Расход цемента по типу стяжки (кг/м³)
-  static const Map<int, double> cementPerCbm = {
-    0: 400.0, // Цементно-песчаная М150 (пропорция 1:3)
-    1: 350.0, // Полусухая (меньше воды)
-    2: 300.0, // Бетон М200 (с добавлением щебня)
+  /// Расход ЦПС по маркам (кг/м²/см)
+  static const Map<int, double> cpsConsumption = {
+    0: 15.0, // М100 — выравнивание
+    1: 17.0, // М150 — универсальная
+    2: 18.0, // М200 — высокопрочная
   };
 
-  /// Расход песка по типу стяжки (кг/м³)
-  static const Map<int, double> sandPerCbm = {
-    0: 1200.0, // ЦПС 1:3
-    1: 1050.0, // Полусухая
-    2: 900.0, // Бетон (часть заменяется щебнем)
+  /// Расход Пескобетона по маркам (кг/м²/см)
+  static const Map<int, double> peskobetonConsumption = {
+    0: 19.0, // М200 — жилые
+    1: 20.0, // М300 — стандарт
+    2: 22.0, // М400 — высокопрочный
   };
 
-  /// Расход щебня для бетонной стяжки (кг/м³)
-  static const double gravelPerCbm = 900.0;
-
-  /// Вес стандартного мешка цемента (кг)
-  static const double cementBagWeight = 50.0;
-
-  /// Плотность песка (кг/м³)
-  static const double sandDensity = 1500.0;
-
-  // ==========================================================================
-  // Константы для готовой сухой смеси (ЦПС)
-  // ==========================================================================
-
-  /// Расход сухой смеси (кг/м²/мм толщины)
-  static const Map<int, double> mixConsumption = {
-    0: 2.0, // М300 Пескобетон: ~20-22 кг на 1 см
-    1: 1.8, // М150 Универсальная: ~18 кг на 1 см
-  };
+  /// Рекомендуемые марки по толщине стяжки
+  static String getRecommendedMarka(int mixType, double thickness) {
+    if (mixType == 0) {
+      // ЦПС
+      if (thickness <= 30) return 'М100';
+      if (thickness <= 50) return 'М150';
+      return 'М200';
+    } else {
+      // Пескобетон
+      if (thickness <= 40) return 'М200';
+      if (thickness <= 80) return 'М300';
+      return 'М400';
+    }
+  }
 
   // ==========================================================================
   // Константы для дополнительных материалов
@@ -81,11 +105,17 @@ class CalculateScreedUnified extends BaseCalculator {
   /// Запас на плёнку ПЭ (%)
   static const double filmMargin = 15.0;
 
-  /// Шаг установки маяков (м²/шт)
+  /// Шаг установки маяков (м²/шт) — примерно 1 маяк на 1.5 м²
   static const double beaconStep = 1.5;
 
-  /// Минимальная безопасная толщина стяжки (мм)
+  /// Минимальная безопасная толщина стяжки (мм) по СП
   static const double minSafeThickness = 30.0;
+
+  /// Рекомендуемая минимальная толщина для ЦПС (мм)
+  static const double minCpsThickness = 20.0;
+
+  /// Рекомендуемая минимальная толщина для Пескобетона (мм)
+  static const double minPeskobetonThickness = 30.0;
 
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -137,10 +167,10 @@ class CalculateScreedUnified extends BaseCalculator {
       perimeter = (roomWidth + roomLength) * 2;
     }
 
-    // --- Параметры стяжки ---
-    final screedType = getIntInput(inputs, 'screedType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final materialType = getIntInput(inputs, 'materialType', defaultValue: 0, minValue: 0, maxValue: 1);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 50.0, minValue: 10.0, maxValue: 200.0);
+    // --- Параметры смеси ---
+    final mixType = getIntInput(inputs, 'mixType', defaultValue: 0, minValue: 0, maxValue: 1);
+    final thickness = getInput(inputs, 'thickness', defaultValue: 50.0, minValue: 10.0, maxValue: 150.0);
+    final bagWeight = getInput(inputs, 'bagWeight', defaultValue: 40.0, minValue: 25.0, maxValue: 50.0);
 
     // --- Опции ---
     final needMesh = getIntInput(inputs, 'needMesh', defaultValue: 1) == 1;
@@ -151,37 +181,24 @@ class CalculateScreedUnified extends BaseCalculator {
     // --- Объём стяжки ---
     final volume = calculateVolume(area, thickness);
 
-    // --- Расчёт основных материалов ---
-    double cementKg = 0;
-    int cementBags = 0;
-    double sandKg = 0;
-    double sandCbm = 0;
-    double gravelKg = 0;
-    double gravelCbm = 0;
-    double mixWeightKg = 0;
-    int mixBags = 0;
+    // --- Расход смеси ---
+    double consumption;
+    int marka;
 
-    if (materialType == 0) {
-      // Готовая сухая смесь (ЦПС)
-      final mixGrade = getIntInput(inputs, 'mixGrade', defaultValue: 0, minValue: 0, maxValue: 1);
-      final bagWeight = getInput(inputs, 'bagWeight', defaultValue: 40.0, minValue: 25.0, maxValue: 50.0);
-
-      final consumption = mixConsumption[mixGrade] ?? 2.0;
-      mixWeightKg = area * thickness * consumption;
-      mixBags = ceilToInt(mixWeightKg / bagWeight);
+    if (mixType == 0) {
+      // ЦПС
+      marka = getIntInput(inputs, 'cpsMarka', defaultValue: 1, minValue: 0, maxValue: 2);
+      consumption = cpsConsumption[marka] ?? 17.0;
     } else {
-      // Самозамес (цемент + песок)
-      cementKg = volume * (cementPerCbm[screedType] ?? 400.0);
-      sandKg = volume * (sandPerCbm[screedType] ?? 1200.0);
-      cementBags = ceilToInt(cementKg / cementBagWeight);
-      sandCbm = sandKg / sandDensity;
-
-      // Для бетонной стяжки добавляем щебень
-      if (screedType == 2) {
-        gravelKg = volume * gravelPerCbm;
-        gravelCbm = gravelKg / 1400; // Плотность щебня ~1400 кг/м³
-      }
+      // Пескобетон
+      marka = getIntInput(inputs, 'peskobetonMarka', defaultValue: 1, minValue: 0, maxValue: 2);
+      consumption = peskobetonConsumption[marka] ?? 20.0;
     }
+
+    // Формула: площадь × толщина(см) × расход(кг/м²/см)
+    final thicknessCm = thickness / 10.0;
+    final mixWeightKg = area * thicknessCm * consumption;
+    final mixBags = ceilToInt(mixWeightKg / bagWeight);
 
     // --- Армирующая сетка ---
     final meshArea = needMesh ? addMargin(area, meshMargin) : 0.0;
@@ -195,49 +212,44 @@ class CalculateScreedUnified extends BaseCalculator {
     // --- Маяки ---
     final beaconsNeeded = needBeacons ? ceilToInt(area / beaconStep) : 0;
 
-    // --- Предупреждение о толщине ---
+    // --- Предупреждения ---
     final thicknessWarning = thickness < minSafeThickness ? 1.0 : 0.0;
+
+    // Предупреждение о минимальной толщине для типа смеси
+    final minThicknessForType = mixType == 0 ? minCpsThickness : minPeskobetonThickness;
+    final typeThicknessWarning = thickness < minThicknessForType ? 1.0 : 0.0;
 
     // --- Расчёт стоимости ---
     final costs = <double?>[];
 
-    if (materialType == 0) {
-      // Готовая смесь
-      final mixGrade = getIntInput(inputs, 'mixGrade', defaultValue: 0);
-      final mixSku = mixGrade == 0 ? 'dsp_m300' : 'dsp_m150';
-      final mixPrice = findPrice(priceList, [mixSku, 'cement_sand_mix', 'dry_mix']);
-      costs.add(calculateCost(mixBags.toDouble(), mixPrice?.price));
+    // Смесь
+    String mixSku;
+    if (mixType == 0) {
+      mixSku = marka == 0 ? 'cps_m100' : (marka == 1 ? 'cps_m150' : 'cps_m200');
     } else {
-      // Самозамес
-      final cementPrice = findPrice(priceList, ['cement', 'cement_bag', 'cement_m400', 'цемент']);
-      final sandPrice = findPrice(priceList, ['sand', 'sand_construction', 'песок']);
-      costs.add(calculateCost(cementBags.toDouble(), cementPrice?.price));
-      costs.add(calculateCost(sandCbm, sandPrice?.price));
-
-      if (screedType == 2) {
-        final gravelPrice = findPrice(priceList, ['gravel', 'crushed_stone', 'щебень']);
-        costs.add(calculateCost(gravelCbm, gravelPrice?.price));
-      }
+      mixSku = marka == 0 ? 'peskobeton_m200' : (marka == 1 ? 'peskobeton_m300' : 'peskobeton_m400');
     }
+    final mixPrice = findPrice(priceList, [mixSku, 'dry_mix', 'cement_sand_mix']);
+    costs.add(calculateCost(mixBags.toDouble(), mixPrice?.price));
 
     // Дополнительные материалы
     if (needMesh) {
-      final meshPrice = findPrice(priceList, ['mesh', 'armature_mesh', 'mesh_reinforcing', 'сетка']);
+      final meshPrice = findPrice(priceList, ['mesh', 'armature_mesh', 'mesh_reinforcing']);
       costs.add(calculateCost(meshArea, meshPrice?.price));
     }
 
     if (needFilm) {
-      final filmPrice = findPrice(priceList, ['film', 'pe_film', 'плёнка']);
+      final filmPrice = findPrice(priceList, ['film', 'pe_film']);
       costs.add(calculateCost(filmArea, filmPrice?.price));
     }
 
     if (needTape) {
-      final tapePrice = findPrice(priceList, ['tape_damper', 'damper_tape', 'демпферная_лента']);
+      final tapePrice = findPrice(priceList, ['tape_damper', 'damper_tape']);
       costs.add(calculateCost(tapeMeters, tapePrice?.price));
     }
 
     if (needBeacons) {
-      final beaconPrice = findPrice(priceList, ['beacon', 'beacon_metal', 'profile_beacon', 'маяк']);
+      final beaconPrice = findPrice(priceList, ['beacon', 'beacon_metal', 'profile_beacon']);
       costs.add(calculateCost(beaconsNeeded.toDouble(), beaconPrice?.price));
     }
 
@@ -248,21 +260,14 @@ class CalculateScreedUnified extends BaseCalculator {
         'perimeter': perimeter,
         'thickness': thickness,
         'volume': volume,
-        'screedType': screedType.toDouble(),
-        'materialType': materialType.toDouble(),
+        'mixType': mixType.toDouble(),
+        'marka': marka.toDouble(),
 
-        // Для готовой смеси
+        // Смесь
         'mixWeightKg': mixWeightKg,
         'mixWeightTonnes': mixWeightKg / 1000,
         'mixBags': mixBags.toDouble(),
-
-        // Для самозамеса
-        'cementKg': cementKg,
-        'cementBags': cementBags.toDouble(),
-        'sandKg': sandKg,
-        'sandCbm': sandCbm,
-        'gravelKg': gravelKg,
-        'gravelCbm': gravelCbm,
+        'consumption': consumption,
 
         // Дополнительные материалы
         'needMesh': needMesh ? 1.0 : 0.0,
@@ -276,6 +281,7 @@ class CalculateScreedUnified extends BaseCalculator {
 
         // Предупреждения
         'thicknessWarning': thicknessWarning,
+        'typeThicknessWarning': typeThicknessWarning,
       },
       totalPrice: sumCosts(costs),
     );

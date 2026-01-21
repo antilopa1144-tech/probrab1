@@ -6,37 +6,39 @@ import '../../../domain/usecases/calculate_screed_unified.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
-/// Тип стяжки
-enum ScreedType {
-  cementSand('screed_unified.type.cement_sand', 'screed_unified.type.cement_sand_desc', Icons.foundation),
-  semidry('screed_unified.type.semidry', 'screed_unified.type.semidry_desc', Icons.water_drop_outlined),
-  concrete('screed_unified.type.concrete', 'screed_unified.type.concrete_desc', Icons.construction);
+/// Тип сухой смеси
+enum ScreedMixType {
+  cps('screed_unified.mix_type.cps', 'screed_unified.mix_type.cps_desc', Icons.grain),
+  peskobeton('screed_unified.mix_type.peskobeton', 'screed_unified.mix_type.peskobeton_desc', Icons.foundation);
 
   final String nameKey;
   final String descKey;
   final IconData icon;
-  const ScreedType(this.nameKey, this.descKey, this.icon);
+  const ScreedMixType(this.nameKey, this.descKey, this.icon);
 }
 
-/// Способ приготовления
-enum MaterialMethod {
-  readyMix('screed_unified.method.ready_mix', 'screed_unified.method.ready_mix_desc', Icons.shopping_bag),
-  selfMix('screed_unified.method.self_mix', 'screed_unified.method.self_mix_desc', Icons.handyman);
+/// Марки ЦПС
+enum CpsMarka {
+  m100('screed_unified.cps.m100', 'screed_unified.cps.m100_desc', '15 кг/м²/см'),
+  m150('screed_unified.cps.m150', 'screed_unified.cps.m150_desc', '17 кг/м²/см'),
+  m200('screed_unified.cps.m200', 'screed_unified.cps.m200_desc', '18 кг/м²/см');
 
   final String nameKey;
   final String descKey;
-  final IconData icon;
-  const MaterialMethod(this.nameKey, this.descKey, this.icon);
+  final String consumption;
+  const CpsMarka(this.nameKey, this.descKey, this.consumption);
 }
 
-/// Марка готовой смеси
-enum MixGrade {
-  m300('screed_unified.grade.m300', 'screed_unified.grade.m300_desc'),
-  m150('screed_unified.grade.m150', 'screed_unified.grade.m150_desc');
+/// Марки Пескобетона
+enum PeskobetonMarka {
+  m200('screed_unified.peskobeton.m200', 'screed_unified.peskobeton.m200_desc', '19 кг/м²/см'),
+  m300('screed_unified.peskobeton.m300', 'screed_unified.peskobeton.m300_desc', '20 кг/м²/см'),
+  m400('screed_unified.peskobeton.m400', 'screed_unified.peskobeton.m400_desc', '22 кг/м²/см');
 
   final String nameKey;
   final String descKey;
-  const MixGrade(this.nameKey, this.descKey);
+  final String consumption;
+  const PeskobetonMarka(this.nameKey, this.descKey, this.consumption);
 }
 
 /// Режим ввода площади
@@ -48,28 +50,16 @@ class _ScreedResult {
   final double perimeter;
   final double volume;
   final double thickness;
-
-  // Готовая смесь
   final double mixWeightKg;
   final double mixWeightTonnes;
   final int mixBags;
-
-  // Самозамес
-  final double cementKg;
-  final int cementBags;
-  final double sandKg;
-  final double sandCbm;
-  final double gravelKg;
-  final double gravelCbm;
-
-  // Дополнительные материалы
+  final double consumption;
   final double meshArea;
   final double filmArea;
   final double tapeMeters;
   final int beaconsNeeded;
-
-  // Флаги
   final bool thicknessWarning;
+  final bool typeThicknessWarning;
 
   const _ScreedResult({
     required this.area,
@@ -79,17 +69,13 @@ class _ScreedResult {
     required this.mixWeightKg,
     required this.mixWeightTonnes,
     required this.mixBags,
-    required this.cementKg,
-    required this.cementBags,
-    required this.sandKg,
-    required this.sandCbm,
-    required this.gravelKg,
-    required this.gravelCbm,
+    required this.consumption,
     required this.meshArea,
     required this.filmArea,
     required this.tapeMeters,
     required this.beaconsNeeded,
     required this.thicknessWarning,
+    required this.typeThicknessWarning,
   });
 
   factory _ScreedResult.fromCalculatorResult(Map<String, double> values) {
@@ -101,28 +87,27 @@ class _ScreedResult {
       mixWeightKg: values['mixWeightKg'] ?? 0,
       mixWeightTonnes: values['mixWeightTonnes'] ?? 0,
       mixBags: (values['mixBags'] ?? 0).toInt(),
-      cementKg: values['cementKg'] ?? 0,
-      cementBags: (values['cementBags'] ?? 0).toInt(),
-      sandKg: values['sandKg'] ?? 0,
-      sandCbm: values['sandCbm'] ?? 0,
-      gravelKg: values['gravelKg'] ?? 0,
-      gravelCbm: values['gravelCbm'] ?? 0,
+      consumption: values['consumption'] ?? 0,
       meshArea: values['meshArea'] ?? 0,
       filmArea: values['filmArea'] ?? 0,
       tapeMeters: values['tapeMeters'] ?? 0,
       beaconsNeeded: (values['beaconsNeeded'] ?? 0).toInt(),
       thicknessWarning: (values['thicknessWarning'] ?? 0) > 0,
+      typeThicknessWarning: (values['typeThicknessWarning'] ?? 0) > 0,
     );
   }
 }
 
-/// Объединённый калькулятор стяжки пола.
+/// Калькулятор стяжки пола (ЦПС / Пескобетон).
 ///
-/// Объединяет функциональность калькуляторов "Стяжка" и "ЦПС/Стяжка":
-/// - Выбор типа стяжки: ЦПС, полусухая, бетонная
-/// - Выбор способа: готовая смесь или самозамес
-/// - Расчёт всех необходимых материалов
-/// - Современный UI с подсказками
+/// Современный калькулятор для расчёта сухих смесей:
+/// - ЦПС (цементно-песчаная смесь): М100, М150, М200
+/// - Пескобетон: М200, М300, М400
+///
+/// Особенности:
+/// - Расход по СП 29.13330.2011
+/// - Рекомендации по маркам в зависимости от толщины
+/// - Расчёт дополнительных материалов
 class ScreedUnifiedCalculatorScreen extends ConsumerStatefulWidget {
   const ScreedUnifiedCalculatorScreen({super.key});
 
@@ -149,9 +134,9 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
   double _bagWeight = 40.0;
 
   // Выборы
-  ScreedType _screedType = ScreedType.cementSand;
-  MaterialMethod _materialMethod = MaterialMethod.readyMix;
-  MixGrade _mixGrade = MixGrade.m300;
+  ScreedMixType _mixType = ScreedMixType.cps;
+  CpsMarka _cpsMarka = CpsMarka.m150;
+  PeskobetonMarka _peskobetonMarka = PeskobetonMarka.m300;
   AreaInputMode _inputMode = AreaInputMode.manual;
 
   // Опции
@@ -175,9 +160,9 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
     final inputs = <String, double>{
       'inputMode': _inputMode == AreaInputMode.manual ? 0.0 : 1.0,
       'thickness': _thickness,
-      'screedType': _screedType.index.toDouble(),
-      'materialType': _materialMethod.index.toDouble(),
-      'mixGrade': _mixGrade.index.toDouble(),
+      'mixType': _mixType.index.toDouble(),
+      'cpsMarka': _cpsMarka.index.toDouble(),
+      'peskobetonMarka': _peskobetonMarka.index.toDouble(),
       'bagWeight': _bagWeight,
       'needMesh': _needMesh ? 1.0 : 0.0,
       'needFilm': _needFilm ? 1.0 : 0.0,
@@ -198,6 +183,21 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
 
   void _update() => setState(() => _result = _calculate());
 
+  /// Получить рекомендуемую марку для текущей толщины
+  String _getRecommendedMarka() {
+    return CalculateScreedUnified.getRecommendedMarka(_mixType.index, _thickness);
+  }
+
+  /// Проверить, выбрана ли рекомендуемая марка
+  bool _isRecommendedMarka() {
+    final recommended = _getRecommendedMarka();
+    if (_mixType == ScreedMixType.cps) {
+      return _cpsMarka.nameKey.contains(recommended.replaceAll('М', 'm'));
+    } else {
+      return _peskobetonMarka.nameKey.contains(recommended.replaceAll('М', 'm'));
+    }
+  }
+
   @override
   String generateExportText() {
     final buffer = StringBuffer();
@@ -206,8 +206,12 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
     buffer.writeln();
 
     // Параметры
-    buffer.writeln('${_loc.translate('screed_unified.export.type')}: ${_loc.translate(_screedType.nameKey)}');
-    buffer.writeln('${_loc.translate('screed_unified.export.method')}: ${_loc.translate(_materialMethod.nameKey)}');
+    final mixTypeName = _loc.translate(_mixType.nameKey);
+    final markaName = _mixType == ScreedMixType.cps
+        ? _loc.translate(_cpsMarka.nameKey)
+        : _loc.translate(_peskobetonMarka.nameKey);
+
+    buffer.writeln('${_loc.translate('screed_unified.export.mix_type')}: $mixTypeName $markaName');
     buffer.writeln('${_loc.translate('screed_unified.export.area')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
     buffer.writeln('${_loc.translate('screed_unified.export.thickness')}: ${_result.thickness.toStringAsFixed(0)} ${_loc.translate('common.mm')}');
     buffer.writeln('${_loc.translate('screed_unified.export.volume')}: ${_result.volume.toStringAsFixed(2)} ${_loc.translate('common.cbm')}');
@@ -216,16 +220,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
     // Материалы
     buffer.writeln(_loc.translate('screed_unified.export.materials_title'));
     buffer.writeln('─' * 40);
-
-    if (_materialMethod == MaterialMethod.readyMix) {
-      buffer.writeln('${_loc.translate(_mixGrade.nameKey)}: ${_result.mixBags} ${_loc.translate('common.pcs')} (${_result.mixWeightKg.toStringAsFixed(0)} ${_loc.translate('common.kg')})');
-    } else {
-      buffer.writeln('${_loc.translate('screed_unified.materials.cement')}: ${_result.cementBags} ${_loc.translate('common.pcs')} (${_result.cementKg.toStringAsFixed(0)} ${_loc.translate('common.kg')})');
-      buffer.writeln('${_loc.translate('screed_unified.materials.sand')}: ${_result.sandCbm.toStringAsFixed(2)} ${_loc.translate('common.cbm')}');
-      if (_screedType == ScreedType.concrete) {
-        buffer.writeln('${_loc.translate('screed_unified.materials.gravel')}: ${_result.gravelCbm.toStringAsFixed(2)} ${_loc.translate('common.cbm')}');
-      }
-    }
+    buffer.writeln('$markaName: ${_result.mixBags} ${_loc.translate('common.pcs')} (${_result.mixWeightKg.toStringAsFixed(0)} ${_loc.translate('common.kg')})');
 
     if (_needMesh) {
       buffer.writeln('${_loc.translate('screed_unified.materials.mesh')}: ${_result.meshArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
@@ -257,14 +252,10 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
       actions: exportActions,
       resultHeader: _buildResultHeader(),
       children: [
-        _buildScreedTypeSelector(),
+        _buildMixTypeSelector(),
         const SizedBox(height: 16),
-        _buildMaterialMethodSelector(),
+        _buildMarkaSelector(),
         const SizedBox(height: 16),
-        if (_materialMethod == MaterialMethod.readyMix) ...[
-          _buildMixGradeSelector(),
-          const SizedBox(height: 16),
-        ],
         _buildAreaCard(),
         const SizedBox(height: 16),
         _buildThicknessCard(),
@@ -280,54 +271,43 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
   }
 
   CalculatorResultHeader _buildResultHeader() {
-    final results = <ResultItem>[
-      ResultItem(
-        label: _loc.translate('screed_unified.result.area').toUpperCase(),
-        value: '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-        icon: Icons.straighten,
-      ),
-      ResultItem(
-        label: _loc.translate('screed_unified.result.volume').toUpperCase(),
-        value: '${_result.volume.toStringAsFixed(2)} ${_loc.translate('common.cbm')}',
-        icon: Icons.view_in_ar,
-      ),
-    ];
-
-    if (_materialMethod == MaterialMethod.readyMix) {
-      results.add(ResultItem(
-        label: _loc.translate('screed_unified.result.mix').toUpperCase(),
-        value: '${_result.mixBags} ${_loc.translate('common.pcs')}',
-        icon: Icons.shopping_bag,
-      ));
-    } else {
-      results.add(ResultItem(
-        label: _loc.translate('screed_unified.result.cement').toUpperCase(),
-        value: '${_result.cementBags} ${_loc.translate('common.pcs')}',
-        icon: Icons.inventory_2,
-      ));
-    }
+    final markaName = _mixType == ScreedMixType.cps
+        ? _loc.translate(_cpsMarka.nameKey)
+        : _loc.translate(_peskobetonMarka.nameKey);
 
     return CalculatorResultHeader(
       accentColor: _accentColor,
-      results: results,
+      results: [
+        ResultItem(
+          label: _loc.translate('screed_unified.result.area').toUpperCase(),
+          value: '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          icon: Icons.straighten,
+        ),
+        ResultItem(
+          label: markaName.toUpperCase(),
+          value: '${_result.mixBags} ${_loc.translate('common.pcs')}',
+          icon: Icons.shopping_bag,
+        ),
+        ResultItem(
+          label: _loc.translate('screed_unified.result.weight').toUpperCase(),
+          value: '${_result.mixWeightTonnes.toStringAsFixed(2)} ${_loc.translate('common.ton')}',
+          icon: Icons.scale,
+        ),
+      ],
     );
   }
 
-  Widget _buildScreedTypeSelector() {
+  Widget _buildMixTypeSelector() {
     return TypeSelectorGroup(
-      options: ScreedType.values.map((type) => TypeSelectorOption(
+      options: ScreedMixType.values.map((type) => TypeSelectorOption(
         icon: type.icon,
         title: _loc.translate(type.nameKey),
         subtitle: _loc.translate(type.descKey),
       )).toList(),
-      selectedIndex: _screedType.index,
+      selectedIndex: _mixType.index,
       onSelect: (index) {
         setState(() {
-          _screedType = ScreedType.values[index];
-          // Бетонная стяжка только самозамес
-          if (_screedType == ScreedType.concrete) {
-            _materialMethod = MaterialMethod.selfMix;
-          }
+          _mixType = ScreedMixType.values[index];
           _update();
         });
       },
@@ -335,102 +315,182 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
     );
   }
 
-  Widget _buildMaterialMethodSelector() {
-    // Для бетонной стяжки скрываем селектор — только самозамес
-    if (_screedType == ScreedType.concrete) {
+  Widget _buildMarkaSelector() {
+    final recommended = _getRecommendedMarka();
+    final isRecommended = _isRecommendedMarka();
+
+    if (_mixType == ScreedMixType.cps) {
       return _card(
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(MaterialMethod.selfMix.icon, color: _accentColor),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _loc.translate(MaterialMethod.selfMix.nameKey),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _loc.translate('screed_unified.marka_title'),
                     style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
                   ),
-                  Text(
-                    _loc.translate('screed_unified.concrete_only_self_mix'),
-                    style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+                ),
+                if (!isRecommended)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _accentColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '★ $recommended',
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                    ),
                   ),
-                ],
-              ),
+              ],
             ),
+            const SizedBox(height: 12),
+            TypeSelectorGroup(
+              options: CpsMarka.values.map((m) => TypeSelectorOption(
+                icon: Icons.inventory_2,
+                title: _loc.translate(m.nameKey),
+                subtitle: m.consumption,
+              )).toList(),
+              selectedIndex: _cpsMarka.index,
+              onSelect: (index) {
+                setState(() {
+                  _cpsMarka = CpsMarka.values[index];
+                  _update();
+                });
+              },
+              accentColor: _accentColor,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _loc.translate(_cpsMarka.descKey),
+              style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+            ),
+            const SizedBox(height: 16),
+            _buildBagWeightField(),
+          ],
+        ),
+      );
+    } else {
+      return _card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _loc.translate('screed_unified.marka_title'),
+                    style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
+                  ),
+                ),
+                if (!isRecommended)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _accentColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '★ $recommended',
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            TypeSelectorGroup(
+              options: PeskobetonMarka.values.map((m) => TypeSelectorOption(
+                icon: Icons.inventory_2,
+                title: _loc.translate(m.nameKey),
+                subtitle: m.consumption,
+              )).toList(),
+              selectedIndex: _peskobetonMarka.index,
+              onSelect: (index) {
+                setState(() {
+                  _peskobetonMarka = PeskobetonMarka.values[index];
+                  _update();
+                });
+              },
+              accentColor: _accentColor,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _loc.translate(_peskobetonMarka.descKey),
+              style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+            ),
+            const SizedBox(height: 16),
+            _buildBagWeightField(),
           ],
         ),
       );
     }
-
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _loc.translate('screed_unified.method_title'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
-          ),
-          const SizedBox(height: 12),
-          ModeSelector(
-            options: MaterialMethod.values.map((m) => _loc.translate(m.nameKey)).toList(),
-            selectedIndex: _materialMethod.index,
-            onSelect: (index) {
-              setState(() {
-                _materialMethod = MaterialMethod.values[index];
-                _update();
-              });
-            },
-            accentColor: _accentColor,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _loc.translate(_materialMethod.descKey),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
-          ),
-        ],
-      ),
-    );
   }
 
-  Widget _buildMixGradeSelector() {
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _loc.translate('screed_unified.grade_title'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
-          ),
-          const SizedBox(height: 12),
-          ModeSelector(
-            options: MixGrade.values.map((g) => _loc.translate(g.nameKey)).toList(),
-            selectedIndex: _mixGrade.index,
-            onSelect: (index) {
-              setState(() {
-                _mixGrade = MixGrade.values[index];
-                _update();
-              });
-            },
-            accentColor: _accentColor,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _loc.translate(_mixGrade.descKey),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
-          ),
-          const SizedBox(height: 16),
-          CalculatorTextField(
-            label: _loc.translate('screed_unified.bag_weight'),
-            value: _bagWeight,
-            onChanged: (v) { setState(() { _bagWeight = v; _update(); }); },
-            suffix: _loc.translate('common.kg'),
-            accentColor: _accentColor,
-            minValue: 25,
-            maxValue: 50,
-          ),
-        ],
-      ),
+  Widget _buildBagWeightField() {
+    final bagWeights = [25.0, 40.0, 50.0];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _loc.translate('screed_unified.bag_weight'),
+          style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: bagWeights.map((weight) {
+            final isSelected = _bagWeight == weight;
+            return Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  right: weight != bagWeights.last ? 8 : 0,
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _bagWeight = weight;
+                      _update();
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? _accentColor.withValues(alpha: 0.15)
+                          : CalculatorColors.cardBackground,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isSelected ? _accentColor : CalculatorColors.borderDefault,
+                        width: isSelected ? 2 : 1,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '${weight.toInt()}',
+                          style: CalculatorDesignSystem.titleLarge.copyWith(
+                            color: isSelected ? _accentColor : CalculatorColors.textPrimary,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          _loc.translate('common.kg'),
+                          style: CalculatorDesignSystem.bodySmall.copyWith(
+                            color: isSelected ? _accentColor : CalculatorColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
@@ -527,6 +587,9 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
   }
 
   Widget _buildThicknessCard() {
+    final minThickness = _mixType == ScreedMixType.cps ? 20.0 : 30.0;
+    final showTypeWarning = _thickness < minThickness;
+
     return _card(
       child: Column(
         children: [
@@ -541,27 +604,39 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
             onChanged: (v) { setState(() { _thickness = v; _update(); }); },
           ),
           const SizedBox(height: 8),
-          Text(
-            _loc.translate('screed_unified.thickness_hint'),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+          Row(
+            children: [
+              const Icon(Icons.info_outline, size: 16, color: CalculatorColors.textSecondary),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  _loc.translate('screed_unified.thickness_hint'),
+                  style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+                ),
+              ),
+            ],
           ),
-          if (_result.thicknessWarning) ...[
+          if (_result.thicknessWarning || showTypeWarning) ...[
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.red[50],
+                color: Colors.orange[50],
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.red[200]!),
+                border: Border.all(color: Colors.orange[200]!),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.warning, size: 18, color: Colors.red[700]),
+                  Icon(Icons.warning_amber_rounded, size: 18, color: Colors.orange[700]),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      _loc.translate('screed_unified.thickness_warning'),
-                      style: TextStyle(fontSize: 12, color: Colors.red[900], fontWeight: FontWeight.w500),
+                      showTypeWarning
+                          ? _loc.translate('screed_unified.thickness_type_warning')
+                              .replaceFirst('{min}', minThickness.toStringAsFixed(0))
+                              .replaceFirst('{type}', _loc.translate(_mixType.nameKey))
+                          : _loc.translate('screed_unified.thickness_warning'),
+                      style: TextStyle(fontSize: 12, color: Colors.orange[900], fontWeight: FontWeight.w500),
                     ),
                   ),
                 ],
@@ -629,39 +704,18 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
   }
 
   Widget _buildMaterialsCard() {
-    final items = <MaterialItem>[];
+    final markaName = _mixType == ScreedMixType.cps
+        ? _loc.translate(_cpsMarka.nameKey)
+        : _loc.translate(_peskobetonMarka.nameKey);
 
-    if (_materialMethod == MaterialMethod.readyMix) {
-      // Готовая смесь
-      items.add(MaterialItem(
-        name: _loc.translate(_mixGrade.nameKey),
+    final items = <MaterialItem>[
+      MaterialItem(
+        name: '${_loc.translate(_mixType.nameKey)} $markaName',
         value: '${_result.mixBags} ${_loc.translate('common.pcs')}',
         subtitle: '${_result.mixWeightKg.toStringAsFixed(0)} ${_loc.translate('common.kg')} (${_result.mixWeightTonnes.toStringAsFixed(2)} ${_loc.translate('common.ton')})',
         icon: Icons.shopping_bag,
-      ));
-    } else {
-      // Самозамес
-      items.add(MaterialItem(
-        name: _loc.translate('screed_unified.materials.cement'),
-        value: '${_result.cementBags} ${_loc.translate('common.pcs')}',
-        subtitle: '${_result.cementKg.toStringAsFixed(0)} ${_loc.translate('common.kg')}',
-        icon: Icons.inventory_2,
-      ));
-      items.add(MaterialItem(
-        name: _loc.translate('screed_unified.materials.sand'),
-        value: '${_result.sandCbm.toStringAsFixed(2)} ${_loc.translate('common.cbm')}',
-        subtitle: '${_result.sandKg.toStringAsFixed(0)} ${_loc.translate('common.kg')}',
-        icon: Icons.grain,
-      ));
-      if (_screedType == ScreedType.concrete && _result.gravelCbm > 0) {
-        items.add(MaterialItem(
-          name: _loc.translate('screed_unified.materials.gravel'),
-          value: '${_result.gravelCbm.toStringAsFixed(2)} ${_loc.translate('common.cbm')}',
-          subtitle: '${_result.gravelKg.toStringAsFixed(0)} ${_loc.translate('common.kg')}',
-          icon: Icons.bubble_chart,
-        ));
-      }
-    }
+      ),
+    ];
 
     // Дополнительные материалы
     if (_needMesh && _result.meshArea > 0) {
@@ -711,27 +765,13 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
   Widget _buildTipsCard() {
     final tips = <String>[];
 
-    // Советы по типу стяжки
-    switch (_screedType) {
-      case ScreedType.cementSand:
-        tips.add(_loc.translate('screed_unified.tip.cement_sand_1'));
-        tips.add(_loc.translate('screed_unified.tip.cement_sand_2'));
-        break;
-      case ScreedType.semidry:
-        tips.add(_loc.translate('screed_unified.tip.semidry_1'));
-        tips.add(_loc.translate('screed_unified.tip.semidry_2'));
-        break;
-      case ScreedType.concrete:
-        tips.add(_loc.translate('screed_unified.tip.concrete_1'));
-        tips.add(_loc.translate('screed_unified.tip.concrete_2'));
-        break;
-    }
-
-    // Советы по способу
-    if (_materialMethod == MaterialMethod.readyMix) {
-      tips.add(_loc.translate('screed_unified.tip.ready_mix'));
+    // Советы по типу смеси
+    if (_mixType == ScreedMixType.cps) {
+      tips.add(_loc.translate('screed_unified.tip.cps_1'));
+      tips.add(_loc.translate('screed_unified.tip.cps_2'));
     } else {
-      tips.add(_loc.translate('screed_unified.tip.self_mix'));
+      tips.add(_loc.translate('screed_unified.tip.peskobeton_1'));
+      tips.add(_loc.translate('screed_unified.tip.peskobeton_2'));
     }
 
     tips.add(_loc.translate('screed_unified.tip.common'));

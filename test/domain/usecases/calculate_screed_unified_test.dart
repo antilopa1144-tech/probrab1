@@ -16,8 +16,7 @@ void main() {
           'inputMode': 0.0, // По площади
           'area': 20.0, // 20 м²
           'thickness': 50.0, // 50 мм
-          'screedType': 0.0, // ЦПС
-          'materialType': 1.0, // Самозамес
+          'mixType': 0.0, // ЦПС
         };
 
         final result = calculator(inputs, []);
@@ -34,8 +33,7 @@ void main() {
           'roomWidth': 4.0,
           'roomLength': 5.0,
           'thickness': 50.0,
-          'screedType': 0.0,
-          'materialType': 1.0,
+          'mixType': 0.0,
         };
 
         final result = calculator(inputs, []);
@@ -45,124 +43,164 @@ void main() {
       });
     });
 
-    group('Готовая смесь (ЦПС)', () {
-      test('calculates ready mix M300 bags correctly', () {
+    group('ЦПС (цементно-песчаная смесь)', () {
+      test('calculates CPS M100 bags correctly', () {
         final inputs = {
           'inputMode': 0.0,
           'area': 20.0,
           'thickness': 50.0, // 50 мм = 5 см
-          'screedType': 0.0,
-          'materialType': 0.0, // Готовая смесь
-          'mixGrade': 0.0, // М300
+          'mixType': 0.0, // ЦПС
+          'cpsMarka': 0.0, // М100
           'bagWeight': 40.0,
         };
 
         final result = calculator(inputs, []);
 
-        // Расход М300 = 2.0 кг/м²/мм
-        // Вес = 20 * 50 * 2.0 = 2000 кг
-        // Мешки = ceil(2000 / 40) = 50 мешков
-        expect(result.values['mixWeightKg'], equals(2000.0));
-        expect(result.values['mixBags'], equals(50.0));
+        // Расход М100 = 15.0 кг/м²/см
+        // Вес = 20 * 5 * 15.0 = 1500 кг
+        // Мешки = ceil(1500 / 40) = 38 мешков
+        expect(result.values['mixWeightKg'], equals(1500.0));
+        expect(result.values['mixBags'], equals(38.0));
+        expect(result.values['consumption'], equals(15.0));
       });
 
-      test('calculates ready mix M150 bags correctly', () {
+      test('calculates CPS M150 bags correctly', () {
         final inputs = {
           'inputMode': 0.0,
           'area': 20.0,
           'thickness': 50.0,
-          'screedType': 0.0,
-          'materialType': 0.0,
-          'mixGrade': 1.0, // М150
+          'mixType': 0.0, // ЦПС
+          'cpsMarka': 1.0, // М150
           'bagWeight': 40.0,
         };
 
         final result = calculator(inputs, []);
 
-        // Расход М150 = 1.8 кг/м²/мм
-        // Вес = 20 * 50 * 1.8 = 1800 кг
+        // Расход М150 = 17.0 кг/м²/см
+        // Вес = 20 * 5 * 17.0 = 1700 кг
+        // Мешки = ceil(1700 / 40) = 43 мешка
+        expect(result.values['mixWeightKg'], equals(1700.0));
+        expect(result.values['mixBags'], equals(43.0));
+        expect(result.values['consumption'], equals(17.0));
+      });
+
+      test('calculates CPS M200 bags correctly', () {
+        final inputs = {
+          'inputMode': 0.0,
+          'area': 20.0,
+          'thickness': 50.0,
+          'mixType': 0.0, // ЦПС
+          'cpsMarka': 2.0, // М200
+          'bagWeight': 40.0,
+        };
+
+        final result = calculator(inputs, []);
+
+        // Расход М200 = 18.0 кг/м²/см
+        // Вес = 20 * 5 * 18.0 = 1800 кг
         // Мешки = ceil(1800 / 40) = 45 мешков
         expect(result.values['mixWeightKg'], equals(1800.0));
         expect(result.values['mixBags'], equals(45.0));
-      });
-
-      test('respects bag weight parameter', () {
-        final inputs = {
-          'inputMode': 0.0,
-          'area': 20.0,
-          'thickness': 50.0,
-          'screedType': 0.0,
-          'materialType': 0.0,
-          'mixGrade': 0.0,
-          'bagWeight': 50.0, // 50 кг вместо 40
-        };
-
-        final result = calculator(inputs, []);
-
-        // Вес = 2000 кг
-        // Мешки = ceil(2000 / 50) = 40 мешков
-        expect(result.values['mixBags'], equals(40.0));
+        expect(result.values['consumption'], equals(18.0));
       });
     });
 
-    group('Самозамес (цемент + песок)', () {
-      test('calculates cement and sand for ЦПС correctly', () {
+    group('Пескобетон', () {
+      test('calculates Peskobeton M200 bags correctly', () {
         final inputs = {
           'inputMode': 0.0,
           'area': 20.0,
-          'thickness': 50.0,
-          'screedType': 0.0, // ЦПС
-          'materialType': 1.0, // Самозамес
+          'thickness': 50.0, // 50 мм = 5 см
+          'mixType': 1.0, // Пескобетон
+          'peskobetonMarka': 0.0, // М200
+          'bagWeight': 40.0,
         };
 
         final result = calculator(inputs, []);
 
-        // Объём = 1 м³
-        // Цемент = 1 * 400 = 400 кг → ceil(400/50) = 8 мешков
-        // Песок = 1 * 1200 = 1200 кг → 1200/1500 = 0.8 м³
-        expect(result.values['cementKg'], equals(400.0));
-        expect(result.values['cementBags'], equals(8.0));
-        expect(result.values['sandKg'], equals(1200.0));
-        expect(result.values['sandCbm'], equals(0.8));
+        // Расход М200 = 19.0 кг/м²/см
+        // Вес = 20 * 5 * 19.0 = 1900 кг
+        // Мешки = ceil(1900 / 40) = 48 мешков
+        expect(result.values['mixWeightKg'], equals(1900.0));
+        expect(result.values['mixBags'], equals(48.0));
+        expect(result.values['consumption'], equals(19.0));
       });
 
-      test('calculates materials for polysuhaya screed correctly', () {
+      test('calculates Peskobeton M300 bags correctly', () {
         final inputs = {
           'inputMode': 0.0,
           'area': 20.0,
           'thickness': 50.0,
-          'screedType': 1.0, // Полусухая
-          'materialType': 1.0,
+          'mixType': 1.0, // Пескобетон
+          'peskobetonMarka': 1.0, // М300
+          'bagWeight': 40.0,
         };
 
         final result = calculator(inputs, []);
 
-        // Объём = 1 м³
-        // Цемент = 1 * 350 = 350 кг
-        // Песок = 1 * 1050 = 1050 кг
-        expect(result.values['cementKg'], equals(350.0));
-        expect(result.values['sandKg'], equals(1050.0));
+        // Расход М300 = 20.0 кг/м²/см
+        // Вес = 20 * 5 * 20.0 = 2000 кг
+        // Мешки = ceil(2000 / 40) = 50 мешков
+        expect(result.values['mixWeightKg'], equals(2000.0));
+        expect(result.values['mixBags'], equals(50.0));
+        expect(result.values['consumption'], equals(20.0));
       });
 
-      test('calculates materials for concrete screed with gravel', () {
+      test('calculates Peskobeton M400 bags correctly', () {
         final inputs = {
           'inputMode': 0.0,
           'area': 20.0,
           'thickness': 50.0,
-          'screedType': 2.0, // Бетонная
-          'materialType': 1.0,
+          'mixType': 1.0, // Пескобетон
+          'peskobetonMarka': 2.0, // М400
+          'bagWeight': 40.0,
         };
 
         final result = calculator(inputs, []);
 
-        // Объём = 1 м³
-        // Цемент = 1 * 300 = 300 кг
-        // Песок = 1 * 900 = 900 кг
-        // Щебень = 1 * 900 = 900 кг
-        expect(result.values['cementKg'], equals(300.0));
-        expect(result.values['sandKg'], equals(900.0));
-        expect(result.values['gravelKg'], equals(900.0));
-        expect(result.values['gravelCbm'], closeTo(0.64, 0.01));
+        // Расход М400 = 22.0 кг/м²/см
+        // Вес = 20 * 5 * 22.0 = 2200 кг
+        // Мешки = ceil(2200 / 40) = 55 мешков
+        expect(result.values['mixWeightKg'], equals(2200.0));
+        expect(result.values['mixBags'], equals(55.0));
+        expect(result.values['consumption'], equals(22.0));
+      });
+    });
+
+    group('Вес мешка', () {
+      test('respects bag weight 25 kg', () {
+        final inputs = {
+          'inputMode': 0.0,
+          'area': 10.0,
+          'thickness': 50.0,
+          'mixType': 0.0, // ЦПС
+          'cpsMarka': 1.0, // М150
+          'bagWeight': 25.0,
+        };
+
+        final result = calculator(inputs, []);
+
+        // Вес = 10 * 5 * 17.0 = 850 кг
+        // Мешки = ceil(850 / 25) = 34 мешка
+        expect(result.values['mixWeightKg'], equals(850.0));
+        expect(result.values['mixBags'], equals(34.0));
+      });
+
+      test('respects bag weight 50 kg', () {
+        final inputs = {
+          'inputMode': 0.0,
+          'area': 10.0,
+          'thickness': 50.0,
+          'mixType': 0.0, // ЦПС
+          'cpsMarka': 1.0, // М150
+          'bagWeight': 50.0,
+        };
+
+        final result = calculator(inputs, []);
+
+        // Вес = 850 кг
+        // Мешки = ceil(850 / 50) = 17 мешков
+        expect(result.values['mixBags'], equals(17.0));
       });
     });
 
@@ -172,8 +210,7 @@ void main() {
           'inputMode': 0.0,
           'area': 20.0,
           'thickness': 50.0,
-          'screedType': 0.0,
-          'materialType': 1.0,
+          'mixType': 0.0,
           'needMesh': 1.0,
         };
 
@@ -188,8 +225,7 @@ void main() {
           'inputMode': 0.0,
           'area': 20.0,
           'thickness': 50.0,
-          'screedType': 0.0,
-          'materialType': 1.0,
+          'mixType': 0.0,
           'needFilm': 1.0,
         };
 
@@ -205,8 +241,7 @@ void main() {
           'roomWidth': 4.0,
           'roomLength': 5.0,
           'thickness': 50.0,
-          'screedType': 0.0,
-          'materialType': 1.0,
+          'mixType': 0.0,
           'needTape': 1.0,
         };
 
@@ -221,8 +256,7 @@ void main() {
           'inputMode': 0.0,
           'area': 20.0,
           'thickness': 50.0,
-          'screedType': 0.0,
-          'materialType': 1.0,
+          'mixType': 0.0,
           'needBeacons': 1.0,
         };
 
@@ -237,8 +271,7 @@ void main() {
           'inputMode': 0.0,
           'area': 20.0,
           'thickness': 50.0,
-          'screedType': 0.0,
-          'materialType': 1.0,
+          'mixType': 0.0,
           'needMesh': 0.0,
           'needFilm': 0.0,
           'needTape': 0.0,
@@ -255,13 +288,12 @@ void main() {
     });
 
     group('Предупреждения', () {
-      test('shows warning for thin screed', () {
+      test('shows warning for thin screed (< 30 mm)', () {
         final inputs = {
           'inputMode': 0.0,
           'area': 20.0,
           'thickness': 25.0, // Менее 30 мм
-          'screedType': 0.0,
-          'materialType': 1.0,
+          'mixType': 0.0,
         };
 
         final result = calculator(inputs, []);
@@ -274,25 +306,81 @@ void main() {
           'inputMode': 0.0,
           'area': 20.0,
           'thickness': 50.0, // Более 30 мм
-          'screedType': 0.0,
-          'materialType': 1.0,
+          'mixType': 0.0,
         };
 
         final result = calculator(inputs, []);
 
         expect(result.values['thicknessWarning'], equals(0.0));
       });
+
+      test('shows type warning for CPS below 20 mm', () {
+        final inputs = {
+          'inputMode': 0.0,
+          'area': 20.0,
+          'thickness': 15.0, // Менее 20 мм для ЦПС
+          'mixType': 0.0, // ЦПС
+        };
+
+        final result = calculator(inputs, []);
+
+        expect(result.values['typeThicknessWarning'], equals(1.0));
+      });
+
+      test('shows type warning for Peskobeton below 30 mm', () {
+        final inputs = {
+          'inputMode': 0.0,
+          'area': 20.0,
+          'thickness': 25.0, // Менее 30 мм для Пескобетона
+          'mixType': 1.0, // Пескобетон
+        };
+
+        final result = calculator(inputs, []);
+
+        expect(result.values['typeThicknessWarning'], equals(1.0));
+      });
+    });
+
+    group('Рекомендации по маркам', () {
+      test('recommends CPS M100 for thickness <= 30 mm', () {
+        expect(CalculateScreedUnified.getRecommendedMarka(0, 30.0), equals('М100'));
+        expect(CalculateScreedUnified.getRecommendedMarka(0, 20.0), equals('М100'));
+      });
+
+      test('recommends CPS M150 for thickness 31-50 mm', () {
+        expect(CalculateScreedUnified.getRecommendedMarka(0, 40.0), equals('М150'));
+        expect(CalculateScreedUnified.getRecommendedMarka(0, 50.0), equals('М150'));
+      });
+
+      test('recommends CPS M200 for thickness > 50 mm', () {
+        expect(CalculateScreedUnified.getRecommendedMarka(0, 60.0), equals('М200'));
+        expect(CalculateScreedUnified.getRecommendedMarka(0, 100.0), equals('М200'));
+      });
+
+      test('recommends Peskobeton M200 for thickness <= 40 mm', () {
+        expect(CalculateScreedUnified.getRecommendedMarka(1, 30.0), equals('М200'));
+        expect(CalculateScreedUnified.getRecommendedMarka(1, 40.0), equals('М200'));
+      });
+
+      test('recommends Peskobeton M300 for thickness 41-80 mm', () {
+        expect(CalculateScreedUnified.getRecommendedMarka(1, 50.0), equals('М300'));
+        expect(CalculateScreedUnified.getRecommendedMarka(1, 80.0), equals('М300'));
+      });
+
+      test('recommends Peskobeton M400 for thickness > 80 mm', () {
+        expect(CalculateScreedUnified.getRecommendedMarka(1, 90.0), equals('М400'));
+        expect(CalculateScreedUnified.getRecommendedMarka(1, 150.0), equals('М400'));
+      });
     });
 
     group('Ценообразование', () {
-      test('calculates total price for ready mix', () {
+      test('calculates total price for CPS', () {
         final inputs = {
           'inputMode': 0.0,
           'area': 10.0,
           'thickness': 50.0,
-          'screedType': 0.0,
-          'materialType': 0.0,
-          'mixGrade': 0.0,
+          'mixType': 0.0, // ЦПС
+          'cpsMarka': 1.0, // М150
           'bagWeight': 40.0,
           'needMesh': 1.0,
           'needFilm': 0.0,
@@ -301,25 +389,26 @@ void main() {
         };
 
         final priceList = [
-          const PriceItem(sku: 'dsp_m300', name: 'Пескобетон М300', price: 200, unit: 'мешок', imageUrl: ''),
+          const PriceItem(sku: 'cps_m150', name: 'ЦПС М150', price: 180, unit: 'мешок', imageUrl: ''),
           const PriceItem(sku: 'mesh', name: 'Сетка', price: 50, unit: 'м²', imageUrl: ''),
         ];
 
         final result = calculator(inputs, priceList);
 
-        // Смесь: 25 мешков × 200 = 5000
+        // Смесь: 22 мешка × 180 = 3960
         // Сетка: 11 м² × 50 = 550
-        // Итого: 5550
-        expect(result.totalPrice, equals(5550.0));
+        // Итого: 4510
+        expect(result.totalPrice, equals(4510.0));
       });
 
-      test('calculates total price for self mix', () {
+      test('calculates total price for Peskobeton', () {
         final inputs = {
           'inputMode': 0.0,
           'area': 10.0,
           'thickness': 50.0,
-          'screedType': 0.0,
-          'materialType': 1.0,
+          'mixType': 1.0, // Пескобетон
+          'peskobetonMarka': 1.0, // М300
+          'bagWeight': 40.0,
           'needMesh': 0.0,
           'needFilm': 0.0,
           'needTape': 0.0,
@@ -327,17 +416,13 @@ void main() {
         };
 
         final priceList = [
-          const PriceItem(sku: 'cement', name: 'Цемент', price: 350, unit: 'мешок', imageUrl: ''),
-          const PriceItem(sku: 'sand', name: 'Песок', price: 500, unit: 'м³', imageUrl: ''),
+          const PriceItem(sku: 'peskobeton_m300', name: 'Пескобетон М300', price: 200, unit: 'мешок', imageUrl: ''),
         ];
 
         final result = calculator(inputs, priceList);
 
-        // Объём = 0.5 м³
-        // Цемент: 4 мешка × 350 = 1400
-        // Песок: 0.4 м³ × 500 = 200
-        // Итого: 1600
-        expect(result.totalPrice, equals(1600.0));
+        // Смесь: 25 мешков × 200 = 5000
+        expect(result.totalPrice, equals(5000.0));
       });
     });
 
@@ -347,9 +432,8 @@ void main() {
           'inputMode': 0.0,
           'area': 1.0,
           'thickness': 50.0,
-          'screedType': 0.0,
-          'materialType': 0.0,
-          'mixGrade': 0.0,
+          'mixType': 0.0,
+          'cpsMarka': 1.0,
           'bagWeight': 40.0,
         };
 
@@ -364,8 +448,7 @@ void main() {
           'inputMode': 0.0,
           'area': 500.0,
           'thickness': 50.0,
-          'screedType': 0.0,
-          'materialType': 1.0,
+          'mixType': 0.0,
         };
 
         final result = calculator(inputs, []);
@@ -374,8 +457,22 @@ void main() {
         expect(result.values['volume'], equals(25.0));
       });
 
-      test('handles default values correctly with room mode', () {
-        // В режиме комнаты площадь вычисляется из размеров
+      test('handles default values correctly', () {
+        // Минимальные входные данные с площадью
+        final inputs = {
+          'area': 20.0,
+        };
+
+        final result = calculator(inputs, []);
+
+        // Дефолты: площадь 20, толщина 50, ЦПС М150
+        expect(result.values['area'], equals(20.0));
+        expect(result.values['thickness'], equals(50.0));
+        expect(result.values['mixType'], equals(0.0)); // ЦПС
+        expect(result.values['consumption'], equals(17.0)); // М150
+      });
+
+      test('handles room mode with default values', () {
         final inputs = {
           'inputMode': 1.0, // По комнате
           'roomWidth': 4.0,
@@ -384,10 +481,44 @@ void main() {
 
         final result = calculator(inputs, []);
 
-        // 4x5 = 20 м²
         expect(result.values['area'], equals(20.0));
-        // Толщина по умолчанию 50 мм
         expect(result.values['thickness'], equals(50.0));
+      });
+    });
+
+    group('Формулы по СП 29.13330.2011', () {
+      test('consumption formula: area × thickness(cm) × consumption rate', () {
+        // Проверяем формулу: площадь × толщина(см) × расход
+        final inputs = {
+          'inputMode': 0.0,
+          'area': 15.0, // 15 м²
+          'thickness': 70.0, // 70 мм = 7 см
+          'mixType': 1.0, // Пескобетон
+          'peskobetonMarka': 1.0, // М300, расход 20 кг/м²/см
+          'bagWeight': 50.0,
+        };
+
+        final result = calculator(inputs, []);
+
+        // Ожидаемый вес: 15 × 7 × 20 = 2100 кг
+        expect(result.values['mixWeightKg'], equals(2100.0));
+
+        // Мешки: ceil(2100 / 50) = 42
+        expect(result.values['mixBags'], equals(42.0));
+      });
+
+      test('volume formula: area × thickness(m)', () {
+        final inputs = {
+          'inputMode': 0.0,
+          'area': 25.0,
+          'thickness': 80.0, // 80 мм = 0.08 м
+          'mixType': 0.0,
+        };
+
+        final result = calculator(inputs, []);
+
+        // Объём: 25 × 0.08 = 2.0 м³
+        expect(result.values['volume'], equals(2.0));
       });
     });
   });
