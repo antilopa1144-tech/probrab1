@@ -22,23 +22,17 @@ class CalculateCassetteCeilingV2 extends BaseCalculator {
   /// Запас на пристенный профиль (%)
   static const double wallProfileWastePercent = 10.0;
 
-  /// Шаг главного профиля (м)
-  static const double mainProfileStep = 1.2;
+  /// Норма расхода главного профиля (м.п./м²) — согласно СНиП
+  static const double mainProfilePerM2 = 2.0;
 
-  /// Длина главного профиля (м)
-  static const double mainProfileLength = 3.7;
+  /// Норма расхода поперечного профиля (м.п./м²) — согласно СНиП
+  static const double crossProfilePerM2 = 1.35;
 
-  /// Площадь на один подвес (м²)
-  static const double areaPerHanger = 1.2;
+  /// Норма расхода подвесов (шт/м²) — согласно СНиП
+  static const double hangersPerM2 = 2.5;
 
   /// Площади кассет (м²): 600x600, 600x1200, 300x300
   static const List<double> cassetteAreas = [0.36, 0.72, 0.09];
-
-  /// Шаг поперечного профиля для 600x600 (м)
-  static const double crossProfileStep600 = 0.6;
-
-  /// Шаг поперечного профиля для других размеров (м)
-  static const double crossProfileStepOther = 1.2;
 
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -103,26 +97,17 @@ class CalculateCassetteCeilingV2 extends BaseCalculator {
     // Количество кассет с запасом
     final cassettesCount = (area * (1 + cassetteWastePercent / 100) / cassetteArea).ceil();
 
-    // Основной профиль (3.7 м на каждые 1.2 м по длине, и по ширине)
-    final mainProfileRows = (roomLength / mainProfileStep).ceil();
-    final mainProfilesPerRow = (roomWidth / mainProfileLength).ceil();
-    final mainProfileTotalLength = mainProfileRows * mainProfileLength * mainProfilesPerRow;
+    // Главный профиль: 2.0 м.п. на м² (согласно СНиП)
+    final mainProfileTotalLength = area * mainProfilePerM2;
 
-    // Поперечный профиль (зависит от размера кассеты)
-    double crossProfileLength;
-    if (cassetteSize == 0) {
-      // 600x600 - шаг 0.6 м
-      crossProfileLength = (roomWidth / crossProfileStep600).ceil() * roomLength;
-    } else {
-      // 600x1200 или 300x300 - шаг 1.2 м
-      crossProfileLength = (roomWidth / crossProfileStepOther).ceil() * roomLength;
-    }
+    // Поперечный профиль: 1.35 м.п. на м² (согласно СНиП)
+    final crossProfileLength = area * crossProfilePerM2;
 
     // Пристенный профиль = периметр + 10%
     final wallProfileLength = perimeter * (1 + wallProfileWastePercent / 100);
 
-    // Подвесы: 1 шт на каждые 1.2 м²
-    final hangersCount = (area / areaPerHanger).ceil();
+    // Подвесы: 2.5 шт на м² (согласно СНиП)
+    final hangersCount = (area * hangersPerM2).ceil();
 
     // Расчёт стоимости
     final cassettePrice = findPrice(priceList, ['cassette', 'кассета', 'ceiling_cassette']);

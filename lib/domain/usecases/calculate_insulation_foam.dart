@@ -51,8 +51,9 @@ class CalculateInsulationFoam extends BaseCalculator {
     // Вес утеплителя
     final weight = volume * density;
 
-    // Пароизоляция: площадь + 10% на нахлёсты и загибы
-    final vaporBarrierArea = addMargin(area, 10.0);
+    // Пароизоляция: только для пенопласта (ПСБ), ЭППС сам паронепроницаем
+    // ЭППС не требует пароизоляции согласно СП 50.13330.2012
+    final vaporBarrierArea = type == 1 ? addMargin(area, 10.0) : 0.0;
 
     // Гидроизоляция/ветрозащита (для наружного утепления): площадь + 10%
     final windBarrierArea = addMargin(area, 10.0);
@@ -108,7 +109,7 @@ class CalculateInsulationFoam extends BaseCalculator {
       calculateCost(glueNeeded, gluePrice?.price),
       calculateCost(foamGlueNeeded.toDouble(), foamGluePrice?.price),
       calculateCost(fastenersNeeded.toDouble(), fastenerPrice?.price),
-      calculateCost(vaporBarrierArea, vaporBarrierPrice?.price),
+      if (vaporBarrierArea > 0) calculateCost(vaporBarrierArea, vaporBarrierPrice?.price),
       calculateCost(windBarrierArea, windBarrierPrice?.price),
       calculateCost(tapeNeeded, tapePrice?.price),
       calculateCost(meshArea, meshPrice?.price),

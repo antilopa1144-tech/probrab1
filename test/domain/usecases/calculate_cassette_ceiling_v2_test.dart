@@ -125,7 +125,7 @@ void main() {
     });
 
     group('Main profile calculations', () {
-      test('main profile based on room dimensions', () {
+      test('main profile = 2.0 m.p. per sqm (SNiP norm)', () {
         final inputs = {
           'roomWidth': 4.0,
           'roomLength': 5.0,
@@ -134,10 +134,8 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        // Main profile rows = ceil(5 / 1.2) = 5
-        // Main profiles per row = ceil(4 / 3.7) = 2
-        // Total = 5 * 3.7 * 2 = 37
-        expect(result.values['mainProfileLength'], equals(37.0));
+        // Area = 20 sqm, main profile = 20 * 2.0 = 40 m.p.
+        expect(result.values['mainProfileLength'], equals(40.0));
       });
 
       test('larger room needs more main profile', () {
@@ -163,46 +161,40 @@ void main() {
     });
 
     group('Cross profile calculations', () {
-      test('600x600 cassettes use 0.6m step', () {
+      test('cross profile = 1.35 m.p. per sqm (SNiP norm)', () {
         final inputs = {
-          'roomWidth': 3.0,
-          'roomLength': 4.0,
+          'roomWidth': 4.0,
+          'roomLength': 5.0,
           'cassetteSize': 0.0, // 600x600
           'inputMode': 1.0,
         };
 
         final result = calculator(inputs, emptyPriceList);
 
-        // Cross profile = ceil(3 / 0.6) * 4 = 5 * 4 = 20
-        expect(result.values['crossProfileLength'], equals(20.0));
+        // Area = 20 sqm, cross profile = 20 * 1.35 = 27 m.p.
+        expect(result.values['crossProfileLength'], equals(27.0));
       });
 
-      test('600x1200 cassettes use 1.2m step', () {
-        final inputs = {
+      test('cross profile independent of cassette size', () {
+        final inputs600x600 = {
+          'roomWidth': 3.0,
+          'roomLength': 4.0,
+          'cassetteSize': 0.0, // 600x600
+          'inputMode': 1.0,
+        };
+        final inputs600x1200 = {
           'roomWidth': 3.0,
           'roomLength': 4.0,
           'cassetteSize': 1.0, // 600x1200
           'inputMode': 1.0,
         };
 
-        final result = calculator(inputs, emptyPriceList);
+        final result1 = calculator(inputs600x600, emptyPriceList);
+        final result2 = calculator(inputs600x1200, emptyPriceList);
 
-        // Cross profile = ceil(3 / 1.2) * 4 = 3 * 4 = 12
-        expect(result.values['crossProfileLength'], equals(12.0));
-      });
-
-      test('300x300 cassettes use 1.2m step', () {
-        final inputs = {
-          'roomWidth': 2.4,
-          'roomLength': 4.0,
-          'cassetteSize': 2.0, // 300x300
-          'inputMode': 1.0,
-        };
-
-        final result = calculator(inputs, emptyPriceList);
-
-        // Cross profile = ceil(2.4 / 1.2) * 4 = 2 * 4 = 8
-        expect(result.values['crossProfileLength'], equals(8.0));
+        // Both should be area * 1.35 = 12 * 1.35 = 16.2
+        expect(result1.values['crossProfileLength'], equals(16.2));
+        expect(result2.values['crossProfileLength'], equals(16.2));
       });
     });
 
@@ -235,7 +227,7 @@ void main() {
     });
 
     group('Hangers calculations', () {
-      test('hangers = area / 1.2', () {
+      test('hangers = 2.5 per sqm (SNiP norm)', () {
         final inputs = {
           'roomWidth': 4.0,
           'roomLength': 5.0,
@@ -244,8 +236,8 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        // Area = 20, hangers = ceil(20 / 1.2) = ceil(16.67) = 17
-        expect(result.values['hangersCount'], equals(17.0));
+        // Area = 20, hangers = ceil(20 * 2.5) = ceil(50) = 50
+        expect(result.values['hangersCount'], equals(50.0));
       });
 
       test('more hangers for larger room', () {
@@ -486,8 +478,12 @@ void main() {
         expect(result.values['cassettesCount'], equals(141.0));
         // Perimeter = 2 * (6 + 8) = 28
         expect(result.values['perimeter'], equals(28.0));
-        // Hangers = ceil(48 / 1.2) = 40
-        expect(result.values['hangersCount'], equals(40.0));
+        // Main profile = 48 * 2.0 = 96
+        expect(result.values['mainProfileLength'], equals(96.0));
+        // Cross profile = 48 * 1.35 = 64.8
+        expect(result.values['crossProfileLength'], equals(64.8));
+        // Hangers = ceil(48 * 2.5) = 120
+        expect(result.values['hangersCount'], equals(120.0));
       });
 
       test('bathroom ceiling with 300x300', () {

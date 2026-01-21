@@ -52,6 +52,7 @@ void main() {
         'systemType': 3.0, // IR film
         'roomType': 2.0, // living room
         'usefulAreaPercent': 75.0,
+        'filmWidth': 1.0, // 80 cm (default)
       };
       final emptyPriceList = <PriceItem>[];
 
@@ -60,12 +61,66 @@ void main() {
       // Heating area: 12 * 0.75 = 9 м²
       expect(result.values['heatingArea'], closeTo(9.0, 0.1));
       expect(result.values['filmArea'], closeTo(9.0, 0.1));
-      // Film strips: 9 / 2.5 = 4 (ceil)
+      // Film width: 80 cm
+      expect(result.values['filmWidthCm'], equals(80.0));
+      // Linear meters: 9 / 0.8 = 11.25 м.п.
+      expect(result.values['filmLinearMeters'], closeTo(11.25, 0.1));
+      // Film strips: 11.25 / 5 = 3 (ceil)
+      expect(result.values['filmStrips'], equals(3.0));
+      // Contact clips: 3 * 2 = 6
+      expect(result.values['contactClips'], equals(6.0));
+      // Reflective substrate = full area
+      expect(result.values['reflectiveSubstrate'], equals(12.0));
+    });
+
+    test('calculates infrared film with 50cm width', () {
+      final calculator = CalculateUnderfloorHeating();
+      final inputs = {
+        'area': 10.0,
+        'systemType': 3.0, // IR film
+        'roomType': 2.0, // living room
+        'usefulAreaPercent': 80.0,
+        'filmWidth': 0.0, // 50 cm
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Heating area: 10 * 0.80 = 8 м²
+      expect(result.values['heatingArea'], closeTo(8.0, 0.1));
+      // Film width: 50 cm
+      expect(result.values['filmWidthCm'], equals(50.0));
+      // Linear meters: 8 / 0.5 = 16 м.п.
+      expect(result.values['filmLinearMeters'], closeTo(16.0, 0.1));
+      // Film strips: 16 / 5 = 4 (ceil)
       expect(result.values['filmStrips'], equals(4.0));
       // Contact clips: 4 * 2 = 8
       expect(result.values['contactClips'], equals(8.0));
-      // Reflective substrate = full area
-      expect(result.values['reflectiveSubstrate'], equals(12.0));
+    });
+
+    test('calculates infrared film with 100cm width', () {
+      final calculator = CalculateUnderfloorHeating();
+      final inputs = {
+        'area': 15.0,
+        'systemType': 3.0, // IR film
+        'roomType': 2.0, // living room
+        'usefulAreaPercent': 72.0,
+        'filmWidth': 2.0, // 100 cm
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Heating area: 15 * 0.72 = 10.8 м²
+      expect(result.values['heatingArea'], closeTo(10.8, 0.1));
+      // Film width: 100 cm
+      expect(result.values['filmWidthCm'], equals(100.0));
+      // Linear meters: 10.8 / 1.0 = 10.8 м.п.
+      expect(result.values['filmLinearMeters'], closeTo(10.8, 0.1));
+      // Film strips: 10.8 / 5 = 3 (ceil)
+      expect(result.values['filmStrips'], equals(3.0));
+      // Contact clips: 3 * 2 = 6
+      expect(result.values['contactClips'], equals(6.0));
     });
 
     test('calculates water-based system correctly', () {

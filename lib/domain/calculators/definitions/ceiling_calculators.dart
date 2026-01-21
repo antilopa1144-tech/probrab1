@@ -12,6 +12,7 @@ import '../../usecases/calculate_cassette_ceiling.dart';
 import '../../usecases/calculate_ceiling_insulation.dart';
 import '../../usecases/calculate_rail_ceiling.dart';
 import '../../usecases/calculate_stretch_ceiling.dart';
+import '../../usecases/calculate_ceiling_paint.dart';
 
 final List<CalculatorDefinitionV2> ceilingCalculators = [
   CalculatorDefinitionV2(
@@ -231,6 +232,69 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         'ceilings',
         'stretch',
         'ceilings_stretch',
+      ],
+    ),
+  CalculatorDefinitionV2(
+      id: 'ceilings_paint',
+      titleKey: 'calculator.ceilings_paint.title',
+      descriptionKey: 'calculator.ceilings_paint.description',
+      category: CalculatorCategory.interior,
+      subCategoryKey: 'subcategory.ceilings',
+      fields: [
+        const CalculatorField(
+          key: 'area',
+          labelKey: 'input.area',
+          unitType: UnitType.squareMeters,
+          inputType: FieldInputType.number,
+          defaultValue: 0.0,
+          minValue: 1.0,
+          maxValue: 500.0,
+          required: true,
+          order: 1,
+        ),
+        const CalculatorField(
+          key: 'layers',
+          labelKey: 'input.layers',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.number,
+          defaultValue: 2.0,
+          minValue: 1.0,
+          maxValue: 4.0,
+          required: true,
+          order: 2,
+        ),
+        const CalculatorField(
+          key: 'consumption',
+          labelKey: 'input.paint_consumption',
+          hintKey: 'input.paint_consumption.hint',
+          unitType: UnitType.liters,
+          inputType: FieldInputType.number,
+          defaultValue: 0.12,
+          minValue: 0.08,
+          maxValue: 0.2,
+          required: false,
+          order: 3,
+        ),
+      ],
+      beforeHints: [
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.podgotovte_poverhnost_zagruntuite'),
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_valik_s_korotkim'),
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.kraste_ot_okna_k'),
+      ],
+      afterHints: [
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.dayte_vysohnut_mezhdu_sloyami'),
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.proverte_osveschenie_dlya_kontrolya'),
+      ],
+      useCase: CalculateCeilingPaint(),
+      accentColor: kCalculatorAccentColor,
+      complexity: 2,
+      popularity: 9,
+      tags: [
+        'tag.vnutrennyaya_otdelka',
+        'tag.potolki',
+        'ceilings',
+        'paint',
+        'ceilings_paint',
       ],
     ),
 ];

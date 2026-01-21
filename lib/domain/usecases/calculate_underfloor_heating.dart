@@ -15,6 +15,7 @@ import './base_calculator.dart';
 /// - roomType: тип помещения (1=ванная, 2=жилая, 3=кухня, 4=балкон)
 /// - usefulAreaPercent: процент полезной площади (50-90%), по умолчанию 72%
 /// - addInsulation: добавить теплоизоляцию (0 или 1), по умолчанию 0
+/// - filmWidth: ширина ИК плёнки (0=50см, 1=80см, 2=100см), по умолчанию 1 (80см)
 class CalculateUnderfloorHeating extends BaseCalculator {
   // Константы мощности по типу помещения (Вт/м²)
   static const _roomPower = {
@@ -30,6 +31,13 @@ class CalculateUnderfloorHeating extends BaseCalculator {
     2: 150, // жилая
     3: 150, // кухня
     4: 100, // балкон
+  };
+
+  // Ширина ИК плёнки (м): 0=50см, 1=80см, 2=100см
+  static const _filmWidths = {
+    0: 0.5,  // 50 см
+    1: 0.8,  // 80 см
+    2: 1.0,  // 100 см
   };
 
   @override
@@ -107,19 +115,31 @@ class CalculateUnderfloorHeating extends BaseCalculator {
         break;
 
       case 3: // ИК плёнка
+        // Ширина плёнки: 0=50см, 1=80см, 2=100см
+        final filmWidthIndex = getIntInput(inputs, 'filmWidth', defaultValue: 1, minValue: 0, maxValue: 2);
+        final filmWidthM = _filmWidths[filmWidthIndex] ?? 0.8;
+        final filmWidthCm = (filmWidthM * 100).toInt();
+
         final filmArea = heatingArea;
-        final filmStripArea = 2.5; // м² на полосу
-        final filmStrips = (filmArea / filmStripArea).ceil();
+        // Погонные метры = площадь / ширина плёнки
+        final filmLinearMeters = filmArea / filmWidthM;
+        // Количество полос (стандартная длина рулона — разная, считаем по погонным метрам)
+        final filmStrips = (filmLinearMeters / 5.0).ceil(); // ~5 м.п. на полосу в среднем
         final contactClips = filmStrips * 2;
         final reflectiveSubstrate = area;
+
         values['filmArea'] = filmArea;
+        values['filmWidthCm'] = filmWidthCm.toDouble();
+        values['filmLinearMeters'] = filmLinearMeters;
         values['filmStrips'] = filmStrips.toDouble();
         values['contactClips'] = contactClips.toDouble();
         values['reflectiveSubstrate'] = reflectiveSubstrate;
+
         final filmPrice = findPrice(priceList, ['ir_film', 'infrared_film', 'warm_floor_film']);
         final clipsPrice = findPrice(priceList, ['contact_clips', 'connectors']);
         final substratePrice = findPrice(priceList, ['reflective_substrate', 'foil_substrate']);
-        costs.add(calculateCost(filmArea, filmPrice?.price));
+        // Цена за погонные метры
+        costs.add(calculateCost(filmLinearMeters, filmPrice?.price));
         costs.add(calculateCost(contactClips.toDouble(), clipsPrice?.price));
         costs.add(calculateCost(reflectiveSubstrate, substratePrice?.price));
         break;
