@@ -27,7 +27,7 @@ final slabFoundationCalculatorV2 = CalculatorDefinitionV2(
       labelKey: 'input.area',
       hintKey: 'input.area.hint',
       unitType: UnitType.squareMeters,
-      defaultValue: 0,
+      defaultValue: 50.0,
       minValue: 10.0,
       maxValue: 1000.0,
       required: true,

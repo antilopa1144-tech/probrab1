@@ -22,7 +22,7 @@ final concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
       labelKey: 'input.concreteVolume',
       hintKey: 'input.concreteVolume.hint',
       unitType: UnitType.cubicMeters,
-      defaultValue: 0.0,
+      defaultValue: 1.0,
       required: true,
       minValue: 0.01,
       maxValue: 1000.0,

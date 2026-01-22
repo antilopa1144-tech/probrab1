@@ -20,13 +20,28 @@ class CalculateTile extends BaseCalculator {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final area = inputs['area'] ?? 0;
-    final tileWidth = inputs['tileWidth'] ?? 30.0;
-    final tileHeight = inputs['tileHeight'] ?? 30.0;
+    final inputMode = (inputs['inputMode'] ?? 1).toInt();
 
-    if (area <= 0) return 'Площадь должна быть больше нуля';
-    if (tileWidth <= 0 || tileWidth > 200) return 'Ширина плитки должна быть от 1 до 200 см';
-    if (tileHeight <= 0 || tileHeight > 200) return 'Высота плитки должна быть от 1 до 200 см';
+    if (inputMode == 0) {
+      // Режим "По размерам": проверяем length и width
+      final length = inputs['length'] ?? 0;
+      final width = inputs['width'] ?? 0;
+      if (length <= 0) return 'Длина должна быть больше нуля';
+      if (width <= 0) return 'Ширина должна быть больше нуля';
+    } else {
+      // Режим "По площади": проверяем area
+      final area = inputs['area'] ?? 0;
+      if (area <= 0) return 'Площадь должна быть больше нуля';
+    }
+
+    // Проверяем размер плитки только для пользовательского размера (tileSize == 0)
+    final tileSize = (inputs['tileSize'] ?? 60).toInt();
+    if (tileSize == 0) {
+      final tileWidth = inputs['tileWidth'] ?? 30.0;
+      final tileHeight = inputs['tileHeight'] ?? 30.0;
+      if (tileWidth <= 0 || tileWidth > 200) return 'Ширина плитки должна быть от 1 до 200 см';
+      if (tileHeight <= 0 || tileHeight > 200) return 'Высота плитки должна быть от 1 до 200 см';
+    }
 
     return null;
   }

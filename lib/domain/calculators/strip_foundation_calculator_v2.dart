@@ -27,7 +27,7 @@ final stripFoundationCalculatorV2 = CalculatorDefinitionV2(
       labelKey: 'input.area',
       hintKey: 'input.area.hint',
       unitType: UnitType.squareMeters,
-      defaultValue: 0,
+      defaultValue: 50.0,
       minValue: 0.1,
       maxValue: 10000,
       required: true,

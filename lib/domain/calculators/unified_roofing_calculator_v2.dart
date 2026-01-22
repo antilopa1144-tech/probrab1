@@ -29,10 +29,16 @@ final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
       unitType: UnitType.pieces,
       inputType: FieldInputType.select,
       defaultValue: 0,
-      minValue: 0,
-      maxValue: 5,
       required: true,
       order: 1,
+      options: [
+        FieldOption(value: 0, labelKey: 'input.roofingType.metalTile'),
+        FieldOption(value: 1, labelKey: 'input.roofingType.softRoofing'),
+        FieldOption(value: 2, labelKey: 'input.roofingType.profiledSheet'),
+        FieldOption(value: 3, labelKey: 'input.roofingType.ondulin'),
+        FieldOption(value: 4, labelKey: 'input.roofingType.slate'),
+        FieldOption(value: 5, labelKey: 'input.roofingType.ceramicTile'),
+      ],
     ),
     const CalculatorField(
       key: 'area',
@@ -48,7 +54,7 @@ final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
     const CalculatorField(
       key: 'slope',
       labelKey: 'input.slope',
-      unitType: UnitType.percent,
+      unitType: UnitType.degrees,
       inputType: FieldInputType.number,
       defaultValue: 30.0,
       minValue: 5.0,
@@ -104,21 +110,21 @@ final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
   beforeHints: [
     const CalculatorHint(
       type: HintType.tip,
-      messageKey: 'roofing.uchityvayte_uklon_kryshi_pri',
+      messageKey: 'hint.roofing.uchityvayte_uklon_kryshi_pri',
     ),
     const CalculatorHint(
       type: HintType.tip,
-      messageKey: 'roofing.ne_zabudte_pro_gidroizolyatsiyu',
+      messageKey: 'hint.roofing.ne_zabudte_pro_gidroizolyatsiyu',
     ),
     const CalculatorHint(
       type: HintType.tip,
-      messageKey: 'roofing.ukladyvayte_listy_s_nahlestom',
+      messageKey: 'hint.roofing.ukladyvayte_listy_s_nahlestom',
     ),
   ],
   afterHints: [
     const CalculatorHint(
       type: HintType.tip,
-      messageKey: 'roofing.ispolzuyte_spetsialnye_samorezy_s',
+      messageKey: 'hint.roofing.ispolzuyte_spetsialnye_samorezy_s',
     ),
   ],
   useCase: CalculateUnifiedRoofing(),

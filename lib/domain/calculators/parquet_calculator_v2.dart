@@ -27,7 +27,7 @@ final parquetCalculatorV2 = CalculatorDefinitionV2(
       labelKey: 'input.area',
       hintKey: 'input.area.hint',
       unitType: UnitType.squareMeters,
-      defaultValue: 0,
+      defaultValue: 20.0,
       minValue: 1.0,
       maxValue: 500.0,
       required: true,

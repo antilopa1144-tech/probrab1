@@ -28,10 +28,20 @@ class CalculateWallpaper extends BaseCalculator {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final inputMode = inputs['inputMode'] ?? 0;
-    if (inputMode == 1 && (inputs['area'] ?? 0) <= 0) {
-      return 'Площадь должна быть больше нуля';
+    final inputMode = (inputs['inputMode'] ?? 0).toInt();
+
+    if (inputMode == 0) {
+      // Режим "По размерам": проверяем length и width
+      final length = inputs['length'] ?? 0;
+      final width = inputs['width'] ?? 0;
+      if (length <= 0) return 'Длина должна быть больше нуля';
+      if (width <= 0) return 'Ширина должна быть больше нуля';
+    } else {
+      // Режим "По площади": проверяем area
+      final area = inputs['area'] ?? 0;
+      if (area <= 0) return 'Площадь должна быть больше нуля';
     }
+
     final wallHeight = inputs['wallHeight'] ?? 2.5;
     if (wallHeight <= 0 || wallHeight > 5) return 'Высота стен должна быть от 0.1 до 5 м';
 

@@ -20,7 +20,20 @@ class CalculateWarmFloor extends BaseCalculator {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final area = inputs['area'] ?? 0;
+    final inputMode = (inputs['inputMode'] ?? 1).toInt();
+
+    if (inputMode == 0) {
+      // Режим "По размерам": проверяем length и width
+      final length = inputs['length'] ?? 0;
+      final width = inputs['width'] ?? 0;
+      if (length <= 0) return 'Длина должна быть больше нуля';
+      if (width <= 0) return 'Ширина должна быть больше нуля';
+    } else {
+      // Режим "По площади": проверяем area
+      final area = inputs['area'] ?? 0;
+      if (area <= 0) return 'Площадь должна быть больше нуля';
+    }
+
     final power = inputs['power'] ?? 150;
     final type = inputs['type'] ?? 2;
 
@@ -28,7 +41,6 @@ class CalculateWarmFloor extends BaseCalculator {
     final minPower = getConstantDouble('power_limits', 'min_power', defaultValue: 80.0);
     final maxPower = getConstantDouble('power_limits', 'max_power', defaultValue: 200.0);
 
-    if (area <= 0) return 'Площадь должна быть больше нуля';
     if (power < minPower || power > maxPower) {
       return 'Мощность должна быть от ${minPower.toInt()} до ${maxPower.toInt()} Вт/м²';
     }

@@ -19,10 +19,21 @@ class CalculateLaminate extends BaseCalculator {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final area = inputs['area'] ?? 0;
+    final inputMode = (inputs['inputMode'] ?? 1).toInt();
     final packArea = inputs['packArea'] ?? 2.0;
 
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (inputMode == 0) {
+      // Режим "По размерам": проверяем length и width
+      final length = inputs['length'] ?? 0;
+      final width = inputs['width'] ?? 0;
+      if (length <= 0) return 'Длина должна быть больше нуля';
+      if (width <= 0) return 'Ширина должна быть больше нуля';
+    } else {
+      // Режим "По площади": проверяем area
+      final area = inputs['area'] ?? 0;
+      if (area <= 0) return 'Площадь должна быть больше нуля';
+    }
+
     if (packArea <= 0 || packArea > 10) return 'Площадь упаковки должна быть от 0.1 до 10 м²';
 
     return null;

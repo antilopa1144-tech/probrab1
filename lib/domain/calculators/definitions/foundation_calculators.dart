@@ -177,7 +177,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
           inputType: FieldInputType.number,
-          defaultValue: 0.0,
+          defaultValue: 50.0,
           required: true,
           order: 1,
         ),

@@ -131,8 +131,13 @@ class CalculateScreedUnified extends BaseCalculator {
       return 'Площадь должна быть больше нуля';
     }
 
-    if (inputMode == 1 && (roomWidth == null || roomLength == null)) {
-      return 'Необходимо указать размеры комнаты';
+    if (inputMode == 1) {
+      if (roomWidth == null || roomWidth <= 0) {
+        return 'Ширина комнаты должна быть больше нуля';
+      }
+      if (roomLength == null || roomLength <= 0) {
+        return 'Длина комнаты должна быть больше нуля';
+      }
     }
 
     final thickness = inputs['thickness'] ?? 50;

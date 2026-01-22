@@ -30,8 +30,16 @@ class CalculateLinoleum extends BaseCalculator {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final inputMode = inputs['inputMode'] ?? 0;
-    if (inputMode == 1) {
+    final inputMode = (inputs['inputMode'] ?? 0).toInt();
+
+    if (inputMode == 0) {
+      // Режим "По размерам": проверяем length и width
+      final length = inputs['length'] ?? 0;
+      final width = inputs['width'] ?? 0;
+      if (length <= 0) return 'Длина должна быть больше нуля';
+      if (width <= 0) return 'Ширина должна быть больше нуля';
+    } else {
+      // Режим "По площади": проверяем area и roomWidth
       if ((inputs['area'] ?? 0) <= 0) return 'Площадь должна быть больше нуля';
       if ((inputs['roomWidth'] ?? 0) <= 0) return 'Укажите ширину комнаты для расчёта резов';
     }

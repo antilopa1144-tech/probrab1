@@ -45,6 +45,9 @@ enum UnitType {
   /// Проценты
   percent,
 
+  /// Градусы (угол)
+  degrees,
+
   /// Часы
   hours,
 
@@ -90,6 +93,8 @@ enum UnitType {
         return 'мм';
       case UnitType.percent:
         return '%';
+      case UnitType.degrees:
+        return '°';
       case UnitType.hours:
         return 'ч';
       case UnitType.days:
@@ -134,6 +139,8 @@ enum UnitType {
         return 'unit.millimeters';
       case UnitType.percent:
         return 'unit.percent';
+      case UnitType.degrees:
+        return 'unit.degrees';
       case UnitType.hours:
         return 'unit.hours';
       case UnitType.days:
