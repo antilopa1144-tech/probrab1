@@ -10,6 +10,7 @@
 /// Опции:
 ///   --fix     Показать предложения по исправлению
 ///   --strict  Также проверять неиспользуемые ключи в JSON
+///   --verbose Показать детальную информацию о динамических ключах
 library;
 
 import 'dart:convert';
@@ -18,6 +19,7 @@ import 'dart:io';
 void main(List<String> args) {
   final showFix = args.contains('--fix');
   final strictMode = args.contains('--strict');
+  final verbose = args.contains('--verbose');
 
   print('Validating localization keys...\n');
 
@@ -50,14 +52,15 @@ void main(List<String> args) {
 
   final usedKeys = <String>{};
   final missingKeys = <String, List<String>>{};
+  final dynamicKeys = <String, List<String>>{}; // Ключи с интерполяцией
+  final validatedDynamicKeys = <String, List<String>>{}; // Проверенные динамические
 
   for (final file in dartFiles) {
     final content = file.readAsStringSync();
     final fileName = file.path.split(Platform.pathSeparator).last;
-    final lines = content.split('\n');
 
-    // Ищем translate() вызовы с одинарными кавычками
-    final singleQuotePattern = RegExp(r"_loc\.translate\('([^']+)'\)");
+    // Ищем translate() вызовы с одинарными кавычками (статические ключи)
+    final singleQuotePattern = RegExp(r"_loc\.translate\('([^'$]+)'\)");
     for (final match in singleQuotePattern.allMatches(content)) {
       final key = match.group(1)!;
       usedKeys.add(key);
@@ -66,8 +69,8 @@ void main(List<String> args) {
       }
     }
 
-    // Ищем translate() вызовы с двойными кавычками
-    final doubleQuotePattern = RegExp(r'_loc\.translate\("([^"]+)"\)');
+    // Ищем translate() вызовы с двойными кавычками (статические ключи)
+    final doubleQuotePattern = RegExp(r'_loc\.translate\("([^"$]+)"\)');
     for (final match in doubleQuotePattern.allMatches(content)) {
       final key = match.group(1)!;
       usedKeys.add(key);
@@ -76,8 +79,40 @@ void main(List<String> args) {
       }
     }
 
+    // Ищем translate() с интерполяцией (динамические ключи)
+    // Паттерн: 'prefix.$variable' или 'prefix.${expression}'
+    final dynamicSinglePattern =
+        RegExp(r"_loc\.translate\('([^']*\$[^']+)'\)");
+    for (final match in dynamicSinglePattern.allMatches(content)) {
+      final key = match.group(1)!;
+      final validationResult = validateDynamicKey(key, allKeys);
+      if (validationResult.isValid) {
+        validatedDynamicKeys.putIfAbsent(fileName, () => []).add(key);
+      } else {
+        dynamicKeys
+            .putIfAbsent(fileName, () => [])
+            .add('$key → ${validationResult.reason}');
+      }
+    }
+
+    // Ищем translate() с интерполяцией в двойных кавычках
+    final dynamicDoublePattern =
+        RegExp(r'_loc\.translate\("([^"]*\$[^"]+)"\)');
+    for (final match in dynamicDoublePattern.allMatches(content)) {
+      final key = match.group(1)!;
+      final validationResult = validateDynamicKey(key, allKeys);
+      if (validationResult.isValid) {
+        validatedDynamicKeys.putIfAbsent(fileName, () => []).add(key);
+      } else {
+        dynamicKeys
+            .putIfAbsent(fileName, () => [])
+            .add('$key → ${validationResult.reason}');
+      }
+    }
+
     // Ищем ключи в enum'ах (nameKey, descKey, labelKey)
-    final enumKeyPattern = RegExp(r"'([a-z_]+\.[a-z_]+(?:\.[a-z_]+)*)'");
+    final lines = content.split('\n');
+    final enumKeyPattern = RegExp(r"'([a-z_]+\.[a-z_]+(?:\.[a-z_0-9]+)*)'");
     for (var i = 0; i < lines.length; i++) {
       final line = lines[i];
       if (line.contains('nameKey') ||
@@ -116,6 +151,53 @@ void main(List<String> args) {
     print('');
   }
 
+  // Показываем непроверенные динамические ключи только если есть проблемы
+  final problematicDynamic = dynamicKeys.entries
+      .where((e) => e.value.any((v) => v.contains('NOT FOUND')))
+      .toList();
+
+  if (problematicDynamic.isNotEmpty) {
+    hasErrors = true;
+    print('DYNAMIC KEYS WITH ISSUES:');
+    print('-' * 60);
+    for (final entry in problematicDynamic) {
+      print('\n${entry.key}:');
+      for (final key in entry.value.where((v) => v.contains('NOT FOUND'))) {
+        print('   ⚠ $key');
+      }
+    }
+    print('');
+  }
+
+  if (verbose) {
+    if (validatedDynamicKeys.isNotEmpty) {
+      print('VALIDATED DYNAMIC KEYS:');
+      print('-' * 60);
+      for (final entry in validatedDynamicKeys.entries) {
+        print('\n${entry.key}:');
+        for (final key in entry.value.toSet()) {
+          print('   ✓ $key');
+        }
+      }
+      print('');
+    }
+
+    final okDynamic = dynamicKeys.entries
+        .where((e) => e.value.every((v) => !v.contains('NOT FOUND')))
+        .toList();
+    if (okDynamic.isNotEmpty) {
+      print('DYNAMIC KEYS (assumed OK):');
+      print('-' * 60);
+      for (final entry in okDynamic) {
+        print('\n${entry.key}:');
+        for (final key in entry.value.toSet()) {
+          print('   ~ $key');
+        }
+      }
+      print('');
+    }
+  }
+
   if (strictMode) {
     final unusedKeys = allKeys.where((k) => !usedKeys.contains(k)).toList();
     if (unusedKeys.isNotEmpty) {
@@ -146,16 +228,83 @@ void main(List<String> args) {
     print('');
   }
 
+  // Статистика
+  final totalDynamic = dynamicKeys.values.expand((e) => e).length +
+      validatedDynamicKeys.values.expand((e) => e).length;
+
   // Итог
   print('=' * 60);
   if (hasErrors) {
     print('Validation FAILED');
     exit(1);
   } else {
-    print('Validation PASSED');
-    print('   Used keys: ${usedKeys.length}');
+    print('Validation PASSED ✓');
+    print('   Static keys used: ${usedKeys.length}');
+    print('   Dynamic keys found: $totalDynamic');
     print('   Total keys in JSON: ${allKeys.length}');
   }
+}
+
+/// Результат валидации динамического ключа
+class DynamicKeyValidation {
+  final bool isValid;
+  final String reason;
+
+  DynamicKeyValidation(this.isValid, this.reason);
+}
+
+/// Валидирует динамический ключ с интерполяцией
+///
+/// Проверяет, что префикс ключа существует в JSON и имеет дочерние ключи.
+/// Например: 'roofing_calc.tip.$type' → проверяем что 'roofing_calc.tip.*' существуют
+/// Также поддерживает ключи без точки: 'bag_weight.kg$weight' → ищет 'bag_weight.kg20', 'bag_weight.kg25'
+DynamicKeyValidation validateDynamicKey(String key, Set<String> allKeys) {
+  // Извлекаем статическую часть (до первого $)
+  final dollarIndex = key.indexOf(r'$');
+  if (dollarIndex == -1) {
+    return DynamicKeyValidation(false, 'No interpolation found');
+  }
+
+  String prefix = key.substring(0, dollarIndex);
+  final originalPrefix = prefix;
+
+  // Убираем trailing dot если есть
+  if (prefix.endsWith('.')) {
+    prefix = prefix.substring(0, prefix.length - 1);
+  }
+
+  if (prefix.isEmpty) {
+    // Полностью динамический ключ — не можем проверить
+    return DynamicKeyValidation(true, 'Fully dynamic, cannot validate');
+  }
+
+  // 1. Проверяем ключи с точкой после префикса: prefix.*
+  final matchingWithDot = allKeys.where((k) => k.startsWith('$prefix.')).toList();
+  if (matchingWithDot.isNotEmpty) {
+    return DynamicKeyValidation(
+        true, 'Found ${matchingWithDot.length} keys with prefix "$prefix."');
+  }
+
+  // 2. Проверяем ключи БЕЗ точки (например: prefix='bag_weight.kg' → ищем 'bag_weight.kg20')
+  // Это для случаев типа 'self_leveling.bag_weight.kg$weightKg' → 'self_leveling.bag_weight.kg20'
+  final matchingWithoutDot = allKeys.where((k) =>
+      k.startsWith(originalPrefix) && k != originalPrefix).toList();
+  if (matchingWithoutDot.isNotEmpty) {
+    return DynamicKeyValidation(
+        true, 'Found ${matchingWithoutDot.length} keys starting with "$originalPrefix"');
+  }
+
+  // 3. Проверяем родительский ключ (может это вложенный объект)
+  final parentPrefix = prefix.contains('.')
+      ? prefix.substring(0, prefix.lastIndexOf('.'))
+      : prefix;
+  final parentKeys = allKeys.where((k) => k.startsWith('$parentPrefix.')).toList();
+  if (parentKeys.isNotEmpty) {
+    return DynamicKeyValidation(
+        true, 'Found ${parentKeys.length} keys under parent "$parentPrefix"');
+  }
+
+  return DynamicKeyValidation(false, 'Prefix "$prefix" NOT FOUND in JSON');
 }
 
 /// Преобразует вложенный JSON в плоский список ключей
