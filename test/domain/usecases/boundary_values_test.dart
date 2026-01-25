@@ -176,14 +176,14 @@ void main() {
       expect(result.values['plasterKg'], greaterThan(0));
     });
 
-    test('Tile: нулевой размер плитки', () {
+    test('Tile: нулевой размер плитки нормализуется', () {
       final calculator = CalculateTile();
+      // tileWidth=0 будет нормализован до minValue (1.0 см)
       final inputs = {'area': 50.0, 'tileWidth': 0.0, 'tileHeight': 30.0};
 
-      expect(
-        () => calculator.call(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
-      );
+      final result = calculator.call(inputs, emptyPriceList);
+      // Калькулятор должен вернуть результат с нормализованными значениями
+      expect(result.values['tilesNeeded'], greaterThan(0));
     });
   });
 

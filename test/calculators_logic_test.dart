@@ -9,6 +9,7 @@ void main() {
 
       final result = calculator(
         {
+          'inputMode': 1.0, // Режим "По площади"
           'area': 50.0,
           'rollWidth': 0.53,
           'rollLength': 10.05,

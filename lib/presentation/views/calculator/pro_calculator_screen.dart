@@ -541,6 +541,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
   Widget _buildToggleField(CalculatorField field, Map<String, double> inputs) {
     final value = inputs[field.key] ?? field.defaultValue;
     final isOn = value == 1.0;
+    final accentColor = CalculatorColors.getColorByCategory(widget.definition.category.name);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -548,19 +549,35 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Flexible(
-                  child: Text(
-                    _loc.translate(field.labelKey),
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
-                  ),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        _loc.translate(field.labelKey),
+                        style: CalculatorDesignSystem.bodyMedium.copyWith(
+                          color: CalculatorColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                    if (field.required) ...[
+                      const SizedBox(width: 4),
+                      const Text(
+                        '*',
+                        style: TextStyle(color: Colors.redAccent, fontSize: 14),
+                      ),
+                    ],
+                  ],
                 ),
-                if (field.required) ...[
-                  const SizedBox(width: 4),
-                  const Text(
-                    '*',
-                    style: TextStyle(color: Colors.redAccent, fontSize: 14),
+                if (field.hintKey != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    _loc.translate(field.hintKey!),
+                    style: CalculatorDesignSystem.bodySmall.copyWith(
+                      color: CalculatorColors.textSecondary,
+                    ),
                   ),
                 ],
               ],
@@ -568,10 +585,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
           ),
           Switch(
             value: isOn,
-            activeThumbColor: Colors.blueAccent,
-            activeTrackColor: Colors.blueAccent.withValues(alpha: 0.5),
-            inactiveThumbColor: Colors.white24,
-            inactiveTrackColor: Colors.white10,
+            activeColor: accentColor,
             onChanged: (v) => _updateValue(field.key, v ? 1.0 : 0.0),
           ),
         ],

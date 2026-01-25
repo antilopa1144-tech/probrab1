@@ -154,7 +154,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(ModeSelector), findsWidgets);
+      expect(find.byType(TypeSelectorGroup), findsWidgets);
       expect(find.byType(GestureDetector), findsWidgets);
     });
 

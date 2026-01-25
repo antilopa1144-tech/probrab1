@@ -153,7 +153,7 @@ void main() {
 
     test('has all expected enum values', () {
       const values = UnitType.values;
-      expect(values.length, equals(19));
+      expect(values.length, equals(20));
       expect(values, contains(UnitType.squareMeters));
       expect(values, contains(UnitType.cubicMeters));
       expect(values, contains(UnitType.linearMeters));
@@ -173,6 +173,7 @@ void main() {
       expect(values, contains(UnitType.days));
       expect(values, contains(UnitType.rubles));
       expect(values, contains(UnitType.litersPerSqm));
+      expect(values, contains(UnitType.degrees));
     });
   });
 }

@@ -53,19 +53,19 @@ void main() {
       expect(result.values['groutNeeded'], greaterThan(0));
     });
 
-    test('CalculateScreedUnified calculates price with cement and sand', () {
+    test('CalculateScreedUnified calculates price with dry mix', () {
       final calculator = CalculateScreedUnified();
       final inputs = {
         'inputMode': 0.0,
         'area': 20.0,
         'thickness': 50.0,
         'screedType': 0.0, // ЦПС
-        'materialType': 1.0, // Самозамес
+        'marka': 1.0, // М150
       };
 
       final priceList = createTestPriceList({
-        'cement': 300.0, // 300 руб/мешок
-        'sand': 500.0, // 500 руб/м³
+        'cps_m150': 250.0, // 250 руб/мешок ЦПС М150
+        'dry_mix': 200.0, // fallback
       });
 
       final result = calculator(inputs, priceList);
@@ -74,8 +74,8 @@ void main() {
       expect(result.totalPrice, greaterThan(0));
 
       // Проверяем количество материалов
-      expect(result.values['cementBags'], greaterThan(0));
-      expect(result.values['sandCbm'], greaterThan(0));
+      expect(result.values['mixBags'], greaterThan(0));
+      expect(result.values['area'], equals(20.0));
     });
 
     test('calculator handles missing prices gracefully', () {

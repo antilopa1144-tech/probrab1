@@ -38,7 +38,7 @@ import '../views/calculator/windows_install_calculator_screen.dart';
 import '../views/calculator/facade_panels_calculator_screen.dart';
 import '../views/calculator/fence_calculator_screen.dart';
 import '../views/calculator/stairs_calculator_screen.dart';
-import '../views/calculator/plumbing_calculator_screen.dart';
+// plumbing_calculator_screen.dart - удалён (engineering_plumbing не востребован)
 import '../views/calculator/ventilation_calculator_screen.dart';
 import '../views/calculator/basement_calculator_screen.dart';
 import '../views/calculator/blind_area_calculator_screen.dart';
@@ -46,6 +46,7 @@ import '../views/calculator/slab_calculator_screen.dart';
 import '../views/calculator/strip_foundation_calculator_screen.dart';
 import '../views/calculator/gutters_calculator_screen.dart';
 import '../views/calculator/roofing_unified_calculator_screen.dart';
+import '../views/calculator/concrete_universal_calculator_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
 // dsp_screen.dart удалён - объединён с screed_unified_calculator_screen.dart
@@ -154,7 +155,7 @@ class CalculatorScreenRegistry {
           definition: def,
           initialInputs: inputs,
         ),
-    'engineering_plumbing': (_, _) => const PlumbingCalculatorScreen(),
+    // engineering_plumbing удалён
     'engineering_ventilation': (_, _) => const VentilationCalculatorScreen(),
 
     // Специальные помещения
@@ -184,6 +185,12 @@ class CalculatorScreenRegistry {
     'foundation_blind_area': (_, _) => const BlindAreaCalculatorScreen(),
     'foundation_slab': (_, _) => const SlabCalculatorScreen(),
     'foundation_strip': (_, _) => const StripFoundationCalculatorScreen(),
+
+    // Бетон
+    'concrete_universal': (def, inputs) => ConcreteUniversalCalculatorScreen(
+          definition: def,
+          initialInputs: inputs,
+        ),
 
     // Кровля
     'roofing_gutters': (_, _) => const GuttersCalculatorScreen(),

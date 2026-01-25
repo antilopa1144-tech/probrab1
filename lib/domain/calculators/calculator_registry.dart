@@ -240,6 +240,19 @@ class CalculatorRegistry {
 
   /// Строим кэш для быстрого доступа по ID.
   static Map<String, CalculatorDefinitionV2> _buildIdCache() {
-    return {for (final calc in allCalculators) calc.id: calc};
+    final cache = {for (final calc in allCalculators) calc.id: calc};
+
+    // Алиасы для обратной совместимости (старые ID → новые калькуляторы)
+    // floors_screed → floors_screed_unified (объединённый калькулятор стяжки)
+    if (cache.containsKey('floors_screed_unified')) {
+      cache['floors_screed'] = cache['floors_screed_unified']!;
+      cache['dsp'] = cache['floors_screed_unified']!; // DSP тоже объединён
+    }
+    // bathroom_tile → floors_tile (калькулятор плитки)
+    if (cache.containsKey('floors_tile')) {
+      cache['bathroom_tile'] = cache['floors_tile']!;
+    }
+
+    return cache;
   }
 }

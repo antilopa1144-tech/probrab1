@@ -81,3 +81,14 @@ test_checklist_*.isar*
 test_create_checklist_*.isar*
 test_delete_proj_*.isar*
 test_save_calc_*.isar*
+
+# RuStore signing artifacts
+pepk.jar
+*.pem
+*-encrypted.zip
+
+# Test output
+test_output.txt
+
+# Generated Isar models (keep tracked for now - needed for build)
+# **/*.g.dart

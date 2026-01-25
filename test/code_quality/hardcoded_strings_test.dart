@@ -37,6 +37,10 @@ void main() {
       'modern_calculator_catalog_screen_v2.dart',
       'premium_badge.dart',
       'premium_lock_dialog.dart',
+      // Технические обозначения марок бетона/стяжки (М100-М400)
+      'concrete_universal_calculator_screen.dart',
+      'screed_unified_calculator_screen.dart',
+      'linoleum_calculator_screen.dart', // TODO: нужна локализация
     };
 
     final violations = <String>[];

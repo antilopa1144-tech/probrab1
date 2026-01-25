@@ -292,7 +292,7 @@ void main() {
       final engineeringCalculators = [
         'engineering_heating',
         'engineering_electrics',
-        'engineering_plumbing',
+        // 'engineering_plumbing' - удалён
         'engineering_ventilation',
       ];
 
@@ -323,7 +323,7 @@ void main() {
         'floors_tile', 'floors_self_leveling', 'floors_laminate',
         'floors_linoleum', 'floors_parquet', 'floors_screed', 'floors_warm',
         'ceilings_stretch', 'ceilings_insulation', 'ceilings_cassette', 'ceilings_rail',
-        'engineering_heating', 'engineering_electrics', 'engineering_plumbing', 'engineering_ventilation',
+        'engineering_heating', 'engineering_electrics', 'engineering_ventilation',
         'terrace', 'attic', 'balcony', 'bathroom_waterproof',
         'doors_install', 'windows_install', 'slopes_finishing',
         'insulation_sound',
@@ -332,7 +332,8 @@ void main() {
         'roofing_gutters',
       ];
 
-      expect(registeredIds.length, greaterThanOrEqualTo(50));
+      // Снижено до 45 после удаления legacy калькуляторов
+      expect(registeredIds.length, greaterThanOrEqualTo(45));
 
       for (final id in registeredIds) {
         expect(CalculatorScreenRegistry.hasCustomScreen(id), isTrue,

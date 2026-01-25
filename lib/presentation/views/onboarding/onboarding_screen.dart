@@ -36,24 +36,24 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   final List<OnboardingPage> _pages = [
     const OnboardingPage(
-      icon: Icons.home_outlined,
-      title: 'Выберите объект',
+      icon: Icons.calculate_outlined,
+      title: '55+ калькуляторов',
       description:
-          'Выберите тип объекта: дом, квартира или гараж. Мы подберём подходящие калькуляторы.',
+          'Все расчёты для стройки и ремонта в одном месте: от фундамента до отделки.',
       color: Color(0xFF80DEEA),
     ),
     const OnboardingPage(
-      icon: Icons.calculate_outlined,
-      title: 'Рассчитайте материалы',
+      icon: Icons.architecture_outlined,
+      title: 'Точные расчёты',
       description:
-          'Введите параметры и получите точный расчёт материалов с учётом актуальных цен.',
+          'Введите размеры — получите количество материалов с учётом запаса и норм расхода.',
       color: Color(0xFFA5D6A7),
     ),
     const OnboardingPage(
-      icon: Icons.folder_outlined,
-      title: 'Сохраните в проект',
+      icon: Icons.bookmark_outline,
+      title: 'Сохраняйте расчёты',
       description:
-          'Сохраняйте расчёты в проекты, чтобы не потерять и легко найти нужную смету.',
+          'Все ваши расчёты сохраняются автоматически. Возвращайтесь к ним в любой момент.',
       color: Color(0xFFFFCC80),
     ),
     const OnboardingPage(

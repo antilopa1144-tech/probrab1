@@ -167,6 +167,9 @@ List<PriceItem> createStandardTestPriceList() {
     const PriceItem(sku: 'laminate', name: 'Ламинат', price: 600.0, unit: 'упаковка', imageUrl: ''),
     const PriceItem(sku: 'wallpaper', name: 'Обои', price: 500.0, unit: 'рулон', imageUrl: ''),
     const PriceItem(sku: 'primer', name: 'Грунтовка', price: 200.0, unit: 'л', imageUrl: ''),
+    // Для CalculateScreedUnified
+    const PriceItem(sku: 'dry_mix', name: 'Сухая смесь', price: 200.0, unit: 'мешок', imageUrl: ''),
+    const PriceItem(sku: 'cps_m150', name: 'ЦПС М150', price: 250.0, unit: 'мешок', imageUrl: ''),
   ];
 }
 

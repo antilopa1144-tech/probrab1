@@ -10,7 +10,7 @@ import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
 import '../../usecases/calculate_electrics.dart';
 import '../../usecases/calculate_heating.dart';
-import '../../usecases/calculate_plumbing.dart';
+// calculate_plumbing.dart - удалён (engineering_plumbing не востребован)
 import '../../usecases/calculate_ventilation.dart';
 
 final List<CalculatorDefinitionV2> engineeringCalculators = [
@@ -155,65 +155,7 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
         'tag.inzhenernye_raboty',
       ],
     ),
-  CalculatorDefinitionV2(
-      id: 'engineering_plumbing',
-      titleKey: 'calculator.engineering_plumbing.title',
-      descriptionKey: 'calculator.engineering_plumbing.description',
-      category: CalculatorCategory.interior,
-      subCategoryKey: 'subcategory.plumbing',
-      fields: [
-        const CalculatorField(
-          key: 'rooms',
-          labelKey: 'input.rooms',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.number,
-          defaultValue: 1.0,
-          required: true,
-          order: 1,
-        ),
-        const CalculatorField(
-          key: 'points',
-          labelKey: 'input.points',
-          unitType: UnitType.meters,
-          inputType: FieldInputType.number,
-          defaultValue: 5.0,
-          required: true,
-          order: 2,
-        ),
-        const CalculatorField(
-          key: 'pipeLength',
-          labelKey: 'input.pipeLength',
-          unitType: UnitType.meters,
-          inputType: FieldInputType.number,
-          defaultValue: 20.0,
-          required: true,
-          order: 3,
-        ),
-      ],
-      beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ispolzuyte_kachestvennye_fitingi_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.proverte_vse_soedineniya_na'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanovite_zapornye_krany_na'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.raboty_dolzhen_vypolnyat_kvalifitsirovannyy_3'),
-      ],
-      afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ispolzuyte_kachestvennye_fitingi_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.proverte_vse_soedineniya_na'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanovite_zapornye_krany_na'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.raboty_dolzhen_vypolnyat_kvalifitsirovannyy_3'),
-      ],
-      useCase: CalculatePlumbing(),
-      accentColor: kCalculatorAccentColor,
-      complexity: 2,
-      popularity: 10,
-      tags: [
-        'plumbing',
-        'tag.santehnika',
-        'engineering',
-        'tag.inzhenernye_raboty',
-        'engineering_plumbing',
-      ],
-    ),
+  // engineering_plumbing удалён - слишком общий, не востребован
   CalculatorDefinitionV2(
       id: 'engineering_ventilation',
       titleKey: 'calculator.engineering_ventilation.title',
