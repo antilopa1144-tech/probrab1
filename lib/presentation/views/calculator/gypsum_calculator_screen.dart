@@ -11,7 +11,6 @@ enum GypsumConstructionType { wallLining, partition, ceiling }
 enum GypsumGKLType { standard, moisture, fire }
 enum GypsumThickness { t9_5, t12_5 }
 enum GypsumSheetSize { s2000x1200, s2500x1200, s2700x1200, s3000x1200 }
-enum InputMode { byArea, byRoom }
 
 class _GypsumResult {
   final double area;
@@ -121,11 +120,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
   // Domain layer calculator
   final _calculator = CalculateGypsumV2();
 
-  InputMode _inputMode = InputMode.byArea;
   double _area = 20.0;
-  double _length = 4.0;
-  double _width = 3.0;
-  double _height = 2.7;
   int _layers = 1;
   bool _useInsulation = false;
   GypsumConstructionType _constructionType = GypsumConstructionType.wallLining;
@@ -161,33 +156,11 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
     }
   }
 
-  double _getCalculatedArea() {
-    if (_inputMode == InputMode.byArea) {
-      return _area;
-    }
-
-    // Расчёт площади по размерам комнаты
-    switch (_constructionType) {
-      case GypsumConstructionType.wallLining:
-        // Площадь стен: периметр × высота
-        return (_length + _width) * 2 * _height;
-      case GypsumConstructionType.partition:
-        // Площадь перегородки: длина × высота
-        return _length * _height;
-      case GypsumConstructionType.ceiling:
-        // Площадь потолка: длина × ширина
-        return _length * _width;
-    }
-  }
-
   /// Использует domain layer для расчёта
   _GypsumResult _calculate() {
     final inputs = <String, double>{
-      'inputMode': _inputMode == InputMode.byArea ? 0.0 : 1.0,
+      'inputMode': 0.0, // Только режим "По площади"
       'area': _area,
-      'length': _length,
-      'width': _width,
-      'height': _height,
       'constructionType': _constructionType.index.toDouble(),
       'gklType': _gklType.index.toDouble(),
       'thickness': _thickness.index.toDouble(),
@@ -208,11 +181,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
   @override
   Map<String, dynamic>? getCurrentInputs() {
     return {
-      'inputMode': _inputMode == InputMode.byArea ? 0.0 : 1.0,
       'area': _area,
-      'length': _length,
-      'width': _width,
-      'height': _height,
       'construction_type': (_constructionType.index + 1).toDouble(),
       'gkl_type': (_gklType.index + 1).toDouble(),
       'thickness': _thickness.index.toDouble(),
@@ -358,9 +327,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
         const SizedBox(height: 16),
         _buildSheetSizeSelector(),
         const SizedBox(height: 16),
-        _buildInputModeSelector(),
-        const SizedBox(height: 16),
-        _inputMode == InputMode.byArea ? _buildAreaCard() : _buildRoomDimensionsCard(),
+        _buildAreaCard(),
         const SizedBox(height: 16),
         _buildOptionsCard(),
         const SizedBox(height: 16),
@@ -504,38 +471,6 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
     );
   }
 
-  Widget _buildInputModeSelector() {
-    const accentColor = CalculatorColors.walls;
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _loc.translate('gypsum.input_mode.title'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 12),
-          ModeSelector(
-            options: [
-              _loc.translate('gypsum.input_mode.by_area'),
-              _loc.translate('gypsum.input_mode.by_room'),
-            ],
-            selectedIndex: _inputMode.index,
-            onSelect: (index) {
-              setState(() {
-                _inputMode = InputMode.values[index];
-                _update();
-              });
-            },
-            accentColor: accentColor,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildAreaCard() {
     const accentColor = CalculatorColors.walls;
     return _card(
@@ -573,132 +508,6 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildRoomDimensionsCard() {
-    const accentColor = CalculatorColors.walls;
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _loc.translate('gypsum.room.title'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildDimensionSlider(
-            label: _loc.translate('gypsum.room.length'),
-            value: _length,
-            min: 1.0,
-            max: 20.0,
-            onChanged: (v) {
-              setState(() {
-                _length = v;
-                _update();
-              });
-            },
-            accentColor: accentColor,
-          ),
-          const SizedBox(height: 16),
-          _buildDimensionSlider(
-            label: _loc.translate('gypsum.room.width'),
-            value: _width,
-            min: 1.0,
-            max: 20.0,
-            onChanged: (v) {
-              setState(() {
-                _width = v;
-                _update();
-              });
-            },
-            accentColor: accentColor,
-          ),
-          const SizedBox(height: 16),
-          _buildDimensionSlider(
-            label: _loc.translate('gypsum.room.height'),
-            value: _height,
-            min: 2.0,
-            max: 5.0,
-            onChanged: (v) {
-              setState(() {
-                _height = v;
-                _update();
-              });
-            },
-            accentColor: accentColor,
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  _loc.translate('gypsum.room.calculated_area'),
-                  style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
-                  ),
-                ),
-                Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-                  style: CalculatorDesignSystem.headlineMedium.copyWith(
-                    color: accentColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDimensionSlider({
-    required String label,
-    required double value,
-    required double min,
-    required double max,
-    required ValueChanged<double> onChanged,
-    required Color accentColor,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textSecondary,
-              ),
-            ),
-            Text(
-              '${value.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
-              style: CalculatorDesignSystem.titleMedium.copyWith(
-                color: accentColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: ((max - min) * 10).toInt(),
-          activeColor: accentColor,
-          onChanged: onChanged,
-        ),
-      ],
     );
   }
 

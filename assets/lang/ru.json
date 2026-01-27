@@ -3427,6 +3427,10 @@
     "putty_type": "Тип шпаклёвки",
     "putty_type.finish": "Финишная",
     "putty_type.start": "Стартовая",
+    "qualityClass": "Класс качества",
+    "qualityClass.economy": "Эконом (Q1-Q2)",
+    "qualityClass.standard": "Стандарт (Q3)",
+    "qualityClass.premium": "Премиум (Q4)",
     "railing": "Ограждение",
     "railLength": "Длина рейки",
     "railWidth": "Ширина рейки",
@@ -4675,6 +4679,10 @@
     "insulation": {
       "title": "Теплоизоляция",
       "hint": "Для 1 этажа, над подвалом"
+    },
+    "film_width": {
+      "title": "Ширина ИК плёнки",
+      "label": "ширина"
     },
     "materials": {
       "title": "Материалы",

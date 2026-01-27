@@ -88,8 +88,9 @@ class CalculateCeilingInsulationV2 extends BaseCalculator {
     final packArea = basePackArea * (baseThickness / thickness);
     final insulationPacks = (insulationArea / packArea).ceil();
 
-    // Пароизоляция +15%
-    final vaporBarrierArea = needVaporBarrier ? area * (1 + filmWastePercent / 100) : 0.0;
+    // Пароизоляция +15% (ЭППС не требует пароизоляции по СП 50.13330.2012)
+    final isXps = insulationType == 2;
+    final vaporBarrierArea = (needVaporBarrier && !isXps) ? area * (1 + filmWastePercent / 100) : 0.0;
 
     // Мембрана +15%
     final membraneArea = needMembrane ? area * (1 + filmWastePercent / 100) : 0.0;

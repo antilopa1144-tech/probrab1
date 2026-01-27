@@ -140,6 +140,8 @@ class _HeatingResult {
 
   // ИК плёнка
   final double? filmArea; // м²
+  final double? filmLinearMeters; // погонные метры
+  final int? filmWidthCm; // ширина плёнки в см
   final int? contactClips;
 
   // Водяной
@@ -165,6 +167,8 @@ class _HeatingResult {
     this.matArea,
     this.cableLength,
     this.filmArea,
+    this.filmLinearMeters,
+    this.filmWidthCm,
     this.contactClips,
     this.pipeLength,
     this.loopCount,
@@ -206,6 +210,10 @@ class _UnderfloorHeatingCalculatorScreenState
   HeatingSystemType _systemType = HeatingSystemType.electricMat;
   RoomType _roomType = RoomType.living;
   bool _addInsulation = false;
+  int _filmWidthIndex = 1; // 0=50см, 1=80см, 2=100см
+
+  // Ширины ИК плёнки в метрах
+  static const _filmWidths = {0: 0.5, 1: 0.8, 2: 1.0};
   late double _usefulAreaPercent;
   late _HeatingResult _result;
   late AppLocalizations _loc;
@@ -257,6 +265,8 @@ class _UnderfloorHeatingCalculatorScreenState
     double? matArea;
     double? cableLength;
     double? filmArea;
+    double? filmLinearMeters;
+    int? filmWidthCm;
     int? contactClips;
     double? pipeLength;
     int? loopCount;
@@ -277,13 +287,18 @@ class _UnderfloorHeatingCalculatorScreenState
         break;
 
       case HeatingSystemType.infraredFilm:
-        // ИК плёнка укладывается полосами шириной 0.5 или 1.0 м
+        // ИК плёнка: ширина из выбора пользователя (50/80/100 см)
+        final filmWidthM = _filmWidths[_filmWidthIndex] ?? 0.8;
+        final filmWidthCmVal = (filmWidthM * 100).toInt();
         filmArea = heatingArea;
-        // Рассчитываем количество полос
-        final filmStripArea = _constants.filmStripArea;
-        final filmStrips = (filmArea / filmStripArea).ceil();
+        // Погонные метры = площадь / ширина плёнки
+        final linearMeters = filmArea / filmWidthM;
+        // Количество полос (примерно 5 м.п. на полосу)
+        final filmStrips = (linearMeters / 5.0).ceil();
         // На каждую полосу: контактные зажимы
         contactClips = filmStrips * _constants.contactsPerStrip;
+        filmLinearMeters = linearMeters;
+        filmWidthCm = filmWidthCmVal;
         break;
 
       case HeatingSystemType.waterBased:
@@ -321,6 +336,8 @@ class _UnderfloorHeatingCalculatorScreenState
       matArea: matArea,
       cableLength: cableLength,
       filmArea: filmArea,
+      filmLinearMeters: filmLinearMeters,
+      filmWidthCm: filmWidthCm,
       contactClips: contactClips,
       pipeLength: pipeLength,
       loopCount: loopCount,
@@ -361,7 +378,7 @@ class _UnderfloorHeatingCalculatorScreenState
         buffer.writeln('• ${_loc.translate('warmfloor.export.mounting_tape')}: ${(_result.heatingArea * _constants.montageTapeMultiplier).toStringAsFixed(0)} ${_loc.translate('common.meters')}');
         break;
       case HeatingSystemType.infraredFilm:
-        buffer.writeln('• ${_loc.translate('warmfloor.export.ir_film')}: ${_result.filmArea!.toStringAsFixed(1)} м²');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.ir_film')}: ${_result.filmLinearMeters!.toStringAsFixed(1)} м.п. (${_loc.translate('warmfloor.film_width.label')}: ${_result.filmWidthCm} см)');
         buffer.writeln('• ${_loc.translate('warmfloor.export.contact_clips')}: ${_result.contactClips} ${_loc.translate('common.pcs')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.contact_insulation')}: ${_result.contactClips} ${_loc.translate('common.pcs')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.reflective_substrate')}: ${_result.area.toStringAsFixed(1)} м²');
@@ -424,7 +441,7 @@ class _UnderfloorHeatingCalculatorScreenState
                     ? '${_result.matArea!.toStringAsFixed(1)} м²'
                     : _result.systemType == HeatingSystemType.electricCable
                         ? '${_result.cableLength!.toStringAsFixed(0)} м'
-                        : '${_result.filmArea!.toStringAsFixed(1)} м²',
+                        : '${_result.filmLinearMeters!.toStringAsFixed(1)} м.п.',
             icon: Icons.thermostat,
           ),
         ],
@@ -442,6 +459,8 @@ class _UnderfloorHeatingCalculatorScreenState
         const SizedBox(height: 16),
         _buildUsefulAreaSlider(),
         const SizedBox(height: 16),
+        if (_systemType == HeatingSystemType.infraredFilm) _buildFilmWidthSelector(),
+        if (_systemType == HeatingSystemType.infraredFilm) const SizedBox(height: 16),
         if (_systemType != HeatingSystemType.waterBased) _buildInsulationToggle(),
         if (_systemType != HeatingSystemType.waterBased) const SizedBox(height: 16),
         _buildMaterialsCard(),
@@ -927,6 +946,35 @@ class _UnderfloorHeatingCalculatorScreenState
     );
   }
 
+  Widget _buildFilmWidthSelector() {
+    const accentColor = CalculatorColors.engineering;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('warmfloor.film_width.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: const ['50 см', '80 см', '100 см'],
+            selectedIndex: _filmWidthIndex,
+            onSelect: (index) {
+              setState(() {
+                _filmWidthIndex = index;
+                _update();
+              });
+            },
+            accentColor: accentColor,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildInsulationToggle() {
     const accentColor = CalculatorColors.engineering;
     return _card(
@@ -1002,7 +1050,8 @@ class _UnderfloorHeatingCalculatorScreenState
         materials.addAll([
           MaterialItem(
             name: _loc.translate('warmfloor.materials.ir_film'),
-            value: '${_result.filmArea!.toStringAsFixed(1)} м²',
+            value: '${_result.filmLinearMeters!.toStringAsFixed(1)} м.п.',
+            subtitle: '${_loc.translate('warmfloor.film_width.label')}: ${_result.filmWidthCm} см',
             icon: Icons.view_module,
           ),
           MaterialItem(

@@ -118,13 +118,13 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
     switch (_materialTier) {
       case MaterialTier.economy:
         const dryMaterials = PuttyMaterialsDatabase.finishDryMaterials;
-        return dryMaterials.firstWhere((m) => m.id == 'starateli_finish', orElse: () => dryMaterials.first);
+        return dryMaterials.firstWhere((m) => m.id == 'starateli_finish_plus', orElse: () => dryMaterials.first);
       case MaterialTier.standard:
         const pasteMaterials = PuttyMaterialsDatabase.finishPasteMaterials;
         return pasteMaterials.firstWhere((m) => m.id == 'sheetrock_superfinish', orElse: () => pasteMaterials.first);
       case MaterialTier.premium:
         const pasteMaterialsPremium = PuttyMaterialsDatabase.finishPasteMaterials;
-        return pasteMaterialsPremium.firstWhere((m) => m.id == 'terraco_ready_mix', orElse: () => pasteMaterialsPremium.first);
+        return pasteMaterialsPremium.firstWhere((m) => m.id == 'terraco_handycoat_ready', orElse: () => pasteMaterialsPremium.first);
     }
   }
 
@@ -146,9 +146,10 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
         _finishLayers;
     final finishPackages = (finishConsumption / finishMaterial.packageSize).ceil();
 
-    // Грунтовка: 0.15 л/м² на каждый слой
-    final primerLayers = _startLayers + _finishLayers + 1;
-    final primerVolume = _netArea * 0.15 * primerLayers;
+    // Грунтовка: 0.1 л/м² на слой, 2 грунтования (перед стартом и перед финишем)
+    const primerConsumptionPerLayer = 0.1; // л/м² по СНиП
+    const primerLayers = 2; // перед стартовой и перед финишной шпаклёвкой
+    final primerVolume = _netArea * primerConsumptionPerLayer * primerLayers;
     final primerCanisters = (primerVolume / 10).ceil();
 
     // Абразив: 1 лист на 10 м², 2 этапа шлифовки

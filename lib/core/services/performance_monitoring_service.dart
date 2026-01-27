@@ -3,15 +3,39 @@ import 'package:flutter/foundation.dart';
 
 /// Сервис для мониторинга производительности приложения через Firebase Performance
 class PerformanceMonitoringService {
-  static final FirebasePerformance _performance = FirebasePerformance.instance;
+  static FirebasePerformance? _performance;
+
+  /// Безопасное получение инстанса Firebase Performance
+  static FirebasePerformance? get _safePerformance {
+    try {
+      _performance ??= FirebasePerformance.instance;
+      return _performance;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Firebase Performance unavailable: $e');
+      }
+      return null;
+    }
+  }
 
   /// Включен ли мониторинг производительности
-  static Future<bool> get isPerformanceCollectionEnabled =>
-      _performance.isPerformanceCollectionEnabled();
+  static Future<bool> get isPerformanceCollectionEnabled async {
+    try {
+      return await _safePerformance?.isPerformanceCollectionEnabled() ?? false;
+    } catch (e) {
+      return false;
+    }
+  }
 
   /// Включить/выключить сбор метрик производительности
   static Future<void> setPerformanceCollectionEnabled(bool enabled) async {
-    await _performance.setPerformanceCollectionEnabled(enabled);
+    try {
+      await _safePerformance?.setPerformanceCollectionEnabled(enabled);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Failed to set performance collection: $e');
+      }
+    }
   }
 
   /// Создать кастомную метрику для отслеживания
@@ -22,8 +46,15 @@ class PerformanceMonitoringService {
   /// // ... выполнение операции ...
   /// await trace.stop();
   /// ```
-  static Trace startTrace(String traceName) {
-    return _performance.newTrace(traceName);
+  static Trace? startTrace(String traceName) {
+    try {
+      return _safePerformance?.newTrace(traceName);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Failed to start trace: $e');
+      }
+      return null;
+    }
   }
 
   /// Отследить выполнение калькулятора
@@ -39,6 +70,8 @@ class PerformanceMonitoringService {
     }
 
     final trace = startTrace('calculator_$calculatorId');
+    if (trace == null) return calculation();
+
     trace.putAttribute('calculator_id', calculatorId);
 
     try {
@@ -72,6 +105,8 @@ class PerformanceMonitoringService {
     }
 
     final trace = startTrace('screen_load_$screenName');
+    if (trace == null) return load();
+
     trace.putAttribute('screen', screenName);
 
     try {
@@ -96,6 +131,8 @@ class PerformanceMonitoringService {
     }
 
     final trace = startTrace('db_query_$queryName');
+    if (trace == null) return query();
+
     trace.putAttribute('query_name', queryName);
 
     try {
@@ -124,11 +161,18 @@ class PerformanceMonitoringService {
   /// metric.responsePayloadSize = 1024;
   /// await metric.stop();
   /// ```
-  static HttpMetric newHttpMetric({
+  static HttpMetric? newHttpMetric({
     required String url,
     required HttpMethod method,
   }) {
-    return _performance.newHttpMetric(url, method);
+    try {
+      return _safePerformance?.newHttpMetric(url, method);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Failed to create HTTP metric: $e');
+      }
+      return null;
+    }
   }
 
   /// Отследить время выполнения синхронной операции
@@ -151,6 +195,8 @@ class PerformanceMonitoringService {
     }
 
     final trace = startTrace(name);
+    if (trace == null) return operation();
+
     trace.start();
 
     try {
@@ -180,6 +226,8 @@ class PerformanceMonitoringService {
     if (kDebugMode) return;
 
     final trace = startTrace('custom_$name');
+    if (trace == null) return;
+
     trace.setMetric(name, value);
 
     if (attributes != null) {
@@ -213,6 +261,8 @@ class PerformanceMonitoringService {
     }
 
     final trace = startTrace('user_action_$action');
+    if (trace == null) return execute();
+
     trace.putAttribute('action', action);
 
     if (metadata != null) {

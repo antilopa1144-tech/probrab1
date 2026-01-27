@@ -73,8 +73,9 @@ class CalculateBalcony extends BaseCalculator {
         insulation == 1 ? (wallArea + ceilingArea) * 1.1 : 0.0;
     final insulationVolume =
         insulation == 1 ? (wallArea + ceilingArea) * 0.05 : 0.0;
-    final vaporBarrierArea =
-        insulation == 1 ? (wallArea + ceilingArea) * 1.1 : 0.0;
+    // Для ЭППС (XPS) пароизоляция не требуется (СП 50.13330.2012)
+    // Балкон использует ЭППС по умолчанию
+    const vaporBarrierArea = 0.0;
 
     double tilesNeeded = 0.0;
     double selfLevelingMix = 0.0;

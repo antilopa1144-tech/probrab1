@@ -57,8 +57,8 @@ class CalculateFloorInsulation extends BaseCalculator {
     // Вес утеплителя
     final weight = volume * density;
 
-    // Пароизоляция: площадь пола + 10% на нахлёст
-    final vaporBarrierArea = area * 1.1;
+    // Пароизоляция: для минваты и пенопласта, ЭППС паронепроницаем (СП 50.13330.2012)
+    final vaporBarrierArea = insulationType != 3 ? area * 1.1 : 0.0;
 
     // Гидроизоляция (для минваты обязательна)
     final waterproofingArea = insulationType == 1 ? area * 1.1 : 0.0;

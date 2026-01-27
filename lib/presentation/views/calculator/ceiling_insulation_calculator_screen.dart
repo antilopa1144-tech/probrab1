@@ -311,17 +311,22 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
   }
 
   Widget _buildOptionsCard() {
+    // ЭППС паронепроницаем - пароизоляция не нужна (СП 50.13330.2012)
+    final isXps = _insulationType == CeilingInsulationType.extrudedPPS;
+
     return _card(
       child: Column(
         children: [
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
-            value: _needVaporBarrier,
-            activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needVaporBarrier = v; _update(); }); },
-          ),
+          // Пароизоляция не нужна для ЭППС
+          if (!isXps)
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
+              subtitle: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+              value: _needVaporBarrier,
+              activeTrackColor: _accentColor,
+              onChanged: (v) { setState(() { _needVaporBarrier = v; _update(); }); },
+            ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('ceiling_insulation_calc.option.membrane'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),

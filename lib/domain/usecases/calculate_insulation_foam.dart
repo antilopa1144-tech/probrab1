@@ -127,7 +127,8 @@ class CalculateInsulationFoam extends BaseCalculator {
         'volume': volume,
         'sheetsNeeded': sheetsNeeded.toDouble(),
         'weight': weight,
-        'vaporBarrierArea': vaporBarrierArea,
+        // Пароизоляция только для ПСБ (type=1), ЭППС паронепроницаем
+        if (vaporBarrierArea > 0) 'vaporBarrierArea': vaporBarrierArea,
         'windBarrierArea': windBarrierArea,
         'glueNeeded': glueNeeded,
         'foamGlueNeeded': foamGlueNeeded.toDouble(),

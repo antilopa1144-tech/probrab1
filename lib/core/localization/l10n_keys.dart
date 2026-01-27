@@ -1184,6 +1184,10 @@ abstract final class L10nKeys {
   static const input_putty_type = 'input.putty_type';
   static const input_putty_type_finish = 'input.putty_type.finish';
   static const input_putty_type_start = 'input.putty_type.start';
+  static const input_qualityClass = 'input.qualityClass';
+  static const input_qualityClass_economy = 'input.qualityClass.economy';
+  static const input_qualityClass_standard = 'input.qualityClass.standard';
+  static const input_qualityClass_premium = 'input.qualityClass.premium';
   static const input_rafterStep = 'input.rafterStep';
   static const input_rafterStep_1200mm = 'input.rafterStep.1200mm';
   static const input_rafterStep_300mm = 'input.rafterStep.300mm';
@@ -2623,6 +2627,8 @@ abstract final class L10nKeys {
   static const warmfloor_info_title = 'warmfloor.info.title';
   static const warmfloor_insulation_hint = 'warmfloor.insulation.hint';
   static const warmfloor_insulation_title = 'warmfloor.insulation.title';
+  static const warmfloor_film_width_title = 'warmfloor.film_width.title';
+  static const warmfloor_film_width_label = 'warmfloor.film_width.label';
   static const warmfloor_materials_brackets = 'warmfloor.materials.brackets';
   static const warmfloor_materials_collector = 'warmfloor.materials.collector';
   static const warmfloor_materials_contact_clips = 'warmfloor.materials.contact_clips';

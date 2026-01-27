@@ -8,7 +8,7 @@ import '../../models/calculator_definition_v2.dart';
 import '../../models/calculator_field.dart';
 import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
-import '../../usecases/calculate_cassette_ceiling.dart';
+import '../../usecases/calculate_cassette_ceiling_v2.dart';
 import '../../usecases/calculate_ceiling_insulation.dart';
 import '../../usecases/calculate_rail_ceiling.dart';
 import '../../usecases/calculate_stretch_ceiling.dart';
@@ -23,22 +23,58 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
       subCategoryKey: 'subcategory.ceilings',
       fields: [
         const CalculatorField(
+          key: 'inputMode',
+          labelKey: 'input.inputMode',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.radio,
+          defaultValue: 1.0,
+          required: true,
+          order: 1,
+        ),
+        const CalculatorField(
+          key: 'roomWidth',
+          labelKey: 'input.roomWidth',
+          unitType: UnitType.meters,
+          inputType: FieldInputType.number,
+          defaultValue: 4.0,
+          required: false,
+          order: 2,
+        ),
+        const CalculatorField(
+          key: 'roomLength',
+          labelKey: 'input.roomLength',
+          unitType: UnitType.meters,
+          inputType: FieldInputType.number,
+          defaultValue: 5.0,
+          required: false,
+          order: 3,
+        ),
+        const CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
           inputType: FieldInputType.number,
           defaultValue: 20.0,
-          required: true,
-          order: 1,
+          required: false,
+          order: 4,
         ),
         const CalculatorField(
           key: 'cassetteSize',
-          labelKey: 'input.tileSize',
-          unitType: UnitType.meters,
-          inputType: FieldInputType.number,
-          defaultValue: 60.0,
+          labelKey: 'input.cassetteSize',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.radio,
+          defaultValue: 0.0,
           required: true,
-          order: 2,
+          order: 5,
+        ),
+        const CalculatorField(
+          key: 'ceilingType',
+          labelKey: 'input.ceilingType',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.radio,
+          defaultValue: 0.0,
+          required: true,
+          order: 6,
         ),
       ],
       beforeHints: [
@@ -51,7 +87,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.obespechte_dostup_k_kommunikatsiyam'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_uroven_dlya_montazha'),
       ],
-      useCase: CalculateCassetteCeiling(),
+      useCase: CalculateCassetteCeilingV2(),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
