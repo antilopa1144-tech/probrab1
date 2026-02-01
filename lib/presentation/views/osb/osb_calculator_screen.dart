@@ -90,6 +90,7 @@ class OsbCalculatorScreen extends StatefulWidget {
 }
 
 class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
+  bool _isDark = false;
   InputMode _inputMode = InputMode.byArea;
   double _area = 20.0;
   double _length = 4.0;
@@ -414,6 +415,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
     const accentColor = CalculatorColors.walls;
 
@@ -601,7 +603,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
           Text(
             'Размер листа',
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -679,7 +681,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
           Text(
             'Толщина ОСБ',
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -719,7 +721,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
                         ? 'Рекомендовано: ${_getThicknessHint(_thickness)}'
                         : _getThicknessHint(_thickness),
                     style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                   ),
                 ),
@@ -751,7 +753,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
           Text(
             'Режим ввода',
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -782,7 +784,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
               Text(
                 'Площадь',
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
               Text(
@@ -821,7 +823,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
           Text(
             'Размеры помещения',
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -865,7 +867,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
                 Text(
                   'Расчётная площадь',
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
                 Text(
@@ -900,7 +902,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
             Text(
               label,
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             Text(
@@ -935,7 +937,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
               Text(
                 'Запас материала',
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
+                  color: CalculatorColors.getTextPrimary(_isDark),
                 ),
               ),
               Text(
@@ -955,7 +957,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
                 child: Text(
                   '5 %',
                   style: CalculatorDesignSystem.bodySmall.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
               ),
@@ -986,7 +988,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
                 child: Text(
                   '20 %',
                   style: CalculatorDesignSystem.bodySmall.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                   textAlign: TextAlign.right,
                 ),
@@ -1152,10 +1154,13 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

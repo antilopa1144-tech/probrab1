@@ -203,6 +203,7 @@ class _UnderfloorHeatingCalculatorScreenState
 
   @override
   String get exportSubject => _loc.translate('warmfloor.export.subject');
+  bool _isDark = false;
   InputMode _inputMode = InputMode.byArea;
   double _area = 15.0;
   double _length = 4.0;
@@ -412,6 +413,7 @@ class _UnderfloorHeatingCalculatorScreenState
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.engineering;
 
     return CalculatorScaffold(
@@ -482,7 +484,7 @@ class _UnderfloorHeatingCalculatorScreenState
           Text(
             _loc.translate('warmfloor.mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -516,7 +518,7 @@ class _UnderfloorHeatingCalculatorScreenState
                 child: Text(
                   _loc.translate('warmfloor.dimensions.room_area'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -558,7 +560,7 @@ class _UnderfloorHeatingCalculatorScreenState
           Text(
             _loc.translate('warmfloor.dimensions.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -602,7 +604,7 @@ class _UnderfloorHeatingCalculatorScreenState
                   child: Text(
                     _loc.translate('warmfloor.dimensions.room_area'),
                     style: CalculatorDesignSystem.bodyMedium.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -641,7 +643,7 @@ class _UnderfloorHeatingCalculatorScreenState
               child: Text(
                 label,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -678,7 +680,7 @@ class _UnderfloorHeatingCalculatorScreenState
           Text(
             _loc.translate('warmfloor.system.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -706,7 +708,7 @@ class _UnderfloorHeatingCalculatorScreenState
                     border: Border.all(
                       color: isSelected
                           ? accentColor
-                          : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                          : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -719,12 +721,12 @@ class _UnderfloorHeatingCalculatorScreenState
                         decoration: BoxDecoration(
                           color: isSelected
                               ? accentColor.withValues(alpha: 0.15)
-                              : CalculatorColors.textSecondary.withValues(alpha: 0.1),
+                              : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           type.icon,
-                          color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                          color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
                           size: 24,
                         ),
                       ),
@@ -738,7 +740,7 @@ class _UnderfloorHeatingCalculatorScreenState
                               style: CalculatorDesignSystem.titleSmall.copyWith(
                                 color: isSelected
                                     ? accentColor
-                                    : CalculatorColors.textPrimary,
+                                    : CalculatorColors.getTextPrimary(_isDark),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -746,7 +748,7 @@ class _UnderfloorHeatingCalculatorScreenState
                             Text(
                               _loc.translate(type.subtitleKey),
                               style: CalculatorDesignSystem.bodySmall.copyWith(
-                                color: CalculatorColors.textSecondary,
+                                color: CalculatorColors.getTextSecondary(_isDark),
                               ),
                             ),
                             if (isSelected) ...[
@@ -784,14 +786,14 @@ class _UnderfloorHeatingCalculatorScreenState
           Text(
             _loc.translate('warmfloor.room.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             _loc.translate('warmfloor.room.title_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -819,7 +821,7 @@ class _UnderfloorHeatingCalculatorScreenState
                     border: Border.all(
                       color: isSelected
                           ? accentColor
-                          : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                          : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -835,7 +837,7 @@ class _UnderfloorHeatingCalculatorScreenState
                               style: CalculatorDesignSystem.titleSmall.copyWith(
                                 color: isSelected
                                     ? accentColor
-                                    : CalculatorColors.textPrimary,
+                                    : CalculatorColors.getTextPrimary(_isDark),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -843,7 +845,7 @@ class _UnderfloorHeatingCalculatorScreenState
                             Text(
                               '${_loc.translate(type.descriptionKey)} • ${_constants.getRoomPower(type.key)} Вт/м²',
                               style: CalculatorDesignSystem.bodySmall.copyWith(
-                                color: CalculatorColors.textSecondary,
+                                color: CalculatorColors.getTextSecondary(_isDark),
                               ),
                             ),
                           ],
@@ -874,7 +876,7 @@ class _UnderfloorHeatingCalculatorScreenState
               Text(
                 _loc.translate('warmfloor.useful_area.title'),
                 style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
+                  color: CalculatorColors.getTextPrimary(_isDark),
                 ),
               ),
               Container(
@@ -897,7 +899,7 @@ class _UnderfloorHeatingCalculatorScreenState
           Text(
             _loc.translate('warmfloor.useful_area.hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -928,14 +930,14 @@ class _UnderfloorHeatingCalculatorScreenState
               Text(
                 '${_constants.usefulAreaMin.toInt()}% (${_loc.translate('warmfloor.useful_area.min_label')})',
                 style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                   fontSize: 11,
                 ),
               ),
               Text(
                 '${_constants.usefulAreaMax.toInt()}% (${_loc.translate('warmfloor.useful_area.max_label')})',
                 style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                   fontSize: 11,
                 ),
               ),
@@ -955,7 +957,7 @@ class _UnderfloorHeatingCalculatorScreenState
           Text(
             _loc.translate('warmfloor.film_width.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -987,14 +989,14 @@ class _UnderfloorHeatingCalculatorScreenState
                 Text(
                   _loc.translate('warmfloor.insulation.title'),
                   style: CalculatorDesignSystem.titleMedium.copyWith(
-                    color: CalculatorColors.textPrimary,
+                    color: CalculatorColors.getTextPrimary(_isDark),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   _loc.translate('warmfloor.insulation.hint'),
                   style: CalculatorDesignSystem.bodySmall.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
               ],
@@ -1234,10 +1236,13 @@ class _UnderfloorHeatingCalculatorScreenState
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

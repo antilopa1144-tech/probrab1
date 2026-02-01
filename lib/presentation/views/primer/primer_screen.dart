@@ -14,6 +14,7 @@ class PrimerScreen extends StatefulWidget {
 }
 
 class _PrimerScreenState extends State<PrimerScreen> {
+  bool _isDark = false;
   late AppLocalizations _loc;
 
   // Геометрия
@@ -132,6 +133,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
     const accentColor = CalculatorColors.interior;
 
@@ -269,7 +271,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
           Text(
             _loc.translate('common.dimensions'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -366,7 +368,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
           Text(
             _loc.translate('primer.layers_title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -447,7 +449,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
           child: Text(
             _loc.translate('common.tips'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
         ),
@@ -457,10 +459,13 @@ class _PrimerScreenState extends State<PrimerScreen> {
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

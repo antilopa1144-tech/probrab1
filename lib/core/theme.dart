@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 /// Современная тема приложения с использованием Material You 3 и эффектами 2025 года.
 class AppTheme {
   /// Creates a dark theme using Material You 3 with a dynamic accent colour.
+  /// Тёплые персиковые оттенки для комфорта глаз
   static ThemeData darkTheme(Color accent) {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: accent,
@@ -10,12 +11,12 @@ class AppTheme {
       primary: accent,
       onPrimary: Colors.black,
       secondary: accent,
-      surface: const Color(0xFF0F0F0F), // Deeper black for Android 15
-      surfaceContainerHighest: const Color(0xFF1C1C1C),
-      surfaceContainerHigh: const Color(0xFF232323),
-      surfaceContainer: const Color(0xFF282828),
-      surfaceContainerLow: const Color(0xFF2E2E2E),
-      surfaceContainerLowest: const Color(0xFF353535),
+      surface: const Color(0xFF1E1A18), // Тёплый тёмный с персиком
+      surfaceContainerHighest: const Color(0xFF3A322E), // Заметный персиковый
+      surfaceContainerHigh: const Color(0xFF453C37),
+      surfaceContainer: const Color(0xFF342C28),
+      surfaceContainerLow: const Color(0xFF3F3632),
+      surfaceContainerLowest: const Color(0xFF282220),
     );
 
     return _buildTheme(colorScheme, accent, Brightness.dark);
@@ -45,14 +46,14 @@ class AppTheme {
       useMaterial3: true,
       brightness: brightness,
       scaffoldBackgroundColor: brightness == Brightness.dark
-          ? const Color(0xFF0F0F0F)
+          ? const Color(0xFF1E1A18) // Тёплый тёмный с персиком
           : const Color(0xFFFAFAFA),
       colorScheme: colorScheme,
       
       // Современный AppBar с blur эффектом (Android 15 style)
       appBarTheme: AppBarTheme(
         backgroundColor: brightness == Brightness.dark
-            ? const Color(0xFF0F0F0F).withValues(alpha: 0.85)
+            ? const Color(0xFF1E1A18).withValues(alpha: 0.85) // Тёплый персиковый
             : const Color(0xFFFAFAFA).withValues(alpha: 0.85),
         elevation: 0,
         scrolledUnderElevation: 0,

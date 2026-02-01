@@ -49,6 +49,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
   @override
   String get exportSubject => _loc.translate('windows_calc.title');
 
+  bool _isDark = false;
   int _windowsCount = 5;
   double _windowWidth = 1.4;
   double _windowHeight = 1.5;
@@ -132,6 +133,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('windows_calc.title'),
@@ -232,7 +234,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('windows_calc.label.windows_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('windows_calc.label.windows_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('$_windowsCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -256,7 +258,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
         children: [
           Text(
             _loc.translate('windows_calc.label.window_size'),
-            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary),
+            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
           ),
           const SizedBox(height: 12),
           Row(
@@ -273,7 +275,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(_loc.translate('windows_calc.label.total_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+                Text(_loc.translate('windows_calc.label.total_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
                 Text('${_result.totalArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
               ],
             ),
@@ -289,16 +291,16 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
         children: [
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('windows_calc.option.sill'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('windows_calc.option.sill_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('windows_calc.option.sill'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('windows_calc.option.sill_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needSill,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needSill = v; _update(); }); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('windows_calc.option.slopes'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('windows_calc.option.slopes_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('windows_calc.option.slopes'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('windows_calc.option.slopes_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needSlopes,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needSlopes = v; _update(); }); },
@@ -354,10 +356,13 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

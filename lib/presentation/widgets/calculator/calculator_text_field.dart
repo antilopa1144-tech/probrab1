@@ -150,6 +150,7 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
   Widget build(BuildContext context) {
     final accent = widget.accentColor ?? CalculatorColors.interior;
     final allowNegative = widget.minValue != null && widget.minValue! < 0;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return TextField(
       controller: _controller,
@@ -178,14 +179,16 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
             ? Icon(widget.icon, size: 20, color: accent)
             : null,
         filled: true,
-        fillColor: widget.fillColor ?? CalculatorColors.inputBackground,
+        fillColor: widget.fillColor ?? CalculatorColors.getInputBackground(isDark),
         border: OutlineInputBorder(
           borderRadius: CalculatorDesignSystem.inputBorderRadius,
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: CalculatorDesignSystem.inputBorderRadius,
-          borderSide: BorderSide.none,
+          borderSide: isDark
+              ? BorderSide(color: CalculatorColors.borderDefaultDark, width: 1)
+              : BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: CalculatorDesignSystem.inputBorderRadius,
@@ -204,11 +207,15 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
           vertical: 12,
         ),
         labelStyle: CalculatorDesignSystem.bodySmall.copyWith(
-          color: CalculatorColors.textSecondary,
+          color: CalculatorColors.getTextSecondary(isDark),
+        ),
+        suffixStyle: CalculatorDesignSystem.bodySmall.copyWith(
+          color: CalculatorColors.getTextTertiary(isDark),
         ),
       ),
       style: CalculatorDesignSystem.bodyMedium.copyWith(
         height: 1.2,
+        color: CalculatorColors.getTextPrimary(isDark),
       ),
       onChanged: _handleChange,
     );

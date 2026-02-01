@@ -80,6 +80,8 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
 
   static const _accentColor = CalculatorColors.interior;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -139,6 +141,7 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('decor_plaster_calc.title'),
@@ -253,7 +256,7 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('decor_plaster_calc.label.wall_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('decor_plaster_calc.label.wall_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -279,7 +282,7 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
           const SizedBox(height: 8),
           Text(
             _loc.translate('decor_plaster_calc.layers_hint'),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
           ),
         ],
       ),
@@ -292,8 +295,8 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
         children: [
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('decor_plaster_calc.option.primer'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('decor_plaster_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('decor_plaster_calc.option.primer'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('decor_plaster_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needPrimer,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPrimer = v; _update(); }); },
@@ -301,8 +304,8 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
           if (_plasterType == DecorPlasterType.venetian)
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: Text(_loc.translate('decor_plaster_calc.option.wax'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-              subtitle: Text(_loc.translate('decor_plaster_calc.option.wax_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+              title: Text(_loc.translate('decor_plaster_calc.option.wax'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+              subtitle: Text(_loc.translate('decor_plaster_calc.option.wax_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               value: _needWax,
               activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needWax = v; _update(); }); },
@@ -382,10 +385,13 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

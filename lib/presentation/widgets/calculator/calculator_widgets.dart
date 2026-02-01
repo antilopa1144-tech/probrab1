@@ -50,8 +50,10 @@ export 'result_card.dart';
 export 'tips_card.dart';
 
 // Кнопка добавления в проект
-// Включает: AddToProjectButton, CalculationData, MaterialData
-export 'add_to_project_button.dart';
+// На вебе используется заглушка без Isar-зависимостей
+// dart.library.io существует на нативных платформах (Android, iOS, desktop)
+export 'add_to_project_button_stub.dart'
+    if (dart.library.io) 'add_to_project_button.dart';
 
 // Константы
 export '../../../core/constants/calculator_colors.dart';

@@ -13,6 +13,7 @@ class PaintScreen extends StatefulWidget {
 }
 
 class _PaintScreenState extends State<PaintScreen> {
+  bool _isDark = false;
   late AppLocalizations _loc;
 
   // Геометрия
@@ -116,6 +117,7 @@ class _PaintScreenState extends State<PaintScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
     // Цвет зависит от типа: интерьер = interior, фасад = facade
     final accentColor = _paintType == 0 ? CalculatorColors.interior : CalculatorColors.facade;
@@ -183,7 +185,7 @@ class _PaintScreenState extends State<PaintScreen> {
               Text(
                 _loc.translate('paint.paint_type'),
                 style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
+                  color: CalculatorColors.getTextPrimary(_isDark),
                 ),
               ),
               const SizedBox(height: 12),
@@ -229,7 +231,7 @@ class _PaintScreenState extends State<PaintScreen> {
               Text(
                 _loc.translate('paint.parameters'),
                 style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
+                  color: CalculatorColors.getTextPrimary(_isDark),
                 ),
               ),
               const SizedBox(height: 12),
@@ -341,7 +343,7 @@ class _PaintScreenState extends State<PaintScreen> {
           Text(
             _loc.translate('common.dimensions'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -443,10 +445,13 @@ class _PaintScreenState extends State<PaintScreen> {
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

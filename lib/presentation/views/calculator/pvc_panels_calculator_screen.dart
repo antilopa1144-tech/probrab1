@@ -83,6 +83,8 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
 
   static const _accentColor = CalculatorColors.interior;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -144,6 +146,7 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('pvc_panels_calc.title'),
@@ -291,7 +294,7 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('pvc_panels_calc.label.total_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('pvc_panels_calc.label.total_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -321,16 +324,16 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
         children: [
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('pvc_panels_calc.option.profile'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('pvc_panels_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('pvc_panels_calc.option.profile'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('pvc_panels_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needProfile,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needProfile = v; _update(); }); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('pvc_panels_calc.option.corners'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('pvc_panels_calc.option.corners_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('pvc_panels_calc.option.corners'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('pvc_panels_calc.option.corners_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needCorners,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needCorners = v; _update(); }); },
@@ -386,10 +389,13 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

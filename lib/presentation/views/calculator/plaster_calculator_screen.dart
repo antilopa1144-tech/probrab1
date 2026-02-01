@@ -94,6 +94,8 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
   late _PlasterResult _result;
   late AppLocalizations _loc;
 
+  bool _isDark = false;
+
   // Константы калькулятора (null = используются hardcoded defaults)
   late final _PlasterConstants _constants;
 
@@ -143,6 +145,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.walls;
 
     return CalculatorScaffold(
@@ -252,7 +255,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
             Text(
               _loc.translate('plaster_pro.label.wall_area'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             Text(
@@ -341,7 +344,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
               Text(
                 _loc.translate('plaster_pro.thickness.title'),
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
               Text(
@@ -456,10 +459,13 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

@@ -55,6 +55,8 @@ class CeilingInsulationCalculatorScreen extends ConsumerStatefulWidget {
 
 class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsulationCalculatorScreen>
     with ExportableConsumerMixin {
+  bool _isDark = false;
+
   // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
@@ -138,6 +140,7 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
 
   @override
   Widget build(BuildContext context) {
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
 
     return CalculatorScaffold(
@@ -286,7 +289,7 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('ceiling_insulation_calc.label.ceiling_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('ceiling_insulation_calc.label.ceiling_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -321,16 +324,16 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
           if (!isXps)
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-              subtitle: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+              title: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+              subtitle: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               value: _needVaporBarrier,
               activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needVaporBarrier = v; _update(); }); },
             ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('ceiling_insulation_calc.option.membrane'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('ceiling_insulation_calc.option.membrane_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('ceiling_insulation_calc.option.membrane'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('ceiling_insulation_calc.option.membrane_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needMembrane,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needMembrane = v; _update(); }); },
@@ -375,10 +378,13 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

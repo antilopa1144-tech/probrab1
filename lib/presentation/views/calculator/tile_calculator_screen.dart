@@ -278,6 +278,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
 
   @override
   String get exportSubject => _loc.translate('tile.export.subject');
+  bool _isDark = false;
   InputMode _inputMode = InputMode.byArea;
   double _area = 20.0;
   double _length = 5.0;
@@ -517,6 +518,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.interior;
 
     return CalculatorScaffold(
@@ -585,7 +587,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           Text(
             _loc.translate('tile.mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -619,7 +621,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                 child: Text(
                   _loc.translate('tile.area.title'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
               ),
@@ -659,7 +661,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           Text(
             _loc.translate('tile.dimensions.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -703,7 +705,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                   child: Text(
                     _loc.translate('tile.area.room_area'),
                     style: CalculatorDesignSystem.bodyMedium.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                   ),
                 ),
@@ -739,7 +741,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
               child: Text(
                 label,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
             ),
@@ -774,7 +776,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           Text(
             _loc.translate('tile.room.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -802,7 +804,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                     border: Border.all(
                       color: isSelected
                           ? accentColor
-                          : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                          : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -815,12 +817,12 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                         decoration: BoxDecoration(
                           color: isSelected
                               ? accentColor.withValues(alpha: 0.15)
-                              : CalculatorColors.textSecondary.withValues(alpha: 0.1),
+                              : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           type.icon,
-                          color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                          color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
                           size: 24,
                         ),
                       ),
@@ -834,7 +836,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                               style: CalculatorDesignSystem.titleSmall.copyWith(
                                 color: isSelected
                                     ? accentColor
-                                    : CalculatorColors.textPrimary,
+                                    : CalculatorColors.getTextPrimary(_isDark),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -842,7 +844,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                             Text(
                               _loc.translate(type.descKey),
                               style: CalculatorDesignSystem.bodySmall.copyWith(
-                                color: CalculatorColors.textSecondary,
+                                color: CalculatorColors.getTextSecondary(_isDark),
                               ),
                             ),
                           ],
@@ -870,7 +872,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           Text(
             _loc.translate('tile.material.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -908,7 +910,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                     border: Border.all(
                       color: isSelected
                           ? accentColor
-                          : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                          : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -921,12 +923,12 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                         decoration: BoxDecoration(
                           color: isSelected
                               ? accentColor.withValues(alpha: 0.15)
-                              : CalculatorColors.textSecondary.withValues(alpha: 0.1),
+                              : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           type.icon,
-                          color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                          color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
                           size: 24,
                         ),
                       ),
@@ -940,7 +942,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                               style: CalculatorDesignSystem.titleSmall.copyWith(
                                 color: isSelected
                                     ? accentColor
-                                    : CalculatorColors.textPrimary,
+                                    : CalculatorColors.getTextPrimary(_isDark),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -948,7 +950,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                             Text(
                               _loc.translate(type.subtitleKey),
                               style: CalculatorDesignSystem.bodySmall.copyWith(
-                                color: CalculatorColors.textSecondary,
+                                color: CalculatorColors.getTextSecondary(_isDark),
                               ),
                             ),
                             if (isSelected) ...[
@@ -992,7 +994,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           Text(
             _loc.translate('tile.size.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -1022,11 +1024,11 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                 selectedColor: accentColor.withValues(alpha: 0.2),
                 backgroundColor: Colors.transparent,
                 side: BorderSide(
-                  color: isSelected ? accentColor : CalculatorColors.textSecondary.withValues(alpha: 0.3),
+                  color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.3),
                   width: 2,
                 ),
                 labelStyle: TextStyle(
-                  color: isSelected ? accentColor : CalculatorColors.textPrimary,
+                  color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
               );
@@ -1046,7 +1048,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           Text(
             _loc.translate('tile.size.custom_title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -1056,7 +1058,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                 child: Text(
                   _loc.translate('tile.size.width'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
               ),
@@ -1090,7 +1092,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                 child: Text(
                   _loc.translate('tile.size.height'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
               ),
@@ -1131,14 +1133,14 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           Text(
             _loc.translate('tile.layout.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             _loc.translate('tile.layout.hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -1166,7 +1168,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                     border: Border.all(
                       color: isSelected
                           ? accentColor
-                          : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                          : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -1175,7 +1177,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                     children: [
                       Icon(
                         pattern.icon,
-                        color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                        color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
                         size: 32,
                       ),
                       const SizedBox(width: 12),
@@ -1188,7 +1190,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                               style: CalculatorDesignSystem.titleSmall.copyWith(
                                 color: isSelected
                                     ? accentColor
-                                    : CalculatorColors.textPrimary,
+                                    : CalculatorColors.getTextPrimary(_isDark),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -1196,7 +1198,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                             Text(
                               '${_loc.translate(pattern.descKey)} • ${_loc.translate('tile.layout.reserve').replaceFirst('{value}', '${_constants.getLayoutMargin(pattern)}')}',
                               style: CalculatorDesignSystem.bodySmall.copyWith(
-                                color: CalculatorColors.textSecondary,
+                                color: CalculatorColors.getTextSecondary(_isDark),
                               ),
                             ),
                           ],
@@ -1229,14 +1231,14 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                     Text(
                       _loc.translate('tile.joint.title'),
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
-                        color: CalculatorColors.textSecondary,
+                        color: CalculatorColors.getTextSecondary(_isDark),
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       _loc.translate('tile.joint.hint'),
                       style: CalculatorDesignSystem.bodySmall.copyWith(
-                        color: CalculatorColors.textSecondary,
+                        color: CalculatorColors.getTextSecondary(_isDark),
                         fontSize: 11,
                       ),
                     ),
@@ -1280,7 +1282,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           Text(
             _loc.translate('tile.options.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -1345,7 +1347,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
               Text(
                 title,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
+                  color: CalculatorColors.getTextPrimary(_isDark),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -1353,7 +1355,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
               Text(
                 subtitle,
                 style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
             ],
@@ -1494,10 +1496,13 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

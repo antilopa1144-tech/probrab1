@@ -148,6 +148,8 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
 
   static const _accentColor = CalculatorColors.interior;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -239,6 +241,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('laminate_calc.title'),
@@ -337,7 +340,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
         children: [
           Text(
             _loc.translate('laminate_calc.section.class'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
+            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark)),
           ),
           const SizedBox(height: 12),
           ModeSelector(
@@ -354,7 +357,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
           const SizedBox(height: 8),
           Text(
             _loc.translate(_laminateClass.descKey),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
           ),
         ],
       ),
@@ -368,7 +371,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
         children: [
           Text(
             _loc.translate('laminate_calc.section.type'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
+            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark)),
           ),
           const SizedBox(height: 12),
           ModeSelector(
@@ -385,7 +388,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
           const SizedBox(height: 8),
           Text(
             _loc.translate(_laminateType.descKey),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
           ),
         ],
       ),
@@ -451,7 +454,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('laminate_calc.label.floor_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('laminate_calc.label.floor_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -467,7 +470,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
         children: [
           Text(
             _loc.translate('laminate_calc.section.package'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
+            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark)),
           ),
           const SizedBox(height: 12),
           ModeSelector(
@@ -501,7 +504,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
       children: [
         Text(
           _loc.translate('laminate_calc.pack_mode.preset_hint'),
-          style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+          style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
         ),
         const SizedBox(height: 12),
         ...LaminatePackagePreset.values.map((preset) {
@@ -526,7 +529,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
                 decoration: BoxDecoration(
                   color: isSelected ? _accentColor.withValues(alpha: 0.1) : Colors.transparent,
                   border: Border.all(
-                    color: isSelected ? _accentColor : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                    color: isSelected ? _accentColor : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
                     width: isSelected ? 2 : 1,
                   ),
                   borderRadius: BorderRadius.circular(8),
@@ -540,14 +543,14 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
                           Text(
                             _loc.translate(preset.nameKey),
                             style: CalculatorDesignSystem.bodyMedium.copyWith(
-                              color: CalculatorColors.textPrimary,
+                              color: CalculatorColors.getTextPrimary(_isDark),
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             '${preset.lengthMm}×${preset.widthMm} мм, ${preset.boardsPerPack} ${_loc.translate('common.pcs')}',
-                            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+                            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
                           ),
                         ],
                       ),
@@ -555,7 +558,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
                     Text(
                       '${preset.packArea.toStringAsFixed(2)} ${_loc.translate('common.sqm')}',
                       style: CalculatorDesignSystem.bodyLarge.copyWith(
-                        color: isSelected ? _accentColor : CalculatorColors.textPrimary,
+                        color: isSelected ? _accentColor : CalculatorColors.getTextPrimary(_isDark),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -575,7 +578,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
       children: [
         Text(
           _loc.translate('laminate_calc.pack_mode.dimensions_hint'),
-          style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+          style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
         ),
         const SizedBox(height: 12),
         Row(
@@ -645,7 +648,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
             children: [
               Text(
                 _loc.translate('laminate_calc.label.pack_area'),
-                style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary),
+                style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
               ),
               Text(
                 '${_packArea.toStringAsFixed(2)} ${_loc.translate('common.sqm')}',
@@ -667,7 +670,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
       children: [
         Text(
           _loc.translate('laminate_calc.pack_mode.custom_hint'),
-          style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+          style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
         ),
         const SizedBox(height: 12),
         CalculatorSliderField(
@@ -696,16 +699,16 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
         children: [
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('laminate_calc.option.underlay'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('laminate_calc.option.underlay_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('laminate_calc.option.underlay'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('laminate_calc.option.underlay_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needUnderlay,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needUnderlay = v; _update(); }); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('laminate_calc.option.plinth'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('laminate_calc.option.plinth_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('laminate_calc.option.plinth'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('laminate_calc.option.plinth_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needPlinth,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPlinth = v; _update(); }); },
@@ -752,10 +755,13 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

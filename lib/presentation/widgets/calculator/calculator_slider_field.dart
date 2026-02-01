@@ -65,6 +65,7 @@ class CalculatorSliderField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final displayValue = decimalPlaces == 0
         ? value.toStringAsFixed(0)
         : value.toStringAsFixed(decimalPlaces);
@@ -78,7 +79,7 @@ class CalculatorSliderField extends StatelessWidget {
               child: Text(
                 label,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(isDark),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -138,6 +139,8 @@ class CalculatorSliderFieldCompact extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +148,7 @@ class CalculatorSliderFieldCompact extends StatelessWidget {
         Text(
           label,
           style: CalculatorDesignSystem.bodySmall.copyWith(
-            color: CalculatorColors.textSecondary,
+            color: CalculatorColors.getTextSecondary(isDark),
           ),
         ),
         Slider(

@@ -89,6 +89,8 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
 
   static const _accentColor = CalculatorColors.foundation;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -147,6 +149,7 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('blind_area_calc.title'),
@@ -235,16 +238,16 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
         children: [
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('blind_area_calc.option.insulation'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('blind_area_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('blind_area_calc.option.insulation'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('blind_area_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needInsulation,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needInsulation = v; _update(); }); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('blind_area_calc.option.drainage'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('blind_area_calc.option.drainage_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('blind_area_calc.option.drainage'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('blind_area_calc.option.drainage_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needDrainage,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needDrainage = v; _update(); }); },
@@ -356,10 +359,13 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

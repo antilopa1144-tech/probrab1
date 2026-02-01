@@ -82,6 +82,8 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
 
   static const _accentColor = CalculatorColors.interior;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -142,6 +144,7 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('doors_calc.title'),
@@ -242,7 +245,7 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('doors_calc.label.doors_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('doors_calc.label.doors_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('$_doorsCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -266,7 +269,7 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
         children: [
           Text(
             _loc.translate('doors_calc.label.door_size'),
-            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary),
+            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
           ),
           const SizedBox(height: 12),
           Row(
@@ -287,16 +290,16 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
         children: [
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('doors_calc.option.casing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('doors_calc.option.casing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('doors_calc.option.casing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('doors_calc.option.casing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needCasing,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needCasing = v; _update(); }); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('doors_calc.option.threshold'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('doors_calc.option.threshold_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('doors_calc.option.threshold'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('doors_calc.option.threshold_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needThreshold,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needThreshold = v; _update(); }); },
@@ -358,10 +361,13 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

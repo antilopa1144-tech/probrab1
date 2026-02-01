@@ -81,6 +81,8 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
 
   static const _accentColor = CalculatorColors.interior;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -146,6 +148,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('attic_calc.title'),
@@ -266,7 +269,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('attic_calc.label.insulation_thickness'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('attic_calc.label.insulation_thickness'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_insulationThickness.toStringAsFixed(0)} ${_loc.translate('common.mm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -290,8 +293,8 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
           if (_atticType != AtticType.cold) ...[
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: Text(_loc.translate('attic_calc.option.vapor_barrier'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-              subtitle: Text(_loc.translate('attic_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+              title: Text(_loc.translate('attic_calc.option.vapor_barrier'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+              subtitle: Text(_loc.translate('attic_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               value: _needVaporBarrier,
               activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needVaporBarrier = v; _update(); }); },
@@ -299,8 +302,8 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
           ],
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('attic_calc.option.membrane'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('attic_calc.option.membrane_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('attic_calc.option.membrane'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('attic_calc.option.membrane_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needMembrane,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needMembrane = v; _update(); }); },
@@ -308,8 +311,8 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
           if (_atticType == AtticType.living)
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: Text(_loc.translate('attic_calc.option.gypsum'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-              subtitle: Text(_loc.translate('attic_calc.option.gypsum_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+              title: Text(_loc.translate('attic_calc.option.gypsum'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+              subtitle: Text(_loc.translate('attic_calc.option.gypsum_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               value: _needGypsum,
               activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needGypsum = v; _update(); }); },
@@ -375,10 +378,13 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

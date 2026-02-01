@@ -1,9 +1,64 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'calculator_colors.dart';
 
 /// Константы дизайн-системы для калькуляторов
 ///
 /// Основано на эталонном дизайне калькулятора "Шпатлёвка"
 class CalculatorDesignSystem {
+  // === RESPONSIVE BREAKPOINTS ===
+
+  /// Максимальная ширина контента для мобильного вида
+  static const maxContentWidthMobile = 480.0;
+
+  /// Максимальная ширина контента для планшета
+  static const maxContentWidthTablet = 600.0;
+
+  /// Максимальная ширина контента для десктопа
+  static const maxContentWidthDesktop = 800.0;
+
+  /// Breakpoint для планшета
+  static const breakpointTablet = 600.0;
+
+  /// Breakpoint для десктопа
+  static const breakpointDesktop = 1024.0;
+
+  /// Получить максимальную ширину контента в зависимости от ширины экрана
+  static double getMaxContentWidth(double screenWidth) {
+    if (screenWidth >= breakpointDesktop) {
+      return maxContentWidthDesktop;
+    } else if (screenWidth >= breakpointTablet) {
+      return maxContentWidthTablet;
+    }
+    return double.infinity; // На мобильных - без ограничений
+  }
+
+  /// Является ли текущий экран широким (веб/десктоп)
+  static bool isWideScreen(BuildContext context) {
+    return MediaQuery.of(context).size.width >= breakpointTablet;
+  }
+
+  /// Обёртка для адаптивного контента (центрирует на широких экранах)
+  static Widget responsiveWrapper({
+    required Widget child,
+    required BuildContext context,
+    double? maxWidth,
+  }) {
+    if (!kIsWeb) return child;
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final effectiveMaxWidth = maxWidth ?? getMaxContentWidth(screenWidth);
+
+    if (screenWidth <= effectiveMaxWidth) return child;
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: effectiveMaxWidth),
+        child: child,
+      ),
+    );
+  }
+
   // === ТИПОГРАФИКА ===
 
   /// Заголовки экранов
@@ -179,6 +234,22 @@ class CalculatorDesignSystem {
     ],
   );
 
+  /// Декорация для карточки с автоопределением темы
+  static BoxDecoration cardDecorationThemed(BuildContext context, {Color? color}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return BoxDecoration(
+      color: color ?? CalculatorColors.getCardBackground(isDark),
+      borderRadius: cardBorderRadius,
+      boxShadow: [
+        BoxShadow(
+          color: Color.fromRGBO(0, 0, 0, isDark ? 0.3 : 0.05),
+          blurRadius: 10,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    );
+  }
+
   /// Декорация для карточки без тени
   static BoxDecoration cardDecorationFlat({Color? color, Color? borderColor}) => BoxDecoration(
     color: color ?? Colors.white,
@@ -186,7 +257,17 @@ class CalculatorDesignSystem {
     border: borderColor != null ? Border.all(color: borderColor) : null,
   );
 
-  /// Декорация для поля ввода
+  /// Декорация для карточки без тени с автоопределением темы
+  static BoxDecoration cardDecorationFlatThemed(BuildContext context, {Color? color, Color? borderColor}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return BoxDecoration(
+      color: color ?? CalculatorColors.getCardBackground(isDark),
+      borderRadius: cardBorderRadius,
+      border: borderColor != null ? Border.all(color: borderColor) : null,
+    );
+  }
+
+  /// Декорация для поля ввода (светлая тема по умолчанию)
   static InputDecoration inputDecoration({
     required String label,
     String? hint,
@@ -224,6 +305,64 @@ class CalculatorDesignSystem {
       color: Color(0xFF64748B),
     ),
   );
+
+  /// Декорация для поля ввода с поддержкой тёмной темы
+  static InputDecoration inputDecorationThemed({
+    required String label,
+    required bool isDark,
+    String? hint,
+    Widget? suffixIcon,
+    Color? fillColor,
+  }) {
+    final defaultFillColor = isDark
+        ? const Color(0xFF2A2A2A)
+        : const Color(0xFFF1F5F9);
+    final labelColor = isDark
+        ? const Color(0xFFB0B0B0)
+        : const Color(0xFF64748B);
+    final focusBorderColor = isDark
+        ? const Color(0xFF6A6A6A)
+        : const Color(0xFF94A3B8);
+
+    return InputDecoration(
+      labelText: label,
+      hintText: hint,
+      suffixIcon: suffixIcon,
+      filled: true,
+      fillColor: fillColor ?? defaultFillColor,
+      border: OutlineInputBorder(
+        borderRadius: inputBorderRadius,
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: inputBorderRadius,
+        borderSide: isDark
+            ? const BorderSide(color: Color(0xFF3A3A3A), width: 1)
+            : BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: inputBorderRadius,
+        borderSide: BorderSide(
+          color: focusBorderColor,
+          width: borderWidthMedium,
+        ),
+      ),
+      contentPadding: inputPadding,
+      labelStyle: TextStyle(
+        fontSize: 14,
+        color: labelColor,
+      ),
+      floatingLabelStyle: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: labelColor,
+      ),
+      hintStyle: TextStyle(
+        fontSize: 14,
+        color: labelColor.withValues(alpha: 0.7),
+      ),
+    );
+  }
 
   // === АНИМАЦИИ ===
 

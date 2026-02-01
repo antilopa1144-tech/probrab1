@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
 
 /// Переключатель режимов (табы) для калькуляторов
@@ -45,11 +46,13 @@ class ModeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = accentColor ?? Theme.of(context).primaryColor;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final containerBg = isDark ? CalculatorColors.inputBackgroundDark : Colors.grey[200];
 
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: containerBg,
         borderRadius: CalculatorDesignSystem.selectorBorderRadius,
       ),
       padding: const EdgeInsets.all(4),
@@ -58,6 +61,7 @@ class ModeSelector extends StatelessWidget {
           options.length,
           (index) => Expanded(
             child: _buildOption(
+              context,
               options[index],
               selectedIndex == index,
               accent,
@@ -70,11 +74,16 @@ class ModeSelector extends StatelessWidget {
   }
 
   Widget _buildOption(
+    BuildContext context,
     String text,
     bool isSelected,
     Color accentColor,
     VoidCallback onTap,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final selectedBg = isDark ? CalculatorColors.cardBackgroundDark : Colors.white;
+    final unselectedTextColor = isDark ? CalculatorColors.textSecondaryDark : Colors.grey[600];
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -82,7 +91,7 @@ class ModeSelector extends StatelessWidget {
         curve: CalculatorDesignSystem.animationCurve,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
+          color: isSelected ? selectedBg : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           boxShadow: isSelected
               ? [CalculatorDesignSystem.cardDecoration().boxShadow![0]]
@@ -91,7 +100,7 @@ class ModeSelector extends StatelessWidget {
         child: Text(
           text,
           style: CalculatorDesignSystem.bodyMedium.copyWith(
-            color: isSelected ? accentColor : Colors.grey[600],
+            color: isSelected ? accentColor : unselectedTextColor,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
           textAlign: TextAlign.center,
@@ -123,11 +132,13 @@ class ModeSelectorWithIcons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = accentColor ?? Theme.of(context).primaryColor;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final containerBg = isDark ? CalculatorColors.inputBackgroundDark : Colors.grey[200];
 
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: containerBg,
         borderRadius: CalculatorDesignSystem.selectorBorderRadius,
       ),
       padding: const EdgeInsets.all(4),
@@ -136,6 +147,7 @@ class ModeSelectorWithIcons extends StatelessWidget {
           options.length,
           (index) => Expanded(
             child: _buildOption(
+              context,
               options[index],
               selectedIndex == index,
               accent,
@@ -148,11 +160,16 @@ class ModeSelectorWithIcons extends StatelessWidget {
   }
 
   Widget _buildOption(
+    BuildContext context,
     ModeSelectorIconOption option,
     bool isSelected,
     Color accentColor,
     VoidCallback onTap,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final selectedBg = isDark ? CalculatorColors.cardBackgroundDark : Colors.white;
+    final unselectedColor = isDark ? CalculatorColors.textSecondaryDark : Colors.grey[600];
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -160,7 +177,7 @@ class ModeSelectorWithIcons extends StatelessWidget {
         curve: CalculatorDesignSystem.animationCurve,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
+          color: isSelected ? selectedBg : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           boxShadow: isSelected
               ? [CalculatorDesignSystem.cardDecoration().boxShadow![0]]
@@ -174,7 +191,7 @@ class ModeSelectorWithIcons extends StatelessWidget {
               Icon(
                 option.icon,
                 size: 18,
-                color: isSelected ? accentColor : Colors.grey[600],
+                color: isSelected ? accentColor : unselectedColor,
               ),
               const SizedBox(width: 6),
             ],
@@ -182,7 +199,7 @@ class ModeSelectorWithIcons extends StatelessWidget {
               child: Text(
                 option.label,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: isSelected ? accentColor : Colors.grey[600],
+                  color: isSelected ? accentColor : unselectedColor,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
                 textAlign: TextAlign.center,
@@ -233,6 +250,7 @@ class ModeSelectorVertical extends StatelessWidget {
         (index) => Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: _buildOption(
+            context,
             options[index],
             selectedIndex == index,
             accent,
@@ -244,11 +262,17 @@ class ModeSelectorVertical extends StatelessWidget {
   }
 
   Widget _buildOption(
+    BuildContext context,
     String text,
     bool isSelected,
     Color accentColor,
     VoidCallback onTap,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final unselectedBg = isDark ? CalculatorColors.cardBackgroundDark : Colors.white;
+    final unselectedBorder = isDark ? CalculatorColors.borderDefaultDark : Colors.grey[300]!;
+    final unselectedTextColor = isDark ? CalculatorColors.textSecondaryDark : Colors.grey[700];
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -256,10 +280,10 @@ class ModeSelectorVertical extends StatelessWidget {
         curve: CalculatorDesignSystem.animationCurve,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: isSelected ? accentColor : Colors.white,
+          color: isSelected ? accentColor : unselectedBg,
           borderRadius: CalculatorDesignSystem.selectorBorderRadius,
           border: Border.all(
-            color: isSelected ? accentColor : Colors.grey[300]!,
+            color: isSelected ? accentColor : unselectedBorder,
             width: isSelected
                 ? CalculatorDesignSystem.borderWidthMedium
                 : CalculatorDesignSystem.borderWidthThin,
@@ -271,7 +295,7 @@ class ModeSelectorVertical extends StatelessWidget {
               child: Text(
                 text,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: isSelected ? Colors.white : Colors.grey[700],
+                  color: isSelected ? Colors.white : unselectedTextColor,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               ),

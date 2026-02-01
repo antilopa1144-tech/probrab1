@@ -127,6 +127,8 @@ class _SelfLevelingFloorCalculatorScreenState
   late _SelfLevelingFloorResult _result;
   late AppLocalizations _loc;
 
+  bool _isDark = false;
+
   // Константы калькулятора (null = используются hardcoded defaults)
   late final _SelfLevelingConstants _constants;
 
@@ -238,6 +240,7 @@ class _SelfLevelingFloorCalculatorScreenState
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.interior;
 
     return CalculatorScaffold(
@@ -298,7 +301,7 @@ class _SelfLevelingFloorCalculatorScreenState
           Text(
             _loc.translate('self_leveling.input_mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -332,7 +335,7 @@ class _SelfLevelingFloorCalculatorScreenState
               Text(
                 _loc.translate('self_leveling.label.area'),
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
               Text(
@@ -370,7 +373,7 @@ class _SelfLevelingFloorCalculatorScreenState
           Text(
             _loc.translate('self_leveling.dimensions.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -414,7 +417,7 @@ class _SelfLevelingFloorCalculatorScreenState
                 Text(
                   _loc.translate('self_leveling.dimensions.calculated_area'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
                 Text(
@@ -449,7 +452,7 @@ class _SelfLevelingFloorCalculatorScreenState
             Text(
               label,
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             Text(
@@ -488,14 +491,14 @@ class _SelfLevelingFloorCalculatorScreenState
                   Text(
                     _loc.translate('self_leveling.thickness.title'),
                     style: CalculatorDesignSystem.titleMedium.copyWith(
-                      color: CalculatorColors.textPrimary,
+                      color: CalculatorColors.getTextPrimary(_isDark),
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     _loc.translate('self_leveling.thickness.subtitle'),
                     style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                   ),
                 ],
@@ -537,7 +540,7 @@ class _SelfLevelingFloorCalculatorScreenState
           Text(
             _loc.translate('self_leveling.brand.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -601,7 +604,7 @@ class _SelfLevelingFloorCalculatorScreenState
           Text(
             _loc.translate('self_leveling.bag_weight.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -698,10 +701,13 @@ class _SelfLevelingFloorCalculatorScreenState
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

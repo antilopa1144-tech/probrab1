@@ -165,6 +165,7 @@ class _TileAdhesiveCalculatorScreenState
 
   @override
   String get exportSubject => _loc.translate('tile_adhesive.export.subject');
+  bool _isDark = false;
   InputMode _inputMode = InputMode.byArea;
   double _area = 20.0;
   double _length = 5.0;
@@ -352,6 +353,7 @@ class _TileAdhesiveCalculatorScreenState
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.interior;
 
     return CalculatorScaffold(
@@ -420,7 +422,7 @@ class _TileAdhesiveCalculatorScreenState
           Text(
             _loc.translate('tile_adhesive.input_mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -454,7 +456,7 @@ class _TileAdhesiveCalculatorScreenState
               Text(
                 _loc.translate('tile_adhesive.label.area'),
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
               Text(
@@ -492,7 +494,7 @@ class _TileAdhesiveCalculatorScreenState
           Text(
             _loc.translate('tile_adhesive.dimensions.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -536,7 +538,7 @@ class _TileAdhesiveCalculatorScreenState
                 Text(
                   _loc.translate('tile_adhesive.dimensions.calculated_area'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
                 Text(
@@ -571,7 +573,7 @@ class _TileAdhesiveCalculatorScreenState
             Text(
               label,
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             Text(
@@ -604,7 +606,7 @@ class _TileAdhesiveCalculatorScreenState
           Text(
             _loc.translate('tile_adhesive.surface_type.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -636,14 +638,14 @@ class _TileAdhesiveCalculatorScreenState
           Text(
             _loc.translate('tile_adhesive.tile_type.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             _loc.translate('tile_adhesive.tile_type.subtitle'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -672,7 +674,7 @@ class _TileAdhesiveCalculatorScreenState
           Text(
             _loc.translate('tile_adhesive.brand.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -733,7 +735,7 @@ class _TileAdhesiveCalculatorScreenState
           Text(
             _loc.translate('tile_adhesive.bag_weight.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -765,14 +767,14 @@ class _TileAdhesiveCalculatorScreenState
                 Text(
                   _loc.translate('tile_adhesive.svp.title'),
                   style: CalculatorDesignSystem.titleMedium.copyWith(
-                    color: CalculatorColors.textPrimary,
+                    color: CalculatorColors.getTextPrimary(_isDark),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   _loc.translate('tile_adhesive.svp.subtitle'),
                   style: CalculatorDesignSystem.bodySmall.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
               ],
@@ -805,14 +807,14 @@ class _TileAdhesiveCalculatorScreenState
                 Text(
                   _loc.translate('tile_adhesive.grout.title'),
                   style: CalculatorDesignSystem.titleMedium.copyWith(
-                    color: CalculatorColors.textPrimary,
+                    color: CalculatorColors.getTextPrimary(_isDark),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   _loc.translate('tile_adhesive.grout.subtitle'),
                   style: CalculatorDesignSystem.bodySmall.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
               ],
@@ -845,14 +847,14 @@ class _TileAdhesiveCalculatorScreenState
                 Text(
                   _loc.translate('tile_adhesive.waterproofing.title'),
                   style: CalculatorDesignSystem.titleMedium.copyWith(
-                    color: CalculatorColors.textPrimary,
+                    color: CalculatorColors.getTextPrimary(_isDark),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   _loc.translate('tile_adhesive.waterproofing.subtitle'),
                   style: CalculatorDesignSystem.bodySmall.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
               ],
@@ -985,10 +987,13 @@ class _TileAdhesiveCalculatorScreenState
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

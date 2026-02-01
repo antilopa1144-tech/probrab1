@@ -228,6 +228,8 @@ class GasblockCalculatorScreen extends ConsumerStatefulWidget {
 
 class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScreen>
     with ExportableConsumerMixin {
+  bool _isDark = false;
+
   @override
   AppLocalizations get loc => _loc;
 
@@ -419,6 +421,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
 
   @override
   Widget build(BuildContext context) {
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
     const accentColor = CalculatorColors.walls;
 
@@ -488,7 +491,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           Text(
             _loc.translate('gasblock.mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -520,7 +523,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           Text(
             _loc.translate('gasblock.dimensions.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -587,7 +590,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
                     child: Text(
                       _loc.translate('gasblock.dimensions.wall_area'),
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
-                        color: CalculatorColors.textSecondary,
+                        color: CalculatorColors.getTextSecondary(_isDark),
                       ),
                     ),
                   ),
@@ -617,7 +620,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           Text(
             _loc.translate('gasblock.openings.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -648,7 +651,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
                   child: Text(
                     _loc.translate('gasblock.openings.masonry_area'),
                     style: CalculatorDesignSystem.bodyMedium.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                   ),
                 ),
@@ -676,7 +679,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           Text(
             _loc.translate('gasblock.wall_type.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -716,7 +719,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           Text(
             _loc.translate('gasblock.material.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -757,7 +760,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           Text(
             _loc.translate('gasblock.block_size.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -803,7 +806,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
                         .replaceFirst('{area}', faceArea.toStringAsFixed(3))
                         .replaceFirst('{volume}', blockVolume.toStringAsFixed(3)),
                     style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                   ),
                 ),
@@ -824,7 +827,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           Text(
             _loc.translate('gasblock.block_size.custom_title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -875,7 +878,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           Text(
             _loc.translate('gasblock.thickness.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -916,7 +919,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           Text(
             _loc.translate('gasblock.masonry.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -945,7 +948,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           Text(
             mixInfo,
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
         ],
@@ -983,7 +986,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
           Text(
             _loc.translate('gasblock.additional.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -992,12 +995,12 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(
               _loc.translate('gasblock.additional.reinforcement'),
@@ -1006,7 +1009,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             subtitle: Text(
               _loc.translate('gasblock.additional.reinforcement_desc').replaceFirst('{rows}', '${_constants.getReinforcementStepRows(_wallType)}'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _useReinforcement,
@@ -1023,12 +1026,12 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(
               _loc.translate('gasblock.additional.primer'),
@@ -1037,7 +1040,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             subtitle: Text(
               _loc.translate('gasblock.additional.primer_desc').replaceFirst('{value}', '${_constants.getPrimerPerLayer()}'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _usePrimer,
@@ -1054,12 +1057,12 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(
               _loc.translate('gasblock.additional.plaster'),
@@ -1068,7 +1071,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             subtitle: Text(
               _loc.translate('gasblock.additional.plaster_desc'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _usePlaster,
@@ -1085,12 +1088,12 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(
               _loc.translate('gasblock.additional.mesh'),
@@ -1099,7 +1102,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             subtitle: Text(
               _loc.translate('gasblock.additional.mesh_desc'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _useMesh,
@@ -1116,12 +1119,12 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(
               _loc.translate('gasblock.additional.lintels'),
@@ -1130,7 +1133,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             subtitle: Text(
               _loc.translate('gasblock.additional.lintels_desc'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _useLintels,
@@ -1314,7 +1317,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               child: Text(
                 label,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -1379,7 +1382,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               child: Text(
                 label,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -1425,10 +1428,13 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: CalculatorDesignSystem.cardPadding,
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

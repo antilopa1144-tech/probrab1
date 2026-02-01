@@ -85,6 +85,8 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
 
   static const _accentColor = CalculatorColors.interior;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -139,6 +141,7 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('gutters_calc.title'),
@@ -235,7 +238,7 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('gutters_calc.label.downpipes_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('gutters_calc.label.downpipes_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('$_downpipesCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -249,7 +252,7 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
           ),
           Text(
             _loc.translate('gutters_calc.downpipes_hint'),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
           ),
         ],
       ),
@@ -260,8 +263,8 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
     return _card(
       child: SwitchListTile(
         contentPadding: EdgeInsets.zero,
-        title: Text(_loc.translate('gutters_calc.option.heating'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-        subtitle: Text(_loc.translate('gutters_calc.option.heating_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+        title: Text(_loc.translate('gutters_calc.option.heating'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+        subtitle: Text(_loc.translate('gutters_calc.option.heating_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
         value: _needHeating,
         activeTrackColor: _accentColor,
         onChanged: (v) { setState(() { _needHeating = v; _update(); }); },
@@ -333,10 +336,13 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

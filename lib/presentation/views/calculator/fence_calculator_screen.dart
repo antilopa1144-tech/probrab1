@@ -77,6 +77,8 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
 
   static const _accentColor = CalculatorColors.interior;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -130,6 +132,7 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('fence_calc.title'),
@@ -216,7 +219,7 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('fence_calc.label.length'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('fence_calc.label.length'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_fenceLength.toStringAsFixed(0)} ${_loc.translate('common.meters')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -225,7 +228,7 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('fence_calc.label.height'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('fence_calc.label.height'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_fenceHeight.toStringAsFixed(1)} ${_loc.translate('common.meters')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -242,7 +245,7 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('fence_calc.label.post_spacing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('fence_calc.label.post_spacing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_postSpacing.toStringAsFixed(1)} ${_loc.translate('common.meters')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -256,7 +259,7 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
           ),
           Text(
             _loc.translate('fence_calc.spacing_hint'),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
           ),
         ],
       ),
@@ -310,10 +313,13 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

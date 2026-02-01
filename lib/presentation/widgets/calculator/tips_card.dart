@@ -74,11 +74,14 @@ class TipsCard extends StatelessWidget {
 
     final loc = AppLocalizations.of(context);
     final displayTitle = title ?? loc.translate('common.tips');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -87,27 +90,27 @@ class TipsCard extends StatelessWidget {
               Icon(
                 titleIcon ?? Icons.lightbulb_outline,
                 size: 20,
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(isDark),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   displayTitle,
                   style: CalculatorDesignSystem.titleMedium.copyWith(
-                    color: CalculatorColors.textPrimary,
+                    color: CalculatorColors.getTextPrimary(isDark),
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          ...tips.map((tip) => _buildTipItem(tip)),
+          ...tips.map((tip) => _buildTipItem(tip, isDark)),
         ],
       ),
     );
   }
 
-  Widget _buildTipItem(String text) {
+  Widget _buildTipItem(String text, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -123,7 +126,7 @@ class TipsCard extends StatelessWidget {
             child: Text(
               text,
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(isDark),
               ),
             ),
           ),
@@ -160,22 +163,24 @@ class TipsSection extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (title != null) ...[
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.lightbulb_outline,
                 size: 18,
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(isDark),
               ),
               const SizedBox(width: 6),
               Text(
                 title!,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
+                  color: CalculatorColors.getTextPrimary(isDark),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -183,12 +188,12 @@ class TipsSection extends StatelessWidget {
           ),
           const SizedBox(height: 8),
         ],
-        ...tips.map((tip) => _buildTipItem(tip)),
+        ...tips.map((tip) => _buildTipItem(tip, isDark)),
       ],
     );
   }
 
-  Widget _buildTipItem(String text) {
+  Widget _buildTipItem(String text, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
@@ -204,7 +209,7 @@ class TipsSection extends StatelessWidget {
             child: Text(
               text,
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(isDark),
                 fontSize: 12,
               ),
             ),

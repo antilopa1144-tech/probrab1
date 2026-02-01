@@ -80,6 +80,8 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
 
   static const _accentColor = CalculatorColors.interior;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -136,6 +138,7 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('balcony_calc.title'),
@@ -252,24 +255,24 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
           if (_balconyType == BalconyType.warm)
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: Text(_loc.translate('balcony_calc.option.insulation'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-              subtitle: Text(_loc.translate('balcony_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+              title: Text(_loc.translate('balcony_calc.option.insulation'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+              subtitle: Text(_loc.translate('balcony_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               value: _needInsulation,
               activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needInsulation = v; _update(); }); },
             ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('balcony_calc.option.floor_finishing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('balcony_calc.option.floor_finishing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('balcony_calc.option.floor_finishing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('balcony_calc.option.floor_finishing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needFloorFinishing,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needFloorFinishing = v; _update(); }); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('balcony_calc.option.wall_finishing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('balcony_calc.option.wall_finishing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('balcony_calc.option.wall_finishing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('balcony_calc.option.wall_finishing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needWallFinishing,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needWallFinishing = v; _update(); }); },
@@ -316,10 +319,13 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

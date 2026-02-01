@@ -90,6 +90,7 @@ class DynamicList<T> extends StatelessWidget {
     final accent = accentColor ?? CalculatorColors.interior;
     final canRemove = items.length > minItems;
     final canAdd = maxItems == null || items.length < maxItems!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,6 +106,7 @@ class DynamicList<T> extends StatelessWidget {
                   title!,
                   style: CalculatorDesignSystem.titleMedium.copyWith(
                     fontWeight: FontWeight.w600,
+                    color: CalculatorColors.getTextPrimary(isDark),
                   ),
                 ),
                 if (canAdd)
@@ -117,9 +119,9 @@ class DynamicList<T> extends StatelessWidget {
                     label: Text(addButtonText ?? 'Добавить'),
                     style: TextButton.styleFrom(
                       foregroundColor: accent,
-                      backgroundColor: HSLColor.fromColor(accent)
-                          .withLightness(0.95)
-                          .toColor(),
+                      backgroundColor: isDark
+                          ? accent.withValues(alpha: 0.2)
+                          : HSLColor.fromColor(accent).withLightness(0.95).toColor(),
                     ),
                   ),
               ],
@@ -133,12 +135,14 @@ class DynamicList<T> extends StatelessWidget {
           itemCount: items.length,
           separatorBuilder: (context, index) {
             if (showDividers) {
-              return CalculatorDesignSystem.divider();
+              return CalculatorDesignSystem.divider(
+                color: CalculatorColors.getDivider(isDark),
+              );
             }
             return const SizedBox(height: 8);
           },
           itemBuilder: (context, index) {
-            return _buildListItem(context, index, accent, canRemove);
+            return _buildListItem(context, index, accent, canRemove, isDark);
           },
         ),
 
@@ -165,13 +169,20 @@ class DynamicList<T> extends StatelessWidget {
     int index,
     Color accent,
     bool canRemove,
+    bool isDark,
   ) {
+    final itemBg = isDark ? CalculatorColors.inputBackgroundDark : Colors.grey[50];
+    final itemBorder = isDark ? CalculatorColors.borderDefaultDark : Colors.grey[200]!;
+    final indexBg = isDark
+        ? accent.withValues(alpha: 0.2)
+        : HSLColor.fromColor(accent).withLightness(0.95).toColor();
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: itemBg,
         borderRadius: CalculatorDesignSystem.cardBorderRadius,
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: itemBorder),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,9 +194,7 @@ class DynamicList<T> extends StatelessWidget {
               height: 24,
               margin: const EdgeInsets.only(right: 12),
               decoration: BoxDecoration(
-                color: HSLColor.fromColor(accent)
-                    .withLightness(0.95)
-                    .toColor(),
+                color: indexBg,
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -323,6 +332,7 @@ class OpeningsList extends StatelessWidget {
           children: [
             Expanded(
               child: _buildField(
+                context,
                 'Ширина',
                 opening.width,
                 (v) => onWidthChanged(index, v),
@@ -331,6 +341,7 @@ class OpeningsList extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: _buildField(
+                context,
                 'Высота',
                 opening.height,
                 (v) => onHeightChanged(index, v),
@@ -340,6 +351,7 @@ class OpeningsList extends StatelessWidget {
             SizedBox(
               width: 70,
               child: _buildField(
+                context,
                 'Кол-во',
                 opening.count.toDouble(),
                 (v) => onCountChanged(index, v.toInt()),
@@ -353,25 +365,31 @@ class OpeningsList extends StatelessWidget {
   }
 
   Widget _buildField(
+    BuildContext context,
     String label,
     double value,
     ValueChanged<double> onChanged, {
     bool isInt = false,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final fillColor = isDark ? CalculatorColors.cardBackgroundDark : Colors.white;
+    final textColor = CalculatorColors.getTextPrimary(isDark);
+    final labelColor = CalculatorColors.getTextSecondary(isDark);
+
     return TextField(
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(fontSize: 11),
+        labelStyle: TextStyle(fontSize: 11, color: labelColor),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: fillColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide.none,
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       ),
-      style: const TextStyle(fontSize: 13),
+      style: TextStyle(fontSize: 13, color: textColor),
       controller: TextEditingController(
         text: isInt ? value.toInt().toString() : value.toStringAsFixed(1),
       ),

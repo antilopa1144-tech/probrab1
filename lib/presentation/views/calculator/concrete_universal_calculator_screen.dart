@@ -59,6 +59,8 @@ class ConcreteUniversalCalculatorScreen extends StatefulWidget {
 
 class _ConcreteUniversalCalculatorScreenState
     extends State<ConcreteUniversalCalculatorScreen> with ExportableMixin {
+  bool _isDark = false;
+
   @override
   AppLocalizations get loc => _loc;
 
@@ -225,6 +227,7 @@ class _ConcreteUniversalCalculatorScreenState
 
   @override
   Widget build(BuildContext context) {
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
     const accentColor = CalculatorColors.foundation;
 
@@ -316,7 +319,7 @@ class _ConcreteUniversalCalculatorScreenState
           Text(
             _loc.translate('concrete.input_mode'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -382,7 +385,7 @@ class _ConcreteUniversalCalculatorScreenState
           children: [
             Icon(
               icon,
-              color: isSelected ? accentColor : CalculatorColors.textSecondary,
+              color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
               size: 28,
             ),
             const SizedBox(height: 8),
@@ -390,7 +393,7 @@ class _ConcreteUniversalCalculatorScreenState
               label,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: isSelected ? accentColor : CalculatorColors.textPrimary,
+                color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 fontSize: 13,
               ),
@@ -409,14 +412,14 @@ class _ConcreteUniversalCalculatorScreenState
           Text(
             _loc.translate('concrete.area_input'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 4),
           Text(
             _loc.translate('concrete.area_input.hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -463,7 +466,7 @@ class _ConcreteUniversalCalculatorScreenState
                 selected: isSelected,
                 selectedColor: accentColor.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
-                  color: isSelected ? accentColor : CalculatorColors.textPrimary,
+                  color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
                 side: BorderSide(
@@ -545,14 +548,14 @@ class _ConcreteUniversalCalculatorScreenState
           Text(
             _loc.translate('concrete.grade'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 4),
           Text(
             _loc.translate('concrete.grade.hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -592,7 +595,7 @@ class _ConcreteUniversalCalculatorScreenState
                           child: Text(
                             _gradeLabel(grade),
                             style: TextStyle(
-                              color: isSelected ? Colors.white : CalculatorColors.textPrimary,
+                              color: isSelected ? Colors.white : CalculatorColors.getTextPrimary(_isDark),
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
                             ),
@@ -604,7 +607,7 @@ class _ConcreteUniversalCalculatorScreenState
                         child: Text(
                           _gradeDescription(grade),
                           style: TextStyle(
-                            color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                            color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
                             fontSize: 13,
                           ),
                         ),
@@ -630,14 +633,14 @@ class _ConcreteUniversalCalculatorScreenState
           Text(
             _loc.translate('input.concreteVolume'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 4),
           Text(
             _loc.translate('input.concreteVolume.hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -667,7 +670,7 @@ class _ConcreteUniversalCalculatorScreenState
                 selected: isSelected,
                 selectedColor: accentColor.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
-                  color: isSelected ? accentColor : CalculatorColors.textPrimary,
+                  color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
                 side: BorderSide(
@@ -703,14 +706,14 @@ class _ConcreteUniversalCalculatorScreenState
                     Text(
                       _loc.translate('input.manualMix'),
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
-                        color: CalculatorColors.textPrimary,
+                        color: CalculatorColors.getTextPrimary(_isDark),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       _loc.translate('input.manualMix.hint'),
                       style: CalculatorDesignSystem.bodySmall.copyWith(
-                        color: CalculatorColors.textSecondary,
+                        color: CalculatorColors.getTextSecondary(_isDark),
                       ),
                     ),
                   ],
@@ -736,7 +739,7 @@ class _ConcreteUniversalCalculatorScreenState
             Text(
               _loc.translate('concrete.mixer_volume'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
+                color: CalculatorColors.getTextPrimary(_isDark),
               ),
             ),
             const SizedBox(height: 8),
@@ -750,7 +753,7 @@ class _ConcreteUniversalCalculatorScreenState
                   selected: isSelected,
                   selectedColor: accentColor.withValues(alpha: 0.2),
                   labelStyle: TextStyle(
-                    color: isSelected ? accentColor : CalculatorColors.textPrimary,
+                    color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                   side: BorderSide(
@@ -872,10 +875,13 @@ class _ConcreteUniversalCalculatorScreenState
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

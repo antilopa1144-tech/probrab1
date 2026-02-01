@@ -172,6 +172,8 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
 
   late AppLocalizations _loc;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -210,6 +212,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     final calcState = ref.watch(proCalculatorProvider(widget.definition));
     _latestInputs = Map<String, double>.from(calcState.inputs);
     final accentColor = CalculatorColors.getColorByCategory(widget.definition.category.name);
@@ -340,7 +343,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
                     child: Text(
                       _loc.translate(field.labelKey),
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
-                        color: CalculatorColors.textPrimary,
+                        color: CalculatorColors.getTextPrimary(_isDark),
                       ),
                     ),
                   ),
@@ -371,7 +374,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
               child: Text(
                 '${min.toInt()} $unitLabel',
                 style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
             ),
@@ -397,7 +400,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
               child: Text(
                 '${max.toInt()} $unitLabel',
                 style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
                 textAlign: TextAlign.right,
               ),
@@ -444,7 +447,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
                 Text(
                   _loc.translate(field.labelKey),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textPrimary,
+                    color: CalculatorColors.getTextPrimary(_isDark),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -482,7 +485,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
             Text(
               _loc.translate(field.labelKey),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
+                color: CalculatorColors.getTextPrimary(_isDark),
               ),
             ),
             if (field.required) ...[
@@ -508,7 +511,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
             underline: const SizedBox(),
             dropdownColor: CalculatorColors.inputBackground,
             style: CalculatorDesignSystem.bodyMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
             items: options.map((opt) {
               return DropdownMenuItem(
@@ -558,7 +561,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
                       child: Text(
                         _loc.translate(field.labelKey),
                         style: CalculatorDesignSystem.bodyMedium.copyWith(
-                          color: CalculatorColors.textPrimary,
+                          color: CalculatorColors.getTextPrimary(_isDark),
                         ),
                       ),
                     ),
@@ -576,7 +579,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
                   Text(
                     _loc.translate(field.hintKey!),
                     style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                   ),
                 ],
@@ -606,7 +609,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
               Text(
                 _loc.translate(field.labelKey),
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
+                  color: CalculatorColors.getTextPrimary(_isDark),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -691,10 +694,13 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen> {
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(CalculatorDesignSystem.spacingL),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

@@ -1,7 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../core/services/notification_service.dart';
+// Условный импорт для NotificationService
+// На вебе используется заглушка без Isar-зависимостей
+import '../../core/services/notification_service_web.dart'
+    if (dart.library.io) '../../core/services/notification_service.dart';
 
 /// Настройки приложения
 class AppSettings {
@@ -147,10 +150,14 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(darkMode: darkMode);
     await _saveSettings();
   }
+
+  /// Переключить тёмную тему
+  void toggleDarkMode() {
+    updateDarkMode(!state.darkMode);
+  }
 }
 
-final settingsProvider = 
+final settingsProvider =
     StateNotifierProvider<SettingsNotifier, AppSettings>(
   (ref) => SettingsNotifier(),
 );
-

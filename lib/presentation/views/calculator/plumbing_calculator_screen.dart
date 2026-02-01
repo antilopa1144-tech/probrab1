@@ -62,6 +62,8 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen>
 
   static const _accentColor = CalculatorColors.interior;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -134,6 +136,7 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen>
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('plumbing_calc.title'),
@@ -238,7 +241,7 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('plumbing_calc.label.avg_pipe_length'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('plumbing_calc.label.avg_pipe_length'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_avgPipeLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -286,8 +289,8 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen>
     return _card(
       child: SwitchListTile(
         contentPadding: EdgeInsets.zero,
-        title: Text(_loc.translate('plumbing_calc.option.hot_water'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-        subtitle: Text(_loc.translate('plumbing_calc.option.hot_water_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+        title: Text(_loc.translate('plumbing_calc.option.hot_water'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+        subtitle: Text(_loc.translate('plumbing_calc.option.hot_water_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
         value: _needHotWater,
         activeTrackColor: _accentColor,
         onChanged: (v) { setState(() { _needHotWater = v; _update(); }); },
@@ -344,10 +347,13 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen>
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

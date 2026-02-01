@@ -130,6 +130,8 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
   late _GypsumResult _result;
   late AppLocalizations _loc;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -292,6 +294,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.walls;
 
     return CalculatorScaffold(
@@ -381,7 +384,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
           Text(
             _loc.translate('gypsum.gkl_type.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -414,7 +417,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
           Text(
             _loc.translate('gypsum.thickness.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -446,7 +449,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
           Text(
             _loc.translate('gypsum.sheet_size.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -482,7 +485,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
               Text(
                 _loc.translate('gypsum.label.area'),
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
               Text(
@@ -520,7 +523,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
           Text(
             _loc.translate('gypsum.options.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -530,7 +533,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
               Text(
                 _loc.translate('gypsum.options.layers'),
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
               Text(
@@ -566,7 +569,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
                   Text(
                     _loc.translate('gypsum.options.insulation'),
                     style: CalculatorDesignSystem.bodyMedium.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                   ),
                 ],
@@ -774,10 +777,13 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

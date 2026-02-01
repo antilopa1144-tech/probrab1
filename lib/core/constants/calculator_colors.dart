@@ -47,7 +47,7 @@ class CalculatorColors {
   static const ceilingLight = Color(0xFFDBEAFE);
   static const ceilingDark = Color(0xFF2563EB);
 
-  // === ОБЩИЕ ЦВЕТА ===
+  // === ОБЩИЕ ЦВЕТА (СВЕТЛАЯ ТЕМА) ===
 
   /// Фон экрана
   static const backgroundPrimary = Color(0xFFF8FAFC); // Светло-серый
@@ -69,18 +69,103 @@ class CalculatorColors {
   static const resultCardText = Colors.white;
   static const resultCardTextSecondary = Color(0xFF9CA3AF);
 
-  // === ТЕКСТ ===
+  // === ТЕКСТ (СВЕТЛАЯ ТЕМА) ===
 
   static const textPrimary = Color(0xFF1E293B); // Основной текст
   static const textSecondary = Color(0xFF475569); // Вторичный текст (улучшенный контраст)
   static const textTertiary = Color(0xFF64748B); // Подсказки (улучшенный контраст)
   static const textDisabled = Color(0xFFCBD5E1);
 
-  // === ГРАНИЦЫ И РАЗДЕЛИТЕЛИ ===
+  // === ГРАНИЦЫ И РАЗДЕЛИТЕЛИ (СВЕТЛАЯ ТЕМА) ===
 
   static const borderDefault = Color(0xFFE2E8F0);
   static const borderFocused = Color(0xFF94A3B8);
   static const divider = Color(0xFFE2E8F0);
+
+  // === ТЁМНАЯ ТЕМА (мягкий персиковый стиль) ===
+
+  /// Фон экрана (тёмная тема) - тёплый тёмный с персиковым оттенком
+  static const backgroundPrimaryDark = Color(0xFF1E1A18);
+  static const backgroundSecondaryDark = Color(0xFF282220);
+
+  /// Фон карточек (тёмная тема) - заметный персиковый оттенок
+  static const cardBackgroundDark = Color(0xFF3A322E);
+  static const cardBackgroundLightDark = Color(0xFF453C37);
+
+  /// Фон полей ввода (тёмная тема) - персиковый
+  static const inputBackgroundDark = Color(0xFF342C28);
+  static const inputBackgroundFocusedDark = Color(0xFF3F3632);
+
+  /// Фон header с результатами (тёмная тема)
+  static const headerBackgroundDark = Color(0xFF2A2421);
+
+  /// Фон карточки результатов (тёмная тема)
+  static const resultCardBackgroundDark = Color(0xFF2A2421);
+  static const resultCardTextDark = Color(0xFFF5EDE8);
+  static const resultCardTextSecondaryDark = Color(0xFFBFAFA5);
+
+  // === ТЕКСТ (ТЁМНАЯ ТЕМА) - тёплые оттенки ===
+
+  static const textPrimaryDark = Color(0xFFF5EDE8); // Тёплый почти белый
+  static const textSecondaryDark = Color(0xFFBFAFA5); // Тёплый серый
+  static const textTertiaryDark = Color(0xFF9A8A80); // Приглушённый
+  static const textDisabledDark = Color(0xFF6B5F58);
+
+  // === ГРАНИЦЫ И РАЗДЕЛИТЕЛИ (ТЁМНАЯ ТЕМА) - тёплые ===
+
+  static const borderDefaultDark = Color(0xFF3D3430);
+  static const borderFocusedDark = Color(0xFF4D433E);
+  static const dividerDark = Color(0xFF3D3430);
+
+  // === АДАПТИВНЫЕ ГЕТТЕРЫ ===
+
+  /// Получить фон экрана в зависимости от темы
+  static Color getBackgroundPrimary(bool isDark) =>
+      isDark ? backgroundPrimaryDark : backgroundPrimary;
+
+  /// Получить фон карточки в зависимости от темы
+  static Color getCardBackground(bool isDark) =>
+      isDark ? cardBackgroundDark : cardBackground;
+
+  /// Получить светлый фон карточки в зависимости от темы
+  static Color getCardBackgroundLight(bool isDark) =>
+      isDark ? cardBackgroundLightDark : cardBackgroundLight;
+
+  /// Получить фон поля ввода в зависимости от темы
+  static Color getInputBackground(bool isDark) =>
+      isDark ? inputBackgroundDark : inputBackground;
+
+  /// Получить фон header в зависимости от темы
+  static Color getHeaderBackground(bool isDark) =>
+      isDark ? headerBackgroundDark : headerBackground;
+
+  /// Получить основной цвет текста в зависимости от темы
+  static Color getTextPrimary(bool isDark) =>
+      isDark ? textPrimaryDark : textPrimary;
+
+  /// Получить основной цвет текста автоматически из контекста
+  static Color textPrimaryOf(BuildContext context) =>
+      getTextPrimary(Theme.of(context).brightness == Brightness.dark);
+
+  /// Получить вторичный цвет текста в зависимости от темы
+  static Color getTextSecondary(bool isDark) =>
+      isDark ? textSecondaryDark : textSecondary;
+
+  /// Получить вторичный цвет текста автоматически из контекста
+  static Color textSecondaryOf(BuildContext context) =>
+      getTextSecondary(Theme.of(context).brightness == Brightness.dark);
+
+  /// Получить третичный цвет текста в зависимости от темы
+  static Color getTextTertiary(bool isDark) =>
+      isDark ? textTertiaryDark : textTertiary;
+
+  /// Получить цвет границы в зависимости от темы
+  static Color getBorderDefault(bool isDark) =>
+      isDark ? borderDefaultDark : borderDefault;
+
+  /// Получить цвет разделителя в зависимости от темы
+  static Color getDivider(bool isDark) =>
+      isDark ? dividerDark : divider;
 
   // === ТЕНИ ===
 

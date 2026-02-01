@@ -28,6 +28,8 @@ enum MaterialTier {
 
 class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
     with ExportableMixin {
+  bool _isDark = false;
+
   @override
   AppLocalizations get loc => _loc;
 
@@ -235,6 +237,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
 
   @override
   Widget build(BuildContext context) {
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
     const accentColor = CalculatorColors.interior;
 
@@ -300,7 +303,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
           Text(
             _loc.translate('putty.input_mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -334,7 +337,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                 child: Text(
                   _loc.translate('putty.dimensions.wall_area'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -376,7 +379,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
           Text(
             _loc.translate('putty.dimensions.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -434,7 +437,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                   child: Text(
                     _loc.translate('putty.dimensions.wall_area'),
                     style: CalculatorDesignSystem.bodyMedium.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -473,7 +476,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
               child: Text(
                 label,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -510,7 +513,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
           Text(
             _loc.translate('putty.section.finish_goal'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -534,7 +537,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                 ? _loc.translate('putty.target.painting.subtitle')
                 : _loc.translate('putty.target.wallpaper.subtitle'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
         ],
@@ -551,14 +554,14 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
           Text(
             _loc.translate('putty.wall_condition_title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             _loc.translate('putty.wall_condition_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -584,7 +587,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                     border: Border.all(
                       color: isSelected
                           ? accentColor
-                          : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                          : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -598,7 +601,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                             Text(
                               _loc.translate(condition.labelKey),
                               style: CalculatorDesignSystem.titleSmall.copyWith(
-                                color: isSelected ? accentColor : CalculatorColors.textPrimary,
+                                color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -606,7 +609,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                             Text(
                               _loc.translate(condition.descriptionKey),
                               style: CalculatorDesignSystem.bodySmall.copyWith(
-                                color: CalculatorColors.textSecondary,
+                                color: CalculatorColors.getTextSecondary(_isDark),
                               ),
                             ),
                           ],
@@ -634,14 +637,14 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
           Text(
             _loc.translate('putty.material_tier.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             _loc.translate('putty.material_tier.hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -667,7 +670,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                     border: Border.all(
                       color: isSelected
                           ? accentColor
-                          : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                          : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -680,12 +683,12 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                         decoration: BoxDecoration(
                           color: isSelected
                               ? accentColor.withValues(alpha: 0.15)
-                              : CalculatorColors.textSecondary.withValues(alpha: 0.1),
+                              : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           tier.icon,
-                          color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                          color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
                           size: 24,
                         ),
                       ),
@@ -697,7 +700,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                             Text(
                               _loc.translate(tier.nameKey),
                               style: CalculatorDesignSystem.titleSmall.copyWith(
-                                color: isSelected ? accentColor : CalculatorColors.textPrimary,
+                                color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -705,7 +708,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                             Text(
                               _loc.translate(tier.descriptionKey),
                               style: CalculatorDesignSystem.bodySmall.copyWith(
-                                color: CalculatorColors.textSecondary,
+                                color: CalculatorColors.getTextSecondary(_isDark),
                               ),
                             ),
                           ],
@@ -736,7 +739,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
         Text(
           _loc.translate('putty.material_details_hint'),
           style: CalculatorDesignSystem.bodySmall.copyWith(
-            color: CalculatorColors.textSecondary,
+            color: CalculatorColors.getTextSecondary(_isDark),
           ),
         ),
         const SizedBox(height: 16),
@@ -904,14 +907,14 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                     Text(
                       _loc.translate('putty.openings_toggle'),
                       style: CalculatorDesignSystem.titleMedium.copyWith(
-                        color: CalculatorColors.textPrimary,
+                        color: CalculatorColors.getTextPrimary(_isDark),
                       ),
                     ),
                     if (!_showOpenings)
                       Text(
                         _loc.translate('putty.openings_hint'),
                         style: CalculatorDesignSystem.bodySmall.copyWith(
-                          color: CalculatorColors.textSecondary,
+                          color: CalculatorColors.getTextSecondary(_isDark),
                         ),
                       ),
                   ],
@@ -936,7 +939,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
               Text(
                 _loc.translate('putty.section.openings', {'count': _openings.length.toString()}),
                 style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
+                  color: CalculatorColors.getTextPrimary(_isDark),
                 ),
               ),
               TextButton.icon(
@@ -1038,7 +1041,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
         Text(
           label,
           style: CalculatorDesignSystem.bodySmall.copyWith(
-            color: CalculatorColors.textSecondary,
+            color: CalculatorColors.getTextSecondary(_isDark),
           ),
         ),
         Text(
@@ -1158,10 +1161,13 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

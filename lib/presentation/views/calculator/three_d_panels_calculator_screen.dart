@@ -88,6 +88,7 @@ class _ThreeDPanelsCalculatorScreenState
   @override
   String get exportSubject => _loc.translate('three_d_panels.export.subject');
 
+  bool _isDark = false;
   PanelsInputMode _inputMode = PanelsInputMode.byArea;
   double _area = 12.0;
   double _length = 4.0;
@@ -200,6 +201,7 @@ class _ThreeDPanelsCalculatorScreenState
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.interior;
 
     return CalculatorScaffold(
@@ -254,7 +256,7 @@ class _ThreeDPanelsCalculatorScreenState
           Text(
             _loc.translate('three_d_panels.input_mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -288,7 +290,7 @@ class _ThreeDPanelsCalculatorScreenState
                 child: Text(
                   _loc.translate('three_d_panels.field.wall_area'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -353,7 +355,7 @@ class _ThreeDPanelsCalculatorScreenState
           Text(
             _loc.translate('three_d_panels.field.wall_size'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -397,7 +399,7 @@ class _ThreeDPanelsCalculatorScreenState
                   child: Text(
                     _loc.translate('three_d_panels.field.wall_area'),
                     style: CalculatorDesignSystem.bodyMedium.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -436,7 +438,7 @@ class _ThreeDPanelsCalculatorScreenState
               child: Text(
                 label,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -490,14 +492,14 @@ class _ThreeDPanelsCalculatorScreenState
           Text(
             _loc.translate('three_d_panels.panel_size.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             _loc.translate('three_d_panels.panel_size.hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -507,7 +509,7 @@ class _ThreeDPanelsCalculatorScreenState
                 child: Text(
                   _loc.translate('three_d_panels.panel_size.side'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
               ),
@@ -560,7 +562,7 @@ class _ThreeDPanelsCalculatorScreenState
           Text(
             _loc.translate('three_d_panels.panel_size.area_note').replaceFirst('{value}', _result.panelArea.toStringAsFixed(3)),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
         ],
@@ -577,7 +579,7 @@ class _ThreeDPanelsCalculatorScreenState
           Text(
             _loc.translate('three_d_panels.options.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -586,23 +588,23 @@ class _ThreeDPanelsCalculatorScreenState
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(
               _loc.translate('three_d_panels.options.paintable'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
+                color: CalculatorColors.getTextPrimary(_isDark),
               ),
             ),
             subtitle: Text(
               _loc.translate('three_d_panels.options.paintable_hint'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _paintable,
@@ -619,23 +621,23 @@ class _ThreeDPanelsCalculatorScreenState
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(
               _loc.translate('three_d_panels.options.varnish'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
+                color: CalculatorColors.getTextPrimary(_isDark),
               ),
             ),
             subtitle: Text(
               _loc.translate('three_d_panels.options.varnish_hint'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _withVarnish,
@@ -726,10 +728,13 @@ class _ThreeDPanelsCalculatorScreenState
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

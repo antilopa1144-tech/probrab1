@@ -206,6 +206,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
 
   @override
   String get exportSubject => _loc.translate(widget.definition.titleKey);
+  bool _isDark = false;
   InputMode _inputMode = InputMode.byArea;
   double _area = 20.0;
   double _length = 5.0;
@@ -383,6 +384,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.walls;
 
     return CalculatorScaffold(
@@ -532,7 +534,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
           Text(
             _loc.translate('woodlining.section.lining_type'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -574,7 +576,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
                         .replaceFirst('{width}', _constants.getLiningWidth(_liningType.key).toInt().toString())
                         .replaceFirst('{length}', _constants.getLiningLength(_liningType.key).toString()),
                     style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                   ),
                 ),
@@ -595,7 +597,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
           Text(
             _loc.translate('woodlining.section.wood_species'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -634,7 +636,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
           Text(
             _loc.translate('woodlining.section.mounting_direction'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -673,7 +675,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
           Text(
             _loc.translate('woodlining.section.fastening_type'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -712,7 +714,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
           Text(
             _loc.translate('woodlining.section.finish_coating'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -721,12 +723,12 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(
               _loc.translate('woodlining.finish.use_finish'),
@@ -735,7 +737,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
             subtitle: Text(
               _useFinish ? _loc.translate(_finishType.nameKey) : _loc.translate('woodlining.finish.not_used'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _useFinish,
@@ -803,7 +805,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
           Text(
             _loc.translate('woodlining.section.additional_materials'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -812,12 +814,12 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(
               _loc.translate('woodlining.optional.insulation'),
@@ -828,7 +830,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
                   ? _loc.translate('woodlining.optional.insulation_desc').replaceFirst('{value}', _insulationThickness.toInt().toString())
                   : _loc.translate('woodlining.finish.not_used'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _useInsulation,
@@ -863,12 +865,12 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(_loc.translate('woodlining.optional.vapor_barrier'), style: CalculatorDesignSystem.bodyMedium),
             subtitle: Text(
@@ -876,7 +878,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
                   ? _loc.translate('woodlining.optional.vapor_barrier_desc').replaceFirst('{value}', _constants.vaporBarrierWeightPerM2.toString())
                   : _loc.translate('woodlining.finish.not_used'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _useVaporBarrier,
@@ -893,12 +895,12 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(_loc.translate('woodlining.optional.antiseptic'), style: CalculatorDesignSystem.bodyMedium),
             subtitle: Text(
@@ -906,7 +908,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
                   ? _loc.translate('woodlining.optional.antiseptic_desc').replaceFirst('{value}', _constants.antisepticConsumption.toString())
                   : _loc.translate('woodlining.finish.not_used'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _useAntiseptic,
@@ -1088,7 +1090,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               child: Text(
                 label,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -1134,10 +1136,13 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: CalculatorDesignSystem.cardPadding,
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

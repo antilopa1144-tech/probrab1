@@ -75,8 +75,9 @@ class TypeSelectorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     // Светлый оттенок акцентного цвета для фона
-    final lightColor = _getLightColor(accentColor);
+    final lightColor = _getLightColor(accentColor, isDark);
     final darkColor = _getDarkColor(accentColor);
 
     // Уменьшаем размеры если есть subtitle для экономии места
@@ -86,6 +87,11 @@ class TypeSelectorCard extends StatelessWidget {
     const subtitleFontSize = 9.0;
     final padding = hasSubtitle ? 8.0 : 12.0;
 
+    // Цвета для тёмной и светлой темы
+    final unselectedBg = isDark ? CalculatorColors.cardBackgroundDark : Colors.grey[50];
+    final unselectedBorder = isDark ? CalculatorColors.borderDefaultDark : Colors.grey[200]!;
+    final unselectedIconColor = isDark ? CalculatorColors.textSecondaryDark : Colors.grey[600];
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -93,9 +99,9 @@ class TypeSelectorCard extends StatelessWidget {
         curve: CalculatorDesignSystem.animationCurve,
         padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
-          color: isSelected ? lightColor : Colors.grey[50],
+          color: isSelected ? lightColor : unselectedBg,
           border: Border.all(
-            color: isSelected ? accentColor : Colors.grey[200]!,
+            color: isSelected ? accentColor : unselectedBorder,
             width: isSelected
               ? CalculatorDesignSystem.borderWidthMedium
               : CalculatorDesignSystem.borderWidthThin,
@@ -111,7 +117,7 @@ class TypeSelectorCard extends StatelessWidget {
               children: [
                 Icon(
                   icon,
-                  color: isSelected ? darkColor : Colors.grey[600],
+                  color: isSelected ? darkColor : unselectedIconColor,
                   size: effectiveIconSize,
                 ),
                 if (showCheckmark && isSelected)
@@ -140,7 +146,7 @@ class TypeSelectorCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: titleFontSize,
                 fontWeight: FontWeight.w600,
-                color: isSelected ? darkColor : CalculatorColors.textPrimary,
+                color: isSelected ? darkColor : CalculatorColors.getTextPrimary(isDark),
               ),
               textAlign: TextAlign.center,
               maxLines: 1,
@@ -155,7 +161,7 @@ class TypeSelectorCard extends StatelessWidget {
                   fontSize: subtitleFontSize,
                   fontWeight: FontWeight.w400,
                   height: 1.0,
-                  color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                  color: isSelected ? accentColor : CalculatorColors.getTextSecondary(isDark),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,
@@ -168,9 +174,16 @@ class TypeSelectorCard extends StatelessWidget {
     );
   }
 
-  /// Получить светлый оттенок цвета
-  Color _getLightColor(Color color) {
+  /// Получить светлый оттенок цвета (для тёмной темы более тёмный)
+  Color _getLightColor(Color color, bool isDark) {
     final hsl = HSLColor.fromColor(color);
+    if (isDark) {
+      // В тёмной теме делаем более приглушённый и тёмный оттенок
+      return hsl
+          .withLightness((hsl.lightness * 0.25).clamp(0.0, 0.3))
+          .withSaturation((hsl.saturation * 0.5).clamp(0.0, 1.0))
+          .toColor();
+    }
     return hsl
         .withLightness((hsl.lightness + 0.35).clamp(0.0, 1.0))
         .withSaturation((hsl.saturation * 0.3).clamp(0.0, 1.0))

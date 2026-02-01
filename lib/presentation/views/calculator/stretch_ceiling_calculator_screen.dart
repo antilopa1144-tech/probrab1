@@ -66,6 +66,7 @@ class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingC
   // Domain layer calculator
   final _calculator = CalculateStretchCeilingV2();
 
+  bool _isDark = false;
   double _area = 16.0;
   double _roomWidth = 4.0;
   double _roomLength = 4.0;
@@ -130,6 +131,7 @@ class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingC
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('stretch_ceiling_calc.title'),
@@ -281,7 +283,7 @@ class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingC
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('stretch_ceiling_calc.label.ceiling_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('stretch_ceiling_calc.label.ceiling_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -307,7 +309,7 @@ class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingC
           const SizedBox(height: 8),
           Text(
             _loc.translate('stretch_ceiling_calc.lights_hint'),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
           ),
         ],
       ),
@@ -354,10 +356,13 @@ class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingC
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

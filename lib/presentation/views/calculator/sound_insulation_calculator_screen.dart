@@ -62,6 +62,8 @@ class SoundInsulationCalculatorScreen extends ConsumerStatefulWidget {
 
 class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulationCalculatorScreen>
     with ExportableConsumerMixin {
+  bool _isDark = false;
+
   // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
@@ -156,6 +158,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
 
   @override
   Widget build(BuildContext context) {
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
 
     return CalculatorScaffold(
@@ -265,7 +268,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
         children: [
           Text(
             _loc.translate('sound_insulation_calc.label.surface'),
-            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary),
+            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
           ),
           const SizedBox(height: 12),
           ModeSelector(
@@ -291,7 +294,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
         children: [
           Text(
             _loc.translate('sound_insulation_calc.section.area'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
+            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark)),
           ),
           const SizedBox(height: 12),
           ModeSelector(
@@ -371,7 +374,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
                     children: [
                       Text(
                         _loc.translate('sound_insulation_calc.label.calculated_area'),
-                        style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary),
+                        style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
                       ),
                       Text(
                         '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
@@ -411,16 +414,16 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
         children: [
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('sound_insulation_calc.option.gypsum'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('sound_insulation_calc.option.gypsum_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('sound_insulation_calc.option.gypsum'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('sound_insulation_calc.option.gypsum_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needGypsum,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needGypsum = v; _update(); }); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('sound_insulation_calc.option.profile'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('sound_insulation_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('sound_insulation_calc.option.profile'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('sound_insulation_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needProfile,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needProfile = v; _update(); }); },
@@ -487,10 +490,13 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

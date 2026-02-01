@@ -210,7 +210,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                       decoration: InputDecoration(
                         hintText: loc.translate('unit_converter.value'),
                         filled: true,
-                        fillColor: const Color(0xFFF1F5F9),
+                        fillColor: theme.colorScheme.surfaceContainerHighest,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -240,7 +240,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                       decoration: InputDecoration(
                         hintText: loc.translate('unit_converter.from'),
                         filled: true,
-                        fillColor: const Color(0xFFF1F5F9),
+                        fillColor: theme.colorScheme.surfaceContainerHighest,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -286,7 +286,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                       decoration: InputDecoration(
                         hintText: loc.translate('unit_converter.to'),
                         filled: true,
-                        fillColor: const Color(0xFFF1F5F9),
+                        fillColor: theme.colorScheme.surfaceContainerHighest,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,

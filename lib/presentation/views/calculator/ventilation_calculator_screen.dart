@@ -66,6 +66,7 @@ class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalcula
   // Domain layer calculator
   final _calculator = CalculateVentilationV2();
 
+  bool _isDark = false;
   double _roomArea = 50.0;
   double _ceilingHeight = 2.7;
   int _roomsCount = 4;
@@ -130,6 +131,7 @@ class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalcula
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('ventilation_calc.title'),
@@ -228,7 +230,7 @@ class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalcula
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('ventilation_calc.label.area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('ventilation_calc.label.area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_roomArea.toStringAsFixed(0)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -237,7 +239,7 @@ class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalcula
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('ventilation_calc.label.ceiling_height'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('ventilation_calc.label.ceiling_height'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_ceilingHeight.toStringAsFixed(1)} ${_loc.translate('common.meters')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -246,7 +248,7 @@ class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalcula
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('ventilation_calc.label.rooms'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('ventilation_calc.label.rooms'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('$_roomsCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -260,8 +262,8 @@ class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalcula
     return _card(
       child: SwitchListTile(
         contentPadding: EdgeInsets.zero,
-        title: Text(_loc.translate('ventilation_calc.option.recovery'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-        subtitle: Text(_loc.translate('ventilation_calc.option.recovery_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+        title: Text(_loc.translate('ventilation_calc.option.recovery'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+        subtitle: Text(_loc.translate('ventilation_calc.option.recovery_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
         value: _needRecovery,
         activeTrackColor: _accentColor,
         onChanged: (v) { setState(() { _needRecovery = v; _update(); }); },
@@ -309,10 +311,13 @@ class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalcula
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

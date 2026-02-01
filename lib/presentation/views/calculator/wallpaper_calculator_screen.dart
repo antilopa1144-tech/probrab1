@@ -93,6 +93,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
   @override
   String get exportSubject => _loc.translate('wallpaper.export.subject');
 
+  bool _isDark = false;
   InputMode _inputMode = InputMode.byRoom;
   double _area = 30.0;
   double _length = 4.0;
@@ -266,6 +267,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.interior;
 
     return CalculatorScaffold(
@@ -326,7 +328,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
           Text(
             _loc.translate('wallpaper.input_mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -360,7 +362,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
               Text(
                 _loc.translate('wallpaper.label.area'),
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
               Text(
@@ -398,7 +400,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
           Text(
             _loc.translate('wallpaper.room.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -456,7 +458,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
                 Text(
                   _loc.translate('wallpaper.room.calculated_area'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
                 Text(
@@ -491,7 +493,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
             Text(
               label,
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             Text(
@@ -524,7 +526,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
           Text(
             _loc.translate('wallpaper.roll_size.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -558,7 +560,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
           Text(
             _loc.translate('wallpaper.custom_size.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -610,7 +612,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
                     Text(
                       _loc.translate('wallpaper.rapport.title'),
                       style: CalculatorDesignSystem.titleMedium.copyWith(
-                        color: CalculatorColors.textPrimary,
+                        color: CalculatorColors.getTextPrimary(_isDark),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -619,7 +621,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
                     Text(
                       _loc.translate('wallpaper.rapport.subtitle'),
                       style: CalculatorDesignSystem.bodySmall.copyWith(
-                        color: CalculatorColors.textSecondary,
+                        color: CalculatorColors.getTextSecondary(_isDark),
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -673,14 +675,14 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
                   Text(
                     _loc.translate('wallpaper.deductions.title'),
                     style: CalculatorDesignSystem.titleMedium.copyWith(
-                      color: CalculatorColors.textPrimary,
+                      color: CalculatorColors.getTextPrimary(_isDark),
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     _loc.translate('wallpaper.deductions.subtitle'),
                     style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                   ),
                 ],
@@ -725,7 +727,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
               Text(
                 _loc.translate('wallpaper.reserve.title'),
                 style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
+                  color: CalculatorColors.getTextPrimary(_isDark),
                 ),
               ),
               Text(
@@ -810,10 +812,13 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

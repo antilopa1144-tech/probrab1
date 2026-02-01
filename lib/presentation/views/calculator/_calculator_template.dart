@@ -129,6 +129,7 @@ class TemplateCalculatorScreen extends StatefulWidget {
 
 class _TemplateCalculatorScreenState extends State<TemplateCalculatorScreen> {
   // === СОСТОЯНИЕ ===
+  bool _isDark = false;
   double _area = 20.0;
   double _roomWidth = 4.0;
   double _roomLength = 5.0;
@@ -231,6 +232,7 @@ class _TemplateCalculatorScreenState extends State<TemplateCalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('template.brand'),
@@ -337,7 +339,7 @@ class _TemplateCalculatorScreenState extends State<TemplateCalculatorScreen> {
             Text(
               _loc.translate('template.label.area'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             Text(
@@ -424,10 +426,13 @@ class _TemplateCalculatorScreenState extends State<TemplateCalculatorScreen> {
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

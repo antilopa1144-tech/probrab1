@@ -103,6 +103,8 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
 
   static const _accentColor = CalculatorColors.walls;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -204,6 +206,7 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('brick_calc.title'),
@@ -269,7 +272,7 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
         children: [
           Text(
             _loc.translate('brick_calc.section.thickness'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.textPrimary),
+            style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark)),
           ),
           const SizedBox(height: 12),
           ModeSelector(
@@ -287,7 +290,7 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
           Text(
             _loc.translate('brick_calc.thickness_info')
                 .replaceFirst('{value}', _wallThickness.thicknessMm),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
           ),
         ],
       ),
@@ -353,7 +356,7 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('brick_calc.label.wall_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('brick_calc.label.wall_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -420,10 +423,13 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

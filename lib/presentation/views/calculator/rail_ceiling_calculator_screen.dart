@@ -92,6 +92,8 @@ class _RailCeilingCalculatorScreenState extends ConsumerState<RailCeilingCalcula
 
   static const _accentColor = CalculatorColors.interior;
 
+  bool _isDark = false;
+
   @override
   void initState() {
     super.initState();
@@ -149,6 +151,7 @@ class _RailCeilingCalculatorScreenState extends ConsumerState<RailCeilingCalcula
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('rail_ceiling_calc.title'),
@@ -247,7 +250,7 @@ class _RailCeilingCalculatorScreenState extends ConsumerState<RailCeilingCalcula
         children: [
           Text(
             _loc.translate('rail_ceiling_calc.label.rail_width'),
-            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary),
+            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
           ),
           const SizedBox(height: 12),
           Row(
@@ -276,7 +279,7 @@ class _RailCeilingCalculatorScreenState extends ConsumerState<RailCeilingCalcula
                         child: Text(
                           '${width.label} ${_loc.translate('common.mm')}',
                           style: CalculatorDesignSystem.bodySmall.copyWith(
-                            color: isSelected ? Colors.white : CalculatorColors.textPrimary,
+                            color: isSelected ? Colors.white : CalculatorColors.getTextPrimary(_isDark),
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           ),
                         ),
@@ -346,7 +349,7 @@ class _RailCeilingCalculatorScreenState extends ConsumerState<RailCeilingCalcula
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('rail_ceiling_calc.label.ceiling_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary)),
+              Text(_loc.translate('rail_ceiling_calc.label.ceiling_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               Text('${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -392,10 +395,13 @@ class _RailCeilingCalculatorScreenState extends ConsumerState<RailCeilingCalcula
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

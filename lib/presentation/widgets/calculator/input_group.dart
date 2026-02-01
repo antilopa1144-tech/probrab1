@@ -97,14 +97,17 @@ class _InputGroupState extends State<InputGroup> {
 
   /// Статичная группа (не сворачивается)
   Widget _buildStaticGroup() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final defaultBg = CalculatorColors.getCardBackground(isDark);
+
     return Container(
       padding: widget.padding ?? CalculatorDesignSystem.cardPadding,
       decoration: widget.showShadow
           ? CalculatorDesignSystem.cardDecoration(
-              color: widget.backgroundColor ?? Colors.white,
+              color: widget.backgroundColor ?? defaultBg,
             )
           : CalculatorDesignSystem.cardDecorationFlat(
-              color: widget.backgroundColor ?? Colors.white,
+              color: widget.backgroundColor ?? defaultBg,
             ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,13 +122,16 @@ class _InputGroupState extends State<InputGroup> {
 
   /// Collapsible группа (с ExpansionTile)
   Widget _buildCollapsibleGroup() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final defaultBg = CalculatorColors.getCardBackground(isDark);
+
     return Container(
       decoration: widget.showShadow
           ? CalculatorDesignSystem.cardDecoration(
-              color: widget.backgroundColor ?? Colors.white,
+              color: widget.backgroundColor ?? defaultBg,
             )
           : CalculatorDesignSystem.cardDecorationFlat(
-              color: widget.backgroundColor ?? Colors.white,
+              color: widget.backgroundColor ?? defaultBg,
             ),
       child: Theme(
         data: Theme.of(context).copyWith(
@@ -152,6 +158,7 @@ class _InputGroupState extends State<InputGroup> {
   /// Заголовок группы
   Widget _buildHeader() {
     final color = widget.accentColor ?? CalculatorColors.interior;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Row(
       children: [
@@ -168,6 +175,7 @@ class _InputGroupState extends State<InputGroup> {
             widget.title,
             style: CalculatorDesignSystem.titleMedium.copyWith(
               fontWeight: FontWeight.w600,
+              color: CalculatorColors.getTextPrimary(isDark),
             ),
           ),
         ),
@@ -271,14 +279,18 @@ class InputGroupColored extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Светлый оттенок акцентного цвета
-    final lightColor = _getLightColor(accentColor);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // В тёмной теме используем стандартный фон карточки
+    // В светлой - светлый оттенок акцентного цвета
+    final bgColor = isDark
+        ? CalculatorColors.getCardBackground(isDark)
+        : _getLightColor(accentColor);
 
     return InputGroup(
       title: title,
       icon: icon,
       accentColor: accentColor,
-      backgroundColor: lightColor,
+      backgroundColor: bgColor,
       showShadow: false,
       trailing: trailing,
       children: children,

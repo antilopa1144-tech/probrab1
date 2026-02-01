@@ -69,6 +69,7 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
   // Domain layer calculator
   final _calculator = CalculateStairsV2();
 
+  bool _isDark = false;
   double _floorHeight = 2.8;
   double _openingLength = 4.0;
   double _stairsWidth = 0.9;
@@ -141,6 +142,7 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('stairs_calc.title'),
@@ -258,8 +260,8 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
         children: [
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('stairs_calc.option.railing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-            subtitle: Text(_loc.translate('stairs_calc.option.railing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+            title: Text(_loc.translate('stairs_calc.option.railing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+            subtitle: Text(_loc.translate('stairs_calc.option.railing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
             value: _needRailing,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needRailing = v; _update(); }); },
@@ -267,8 +269,8 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
           if (_needRailing)
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: Text(_loc.translate('stairs_calc.option.both_sides'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textPrimary)),
-              subtitle: Text(_loc.translate('stairs_calc.option.both_sides_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+              title: Text(_loc.translate('stairs_calc.option.both_sides'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+              subtitle: Text(_loc.translate('stairs_calc.option.both_sides_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
               value: _needBothSides,
               activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needBothSides = v; _update(); }); },
@@ -285,7 +287,7 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
         children: [
           Text(
             _loc.translate('stairs_calc.section.calculated_params'),
-            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.textSecondary, fontWeight: FontWeight.bold),
+            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark), fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           _buildParamRow(_loc.translate('stairs_calc.param.steps'), '${_result.stepsCount} ${_loc.translate('common.pcs')}'),
@@ -331,7 +333,7 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.textSecondary)),
+          Text(label, style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
           Text(value, style: CalculatorDesignSystem.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
         ],
       ),
@@ -374,10 +376,13 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

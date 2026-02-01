@@ -34,6 +34,8 @@ class RoofingUnifiedCalculatorScreen extends StatefulWidget {
 
 class _RoofingUnifiedCalculatorScreenState
     extends State<RoofingUnifiedCalculatorScreen> with ExportableMixin {
+  bool _isDark = false;
+
   @override
   AppLocalizations get loc => _loc;
 
@@ -239,6 +241,7 @@ class _RoofingUnifiedCalculatorScreenState
 
   @override
   Widget build(BuildContext context) {
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
     const accentColor = CalculatorColors.roofing;
 
@@ -293,7 +296,7 @@ class _RoofingUnifiedCalculatorScreenState
           Text(
             _loc.translate('roofing_calc.label.roofingType'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -309,7 +312,7 @@ class _RoofingUnifiedCalculatorScreenState
                     Icon(
                       _getRoofingTypeIcon(type),
                       size: 16,
-                      color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                      color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
                     ),
                     const SizedBox(width: 4),
                     Text(_getRoofingTypeLabel(type)),
@@ -318,7 +321,7 @@ class _RoofingUnifiedCalculatorScreenState
                 selected: isSelected,
                 selectedColor: accentColor.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
-                  color: isSelected ? accentColor : CalculatorColors.textPrimary,
+                  color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
                 side: BorderSide(
@@ -347,7 +350,7 @@ class _RoofingUnifiedCalculatorScreenState
           Text(
             _loc.translate('roofing_calc.section.area'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -434,7 +437,7 @@ class _RoofingUnifiedCalculatorScreenState
                       Text(
                         _loc.translate('roofing_calc.label.calculated_area'),
                         style: CalculatorDesignSystem.bodyMedium.copyWith(
-                          color: CalculatorColors.textSecondary,
+                          color: CalculatorColors.getTextSecondary(_isDark),
                         ),
                       ),
                       Text(
@@ -465,7 +468,7 @@ class _RoofingUnifiedCalculatorScreenState
                 child: Text(
                   _loc.translate('roofing_calc.label.slope'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
               ),
@@ -502,7 +505,7 @@ class _RoofingUnifiedCalculatorScreenState
           Text(
             _loc.translate('hint.roofing.slope_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
         ],
@@ -519,7 +522,7 @@ class _RoofingUnifiedCalculatorScreenState
           Text(
             _loc.translate('hint.roofing.sheet_dimensions'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -576,7 +579,7 @@ class _RoofingUnifiedCalculatorScreenState
           Text(
             _loc.translate('hint.roofing.additional_params'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -615,7 +618,7 @@ class _RoofingUnifiedCalculatorScreenState
           Text(
             _loc.translate('hint.roofing.optional_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
         ],
@@ -765,10 +768,13 @@ class _RoofingUnifiedCalculatorScreenState
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

@@ -110,6 +110,8 @@ class TerraceCalculatorScreen extends StatefulWidget {
 
 class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
     with ExportableMixin {
+  bool _isDark = false;
+
   @override
   AppLocalizations get loc => _loc;
 
@@ -383,6 +385,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
 
   @override
   Widget build(BuildContext context) {
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
     const accentColor = CalculatorColors.facade;
 
@@ -431,7 +434,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
           Text(
             _loc.translate('terrace_calc.section.area'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -518,7 +521,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
                       Text(
                         _loc.translate('terrace_calc.label.calculated_area'),
                         style: CalculatorDesignSystem.bodyMedium.copyWith(
-                          color: CalculatorColors.textSecondary,
+                          color: CalculatorColors.getTextSecondary(_isDark),
                         ),
                       ),
                       Text(
@@ -547,7 +550,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
           Text(
             _loc.translate('input.floorType'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -563,7 +566,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
                     Icon(
                       _getFloorTypeIconForType(type),
                       size: 16,
-                      color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                      color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
                     ),
                     const SizedBox(width: 4),
                     Text(_getFloorTypeLabelForType(type)),
@@ -572,7 +575,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
                 selected: isSelected,
                 selectedColor: accentColor.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
-                  color: isSelected ? accentColor : CalculatorColors.textPrimary,
+                  color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
                 side: BorderSide(
@@ -591,7 +594,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
           Text(
             _loc.translate('terrace_calc.floor_type.margin_note'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
         ],
@@ -654,7 +657,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
           Text(
             _loc.translate('input.railing'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -663,23 +666,23 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(
               _loc.translate('terrace_calc.railing.toggle'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
+                color: CalculatorColors.getTextPrimary(_isDark),
               ),
             ),
             subtitle: Text(
               _loc.translate('terrace_calc.railing.hint'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _hasRailing,
@@ -704,7 +707,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
                     child: Text(
                       _loc.translate('terrace_calc.railing.perimeter'),
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
-                        color: CalculatorColors.textSecondary,
+                        color: CalculatorColors.getTextSecondary(_isDark),
                       ),
                     ),
                   ),
@@ -741,7 +744,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
           Text(
             _loc.translate('input.roof'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -750,23 +753,23 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
             trackColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor.withValues(alpha: 0.4)
-                  : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+                  : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
             ),
             thumbColor: WidgetStateProperty.resolveWith(
               (states) => states.contains(WidgetState.selected)
                   ? accentColor
-                  : CalculatorColors.textSecondary,
+                  : CalculatorColors.getTextSecondary(_isDark),
             ),
             title: Text(
               _loc.translate('terrace_calc.roof.toggle'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
+                color: CalculatorColors.getTextPrimary(_isDark),
               ),
             ),
             subtitle: Text(
               _loc.translate('terrace_calc.roof.hint'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _hasRoof,
@@ -791,7 +794,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
                       Icon(
                         _getRoofTypeIconForType(type),
                         size: 16,
-                        color: isSelected ? accentColor : CalculatorColors.textSecondary,
+                        color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
                       ),
                       const SizedBox(width: 4),
                       Text(_getRoofTypeLabelForType(type)),
@@ -800,7 +803,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
                   selected: isSelected,
                   selectedColor: accentColor.withValues(alpha: 0.2),
                   labelStyle: TextStyle(
-                    color: isSelected ? accentColor : CalculatorColors.textPrimary,
+                    color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),
                   side: BorderSide(
@@ -828,7 +831,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
                     child: Text(
                       _loc.translate('terrace_calc.roof.area'),
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
-                        color: CalculatorColors.textSecondary,
+                        color: CalculatorColors.getTextSecondary(_isDark),
                       ),
                     ),
                   ),
@@ -1031,10 +1034,13 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

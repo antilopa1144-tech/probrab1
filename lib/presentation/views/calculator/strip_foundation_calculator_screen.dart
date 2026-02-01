@@ -78,6 +78,7 @@ class _StripFoundationCalculatorScreenState
   @override
   String get exportSubject => _loc.translate('strip_calc.title');
 
+  bool _isDark = false;
   // Размеры дома
   double _houseLength = 10.0;
   double _houseWidth = 8.0;
@@ -228,6 +229,7 @@ class _StripFoundationCalculatorScreenState
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CalculatorScaffold(
       title: _loc.translate('strip_calc.title'),
@@ -322,7 +324,7 @@ class _StripFoundationCalculatorScreenState
           Text(
             _loc.translate('strip_calc.house_dimensions'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -396,7 +398,7 @@ class _StripFoundationCalculatorScreenState
           Text(
             _loc.translate('strip_calc.strip_dimensions'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -407,7 +409,7 @@ class _StripFoundationCalculatorScreenState
               Text(
                 _loc.translate('strip_calc.strip_width'),
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
               Text(
@@ -440,7 +442,7 @@ class _StripFoundationCalculatorScreenState
               Text(
                 _loc.translate('strip_calc.strip_height'),
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
               Text(
@@ -469,7 +471,7 @@ class _StripFoundationCalculatorScreenState
           Text(
             hint,
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
         ],
@@ -486,13 +488,13 @@ class _StripFoundationCalculatorScreenState
             title: Text(
               _loc.translate('strip_calc.internal_walls'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
+                color: CalculatorColors.getTextPrimary(_isDark),
               ),
             ),
             subtitle: Text(
               _loc.translate('strip_calc.internal_walls_desc'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _hasInternalWalls,
@@ -535,13 +537,13 @@ class _StripFoundationCalculatorScreenState
             title: Text(
               _loc.translate('strip_calc.option.waterproof'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
+                color: CalculatorColors.getTextPrimary(_isDark),
               ),
             ),
             subtitle: Text(
               _loc.translate('strip_calc.option.waterproof_desc'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _needWaterproof,
@@ -558,13 +560,13 @@ class _StripFoundationCalculatorScreenState
             title: Text(
               _loc.translate('strip_calc.option.insulation'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
+                color: CalculatorColors.getTextPrimary(_isDark),
               ),
             ),
             subtitle: Text(
               _loc.translate('strip_calc.option.insulation_desc'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _needInsulation,
@@ -706,10 +708,13 @@ class _StripFoundationCalculatorScreenState
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

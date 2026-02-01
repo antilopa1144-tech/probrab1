@@ -65,6 +65,8 @@ class LinoleumCalculatorScreen extends ConsumerStatefulWidget {
 
 class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScreen>
     with ExportableConsumerMixin {
+  bool _isDark = false;
+
   // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
@@ -148,6 +150,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
 
   @override
   Widget build(BuildContext context) {
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
 
     return CalculatorScaffold(
@@ -248,7 +251,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
           Text(
             'Размеры комнаты',
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -302,7 +305,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
                 Text(
                   _loc.translate('linoleum_calc.label.floor_area'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
                 Text(
@@ -328,7 +331,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
           Text(
             'Параметры',
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -389,7 +392,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
                         ? 'Рекомендуемый запас для подрезки'
                         : 'Рекомендуется минимум 20 см',
                     style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(_isDark),
                     ),
                   ),
                 ),
@@ -402,13 +405,13 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
             title: Text(
               _loc.translate('linoleum_calc.option.tape'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
+                color: CalculatorColors.getTextPrimary(_isDark),
               ),
             ),
             subtitle: Text(
               _loc.translate('linoleum_calc.option.tape_desc'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _needTape,
@@ -425,13 +428,13 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
             title: Text(
               _loc.translate('linoleum_calc.option.plinth'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
+                color: CalculatorColors.getTextPrimary(_isDark),
               ),
             ),
             subtitle: Text(
               _loc.translate('linoleum_calc.option.plinth_desc'),
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.textSecondary,
+                color: CalculatorColors.getTextSecondary(_isDark),
               ),
             ),
             value: _needPlinth,
@@ -492,10 +495,13 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }

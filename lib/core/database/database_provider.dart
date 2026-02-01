@@ -1,32 +1,54 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../data/models/calculation.dart';
-import '../../domain/models/project_v2.dart';
-import '../../domain/models/checklist.dart';
+import '../../data/repositories/interfaces/project_repository_interface.dart';
+import '../../data/repositories/interfaces/checklist_repository_interface.dart';
+import '../../data/repositories/web/web_project_repository.dart';
+import '../../data/repositories/web/web_checklist_repository.dart';
 
-/// Единая точка инициализации Isar со всеми схемами.
-final isarProvider = FutureProvider<Isar>((ref) async {
-  // При hot-restart повторно используем уже открытую базу
-  if (Isar.instanceNames.isNotEmpty) {
-    final existing = Isar.getInstance(Isar.instanceNames.first);
-    if (existing != null) {
-      return existing;
-    }
+// Условный импорт для Isar (только для не-веб платформ)
+import 'database_provider_native.dart'
+    if (dart.library.html) 'database_provider_web.dart' as platform;
+
+/// Провайдер для SharedPreferences (используется на всех платформах)
+final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) async {
+  return SharedPreferences.getInstance();
+});
+
+/// Единая точка инициализации базы данных.
+/// На мобильных платформах использует Isar.
+/// На вебе возвращает null (данные хранятся в SharedPreferences).
+final isarProvider = FutureProvider<dynamic>((ref) async {
+  if (kIsWeb) {
+    // На вебе Isar не используется
+    return null;
+  }
+  return platform.openIsarDatabase();
+});
+
+/// Провайдер репозитория проектов.
+/// Автоматически выбирает реализацию в зависимости от платформы.
+final projectRepositoryProvider = FutureProvider<IProjectRepository>((ref) async {
+  final prefs = await ref.watch(sharedPreferencesProvider.future);
+
+  if (kIsWeb) {
+    return WebProjectRepository(prefs);
   }
 
-  final dir = await getApplicationDocumentsDirectory();
+  final isar = await ref.watch(isarProvider.future);
+  return platform.createProjectRepository(isar);
+});
 
-  return Isar.open(
-    [
-      ProjectV2Schema,
-      ProjectCalculationSchema,
-      CalculationSchema,
-      RenovationChecklistSchema,
-      ChecklistItemSchema,
-    ],
-    directory: dir.path,
-    name: 'probrab_ai',
-  );
+/// Провайдер репозитория чек-листов.
+/// Автоматически выбирает реализацию в зависимости от платформы.
+final checklistRepositoryProvider = FutureProvider<IChecklistRepository>((ref) async {
+  final prefs = await ref.watch(sharedPreferencesProvider.future);
+
+  if (kIsWeb) {
+    return WebChecklistRepository(prefs);
+  }
+
+  final isar = await ref.watch(isarProvider.future);
+  return platform.createChecklistRepository(isar);
 });

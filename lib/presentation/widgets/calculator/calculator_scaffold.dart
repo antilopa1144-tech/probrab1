@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
@@ -72,8 +73,41 @@ class CalculatorScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWideScreen = kIsWeb && screenWidth >= CalculatorDesignSystem.breakpointTablet;
+    final maxWidth = CalculatorDesignSystem.getMaxContentWidth(screenWidth);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    Widget bodyContent = Column(
+      children: [
+        // Header с результатами (если указан)
+        if (resultHeader != null) resultHeader!,
+
+        // Тело с прокруткой
+        Expanded(
+          child: SingleChildScrollView(
+            padding: bodyPadding ?? CalculatorDesignSystem.screenPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: children,
+            ),
+          ),
+        ),
+      ],
+    );
+
+    // На широких экранах центрируем контент с ограничением ширины
+    if (isWideScreen) {
+      bodyContent = Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: bodyContent,
+        ),
+      );
+    }
+
     return Scaffold(
-      backgroundColor: CalculatorColors.backgroundPrimary,
+      backgroundColor: CalculatorColors.getBackgroundPrimary(isDark),
       appBar: AppBar(
         title: Text(title),
         backgroundColor: accentColor,
@@ -82,23 +116,7 @@ class CalculatorScaffold extends StatelessWidget {
         automaticallyImplyLeading: showBackButton,
         actions: actions,
       ),
-      body: Column(
-        children: [
-          // Header с результатами (если указан)
-          if (resultHeader != null) resultHeader!,
-
-          // Тело с прокруткой
-          Expanded(
-            child: SingleChildScrollView(
-              padding: bodyPadding ?? CalculatorDesignSystem.screenPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: children,
-              ),
-            ),
-          ),
-        ],
-      ),
+      body: bodyContent,
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: bottomNavigationBar,
     );

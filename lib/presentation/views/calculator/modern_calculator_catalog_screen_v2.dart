@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/constants/catalog_palette.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../core/widgets/staggered_animation.dart';
 import '../../../domain/calculators/calculator_registry.dart';
@@ -165,7 +166,7 @@ class _ModernCalculatorCatalogScreenV2State
     final loc = AppLocalizations.of(context);
     final calculators = _filtered(loc);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final palette = _PremiumPalette(isDark);
+    final palette = CatalogPalette(isDark);
     final width = MediaQuery.of(context).size.width;
     final crossAxisCount = width >= 900 ? 3 : 2;
     final cardAspectRatio = width >= 900 ? 0.96 : 0.86;
@@ -484,7 +485,7 @@ class _ModernCalculatorCatalogScreenV2State
 
   void _showSettingsMenu(
     BuildContext context,
-    _PremiumPalette palette,
+    CatalogPalette palette,
     bool isDark,
   ) {
     showModalBottomSheet(
@@ -544,7 +545,7 @@ class _ModernCalculatorCatalogScreenV2State
     );
   }
 
-  Widget _buildSearchBar(AppLocalizations loc, _PremiumPalette palette) {
+  Widget _buildSearchBar(AppLocalizations loc, CatalogPalette palette) {
     return Container(
       decoration: BoxDecoration(
         color: palette.surface,
@@ -606,7 +607,7 @@ class _ModernCalculatorCatalogScreenV2State
     );
   }
 
-  Widget _buildCategoryChips(AppLocalizations loc, _PremiumPalette palette) {
+  Widget _buildCategoryChips(AppLocalizations loc, CatalogPalette palette) {
     return SizedBox(
       height: 40,
       child: ListView.separated(
@@ -651,7 +652,7 @@ class _ModernCalculatorCatalogScreenV2State
     );
   }
 
-  Widget _buildEmptyState(AppLocalizations loc, _PremiumPalette palette) {
+  Widget _buildEmptyState(AppLocalizations loc, CatalogPalette palette) {
     final hasFilter = _activeCategory != 'all' || _query.isNotEmpty;
 
     return Center(
@@ -724,7 +725,7 @@ class _ModernCalculatorCatalogScreenV2State
 /// Карточка недавнего калькулятора (горизонтальный чип)
 class _RecentCalculatorChip extends StatelessWidget {
   final CalculatorDefinitionV2 calc;
-  final _PremiumPalette palette;
+  final CatalogPalette palette;
   final VoidCallback onTap;
   final AppLocalizations loc;
 
@@ -795,7 +796,7 @@ class _RecentCalculatorChip extends StatelessWidget {
 class _PopularCalculatorCard extends StatelessWidget {
   final CalculatorDefinitionV2 calc;
   final ToolData? toolData;
-  final _PremiumPalette palette;
+  final CatalogPalette palette;
   final bool isDark;
   final VoidCallback onTap;
   final AppLocalizations loc;
@@ -903,7 +904,7 @@ class _CalculatorCard extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final Color iconBg;
-  final _PremiumPalette palette;
+  final CatalogPalette palette;
   final int complexity;
   final VoidCallback onTap;
   final AppLocalizations loc;
@@ -1059,42 +1060,4 @@ class _CalculatorCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _PremiumPalette {
-  final bool isDark;
-
-  const _PremiumPalette(this.isDark);
-
-  Color get background =>
-      isDark ? const Color(0xFF11100F) : const Color(0xFFF6F2ED);
-  Color get surface =>
-      isDark ? const Color(0xFF1A1917) : const Color(0xFFFCFAF7);
-  Color get surfaceMuted =>
-      isDark ? const Color(0xFF23211E) : const Color(0xFFF0E9E1);
-  Color get border =>
-      isDark ? const Color(0xFF2C2925) : const Color(0xFFE2D9CF);
-  Color get textPrimary =>
-      isDark ? const Color(0xFFF1EAE1) : const Color(0xFF1F1B16);
-  Color get textSecondary =>
-      isDark ? const Color(0xFFB4ACA2) : const Color(0xFF6E645A);
-  Color get textMuted =>
-      isDark ? const Color(0xFF8E867D) : const Color(0xFF8C8176);
-  Color get accent => const Color(0xFFE0823D);
-
-  List<BoxShadow> get cardShadow => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
-          blurRadius: isDark ? 16 : 12,
-          offset: const Offset(0, 8),
-        ),
-      ];
-
-  List<BoxShadow> get controlShadow => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
-          blurRadius: isDark ? 10 : 8,
-          offset: const Offset(0, 4),
-        ),
-      ];
 }

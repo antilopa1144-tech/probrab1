@@ -61,6 +61,8 @@ class CalculatorResultHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: EdgeInsets.fromLTRB(
         CalculatorDesignSystem.spacingM,
@@ -72,20 +74,20 @@ class CalculatorResultHeader extends StatelessWidget {
         color: accentColor,
         borderRadius: CalculatorDesignSystem.headerBorderRadius,
       ),
-      child: useWhiteCard ? _buildWhiteCard() : _buildDirectContent(),
+      child: useWhiteCard ? _buildWhiteCard(isDark) : _buildDirectContent(),
     );
   }
 
   /// Белая карточка с тенью (эталонный стиль)
-  Widget _buildWhiteCard() {
+  Widget _buildWhiteCard(bool isDark) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: CalculatorColors.getCardBackground(isDark),
         borderRadius: CalculatorDesignSystem.cardBorderRadius,
         boxShadow: [CalculatorColors.shadowLarge],
       ),
-      child: _buildResultsRow(),
+      child: _buildResultsRow(isDark),
     );
   }
 
@@ -93,12 +95,12 @@ class CalculatorResultHeader extends StatelessWidget {
   Widget _buildDirectContent() {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: _buildResultsRow(),
+      child: _buildResultsRow(false),
     );
   }
 
   /// Строка с результатами
-  Widget _buildResultsRow() {
+  Widget _buildResultsRow([bool isDark = false]) {
     final List<Widget> children = [];
 
     for (int i = 0; i < results.length; i++) {
@@ -107,6 +109,7 @@ class CalculatorResultHeader extends StatelessWidget {
           child: _buildHeaderItem(
             results[i],
             useWhiteCard ? accentColor : Colors.white,
+            isDark,
           ),
         ),
       );
@@ -119,7 +122,7 @@ class CalculatorResultHeader extends StatelessWidget {
             height: 30,
             margin: const EdgeInsets.symmetric(horizontal: 8),
             color: useWhiteCard
-              ? Colors.grey[200]
+              ? CalculatorColors.getDivider(isDark)
               : const Color.fromRGBO(255, 255, 255, 0.3),
           ),
         );
@@ -133,7 +136,11 @@ class CalculatorResultHeader extends StatelessWidget {
   }
 
   /// Отдельный элемент результата (колонка с меткой и значением)
-  Widget _buildHeaderItem(ResultItem item, Color valueColor) {
+  Widget _buildHeaderItem(ResultItem item, Color valueColor, bool isDark) {
+    final labelColor = useWhiteCard
+        ? CalculatorColors.getTextSecondary(isDark)
+        : Colors.white;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -141,14 +148,14 @@ class CalculatorResultHeader extends StatelessWidget {
           Icon(
             item.icon,
             size: CalculatorDesignSystem.iconSizeSmall,
-            color: useWhiteCard ? Colors.grey[600] : Colors.white,
+            color: labelColor,
           ),
           const SizedBox(height: 4),
         ],
         Text(
           item.label.toUpperCase(),
           style: CalculatorDesignSystem.headerLabel.copyWith(
-            color: useWhiteCard ? Colors.grey[600] : Colors.white,
+            color: labelColor,
           ),
           textAlign: TextAlign.center,
           maxLines: 2,

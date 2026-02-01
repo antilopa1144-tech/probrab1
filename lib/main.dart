@@ -1,8 +1,8 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'core/constants/app_constants.dart';
@@ -17,9 +17,17 @@ import 'presentation/views/onboarding/onboarding_screen.dart';
 import 'core/performance/frame_timing_logger.dart';
 import 'core/utils/keyboard_dismiss_observer.dart';
 
+// Условный импорт для Crashlytics (не используется на вебе)
+import 'core/platform/crashlytics_native.dart'
+    if (dart.library.html) 'core/platform/crashlytics_web.dart' as crashlytics;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FrameTimingLogger.maybeInit();
+
+  // Frame timing только на нативных платформах
+  if (!kIsWeb) {
+    FrameTimingLogger.maybeInit();
+  }
 
   // Инициализация Firebase (с обработкой дублирования)
   try {
@@ -32,21 +40,17 @@ void main() async {
   }
   final prefs = await SharedPreferences.getInstance();
 
-  // Передача Flutter ошибок в Crashlytics
+  // Передача Flutter ошибок в Crashlytics (только на нативных платформах)
   FlutterError.onError = (details) {
-    // Логирование в консоль и Firebase
+    // Логирование в консоль
     GlobalErrorHandler.logFatalError(
       details.exception,
       details.stack ?? StackTrace.current,
       'FlutterError',
     );
 
-    // Также отправляем напрямую в Crashlytics
-    try {
-      FirebaseCrashlytics.instance.recordFlutterFatalError(details);
-    } catch (e) {
-      // Игнорируем ошибки Firebase, если сервис недоступен
-    }
+    // Отправляем в Crashlytics (только на нативных платформах)
+    crashlytics.recordFlutterFatalError(details);
   };
 
   runApp(

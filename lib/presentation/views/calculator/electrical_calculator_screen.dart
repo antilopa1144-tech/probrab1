@@ -109,6 +109,8 @@ class ElectricalCalculatorScreen extends ConsumerStatefulWidget {
 
 class _ElectricalCalculatorScreenState
     extends ConsumerState<ElectricalCalculatorScreen> with ExportableConsumerMixin {
+  bool _isDark = false;
+
   // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
@@ -322,6 +324,7 @@ class _ElectricalCalculatorScreenState
 
   @override
   Widget build(BuildContext context) {
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
     const accentColor = CalculatorColors.interior;
 
@@ -387,7 +390,7 @@ class _ElectricalCalculatorScreenState
           Text(
             _loc.translate('electrical.mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -411,7 +414,7 @@ class _ElectricalCalculatorScreenState
                 ? _loc.translate('electrical.mode.by_area_hint')
                 : _loc.translate('electrical.mode.by_points_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
         ],
@@ -428,7 +431,7 @@ class _ElectricalCalculatorScreenState
           Text(
             _loc.translate('electrical.room_type.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -451,7 +454,7 @@ class _ElectricalCalculatorScreenState
           Text(
             _getRoomTypeDescription(),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
         ],
@@ -479,7 +482,7 @@ class _ElectricalCalculatorScreenState
           Text(
             _loc.translate('electrical.area.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -521,7 +524,7 @@ class _ElectricalCalculatorScreenState
           Text(
             _loc.translate('electrical.area.rooms_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
         ],
@@ -538,7 +541,7 @@ class _ElectricalCalculatorScreenState
           Text(
             _loc.translate('electrical.points.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
@@ -616,7 +619,7 @@ class _ElectricalCalculatorScreenState
               child: Text(
                 label,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
               ),
             ),
@@ -658,7 +661,7 @@ class _ElectricalCalculatorScreenState
           Text(
             _loc.translate('electrical.wiring.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -682,7 +685,7 @@ class _ElectricalCalculatorScreenState
                 ? _loc.translate('electrical.wiring.hidden_desc')
                 : _loc.translate('electrical.wiring.open_desc'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
         ],
@@ -703,7 +706,7 @@ class _ElectricalCalculatorScreenState
               Text(
                 _loc.translate('electrical.consumers.title'),
                 style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
+                  color: CalculatorColors.getTextPrimary(_isDark),
                 ),
               ),
             ],
@@ -712,7 +715,7 @@ class _ElectricalCalculatorScreenState
           Text(
             _loc.translate('electrical.consumers.subtitle'),
             style: CalculatorDesignSystem.bodySmall.copyWith(
-              color: CalculatorColors.textSecondary,
+              color: CalculatorColors.getTextSecondary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -845,14 +848,14 @@ class _ElectricalCalculatorScreenState
                     Text(
                       label,
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
-                        color: CalculatorColors.textPrimary,
+                        color: CalculatorColors.getTextPrimary(_isDark),
                         fontWeight: value ? FontWeight.w600 : FontWeight.normal,
                       ),
                     ),
                     Text(
                       subtitle,
                       style: CalculatorDesignSystem.bodySmall.copyWith(
-                        color: CalculatorColors.textSecondary,
+                        color: CalculatorColors.getTextSecondary(_isDark),
                       ),
                     ),
                   ],
@@ -874,7 +877,7 @@ class _ElectricalCalculatorScreenState
           Text(
             _loc.translate('electrical.options.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -923,23 +926,23 @@ class _ElectricalCalculatorScreenState
       trackColor: WidgetStateProperty.resolveWith(
         (states) => states.contains(WidgetState.selected)
             ? accentColor.withValues(alpha: 0.4)
-            : CalculatorColors.textSecondary.withValues(alpha: 0.2),
+            : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
       ),
       thumbColor: WidgetStateProperty.resolveWith(
         (states) => states.contains(WidgetState.selected)
             ? accentColor
-            : CalculatorColors.textSecondary,
+            : CalculatorColors.getTextSecondary(_isDark),
       ),
       title: Text(
         title,
         style: CalculatorDesignSystem.bodyMedium.copyWith(
-          color: CalculatorColors.textPrimary,
+          color: CalculatorColors.getTextPrimary(_isDark),
         ),
       ),
       subtitle: Text(
         subtitle,
         style: CalculatorDesignSystem.bodySmall.copyWith(
-          color: CalculatorColors.textSecondary,
+          color: CalculatorColors.getTextSecondary(_isDark),
         ),
       ),
       value: value,
@@ -1108,10 +1111,13 @@ class _ElectricalCalculatorScreenState
   }
 
   Widget _card({required Widget child}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecoration(
+        color: CalculatorColors.getCardBackground(isDark),
+      ),
       child: child,
     );
   }
