@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_constant.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Вспомогательный класс для работы с константами калькулятора штукатурки
@@ -77,7 +78,8 @@ class PlasterCalculatorScreen extends StatefulWidget {
   State<PlasterCalculatorScreen> createState() => _PlasterCalculatorScreenState();
 }
 
-class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
+class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
+    with ExportableMixin {
   double _roomWidth = 4.0;
   double _roomLength = 5.0;
   double _roomHeight = 2.7;
@@ -93,8 +95,6 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
   PlasterInputMode _inputMode = PlasterInputMode.manual;
   late _PlasterResult _result;
   late AppLocalizations _loc;
-
-  bool _isDark = false;
 
   // Константы калькулятора (null = используются hardcoded defaults)
   late final _PlasterConstants _constants;
@@ -143,14 +143,46 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
   void _update() => setState(() => _result = _calculate());
 
   @override
+  AppLocalizations get loc => _loc;
+
+  @override
+  String get exportSubject => _loc.translate('plaster_pro.brand');
+
+  @override
+  String generateExportText() {
+    final buffer = StringBuffer();
+    buffer.writeln(_loc.translate('plaster_pro.brand'));
+    buffer.writeln('═' * 40);
+    buffer.writeln();
+    buffer.writeln('${_loc.translate('plaster_pro.label.wall_area')}: ${_result.area.toStringAsFixed(1)} м²');
+    buffer.writeln('${_loc.translate('plaster_pro.label.thickness')}: $_thickness мм');
+    buffer.writeln('${_loc.translate('plaster_pro.label.material')}: ${_materialType == PlasterMaterial.gypsum ? _loc.translate('plaster_pro.material.gypsum') : _loc.translate('plaster_pro.material.cement')}');
+    buffer.writeln();
+    buffer.writeln('─' * 40);
+    buffer.writeln(_loc.translate('plaster_pro.section.results').toUpperCase());
+    buffer.writeln('─' * 40);
+    buffer.writeln('${_loc.translate('plaster_pro.label.bags')}: ${_result.bags} шт (${(_result.totalWeight).toStringAsFixed(1)} кг)');
+    if (_useBeacons) {
+      buffer.writeln('${_loc.translate('plaster_pro.label.beacons')}: ${_result.beacons} шт (${_result.beaconSize} мм)');
+    }
+    if (_useMesh) {
+      buffer.writeln('${_loc.translate('plaster_pro.label.mesh')}: ${_result.meshArea} м²');
+    }
+    if (_usePrimer) {
+      buffer.writeln('${_loc.translate('plaster_pro.label.primer')}: ${_result.primerLiters} л');
+    }
+    return buffer.toString();
+  }
+
+  @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
-    _isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.walls;
 
     return CalculatorScaffold(
       title: _loc.translate('plaster_pro.brand'),
       accentColor: accentColor,
+      actions: exportActions,
 
       // Header с ключевыми результатами вверху
       resultHeader: CalculatorResultHeader(
@@ -255,7 +287,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
             Text(
               _loc.translate('plaster_pro.label.wall_area'),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.getTextSecondary(_isDark),
+                color: CalculatorColors.textSecondary,
               ),
             ),
             Text(
@@ -344,7 +376,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
               Text(
                 _loc.translate('plaster_pro.thickness.title'),
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.getTextSecondary(_isDark),
+                  color: CalculatorColors.textSecondary,
                 ),
               ),
               Text(
@@ -459,13 +491,10 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen> {
   }
 
   Widget _card({required Widget child}) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(
-        color: CalculatorColors.getCardBackground(isDark),
-      ),
+      decoration: CalculatorDesignSystem.cardDecoration(),
       child: child,
     );
   }

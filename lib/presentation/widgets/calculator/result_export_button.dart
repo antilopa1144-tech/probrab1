@@ -5,6 +5,7 @@ import '../../../core/localization/app_localizations.dart';
 class ResultExportButton extends StatelessWidget {
   final VoidCallback? onExportCsv;
   final VoidCallback? onExportPdf;
+  final VoidCallback? onDownloadPdf;
   final VoidCallback? onShare;
   final VoidCallback? onCopy;
   final bool enabled;
@@ -14,6 +15,7 @@ class ResultExportButton extends StatelessWidget {
     super.key,
     this.onExportCsv,
     this.onExportPdf,
+    this.onDownloadPdf,
     this.onShare,
     this.onCopy,
     this.enabled = true,
@@ -66,6 +68,15 @@ class ResultExportButton extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
             ),
           ),
+        if (onDownloadPdf != null)
+          PopupMenuItem(
+            value: ExportAction.downloadPdf,
+            child: ListTile(
+              leading: const Icon(Icons.download_rounded),
+              title: Text(loc.translate('common.download_pdf')),
+              contentPadding: EdgeInsets.zero,
+            ),
+          ),
       ],
     );
   }
@@ -84,6 +95,9 @@ class ResultExportButton extends StatelessWidget {
       case ExportAction.pdf:
         onExportPdf?.call();
         break;
+      case ExportAction.downloadPdf:
+        onDownloadPdf?.call();
+        break;
     }
   }
 }
@@ -94,4 +108,5 @@ enum ExportAction {
   copy,
   csv,
   pdf,
+  downloadPdf,
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/localization/app_localizations.dart';
+import '../services/pdf_export_service.dart';
 
 /// Миксин для добавления функциональности экспорта (share/copy) в калькуляторы.
 ///
@@ -50,7 +51,39 @@ mixin ExportableMixin<T extends StatefulWidget> on State<T> {
     );
   }
 
-  /// Удобный геттер для получения действий экспорта (иконки share/copy).
+  /// Экспорт результата в PDF (открыть диалог печати).
+  Future<void> exportPdf() async {
+    await PdfExportService.exportFromText(
+      title: exportSubject,
+      text: generateExportText(),
+      saveLocally: false,
+    );
+  }
+
+  /// Скачать результат как PDF файл локально.
+  Future<void> downloadPdf() async {
+    final filePath = await PdfExportService.exportFromText(
+      title: exportSubject,
+      text: generateExportText(),
+      saveLocally: true,
+    );
+
+    if (filePath != null && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(loc.translate('common.pdf_saved_to', {'path': filePath})),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 5),
+          action: SnackBarAction(
+            label: 'OK',
+            onPressed: () {},
+          ),
+        ),
+      );
+    }
+  }
+
+  /// Удобный геттер для получения действий экспорта (иконки share/copy/pdf).
   List<Widget> get exportActions => [
         IconButton(
           icon: const Icon(Icons.copy_rounded),
@@ -61,6 +94,11 @@ mixin ExportableMixin<T extends StatefulWidget> on State<T> {
           icon: const Icon(Icons.share_rounded),
           onPressed: shareCalculation,
           tooltip: loc.translate('common.share'),
+        ),
+        IconButton(
+          icon: const Icon(Icons.download_rounded),
+          onPressed: downloadPdf,
+          tooltip: loc.translate('common.download_pdf'),
         ),
       ];
 }

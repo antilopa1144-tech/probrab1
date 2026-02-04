@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:share_plus/share_plus.dart' show ShareParams, SharePlus, XFile;
 import '../../core/localization/app_localizations.dart';
 import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/models/calculator_definition_v2.dart';
@@ -13,12 +17,80 @@ import '../utils/calculation_display.dart';
 
 /// Сервис для экспорта расчётов в PDF.
 class PdfExportService {
+  /// Кешированный шрифт для кириллицы.
+  static pw.Font? _cachedFont;
+
+  /// Загрузить шрифт с поддержкой кириллицы.
+  static Future<pw.Font> _loadFont() async {
+    if (_cachedFont != null) return _cachedFont!;
+    final fontData = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
+    _cachedFont = pw.Font.ttf(fontData);
+    return _cachedFont!;
+  }
+
+  /// Создать тему с кириллическим шрифтом.
+  static pw.ThemeData _buildTheme(pw.Font font) {
+    return pw.ThemeData.withFont(
+      base: font,
+      bold: font,
+      italic: font,
+      boldItalic: font,
+    );
+  }
+
+  /// Поделиться PDF файлом.
+  static Future<void> sharePdf(Uint8List data, String fileName) async {
+    final tempDir = await getTemporaryDirectory();
+    final file = File('${tempDir.path}/$fileName');
+    await file.writeAsBytes(data);
+    await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], text: fileName));
+  }
+
+  /// Сохранить PDF локально и вернуть путь к файлу.
+  static Future<String> savePdfLocally(Uint8List data, String fileName) async {
+    Directory? directory;
+
+    if (Platform.isAndroid) {
+      // Попробуем сохранить во внешнее хранилище (Downloads)
+      directory = await getExternalStorageDirectory();
+      if (directory != null) {
+        // Переходим в папку Downloads
+        final downloadsPath = directory.path.replaceFirst(
+          RegExp(r'/Android/data/[^/]+/files'),
+          '/Download',
+        );
+        directory = Directory(downloadsPath);
+        if (!await directory.exists()) {
+          directory = await getApplicationDocumentsDirectory();
+        }
+      }
+    } else if (Platform.isIOS) {
+      directory = await getApplicationDocumentsDirectory();
+    } else {
+      // Windows, macOS, Linux
+      directory = await getDownloadsDirectory() ?? await getApplicationDocumentsDirectory();
+    }
+
+    directory ??= await getApplicationDocumentsDirectory();
+
+    final filePath = '${directory.path}/$fileName';
+    final file = File(filePath);
+    await file.writeAsBytes(data);
+
+    return filePath;
+  }
+
   /// Экспортировать расчёт в PDF.
-  static Future<void> exportCalculation(
+  ///
+  /// [saveLocally] - если true, сохраняет файл локально и возвращает путь.
+  /// Если false, открывает диалог печати/шеринга.
+  static Future<String?> exportCalculation(
     Calculation calculation,
     CalculatorDefinitionV2? definition, {
     BuildContext? buildContext,
+    bool saveLocally = false,
   }) async {
+    final font = await _loadFont();
     final resolvedDefinition =
         definition ?? CalculatorRegistry.getById(calculation.calculatorId);
 
@@ -38,7 +110,9 @@ class PdfExportService {
     final categoryLabel = buildContext == null
         ? calculation.category
         : CalculationDisplay.historyCategoryLabel(buildContext, calculation);
-    final pdf = pw.Document();
+    final pdf = pw.Document(
+      theme: _buildTheme(font),
+    );
 
     pdf.addPage(
       pw.MultiPage(
@@ -77,7 +151,7 @@ class PdfExportService {
                     ),
                     pw.SizedBox(height: 4),
                     pw.Text(
-                      'Дата: ${_formatDate(calculation.createdAt)}',
+                      'Дата: ${formatDate(calculation.createdAt)}',
                       style: const pw.TextStyle(fontSize: 12),
                     ),
                   ],
@@ -132,15 +206,25 @@ class PdfExportService {
       ),
     );
 
-    // Показываем диалог печати/сохранения
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
-    );
+    final pdfBytes = await pdf.save();
+
+    if (saveLocally) {
+      // Генерируем имя файла
+      final fileName = 'calculation_${calculation.id}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      final filePath = await savePdfLocally(pdfBytes, fileName);
+      return filePath;
+    } else {
+      // Показываем диалог печати/сохранения
+      await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdfBytes,
+      );
+      return null;
+    }
   }
 
   static pw.Widget _buildInputsTable(String inputsJson) {
     try {
-      final inputs = _parseJson(inputsJson);
+      final inputs = parseJson(inputsJson);
       if (inputs.isEmpty) {
         return pw.Text('Нет данных');
       }
@@ -190,7 +274,7 @@ class PdfExportService {
 
   static pw.Widget _buildResultsTable(String resultsJson) {
     try {
-      final results = _parseJson(resultsJson);
+      final results = parseJson(resultsJson);
       if (results.isEmpty) {
         return pw.Text('Нет данных');
       }
@@ -238,7 +322,8 @@ class PdfExportService {
     }
   }
 
-  static Map<String, double> _parseJson(String json) {
+  @visibleForTesting
+  static Map<String, double> parseJson(String json) {
     try {
       final decoded = jsonDecode(json) as Map<String, dynamic>;
       return decoded.map(
@@ -249,8 +334,18 @@ class PdfExportService {
     }
   }
 
-  static String _formatDate(DateTime date) {
+  @visibleForTesting
+  static String formatDate(DateTime date) {
     return '${date.day}.${date.month}.${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  /// Проверяет, должна ли строка рендерироваться жирной в PDF.
+  @visibleForTesting
+  static bool isLineBold(String line) {
+    return (line == line.toUpperCase() && line.trim().length > 2) ||
+        line.startsWith('▸') ||
+        line.startsWith('►') ||
+        line.startsWith('•');
   }
 
   // ─────────────────────────────────────────────────────────────────
@@ -258,13 +353,20 @@ class PdfExportService {
   // ─────────────────────────────────────────────────────────────────
 
   /// Экспортировать проект в PDF.
-  static Future<void> exportProject(
+  ///
+  /// [saveLocally] - если true, сохраняет файл локально и возвращает путь.
+  /// Если false, открывает диалог печати/шеринга.
+  static Future<String?> exportProject(
     ProjectV2 project,
-    BuildContext context,
-  ) async {
+    BuildContext context, {
+    bool saveLocally = false,
+  }) async {
+    final font = await _loadFont();
     final loc = AppLocalizations.of(context);
     final dateFormat = DateFormat('dd.MM.yyyy');
-    final pdf = pw.Document();
+    final pdf = pw.Document(
+      theme: _buildTheme(font),
+    );
 
     pdf.addPage(
       pw.MultiPage(
@@ -348,9 +450,20 @@ class PdfExportService {
       ),
     );
 
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
-    );
+    final pdfBytes = await pdf.save();
+
+    if (saveLocally) {
+      // Генерируем имя файла из названия проекта
+      final sanitizedName = sanitizeFileName(project.name);
+      final fileName = 'project_${sanitizedName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      final filePath = await savePdfLocally(pdfBytes, fileName);
+      return filePath;
+    } else {
+      await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdfBytes,
+      );
+      return null;
+    }
   }
 
   static pw.Widget _buildProjectInfoSection(
@@ -482,7 +595,7 @@ class PdfExportService {
                     style: const pw.TextStyle(fontSize: 10),
                   ),
                   pw.Text(
-                    _formatMoney(project.budgetSpent),
+                    formatMoney(project.budgetSpent),
                     style: pw.TextStyle(
                       fontSize: 16,
                       fontWeight: pw.FontWeight.bold,
@@ -499,7 +612,7 @@ class PdfExportService {
                     style: const pw.TextStyle(fontSize: 10),
                   ),
                   pw.Text(
-                    _formatMoney(project.budgetRemaining),
+                    formatMoney(project.budgetRemaining),
                     style: pw.TextStyle(
                       fontSize: 16,
                       fontWeight: pw.FontWeight.bold,
@@ -518,7 +631,7 @@ class PdfExportService {
           ),
           pw.SizedBox(height: 4),
           pw.Text(
-            '${loc.translate('project.total')}: ${_formatMoney(project.budgetTotal)}',
+            '${loc.translate('project.total')}: ${formatMoney(project.budgetTotal)}',
             style: const pw.TextStyle(fontSize: 10),
           ),
         ],
@@ -570,11 +683,11 @@ class PdfExportService {
                   ),
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(8),
-                    child: pw.Text(_formatMoney(calc.effectiveMaterialCost)),
+                    child: pw.Text(formatMoney(calc.effectiveMaterialCost)),
                   ),
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(8),
-                    child: pw.Text(_formatMoney(calc.laborCost ?? 0)),
+                    child: pw.Text(formatMoney(calc.laborCost ?? 0)),
                   ),
                 ],
               ),
@@ -592,14 +705,14 @@ class PdfExportService {
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(8),
                   child: pw.Text(
-                    _formatMoney(project.totalMaterialCost),
+                    formatMoney(project.totalMaterialCost),
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                   ),
                 ),
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(8),
                   child: pw.Text(
-                    _formatMoney(project.totalLaborCost),
+                    formatMoney(project.totalLaborCost),
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                   ),
                 ),
@@ -678,14 +791,14 @@ class PdfExportService {
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(6),
                     child: pw.Text(
-                      _formatMoney(m.pricePerUnit),
+                      formatMoney(m.pricePerUnit),
                       style: const pw.TextStyle(fontSize: 9),
                     ),
                   ),
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(6),
                     child: pw.Text(
-                      _formatMoney(m.totalCost),
+                      formatMoney(m.totalCost),
                       style: const pw.TextStyle(fontSize: 9),
                     ),
                   ),
@@ -732,12 +845,114 @@ class PdfExportService {
     }
   }
 
-  static String _formatMoney(double amount) {
+  /// Очистка строки для использования в имени файла.
+  /// Сохраняет буквы (включая кириллицу), цифры и дефисы.
+  /// Все whitespace (пробелы, табы, переносы) заменяются на подчёркивания.
+  @visibleForTesting
+  static String sanitizeFileName(String name) {
+    return name
+        .replaceAll(RegExp(r'[^\p{L}\p{N}\s-]', unicode: true), '')
+        .replaceAll(RegExp(r'\s'), '_');
+  }
+
+  @visibleForTesting
+  static String formatMoney(double amount) {
     if (amount >= 1000000) {
       return '${(amount / 1000000).toStringAsFixed(1)}M ₽';
     } else if (amount >= 1000) {
       return '${(amount / 1000).toStringAsFixed(0)}k ₽';
     }
     return '${amount.toStringAsFixed(0)} ₽';
+  }
+
+  // ─────────────────────────────────────────────────────────────────
+  // Text-based Export (для калькуляторов через миксины)
+  // ─────────────────────────────────────────────────────────────────
+
+  /// Экспортировать результат калькулятора в PDF из текста.
+  ///
+  /// [title] — заголовок PDF (имя калькулятора).
+  /// [text] — текст результата (из generateExportText()).
+  /// [saveLocally] — если true, сохраняет локально и возвращает путь.
+  static Future<String?> exportFromText({
+    required String title,
+    required String text,
+    bool saveLocally = false,
+  }) async {
+    final font = await _loadFont();
+    final pdf = pw.Document(
+      theme: _buildTheme(font),
+    );
+
+    // Разбиваем текст по строкам для красивого рендера
+    final lines = text.split('\n');
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(40),
+        build: (pw.Context context) {
+          return [
+            pw.Header(
+              level: 0,
+              child: pw.Text(
+                title,
+                style: pw.TextStyle(
+                  fontSize: 22,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ),
+            pw.SizedBox(height: 8),
+            pw.Divider(color: PdfColors.grey400, height: 1),
+            pw.SizedBox(height: 16),
+            ...lines.map((line) {
+              // Разделители (═══) рендерим как горизонтальную линию
+              if (line.startsWith('═') || line.startsWith('─') || line.startsWith('---')) {
+                return pw.Divider(color: PdfColors.grey300, height: 12);
+              }
+              // Пустые строки
+              if (line.trim().isEmpty) {
+                return pw.SizedBox(height: 8);
+              }
+              // Жирные заголовки (строки в верхнем регистре или начинающиеся с ▸/►/•)
+              return pw.Text(
+                line,
+                style: pw.TextStyle(
+                  fontSize: 11,
+                  fontWeight: isLineBold(line) ? pw.FontWeight.bold : pw.FontWeight.normal,
+                ),
+              );
+            }),
+          ];
+        },
+        footer: (pw.Context context) {
+          return pw.Container(
+            alignment: pw.Alignment.centerRight,
+            margin: const pw.EdgeInsets.only(top: 10),
+            child: pw.Text(
+              'Прораб AI • ${formatDate(DateTime.now())}',
+              style: const pw.TextStyle(
+                fontSize: 10,
+                color: PdfColors.grey600,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+
+    final pdfBytes = await pdf.save();
+
+    if (saveLocally) {
+      final sanitizedTitle = sanitizeFileName(title);
+      final fileName = '${sanitizedTitle}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+      return await savePdfLocally(pdfBytes, fileName);
+    } else {
+      await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdfBytes,
+      );
+      return null;
+    }
   }
 }

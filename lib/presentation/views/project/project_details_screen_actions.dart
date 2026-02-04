@@ -550,6 +550,42 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
     }
   }
 
+  void _downloadProjectToPdf(ProjectV2 project) async {
+    try {
+      final loc = AppLocalizations.of(context);
+      final filePath = await PdfExportService.exportProject(
+        project,
+        context,
+        saveLocally: true,
+      );
+
+      if (filePath != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              loc.translate('common.pdf_saved_to', {'path': filePath}),
+            ),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'OK',
+              onPressed: () {},
+            ),
+          ),
+        );
+      }
+    } catch (e, stack) {
+      if (mounted) {
+        GlobalErrorHandler.handle(
+          context,
+          e,
+          stackTrace: stack,
+          contextMessage: 'Download project PDF',
+        );
+      }
+    }
+  }
+
   void _showExportOptions(ProjectV2 project) {
     showModalBottomSheet(
       context: context,
@@ -569,10 +605,19 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
             ListTile(
               leading: const Icon(Icons.picture_as_pdf_rounded),
               title: const Text('Экспорт в PDF'),
-              subtitle: const Text('Полный отчёт с графиками'),
+              subtitle: const Text('Открыть в приложении для просмотра'),
               onTap: () {
                 Navigator.pop(context);
                 _exportProjectToPdf(project);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.download_rounded),
+              title: const Text('Скачать PDF'),
+              subtitle: const Text('Сохранить файл на устройство'),
+              onTap: () {
+                Navigator.pop(context);
+                _downloadProjectToPdf(project);
               },
             ),
             ListTile(
