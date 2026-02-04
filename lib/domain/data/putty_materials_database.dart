@@ -37,6 +37,43 @@ enum PuttyComposition {
   cement,
 }
 
+/// Тип поверхности для применения
+enum SurfaceType {
+  /// Только стены
+  wall,
+
+  /// Только потолок (лёгкие пасты)
+  ceiling,
+
+  /// Универсальная (стены и потолок)
+  universal,
+}
+
+/// Расширение для SurfaceType
+extension SurfaceTypeExtension on SurfaceType {
+  String get labelKey {
+    switch (this) {
+      case SurfaceType.wall:
+        return 'putty.surface.wall';
+      case SurfaceType.ceiling:
+        return 'putty.surface.ceiling';
+      case SurfaceType.universal:
+        return 'putty.surface.universal';
+    }
+  }
+
+  String get descriptionKey {
+    switch (this) {
+      case SurfaceType.wall:
+        return 'putty.surface.wall_desc';
+      case SurfaceType.ceiling:
+        return 'putty.surface.ceiling_desc';
+      case SurfaceType.universal:
+        return 'putty.surface.universal_desc';
+    }
+  }
+}
+
 /// Материал шпаклёвки
 class PuttyMaterial {
   final String id;
@@ -49,11 +86,17 @@ class PuttyMaterial {
   /// Расход кг/м² при слое 1мм
   final double consumptionPerMm;
 
-  /// Размер упаковки (кг для сухих, л для паст)
+  /// Размер упаковки по умолчанию (кг для сухих, л для паст)
   final double packageSize;
 
   /// Единица измерения упаковки
   final String packageUnit;
+
+  /// Доступные фасовки (кг)
+  final List<double> availableWeights;
+
+  /// Тип поверхности (стены, потолок, универсальная)
+  final SurfaceType surfaceType;
 
   /// Максимальная толщина слоя (мм)
   final double maxLayerThickness;
@@ -83,6 +126,8 @@ class PuttyMaterial {
     required this.consumptionPerMm,
     required this.packageSize,
     required this.packageUnit,
+    this.availableWeights = const [],
+    this.surfaceType = SurfaceType.universal,
     required this.maxLayerThickness,
     required this.minLayerThickness,
     required this.dryingTimeHours,
@@ -94,10 +139,26 @@ class PuttyMaterial {
   /// Полное название (бренд + название)
   String get fullName => '$brand $name';
 
-  /// Расчёт количества упаковок
-  int calculatePackages(double area, double layerThickness, int layers) {
+  /// Доступные веса для выбора (если список пуст, используем packageSize)
+  List<double> get weights =>
+      availableWeights.isNotEmpty ? availableWeights : [packageSize];
+
+  /// Расчёт количества упаковок для указанного веса
+  int calculatePackagesForWeight(
+      double area, double layerThickness, int layers, double weight) {
     final totalConsumption = area * consumptionPerMm * layerThickness * layers;
-    return (totalConsumption / packageSize).ceil();
+    return (totalConsumption / weight).ceil();
+  }
+
+  /// Расчёт количества упаковок (использует packageSize по умолчанию)
+  int calculatePackages(double area, double layerThickness, int layers) {
+    return calculatePackagesForWeight(area, layerThickness, layers, packageSize);
+  }
+
+  /// Расчёт общего расхода в кг
+  double calculateTotalConsumption(
+      double area, double layerThickness, int layers) {
+    return area * consumptionPerMm * layerThickness * layers;
   }
 }
 
@@ -121,6 +182,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 0.9,
       packageSize: 25,
       packageUnit: 'кг',
+      availableWeights: [10, 25, 30],
+      surfaceType: SurfaceType.wall,
       maxLayerThickness: 15,
       minLayerThickness: 3,
       dryingTimeHours: 24,
@@ -138,12 +201,33 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 0.8,
       packageSize: 25,
       packageUnit: 'кг',
+      availableWeights: [5, 10, 25],
+      surfaceType: SurfaceType.universal,
       maxLayerThickness: 10,
       minLayerThickness: 1,
       dryingTimeHours: 24,
       isWaterproof: false,
       recommendationKey: 'putty.material.knauf_fugen.rec',
       popularity: 9,
+    ),
+    PuttyMaterial(
+      id: 'knauf_uniflott',
+      brand: 'Knauf',
+      name: 'Унифлотт',
+      purpose: PuttyPurpose.start,
+      form: PuttyForm.dry,
+      composition: PuttyComposition.gypsum,
+      consumptionPerMm: 0.3,
+      packageSize: 25,
+      packageUnit: 'кг',
+      availableWeights: [5, 25],
+      surfaceType: SurfaceType.universal,
+      maxLayerThickness: 5,
+      minLayerThickness: 1,
+      dryingTimeHours: 24,
+      isWaterproof: false,
+      recommendationKey: 'putty.material.knauf_uniflott.rec',
+      popularity: 8,
     ),
 
     // --- Волма ---
@@ -157,6 +241,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 0.9,
       packageSize: 30,
       packageUnit: 'кг',
+      availableWeights: [15, 30],
+      surfaceType: SurfaceType.wall,
       maxLayerThickness: 60,
       minLayerThickness: 5,
       dryingTimeHours: 24,
@@ -174,6 +260,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 1.0,
       packageSize: 25,
       packageUnit: 'кг',
+      availableWeights: [5, 25],
+      surfaceType: SurfaceType.wall,
       maxLayerThickness: 10,
       minLayerThickness: 1,
       dryingTimeHours: 24,
@@ -193,6 +281,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 1.0,
       packageSize: 25,
       packageUnit: 'кг',
+      availableWeights: [5, 15, 25],
+      surfaceType: SurfaceType.wall,
       maxLayerThickness: 8,
       minLayerThickness: 1,
       dryingTimeHours: 24,
@@ -212,6 +302,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 1.8,
       packageSize: 25,
       packageUnit: 'кг',
+      availableWeights: [5, 25],
+      surfaceType: SurfaceType.wall,
       maxLayerThickness: 20,
       minLayerThickness: 2,
       dryingTimeHours: 48,
@@ -231,6 +323,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 0.9,
       packageSize: 30,
       packageUnit: 'кг',
+      availableWeights: [5, 30],
+      surfaceType: SurfaceType.wall,
       maxLayerThickness: 40,
       minLayerThickness: 5,
       dryingTimeHours: 24,
@@ -250,6 +344,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 0.9,
       packageSize: 30,
       packageUnit: 'кг',
+      availableWeights: [15, 30],
+      surfaceType: SurfaceType.wall,
       maxLayerThickness: 50,
       minLayerThickness: 5,
       dryingTimeHours: 24,
@@ -275,6 +371,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 1.2,
       packageSize: 20,
       packageUnit: 'кг',
+      availableWeights: [5, 20, 25],
+      surfaceType: SurfaceType.wall,
       maxLayerThickness: 5,
       minLayerThickness: 0.3,
       dryingTimeHours: 24,
@@ -292,6 +390,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 1.2,
       packageSize: 20,
       packageUnit: 'кг',
+      availableWeights: [5, 20],
+      surfaceType: SurfaceType.universal,
       maxLayerThickness: 4,
       minLayerThickness: 0.3,
       dryingTimeHours: 24,
@@ -309,6 +409,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 1.2,
       packageSize: 20,
       packageUnit: 'кг',
+      availableWeights: [5, 20],
+      surfaceType: SurfaceType.wall,
       maxLayerThickness: 4,
       minLayerThickness: 0.3,
       dryingTimeHours: 48,
@@ -328,6 +430,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 0.9,
       packageSize: 25,
       packageUnit: 'кг',
+      availableWeights: [5, 10, 25],
+      surfaceType: SurfaceType.universal,
       maxLayerThickness: 3,
       minLayerThickness: 0.5,
       dryingTimeHours: 24,
@@ -345,6 +449,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 1.0,
       packageSize: 25,
       packageUnit: 'кг',
+      availableWeights: [5, 25],
+      surfaceType: SurfaceType.wall,
       maxLayerThickness: 5,
       minLayerThickness: 0.2,
       dryingTimeHours: 24,
@@ -364,6 +470,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 1.1,
       packageSize: 25,
       packageUnit: 'кг',
+      availableWeights: [5, 15, 25],
+      surfaceType: SurfaceType.universal,
       maxLayerThickness: 3,
       minLayerThickness: 0.3,
       dryingTimeHours: 24,
@@ -383,6 +491,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 1.0,
       packageSize: 25,
       packageUnit: 'кг',
+      availableWeights: [5, 20, 25],
+      surfaceType: SurfaceType.wall,
       maxLayerThickness: 3,
       minLayerThickness: 0.2,
       dryingTimeHours: 24,
@@ -402,6 +512,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 1.0,
       packageSize: 20,
       packageUnit: 'кг',
+      availableWeights: [5, 20],
+      surfaceType: SurfaceType.wall,
       maxLayerThickness: 3,
       minLayerThickness: 0.3,
       dryingTimeHours: 24,
@@ -426,7 +538,9 @@ class PuttyMaterialsDatabase {
       composition: PuttyComposition.polymer,
       consumptionPerMm: 1.0,
       packageSize: 28,
-      packageUnit: 'л',
+      packageUnit: 'кг',
+      availableWeights: [5.6, 17, 28],
+      surfaceType: SurfaceType.ceiling,
       maxLayerThickness: 2,
       minLayerThickness: 0.2,
       dryingTimeHours: 6,
@@ -443,7 +557,9 @@ class PuttyMaterialsDatabase {
       composition: PuttyComposition.polymer,
       consumptionPerMm: 0.7,
       packageSize: 17,
-      packageUnit: 'л',
+      packageUnit: 'кг',
+      availableWeights: [3.5, 17],
+      surfaceType: SurfaceType.ceiling,
       maxLayerThickness: 3,
       minLayerThickness: 0.3,
       dryingTimeHours: 5,
@@ -462,7 +578,9 @@ class PuttyMaterialsDatabase {
       composition: PuttyComposition.polymer,
       consumptionPerMm: 1.0,
       packageSize: 17,
-      packageUnit: 'л',
+      packageUnit: 'кг',
+      availableWeights: [3.5, 17, 28],
+      surfaceType: SurfaceType.ceiling,
       maxLayerThickness: 2,
       minLayerThickness: 0.2,
       dryingTimeHours: 6,
@@ -479,7 +597,9 @@ class PuttyMaterialsDatabase {
       composition: PuttyComposition.polymer,
       consumptionPerMm: 0.9,
       packageSize: 10,
-      packageUnit: 'л',
+      packageUnit: 'кг',
+      availableWeights: [3, 10, 20],
+      surfaceType: SurfaceType.universal,
       maxLayerThickness: 3,
       minLayerThickness: 0.3,
       dryingTimeHours: 4,
@@ -498,7 +618,9 @@ class PuttyMaterialsDatabase {
       composition: PuttyComposition.polymer,
       consumptionPerMm: 1.0,
       packageSize: 25,
-      packageUnit: 'л',
+      packageUnit: 'кг',
+      availableWeights: [5, 15, 25],
+      surfaceType: SurfaceType.ceiling,
       maxLayerThickness: 2,
       minLayerThickness: 0.2,
       dryingTimeHours: 6,
@@ -515,7 +637,9 @@ class PuttyMaterialsDatabase {
       composition: PuttyComposition.polymer,
       consumptionPerMm: 0.8,
       packageSize: 15,
-      packageUnit: 'л',
+      packageUnit: 'кг',
+      availableWeights: [5, 15],
+      surfaceType: SurfaceType.ceiling,
       maxLayerThickness: 3,
       minLayerThickness: 0.3,
       dryingTimeHours: 4,
@@ -534,7 +658,9 @@ class PuttyMaterialsDatabase {
       composition: PuttyComposition.polymer,
       consumptionPerMm: 1.1,
       packageSize: 16,
-      packageUnit: 'л',
+      packageUnit: 'кг',
+      availableWeights: [1.5, 5, 16],
+      surfaceType: SurfaceType.universal,
       maxLayerThickness: 2,
       minLayerThickness: 0.3,
       dryingTimeHours: 5,
@@ -553,12 +679,54 @@ class PuttyMaterialsDatabase {
       composition: PuttyComposition.polymer,
       consumptionPerMm: 1.0,
       packageSize: 25,
-      packageUnit: 'л',
+      packageUnit: 'кг',
+      availableWeights: [5, 25],
+      surfaceType: SurfaceType.ceiling,
       maxLayerThickness: 3,
       minLayerThickness: 0.3,
       dryingTimeHours: 4,
       isWaterproof: false,
       recommendationKey: 'putty.material.semin_light.rec',
+      popularity: 6,
+    ),
+    PuttyMaterial(
+      id: 'semin_sem_joint',
+      brand: 'Semin',
+      name: 'Sem-Joint',
+      purpose: PuttyPurpose.finish,
+      form: PuttyForm.paste,
+      composition: PuttyComposition.polymer,
+      consumptionPerMm: 1.0,
+      packageSize: 25,
+      packageUnit: 'кг',
+      availableWeights: [7, 25],
+      surfaceType: SurfaceType.universal,
+      maxLayerThickness: 3,
+      minLayerThickness: 0.3,
+      dryingTimeHours: 4,
+      isWaterproof: false,
+      recommendationKey: 'putty.material.semin_joint.rec',
+      popularity: 7,
+    ),
+
+    // --- VGT ---
+    PuttyMaterial(
+      id: 'vgt_premium',
+      brand: 'VGT',
+      name: 'Premium',
+      purpose: PuttyPurpose.finish,
+      form: PuttyForm.paste,
+      composition: PuttyComposition.polymer,
+      consumptionPerMm: 0.9,
+      packageSize: 16,
+      packageUnit: 'кг',
+      availableWeights: [1.5, 3.6, 7, 16, 25],
+      surfaceType: SurfaceType.universal,
+      maxLayerThickness: 3,
+      minLayerThickness: 0.3,
+      dryingTimeHours: 4,
+      isWaterproof: false,
+      recommendationKey: 'putty.material.vgt_premium.rec',
       popularity: 6,
     ),
   ];
@@ -579,6 +747,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 0.8,
       packageSize: 25,
       packageUnit: 'кг',
+      availableWeights: [5, 10, 25],
+      surfaceType: SurfaceType.universal,
       maxLayerThickness: 10,
       minLayerThickness: 0.5,
       dryingTimeHours: 24,
@@ -596,6 +766,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 1.0,
       packageSize: 25,
       packageUnit: 'кг',
+      availableWeights: [5, 25],
+      surfaceType: SurfaceType.universal,
       maxLayerThickness: 5,
       minLayerThickness: 0.2,
       dryingTimeHours: 24,
@@ -614,7 +786,9 @@ class PuttyMaterialsDatabase {
       composition: PuttyComposition.polymer,
       consumptionPerMm: 1.0,
       packageSize: 25,
-      packageUnit: 'л',
+      packageUnit: 'кг',
+      availableWeights: [5, 15, 25],
+      surfaceType: SurfaceType.universal,
       maxLayerThickness: 5,
       minLayerThickness: 0.3,
       dryingTimeHours: 6,
@@ -634,6 +808,8 @@ class PuttyMaterialsDatabase {
       consumptionPerMm: 0.9,
       packageSize: 25,
       packageUnit: 'кг',
+      availableWeights: [5, 15, 25],
+      surfaceType: SurfaceType.universal,
       maxLayerThickness: 5,
       minLayerThickness: 0.2,
       dryingTimeHours: 24,
@@ -709,6 +885,63 @@ class PuttyMaterialsDatabase {
     }
     final list = brands.toList();
     list.sort();
+    return list;
+  }
+
+  /// Получить материалы для стен (wall + universal)
+  static List<PuttyMaterial> getWallMaterials() {
+    return allMaterials
+        .where((m) =>
+            m.surfaceType == SurfaceType.wall ||
+            m.surfaceType == SurfaceType.universal)
+        .toList();
+  }
+
+  /// Получить материалы для потолка (ceiling + universal)
+  static List<PuttyMaterial> getCeilingMaterials() {
+    return allMaterials
+        .where((m) =>
+            m.surfaceType == SurfaceType.ceiling ||
+            m.surfaceType == SurfaceType.universal)
+        .toList();
+  }
+
+  /// Получить материалы по типу поверхности
+  static List<PuttyMaterial> getBySurfaceType(SurfaceType type) {
+    if (type == SurfaceType.wall) {
+      return getWallMaterials();
+    } else if (type == SurfaceType.ceiling) {
+      return getCeilingMaterials();
+    }
+    return allMaterials;
+  }
+
+  /// Получить финишные материалы для стен
+  static List<PuttyMaterial> getFinishWallMaterialsSorted() {
+    final list = [...finishDryMaterials, ...finishPasteMaterials]
+        .where((m) =>
+            m.surfaceType == SurfaceType.wall ||
+            m.surfaceType == SurfaceType.universal)
+        .toList();
+    list.sort((a, b) => b.popularity.compareTo(a.popularity));
+    return list;
+  }
+
+  /// Получить финишные материалы для потолка (лёгкие пасты)
+  static List<PuttyMaterial> getFinishCeilingMaterialsSorted() {
+    final list = [...finishDryMaterials, ...finishPasteMaterials]
+        .where((m) =>
+            m.surfaceType == SurfaceType.ceiling ||
+            m.surfaceType == SurfaceType.universal)
+        .toList();
+    list.sort((a, b) => b.popularity.compareTo(a.popularity));
+    return list;
+  }
+
+  /// Получить все финишные материалы отсортированные
+  static List<PuttyMaterial> getAllFinishMaterialsSorted() {
+    final list = [...finishDryMaterials, ...finishPasteMaterials];
+    list.sort((a, b) => b.popularity.compareTo(a.popularity));
     return list;
   }
 }

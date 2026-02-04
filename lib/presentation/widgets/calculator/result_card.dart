@@ -234,13 +234,9 @@ class ResultCardLight extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       padding: CalculatorDesignSystem.cardPaddingLarge,
-      decoration: CalculatorDesignSystem.cardDecoration(
-        color: CalculatorColors.getCardBackground(isDark),
-      ),
+      decoration: CalculatorDesignSystem.cardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -260,26 +256,21 @@ class ResultCardLight extends StatelessWidget {
                   title,
                   style: CalculatorDesignSystem.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: CalculatorColors.getTextPrimary(isDark),
                   ),
                 ),
               ),
             ],
           ),
 
-          CalculatorDesignSystem.divider(
-            color: CalculatorColors.getDivider(isDark),
-          ),
+          CalculatorDesignSystem.divider(),
 
           // Список результатов
-          ...results.map((item) => _buildResultRow(item, false, isDark)),
+          ...results.map((item) => _buildResultRow(item, false)),
 
           // Итоговая строка
           if (totalRow != null) ...[
-            CalculatorDesignSystem.divider(
-              color: CalculatorColors.getDivider(isDark),
-            ),
-            _buildResultRow(totalRow!, true, isDark),
+            CalculatorDesignSystem.divider(),
+            _buildResultRow(totalRow!, true),
           ],
 
           // Footer
@@ -292,7 +283,7 @@ class ResultCardLight extends StatelessWidget {
     );
   }
 
-  Widget _buildResultRow(ResultRowItem item, bool isTotal, bool isDark) {
+  Widget _buildResultRow(ResultRowItem item, bool isTotal) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -302,7 +293,7 @@ class ResultCardLight extends StatelessWidget {
             Icon(
               item.icon,
               size: 20,
-              color: isTotal ? accentColor : CalculatorColors.getTextSecondary(isDark),
+              color: isTotal ? accentColor : CalculatorColors.textSecondary,
             ),
             const SizedBox(width: 8),
           ],
@@ -314,7 +305,6 @@ class ResultCardLight extends StatelessWidget {
                   item.label,
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
                     fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-                    color: CalculatorColors.getTextPrimary(isDark),
                   ),
                 ),
                 if (item.subtitle != null) ...[
@@ -322,7 +312,7 @@ class ResultCardLight extends StatelessWidget {
                   Text(
                     item.subtitle!,
                     style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.getTextSecondary(isDark),
+                      color: CalculatorColors.textSecondary,
                     ),
                   ),
                 ],
@@ -333,7 +323,7 @@ class ResultCardLight extends StatelessWidget {
             child: Text(
               item.value,
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: isTotal ? accentColor : CalculatorColors.getTextPrimary(isDark),
+                color: isTotal ? accentColor : CalculatorColors.textPrimary,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.end,
@@ -439,6 +429,7 @@ class MaterialsCardModern extends StatelessWidget {
   final IconData titleIcon;
   final List<MaterialItem> items;
   final Color accentColor;
+  final Widget? footer;
 
   const MaterialsCardModern({
     super.key,
@@ -446,18 +437,15 @@ class MaterialsCardModern extends StatelessWidget {
     required this.titleIcon,
     required this.items,
     required this.accentColor,
+    this.footer,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: CalculatorDesignSystem.cardDecoration(
-        color: CalculatorColors.getCardBackground(isDark),
-      ),
+      decoration: CalculatorDesignSystem.cardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -470,7 +458,7 @@ class MaterialsCardModern extends StatelessWidget {
                 child: Text(
                   title,
                   style: CalculatorDesignSystem.titleMedium.copyWith(
-                    color: CalculatorColors.getTextPrimary(isDark),
+                    color: CalculatorColors.textPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: 17,
                   ),
@@ -484,14 +472,16 @@ class MaterialsCardModern extends StatelessWidget {
             final index = entry.key;
             final item = entry.value;
             final isLast = index == items.length - 1;
-            return _buildMaterialRow(item, isLast, isDark);
+            return _buildMaterialRow(item, isLast);
           }),
+          // Footer (опционально)
+          if (footer != null) footer!,
         ],
       ),
     );
   }
 
-  Widget _buildMaterialRow(MaterialItem item, bool isLast, bool isDark) {
+  Widget _buildMaterialRow(MaterialItem item, bool isLast) {
     return Column(
       children: [
         Padding(
@@ -504,7 +494,7 @@ class MaterialsCardModern extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: isDark ? 0.2 : 0.1),
+                  color: accentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(item.icon, color: accentColor, size: 18),
@@ -518,7 +508,7 @@ class MaterialsCardModern extends StatelessWidget {
                     Text(
                       item.name,
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
-                        color: CalculatorColors.getTextPrimary(isDark),
+                        color: CalculatorColors.textPrimary,
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
                       ),
@@ -528,7 +518,7 @@ class MaterialsCardModern extends StatelessWidget {
                       Text(
                         item.subtitle!,
                         style: CalculatorDesignSystem.bodySmall.copyWith(
-                          color: CalculatorColors.getTextSecondary(isDark),
+                          color: CalculatorColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),
@@ -538,7 +528,7 @@ class MaterialsCardModern extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: accentColor.withValues(alpha: isDark ? 0.2 : 0.1),
+                        color: accentColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -559,7 +549,7 @@ class MaterialsCardModern extends StatelessWidget {
         if (!isLast)
           Divider(
             height: 1,
-            color: CalculatorColors.getTextSecondary(isDark).withValues(alpha: 0.15),
+            color: CalculatorColors.textSecondary.withValues(alpha: 0.15),
           ),
       ],
     );

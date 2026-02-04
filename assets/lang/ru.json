@@ -332,7 +332,23 @@
     "package": "Фасовка",
     "composition": "Состав",
     "drying_time": "Время высыхания",
-    "layer_thickness": "Толщина слоя"
+    "layer_thickness": "Толщина слоя",
+    "surface_type": {
+      "title": "Тип поверхности",
+      "hint": "Для потолка рекомендуются лёгкие полимерные пасты"
+    },
+    "surface": {
+      "wall": "Стены",
+      "ceiling": "Потолок",
+      "universal": "Универсальный",
+      "wall_desc": "Стандартные шпаклёвки для стен",
+      "ceiling_desc": "Лёгкие пасты для потолка (Danogips, Sheetrock и др.)",
+      "universal_desc": "Подходит для стен и потолка"
+    },
+    "weight_selector": {
+      "title": "Фасовка финишной шпаклёвки",
+      "hint": "Выберите удобный размер упаковки"
+    }
   },
   "preset": {
     "bathroom_small": "Ванная мал.",
@@ -3427,10 +3443,6 @@
     "putty_type": "Тип шпаклёвки",
     "putty_type.finish": "Финишная",
     "putty_type.start": "Стартовая",
-    "qualityClass": "Класс качества",
-    "qualityClass.economy": "Эконом (Q1-Q2)",
-    "qualityClass.standard": "Стандарт (Q3)",
-    "qualityClass.premium": "Премиум (Q4)",
     "railing": "Ограждение",
     "railLength": "Длина рейки",
     "railWidth": "Ширина рейки",
@@ -4680,10 +4692,6 @@
       "title": "Теплоизоляция",
       "hint": "Для 1 этажа, над подвалом"
     },
-    "film_width": {
-      "title": "Ширина ИК плёнки",
-      "label": "ширина"
-    },
     "materials": {
       "title": "Материалы",
       "heating_mat": "Нагревательный мат",
@@ -4902,6 +4910,8 @@
     "export_results": "Экспорт результатов",
     "export_csv": "Экспорт в CSV",
     "export_pdf": "Экспорт в PDF",
+    "download_pdf": "Скачать PDF",
+    "pdf_saved_to": "PDF сохранён в: {path}",
     "qr_code_title": "QR код расчёта",
     "qr_scan_instruction": "Отсканируйте QR код для импорта данных",
     "qr_data_size": "Данные: {size} символов",
