@@ -129,7 +129,7 @@ void main() {
     });
 
     test('пунктуация и слеши удаляются', () {
-      expect(PdfExportService.sanitizeFileName('a/b\\c.d'), 'abcd');
+      expect(PdfExportService.sanitizeFileName(r'a/b\c.d'), 'abcd');
     });
 
     test('дефисы сохраняются', () {
@@ -141,7 +141,7 @@ void main() {
     });
 
     test('только специальные символы → пустая строка', () {
-      expect(PdfExportService.sanitizeFileName('!@#\$%^&*()'), '');
+      expect(PdfExportService.sanitizeFileName(r'!@#$%^&*()'), '');
     });
 
     test('смешанный регистр и языки', () {

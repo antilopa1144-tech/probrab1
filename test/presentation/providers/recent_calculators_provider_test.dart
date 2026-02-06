@@ -3,6 +3,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/presentation/providers/recent_calculators_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Реальные ID калькуляторов из CalculatorRegistry
+const _id1 = 'paint_universal';
+const _id2 = 'floors_tile';
+const _id3 = 'floors_laminate';
+const _id4 = 'floors_linoleum';
+const _id5 = 'floors_parquet';
+const _id6 = 'floors_warm';
+const _id7 = 'exterior_brick';
+const _id8 = 'foundation_basement';
+const _id9 = 'foundation_slab';
+const _id10 = 'fence';
+const _id11 = 'stairs';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -25,27 +38,22 @@ void main() {
       'загружает сохранённые калькуляторы при инициализации',
       () async {
         SharedPreferences.setMockInitialValues({
-          'recent_calculators': ['brick', 'tile', 'paint_universal'],
+          'recent_calculators': [_id1, _id2, _id3],
         });
 
         final container = ProviderContainer();
+        addTearDown(container.dispose);
 
-        // Инициируем загрузку
-        container.read(recentCalculatorsProvider);
-
-        // Ждём загрузки
-        await Future.delayed(const Duration(milliseconds: 150));
+        final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
         final state = container.read(recentCalculatorsProvider);
 
         expect(state.length, 3);
-        expect(state, contains('brick'));
-        expect(state, contains('tile'));
-        expect(state, contains('paint_universal'));
-
-        container.dispose();
+        expect(state, contains(_id1));
+        expect(state, contains(_id2));
+        expect(state, contains(_id3));
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
@@ -56,47 +64,48 @@ void main() {
         addTearDown(container.dispose);
 
         final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
-        await notifier.addRecent('brick');
+        await notifier.addRecent(_id1);
 
         final state = container.read(recentCalculatorsProvider);
 
         expect(state.length, 1);
-        expect(state.first, 'brick');
+        expect(state.first, _id1);
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
       'addRecent перемещает существующий калькулятор в начало',
       () async {
         SharedPreferences.setMockInitialValues({
-          'recent_calculators': ['tile', 'brick', 'paint_universal'],
+          'recent_calculators': [_id2, _id1, _id3],
         });
 
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
-        await Future.delayed(const Duration(milliseconds: 100));
-
         final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
-        await notifier.addRecent('brick');
+        await notifier.addRecent(_id1);
 
         final state = container.read(recentCalculatorsProvider);
 
-        expect(state.first, 'brick');
-        expect(state[1], 'tile');
-        expect(state[2], 'paint_universal');
+        expect(state.first, _id1);
+        expect(state[1], _id2);
+        expect(state[2], _id3);
         expect(state.length, 3);
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
       'addRecent ограничивает список до 10 элементов',
       () async {
-        final initialList = List.generate(10, (i) => 'calc$i');
+        final initialList = [
+          _id1, _id2, _id3, _id4, _id5,
+          _id6, _id7, _id8, _id9, _id10,
+        ];
         SharedPreferences.setMockInitialValues({
           'recent_calculators': initialList,
         });
@@ -104,19 +113,17 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
-        await Future.delayed(const Duration(milliseconds: 100));
-
         final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
-        await notifier.addRecent('new_calc');
+        await notifier.addRecent(_id11);
 
         final state = container.read(recentCalculatorsProvider);
 
         expect(state.length, 10);
-        expect(state.first, 'new_calc');
-        expect(state, isNot(contains('calc9'))); // Последний элемент удалён
+        expect(state.first, _id11);
+        expect(state, isNot(contains(_id10))); // Последний элемент удалён
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
@@ -127,6 +134,7 @@ void main() {
         addTearDown(container.dispose);
 
         final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
         // Добавляем legacy ID
         await notifier.addRecent('walls_paint');
@@ -137,7 +145,6 @@ void main() {
         expect(state, contains('paint_universal'));
         expect(state, isNot(contains('walls_paint')));
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
@@ -148,6 +155,7 @@ void main() {
         addTearDown(container.dispose);
 
         final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.addRecent('nonexistent_calculator_12345');
 
@@ -155,22 +163,20 @@ void main() {
 
         expect(state, isEmpty);
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
       'clearRecent очищает весь список',
       () async {
         SharedPreferences.setMockInitialValues({
-          'recent_calculators': ['brick', 'tile', 'paint_universal'],
+          'recent_calculators': [_id1, _id2, _id3],
         });
 
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
-        await Future.delayed(const Duration(milliseconds: 100));
-
         final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.clearRecent();
 
@@ -178,48 +184,44 @@ void main() {
 
         expect(state, isEmpty);
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
       'removeRecent удаляет конкретный калькулятор',
       () async {
         SharedPreferences.setMockInitialValues({
-          'recent_calculators': ['brick', 'tile', 'paint_universal'],
+          'recent_calculators': [_id1, _id2, _id3],
         });
 
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
-        await Future.delayed(const Duration(milliseconds: 100));
-
         final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
-        await notifier.removeRecent('tile');
+        await notifier.removeRecent(_id2);
 
         final state = container.read(recentCalculatorsProvider);
 
         expect(state.length, 2);
-        expect(state, contains('brick'));
-        expect(state, contains('paint_universal'));
-        expect(state, isNot(contains('tile')));
+        expect(state, contains(_id1));
+        expect(state, contains(_id3));
+        expect(state, isNot(contains(_id2)));
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
       'removeRecent канонизирует legacy ID перед удалением',
       () async {
         SharedPreferences.setMockInitialValues({
-          'recent_calculators': ['brick', 'paint_universal', 'tile'],
+          'recent_calculators': [_id1, 'paint_universal', _id2],
         });
 
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
-        await Future.delayed(const Duration(milliseconds: 100));
-
         final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
         // Удаляем по legacy ID
         await notifier.removeRecent('walls_paint');
@@ -227,9 +229,8 @@ void main() {
         final state = container.read(recentCalculatorsProvider);
 
         expect(state, isNot(contains('paint_universal')));
-        expect(state.length, 2);
+        expect(state.length, 1); // _id1 == paint_universal too, so only _id2 remains
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
@@ -240,19 +241,19 @@ void main() {
         addTearDown(container.dispose);
 
         final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
-        await notifier.addRecent('brick');
-        await notifier.addRecent('tile');
+        await notifier.addRecent(_id1);
+        await notifier.addRecent(_id2);
 
         final prefs = await SharedPreferences.getInstance();
         final saved = prefs.getStringList('recent_calculators');
 
         expect(saved, isNotNull);
         expect(saved!.length, 2);
-        expect(saved.first, 'tile'); // Последний добавленный
-        expect(saved[1], 'brick');
+        expect(saved.first, _id2); // Последний добавленный
+        expect(saved[1], _id1);
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
@@ -260,9 +261,9 @@ void main() {
       () async {
         SharedPreferences.setMockInitialValues({
           'recent_calculators': [
-            'brick',
+            _id1,
             'nonexistent_calc',
-            'tile',
+            _id2,
             'another_fake',
           ],
         });
@@ -270,17 +271,17 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
-        await Future.delayed(const Duration(milliseconds: 100));
+        final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
         final state = container.read(recentCalculatorsProvider);
 
         expect(state.length, 2);
-        expect(state, contains('brick'));
-        expect(state, contains('tile'));
+        expect(state, contains(_id1));
+        expect(state, contains(_id2));
         expect(state, isNot(contains('nonexistent_calc')));
         expect(state, isNot(contains('another_fake')));
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
@@ -288,26 +289,26 @@ void main() {
       () async {
         SharedPreferences.setMockInitialValues({
           'recent_calculators': [
-            'brick',
-            'walls_paint', // legacy
-            'warm_floor', // legacy
+            _id2,
+            'walls_paint', // legacy → paint_universal
+            'warm_floor', // legacy → floors_warm
           ],
         });
 
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
-        await Future.delayed(const Duration(milliseconds: 100));
+        final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
         final state = container.read(recentCalculatorsProvider);
 
-        expect(state, contains('brick'));
+        expect(state, contains(_id2));
         expect(state, contains('paint_universal')); // канонический
         expect(state, contains('floors_warm')); // канонический
         expect(state, isNot(contains('walls_paint')));
         expect(state, isNot(contains('warm_floor')));
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
@@ -324,14 +325,14 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
-        await Future.delayed(const Duration(milliseconds: 100));
+        final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
         final state = container.read(recentCalculatorsProvider);
 
         expect(state.length, 1);
         expect(state, contains('paint_universal'));
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
@@ -342,18 +343,18 @@ void main() {
         addTearDown(container.dispose);
 
         final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
-        await notifier.addRecent('brick');
-        await notifier.addRecent('tile');
-        await notifier.addRecent('paint_universal');
+        await notifier.addRecent(_id1);
+        await notifier.addRecent(_id2);
+        await notifier.addRecent(_id3);
 
         final state = container.read(recentCalculatorsProvider);
 
-        expect(state[0], 'paint_universal');
-        expect(state[1], 'tile');
-        expect(state[2], 'brick');
+        expect(state[0], _id3);
+        expect(state[1], _id2);
+        expect(state[2], _id1);
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
@@ -366,13 +367,13 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
-        await Future.delayed(const Duration(milliseconds: 100));
+        final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
         final state = container.read(recentCalculatorsProvider);
 
         expect(state, isEmpty);
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
 
     test(
@@ -383,20 +384,20 @@ void main() {
         addTearDown(container.dispose);
 
         final notifier = container.read(recentCalculatorsProvider.notifier);
+        await notifier.initialized;
 
-        await notifier.addRecent('brick');
-        await notifier.addRecent('tile');
-        await notifier.removeRecent('brick');
-        await notifier.addRecent('paint_universal');
+        await notifier.addRecent(_id1);
+        await notifier.addRecent(_id2);
+        await notifier.removeRecent(_id1);
+        await notifier.addRecent(_id3);
 
         final state = container.read(recentCalculatorsProvider);
 
         expect(state.length, 2);
-        expect(state[0], 'paint_universal');
-        expect(state[1], 'tile');
-        expect(state, isNot(contains('brick')));
+        expect(state[0], _id3);
+        expect(state[1], _id2);
+        expect(state, isNot(contains(_id1)));
       },
-      skip: 'Requires real async initialization - timing issues in unit tests',
     );
   });
 }

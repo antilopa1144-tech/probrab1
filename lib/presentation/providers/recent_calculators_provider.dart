@@ -10,8 +10,17 @@ import '../../domain/calculators/calculator_registry.dart';
 /// Самый последний калькулятор находится в начале списка.
 class RecentCalculatorsNotifier extends StateNotifier<List<String>> {
   RecentCalculatorsNotifier() : super([]) {
-    _loadRecent();
+    _initFuture = _loadRecent();
   }
+
+  /// Future, которое завершается когда начальная загрузка готова.
+  late final Future<void> _initFuture;
+
+  /// Позволяет дождаться завершения начальной загрузки.
+  Future<void> get initialized => _initFuture;
+
+  /// Флаг: было ли явное обновление до завершения _loadRecent.
+  bool _hasBeenUpdated = false;
 
   static const String _key = 'recent_calculators';
   static const int _maxRecentCount = 10;
@@ -38,6 +47,9 @@ class RecentCalculatorsNotifier extends StateNotifier<List<String>> {
       await prefs.setStringList(_key, valid);
     }
 
+    if (!mounted) return;
+    if (_hasBeenUpdated) return;
+
     state = valid;
   }
 
@@ -46,6 +58,7 @@ class RecentCalculatorsNotifier extends StateNotifier<List<String>> {
   /// Если калькулятор уже есть в списке, он перемещается в начало.
   /// Если список превышает максимальный размер, старейшие записи удаляются.
   Future<void> addRecent(String calculatorId) async {
+    _hasBeenUpdated = true;
     final canonical = CalculatorIdMigration.canonicalize(calculatorId);
 
     // Проверяем, что калькулятор существует
@@ -71,6 +84,7 @@ class RecentCalculatorsNotifier extends StateNotifier<List<String>> {
 
   /// Очистить историю недавних калькуляторов
   Future<void> clearRecent() async {
+    _hasBeenUpdated = true;
     state = [];
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_key);
@@ -78,6 +92,7 @@ class RecentCalculatorsNotifier extends StateNotifier<List<String>> {
 
   /// Удалить конкретный калькулятор из истории
   Future<void> removeRecent(String calculatorId) async {
+    _hasBeenUpdated = true;
     final canonical = CalculatorIdMigration.canonicalize(calculatorId);
     final recent = List<String>.from(state);
     recent.remove(canonical);

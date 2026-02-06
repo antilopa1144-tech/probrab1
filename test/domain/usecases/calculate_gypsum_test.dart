@@ -70,8 +70,8 @@ void main() {
 
         // ПН: 20 × 0.8 = 16 м → ceil(16/3) = 6 штук
         expect(result.values['pnPieces'], equals(6.0));
-        // ПП: 20 × 2.0 = 40 м → ceil(40/3) = 14 штук
-        expect(result.values['ppPieces'], equals(14.0));
+        // ПП: 20 × 2.4 = 48 м → ceil(48/3) = 16 штук
+        expect(result.values['ppPieces'], equals(16.0));
       });
 
       test('calculates suspensions for wall lining', () {
@@ -208,8 +208,8 @@ void main() {
           'layers': 1.0,
         }, emptyPriceList);
 
-        // 20 × 0.3 × 1 слой = 6 кг
-        expect(result.values['fillerKg'], equals(6.0));
+        // 20 × 1.2 × 1 слой = 24 кг
+        expect(result.values['fillerKg'], equals(24.0));
       });
 
       test('calculates more filler for partition', () {
@@ -219,8 +219,8 @@ void main() {
           'layers': 1.0,
         }, emptyPriceList);
 
-        // 20 × 0.6 × 1 слой = 12 кг (больше швов)
-        expect(result.values['fillerKg'], equals(12.0));
+        // 20 × 2.4 × 1 слой = 48 кг (больше швов)
+        expect(result.values['fillerKg'], equals(48.0));
       });
 
       test('calculates primer', () {

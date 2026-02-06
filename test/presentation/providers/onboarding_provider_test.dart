@@ -257,7 +257,8 @@ void main() {
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       container = ProviderContainer();
-      await Future.delayed(const Duration(milliseconds: 50));
+      final notifier = container.read(onboardingProvider.notifier);
+      await notifier.initialized;
     });
 
     tearDown(() {
@@ -354,7 +355,6 @@ void main() {
         final state = container.read(onboardingProvider);
         expect(state.viewedSteps.contains('step1'), true);
       },
-      skip: 'Requires real async initialization',
     );
 
     test('previousStep возвращается к предыдущему шагу', () async {
@@ -462,7 +462,8 @@ void main() {
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       container = ProviderContainer();
-      await Future.delayed(const Duration(milliseconds: 50));
+      final notifier = container.read(onboardingProvider.notifier);
+      await notifier.initialized;
     });
 
     tearDown(() {
@@ -565,7 +566,8 @@ void main() {
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       container = ProviderContainer();
-      await Future.delayed(const Duration(milliseconds: 50));
+      final notifier = container.read(onboardingProvider.notifier);
+      await notifier.initialized;
     });
 
     tearDown(() {
@@ -632,7 +634,6 @@ void main() {
         expect(notifier.isStepViewed('step1'), true);
         expect(notifier.isStepViewed('step2'), false);
       },
-      skip: 'Requires real async initialization',
     );
 
     test('getRemainingStepsCount возвращает количество оставшихся шагов', () {
@@ -662,11 +663,8 @@ void main() {
 
         notifier.setSteps(steps);
 
-        // Отмечаем step1 как просмотренный
-        await notifier.nextStep();
-
-        // Сбрасываем на начало
-        await notifier.goToStep(0);
+        // Отмечаем step1 как просмотренный через markCurrentStepAsViewed
+        await notifier.markCurrentStepAsViewed();
 
         // Переходим к первому непросмотренному
         final result = await notifier.goToFirstUnviewedStep();
@@ -675,7 +673,6 @@ void main() {
         final state = container.read(onboardingProvider);
         expect(state.currentStep?.id, 'step2');
       },
-      skip: 'Requires real async initialization',
     );
 
     test(
@@ -694,7 +691,6 @@ void main() {
 
         expect(result, false);
       },
-      skip: 'Requires real async initialization',
     );
 
     test('getStepById возвращает шаг по ID', () {
@@ -778,7 +774,6 @@ void main() {
         final state = container.read(onboardingProvider);
         expect(state.viewedSteps.contains('step1'), true);
       },
-      skip: 'Requires real async initialization',
     );
   });
 
@@ -788,7 +783,8 @@ void main() {
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       container = ProviderContainer();
-      await Future.delayed(const Duration(milliseconds: 50));
+      final notifier = container.read(onboardingProvider.notifier);
+      await notifier.initialized;
     });
 
     tearDown(() {
@@ -878,9 +874,8 @@ void main() {
 
         // Создаём первый контейнер и устанавливаем состояние
         var container = ProviderContainer();
-        await Future.delayed(const Duration(milliseconds: 50));
-
-        final notifier = container.read(onboardingProvider.notifier);
+        var notifier = container.read(onboardingProvider.notifier);
+        await notifier.initialized;
 
         const steps = [
           OnboardingStep(id: 'step1', title: 'Step 1', description: 'Desc 1', order: 0),
@@ -891,12 +886,12 @@ void main() {
         await notifier.nextStep();
         await notifier.complete();
 
-        await Future.delayed(const Duration(milliseconds: 50));
         container.dispose();
 
         // Создаём новый контейнер и проверяем что состояние загрузилось
         container = ProviderContainer();
-        await Future.delayed(const Duration(milliseconds: 100));
+        notifier = container.read(onboardingProvider.notifier);
+        await notifier.initialized;
 
         final state = container.read(onboardingProvider);
         expect(state.isCompleted, true);
@@ -905,14 +900,14 @@ void main() {
 
         container.dispose();
       },
-      skip: 'Requires real async initialization',
     );
 
     test('работает с пустым состоянием при первом запуске', () async {
       SharedPreferences.setMockInitialValues({});
 
       final container = ProviderContainer();
-      await Future.delayed(const Duration(milliseconds: 50));
+      final notifier = container.read(onboardingProvider.notifier);
+      await notifier.initialized;
 
       final state = container.read(onboardingProvider);
       expect(state.isCompleted, false);
@@ -928,7 +923,8 @@ void main() {
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       container = ProviderContainer();
-      await Future.delayed(const Duration(milliseconds: 50));
+      final notifier = container.read(onboardingProvider.notifier);
+      await notifier.initialized;
     });
 
     tearDown(() {
@@ -1013,9 +1009,9 @@ void main() {
       () async {
         SharedPreferences.setMockInitialValues({});
         final container = ProviderContainer();
-        await Future.delayed(const Duration(milliseconds: 50));
 
         final notifier = container.read(onboardingProvider.notifier);
+        await notifier.initialized;
 
         // 1. Устанавливаем шаги
         const steps = [
@@ -1055,15 +1051,14 @@ void main() {
 
         container.dispose();
       },
-      skip: 'Requires real async initialization',
     );
 
     test('навигация с возвратами', () async {
       SharedPreferences.setMockInitialValues({});
       final container = ProviderContainer();
-      await Future.delayed(const Duration(milliseconds: 50));
 
       final notifier = container.read(onboardingProvider.notifier);
+      await notifier.initialized;
 
       const steps = [
         OnboardingStep(id: 'step1', title: 'Step 1', description: 'Desc 1', order: 0),
@@ -1099,9 +1094,9 @@ void main() {
     test('пропуск онбординга', () async {
       SharedPreferences.setMockInitialValues({});
       final container = ProviderContainer();
-      await Future.delayed(const Duration(milliseconds: 50));
 
       final notifier = container.read(onboardingProvider.notifier);
+      await notifier.initialized;
 
       const steps = [
         OnboardingStep(id: 'step1', title: 'Step 1', description: 'Desc 1', order: 0),
@@ -1120,9 +1115,10 @@ void main() {
       container.dispose();
     });
 
-    test('работа с предустановленными шагами', () {
+    test('работа с предустановленными шагами', () async {
       final container = ProviderContainer();
       final notifier = container.read(onboardingProvider.notifier);
+      await notifier.initialized;
 
       notifier.setSteps(defaultOnboardingSteps);
 

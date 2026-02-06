@@ -332,7 +332,7 @@ void main() {
         final result15 = calculator(inputs15, <PriceItem>[]);
 
         // С запасом 15% должно быть больше рулонов
-        expect(result15.values['rollsNeeded']!,
+        expect(result15.values['rollsNeeded'],
             greaterThanOrEqualTo(result0.values['rollsNeeded']!));
       });
     });

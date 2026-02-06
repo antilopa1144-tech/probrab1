@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unnecessary_string_interpolations, prefer_function_declarations_over_variables, use_raw_strings
 
 /// Скрипт поиска мёртвого (неиспользуемого) кода.
 ///

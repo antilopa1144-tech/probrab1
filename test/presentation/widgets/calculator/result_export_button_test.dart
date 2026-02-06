@@ -407,11 +407,12 @@ void main() {
 
     group('ExportAction enum', () {
       test('имеет все необходимые значения', () {
-        expect(ExportAction.values.length, 4);
+        expect(ExportAction.values.length, 5);
         expect(ExportAction.values.contains(ExportAction.share), true);
         expect(ExportAction.values.contains(ExportAction.copy), true);
         expect(ExportAction.values.contains(ExportAction.csv), true);
         expect(ExportAction.values.contains(ExportAction.pdf), true);
+        expect(ExportAction.values.contains(ExportAction.downloadPdf), true);
       });
     });
   });

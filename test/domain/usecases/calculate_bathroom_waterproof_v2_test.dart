@@ -264,7 +264,7 @@ void main() {
         );
       });
 
-      test('default wall height is 0.2m', () {
+      test('default wall height is 1.5m', () {
         final inputs = {
           'length': 2.5,
           'width': 1.8,
@@ -272,7 +272,7 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        expect(result.values['wallHeight'], equals(0.2));
+        expect(result.values['wallHeight'], equals(1.5));
       });
     });
 
@@ -284,7 +284,7 @@ void main() {
 
         expect(result.values['length'], equals(2.5));
         expect(result.values['width'], equals(1.8));
-        expect(result.values['wallHeight'], equals(0.2));
+        expect(result.values['wallHeight'], equals(1.5));
         expect(result.values['waterproofType'], equals(0.0)); // liquid
         expect(result.values['layers'], equals(2.0));
         expect(result.values['needPrimer'], equals(1.0)); // yes
@@ -297,14 +297,14 @@ void main() {
         final inputs = {
           'length': 2.0,
           'width': 2.0,
-          'wallHeight': 0.1, // minimum wall height
+          'wallHeight': 0.2, // minimum wall height
         };
 
         final result = calculator(inputs, emptyPriceList);
 
-        // Floor = 4 sqm, Wall = 8 * 0.1 = 0.8 sqm
-        // Total = (4 + 0.8) * 1.1 = 5.28 sqm
-        expect(result.values['totalArea'], closeTo(5.28, 0.01));
+        // Floor = 4 sqm, Wall = 8 * 0.2 = 1.6 sqm
+        // Total = (4 + 1.6) * 1.1 = 6.16 sqm
+        expect(result.values['totalArea'], closeTo(6.16, 0.01));
       });
     });
 
@@ -313,21 +313,21 @@ void main() {
         final inputs = {
           'length': 20.0, // Invalid, should clamp to 10
           'width': 20.0, // Invalid, should clamp to 10
-          'wallHeight': 1.0, // Invalid, should clamp to 0.5
+          'wallHeight': 5.0, // Invalid, should clamp to 3.0
         };
 
         final result = calculator(inputs, emptyPriceList);
 
         expect(result.values['length'], equals(10.0));
         expect(result.values['width'], equals(10.0));
-        expect(result.values['wallHeight'], equals(0.5));
+        expect(result.values['wallHeight'], equals(3.0));
       });
 
       test('handles minimum dimensions', () {
         final inputs = {
           'length': 1.0,
           'width': 1.0,
-          'wallHeight': 0.1,
+          'wallHeight': 0.2,
         };
 
         final result = calculator(inputs, emptyPriceList);
@@ -341,7 +341,7 @@ void main() {
         final inputs = {
           'length': 10.0,
           'width': 10.0,
-          'wallHeight': 0.5,
+          'wallHeight': 3.0,
         };
 
         final result = calculator(inputs, emptyPriceList);

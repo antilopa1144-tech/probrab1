@@ -49,8 +49,9 @@ class CalculateBrickFacing extends BaseCalculator {
       doorsArea: doorsArea,
     );
 
-    // Количество кирпичей на 1 м² (для облицовки полкирпича)
-    final bricksPerM2 = thickness == 0.5 ? 61.5 : 128.0;
+    // Количество кирпичей на 1 м² (ГОСТ 530-2012, одинарный 250×120×65 мм, шов 10 мм)
+    // Полкирпича: 51 шт/м², в кирпич: 102 шт/м²
+    final bricksPerM2 = thickness == 0.5 ? 51.0 : 102.0;
 
     // Количество кирпичей с запасом 5%
     final bricksNeeded = calculateUnitsNeeded(usefulArea, 1.0 / bricksPerM2, marginPercent: 5.0);

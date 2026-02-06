@@ -103,8 +103,17 @@ class OnboardingState {
 /// Управление процессом онбординга
 class OnboardingNotifier extends StateNotifier<OnboardingState> {
   OnboardingNotifier() : super(const OnboardingState()) {
-    _loadOnboardingState();
+    _initFuture = _loadOnboardingState();
   }
+
+  /// Future, которое завершается когда начальная загрузка готова.
+  late final Future<void> _initFuture;
+
+  /// Позволяет дождаться завершения начальной загрузки.
+  Future<void> get initialized => _initFuture;
+
+  /// Флаг: было ли явное обновление до завершения _loadOnboardingState.
+  bool _hasBeenUpdated = false;
 
   static const String _completedKey = 'onboarding_completed';
   static const String _viewedStepsKey = 'onboarding_viewed_steps';
@@ -118,6 +127,9 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
       final isCompleted = prefs.getBool(_completedKey) ?? false;
       final viewedStepsJson = prefs.getStringList(_viewedStepsKey) ?? [];
       final currentStepIndex = prefs.getInt(_currentStepKey) ?? 0;
+
+      if (!mounted) return;
+      if (_hasBeenUpdated) return;
 
       state = state.copyWith(
         isCompleted: isCompleted,
@@ -145,6 +157,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
   /// Установить шаги онбординга
   void setSteps(List<OnboardingStep> steps) {
+    _hasBeenUpdated = true;
     // Сортируем шаги по order
     final sortedSteps = List<OnboardingStep>.from(steps)
       ..sort((a, b) => a.order.compareTo(b.order));
@@ -157,6 +170,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
   /// Перейти к следующему шагу
   Future<bool> nextStep() async {
+    _hasBeenUpdated = true;
     if (!state.hasNextStep) return false;
 
     // Отмечаем текущий шаг как просмотренный
@@ -174,6 +188,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
   /// Вернуться к предыдущему шагу
   Future<bool> previousStep() async {
+    _hasBeenUpdated = true;
     if (!state.hasPreviousStep) return false;
 
     state = state.copyWith(
@@ -186,6 +201,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
   /// Перейти к конкретному шагу
   Future<bool> goToStep(int index) async {
+    _hasBeenUpdated = true;
     if (index < 0 || index >= state.steps.length) return false;
 
     // Отмечаем текущий шаг как просмотренный
@@ -209,6 +225,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
   /// Отметить шаг как просмотренный
   Future<void> _markStepAsViewed(String stepId) async {
+    _hasBeenUpdated = true;
     final newViewedSteps = Set<String>.from(state.viewedSteps);
     newViewedSteps.add(stepId);
 
@@ -225,6 +242,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
   /// Завершить онбординг
   Future<void> complete() async {
+    _hasBeenUpdated = true;
     // Отмечаем текущий шаг как просмотренный
     if (state.currentStep != null) {
       await _markStepAsViewed(state.currentStep!.id);
@@ -236,6 +254,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
   /// Пропустить онбординг
   Future<void> skip() async {
+    _hasBeenUpdated = true;
     if (!state.canSkip) return;
 
     state = state.copyWith(isCompleted: true);
@@ -244,6 +263,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
   /// Сбросить онбординг (для повторного показа)
   Future<void> reset() async {
+    _hasBeenUpdated = true;
     state = OnboardingState(
       steps: state.steps,
       currentStepIndex: 0,

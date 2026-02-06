@@ -97,10 +97,15 @@ class CalculateTile extends BaseCalculator {
     // Количество плиток с запасом (reserve% по выбору пользователя)
     final tilesNeeded = calculateUnitsNeeded(area, tileArea, marginPercent: reserve);
 
-    // Затирка: расход ~1.5 кг/м² × коэффициент шва
-    // Формула: площадь × расход × (ширина_шва_мм / 10)
-    const groutConsumption = 1.5; // кг/м² на 1 мм шва
-    final groutNeeded = area * groutConsumption * (jointWidth / 10);
+    // Затирка: формула через длину швов (зависит от размера плитки)
+    // jointsLength = (1/ширина_плитки + 1/высота_плитки) — м шва на м²
+    // Расход = jointsLength × ширина_шва × глубина_шва × плотность
+    final tileWm = tileWidth / 100; // см → м
+    final tileHm = tileHeight / 100;
+    final jointsLength = (1 / tileWm) + (1 / tileHm); // м шва/м²
+    const groutDepthMm = 5.0; // стандартная глубина шва 5 мм
+    const groutDensity = 1600.0; // кг/м³ для цементной затирки
+    final groutNeeded = area * jointsLength * (jointWidth / 1000) * (groutDepthMm / 1000) * groutDensity * 1.1; // +10% запас
 
     // Клей: расход зависит от размера плитки
     // Мелкая плитка (< 20×20): 3-4 кг/м²

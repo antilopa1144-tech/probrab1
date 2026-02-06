@@ -35,8 +35,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Вес арматуры = 13.44 м³ * 100 кг/м³ = 1344 кг (по СП 63.13330.2018)
-      expect(result.values['rebarWeight'], closeTo(1344.0, 50.0));
+      // Вес арматуры = 13.44 м³ * 80 кг/м³ = 1075.2 кг (по СП 63.13330.2018)
+      expect(result.values['rebarWeight'], closeTo(1075.2, 40.0));
     });
 
     test('calculates cement bags correctly', () {

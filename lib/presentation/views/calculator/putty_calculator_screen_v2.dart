@@ -141,15 +141,15 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
         }
         return availableMaterials.first;
       case MaterialTier.standard:
-        // Для стандарта - пасты среднего класса
+        // Стандарт: Vetonit, Knauf — НЕ Sheetrock (это премиум)
         if (_surfaceType == SurfaceType.ceiling) {
           return availableMaterials.firstWhere(
-            (m) => m.id == 'sheetrock_superfinish' || m.id == 'danogips_superfinish',
+            (m) => m.id == 'vetonit_lr_plus' || m.id == 'knauf_hp_finish',
             orElse: () => availableMaterials.first,
           );
         }
         return availableMaterials.firstWhere(
-          (m) => m.id == 'vetonit_lr_plus' || m.id.contains('sheetrock'),
+          (m) => m.id == 'vetonit_lr_plus' || m.id == 'knauf_hp_finish',
           orElse: () => availableMaterials.first,
         );
       case MaterialTier.premium:
@@ -360,7 +360,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
               const SizedBox(width: 8),
               Tooltip(
                 message: _loc.translate('putty.surface_type.hint'),
-                child: Icon(
+                child: const Icon(
                   Icons.info_outline,
                   size: 18,
                   color: CalculatorColors.textSecondary,
@@ -1246,7 +1246,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
         const Divider(height: 24),
         Row(
           children: [
-            Icon(
+            const Icon(
               Icons.inventory_2_outlined,
               size: 18,
               color: CalculatorColors.textSecondary,

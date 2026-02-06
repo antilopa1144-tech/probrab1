@@ -187,7 +187,7 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
         enabledBorder: OutlineInputBorder(
           borderRadius: CalculatorDesignSystem.inputBorderRadius,
           borderSide: isDark
-              ? BorderSide(color: CalculatorColors.borderDefaultDark, width: 1)
+              ? const BorderSide(color: CalculatorColors.borderDefaultDark, width: 1)
               : BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(

@@ -6,6 +6,9 @@ import '../../data/repositories/interfaces/project_repository_interface.dart';
 import '../../data/repositories/interfaces/checklist_repository_interface.dart';
 import '../../data/repositories/project_repository_v2.dart';
 import '../../data/repositories/checklist_repository.dart';
+import '../../domain/models/project_v2.dart';
+import '../../domain/models/checklist.dart';
+import '../../domain/models/checklist_template.dart';
 
 /// Обёртка над ProjectRepositoryV2 для реализации интерфейса IProjectRepository
 class NativeProjectRepositoryWrapper implements IProjectRepository {
@@ -14,35 +17,35 @@ class NativeProjectRepositoryWrapper implements IProjectRepository {
   NativeProjectRepositoryWrapper(this._repo);
 
   @override
-  Future<List> getAllProjects() => _repo.getAllProjects();
+  Future<List<ProjectV2>> getAllProjects() => _repo.getAllProjects();
 
   @override
-  Future<dynamic> getProjectById(int id) => _repo.getProjectById(id);
+  Future<ProjectV2?> getProjectById(int id) => _repo.getProjectById(id);
 
   @override
-  Future<int> createProject(dynamic project) => _repo.createProject(project);
+  Future<int> createProject(ProjectV2 project) => _repo.createProject(project);
 
   @override
-  Future<void> updateProject(dynamic project) => _repo.updateProject(project);
+  Future<void> updateProject(ProjectV2 project) => _repo.updateProject(project);
 
   @override
   Future<void> deleteProject(int id) => _repo.deleteProject(id);
 
   @override
-  Future<List> getFavoriteProjects() => _repo.getFavoriteProjects();
+  Future<List<ProjectV2>> getFavoriteProjects() => _repo.getFavoriteProjects();
 
   @override
-  Future<List> getProjectsByStatus(dynamic status) =>
+  Future<List<ProjectV2>> getProjectsByStatus(ProjectStatus status) =>
       _repo.getProjectsByStatus(status);
 
   @override
-  Future<List> searchProjects(String query) => _repo.searchProjects(query);
+  Future<List<ProjectV2>> searchProjects(String query) => _repo.searchProjects(query);
 
   @override
   Future<void> toggleFavorite(int id) => _repo.toggleFavorite(id);
 
   @override
-  Future<void> addCalculationToProject(int projectId, dynamic calculation) =>
+  Future<void> addCalculationToProject(int projectId, ProjectCalculation calculation) =>
       _repo.addCalculationToProject(projectId, calculation);
 
   @override
@@ -54,11 +57,11 @@ class NativeProjectRepositoryWrapper implements IProjectRepository {
       _repo.toggleMaterialPurchased(calculationId, materialIndex);
 
   @override
-  Future<List> getProjectCalculations(int projectId) =>
+  Future<List<ProjectCalculation>> getProjectCalculations(int projectId) =>
       _repo.getProjectCalculations(projectId);
 
   @override
-  Future getStatistics() => _repo.getStatistics();
+  Future<ProjectStatistics> getStatistics() => _repo.getStatistics();
 
   @override
   Future<void> clearAllProjects() => _repo.clearAllProjects();
@@ -71,43 +74,44 @@ class NativeChecklistRepositoryWrapper implements IChecklistRepository {
   NativeChecklistRepositoryWrapper(this._repo);
 
   @override
-  Future<List> getAllChecklists() => _repo.getAllChecklists();
+  Future<List<RenovationChecklist>> getAllChecklists() => _repo.getAllChecklists();
 
   @override
-  Future<dynamic> getChecklistById(int id) => _repo.getChecklistById(id);
+  Future<RenovationChecklist?> getChecklistById(int id) => _repo.getChecklistById(id);
 
   @override
-  Future<List> getChecklistsByProjectId(int projectId) =>
+  Future<List<RenovationChecklist>> getChecklistsByProjectId(int projectId) =>
       _repo.getChecklistsByProjectId(projectId);
 
   @override
-  Future<List> getChecklistsByCategory(dynamic category) =>
+  Future<List<RenovationChecklist>> getChecklistsByCategory(ChecklistCategory category) =>
       _repo.getChecklistsByCategory(category);
 
   @override
-  Future createChecklist(dynamic checklist) => _repo.createChecklist(checklist);
+  Future<RenovationChecklist> createChecklist(RenovationChecklist checklist) =>
+      _repo.createChecklist(checklist);
 
   @override
-  Future createChecklistFromTemplate(dynamic template, {int? projectId}) =>
+  Future<RenovationChecklist> createChecklistFromTemplate(ChecklistTemplate template, {int? projectId}) =>
       _repo.createChecklistFromTemplate(template, projectId: projectId);
 
   @override
-  Future<void> updateChecklist(dynamic checklist) =>
+  Future<void> updateChecklist(RenovationChecklist checklist) =>
       _repo.updateChecklist(checklist);
 
   @override
   Future<void> deleteChecklist(int id) => _repo.deleteChecklist(id);
 
   @override
-  Future<List> getChecklistItems(int checklistId) =>
+  Future<List<ChecklistItem>> getChecklistItems(int checklistId) =>
       _repo.getChecklistItems(checklistId);
 
   @override
-  Future createChecklistItem({
+  Future<ChecklistItem> createChecklistItem({
     required int checklistId,
     required String title,
     String? description,
-    dynamic priority,
+    ChecklistPriority priority = ChecklistPriority.normal,
   }) =>
       _repo.createChecklistItem(
         checklistId: checklistId,
@@ -117,7 +121,7 @@ class NativeChecklistRepositoryWrapper implements IChecklistRepository {
       );
 
   @override
-  Future<void> updateChecklistItem(dynamic item) =>
+  Future<void> updateChecklistItem(ChecklistItem item) =>
       _repo.updateChecklistItem(item);
 
   @override
@@ -133,19 +137,19 @@ class NativeChecklistRepositoryWrapper implements IChecklistRepository {
       _repo.reorderChecklistItems(checklistId, itemIds);
 
   @override
-  Future getOverallStats() => _repo.getOverallStats();
+  Future<ChecklistStats> getOverallStats() => _repo.getOverallStats();
 
   @override
-  Future getProjectStats(int projectId) => _repo.getProjectStats(projectId);
+  Future<ChecklistStats> getProjectStats(int projectId) => _repo.getProjectStats(projectId);
 
   @override
-  Stream<List> watchAllChecklists() => _repo.watchAllChecklists();
+  Stream<List<RenovationChecklist>> watchAllChecklists() => _repo.watchAllChecklists();
 
   @override
-  Stream<dynamic> watchChecklist(int id) => _repo.watchChecklist(id);
+  Stream<RenovationChecklist?> watchChecklist(int id) => _repo.watchChecklist(id);
 
   @override
-  Stream<List> watchProjectChecklists(int projectId) =>
+  Stream<List<RenovationChecklist>> watchProjectChecklists(int projectId) =>
       _repo.watchProjectChecklists(projectId);
 }
 

@@ -116,7 +116,7 @@ class CalculateGypsum extends BaseCalculator {
     if (constructionType == 1) {
       // Облицовка стен (система Knauf C 623)
       pnMeters = area * 0.8;  // ПН 28×27 (направляющий)
-      ppMeters = area * 2.0;  // ПП 60×27 (стоечный)
+      ppMeters = area * 2.4;  // ПП 60×27 (стоечный, шаг 50 см по СП 163.1325800)
       pnPieces = (pnMeters / profileLength).ceil();
       ppPieces = (ppMeters / profileLength).ceil();
       suspensions = (area * 1.3).ceil();
@@ -157,7 +157,8 @@ class CalculateGypsum extends BaseCalculator {
 
     // Материалы для заделки швов
     final armatureTape = area * 1.2; // серпянка/бумажная лента
-    final fillerKg = area * (constructionType == 2 ? 0.6 : 0.3) * layers;
+    // Шпатлёвка: 1.2 кг/м² для заделки швов, перегородки ×2 (обе стороны)
+    final fillerKg = area * (constructionType == 2 ? 2.4 : 1.2) * layers;
     final primerLiters = area * 0.1;
 
     // Расчёт стоимости

@@ -4,6 +4,18 @@ import 'package:probrab_ai/presentation/views/settings_page.dart';
 
 import '../../helpers/test_helpers.dart';
 
+/// Вспомогательная функция для прокрутки ListView до видимости элемента.
+/// Использует scrollUntilVisible, который инкрементально прокручивает
+/// Scrollable до тех пор, пока виджет не будет создан и виден.
+Future<void> _scrollTo(WidgetTester tester, Finder finder) async {
+  await tester.scrollUntilVisible(
+    finder,
+    200.0,
+    scrollable: find.byType(Scrollable).first,
+  );
+  await tester.pumpAndSettle();
+}
+
 void main() {
   setUp(() {
     setupMocks();
@@ -47,31 +59,37 @@ void main() {
         expect(find.byIcon(Icons.tune_outlined, skipOffstage: false), findsOneWidget);
       });
 
-      // skip: ListView lazy loading не создаёт виджеты за пределами viewport
-      testWidgets('отображается секция языка', skip: true, (tester) async {
+      testWidgets('отображается секция языка', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        expect(find.text('Язык', skipOffstage: false), findsOneWidget);
-        expect(find.byIcon(Icons.language_outlined, skipOffstage: false), findsOneWidget);
+        // Прокручиваем к секции языка
+        await _scrollTo(tester, find.text('Язык'));
+
+        expect(find.text('Язык'), findsOneWidget);
+        expect(find.byIcon(Icons.language_outlined), findsOneWidget);
       });
 
-      // skip: ListView lazy loading не создаёт виджеты за пределами viewport
-      testWidgets('отображается секция данных', skip: true, (tester) async {
+      testWidgets('отображается секция данных', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        expect(find.text('Данные', skipOffstage: false), findsOneWidget);
-        expect(find.byIcon(Icons.storage_outlined, skipOffstage: false), findsOneWidget);
+        // Прокручиваем к секции данных
+        await _scrollTo(tester, find.text('Данные'));
+
+        expect(find.text('Данные'), findsOneWidget);
+        expect(find.byIcon(Icons.storage_outlined), findsOneWidget);
       });
 
-      // skip: ListView lazy loading не создаёт виджеты за пределами viewport
-      testWidgets('отображается секция о приложении', skip: true, (tester) async {
+      testWidgets('отображается секция о приложении', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        expect(find.text('О приложении', skipOffstage: false), findsOneWidget);
-        expect(find.byIcon(Icons.info_outlined, skipOffstage: false), findsOneWidget);
+        // Прокручиваем к секции о приложении
+        await _scrollTo(tester, find.text('О приложении'));
+
+        expect(find.text('О приложении'), findsOneWidget);
+        expect(find.byIcon(Icons.info_outlined), findsOneWidget);
       });
     });
 
@@ -132,16 +150,17 @@ void main() {
         expect(find.byType(SettingsPage), findsOneWidget);
       });
 
-      // skip: Виджет за пределами viewport
-      testWidgets('переключатель автосохранения работает', skip: true, (tester) async {
+      testWidgets('переключатель автосохранения работает', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Находим переключатель автосохранения
+        // Прокручиваем к переключателю автосохранения
         final autoSaveSwitch = find.widgetWithText(
           SwitchListTile,
           'Автосохранение расчётов',
         );
+        await _scrollTo(tester, autoSaveSwitch);
+
         expect(autoSaveSwitch, findsOneWidget);
 
         // Тапаем по переключателю
@@ -151,16 +170,17 @@ void main() {
         expect(find.byType(SettingsPage), findsOneWidget);
       });
 
-      // skip: Виджет за пределами viewport
-      testWidgets('переключатель подсказок работает', skip: true, (tester) async {
+      testWidgets('переключатель подсказок работает', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Находим переключатель подсказок
+        // Прокручиваем к переключателю подсказок
         final tipsSwitch = find.widgetWithText(
           SwitchListTile,
           'Показывать подсказки',
         );
+        await _scrollTo(tester, tipsSwitch);
+
         expect(tipsSwitch, findsOneWidget);
 
         await tester.tap(tipsSwitch);
@@ -169,21 +189,23 @@ void main() {
         expect(find.byType(SettingsPage), findsOneWidget);
       });
 
-      // skip: Виджет за пределами viewport
-      testWidgets('переключатель уведомлений работает', skip: true, (tester) async {
+      testWidgets('переключатель уведомлений отображается', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Находим переключатель уведомлений
+        // Прокручиваем к переключателю уведомлений
         final notificationsSwitch = find.widgetWithText(
           SwitchListTile,
           'Уведомления',
         );
+        await _scrollTo(tester, notificationsSwitch);
+
         expect(notificationsSwitch, findsOneWidget);
 
-        await tester.tap(notificationsSwitch);
-        await tester.pump();
-
+        // Примечание: тап по переключателю не тестируем, т.к.
+        // FlutterLocalNotificationsPlugin не инициализирован
+        // в тестовом окружении и вызывает LateInitializationError.
+        // Для полного теста нужен мок NotificationService.
         expect(find.byType(SettingsPage), findsOneWidget);
       });
     });
@@ -283,20 +305,18 @@ void main() {
       });
     });
 
-    group('Тесты диалога выбора языка', skip: 'Требует прокрутки к невидимым элементам', () {
+    group('Тесты диалога выбора языка', () {
       testWidgets('открывается диалог выбора языка', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Прокручиваем вниз к секции языка
-        await tester.drag(find.byType(ListView), const Offset(0, -300));
-        await tester.pumpAndSettle();
-
-        // Находим пункт настроек языка
+        // Прокручиваем к пункту настроек языка
         final languageTile = find.widgetWithText(
           ListTile,
           'Язык приложения',
         );
+        await _scrollTo(tester, languageTile);
+
         await tester.tap(languageTile);
         await tester.pumpAndSettle();
 
@@ -308,15 +328,13 @@ void main() {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Прокручиваем вниз к секции языка
-        await tester.drag(find.byType(ListView), const Offset(0, -300));
-        await tester.pumpAndSettle();
-
-        // Открываем диалог языка
+        // Прокручиваем к пункту настроек языка
         final languageTile = find.widgetWithText(
           ListTile,
           'Язык приложения',
         );
+        await _scrollTo(tester, languageTile);
+
         await tester.tap(languageTile);
         await tester.pumpAndSettle();
 
@@ -336,20 +354,18 @@ void main() {
       });
     });
 
-    group('Тесты диалога очистки кэша', skip: 'Требует прокрутки к невидимым элементам', () {
+    group('Тесты диалога очистки кэша', () {
       testWidgets('открывается диалог очистки кэша', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Прокручиваем вниз к секции данных
-        await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pumpAndSettle();
-
-        // Находим пункт очистки кэша
+        // Прокручиваем к пункту очистки кэша
         final clearCacheTile = find.widgetWithText(
           ListTile,
           'Очистить кэш',
         );
+        await _scrollTo(tester, clearCacheTile);
+
         await tester.tap(clearCacheTile);
         await tester.pumpAndSettle();
 
@@ -364,14 +380,13 @@ void main() {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Прокручиваем и открываем диалог
-        await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pumpAndSettle();
-
+        // Прокручиваем к пункту очистки кэша
         final clearCacheTile = find.widgetWithText(
           ListTile,
           'Очистить кэш',
         );
+        await _scrollTo(tester, clearCacheTile);
+
         await tester.tap(clearCacheTile);
         await tester.pumpAndSettle();
 
@@ -391,14 +406,13 @@ void main() {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Прокручиваем и открываем диалог
-        await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pumpAndSettle();
-
+        // Прокручиваем к пункту очистки кэша
         final clearCacheTile = find.widgetWithText(
           ListTile,
           'Очистить кэш',
         );
+        await _scrollTo(tester, clearCacheTile);
+
         await tester.tap(clearCacheTile);
         await tester.pumpAndSettle();
 
@@ -410,17 +424,20 @@ void main() {
 
         // Должно показаться сообщение о загрузке
         expect(find.text('Очистка кэша...'), findsOneWidget);
+
+        // Прокачиваем таймер Future.delayed(800ms) из _showClearCacheDialog
+        await tester.pump(const Duration(seconds: 1));
+        await tester.pumpAndSettle();
       });
     });
 
-    group('Тесты пунктов о приложении', skip: 'Требует прокрутки к невидимым элементам', () {
+    group('Тесты пунктов о приложении', () {
       testWidgets('отображается версия приложения', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Прокручиваем к секции о приложении
-        await tester.drag(find.byType(ListView), const Offset(0, -600));
-        await tester.pumpAndSettle();
+        // Прокручиваем к пункту версии
+        await _scrollTo(tester, find.text('Версия'));
 
         // Должна быть информация о версии
         expect(find.text('Версия'), findsOneWidget);
@@ -430,15 +447,13 @@ void main() {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Прокручиваем к секции о приложении
-        await tester.drag(find.byType(ListView), const Offset(0, -600));
-        await tester.pumpAndSettle();
-
-        // Находим пункт обратной связи
+        // Прокручиваем к пункту обратной связи
         final feedbackTile = find.widgetWithText(
           ListTile,
           'Обратная связь',
         );
+        await _scrollTo(tester, feedbackTile);
+
         await tester.tap(feedbackTile);
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
@@ -453,15 +468,13 @@ void main() {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Прокручиваем к секции о приложении
-        await tester.drag(find.byType(ListView), const Offset(0, -600));
-        await tester.pumpAndSettle();
-
-        // Находим пункт политики конфиденциальности
+        // Прокручиваем к пункту политики конфиденциальности
         final privacyTile = find.widgetWithText(
           ListTile,
           'Политика конфиденциальности',
         );
+        await _scrollTo(tester, privacyTile);
+
         await tester.tap(privacyTile);
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
@@ -471,20 +484,18 @@ void main() {
       });
     });
 
-    group('Тесты экспорта данных', skip: 'Требует прокрутки к невидимым элементам', () {
+    group('Тесты экспорта данных', () {
       testWidgets('пункт экспорта показывает snackbar', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Прокручиваем к секции данных
-        await tester.drag(find.byType(ListView), const Offset(0, -500));
-        await tester.pumpAndSettle();
-
-        // Находим пункт экспорта
+        // Прокручиваем к пункту экспорта
         final exportTile = find.widgetWithText(
           ListTile,
           'Экспорт данных',
         );
+        await _scrollTo(tester, exportTile);
+
         await tester.tap(exportTile);
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
@@ -504,27 +515,43 @@ void main() {
         await tester.pumpAndSettle();
 
         // Прокручиваем к секции о приложении
-        await tester.drag(find.byType(ListView), const Offset(0, -600));
-        await tester.pumpAndSettle();
+        await _scrollTo(tester, find.text('Версия'));
 
         // Версия должна быть загружена (не должно быть "Загрузка...")
         expect(find.text('Загрузка...'), findsNothing);
       });
     });
 
-    // skip: ListView lazy loading не создаёт виджеты за пределами viewport
-    group('Тесты _SettingsSection widget', skip: 'ListView lazy loading', () {
+    group('Тесты _SettingsSection widget', () {
       testWidgets('все секции имеют иконки и заголовки', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Проверяем наличие всех секций (используем skipOffstage: false для невидимых)
-        expect(find.byIcon(Icons.palette_outlined, skipOffstage: false), findsOneWidget);
-        expect(find.byIcon(Icons.location_on_outlined, skipOffstage: false), findsOneWidget);
-        expect(find.byIcon(Icons.tune_outlined, skipOffstage: false), findsOneWidget);
-        expect(find.byIcon(Icons.language_outlined, skipOffstage: false), findsOneWidget);
-        expect(find.byIcon(Icons.storage_outlined, skipOffstage: false), findsOneWidget);
-        expect(find.byIcon(Icons.info_outlined, skipOffstage: false), findsOneWidget);
+        // Проверяем каждую секцию последовательно, прокручивая к ней.
+        // После прокрутки предыдущие секции могут покинуть viewport,
+        // поэтому проверяем по одной.
+
+        // Секция 1: Внешний вид (видна без прокрутки)
+        expect(find.byIcon(Icons.palette_outlined), findsOneWidget);
+
+        // Секция 2: Регион и единицы (видна без прокрутки)
+        expect(find.byIcon(Icons.location_on_outlined), findsOneWidget);
+
+        // Секция 3: Поведение (может быть на границе viewport)
+        await _scrollTo(tester, find.byIcon(Icons.tune_outlined));
+        expect(find.byIcon(Icons.tune_outlined), findsOneWidget);
+
+        // Секция 4: Язык
+        await _scrollTo(tester, find.byIcon(Icons.language_outlined));
+        expect(find.byIcon(Icons.language_outlined), findsOneWidget);
+
+        // Секция 5: Данные
+        await _scrollTo(tester, find.byIcon(Icons.storage_outlined));
+        expect(find.byIcon(Icons.storage_outlined), findsOneWidget);
+
+        // Секция 6: О приложении
+        await _scrollTo(tester, find.byIcon(Icons.info_outlined));
+        expect(find.byIcon(Icons.info_outlined), findsOneWidget);
       });
     });
 

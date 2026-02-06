@@ -28,6 +28,8 @@ class CalculateAtticV2 extends BaseCalculator {
     final roofHeight = getInput(inputs, 'roofHeight', defaultValue: 2.5, minValue: 1.5, maxValue: 5);
     final insulationThickness = getInput(inputs, 'insulationThickness', defaultValue: 150.0, minValue: 50, maxValue: 300);
     final atticType = getIntInput(inputs, 'atticType', defaultValue: 1, minValue: 0, maxValue: 2);
+    // Тип утеплителя: 0=минвата, 1=пенопласт, 2=ЭППС
+    final insulationType = getIntInput(inputs, 'insulationType', defaultValue: 0, minValue: 0, maxValue: 2);
     final needVaporBarrier = getInput(inputs, 'needVaporBarrier', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
     final needMembrane = getInput(inputs, 'needMembrane', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
     final needGypsum = getInput(inputs, 'needGypsum', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
@@ -72,9 +74,11 @@ class CalculateAtticV2 extends BaseCalculator {
       insulationArea = roofArea * insulationFrontalMultiplier * insulationWasteFactor;
     }
 
-    // Пароизоляция (только если есть утепление)
+    // Пароизоляция (только если есть утепление И не ЭППС)
+    // ЭППС паронепроницаем — пароизоляция НЕ нужна (СП 50.13330.2012)
     const vaporBarrierOverlapFactor = 1 + vaporBarrierOverlapPercent / 100;
-    final vaporBarrierArea = (needVaporBarrier && insulationArea > 0)
+    final isXps = insulationType == 2;
+    final vaporBarrierArea = (needVaporBarrier && insulationArea > 0 && !isXps)
         ? insulationArea * vaporBarrierOverlapFactor
         : 0.0;
 
@@ -97,6 +101,7 @@ class CalculateAtticV2 extends BaseCalculator {
       'atticType': atticType.toDouble(),
       'floorArea': floorArea,
       'roofArea': roofArea,
+      'insulationType': insulationType.toDouble(),
       'insulationArea': insulationArea,
       'vaporBarrierArea': vaporBarrierArea,
       'membraneArea': membraneArea,

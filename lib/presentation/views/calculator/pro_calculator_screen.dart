@@ -6,6 +6,7 @@ import '../../../core/enums/field_input_type.dart';
 import '../../../core/exceptions/calculation_exception.dart';
 import '../../../core/services/calculator_memory_service.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
+import '../../../domain/models/calculator_hint.dart';
 import '../../../domain/models/calculator_field.dart';
 import '../../../data/models/price_item.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
@@ -257,11 +258,11 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     final beforeHints = widget.definition.getBeforeHints(calcState.inputs);
     final afterHints = calcState.results != null
         ? widget.definition.getAfterHints(calcState.inputs, calcState.results!)
-        : const [];
+        : const <CalculatorHint>[];
 
     // Convert hints to tips strings
-    final beforeTips = beforeHints.map((dynamic h) => (h.message ?? _loc.translate(h.messageKey ?? '')) as String).toList();
-    final afterTips = afterHints.map((dynamic h) => (h.message ?? _loc.translate(h.messageKey ?? '')) as String).toList();
+    final beforeTips = beforeHints.map((h) => h.message ?? _loc.translate(h.messageKey ?? '')).toList();
+    final afterTips = afterHints.map((h) => h.message ?? _loc.translate(h.messageKey ?? '')).toList();
 
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),

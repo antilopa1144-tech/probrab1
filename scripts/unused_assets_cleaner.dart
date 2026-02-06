@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_raw_strings, unnecessary_string_interpolations
 
 /// Скрипт поиска неиспользуемых ресурсов.
 ///

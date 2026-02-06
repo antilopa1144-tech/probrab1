@@ -23,7 +23,7 @@ void main() {
       });
 
       test('has correct scaffold background color', () {
-        expect(darkTheme.scaffoldBackgroundColor, const Color(0xFF0F0F0F));
+        expect(darkTheme.scaffoldBackgroundColor, const Color(0xFF1E1A18));
       });
 
       test('color scheme uses accent as primary', () {
@@ -31,7 +31,7 @@ void main() {
       });
 
       test('color scheme has dark surface', () {
-        expect(darkTheme.colorScheme.surface, const Color(0xFF0F0F0F));
+        expect(darkTheme.colorScheme.surface, const Color(0xFF1E1A18));
       });
 
       test('AppBar theme has transparent surface tint', () {

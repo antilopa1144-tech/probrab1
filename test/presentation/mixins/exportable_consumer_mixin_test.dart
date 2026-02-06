@@ -386,7 +386,7 @@ void main() {
           matching: find.byType(IconButton),
         );
 
-        expect(actions, findsNWidgets(2)); // copy + share
+        expect(actions, findsNWidgets(3)); // copy + share + download
       });
 
       testWidgets('кнопки отображаются в правильном порядке со всеми опциями', (
@@ -410,13 +410,13 @@ void main() {
 
         await tester.pumpAndSettle();
 
-        // Должны быть все кнопки: save, copy, share, qr
+        // Должны быть все кнопки: save, copy, share, download, qr
         final actions = find.descendant(
           of: find.byType(AppBar),
           matching: find.byType(IconButton),
         );
 
-        expect(actions, findsNWidgets(4)); // save + copy + share + qr
+        expect(actions, findsNWidgets(5)); // save + copy + share + download + qr
       });
 
       testWidgets('кнопка сохранения идет первой', (tester) async {

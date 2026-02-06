@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, prefer_interpolation_to_compose_strings, prefer_const_declarations, unnecessary_brace_in_string_interps
 
 import 'dart:io';
 

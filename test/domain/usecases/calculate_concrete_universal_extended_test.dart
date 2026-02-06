@@ -131,7 +131,7 @@ void main() {
 
         final result = calculator(inputs, <PriceItem>[]);
 
-        expect(result.values['concreteVolume']!, greaterThan(0));
+        expect(result.values['concreteVolume'], greaterThan(0));
         // ceil(0.01 * 6) = 1 мешок
         expect(result.values['cementBags'], 1.0);
       });

@@ -62,9 +62,9 @@ class WebProjectRepository implements IProjectRepository {
       'id': calc.id,
       'projectId': calc.project.value?.id,
       'calculatorId': calc.calculatorId,
-      'inputs': calc.inputs,
-      'results': calc.results,
-      'note': calc.note,
+      'inputs': calc.inputsMap,
+      'results': calc.resultsMap,
+      'notes': calc.notes,
       'createdAt': calc.createdAt.toIso8601String(),
       'updatedAt': calc.updatedAt.toIso8601String(),
       'materials': calc.materials.map((m) => {
@@ -81,14 +81,19 @@ class WebProjectRepository implements IProjectRepository {
     final calc = ProjectCalculation()
       ..id = json['id'] as int
       ..calculatorId = json['calculatorId'] as String
-      ..inputs = Map<String, double>.from(json['inputs'] as Map)
-      ..results = Map<String, double>.from(json['results'] as Map)
-      ..note = json['note'] as String?
+      ..notes = json['notes'] as String?
       ..createdAt = DateTime.parse(json['createdAt'] as String)
       ..updatedAt = DateTime.parse(json['updatedAt'] as String);
 
+    if (json['inputs'] is Map) {
+      calc.setInputsFromMap(Map<String, double>.from(json['inputs'] as Map));
+    }
+    if (json['results'] is Map) {
+      calc.setResultsFromMap(Map<String, double>.from(json['results'] as Map));
+    }
+
     // Парсим материалы
-    final materialsJson = json['materials'] as List?;
+    final materialsJson = json['materials'] as List<Map<String, dynamic>>?;
     if (materialsJson != null) {
       for (final mJson in materialsJson) {
         final material = ProjectMaterial()

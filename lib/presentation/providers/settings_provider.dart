@@ -73,8 +73,20 @@ class AppSettings {
 
 class SettingsNotifier extends StateNotifier<AppSettings> {
   SettingsNotifier() : super(const AppSettings()) {
-    _loadSettings();
+    _initFuture = _loadSettings();
   }
+
+  /// Future, которое завершается когда начальная загрузка настроек готова.
+  /// Полезно для тестов, чтобы дождаться окончания инициализации.
+  late final Future<void> _initFuture;
+
+  /// Позволяет дождаться завершения начальной загрузки настроек.
+  Future<void> get initialized => _initFuture;
+
+  /// Флаг: было ли явное обновление настроек до завершения _loadSettings.
+  /// Если да — _loadSettings не перезаписывает state, чтобы не потерять
+  /// изменения, сделанные через update-методы.
+  bool _hasBeenUpdated = false;
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
@@ -87,6 +99,9 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     final unitSystem = prefs.getString('unitSystem') ?? 'metric';
     final showTips = prefs.getBool('showTips') ?? true;
     final darkMode = prefs.getBool('darkMode') ?? false;
+
+    if (!mounted) return;
+    if (_hasBeenUpdated) return;
 
     state = AppSettings(
       region: region,
@@ -111,21 +126,25 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   }
 
   Future<void> updateRegion(String region) async {
+    _hasBeenUpdated = true;
     state = state.copyWith(region: region);
     await _saveSettings();
   }
 
   Future<void> updateLanguage(String language) async {
+    _hasBeenUpdated = true;
     state = state.copyWith(language: language);
     await _saveSettings();
   }
 
   Future<void> updateAutoSave(bool autoSave) async {
+    _hasBeenUpdated = true;
     state = state.copyWith(autoSave: autoSave);
     await _saveSettings();
   }
 
   Future<void> updateNotifications(bool enabled) async {
+    _hasBeenUpdated = true;
     state = state.copyWith(notificationsEnabled: enabled);
     await _saveSettings();
 
@@ -137,16 +156,19 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   }
 
   Future<void> updateUnitSystem(String unitSystem) async {
+    _hasBeenUpdated = true;
     state = state.copyWith(unitSystem: unitSystem);
     await _saveSettings();
   }
 
   Future<void> updateShowTips(bool showTips) async {
+    _hasBeenUpdated = true;
     state = state.copyWith(showTips: showTips);
     await _saveSettings();
   }
 
   Future<void> updateDarkMode(bool darkMode) async {
+    _hasBeenUpdated = true;
     state = state.copyWith(darkMode: darkMode);
     await _saveSettings();
   }

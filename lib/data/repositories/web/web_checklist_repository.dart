@@ -143,11 +143,6 @@ class WebChecklistRepository implements IChecklistRepository {
     await _prefs.setString(_itemsKey, jsonEncode(jsonList));
   }
 
-  void _invalidateCache() {
-    _checklistsCache = null;
-    _itemsCache = null;
-  }
-
   void _notifyListeners() {
     if (_checklistsCache != null) {
       _checklistsController.add(_checklistsCache!.toList());

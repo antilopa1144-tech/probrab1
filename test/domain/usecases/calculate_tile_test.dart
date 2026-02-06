@@ -39,8 +39,9 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Затирка: 10 м² * 1.5 кг/м² * 0.3 = 4.5 кг
-      expect(result.values['groutNeeded'], closeTo(4.5, 1));
+      // Затирка: jointsLength = (1/0.3 + 1/0.3) = 6.667 м/м²
+      // groutNeeded = 10 * 6.667 * (3/1000) * (5/1000) * 1600 * 1.1 = 1.76 кг
+      expect(result.values['groutNeeded'], closeTo(1.76, 0.1));
 
       // Клей: 10 м² * 5.5 кг/м² = 55 кг (для плитки 30x30 используется расход 4.0)
       expect(result.values['glueNeeded'], closeTo(40.0, 5.0));

@@ -222,8 +222,9 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
-        // Ждём загрузки настроек
-        await Future.delayed(const Duration(milliseconds: 100));
+        // Ждём завершения _loadSettings
+        final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         final settings = container.read(settingsProvider);
         expect(settings.region, 'Казань');
@@ -231,7 +232,6 @@ void main() {
         expect(settings.autoSave, false);
         expect(settings.darkMode, true);
       },
-      skip: 'Requires mounted check in SettingsNotifier._loadSettings',
     );
 
     test('updateRegion обновляет регион', () async {
@@ -267,14 +267,15 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
+        // Ждём завершения _loadSettings
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateLanguage('en');
 
         final settings = container.read(settingsProvider);
         expect(settings.language, 'en');
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -284,14 +285,15 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
+        // Ждём завершения _loadSettings
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateLanguage('en');
 
         final prefs = await SharedPreferences.getInstance();
         expect(prefs.getString('language'), 'en');
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -301,14 +303,15 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
+        // Ждём завершения _loadSettings
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateAutoSave(false);
 
         final settings = container.read(settingsProvider);
         expect(settings.autoSave, false);
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -318,14 +321,15 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
+        // Ждём завершения _loadSettings
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateAutoSave(false);
 
         final prefs = await SharedPreferences.getInstance();
         expect(prefs.getBool('autoSave'), false);
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -369,14 +373,15 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
+        // Ждём завершения _loadSettings
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateUnitSystem('imperial');
 
         final settings = container.read(settingsProvider);
         expect(settings.unitSystem, 'imperial');
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -386,14 +391,15 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
+        // Ждём завершения _loadSettings
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateUnitSystem('imperial');
 
         final prefs = await SharedPreferences.getInstance();
         expect(prefs.getString('unitSystem'), 'imperial');
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -403,14 +409,15 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
+        // Ждём завершения _loadSettings
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateShowTips(false);
 
         final settings = container.read(settingsProvider);
         expect(settings.showTips, false);
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -420,14 +427,15 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
+        // Ждём завершения _loadSettings
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateShowTips(false);
 
         final prefs = await SharedPreferences.getInstance();
         expect(prefs.getBool('showTips'), false);
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -437,14 +445,15 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
+        // Ждём завершения _loadSettings
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateDarkMode(true);
 
         final settings = container.read(settingsProvider);
         expect(settings.darkMode, true);
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -454,14 +463,15 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
+        // Ждём завершения _loadSettings
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateDarkMode(true);
 
         final prefs = await SharedPreferences.getInstance();
         expect(prefs.getBool('darkMode'), true);
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -471,7 +481,9 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
+        // Ждём завершения _loadSettings
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateRegion('Пермь');
         await notifier.updateLanguage('en');
@@ -482,7 +494,6 @@ void main() {
         expect(settings.language, 'en');
         expect(settings.darkMode, true);
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -497,9 +508,8 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
-        await Future.delayed(const Duration(milliseconds: 100));
-
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateDarkMode(true);
 
@@ -509,7 +519,6 @@ void main() {
         expect(settings.autoSave, true);
         expect(settings.darkMode, true);
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -522,7 +531,8 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
-        await Future.delayed(const Duration(milliseconds: 100));
+        final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         final settings = container.read(settingsProvider);
         expect(settings.region, 'Тюмень');
@@ -530,7 +540,6 @@ void main() {
         expect(settings.autoSave, true); // default
         expect(settings.showTips, true); // default
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
 
     test(
@@ -562,7 +571,9 @@ void main() {
         final container = ProviderContainer();
         addTearDown(container.dispose);
 
+        // Ждём завершения _loadSettings
         final notifier = container.read(settingsProvider.notifier);
+        await notifier.initialized;
 
         await notifier.updateRegion('Регион 1');
         await notifier.updateRegion('Регион 2');
@@ -574,7 +585,6 @@ void main() {
         final prefs = await SharedPreferences.getInstance();
         expect(prefs.getString('region'), 'Регион 3');
       },
-      skip: 'Requires mounted check in SettingsNotifier due to async _loadSettings race',
     );
   });
 }

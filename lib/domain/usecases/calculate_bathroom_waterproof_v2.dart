@@ -26,7 +26,8 @@ class CalculateBathroomWaterproofV2 extends BaseCalculator {
     // Входные параметры
     final length = getInput(inputs, 'length', defaultValue: 2.5, minValue: 1, maxValue: 10);
     final width = getInput(inputs, 'width', defaultValue: 1.8, minValue: 1, maxValue: 10);
-    final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 0.2, minValue: 0.1, maxValue: 0.5);
+    // Высота обработки стен: минимум 1.5 м для мокрых зон по СНиП 3.04.01-87
+    final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 1.5, minValue: 0.2, maxValue: 3.0);
     final waterproofType = getIntInput(inputs, 'waterproofType', defaultValue: 0, minValue: 0, maxValue: 2);
     final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 3);
     final needPrimer = getInput(inputs, 'needPrimer', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;

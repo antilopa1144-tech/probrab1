@@ -17,24 +17,37 @@ import '../utils/calculation_display.dart';
 
 /// Сервис для экспорта расчётов в PDF.
 class PdfExportService {
-  /// Кешированный шрифт для кириллицы.
-  static pw.Font? _cachedFont;
+  /// Кешированный шрифт Regular для кириллицы.
+  static pw.Font? _cachedFontRegular;
 
-  /// Загрузить шрифт с поддержкой кириллицы.
+  /// Кешированный шрифт Bold для кириллицы.
+  static pw.Font? _cachedFontBold;
+
+  /// Загрузить шрифт Regular с поддержкой кириллицы.
   static Future<pw.Font> _loadFont() async {
-    if (_cachedFont != null) return _cachedFont!;
+    if (_cachedFontRegular != null) return _cachedFontRegular!;
     final fontData = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
-    _cachedFont = pw.Font.ttf(fontData);
-    return _cachedFont!;
+    _cachedFontRegular = pw.Font.ttf(fontData);
+    return _cachedFontRegular!;
+  }
+
+  /// Загрузить шрифт Bold с поддержкой кириллицы.
+  static Future<pw.Font> _loadFontBold() async {
+    if (_cachedFontBold != null) return _cachedFontBold!;
+    final fontData = await rootBundle.load('assets/fonts/Roboto-Bold.ttf');
+    _cachedFontBold = pw.Font.ttf(fontData);
+    return _cachedFontBold!;
   }
 
   /// Создать тему с кириллическим шрифтом.
-  static pw.ThemeData _buildTheme(pw.Font font) {
+  static Future<pw.ThemeData> _buildTheme() async {
+    final fontRegular = await _loadFont();
+    final fontBold = await _loadFontBold();
     return pw.ThemeData.withFont(
-      base: font,
-      bold: font,
-      italic: font,
-      boldItalic: font,
+      base: fontRegular,
+      bold: fontBold,
+      italic: fontRegular,
+      boldItalic: fontBold,
     );
   }
 
@@ -60,6 +73,7 @@ class PdfExportService {
           '/Download',
         );
         directory = Directory(downloadsPath);
+        // ignore: avoid_slow_async_io
         if (!await directory.exists()) {
           directory = await getApplicationDocumentsDirectory();
         }
@@ -90,11 +104,12 @@ class PdfExportService {
     BuildContext? buildContext,
     bool saveLocally = false,
   }) async {
-    final font = await _loadFont();
+    final theme = await _buildTheme();
     final resolvedDefinition =
         definition ?? CalculatorRegistry.getById(calculation.calculatorId);
 
     final loc =
+        // ignore: use_build_context_synchronously
         buildContext == null ? null : AppLocalizations.of(buildContext);
     final calculatorName = (loc == null || resolvedDefinition == null)
         ? calculation.calculatorName
@@ -109,9 +124,10 @@ class PdfExportService {
 
     final categoryLabel = buildContext == null
         ? calculation.category
+        // ignore: use_build_context_synchronously
         : CalculationDisplay.historyCategoryLabel(buildContext, calculation);
     final pdf = pw.Document(
-      theme: _buildTheme(font),
+      theme: theme,
     );
 
     pdf.addPage(
@@ -361,11 +377,12 @@ class PdfExportService {
     BuildContext context, {
     bool saveLocally = false,
   }) async {
-    final font = await _loadFont();
+    final theme = await _buildTheme();
+    // ignore: use_build_context_synchronously
     final loc = AppLocalizations.of(context);
     final dateFormat = DateFormat('dd.MM.yyyy');
     final pdf = pw.Document(
-      theme: _buildTheme(font),
+      theme: theme,
     );
 
     pdf.addPage(
@@ -879,9 +896,9 @@ class PdfExportService {
     required String text,
     bool saveLocally = false,
   }) async {
-    final font = await _loadFont();
+    final theme = await _buildTheme();
     final pdf = pw.Document(
-      theme: _buildTheme(font),
+      theme: theme,
     );
 
     // Разбиваем текст по строкам для красивого рендера
@@ -947,7 +964,7 @@ class PdfExportService {
     if (saveLocally) {
       final sanitizedTitle = sanitizeFileName(title);
       final fileName = '${sanitizedTitle}_${DateTime.now().millisecondsSinceEpoch}.pdf';
-      return await savePdfLocally(pdfBytes, fileName);
+      return savePdfLocally(pdfBytes, fileName);
     } else {
       await Printing.layoutPdf(
         onLayout: (PdfPageFormat format) async => pdfBytes,

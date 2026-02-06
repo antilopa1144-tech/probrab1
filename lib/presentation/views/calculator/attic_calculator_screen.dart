@@ -18,6 +18,17 @@ enum AtticType {
   const AtticType(this.nameKey, this.descKey, this.icon);
 }
 
+/// Тип утеплителя
+enum InsulationMaterialType {
+  mineralWool('attic_calc.insulation.mineral_wool', Icons.view_agenda),
+  foam('attic_calc.insulation.foam', Icons.square_rounded),
+  xps('attic_calc.insulation.xps', Icons.view_compact);
+
+  final String nameKey;
+  final IconData icon;
+  const InsulationMaterialType(this.nameKey, this.icon);
+}
+
 class _AtticResult {
   final double floorArea;
   final double roofArea;
@@ -72,6 +83,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
   double _insulationThickness = 150.0; // мм
 
   AtticType _atticType = AtticType.warm;
+  InsulationMaterialType _insulationMaterialType = InsulationMaterialType.mineralWool;
   bool _needVaporBarrier = true;
   bool _needMembrane = true;
   bool _needGypsum = true;
@@ -97,6 +109,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
       'roofHeight': _roofHeight,
       'insulationThickness': _insulationThickness,
       'atticType': _atticType.index.toDouble(),
+      'insulationType': _insulationMaterialType.index.toDouble(),
       'needVaporBarrier': _needVaporBarrier ? 1.0 : 0.0,
       'needMembrane': _needMembrane ? 1.0 : 0.0,
       'needGypsum': _needGypsum ? 1.0 : 0.0,
@@ -266,6 +279,23 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
     return _card(
       child: Column(
         children: [
+          // Тип утеплителя
+          ModeSelector(
+            options: InsulationMaterialType.values.map((t) => _loc.translate(t.nameKey)).toList(),
+            selectedIndex: _insulationMaterialType.index,
+            onSelect: (index) {
+              setState(() {
+                _insulationMaterialType = InsulationMaterialType.values[index];
+                // ЭППС паронепроницаем — автоматически отключаем пароизоляцию
+                if (_insulationMaterialType == InsulationMaterialType.xps) {
+                  _needVaporBarrier = false;
+                }
+                _update();
+              });
+            },
+            accentColor: _accentColor,
+          ),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -281,6 +311,23 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
             activeColor: _accentColor,
             onChanged: (v) { setState(() { _insulationThickness = v; _update(); }); },
           ),
+          // Подсказка для ЭППС
+          if (_insulationMaterialType == InsulationMaterialType.xps)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline, size: 16, color: _accentColor),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _loc.translate('attic_calc.hint.xps_no_vapor_barrier'),
+                      style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );

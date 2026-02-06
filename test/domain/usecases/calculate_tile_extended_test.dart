@@ -145,7 +145,7 @@ void main() {
             closeTo(2.0, 0.01));
       });
 
-      test('Формула затирки: area × 1.5 × (jointWidth / 10)', () {
+      test('Формула затирки через длину швов: jointsLength × jointWidth × depth × density', () {
         final inputs = {
           'area': 20.0,
           'tileSize': 60.0,
@@ -154,8 +154,9 @@ void main() {
 
         final result = calculator(inputs, <PriceItem>[]);
 
-        // 20 × 1.5 × (5 / 10) = 15 кг
-        expect(result.values['groutNeeded'], closeTo(15.0, 0.5));
+        // tileW=0.6м, tileH=0.6м → jointsLength = 1/0.6 + 1/0.6 = 3.333 м/м²
+        // grout = 20 × 3.333 × (5/1000) × (5/1000) × 1600 × 1.1 ≈ 2.93 кг
+        expect(result.values['groutNeeded'], closeTo(2.93, 0.1));
       });
     });
 

@@ -14,6 +14,8 @@ import '../../providers/recent_calculators_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../utils/calculator_navigation_helper.dart';
 import '../tools/unit_converter_bottom_sheet.dart';
+import '../tools/room_area_bottom_sheet.dart';
+import '../tools/simple_calculator_bottom_sheet.dart';
 import '../checklist/create_checklist_bottom_sheet.dart';
 import '../checklist/checklist_details_screen.dart';
 
@@ -205,16 +207,52 @@ class _ModernCalculatorCatalogScreenV2State
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: () {
-              UnitConverterBottomSheet.show(context);
-            },
+          PopupMenuButton<String>(
             icon: Icon(
-              Icons.calculate_outlined,
+              Icons.build_outlined,
               color: palette.textMuted,
               size: 22,
             ),
-            tooltip: loc.translate('catalog.unit_converter_tooltip'),
+            tooltip: loc.translate('catalog.tools_menu'),
+            onSelected: (value) {
+              switch (value) {
+                case 'unit_converter':
+                  UnitConverterBottomSheet.show(context);
+                case 'room_area':
+                  RoomAreaBottomSheet.show(context);
+                case 'simple_calculator':
+                  SimpleCalculatorBottomSheet.show(context);
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'unit_converter',
+                child: ListTile(
+                  leading: const Icon(Icons.straighten_rounded),
+                  title: Text(loc.translate('tools.unit_converter')),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'room_area',
+                child: ListTile(
+                  leading: const Icon(Icons.square_foot_rounded),
+                  title: Text(loc.translate('tools.room_area')),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'simple_calculator',
+                child: ListTile(
+                  leading: const Icon(Icons.calculate_rounded),
+                  title: Text(loc.translate('tools.simple_calculator')),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+            ],
           ),
           IconButton(
             onPressed: () async {

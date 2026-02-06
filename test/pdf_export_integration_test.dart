@@ -36,11 +36,7 @@ void main() {
     test('exportFromText signature correct', () async {
       // Проверяем что метод принимает правильные параметры
       // Это compile-time тест — если сигнатура изменится, тест не скомпилируется
-      Future<String?> Function({
-        required String title,
-        required String text,
-        bool saveLocally,
-      }) fn = PdfExportService.exportFromText;
+      const fn = PdfExportService.exportFromText;
 
       expect(fn, isNotNull);
     });

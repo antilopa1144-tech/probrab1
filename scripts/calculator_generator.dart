@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unintended_html_in_doc_comment
 
 /// Генератор калькуляторов для проекта Прораб AI.
 ///

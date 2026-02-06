@@ -77,9 +77,11 @@ enum TileType {
 }
 
 enum AdhesiveBrand {
-  ceresitCM11(1.5, 'Ceresit CM 11', [25]),
+  ceresitCM9(1.2, 'Ceresit CM 9', [25]),
+  ceresitCM11Plus(1.5, 'Ceresit CM 11 Plus', [25]),
   ceresitCM12(1.6, 'Ceresit CM 12', [25]),
   ceresitCM14(1.8, 'Ceresit CM 14', [25]),
+  ceresitCM16(1.9, 'Ceresit CM 16', [25]),
   ceresitCM17(1.8, 'Ceresit CM 17', [25]),
   unis21(1.4, 'Unis 21 (UniPlus)', [25]),
   unisPlus(1.5, 'Unis Плюс', [25]),
@@ -971,13 +973,25 @@ class _TileAdhesiveCalculatorScreenState
 
   Widget _buildTipsCard() {
     const accentColor = CalculatorColors.interior;
-    final tips = <String>[
+    final tips = <String>[];
+
+    // Динамические предупреждения по бренду
+    if (_adhesiveBrand == AdhesiveBrand.ceresitCM9 &&
+        _tileType != TileType.mosaic &&
+        _tileType != TileType.ceramic) {
+      tips.add(_loc.translate('hint.tile_adhesive.cm9_small_tile_only'));
+    }
+    if (_adhesiveBrand == AdhesiveBrand.ceresitCM16) {
+      tips.add(_loc.translate('hint.tile_adhesive.cm16_deformable'));
+    }
+
+    tips.addAll([
       _loc.translate('hint.tile_adhesive.surface_preparation'),
       _loc.translate('hint.tile_adhesive.notch_size'),
       _loc.translate('hint.tile_adhesive.mixing'),
       _loc.translate('hint.tile_adhesive.application'),
       _loc.translate('hint.tile_adhesive.working_time'),
-    ];
+    ]);
 
     return TipsCard(
       tips: tips,

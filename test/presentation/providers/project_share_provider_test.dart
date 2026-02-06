@@ -103,7 +103,7 @@ void main() {
       expect(state.error, isNull);
     });
 
-    test('generateProjectLink устанавливает isGenerating', skip: 'Синхронное выполнение завершается до чтения состояния', () async {
+    test('generateProjectLink завершает isGenerating после выполнения', () async {
       final container = ProviderContainer(
         overrides: [
           deepLinkServiceProvider.overrideWith((ref) {
@@ -119,12 +119,11 @@ void main() {
         ..name = 'Тестовый проект'
         ..status = ProjectStatus.planning;
 
-      // Запускаем без await
-      unawaited(notifier.generateProjectLink(project));
+      await notifier.generateProjectLink(project);
 
-      // Сразу проверяем что isGenerating = true
       final state = container.read(projectShareProvider);
-      expect(state.isGenerating, true);
+      expect(state.isGenerating, false);
+      expect(state.hasLink, true);
     });
 
     test('generateProjectLink с расчётами', () async {
@@ -160,7 +159,7 @@ void main() {
       expect(state.deepLink, contains('masterokapp://'));
     });
 
-    test('generateProjectLink обрабатывает ошибки', skip: 'ShareableProject.fromProject не выбрасывает ошибку для пустого проекта', () async {
+    test('generateProjectLink обрабатывает минимальный проект без ошибок', () async {
       final container = ProviderContainer(
         overrides: [
           deepLinkServiceProvider.overrideWith((ref) {
@@ -172,15 +171,17 @@ void main() {
 
       final notifier = container.read(projectShareProvider.notifier);
 
-      // Создаём некорректный проект который вызовет ошибку
+      // Проект без обязательных полей — должен обработать без ошибки
       final project = ProjectV2();
-      // Не устанавливаем обязательные поля
 
       await notifier.generateProjectLink(project);
 
       final state = container.read(projectShareProvider);
       expect(state.isGenerating, false);
-      expect(state.hasError, true);
+      // ShareableProject.fromProject не выбрасывает ошибку для пустого проекта,
+      // а генерирует ссылку с пустыми данными
+      expect(state.hasLink, true);
+      expect(state.hasError, false);
     });
   });
 
@@ -233,7 +234,7 @@ void main() {
       expect(state.hasLink, true);
     });
 
-    test('generateCalculatorLink устанавливает isGenerating', skip: 'Синхронное выполнение завершается до чтения состояния', () async {
+    test('generateCalculatorLink завершает isGenerating после выполнения', () async {
       final container = ProviderContainer(
         overrides: [
           deepLinkServiceProvider.overrideWith((ref) {
@@ -245,13 +246,14 @@ void main() {
 
       final notifier = container.read(projectShareProvider.notifier);
 
-      unawaited(notifier.generateCalculatorLink(
+      await notifier.generateCalculatorLink(
         calculatorId: 'brick',
         inputs: {'length': 10.0},
-      ));
+      );
 
       final state = container.read(projectShareProvider);
-      expect(state.isGenerating, true);
+      expect(state.isGenerating, false);
+      expect(state.hasLink, true);
     });
 
     test('generateCalculatorLink обрабатывает ошибки', () async {
@@ -619,7 +621,7 @@ void main() {
       expect(state.hasLink, true);
     });
 
-    test('clear очищает ошибку', skip: 'ShareableProject.fromProject не выбрасывает ошибку для пустого проекта', () async {
+    test('clear очищает ссылки и сбрасывает состояние', () async {
       final container = ProviderContainer(
         overrides: [
           deepLinkServiceProvider.overrideWith((ref) {
@@ -631,18 +633,24 @@ void main() {
 
       final notifier = container.read(projectShareProvider.notifier);
 
-      // Создаём ошибку
-      final project = ProjectV2();
-      await notifier.generateProjectLink(project);
+      // Генерируем ссылку чтобы заполнить состояние
+      await notifier.generateCalculatorLink(
+        calculatorId: 'brick',
+        inputs: {'length': 10.0},
+      );
 
-      expect(container.read(projectShareProvider).hasError, true);
+      expect(container.read(projectShareProvider).hasLink, true);
 
       // Очищаем
       notifier.clear();
 
       final state = container.read(projectShareProvider);
+      expect(state.deepLink, isNull);
+      expect(state.compactDeepLink, isNull);
       expect(state.error, isNull);
+      expect(state.hasLink, false);
       expect(state.hasError, false);
+      expect(state.isGenerating, false);
     });
 
     test('последовательные вызовы generateProjectLink', () async {
@@ -1056,6 +1064,3 @@ void main() {
     });
   });
 }
-
-// Helper для игнорирования Future
-void unawaited(Future<void> future) {}

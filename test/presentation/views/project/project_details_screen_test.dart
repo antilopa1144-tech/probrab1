@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar_community/isar.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:probrab_ai/data/models/calculation.dart';
 import 'package:probrab_ai/presentation/views/project/project_details_screen.dart';
 import 'package:probrab_ai/presentation/providers/project_v2_provider.dart';
 import 'package:probrab_ai/data/repositories/project_repository_v2.dart';
 import 'package:probrab_ai/domain/models/project_v2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../helpers/isar_test_utils.dart';
 import '../../../helpers/test_helpers.dart';
+import '../../../helpers/test_path_provider.dart';
 
 /// Mock repository for testing
 class MockProjectRepositoryV2 implements ProjectRepositoryV2 {
@@ -78,7 +83,68 @@ List<Override> _createOverrides(MockProjectRepositoryV2 mockRepo) {
   ];
 }
 
+/// Creates overrides using a real Isar-backed ProjectRepositoryV2.
+/// This is needed for tests that require project.calculations.load() to work,
+/// since IsarLinks.load() throws when the ProjectV2 is not managed by Isar.
+List<Override> _createIsarOverrides(ProjectRepositoryV2 realRepo) {
+  final mockNotifierRepo = MockProjectRepositoryV2();
+  return <Override>[
+    projectRepositoryV2Provider.overrideWithValue(realRepo),
+    projectV2NotifierProvider.overrideWith((ref) => MockProjectV2Notifier(mockNotifierRepo)),
+  ];
+}
+
+/// Shared Isar state for FAB tests (group-level lifecycle).
+Isar? _fabIsar;
+ProjectRepositoryV2? _fabRepo;
+int? _fabProjectId;
+
+/// Opens a fresh Isar instance for FAB tests and inserts a test project.
+Future<void> _setupFabIsar() async {
+  final dir = await getApplicationDocumentsDirectory();
+  _fabIsar = await Isar.open(
+    [ProjectV2Schema, ProjectCalculationSchema, CalculationSchema],
+    directory: dir.path,
+    name: 'project_details_fab_test',
+  );
+
+  _fabRepo = ProjectRepositoryV2(_fabIsar!);
+
+  final project = ProjectV2()
+    ..name = 'Test Project'
+    ..createdAt = DateTime.now()
+    ..updatedAt = DateTime.now()
+    ..status = ProjectStatus.planning
+    ..isFavorite = false
+    ..tags = [];
+
+  _fabProjectId = await _fabRepo!.createProject(project);
+}
+
+/// Closes the FAB test Isar instance.
+Future<void> _teardownFabIsar() async {
+  if (_fabIsar != null && _fabIsar!.isOpen) {
+    await _fabIsar!.close(deleteFromDisk: true);
+  }
+  _fabIsar = null;
+  _fabRepo = null;
+  _fabProjectId = null;
+}
+
 void main() {
+  late TestPathProviderPlatform pathProvider;
+
+  setUpAll(() async {
+    pathProvider = installTestPathProvider();
+    await ensureIsarInitialized();
+    await _setupFabIsar();
+  });
+
+  tearDownAll(() async {
+    await _teardownFabIsar();
+    pathProvider.dispose();
+  });
+
   group('ProjectDetailsScreen', () {
     late MockProjectRepositoryV2 mockRepo;
 
@@ -169,63 +235,43 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
+    // skip: Requires full Isar lifecycle — IsarLinks.load() needs managed object
     testWidgets('shows FAB for adding calculations when project loaded',
-        skip: true, (tester) async {
-      setTestViewportSize(tester);
-      tester.view.physicalSize = const Size(1440, 2560);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-
-      // Create a mock with actual project data
-      final testProject = ProjectV2()
-        ..id = 1
-        ..name = 'Test Project'
-        ..createdAt = DateTime.now()
-        ..updatedAt = DateTime.now()
-        ..status = ProjectStatus.planning
-        ..isFavorite = false
-        ..tags = [];
-      final projectRepo = MockProjectRepositoryV2(projectToReturn: testProject);
-
-      await tester.pumpWidget(
-        createTestApp(
-          child: const ProjectDetailsScreen(projectId: 1),
-          overrides: _createOverrides(projectRepo),
-        ),
-      );
-
-      // Wait for project to load using pumpForStream for better async handling
-      await pumpForStream(tester);
-
-      expect(find.byType(FloatingActionButton), findsOneWidget);
-    });
-
-    testWidgets('FAB has add icon when project loaded', skip: true,
+        skip: true,
         (tester) async {
       setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
 
-      // Create a mock with actual project data
-      final testProject = ProjectV2()
-        ..id = 1
-        ..name = 'Test Project'
-        ..createdAt = DateTime.now()
-        ..updatedAt = DateTime.now()
-        ..status = ProjectStatus.planning
-        ..isFavorite = false
-        ..tags = [];
-      final projectRepo = MockProjectRepositoryV2(projectToReturn: testProject);
-
       await tester.pumpWidget(
         createTestApp(
-          child: const ProjectDetailsScreen(projectId: 1),
-          overrides: _createOverrides(projectRepo),
+          child: ProjectDetailsScreen(projectId: _fabProjectId!),
+          overrides: _createIsarOverrides(_fabRepo!),
         ),
       );
 
-      // Wait for project to load
+      await pumpForStream(tester);
+
+      expect(find.byType(FloatingActionButton), findsOneWidget);
+    });
+
+    // skip: Requires full Isar lifecycle — IsarLinks.load() needs managed object
+    testWidgets('FAB has add icon when project loaded',
+        skip: true,
+        (tester) async {
+      setTestViewportSize(tester);
+      tester.view.physicalSize = const Size(1440, 2560);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: ProjectDetailsScreen(projectId: _fabProjectId!),
+          overrides: _createIsarOverrides(_fabRepo!),
+        ),
+      );
+
       await pumpForStream(tester);
 
       expect(find.byIcon(Icons.add_rounded), findsOneWidget);
@@ -302,27 +348,17 @@ void main() {
       expect(find.byType(ProjectDetailsScreen), findsOneWidget);
     });
 
+    // skip: Requires full Isar lifecycle — IsarLinks.load() needs managed object
     testWidgets('can tap FAB when project loaded', skip: true, (tester) async {
       setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
 
-      // Create a mock with actual project data
-      final testProject = ProjectV2()
-        ..id = 1
-        ..name = 'Test Project'
-        ..createdAt = DateTime.now()
-        ..updatedAt = DateTime.now()
-        ..status = ProjectStatus.planning
-        ..isFavorite = false
-        ..tags = [];
-      final projectRepo = MockProjectRepositoryV2(projectToReturn: testProject);
-
       await tester.pumpWidget(
         createTestApp(
-          child: const ProjectDetailsScreen(projectId: 1),
-          overrides: _createOverrides(projectRepo),
+          child: ProjectDetailsScreen(projectId: _fabProjectId!),
+          overrides: _createIsarOverrides(_fabRepo!),
         ),
       );
 
@@ -835,6 +871,7 @@ void main() {
       expect(find.byType(FutureBuilder<ProjectV2?>), findsOneWidget);
     });
 
+    // skip: Requires full Isar lifecycle — IsarLinks.load() needs managed object
     testWidgets('FAB видна когда проект загружен', skip: true, (tester) async {
       setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
@@ -843,18 +880,19 @@ void main() {
 
       await tester.pumpWidget(
         createTestApp(
-          child: const ProjectDetailsScreen(projectId: 1),
-          overrides: _createOverrides(mockRepo),
+          child: ProjectDetailsScreen(projectId: _fabProjectId!),
+          overrides: _createIsarOverrides(_fabRepo!),
         ),
       );
 
-      // Wait for project to load
       await pumpForStream(tester);
 
       expect(find.byType(FloatingActionButton), findsOneWidget);
     });
 
-    testWidgets('можно тапнуть на FAB когда проект загружен', skip: true,
+    // skip: Requires full Isar lifecycle — IsarLinks.load() needs managed object
+    testWidgets('можно тапнуть на FAB когда проект загружен',
+        skip: true,
         (tester) async {
       setTestViewportSize(tester);
       tester.view.physicalSize = const Size(1440, 2560);
@@ -863,12 +901,11 @@ void main() {
 
       await tester.pumpWidget(
         createTestApp(
-          child: const ProjectDetailsScreen(projectId: 1),
-          overrides: _createOverrides(mockRepo),
+          child: ProjectDetailsScreen(projectId: _fabProjectId!),
+          overrides: _createIsarOverrides(_fabRepo!),
         ),
       );
 
-      // Wait for project to load
       await pumpForStream(tester);
 
       final fab = find.byType(FloatingActionButton);

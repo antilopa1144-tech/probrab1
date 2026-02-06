@@ -4,7 +4,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:probrab_ai/presentation/app/main_shell.dart';
-import 'package:probrab_ai/presentation/views/calculator/modern_calculator_catalog_screen.dart';
+import 'package:probrab_ai/presentation/views/calculator/calculator_catalog_screen.dart';
 import 'package:probrab_ai/core/localization/app_localizations.dart' show AppLocalizationsDelegate;
 
 void main() {
@@ -69,7 +69,7 @@ void main() {
     testWidgets('E2E: Search for calculator', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: const ModernCalculatorCatalogScreen(),
+          child: const CalculatorCatalogScreen(),
         ),
       );
 
@@ -84,7 +84,7 @@ void main() {
       await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
       // Should show search results
-      expect(find.byType(ModernCalculatorCatalogScreen), findsOneWidget);
+      expect(find.byType(CalculatorCatalogScreen), findsOneWidget);
 
       // Clear search
       final clearButton = find.byIcon(Icons.clear);
@@ -94,20 +94,20 @@ void main() {
       }
 
       // Should show all calculators again
-      expect(find.byType(ModernCalculatorCatalogScreen), findsOneWidget);
+      expect(find.byType(CalculatorCatalogScreen), findsOneWidget);
     });
 
     testWidgets('E2E: Calculator catalog loads and scrolls', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: const ModernCalculatorCatalogScreen(),
+          child: const CalculatorCatalogScreen(),
         ),
       );
 
       await tester.pumpAndSettle();
 
       // Verify catalog loaded
-      expect(find.byType(ModernCalculatorCatalogScreen), findsOneWidget);
+      expect(find.byType(CalculatorCatalogScreen), findsOneWidget);
 
       // Find scrollable view
       final scrollable = find.byType(CustomScrollView);
@@ -117,20 +117,20 @@ void main() {
         await tester.pumpAndSettle();
 
         // Should still show catalog
-        expect(find.byType(ModernCalculatorCatalogScreen), findsOneWidget);
+        expect(find.byType(CalculatorCatalogScreen), findsOneWidget);
 
         // Scroll back up
         await tester.drag(scrollable.first, const Offset(0, 300));
         await tester.pumpAndSettle();
       }
 
-      expect(find.byType(ModernCalculatorCatalogScreen), findsOneWidget);
+      expect(find.byType(CalculatorCatalogScreen), findsOneWidget);
     });
 
     testWidgets('E2E: Toggle favorite calculator', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: const ModernCalculatorCatalogScreen(),
+          child: const CalculatorCatalogScreen(),
         ),
       );
 
@@ -144,14 +144,14 @@ void main() {
         await tester.pumpAndSettle();
 
         // Button should still exist (might be filled star now)
-        expect(find.byType(ModernCalculatorCatalogScreen), findsOneWidget);
+        expect(find.byType(CalculatorCatalogScreen), findsOneWidget);
       }
     });
 
     testWidgets('E2E: Category filter functionality', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: const ModernCalculatorCatalogScreen(),
+          child: const CalculatorCatalogScreen(),
         ),
       );
 
@@ -165,7 +165,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Should show catalog
-        expect(find.byType(ModernCalculatorCatalogScreen), findsOneWidget);
+        expect(find.byType(CalculatorCatalogScreen), findsOneWidget);
 
         // Find and tap another category if available
         final categoryChips = find.byType(ChoiceChip);
@@ -174,7 +174,7 @@ void main() {
           await tester.pumpAndSettle();
 
           // Should still show catalog (filtered)
-          expect(find.byType(ModernCalculatorCatalogScreen), findsOneWidget);
+          expect(find.byType(CalculatorCatalogScreen), findsOneWidget);
         }
       }
     });
@@ -235,16 +235,16 @@ void main() {
       expect(find.byType(BottomNavigationBar), findsOneWidget);
     });
 
-    testWidgets('ModernCalculatorCatalogScreen renders without errors', (tester) async {
+    testWidgets('CalculatorCatalogScreen renders without errors', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: const ModernCalculatorCatalogScreen(),
+          child: const CalculatorCatalogScreen(),
         ),
       );
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(ModernCalculatorCatalogScreen), findsOneWidget);
+      expect(find.byType(CalculatorCatalogScreen), findsOneWidget);
     });
   });
 
@@ -282,7 +282,7 @@ void main() {
       final stopwatch = Stopwatch()..start();
 
       // Catalog should be visible immediately since it's the home screen
-      expect(find.byType(ModernCalculatorCatalogScreen), findsOneWidget);
+      expect(find.byType(CalculatorCatalogScreen), findsOneWidget);
 
       stopwatch.stop();
 

@@ -4,7 +4,6 @@ import 'package:integration_test/integration_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:probrab_ai/presentation/views/calculator/calculator_catalog_screen.dart';
-import 'package:probrab_ai/presentation/views/calculator/modern_calculator_catalog_screen.dart';
 import 'package:probrab_ai/domain/calculators/calculator_registry.dart';
 import 'package:probrab_ai/core/localization/app_localizations.dart' show AppLocalizationsDelegate;
 
@@ -70,23 +69,10 @@ void main() {
       expect(find.byType(CalculatorCatalogScreen), findsOneWidget);
     });
 
-    testWidgets('modern catalog screen loads', (tester) async {
-      await tester.pumpWidget(
-        createTestApp(
-          child: const ModernCalculatorCatalogScreen(),
-        ),
-      );
-
-      await tester.pumpAndSettle();
-
-      // Should show the modern catalog
-      expect(find.byType(ModernCalculatorCatalogScreen), findsOneWidget);
-    });
-
     testWidgets('category filter works', (tester) async {
       await tester.pumpWidget(
         createTestApp(
-          child: const ModernCalculatorCatalogScreen(),
+          child: const CalculatorCatalogScreen(),
         ),
       );
 
@@ -99,7 +85,7 @@ void main() {
         await tester.pumpAndSettle();
       }
 
-      expect(find.byType(ModernCalculatorCatalogScreen), findsOneWidget);
+      expect(find.byType(CalculatorCatalogScreen), findsOneWidget);
     });
   });
 

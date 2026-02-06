@@ -5,7 +5,7 @@ import 'package:probrab_ai/data/repositories/checklist_repository.dart';
 import 'package:probrab_ai/domain/models/checklist.dart';
 import 'package:probrab_ai/domain/models/checklist_template.dart';
 import 'package:probrab_ai/presentation/providers/checklist_provider.dart';
-import 'package:probrab_ai/core/database/database_provider.dart';
+import 'package:probrab_ai/core/database/database_provider.dart' hide checklistRepositoryProvider;
 
 void main() {
   late Isar isar;

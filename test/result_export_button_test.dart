@@ -130,7 +130,7 @@ void main() {
 
     testWidgets('без callback — меню пуст', (WidgetTester tester) async {
       await tester.pumpWidget(
-        _withLocalization(ResultExportButton()),
+        _withLocalization(const ResultExportButton()),
       );
       await _openPopup(tester);
       expect(find.byIcon(Icons.share_rounded), findsNothing);
@@ -268,7 +268,7 @@ void main() {
   // ─────────────────────────────────────────────────
   group('ResultExportButton — конструктор', () {
     test('все callback-поля по умолчанию null', () {
-      final btn = ResultExportButton();
+      const btn = ResultExportButton();
       expect(btn.onShare, isNull);
       expect(btn.onCopy, isNull);
       expect(btn.onExportCsv, isNull);
@@ -305,17 +305,17 @@ void main() {
     });
 
     test('enabled по умолчанию true', () {
-      final btn = ResultExportButton();
+      const btn = ResultExportButton();
       expect(btn.enabled, true);
     });
 
     test('tooltip по умолчанию null', () {
-      final btn = ResultExportButton();
+      const btn = ResultExportButton();
       expect(btn.tooltip, isNull);
     });
 
     test('custom tooltip передаётся', () {
-      final btn = ResultExportButton(tooltip: 'Мой тултип');
+      const btn = ResultExportButton(tooltip: 'Мой тултип');
       expect(btn.tooltip, 'Мой тултип');
     });
   });

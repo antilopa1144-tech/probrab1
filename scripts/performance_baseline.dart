@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unintended_html_in_doc_comment, unnecessary_string_interpolations, prefer_const_declarations
 
 /// Скрипт измерения baseline производительности.
 ///

@@ -93,8 +93,9 @@ void main() {
       expect(find.text('В работе'), findsOneWidget);
     });
 
-    // skip: Виджет изменён, текст "Прогресс" не отображается напрямую
-    testWidgets('renders progress section', skip: true, (tester) async {
+    testWidgets('renders no progress section when no materials', (tester) async {
+      // testProject has no calculations/materials (IsarLinks not loaded),
+      // so _InfoRow shows neither calculations count nor progress bar
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -106,13 +107,17 @@ void main() {
         ),
       );
 
-      expect(find.text('Прогресс'), findsOneWidget);
-      expect(find.text('5/10 '), findsOneWidget);
-      expect(find.byType(LinearProgressIndicator), findsOneWidget);
+      // No materials → no "Куплено" text and no progress bar
+      expect(find.text('Куплено'), findsNothing);
+      expect(find.byType(LinearProgressIndicator), findsNothing);
+      // No calculations → no calculate icon
+      expect(find.byIcon(Icons.calculate_outlined), findsNothing);
     });
 
-    // skip: UI изменён, формат отображения бюджета другой
-    testWidgets('renders budget row when budget > 0', skip: true, (tester) async {
+    testWidgets('does not render budget row (budget display removed from card)',
+        (tester) async {
+      // Budget display was removed from DashboardProjectCard;
+      // the card now shows calculations count and materials progress instead
       await tester.pumpWidget(
         createTestApp(
           child: Scaffold(
@@ -124,8 +129,8 @@ void main() {
         ),
       );
 
-      expect(find.byIcon(Icons.account_balance_wallet_outlined), findsOneWidget);
-      expect(find.text('50k / 100k'), findsOneWidget);
+      // Wallet icon is no longer present in the card
+      expect(find.byIcon(Icons.account_balance_wallet_outlined), findsNothing);
     });
 
     testWidgets('does not render budget row when budget is 0', (tester) async {
@@ -145,8 +150,8 @@ void main() {
       expect(find.byIcon(Icons.account_balance_wallet_outlined), findsNothing);
     });
 
-    // skip: UI изменён, формат отображения предупреждения другой
-    testWidgets('shows warning icon when over budget', skip: true, (tester) async {
+    testWidgets('does not show budget warning icon (budget display removed)',
+        (tester) async {
       testProject.budgetSpent = 150000;
 
       await tester.pumpWidget(
@@ -160,8 +165,9 @@ void main() {
         ),
       );
 
-      // Should show warning icon in budget row
-      expect(find.byIcon(Icons.warning_amber_rounded), findsAtLeast(1));
+      // Budget display was removed from card.
+      // No wallet icon or budget-specific warning should appear.
+      expect(find.byIcon(Icons.account_balance_wallet_outlined), findsNothing);
     });
 
     testWidgets('renders deadline when provided', (tester) async {
@@ -301,15 +307,14 @@ void main() {
       expect(find.byType(Card), findsOneWidget);
     });
 
-    // skip: Тесты статусов требуют обновления локализованных ключей
-    group('status badges', skip: 'UI изменён', () {
+    group('status badges', () {
       for (final status in ProjectStatus.values) {
         testWidgets('renders correct label for $status', (tester) async {
           testProject.status = status;
 
           await tester.pumpWidget(
-            MaterialApp(
-              home: Scaffold(
+            createTestApp(
+              child: Scaffold(
                 body: DashboardProjectCard(
                   project: testProject,
                   onTap: () {},
@@ -324,14 +329,13 @@ void main() {
       }
     });
 
-    // skip: Тесты дедлайна требуют обновления локализованных ключей
-    group('deadline display', skip: 'UI изменён', () {
+    group('deadline display', () {
       testWidgets('shows "Сегодня" for deadline today', (tester) async {
         testProject.deadline = DateTime.now();
 
         await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
+          createTestApp(
+            child: Scaffold(
               body: DashboardProjectCard(
                 project: testProject,
                 onTap: () {},
@@ -348,8 +352,8 @@ void main() {
         testProject.deadline = DateTime.now().add(const Duration(days: 3));
 
         await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
+          createTestApp(
+            child: Scaffold(
               body: DashboardProjectCard(
                 project: testProject,
                 onTap: () {},
@@ -366,8 +370,8 @@ void main() {
         testProject.deadline = DateTime.now().subtract(const Duration(days: 1));
 
         await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
+          createTestApp(
+            child: Scaffold(
               body: DashboardProjectCard(
                 project: testProject,
                 onTap: () {},

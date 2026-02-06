@@ -256,7 +256,8 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
     if (_inputMode == InputMode.byArea) {
       return _area;
     }
-    return _length * _width;
+    // Площадь стен = периметр × высота (для обшивки стен, не пола)
+    return 2 * (_length + _width) * _height;
   }
 
   _WoodLiningResult _calculate() {

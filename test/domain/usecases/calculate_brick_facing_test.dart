@@ -15,10 +15,10 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Для полкирпича: ~61.5 шт/м²
-      // 50 * 61.5 * 1.05 = ~3230 шт
-      expect(result.values['bricksNeeded'], greaterThan(3200));
-      expect(result.values['bricksNeeded'], lessThan(3300));
+      // Для полкирпича: ~51 шт/м²
+      // 50 * 51 * 1.05 = ~2678 шт
+      expect(result.values['bricksNeeded'], greaterThan(2650));
+      expect(result.values['bricksNeeded'], lessThan(2750));
       expect(result.values['area'], closeTo(50.0, 2.5));
     });
 
@@ -77,7 +77,7 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // По умолчанию: толщина 0.5 (полкирпича)
-      expect(result.values['bricksNeeded'], greaterThan(3200));
+      expect(result.values['bricksNeeded'], greaterThan(2650));
     });
 
     test('throws exception for zero area', () {
