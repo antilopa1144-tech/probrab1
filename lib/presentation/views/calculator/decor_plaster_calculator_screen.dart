@@ -256,7 +256,7 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('decor_plaster_calc.label.wall_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              Text(_loc.translate('decor_plaster_calc.label.wall_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
               Text('${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -282,7 +282,7 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
           const SizedBox(height: 8),
           Text(
             _loc.translate('decor_plaster_calc.layers_hint'),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -296,7 +296,7 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('decor_plaster_calc.option.primer'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('decor_plaster_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('decor_plaster_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needPrimer,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPrimer = v; _update(); }); },
@@ -305,7 +305,7 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(_loc.translate('decor_plaster_calc.option.wax'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-              subtitle: Text(_loc.translate('decor_plaster_calc.option.wax_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              subtitle: Text(_loc.translate('decor_plaster_calc.option.wax_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
               value: _needWax,
               activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needWax = v; _update(); }); },

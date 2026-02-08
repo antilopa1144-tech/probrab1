@@ -360,7 +360,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
               const SizedBox(width: 8),
               Tooltip(
                 message: _loc.translate('putty.surface_type.hint'),
-                child: const Icon(
+                child: Icon(
                   Icons.info_outline,
                   size: 18,
                   color: CalculatorColors.textSecondary,
@@ -1246,7 +1246,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
         const Divider(height: 24),
         Row(
           children: [
-            const Icon(
+            Icon(
               Icons.inventory_2_outlined,
               size: 18,
               color: CalculatorColors.textSecondary,

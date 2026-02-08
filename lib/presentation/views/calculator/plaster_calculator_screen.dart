@@ -291,7 +291,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
               ),
             ),
             Text(
-              '${_manualArea.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
+              '${_manualArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
               style: CalculatorDesignSystem.headlineMedium.copyWith(
                 color: accentColor,
                 fontWeight: FontWeight.bold,
@@ -303,6 +303,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
           value: _manualArea,
           min: 1,
           max: 500,
+          divisions: 4990,
           activeColor: accentColor,
           onChanged: (v) { setState(() { _manualArea = v; _update(); }); },
         ),
@@ -380,7 +381,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
                 ),
               ),
               Text(
-                '${_thickness.toStringAsFixed(0)} ${_loc.translate('common.mm')}',
+                '${_thickness.toStringAsFixed(1)} ${_loc.translate('common.mm')}',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.bold,
@@ -392,6 +393,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
             value: _thickness,
             min: 5,
             max: 100,
+            divisions: 950,
             activeColor: accentColor,
             onChanged: (v) { setState(() { _thickness = v; _update(); }); },
           ),

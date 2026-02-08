@@ -5,6 +5,8 @@ import 'package:probrab_ai/presentation/views/calculator/electrical_calculator_s
 import 'package:probrab_ai/presentation/widgets/calculator/mode_selector.dart';
 import 'package:probrab_ai/presentation/widgets/calculator/calculator_result_header.dart';
 
+import 'package:probrab_ai/presentation/widgets/calculator/calculator_text_field.dart';
+
 import '../../../helpers/calculator_test_helpers.dart';
 import '../../../helpers/test_helpers.dart';
 
@@ -211,6 +213,24 @@ void main() {
       await tester.pump();
 
       expect(find.byType(ElectricalCalculatorScreen), findsOneWidget);
+    });
+  });
+
+  group('ElectricalCalculatorScreen slider+textfield', () {
+    testWidgets('slider fields have paired CalculatorTextField', (tester) async {
+      setupTestScreenSize(tester);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: ElectricalCalculatorScreen(definition: testDefinition),
+          overrides: CalculatorMockOverrides.electrical,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Both Slider and CalculatorTextField should be present
+      expect(find.byType(Slider), findsWidgets);
+      expect(find.byType(CalculatorTextField), findsWidgets);
     });
   });
 

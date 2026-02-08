@@ -289,7 +289,7 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('ceiling_insulation_calc.label.ceiling_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              Text(_loc.translate('ceiling_insulation_calc.label.ceiling_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
               Text('${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -325,7 +325,7 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-              subtitle: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              subtitle: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
               value: _needVaporBarrier,
               activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needVaporBarrier = v; _update(); }); },
@@ -333,7 +333,7 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('ceiling_insulation_calc.option.membrane'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('ceiling_insulation_calc.option.membrane_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('ceiling_insulation_calc.option.membrane_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needMembrane,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needMembrane = v; _update(); }); },

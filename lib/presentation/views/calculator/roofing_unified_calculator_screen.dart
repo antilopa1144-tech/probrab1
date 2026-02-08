@@ -501,6 +501,22 @@ class _RoofingUnifiedCalculatorScreenState
               },
             ),
           ),
+          const SizedBox(height: 12),
+          CalculatorTextField(
+            label: _loc.translate('roofing_calc.label.slope'),
+            value: _slope,
+            onChanged: (v) {
+              setState(() {
+                _slope = v;
+                _update();
+              });
+            },
+            suffix: '°',
+            accentColor: accentColor,
+            minValue: _minSlope,
+            maxValue: _maxSlope,
+            decimalPlaces: 0,
+          ),
           const SizedBox(height: 8),
           Text(
             _loc.translate('hint.roofing.slope_hint'),

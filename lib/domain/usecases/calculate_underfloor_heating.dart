@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_declarations
+import 'dart:math' show sqrt;
+
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
@@ -18,16 +20,17 @@ import './base_calculator.dart';
 /// - filmWidth: ширина ИК плёнки (0=50см, 1=80см, 2=100см), по умолчанию 1 (80см)
 class CalculateUnderfloorHeating extends BaseCalculator {
   // Константы мощности по типу помещения (Вт/м²)
+  // СП 60.13330.2020 — удельная мощность тёплого пола
   static const _roomPower = {
     1: 180.0, // ванная
-    2: 120.0, // жилая
+    2: 150.0, // жилая (обновлено: 150 Вт/м² по СП 60.13330.2020)
     3: 130.0, // кухня
     4: 200.0, // балкон
   };
 
   // Шаг укладки труб по типу помещения (мм)
   static const _pipeStep = {
-    1: 150, // ванная
+    1: 100, // ванная (обновлено: 100 мм для санузлов — Rehau, Uponor)
     2: 150, // жилая
     3: 150, // кухня
     4: 100, // балкон
@@ -159,8 +162,9 @@ class CalculateUnderfloorHeating extends BaseCalculator {
         final screedThickness = 0.08; // м
         final screedVolume = area * screedThickness;
 
-        final damperTapePerM2 = 0.4;
-        final damperTapeLength = area * damperTapePerM2;
+        // Демпферная лента идёт по периметру помещения + 10% запас
+        final perimeter = sqrt(area) * 4; // оценка периметра по площади
+        final damperTapeLength = perimeter * 1.1;
 
         final bracketsPerM2 = 10.0;
         final bracketsCount = (heatingArea * bracketsPerM2).ceil();
@@ -171,6 +175,7 @@ class CalculateUnderfloorHeating extends BaseCalculator {
         values['insulationArea'] = insulationArea;
         values['screedVolume'] = screedVolume;
         values['damperTapeLength'] = damperTapeLength;
+        values['perimeter'] = perimeter;
         values['bracketsCount'] = bracketsCount.toDouble();
         values['pipeStep'] = pipeStepMm.toDouble();
 

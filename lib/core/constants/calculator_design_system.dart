@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'calculator_colors.dart';
+import 'app_colors.dart';
+import 'app_typography.dart';
 
 /// Константы дизайн-системы для калькуляторов
 ///
@@ -59,92 +60,21 @@ class CalculatorDesignSystem {
     );
   }
 
-  // === ТИПОГРАФИКА ===
+  // === ТИПОГРАФИКА (из AppTypography) ===
 
-  /// Заголовки экранов
-  static const headlineLarge = TextStyle(
-    fontSize: 24,
-    fontWeight: FontWeight.w600,
-    letterSpacing: -0.5,
-    height: 1.2,
-  );
-
-  static const headlineMedium = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w600,
-    height: 1.3,
-  );
-
-  /// Заголовки секций
-  static const titleLarge = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-  );
-
-  static const titleMedium = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-  );
-
-  static const titleSmall = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-  );
-
-  /// Основной текст
-  static const bodyLarge = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    height: 1.5,
-  );
-
-  static const bodyMedium = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    height: 1.5,
-  );
-
-  static const bodySmall = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    height: 1.5,
-  );
-
-  /// Метки и подписи
-  static const labelLarge = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-  );
-
-  static const labelMedium = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-  );
-
-  static const labelSmall = TextStyle(
-    fontSize: 10,
-    fontWeight: FontWeight.w500,
-    height: 1.4,
-    letterSpacing: 0.5,
-  );
-
-  /// Текст в результатах header (верхняя панель)
-  static const headerLabel = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.bold,
-    letterSpacing: 0.8,
-  );
-
-  static const headerValue = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.bold,
-    height: 1.3,
-  );
+  static const headlineLarge = AppTypography.headlineLarge;
+  static const headlineMedium = AppTypography.headlineMedium;
+  static const titleLarge = AppTypography.titleLarge;
+  static const titleMedium = AppTypography.titleMedium;
+  static const titleSmall = AppTypography.titleSmall;
+  static const bodyLarge = AppTypography.bodyLarge;
+  static const bodyMedium = AppTypography.bodyMedium;
+  static const bodySmall = AppTypography.bodySmall;
+  static const labelLarge = AppTypography.labelLarge;
+  static const labelMedium = AppTypography.labelMedium;
+  static const labelSmall = AppTypography.labelSmall;
+  static const headerLabel = AppTypography.headerLabel;
+  static const headerValue = AppTypography.headerValue;
 
   // === ОТСТУПЫ ===
 
@@ -236,13 +166,13 @@ class CalculatorDesignSystem {
 
   /// Декорация для карточки с автоопределением темы
   static BoxDecoration cardDecorationThemed(BuildContext context, {Color? color}) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final c = AppColors.of(context);
     return BoxDecoration(
-      color: color ?? CalculatorColors.getCardBackground(isDark),
+      color: color ?? c.cardBackground,
       borderRadius: cardBorderRadius,
       boxShadow: [
         BoxShadow(
-          color: Color.fromRGBO(0, 0, 0, isDark ? 0.3 : 0.05),
+          color: c.shadowColorMedium,
           blurRadius: 10,
           offset: const Offset(0, 2),
         ),
@@ -259,9 +189,9 @@ class CalculatorDesignSystem {
 
   /// Декорация для карточки без тени с автоопределением темы
   static BoxDecoration cardDecorationFlatThemed(BuildContext context, {Color? color, Color? borderColor}) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final c = AppColors.of(context);
     return BoxDecoration(
-      color: color ?? CalculatorColors.getCardBackground(isDark),
+      color: color ?? c.cardBackground,
       borderRadius: cardBorderRadius,
       border: borderColor != null ? Border.all(color: borderColor) : null,
     );
@@ -314,22 +244,14 @@ class CalculatorDesignSystem {
     Widget? suffixIcon,
     Color? fillColor,
   }) {
-    final defaultFillColor = isDark
-        ? const Color(0xFF2A2A2A)
-        : const Color(0xFFF1F5F9);
-    final labelColor = isDark
-        ? const Color(0xFFB0B0B0)
-        : const Color(0xFF64748B);
-    final focusBorderColor = isDark
-        ? const Color(0xFF6A6A6A)
-        : const Color(0xFF94A3B8);
+    final c = AppColors.resolve(isDark);
 
     return InputDecoration(
       labelText: label,
       hintText: hint,
       suffixIcon: suffixIcon,
       filled: true,
-      fillColor: fillColor ?? defaultFillColor,
+      fillColor: fillColor ?? c.inputBackground,
       border: OutlineInputBorder(
         borderRadius: inputBorderRadius,
         borderSide: BorderSide.none,
@@ -337,29 +259,29 @@ class CalculatorDesignSystem {
       enabledBorder: OutlineInputBorder(
         borderRadius: inputBorderRadius,
         borderSide: isDark
-            ? const BorderSide(color: Color(0xFF3A3A3A), width: 1)
+            ? BorderSide(color: c.borderDefault, width: 1)
             : BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: inputBorderRadius,
         borderSide: BorderSide(
-          color: focusBorderColor,
+          color: c.borderFocused,
           width: borderWidthMedium,
         ),
       ),
       contentPadding: inputPadding,
       labelStyle: TextStyle(
         fontSize: 14,
-        color: labelColor,
+        color: c.textSecondary,
       ),
       floatingLabelStyle: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w500,
-        color: labelColor,
+        color: c.textSecondary,
       ),
       hintStyle: TextStyle(
         fontSize: 14,
-        color: labelColor.withValues(alpha: 0.7),
+        color: c.textSecondary.withValues(alpha: 0.7),
       ),
     );
   }

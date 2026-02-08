@@ -249,7 +249,7 @@ class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWat
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('waterproof_calc.label.wall_height'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              Text(_loc.translate('waterproof_calc.label.wall_height'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
               Text('${(_wallHeight * 100).toStringAsFixed(0)} ${_loc.translate('common.cm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -263,7 +263,7 @@ class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWat
           ),
           Text(
             _loc.translate('waterproof_calc.wall_height_hint'),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -277,7 +277,7 @@ class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWat
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('waterproof_calc.label.layers'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              Text(_loc.translate('waterproof_calc.label.layers'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
               Text('$_layers', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -291,7 +291,7 @@ class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWat
           ),
           Text(
             _loc.translate('waterproof_calc.layers_hint'),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -305,7 +305,7 @@ class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWat
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('waterproof_calc.option.primer'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('waterproof_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('waterproof_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needPrimer,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPrimer = v; _update(); }); },
@@ -313,7 +313,7 @@ class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWat
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('waterproof_calc.option.tape'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('waterproof_calc.option.tape_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('waterproof_calc.option.tape_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needTape,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needTape = v; _update(); }); },

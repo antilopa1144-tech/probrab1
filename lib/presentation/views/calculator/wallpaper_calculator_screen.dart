@@ -100,7 +100,6 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
   double _width = 3.0;
   double _height = 2.7;
   double _windowsDoors = 3.0;
-  double _reserve = 5.0;
   int _rapport = 0;
   WallpaperRollSize _rollSize = WallpaperRollSize.s053x10;
   double _customWidth = 1.06;
@@ -197,9 +196,6 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
       // Если полоса выше рулона, считаем по площади
       rollsNeeded = (effectiveArea / rollArea).ceil();
     }
-
-    // Добавляем запас
-    rollsNeeded = (rollsNeeded * (1 + _reserve / 100)).ceil();
 
     // Расчёт материалов из констант
     // Клей - сухая смесь, показываем точное значение без округления вверх
@@ -309,8 +305,6 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
         const SizedBox(height: 16),
         _buildDeductionsCard(),
         const SizedBox(height: 16),
-        _buildReserveCard(),
-        const SizedBox(height: 16),
         _buildMaterialsCard(),
         const SizedBox(height: 24),
         _buildTipsCard(),
@@ -378,6 +372,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
             value: _area,
             min: 1,
             max: 500,
+            divisions: 4990,
             activeColor: accentColor,
             onChanged: (v) {
               setState(() {
@@ -706,49 +701,6 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
             onChanged: (v) {
               setState(() {
                 _windowsDoors = v;
-                _update();
-              });
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReserveCard() {
-    const accentColor = CalculatorColors.interior;
-    return _card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _loc.translate('wallpaper.reserve.title'),
-                style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: CalculatorColors.getTextPrimary(_isDark),
-                ),
-              ),
-              Text(
-                '${_reserve.toStringAsFixed(0)} %',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Slider(
-            value: _reserve,
-            min: 0,
-            max: 20,
-            divisions: 20,
-            activeColor: accentColor,
-            onChanged: (v) {
-              setState(() {
-                _reserve = v;
                 _update();
               });
             },

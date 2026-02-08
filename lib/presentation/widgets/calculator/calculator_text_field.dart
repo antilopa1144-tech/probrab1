@@ -187,7 +187,7 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
         enabledBorder: OutlineInputBorder(
           borderRadius: CalculatorDesignSystem.inputBorderRadius,
           borderSide: isDark
-              ? const BorderSide(color: CalculatorColors.borderDefaultDark, width: 1)
+              ? BorderSide(color: CalculatorColors.borderDefaultDark, width: 1)
               : BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
@@ -207,10 +207,12 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
           vertical: 12,
         ),
         labelStyle: CalculatorDesignSystem.bodySmall.copyWith(
-          color: CalculatorColors.getTextSecondary(isDark),
+          color: CalculatorColors.getTextPrimary(isDark),
+          fontWeight: FontWeight.w600,
         ),
         suffixStyle: CalculatorDesignSystem.bodySmall.copyWith(
-          color: CalculatorColors.getTextTertiary(isDark),
+          color: CalculatorColors.getTextPrimary(isDark),
+          fontWeight: FontWeight.w600,
         ),
       ),
       style: CalculatorDesignSystem.bodyMedium.copyWith(

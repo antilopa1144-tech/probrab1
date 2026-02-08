@@ -259,7 +259,7 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('decor_stone_calc.label.wall_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              Text(_loc.translate('decor_stone_calc.label.wall_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
               Text('${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -285,7 +285,7 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
           const SizedBox(height: 8),
           Text(
             _loc.translate('decor_stone_calc.joint_hint'),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -299,7 +299,7 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('decor_stone_calc.option.grout'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('decor_stone_calc.option.grout_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('decor_stone_calc.option.grout_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needGrout,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needGrout = v; _update(); }); },
@@ -307,7 +307,7 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('decor_stone_calc.option.primer'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('decor_stone_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('decor_stone_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needPrimer,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPrimer = v; _update(); }); },

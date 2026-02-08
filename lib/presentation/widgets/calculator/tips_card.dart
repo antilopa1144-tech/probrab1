@@ -98,6 +98,7 @@ class TipsCard extends StatelessWidget {
                   displayTitle,
                   style: CalculatorDesignSystem.titleMedium.copyWith(
                     color: CalculatorColors.getTextPrimary(isDark),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -126,7 +127,9 @@ class TipsCard extends StatelessWidget {
             child: Text(
               text,
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.getTextSecondary(isDark),
+                color: CalculatorColors.getTextPrimary(isDark),
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
               ),
             ),
           ),
@@ -181,7 +184,7 @@ class TipsSection extends StatelessWidget {
                 title!,
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
                   color: CalculatorColors.getTextPrimary(isDark),
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -209,8 +212,9 @@ class TipsSection extends StatelessWidget {
             child: Text(
               text,
               style: CalculatorDesignSystem.bodySmall.copyWith(
-                color: CalculatorColors.getTextSecondary(isDark),
-                fontSize: 12,
+                color: CalculatorColors.getTextPrimary(isDark),
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
               ),
             ),
           ),

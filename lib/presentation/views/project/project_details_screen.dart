@@ -9,6 +9,7 @@ import '../../../domain/calculators/calculator_registry.dart';
 import '../../../core/errors/global_error_handler.dart';
 import '../../providers/project_v2_provider.dart';
 import '../../services/pdf_export_service.dart';
+import '../../services/pdf_file_handler.dart';
 import '../../utils/calculator_navigation_helper.dart';
 import 'widgets/project_details_content.dart';
 import 'qr_share_screen.dart';

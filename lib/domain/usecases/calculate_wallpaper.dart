@@ -99,7 +99,8 @@ class CalculateWallpaper extends BaseCalculator {
 
     // --- Получаем остальные входные данные ---
     final rapport = getInput(inputs, 'rapport', defaultValue: 0.0, minValue: 0.0, maxValue: 100.0); // см
-    final reserve = getInput(inputs, 'reserve', defaultValue: 5.0, minValue: 0.0, maxValue: 15.0);
+    // Запас убран по запросу пользователя — раскрой обоев уже учтён в формуле полос
+    const reserve = 0.0;
     final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 2.5, minValue: 2.0, maxValue: 5.0);
     final windowsArea = getInput(inputs, 'windowsArea', minValue: 0.0);
     final doorsArea = getInput(inputs, 'doorsArea', minValue: 0.0);

@@ -6,6 +6,7 @@ import '../../core/localization/app_localizations.dart';
 import '../../domain/models/calculator_result_payload.dart';
 import '../../domain/models/shareable_content.dart';
 import '../services/pdf_export_service.dart';
+import '../services/pdf_file_handler.dart';
 import '../views/calculator/calculator_qr_share_screen.dart';
 
 /// Миксин для добавления функциональности экспорта (share/copy) в Riverpod-калькуляторы.
@@ -130,35 +131,57 @@ mixin ExportableConsumerMixin<T extends ConsumerStatefulWidget> on ConsumerState
     );
   }
 
-  /// Экспорт результата в PDF (открыть диалог печати).
+  /// Экспорт результата в PDF — сохраняет и открывает файл.
   Future<void> exportPdf() async {
-    await PdfExportService.exportFromText(
-      title: exportSubject,
-      text: generateExportText(),
-      saveLocally: false,
-    );
+    try {
+      final filePath = await PdfExportService.exportFromText(
+        title: exportSubject,
+        text: generateExportText(),
+      );
+      await openPdfFile(filePath);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка при создании PDF: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
-  /// Скачать результат как PDF файл локально.
+  /// Скачать результат как PDF файл — сохраняет и открывает.
   Future<void> downloadPdf() async {
-    final filePath = await PdfExportService.exportFromText(
-      title: exportSubject,
-      text: generateExportText(),
-      saveLocally: true,
-    );
-
-    if (filePath != null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(loc.translate('common.pdf_saved_to', {'path': filePath})),
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 5),
-          action: SnackBarAction(
-            label: 'OK',
-            onPressed: () {},
-          ),
-        ),
+    try {
+      final filePath = await PdfExportService.exportFromText(
+        title: exportSubject,
+        text: generateExportText(),
       );
+      await openPdfFile(filePath);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(loc.translate('common.pdf_saved_to', {'path': filePath})),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'OK',
+              onPressed: () {},
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка при создании PDF: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

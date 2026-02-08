@@ -261,7 +261,7 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('stairs_calc.option.railing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('stairs_calc.option.railing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('stairs_calc.option.railing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needRailing,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needRailing = v; _update(); }); },
@@ -270,7 +270,7 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(_loc.translate('stairs_calc.option.both_sides'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-              subtitle: Text(_loc.translate('stairs_calc.option.both_sides_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              subtitle: Text(_loc.translate('stairs_calc.option.both_sides_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
               value: _needBothSides,
               activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needBothSides = v; _update(); }); },
@@ -333,7 +333,7 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+          Text(label, style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
           Text(value, style: CalculatorDesignSystem.bodyMedium.copyWith(fontWeight: FontWeight.bold)),
         ],
       ),

@@ -172,6 +172,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     with ExportableConsumerMixin {
   late final CalculatorMemoryService _memory;
   Map<String, double> _latestInputs = {};
+  // _useSliders removed — slider fields now always show both slider + text field
 
   late AppLocalizations _loc;
 
@@ -270,6 +271,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
       actions: exportActions,
       resultHeader: calcState.results != null ? _buildResultHeader(calcState.results, accentColor) : null,
       children: [
+        // Slider fields now always show both slider + text field inline
         if (beforeTips.isNotEmpty) TipsCard(
           tips: beforeTips,
           accentColor: accentColor,
@@ -289,6 +291,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
       ],
     );
   }
+
 
   List<Widget> _buildInputFields(
     Map<String, double> inputs,
@@ -362,6 +365,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     final max = field.maxValue ?? 100;
     final step = field.step ?? 1;
     final unitLabel = _loc.translate('unit.${field.unitType.name}');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final range = max - min;
     int? divisions;
     if (step > 0 && range > 0) {
@@ -370,6 +374,10 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
         divisions = raw.round();
       }
     }
+
+    // Определяем формат отображения: дробный если step < 1
+    final useDecimal = step < 1;
+    final decimals = step < 0.1 ? 2 : (useDecimal ? 1 : 0);
 
     return Column(
       children: [
@@ -383,7 +391,8 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
                     child: Text(
                       _loc.translate(field.labelKey),
                       style: CalculatorDesignSystem.bodyMedium.copyWith(
-                        color: CalculatorColors.textPrimary,
+                        color: CalculatorColors.getTextPrimary(isDark),
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -398,7 +407,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
               ),
             ),
             Text(
-              '${value.toStringAsFixed(0)} $unitLabel',
+              '${value.toStringAsFixed(decimals)} $unitLabel',
               style: CalculatorDesignSystem.headlineMedium.copyWith(
                 color: accentColor,
                 fontWeight: FontWeight.bold,
@@ -412,9 +421,9 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
             SizedBox(
               width: 50,
               child: Text(
-                '${min.toInt()} $unitLabel',
+                '${min.toStringAsFixed(useDecimal ? 1 : 0)} $unitLabel',
                 style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(isDark),
                 ),
               ),
             ),
@@ -422,7 +431,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
                   activeTrackColor: accentColor,
-                  inactiveTrackColor: Colors.grey[300],
+                  inactiveTrackColor: isDark ? Colors.grey[700] : Colors.grey[300],
                   thumbColor: accentColor,
                   overlayColor: accentColor.withValues(alpha: 0.2),
                 ),
@@ -438,14 +447,25 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
             SizedBox(
               width: 50,
               child: Text(
-                '${max.toInt()} $unitLabel',
+                '${max.toStringAsFixed(useDecimal ? 1 : 0)} $unitLabel',
                 style: CalculatorDesignSystem.bodySmall.copyWith(
-                  color: CalculatorColors.textSecondary,
+                  color: CalculatorColors.getTextSecondary(isDark),
                 ),
                 textAlign: TextAlign.right,
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 12),
+        CalculatorTextField(
+          label: _loc.translate(field.labelKey),
+          value: value,
+          onChanged: (v) => _updateValue(field.key, v),
+          suffix: unitLabel,
+          accentColor: accentColor,
+          minValue: min,
+          maxValue: max,
+          decimalPlaces: decimals,
         ),
       ],
     );
@@ -475,6 +495,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
   Widget _buildSelectField(CalculatorField field, Map<String, double> inputs, Color accentColor) {
     final value = inputs[field.key] ?? field.defaultValue;
     final options = field.options ?? [];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Если опций <= 4, используем TypeSelectorGroup для лучшего UX
     if (options.length <= 4) {
@@ -487,8 +508,8 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
                 Text(
                   _loc.translate(field.labelKey),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textPrimary,
-                    fontWeight: FontWeight.w500,
+                    color: CalculatorColors.getTextPrimary(isDark),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 if (field.required) ...[
@@ -525,7 +546,8 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
             Text(
               _loc.translate(field.labelKey),
               style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textPrimary,
+                color: CalculatorColors.getTextPrimary(isDark),
+                fontWeight: FontWeight.w600,
               ),
             ),
             if (field.required) ...[
@@ -541,17 +563,17 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: CalculatorColors.inputBackground,
+            color: CalculatorColors.getInputBackground(isDark),
             borderRadius: CalculatorDesignSystem.inputBorderRadius,
-            border: Border.all(color: Colors.grey[300]!),
+            border: Border.all(color: isDark ? CalculatorColors.borderDefaultDark : Colors.grey[300]!),
           ),
           child: DropdownButton<double>(
             value: value,
             isExpanded: true,
             underline: const SizedBox(),
-            dropdownColor: CalculatorColors.inputBackground,
+            dropdownColor: CalculatorColors.getInputBackground(isDark),
             style: CalculatorDesignSystem.bodyMedium.copyWith(
-              color: CalculatorColors.textPrimary,
+              color: CalculatorColors.getTextPrimary(isDark),
             ),
             items: options.map((opt) {
               return DropdownMenuItem(
@@ -585,6 +607,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     final value = inputs[field.key] ?? field.defaultValue;
     final isOn = value == 1.0;
     final accentColor = CalculatorColors.getColorByCategory(widget.definition.category.name);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -601,7 +624,8 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
                       child: Text(
                         _loc.translate(field.labelKey),
                         style: CalculatorDesignSystem.bodyMedium.copyWith(
-                          color: CalculatorColors.textPrimary,
+                          color: CalculatorColors.getTextPrimary(isDark),
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -619,7 +643,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
                   Text(
                     _loc.translate(field.hintKey!),
                     style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.textSecondary,
+                      color: CalculatorColors.getTextSecondary(isDark),
                     ),
                   ),
                 ],
@@ -639,6 +663,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
   Widget _buildRadioField(CalculatorField field, Map<String, double> inputs, Color accentColor) {
     final value = inputs[field.key] ?? field.defaultValue;
     final options = field.options ?? [];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -649,8 +674,8 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
               Text(
                 _loc.translate(field.labelKey),
                 style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textPrimary,
-                  fontWeight: FontWeight.w500,
+                  color: CalculatorColors.getTextPrimary(isDark),
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               if (field.required) ...[
@@ -737,7 +762,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(CalculatorDesignSystem.spacingL),
-      decoration: CalculatorDesignSystem.cardDecoration(),
+      decoration: CalculatorDesignSystem.cardDecorationThemed(context),
       child: child,
     );
   }

@@ -238,7 +238,7 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('gutters_calc.label.downpipes_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              Text(_loc.translate('gutters_calc.label.downpipes_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
               Text('$_downpipesCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -252,7 +252,7 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
           ),
           Text(
             _loc.translate('gutters_calc.downpipes_hint'),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -264,7 +264,7 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
       child: SwitchListTile(
         contentPadding: EdgeInsets.zero,
         title: Text(_loc.translate('gutters_calc.option.heating'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-        subtitle: Text(_loc.translate('gutters_calc.option.heating_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+        subtitle: Text(_loc.translate('gutters_calc.option.heating_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
         value: _needHeating,
         activeTrackColor: _accentColor,
         onChanged: (v) { setState(() { _needHeating = v; _update(); }); },

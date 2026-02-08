@@ -1,3 +1,5 @@
+import 'dart:math' show max, sqrt;
+
 import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
@@ -36,13 +38,13 @@ class _WarmFloorConstants {
 
   // Room power (Вт/м²)
   int getRoomPower(String roomKey) {
-    final defaults = {'bathroom': 180, 'living': 120, 'kitchen': 130, 'balcony': 200};
+    final defaults = {'bathroom': 180, 'living': 150, 'kitchen': 130, 'balcony': 200};
     return _getInt('room_power', roomKey, defaults[roomKey] ?? 150);
   }
 
   // Pipe step for water system (мм)
   int getPipeStep(String roomKey) {
-    final defaults = {'bathroom': 150, 'living': 150, 'kitchen': 150, 'balcony': 100};
+    final defaults = {'bathroom': 100, 'living': 150, 'kitchen': 150, 'balcony': 100};
     return _getInt('pipe_step', roomKey, defaults[roomKey] ?? 150);
   }
 
@@ -125,6 +127,7 @@ enum RoomType {
 
 class _HeatingResult {
   final double area;
+  final double perimeter; // Периметр помещения (м)
   final HeatingSystemType systemType;
   final RoomType roomType;
   final double heatingArea; // Фактическая площадь обогрева (70-80% от общей)
@@ -158,6 +161,7 @@ class _HeatingResult {
 
   const _HeatingResult({
     required this.area,
+    required this.perimeter,
     required this.systemType,
     required this.roomType,
     required this.heatingArea,
@@ -251,6 +255,11 @@ class _UnderfloorHeatingCalculatorScreenState
   _HeatingResult _calculate() {
     final calculatedArea = _getCalculatedArea();
 
+    // Периметр: из размеров или оценка по площади (√area × 4)
+    final perimeter = _inputMode == InputMode.byDimensions
+        ? (_length + _width) * 2
+        : sqrt(calculatedArea) * 4;
+
     // Площадь обогрева = настраиваемый % от общей (минус мебель, сантехника)
     final heatingArea = calculatedArea * (_usefulAreaPercent / 100);
 
@@ -291,14 +300,32 @@ class _UnderfloorHeatingCalculatorScreenState
         // ИК плёнка: ширина из выбора пользователя (50/80/100 см)
         final filmWidthM = _filmWidths[_filmWidthIndex] ?? 0.8;
         final filmWidthCmVal = (filmWidthM * 100).toInt();
-        filmArea = heatingArea;
-        // Погонные метры = площадь / ширина плёнки
-        final linearMeters = filmArea / filmWidthM;
-        // Количество полос (примерно 5 м.п. на полосу)
-        final filmStrips = (linearMeters / 5.0).ceil();
-        // На каждую полосу: контактные зажимы
-        contactClips = filmStrips * _constants.contactsPerStrip;
-        filmLinearMeters = linearMeters;
+
+        // Отступы от стен: 30 см с каждой стороны (требование производителей Caleo, Q-Term)
+        const wallOffset = 0.30; // м
+
+        // Эффективные размеры (без отступов от стен)
+        double effectiveLength, effectiveWidth;
+        if (_inputMode == InputMode.byDimensions) {
+          effectiveLength = max(_length - 2 * wallOffset, 0.5);
+          effectiveWidth = max(_width - 2 * wallOffset, 0.5);
+        } else {
+          // Оценка размеров из площади (соотношение ~4:3)
+          final side = sqrt(calculatedArea);
+          effectiveLength = max(side * 1.15 - 2 * wallOffset, 0.5);
+          effectiveWidth = max(side * 0.87 - 2 * wallOffset, 0.5);
+        }
+
+        // Количество полос = сколько полос шириной filmWidth вмещается по ширине комнаты
+        final stripCount = max((effectiveWidth / filmWidthM).floor(), 1);
+        // Длина каждой полосы = эффективная длина комнаты
+        final stripLength = effectiveLength;
+        // Итого погонных метров
+        filmLinearMeters = stripCount * stripLength;
+        // Фактическая площадь покрытия плёнкой
+        filmArea = filmLinearMeters * filmWidthM;
+        // На каждую полосу: контактные зажимы (2 шт на полосу)
+        contactClips = stripCount * _constants.contactsPerStrip;
         filmWidthCm = filmWidthCmVal;
         break;
 
@@ -328,6 +355,7 @@ class _UnderfloorHeatingCalculatorScreenState
 
     return _HeatingResult(
       area: calculatedArea,
+      perimeter: perimeter,
       systemType: _systemType,
       roomType: _roomType,
       heatingArea: heatingArea,
@@ -351,7 +379,7 @@ class _UnderfloorHeatingCalculatorScreenState
     );
   }
 
-  void _update() => setState(() => _result = _calculate());
+  void _recalculate() => _result = _calculate();
 
   @override
   String generateExportText() {
@@ -389,7 +417,7 @@ class _UnderfloorHeatingCalculatorScreenState
         buffer.writeln('• ${_loc.translate('warmfloor.export.collector')}: ${_result.collectorOutputs} ${_loc.translate('warmfloor.materials.outputs')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.loops')}: ${_result.loopCount}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.insulation_psb')}: ${_result.insulationArea!.toStringAsFixed(1)} м²');
-        buffer.writeln('• ${_loc.translate('warmfloor.export.damper_tape')}: ${(_result.area * _constants.damperTapePerM2).toStringAsFixed(0)} ${_loc.translate('common.meters')}');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.damper_tape')}: ${(_result.perimeter * 1.1).toStringAsFixed(0)} ${_loc.translate('common.meters')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.brackets')}: ${(_result.heatingArea * _constants.bracketsPerM2).toStringAsFixed(0)} ${_loc.translate('common.pcs')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.screed')}: ${_result.screedVolume!.toStringAsFixed(2)} м³');
         break;
@@ -497,7 +525,7 @@ class _UnderfloorHeatingCalculatorScreenState
             onSelect: (index) {
               setState(() {
                 _inputMode = InputMode.values[index];
-                _update();
+                _recalculate();
               });
             },
             accentColor: accentColor,
@@ -510,43 +538,20 @@ class _UnderfloorHeatingCalculatorScreenState
   Widget _buildAreaCard() {
     const accentColor = CalculatorColors.engineering;
     return _card(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _loc.translate('warmfloor.dimensions.room_area'),
-                  style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.getTextSecondary(_isDark),
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${_area.toStringAsFixed(1)} м²',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Slider(
-            value: _area,
-            min: 1,
-            max: 100,
-            activeColor: accentColor,
-            onChanged: (v) {
-              setState(() {
-                _area = v;
-                _update();
-              });
-            },
-          ),
-        ],
+      child: CalculatorTextField(
+        key: const ValueKey('warm_floor_area'),
+        label: _loc.translate('warmfloor.dimensions.room_area'),
+        value: _area,
+        onChanged: (v) {
+          setState(() {
+            _area = v;
+            _recalculate();
+          });
+        },
+        suffix: 'м²',
+        accentColor: accentColor,
+        minValue: 1,
+        maxValue: 200,
       ),
     );
   }
@@ -555,41 +560,45 @@ class _UnderfloorHeatingCalculatorScreenState
     const accentColor = CalculatorColors.engineering;
     return _card(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            _loc.translate('warmfloor.dimensions.title'),
-            style: CalculatorDesignSystem.titleMedium.copyWith(
-              color: CalculatorColors.getTextPrimary(_isDark),
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildDimensionSlider(
-            label: _loc.translate('warmfloor.dimensions.length'),
-            value: _length,
-            min: 0.5,
-            max: 20.0,
-            onChanged: (v) {
-              setState(() {
-                _length = v;
-                _update();
-              });
-            },
-            accentColor: accentColor,
-          ),
-          const SizedBox(height: 16),
-          _buildDimensionSlider(
-            label: _loc.translate('warmfloor.dimensions.width'),
-            value: _width,
-            min: 0.5,
-            max: 20.0,
-            onChanged: (v) {
-              setState(() {
-                _width = v;
-                _update();
-              });
-            },
-            accentColor: accentColor,
+          Row(
+            children: [
+              Expanded(
+                child: CalculatorTextField(
+                  key: const ValueKey('warm_floor_length'),
+                  label: _loc.translate('warmfloor.dimensions.length'),
+                  value: _length,
+                  onChanged: (v) {
+                    setState(() {
+                      _length = v;
+                      _recalculate();
+                    });
+                  },
+                  suffix: 'м',
+                  accentColor: accentColor,
+                  minValue: 0.5,
+                  maxValue: 30,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: CalculatorTextField(
+                  key: const ValueKey('warm_floor_width'),
+                  label: _loc.translate('warmfloor.dimensions.width'),
+                  value: _width,
+                  onChanged: (v) {
+                    setState(() {
+                      _width = v;
+                      _recalculate();
+                    });
+                  },
+                  suffix: 'м',
+                  accentColor: accentColor,
+                  minValue: 0.5,
+                  maxValue: 30,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           Container(
@@ -599,23 +608,19 @@ class _UnderfloorHeatingCalculatorScreenState
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: Text(
-                    _loc.translate('warmfloor.dimensions.room_area'),
-                    style: CalculatorDesignSystem.bodyMedium.copyWith(
-                      color: CalculatorColors.getTextSecondary(_isDark),
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                Text(
+                  _loc.translate('warmfloor.dimensions.room_area'),
+                  style: CalculatorDesignSystem.bodyMedium.copyWith(
+                    color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
-                const SizedBox(width: 8),
                 Text(
                   '${_getCalculatedArea().toStringAsFixed(1)} м²',
-                  style: CalculatorDesignSystem.headlineMedium.copyWith(
+                  style: CalculatorDesignSystem.titleMedium.copyWith(
                     color: accentColor,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -623,51 +628,6 @@ class _UnderfloorHeatingCalculatorScreenState
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildDimensionSlider({
-    required String label,
-    required double value,
-    required double min,
-    required double max,
-    required ValueChanged<double> onChanged,
-    required Color accentColor,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                label,
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.getTextSecondary(_isDark),
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              '${value.toStringAsFixed(1)} м',
-              style: CalculatorDesignSystem.titleMedium.copyWith(
-                color: accentColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: ((max - min) * 10).toInt(),
-          activeColor: accentColor,
-          onChanged: onChanged,
-        ),
-      ],
     );
   }
 
@@ -695,7 +655,7 @@ class _UnderfloorHeatingCalculatorScreenState
                 onTap: () {
                   setState(() {
                     _systemType = type;
-                    _update();
+                    _recalculate();
                   });
                 },
                 borderRadius: BorderRadius.circular(12),
@@ -808,7 +768,7 @@ class _UnderfloorHeatingCalculatorScreenState
                 onTap: () {
                   setState(() {
                     _roomType = type;
-                    _update();
+                    _recalculate();
                   });
                 },
                 borderRadius: BorderRadius.circular(12),
@@ -919,7 +879,7 @@ class _UnderfloorHeatingCalculatorScreenState
               onChanged: (value) {
                 setState(() {
                   _usefulAreaPercent = value;
-                  _update();
+                  _recalculate();
                 });
               },
             ),
@@ -942,6 +902,22 @@ class _UnderfloorHeatingCalculatorScreenState
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          CalculatorTextField(
+            label: _loc.translate('warmfloor.useful_area.title'),
+            value: _usefulAreaPercent,
+            onChanged: (v) {
+              setState(() {
+                _usefulAreaPercent = v;
+                _recalculate();
+              });
+            },
+            suffix: '%',
+            accentColor: accentColor,
+            minValue: _constants.usefulAreaMin,
+            maxValue: _constants.usefulAreaMax,
+            decimalPlaces: 0,
           ),
         ],
       ),
@@ -967,7 +943,7 @@ class _UnderfloorHeatingCalculatorScreenState
             onSelect: (index) {
               setState(() {
                 _filmWidthIndex = index;
-                _update();
+                _result = _calculate();
               });
             },
             accentColor: accentColor,
@@ -1007,7 +983,7 @@ class _UnderfloorHeatingCalculatorScreenState
             onChanged: (value) {
               setState(() {
                 _addInsulation = value;
-                _update();
+                _recalculate();
               });
             },
             activeTrackColor: accentColor,
@@ -1052,8 +1028,8 @@ class _UnderfloorHeatingCalculatorScreenState
         materials.addAll([
           MaterialItem(
             name: _loc.translate('warmfloor.materials.ir_film'),
-            value: '${_result.filmLinearMeters!.toStringAsFixed(1)} м.п.',
-            subtitle: '${_loc.translate('warmfloor.film_width.label')}: ${_result.filmWidthCm} см',
+            value: '${_result.filmLinearMeters!.toStringAsFixed(1)} м.п. × ${_result.filmWidthCm} см',
+            subtitle: '${_loc.translate('warmfloor.materials.coverage')}: ${_result.filmArea!.toStringAsFixed(1)} м²',
             icon: Icons.view_module,
           ),
           MaterialItem(
@@ -1079,6 +1055,7 @@ class _UnderfloorHeatingCalculatorScreenState
           MaterialItem(
             name: _loc.translate('warmfloor.materials.pipe_pert'),
             value: '${_result.pipeLength!.toStringAsFixed(0)} м',
+            subtitle: '${_loc.translate('warmfloor.materials.pipe_step')}: ${_constants.getPipeStep(_roomType.key)} мм',
             icon: Icons.timeline,
           ),
           MaterialItem(
@@ -1099,7 +1076,7 @@ class _UnderfloorHeatingCalculatorScreenState
           ),
           MaterialItem(
             name: _loc.translate('warmfloor.materials.damper_tape'),
-            value: '${(_result.area * _constants.damperTapePerM2).toStringAsFixed(0)} м',
+            value: '${(_result.perimeter * 1.1).toStringAsFixed(0)} м',
             icon: Icons.straighten,
           ),
           MaterialItem(

@@ -369,7 +369,7 @@ class _PaintScreenState extends State<PaintScreen> {
         children: [
           Expanded(
             child: CalculatorTextField(
-              label: _loc.translate('plaster_pro.label.width'),
+              label: _loc.translate('input.room_width'),
               value: _roomWidth,
               onChanged: (v) => setState(() => _roomWidth = v),
               suffix: 'м',
@@ -381,7 +381,7 @@ class _PaintScreenState extends State<PaintScreen> {
           const SizedBox(width: 12),
           Expanded(
             child: CalculatorTextField(
-              label: _loc.translate('plaster_pro.label.length'),
+              label: _loc.translate('input.room_length'),
               value: _roomLength,
               onChanged: (v) => setState(() => _roomLength = v),
               suffix: 'м',
@@ -394,7 +394,7 @@ class _PaintScreenState extends State<PaintScreen> {
       ),
       const SizedBox(height: 12),
       CalculatorTextField(
-        label: _loc.translate('plaster_pro.label.height'),
+        label: _loc.translate('input.room_height'),
         value: _roomHeight,
         onChanged: (v) => setState(() => _roomHeight = v),
         suffix: 'м',
@@ -404,7 +404,8 @@ class _PaintScreenState extends State<PaintScreen> {
       ),
       const SizedBox(height: 12),
       CalculatorTextField(
-        label: _loc.translate('plaster_pro.label.openings_hint'),
+        key: const ValueKey('openings_area_field'),
+        label: _loc.translate('input.paint.doors_windows'),
         value: _openingsArea,
         onChanged: (v) => setState(() => _openingsArea = v),
         suffix: 'м²',
@@ -418,7 +419,8 @@ class _PaintScreenState extends State<PaintScreen> {
   List<Widget> _buildManualInputs(Color accentColor) {
     return [
       CalculatorTextField(
-        label: _loc.translate('plaster_pro.label.wall_area'),
+        key: const ValueKey('manual_area_field'),
+        label: _loc.translate('input.paint.wall_area'),
         value: _manualArea,
         onChanged: (v) => setState(() => _manualArea = v),
         suffix: 'м²',

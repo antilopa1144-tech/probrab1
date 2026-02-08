@@ -1,19 +1,16 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
-import 'package:share_plus/share_plus.dart' show ShareParams, SharePlus, XFile;
 import '../../core/localization/app_localizations.dart';
 import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/models/calculator_definition_v2.dart';
 import '../../domain/models/project_v2.dart';
 import '../../data/models/calculation.dart';
 import '../utils/calculation_display.dart';
+import 'pdf_file_handler.dart';
 
 /// Сервис для экспорта расчётов в PDF.
 class PdfExportService {
@@ -51,58 +48,13 @@ class PdfExportService {
     );
   }
 
-  /// Поделиться PDF файлом.
-  static Future<void> sharePdf(Uint8List data, String fileName) async {
-    final tempDir = await getTemporaryDirectory();
-    final file = File('${tempDir.path}/$fileName');
-    await file.writeAsBytes(data);
-    await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], text: fileName));
-  }
-
-  /// Сохранить PDF локально и вернуть путь к файлу.
-  static Future<String> savePdfLocally(Uint8List data, String fileName) async {
-    Directory? directory;
-
-    if (Platform.isAndroid) {
-      // Попробуем сохранить во внешнее хранилище (Downloads)
-      directory = await getExternalStorageDirectory();
-      if (directory != null) {
-        // Переходим в папку Downloads
-        final downloadsPath = directory.path.replaceFirst(
-          RegExp(r'/Android/data/[^/]+/files'),
-          '/Download',
-        );
-        directory = Directory(downloadsPath);
-        // ignore: avoid_slow_async_io
-        if (!await directory.exists()) {
-          directory = await getApplicationDocumentsDirectory();
-        }
-      }
-    } else if (Platform.isIOS) {
-      directory = await getApplicationDocumentsDirectory();
-    } else {
-      // Windows, macOS, Linux
-      directory = await getDownloadsDirectory() ?? await getApplicationDocumentsDirectory();
-    }
-
-    directory ??= await getApplicationDocumentsDirectory();
-
-    final filePath = '${directory.path}/$fileName';
-    final file = File(filePath);
-    await file.writeAsBytes(data);
-
-    return filePath;
-  }
-
   /// Экспортировать расчёт в PDF.
   ///
-  /// [saveLocally] - если true, сохраняет файл локально и возвращает путь.
-  /// Если false, открывает диалог печати/шеринга.
-  static Future<String?> exportCalculation(
+  /// Сохраняет PDF локально и возвращает путь к файлу.
+  static Future<String> exportCalculation(
     Calculation calculation,
     CalculatorDefinitionV2? definition, {
     BuildContext? buildContext,
-    bool saveLocally = false,
   }) async {
     final theme = await _buildTheme();
     final resolvedDefinition =
@@ -224,18 +176,8 @@ class PdfExportService {
 
     final pdfBytes = await pdf.save();
 
-    if (saveLocally) {
-      // Генерируем имя файла
-      final fileName = 'calculation_${calculation.id}_${DateTime.now().millisecondsSinceEpoch}.pdf';
-      final filePath = await savePdfLocally(pdfBytes, fileName);
-      return filePath;
-    } else {
-      // Показываем диалог печати/сохранения
-      await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => pdfBytes,
-      );
-      return null;
-    }
+    final fileName = 'calculation_${calculation.id}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+    return savePdfToFile(pdfBytes, fileName);
   }
 
   static pw.Widget _buildInputsTable(String inputsJson) {
@@ -370,13 +312,11 @@ class PdfExportService {
 
   /// Экспортировать проект в PDF.
   ///
-  /// [saveLocally] - если true, сохраняет файл локально и возвращает путь.
-  /// Если false, открывает диалог печати/шеринга.
-  static Future<String?> exportProject(
+  /// Сохраняет PDF локально и возвращает путь к файлу.
+  static Future<String> exportProject(
     ProjectV2 project,
-    BuildContext context, {
-    bool saveLocally = false,
-  }) async {
+    BuildContext context,
+  ) async {
     final theme = await _buildTheme();
     // ignore: use_build_context_synchronously
     final loc = AppLocalizations.of(context);
@@ -469,18 +409,9 @@ class PdfExportService {
 
     final pdfBytes = await pdf.save();
 
-    if (saveLocally) {
-      // Генерируем имя файла из названия проекта
-      final sanitizedName = sanitizeFileName(project.name);
-      final fileName = 'project_${sanitizedName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
-      final filePath = await savePdfLocally(pdfBytes, fileName);
-      return filePath;
-    } else {
-      await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => pdfBytes,
-      );
-      return null;
-    }
+    final sanitizedName = sanitizeFileName(project.name);
+    final fileName = 'project_${sanitizedName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+    return savePdfToFile(pdfBytes, fileName);
   }
 
   static pw.Widget _buildProjectInfoSection(
@@ -890,11 +821,10 @@ class PdfExportService {
   ///
   /// [title] — заголовок PDF (имя калькулятора).
   /// [text] — текст результата (из generateExportText()).
-  /// [saveLocally] — если true, сохраняет локально и возвращает путь.
-  static Future<String?> exportFromText({
+  /// Сохраняет PDF локально и возвращает путь к файлу.
+  static Future<String> exportFromText({
     required String title,
     required String text,
-    bool saveLocally = false,
   }) async {
     final theme = await _buildTheme();
     final pdf = pw.Document(
@@ -961,15 +891,8 @@ class PdfExportService {
 
     final pdfBytes = await pdf.save();
 
-    if (saveLocally) {
-      final sanitizedTitle = sanitizeFileName(title);
-      final fileName = '${sanitizedTitle}_${DateTime.now().millisecondsSinceEpoch}.pdf';
-      return savePdfLocally(pdfBytes, fileName);
-    } else {
-      await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => pdfBytes,
-      );
-      return null;
-    }
+    final sanitizedTitle = sanitizeFileName(title);
+    final fileName = '${sanitizedTitle}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+    return savePdfToFile(pdfBytes, fileName);
   }
 }

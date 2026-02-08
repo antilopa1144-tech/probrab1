@@ -293,7 +293,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
           const SizedBox(height: 8),
           Text(
             _loc.translate('parquet_calc.pattern.waste_info').replaceFirst('{value}', _pattern.wastePercent.toString()),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -354,7 +354,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('parquet_calc.label.floor_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              Text(_loc.translate('parquet_calc.label.floor_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
               Text('${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -382,7 +382,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('parquet_calc.option.underlay'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('parquet_calc.option.underlay_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('parquet_calc.option.underlay_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needUnderlay,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needUnderlay = v; _update(); }); },
@@ -390,7 +390,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('parquet_calc.option.plinth'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('parquet_calc.option.plinth_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('parquet_calc.option.plinth_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needPlinth,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needPlinth = v; _update(); }); },
@@ -398,7 +398,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('parquet_calc.option.glue'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('parquet_calc.option.glue_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('parquet_calc.option.glue_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needGlue,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needGlue = v; _update(); }); },

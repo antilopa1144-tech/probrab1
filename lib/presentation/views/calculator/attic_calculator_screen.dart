@@ -299,7 +299,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('attic_calc.label.insulation_thickness'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              Text(_loc.translate('attic_calc.label.insulation_thickness'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
               Text('${_insulationThickness.toStringAsFixed(0)} ${_loc.translate('common.mm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -322,7 +322,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
                   Expanded(
                     child: Text(
                       _loc.translate('attic_calc.hint.xps_no_vapor_barrier'),
-                      style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+                      style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
                     ),
                   ),
                 ],
@@ -341,7 +341,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(_loc.translate('attic_calc.option.vapor_barrier'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-              subtitle: Text(_loc.translate('attic_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              subtitle: Text(_loc.translate('attic_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
               value: _needVaporBarrier,
               activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needVaporBarrier = v; _update(); }); },
@@ -350,7 +350,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('attic_calc.option.membrane'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('attic_calc.option.membrane_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('attic_calc.option.membrane_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needMembrane,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needMembrane = v; _update(); }); },
@@ -359,7 +359,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(_loc.translate('attic_calc.option.gypsum'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-              subtitle: Text(_loc.translate('attic_calc.option.gypsum_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              subtitle: Text(_loc.translate('attic_calc.option.gypsum_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
               value: _needGypsum,
               activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needGypsum = v; _update(); }); },

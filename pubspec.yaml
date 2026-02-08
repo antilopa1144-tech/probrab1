@@ -41,6 +41,8 @@ dependencies:
   url_launcher: ^6.3.2
   # Поделиться результатом расчёта
   share_plus: ^12.0.1
+  # Открытие файлов системным просмотрщиком (PDF и др.)
+  open_filex: ^4.5.0
   # Реклама Google AdMob (баннеры и межстраничная)
   # Покупки внутри приложения (PRO версия без рекламы)
   # Генерация PDF отчётов
@@ -54,7 +56,6 @@ dependencies:
   # Для работы с векторами 3D (Vector3)
   vector_math: ^2.1.4
   fl_chart: ^0.69.0
-  printing: ^5.14.2
   package_info_plus: ^9.0.0
   # Firebase для аналитики и мониторинга ошибок
   firebase_core: ^3.3.0
@@ -113,11 +114,6 @@ flutter:
     - assets/obj/
     - assets/fonts/
 
-  # Шрифты для PDF-экспорта (кириллица)
-  fonts:
-    - family: Roboto
-      fonts:
-        - asset: assets/fonts/Roboto-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/Roboto-Bold.ttf
-          weight: 700
+  # Шрифты Roboto хранятся в assets/fonts/ для PDF-экспорта (кириллица).
+  # НЕ объявляем как fonts: чтобы UI использовал системный Roboto,
+  # а PDF-сервис загружает их напрямую через rootBundle.load().

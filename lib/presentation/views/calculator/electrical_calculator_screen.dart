@@ -12,6 +12,7 @@ import '../../widgets/calculator/calculator_scaffold.dart';
 import '../../widgets/calculator/mode_selector.dart';
 import '../../widgets/calculator/result_card.dart';
 import '../../widgets/calculator/tips_card.dart';
+import '../../widgets/calculator/calculator_text_field.dart';
 
 /// Режим ввода данных
 enum InputMode {
@@ -647,6 +648,18 @@ class _ElectricalCalculatorScreenState
             divisions: divisions,
             onChanged: onChanged,
           ),
+        ),
+        const SizedBox(height: 12),
+        CalculatorTextField(
+          label: label,
+          value: value,
+          onChanged: onChanged,
+          suffix: suffix,
+          accentColor: accentColor,
+          minValue: min,
+          maxValue: max,
+          isInteger: isInteger,
+          decimalPlaces: isInteger ? 0 : 1,
         ),
       ],
     );

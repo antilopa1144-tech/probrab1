@@ -10,7 +10,11 @@ import '../../widgets/calculator/calculator_widgets.dart';
 enum FacadePanelType {
   vinyl('facade_panels_calc.type.vinyl', 'facade_panels_calc.type.vinyl_desc', Icons.view_module),
   metal('facade_panels_calc.type.metal', 'facade_panels_calc.type.metal_desc', Icons.grid_view),
-  fiber('facade_panels_calc.type.fiber', 'facade_panels_calc.type.fiber_desc', Icons.layers);
+  fiber('facade_panels_calc.type.fiber', 'facade_panels_calc.type.fiber_desc', Icons.layers),
+  blockHouse('facade_panels_calc.type.block_house', 'facade_panels_calc.type.block_house_desc', Icons.forest),
+  thermoPanels('facade_panels_calc.type.thermo', 'facade_panels_calc.type.thermo_desc', Icons.thermostat),
+  profSheet('facade_panels_calc.type.prof_sheet', 'facade_panels_calc.type.prof_sheet_desc', Icons.view_column),
+  hpl('facade_panels_calc.type.hpl', 'facade_panels_calc.type.hpl_desc', Icons.dashboard);
 
   final String nameKey;
   final String descKey;
@@ -21,6 +25,7 @@ enum FacadePanelType {
 class _FacadePanelsResult {
   final double wallArea;
   final double panelsArea;
+  final int panelsCount;
   final double profileLength;
   final double insulationArea;
   final int cornersCount;
@@ -29,6 +34,7 @@ class _FacadePanelsResult {
   const _FacadePanelsResult({
     required this.wallArea,
     required this.panelsArea,
+    required this.panelsCount,
     required this.profileLength,
     required this.insulationArea,
     required this.cornersCount,
@@ -39,6 +45,7 @@ class _FacadePanelsResult {
     return _FacadePanelsResult(
       wallArea: values['wallArea'] ?? 0,
       panelsArea: values['panelsArea'] ?? 0,
+      panelsCount: (values['panelsCount'] ?? 0).toInt(),
       profileLength: values['profileLength'] ?? 0,
       insulationArea: values['insulationArea'] ?? 0,
       cornersCount: (values['cornersCount'] ?? 0).toInt(),
@@ -65,9 +72,12 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
   // Domain layer calculator
   final _calculator = CalculateFacadePanelsV2();
 
-  double _wallLength = 40.0; // периметр дома
+  double _houseLength = 10.0; // длина дома
+  double _houseWidth = 10.0;  // ширина дома
   double _wallHeight = 3.0;
   double _openingsArea = 10.0; // окна и двери
+
+  double get _perimeter => (_houseLength + _houseWidth) * 2;
 
   FacadePanelType _panelType = FacadePanelType.vinyl;
   bool _needInsulation = true;
@@ -89,7 +99,7 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
   /// Использует domain layer для расчёта
   _FacadePanelsResult _calculate() {
     final inputs = <String, double>{
-      'wallLength': _wallLength,
+      'wallLength': _perimeter,
       'wallHeight': _wallHeight,
       'openingsArea': _openingsArea,
       'panelType': _panelType.index.toDouble(),
@@ -117,6 +127,8 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
     buffer.writeln(_loc.translate('facade_panels_calc.export.materials_title'));
     buffer.writeln('─' * 40);
     buffer.writeln(_loc.translate('facade_panels_calc.export.panels')
+        .replaceFirst('{value}', '${_result.panelsCount}'));
+    buffer.writeln(_loc.translate('facade_panels_calc.export.panels_area')
         .replaceFirst('{value}', _result.panelsArea.toStringAsFixed(1)));
     if (_needProfile) {
       buffer.writeln(_loc.translate('facade_panels_calc.export.profile')
@@ -152,8 +164,8 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
             icon: Icons.crop_square,
           ),
           ResultItem(
-            label: _loc.translate('facade_panels_calc.result.panels').toUpperCase(),
-            value: '${_result.panelsArea.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
+            label: _loc.translate('facade_panels_calc.result.panels_count').toUpperCase(),
+            value: '${_result.panelsCount} ${_loc.translate('common.pcs')}',
             icon: Icons.view_module,
           ),
           ResultItem(
@@ -190,6 +202,18 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
       case FacadePanelType.fiber:
         tips.add(_loc.translate('facade_panels_calc.tip.fiber_1'));
         tips.add(_loc.translate('facade_panels_calc.tip.fiber_2'));
+      case FacadePanelType.blockHouse:
+        tips.add(_loc.translate('facade_panels_calc.tip.block_house_1'));
+        tips.add(_loc.translate('facade_panels_calc.tip.block_house_2'));
+      case FacadePanelType.thermoPanels:
+        tips.add(_loc.translate('facade_panels_calc.tip.thermo_1'));
+        tips.add(_loc.translate('facade_panels_calc.tip.thermo_2'));
+      case FacadePanelType.profSheet:
+        tips.add(_loc.translate('facade_panels_calc.tip.prof_sheet_1'));
+        tips.add(_loc.translate('facade_panels_calc.tip.prof_sheet_2'));
+      case FacadePanelType.hpl:
+        tips.add(_loc.translate('facade_panels_calc.tip.hpl_1'));
+        tips.add(_loc.translate('facade_panels_calc.tip.hpl_2'));
     }
     tips.add(_loc.translate('facade_panels_calc.tip.common'));
     return TipsCard(
@@ -200,20 +224,33 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
   }
 
   Widget _buildTypeSelector() {
-    return TypeSelectorGroup(
-      options: FacadePanelType.values.map((type) => TypeSelectorOption(
-        icon: type.icon,
-        title: _loc.translate(type.nameKey),
-        subtitle: _loc.translate(type.descKey),
-      )).toList(),
-      selectedIndex: _panelType.index,
-      onSelect: (index) {
-        setState(() {
-          _panelType = FacadePanelType.values[index];
-          _update();
-        });
+    // 7 типов не помещаются в один Row — используем сетку 2 колонки
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final cardWidth = (constraints.maxWidth - 12) / 2; // 2 колонки, 12 зазор
+        return Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: FacadePanelType.values.map((type) {
+            return SizedBox(
+              width: cardWidth,
+              child: TypeSelectorCard(
+                icon: type.icon,
+                title: _loc.translate(type.nameKey),
+                subtitle: _loc.translate(type.descKey),
+                isSelected: _panelType == type,
+                accentColor: _accentColor,
+                onTap: () {
+                  setState(() {
+                    _panelType = type;
+                    _update();
+                  });
+                },
+              ),
+            );
+          }).toList(),
+        );
       },
-      accentColor: _accentColor,
     );
   }
 
@@ -223,29 +260,102 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
         children: [
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('facade_panels_calc.label.perimeter'), value: _wallLength, onChanged: (v) { setState(() { _wallLength = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 10, maxValue: 200)),
+              Expanded(child: CalculatorTextField(
+                key: const ValueKey('house_length'),
+                label: _loc.translate('facade_panels_calc.label.house_length'),
+                value: _houseLength,
+                onChanged: (v) { setState(() { _houseLength = v; _update(); }); },
+                suffix: _loc.translate('common.meters'),
+                accentColor: _accentColor,
+                minValue: 3,
+                maxValue: 50,
+              )),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('facade_panels_calc.label.height'), value: _wallHeight, onChanged: (v) { setState(() { _wallHeight = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 2, maxValue: 10)),
+              Expanded(child: CalculatorTextField(
+                key: const ValueKey('house_width'),
+                label: _loc.translate('facade_panels_calc.label.house_width'),
+                value: _houseWidth,
+                onChanged: (v) { setState(() { _houseWidth = v; _update(); }); },
+                suffix: _loc.translate('common.meters'),
+                accentColor: _accentColor,
+                minValue: 3,
+                maxValue: 50,
+              )),
             ],
+          ),
+          const SizedBox(height: 12),
+          CalculatorTextField(
+            key: const ValueKey('wall_height'),
+            label: _loc.translate('facade_panels_calc.label.height'),
+            value: _wallHeight,
+            onChanged: (v) { setState(() { _wallHeight = v; _update(); }); },
+            suffix: _loc.translate('common.meters'),
+            accentColor: _accentColor,
+            minValue: 2,
+            maxValue: 10,
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: _accentColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _loc.translate('facade_panels_calc.label.perimeter'),
+                  style: CalculatorDesignSystem.bodyMedium.copyWith(
+                    color: CalculatorColors.getTextSecondary(_isDark),
+                  ),
+                ),
+                Text(
+                  '${_perimeter.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
+                  style: CalculatorDesignSystem.titleMedium.copyWith(
+                    color: _accentColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('facade_panels_calc.label.openings'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
-              Text('${_openingsArea.toStringAsFixed(0)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
+              Text(_loc.translate('facade_panels_calc.label.openings'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
+              Text('${_openingsArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
-          Slider(
-            value: _openingsArea,
-            min: 0,
-            max: 50,
-            activeColor: _accentColor,
-            onChanged: (v) { setState(() { _openingsArea = v; _update(); }); },
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              inactiveTrackColor: _accentColor.withValues(alpha: _isDark ? 0.3 : 0.2),
+            ),
+            child: Slider(
+              value: _openingsArea,
+              min: 0,
+              max: 50,
+              divisions: 500,
+              activeColor: _accentColor,
+              onChanged: (v) { setState(() { _openingsArea = v; _update(); }); },
+            ),
           ),
+          const SizedBox(height: 8),
+          CalculatorTextField(
+            label: _loc.translate('facade_panels_calc.label.openings'),
+            value: _openingsArea,
+            onChanged: (v) { setState(() { _openingsArea = v; _update(); }); },
+            suffix: _loc.translate('common.sqm'),
+            accentColor: _accentColor,
+            minValue: 0,
+            maxValue: 50,
+            decimalPlaces: 1,
+          ),
+          const SizedBox(height: 8),
           Text(
             _loc.translate('facade_panels_calc.openings_hint'),
-            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+            style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -259,7 +369,7 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('facade_panels_calc.option.insulation'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('facade_panels_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('facade_panels_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needInsulation,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needInsulation = v; _update(); }); },
@@ -267,7 +377,7 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('facade_panels_calc.option.profile'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('facade_panels_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('facade_panels_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needProfile,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needProfile = v; _update(); }); },
@@ -281,8 +391,8 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
     final items = <MaterialItem>[
       MaterialItem(
         name: _loc.translate('facade_panels_calc.materials.panels'),
-        value: '${_result.panelsArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-        subtitle: _loc.translate(_panelType.nameKey),
+        value: '${_result.panelsCount} ${_loc.translate('common.pcs')}',
+        subtitle: '${_loc.translate(_panelType.nameKey)} (${_result.panelsArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')})',
         icon: Icons.view_module,
       ),
     ];

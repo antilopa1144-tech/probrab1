@@ -205,21 +205,6 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
       group: 'advanced',
       order: 20,
     ),
-    const CalculatorField(
-      key: 'reserve',
-      labelKey: 'input.reserve',
-      hintKey: 'input.reserve.hint',
-      unitType: UnitType.percent,
-      inputType: FieldInputType.slider,
-      defaultValue: 5,
-      minValue: 0,
-      maxValue: 15,
-      step: 1,
-      iconName: 'add_shopping_cart',
-      group: 'advanced',
-      order: 21,
-    ),
-
     // --- Группа "Проёмы" (дополнительно) ---
     const CalculatorField(
       key: 'windowsArea',

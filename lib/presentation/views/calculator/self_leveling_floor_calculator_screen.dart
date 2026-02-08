@@ -47,14 +47,18 @@ enum InputMode { byArea, byDimensions }
 enum BagWeight { kg20, kg25 }
 
 enum MixtureBrand {
-  ceresit175(1.5, 'Ceresit CN 175', [25]),
-  ceresit173(1.6, 'Ceresit CN 173', [25]),
+  ceresit175(1.5, 'Ceresit CN 175 Super', [20, 25]),
+  ceresit173(1.6, 'Ceresit CN 173 Universal', [20, 25]),
+  ceresit178(1.7, 'Ceresit CN 178', [20, 25]),
+  ceresit68(1.6, 'Ceresit CN 68 Nivelir', [25]),
+  ceresit76(1.8, 'Ceresit CN 76 Extrahart', [25]),
+  ceresit88(1.8, 'Ceresit CN 88', [25]),
   knauf(1.6, 'Knauf Боден', [20, 25]),
   unis(1.5, 'Unis Горизонт', [20, 25]),
   volma(1.7, 'Волма Нивелир', [20]),
   osnovit(1.5, 'Основит Скорлайн', [20]),
   bergauf(1.6, 'Bergauf Easy Boden', [25]),
-  starateli(1.6, 'Старатели', [20]),
+  starateli(1.6, 'Старатели', [20, 25]),
   average(1.6, 'Средний расход', [20, 25]);
 
   final double consumption;

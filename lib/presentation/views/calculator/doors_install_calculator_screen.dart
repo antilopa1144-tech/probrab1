@@ -245,7 +245,7 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('doors_calc.label.doors_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              Text(_loc.translate('doors_calc.label.doors_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
               Text('$_doorsCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -269,7 +269,7 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
         children: [
           Text(
             _loc.translate('doors_calc.label.door_size'),
-            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
           Row(
@@ -291,7 +291,7 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('doors_calc.option.casing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('doors_calc.option.casing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('doors_calc.option.casing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needCasing,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needCasing = v; _update(); }); },
@@ -299,7 +299,7 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('doors_calc.option.threshold'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('doors_calc.option.threshold_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('doors_calc.option.threshold_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needThreshold,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needThreshold = v; _update(); }); },

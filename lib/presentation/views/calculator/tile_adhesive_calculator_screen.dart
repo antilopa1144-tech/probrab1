@@ -77,22 +77,43 @@ enum TileType {
 }
 
 enum AdhesiveBrand {
+  // Ceresit (Henkel) — полная актуальная линейка
   ceresitCM9(1.2, 'Ceresit CM 9', [25]),
-  ceresitCM11Plus(1.5, 'Ceresit CM 11 Plus', [25]),
+  ceresitCM11Pro(1.5, 'Ceresit CM 11 Pro', [25]),
   ceresitCM12(1.6, 'Ceresit CM 12', [25]),
-  ceresitCM14(1.8, 'Ceresit CM 14', [25]),
-  ceresitCM16(1.9, 'Ceresit CM 16', [25]),
-  ceresitCM17(1.8, 'Ceresit CM 17', [25]),
+  ceresitCM14(1.8, 'Ceresit CM 14 Extra', [25]),
+  ceresitCM16(1.9, 'Ceresit CM 16 Flex', [25]),
+  ceresitCM17(1.4, 'Ceresit CM 17 Super Flex', [25]),
+  // Unis — актуальная линейка
   unis21(1.4, 'Unis 21 (UniPlus)', [25]),
   unisPlus(1.5, 'Unis Плюс', [25]),
   unis2000(1.6, 'Unis 2000', [25]),
   unisGranit(1.7, 'Unis Гранит', [25]),
   unisBelix(1.6, 'Unis Белфикс', [20, 25]),
+  unisU300(1.2, 'Unis U-300 MaxiFlex', [25]),
+  // Knauf — актуальная линейка
   knaufFliesen(1.5, 'Knauf Флизен', [25]),
   knaufFlex(1.6, 'Knauf Флекс', [25]),
+  knaufMarmor(1.5, 'Knauf Мрамор', [25]),
+  // Litokol — актуальная линейка
   litokolX11(1.4, 'Litokol X11', [25]),
   litokolK80(1.6, 'Litokol K80', [25]),
+  litokolHyperflex(1.2, 'Litokol Hyperflex K100', [20]),
+  // Weber-Vetonit
+  weberEasyFix(1.5, 'Weber.Vetonit Easy Fix', [25]),
+  weberUltraFix(1.4, 'Weber.Vetonit Ultra Fix', [25]),
+  weberProfi(1.6, 'Weber.Vetonit Profi Plus', [25]),
+  // Mapei
+  mapeiKeraflexMaxi(1.5, 'Mapei Keraflex Maxi', [25]),
+  mapeiKerabond(1.3, 'Mapei Kerabond', [25]),
+  // Bergauf
+  bergaufKeramik(1.4, 'Bergauf Keramik', [25]),
+  bergaufMaxi(1.5, 'Bergauf Keramik Maxi', [25]),
+  // Волма, Старатели, Основит
   volmaCeramic(1.5, 'Волма Керамик', [25]),
+  volmaMulti(1.6, 'Волма Мультиклей', [25]),
+  starateliPlus(1.4, 'Старатели Плюс', [25]),
+  osnovitMaxiplix(1.5, 'Основит Мастпликс', [25]),
   average(1.5, 'Средний расход', [20, 25]);
 
   final double baseConsumption; // Базовый расход (кг/м²/мм)

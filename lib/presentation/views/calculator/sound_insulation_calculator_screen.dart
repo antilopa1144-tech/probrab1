@@ -268,7 +268,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
         children: [
           Text(
             _loc.translate('sound_insulation_calc.label.surface'),
-            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
           ModeSelector(
@@ -374,7 +374,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
                     children: [
                       Text(
                         _loc.translate('sound_insulation_calc.label.calculated_area'),
-                        style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+                        style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600),
                       ),
                       Text(
                         '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
@@ -415,7 +415,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('sound_insulation_calc.option.gypsum'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('sound_insulation_calc.option.gypsum_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('sound_insulation_calc.option.gypsum_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needGypsum,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needGypsum = v; _update(); }); },
@@ -423,7 +423,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('sound_insulation_calc.option.profile'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('sound_insulation_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('sound_insulation_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needProfile,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needProfile = v; _update(); }); },

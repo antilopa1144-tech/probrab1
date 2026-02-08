@@ -193,6 +193,24 @@ void main() {
     });
   });
 
+  group('UnderfloorHeatingCalculatorScreen slider+textfield', () {
+    testWidgets('slider fields have paired CalculatorTextField', (tester) async {
+      setupTestScreenSize(tester);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: UnderfloorHeatingCalculatorScreen(definition: testDefinition),
+          overrides: CalculatorMockOverrides.underfloorHeating,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Both Slider and CalculatorTextField should be present
+      expect(find.byType(Slider), findsWidgets);
+      expect(find.byType(CalculatorTextField), findsWidgets);
+    });
+  });
+
   group('UnderfloorHeatingCalculatorScreen input modes', () {
     testWidgets('shows input mode selector', (tester) async {
       setupTestScreenSize(tester);

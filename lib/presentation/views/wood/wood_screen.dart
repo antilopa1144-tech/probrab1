@@ -49,6 +49,7 @@ class _WoodScreenState extends State<WoodScreen> {
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.interior;
 
     final netArea = _getArea();
@@ -119,7 +120,7 @@ class _WoodScreenState extends State<WoodScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: CalculatorColors.getCardBackground(isDark),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -134,7 +135,7 @@ class _WoodScreenState extends State<WoodScreen> {
             children: [
               Text(
                 _loc.translate('wood.base'),
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: CalculatorColors.getTextSecondary(isDark)),
               ),
               const SizedBox(height: 12),
               ModeSelector(
@@ -156,7 +157,7 @@ class _WoodScreenState extends State<WoodScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: CalculatorColors.getCardBackground(isDark),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -171,7 +172,7 @@ class _WoodScreenState extends State<WoodScreen> {
             children: [
               Text(
                 _loc.translate('wood.texture'),
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.grey),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: CalculatorColors.getTextSecondary(isDark)),
               ),
               const SizedBox(height: 12),
               ModeSelector(
@@ -218,7 +219,7 @@ class _WoodScreenState extends State<WoodScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: CalculatorColors.getCardBackground(isDark),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -245,20 +246,20 @@ class _WoodScreenState extends State<WoodScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.blue[50],
+            color: isDark ? Colors.blue[900]!.withValues(alpha: 0.2) : Colors.blue[50],
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.blue[200]!),
+            border: Border.all(color: isDark ? Colors.blue[700]! : Colors.blue[200]!),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  Icon(Icons.brush_rounded, color: Colors.blue[800], size: 20),
+                  Icon(Icons.brush_rounded, color: isDark ? Colors.blue[300] : Colors.blue[800], size: 20),
                   const SizedBox(width: 8),
                   Text(
                     _loc.translate('wood.tips'),
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.blue[900]),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: isDark ? Colors.blue[200] : Colors.blue[900]),
                   ),
                 ],
               ),
@@ -267,11 +268,11 @@ class _WoodScreenState extends State<WoodScreen> {
                 children: [
                   Text(
                     '${_loc.translate('wood.brush')}: ',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: CalculatorColors.getTextPrimary(isDark)),
                   ),
                   Text(
                     baseIndex == 0 ? _loc.translate('wood.synthetic') : _loc.translate('wood.natural'),
-                    style: const TextStyle(fontSize: 14),
+                    style: TextStyle(fontSize: 14, color: CalculatorColors.getTextPrimary(isDark)),
                   ),
                 ],
               ),
@@ -280,11 +281,11 @@ class _WoodScreenState extends State<WoodScreen> {
                 children: [
                   Text(
                     '${_loc.translate('wood.cleaning')}: ',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: CalculatorColors.getTextPrimary(isDark)),
                   ),
                   Text(
                     baseIndex == 0 ? _loc.translate('wood.water') : _loc.translate('wood.white_spirit'),
-                    style: const TextStyle(fontSize: 14),
+                    style: TextStyle(fontSize: 14, color: CalculatorColors.getTextPrimary(isDark)),
                   ),
                 ],
               ),
@@ -326,11 +327,12 @@ class _WoodScreenState extends State<WoodScreen> {
   }
 
   Widget _buildGeometryCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.interior;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: CalculatorColors.getCardBackground(isDark),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

@@ -241,11 +241,11 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('plumbing_calc.label.avg_pipe_length'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              Text(_loc.translate('plumbing_calc.label.avg_pipe_length'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
               Text('${_avgPipeLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
-          Slider(value: _avgPipeLength, min: 2, max: 15, activeColor: _accentColor, onChanged: (v) { setState(() { _avgPipeLength = v; _update(); }); }),
+          Slider(value: _avgPipeLength, min: 2, max: 15, divisions: 130, activeColor: _accentColor, onChanged: (v) { setState(() { _avgPipeLength = v; _update(); }); }),
         ],
       ),
     );
@@ -290,7 +290,7 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen>
       child: SwitchListTile(
         contentPadding: EdgeInsets.zero,
         title: Text(_loc.translate('plumbing_calc.option.hot_water'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-        subtitle: Text(_loc.translate('plumbing_calc.option.hot_water_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+        subtitle: Text(_loc.translate('plumbing_calc.option.hot_water_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
         value: _needHotWater,
         activeTrackColor: _accentColor,
         onChanged: (v) { setState(() { _needHotWater = v; _update(); }); },

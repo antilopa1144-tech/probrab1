@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/calculator_colors.dart';
 import '../../../core/localization/app_localizations.dart';
 
 class GroupedResultsCard extends StatelessWidget {
@@ -25,6 +26,11 @@ class GroupedResultsCard extends StatelessWidget {
       'studsLength',
       'battensLength',
       'counterBattensLength',
+      'groutNeeded',
+      'bagsNeeded',
+      'panelsCount',
+      'panelsArea',
+      'profileLength',
     ],
     'consumables': [
       'meshArea',
@@ -39,6 +45,10 @@ class GroupedResultsCard extends StatelessWidget {
       'foamNeeded',
       'glueNeeded',
       'glueNeededKg',
+      'spatulaCount',
+      'spongePackCount',
+      'cornersCount',
+      'startersCount',
     ],
     'additional': [
       'waterproofingArea',
@@ -49,6 +59,9 @@ class GroupedResultsCard extends StatelessWidget {
       'underlaymentArea',
       'membraneArea',
       'recommendedThickness',
+      'consumptionPerM2',
+      'bagWeight',
+      'wastePercent',
     ],
   };
 
@@ -59,18 +72,21 @@ class GroupedResultsCard extends StatelessWidget {
     return Column(
       children: [
         _buildGroupCard(
+          context: context,
           title: _translateGroupLabel('materials'),
           icon: Icons.inventory_2_outlined,
           keys: groups['materials']!,
         ),
         const SizedBox(height: 12),
         _buildGroupCard(
+          context: context,
           title: _translateGroupLabel('consumables'),
           icon: Icons.build_outlined,
           keys: groups['consumables']!,
         ),
         const SizedBox(height: 12),
         _buildGroupCard(
+          context: context,
           title: _translateGroupLabel('additional'),
           icon: Icons.add_circle_outline,
           keys: groups['additional']!,
@@ -80,6 +96,7 @@ class GroupedResultsCard extends StatelessWidget {
   }
 
   Widget _buildGroupCard({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required List<String> keys,
@@ -92,10 +109,17 @@ class GroupedResultsCard extends StatelessWidget {
 
     if (groupResults.isEmpty) return const SizedBox.shrink();
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Тёмная карточка: в светлой теме — тёмно-синий фон, в тёмной — чуть светлее основного фона
+    final cardBg = isDark ? CalculatorColors.cardBackgroundLightDark : const Color(0xFF1E293B);
+    final headerColor = isDark ? CalculatorColors.textSecondaryDark : Colors.white;
+    final labelColor = isDark ? CalculatorColors.textPrimaryDark : Colors.white;
+    final valueColor = isDark ? CalculatorColors.textPrimaryDark : Colors.white;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
+        color: cardBg,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -103,13 +127,13 @@ class GroupedResultsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, color: Colors.white54, size: 20),
+              Icon(icon, color: headerColor, size: 20),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    color: Colors.white54,
+                  style: TextStyle(
+                    color: headerColor,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
@@ -131,15 +155,15 @@ class GroupedResultsCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       _translateResultLabel(entry.key),
-                      style: const TextStyle(color: Colors.white70),
+                      style: TextStyle(color: labelColor, fontWeight: FontWeight.w500),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Flexible(
                     child: Text(
                       unit.isEmpty ? formatted : '$formatted $unit',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: valueColor,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.end,

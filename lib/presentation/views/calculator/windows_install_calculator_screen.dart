@@ -234,7 +234,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(_loc.translate('windows_calc.label.windows_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              Text(_loc.translate('windows_calc.label.windows_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
               Text('$_windowsCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
             ],
           ),
@@ -258,7 +258,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
         children: [
           Text(
             _loc.translate('windows_calc.label.window_size'),
-            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+            style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
           Row(
@@ -275,7 +275,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(_loc.translate('windows_calc.label.total_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+                Text(_loc.translate('windows_calc.label.total_area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
                 Text('${_result.totalArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
               ],
             ),
@@ -292,7 +292,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('windows_calc.option.sill'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('windows_calc.option.sill_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('windows_calc.option.sill_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needSill,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needSill = v; _update(); }); },
@@ -300,7 +300,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('windows_calc.option.slopes'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('windows_calc.option.slopes_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('windows_calc.option.slopes_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needSlopes,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needSlopes = v; _update(); }); },

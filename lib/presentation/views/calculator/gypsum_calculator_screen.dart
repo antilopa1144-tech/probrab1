@@ -489,7 +489,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
                 ),
               ),
               Text(
-                '${_area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
+                '${_area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                 style: CalculatorDesignSystem.headlineMedium.copyWith(
                   color: accentColor,
                   fontWeight: FontWeight.bold,
@@ -501,6 +501,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
             value: _area,
             min: 1,
             max: 500,
+            divisions: 4990,
             activeColor: accentColor,
             onChanged: (v) {
               setState(() {

@@ -95,9 +95,12 @@ class CalculateGypsumV2 extends BaseCalculator {
   // Materials
   static const double insulationMargin = 1.05;
   static const double armatureTapePerSqm = 1.2;
-  static const double fillerStandard = 0.3;
-  static const double fillerPartition = 0.6;
-  static const double primerPerSqm = 0.1;
+  // Шпаклёвка: Knauf Fugen ~0.8 кг/м² (заделка швов + финиш), перегородка ×2 стороны
+  static const double fillerStandard = 0.8;
+  static const double fillerPartition = 1.5; // 0.8 × 2 стороны - 0.1 (нет стыков у стены)
+  // Грунтовка: 0.15 л/м² одна сторона, перегородка ×2 стороны
+  static const double primerPerSqm = 0.15;
+  static const double primerPartitionPerSqm = 0.3;
 
   @override
   CalculatorResult calculate(
@@ -226,7 +229,7 @@ class CalculateGypsumV2 extends BaseCalculator {
     final insulationArea = useInsulation ? calculatedArea * insulationMargin : 0.0;
     final armatureTape = calculatedArea * armatureTapePerSqm;
     final fillerKg = calculatedArea * (constructionType == 1 ? fillerPartition : fillerStandard) * layers;
-    final primerLiters = calculatedArea * primerPerSqm;
+    final primerLiters = calculatedArea * (constructionType == 1 ? primerPartitionPerSqm : primerPerSqm);
 
     // Sheet weight calculation based on thickness and size
     final sheetWeight = sheetWeights[thickness]?[sheetSizeIndex] ?? 29.0;

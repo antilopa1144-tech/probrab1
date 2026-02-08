@@ -83,8 +83,8 @@ class TypeSelectorCard extends StatelessWidget {
     // Уменьшаем размеры если есть subtitle для экономии места
     final hasSubtitle = subtitle != null && subtitle!.isNotEmpty;
     final effectiveIconSize = hasSubtitle ? (iconSize * 0.75) : iconSize;
-    final titleFontSize = hasSubtitle ? 10.0 : 14.0;
-    const subtitleFontSize = 9.0;
+    final titleFontSize = hasSubtitle ? 13.0 : 14.0;
+    const subtitleFontSize = 12.0;
     final padding = hasSubtitle ? 8.0 : 12.0;
 
     // Цвета для тёмной и светлой темы
@@ -159,9 +159,9 @@ class TypeSelectorCard extends StatelessWidget {
                 subtitle!,
                 style: TextStyle(
                   fontSize: subtitleFontSize,
-                  fontWeight: FontWeight.w400,
-                  height: 1.0,
-                  color: isSelected ? accentColor : CalculatorColors.getTextSecondary(isDark),
+                  fontWeight: FontWeight.w600,
+                  height: 1.2,
+                  color: isSelected ? accentColor : CalculatorColors.getTextPrimary(isDark),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,

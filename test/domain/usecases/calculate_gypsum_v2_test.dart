@@ -407,8 +407,8 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        // 20 * 0.3 * 1 = 6 kg
-        expect(result.values['fillerKg'], closeTo(6.0, 0.1));
+        // 20 * 0.8 * 1 = 16 kg (Knauf Fugen ~0.8 кг/м²)
+        expect(result.values['fillerKg'], closeTo(16.0, 0.1));
       });
 
       test('filler amount - partition (more)', () {
@@ -420,8 +420,8 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        // 20 * 0.6 * 1 = 12 kg
-        expect(result.values['fillerKg'], closeTo(12.0, 0.1));
+        // 20 * 1.5 * 1 = 30 kg (перегородка: 2 стороны)
+        expect(result.values['fillerKg'], closeTo(30.0, 0.1));
       });
 
       test('primer calculation', () {
@@ -431,8 +431,8 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        // 20 * 0.1 = 2 liters
-        expect(result.values['primerLiters'], closeTo(2.0, 0.1));
+        // 20 * 0.15 = 3 liters
+        expect(result.values['primerLiters'], closeTo(3.0, 0.1));
       });
     });
 

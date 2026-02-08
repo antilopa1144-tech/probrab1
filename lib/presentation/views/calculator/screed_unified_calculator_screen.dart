@@ -368,7 +368,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
             const SizedBox(height: 12),
             Text(
               _loc.translate(_cpsMarka.descKey),
-              style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+              style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 16),
             _buildBagWeightField(),
@@ -421,7 +421,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
             const SizedBox(height: 12),
             Text(
               _loc.translate(_peskobetonMarka.descKey),
-              style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+              style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 16),
             _buildBagWeightField(),
@@ -576,7 +576,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
             children: [
               Text(
                 _loc.translate('screed_unified.label.floor_area'),
-                style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+                style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600),
               ),
               Text(
                 '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
@@ -614,7 +614,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
               Expanded(
                 child: Text(
                   _loc.translate('screed_unified.thickness_hint'),
-                  style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark)),
+                  style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
                 ),
               ),
             ],
@@ -699,7 +699,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
     return SwitchListTile(
       contentPadding: EdgeInsets.zero,
       title: Text(title, style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-      subtitle: Text(subtitle, style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+      subtitle: Text(subtitle, style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
       value: value,
       activeTrackColor: _accentColor,
       onChanged: onChanged,

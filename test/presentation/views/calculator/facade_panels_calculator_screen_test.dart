@@ -35,7 +35,7 @@ void main() {
 
       await tester.pump();
 
-      expect(find.byType(TypeSelectorGroup), findsWidgets);
+      expect(find.byType(TypeSelectorCard), findsWidgets);
     });
 
     testWidgets('отображает результаты в шапке', (tester) async {
@@ -79,7 +79,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.byType(TypeSelectorGroup), findsWidgets);
+      expect(find.byType(TypeSelectorCard), findsWidgets);
       expect(find.byIcon(Icons.view_module), findsWidgets); // vinyl
       expect(find.byIcon(Icons.grid_view), findsWidgets); // metal
       expect(find.byIcon(Icons.layers), findsWidgets); // fiber
@@ -95,7 +95,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final vinylOption = find.byType(TypeSelectorGroup);
+      final vinylOption = find.byType(TypeSelectorCard);
       if (vinylOption.evaluate().isNotEmpty) {
         await tester.tap(vinylOption.first);
         await tester.pumpAndSettle();
@@ -114,7 +114,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final metalOption = find.byType(TypeSelectorGroup);
+      final metalOption = find.byType(TypeSelectorCard);
       if (metalOption.evaluate().isNotEmpty) {
         await tester.tap(metalOption.first);
         await tester.pumpAndSettle();
@@ -133,7 +133,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final fiberOption = find.byType(TypeSelectorGroup);
+      final fiberOption = find.byType(TypeSelectorCard);
       if (fiberOption.evaluate().isNotEmpty) {
         await tester.tap(fiberOption.first);
         await tester.pumpAndSettle();
@@ -328,6 +328,43 @@ void main() {
       final scrollable = find.byType(SingleChildScrollView).first;
       await tester.drag(scrollable, const Offset(0, -300));
       await tester.pumpAndSettle();
+
+      expect(find.byType(FacadePanelsCalculatorScreen), findsOneWidget);
+    });
+  });
+
+  group('FacadePanelsCalculatorScreen - ползунок + текстовое поле', () {
+    testWidgets('ползунок проемов имеет парное текстовое поле', (tester) async {
+      setTestViewportSize(tester);
+      await tester.pumpWidget(
+        createTestApp(
+          child: const FacadePanelsCalculatorScreen(),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Slider и CalculatorTextField для площади проемов должны быть вместе
+      expect(find.byType(Slider), findsWidgets);
+      expect(find.byType(CalculatorTextField), findsWidgets);
+    });
+
+    testWidgets('текстовое поле и ползунок оба реагируют на изменения', (tester) async {
+      setTestViewportSize(tester);
+      await tester.pumpWidget(
+        createTestApp(
+          child: const FacadePanelsCalculatorScreen(),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Двигаем ползунок — результат должен обновиться
+      final sliders = find.byType(Slider);
+      if (sliders.evaluate().isNotEmpty) {
+        await tester.drag(sliders.first, const Offset(50, 0));
+        await tester.pumpAndSettle();
+      }
 
       expect(find.byType(FacadePanelsCalculatorScreen), findsOneWidget);
     });

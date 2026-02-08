@@ -104,17 +104,18 @@ void main() {
         expect(result.values['profileLength'], equals(0.0));
       });
 
-      test('profile length based on 0.6m step', () {
+      test('profile length based on panel type step', () {
         final inputs = {
-          'wallLength': 12.0, // 12/0.6 = 20 verticals
+          'wallLength': 12.0, // vinyl: 12/0.4 = 30 verticals
           'wallHeight': 3.0,
           'needProfile': 1.0,
+          'panelType': 0.0, // vinyl siding, profileStep = 0.4m
         };
 
         final result = calculator(inputs, emptyPriceList);
 
-        // 20 verticals * 3m * 1.1 = 66m
-        expect(result.values['profileLength'], closeTo(66.0, 0.1));
+        // 30 verticals * 3m * 1.1 = 99m
+        expect(result.values['profileLength'], closeTo(99.0, 0.1));
       });
     });
 
@@ -241,6 +242,177 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
 
         expect(result.values['panelType'], equals(2.0));
+      });
+
+      test('accepts block house (type 3)', () {
+        final result = calculator({
+          'panelType': 3.0,
+        }, emptyPriceList);
+
+        expect(result.values['panelType'], equals(3.0));
+      });
+
+      test('accepts thermo panels (type 4)', () {
+        final result = calculator({
+          'panelType': 4.0,
+        }, emptyPriceList);
+
+        expect(result.values['panelType'], equals(4.0));
+      });
+
+      test('accepts prof sheet (type 5)', () {
+        final result = calculator({
+          'panelType': 5.0,
+        }, emptyPriceList);
+
+        expect(result.values['panelType'], equals(5.0));
+      });
+
+      test('accepts HPL panels (type 6)', () {
+        final result = calculator({
+          'panelType': 6.0,
+        }, emptyPriceList);
+
+        expect(result.values['panelType'], equals(6.0));
+      });
+
+      test('invalid type clamped to valid range', () {
+        final result = calculator({
+          'panelType': 99.0,
+        }, emptyPriceList);
+
+        expect(result.values['panelType'], equals(6.0)); // max index
+      });
+    });
+
+    group('Panel type specifications', () {
+      // Стандартный дом: 40м периметр, 3м высота, 10м² проёмов
+      // wallArea = 120 - 10 = 110 м²
+      final baseInputs = {
+        'wallLength': 40.0,
+        'wallHeight': 3.0,
+        'openingsArea': 10.0,
+        'needInsulation': 0.0,
+        'needProfile': 1.0,
+      };
+
+      test('vinyl (0): 10% waste, 0.84 m²/шт, profile step 0.4m', () {
+        final result = calculator({...baseInputs, 'panelType': 0.0}, emptyPriceList);
+
+        // panelsArea = 110 * 1.10 = 121.0
+        expect(result.values['panelsArea'], closeTo(121.0, 0.1));
+        expect(result.values['wastePercent'], equals(10.0));
+        // panelsCount = ceil(121.0 / 0.84) = ceil(144.05) = 145
+        expect(result.values['panelsCount'], equals(145.0));
+        // profile: 40/0.4 = 100 verticals * 3m * 1.1 = 330
+        expect(result.values['profileLength'], closeTo(330.0, 0.1));
+      });
+
+      test('metal (1): 7% waste, 0.81 m²/шт, profile step 0.4m', () {
+        final result = calculator({...baseInputs, 'panelType': 1.0}, emptyPriceList);
+
+        // panelsArea = 110 * 1.07 = 117.7
+        expect(result.values['panelsArea'], closeTo(117.7, 0.1));
+        expect(result.values['wastePercent'], equals(7.0));
+        // panelsCount = ceil(117.7 / 0.81) = ceil(145.31) = 146
+        expect(result.values['panelsCount'], equals(146.0));
+      });
+
+      test('fiber (2): 12% waste, 0.68 m²/шт, profile step 0.6m', () {
+        final result = calculator({...baseInputs, 'panelType': 2.0}, emptyPriceList);
+
+        // panelsArea = 110 * 1.12 = 123.2
+        expect(result.values['panelsArea'], closeTo(123.2, 0.1));
+        expect(result.values['wastePercent'], equals(12.0));
+        // panelsCount = ceil(123.2 / 0.68) = ceil(181.18) = 182
+        expect(result.values['panelsCount'], equals(182.0));
+        // profile: 40/0.6 = 67 verticals * 3m * 1.1 = 221.1
+        expect(result.values['profileLength'], closeTo(221.1, 0.1));
+      });
+
+      test('block house (3): 15% waste, 0.42 m²/шт, profile step 0.5m', () {
+        final result = calculator({...baseInputs, 'panelType': 3.0}, emptyPriceList);
+
+        // panelsArea = 110 * 1.15 = 126.5
+        expect(result.values['panelsArea'], closeTo(126.5, 0.1));
+        expect(result.values['wastePercent'], equals(15.0));
+        // panelsCount = ceil(126.5 / 0.42) = ceil(301.19) = 302
+        expect(result.values['panelsCount'], equals(302.0));
+        // profile: 40/0.5 = 80 verticals * 3m * 1.1 = 264
+        expect(result.values['profileLength'], closeTo(264.0, 0.1));
+      });
+
+      test('thermo panels (4): 5% waste, 0.50 m²/шт, NO profile needed', () {
+        final result = calculator({...baseInputs, 'panelType': 4.0}, emptyPriceList);
+
+        // panelsArea = 110 * 1.05 = 115.5
+        expect(result.values['panelsArea'], closeTo(115.5, 0.1));
+        expect(result.values['wastePercent'], equals(5.0));
+        // panelsCount = ceil(115.5 / 0.50) = ceil(231.0) = 231
+        expect(result.values['panelsCount'], equals(231.0));
+        // Термопанели: profileStep = 0 → обрешётка не нужна (клеевой монтаж)
+        expect(result.values['profileLength'], equals(0.0));
+      });
+
+      test('prof sheet C-8 (5): 8% waste, 2.30 m²/шт, profile step 0.6m', () {
+        final result = calculator({...baseInputs, 'panelType': 5.0}, emptyPriceList);
+
+        // panelsArea = 110 * 1.08 = 118.8
+        expect(result.values['panelsArea'], closeTo(118.8, 0.1));
+        expect(result.values['wastePercent'], equals(8.0));
+        // panelsCount = ceil(118.8 / 2.30) = ceil(51.65) = 52
+        expect(result.values['panelsCount'], equals(52.0));
+      });
+
+      test('HPL panels (6): 10% waste, 3.97 m²/шт, profile step 0.6m', () {
+        final result = calculator({...baseInputs, 'panelType': 6.0}, emptyPriceList);
+
+        // panelsArea = 110 * 1.10 = 121.0
+        expect(result.values['panelsArea'], closeTo(121.0, 0.1));
+        expect(result.values['wastePercent'], equals(10.0));
+        // panelsCount = ceil(121.0 / 3.97) = ceil(30.48) = 31
+        expect(result.values['panelsCount'], equals(31.0));
+      });
+
+      test('different types produce different panels count for same area', () {
+        // Блок-хаус (маленькие панели) vs Профлист (большие)
+        final blockHouse = calculator({...baseInputs, 'panelType': 3.0}, emptyPriceList);
+        final profSheet = calculator({...baseInputs, 'panelType': 5.0}, emptyPriceList);
+
+        // Блок-хаус: ~302 шт vs Профлист: ~52 шт
+        expect(
+          blockHouse.values['panelsCount'],
+          greaterThan(profSheet.values['panelsCount']!),
+        );
+      });
+
+      test('thermo panels ignore profile even when needProfile=1', () {
+        final result = calculator({
+          'wallLength': 40.0,
+          'wallHeight': 3.0,
+          'panelType': 4.0, // thermo — profileStep = 0
+          'needProfile': 1.0,
+        }, emptyPriceList);
+
+        expect(result.values['profileLength'], equals(0.0));
+      });
+
+      test('waste percent varies by type', () {
+        final vinyl = calculator({'panelType': 0.0}, emptyPriceList);
+        final metal = calculator({'panelType': 1.0}, emptyPriceList);
+        final fiber = calculator({'panelType': 2.0}, emptyPriceList);
+        final blockHouse = calculator({'panelType': 3.0}, emptyPriceList);
+        final thermo = calculator({'panelType': 4.0}, emptyPriceList);
+        final prof = calculator({'panelType': 5.0}, emptyPriceList);
+        final hpl = calculator({'panelType': 6.0}, emptyPriceList);
+
+        expect(vinyl.values['wastePercent'], equals(10.0));
+        expect(metal.values['wastePercent'], equals(7.0));
+        expect(fiber.values['wastePercent'], equals(12.0));
+        expect(blockHouse.values['wastePercent'], equals(15.0));
+        expect(thermo.values['wastePercent'], equals(5.0));
+        expect(prof.values['wastePercent'], equals(8.0));
+        expect(hpl.values['wastePercent'], equals(10.0));
       });
     });
 

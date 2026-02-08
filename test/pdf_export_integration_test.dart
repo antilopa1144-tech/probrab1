@@ -23,22 +23,9 @@ void main() {
   });
 
   group('PdfExportService — интеграционные тесты', () {
-    test('exportFromText генерирует валидный PDF (без saveLocally)', () async {
-      // Этот тест проверяет что метод не бросает исключений
-      // и возвращает null при saveLocally: false (открывает диалог печати)
-      // В тестовом окружении без UI это просто проверка что код выполняется
-
-      // Примечание: полноценный интеграционный тест требует мока Printing.layoutPdf
-      // Здесь мы проверяем только что метод доступен и типы корректны
-      expect(PdfExportService.exportFromText, isA<Function>());
-    });
-
     test('exportFromText signature correct', () async {
-      // Проверяем что метод принимает правильные параметры
-      // Это compile-time тест — если сигнатура изменится, тест не скомпилируется
-      const fn = PdfExportService.exportFromText;
-
-      expect(fn, isNotNull);
+      // Проверяем что метод доступен и типы корректны
+      expect(PdfExportService.exportFromText, isA<Function>());
     });
 
     test('exportCalculation signature correct', () async {
@@ -49,16 +36,6 @@ void main() {
     test('exportProject signature correct', () async {
       // Проверяем сигнатуру exportProject
       expect(PdfExportService.exportProject, isA<Function>());
-    });
-
-    test('savePdfLocally signature correct', () async {
-      // Проверяем что статический метод savePdfLocally доступен
-      expect(PdfExportService.savePdfLocally, isA<Function>());
-    });
-
-    test('sharePdf signature correct', () async {
-      // Проверяем что статический метод sharePdf доступен
-      expect(PdfExportService.sharePdf, isA<Function>());
     });
   });
 

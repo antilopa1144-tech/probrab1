@@ -256,7 +256,7 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(_loc.translate('balcony_calc.option.insulation'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-              subtitle: Text(_loc.translate('balcony_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+              subtitle: Text(_loc.translate('balcony_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
               value: _needInsulation,
               activeTrackColor: _accentColor,
               onChanged: (v) { setState(() { _needInsulation = v; _update(); }); },
@@ -264,7 +264,7 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('balcony_calc.option.floor_finishing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('balcony_calc.option.floor_finishing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('balcony_calc.option.floor_finishing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needFloorFinishing,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needFloorFinishing = v; _update(); }); },
@@ -272,7 +272,7 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('balcony_calc.option.wall_finishing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('balcony_calc.option.wall_finishing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+            subtitle: Text(_loc.translate('balcony_calc.option.wall_finishing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needWallFinishing,
             activeTrackColor: _accentColor,
             onChanged: (v) { setState(() { _needWallFinishing = v; _update(); }); },

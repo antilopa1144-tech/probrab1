@@ -36,6 +36,7 @@ import '../views/calculator/sound_insulation_calculator_screen.dart';
 import '../views/calculator/slopes_calculator_screen.dart';
 import '../views/calculator/windows_install_calculator_screen.dart';
 import '../views/calculator/facade_panels_calculator_screen.dart';
+import '../views/calculator/tile_grout_calculator_screen.dart';
 import '../views/calculator/fence_calculator_screen.dart';
 import '../views/calculator/stairs_calculator_screen.dart';
 // plumbing_calculator_screen.dart - удалён (engineering_plumbing не востребован)
@@ -135,6 +136,7 @@ class CalculatorScreenRegistry {
     // Алиасы для обратной совместимости
     'floors_screed': (_, _) => const ScreedUnifiedCalculatorScreen(),
     'dsp': (_, _) => const ScreedUnifiedCalculatorScreen(),
+    'floors_tile_grout': (_, _) => const TileGroutCalculatorScreen(),
     'floors_warm': (def, inputs) => UnderfloorHeatingCalculatorScreen(
           definition: def,
           initialInputs: inputs,
