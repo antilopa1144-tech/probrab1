@@ -69,9 +69,11 @@ class CalculateWallpaper extends BaseCalculator {
       area = (length + width) * 2 * wallHeight;
       perimeter = (length + width) * 2;
     } else {
-      // Режим "По площади": берём готовые значения
+      // Режим "По площади": берём площадь стен
       area = getInput(inputs, 'area', minValue: 0.1);
-      perimeter = estimatePerimeter(area);
+      final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 2.5, minValue: 2.0, maxValue: 5.0);
+      // Периметр = площадь стен / высота стен (а не sqrt(area)*4, т.к. area — это площадь СТЕН, а не пола)
+      perimeter = area / wallHeight;
     }
 
     // --- Получаем размер рулона ---

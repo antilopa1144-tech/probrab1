@@ -308,6 +308,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
         _buildMaterialsCard(),
         const SizedBox(height: 24),
         _buildTipsCard(),
+        const SizedBox(height: 16),
         const SizedBox(height: 20),
       ],
     );

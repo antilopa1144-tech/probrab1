@@ -48,7 +48,7 @@ void main() {
     });
 
     group('Tile size adjustments', () {
-      test('increases consumption for mosaic (small tile)', () {
+      test('mosaic tile (<10 cm) uses thinner layer — lower consumption', () {
         final inputs = {
           'area': 10.0,
           'tileSize': 5.0, // mosaic
@@ -58,28 +58,14 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        // Base 4.2 * 1.3 (mosaic) = 5.46 kg/m²
-        expect(result.values['consumptionPerM2'], closeTo(5.46, 0.1));
+        // Base 4.2 * 0.7 (mosaic — гребёнка 3-4 мм) = 2.94 kg/m²
+        expect(result.values['consumptionPerM2'], closeTo(2.94, 0.1));
       });
 
-      test('increases consumption for medium tile (10-20 cm)', () {
+      test('small tile (10-20 cm) uses 6mm notch — slightly lower consumption', () {
         final inputs = {
           'area': 10.0,
           'tileSize': 15.0,
-          'layerThickness': 5.0,
-          'surface': 2.0,
-        };
-
-        final result = calculator(inputs, emptyPriceList);
-
-        // Base 4.2 * 1.15 = 4.83 kg/m²
-        expect(result.values['consumptionPerM2'], closeTo(4.83, 0.1));
-      });
-
-      test('decreases consumption for large tile (>60 cm)', () {
-        final inputs = {
-          'area': 10.0,
-          'tileSize': 80.0,
           'layerThickness': 5.0,
           'surface': 2.0,
         };
@@ -90,10 +76,38 @@ void main() {
         expect(result.values['consumptionPerM2'], closeTo(3.57, 0.1));
       });
 
-      test('standard consumption for 20-60 cm tile', () {
+      test('large tile (40-60 cm) uses 8-10mm notch — higher consumption', () {
         final inputs = {
           'area': 10.0,
-          'tileSize': 45.0,
+          'tileSize': 50.0,
+          'layerThickness': 5.0,
+          'surface': 2.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // Base 4.2 * 1.2 = 5.04 kg/m²
+        expect(result.values['consumptionPerM2'], closeTo(5.04, 0.1));
+      });
+
+      test('extra large tile (>60 cm) uses 10-12mm notch + double application', () {
+        final inputs = {
+          'area': 10.0,
+          'tileSize': 80.0,
+          'layerThickness': 5.0,
+          'surface': 2.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // Base 4.2 * 1.4 = 5.88 kg/m²
+        expect(result.values['consumptionPerM2'], closeTo(5.88, 0.1));
+      });
+
+      test('standard consumption for 20-40 cm tile (base, no adjustment)', () {
+        final inputs = {
+          'area': 10.0,
+          'tileSize': 30.0,
           'layerThickness': 5.0,
           'surface': 2.0,
         };
@@ -246,7 +260,8 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
 
         expect(result.values['glueNeeded'], greaterThan(0));
-        expect(result.values['consumptionPerM2'], closeTo(5.46, 0.1));
+        // 4.2 * 0.7 = 2.94
+        expect(result.values['consumptionPerM2'], closeTo(2.94, 0.1));
       });
 
       test('handles maximum tile size', () {
@@ -258,7 +273,8 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
 
         expect(result.values['glueNeeded'], greaterThan(0));
-        expect(result.values['consumptionPerM2'], closeTo(3.57, 0.1));
+        // 4.2 * 1.4 = 5.88
+        expect(result.values['consumptionPerM2'], closeTo(5.88, 0.1));
       });
 
       test('handles small area', () {
@@ -341,33 +357,33 @@ void main() {
       test('mosaic on wall with thick layer', () {
         final inputs = {
           'area': 5.0,
-          'tileSize': 5.0, // mosaic: 1.3x
+          'tileSize': 5.0, // mosaic: 0.7x
           'layerThickness': 10.0, // 2x
           'surface': 1.0, // wall: 1.1x
         };
 
         final result = calculator(inputs, emptyPriceList);
 
-        // 4.2 * 1.3 * 2.0 * 1.1 = 12.012 kg/m²
-        expect(result.values['consumptionPerM2'], closeTo(12.01, 0.1));
-        // 5 * 12.012 * 1.08 = 64.86 kg
-        expect(result.values['glueNeeded'], closeTo(64.86, 0.5));
+        // 4.2 * 0.7 * 2.0 * 1.1 = 6.468 kg/m²
+        expect(result.values['consumptionPerM2'], closeTo(6.47, 0.1));
+        // 5 * 6.468 * 1.08 = 34.93 kg
+        expect(result.values['glueNeeded'], closeTo(34.93, 0.5));
       });
 
       test('large tile on floor with thin layer', () {
         final inputs = {
           'area': 30.0,
-          'tileSize': 80.0, // large: 0.85x
+          'tileSize': 80.0, // large: 1.4x
           'layerThickness': 3.0, // 0.6x
           'surface': 2.0, // floor: 1.0x
         };
 
         final result = calculator(inputs, emptyPriceList);
 
-        // 4.2 * 0.85 * 0.6 * 1.0 = 2.142 kg/m²
-        expect(result.values['consumptionPerM2'], closeTo(2.14, 0.1));
-        // 30 * 2.142 * 1.08 = 69.4 kg
-        expect(result.values['glueNeeded'], closeTo(69.4, 0.5));
+        // 4.2 * 1.4 * 0.6 * 1.0 = 3.528 kg/m²
+        expect(result.values['consumptionPerM2'], closeTo(3.53, 0.1));
+        // 30 * 3.528 * 1.08 = 114.31 kg
+        expect(result.values['glueNeeded'], closeTo(114.31, 0.5));
       });
     });
   });

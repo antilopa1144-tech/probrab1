@@ -68,15 +68,17 @@ class CalculateStripFoundation extends BaseCalculator {
       maxValue: 3.0,
     );
 
-    // Объём бетона для фундамента (с запасом 5% на разлив)
+    // Чистый объём бетона для фундамента (без запаса — для расчёта компонентов)
+    final rawConcreteVolume = perimeter * width * height;
+    // Объём бетона с запасом 5% на разлив (для заказа)
     const concreteWastePercent = 5.0;
-    final concreteVolume = perimeter * width * height * (1 + concreteWastePercent / 100);
+    final concreteVolume = rawConcreteVolume * (1 + concreteWastePercent / 100);
 
     // Армирование (СП 63.13330.2018):
     // - Продольная арматура: 4-6 стержней диаметром 12-14 мм
     // - Поперечные хомуты: диаметр 8-10 мм, шаг 30-40 см
     // Общий вес арматуры: ~80 кг на м³ бетона (норма 50-100 кг/м³ для типового ленточного)
-    final rebarWeight = concreteVolume * 80;
+    final rebarWeight = rawConcreteVolume * 80;
 
     // Количество стержней продольной арматуры (4-6 шт, по 2-3 сверху и снизу)
     const longitudinalBars = 6;
@@ -101,8 +103,9 @@ class CalculateStripFoundation extends BaseCalculator {
     final gravelVolume = perimeter * width * gravelThickness * (1 + gravelWastePercent / 100);
 
     // Если делать бетон самостоятельно:
-    // Для М300: цемент М400 (330 кг/м³), песок (0.6 м³), щебень (0.8 м³)
-    final cementBags = concreteVolume * 7; // мешки по 50 кг
+    // Для М300: цемент М400 — 330 кг/м³ = 6.6 мешков по 50 кг на 1 м³
+    // Используем чистый объём (запас 5% — это на разлив при заливке, а не на компоненты)
+    final cementBags = (rawConcreteVolume * 6.6).ceil();
 
     // Расчёт стоимости
     final concretePrice = findPrice(priceList, ['concrete_m300', 'concrete_m250', 'concrete']);

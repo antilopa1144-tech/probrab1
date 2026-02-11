@@ -31,7 +31,9 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['materialNeeded'], closeTo(17.6, 0.9));
+      // totalArea=8, consumptionPerLayer=1.5, layers=2, +10%
+      // 8 * 1.5 * 2 * 1.1 = 26.4
+      expect(result.values['materialNeeded'], closeTo(26.4, 1.0));
     });
 
     test('calculates primer needed', () {

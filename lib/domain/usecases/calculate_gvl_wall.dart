@@ -43,8 +43,8 @@ class CalculateGvlWall extends BaseCalculator {
     // Количество листов с запасом 8%
     final sheetsNeeded = calculateUnitsNeeded(area * layers, sheetArea, marginPercent: 10.0);
 
-    // Стоечный профиль (CW): шаг 40-60 см
-    final studsCount = ceilToInt((perimeter / 4) / 0.6);
+    // Стоечный профиль (CW): шаг 60 см по всему периметру
+    final studsCount = ceilToInt(perimeter / 0.6);
     final studsLength = studsCount * wallHeight;
 
     // Направляющий профиль (UW): верх и низ

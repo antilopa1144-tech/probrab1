@@ -49,15 +49,17 @@ class CalculateConcreteUniversal extends BaseCalculator {
     final gravelPrice = findPrice(priceList, ['gravel', 'crushed_stone']);
     final waterPrice = findPrice(priceList, ['water']);
 
-    final costs = [
-      calculateCost(concreteVolume, concretePrice?.price),
-      if (manualMix) ...[
-        calculateCost(cementBags.toDouble(), cementPrice?.price),
-        calculateCost(sandVolume, sandPrice?.price),
-        calculateCost(gravelVolume, gravelPrice?.price),
-        calculateCost(waterNeeded, waterPrice?.price),
-      ],
-    ];
+    // Стоимость: готовый бетон ИЛИ компоненты (не суммировать оба варианта)
+    final costs = manualMix
+        ? [
+            calculateCost(cementBags.toDouble(), cementPrice?.price),
+            calculateCost(sandVolume, sandPrice?.price),
+            calculateCost(gravelVolume, gravelPrice?.price),
+            calculateCost(waterNeeded, waterPrice?.price),
+          ]
+        : [
+            calculateCost(concreteVolume, concretePrice?.price),
+          ];
 
     return createResult(
       values: {

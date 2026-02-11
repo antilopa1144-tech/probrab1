@@ -25,7 +25,7 @@ void main() {
       expect(result.values['concreteVolume'], closeTo(13.44, 0.5));
     });
 
-    test('calculates rebar weight correctly', () {
+    test('calculates rebar weight from raw volume', () {
       final inputs = {
         'perimeter': 40.0,
         'width': 0.4,
@@ -35,11 +35,12 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Вес арматуры = 13.44 м³ * 80 кг/м³ = 1075.2 кг (по СП 63.13330.2018)
-      expect(result.values['rebarWeight'], closeTo(1075.2, 40.0));
+      // rawVolume = 40 * 0.4 * 0.8 = 12.8 м³
+      // Вес арматуры = 12.8 * 80 = 1024 кг (по СП 63.13330.2018)
+      expect(result.values['rebarWeight'], closeTo(1024.0, 1.0));
     });
 
-    test('calculates cement bags correctly', () {
+    test('calculates cement bags from raw volume', () {
       final inputs = {
         'perimeter': 40.0,
         'width': 0.4,
@@ -49,10 +50,9 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Field may be null if not calculated
-      if (result.values.containsKey('bagsCement') && result.values['bagsCement'] != null) {
-        expect(result.values['bagsCement'], closeTo(89.6, 10.0));
-      }
+      // rawVolume = 40 * 0.4 * 0.8 = 12.8 м³
+      // cementBags = ceil(12.8 * 6.6) = ceil(84.48) = 85
+      expect(result.values['cementBags'], equals(85.0));
     });
 
     test('throws on completely empty inputs', () {

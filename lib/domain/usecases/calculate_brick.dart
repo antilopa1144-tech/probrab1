@@ -61,16 +61,32 @@ class CalculateBrick extends BaseCalculator {
     3: 510,  // 2 кирпича
   };
 
-  /// Коэффициент расхода раствора по толщине стены
-  static const Map<int, double> mortarMultiplier = {
-    0: 0.6,   // 0.5 кирпича
-    1: 1.0,   // 1 кирпич
-    2: 1.4,   // 1.5 кирпича
-    3: 1.8,   // 2 кирпича
+  /// Расход раствора на 1 м² кладки (м³) по СНиП
+  /// Зависит от типа кирпича и толщины стены
+  /// Источник: технологические карты кирпичной кладки
+  static const Map<int, Map<int, double>> mortarPerSqm = {
+    // Одинарный кирпич 250×120×65 мм
+    0: {
+      0: 0.019,  // 0.5 кирпича — ~0.189 м³ на 1000 шт ≈ 0.019 м³/м²
+      1: 0.023,  // 1 кирпич — ~0.221 м³ на 1000 шт ≈ 0.023 м³/м²
+      2: 0.034,  // 1.5 кирпича
+      3: 0.045,  // 2 кирпича
+    },
+    // Полуторный кирпич 250×120×88 мм
+    1: {
+      0: 0.016,
+      1: 0.020,
+      2: 0.029,
+      3: 0.038,
+    },
+    // Двойной кирпич 250×120×138 мм
+    2: {
+      0: 0.013,
+      1: 0.017,
+      2: 0.024,
+      3: 0.031,
+    },
   };
-
-  /// Расход раствора на 1 кирпич (м³)
-  static const double mortarPerBrick = 0.00025;
 
   /// Объём раствора из 1 мешка 25 кг (м³)
   static const double mortarPerBag = 0.015;
@@ -127,9 +143,9 @@ class CalculateBrick extends BaseCalculator {
     // Количество кирпичей с запасом
     final bricksNeeded = (area * bricksPerM2 * (1 + wastePercent / 100)).ceil();
 
-    // Расход раствора
-    final thicknessMultiplier = mortarMultiplier[wallThickness]!;
-    final mortarVolume = bricksNeeded * mortarPerBrick * thicknessMultiplier;
+    // Расход раствора (м³/м² кладки по СНиП, зависит от типа кирпича и толщины)
+    final mortarPerM2 = mortarPerSqm[brickType]![wallThickness]!;
+    final mortarVolume = area * mortarPerM2;
 
     // Мешки раствора (25 кг)
     final mortarBags = (mortarVolume / mortarPerBag).ceil();

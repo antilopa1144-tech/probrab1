@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -16,6 +19,7 @@ import 'core/errors/global_error_handler.dart';
 import 'presentation/views/onboarding/onboarding_screen.dart';
 import 'core/performance/frame_timing_logger.dart';
 import 'core/utils/keyboard_dismiss_observer.dart';
+import 'core/services/ai_service.dart';
 
 // Условный импорт для Crashlytics (не используется на вебе)
 import 'core/platform/crashlytics_native.dart'
@@ -23,6 +27,12 @@ import 'core/platform/crashlytics_native.dart'
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Загрузка переменных окружения (.env) — API-ключи и секреты
+  await dotenv.load();
+
+  // Предзагрузка AI-сервиса (Михалыч) — модель будет готова к первому запросу
+  unawaited(AiService.preload());
 
   // Frame timing только на нативных платформах
   if (!kIsWeb) {

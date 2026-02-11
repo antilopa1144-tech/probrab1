@@ -18,6 +18,9 @@ import '../tools/room_area_bottom_sheet.dart';
 import '../tools/simple_calculator_bottom_sheet.dart';
 import '../checklist/create_checklist_bottom_sheet.dart';
 import '../checklist/checklist_details_screen.dart';
+import '../../providers/calculation_provider.dart';
+import '../../widgets/calculator/mikhalych_button.dart';
+import '../../../core/services/ai_service.dart';
 
 /// Улучшенный каталог калькуляторов с недавними и популярными секциями.
 class ModernCalculatorCatalogScreenV2 extends ConsumerStatefulWidget {
@@ -436,6 +439,18 @@ class _ModernCalculatorCatalogScreenV2State
                 ),
               ),
             ],
+
+            // Карточка Михалыча
+            if (!hasSearch && !hasFilter)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
+                  child: _MikhalychPromoCard(
+                    palette: palette,
+                    isDark: isDark,
+                  ),
+                ),
+              ),
 
             // Заголовок секции с калькуляторами
             if (hasSearch || hasFilter || showPopular)
@@ -1096,6 +1111,124 @@ class _CalculatorCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Промо-карточка Михалыча на главном экране
+class _MikhalychPromoCard extends ConsumerWidget {
+  final CatalogPalette palette;
+  final bool isDark;
+
+  const _MikhalychPromoCard({
+    required this.palette,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    const accentColor = Color(0xFFE0823D);
+    final loc = AppLocalizations.of(context);
+
+    // Получаем историю расчётов для контекста Михалыча
+    final calculationsAsync = ref.watch(calculationsProvider);
+    final historyText = calculationsAsync.whenOrNull(
+      data: (calcs) => AiService.formatCalculationHistory(calcs),
+    );
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () => _openMikhalych(context, historyText),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isDark
+                  ? [
+                      accentColor.withValues(alpha: 0.15),
+                      accentColor.withValues(alpha: 0.08),
+                    ]
+                  : [
+                      accentColor.withValues(alpha: 0.12),
+                      accentColor.withValues(alpha: 0.04),
+                    ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: accentColor.withValues(alpha: isDark ? 0.3 : 0.2),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(
+                    Icons.engineering,
+                    color: accentColor,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        loc.translate('ai.promo_title'),
+                        style: GoogleFonts.manrope(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: palette.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        loc.translate('ai.promo_subtitle'),
+                        style: GoogleFonts.manrope(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: palette.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 16,
+                  color: palette.textMuted,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openMikhalych(BuildContext context, String? calculationHistory) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return MikhalychBottomSheet(
+          calculatorName: 'Главный экран',
+          data: const {},
+          accentColor: const Color(0xFFE0823D),
+          calculationHistory: calculationHistory,
+        );
+      },
     );
   }
 }

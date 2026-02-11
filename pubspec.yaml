@@ -77,6 +77,10 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   # Работа с часовыми поясами для уведомлений
   timezone: ^0.10.0
+  # HTTP-клиент для OpenRouter API (Михалыч AI-прораб)
+  http: ^1.1.0
+  # Безопасное хранение API-ключей через .env файл
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -106,6 +110,7 @@ flutter:
   # Локализационные ресурсы
   generate: true
   assets:
+    - .env
     - assets/icons/
     - assets/videos/
     - assets/json/

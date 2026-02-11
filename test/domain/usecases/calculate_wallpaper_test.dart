@@ -24,8 +24,11 @@ void main() {
 
       // Новый алгоритм: периметр ? √(50*4) ? 14.14м  ~27 полос (14.14/0.53)
       // Полос из рулона: 10.05/2.5 = 4 полосы  ~7 рулонов с запасом 5%
-      expect(result.values['rollsNeeded'], greaterThanOrEqualTo(7.0));
-      expect(result.values['rollsNeeded'], lessThanOrEqualTo(15.0));
+      // Периметр = area / wallHeight = 50 / 2.5 = 20 м
+      // Полос = ceil(20 / 0.53) = 38
+      // Полос из рулона: floor(10.05 / 2.5) = 4
+      // Рулонов = ceil(38 / 4) = 10
+      expect(result.values['rollsNeeded'], closeTo(10.0, 1.0));
     });
 
     test('subtracts windows and doors area', () {

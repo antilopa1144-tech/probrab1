@@ -117,40 +117,38 @@ void main() {
     });
 
     group('Mortar calculations', () {
-      test('calculates mortar volume', () {
+      test('calculates mortar volume from mortarPerSqm', () {
         final inputs = {
           'area': 20.0,
-          'brickType': 0.0,
-          'wallThickness': 1.0,
+          'brickType': 0.0, // одинарный
+          'wallThickness': 1.0, // 1 кирпич
         };
 
         final result = calculator(inputs, emptyPriceList);
 
-        // mortarVolume = bricksNeeded * 0.00025 * thicknessMultiplier
-        // 2142 * 0.00025 * 1.0 = 0.5355 m³
-        expect(result.values['mortarVolume'], closeTo(0.54, 0.01));
+        // mortarVolume = area * mortarPerSqm[0][1] = 20 * 0.023 = 0.46 м³
+        expect(result.values['mortarVolume'], closeTo(0.46, 0.01));
       });
 
-      test('thicker wall uses more mortar per brick', () {
+      test('thicker wall uses more mortar per m²', () {
         final oneInputs = {
           'area': 20.0,
           'brickType': 0.0,
-          'wallThickness': 1.0, // multiplier = 1.0
+          'wallThickness': 1.0, // 0.023 м³/м²
         };
         final twoInputs = {
           'area': 20.0,
           'brickType': 0.0,
-          'wallThickness': 3.0, // multiplier = 1.8
+          'wallThickness': 3.0, // 0.045 м³/м²
         };
 
         final oneResult = calculator(oneInputs, emptyPriceList);
         final twoResult = calculator(twoInputs, emptyPriceList);
 
-        // 2-brick wall has higher multiplier but also 4x bricks
-        // So mortar should be significantly higher
+        // 2-brick wall: 0.045/0.023 ≈ 1.96x more mortar
         expect(
           twoResult.values['mortarVolume'],
-          greaterThan((oneResult.values['mortarVolume'] ?? 0) * 3),
+          greaterThan(oneResult.values['mortarVolume']! * 1.5),
         );
       });
 
@@ -163,9 +161,8 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        // mortarBags = ceil(mortarVolume / 0.015)
-        // ceil(0.5355 / 0.015) = ceil(35.7) = 36
-        expect(result.values['mortarBags'], equals(36));
+        // mortarBags = ceil(0.46 / 0.015) = ceil(30.67) = 31
+        expect(result.values['mortarBags'], equals(31));
       });
     });
 
@@ -414,8 +411,8 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
 
         // cementNeeded = mortarVolume * 375
-        // ~0.54 * 375 = ~200 kg
-        expect(result.values['cementNeeded'], closeTo(200, 10));
+        // 0.46 * 375 = 172.5 kg
+        expect(result.values['cementNeeded'], closeTo(172.5, 5));
       });
 
       test('calculates sand needed', () {
@@ -428,8 +425,8 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
 
         // sandNeeded = mortarVolume * 1.5
-        // ~0.54 * 1.5 = ~0.8 m³
-        expect(result.values['sandNeeded'], closeTo(0.8, 0.1));
+        // 0.46 * 1.5 = 0.69 m³
+        expect(result.values['sandNeeded'], closeTo(0.69, 0.05));
       });
     });
   });

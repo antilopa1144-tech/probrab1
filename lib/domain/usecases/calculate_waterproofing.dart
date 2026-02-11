@@ -42,8 +42,9 @@ class CalculateWaterproofing extends BaseCalculator {
     final wallArea = perimeter * wallHeight;
     final totalArea = floorArea + wallArea;
 
-    // Расход материала: ~1.5-2.0 кг/м² на слой для обмазочной гидроизоляции
-    const consumptionPerLayer = 1.0; // кг/м²
+    // Расход материала: ~1.5 кг/м² на слой для обмазочной гидроизоляции
+    // (Ceresit CR 65 — 1.5-2.0 кг/м², Weber.tec 822 — 1.3-1.5 кг/м²)
+    const consumptionPerLayer = 1.5; // кг/м²
     final materialNeeded = totalArea * consumptionPerLayer * layers * 1.1; // +10%
 
     // Грунтовка: ~0.2-0.25 л/м², 1 слой перед гидроизоляцией
