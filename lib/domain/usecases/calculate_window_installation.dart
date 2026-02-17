@@ -41,32 +41,32 @@ class CalculateWindowInstallation extends BaseCalculator {
     // Периметр одного окна
     final windowPerimeter = (windowWidth + windowHeight) * 2;
 
-    // Монтажная пена: 1-2 баллона на окно (зависит от размера)
-    final foamPerWindow = windowArea > 2.5 ? 2 : 1;
-    final foamNeeded = windows * foamPerWindow;
+    // Монтажная пена: 1.5-2 баллона на окно (зависит от размера шва ~2-3 см)
+    final foamPerWindow = windowArea > 2.5 ? 2.0 : 1.5;
+    final foamNeeded = ceilToInt(windows * foamPerWindow);
 
     // Подоконники: длина окна + 5 см с каждой стороны
     final sillLength = (windowWidth + 0.1) * windows;
     final sillsNeeded = windows;
 
-    // Откосы: периметр окна × ширина откоса (30 см)
+    // Откосы: периметр окна × ширина откоса (30 см) + 10% запас на подрезку
     final slopeWidth = getInput(inputs, 'slopeWidth', defaultValue: 0.3, minValue: 0.2, maxValue: 0.5);
-    final slopeArea = windowPerimeter * slopeWidth * windows;
+    final slopeArea = windowPerimeter * slopeWidth * windows * 1.1;
 
     // Отливы: ширина окна + 5 см с каждой стороны
     final dripLength = (windowWidth + 0.1) * windows;
 
-    // Уплотнительная лента ПСУЛ: периметр окон
-    final sealantTapeLength = windowPerimeter * windows;
+    // Уплотнительная лента ПСУЛ: периметр окон + 10% запас
+    final sealantTapeLength = windowPerimeter * windows * 1.1;
 
-    // Анкера/крепёж: ~6-8 шт на окно
-    final anchorsNeeded = windows * 7;
+    // Анкера/крепёж: ~8 шт на окно (по ГОСТ 30971, через каждые 60-70 см)
+    final anchorsNeeded = windows * 8;
 
     // Силиконовый герметик: 1 туба на 2 окна
     final sealantTubes = ceilToInt(windows / 2);
 
-    // Пароизоляционная лента: периметр окон
-    final vaporTapeLength = windowPerimeter * windows;
+    // Пароизоляционная лента: периметр окон + 10% на нахлёсты
+    final vaporTapeLength = windowPerimeter * windows * 1.1;
 
     // Расчёт стоимости
     final windowPrice = findPrice(priceList, ['window', 'window_pvc', 'plastic_window']);

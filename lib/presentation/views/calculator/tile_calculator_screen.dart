@@ -114,6 +114,18 @@ enum RoomType {
   const RoomType(this.nameKey, this.icon, this.descKey, this.needsWaterproofing);
 }
 
+/// Сложность помещения (дополнительный % отходов, аддитивный)
+enum RoomComplexity {
+  simple('tile.complexity.simple', 0),
+  lShaped('tile.complexity.l_shaped', 5),
+  complex('tile.complexity.complex', 10);
+
+  final String nameKey;
+  /// Дополнительный процент отходов за сложность помещения
+  final int bonusPercent;
+  const RoomComplexity(this.nameKey, this.bonusPercent);
+}
+
 /// Helper class для работы с константами калькулятора плитки
 class _TileConstants {
   final CalculatorConstants? _data;
@@ -162,7 +174,15 @@ class _TileConstants {
   int getGlueBagSize() => _get<int>('glue_bag_size', 'standard', 25);
 
   // Grout calculation
-  double getGroutJointDepth() => _get('grout_calculation', 'joint_depth', 2.0);
+  /// Глубина затирки (мм) зависит от размера плитки:
+  /// малая <15см → 4мм, стандартная 15-40см → 6мм,
+  /// крупная 40-60см → 8мм, крупноформат >60см → 10мм
+  double getGroutJointDepth(double avgTileSizeCm) {
+    if (avgTileSizeCm < 15) return _get('grout_calculation', 'joint_depth_small', 4.0);
+    if (avgTileSizeCm < 40) return _get('grout_calculation', 'joint_depth_standard', 6.0);
+    if (avgTileSizeCm <= 60) return _get('grout_calculation', 'joint_depth_large', 8.0);
+    return _get('grout_calculation', 'joint_depth_xlarge', 10.0);
+  }
   double getGroutDensity() => _get('grout_calculation', 'grout_density', 1.6);
   double getGroutMarginFactor() => _get('grout_calculation', 'margin_factor', 1.1);
 
@@ -170,8 +190,8 @@ class _TileConstants {
   double getPrimerBase() => _get('primer_consumption', 'base', 0.15);
   double getPrimerMarginFactor() => _get('primer_consumption', 'margin_factor', 1.1);
 
-  // Crosses per tile
-  int getCrossesPerTile() => _get<int>('crosses_per_tile', 'standard', 5);
+  // Множитель крестиков на плитку (~1 на пересечение + запас)
+  double getCrossesMultiplier() => _get('crosses_per_tile', 'multiplier', 1.2);
 
   // SVP calculation
   int getSvpClipsPerTile(double avgTileSize) {
@@ -286,6 +306,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
   TileMaterial _material = TileMaterial.ceramic;
   LayoutPattern _layout = LayoutPattern.straight;
   RoomType _roomType = RoomType.kitchen;
+  RoomComplexity _roomComplexity = RoomComplexity.simple;
 
   // Размер плитки
   int _tileSizePreset = 30; // 0 = custom
@@ -369,11 +390,12 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     final tileHeightM = _tileHeight / 100;
     final tileAreaM2 = tileWidthM * tileHeightM;
 
-    // Запас в зависимости от способа укладки
-    final reservePercent = _constants.getLayoutMargin(_layout);
+    // Запас: базовый по укладке + бонус за сложность (аддитивный)
+    final layoutMargin = _constants.getLayoutMargin(_layout);
+    final totalMarginPercent = layoutMargin + _roomComplexity.bonusPercent;
 
     // Количество плиток с запасом
-    final tilesNeeded = ((calculatedArea / tileAreaM2) * (1 + reservePercent / 100)).ceil();
+    final tilesNeeded = ((calculatedArea / tileAreaM2) * (1 + totalMarginPercent / 100)).ceil();
     final tilesArea = tilesNeeded * tileAreaM2;
 
     // Упаковка плитки (обычно 1-1.5 м² в коробке)
@@ -386,7 +408,8 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
 
     // Затирка + запас
     // Формула: (tileWidth + tileHeight) / (tileWidth × tileHeight) × jointWidth × depth × density × area
-    final jointDepth = _constants.getGroutJointDepth();
+    final avgTileSize = (_tileWidth + _tileHeight) / 2;
+    final jointDepth = _constants.getGroutJointDepth(avgTileSize);
     final groutDensity = _constants.getGroutDensity();
     final groutConsumptionPerM2 = ((_tileWidth + _tileHeight) / (_tileWidth * _tileHeight)) *
         _jointWidth *
@@ -397,8 +420,8 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     // Грунтовка + запас
     final primerLiters = calculatedArea * _constants.getPrimerBase() * _constants.getPrimerMarginFactor();
 
-    // Крестики
-    final crossesNeeded = tilesNeeded * _constants.getCrossesPerTile();
+    // Крестики: ~1 на пересечение + 20% запас на поломки
+    final crossesNeeded = (tilesNeeded * _constants.getCrossesMultiplier()).ceil();
 
     // СВП
     int? svpCount;
@@ -534,14 +557,14 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
             icon: Icons.straighten,
           ),
           ResultItem(
-            label: _loc.translate('tile.header.tiles'),
-            value: '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
-            icon: Icons.grid_on,
-          ),
-          ResultItem(
             label: _loc.translate('tile.header.boxes'),
             value: '${_result.boxesNeeded}',
             icon: Icons.inventory_2,
+          ),
+          ResultItem(
+            label: _loc.translate('tile.header.glue'),
+            value: '${_result.glueBags}',
+            icon: Icons.shopping_bag,
           ),
         ],
       ),
@@ -553,6 +576,8 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
             : _buildDimensionsCard(),
         const SizedBox(height: 16),
         _buildRoomTypeSelector(),
+        const SizedBox(height: 16),
+        _buildRoomComplexitySelector(),
         const SizedBox(height: 16),
         _buildMaterialSelector(),
         const SizedBox(height: 16),
@@ -569,8 +594,6 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
         _buildOptionsToggles(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
-        const SizedBox(height: 16),
-        _buildAdditionalInfoCard(),
         const SizedBox(height: 24),
         _buildTipsCard(),
         const SizedBox(height: 20),
@@ -613,41 +636,20 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
   Widget _buildAreaCard() {
     const accentColor = CalculatorColors.interior;
     return _card(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _loc.translate('tile.area.title'),
-                  style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.getTextSecondary(_isDark),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${_area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Slider(
-            value: _area,
-            min: 1,
-            max: 200,
-            activeColor: accentColor,
-            onChanged: (v) {
-              setState(() {
-                _area = v;
-                _update();
-              });
-            },
-          ),
-        ],
+      child: CalculatorSliderField(
+        label: _loc.translate('tile.area.title'),
+        value: _area,
+        min: 1,
+        max: 200,
+        suffix: _loc.translate('common.sqm'),
+        accentColor: accentColor,
+        onChanged: (v) {
+          setState(() {
+            _area = v;
+            _update();
+          });
+        },
+        decimalPlaces: 1,
       ),
     );
   }
@@ -733,37 +735,16 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     required ValueChanged<double> onChanged,
     required Color accentColor,
   }) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                label,
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.getTextSecondary(_isDark),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              '${value.toStringAsFixed(1)} м',
-              style: CalculatorDesignSystem.titleMedium.copyWith(
-                color: accentColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: ((max - min) * 10).toInt(),
-          activeColor: accentColor,
-          onChanged: onChanged,
-        ),
-      ],
+    return CalculatorSliderField(
+      label: label,
+      value: value,
+      min: min,
+      max: max,
+      divisions: ((max - min) * 10).toInt(),
+      suffix: _loc.translate('common.meters'),
+      accentColor: accentColor,
+      onChanged: onChanged,
+      decimalPlaces: 1,
     );
   }
 
@@ -858,6 +839,35 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
               ),
             );
           }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRoomComplexitySelector() {
+    const accentColor = CalculatorColors.interior;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('tile.complexity.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: RoomComplexity.values.map((c) => _loc.translate(c.nameKey)).toList(),
+            selectedIndex: _roomComplexity.index,
+            onSelect: (index) {
+              setState(() {
+                _roomComplexity = RoomComplexity.values[index];
+                _update();
+              });
+            },
+            accentColor: accentColor,
+          ),
         ],
       ),
     );
@@ -1052,72 +1062,38 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
             ),
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _loc.translate('tile.size.width'),
-                  style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.getTextSecondary(_isDark),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${_tileWidth.toStringAsFixed(0)} ${_loc.translate('common.cm')}',
-                style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('tile.size.width'),
             value: _tileWidth,
             min: 5,
             max: 150,
             divisions: 145,
-            activeColor: accentColor,
+            suffix: _loc.translate('common.cm'),
+            accentColor: accentColor,
             onChanged: (v) {
               setState(() {
                 _tileWidth = v;
                 _update();
               });
             },
+            decimalPlaces: 0,
           ),
           const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _loc.translate('tile.size.height'),
-                  style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.getTextSecondary(_isDark),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${_tileHeight.toStringAsFixed(0)} ${_loc.translate('common.cm')}',
-                style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('tile.size.height'),
             value: _tileHeight,
             min: 5,
             max: 150,
             divisions: 145,
-            activeColor: accentColor,
+            suffix: _loc.translate('common.cm'),
+            accentColor: accentColor,
             onChanged: (v) {
               setState(() {
                 _tileHeight = v;
                 _update();
               });
             },
+            decimalPlaces: 0,
           ),
         ],
       ),
@@ -1221,52 +1197,31 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     const accentColor = CalculatorColors.interior;
     return _card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _loc.translate('tile.joint.title'),
-                      style: CalculatorDesignSystem.bodyMedium.copyWith(
-                        color: CalculatorColors.getTextSecondary(_isDark),
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      _loc.translate('tile.joint.hint'),
-                      style: CalculatorDesignSystem.bodySmall.copyWith(
-                        color: CalculatorColors.getTextSecondary(_isDark),
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${_jointWidth.toStringAsFixed(1)} ${_loc.translate('common.mm')}',
-                style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+          Text(
+            _loc.translate('tile.joint.hint'),
+            style: CalculatorDesignSystem.bodySmall.copyWith(
+              color: CalculatorColors.getTextSecondary(_isDark),
+              fontSize: 11,
+            ),
           ),
-          Slider(
+          const SizedBox(height: 8),
+          CalculatorSliderField(
+            label: _loc.translate('tile.joint.title'),
             value: _jointWidth,
             min: 1,
             max: 10,
             divisions: 18,
-            activeColor: accentColor,
+            suffix: _loc.translate('common.mm'),
+            accentColor: accentColor,
             onChanged: (v) {
               setState(() {
                 _jointWidth = v;
                 _update();
               });
             },
+            decimalPlaces: 1,
           ),
         ],
       ),
@@ -1439,41 +1394,6 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       title: _loc.translate('tile.materials.title'),
       titleIcon: Icons.construction,
       items: items,
-      accentColor: accentColor,
-    );
-  }
-
-  Widget _buildAdditionalInfoCard() {
-    const accentColor = CalculatorColors.interior;
-
-    final infoItems = <MaterialItem>[
-      MaterialItem(
-        name: _loc.translate('tile.info.material'),
-        value: _loc.translate(_result.material.nameKey),
-        icon: Icons.grid_on,
-      ),
-      MaterialItem(
-        name: _loc.translate('tile.info.tile_size'),
-        value: '${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} ${_loc.translate('common.cm')}',
-        icon: Icons.square_foot,
-      ),
-      MaterialItem(
-        name: _loc.translate('tile.info.layout'),
-        value: _loc.translate(_result.layout.nameKey),
-        subtitle: _loc.translate('tile.layout.reserve').replaceFirst('{value}', '${_constants.getLayoutMargin(_result.layout)}'),
-        icon: Icons.pattern,
-      ),
-      MaterialItem(
-        name: _loc.translate('tile.info.joint_width'),
-        value: '${_result.jointWidth.toStringAsFixed(1)} ${_loc.translate('common.mm')}',
-        icon: Icons.border_style,
-      ),
-    ];
-
-    return MaterialsCardModern(
-      title: _loc.translate('tile.info.title'),
-      titleIcon: Icons.info_outline,
-      items: infoItems,
       accentColor: accentColor,
     );
   }

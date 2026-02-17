@@ -25,6 +25,33 @@ import './base_calculator.dart';
 /// - loadLevel: уровень нагрузки (1=обычная, 2=высокая)
 /// - reserve: запас (%) по умолчанию 10
 class CalculateSheetingOsbPlywood extends BaseCalculator {
+  /// Раскладка листов по сетке (grid-based).
+  /// Пробует обе ориентации листа и возвращает лучший результат.
+  ///
+  /// [wallLength] - длина стены/пола (м)
+  /// [wallHeight] - высота стены / ширина пола (м)
+  /// [sheetL] - длина листа (м)
+  /// [sheetW] - ширина листа (м)
+  /// [layers] - количество слоёв обшивки
+  int _gridLayoutSheets(double wallLength, double wallHeight, double sheetL, double sheetW, int layers) {
+    // Ориентация 1: лист горизонтально (длинная сторона по длине стены)
+    final sheetsH = _layoutOneOrientation(wallLength, wallHeight, sheetL, sheetW);
+    // Ориентация 2: лист вертикально (длинная сторона по высоте стены)
+    final sheetsV = _layoutOneOrientation(wallLength, wallHeight, sheetW, sheetL);
+
+    // Берём лучший результат (меньше листов = меньше отходов)
+    final bestSheets = sheetsH < sheetsV ? sheetsH : sheetsV;
+    return bestSheets * layers;
+  }
+
+  /// Раскладка в одной ориентации.
+  int _layoutOneOrientation(double surfaceLength, double surfaceHeight, double sheetAlongLength, double sheetAlongHeight) {
+    if (sheetAlongLength <= 0 || sheetAlongHeight <= 0) return 999999;
+    final columnsNeeded = (surfaceLength / sheetAlongLength).ceil();
+    final rowsNeeded = (surfaceHeight / sheetAlongHeight).ceil();
+    return columnsNeeded * rowsNeeded;
+  }
+
   @override
   String? validateInputs(Map<String, double> inputs) {
     final baseError = super.validateInputs(inputs);
@@ -125,6 +152,9 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
     final environment = getIntInput(inputs, 'environment', defaultValue: 1, minValue: 1, maxValue: 3);
     final loadLevel = getIntInput(inputs, 'loadLevel', defaultValue: 1, minValue: 1, maxValue: 2);
 
+    // Ориентация листа (1=авто, 2=горизонтально, 3=вертикально)
+    final sheetOrientation = getIntInput(inputs, 'sheetOrientation', defaultValue: 1, minValue: 1, maxValue: 3);
+
     // --- Множитель площади ОСБ (двусторонняя обшивка) ---
     double osbAreaMultiplier;
     switch (constructionType) {
@@ -181,11 +211,45 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
 
     final osbBaseArea = effectiveArea * osbAreaMultiplier;
 
-    // Площадь ОСБ с запасом
+    // Площадь ОСБ с запасом (для отображения)
     final materialArea = addMargin(osbBaseArea, reserve);
 
-    // Количество листов
-    final sheetsNeeded = calculateUnitsNeeded(osbBaseArea, sheetArea, marginPercent: reserve);
+    // Количество листов: grid-based layout когда есть размеры, иначе area/area
+    int sheetsNeeded;
+
+    // Определяем число слоёв обшивки
+    final int layers = (osbAreaMultiplier > 1.5) ? 2 : 1; // перегородки/СИП = 2 стороны
+
+    if (inputMode == 0) {
+      final wallLength = getInput(inputs, 'length', minValue: 0.1);
+      final wallHeight = getInput(inputs, 'width', minValue: 0.1);
+
+      if (wallLength > 0 && wallHeight > 0) {
+        // Grid-based раскладка с учётом ориентации
+        int gridSheets;
+        if (sheetOrientation == 2) {
+          // Принудительно горизонтально
+          gridSheets = _layoutOneOrientation(wallLength, wallHeight, sheetLength, sheetWidth) * layers;
+        } else if (sheetOrientation == 3) {
+          // Принудительно вертикально
+          gridSheets = _layoutOneOrientation(wallLength, wallHeight, sheetWidth, sheetLength) * layers;
+        } else {
+          // Авто — лучший из двух
+          gridSheets = _gridLayoutSheets(wallLength, wallHeight, sheetLength, sheetWidth, layers);
+        }
+
+        // Добавляем запас на подрезку (меньше чем area-based, т.к. раскладка точнее)
+        // Для grid layout 5% достаточно (обрезки частично переиспользуются)
+        final gridReserve = reserve.clamp(5.0, 20.0) / 2; // половина от пользовательского
+        sheetsNeeded = (gridSheets * (1 + gridReserve / 100)).ceil();
+      } else {
+        // Fallback на area-based
+        sheetsNeeded = calculateUnitsNeeded(osbBaseArea, sheetArea, marginPercent: reserve);
+      }
+    } else {
+      // Режим по площади — area-based формула
+      sheetsNeeded = calculateUnitsNeeded(osbBaseArea, sheetArea, marginPercent: reserve);
+    }
 
     // --- Расчёт крепежа в зависимости от типа конструкции ---
     // Нормы расхода саморезов для ОСБ (СП 31-105-2002):
@@ -303,8 +367,11 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
     }
 
     final isLowClass = osbClass < 3;
+    // ОСБ-1/2 — только для сухих интерьеров (ГОСТ Р 56309)
+    // Предупреждаем для наружных условий, кровли и опалубки
+    // Стены (type 1) могут быть интерьерными — проверяем через environment
     final warningClassOutdoor = isLowClass &&
-        (environment == 3 || constructionType == 1 || constructionType == 3 || constructionType == 6);
+        (environment == 3 || constructionType == 3 || constructionType == 6);
     final warningClassWet = isLowClass && environment == 2;
     final warningClassLoad = isLowClass && loadLevel == 2;
 

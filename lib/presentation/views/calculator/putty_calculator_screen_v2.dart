@@ -454,43 +454,20 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
   Widget _buildAreaCard() {
     const accentColor = CalculatorColors.interior;
     return _card(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  _loc.translate('putty.dimensions.wall_area'),
-                  style: CalculatorDesignSystem.bodyMedium.copyWith(
-                    color: CalculatorColors.textSecondary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${_area.toStringAsFixed(1)} м²',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Slider(
-            value: _area,
-            min: 5,
-            max: 200,
-            activeColor: accentColor,
-            onChanged: (v) {
-              setState(() {
-                _area = v;
-                _update();
-              });
-            },
-          ),
-        ],
+      child: CalculatorSliderField(
+        label: _loc.translate('putty.dimensions.wall_area'),
+        value: _area,
+        min: 5,
+        max: 200,
+        suffix: 'м²',
+        accentColor: accentColor,
+        decimalPlaces: 1,
+        onChanged: (v) {
+          setState(() {
+            _area = v;
+            _update();
+          });
+        },
       ),
     );
   }
@@ -508,46 +485,55 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
             ),
           ),
           const SizedBox(height: 16),
-          _buildDimensionSlider(
+          CalculatorSliderField(
             label: _loc.translate('putty.dimensions.length'),
             value: _length,
             min: 1.0,
             max: 20.0,
+            divisions: 190,
+            suffix: _loc.translate('common.meters'),
+            accentColor: accentColor,
+            decimalPlaces: 1,
             onChanged: (v) {
               setState(() {
                 _length = v;
                 _update();
               });
             },
-            accentColor: accentColor,
           ),
           const SizedBox(height: 16),
-          _buildDimensionSlider(
+          CalculatorSliderField(
             label: _loc.translate('putty.dimensions.width'),
             value: _width,
             min: 1.0,
             max: 20.0,
+            divisions: 190,
+            suffix: _loc.translate('common.meters'),
+            accentColor: accentColor,
+            decimalPlaces: 1,
             onChanged: (v) {
               setState(() {
                 _width = v;
                 _update();
               });
             },
-            accentColor: accentColor,
           ),
           const SizedBox(height: 16),
-          _buildDimensionSlider(
+          CalculatorSliderField(
             label: _loc.translate('putty.dimensions.ceiling_height'),
             value: _height,
             min: 2.0,
             max: 4.0,
+            divisions: 20,
+            suffix: _loc.translate('common.meters'),
+            accentColor: accentColor,
+            decimalPlaces: 1,
             onChanged: (v) {
               setState(() {
                 _height = v;
                 _update();
               });
             },
-            accentColor: accentColor,
           ),
           const SizedBox(height: 12),
           Container(
@@ -581,51 +567,6 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildDimensionSlider({
-    required String label,
-    required double value,
-    required double min,
-    required double max,
-    required ValueChanged<double> onChanged,
-    required Color accentColor,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                label,
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              '${value.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
-              style: CalculatorDesignSystem.titleMedium.copyWith(
-                color: accentColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: ((max - min) * 10).toInt(),
-          activeColor: accentColor,
-          onChanged: onChanged,
-        ),
-      ],
     );
   }
 
@@ -1087,51 +1028,59 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
               child: Row(
                 children: [
                   Expanded(
-                    child: _buildSmallSlider(
+                    child: CalculatorSliderField(
                       label: _loc.translate('putty.openings_w'),
                       value: opening.width,
                       min: 0.5,
                       max: 3.0,
+                      divisions: 25,
+                      suffix: _loc.translate('common.meters'),
+                      accentColor: accentColor,
+                      decimalPlaces: 1,
                       onChanged: (v) {
                         setState(() {
                           opening.width = v;
                           _update();
                         });
                       },
-                      accentColor: accentColor,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: _buildSmallSlider(
+                    child: CalculatorSliderField(
                       label: _loc.translate('putty.openings_h'),
                       value: opening.height,
                       min: 0.5,
                       max: 3.0,
+                      divisions: 25,
+                      suffix: _loc.translate('common.meters'),
+                      accentColor: accentColor,
+                      decimalPlaces: 1,
                       onChanged: (v) {
                         setState(() {
                           opening.height = v;
                           _update();
                         });
                       },
-                      accentColor: accentColor,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: _buildSmallSlider(
+                    child: CalculatorSliderField(
                       label: _loc.translate('putty.openings_count'),
                       value: opening.count.toDouble(),
                       min: 1,
                       max: 10,
+                      divisions: 9,
+                      suffix: _loc.translate('common.pcs'),
+                      accentColor: accentColor,
+                      decimalPlaces: 0,
                       onChanged: (v) {
                         setState(() {
                           opening.count = v.toInt();
                           _update();
                         });
                       },
-                      accentColor: accentColor,
-                      isInteger: true,
                     ),
                   ),
                   if (_openings.length > 1)
@@ -1148,43 +1097,6 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
           }),
         ],
       ),
-    );
-  }
-
-  Widget _buildSmallSlider({
-    required String label,
-    required double value,
-    required double min,
-    required double max,
-    required ValueChanged<double> onChanged,
-    required Color accentColor,
-    bool isInteger = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          label,
-          style: CalculatorDesignSystem.bodySmall.copyWith(
-            color: CalculatorColors.textSecondary,
-          ),
-        ),
-        Text(
-          isInteger ? value.toInt().toString() : value.toStringAsFixed(1),
-          style: CalculatorDesignSystem.titleSmall.copyWith(
-            color: accentColor,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: isInteger ? (max - min).toInt() : ((max - min) * 10).toInt(),
-          activeColor: accentColor,
-          onChanged: onChanged,
-        ),
-      ],
     );
   }
 

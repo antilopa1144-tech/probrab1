@@ -12,6 +12,16 @@ enum GypsumGKLType { standard, moisture, fire }
 enum GypsumThickness { t9_5, t12_5 }
 enum GypsumSheetSize { s2000x1200, s2500x1200, s2700x1200, s3000x1200 }
 
+/// Форма стены — влияет на расход профиля
+enum WallShape {
+  rectangular(1.0),  // Прямоугольная
+  lShaped(1.1),      // Г-образная — +10% профиля
+  complex(1.2);       // Сложная — +20% профиля
+
+  final double profileMultiplier;
+  const WallShape(this.profileMultiplier);
+}
+
 class _GypsumResult {
   final double area;
   final int gklSheets;
@@ -127,6 +137,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
   GypsumGKLType _gklType = GypsumGKLType.standard;
   GypsumThickness _thickness = GypsumThickness.t12_5;
   GypsumSheetSize _sheetSize = GypsumSheetSize.s2500x1200;
+  WallShape _wallShape = WallShape.rectangular;
   late _GypsumResult _result;
   late AppLocalizations _loc;
 
@@ -169,10 +180,42 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
       'sheetSize': _sheetSize.index.toDouble(),
       'layers': _layers.toDouble(),
       'useInsulation': _useInsulation ? 1.0 : 0.0,
+      'wallShape': _wallShape.index.toDouble(),
     };
 
     final result = _calculator(inputs, []);
-    return _GypsumResult.fromCalculatorResult(result.values, _sheetSize);
+    final gypsumResult = _GypsumResult.fromCalculatorResult(result.values, _sheetSize);
+
+    // Применяем множитель формы стены к профилю
+    if (_wallShape != WallShape.rectangular) {
+      final m = _wallShape.profileMultiplier;
+      return _GypsumResult(
+        area: gypsumResult.area,
+        gklSheets: gypsumResult.gklSheets,
+        sheetArea: gypsumResult.sheetArea,
+        sheetSizeName: gypsumResult.sheetSizeName,
+        constructionType: gypsumResult.constructionType,
+        pnPieces: (gypsumResult.pnPieces * m).ceil(),
+        pnMeters: gypsumResult.pnMeters * m,
+        ppPieces: (gypsumResult.ppPieces * m).ceil(),
+        ppMeters: gypsumResult.ppMeters * m,
+        screwsTN25: gypsumResult.screwsTN25,
+        screwsTN35: gypsumResult.screwsTN35,
+        screwsLN: (gypsumResult.screwsLN * m).ceil(),
+        dowels: (gypsumResult.dowels * m).ceil(),
+        suspensions: (gypsumResult.suspensions * m).ceil(),
+        connectors: (gypsumResult.connectors * m).ceil(),
+        insulationArea: gypsumResult.insulationArea,
+        sealingTape: gypsumResult.sealingTape * m,
+        armatureTape: gypsumResult.armatureTape,
+        fillerKg: gypsumResult.fillerKg,
+        primerLiters: gypsumResult.primerLiters,
+        sheetWeight: gypsumResult.sheetWeight,
+        totalWeight: gypsumResult.totalWeight,
+      );
+    }
+
+    return gypsumResult;
   }
 
   void _update() => setState(() => _result = _calculate());
@@ -332,6 +375,8 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
         const SizedBox(height: 16),
         _buildAreaCard(),
         const SizedBox(height: 16),
+        _buildWallShapeSelector(),
+        const SizedBox(height: 16),
         _buildOptionsCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
@@ -474,43 +519,57 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
     );
   }
 
-  Widget _buildAreaCard() {
+  Widget _buildWallShapeSelector() {
     const accentColor = CalculatorColors.walls;
     return _card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _loc.translate('gypsum.label.area'),
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.getTextSecondary(_isDark),
-                ),
-              ),
-              Text(
-                '${_area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+          Text(
+            _loc.translate('gypsum.wall_shape.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
           ),
-          Slider(
-            value: _area,
-            min: 1,
-            max: 500,
-            divisions: 4990,
-            activeColor: accentColor,
-            onChanged: (v) {
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: [
+              _loc.translate('gypsum.wall_shape.rectangular'),
+              _loc.translate('gypsum.wall_shape.l_shaped'),
+              _loc.translate('gypsum.wall_shape.complex'),
+            ],
+            selectedIndex: _wallShape.index,
+            onSelect: (index) {
               setState(() {
-                _area = v;
+                _wallShape = WallShape.values[index];
                 _update();
               });
             },
+            accentColor: accentColor,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAreaCard() {
+    const accentColor = CalculatorColors.walls;
+    return _card(
+      child: CalculatorSliderField(
+        label: _loc.translate('gypsum.label.area'),
+        value: _area,
+        min: 1,
+        max: 500,
+        divisions: 4990,
+        suffix: _loc.translate('common.sqm'),
+        accentColor: accentColor,
+        onChanged: (v) {
+          setState(() {
+            _area = v;
+            _update();
+          });
+        },
+        decimalPlaces: 1,
       ),
     );
   }
@@ -528,36 +587,21 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
             ),
           ),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _loc.translate('gypsum.options.layers'),
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.getTextSecondary(_isDark),
-                ),
-              ),
-              Text(
-                '$_layers ${_loc.translate('gypsum.options.layers_unit')}',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('gypsum.options.layers'),
             value: _layers.toDouble(),
             min: 1,
             max: 2,
             divisions: 1,
-            activeColor: accentColor,
+            suffix: _loc.translate('gypsum.options.layers_unit'),
+            accentColor: accentColor,
             onChanged: (v) {
               setState(() {
                 _layers = v.toInt();
                 _update();
               });
             },
+            decimalPlaces: 0,
           ),
           const SizedBox(height: 12),
           Row(
@@ -611,7 +655,11 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
     }
 
     // Формируем subtitle с размером и весом листа
-    final sheetSubtitle = '${_result.sheetSizeName}, ${_result.sheetWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')}/${_loc.translate('gypsum.materials.sheet')}';
+    final sheetInfo = '${_result.sheetSizeName}, ${_result.sheetWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')}/${_loc.translate('gypsum.materials.sheet')}';
+    // Для перегородки пояснить: ×2 = обшивка с обеих сторон
+    final sheetSubtitle = _constructionType == GypsumConstructionType.partition
+        ? '$sheetInfo • ${_loc.translate('gypsum.construction.partition_desc')}'
+        : sheetInfo;
 
     final items = <MaterialItem>[
       MaterialItem(

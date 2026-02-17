@@ -58,7 +58,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Manual and room modes via ModeSelector
+      // Manual and room modes via ModeSelector (evenness uses ChoiceChip)
       expect(find.byType(ModeSelector), findsOneWidget);
     });
 
@@ -314,8 +314,8 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Tap room mode (second option in ModeSelector)
-      final modeSelector = find.byType(ModeSelector);
+      // Tap room mode (first ModeSelector = input mode)
+      final modeSelector = find.byType(ModeSelector).first;
       expect(modeSelector, findsOneWidget);
 
       // Find the mode selector options and tap the second one (room)
@@ -345,8 +345,8 @@ void main() {
 
       await tester.pump();
 
-      // Switch to room mode
-      final modeSelector = find.byType(ModeSelector);
+      // Switch to room mode (first ModeSelector = input mode)
+      final modeSelector = find.byType(ModeSelector).first;
       expect(modeSelector, findsOneWidget);
 
       final gestureDetectors = find.descendant(

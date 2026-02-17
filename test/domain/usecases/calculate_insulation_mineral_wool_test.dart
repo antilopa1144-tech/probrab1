@@ -74,8 +74,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Крепёж: 20 * 5 = 100 шт
-      expect(result.values['fastenersNeeded'], closeTo(100.0, 5.0));
+      // Крепёж: 20 * 5 = 100 шт (толщина 100мм → 5 дюбелей/м², стена по умолчанию)
+      expect(result.values['fastenersNeeded'], equals(100.0));
     });
 
     test('uses default thickness when missing', () {
@@ -118,6 +118,300 @@ void main() {
         () => calculator(inputs, emptyPriceList),
         throwsA(isA<CalculationException>()),
       );
+    });
+
+    test('outputs applicationSurface and fastenersPerSqm', () {
+      final calculator = CalculateInsulationMineralWool();
+      final inputs = {
+        'area': 20.0,
+        'thickness': 100.0,
+        'applicationSurface': 1.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['applicationSurface'], equals(1.0));
+      expect(result.values['fastenersPerSqm'], equals(5.0));
+    });
+
+    group('Крепёж по толщине', () {
+      test('Тонкий утеплитель 50мм → 4 шт/м²', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 50.0,
+          'applicationSurface': 1.0,
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 10 * 4 * 1.0 = 40
+        expect(result.values['fastenersNeeded'], equals(40.0));
+        expect(result.values['fastenersPerSqm'], equals(4.0));
+      });
+
+      test('Стандартный 100мм → 5 шт/м²', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 100.0,
+          'applicationSurface': 1.0,
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 10 * 5 * 1.0 = 50
+        expect(result.values['fastenersNeeded'], equals(50.0));
+        expect(result.values['fastenersPerSqm'], equals(5.0));
+      });
+
+      test('Толстый 150мм → 6 шт/м²', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 150.0,
+          'applicationSurface': 1.0,
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 10 * 6 * 1.0 = 60
+        expect(result.values['fastenersNeeded'], equals(60.0));
+        expect(result.values['fastenersPerSqm'], equals(6.0));
+      });
+
+      test('Очень толстый 200мм → 8 шт/м²', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 200.0,
+          'applicationSurface': 1.0,
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 10 * 8 * 1.0 = 80
+        expect(result.values['fastenersNeeded'], equals(80.0));
+        expect(result.values['fastenersPerSqm'], equals(8.0));
+      });
+
+      test('Максимальный 300мм → 10 шт/м²', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 300.0,
+          'applicationSurface': 1.0,
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 10 * 10 * 1.0 = 100
+        expect(result.values['fastenersNeeded'], equals(100.0));
+        expect(result.values['fastenersPerSqm'], equals(10.0));
+      });
+    });
+
+    group('Поверхность утепления', () {
+      test('Стена (по умолчанию) → стандартные крепежи', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 100.0,
+          // applicationSurface не указан → default 1 (стена)
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 10 * 5 * 1.0 = 50
+        expect(result.values['fastenersNeeded'], equals(50.0));
+        expect(result.values['applicationSurface'], equals(1.0));
+      });
+
+      test('Пол → 0 крепежей (гравитация)', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 100.0,
+          'applicationSurface': 2.0, // пол
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 10 * 5 * 0.0 = 0
+        expect(result.values['fastenersNeeded'], equals(0.0));
+        expect(result.values['applicationSurface'], equals(2.0));
+      });
+
+      test('Потолок → ×1.5 крепежей', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 100.0,
+          'applicationSurface': 3.0, // потолок
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 10 * 5 * 1.5 = 75
+        expect(result.values['fastenersNeeded'], equals(75.0));
+        expect(result.values['applicationSurface'], equals(3.0));
+      });
+
+      test('Скат крыши → ×1.2 крепежей', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 100.0,
+          'applicationSurface': 4.0, // скат крыши
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // 10 * 5 * 1.2 = 60
+        expect(result.values['fastenersNeeded'], equals(60.0));
+        expect(result.values['applicationSurface'], equals(4.0));
+      });
+    });
+
+    group('Корректировка крепежа по плотности', () {
+      test('Лёгкая плита (<50 кг/м³) → ×0.8 крепежа', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 100.0,
+          'density': 30.0, // лёгкая
+          'applicationSurface': 1.0,
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // base=5 (100мм), densityFactor=0.8 → fastenersPerSqm = ceil(5*0.8)=4
+        // 10 * 4 * 1.0 = 40
+        expect(result.values['fastenersNeeded'], equals(40.0));
+        expect(result.values['fastenersPerSqm'], equals(4.0));
+      });
+
+      test('Тяжёлая плита (>100 кг/м³) → ×1.3 крепежа', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 100.0,
+          'density': 120.0, // тяжёлая
+          'applicationSurface': 1.0,
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // base=5 (100мм), densityFactor=1.3 → fastenersPerSqm = ceil(5*1.3)=7
+        // 10 * 7 * 1.0 = 70
+        expect(result.values['fastenersNeeded'], equals(70.0));
+        expect(result.values['fastenersPerSqm'], equals(7.0));
+      });
+
+      test('Стандартная плотность (50-100 кг/м³) → ×1.0 (без изменений)', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 100.0,
+          'density': 75.0,
+          'applicationSurface': 1.0,
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // base=5 (100мм), densityFactor=1.0 → 5
+        // 10 * 5 * 1.0 = 50
+        expect(result.values['fastenersNeeded'], equals(50.0));
+        expect(result.values['fastenersPerSqm'], equals(5.0));
+      });
+
+      test('Тяжёлая плита на потолке → density×1.3 + ceiling×1.5', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 100.0,
+          'density': 120.0,
+          'applicationSurface': 3.0, // потолок
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // base=5, densityFactor=1.3 → ceil(6.5)=7, ceiling ×1.5
+        // 10 * 7 * 1.5 = 105
+        expect(result.values['fastenersNeeded'], equals(105.0));
+      });
+    });
+
+    group('Предупреждения', () {
+      test('Тонкий утеплитель <100мм на стену → предупреждение warningThinExterior', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 50.0,
+          'applicationSurface': 1.0, // стена
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        expect(result.values['warningThinExterior'], equals(1.0));
+      });
+
+      test('Толщина 100мм на стену → нет предупреждения', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 100.0,
+          'applicationSurface': 1.0, // стена
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        expect(result.values.containsKey('warningThinExterior'), isFalse);
+      });
+
+      test('Пол → предупреждение warningFloorNoFasteners', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 100.0,
+          'applicationSurface': 2.0, // пол
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        expect(result.values['warningFloorNoFasteners'], equals(1.0));
+      });
+
+      test('Тонкий утеплитель на пол → нет предупреждения (только для стен)', () {
+        final calculator = CalculateInsulationMineralWool();
+        final inputs = {
+          'area': 10.0,
+          'thickness': 50.0,
+          'applicationSurface': 2.0, // пол
+        };
+        final emptyPriceList = <PriceItem>[];
+
+        final result = calculator(inputs, emptyPriceList);
+
+        expect(result.values.containsKey('warningThinExterior'), isFalse);
+      });
     });
   });
 }

@@ -443,23 +443,19 @@ void main() {
         expect(find.text('Версия'), findsOneWidget);
       });
 
-      testWidgets('пункт обратной связи показывает snackbar', (tester) async {
+      testWidgets('пункт оценки приложения отображается', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
-        // Прокручиваем к пункту обратной связи
-        final feedbackTile = find.widgetWithText(
+        // Прокручиваем к пункту оценки приложения
+        final rateAppTile = find.widgetWithText(
           ListTile,
-          'Обратная связь',
+          'Оценить приложение',
         );
-        await _scrollTo(tester, feedbackTile);
+        await _scrollTo(tester, rateAppTile);
 
-        await tester.tap(feedbackTile);
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 100));
-
-        // Должен показаться snackbar
-        expect(find.text('Функция в разработке'), findsOneWidget);
+        expect(rateAppTile, findsOneWidget);
+        expect(find.text('Оставьте отзыв в RuStore'), findsOneWidget);
       });
 
       testWidgets('пункт политики конфиденциальности показывает snackbar', (

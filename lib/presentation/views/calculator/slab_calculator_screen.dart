@@ -216,20 +216,16 @@ class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
             ],
           ),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('slab_calc.label.thickness'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('${(_thickness * 100).toStringAsFixed(0)} ${_loc.translate('common.cm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('slab_calc.label.thickness'),
             value: _thickness * 100,
             min: 20,
             max: 50,
             divisions: 6,
-            activeColor: _accentColor,
+            suffix: _loc.translate('common.cm'),
+            accentColor: _accentColor,
             onChanged: (v) { setState(() { _thickness = v / 100; _update(); }); },
+            decimalPlaces: 0,
           ),
           Text(
             _loc.translate('slab_calc.thickness_hint'),

@@ -238,6 +238,30 @@ final sheetingOsbPlywoodCalculatorV2 = CalculatorDefinitionV2(
       order: 30,
     ),
 
+    // --- Ориентация листа ---
+    const CalculatorField(
+      key: 'sheetOrientation',
+      labelKey: 'input.sheetOrientation',
+      hintKey: 'input.sheetOrientation.hint',
+      unitType: UnitType.pieces,
+      inputType: FieldInputType.select,
+      defaultValue: 1,
+      required: false,
+      iconName: 'crop_rotate',
+      group: 'advanced',
+      order: 31,
+      options: [
+        FieldOption(value: 1, labelKey: 'input.sheetOrientation.auto'),
+        FieldOption(value: 2, labelKey: 'input.sheetOrientation.horizontal'),
+        FieldOption(value: 3, labelKey: 'input.sheetOrientation.vertical'),
+      ],
+      dependency: FieldDependency(
+        condition: DependencyCondition.equals,
+        fieldKey: 'inputMode',
+        value: 0,
+      ),
+    ),
+
     // --- Группа "Проёмы" ---
     const CalculatorField(
       key: 'windowsArea',

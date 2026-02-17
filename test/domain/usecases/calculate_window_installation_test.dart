@@ -30,8 +30,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Пена: 1 баллон на окно
-      expect(result.values['foamNeeded'], equals(3.0));
+      // Пена: 1.5 баллона на окно (окно 1.5×1.4=2.1м² < 2.5) → ceil(3×1.5)=5
+      expect(result.values['foamNeeded'], equals(5.0));
     });
 
     test('calculates sills needed', () {
@@ -62,8 +62,8 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // Периметр: (1.5 + 1.4) * 2 = 5.8 м
-      // Площадь откосов: 5.8 * 0.3 * 2 = 3.48 м²
-      expect(result.values['slopeArea'], closeTo(3.48, 0.1));
+      // Площадь откосов: 5.8 * 0.3 * 2 * 1.1 (запас на подрезку) = 3.83 м²
+      expect(result.values['slopeArea'], closeTo(3.83, 0.1));
     });
 
     test('calculates drip length', () {

@@ -216,23 +216,28 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
     return _card(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('fence_calc.label.length'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('${_fenceLength.toStringAsFixed(0)} ${_loc.translate('common.meters')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
+          CalculatorSliderField(
+            label: _loc.translate('fence_calc.label.length'),
+            value: _fenceLength,
+            min: 10,
+            max: 500,
+            suffix: _loc.translate('common.meters'),
+            accentColor: _accentColor,
+            onChanged: (v) { setState(() { _fenceLength = v; _update(); }); },
+            decimalPlaces: 0,
           ),
-          Slider(value: _fenceLength, min: 10, max: 500, activeColor: _accentColor, onChanged: (v) { setState(() { _fenceLength = v; _update(); }); }),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('fence_calc.label.height'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('${_fenceHeight.toStringAsFixed(1)} ${_loc.translate('common.meters')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
+          CalculatorSliderField(
+            label: _loc.translate('fence_calc.label.height'),
+            value: _fenceHeight,
+            min: 1.0,
+            max: 3.0,
+            divisions: 8,
+            suffix: _loc.translate('common.meters'),
+            accentColor: _accentColor,
+            onChanged: (v) { setState(() { _fenceHeight = v; _update(); }); },
+            decimalPlaces: 1,
           ),
-          Slider(value: _fenceHeight, min: 1.0, max: 3.0, divisions: 8, activeColor: _accentColor, onChanged: (v) { setState(() { _fenceHeight = v; _update(); }); }),
         ],
       ),
     );
@@ -242,20 +247,16 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
     return _card(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('fence_calc.label.post_spacing'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('${_postSpacing.toStringAsFixed(1)} ${_loc.translate('common.meters')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('fence_calc.label.post_spacing'),
             value: _postSpacing,
             min: 2.0,
             max: 3.5,
             divisions: 6,
-            activeColor: _accentColor,
+            suffix: _loc.translate('common.meters'),
+            accentColor: _accentColor,
             onChanged: (v) { setState(() { _postSpacing = v; _update(); }); },
+            decimalPlaces: 1,
           ),
           Text(
             _loc.translate('fence_calc.spacing_hint'),

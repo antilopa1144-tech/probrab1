@@ -73,7 +73,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['wallArea'], equals(3.0));
+      // Default wallHeight = 0.5 м, wallArea = 10 * 0.5 = 5.0
+      expect(result.values['wallArea'], equals(5.0));
     });
 
     test('handles different wall heights', () {
@@ -100,7 +101,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['totalArea'], equals(3.0));
+      // Default wallHeight = 0.5, wallArea = 10 * 0.5 = 5.0, totalArea = 0 + 5 = 5.0
+      expect(result.values['totalArea'], equals(5.0));
       expect(result.values['materialNeeded'], greaterThan(0));
     });
 
@@ -114,8 +116,11 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['totalArea'], equals(7.68));
-      expect(result.values['wallArea'], equals(2.68));
+      // estimatePerimeter(5) = 4*sqrt(5) ≈ 8.944
+      // wallArea = 8.944 * 0.5 = 4.472 → rounded to 4.47
+      // totalArea = 5.0 + 4.47 = 9.47
+      expect(result.values['totalArea'], closeTo(9.47, 0.01));
+      expect(result.values['wallArea'], closeTo(4.47, 0.01));
       expect(result.values['tapeLength'], closeTo(8.94, 0.01));
     });
   });

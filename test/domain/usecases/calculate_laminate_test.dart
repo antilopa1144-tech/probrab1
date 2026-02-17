@@ -36,7 +36,7 @@ void main() {
       expect(result.values['underlayArea'], closeTo(21.0, 1.1));
     });
 
-    test('calculates plinth length from perimeter with 5% reserve', () {
+    test('calculates plinth length from perimeter (piece-based)', () {
       final inputs = {
         'area': 20.0,
         'packArea': 2.0,
@@ -46,8 +46,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Плинтус = 18 * 1.05 = 18.9 м
-      expect(result.values['plinthLength'], closeTo(18.9, 0.9));
+      // Плинтус: 18 - 0.9 (дверь) = 17.1 м → ceil(17.1/2.5) = 7 штук → 7 * 2.5 = 17.5 м
+      expect(result.values['plinthLength'], closeTo(17.5, 0.1));
     });
 
     test('estimates plinth length when perimeter not provided', () {
@@ -59,8 +59,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Периметр ≈ 4 * sqrt(16) = 16 м, с запасом 5% = 16.8 м
-      expect(result.values['plinthLength'], closeTo(16.8, 0.1));
+      // Периметр ≈ 4 * sqrt(16) = 16 м, минус дверь 0.9 = 15.1 → ceil(15.1/2.5) = 7 → 7*2.5 = 17.5
+      expect(result.values['plinthLength'], closeTo(17.5, 0.1));
     });
 
     test('calculates wedges needed', () {

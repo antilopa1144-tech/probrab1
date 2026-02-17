@@ -173,6 +173,38 @@ final paintUniversalCalculatorV2 = CalculatorDefinitionV2(
       ),
     ),
 
+    // Подготовка поверхности
+    const CalculatorField(
+      key: 'surfacePrep',
+      labelKey: 'input.paint.surfacePrep',
+      unitType: UnitType.pieces,
+      inputType: FieldInputType.select,
+      defaultValue: 1,
+      options: [
+        FieldOption(value: 1, labelKey: 'input.paint.surfacePrep.primed'),
+        FieldOption(value: 2, labelKey: 'input.paint.surfacePrep.raw'),
+        FieldOption(value: 3, labelKey: 'input.paint.surfacePrep.repainted'),
+      ],
+      group: 'conditions',
+      order: 35,
+    ),
+
+    // Интенсивность цвета
+    const CalculatorField(
+      key: 'colorIntensity',
+      labelKey: 'input.paint.colorIntensity',
+      unitType: UnitType.pieces,
+      inputType: FieldInputType.select,
+      defaultValue: 1,
+      options: [
+        FieldOption(value: 1, labelKey: 'input.paint.colorIntensity.light'),
+        FieldOption(value: 2, labelKey: 'input.paint.colorIntensity.bright'),
+        FieldOption(value: 3, labelKey: 'input.paint.colorIntensity.dark'),
+      ],
+      group: 'conditions',
+      order: 36,
+    ),
+
     // Количество слоёв
     const CalculatorField(
       key: 'layers',
@@ -234,6 +266,15 @@ final paintUniversalCalculatorV2 = CalculatorDefinitionV2(
     const CalculatorHint(
       type: HintType.important,
       messageKey: 'hint.paint.after.drying',
+    ),
+    const CalculatorHint(
+      type: HintType.warning,
+      messageKey: 'hint.paint.dark_color_extra_coats',
+      condition: HintCondition(
+        type: HintConditionType.equals,
+        fieldKey: 'colorIntensity',
+        value: 3,
+      ),
     ),
   ],
 

@@ -31,6 +31,14 @@ class _PaintScreenState extends State<PaintScreen> {
   // Индекс типа поверхности
   int _surfaceIndex = 0;
 
+  // Подготовка поверхности: 0=загрунтованная (1.0), 1=новая необработанная (1.2), 2=ранее окрашенная (0.95)
+  int _surfacePrep = 0;
+  static const _surfacePrepMultipliers = [1.0, 1.2, 0.95];
+
+  // Интенсивность цвета: 0=светлый (1.0), 1=яркий (1.15), 2=тёмный (1.3)
+  int _colorIntensity = 0;
+  static const _colorIntensityMultipliers = [1.0, 1.15, 1.3];
+
   // Параметры
   double _coverage = 10.0; // м²/л (по умолчанию для интерьера)
   int _layers = 2;
@@ -70,7 +78,9 @@ class _PaintScreenState extends State<PaintScreen> {
     final netArea = _getArea();
     final surface = _surfaces[_paintType][_surfaceIndex];
     final factor = surface['factor'] as double;
-    final liters = (netArea * _layers * factor) / _coverage;
+    final prepMul = _surfacePrepMultipliers[_surfacePrep];
+    final colorMul = _colorIntensityMultipliers[_colorIntensity];
+    final liters = (netArea * _layers * factor * prepMul * colorMul) / _coverage;
     final canSize = _paintType == 0 ? 9 : 10;
     final cans = (liters / canSize).ceil();
     final perimeter = (_roomWidth + _roomLength) * 2;
@@ -128,8 +138,10 @@ class _PaintScreenState extends State<PaintScreen> {
     final surface = _surfaces[_paintType][_surfaceIndex];
     final factor = surface['factor'] as double;
 
-    // Расчет краски
-    final liters = (netArea * _layers * factor) / _coverage;
+    // Расчет краски с учётом подготовки и интенсивности цвета
+    final prepMultiplier = _surfacePrepMultipliers[_surfacePrep];
+    final colorMultiplier = _colorIntensityMultipliers[_colorIntensity];
+    final liters = (netArea * _layers * factor * prepMultiplier * colorMultiplier) / _coverage;
 
     // Размер банок: интерьер = 9л, фасад = 10л
     final canSize = _paintType == 0 ? 9 : 10;
@@ -215,6 +227,16 @@ class _PaintScreenState extends State<PaintScreen> {
           onSelect: (index) => setState(() => _surfaceIndex = index),
           accentColor: accentColor,
         ),
+
+        const SizedBox(height: 16),
+
+        // Подготовка поверхности
+        _buildSurfacePrepSelector(accentColor),
+
+        const SizedBox(height: 16),
+
+        // Интенсивность цвета
+        _buildColorIntensitySelector(accentColor),
 
         const SizedBox(height: 16),
 
@@ -332,6 +354,60 @@ class _PaintScreenState extends State<PaintScreen> {
 
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildSurfacePrepSelector(Color accentColor) {
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('paint.surfacePrep'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: [
+              _loc.translate('paint.surfacePrep.primed'),
+              _loc.translate('paint.surfacePrep.raw'),
+              _loc.translate('paint.surfacePrep.repainted'),
+            ],
+            selectedIndex: _surfacePrep,
+            onSelect: (index) => setState(() => _surfacePrep = index),
+            accentColor: accentColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildColorIntensitySelector(Color accentColor) {
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('paint.colorIntensity'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: [
+              _loc.translate('paint.colorIntensity.light'),
+              _loc.translate('paint.colorIntensity.bright'),
+              _loc.translate('paint.colorIntensity.dark'),
+            ],
+            selectedIndex: _colorIntensity,
+            onSelect: (index) => setState(() => _colorIntensity = index),
+            accentColor: accentColor,
+          ),
+        ],
+      ),
     );
   }
 

@@ -54,20 +54,22 @@ class CalculateElectricalV2 extends BaseCalculator {
   static const int lightPerAreaDivisor = 6;
   static const int lightPerRoom = 1;
 
-  // Кабель на точку (скрытая/открытая проводка)
-  static const List<double> cablePerLight = [5.0, 4.0];
-  static const List<double> cablePerSocket = [4.5, 3.5];
-  static const List<double> cablePerSwitch = [4.0, 3.0];
+  // Кабель: ответвление от распредкоробки до точки (скрытая/открытая)
+  // Реальное расстояние: коробка на стене → розетка/светильник = 1.5-2.5м
+  static const List<double> branchPerLight = [2.5, 2.0];
+  static const List<double> branchPerSocket = [2.0, 1.5];
+  static const List<double> branchPerSwitch = [1.8, 1.5];
+
+  // Кабель: магистраль от щитка до распредкоробки комнаты
+  // Среднее расстояние по квартире от щитка до комнаты
+  static const List<double> trunkPerRoom = [6.0, 5.0];
 
   // Группы освещения и розеток
   static const int maxLightsPerGroup = 8;
-  static const double cablePerLightGroup = 10.0;
   static const int maxSocketsPerGroup = 6;
-  static const double cablePerSocketGroup = 10.0;
 
-  // Запас на кабель
-  static const double cableMarginPercent = 15.0;
-  static const double switchCableFactor = 0.5;
+  // Запас кабеля: 10% (подъём/спуск, обход, запас в коробках ~20см на концы)
+  static const double cableMarginPercent = 10.0;
 
   // Кабель для мощных потребителей (м)
   static const double electricStoveCable = 12.0;
@@ -167,26 +169,34 @@ class CalculateElectricalV2 extends BaseCalculator {
     final powerConsumers = hasElectricStove + hasOven + hasBoiler +
         hasWashingMachine + hasDishwasher + hasConditioner + hasWarmFloor;
 
-    // Расчёт кабеля
+    // Расчёт кабеля: модель «магистраль + ответвления»
+    // Реальная проводка: щиток → магистраль до распредкоробки → ответвления до точек
     const cableMarginMultiplier = 1 + (cableMarginPercent / 100);
+    final w = wiringMethod; // 0=скрытая, 1=открытая
 
-    // Кабель 3×1.5 для освещения
+    // Группы
     final lightGroups = (lights / maxLightsPerGroup).ceil();
-    final cableLightCalc = (lights * cablePerLight[wiringMethod] +
-            lightGroups * cablePerLightGroup) *
-        cableMarginMultiplier;
-
-    // Кабель 3×2.5 для розеток
     final socketGroups = (sockets / maxSocketsPerGroup).ceil();
-    final cableSocketCalc = (sockets * cablePerSocket[wiringMethod] +
-            socketGroups * cablePerSocketGroup) *
-        cableMarginMultiplier;
 
-    // Кабель для выключателей
-    final cableSwitchesCalc =
-        switches * cablePerSwitch[wiringMethod] * switchCableFactor;
+    // Кабель 3×1.5 для освещения:
+    // - магистраль от щитка: lightGroups × trunkPerRoom (каждая группа = своя линия)
+    // - ответвления: lights × branchPerLight (от коробки до светильника)
+    // - выключатели: switches × branchPerSwitch (от коробки до выключателя)
+    final lightTrunk = lightGroups * trunkPerRoom[w];
+    final lightBranches = lights * branchPerLight[w];
+    final switchBranches = switches * branchPerSwitch[w];
+    final cableLightTotal =
+        (lightTrunk + lightBranches + switchBranches) * cableMarginMultiplier;
 
-    // Кабель 3×4/6 для мощных потребителей
+    // Кабель 3×2.5 для розеток:
+    // - магистраль от щитка: socketGroups × trunkPerRoom
+    // - ответвления: sockets × branchPerSocket (от коробки до розетки)
+    final socketTrunk = socketGroups * trunkPerRoom[w];
+    final socketBranches = sockets * branchPerSocket[w];
+    final cableSocketTotal =
+        (socketTrunk + socketBranches) * cableMarginMultiplier;
+
+    // Кабель 3×4/6 для мощных потребителей (каждый на отдельной линии от щитка)
     double cablePowerCalc = 0;
     if (hasElectricStove == 1) cablePowerCalc += electricStoveCable;
     if (hasOven == 1) cablePowerCalc += ovenCable;
@@ -195,12 +205,9 @@ class CalculateElectricalV2 extends BaseCalculator {
     if (hasDishwasher == 1) cablePowerCalc += dishwasherCable;
     if (hasConditioner == 1) cablePowerCalc += conditionerCable;
     if (hasWarmFloor == 1) cablePowerCalc += warmFloorCable;
-    cablePowerCalc *= cableMarginMultiplier;
+    final cablePowerTotal = cablePowerCalc * cableMarginMultiplier;
 
-    // Итоговые значения кабеля
-    final cableLightTotal = cableLightCalc + cableSwitchesCalc;
-    final cableSocketTotal = cableSocketCalc;
-    final cablePowerTotal = cablePowerCalc;
+    // Итого кабеля
     final totalCable = cableLightTotal + cableSocketTotal + cablePowerTotal;
 
     // Гофра
@@ -215,15 +222,18 @@ class CalculateElectricalV2 extends BaseCalculator {
     final rcdDevices = (socketGroups / socketGroupsPerRcd).ceil() + fireProtectionRcd;
 
     // Распределительные коробки
+    // В обоих режимах учитываем комнаты: минимум 1 коробка на комнату + по площади
     int junctionBoxes;
     if (inputMode == 0) {
       junctionBoxes = (rooms * boxesPerRoom + area / boxesPerAreaDivisor).ceil();
     } else {
-      junctionBoxes = ((sockets + switches) / boxesPerPointsDivisor).ceil();
+      // Ручной режим: 1 коробка на каждые 4-5 точек, минимум rooms штук
+      final byPoints = ((sockets + switches + lights) / boxesPerPointsDivisor).ceil();
+      junctionBoxes = max(byPoints, rooms);
     }
 
-    // Модули в щитке
-    final panelModules = ((basePanelModules +
+    // Модули в щитке (вводной автомат 2 модуля + групповые + УЗО + диф + 20% резерв)
+    final panelModules = ((2 + // вводной автомат (двухполюсный)
             circuitBreakers * breakerModules +
             rcdDevices * rcdModules +
             difAutomats * difautomatModules) *

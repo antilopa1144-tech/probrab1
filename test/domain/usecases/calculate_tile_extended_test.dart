@@ -79,32 +79,32 @@ void main() {
         expect(result.values['tilesNeeded'], 275.0);
       });
 
-      test('Крупноформат 80x80 см', () {
+      test('Крупноформат 80x80 см (+5% доп. за размер)', () {
         final inputs = {
           'area': 20.0,
           'tileSize': 80.0,
-          'reserve': 10.0,
         };
 
         final result = calculator(inputs, <PriceItem>[]);
 
-        // Плитка 80x80 см = 0.64 м²
-        // Плиток: ceil(20 / 0.64 * 1.10) = ceil(34.4) = 35
-        expect(result.values['tilesNeeded'], 35.0);
+        // Плитка 80x80 см = 0.64 м², avgSize=80>60 → +5% за размер
+        // layoutPattern=1 (default) = 10% + 5% = 15%
+        // ceil(20 / 0.64 * 1.15) = ceil(35.94) = 36
+        expect(result.values['tilesNeeded'], 36.0);
       });
 
-      test('Прямоугольная плитка 120x60 см', () {
+      test('Прямоугольная плитка 120x60 см (+5% доп. за размер)', () {
         final inputs = {
           'area': 20.0,
           'tileSize': 120.0, // Означает 120x60
-          'reserve': 10.0,
         };
 
         final result = calculator(inputs, <PriceItem>[]);
 
-        // Плитка 120x60 см = 0.72 м²
-        // Плиток: ceil(20 / 0.72 * 1.10) = ceil(30.6) = 31
-        expect(result.values['tilesNeeded'], 31.0);
+        // Плитка 120x60 см = 0.72 м², avgSize=90>60 → +5% за размер
+        // layoutPattern=1 (default) = 10% + 5% = 15%
+        // ceil(20 / 0.72 * 1.15) = ceil(31.94) = 32
+        expect(result.values['tilesNeeded'], 32.0);
       });
 
       test('Пользовательский размер 45x45 см', () {
@@ -155,8 +155,9 @@ void main() {
         final result = calculator(inputs, <PriceItem>[]);
 
         // tileW=0.6м, tileH=0.6м → jointsLength = 1/0.6 + 1/0.6 = 3.333 м/м²
-        // grout = 20 × 3.333 × (5/1000) × (5/1000) × 1600 × 1.1 ≈ 2.93 кг
-        expect(result.values['groutNeeded'], closeTo(2.93, 0.1));
+        // avgSize=60 → groutDepth=8мм (40-60 см)
+        // grout = 20 × 3.333 × (5/1000) × (8/1000) × 1600 × 1.1 ≈ 4.69 кг
+        expect(result.values['groutNeeded'], closeTo(4.69, 0.2));
       });
     });
 
@@ -201,7 +202,7 @@ void main() {
     });
 
     group('Крестики', () {
-      test('Крестиков 4 на плитку', () {
+      test('Крестиков ~1.2 на плитку (1 на пересечение + 20% запас)', () {
         final inputs = {
           'area': 10.0,
           'tileSize': 60.0, // 0.36 м²
@@ -213,7 +214,7 @@ void main() {
         final tiles = result.values['tilesNeeded']!;
         final crosses = result.values['crossesNeeded']!;
 
-        expect(crosses, tiles * 4);
+        expect(crosses, (tiles * 1.2).ceil().toDouble());
       });
     });
 
@@ -231,31 +232,35 @@ void main() {
       });
     });
 
-    group('Запас', () {
-      test('Запас 5% (минимум)', () {
+    group('Отходы по паттерну укладки', () {
+      test('Прямая укладка (10%)', () {
         final inputs = {
           'area': 10.0,
           'tileSize': 60.0, // 0.36 м²
-          'reserve': 5.0,
+          'layoutPattern': 1.0,
         };
 
         final result = calculator(inputs, <PriceItem>[]);
 
-        // ceil(10 / 0.36 * 1.05) = ceil(29.2) = 30
-        expect(result.values['tilesNeeded'], 30.0);
+        // totalWaste = 10% (прямая) × 1.0 (простая) + 0 (avgSize=60, не >60)
+        // ceil(10 / 0.36 * 1.10) = ceil(30.56) = 31
+        expect(result.values['tilesNeeded'], 31.0);
+        expect(result.values['wastePercent'], 10.0);
       });
 
-      test('Запас 20% (максимум)', () {
+      test('Диагональная укладка (15%)', () {
         final inputs = {
           'area': 10.0,
           'tileSize': 60.0, // 0.36 м²
-          'reserve': 20.0,
+          'layoutPattern': 2.0,
         };
 
         final result = calculator(inputs, <PriceItem>[]);
 
-        // ceil(10 / 0.36 * 1.20) = ceil(33.3) = 34
-        expect(result.values['tilesNeeded'], 34.0);
+        // totalWaste = 15% (диагональ) × 1.0 (простая) + 0
+        // ceil(10 / 0.36 * 1.15) = ceil(31.94) = 32
+        expect(result.values['tilesNeeded'], 32.0);
+        expect(result.values['wastePercent'], 15.0);
       });
     });
 

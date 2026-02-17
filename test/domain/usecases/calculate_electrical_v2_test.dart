@@ -363,17 +363,19 @@ void main() {
         expect(result.values['junctionBoxes'], greaterThan(0));
       });
 
-      test('by points mode: based on sockets and switches', () {
+      test('by points mode: based on all points, min = rooms', () {
         final inputs = {
           'inputMode': 1.0,
           'manualSockets': 30.0,
           'manualSwitches': 10.0,
+          'manualLights': 12.0,
+          'rooms': 3.0,
         };
 
         final result = calculator(inputs, emptyPriceList);
 
-        // boxes = (sockets + switches) / 8
-        expect(result.values['junctionBoxes'], greaterThan(0));
+        // boxes = max((30+10+12)/8, 3) = max(7, 3) = 7
+        expect(result.values['junctionBoxes'], greaterThanOrEqualTo(3));
       });
     });
 
@@ -460,6 +462,79 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
 
         expect(result.totalPrice, isNull);
+      });
+    });
+
+    group('Cable realism checks', () {
+      test('50 sqm apartment: total cable 80-150m (not 200+)', () {
+        // Реальная двухкомнатная квартира: ~100-120м кабеля всего
+        final result = calculator({
+          'inputMode': 0.0,
+          'area': 50.0,
+          'rooms': 2.0,
+          'roomType': 0.0,
+          'wiringMethod': 0.0,
+        }, emptyPriceList);
+
+        final totalCable = result.values['totalCable']!;
+        expect(totalCable, greaterThan(80),
+            reason: 'Слишком мало кабеля для 50м² квартиры');
+        expect(totalCable, lessThan(150),
+            reason: 'Слишком много кабеля для 50м² квартиры без мощных потребителей');
+      });
+
+      test('30 sqm studio: total cable 50-100m', () {
+        final result = calculator({
+          'inputMode': 0.0,
+          'area': 30.0,
+          'rooms': 1.0,
+          'roomType': 0.0,
+          'wiringMethod': 0.0,
+        }, emptyPriceList);
+
+        final totalCable = result.values['totalCable']!;
+        expect(totalCable, greaterThan(50),
+            reason: 'Слишком мало кабеля для студии');
+        expect(totalCable, lessThan(100),
+            reason: 'Слишком много кабеля для студии');
+      });
+
+      test('manual mode 20 sockets: socket cable < 80m', () {
+        // 20 розеток × 2м ответвление + 4 группы × 6м магистраль = 64м × 1.10 = ~70м
+        // Старая формула давала 20 × 4.5 + 4 × 10 = 130м × 1.15 = ~150м
+        final result = calculator({
+          'inputMode': 1.0,
+          'manualSockets': 20.0,
+          'manualSwitches': 6.0,
+          'manualLights': 10.0,
+          'rooms': 2.0,
+          'wiringMethod': 0.0,
+        }, emptyPriceList);
+
+        final cableSocket = result.values['cableSocket']!;
+        expect(cableSocket, greaterThan(40),
+            reason: 'Слишком мало кабеля 2.5 для 20 розеток');
+        expect(cableSocket, lessThan(80),
+            reason: 'Перерасчёт кабеля 2.5 для 20 розеток');
+      });
+
+      test('cable per socket is reasonable (2-4m effective)', () {
+        // Проверяем что на 1 розетку приходится адекватное количество кабеля
+        final result = calculator({
+          'inputMode': 1.0,
+          'manualSockets': 10.0,
+          'manualSwitches': 4.0,
+          'manualLights': 6.0,
+          'rooms': 2.0,
+          'wiringMethod': 0.0,
+        }, emptyPriceList);
+
+        final cableSocket = result.values['cableSocket']!;
+        final effectivePerSocket = cableSocket / 10.0;
+        expect(effectivePerSocket, greaterThan(2.0),
+            reason: 'Менее 2м на розетку — нереально мало');
+        expect(effectivePerSocket, lessThan(5.0),
+            reason: 'Более 5м на розетку — завышение');
       });
     });
 

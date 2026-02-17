@@ -269,21 +269,24 @@ void main() {
     });
 
     group('Клей и грунтовка', () {
-      test('Клей: 8 г/м² (0.008 кг/м²)', () {
+      test('Клей (бумажные по умолч.): 5 г/м² + 10% запас', () {
         final inputs = {
           'inputMode': 1.0,
           'area': 40.0,
           'wallHeight': 2.5,
           'rollSize': 1.0,
+          // wallpaperType не задан → default = 1 (бумажные, 0.005 кг/м²)
         };
 
         final result = calculator(inputs, <PriceItem>[]);
 
-        // 40 * 0.008 = 0.32 кг
-        expect(result.values['glueNeeded'], closeTo(0.32, 0.01));
+        // 40 × 0.005 × 1.1 = 0.22 кг
+        expect(result.values['glueNeeded'], closeTo(0.22, 0.01));
+        // pasteNeeded = glueNeeded (backward compat)
+        expect(result.values['pasteNeeded'], result.values['glueNeeded']);
       });
 
-      test('Грунтовка: 0.1 л/м²', () {
+      test('Грунтовка: 0.15 л/м² + 10% запас', () {
         final inputs = {
           'inputMode': 1.0,
           'area': 40.0,
@@ -293,8 +296,8 @@ void main() {
 
         final result = calculator(inputs, <PriceItem>[]);
 
-        // 40 * 0.1 = 4 л
-        expect(result.values['primerNeeded'], closeTo(4.0, 0.1));
+        // 40 × 0.15 × 1.1 = 6.6 л
+        expect(result.values['primerNeeded'], closeTo(6.6, 0.1));
       });
     });
 

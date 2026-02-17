@@ -32,6 +32,17 @@ enum WallThickness {
 
 enum BrickInputMode { manual, wall }
 
+/// Условия работы — влияют на расход раствора
+enum WorkingConditions {
+  normal(1.0),     // Нормальные
+  windy(1.05),     // Ветрено — быстрее сохнет
+  cold(1.1),       // Холод <+5°C — добавки в раствор
+  hot(1.08);       // Жара >+30°C — быстрое испарение
+
+  final double mortarMultiplier;
+  const WorkingConditions(this.mortarMultiplier);
+}
+
 /// Результат расчёта кирпичной кладки
 class _BrickResult {
   final double area;
@@ -97,6 +108,7 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
   BrickType _brickType = BrickType.single;
   WallThickness _wallThickness = WallThickness.one;
   BrickInputMode _inputMode = BrickInputMode.manual;
+  WorkingConditions _workingConditions = WorkingConditions.normal;
 
   late _BrickResult _result;
   late AppLocalizations _loc;
@@ -156,7 +168,24 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
     }
 
     final result = _calculator(inputs, []);
-    return _BrickResult.fromCalculatorResult(result.values);
+    final base = _BrickResult.fromCalculatorResult(result.values);
+
+    // Применяем множитель условий работы ТОЛЬКО к раствору
+    if (_workingConditions != WorkingConditions.normal) {
+      final m = _workingConditions.mortarMultiplier;
+      final adjustedVolume = base.mortarVolume * m;
+      return _BrickResult(
+        area: base.area,
+        bricksNeeded: base.bricksNeeded,
+        mortarVolume: adjustedVolume,
+        mortarBags: (adjustedVolume * 1500 / 25).ceil(), // ~1500 кг/м³ сухой смеси
+        brickLength: base.brickLength,
+        brickWidth: base.brickWidth,
+        brickHeight: base.brickHeight,
+      );
+    }
+
+    return base;
   }
 
   void _update() => setState(() => _result = _calculate());
@@ -238,6 +267,8 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
         _buildThicknessSelector(),
         const SizedBox(height: 16),
         _buildAreaCard(),
+        const SizedBox(height: 16),
+        _buildWorkingConditionsSelector(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
         const SizedBox(height: 16),
@@ -362,6 +393,39 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildWorkingConditionsSelector() {
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('brick_calc.conditions.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: [
+              _loc.translate('brick_calc.conditions.normal'),
+              _loc.translate('brick_calc.conditions.windy'),
+              _loc.translate('brick_calc.conditions.cold'),
+              _loc.translate('brick_calc.conditions.hot'),
+            ],
+            selectedIndex: _workingConditions.index,
+            onSelect: (index) {
+              setState(() {
+                _workingConditions = WorkingConditions.values[index];
+                _update();
+              });
+            },
+            accentColor: _accentColor,
+          ),
+        ],
+      ),
     );
   }
 

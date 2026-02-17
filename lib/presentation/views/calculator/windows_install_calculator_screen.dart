@@ -229,24 +229,16 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
 
   Widget _buildCountCard() {
     return _card(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('windows_calc.label.windows_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('$_windowsCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Slider(
-            value: _windowsCount.toDouble(),
-            min: 1,
-            max: 20,
-            divisions: 19,
-            activeColor: _accentColor,
-            onChanged: (v) { setState(() { _windowsCount = v.toInt(); _update(); }); },
-          ),
-        ],
+      child: CalculatorSliderField(
+        label: _loc.translate('windows_calc.label.windows_count'),
+        value: _windowsCount.toDouble(),
+        min: 1,
+        max: 20,
+        divisions: 19,
+        suffix: _loc.translate('common.pcs'),
+        accentColor: _accentColor,
+        onChanged: (v) { setState(() { _windowsCount = v.toInt(); _update(); }); },
+        decimalPlaces: 0,
       ),
     );
   }

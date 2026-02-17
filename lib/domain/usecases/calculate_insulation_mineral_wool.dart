@@ -8,11 +8,13 @@ import './base_calculator.dart';
 /// Нормативы:
 /// - СНиП 23-02-2003 "Тепловая защита зданий"
 /// - ГОСТ 9573-2012 "Плиты из минеральной ваты"
+/// - СП 50.13330.2012 "Тепловая защита зданий"
 ///
 /// Поля:
 /// - area: площадь утепления (м²)
 /// - thickness: толщина утеплителя (мм), по умолчанию 100
 /// - density: плотность (кг/м³), по умолчанию 50
+/// - applicationSurface: поверхность утепления (1=стена, 2=пол, 3=потолок, 4=скат крыши)
 class CalculateInsulationMineralWool extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -36,6 +38,7 @@ class CalculateInsulationMineralWool extends BaseCalculator {
     final area = getInput(inputs, 'area', minValue: 0.1);
     final thickness = getInput(inputs, 'thickness', defaultValue: 100.0, minValue: 50.0, maxValue: 300.0);
     final density = getInput(inputs, 'density', defaultValue: 50.0, minValue: 30.0, maxValue: 200.0);
+    final applicationSurface = getIntInput(inputs, 'applicationSurface', defaultValue: 1, minValue: 1, maxValue: 4);
 
     // Объём утеплителя в м³
     final volume = calculateVolume(area, thickness);
@@ -55,8 +58,44 @@ class CalculateInsulationMineralWool extends BaseCalculator {
     // Гидроизоляция/ветрозащита (для наружного утепления): площадь + 10%
     final windBarrierArea = addMargin(area, 10.0);
 
-    // Крепёж: дюбели-грибки, ~5-6 шт/м²
-    final fastenersNeeded = ceilToInt(area * 5);
+    // Крепёж: дюбели-грибки по толщине утеплителя (СП 50.13330)
+    // Базовое количество по толщине
+    int baseFastenersPerSqm;
+    if (thickness <= 50) {
+      baseFastenersPerSqm = 4;      // Тонкий слой — 4 по углам плиты
+    } else if (thickness <= 100) {
+      baseFastenersPerSqm = 5;      // Стандарт — 4 по углам + 1 центр
+    } else if (thickness <= 150) {
+      baseFastenersPerSqm = 6;      // Рекомендация СП 50.13330
+    } else if (thickness <= 200) {
+      baseFastenersPerSqm = 8;      // Толстый — усиленное крепление
+    } else {
+      baseFastenersPerSqm = 10;     // Очень толстый (250-300мм)
+    }
+
+    // Корректировка по плотности (СП 50.13330):
+    // Лёгкая (<50 кг/м³): меньше крепежа — плита легче
+    // Тяжёлая (>100 кг/м³): больше крепежа — плита тяжелее, больше нагрузка
+    final double densityFactor;
+    if (density < 50) {
+      densityFactor = 0.8;
+    } else if (density > 100) {
+      densityFactor = 1.3;
+    } else {
+      densityFactor = 1.0;
+    }
+
+    final int fastenersPerSqm = (baseFastenersPerSqm * densityFactor).ceil();
+
+    // Множитель по типу поверхности
+    final double fastenerMultiplier = switch (applicationSurface) {
+      2 => 0.0,   // пол — гравитация держит, крепёж не нужен
+      3 => 1.5,   // потолок — против гравитации, усиленный крепёж
+      4 => 1.2,   // скат крыши — умеренно усиленный крепёж
+      _ => 1.0,   // стена — стандарт
+    };
+
+    final fastenersNeeded = ceilToInt(area * fastenersPerSqm * fastenerMultiplier);
 
     // Соединительная лента для пароизоляции: по швам
     final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
@@ -115,6 +154,13 @@ class CalculateInsulationMineralWool extends BaseCalculator {
         'fastenersNeeded': fastenersNeeded.toDouble(),
         'tapeNeeded': tapeNeeded,
         if (battensLength > 0) 'battensLength': battensLength,
+        'applicationSurface': applicationSurface.toDouble(),
+        'fastenersPerSqm': fastenersPerSqm.toDouble(),
+        // Предупреждение: тонкий утеплитель (<100мм) на наружной стене
+        if (thickness < 100 && applicationSurface == 1) 'warningThinExterior': 1.0,
+        // Предупреждение: пол без механического крепежа
+        // Для жёстких плит под стяжку может понадобиться фиксация
+        if (applicationSurface == 2) 'warningFloorNoFasteners': 1.0,
       },
       totalPrice: sumCosts(costs),
     );

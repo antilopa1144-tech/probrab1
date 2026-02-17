@@ -403,30 +403,15 @@ class _StripFoundationCalculatorScreenState
           ),
           const SizedBox(height: 16),
           // Ширина ленты
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _loc.translate('strip_calc.strip_width'),
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.getTextSecondary(_isDark),
-                ),
-              ),
-              Text(
-                '${(_stripWidth * 100).toStringAsFixed(0)} ${_loc.translate('common.cm')}',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: _accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('strip_calc.strip_width'),
             value: _stripWidth * 100,
             min: 25,
             max: 60,
             divisions: 7,
-            activeColor: _accentColor,
+            suffix: _loc.translate('common.cm'),
+            accentColor: _accentColor,
+            decimalPlaces: 0,
             onChanged: (v) {
               setState(() {
                 _stripWidth = v / 100;
@@ -436,30 +421,15 @@ class _StripFoundationCalculatorScreenState
           ),
           const SizedBox(height: 8),
           // Высота ленты
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _loc.translate('strip_calc.strip_height'),
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.getTextSecondary(_isDark),
-                ),
-              ),
-              Text(
-                '${(_stripHeight * 100).toStringAsFixed(0)} ${_loc.translate('common.cm')}',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: _accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('strip_calc.strip_height'),
             value: _stripHeight.clamp(minHeight, maxHeight) * 100,
             min: minHeight * 100,
             max: maxHeight * 100,
             divisions: ((maxHeight - minHeight) * 10).round(),
-            activeColor: _accentColor,
+            suffix: _loc.translate('common.cm'),
+            accentColor: _accentColor,
+            decimalPlaces: 0,
             onChanged: (v) {
               setState(() {
                 _stripHeight = v / 100;

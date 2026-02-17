@@ -471,39 +471,20 @@ class _TileAdhesiveCalculatorScreenState
   Widget _buildAreaCard() {
     const accentColor = CalculatorColors.interior;
     return _card(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _loc.translate('tile_adhesive.label.area'),
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.getTextSecondary(_isDark),
-                ),
-              ),
-              Text(
-                '${_area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Slider(
-            value: _area,
-            min: 1,
-            max: 500,
-            activeColor: accentColor,
-            onChanged: (v) {
-              setState(() {
-                _area = v;
-                _update();
-              });
-            },
-          ),
-        ],
+      child: CalculatorSliderField(
+        label: _loc.translate('tile_adhesive.label.area'),
+        value: _area,
+        min: 1,
+        max: 500,
+        suffix: _loc.translate('common.sqm'),
+        accentColor: accentColor,
+        onChanged: (v) {
+          setState(() {
+            _area = v;
+            _update();
+          });
+        },
+        decimalPlaces: 1,
       ),
     );
   }
@@ -587,36 +568,16 @@ class _TileAdhesiveCalculatorScreenState
     required ValueChanged<double> onChanged,
     required Color accentColor,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.getTextSecondary(_isDark),
-              ),
-            ),
-            Text(
-              '${value.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
-              style: CalculatorDesignSystem.titleMedium.copyWith(
-                color: accentColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: ((max - min) * 10).toInt(),
-          activeColor: accentColor,
-          onChanged: onChanged,
-        ),
-      ],
+    return CalculatorSliderField(
+      label: label,
+      value: value,
+      min: min,
+      max: max,
+      divisions: ((max - min) * 10).toInt(),
+      suffix: _loc.translate('common.meters'),
+      accentColor: accentColor,
+      onChanged: onChanged,
+      decimalPlaces: 1,
     );
   }
 

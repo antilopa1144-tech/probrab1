@@ -246,20 +246,16 @@ class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWat
             ],
           ),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('waterproof_calc.label.wall_height'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('${(_wallHeight * 100).toStringAsFixed(0)} ${_loc.translate('common.cm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('waterproof_calc.label.wall_height'),
             value: _wallHeight * 100,
             min: 10,
             max: 50,
             divisions: 8,
-            activeColor: _accentColor,
+            suffix: _loc.translate('common.cm'),
+            accentColor: _accentColor,
             onChanged: (v) { setState(() { _wallHeight = v / 100; _update(); }); },
+            decimalPlaces: 0,
           ),
           Text(
             _loc.translate('waterproof_calc.wall_height_hint'),
@@ -274,20 +270,16 @@ class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWat
     return _card(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('waterproof_calc.label.layers'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('$_layers', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('waterproof_calc.label.layers'),
             value: _layers.toDouble(),
             min: 1,
             max: 3,
             divisions: 2,
-            activeColor: _accentColor,
+            suffix: _loc.translate('common.pcs'),
+            accentColor: _accentColor,
             onChanged: (v) { setState(() { _layers = v.toInt(); _update(); }); },
+            decimalPlaces: 0,
           ),
           Text(
             _loc.translate('waterproof_calc.layers_hint'),

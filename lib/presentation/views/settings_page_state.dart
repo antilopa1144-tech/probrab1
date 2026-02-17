@@ -176,6 +176,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 value: settings.darkMode,
                 onChanged: (value) {
                   ref.read(settingsProvider.notifier).updateDarkMode(value);
+                  TrackerService.trackSettingsChanged(
+                    setting: 'dark_mode',
+                    value: value.toString(),
+                  );
                 },
               ),
             ],
@@ -313,19 +317,30 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 leading: const Icon(Icons.numbers_outlined),
               ),
               ListTile(
-                title: Text(loc.translate('settings.about.feedback.title')),
+                title: Text(loc.translate('settings.about.rate_app.title')),
                 subtitle: Text(
-                  loc.translate('settings.about.feedback.subtitle'),
+                  loc.translate('settings.about.rate_app.subtitle'),
                 ),
-                leading: const Icon(Icons.feedback_outlined),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content:
-                          Text(loc.translate('common.feature_in_development')),
-                    ),
-                  );
+                leading: const Icon(Icons.star_outline_rounded),
+                trailing: ref.watch(reviewProvider).isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.chevron_right),
+                onTap: () async {
+                  final success =
+                      await ref.read(reviewProvider.notifier).requestReview();
+                  if (!success && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          loc.translate('settings.about.rate_app.error'),
+                        ),
+                      ),
+                    );
+                  }
                 },
               ),
               ListTile(
@@ -375,6 +390,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               onTap: () {
                 ref.read(settingsProvider.notifier).updateRegion(region);
                 ref.read(regionProvider.notifier).setRegion(region);
+                TrackerService.trackSettingsChanged(
+                  setting: 'region',
+                  value: region,
+                );
                 Navigator.pop(context);
               },
             );
@@ -466,6 +485,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   await ref
                       .read(settingsProvider.notifier)
                       .updateLanguage(langCode);
+                  TrackerService.trackSettingsChanged(
+                    setting: 'language',
+                    value: langCode,
+                  );
                   if (context.mounted) {
                     Navigator.pop(context);
                     // MaterialApp перезагрузится автоматически благодаря key в main.dart

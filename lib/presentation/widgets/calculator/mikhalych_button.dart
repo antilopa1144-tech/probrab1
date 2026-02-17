@@ -222,19 +222,46 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
     _askStream(_buildInitialQuestion());
   }
 
+  static const _generalGreetings = [
+    'Михалыч, здорова! Что посоветуешь сегодня?',
+    'Михалыч, есть минутка? Нужен совет от старшего.',
+    'Михалыч, подскажи — с чего начать?',
+    'Михалыч, ты тут? Есть вопрос по стройке.',
+    'Михалыч, давай обсудим — что на объекте делать будем?',
+  ];
+
+  static const _calculatorGreetings = [
+    'Михалыч, считаю {name}. На что обратить внимание?',
+    'Михалыч, взялся за {name} — подскажи, где народ косячит?',
+    'Михалыч, тут {name}. Какие подводные камни?',
+    'Михалыч, {name} — дай пару советов от практика.',
+    'Михалыч, прикидываю {name}. Чего не забыть?',
+  ];
+
+  static const _dataGreetings = [
+    'Михалыч, глянь мой расчёт — всё ли правильно?',
+    'Михалыч, проверь цифры — не налажал ли я?',
+    'Михалыч, посмотри расчёт и скажи честно — нормально?',
+    'Михалыч, вот что насчитал — ругай если что не так.',
+  ];
+
   String _buildInitialQuestion() {
     if (widget.calculatorName == 'Главный экран') {
-      return 'Привет, Михалыч! Чем можешь помочь?';
+      const greetings = _generalGreetings;
+      return greetings[DateTime.now().millisecond % greetings.length];
     }
     if (widget.data.isEmpty) {
-      return 'Михалыч, я тут считаю ${widget.calculatorName}. '
-          'Дай совет — на что обратить внимание?';
+      const greetings = _calculatorGreetings;
+      final template = greetings[DateTime.now().millisecond % greetings.length];
+      return template.replaceAll('{name}', widget.calculatorName);
     }
+    const greetings = _dataGreetings;
+    final greeting = greetings[DateTime.now().millisecond % greetings.length];
     final dataStr =
         widget.data.entries.map((e) => '${e.key}: ${e.value}').join(', ');
     final truncated =
         dataStr.length > 5000 ? '${dataStr.substring(0, 5000)}...' : dataStr;
-    return 'Вот мои данные расчёта: $truncated\n\nПроверь и дай совет.';
+    return '$greeting\n\nДанные: $truncated';
   }
 
   // ---------------------------------------------------------------------------

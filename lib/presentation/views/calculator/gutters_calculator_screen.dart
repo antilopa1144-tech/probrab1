@@ -235,20 +235,16 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
           const SizedBox(height: 12),
           CalculatorTextField(label: _loc.translate('gutters_calc.label.wall_height'), value: _wallHeight, onChanged: (v) { setState(() { _wallHeight = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 2, maxValue: 15),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('gutters_calc.label.downpipes_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('$_downpipesCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('gutters_calc.label.downpipes_count'),
             value: _downpipesCount.toDouble(),
             min: 2,
             max: 10,
             divisions: 8,
-            activeColor: _accentColor,
+            suffix: _loc.translate('common.pcs'),
+            accentColor: _accentColor,
             onChanged: (v) { setState(() { _downpipesCount = v.toInt(); _update(); }); },
+            decimalPlaces: 0,
           ),
           Text(
             _loc.translate('gutters_calc.downpipes_hint'),

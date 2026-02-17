@@ -1,5 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import '../../core/enums/calculator_category.dart';
+import '../../core/services/tracker_service_web.dart'
+    if (dart.library.io) '../../core/services/tracker_service.dart';
 import '../../core/cache/calculation_cache.dart';
 import '../../data/models/price_item.dart';
 import '../../core/localization/app_localizations.dart';
@@ -150,6 +152,13 @@ class CalculatorDefinitionV2 {
     } catch (e) {
       // Игнорируем ошибки Firebase, если сервис недоступен
     }
+
+    // Дублируем в MyTracker
+    TrackerService.trackCalculatorUsed(
+      calculatorId: id,
+      category: category.name,
+      subcategory: subCategoryKey,
+    );
 
     // Сохраняем в кэш
     if (useCache) {

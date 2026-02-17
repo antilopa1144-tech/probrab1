@@ -238,14 +238,17 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen>
           const Divider(),
           _buildCounterRow(_loc.translate('plumbing_calc.label.kitchens'), _kitchensCount, (v) { setState(() { _kitchensCount = v; _update(); }); }),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('plumbing_calc.label.avg_pipe_length'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('${_avgPipeLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
+          CalculatorSliderField(
+            label: _loc.translate('plumbing_calc.label.avg_pipe_length'),
+            value: _avgPipeLength,
+            min: 2,
+            max: 15,
+            divisions: 130,
+            suffix: _loc.translate('common.meters'),
+            accentColor: _accentColor,
+            onChanged: (v) { setState(() { _avgPipeLength = v; _update(); }); },
+            decimalPlaces: 1,
           ),
-          Slider(value: _avgPipeLength, min: 2, max: 15, divisions: 130, activeColor: _accentColor, onChanged: (v) { setState(() { _avgPipeLength = v; _update(); }); }),
         ],
       ),
     );

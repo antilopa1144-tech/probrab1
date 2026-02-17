@@ -8,6 +8,8 @@ import '../../domain/models/shareable_content.dart';
 import '../services/pdf_export_service.dart';
 import '../services/pdf_file_handler.dart';
 import '../views/calculator/calculator_qr_share_screen.dart';
+import '../../core/services/tracker_service_web.dart'
+    if (dart.library.io) '../../core/services/tracker_service.dart';
 
 /// Миксин для добавления функциональности экспорта (share/copy) в Riverpod-калькуляторы.
 ///
@@ -97,6 +99,7 @@ mixin ExportableConsumerMixin<T extends ConsumerStatefulWidget> on ConsumerState
   /// Поделиться результатом расчёта.
   void shareCalculation() {
     final text = generateExportText();
+    TrackerService.trackExport(type: 'share', calculatorId: calculatorId ?? 'unknown');
     SharePlus.instance.share(ShareParams(text: text, subject: exportSubject));
   }
 
@@ -133,6 +136,7 @@ mixin ExportableConsumerMixin<T extends ConsumerStatefulWidget> on ConsumerState
 
   /// Экспорт результата в PDF — сохраняет и открывает файл.
   Future<void> exportPdf() async {
+    TrackerService.trackExport(type: 'pdf', calculatorId: calculatorId ?? 'unknown');
     try {
       final filePath = await PdfExportService.exportFromText(
         title: exportSubject,

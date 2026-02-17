@@ -198,24 +198,16 @@ class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
 
   Widget _buildCountCard() {
     return _card(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('slopes_calc.label.windows_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('$_windowsCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Slider(
-            value: _windowsCount.toDouble(),
-            min: 1,
-            max: 15,
-            divisions: 14,
-            activeColor: _accentColor,
-            onChanged: (v) { setState(() { _windowsCount = v.toInt(); _update(); }); },
-          ),
-        ],
+      child: CalculatorSliderField(
+        label: _loc.translate('slopes_calc.label.windows_count'),
+        value: _windowsCount.toDouble(),
+        min: 1,
+        max: 15,
+        divisions: 14,
+        suffix: _loc.translate('common.pcs'),
+        accentColor: _accentColor,
+        onChanged: (v) { setState(() { _windowsCount = v.toInt(); _update(); }); },
+        decimalPlaces: 0,
       ),
     );
   }
@@ -238,20 +230,16 @@ class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('slopes_calc.label.slope_depth'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('${(_slopeDepth * 100).toStringAsFixed(0)} ${_loc.translate('common.cm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('slopes_calc.label.slope_depth'),
             value: _slopeDepth * 100,
             min: 10,
             max: 50,
             divisions: 8,
-            activeColor: _accentColor,
+            suffix: _loc.translate('common.cm'),
+            accentColor: _accentColor,
             onChanged: (v) { setState(() { _slopeDepth = v / 100; _update(); }); },
+            decimalPlaces: 0,
           ),
         ],
       ),

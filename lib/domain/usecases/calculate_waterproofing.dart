@@ -33,7 +33,7 @@ class CalculateWaterproofing extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final floorArea = getInput(inputs, 'floorArea', defaultValue: 0.0, minValue: 0.0);
-    final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 0.3, minValue: 0.1, maxValue: 2.5);
+    final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 0.5, minValue: 0.1, maxValue: 2.5);
     final perimeterInput = inputs['perimeter'] ?? 0.0;
     final perimeter = perimeterInput > 0 ? perimeterInput : estimatePerimeter(floorArea);
     final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 3);

@@ -24,7 +24,8 @@ void main() {
         ),
       );
 
-      expect(find.text('Тестовая метка'), findsOneWidget);
+      // Label appears in header row and in the text field below
+      expect(find.text('Тестовая метка'), findsAtLeastNWidgets(1));
     });
 
     testWidgets('отображает значение с суффиксом', (tester) async {
@@ -111,7 +112,8 @@ void main() {
         ),
       );
 
-      expect(find.text('Тест'), findsOneWidget);
+      // Label appears in header row and in the text field below
+      expect(find.text('Тест'), findsAtLeastNWidgets(1));
       expect(find.text('50 м²'), findsNothing);
     });
 

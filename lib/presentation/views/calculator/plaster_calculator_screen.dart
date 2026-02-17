@@ -44,6 +44,30 @@ class _PlasterConstants {
 enum PlasterMaterial { gypsum, cement }
 enum PlasterInputMode { manual, room }
 
+/// Тип основания для штукатурки
+enum SubstrateType {
+  concrete('plaster_pro.substrate.concrete', 1.0),
+  newBrick('plaster_pro.substrate.new_brick', 1.15),
+  oldBrick('plaster_pro.substrate.old_brick', 1.3),
+  gasBlock('plaster_pro.substrate.gas_block', 1.25),
+  foamBlock('plaster_pro.substrate.foam_block', 1.2);
+
+  final String nameKey;
+  final double multiplier;
+  const SubstrateType(this.nameKey, this.multiplier);
+}
+
+/// Ровность стен
+enum WallEvenness {
+  even('plaster_pro.evenness.even', 1.0),
+  uneven('plaster_pro.evenness.uneven', 1.15),
+  veryUneven('plaster_pro.evenness.very_uneven', 1.3);
+
+  final String nameKey;
+  final double multiplier;
+  const WallEvenness(this.nameKey, this.multiplier);
+}
+
 class _PlasterResult {
   final double area;
   final double totalWeight;
@@ -93,8 +117,11 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
   bool _usePrimer = true;
   PlasterMaterial _materialType = PlasterMaterial.gypsum;
   PlasterInputMode _inputMode = PlasterInputMode.manual;
+  SubstrateType _substrateType = SubstrateType.concrete;
+  WallEvenness _wallEvenness = WallEvenness.even;
   late _PlasterResult _result;
   late AppLocalizations _loc;
+  bool _isDark = false;
 
   // Константы калькулятора (null = используются hardcoded defaults)
   late final _PlasterConstants _constants;
@@ -128,15 +155,26 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
     }
 
     final rate = _constants.getConsumptionRate(_materialType.name);
-    final totalWeight = area * (_thickness / 10.0) * rate * _constants.materialMargin;
+    // Множители основания и ровности стен
+    final substrateMultiplier = _substrateType.multiplier;
+    final evennessMultiplier = _wallEvenness.multiplier;
+    final totalWeight = area * (_thickness / 10.0) * rate * substrateMultiplier * evennessMultiplier * _constants.materialMargin;
+
+    // Толщина >30мм → автодобавление армирующей сетки
+    final autoMesh = _thickness > 30;
+    final meshNeeded = _useMesh || autoMesh;
+
+    // Маяки: <15мм → 6мм, 15-30мм → 10мм, >30мм → 10мм + сетка
+    final beaconSize = _thickness < 15 ? 6 : 10;
+
     return _PlasterResult(
       area: area,
       totalWeight: totalWeight,
       bags: (totalWeight / _bagWeight).ceil(),
       beacons: _useBeacons ? (area / _constants.areaPerBeacon).ceil() : 0,
-      meshArea: _useMesh ? (area * _constants.meshMargin).ceil() : 0,
+      meshArea: meshNeeded ? (area * _constants.meshMargin).ceil() : 0,
       primerLiters: double.parse((_usePrimer ? area * _constants.primerConsumption * _constants.primerMargin : 0).toStringAsFixed(1)),
-      beaconSize: _thickness < 10 ? 6 : 10,
+      beaconSize: beaconSize,
     );
   }
 
@@ -177,6 +215,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
   @override
   Widget build(BuildContext context) {
     _loc = AppLocalizations.of(context);
+    _isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = CalculatorColors.walls;
 
     return CalculatorScaffold(
@@ -208,6 +247,10 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
 
       children: [
         _buildMaterialSelector(),
+        const SizedBox(height: 16),
+        _buildSubstrateSelector(),
+        const SizedBox(height: 16),
+        _buildEvennessSelector(),
         const SizedBox(height: 16),
         _buildAreaCard(),
         const SizedBox(height: 16),
@@ -251,6 +294,94 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
     );
   }
 
+  Widget _buildSubstrateSelector() {
+    const accentColor = CalculatorColors.walls;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('plaster_pro.substrate.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: SubstrateType.values.map((type) {
+              final isSelected = _substrateType == type;
+              return ChoiceChip(
+                label: Text(_loc.translate(type.nameKey)),
+                selected: isSelected,
+                selectedColor: accentColor.withValues(alpha: 0.2),
+                labelStyle: TextStyle(
+                  color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  fontSize: 13,
+                ),
+                side: BorderSide(
+                  color: isSelected ? accentColor : Colors.grey.shade300,
+                ),
+                onSelected: (_) {
+                  setState(() {
+                    _substrateType = type;
+                    _update();
+                  });
+                },
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEvennessSelector() {
+    const accentColor = CalculatorColors.walls;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('plaster_pro.evenness.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: WallEvenness.values.map((type) {
+              final isSelected = _wallEvenness == type;
+              return ChoiceChip(
+                label: Text(_loc.translate(type.nameKey)),
+                selected: isSelected,
+                selectedColor: accentColor.withValues(alpha: 0.2),
+                labelStyle: TextStyle(
+                  color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  fontSize: 13,
+                ),
+                side: BorderSide(
+                  color: isSelected ? accentColor : Colors.grey.shade300,
+                ),
+                onSelected: (_) {
+                  setState(() {
+                    _wallEvenness = type;
+                    _update();
+                  });
+                },
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildAreaCard() {
     const accentColor = CalculatorColors.walls;
     return _card(
@@ -279,35 +410,16 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
 
   Widget _buildManualInputs() {
     const accentColor = CalculatorColors.walls;
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              _loc.translate('plaster_pro.label.wall_area'),
-              style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.textSecondary,
-              ),
-            ),
-            Text(
-              '${_manualArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-              style: CalculatorDesignSystem.headlineMedium.copyWith(
-                color: accentColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        Slider(
-          value: _manualArea,
-          min: 1,
-          max: 500,
-          divisions: 4990,
-          activeColor: accentColor,
-          onChanged: (v) { setState(() { _manualArea = v; _update(); }); },
-        ),
-      ],
+    return CalculatorSliderField(
+      label: _loc.translate('plaster_pro.label.wall_area'),
+      value: _manualArea,
+      min: 1,
+      max: 500,
+      divisions: 4990,
+      suffix: _loc.translate('common.sqm'),
+      accentColor: accentColor,
+      onChanged: (v) { setState(() { _manualArea = v; _update(); }); },
+      decimalPlaces: 1,
     );
   }
 
@@ -371,31 +483,16 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
     return _card(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _loc.translate('plaster_pro.thickness.title'),
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.textSecondary,
-                ),
-              ),
-              Text(
-                '${_thickness.toStringAsFixed(1)} ${_loc.translate('common.mm')}',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('plaster_pro.thickness.title'),
             value: _thickness,
             min: 5,
             max: 100,
             divisions: 950,
-            activeColor: accentColor,
+            suffix: _loc.translate('common.mm'),
+            accentColor: accentColor,
             onChanged: (v) { setState(() { _thickness = v; _update(); }); },
+            decimalPlaces: 1,
           ),
           const SizedBox(height: 8),
           Row(

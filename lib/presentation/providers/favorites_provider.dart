@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../core/services/tracker_service_web.dart'
+    if (dart.library.io) '../../core/services/tracker_service.dart';
 import '../../domain/calculators/calculator_id_migration.dart';
 import '../../domain/calculators/calculator_registry.dart';
 
@@ -42,10 +44,12 @@ class FavoritesNotifier extends StateNotifier<List<String>> {
     final favorites = List<String>.from(state);
     if (favorites.contains(canonical)) {
       favorites.remove(canonical);
+      TrackerService.trackFavorite(calculatorId: canonical, added: false);
     } else {
       // Only allow adding favorites for calculators that currently exist.
       if (!CalculatorRegistry.exists(canonical)) return;
       favorites.add(canonical);
+      TrackerService.trackFavorite(calculatorId: canonical, added: true);
     }
     state = favorites;
     final prefs = await SharedPreferences.getInstance();

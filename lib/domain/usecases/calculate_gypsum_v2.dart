@@ -124,6 +124,16 @@ class CalculateGypsumV2 extends BaseCalculator {
     final layers = getInput(inputs, 'layers', defaultValue: 1.0, minValue: 1.0, maxValue: 2.0).round();
     final useInsulation = getInput(inputs, 'useInsulation', defaultValue: 0.0, minValue: 0.0, maxValue: 1.0) >= 0.5;
 
+    // Форма стен: 1=прямоугольная, 2=Г-образная, 3=сложная (много углов)
+    final wallShape = getIntInput(inputs, 'wallShape', defaultValue: 1, minValue: 1, maxValue: 3);
+
+    // Множитель профиля для сложных стен (больше подрезок и стыков)
+    final double wallShapeProfileMultiplier = switch (wallShape) {
+      2 => 1.10,  // Г-образная — +10% профиля на внутренние углы
+      3 => 1.20,  // Сложная — +20% на подрезки
+      _ => 1.0,   // Прямоугольная
+    };
+
     // Calculate area based on input mode
     double calculatedArea;
     if (inputMode == 0) {
@@ -207,6 +217,22 @@ class CalculateGypsumV2 extends BaseCalculator {
         break;
     }
 
+    // Применяем множитель формы стен к профилям
+    // (для сложных стен больше подрезок, стыков, внутренних углов)
+    pnMeters *= wallShapeProfileMultiplier;
+    ppMeters *= wallShapeProfileMultiplier;
+    pnPieces = (pnMeters / profileLength).ceil();
+    ppPieces = (ppMeters / profileLength).ceil();
+
+    // Сращивание профилей при высоте > 3.0м (только для стен и перегородок)
+    int profileConnectors = 0;
+    if (inputMode == 1 && height > 3.0 && constructionType != 2) {
+      // Количество уровней сращивания
+      final spliceCount = ((height - 3.0) / 3.0).ceil();
+      // Соединители на каждый ПП профиль
+      profileConnectors = spliceCount * ppPieces;
+    }
+
     // Assign screws based on thickness:
     // 9.5mm -> TN25 (25mm screws)
     // 12.5mm -> TN35 (35mm screws)
@@ -268,6 +294,12 @@ class CalculateGypsumV2 extends BaseCalculator {
       'thickness': thickness.toDouble(),
       'sheetWeight': sheetWeight,
       'totalWeight': totalWeight,
+      'wallShape': wallShape.toDouble(),
+      'profileConnectors': profileConnectors.toDouble(),
+      // Flags for conditional hints
+      if (inputMode == 1 && height > 3.0 && constructionType != 2) 'warningTallWall': 1.0,
+      if (constructionType == 1) 'suggestInsulation': 1.0,
+      if (gklType == 1) 'suggestWaterproofing': 1.0,
     };
 
     // Calculate total price if prices available

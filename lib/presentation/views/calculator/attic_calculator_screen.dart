@@ -296,20 +296,16 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
             accentColor: _accentColor,
           ),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('attic_calc.label.insulation_thickness'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('${_insulationThickness.toStringAsFixed(0)} ${_loc.translate('common.mm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('attic_calc.label.insulation_thickness'),
             value: _insulationThickness,
             min: 50,
             max: 300,
             divisions: 10,
-            activeColor: _accentColor,
+            suffix: _loc.translate('common.mm'),
+            accentColor: _accentColor,
             onChanged: (v) { setState(() { _insulationThickness = v; _update(); }); },
+            decimalPlaces: 0,
           ),
           // Подсказка для ЭППС
           if (_insulationMaterialType == InsulationMaterialType.xps)

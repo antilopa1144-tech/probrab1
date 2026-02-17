@@ -9,7 +9,9 @@ import '../../widgets/calculator/calculator_widgets.dart';
 /// Способ укладки ламината
 enum LaminatePattern {
   straight('laminate_calc.pattern.straight', 'laminate_calc.pattern.straight_desc', Icons.view_stream),
-  diagonal('laminate_calc.pattern.diagonal', 'laminate_calc.pattern.diagonal_desc', Icons.rotate_right);
+  offset('laminate_calc.pattern.offset', 'laminate_calc.pattern.offset_desc', Icons.view_week),
+  diagonal('laminate_calc.pattern.diagonal', 'laminate_calc.pattern.diagonal_desc', Icons.rotate_right),
+  herringbone('laminate_calc.pattern.herringbone', 'laminate_calc.pattern.herringbone_desc', Icons.trending_up);
 
   final String nameKey;
   final String descKey;
@@ -201,7 +203,12 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
 
   /// Процент отходов для экспорта
   double _getWastePercent() {
-    return _pattern == LaminatePattern.straight ? 0.05 : 0.15;
+    return switch (_pattern) {
+      LaminatePattern.straight => 0.07,
+      LaminatePattern.offset => 0.10,
+      LaminatePattern.diagonal => 0.15,
+      LaminatePattern.herringbone => 0.20,
+    };
   }
 
   void _update() => setState(() => _result = _calculate());
@@ -298,10 +305,22 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
           _loc.translate('laminate_calc.tip.straight_2'),
         ]);
         break;
+      case LaminatePattern.offset:
+        tips.addAll([
+          _loc.translate('laminate_calc.tip.offset_1'),
+          _loc.translate('laminate_calc.tip.offset_2'),
+        ]);
+        break;
       case LaminatePattern.diagonal:
         tips.addAll([
           _loc.translate('laminate_calc.tip.diagonal_1'),
           _loc.translate('laminate_calc.tip.diagonal_2'),
+        ]);
+        break;
+      case LaminatePattern.herringbone:
+        tips.addAll([
+          _loc.translate('laminate_calc.tip.herringbone_1'),
+          _loc.translate('laminate_calc.tip.herringbone_2'),
         ]);
         break;
     }

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:app_links/app_links.dart';
 import '../../core/services/deep_link_service.dart';
+import '../../core/services/tracker_service_web.dart'
+    if (dart.library.io) '../../core/services/tracker_service.dart';
 import '../views/favorites/favorite_calculators_screen.dart';
 import '../views/checklist/checklists_list_screen.dart';
 import '../views/calculator/modern_calculator_catalog_screen_v2.dart';
@@ -108,11 +110,14 @@ class _MainShellState extends State<MainShell> {
     return true;
   }
 
+  static const _tabNames = ['catalog', 'checklists', 'favorites'];
+
   void _selectTab(int index) {
     if (index == _currentIndex) {
       _navigatorKeys[index].currentState?.popUntil((route) => route.isFirst);
       return;
     }
+    TrackerService.trackScreenView(_tabNames[index]);
     setState(() => _currentIndex = index);
   }
 

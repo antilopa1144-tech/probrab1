@@ -240,24 +240,16 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
 
   Widget _buildCountCard() {
     return _card(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('doors_calc.label.doors_count'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('$_doorsCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          Slider(
-            value: _doorsCount.toDouble(),
-            min: 1,
-            max: 15,
-            divisions: 14,
-            activeColor: _accentColor,
-            onChanged: (v) { setState(() { _doorsCount = v.toInt(); _update(); }); },
-          ),
-        ],
+      child: CalculatorSliderField(
+        label: _loc.translate('doors_calc.label.doors_count'),
+        value: _doorsCount.toDouble(),
+        min: 1,
+        max: 15,
+        divisions: 14,
+        suffix: _loc.translate('common.pcs'),
+        accentColor: _accentColor,
+        onChanged: (v) { setState(() { _doorsCount = v.toInt(); _update(); }); },
+        decimalPlaces: 0,
       ),
     );
   }

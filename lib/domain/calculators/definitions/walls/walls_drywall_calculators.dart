@@ -8,7 +8,7 @@ import '../../../models/calculator_definition_v2.dart';
 import '../../../models/calculator_field.dart';
 import '../../../models/calculator_hint.dart';
 import '../../calculator_constants.dart';
-import '../../../usecases/calculate_gypsum.dart';
+import '../../../usecases/calculate_gypsum_v2.dart';
 import '../../../usecases/calculate_3d_panels.dart';
 import '../../../usecases/calculate_mdf_panels.dart';
 import '../../../usecases/calculate_pvc_panels.dart';
@@ -39,19 +39,19 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           order: 1,
         ),
         const CalculatorField(
-          key: 'construction_type',
+          key: 'constructionType',
           labelKey: 'input.construction_type',
           unitType: UnitType.pieces,
           inputType: FieldInputType.select,
-          defaultValue: 1.0,
+          defaultValue: 0.0,
           iconName: 'construction',
           group: 'material',
           required: true,
           order: 2,
           options: [
-            FieldOption(value: 1.0, labelKey: 'input.construction_type.wall_lining'),
-            FieldOption(value: 2.0, labelKey: 'input.construction_type.partition'),
-            FieldOption(value: 3.0, labelKey: 'input.construction_type.ceiling'),
+            FieldOption(value: 0.0, labelKey: 'input.construction_type.wall_lining'),
+            FieldOption(value: 1.0, labelKey: 'input.construction_type.partition'),
+            FieldOption(value: 2.0, labelKey: 'input.construction_type.ceiling'),
           ],
         ),
         const CalculatorField(
@@ -69,23 +69,23 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           order: 3,
         ),
         const CalculatorField(
-          key: 'gkl_type',
+          key: 'gklType',
           labelKey: 'input.gkl_type',
           unitType: UnitType.pieces,
           inputType: FieldInputType.select,
-          defaultValue: 1.0,
+          defaultValue: 0.0,
           iconName: 'category',
           group: 'material',
           required: true,
           order: 4,
           options: [
-            FieldOption(value: 1.0, labelKey: 'input.gkl_type.standard'),
-            FieldOption(value: 2.0, labelKey: 'input.gkl_type.moisture'),
-            FieldOption(value: 3.0, labelKey: 'input.gkl_type.fire'),
+            FieldOption(value: 0.0, labelKey: 'input.gkl_type.standard'),
+            FieldOption(value: 1.0, labelKey: 'input.gkl_type.moisture'),
+            FieldOption(value: 2.0, labelKey: 'input.gkl_type.fire'),
           ],
         ),
         const CalculatorField(
-          key: 'use_insulation',
+          key: 'useInsulation',
           labelKey: 'input.use_insulation',
           unitType: UnitType.pieces,
           inputType: FieldInputType.checkbox,
@@ -94,6 +94,22 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           group: 'options',
           required: false,
           order: 5,
+        ),
+        const CalculatorField(
+          key: 'wallShape',
+          labelKey: 'input.wallShape',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.select,
+          defaultValue: 1.0,
+          iconName: 'crop_square',
+          group: 'conditions',
+          required: false,
+          order: 6,
+          options: [
+            FieldOption(value: 1.0, labelKey: 'input.wallShape.rectangular'),
+            FieldOption(value: 2.0, labelKey: 'input.wallShape.lShaped'),
+            FieldOption(value: 3.0, labelKey: 'input.wallShape.complex'),
+          ],
         ),
       ],
       beforeHints: [
@@ -105,8 +121,26 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.screw_depth_1mm'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.joints_offset'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.gap_from_floor'),
+        const CalculatorHint(
+          type: HintType.tip,
+          messageKey: 'hint.gypsum.tall_wall_use_tn45',
+          condition: HintCondition(
+            type: HintConditionType.greaterThan,
+            resultKey: 'warningTallWall',
+            value: 0,
+          ),
+        ),
+        const CalculatorHint(
+          type: HintType.tip,
+          messageKey: 'hint.gypsum.partition_add_insulation',
+          condition: HintCondition(
+            type: HintConditionType.equals,
+            resultKey: 'suggestInsulation',
+            value: 1,
+          ),
+        ),
       ],
-      useCase: CalculateGypsum(),
+      useCase: CalculateGypsumV2(),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 9,
@@ -411,6 +445,22 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: false,
           order: 7,
         ),
+        const CalculatorField(
+          key: 'wallpaperType',
+          labelKey: 'input.wallpaperType',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.select,
+          defaultValue: 1.0,
+          iconName: 'wallpaper',
+          group: 'material',
+          required: true,
+          order: 8,
+          options: [
+            FieldOption(value: 1.0, labelKey: 'input.wallpaperType.paper'),
+            FieldOption(value: 2.0, labelKey: 'input.wallpaperType.vinyl'),
+            FieldOption(value: 3.0, labelKey: 'input.wallpaperType.fleece'),
+          ],
+        ),
       ],
       beforeHints: [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.wallpaper.check_batch_number'),
@@ -418,6 +468,24 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
       ],
       afterHints: [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.wallpaper.temperature_humidity'),
+        const CalculatorHint(
+          type: HintType.tip,
+          messageKey: 'hint.wallpaper.vinyl_apply_to_wall',
+          condition: HintCondition(
+            type: HintConditionType.equals,
+            fieldKey: 'wallpaperType',
+            value: 2.0,
+          ),
+        ),
+        const CalculatorHint(
+          type: HintType.tip,
+          messageKey: 'hint.wallpaper.fleece_moisture_ok',
+          condition: HintCondition(
+            type: HintConditionType.equals,
+            fieldKey: 'wallpaperType',
+            value: 3.0,
+          ),
+        ),
       ],
       useCase: CalculateWallpaper(),
       accentColor: kCalculatorAccentColor,

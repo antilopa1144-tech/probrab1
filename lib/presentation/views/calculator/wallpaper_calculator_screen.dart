@@ -43,6 +43,17 @@ class _WallpaperConstants {
 enum InputMode { byArea, byRoom }
 enum WallpaperRollSize { s053x10, s106x10, s106x25, custom }
 
+/// Тип обоев — влияет на расход клея (сухая смесь, кг/м²)
+/// Типичная пачка 250г = ~30-40 м² покрытия
+enum WallpaperType {
+  paper(0.007),      // Бумажные: 7 г/м² — лёгкие, минимальный расход
+  vinyl(0.012),      // Виниловые: 12 г/м² — тяжёлые, клей на стену
+  nonWoven(0.010);   // Флизелиновые: 10 г/м² — средний расход, клей на стену
+
+  final double pasteRate;
+  const WallpaperType(this.pasteRate);
+}
+
 class _WallpaperResult {
   final double area;
   final double wallsArea;
@@ -102,6 +113,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
   double _windowsDoors = 3.0;
   int _rapport = 0;
   WallpaperRollSize _rollSize = WallpaperRollSize.s053x10;
+  WallpaperType _wallpaperType = WallpaperType.vinyl;
   double _customWidth = 1.06;
   double _customLength = 10.0;
   late _WallpaperResult _result;
@@ -197,11 +209,11 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
       rollsNeeded = (effectiveArea / rollArea).ceil();
     }
 
-    // Расчёт материалов из констант
-    // Клей - сухая смесь, показываем точное значение без округления вверх
-    final glueNeededKg = effectiveArea * _constants.gluePerM2;
-    // Грунтовка: 0.1 л/м² (стандартный расход)
-    final primerLiters = effectiveArea * 0.1;
+    // Расчёт материалов
+    // Клей - сухая смесь, расход зависит от типа обоев
+    final glueNeededKg = effectiveArea * _wallpaperType.pasteRate;
+    // Грунтовка: 0.15 л/м² × 1.1 запас
+    final primerLiters = effectiveArea * 0.15 * 1.1;
 
     return _WallpaperResult(
       area: effectiveArea,
@@ -291,6 +303,8 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
         ],
       ),
       children: [
+        _buildWallpaperTypeSelector(),
+        const SizedBox(height: 16),
         _buildInputModeSelector(),
         const SizedBox(height: 16),
         _inputMode == InputMode.byArea ? _buildAreaCard() : _buildRoomDimensionsCard(),
@@ -311,6 +325,37 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
         const SizedBox(height: 16),
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildWallpaperTypeSelector() {
+    const accentColor = CalculatorColors.interior;
+    return TypeSelectorGroup(
+      options: [
+        TypeSelectorOption(
+          icon: Icons.description,
+          title: _loc.translate('wallpaper.type.paper'),
+          subtitle: _loc.translate('wallpaper.type.paper_desc'),
+        ),
+        TypeSelectorOption(
+          icon: Icons.layers,
+          title: _loc.translate('wallpaper.type.vinyl'),
+          subtitle: _loc.translate('wallpaper.type.vinyl_desc'),
+        ),
+        TypeSelectorOption(
+          icon: Icons.texture,
+          title: _loc.translate('wallpaper.type.non_woven'),
+          subtitle: _loc.translate('wallpaper.type.non_woven_desc'),
+        ),
+      ],
+      selectedIndex: _wallpaperType.index,
+      onSelect: (index) {
+        setState(() {
+          _wallpaperType = WallpaperType.values[index];
+          _update();
+        });
+      },
+      accentColor: accentColor,
     );
   }
 
@@ -349,40 +394,21 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
   Widget _buildAreaCard() {
     const accentColor = CalculatorColors.interior;
     return _card(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _loc.translate('wallpaper.label.area'),
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.getTextSecondary(_isDark),
-                ),
-              ),
-              Text(
-                '${_area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Slider(
-            value: _area,
-            min: 1,
-            max: 500,
-            divisions: 4990,
-            activeColor: accentColor,
-            onChanged: (v) {
-              setState(() {
-                _area = v;
-                _update();
-              });
-            },
-          ),
-        ],
+      child: CalculatorSliderField(
+        label: _loc.translate('wallpaper.label.area'),
+        value: _area,
+        min: 1,
+        max: 500,
+        divisions: 4990,
+        suffix: _loc.translate('common.sqm'),
+        accentColor: accentColor,
+        onChanged: (v) {
+          setState(() {
+            _area = v;
+            _update();
+          });
+        },
+        decimalPlaces: 0,
       ),
     );
   }
@@ -480,36 +506,16 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     required ValueChanged<double> onChanged,
     required Color accentColor,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.getTextSecondary(_isDark),
-              ),
-            ),
-            Text(
-              '${value.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
-              style: CalculatorDesignSystem.titleMedium.copyWith(
-                color: accentColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: ((max - min) * 10).toInt(),
-          activeColor: accentColor,
-          onChanged: onChanged,
-        ),
-      ],
+    return CalculatorSliderField(
+      label: label,
+      value: value,
+      min: min,
+      max: max,
+      divisions: ((max - min) * 10).toInt(),
+      suffix: _loc.translate('common.meters'),
+      accentColor: accentColor,
+      onChanged: onChanged,
+      decimalPlaces: 1,
     );
   }
 
@@ -598,58 +604,41 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _loc.translate('wallpaper.rapport.title'),
-                      style: CalculatorDesignSystem.titleMedium.copyWith(
-                        color: CalculatorColors.getTextPrimary(_isDark),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _loc.translate('wallpaper.rapport.subtitle'),
-                      style: CalculatorDesignSystem.bodySmall.copyWith(
-                        color: CalculatorColors.getTextSecondary(_isDark),
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                _rapport == 0
-                    ? _loc.translate('wallpaper.rapport.none')
-                    : '$_rapport ${_loc.translate('common.cm')}',
-                style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+          Text(
+            _loc.translate('wallpaper.rapport.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _loc.translate('wallpaper.rapport.subtitle'),
+            style: CalculatorDesignSystem.bodySmall.copyWith(
+              color: CalculatorColors.getTextSecondary(_isDark),
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 8),
-          Slider(
+          CalculatorSliderField(
+            label: _rapport == 0
+                ? _loc.translate('wallpaper.rapport.none')
+                : _loc.translate('wallpaper.rapport.title'),
             value: _rapport.toDouble(),
             min: 0,
             max: 100,
             divisions: 20,
-            activeColor: accentColor,
+            suffix: _loc.translate('common.cm'),
+            accentColor: accentColor,
             onChanged: (v) {
               setState(() {
                 _rapport = v.toInt();
                 _update();
               });
             },
+            decimalPlaces: 0,
           ),
         ],
       ),
@@ -662,49 +651,35 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _loc.translate('wallpaper.deductions.title'),
-                    style: CalculatorDesignSystem.titleMedium.copyWith(
-                      color: CalculatorColors.getTextPrimary(_isDark),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _loc.translate('wallpaper.deductions.subtitle'),
-                    style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.getTextSecondary(_isDark),
-                    ),
-                  ),
-                ],
-              ),
-              Text(
-                '${_windowsDoors.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-                style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+          Text(
+            _loc.translate('wallpaper.deductions.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _loc.translate('wallpaper.deductions.subtitle'),
+            style: CalculatorDesignSystem.bodySmall.copyWith(
+              color: CalculatorColors.getTextSecondary(_isDark),
+            ),
           ),
           const SizedBox(height: 8),
-          Slider(
+          CalculatorSliderField(
+            label: _loc.translate('wallpaper.deductions.title'),
             value: _windowsDoors,
             min: 0,
             max: 50,
             divisions: 100,
-            activeColor: accentColor,
+            suffix: _loc.translate('common.sqm'),
+            accentColor: accentColor,
             onChanged: (v) {
               setState(() {
                 _windowsDoors = v;
                 _update();
               });
             },
+            decimalPlaces: 1,
           ),
         ],
       ),
@@ -751,11 +726,26 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
 
   Widget _buildTipsCard() {
     const accentColor = CalculatorColors.interior;
-    final tips = <String>[
+    final tips = <String>[];
+
+    // Контекстные подсказки по типу обоев
+    switch (_wallpaperType) {
+      case WallpaperType.paper:
+        tips.add(_loc.translate('hint.wallpaper.paper_glue_on_strip'));
+        tips.add(_loc.translate('hint.wallpaper.paper_soak_time'));
+      case WallpaperType.vinyl:
+        tips.add(_loc.translate('hint.wallpaper.vinyl_glue_on_wall'));
+        tips.add(_loc.translate('hint.wallpaper.vinyl_wet_rooms'));
+      case WallpaperType.nonWoven:
+        tips.add(_loc.translate('hint.wallpaper.nonwoven_glue_on_wall'));
+        tips.add(_loc.translate('hint.wallpaper.nonwoven_ventilation'));
+    }
+
+    tips.addAll([
       _loc.translate('hint.wallpaper.check_batch_number'),
       _loc.translate('hint.wallpaper.start_from_window'),
       _loc.translate('hint.wallpaper.temperature_humidity'),
-    ];
+    ]);
 
     return TipsCard(
       tips: tips,

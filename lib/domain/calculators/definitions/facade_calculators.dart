@@ -13,7 +13,7 @@ import '../../usecases/calculate_facade_panels.dart';
 import '../../usecases/calculate_fence.dart';
 import '../../usecases/calculate_stairs.dart';
 import '../../usecases/calculate_terrace.dart';
-// insulation_foam и insulation_mineral_wool удалены
+import '../../usecases/calculate_insulation_mineral_wool.dart';
 
 final List<CalculatorDefinitionV2> facadeCalculators = [
   CalculatorDefinitionV2(
@@ -107,6 +107,23 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 6,
         ),
+        const CalculatorField(
+          key: 'workingConditions',
+          labelKey: 'input.workingConditions',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.select,
+          defaultValue: 1.0,
+          iconName: 'thermostat',
+          group: 'conditions',
+          required: false,
+          order: 10,
+          options: [
+            FieldOption(value: 1.0, labelKey: 'input.workingConditions.normal'),
+            FieldOption(value: 2.0, labelKey: 'input.workingConditions.windy'),
+            FieldOption(value: 3.0, labelKey: 'input.workingConditions.cold'),
+            FieldOption(value: 4.0, labelKey: 'input.workingConditions.hot'),
+          ],
+        ),
       ],
       beforeHints: [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ispolzuyte_oblitsovochnyy_kirpich_s'),
@@ -119,6 +136,15 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.armiruyte_cherez_kazhdye_5'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.proveryayte_vertikalnost_kazhdogo_ryada'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.zaschitite_kladku_ot_dozhdya'),
+        const CalculatorHint(
+          type: HintType.warning,
+          messageKey: 'hint.brick.cold_weather_warning',
+          condition: HintCondition(
+            type: HintConditionType.equals,
+            fieldKey: 'workingConditions',
+            value: 3,
+          ),
+        ),
       ],
       useCase: CalculateBrickFacing(),
       accentColor: kCalculatorAccentColor,
@@ -543,5 +569,98 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         'tag.terrasa_veranda',
       ],
     ),
-  // insulation_foam и insulation_mineral удалены - не востребованы
+  // Утеплитель минеральная вата
+  CalculatorDefinitionV2(
+      id: 'insulation_mineral_wool',
+      titleKey: 'calculator.insulation_mineral_wool.title',
+      descriptionKey: 'calculator.insulation_mineral_wool.description',
+      category: CalculatorCategory.exterior,
+      subCategoryKey: 'subcategory.insulation',
+      fields: [
+        const CalculatorField(
+          key: 'area',
+          labelKey: 'input.area',
+          unitType: UnitType.squareMeters,
+          inputType: FieldInputType.slider,
+          defaultValue: 20.0,
+          minValue: 1.0,
+          maxValue: 500.0,
+          step: 1.0,
+          iconName: 'square_foot',
+          group: 'dimensions',
+          required: true,
+          order: 1,
+        ),
+        const CalculatorField(
+          key: 'thickness',
+          labelKey: 'input.thickness',
+          unitType: UnitType.millimeters,
+          inputType: FieldInputType.slider,
+          defaultValue: 100.0,
+          minValue: 50.0,
+          maxValue: 300.0,
+          step: 10.0,
+          iconName: 'height',
+          group: 'material',
+          required: true,
+          order: 2,
+        ),
+        const CalculatorField(
+          key: 'density',
+          labelKey: 'input.density',
+          unitType: UnitType.kilograms,
+          inputType: FieldInputType.slider,
+          defaultValue: 50.0,
+          minValue: 30.0,
+          maxValue: 200.0,
+          step: 5.0,
+          iconName: 'density_medium',
+          group: 'material',
+          required: true,
+          order: 3,
+        ),
+        const CalculatorField(
+          key: 'applicationSurface',
+          labelKey: 'input.applicationSurface',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.select,
+          defaultValue: 1.0,
+          iconName: 'wall',
+          group: 'conditions',
+          required: true,
+          order: 4,
+          options: [
+            FieldOption(value: 1.0, labelKey: 'input.applicationSurface.wall'),
+            FieldOption(value: 2.0, labelKey: 'input.applicationSurface.floor'),
+            FieldOption(value: 3.0, labelKey: 'input.applicationSurface.ceiling'),
+            FieldOption(value: 4.0, labelKey: 'input.applicationSurface.roofSlope'),
+          ],
+        ),
+      ],
+      beforeHints: [
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.insulation.vapor_barrier_inside'),
+        const CalculatorHint(type: HintType.tip, messageKey: 'hint.insulation.wind_barrier_outside'),
+      ],
+      afterHints: [
+        const CalculatorHint(
+          type: HintType.warning,
+          messageKey: 'hint.insulation.thin_exterior_warning',
+          condition: HintCondition(
+            type: HintConditionType.lessThan,
+            resultKey: 'thickness',
+            value: 100,
+          ),
+        ),
+      ],
+      useCase: CalculateInsulationMineralWool(),
+      accentColor: kCalculatorAccentColor,
+      complexity: 2,
+      popularity: 8,
+      tags: [
+        'tag.naruzhnaya_otdelka',
+        'insulation',
+        'mineral_wool',
+        'insulation_mineral_wool',
+      ],
+    ),
 ];

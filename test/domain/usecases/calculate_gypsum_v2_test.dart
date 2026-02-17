@@ -691,5 +691,326 @@ void main() {
         expect(result.values['sealingTape'], equals(0.0));
       });
     });
+
+    group('Wall shape multiplier', () {
+      test('rectangular wall (default) — standard profile', () {
+        final baseline = calculator({
+          'area': 20.0,
+          'constructionType': 0.0,
+        }, emptyPriceList);
+
+        final rectangular = calculator({
+          'area': 20.0,
+          'constructionType': 0.0,
+          'wallShape': 1.0,
+        }, emptyPriceList);
+
+        // wallShape=1 is default, should match baseline exactly
+        expect(rectangular.values['pnMeters'], equals(baseline.values['pnMeters']));
+        expect(rectangular.values['ppMeters'], equals(baseline.values['ppMeters']));
+        expect(rectangular.values['wallShape'], equals(1.0));
+      });
+
+      test('L-shaped wall — +10% profile', () {
+        final baseline = calculator({
+          'area': 20.0,
+          'constructionType': 0.0,
+          'wallShape': 1.0,
+        }, emptyPriceList);
+
+        final lShaped = calculator({
+          'area': 20.0,
+          'constructionType': 0.0,
+          'wallShape': 2.0,
+        }, emptyPriceList);
+
+        // pnMeters: 20 * 0.8 = 16.0 base, * 1.1 = 17.6
+        // ppMeters: 20 * 2.0 = 40.0 base, * 1.1 = 44.0
+        expect(lShaped.values['pnMeters'], closeTo(baseline.values['pnMeters']! * 1.1, 0.01));
+        expect(lShaped.values['ppMeters'], closeTo(baseline.values['ppMeters']! * 1.1, 0.01));
+        expect(lShaped.values['wallShape'], equals(2.0));
+      });
+
+      test('complex wall — +20% profile', () {
+        final baseline = calculator({
+          'area': 20.0,
+          'constructionType': 0.0,
+          'wallShape': 1.0,
+        }, emptyPriceList);
+
+        final complex = calculator({
+          'area': 20.0,
+          'constructionType': 0.0,
+          'wallShape': 3.0,
+        }, emptyPriceList);
+
+        // pnMeters: 16.0 * 1.2 = 19.2
+        // ppMeters: 40.0 * 1.2 = 48.0
+        expect(complex.values['pnMeters'], closeTo(baseline.values['pnMeters']! * 1.2, 0.01));
+        expect(complex.values['ppMeters'], closeTo(baseline.values['ppMeters']! * 1.2, 0.01));
+        expect(complex.values['wallShape'], equals(3.0));
+      });
+
+      test('wall shape also affects partition profiles', () {
+        final baseline = calculator({
+          'area': 20.0,
+          'constructionType': 1.0,
+          'wallShape': 1.0,
+        }, emptyPriceList);
+
+        final complex = calculator({
+          'area': 20.0,
+          'constructionType': 1.0,
+          'wallShape': 3.0,
+        }, emptyPriceList);
+
+        expect(complex.values['pnMeters'], closeTo(baseline.values['pnMeters']! * 1.2, 0.01));
+        expect(complex.values['ppMeters'], closeTo(baseline.values['ppMeters']! * 1.2, 0.01));
+      });
+
+      test('wall shape affects ceiling profiles too', () {
+        final baseline = calculator({
+          'area': 20.0,
+          'constructionType': 2.0,
+          'wallShape': 1.0,
+        }, emptyPriceList);
+
+        final lShaped = calculator({
+          'area': 20.0,
+          'constructionType': 2.0,
+          'wallShape': 2.0,
+        }, emptyPriceList);
+
+        expect(lShaped.values['pnMeters'], closeTo(baseline.values['pnMeters']! * 1.1, 0.01));
+        expect(lShaped.values['ppMeters'], closeTo(baseline.values['ppMeters']! * 1.1, 0.01));
+      });
+    });
+
+    group('Profile splicing for tall walls', () {
+      test('height <= 3.0m — no splicing connectors', () {
+        final result = calculator({
+          'inputMode': 1.0,
+          'length': 5.0,
+          'width': 4.0,
+          'height': 2.7,
+          'constructionType': 0.0, // wall lining
+        }, emptyPriceList);
+
+        expect(result.values['profileConnectors'], equals(0.0));
+      });
+
+      test('height 3.0m exactly — no splicing connectors', () {
+        final result = calculator({
+          'inputMode': 1.0,
+          'length': 5.0,
+          'width': 4.0,
+          'height': 3.0,
+          'constructionType': 0.0,
+        }, emptyPriceList);
+
+        expect(result.values['profileConnectors'], equals(0.0));
+      });
+
+      test('height 3.5m — 1 splice level', () {
+        final result = calculator({
+          'inputMode': 1.0,
+          'length': 5.0,
+          'width': 4.0,
+          'height': 3.5,
+          'constructionType': 0.0,
+        }, emptyPriceList);
+
+        // spliceCount = ceil((3.5-3.0)/3.0) = ceil(0.167) = 1
+        // profileConnectors = 1 * ppPieces
+        final ppPieces = result.values['ppPieces']!;
+        expect(ppPieces, greaterThan(0));
+        expect(result.values['profileConnectors'], equals(ppPieces));
+      });
+
+      test('height 4.5m — still 1 splice level', () {
+        final result = calculator({
+          'inputMode': 1.0,
+          'length': 5.0,
+          'width': 4.0,
+          'height': 4.5,
+          'constructionType': 0.0,
+        }, emptyPriceList);
+
+        // spliceCount = ceil((4.5-3.0)/3.0) = ceil(0.5) = 1
+        final ppPieces = result.values['ppPieces']!;
+        expect(result.values['profileConnectors'], equals(ppPieces));
+      });
+
+      test('partition with tall wall also gets splicing', () {
+        final result = calculator({
+          'inputMode': 1.0,
+          'length': 5.0,
+          'height': 3.5,
+          'constructionType': 1.0, // partition
+        }, emptyPriceList);
+
+        // spliceCount = 1, profileConnectors = 1 * ppPieces
+        final ppPieces = result.values['ppPieces']!;
+        expect(result.values['profileConnectors'], equals(ppPieces));
+      });
+
+      test('ceiling — no splicing even with tall room', () {
+        final result = calculator({
+          'inputMode': 1.0,
+          'length': 5.0,
+          'width': 4.0,
+          'height': 4.0,
+          'constructionType': 2.0, // ceiling
+        }, emptyPriceList);
+
+        // Ceiling doesn't need profile splicing
+        expect(result.values['profileConnectors'], equals(0.0));
+      });
+
+      test('area mode — no splicing even if height > 3m', () {
+        final result = calculator({
+          'inputMode': 0.0,
+          'area': 20.0,
+          'height': 4.0, // height is ignored in area mode for splicing
+          'constructionType': 0.0,
+        }, emptyPriceList);
+
+        expect(result.values['profileConnectors'], equals(0.0));
+      });
+    });
+
+    group('Conditional warnings and flags', () {
+      test('tall wall flag set when height > 3m in dimension mode', () {
+        final result = calculator({
+          'inputMode': 1.0,
+          'length': 5.0,
+          'width': 4.0,
+          'height': 3.5,
+          'constructionType': 0.0,
+        }, emptyPriceList);
+
+        expect(result.values['warningTallWall'], equals(1.0));
+      });
+
+      test('tall wall flag NOT set when height <= 3m', () {
+        final result = calculator({
+          'inputMode': 1.0,
+          'length': 5.0,
+          'width': 4.0,
+          'height': 2.7,
+          'constructionType': 0.0,
+        }, emptyPriceList);
+
+        expect(result.values.containsKey('warningTallWall'), isFalse);
+      });
+
+      test('tall wall flag NOT set in area mode', () {
+        final result = calculator({
+          'inputMode': 0.0,
+          'area': 20.0,
+          'constructionType': 0.0,
+        }, emptyPriceList);
+
+        expect(result.values.containsKey('warningTallWall'), isFalse);
+      });
+
+      test('tall wall flag NOT set for ceiling', () {
+        final result = calculator({
+          'inputMode': 1.0,
+          'length': 5.0,
+          'width': 4.0,
+          'height': 4.0,
+          'constructionType': 2.0, // ceiling
+        }, emptyPriceList);
+
+        expect(result.values.containsKey('warningTallWall'), isFalse);
+      });
+
+      test('suggest insulation for partitions', () {
+        final result = calculator({
+          'area': 20.0,
+          'constructionType': 1.0, // partition
+        }, emptyPriceList);
+
+        expect(result.values['suggestInsulation'], equals(1.0));
+      });
+
+      test('no insulation suggestion for wall lining', () {
+        final result = calculator({
+          'area': 20.0,
+          'constructionType': 0.0, // wall lining
+        }, emptyPriceList);
+
+        expect(result.values.containsKey('suggestInsulation'), isFalse);
+      });
+
+      test('no insulation suggestion for ceiling', () {
+        final result = calculator({
+          'area': 20.0,
+          'constructionType': 2.0, // ceiling
+        }, emptyPriceList);
+
+        expect(result.values.containsKey('suggestInsulation'), isFalse);
+      });
+
+      test('suggest waterproofing for moisture-resistant GKL', () {
+        final result = calculator({
+          'area': 20.0,
+          'gklType': 1.0, // moisture resistant
+        }, emptyPriceList);
+
+        expect(result.values['suggestWaterproofing'], equals(1.0));
+      });
+
+      test('no waterproofing suggestion for standard GKL', () {
+        final result = calculator({
+          'area': 20.0,
+          'gklType': 0.0, // standard
+        }, emptyPriceList);
+
+        expect(result.values.containsKey('suggestWaterproofing'), isFalse);
+      });
+
+      test('no waterproofing suggestion for fire-resistant GKL', () {
+        final result = calculator({
+          'area': 20.0,
+          'gklType': 2.0, // fire resistant
+        }, emptyPriceList);
+
+        expect(result.values.containsKey('suggestWaterproofing'), isFalse);
+      });
+    });
+
+    group('Default wallShape backward compatibility', () {
+      test('wallShape defaults to 1 (rectangular)', () {
+        final result = calculator(<String, double>{}, emptyPriceList);
+
+        expect(result.values['wallShape'], equals(1.0));
+      });
+
+      test('default wallShape gives same profile as explicit wallShape=1', () {
+        final defaultResult = calculator({
+          'area': 20.0,
+          'constructionType': 0.0,
+        }, emptyPriceList);
+
+        final explicitResult = calculator({
+          'area': 20.0,
+          'constructionType': 0.0,
+          'wallShape': 1.0,
+        }, emptyPriceList);
+
+        expect(defaultResult.values['pnMeters'], equals(explicitResult.values['pnMeters']));
+        expect(defaultResult.values['ppMeters'], equals(explicitResult.values['ppMeters']));
+        expect(defaultResult.values['pnPieces'], equals(explicitResult.values['pnPieces']));
+        expect(defaultResult.values['ppPieces'], equals(explicitResult.values['ppPieces']));
+      });
+
+      test('profileConnectors defaults to 0', () {
+        final result = calculator(<String, double>{}, emptyPriceList);
+
+        expect(result.values['profileConnectors'], equals(0.0));
+      });
+    });
   });
 }

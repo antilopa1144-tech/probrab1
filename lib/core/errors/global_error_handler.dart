@@ -8,6 +8,8 @@ import '../exceptions/calculation_exception.dart';
 import '../exceptions/storage_exception.dart';
 import '../exceptions/network_exception.dart';
 import '../exceptions/export_exception.dart';
+import '../services/tracker_service_web.dart'
+    if (dart.library.io) '../services/tracker_service.dart';
 import 'error_category.dart';
 
 /// Глобальный обработчик ошибок приложения с UI интеграцией.
@@ -114,8 +116,15 @@ class GlobalErrorHandler {
           'timestamp': timestamp,
         },
       );
+
+      // Дублируем в MyTracker
+      TrackerService.trackError(
+        category: category.name,
+        type: error.runtimeType.toString(),
+        context: contextMessage,
+      );
     } catch (e) {
-      // Игнорируем ошибки Firebase, если сервис недоступен
+      // Игнорируем ошибки Firebase/MyTracker, если сервис недоступен
     }
   }
 
@@ -155,8 +164,16 @@ class GlobalErrorHandler {
           'timestamp': timestamp,
         },
       );
+
+      // Дублируем в MyTracker
+      TrackerService.trackError(
+        category: category.name,
+        type: error.runtimeType.toString(),
+        context: contextMessage,
+        fatal: true,
+      );
     } catch (e) {
-      // Игнорируем ошибки Firebase, если сервис недоступен
+      // Игнорируем ошибки Firebase/MyTracker, если сервис недоступен
     }
   }
 

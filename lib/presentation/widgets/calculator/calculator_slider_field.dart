@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
+import 'calculator_text_field.dart';
 
 /// Переиспользуемый виджет слайдера для калькуляторов.
 ///
-/// Включает метку, текущее значение и слайдер в едином стиле дизайн-системы.
+/// Включает метку, текущее значение, слайдер и текстовое поле для ручного ввода.
 ///
 /// Использование:
 /// ```dart
@@ -110,6 +111,17 @@ class CalculatorSliderField extends StatelessWidget {
           divisions: divisions,
           activeColor: accentColor,
           onChanged: onChanged,
+        ),
+        const SizedBox(height: 4),
+        CalculatorTextField(
+          label: label,
+          value: value,
+          onChanged: onChanged,
+          suffix: suffix,
+          accentColor: accentColor,
+          minValue: min,
+          maxValue: max,
+          decimalPlaces: decimalPlaces,
         ),
       ],
     );

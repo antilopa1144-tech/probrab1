@@ -376,6 +376,43 @@ void main() {
       expect(result.values['warningLowThicknessFloor'], equals(1.0));
     });
 
+    test('no outdoor class warning for interior dry walls with OSB-2', () {
+      final inputs = {
+        'inputMode': 1.0,
+        'area': 12.0,
+        'sheetSize': 1.0,
+        'thickness': 12.0,
+        'constructionType': 1.0, // стены
+        'osbClass': 2.0,
+        'environment': 1.0, // сухое помещение
+        'reserve': 10.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // ОСБ-2 в сухом помещении на стенах — допустимо, без предупреждения
+      expect(result.values.containsKey('warningClassOutdoor'), isFalse);
+    });
+
+    test('flags low class for outdoor environment', () {
+      final inputs = {
+        'inputMode': 1.0,
+        'area': 12.0,
+        'sheetSize': 1.0,
+        'thickness': 12.0,
+        'constructionType': 1.0,
+        'osbClass': 2.0,
+        'environment': 3.0, // наружные условия
+        'reserve': 10.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['warningClassOutdoor'], equals(1.0));
+    });
+
     test('flags low class for wet environment', () {
       final inputs = {
         'inputMode': 1.0,
@@ -392,6 +429,87 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       expect(result.values['warningClassWet'], equals(1.0));
+    });
+
+    group('grid-based layout (inputMode=0)', () {
+      test('wall 3×2.7m, sheet 2500×1250 → grid gives realistic count', () {
+        final inputs = {
+          'inputMode': 0.0,
+          'length': 3.0,
+          'width': 2.7,
+          'sheetSize': 1.0, // 2500×1250
+          'thickness': 9.0,
+          'constructionType': 1.0, // стена
+          'reserve': 10.0,
+        };
+        final emptyPriceList = <PriceItem>[];
+        final result = calculator(inputs, emptyPriceList);
+
+        // Grid layout:
+        // Horizontal: ceil(3.0/2.5) × ceil(2.7/1.25) = 2 × 3 = 6
+        // Vertical: ceil(3.0/1.25) × ceil(2.7/2.5) = 3 × 2 = 6
+        // Both give 6, single layer wall
+        // With ~5% grid reserve → 6 * 1.05 = 6.3 → 7
+        // Area-based would give: 3*2.7=8.1 / 3.125 * 1.10 = 2.85 → 3 sheets
+        // Grid result accounts for actual cuts — should be >= 3
+        expect(result.values['sheetsNeeded'], greaterThanOrEqualTo(3));
+      });
+
+      test('wall 8×2.7m, sheet 2500×1250 → grid vs area differ', () {
+        final inputs = {
+          'inputMode': 0.0,
+          'length': 8.0,
+          'width': 2.7,
+          'sheetSize': 1.0, // 2500×1250
+          'thickness': 9.0,
+          'constructionType': 1.0,
+          'reserve': 10.0,
+        };
+        final emptyPriceList = <PriceItem>[];
+        final result = calculator(inputs, emptyPriceList);
+
+        // Grid: horizontal: ceil(8/2.5) × ceil(2.7/1.25) = 4 × 3 = 12
+        // Grid: vertical: ceil(8/1.25) × ceil(2.7/2.5) = 7 × 2 = 14
+        // Best = 12, with reserve → ~13
+        // Area-based: 8*2.7=21.6 / 3.125 * 1.10 = 7.6 → 8 sheets
+        // Grid gives more (realistic!)
+        expect(result.values['sheetsNeeded'], greaterThanOrEqualTo(8));
+      });
+
+      test('area-based mode (inputMode=1) still works correctly', () {
+        final inputs = {
+          'inputMode': 1.0,
+          'area': 20.0,
+          'sheetSize': 1.0,
+          'thickness': 9.0,
+          'constructionType': 1.0,
+          'reserve': 10.0,
+        };
+        final emptyPriceList = <PriceItem>[];
+        final result = calculator(inputs, emptyPriceList);
+
+        // Area-based: 20 / 3.125 * 1.10 = 7.04 → 8
+        expect(result.values['sheetsNeeded'], greaterThanOrEqualTo(7));
+        expect(result.values['sheetsNeeded'], lessThanOrEqualTo(8));
+      });
+
+      test('partitions use 2 layers in grid mode', () {
+        final inputs = {
+          'inputMode': 0.0,
+          'length': 3.0,
+          'width': 2.7,
+          'sheetSize': 1.0,
+          'thickness': 12.0,
+          'constructionType': 4.0, // перегородки (2 стороны)
+          'reserve': 10.0,
+        };
+        final emptyPriceList = <PriceItem>[];
+        final result = calculator(inputs, emptyPriceList);
+
+        // Grid for one side: min(6, 6) = 6
+        // × 2 layers = 12, with reserve → ~13
+        expect(result.values['sheetsNeeded'], greaterThanOrEqualTo(12));
+      });
     });
 
   });

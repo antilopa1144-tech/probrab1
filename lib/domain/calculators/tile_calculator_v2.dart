@@ -185,6 +185,43 @@ final tileCalculatorV2 = CalculatorDefinitionV2(
       group: 'advanced',
       order: 21,
     ),
+    // --- Способ укладки (NEW) ---
+    const CalculatorField(
+      key: 'layoutPattern',
+      labelKey: 'input.layoutPattern',
+      hintKey: 'input.layoutPattern.hint',
+      unitType: UnitType.pieces,
+      inputType: FieldInputType.select,
+      defaultValue: 1,
+      required: true,
+      iconName: 'grid_on',
+      group: 'advanced',
+      order: 22,
+      options: [
+        FieldOption(value: 1, labelKey: 'input.layoutPattern.straight'),
+        FieldOption(value: 2, labelKey: 'input.layoutPattern.diagonal'),
+        FieldOption(value: 3, labelKey: 'input.layoutPattern.offset'),
+        FieldOption(value: 4, labelKey: 'input.layoutPattern.herringbone'),
+      ],
+    ),
+    // --- Сложность помещения (NEW) ---
+    const CalculatorField(
+      key: 'roomComplexity',
+      labelKey: 'input.roomComplexity',
+      hintKey: 'input.roomComplexity.hint',
+      unitType: UnitType.pieces,
+      inputType: FieldInputType.select,
+      defaultValue: 1,
+      required: false,
+      iconName: 'architecture',
+      group: 'advanced',
+      order: 23,
+      options: [
+        FieldOption(value: 1, labelKey: 'input.roomComplexity.simple'),
+        FieldOption(value: 2, labelKey: 'input.roomComplexity.l_shaped'),
+        FieldOption(value: 3, labelKey: 'input.roomComplexity.complex'),
+      ],
+    ),
   ],
 
   // Подсказки перед расчётом
@@ -197,13 +234,25 @@ final tileCalculatorV2 = CalculatorDefinitionV2(
   // Подсказки после расчёта
   afterHints: [
     CalculatorHint(type: HintType.tip, messageKey: 'hint.tile.after.grout'),
+    CalculatorHint(type: HintType.important, messageKey: 'hint.tile.after.adhesive'),
+    CalculatorHint(type: HintType.tip, messageKey: 'hint.tile.after.installation'),
     CalculatorHint(
-      type: HintType.important,
-      messageKey: 'hint.tile.after.adhesive',
+      type: HintType.warning,
+      messageKey: 'hint.tile.large_tile_deformation_joints',
+      condition: HintCondition(
+        type: HintConditionType.equals,
+        resultKey: 'warningLargeTile',
+        value: 1,
+      ),
     ),
     CalculatorHint(
-      type: HintType.tip,
-      messageKey: 'hint.tile.after.installation',
+      type: HintType.warning,
+      messageKey: 'hint.tile.herringbone_large_area',
+      condition: HintCondition(
+        type: HintConditionType.equals,
+        resultKey: 'warningHerringboneLargeArea',
+        value: 1,
+      ),
     ),
   ],
 

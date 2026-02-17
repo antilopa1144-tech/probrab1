@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
+import '../services/tracker_service_web.dart'
+    if (dart.library.io) '../services/tracker_service.dart';
+
 /// Категории ошибок для аналитики и мониторинга.
 enum ErrorCategory {
   network,
@@ -113,8 +116,15 @@ class ErrorHandler {
           'context': context ?? 'unknown',
         },
       );
+
+      // Дублируем в MyTracker
+      TrackerService.trackError(
+        category: category.name,
+        type: error.runtimeType.toString(),
+        context: context,
+      );
     } catch (e) {
-      // Игнорируем ошибки при отправке в Firebase
+      // Игнорируем ошибки при отправке в Firebase/MyTracker
       if (kDebugMode) {
         debugPrint('Failed to send error to Firebase: $e');
       }
@@ -153,8 +163,16 @@ class ErrorHandler {
           'context': context ?? 'unknown',
         },
       );
+
+      // Дублируем в MyTracker
+      TrackerService.trackError(
+        category: category.name,
+        type: error.runtimeType.toString(),
+        context: context,
+        fatal: true,
+      );
     } catch (e) {
-      // Игнорируем ошибки при отправке в Firebase
+      // Игнорируем ошибки при отправке в Firebase/MyTracker
       if (kDebugMode) {
         debugPrint('Failed to send fatal error to Firebase: $e');
       }

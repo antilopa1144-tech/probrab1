@@ -126,6 +126,16 @@ class CalculateBrick extends BaseCalculator {
     final brickType = getIntInput(inputs, 'brickType', defaultValue: 0, minValue: 0, maxValue: 2);
     final wallThickness = getIntInput(inputs, 'wallThickness', defaultValue: 1, minValue: 0, maxValue: 3);
 
+    // Условия работы: 1=нормальные, 2=ветрено, 3=холод <+5°C, 4=жарко >+30°C
+    final workingConditions = getIntInput(inputs, 'workingConditions', defaultValue: 1, minValue: 1, maxValue: 4);
+
+    final double conditionsMultiplier = switch (workingConditions) {
+      2 => 1.05,  // Ветрено — больше расход раствора (быстрее сохнет)
+      3 => 1.10,  // Холод — раствор густеет, больше потерь
+      4 => 1.08,  // Жарко — раствор сохнет быстрее, больше потерь
+      _ => 1.0,   // Нормальные условия
+    };
+
     // Площадь: либо напрямую, либо из размеров стены
     double area;
     final inputArea = getInput(inputs, 'area', defaultValue: 0);
@@ -140,12 +150,12 @@ class CalculateBrick extends BaseCalculator {
     // Количество кирпичей на м²
     final bricksPerM2 = bricksPerSqm[brickType]![wallThickness]!;
 
-    // Количество кирпичей с запасом
+    // Количество кирпичей с запасом (условия НЕ влияют на кирпич)
     final bricksNeeded = (area * bricksPerM2 * (1 + wastePercent / 100)).ceil();
 
-    // Расход раствора (м³/м² кладки по СНиП, зависит от типа кирпича и толщины)
+    // Расход раствора (м³/м² кладки по СНиП) + 8% потери на площадке + условия
     final mortarPerM2 = mortarPerSqm[brickType]![wallThickness]!;
-    final mortarVolume = area * mortarPerM2;
+    final mortarVolume = area * mortarPerM2 * 1.08 * conditionsMultiplier;
 
     // Мешки раствора (25 кг)
     final mortarBags = (mortarVolume / mortarPerBag).ceil();
@@ -156,19 +166,47 @@ class CalculateBrick extends BaseCalculator {
     // Песок для раствора (примерно 1.5 м³/м³ раствора)
     final sandNeeded = mortarVolume * 1.5;
 
+    // --- Кладочная сетка: армирование через каждые N рядов ---
+    // Несущие стены (wallThickness >= 1) → каждые 5 рядов
+    // Перегородки (wallThickness == 0) → каждые 3 ряда
+    final brickSize = brickSizes[brickType]!;
+    final brickHeightMm = brickSize.$3; // высота кирпича в мм
+    const jointMm = 10; // толщина шва 10мм
+
+    // Высота одного ряда (мм)
+    final rowHeight = brickHeightMm + jointMm;
+
+    // Высота стены для расчёта рядов
+    final wallHeightM = getInput(inputs, 'wallHeight', defaultValue: 2.7, minValue: 0.1, maxValue: 10);
+    final totalRows = (wallHeightM * 1000 / rowHeight).ceil();
+
+    // Интервал армирования
+    final meshInterval = wallThickness == 0 ? 3 : 5;
+    final meshLayers = (totalRows / meshInterval).ceil();
+
+    // Ширина стены для сетки
+    final wallWidthM = inputArea > 0
+        ? area / wallHeightM
+        : getInput(inputs, 'wallWidth', defaultValue: 5.0, minValue: 0.1, maxValue: 50);
+    // Площадь сетки с запасом 10%
+    final meshArea = meshLayers * wallWidthM * 1.1;
+    // Сетка в картах (стандарт: карта 0.5×2.0 м = 1.0 м²)
+    final meshCards = (meshArea / 1.0).ceil();
+
     // Расчёт стоимости
     final brickPrice = findPrice(priceList, ['brick', 'brick_single', 'brick_red', 'brick_ceramic']);
     final cementPrice = findPrice(priceList, ['cement', 'cement_bag', 'portland_cement']);
     final sandPrice = findPrice(priceList, ['sand', 'sand_construction']);
+    final meshPrice = findPrice(priceList, ['mesh_masonry', 'mesh_brick', 'reinforcing_mesh']);
 
     final costs = [
       calculateCost(bricksNeeded.toDouble(), brickPrice?.price),
       calculateCost(cementNeeded / 50, cementPrice?.price), // цемент продаётся мешками по 50 кг
       calculateCost(sandNeeded, sandPrice?.price),
+      calculateCost(meshArea, meshPrice?.price),
     ];
 
     // Размер кирпича для информации
-    final brickSize = brickSizes[brickType]!;
     final wallThickMm = wallThicknessMm[wallThickness]!;
 
     return createResult(
@@ -185,6 +223,11 @@ class CalculateBrick extends BaseCalculator {
         'brickLength': brickSize.$1.toDouble(),
         'brickWidth': brickSize.$2.toDouble(),
         'brickHeight': brickSize.$3.toDouble(),
+        'workingConditions': workingConditions.toDouble(),
+        'meshLayers': meshLayers.toDouble(),
+        'meshArea': meshArea,
+        'meshCards': meshCards.toDouble(),
+        'wallHeight': wallHeightM,
       },
       totalPrice: sumCosts(costs),
     );

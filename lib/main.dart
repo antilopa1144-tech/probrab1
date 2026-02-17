@@ -25,6 +25,10 @@ import 'core/services/ai_service.dart';
 import 'core/platform/crashlytics_native.dart'
     if (dart.library.html) 'core/platform/crashlytics_web.dart' as crashlytics;
 
+// Условный импорт для MyTracker (не используется на вебе)
+import 'core/services/tracker_service_web.dart'
+    if (dart.library.io) 'core/services/tracker_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -48,6 +52,11 @@ void main() async {
     // Firebase уже инициализирован нативно через google-services.json
     debugPrint('Firebase already initialized: $e');
   }
+  // Инициализация MyTracker аналитики
+  if (!kIsWeb) {
+    unawaited(TrackerService.initialize(dotenv.env['MYTRACKER_SDK_KEY'] ?? ''));
+  }
+
   final prefs = await SharedPreferences.getInstance();
 
   // Передача Flutter ошибок в Crashlytics (только на нативных платформах)

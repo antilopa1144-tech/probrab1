@@ -9,11 +9,7 @@ import './base_calculator.dart';
 /// - СНиП 3.04.01-87 "Изоляционные и отделочные покрытия"
 /// - ГОСТ 6787-2001 "Плитки керамические для полов"
 ///
-/// Поля:
-/// - area: площадь (м²)
-/// - tileWidth: ширина плитки (см)
-/// - tileHeight: высота плитки (см)
-/// - jointWidth: ширина шва (мм), по умолчанию 3
+/// Учитывает способ укладки, сложность помещения, размер плитки.
 class CalculateTile extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -23,18 +19,15 @@ class CalculateTile extends BaseCalculator {
     final inputMode = (inputs['inputMode'] ?? 1).toInt();
 
     if (inputMode == 0) {
-      // Режим "По размерам": проверяем length и width
       final length = inputs['length'] ?? 0;
       final width = inputs['width'] ?? 0;
       if (length <= 0) return 'Длина должна быть больше нуля';
       if (width <= 0) return 'Ширина должна быть больше нуля';
     } else {
-      // Режим "По площади": проверяем area
       final area = inputs['area'] ?? 0;
       if (area <= 0) return 'Площадь должна быть больше нуля';
     }
 
-    // Проверяем размер плитки только для пользовательского размера (tileSize == 0)
     final tileSize = (inputs['tileSize'] ?? 60).toInt();
     if (tileSize == 0) {
       final tileWidth = inputs['tileWidth'] ?? 30.0;
@@ -51,18 +44,15 @@ class CalculateTile extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    // --- Режим ввода: по размерам (0) или по площади (1) ---
+    // --- Режим ввода ---
     final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 1);
 
-    // Вычисляем площадь в зависимости от режима
     double area;
     if (inputMode == 0) {
-      // Режим "По размерам": вычисляем площадь
       final length = getInput(inputs, 'length', minValue: 0.1);
       final width = getInput(inputs, 'width', minValue: 0.1);
       area = length * width;
     } else {
-      // Режим "По площади": берём готовую площадь
       area = getInput(inputs, 'area', minValue: 0.1);
     }
 
@@ -72,21 +62,52 @@ class CalculateTile extends BaseCalculator {
     double tileHeight;
 
     if (tileSize == 0) {
-      // Пользовательский размер
       tileWidth = getInput(inputs, 'tileWidth', defaultValue: 60.0, minValue: 1.0, maxValue: 200.0);
       tileHeight = getInput(inputs, 'tileHeight', defaultValue: 60.0, minValue: 1.0, maxValue: 200.0);
     } else if (tileSize == 120) {
-      // Прямоугольная плитка 120×60
       tileWidth = 120.0;
       tileHeight = 60.0;
     } else {
-      // Квадратная плитка (20×20, 30×30, 40×40, 60×60, 80×80)
       tileWidth = tileSize;
       tileHeight = tileSize;
     }
 
     final jointWidth = getInput(inputs, 'jointWidth', defaultValue: 3.0, minValue: 1.0, maxValue: 10.0);
-    final reserve = getInput(inputs, 'reserve', defaultValue: 10.0, minValue: 5.0, maxValue: 20.0);
+
+    // --- Способ укладки (NEW) ---
+    // 1 = прямая (10%), 2 = диагональная (15%), 3 = со смещением (10%), 4 = ёлочка (20%)
+    final layoutPattern = getIntInput(inputs, 'layoutPattern', defaultValue: 1, minValue: 1, maxValue: 4);
+
+    // Базовый % отходов по паттерну
+    final double patternWaste = switch (layoutPattern) {
+      2 => 15.0, // диагональная
+      4 => 20.0, // ёлочка
+      _ => 10.0, // прямая или со смещением
+    };
+
+    // --- Сложность помещения (NEW) ---
+    // 1 = простая прямоугольная, 2 = Г-образная, 3 = много углов/труб
+    final roomComplexity = getIntInput(inputs, 'roomComplexity', defaultValue: 1, minValue: 1, maxValue: 3);
+
+    // Дополнительный % отходов за сложность помещения (аддитивный)
+    final double complexityBonus = switch (roomComplexity) {
+      2 => 5.0,  // Г-образная: +5% дополнительных подрезок
+      3 => 10.0, // сложная: +10% углы, трубы, выступы
+      _ => 0.0,  // простая прямоугольная
+    };
+
+    // --- Поправка на размер плитки ---
+    final avgSize = (tileWidth + tileHeight) / 2;
+    double sizeAdjustment = 0.0;
+    if (avgSize > 60) {
+      sizeAdjustment = 5.0; // крупная плитка → +5% доп. запас (дорогие подрезки)
+    } else if (avgSize < 10) {
+      sizeAdjustment = -3.0; // мозаика → -3% (обрезки переиспользуются)
+    }
+
+    // Итоговый % отходов (все компоненты аддитивные)
+    // Пример: диагональ 15% + Г-образная 5% + крупная плитка 5% = 25%
+    final totalWaste = patternWaste + complexityBonus + sizeAdjustment;
 
     // Площадь одной плитки в м²
     final tileArea = calculateTileArea(tileWidth, tileHeight);
@@ -94,34 +115,41 @@ class CalculateTile extends BaseCalculator {
       return createResult(values: {'error': 1.0});
     }
 
-    // Количество плиток с запасом (reserve% по выбору пользователя)
-    final tilesNeeded = calculateUnitsNeeded(area, tileArea, marginPercent: reserve);
+    // Количество плиток с запасом
+    final tilesNeeded = calculateUnitsNeeded(area, tileArea, marginPercent: totalWaste);
 
-    // Затирка: формула через длину швов (зависит от размера плитки)
-    // jointsLength = (1/ширина_плитки + 1/высота_плитки) — м шва на м²
-    // Расход = jointsLength × ширина_шва × глубина_шва × плотность
-    final tileWm = tileWidth / 100; // см → м
+    // Затирка: формула через длину швов
+    final tileWm = tileWidth / 100;
     final tileHm = tileHeight / 100;
-    final jointsLength = (1 / tileWm) + (1 / tileHm); // м шва/м²
-    const groutDepthMm = 5.0; // стандартная глубина шва 5 мм
-    const groutDensity = 1600.0; // кг/м³ для цементной затирки
-    final groutNeeded = area * jointsLength * (jointWidth / 1000) * (groutDepthMm / 1000) * groutDensity * 1.1; // +10% запас
+    final jointsLength = (1 / tileWm) + (1 / tileHm);
+    // Глубина затирки зависит от размера плитки (коррелирует с толщиной)
+    // Малая <15 см: ~4 мм, стандартная 15-40 см: ~6 мм,
+    // крупная 40-60 см: ~8 мм, крупноформат >60 см: ~10 мм
+    final double groutDepthMm;
+    if (avgSize < 15) {
+      groutDepthMm = 4.0;
+    } else if (avgSize < 40) {
+      groutDepthMm = 6.0;
+    } else if (avgSize <= 60) {
+      groutDepthMm = 8.0;
+    } else {
+      groutDepthMm = 10.0;
+    }
+    const groutDensity = 1600.0;
+    final groutNeeded = area * jointsLength * (jointWidth / 1000) * (groutDepthMm / 1000) * groutDensity * 1.1;
 
     // Клей: расход зависит от размера плитки
-    // Мелкая плитка (< 20×20): 3-4 кг/м²
-    // Средняя (20-40): 4-5 кг/м²
-    // Крупная (> 40): 5-6 кг/м²
-    final avgSize = (tileWidth + tileHeight) / 2;
     final glueConsumption = avgSize < 20 ? 3.5 : (avgSize < 40 ? 4.0 : 5.5);
     final glueNeeded = area * glueConsumption;
 
-    // Крестики: ~4 шт на плитку (по углам)
-    final crossesNeeded = tilesNeeded * 4;
+    // Крестики: ~1 шт на пересечение (≈ кол-во плиток) + 20% на поломки
+    // На каждом пересечении 4 плиток стоит 1 крестик, плюс T-стыки по краям
+    final crossesNeeded = (tilesNeeded * 1.2).ceil();
 
-    // Грунтовка: расход ~0.15 л/м² (рекомендуется перед укладкой)
+    // Грунтовка: 0.15 л/м²
     final primerNeeded = area * 0.15;
 
-    // Расчёт стоимости
+    // Стоимость
     final tilePrice = findPrice(priceList, ['tile', 'tile_ceramic', 'tile_porcelain']);
     final groutPrice = findPrice(priceList, ['grout', 'grout_tile']);
     final gluePrice = findPrice(priceList, ['glue_tile', 'glue']);
@@ -142,9 +170,12 @@ class CalculateTile extends BaseCalculator {
         'glueNeeded': glueNeeded,
         'crossesNeeded': crossesNeeded.toDouble(),
         'primerNeeded': primerNeeded,
+        'wastePercent': totalWaste,
+        // Флаги для условных подсказок
+        if (avgSize > 60) 'warningLargeTile': 1.0,
+        if (layoutPattern == 4 && area > 30) 'warningHerringboneLargeArea': 1.0,
       },
       totalPrice: sumCosts(costs),
     );
   }
 }
-

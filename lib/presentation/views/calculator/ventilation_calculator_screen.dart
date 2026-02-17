@@ -227,32 +227,40 @@ class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalcula
     return _card(
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('ventilation_calc.label.area'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('${_roomArea.toStringAsFixed(0)} ${_loc.translate('common.sqm')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
+          CalculatorSliderField(
+            label: _loc.translate('ventilation_calc.label.area'),
+            value: _roomArea,
+            min: 20,
+            max: 300,
+            suffix: _loc.translate('common.sqm'),
+            accentColor: _accentColor,
+            onChanged: (v) { setState(() { _roomArea = v; _update(); }); },
+            decimalPlaces: 0,
           ),
-          Slider(value: _roomArea, min: 20, max: 300, activeColor: _accentColor, onChanged: (v) { setState(() { _roomArea = v; _update(); }); }),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('ventilation_calc.label.ceiling_height'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('${_ceilingHeight.toStringAsFixed(1)} ${_loc.translate('common.meters')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
+          CalculatorSliderField(
+            label: _loc.translate('ventilation_calc.label.ceiling_height'),
+            value: _ceilingHeight,
+            min: 2.2,
+            max: 4.0,
+            divisions: 9,
+            suffix: _loc.translate('common.meters'),
+            accentColor: _accentColor,
+            onChanged: (v) { setState(() { _ceilingHeight = v; _update(); }); },
+            decimalPlaces: 1,
           ),
-          Slider(value: _ceilingHeight, min: 2.2, max: 4.0, divisions: 9, activeColor: _accentColor, onChanged: (v) { setState(() { _ceilingHeight = v; _update(); }); }),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(_loc.translate('ventilation_calc.label.rooms'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600)),
-              Text('$_roomsCount ${_loc.translate('common.pcs')}', style: CalculatorDesignSystem.headlineMedium.copyWith(color: _accentColor, fontWeight: FontWeight.bold)),
-            ],
+          CalculatorSliderField(
+            label: _loc.translate('ventilation_calc.label.rooms'),
+            value: _roomsCount.toDouble(),
+            min: 1,
+            max: 15,
+            divisions: 14,
+            suffix: _loc.translate('common.pcs'),
+            accentColor: _accentColor,
+            onChanged: (v) { setState(() { _roomsCount = v.toInt(); _update(); }); },
+            decimalPlaces: 0,
           ),
-          Slider(value: _roomsCount.toDouble(), min: 1, max: 15, divisions: 14, activeColor: _accentColor, onChanged: (v) { setState(() { _roomsCount = v.toInt(); _update(); }); }),
         ],
       ),
     );

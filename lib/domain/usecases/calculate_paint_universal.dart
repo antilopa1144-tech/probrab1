@@ -10,6 +10,10 @@ import 'base_calculator.dart';
 /// - Два режима ввода: по площади или по размерам комнаты
 /// - Учёт проёмов (окна и двери)
 /// - Настраиваемое количество слоёв и запас
+/// - Подготовка поверхности (загрунтованная / новая / ранее окрашенная)
+/// - Интенсивность цвета (светлый / яркий / тёмный)
+/// - Потери на впитывание валика (+0.3 л на первый валик)
+/// - Повышенный расход на потолок (+15%)
 ///
 /// Поля:
 /// - paintType: 0=стены, 1=потолок, 2=стены и потолок
@@ -17,6 +21,10 @@ import 'base_calculator.dart';
 /// - wallArea, ceilingArea: площади (режим 0)
 /// - length, width, height: размеры комнаты (режим 1)
 /// - doorsWindows: площадь проёмов (м²)
+/// - surfacePrep: 1=загрунтованная (1.0×), 2=новая необработанная (1.2×),
+///   3=ранее окрашенная (0.95×)
+/// - colorIntensity: 1=светлый/белый (1.0×), 2=яркий/насыщенный (1.15×),
+///   3=тёмный (1.3×)
 /// - layers: количество слоёв (1-4)
 /// - reserve: запас в процентах
 class CalculatePaintUniversal extends BaseCalculator {
@@ -45,6 +53,26 @@ class CalculatePaintUniversal extends BaseCalculator {
     final reservePercent = getInput(inputs, 'reserve', defaultValue: 10, minValue: 0);
     final doorsWindows = getInput(inputs, 'doorsWindows', defaultValue: 0, minValue: 0);
     final consumption = getInput(inputs, 'consumption', defaultValue: 0.11, minValue: 0.01);
+
+    // Подготовка поверхности: влияет на расход краски
+    // 1=загрунтованная (1.0×), 2=новая необработанная (1.2×), 3=ранее окрашенная (0.95×)
+    final surfacePrep = getIntInput(inputs, 'surfacePrep', defaultValue: 1);
+    final double surfacePrepMultiplier = switch (surfacePrep) {
+      1 => 1.0,   // загрунтованная — нормальный расход
+      2 => 1.2,   // новая необработанная — впитывание +20%
+      3 => 0.95,  // ранее окрашенная — меньше впитывания
+      _ => 1.0,
+    };
+
+    // Интенсивность цвета: тёмные и яркие цвета требуют больше краски
+    // 1=светлый/белый (1.0×), 2=яркий/насыщенный (1.15×), 3=тёмный (1.3×)
+    final colorIntensity = getIntInput(inputs, 'colorIntensity', defaultValue: 1);
+    final double colorMultiplier = switch (colorIntensity) {
+      1 => 1.0,   // светлый/белый — базовый расход
+      2 => 1.15,  // яркий/насыщенный — нужно больше для укрывистости
+      3 => 1.3,   // тёмный — максимальный расход для укрывистости
+      _ => 1.0,
+    };
 
     // Вычисляем площади в зависимости от режима
     double wallArea = 0;
@@ -85,13 +113,28 @@ class CalculatePaintUniversal extends BaseCalculator {
     // Первый слой: +20% к расходу (впитывание), остальные: по номиналу
     final firstLayerConsumption = consumption * 1.2;
     final otherLayerConsumption = consumption;
+    final basePaintConsumption =
+        firstLayerConsumption + (layers - 1) * otherLayerConsumption;
 
-    final paintConsumption = firstLayerConsumption + (layers - 1) * otherLayerConsumption;
-    final rawPaint = totalArea * paintConsumption;
-    final paintWithReserve = rawPaint * (1 + reservePercent / 100);
+    // Расход для стен: базовый × подготовка × цвет
+    final wallPaintConsumption =
+        basePaintConsumption * surfacePrepMultiplier * colorMultiplier;
+    final rawWallPaint = usefulWallArea * wallPaintConsumption;
 
-    // Грунтовка: 0.12 л/м², один слой
-    const primerConsumption = 0.12;
+    // Расход для потолка: +15% (потёки, работа над головой, больше потерь)
+    final ceilingPaintConsumption =
+        basePaintConsumption * surfacePrepMultiplier * colorMultiplier * 1.15;
+    final rawCeilingPaint = usefulCeilingArea * ceilingPaintConsumption;
+
+    final rawPaint = rawWallPaint + rawCeilingPaint;
+
+    // «Запой валика»: первый валик впитывает ~0.3 л краски (разовая потеря)
+    const rollerAbsorption = 0.3;
+    final paintWithReserve =
+        rawPaint * (1 + reservePercent / 100) + rollerAbsorption;
+
+    // Грунтовка: 0.15 л/м², один слой, ВСЕГДА в результатах
+    const primerConsumption = 0.15;
     final rawPrimer = totalArea * primerConsumption;
     final primerWithReserve = rawPrimer * (1 + reservePercent / 100);
 
@@ -99,9 +142,9 @@ class CalculatePaintUniversal extends BaseCalculator {
     final rollersNeeded = ceilToInt(totalArea / 50); // 1 валик на ~50 м²
     final brushesNeeded = ceilToInt(totalArea / 40).clamp(2, 10); // минимум 2 кисти
 
-    // Малярный скотч: примерно периметр комнаты * 1.5
+    // Малярный скотч: периметр × 2 (окна + двери с двух сторон) × 1.1
     final estimatedPerimeter = estimatePerimeter(totalArea);
-    final tapeNeeded = estimatedPerimeter * 1.5 * (1 + reservePercent / 100);
+    final tapeNeeded = estimatedPerimeter * 2 * 1.1 * (1 + reservePercent / 100);
 
     // Округление
     final finalPaintLiters = roundBulk(paintWithReserve);
@@ -130,6 +173,8 @@ class CalculatePaintUniversal extends BaseCalculator {
         'rollersNeeded': rollersNeeded.toDouble(),
         'brushesNeeded': brushesNeeded.toDouble(),
         'layers': layers.toDouble(),
+        'surfacePrep': surfacePrep.toDouble(),
+        'colorIntensity': colorIntensity.toDouble(),
       },
       totalPrice: sumCosts(costs),
     );

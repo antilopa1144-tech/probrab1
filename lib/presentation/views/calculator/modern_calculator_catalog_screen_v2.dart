@@ -11,7 +11,10 @@ import '../../../domain/calculators/calculator_registry.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../config/catalog_config.dart';
 import '../../providers/recent_calculators_provider.dart';
+import '../../providers/review_provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../../core/services/tracker_service_web.dart'
+    if (dart.library.io) '../../../core/services/tracker_service.dart';
 import '../../utils/calculator_navigation_helper.dart';
 import '../tools/unit_converter_bottom_sheet.dart';
 import '../tools/room_area_bottom_sheet.dart';
@@ -162,6 +165,21 @@ class _ModernCalculatorCatalogScreenV2State
 
     // Добавляем в историю недавних
     ref.read(recentCalculatorsProvider.notifier).addRecent(calc.id);
+
+    // Трекинг открытия калькулятора в MyTracker
+    TrackerService.trackCalculatorOpened(calc.id);
+
+    // Проверяем, пора ли показать диалог оценки RuStore
+    ref.read(reviewProvider.notifier).onCalculatorOpened().then((shouldPrompt) {
+      if (shouldPrompt && mounted) {
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted) {
+            ref.read(reviewProvider.notifier).requestReview();
+          }
+        });
+      }
+    });
+
     // Переходим на экран калькулятора
     CalculatorNavigationHelper.navigateToCalculator(context, calc);
   }

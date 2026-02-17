@@ -28,6 +28,24 @@ final concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
       maxValue: 1000.0,
     ),
     CalculatorField(
+      key: 'concreteGrade',
+      labelKey: 'input.concreteGrade',
+      hintKey: 'input.concreteGrade.hint',
+      unitType: UnitType.pieces,
+      inputType: FieldInputType.select,
+      defaultValue: 3,
+      required: true,
+      options: [
+        FieldOption(value: 1, labelKey: 'input.concreteGrade.m100'),
+        FieldOption(value: 2, labelKey: 'input.concreteGrade.m150'),
+        FieldOption(value: 3, labelKey: 'input.concreteGrade.m200'),
+        FieldOption(value: 4, labelKey: 'input.concreteGrade.m250'),
+        FieldOption(value: 5, labelKey: 'input.concreteGrade.m300'),
+        FieldOption(value: 6, labelKey: 'input.concreteGrade.m350'),
+        FieldOption(value: 7, labelKey: 'input.concreteGrade.m400'),
+      ],
+    ),
+    CalculatorField(
       key: 'manualMix',
       labelKey: 'input.manualMix',
       hintKey: 'input.manualMix.hint',
@@ -62,6 +80,46 @@ final concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
     CalculatorHint(
       type: HintType.warning,
       messageKey: 'hint.concrete.after.temperature',
+    ),
+    // М100-М150: подготовка, подушка, стяжка по грунту
+    CalculatorHint(
+      type: HintType.info,
+      messageKey: 'hint.concrete.grade_low_use',
+      condition: HintCondition(
+        type: HintConditionType.inRange,
+        fieldKey: 'concreteGrade',
+        range: (1, 2),
+      ),
+    ),
+    // М200: стяжка, отмостка, дорожки
+    CalculatorHint(
+      type: HintType.info,
+      messageKey: 'hint.concrete.grade_m200_use',
+      condition: HintCondition(
+        type: HintConditionType.equals,
+        fieldKey: 'concreteGrade',
+        value: 3,
+      ),
+    ),
+    // М250-М300: фундаменты, несущие конструкции
+    CalculatorHint(
+      type: HintType.info,
+      messageKey: 'hint.concrete.grade_mid_use',
+      condition: HintCondition(
+        type: HintConditionType.inRange,
+        fieldKey: 'concreteGrade',
+        range: (4, 5),
+      ),
+    ),
+    // М350-М400: ответственные конструкции, бассейны
+    CalculatorHint(
+      type: HintType.info,
+      messageKey: 'hint.concrete.grade_high_use',
+      condition: HintCondition(
+        type: HintConditionType.inRange,
+        fieldKey: 'concreteGrade',
+        range: (6, 7),
+      ),
     ),
   ],
 );

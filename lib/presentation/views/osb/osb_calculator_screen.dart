@@ -27,6 +27,16 @@ enum OsbSheetSize {
 
 enum InputMode { byArea, byDimensions }
 
+/// Ориентация листа при раскладке
+enum SheetOrientation {
+  auto('osb.orientation.auto'),
+  horizontal('osb.orientation.horizontal'),
+  vertical('osb.orientation.vertical');
+
+  final String nameKey;
+  const SheetOrientation(this.nameKey);
+}
+
 class _OsbResult {
   final double area;
   final int sheetsNeeded;
@@ -99,6 +109,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
   double _reserve = 10.0;
   OsbConstructionType _constructionType = OsbConstructionType.wall;
   OsbSheetSize _sheetSize = OsbSheetSize.s2500x1250;
+  SheetOrientation _sheetOrientation = SheetOrientation.auto;
   late _OsbResult _result;
   late AppLocalizations _loc;
 
@@ -185,7 +196,30 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
     final effectiveArea = calculatedArea;
     final osbBaseArea = effectiveArea * osbAreaMultiplier;
     final materialArea = osbBaseArea * (1 + _reserve / 100);
-    final sheetsNeeded = (osbBaseArea * (1 + _reserve / 100) / sheetArea).ceil();
+
+    // Grid-based раскладка при вводе по размерам
+    int sheetsNeeded;
+    if (_inputMode == InputMode.byDimensions && osbAreaMultiplier <= 1.0) {
+      // Считаем раскладку листов по реальным размерам
+      final sheetsH = (((_length / sheetWidth).ceil()) * ((_width / sheetLength).ceil()));
+      final sheetsV = (((_length / sheetLength).ceil()) * ((_width / sheetWidth).ceil()));
+
+      switch (_sheetOrientation) {
+        case SheetOrientation.auto:
+          sheetsNeeded = sheetsH < sheetsV ? sheetsH : sheetsV;
+          break;
+        case SheetOrientation.horizontal:
+          sheetsNeeded = sheetsH;
+          break;
+        case SheetOrientation.vertical:
+          sheetsNeeded = sheetsV;
+          break;
+      }
+      // Умножаем на слои (перегородки = 2 стороны, СИП = 2 листа)
+      sheetsNeeded = (sheetsNeeded * osbAreaMultiplier).ceil();
+    } else {
+      sheetsNeeded = (materialArea / sheetArea).ceil();
+    }
 
     // Расчёт крепежа
     double screwsPerM2;
@@ -463,6 +497,8 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
         const SizedBox(height: 16),
         _buildSheetSizeSelector(),
         const SizedBox(height: 16),
+        _buildOrientationSelector(),
+        const SizedBox(height: 16),
         _buildThicknessSelector(),
         const SizedBox(height: 16),
         _buildInputModeSelector(),
@@ -670,6 +706,35 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
     }
   }
 
+  Widget _buildOrientationSelector() {
+    const accentColor = CalculatorColors.walls;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('osb.orientation.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: SheetOrientation.values.map((o) => _loc.translate(o.nameKey)).toList(),
+            selectedIndex: _sheetOrientation.index,
+            onSelect: (index) {
+              setState(() {
+                _sheetOrientation = SheetOrientation.values[index];
+                _update();
+              });
+            },
+            accentColor: accentColor,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildThicknessSelector() {
     const accentColor = CalculatorColors.walls;
     final recommended = _getRecommendedThickness();
@@ -776,40 +841,21 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
   Widget _buildAreaCard() {
     const accentColor = CalculatorColors.walls;
     return _card(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Площадь',
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.getTextSecondary(_isDark),
-                ),
-              ),
-              Text(
-                '${_area.toStringAsFixed(1)} м²',
-                style: CalculatorDesignSystem.titleMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          Slider(
-            value: _area,
-            min: 1.0,
-            max: 200.0,
-            divisions: 199,
-            activeColor: accentColor,
-            onChanged: (value) {
-              setState(() {
-                _area = value;
-                _update();
-              });
-            },
-          ),
-        ],
+      child: CalculatorSliderField(
+        label: 'Площадь',
+        value: _area,
+        min: 1.0,
+        max: 200.0,
+        divisions: 199,
+        suffix: 'м²',
+        accentColor: accentColor,
+        decimalPlaces: 1,
+        onChanged: (value) {
+          setState(() {
+            _area = value;
+            _update();
+          });
+        },
       ),
     );
   }
@@ -827,32 +873,38 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          _buildDimensionSlider(
+          CalculatorSliderField(
             label: 'Длина',
             value: _length,
             min: 1.0,
             max: 20.0,
+            divisions: 190,
+            suffix: 'м',
+            accentColor: accentColor,
+            decimalPlaces: 1,
             onChanged: (v) {
               setState(() {
                 _length = v;
                 _update();
               });
             },
-            accentColor: accentColor,
           ),
           const SizedBox(height: 16),
-          _buildDimensionSlider(
+          CalculatorSliderField(
             label: 'Ширина',
             value: _width,
             min: 1.0,
             max: 20.0,
+            divisions: 190,
+            suffix: 'м',
+            accentColor: accentColor,
+            decimalPlaces: 1,
             onChanged: (v) {
               setState(() {
                 _width = v;
                 _update();
               });
             },
-            accentColor: accentColor,
           ),
           const SizedBox(height: 12),
           Container(
@@ -885,117 +937,24 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
     );
   }
 
-  Widget _buildDimensionSlider({
-    required String label,
-    required double value,
-    required double min,
-    required double max,
-    required ValueChanged<double> onChanged,
-    required Color accentColor,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: CalculatorDesignSystem.bodyMedium.copyWith(
-                color: CalculatorColors.getTextSecondary(_isDark),
-              ),
-            ),
-            Text(
-              '${value.toStringAsFixed(1)} м',
-              style: CalculatorDesignSystem.titleMedium.copyWith(
-                color: accentColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: ((max - min) * 10).toInt(),
-          activeColor: accentColor,
-          onChanged: onChanged,
-        ),
-      ],
-    );
-  }
-
   Widget _buildReserveCard() {
     const accentColor = CalculatorColors.walls;
     return _card(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Запас материала',
-                style: CalculatorDesignSystem.bodyMedium.copyWith(
-                  color: CalculatorColors.getTextPrimary(_isDark),
-                ),
-              ),
-              Text(
-                '${_reserve.toStringAsFixed(0)} %',
-                style: CalculatorDesignSystem.headlineMedium.copyWith(
-                  color: accentColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              SizedBox(
-                width: 50,
-                child: Text(
-                  '5 %',
-                  style: CalculatorDesignSystem.bodySmall.copyWith(
-                    color: CalculatorColors.getTextSecondary(_isDark),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    activeTrackColor: accentColor,
-                    inactiveTrackColor: Colors.grey[300],
-                    thumbColor: accentColor,
-                    overlayColor: accentColor.withValues(alpha: 0.2),
-                  ),
-                  child: Slider(
-                    value: _reserve,
-                    min: 5.0,
-                    max: 20.0,
-                    divisions: 15,
-                    onChanged: (value) {
-                      setState(() {
-                        _reserve = value;
-                        _update();
-                      });
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 50,
-                child: Text(
-                  '20 %',
-                  style: CalculatorDesignSystem.bodySmall.copyWith(
-                    color: CalculatorColors.getTextSecondary(_isDark),
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-              ),
-            ],
-          ),
-        ],
+      child: CalculatorSliderField(
+        label: 'Запас материала',
+        value: _reserve,
+        min: 5.0,
+        max: 20.0,
+        divisions: 15,
+        suffix: '%',
+        accentColor: accentColor,
+        decimalPlaces: 0,
+        onChanged: (value) {
+          setState(() {
+            _reserve = value;
+            _update();
+          });
+        },
       ),
     );
   }

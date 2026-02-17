@@ -399,18 +399,16 @@ class _PrimerScreenState extends State<PrimerScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '${_loc.translate('primer.dilution_label')} (1 : ${_dilutionWater.toInt()})',
-            style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1E3A8A)),
-          ),
-          const SizedBox(height: 8),
-          Slider(
+          CalculatorSliderField(
+            label: '${_loc.translate('primer.dilution_label')} (1 : ${_dilutionWater.toInt()})',
             value: _dilutionWater,
             min: 1,
             max: 9,
             divisions: 8,
-            label: '1:${_dilutionWater.toInt()}',
-            activeColor: accentColor,
+            suffix: '',
+            accentColor: accentColor,
+            decimalPlaces: 0,
+            showValue: false,
             onChanged: (v) => setState(() => _dilutionWater = v),
           ),
           Row(

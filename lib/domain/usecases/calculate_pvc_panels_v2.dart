@@ -98,30 +98,73 @@ class CalculatePvcPanelsV2 extends BaseCalculator {
     // Длина панели зависит от типа
     final panelLength = panelLengths[panelType];
 
-    // Площадь одной панели
+    // Площадь одной панели (для отображения)
     final panelArea = panelWidth * panelLength;
 
-    // Количество панелей с запасом
-    final panelsCount = (area * (1 + panelWastePercent / 100) / panelArea).ceil();
+    // Количество панелей — по раскладке, а не по площади!
+    // Панели укладываются в ряд: считаем сколько полос помещается по ширине/длине
+    int panelsCount;
+    if (inputMode == 1) {
+      // Размерный режим: реальная раскладка
+      if (panelType == 1) {
+        // Потолок: панели кладутся поперёк короткой стороны
+        // Количество полос = ceil(длинная сторона / ширина панели)
+        final longerSide = math.max(wallWidth, wallHeight);
+        final shorterSide = math.min(wallWidth, wallHeight);
+        final strips = (longerSide / panelWidth).ceil();
+        // Каждая полоса обрезается по короткой стороне (длина панели >= shorterSide)
+        // Если панель короче — нужна стыковка (дополнительные панели)
+        final panelsPerStrip = (shorterSide / panelLength).ceil();
+        panelsCount = strips * panelsPerStrip;
+      } else {
+        // Стена: панели вертикально, считаем полосы по ширине стены
+        final strips = (wallWidth / panelWidth).ceil();
+        // Если высота больше длины панели — стыковка
+        final panelsPerStrip = (wallHeight / panelLength).ceil();
+        panelsCount = strips * panelsPerStrip;
+      }
+      // Добавляем запас на подрезку
+      panelsCount = (panelsCount * (1 + panelWastePercent / 100)).ceil();
+    } else {
+      // Ручной режим (по площади): используем площадь с запасом
+      panelsCount = (area * (1 + panelWastePercent / 100) / panelArea).ceil();
+    }
 
     // Профиль для обрешётки (через каждые 0.4м)
     double profileLength = 0;
     if (needProfile) {
-      final rows = (wallHeight / profileStep).ceil() + 1;
-      profileLength = rows * wallWidth * (1 + profileWastePercent / 100);
+      if (panelType == 1 && inputMode == 1) {
+        // Потолок: обрешётка перпендикулярно панелям
+        // Панели идут поперёк короткой стороны → обрешётка вдоль короткой
+        final longerSide = math.max(wallWidth, wallHeight);
+        final shorterSide = math.min(wallWidth, wallHeight);
+        final rows = (longerSide / profileStep).ceil() + 1;
+        profileLength = rows * shorterSide * (1 + profileWastePercent / 100);
+      } else {
+        // Стена: горизонтальная обрешётка через каждые 0.4м по высоте
+        final rows = (wallHeight / profileStep).ceil() + 1;
+        profileLength = rows * wallWidth * (1 + profileWastePercent / 100);
+      }
     }
 
-    // Угловые профили (4 угла по высоте помещения)
+    // Стартовый/финишный профиль и угловые профили
     int cornerCount = 0;
     if (needCorners) {
-      cornerCount = (wallHeight * standardCornersCount / cornerProfileLength).ceil();
+      if (panelType == 1 && inputMode == 1) {
+        // Потолок: стартовый профиль по периметру
+        final perimeter = 2 * (wallWidth + wallHeight);
+        cornerCount = (perimeter / cornerProfileLength).ceil();
+      } else {
+        // Стена: угловые профили по высоте × количество углов
+        cornerCount = (wallHeight * standardCornersCount / cornerProfileLength).ceil();
+      }
     }
 
     // Плинтус потолочный (только для потолочных панелей)
     double plinthTotalLength = 0;
     int plinthPieces = 0;
-    if (panelType == 1) {
-      // ceiling
+    if (panelType == 1 && inputMode == 1) {
+      // Потолок: плинтус по периметру
       plinthTotalLength = 2 * (wallWidth + wallHeight);
       plinthPieces = (plinthTotalLength / plinthLength).ceil();
     }

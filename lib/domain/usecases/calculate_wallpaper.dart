@@ -22,6 +22,7 @@ import './base_calculator.dart';
 /// - rapport: раппорт/шаг рисунка (см), по умолчанию 0 (без раппорта)
 /// - windowsArea: площадь окон (м²)
 /// - doorsArea: площадь дверей (м²)
+/// - wallpaperType: тип обоев (1 = бумажные, 2 = виниловые, 3 = флизелиновые)
 class CalculateWallpaper extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -136,18 +137,34 @@ class CalculateWallpaper extends BaseCalculator {
         ? ceilToInt(stripsNeeded / stripsPerRoll.toDouble() * reserveMultiplier)
         : ceilToInt(usefulArea / (rollWidth * rollLength) * (1.0 + reserve / 100 + 0.10)); // резервный расчёт
 
-    // Клей обойный (СУХАЯ СМЕСЬ, разводится водой):
-    // Стандартная упаковка 200-300 г на 5-8 рулонов (25-40 м²)
-    // Расход сухого клея: ~7-10 г/м² в зависимости от типа обоев
-    // - Бумажные: 5-7 г/м²
-    // - Флизелиновые: 7-10 г/м²
-    // - Виниловые/тяжёлые: 10-12 г/м²
-    // Используем средний расход 8 г/м² = 0.008 кг/м²
-    const glueConsumption = 0.008; // кг/м² (8 г/м² сухого клея)
-    final glueNeeded = usefulArea * glueConsumption;
+    // --- Тип обоев: влияет на расход клея ---
+    // 1 = бумажные (лёгкие, мало клея)
+    // 2 = виниловые (тяжёлые, больше клея)
+    // 3 = флизелиновые (средние)
+    final wallpaperType = getIntInput(inputs, 'wallpaperType', defaultValue: 1);
 
-    // Грунтовка (рекомендуется перед поклейкой): ~0.1 л/м²
-    final primerNeeded = usefulArea * 0.1;
+    // Клей обойный (СУХАЯ СМЕСЬ, разводится водой):
+    // Расход сухого клея зависит от типа обоев:
+    // - Бумажные: 5 г/м² (лёгкие, тонкий слой клея)
+    // - Флизелиновые: 8 г/м² (средний вес, клей на стену)
+    // - Виниловые: 10 г/м² (тяжёлые, густой клей)
+    double pasteRate;
+    switch (wallpaperType) {
+      case 1: pasteRate = 0.005; break;  // бумажные — 5 г/м²
+      case 2: pasteRate = 0.010; break;  // виниловые — 10 г/м²
+      case 3: pasteRate = 0.008; break;  // флизелиновые — 8 г/м²
+      default: pasteRate = 0.008;        // fallback
+    }
+
+    // Клей с запасом 10% (потери при замешивании и нанесении)
+    final pasteNeeded = usefulArea * pasteRate * 1.1;
+    // Стандартная упаковка клея — 250 г (0.25 кг), рассчитана на 7-8 рулонов
+    final pastePacks = ceilToInt(pasteNeeded / 0.25);
+
+    // Грунтовка (рекомендуется перед поклейкой): 0.15 л/м² с запасом 10%
+    final primerNeeded = usefulArea * 0.15 * 1.1;
+    // Стандартная канистра грунтовки — 5 л
+    final primerCans = ceilToInt(primerNeeded / 5.0);
 
     // Расчёт стоимости
     final wallpaperPrice = findPrice(priceList, ['wallpaper', 'wallpaper_vinyl', 'wallpaper_fleece', 'wallpaper_paper']);
@@ -156,7 +173,7 @@ class CalculateWallpaper extends BaseCalculator {
 
     final costs = [
       calculateCost(rollsNeeded.toDouble(), wallpaperPrice?.price),
-      calculateCost(glueNeeded, gluePrice?.price),
+      calculateCost(pasteNeeded, gluePrice?.price),
       calculateCost(primerNeeded, primerPrice?.price),
     ];
 
@@ -165,9 +182,13 @@ class CalculateWallpaper extends BaseCalculator {
         'usefulArea': usefulArea,
         'rollsNeeded': rollsNeeded.toDouble(),
         'stripsNeeded': stripsNeeded.toDouble(),
-        'glueNeeded': glueNeeded,
+        'glueNeeded': pasteNeeded,       // backward compat key
+        'pasteNeeded': pasteNeeded,      // new key (same value)
+        'pastePacks': pastePacks.toDouble(),
         'primerNeeded': primerNeeded,
+        'primerCans': primerCans.toDouble(),
         'stripLength': stripLength,
+        'wallpaperType': wallpaperType.toDouble(),
       },
       totalPrice: sumCosts(costs),
     );

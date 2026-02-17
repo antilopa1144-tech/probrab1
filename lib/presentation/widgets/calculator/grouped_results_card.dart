@@ -49,6 +49,7 @@ class GroupedResultsCard extends StatelessWidget {
       'spongePackCount',
       'cornersCount',
       'startersCount',
+      'tapeNeeded',
     ],
     'additional': [
       'waterproofingArea',
@@ -62,6 +63,9 @@ class GroupedResultsCard extends StatelessWidget {
       'consumptionPerM2',
       'bagWeight',
       'wastePercent',
+      'volume',
+      'weight',
+      'fastenersPerSqm',
     ],
   };
 

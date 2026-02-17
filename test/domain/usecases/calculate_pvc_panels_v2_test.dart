@@ -14,7 +14,7 @@ void main() {
     });
 
     group('Basic calculations', () {
-      test('3x2.5 wall, wall panels', () {
+      test('3x2.5 wall, wall panels — layout-based', () {
         final inputs = {
           'wallWidth': 3.0,
           'wallHeight': 2.5,
@@ -29,8 +29,9 @@ void main() {
         expect(result.values['area'], equals(7.5));
         // Panel area = 0.25 * 2.7 = 0.675 sqm
         expect(result.values['panelArea'], closeTo(0.675, 0.01));
-        // Panels = ceil(7.5 * 1.1 / 0.675) = ceil(12.22) = 13
-        expect(result.values['panelsCount'], equals(13.0));
+        // Layout: strips = ceil(3.0 / 0.25) = 12, panelsPerStrip = ceil(2.5 / 2.7) = 1
+        // Total = ceil(12 * 1 * 1.10) = ceil(13.2) = 14
+        expect(result.values['panelsCount'], equals(14.0));
       });
 
       test('larger wall needs more panels', () {
@@ -169,17 +170,18 @@ void main() {
     });
 
     group('Profile calculations', () {
-      test('profile calculated when needed', () {
+      test('profile calculated when needed (wall type)', () {
         final inputs = {
           'wallWidth': 3.0,
           'wallHeight': 2.5,
           'needProfile': 1.0,
+          'panelType': 0.0, // wall — горизонтальная обрешётка
           'inputMode': 1.0,
         };
 
         final result = calculator(inputs, emptyPriceList);
 
-        // Rows = ceil(2.5 / 0.4) + 1 = 7 + 1 = 8
+        // Wall: rows = ceil(2.5 / 0.4) + 1 = 7 + 1 = 8
         // Profile = 8 * 3 * 1.1 = 26.4
         expect(result.values['profileLength'], closeTo(26.4, 0.1));
       });
@@ -222,17 +224,18 @@ void main() {
     });
 
     group('Corner calculations', () {
-      test('corners calculated when needed', () {
+      test('corners calculated when needed (wall type)', () {
         final inputs = {
           'wallWidth': 3.0,
           'wallHeight': 2.5,
           'needCorners': 1.0,
+          'panelType': 0.0, // wall — угловые профили по высоте
           'inputMode': 1.0,
         };
 
         final result = calculator(inputs, emptyPriceList);
 
-        // Corners = ceil(2.5 * 4 / 3) = ceil(3.33) = 4
+        // Wall: corners = ceil(2.5 * 4 / 3) = ceil(3.33) = 4
         expect(result.values['cornerCount'], equals(4.0));
       });
 
@@ -469,7 +472,7 @@ void main() {
         expect(result.values['plinthPieces'], equals(0.0));
       });
 
-      test('ceiling with plinth', () {
+      test('ceiling with plinth — layout-based', () {
         final inputs = {
           'inputMode': 1.0,
           'wallWidth': 4.0,
@@ -482,10 +485,36 @@ void main() {
 
         // Panel length = 3.0 for ceiling
         expect(result.values['panelLength'], equals(3.0));
+        // Layout: longerSide=4, shorterSide=3
+        // strips = ceil(4/0.25) = 16, panelsPerStrip = ceil(3/3.0) = 1
+        // Total = ceil(16 * 1.10) = 18
+        expect(result.values['panelsCount'], equals(18.0));
         // Plinth = 2 * (4 + 3) = 14
         expect(result.values['plinthLength'], equals(14.0));
         // Plinth pieces = ceil(14 / 3) = 5
         expect(result.values['plinthPieces'], equals(5.0));
+      });
+
+      test('user review: ceiling 1.51x1.47, panel 0.25 → 7 panels', () {
+        // Реальный отзыв пользователя: потолок 1.51×1.47, панель шириной 0.25м
+        // Правильный ответ: ceil(1.51/0.25)=7 полос × 1 панель на полосу = 7
+        // С запасом 10%: ceil(7 * 1.10) = 8
+        // Старый расчёт давал 4 (по площади: 1.51*1.47*1.10/0.75 = 2.97 → 3-4)
+        final inputs = {
+          'inputMode': 1.0,
+          'wallWidth': 1.51,
+          'wallHeight': 1.47,
+          'panelType': 1.0, // ceiling
+          'panelWidth': 0.25,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // longerSide=1.51, shorterSide=1.47
+        // strips = ceil(1.51 / 0.25) = 7
+        // panelsPerStrip = ceil(1.47 / 3.0) = 1
+        // with reserve: ceil(7 * 1.10) = 8
+        expect(result.values['panelsCount'], equals(8.0));
       });
 
       test('manual mode calculation', () {

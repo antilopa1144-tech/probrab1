@@ -117,7 +117,7 @@ void main() {
     });
 
     group('Mortar calculations', () {
-      test('calculates mortar volume from mortarPerSqm', () {
+      test('calculates mortar volume with 8% reserve', () {
         final inputs = {
           'area': 20.0,
           'brickType': 0.0, // одинарный
@@ -126,8 +126,9 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        // mortarVolume = area * mortarPerSqm[0][1] = 20 * 0.023 = 0.46 м³
-        expect(result.values['mortarVolume'], closeTo(0.46, 0.01));
+        // mortarVolume = area * mortarPerSqm[0][1] * 1.08
+        // = 20 * 0.023 * 1.08 = 0.4968 м³
+        expect(result.values['mortarVolume'], closeTo(0.4968, 0.01));
       });
 
       test('thicker wall uses more mortar per m²', () {
@@ -152,7 +153,7 @@ void main() {
         );
       });
 
-      test('calculates mortar bags', () {
+      test('calculates mortar bags with 8% reserve', () {
         final inputs = {
           'area': 20.0,
           'brickType': 0.0,
@@ -161,8 +162,9 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
 
-        // mortarBags = ceil(0.46 / 0.015) = ceil(30.67) = 31
-        expect(result.values['mortarBags'], equals(31));
+        // mortarVolume = 20 * 0.023 * 1.08 = 0.4968
+        // mortarBags = ceil(0.4968 / 0.015) = ceil(33.12) = 34
+        expect(result.values['mortarBags'], equals(34));
       });
     });
 
@@ -411,8 +413,8 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
 
         // cementNeeded = mortarVolume * 375
-        // 0.46 * 375 = 172.5 kg
-        expect(result.values['cementNeeded'], closeTo(172.5, 5));
+        // 0.4968 * 375 = 186.3 kg
+        expect(result.values['cementNeeded'], closeTo(186.3, 5));
       });
 
       test('calculates sand needed', () {
@@ -425,8 +427,238 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
 
         // sandNeeded = mortarVolume * 1.5
-        // 0.46 * 1.5 = 0.69 m³
-        expect(result.values['sandNeeded'], closeTo(0.69, 0.05));
+        // 0.4968 * 1.5 = 0.7452 m³
+        expect(result.values['sandNeeded'], closeTo(0.7452, 0.05));
+      });
+    });
+
+    group('Working conditions multiplier', () {
+      test('normal conditions (default) — base mortar with 8% reserve only', () {
+        final inputs = {
+          'area': 20.0,
+          'brickType': 0.0,
+          'wallThickness': 1.0,
+          // workingConditions not set → default 1 (normal)
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // mortarVolume = 20 * 0.023 * 1.08 * 1.0 = 0.4968 → rounded to 0.50
+        expect(result.values['mortarVolume'], closeTo(0.50, 0.01));
+        expect(result.values['workingConditions'], equals(1));
+      });
+
+      test('windy — +5% mortar on top of 8% reserve', () {
+        final inputs = {
+          'area': 20.0,
+          'brickType': 0.0,
+          'wallThickness': 1.0,
+          'workingConditions': 2.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // mortarVolume = 20 * 0.023 * 1.08 * 1.05 = 0.52164 → rounded to 0.52
+        expect(result.values['mortarVolume'], closeTo(0.52, 0.01));
+        expect(result.values['workingConditions'], equals(2));
+      });
+
+      test('cold — +10% mortar on top of 8% reserve', () {
+        final inputs = {
+          'area': 20.0,
+          'brickType': 0.0,
+          'wallThickness': 1.0,
+          'workingConditions': 3.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // mortarVolume = 20 * 0.023 * 1.08 * 1.10 = 0.54648 → rounded to 0.55
+        expect(result.values['mortarVolume'], closeTo(0.55, 0.01));
+        expect(result.values['workingConditions'], equals(3));
+      });
+
+      test('hot — +8% mortar on top of 8% reserve', () {
+        final inputs = {
+          'area': 20.0,
+          'brickType': 0.0,
+          'wallThickness': 1.0,
+          'workingConditions': 4.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // mortarVolume = 20 * 0.023 * 1.08 * 1.08 = 0.536544 → rounded to 0.54
+        expect(result.values['mortarVolume'], closeTo(0.54, 0.01));
+        expect(result.values['workingConditions'], equals(4));
+      });
+
+      test('conditions affect ONLY mortar, not bricks', () {
+        final normalInputs = {
+          'area': 20.0,
+          'brickType': 0.0,
+          'wallThickness': 1.0,
+          'workingConditions': 1.0,
+        };
+        final coldInputs = {
+          'area': 20.0,
+          'brickType': 0.0,
+          'wallThickness': 1.0,
+          'workingConditions': 3.0,
+        };
+        final hotInputs = {
+          'area': 20.0,
+          'brickType': 0.0,
+          'wallThickness': 1.0,
+          'workingConditions': 4.0,
+        };
+
+        final normalResult = calculator(normalInputs, emptyPriceList);
+        final coldResult = calculator(coldInputs, emptyPriceList);
+        final hotResult = calculator(hotInputs, emptyPriceList);
+
+        // Same brick count for all conditions
+        expect(normalResult.values['bricksNeeded'],
+            equals(coldResult.values['bricksNeeded']));
+        expect(normalResult.values['bricksNeeded'],
+            equals(hotResult.values['bricksNeeded']));
+
+        // But mortar differs
+        expect(coldResult.values['mortarVolume'],
+            greaterThan(normalResult.values['mortarVolume']!));
+        expect(hotResult.values['mortarVolume'],
+            greaterThan(normalResult.values['mortarVolume']!));
+      });
+    });
+
+    group('Masonry mesh (кладочная сетка)', () {
+      test('load-bearing wall (thickness>=1) — mesh every 5 rows', () {
+        final inputs = {
+          'area': 20.0,
+          'brickType': 0.0, // single brick, height 65mm
+          'wallThickness': 1.0, // load-bearing
+          'wallHeight': 2.7,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // row height = 65 + 10 = 75mm
+        // totalRows = ceil(2700 / 75) = 36
+        // meshInterval = 5 (load-bearing)
+        // meshLayers = ceil(36 / 5) = 8
+        expect(result.values['meshLayers'], equals(8));
+      });
+
+      test('partition (thickness=0) — mesh every 3 rows', () {
+        final inputs = {
+          'area': 20.0,
+          'brickType': 0.0, // single brick, height 65mm
+          'wallThickness': 0.0, // partition
+          'wallHeight': 2.7,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // row height = 65 + 10 = 75mm
+        // totalRows = ceil(2700 / 75) = 36
+        // meshInterval = 3 (partition)
+        // meshLayers = ceil(36 / 3) = 12
+        expect(result.values['meshLayers'], equals(12));
+      });
+
+      test('mesh area includes 10% reserve', () {
+        final inputs = {
+          'wallWidth': 5.0,
+          'wallHeight': 2.7,
+          'brickType': 0.0, // single brick, height 65mm
+          'wallThickness': 1.0, // load-bearing
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // row height = 75mm, totalRows = ceil(2700/75) = 36
+        // meshInterval = 5, meshLayers = ceil(36/5) = 8
+        // wallWidth = 5.0 (from input)
+        // meshArea = 8 * 5.0 * 1.1 = 44.0
+        expect(result.values['meshArea'], closeTo(44.0, 0.01));
+      });
+
+      test('single brick, wallHeight 2.7m — correct mesh layers', () {
+        final inputs = {
+          'area': 20.0,
+          'brickType': 0.0, // single, height 65mm
+          'wallThickness': 1.0, // load-bearing
+          'wallHeight': 2.7,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // row height = 65 + 10 = 75mm
+        // rows = ceil(2700 / 75) = 36
+        // meshInterval = 5, layers = ceil(36 / 5) = 8
+        expect(result.values['meshLayers'], equals(8));
+
+        // wallWidth = area / wallHeight = 20 / 2.7 ≈ 7.407
+        // meshArea = 8 * 7.407 * 1.1 ≈ 65.185
+        expect(result.values['meshArea'], closeTo(65.185, 0.1));
+
+        // meshCards = ceil(65.185 / 1.0) = 66
+        expect(result.values['meshCards'], equals(66));
+      });
+
+      test('double brick — fewer rows, fewer mesh layers', () {
+        final singleInputs = {
+          'area': 20.0,
+          'brickType': 0.0, // single, height 65mm → row 75mm
+          'wallThickness': 1.0,
+          'wallHeight': 2.7,
+        };
+        final doubleInputs = {
+          'area': 20.0,
+          'brickType': 2.0, // double, height 138mm → row 148mm
+          'wallThickness': 1.0,
+          'wallHeight': 2.7,
+        };
+
+        final singleResult = calculator(singleInputs, emptyPriceList);
+        final doubleResult = calculator(doubleInputs, emptyPriceList);
+
+        // single: rows = ceil(2700/75) = 36, layers = ceil(36/5) = 8
+        // double: rows = ceil(2700/148) = 19, layers = ceil(19/5) = 4
+        expect(singleResult.values['meshLayers'], equals(8));
+        expect(doubleResult.values['meshLayers'], equals(4));
+
+        // Double brick should have fewer mesh layers
+        expect(doubleResult.values['meshLayers'],
+            lessThan(singleResult.values['meshLayers']!));
+      });
+
+      test('mesh cards calculated from mesh area', () {
+        final inputs = {
+          'wallWidth': 5.0,
+          'wallHeight': 2.7,
+          'brickType': 0.0,
+          'wallThickness': 1.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        // meshArea = 8 * 5.0 * 1.1 = 44.0
+        // meshCards = ceil(44.0 / 1.0) = 44
+        expect(result.values['meshCards'], equals(44));
+      });
+
+      test('output contains wallHeight', () {
+        final inputs = {
+          'area': 20.0,
+          'brickType': 0.0,
+          'wallThickness': 1.0,
+          'wallHeight': 3.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        expect(result.values['wallHeight'], equals(3.0));
       });
     });
   });
