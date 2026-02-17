@@ -77,11 +77,19 @@ class CalculatePaintUniversal extends BaseCalculator {
     // Вычисляем площади в зависимости от режима
     double wallArea = 0;
     double ceilingArea = 0;
+    double roomPerimeter = 0;
 
     if (inputMode == 0) {
       // Режим "По площади"
       wallArea = getInput(inputs, 'wallArea', defaultValue: 0, minValue: 0);
       ceilingArea = getInput(inputs, 'ceilingArea', defaultValue: 0, minValue: 0);
+      // Оценка периметра комнаты: из площади потолка (≈ площадь пола)
+      if (ceilingArea > 0) {
+        roomPerimeter = estimatePerimeter(ceilingArea);
+      } else if (wallArea > 0) {
+        // Без потолка — периметр из площади стен при стандартной высоте ~2.7м
+        roomPerimeter = wallArea / 2.7;
+      }
     } else {
       // Режим "По размерам комнаты"
       final length = getInput(inputs, 'length', defaultValue: 5, minValue: 1);
@@ -92,6 +100,8 @@ class CalculatePaintUniversal extends BaseCalculator {
       wallArea = (length + width) * 2 * height;
       // Площадь потолка = длина * ширина
       ceilingArea = length * width;
+      // Периметр комнаты
+      roomPerimeter = (length + width) * 2;
     }
 
     // Определяем, что нужно красить
@@ -142,9 +152,9 @@ class CalculatePaintUniversal extends BaseCalculator {
     final rollersNeeded = ceilToInt(totalArea / 50); // 1 валик на ~50 м²
     final brushesNeeded = ceilToInt(totalArea / 40).clamp(2, 10); // минимум 2 кисти
 
-    // Малярный скотч: периметр × 2 (окна + двери с двух сторон) × 1.1
-    final estimatedPerimeter = estimatePerimeter(totalArea);
-    final tapeNeeded = estimatedPerimeter * 2 * 1.1 * (1 + reservePercent / 100);
+    // Малярный скотч: по стыку стена/потолок + вокруг проёмов (с двух сторон рамы)
+    final openingsPerimeter = doorsWindows > 0 ? estimatePerimeter(doorsWindows) * 2 : 0.0;
+    final tapeNeeded = (roomPerimeter + openingsPerimeter) * 1.1;
 
     // Округление
     final finalPaintLiters = roundBulk(paintWithReserve);

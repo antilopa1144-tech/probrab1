@@ -269,6 +269,58 @@ void main() {
         expect(result.values['stairsType'], equals(0.0));
         expect(result.values['needRailing'], equals(1.0));
         expect(result.values['needBothSides'], equals(0.0));
+        // Default width 0.9m → 2 stringers
+        expect(result.values['stringerCount'], equals(2.0));
+      });
+    });
+
+    group('Stringer count by width', () {
+      test('narrow stairs (<=1.2m) → 2 stringers', () {
+        final inputs = {
+          'floorHeight': 2.8,
+          'stairsWidth': 0.9,
+          'stairsType': 0.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        expect(result.values['stringerCount'], equals(2.0));
+      });
+
+      test('wide stairs (>1.2m) → 3 stringers (central stringer added)', () {
+        final inputs = {
+          'floorHeight': 2.8,
+          'stairsWidth': 1.3,
+          'stairsType': 0.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        expect(result.values['stringerCount'], equals(3.0));
+      });
+
+      test('boundary 1.2m → still 2 stringers', () {
+        final inputs = {
+          'floorHeight': 2.8,
+          'stairsWidth': 1.2,
+          'stairsType': 0.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        expect(result.values['stringerCount'], equals(2.0));
+      });
+
+      test('max width 1.5m → 3 stringers', () {
+        final inputs = {
+          'floorHeight': 2.8,
+          'stairsWidth': 1.5,
+          'stairsType': 0.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        expect(result.values['stringerCount'], equals(3.0));
       });
     });
 

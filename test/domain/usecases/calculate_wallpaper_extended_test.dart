@@ -195,10 +195,9 @@ void main() {
 
         final result = calculator(inputs, <PriceItem>[]);
 
-        // Длина полосы должна быть кратна раппорту + запас
-        // ceil(2.5 / 0.64) + 1 = 4 + 1 = 5 раппортов
-        // 5 * 0.64 = 3.2 м
-        expect(result.values['stripLength'], closeTo(3.2, 0.1));
+        // Длина полосы: ceil(2.5 / 0.64) = 4 раппорта + 5 см подрезка
+        // 4 * 0.64 + 0.05 = 2.61 м
+        expect(result.values['stripLength'], closeTo(2.61, 0.1));
       });
     });
 

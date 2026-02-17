@@ -123,9 +123,10 @@ class CalculateWallpaper extends BaseCalculator {
     if (rapport > 0) {
       // Раппорт в метрах
       final rapportM = rapport / 100;
-      // Подгонка под раппорт: округляем вверх до кратного раппорту + один раппорт запас
-      final rapportUnits = (wallHeight / rapportM).ceil() + 1;
-      stripLength = rapportUnits * rapportM;
+      // Подгонка под раппорт: округляем вверх до кратного раппорту
+      final rapportUnits = (wallHeight / rapportM).ceil();
+      // +5 см на подрезку сверху/снизу
+      stripLength = rapportUnits * rapportM + 0.05;
     }
 
     // Количество полос из одного рулона

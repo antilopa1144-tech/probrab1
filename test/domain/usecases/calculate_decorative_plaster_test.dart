@@ -77,8 +77,59 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // 50 * 1.5 * 3 * 1.1 = 247.5 кг
+      // Фактурная (default): 50 * 1.5 * 3 * 1.1 = 247.5 кг
       expect(result.values['plasterNeeded'], closeTo(247.5, 12.4));
+    });
+
+    test('structural plaster has higher consumption', () {
+      final calculator = CalculateDecorativePlaster();
+      final inputs = {
+        'area': 50.0,
+        'thickness': 2.0,
+        'plasterType': 1.0, // структурная "короед"
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Структурная: 50 * 2.5 * 2 * 1.1 = 275 кг
+      expect(result.values['plasterNeeded'], closeTo(275.0, 1.0));
+      expect(result.values['plasterType'], equals(1.0));
+      // Воск не нужен для структурной
+      expect(result.values['waxNeeded'], equals(0.0));
+    });
+
+    test('venetian plaster uses layers, not thickness', () {
+      final calculator = CalculateDecorativePlaster();
+      final inputs = {
+        'area': 30.0,
+        'plasterType': 2.0, // венецианская
+        // layers default = 4
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Венецианская: 30 * 0.4 * 4 * 1.1 = 52.8 кг (а не 99+ как было)
+      expect(result.values['plasterNeeded'], closeTo(52.8, 1.0));
+      expect(result.values['plasterType'], equals(2.0));
+      // Воск нужен для венецианской
+      expect(result.values['waxNeeded'], closeTo(30 * 0.08, 0.01));
+    });
+
+    test('venetian plaster 5 layers', () {
+      final calculator = CalculateDecorativePlaster();
+      final inputs = {
+        'area': 30.0,
+        'plasterType': 2.0,
+        'layers': 5.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // 30 * 0.4 * 5 * 1.1 = 66 кг
+      expect(result.values['plasterNeeded'], closeTo(66.0, 1.0));
     });
 
     test('throws exception for zero area', () {

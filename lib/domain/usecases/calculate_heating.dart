@@ -37,12 +37,14 @@ class CalculateHeating extends BaseCalculator {
     // Объём помещения
     final volume = area * ceilingHeight;
 
-    // Тепловая мощность: 100 Вт/м² (средняя полоса России)
-    final totalPower = area * 100; // Вт
+    // Тепловая мощность: 41 Вт/м³ (СНиП 41-01-2003, утеплённое здание, средняя полоса)
+    // Для стандартных 2.5м: 50м² × 2.5 × 41 = 5125 Вт (≈ старому 100 Вт/м²)
+    // Для высоких 3.5м: 50м² × 3.5 × 41 = 7175 Вт (корректный учёт объёма)
+    final totalPower = volume * 41; // Вт
 
-    // Радиаторы: 1 секция на 1.8-2.0 м² (при мощности секции ~180 Вт)
-    final sectionsPerM2 = 0.55; // ~1 секция на 1.8 м²
-    final totalSections = ceilToInt(area * sectionsPerM2);
+    // Радиаторы: мощность одной секции ~180 Вт (стандартный алюминиевый, ГОСТ 31311-2005)
+    final sectionPower = 180.0;
+    final totalSections = ceilToInt(totalPower / sectionPower);
     final radiatorsNeeded = rooms; // количество радиаторов
     final sectionsPerRadiator = ceilToInt(totalSections / rooms);
 

@@ -39,12 +39,22 @@ class CalculateDecorativePlaster extends BaseCalculator {
     // Полезная площадь
     final usefulArea = [area - windowsArea - doorsArea, 0.0].reduce((a, b) => a > b ? a : b).toDouble();
 
+    // Тип декоративной штукатурки (влияет на расход и технологию)
+    final plasterType = getIntInput(inputs, 'plasterType', defaultValue: 0, minValue: 0, maxValue: 2);
+
     // Расход зависит от типа штукатурки:
-    // - Венецианская: 0.6-1.0 кг/м² на слой (3-5 слоёв)
-    // - Структурная: 1.5-2.5 кг/м² на 1 мм
-    // - Фактурная: 1.2-2.0 кг/м² на 1 мм
-    final consumptionPerMm = 1.5; // средний расход кг/м²·мм
-    final plasterNeeded = usefulArea * consumptionPerMm * thickness * 1.1; // +10%
+    // 0 = Фактурная ("шуба", "барашек"): 1.5 кг/м²·мм — наносится слоем
+    // 1 = Структурная ("короед"): 2.5 кг/м²·мм — крупное зерно, больший расход
+    // 2 = Венецианская: 0.4 кг/м² на слой — тонкие слои, НЕ зависит от толщины
+    double plasterNeeded;
+    if (plasterType == 2) {
+      // Венецианская: 3-5 тонких слоёв по 0.3-0.5 кг/м²
+      final layers = getIntInput(inputs, 'layers', defaultValue: 4, minValue: 3, maxValue: 5);
+      plasterNeeded = usefulArea * 0.4 * layers * 1.1; // +10%
+    } else {
+      final consumptionPerMm = plasterType == 1 ? 2.5 : 1.5; // структурная vs фактурная
+      plasterNeeded = usefulArea * consumptionPerMm * thickness * 1.1; // +10%
+    }
 
     // Грунтовка глубокого проникновения: 2 слоя по 0.15 л/м²
     final primerNeeded = usefulArea * 0.15 * 1.1;
@@ -52,8 +62,8 @@ class CalculateDecorativePlaster extends BaseCalculator {
     // Базовая шпаклёвка (для выравнивания): ~2 кг/м²
     final baseCoatNeeded = usefulArea * 2.0;
 
-    // Воск/лак для защиты (для венецианской): ~0.08 л/м²
-    final waxNeeded = usefulArea * 0.08;
+    // Воск/лак для защиты: венецианская — обязательно, остальные — не нужен
+    final waxNeeded = plasterType == 2 ? usefulArea * 0.08 : 0.0;
 
     // Малярная сетка (для армирования углов): ~5% площади
     final meshArea = usefulArea * 0.05;
@@ -97,6 +107,7 @@ class CalculateDecorativePlaster extends BaseCalculator {
         'meshArea': meshArea,
         'colorantNeeded': colorantNeeded,
         'thickness': thickness,
+        'plasterType': plasterType.toDouble(),
         'toolSets': toolSets.toDouble(),
       },
       totalPrice: sumCosts(costs),

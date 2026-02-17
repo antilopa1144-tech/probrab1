@@ -56,8 +56,10 @@ class CalculateBrickFacing extends BaseCalculator {
     // Количество кирпичей с запасом 5%
     final bricksNeeded = calculateUnitsNeeded(usefulArea, 1.0 / bricksPerM2, marginPercent: 5.0);
 
-    // Раствор: ~0.02 м³ на 1 м² для полкирпича
-    final mortarPerM2 = 0.02 * thickness;
+    // Раствор (СНиП 3.03.01-87): нормы расхода по толщине кладки
+    // Полкирпича (0.5): 0.023 м³/м² — облицовочная кладка с полным заполнением швов
+    // В кирпич (1.0): 0.045 м³/м² — полнотелая кладка
+    final mortarPerM2 = thickness <= 0.5 ? 0.023 : 0.045;
     final mortarVolume = usefulArea * mortarPerM2 * 1.05;
 
     // Цемент и песок для раствора (пропорция 1:3-4)

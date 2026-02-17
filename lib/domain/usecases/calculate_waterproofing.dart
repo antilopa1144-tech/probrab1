@@ -11,7 +11,7 @@ import './base_calculator.dart';
 ///
 /// Поля:
 /// - floorArea: площадь пола (м²)
-/// - wallHeight: высота обработки стен (м), по умолчанию 0.3
+/// - wallHeight: высота обработки стен (м), по умолчанию 1.2 (СП 29.13330)
 /// - perimeter: периметр ванной (м)
 /// - layers: количество слоёв гидроизоляции, по умолчанию 2
 class CalculateWaterproofing extends BaseCalculator {
@@ -33,7 +33,8 @@ class CalculateWaterproofing extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final floorArea = getInput(inputs, 'floorArea', defaultValue: 0.0, minValue: 0.0);
-    final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 0.5, minValue: 0.1, maxValue: 2.5);
+    // СП 29.13330: мокрые зоны → минимум 1.2м, зона душа → до потолка
+    final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 1.2, minValue: 0.1, maxValue: 3.0);
     final perimeterInput = inputs['perimeter'] ?? 0.0;
     final perimeter = perimeterInput > 0 ? perimeterInput : estimatePerimeter(floorArea);
     final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 3);

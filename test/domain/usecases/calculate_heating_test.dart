@@ -20,17 +20,34 @@ void main() {
       expect(result.values['area'], closeTo(50.0, 2.5));
     });
 
-    test('calculates total power', () {
+    test('calculates total power based on volume', () {
       final calculator = CalculateHeating();
       final inputs = {
         'area': 50.0,
+        // default ceilingHeight = 2.5
       };
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Мощность: 50 * 100 = 5000 Вт
-      expect(result.values['totalPower'], closeTo(5000.0, 250.0));
+      // Мощность: 50 * 2.5 * 41 = 5125 Вт (СНиП 41-01-2003: 41 Вт/м³)
+      expect(result.values['totalPower'], closeTo(5125.0, 50.0));
+    });
+
+    test('calculates power correctly for high ceilings', () {
+      final calculator = CalculateHeating();
+      final inputs = {
+        'area': 50.0,
+        'ceilingHeight': 3.5,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Мощность: 50 * 3.5 * 41 = 7175 Вт (учитывает объём!)
+      expect(result.values['totalPower'], closeTo(7175.0, 50.0));
+      // Секции: 7175 / 180 = 39.86 → 40
+      expect(result.values['totalSections'], equals(40.0));
     });
 
     test('calculates total sections', () {
@@ -43,10 +60,10 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Секций на комнату: 25 / 2 = 13 секций
-      // Всего: 13 * 2 = 26 секций
-      expect(result.values['totalSections'], greaterThan(20));
-      expect(result.values['totalSections'], lessThan(30));
+      // Мощность: 50 * 2.5 * 41 = 5125 Вт, секции: 5125/180 = 28.5 → 29
+      expect(result.values['totalSections'], equals(29.0));
+      // По 15 секций на комнату (29/2 = 14.5 → 15)
+      expect(result.values['sectionsPerRadiator'], equals(15.0));
     });
 
     test('calculates pipe length', () {

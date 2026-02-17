@@ -304,7 +304,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           labelKey: 'input.wallHeight',
           unitType: UnitType.meters,
           inputType: FieldInputType.slider,
-          defaultValue: 0.5,
+          defaultValue: 1.2,
           minValue: 0.2,
           maxValue: 3.0,
           step: 0.1,

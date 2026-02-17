@@ -48,8 +48,22 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Раствор: 50 * 0.02 * 0.5 * 1.1 = 0.55 м³ (фактически 0.53)
-      expect(result.values['mortarVolume'], closeTo(0.53, 0.05));
+      // Раствор (СНиП 3.03.01-87): 50 * 0.023 * 1.05 = 1.2075 м³
+      expect(result.values['mortarVolume'], closeTo(1.21, 0.05));
+    });
+
+    test('calculates mortar for full brick', () {
+      final calculator = CalculateBrickFacing();
+      final inputs = {
+        'area': 50.0,
+        'thickness': 1.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      // Раствор в кирпич: 50 * 0.045 * 1.05 = 2.3625 м³
+      expect(result.values['mortarVolume'], closeTo(2.36, 0.05));
     });
 
     test('calculates reinforcement length', () {

@@ -85,6 +85,9 @@ class CalculateStairsV2 extends BaseCalculator {
     final lengthCoef = lengthCoefficients[stairsType] ?? 1.0;
     final stairsLength = stepsCount * stepDepth * lengthCoef;
 
+    // Количество косоуров: при ширине > 1.2м добавляется центральный (3-й)
+    final stringerCount = stairsWidth > 1.2 ? 3 : 2;
+
     // Длина косоура по теореме Пифагора + запас
     final stringerLength = math.sqrt(floorHeight * floorHeight + stairsLength * stairsLength) *
         (1 + stringerWastePercent / 100);
@@ -108,7 +111,7 @@ class CalculateStairsV2 extends BaseCalculator {
 
     final costs = [
       calculateCost(stepsCount.toDouble(), stepsPrice?.price),
-      calculateCost(stringerLength * 2, stringerPrice?.price), // 2 косоура
+      calculateCost(stringerLength * stringerCount, stringerPrice?.price),
       if (needRailing) calculateCost(railingLength, railingPrice?.price),
     ];
 
@@ -124,6 +127,7 @@ class CalculateStairsV2 extends BaseCalculator {
         'stepDepth': stepDepth,
         'stairsLength': stairsLength,
         'stringerLength': stringerLength,
+        'stringerCount': stringerCount.toDouble(),
         'railingLength': railingLength,
         'isComfortable': isComfortable ? 1.0 : 0.0,
       },

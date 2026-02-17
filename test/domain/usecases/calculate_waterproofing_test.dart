@@ -63,7 +63,7 @@ void main() {
       expect(result.values['tapeLength'], equals(10.0));
     });
 
-    test('uses default wall height when missing', () {
+    test('uses default wall height 1.2m when missing', () {
       final calculator = CalculateWaterproofing();
       final inputs = {
         'floorArea': 5.0,
@@ -73,11 +73,12 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Default wallHeight = 0.5 м, wallArea = 10 * 0.5 = 5.0
-      expect(result.values['wallArea'], equals(5.0));
+      // Default wallHeight = 1.2 м (СП 29.13330), wallArea = 10 * 1.2 = 12.0
+      expect(result.values['wallArea'], equals(12.0));
+      expect(result.values['totalArea'], equals(17.0));
     });
 
-    test('handles different wall heights', () {
+    test('handles explicit wall height 0.5', () {
       final calculator = CalculateWaterproofing();
       final inputs = {
         'floorArea': 5.0,
@@ -101,8 +102,8 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      // Default wallHeight = 0.5, wallArea = 10 * 0.5 = 5.0, totalArea = 0 + 5 = 5.0
-      expect(result.values['totalArea'], equals(5.0));
+      // Default wallHeight = 1.2, wallArea = 10 * 1.2 = 12.0, totalArea = 0 + 12 = 12.0
+      expect(result.values['totalArea'], equals(12.0));
       expect(result.values['materialNeeded'], greaterThan(0));
     });
 
@@ -117,10 +118,10 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
 
       // estimatePerimeter(5) = 4*sqrt(5) ≈ 8.944
-      // wallArea = 8.944 * 0.5 = 4.472 → rounded to 4.47
-      // totalArea = 5.0 + 4.47 = 9.47
-      expect(result.values['totalArea'], closeTo(9.47, 0.01));
-      expect(result.values['wallArea'], closeTo(4.47, 0.01));
+      // wallArea = 8.944 * 1.2 = 10.733 → rounded to 10.73
+      // totalArea = 5.0 + 10.73 = 15.73
+      expect(result.values['totalArea'], closeTo(15.73, 0.1));
+      expect(result.values['wallArea'], closeTo(10.73, 0.1));
       expect(result.values['tapeLength'], closeTo(8.94, 0.01));
     });
   });
