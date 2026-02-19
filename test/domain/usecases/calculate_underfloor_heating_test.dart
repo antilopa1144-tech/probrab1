@@ -323,11 +323,11 @@ void main() {
         }, emptyPriceList);
 
         // heatingArea: 9.0 vs 12.75
-        expect(result60.values['heatingArea']!, lessThan(result85.values['heatingArea']!));
+        expect(result60.values['heatingArea'], lessThan(result85.values['heatingArea']!));
         // matArea follows heatingArea
-        expect(result60.values['matArea']!, lessThan(result85.values['matArea']!));
+        expect(result60.values['matArea'], lessThan(result85.values['matArea']!));
         // totalPower follows heatingArea
-        expect(result60.values['totalPower']!, lessThan(result85.values['totalPower']!));
+        expect(result60.values['totalPower'], lessThan(result85.values['totalPower']!));
       });
 
       test('увеличение % → увеличение длины кабеля (электрокабель)', () {
@@ -347,7 +347,7 @@ void main() {
           'usefulAreaPercent': 90.0,
         }, emptyPriceList);
 
-        expect(result50.values['cableLength']!, lessThan(result90.values['cableLength']!));
+        expect(result50.values['cableLength'], lessThan(result90.values['cableLength']!));
       });
 
       test('увеличение % → увеличение длины трубы (водяной)', () {
@@ -367,8 +367,8 @@ void main() {
           'usefulAreaPercent': 90.0,
         }, emptyPriceList);
 
-        expect(result50.values['pipeLength']!, lessThan(result90.values['pipeLength']!));
-        expect(result50.values['bracketsCount']!, lessThan(result90.values['bracketsCount']!));
+        expect(result50.values['pipeLength'], lessThan(result90.values['pipeLength']!));
+        expect(result50.values['bracketsCount'], lessThan(result90.values['bracketsCount']!));
       });
 
       test('% НЕ влияет на теплоизоляцию и стяжку (полная площадь)', () {
@@ -503,7 +503,7 @@ void main() {
 
         final result = calculator(inputs, emptyPriceList);
         expect(result.values['area'], closeTo(0.1, 0.01));
-        expect(result.values['totalPower']!, greaterThan(0));
+        expect(result.values['totalPower'], greaterThan(0));
       });
 
       test('большая площадь 200 м²', () {
@@ -520,9 +520,9 @@ void main() {
         // Heating area: 200 * 0.72 = 144 м²
         expect(result.values['heatingArea'], closeTo(144.0, 0.5));
         // Pipe length будет очень большой
-        expect(result.values['pipeLength']!, greaterThan(500));
+        expect(result.values['pipeLength'], greaterThan(500));
         // Много контуров
-        expect(result.values['loopCount']!, greaterThan(5));
+        expect(result.values['loopCount'], greaterThan(5));
       });
     });
   });

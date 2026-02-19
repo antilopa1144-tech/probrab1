@@ -7,6 +7,7 @@ import '../../../../core/enums/unit_type.dart';
 import '../../../models/calculator_definition_v2.dart';
 import '../../../models/calculator_field.dart';
 import '../../../models/calculator_hint.dart';
+import '../../../models/calculator_link.dart';
 import '../../calculator_constants.dart';
 import '../../../usecases/calculate_plaster.dart';
 import '../../../usecases/calculate_primer.dart';
@@ -142,6 +143,20 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         'plaster',
         'mixes',
         'mixes_plaster',
+      ],
+      relatedLinks: [
+        const CalculatorLink(
+          targetId: 'mixes_putty',
+          labelKey: 'link.calculate_putty',
+          iconName: 'layers',
+          inputMapping: {'area': 'area'},
+        ),
+        const CalculatorLink(
+          targetId: 'mixes_primer',
+          labelKey: 'link.calculate_primer',
+          iconName: 'format_paint',
+          inputMapping: {'area': 'area'},
+        ),
       ],
     ),
 
@@ -324,6 +339,28 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         'putty',
         'mixes',
         'mixes_putty',
+      ],
+      relatedLinks: [
+        const CalculatorLink(
+          targetId: 'paint_universal',
+          labelKey: 'link.calculate_paint',
+          iconName: 'brush',
+          inputMapping: {'area': 'wallArea'},
+          staticInputs: {'paintType': 0, 'inputMode': 0},
+        ),
+        const CalculatorLink(
+          targetId: 'walls_wallpaper',
+          labelKey: 'link.calculate_wallpaper',
+          iconName: 'wallpaper',
+          inputMapping: {'area': 'area'},
+          staticInputs: {'inputMode': 1},
+        ),
+        const CalculatorLink(
+          targetId: 'mixes_primer',
+          labelKey: 'link.calculate_primer',
+          iconName: 'format_paint',
+          inputMapping: {'area': 'area'},
+        ),
       ],
     ),
 

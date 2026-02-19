@@ -256,11 +256,11 @@ void main() {
         );
 
         expect(
-          vinylResult.values['pasteNeeded']!,
+          vinylResult.values['pasteNeeded'],
           greaterThan(fleeceResult.values['pasteNeeded']!),
         );
         expect(
-          fleeceResult.values['pasteNeeded']!,
+          fleeceResult.values['pasteNeeded'],
           greaterThan(paperResult.values['pasteNeeded']!),
         );
       });

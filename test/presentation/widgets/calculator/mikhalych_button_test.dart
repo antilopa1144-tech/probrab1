@@ -183,10 +183,10 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MikhalychBottomSheet(
               calculatorName: 'Обои',
-              data: const {'area': 20.0},
+              data: {'area': 20.0},
               accentColor: Colors.blue,
             ),
           ),
@@ -202,10 +202,10 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MikhalychBottomSheet(
               calculatorName: 'Плитка',
-              data: const {'area': 15.0},
+              data: {'area': 15.0},
               accentColor: Colors.green,
             ),
           ),
@@ -228,10 +228,10 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MikhalychBottomSheet(
               calculatorName: 'Test',
-              data: const {},
+              data: {},
               accentColor: Colors.blue,
             ),
           ),
@@ -246,10 +246,10 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MikhalychBottomSheet(
               calculatorName: 'Test',
-              data: const {},
+              data: {},
               accentColor: Colors.orange,
             ),
           ),
@@ -264,10 +264,10 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MikhalychBottomSheet(
               calculatorName: 'Test',
-              data: const {'x': 1},
+              data: {'x': 1},
               accentColor: Colors.teal,
             ),
           ),
@@ -290,10 +290,10 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MikhalychBottomSheet(
               calculatorName: 'Test',
-              data: const {'x': 1},
+              data: {'x': 1},
               accentColor: Colors.teal,
             ),
           ),
@@ -309,10 +309,10 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: Scaffold(
+          child: const Scaffold(
             body: MikhalychBottomSheet(
               calculatorName: 'Test',
-              data: const {},
+              data: {},
               accentColor: Colors.blue,
             ),
           ),

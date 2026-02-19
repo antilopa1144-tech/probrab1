@@ -8,6 +8,7 @@ import '../../core/localization/app_localizations.dart';
 import '../usecases/calculator_usecase.dart';
 import 'calculator_field.dart';
 import 'calculator_hint.dart';
+import 'calculator_link.dart';
 
 /// Улучшенное определение калькулятора с поддержкой подсказок и валидации.
 ///
@@ -96,6 +97,9 @@ class CalculatorDefinitionV2 {
   /// Показывать секцию инструментов в результатах
   final bool showToolsSection;
 
+  /// Связанные калькуляторы (отображаются после результатов)
+  final List<CalculatorLink> relatedLinks;
+
   const CalculatorDefinitionV2({
     required this.id,
     required this.titleKey,
@@ -113,6 +117,7 @@ class CalculatorDefinitionV2 {
     this.isFavorite = false,
     this.tags = const [],
     this.showToolsSection = true,
+    this.relatedLinks = const [],
   });
 
   /// Кэш для результатов расчётов
@@ -243,6 +248,7 @@ class CalculatorDefinitionV2 {
     bool? isFavorite,
     List<String>? tags,
     bool? showToolsSection,
+    List<CalculatorLink>? relatedLinks,
   }) {
     return CalculatorDefinitionV2(
       id: id ?? this.id,
@@ -261,6 +267,7 @@ class CalculatorDefinitionV2 {
       isFavorite: isFavorite ?? this.isFavorite,
       tags: tags ?? this.tags,
       showToolsSection: showToolsSection ?? this.showToolsSection,
+      relatedLinks: relatedLinks ?? this.relatedLinks,
     );
   }
 }

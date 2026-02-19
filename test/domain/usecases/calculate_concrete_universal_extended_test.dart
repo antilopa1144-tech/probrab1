@@ -321,11 +321,11 @@ void main() {
 
         // Больше цемента = меньше песка и щебня
         expect(
-          m400result.values['sandVolume']!,
+          m400result.values['sandVolume'],
           lessThan(m100result.values['sandVolume']!),
         );
         expect(
-          m400result.values['gravelVolume']!,
+          m400result.values['gravelVolume'],
           lessThan(m100result.values['gravelVolume']!),
         );
       });

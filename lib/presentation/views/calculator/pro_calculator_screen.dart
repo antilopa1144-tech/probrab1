@@ -12,6 +12,7 @@ import '../../../data/models/price_item.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../providers/price_provider.dart';
 import '../../widgets/calculator/grouped_results_card.dart';
+import '../../widgets/calculator/related_calculators_section.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 class ProCalculatorState {
@@ -281,6 +282,12 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
         ..._buildInputFields(calcState.inputs),
         const SizedBox(height: 16),
         if (calcState.results != null) _buildDetailsCard(calcState.results),
+        if (calcState.results != null && widget.definition.relatedLinks.isNotEmpty)
+          RelatedCalculatorsSection(
+            links: widget.definition.relatedLinks,
+            results: calcState.results!,
+            inputs: calcState.inputs,
+          ),
         if (afterTips.isNotEmpty) const SizedBox(height: 16),
         if (afterTips.isNotEmpty) TipsCard(
           tips: afterTips,

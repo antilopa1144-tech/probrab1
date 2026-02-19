@@ -752,6 +752,10 @@
       "title": "Мансарда",
       "description": "Расчёт материалов: Мансарда"
     },
+    "room": {
+      "title": "Комната",
+      "description": "Комплексный расчёт всех материалов для ремонта комнаты"
+    },
     "balcony": {
       "title": "Балкон / Лоджия",
       "description": "Расчёт материалов: Балкон / Лоджия"
@@ -1947,6 +1951,39 @@
     "simple_calculator.title": "Калькулятор",
     "simple_calculator.error": "Ошибка"
   },
+  "related_calculators": {
+    "title": "Связанные калькуляторы"
+  },
+
+  "link": {
+    "calculate_grout": "Рассчитать затирку →",
+    "calculate_primer": "Рассчитать грунтовку →",
+    "calculate_putty": "Рассчитать шпаклёвку →",
+    "calculate_paint": "Рассчитать краску →",
+    "calculate_wallpaper": "Рассчитать обои →"
+  },
+
+  "room": {
+    "section": {
+      "geometry": "Размеры комнаты",
+      "walls": "Стены",
+      "floor": "Пол",
+      "ceiling": "Потолок",
+      "summary": "Результаты по работам"
+    },
+    "work": {
+      "plaster": "Штукатурка",
+      "putty": "Шпаклёвка",
+      "paintWalls": "Покраска стен",
+      "wallpaper": "Обои",
+      "laminate": "Ламинат",
+      "tile": "Плитка",
+      "paintCeiling": "Покраска потолка"
+    },
+    "doors_count": "Количество дверей",
+    "windows_count": "Количество окон"
+  },
+
   "share": {
     "date": "Дата расчёта",
     "error": "Ошибка при отправке",
@@ -3915,6 +3952,7 @@
   },
   "subcategory": {
     "floors": "Полы",
+    "room": "Комплексный",
     "gkl": "Гипсокартон",
     "heating": "Отопление",
     "metal": "Металлочерепица",

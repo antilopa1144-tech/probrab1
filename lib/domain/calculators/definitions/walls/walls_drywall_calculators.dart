@@ -7,6 +7,7 @@ import '../../../../core/enums/unit_type.dart';
 import '../../../models/calculator_definition_v2.dart';
 import '../../../models/calculator_field.dart';
 import '../../../models/calculator_hint.dart';
+import '../../../models/calculator_link.dart';
 import '../../calculator_constants.dart';
 import '../../../usecases/calculate_gypsum_v2.dart';
 import '../../../usecases/calculate_3d_panels.dart';
@@ -152,6 +153,22 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         'gkl',
         'drywall',
         'gypsum_board',
+      ],
+      relatedLinks: [
+        const CalculatorLink(
+          targetId: 'mixes_putty',
+          labelKey: 'link.calculate_putty',
+          iconName: 'layers',
+          inputMapping: {'totalArea': 'area'},
+          showIfResultKey: 'totalArea',
+        ),
+        const CalculatorLink(
+          targetId: 'mixes_primer',
+          labelKey: 'link.calculate_primer',
+          iconName: 'format_paint',
+          inputMapping: {'totalArea': 'area'},
+          showIfResultKey: 'totalArea',
+        ),
       ],
     ),
 

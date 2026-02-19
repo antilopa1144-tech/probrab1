@@ -5,6 +5,7 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
+import '../models/calculator_link.dart';
 import 'calculator_constants.dart';
 import '../usecases/calculate_paint_universal.dart';
 
@@ -280,4 +281,14 @@ final paintUniversalCalculatorV2 = CalculatorDefinitionV2(
 
   useCase: CalculatePaintUniversal(),
   showToolsSection: true,
+
+  relatedLinks: [
+    const CalculatorLink(
+      targetId: 'mixes_primer',
+      labelKey: 'link.calculate_primer',
+      iconName: 'imagesearch_roller',
+      inputMapping: {'totalArea': 'area'},
+      showIfResultKey: 'totalArea',
+    ),
+  ],
 );

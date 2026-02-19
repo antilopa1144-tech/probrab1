@@ -43,6 +43,7 @@ void main() {
       'linoleum_calculator_screen.dart', // TODO: нужна локализация
       'mikhalych_button.dart', // AI-промпты (отправляются в Gemini, не UI)
       'tile_grout_calculator_screen.dart', // TODO: нужна локализация
+      'room_calculator_screen.dart', // TODO: нужна локализация результатов
     };
 
     final violations = <String>[];

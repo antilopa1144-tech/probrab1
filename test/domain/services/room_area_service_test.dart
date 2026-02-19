@@ -191,15 +191,15 @@ void main() {
       test('три стены с разными проёмами', () {
         final result = service.calculateWalls([
           const WallInput(width: 5, height: 2.5), // 12.5 м²
-          WallInput(
+          const WallInput(
             width: 4,
             height: 2.5,
-            openings: [const Opening(width: 0.9, height: 2.1)], // дверь
+            openings: [Opening(width: 0.9, height: 2.1)], // дверь
           ), // 10 - 1.89 = 8.11
-          WallInput(
+          const WallInput(
             width: 3,
             height: 2.5,
-            openings: [const Opening(width: 1.5, height: 1.4)], // окно
+            openings: [Opening(width: 1.5, height: 1.4)], // окно
           ), // 7.5 - 2.1 = 5.4
         ]);
 

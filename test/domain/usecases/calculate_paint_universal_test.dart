@@ -604,7 +604,7 @@ void main() {
         final rawResult = calculator2.calculate(rawInputs, emptyPriceList);
 
         expect(
-          rawResult.values['paintLiters']!,
+          rawResult.values['paintLiters'],
           greaterThan(primedResult.values['paintLiters']!),
         );
       });
@@ -691,7 +691,7 @@ void main() {
         final darkResult = calculator2.calculate(darkInputs, emptyPriceList);
 
         expect(
-          darkResult.values['paintLiters']!,
+          darkResult.values['paintLiters'],
           greaterThan(lightResult.values['paintLiters']!),
         );
       });
@@ -726,7 +726,7 @@ void main() {
 
         // Wall: 0.22 * 50 + 0.3 = 11.3 => roundBulk = 12.0
         // Ceiling: 0.22 * 1.15 * 50 + 0.3 = 12.95 => roundBulk = 13.0
-        expect(ceilingResult.values['paintLiters']!,
+        expect(ceilingResult.values['paintLiters'],
             greaterThan(wallResult.values['paintLiters']!));
       });
 

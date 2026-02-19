@@ -88,7 +88,7 @@ void main() {
           'layoutPattern': 2.0,
         }, emptyPriceList);
 
-        expect(resultDiagonal.values['tilesNeeded']!,
+        expect(resultDiagonal.values['tilesNeeded'],
             greaterThan(resultStraight.values['tilesNeeded']!));
         expect(resultDiagonal.values['wastePercent'], closeTo(15, 0.5));
       });
@@ -134,7 +134,7 @@ void main() {
         }, emptyPriceList);
 
         // Simple: 10% waste. L-shaped: 10% + 5% = 15%
-        expect(resultLShaped.values['tilesNeeded']!,
+        expect(resultLShaped.values['tilesNeeded'],
             greaterThanOrEqualTo(resultSimple.values['tilesNeeded']!));
         expect(resultLShaped.values['wastePercent'], closeTo(15, 0.5));
       });

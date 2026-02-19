@@ -292,7 +292,7 @@ $contextBlock
     }
 
     if (count >= _maxDailyRequests) {
-      throw AiDailyLimitException(
+      throw const AiDailyLimitException(
         'Всё, начальник, на сегодня хватит — '
         '$_maxDailyRequests вопросов отработал. '
         'Приходи завтра, голова пухнет!',

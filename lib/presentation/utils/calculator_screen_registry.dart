@@ -48,6 +48,7 @@ import '../views/calculator/strip_foundation_calculator_screen.dart';
 import '../views/calculator/gutters_calculator_screen.dart';
 import '../views/calculator/roofing_unified_calculator_screen.dart';
 import '../views/calculator/concrete_universal_calculator_screen.dart';
+import '../views/calculator/room_calculator_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
 // dsp_screen.dart удалён - объединён с screed_unified_calculator_screen.dart
@@ -193,6 +194,9 @@ class CalculatorScreenRegistry {
           definition: def,
           initialInputs: inputs,
         ),
+
+    // Комплексные
+    'room': (_, inputs) => RoomCalculatorScreen(initialInputs: inputs),
 
     // Кровля
     'roofing_gutters': (_, _) => const GuttersCalculatorScreen(),

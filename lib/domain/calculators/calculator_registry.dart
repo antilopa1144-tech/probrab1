@@ -11,6 +11,7 @@ import 'slab_foundation_calculator_v2.dart';
 import 'unified_roofing_calculator_v2.dart';
 import 'warm_floor_calculator_v2.dart';
 import 'parquet_calculator_v2.dart';
+import 'room_calculator_v2.dart';
 // bathroom_tile_calculator_v2.dart удалён - дублирует floors_tile (tile_calculator_v2.dart)
 // plinth_calculator_v2.dart удалён - калькулятор плинтуса больше не нужен
 import 'concrete_universal_calculator_v2.dart';
@@ -88,6 +89,9 @@ class CalculatorRegistry {
     // Полы (дополнительные)
     parquetCalculatorV2,
     // bathroomTileCalculatorV2 удалён - дублирует floors_tile
+
+    // Комплексные
+    roomCalculatorV2,
   ];
 
   /// Все доступные калькуляторы (версия 2)
