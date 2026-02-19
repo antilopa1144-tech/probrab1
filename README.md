@@ -4,7 +4,7 @@
 
 **68+ калькуляторов** | **ИИ-прораб Михалыч** | **Работает без интернета** | **Рейтинг 4.9 в RuStore**
 
-[Скачать в RuStore](https://www.rustore.ru/catalog/app/ru.masterok.app) | [Веб-версия](https://masterok-calc.ru) | [Статья на Хабре](https://habr.com/ru/articles/1001080/)
+[Скачать в RuStore](https://www.rustore.ru/catalog/app/ru.masterok.app)
 
 </div>
 
@@ -142,7 +142,7 @@ flutter analyze
 
 ## Веб-версия
 
-Параллельно развивается [веб-версия](https://masterok-calc.ru) на Next.js — 50+ калькуляторов доступны онлайн бесплатно.
+Веб-версия на Next.js находится в разработке.
 
 ## Обратная связь
 
@@ -150,7 +150,6 @@ flutter analyze
 
 - **Email:** [Antilopa1144@gmail.com](mailto:Antilopa1144@gmail.com)
 - **RuStore:** [Мастерок](https://www.rustore.ru/catalog/app/ru.masterok.app)
-- **Хабр:** [Статья о проекте](https://habr.com/ru/articles/1001080/)
 
 ## Лицензия
 
