@@ -215,13 +215,13 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // In tests without API key, the service errors out quickly.
-      // Either we see a loading state (CircularProgressIndicator) or an error state.
-      final hasLoading =
-          find.byType(CircularProgressIndicator).evaluate().isNotEmpty;
+      // Now shows welcome screen instead of auto-requesting API on open.
+      // Welcome screen shows quick question chips.
+      final hasWelcome =
+          find.text('Быстрые вопросы:').evaluate().isNotEmpty;
       final hasError = find.byIcon(Icons.warning_amber_rounded).evaluate().isNotEmpty;
-      expect(hasLoading || hasError, isTrue,
-          reason: 'Should show either loading spinner or error state');
+      expect(hasWelcome || hasError, isTrue,
+          reason: 'Should show welcome screen or error state');
     });
 
     testWidgets('has close button', (tester) async {
@@ -277,13 +277,14 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('Михалыч'), findsOneWidget);
-      // In test env without API key, may show error instead of typing indicator
-      final hasTyping =
-          find.textContaining('Михалыч думает').evaluate().isNotEmpty;
+      // Now shows welcome screen instead of auto-requesting API on open
+      // Quick questions chips should be visible
+      final hasWelcome =
+          find.text('Быстрые вопросы:').evaluate().isNotEmpty;
       final hasError =
           find.byIcon(Icons.warning_amber_rounded).evaluate().isNotEmpty;
-      expect(hasTyping || hasError, isTrue,
-          reason: 'Should show typing indicator or error');
+      expect(hasWelcome || hasError, isTrue,
+          reason: 'Should show welcome screen or error');
     });
 
     testWidgets('renders in light theme', (tester) async {

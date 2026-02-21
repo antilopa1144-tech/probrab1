@@ -55,7 +55,6 @@ class RelatedCalculatorsSection extends StatelessWidget {
                     context,
                     link.targetId,
                     initialInputs: targetInputs,
-                    checkPremium: false,
                   );
                 },
                 icon: Icon(_resolveIcon(link.iconName), size: 18),

@@ -12,7 +12,6 @@ import '../../../domain/models/calculator_definition_v2.dart';
 import '../../config/catalog_config.dart';
 import '../../providers/recent_calculators_provider.dart';
 import '../../providers/review_provider.dart';
-import '../../providers/settings_provider.dart';
 import '../../../core/services/tracker_service_web.dart'
     if (dart.library.io) '../../../core/services/tracker_service.dart';
 import '../../utils/calculator_navigation_helper.dart';
@@ -24,6 +23,7 @@ import '../checklist/checklist_details_screen.dart';
 import '../../providers/calculation_provider.dart';
 import '../../widgets/calculator/mikhalych_button.dart';
 import '../../../core/services/ai_service.dart';
+import '../settings_page.dart';
 
 /// Улучшенный каталог калькуляторов с недавними и популярными секциями.
 class ModernCalculatorCatalogScreenV2 extends ConsumerStatefulWidget {
@@ -295,8 +295,9 @@ class _ModernCalculatorCatalogScreenV2State
           ),
           IconButton(
             onPressed: () {
-              // TODO: Открыть настройки
-              _showSettingsMenu(context, palette, isDark);
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SettingsPage()),
+              );
             },
             icon: Icon(
               Icons.settings_rounded,
@@ -551,68 +552,6 @@ class _ModernCalculatorCatalogScreenV2State
           ],
         ),
       ),
-    );
-  }
-
-  void _showSettingsMenu(
-    BuildContext context,
-    CatalogPalette palette,
-    bool isDark,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: palette.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        final loc = AppLocalizations.of(context);
-        return Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: palette.border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 24),
-              ListTile(
-                leading: Icon(
-                  isDark ? Icons.wb_sunny_rounded : Icons.nights_stay_rounded,
-                  color: palette.accent,
-                ),
-                title: Text(
-                  loc.translate('settings.theme'),
-                  style: GoogleFonts.manrope(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: palette.textPrimary,
-                  ),
-                ),
-                subtitle: Text(
-                  isDark
-                      ? loc.translate('settings.theme_dark')
-                      : loc.translate('settings.theme_light'),
-                  style: GoogleFonts.manrope(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: palette.textMuted,
-                  ),
-                ),
-                onTap: () {
-                  ref.read(settingsProvider.notifier).updateDarkMode(!isDark);
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 

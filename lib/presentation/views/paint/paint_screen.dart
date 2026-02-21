@@ -43,19 +43,19 @@ class _PaintScreenState extends State<PaintScreen> {
   double _coverage = 10.0; // м²/л (по умолчанию для интерьера)
   int _layers = 2;
 
-  // Данные типов поверхностей
-  final List<List<Map<String, dynamic>>> _surfaces = [
+  // Данные типов поверхностей (геттер — использует _loc, доступен после build)
+  List<List<Map<String, dynamic>>> get _surfaces => [
     // Интерьер
     [
-      {'name': 'Гладкая', 'subtitle': 'х1.0', 'factor': 1.0},
-      {'name': 'Обои', 'subtitle': 'х1.2', 'factor': 1.2},
-      {'name': 'Рельеф', 'subtitle': 'х1.4', 'factor': 1.4},
+      {'name': _loc.translate('paint.surface.smooth'), 'subtitle': 'х1.0', 'factor': 1.0},
+      {'name': _loc.translate('paint.surface.wallpaper'), 'subtitle': 'х1.2', 'factor': 1.2},
+      {'name': _loc.translate('paint.surface.relief'), 'subtitle': 'х1.4', 'factor': 1.4},
     ],
     // Фасад
     [
-      {'name': 'Бетон', 'subtitle': 'х1.0', 'factor': 1.0},
-      {'name': 'Кирпич', 'subtitle': 'х1.15', 'factor': 1.15},
-      {'name': 'Короед', 'subtitle': 'х1.4', 'factor': 1.4},
+      {'name': _loc.translate('paint.surface.concrete'), 'subtitle': 'х1.0', 'factor': 1.0},
+      {'name': _loc.translate('paint.surface.brick'), 'subtitle': 'х1.15', 'factor': 1.15},
+      {'name': _loc.translate('paint.surface.bark_beetle'), 'subtitle': 'х1.4', 'factor': 1.4},
     ],
   ];
 

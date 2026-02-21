@@ -178,7 +178,8 @@
   "error": {
     "calculator_not_found": "Калькулятор \"{id}\" не найден",
     "calculation": "Ошибка расчета",
-    "unexpected": "Непредвиденная ошибка"
+    "unexpected": "Непредвиденная ошибка",
+    "qr_not_supported": "QR-коды не поддерживаются на этой платформе"
   },
   "material": {
     "dry": "Сухой",
@@ -417,18 +418,26 @@
     "paint_type": "Тип краски",
     "interior": "Интерьер",
     "facade": "Фасад",
-    "surface": "Поверхность",
-    "surface_prep": {
-      "title": "Подготовка поверхности",
-      "primed": "Загрунтована",
-      "new_raw": "Новая",
-      "repainted": "Перекраска"
+    "surface": {
+      "title": "Поверхность",
+      "smooth": "Гладкая",
+      "wallpaper": "Обои",
+      "relief": "Рельеф",
+      "concrete": "Бетон",
+      "brick": "Кирпич",
+      "bark_beetle": "Короед"
     },
-    "color_intensity": {
+    "surfacePrep": {
+      "title": "Подготовка поверхности",
+      "primed": "Загрунтованная",
+      "raw": "Новая необработанная (+20%)",
+      "repainted": "Ранее окрашенная (−5%)"
+    },
+    "colorIntensity": {
       "title": "Интенсивность цвета",
-      "light": "Светлый",
-      "bright": "Яркий ×1.15",
-      "dark": "Тёмный ×1.3"
+      "light": "Светлый / белый",
+      "bright": "Яркий / насыщенный (+15%)",
+      "dark": "Тёмный (+30%)"
     },
     "coverage": "Расход (м²/л)",
     "layers": "Слоев",
@@ -915,6 +924,10 @@
     "insulation_mineral": {
       "title": "Минвата",
       "description": "Расчёт материалов: Минвата"
+    },
+    "insulation_mineral_wool": {
+      "title": "Утеплитель (минвата)",
+      "description": "Расчёт минеральной ваты, пароизоляции и крепежа"
     },
     "insulation_sound": {
       "title": "Шумоизоляция",
@@ -1969,7 +1982,38 @@
       "walls": "Стены",
       "floor": "Пол",
       "ceiling": "Потолок",
-      "summary": "Результаты по работам"
+      "summary": "Результаты по работам",
+      "plaster_walls": "Штукатурка стен",
+      "putty_walls": "Шпаклёвка стен",
+      "paint_walls": "Покраска стен",
+      "wallpaper": "Обои",
+      "laminate": "Ламинат",
+      "tile": "Плитка на пол",
+      "paint_ceiling": "Покраска потолка"
+    },
+    "result": {
+      "plaster": "Штукатурка",
+      "putty": "Шпаклёвка",
+      "paint": "Краска",
+      "primer": "Грунтовка",
+      "wallpaper": "Обои",
+      "glue": "Клей",
+      "mesh": "Сетка",
+      "beacons": "Маяки",
+      "laminate": "Ламинат",
+      "underlay": "Подложка",
+      "plinth": "Плинтус",
+      "tile": "Плитка",
+      "grout": "Затирка"
+    },
+    "unit": {
+      "bags": "мешков",
+      "liters": "л",
+      "sqm": "м²",
+      "pcs": "шт",
+      "rolls": "рулонов",
+      "kg": "кг",
+      "packs": "упак."
     },
     "work": {
       "plaster": "Штукатурка",
@@ -2172,7 +2216,8 @@
       "cement": "Цементная"
     },
     "section": {
-      "area": "Расчёт площади"
+      "area": "Расчёт площади",
+      "results": "Результаты расчёта"
     },
     "mode": {
       "manual": "Вручную",
@@ -2184,7 +2229,13 @@
       "length": "Длина",
       "height": "Высота",
       "openings_title": "Вычесть проемы (окна/двери)",
-      "openings_hint": "Площадь проемов, м²"
+      "openings_hint": "Площадь проемов, м²",
+      "thickness": "Толщина штукатурки",
+      "material": "Материал",
+      "bags": "Мешки смеси",
+      "beacons": "Маяки",
+      "mesh": "Сетка армирующая",
+      "primer": "Грунтовка"
     },
     "thickness": {
       "title": "Толщина штукатурки"
@@ -3223,9 +3274,6 @@
       "ne_ostavlyayte_schelei_mezhdu_plitami": "Не оставляйте щелей между плитами утеплителя — это мостики холода.",
       "zakroyte_styazhkoy_ili_nastilom": "Закройте утеплитель стяжкой или настилом из фанеры/ОСБ."
     },
-    "laminate": {
-      "diagonal_high_waste": "Диагональная укладка увеличивает расход ламината на 15%. Рекомендуется для опытных мастеров"
-    },
     "wallpaper": {
       "check_batch_number": "Проверьте номер партии — рулоны из разных партий могут отличаться по оттенку",
       "start_from_window": "Начинайте поклейку от окна для лучшего совпадения узора",
@@ -3440,6 +3488,7 @@
       }
     },
     "laminate": {
+      "diagonal_high_waste": "Диагональная укладка увеличивает расход ламината на 15%. Рекомендуется для опытных мастеров",
       "before": {
         "level": "Основание должно быть ровным (перепад не более 2 мм на 2 м)",
         "measure": "Добавьте запас 5–10% на подрезку",
@@ -3483,11 +3532,14 @@
       "before": {
         "beacons": "Установите маяки для контроля уровня",
         "level": "Проверьте горизонтальность основания",
-        "thickness": "Рекомендуемая толщина слоя 30–80 мм"
+        "thickness": "Рекомендуемая толщина слоя 30–80 мм",
+        "material_choice": "Готовая смесь удобнее и стабильнее по качеству, самозамес — дешевле на больших объёмах",
+        "thin_layer": "При толщине менее 30 мм используйте самовыравнивающуюся смесь, а не обычную стяжку"
       },
       "after": {
         "curing": "Не ходите по стяжке 24–48 часов",
-        "reinforcement": "При больших толщинах используйте армирование"
+        "reinforcement": "При больших толщинах используйте армирование",
+        "crack_warning": "Для предотвращения трещин увлажняйте стяжку первые 3–5 дней и избегайте сквозняков"
       }
     },
     "warm_floor": {
@@ -3529,6 +3581,7 @@
     "mode": "Режим ввода",
     "mode.by_dimensions": "По размерам",
     "mode.by_area": "По площади",
+    "mode.by_room": "По размерам комнаты",
     "mode.sliders": "Ползунки",
     "mode.manual": "Ввод вручную",
     "length": "Длина",
@@ -3595,6 +3648,11 @@
     "floorHeight": "Высота этажа",
     "floorThickness": "Толщина пола",
     "floorType": "Тип пола",
+    "fenceType": "Тип ограждения",
+    "fenceType.profsheet": "Профлист",
+    "fenceType.picket": "Штакетник",
+    "fenceType.chainlink": "Сетка-рабица",
+    "postSpacing": "Шаг столбов",
     "gates": "Ворота",
     "gkl_layers": "Слои ГКЛ",
     "glazing": "Остекление",
@@ -3602,6 +3660,10 @@
     "insulation": "Утепление",
     "insulationThickness": "Толщина утеплителя",
     "insulationType": "Тип утеплителя",
+    "stoneType": "Тип камня",
+    "stoneType.gypsum": "Гипсовый",
+    "stoneType.concrete": "Бетонный",
+    "stoneType.natural": "Натуральный",
     "jointWidth": "Ширина шва",
     "jointWidth.hint": "Ширина швов между плитками в мм",
     "jointDepth": "Глубина шва",
@@ -3892,13 +3954,49 @@
     "wallpaperType.vinyl": "Виниловые",
     "wallpaperType.fleece": "Флизелиновые",
 
+    "inputMode": "Режим ввода",
+    "roomWidth": "Ширина комнаты",
+    "roomLength": "Длина комнаты",
+    "cassetteSize": "Размер кассеты",
+    "ceilingType": "Тип потолка",
+
+    "qualityClass": "Класс качества",
+    "qualityClass.economy": "Эконом",
+    "qualityClass.standard": "Стандарт",
+    "qualityClass.premium": "Премиум",
+
+    "screed_type": "Тип стяжки",
+    "screed_type.hint": "Выберите тип стяжки в зависимости от условий",
+    "screed_type.cement_sand": "Цементно-песчаная",
+    "screed_type.semidry": "Полусухая",
+    "screed_type.concrete": "Бетонная",
+
+    "material_type": "Способ приготовления",
+    "material_type.hint": "Готовая смесь удобнее, самозамес — дешевле",
+    "material_type.ready_mix": "Готовая смесь",
+    "material_type.self_mix": "Самозамес",
+
+    "mix_grade": "Марка смеси",
+    "mix_grade.hint": "М300 — стандарт для стяжки, М150 — для лёгких нагрузок",
+    "mix_grade.m300": "М300",
+    "mix_grade.m150": "М150",
+
+    "need_mesh": "Армирующая сетка",
+    "need_mesh.hint": "Рекомендуется при толщине стяжки более 40 мм",
+    "need_film": "Плёнка ПЭ (гидроизоляция)",
+    "need_film.hint": "Укладывается под стяжку для защиты от влаги",
+    "need_tape": "Демпферная лента",
+    "need_tape.hint": "Прокладывается по периметру для компенсации расширения",
+    "need_beacons": "Маяки",
+    "need_beacons.hint": "Направляющие для выравнивания стяжки по уровню",
+
     "paint.surfacePrep": "Подготовка поверхности",
     "paint.surfacePrep.hint": "Влияет на впитываемость и расход краски",
     "paint.surfacePrep.primed": "Загрунтованная",
     "paint.surfacePrep.raw": "Новая необработанная (+20%)",
     "paint.surfacePrep.repainted": "Ранее окрашенная (−5%)",
     "paint.colorIntensity": "Интенсивность цвета",
-    "paint.colorIntensity.hint": "Тёмные и насыщенные цвета требуют больше краски для укрывистости",
+    "paint.colorIntensity.hint": "Тёмные и насыщенные цвета требуют больше краски",
     "paint.colorIntensity.light": "Светлый / белый",
     "paint.colorIntensity.bright": "Яркий / насыщенный (+15%)",
     "paint.colorIntensity.dark": "Тёмный (+30%)",
@@ -5267,7 +5365,8 @@
     "calculation_saved_to_project": "Расчёт успешно сохранён в проект \"{name}\"",
     "add_more": "Добавить ещё",
     "open_project": "Открыть проект",
-    "recommendations": "Рекомендации"
+    "recommendations": "Рекомендации",
+    "projects_not_supported_web": "Проекты недоступны в веб-версии"
   },
   "tool": {
     "mixes_plaster": {
@@ -7710,5 +7809,27 @@
     "project_type.commercial": "Коммерческое помещение",
     "project_type.bath": "Баня / сауна",
     "project_type.garage": "Гараж"
+  },
+  "osb": {
+    "orientation": {
+      "title": "Ориентация листа",
+      "auto": "Авто",
+      "horizontal": "Горизонт.",
+      "vertical": "Вертикал."
+    }
+  },
+  "smartProject": {
+    "title": "Умный проект",
+    "description": "Автоматический подбор материалов для всего ремонта",
+    "resultTitle": "Сводная смета"
+  },
+  "categories": {
+    "foundation": "Фундамент",
+    "walls": "Стены",
+    "roof": "Кровля",
+    "finish": "Отделка"
+  },
+  "my_calc": {
+    "title": "Мои расчёты"
   }
 }

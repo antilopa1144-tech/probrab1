@@ -43,31 +43,12 @@ void main() {
         expect(find.byIcon(Icons.palette_outlined), findsOneWidget);
       });
 
-      testWidgets('отображается секция региона и единиц', (tester) async {
-        await tester.pumpWidget(createTestApp(child: const SettingsPage()));
-        await tester.pumpAndSettle();
-
-        expect(find.text('Регион и единицы'), findsOneWidget);
-        expect(find.byIcon(Icons.location_on_outlined), findsOneWidget);
-      });
-
       testWidgets('отображается секция поведения', (tester) async {
         await tester.pumpWidget(createTestApp(child: const SettingsPage()));
         await tester.pumpAndSettle();
 
         expect(find.text('Поведение приложения', skipOffstage: false), findsOneWidget);
         expect(find.byIcon(Icons.tune_outlined, skipOffstage: false), findsOneWidget);
-      });
-
-      testWidgets('отображается секция языка', (tester) async {
-        await tester.pumpWidget(createTestApp(child: const SettingsPage()));
-        await tester.pumpAndSettle();
-
-        // Прокручиваем к секции языка
-        await _scrollTo(tester, find.text('Язык'));
-
-        expect(find.text('Язык'), findsOneWidget);
-        expect(find.byIcon(Icons.language_outlined), findsOneWidget);
       });
 
       testWidgets('отображается секция данных', (tester) async {
@@ -207,150 +188,6 @@ void main() {
         // в тестовом окружении и вызывает LateInitializationError.
         // Для полного теста нужен мок NotificationService.
         expect(find.byType(SettingsPage), findsOneWidget);
-      });
-    });
-
-    group('Тесты диалога выбора региона', () {
-      testWidgets('открывается диалог выбора региона', (tester) async {
-        await tester.pumpWidget(createTestApp(child: const SettingsPage()));
-        await tester.pumpAndSettle();
-
-        // Находим пункт настроек региона
-        final regionTile = find.widgetWithText(
-          ListTile,
-          'Регион',
-        );
-        await tester.tap(regionTile);
-        await tester.pumpAndSettle();
-
-        // Должен открыться диалог
-        expect(find.text('Выберите регион'), findsOneWidget);
-      });
-
-      testWidgets('можно выбрать регион из списка', (tester) async {
-        await tester.pumpWidget(createTestApp(child: const SettingsPage()));
-        await tester.pumpAndSettle();
-
-        // Открываем диалог региона
-        final regionTile = find.widgetWithText(
-          ListTile,
-          'Регион',
-        );
-        await tester.tap(regionTile);
-        await tester.pumpAndSettle();
-
-        // Находим любой регион в списке и выбираем его
-        final regionOptions = find.byType(ListTile);
-        if (regionOptions.evaluate().length > 1) {
-          // Тапаем по первому региону в диалоге (не заголовок)
-          await tester.tap(regionOptions.at(1));
-          await tester.pumpAndSettle();
-
-          // Диалог должен закрыться
-          expect(find.text('Выберите регион'), findsNothing);
-        }
-      });
-    });
-
-    group('Тесты диалога выбора единиц измерения', () {
-      testWidgets('открывается диалог выбора единиц', (tester) async {
-        await tester.pumpWidget(createTestApp(child: const SettingsPage()));
-        await tester.pumpAndSettle();
-
-        // Находим пункт настроек единиц
-        final unitsTile = find.widgetWithText(ListTile, 'Единицы');
-        await tester.tap(unitsTile);
-        await tester.pumpAndSettle();
-
-        // Должен открыться диалог
-        expect(find.text('Единицы'), findsAtLeastNWidgets(1));
-        expect(find.text('Метрическая система'), findsOneWidget);
-        expect(find.text('Имперская система'), findsOneWidget);
-      });
-
-      testWidgets('можно выбрать метрическую систему', (tester) async {
-        await tester.pumpWidget(createTestApp(child: const SettingsPage()));
-        await tester.pumpAndSettle();
-
-        // Открываем диалог единиц
-        final unitsTile = find.widgetWithText(ListTile, 'Единицы');
-        await tester.tap(unitsTile);
-        await tester.pumpAndSettle();
-
-        // Выбираем метрическую систему
-        final metricOption = find.text('Метрическая система');
-        await tester.tap(metricOption);
-        await tester.pumpAndSettle();
-
-        // Диалог должен закрыться
-        expect(find.text('Метры, килограммы, литры'), findsNothing);
-      });
-
-      testWidgets('можно выбрать имперскую систему', (tester) async {
-        await tester.pumpWidget(createTestApp(child: const SettingsPage()));
-        await tester.pumpAndSettle();
-
-        // Открываем диалог единиц
-        final unitsTile = find.widgetWithText(ListTile, 'Единицы');
-        await tester.tap(unitsTile);
-        await tester.pumpAndSettle();
-
-        // Выбираем имперскую систему
-        final imperialOption = find.text('Имперская система');
-        await tester.tap(imperialOption);
-        await tester.pumpAndSettle();
-
-        // Диалог должен закрыться
-        expect(find.text('Футы, фунты, галлоны'), findsNothing);
-      });
-    });
-
-    group('Тесты диалога выбора языка', () {
-      testWidgets('открывается диалог выбора языка', (tester) async {
-        await tester.pumpWidget(createTestApp(child: const SettingsPage()));
-        await tester.pumpAndSettle();
-
-        // Прокручиваем к пункту настроек языка
-        final languageTile = find.widgetWithText(
-          ListTile,
-          'Язык приложения',
-        );
-        await _scrollTo(tester, languageTile);
-
-        await tester.tap(languageTile);
-        await tester.pumpAndSettle();
-
-        // Должен открыться диалог
-        expect(find.text('Язык приложения'), findsAtLeastNWidgets(1));
-      });
-
-      testWidgets('можно выбрать язык из списка', (tester) async {
-        await tester.pumpWidget(createTestApp(child: const SettingsPage()));
-        await tester.pumpAndSettle();
-
-        // Прокручиваем к пункту настроек языка
-        final languageTile = find.widgetWithText(
-          ListTile,
-          'Язык приложения',
-        );
-        await _scrollTo(tester, languageTile);
-
-        await tester.tap(languageTile);
-        await tester.pumpAndSettle();
-
-        // Находим варианты языков
-        final languageOptions = find.byWidgetPredicate(
-          (widget) => widget is ListTile && widget.leading is Icon,
-        );
-
-        if (languageOptions.evaluate().isNotEmpty) {
-          // Выбираем первый язык
-          await tester.tap(languageOptions.first);
-          await tester.pumpAndSettle();
-
-          // Диалог должен закрыться
-          expect(find.byType(AlertDialog), findsNothing);
-        }
       });
     });
 
@@ -530,22 +367,15 @@ void main() {
         // Секция 1: Внешний вид (видна без прокрутки)
         expect(find.byIcon(Icons.palette_outlined), findsOneWidget);
 
-        // Секция 2: Регион и единицы (видна без прокрутки)
-        expect(find.byIcon(Icons.location_on_outlined), findsOneWidget);
-
-        // Секция 3: Поведение (может быть на границе viewport)
+        // Секция 2: Поведение (может быть на границе viewport)
         await _scrollTo(tester, find.byIcon(Icons.tune_outlined));
         expect(find.byIcon(Icons.tune_outlined), findsOneWidget);
 
-        // Секция 4: Язык
-        await _scrollTo(tester, find.byIcon(Icons.language_outlined));
-        expect(find.byIcon(Icons.language_outlined), findsOneWidget);
-
-        // Секция 5: Данные
+        // Секция 3: Данные
         await _scrollTo(tester, find.byIcon(Icons.storage_outlined));
         expect(find.byIcon(Icons.storage_outlined), findsOneWidget);
 
-        // Секция 6: О приложении
+        // Секция 4: О приложении
         await _scrollTo(tester, find.byIcon(Icons.info_outlined));
         expect(find.byIcon(Icons.info_outlined), findsOneWidget);
       });

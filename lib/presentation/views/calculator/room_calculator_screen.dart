@@ -778,14 +778,14 @@ class _ResultsSection extends StatelessWidget {
     // Штукатурка
     if (state.doPlaster) {
       final rows = _extractRows(results, 'walls_plaster', {
-        'plasterBags': ('Штукатурка', 'мешков'),
-        'primerLiters': ('Грунтовка', 'л'),
-        'meshArea': ('Сетка', 'м²'),
-        'beacons': ('Маяки', 'шт'),
+        'plasterBags': (loc.translate('room.result.plaster'), loc.translate('room.unit.bags')),
+        'primerLiters': (loc.translate('room.result.primer'), loc.translate('room.unit.liters')),
+        'meshArea': (loc.translate('room.result.mesh'), loc.translate('room.unit.sqm')),
+        'beacons': (loc.translate('room.result.beacons'), loc.translate('room.unit.pcs')),
       });
       if (rows.isNotEmpty) {
         cards.add(_ResultGroupCard(
-          title: 'Штукатурка стен',
+          title: loc.translate('room.section.plaster_walls'),
           icon: Icons.layers,
           rows: rows,
           accentColor: accentColor,
@@ -796,12 +796,12 @@ class _ResultsSection extends StatelessWidget {
     // Шпаклёвка
     if (state.doPutty) {
       final rows = _extractRows(results, 'walls_putty', {
-        'puttyNeeded': ('Шпаклёвка', 'кг'),
-        'primerNeeded': ('Грунтовка', 'л'),
+        'puttyNeeded': (loc.translate('room.result.putty'), loc.translate('room.unit.kg')),
+        'primerNeeded': (loc.translate('room.result.primer'), loc.translate('room.unit.liters')),
       });
       if (rows.isNotEmpty) {
         cards.add(_ResultGroupCard(
-          title: 'Шпаклёвка стен',
+          title: loc.translate('room.section.putty_walls'),
           icon: Icons.format_paint,
           rows: rows,
           accentColor: accentColor,
@@ -812,12 +812,12 @@ class _ResultsSection extends StatelessWidget {
     // Покраска стен
     if (state.doPaintWalls) {
       final rows = _extractRows(results, 'walls_paint', {
-        'paintLiters': ('Краска', 'л'),
-        'primerLiters': ('Грунтовка', 'л'),
+        'paintLiters': (loc.translate('room.result.paint'), loc.translate('room.unit.liters')),
+        'primerLiters': (loc.translate('room.result.primer'), loc.translate('room.unit.liters')),
       });
       if (rows.isNotEmpty) {
         cards.add(_ResultGroupCard(
-          title: 'Покраска стен',
+          title: loc.translate('room.section.paint_walls'),
           icon: Icons.brush,
           rows: rows,
           accentColor: accentColor,
@@ -828,13 +828,13 @@ class _ResultsSection extends StatelessWidget {
     // Обои
     if (state.doWallpaper) {
       final rows = _extractRows(results, 'walls_wallpaper', {
-        'rollsNeeded': ('Обои', 'рулонов'),
-        'pasteNeeded': ('Клей', 'кг'),
-        'primerNeeded': ('Грунтовка', 'л'),
+        'rollsNeeded': (loc.translate('room.result.wallpaper'), loc.translate('room.unit.rolls')),
+        'pasteNeeded': (loc.translate('room.result.glue'), loc.translate('room.unit.kg')),
+        'primerNeeded': (loc.translate('room.result.primer'), loc.translate('room.unit.liters')),
       });
       if (rows.isNotEmpty) {
         cards.add(_ResultGroupCard(
-          title: 'Обои',
+          title: loc.translate('room.section.wallpaper'),
           icon: Icons.wallpaper,
           rows: rows,
           accentColor: accentColor,
@@ -845,13 +845,13 @@ class _ResultsSection extends StatelessWidget {
     // Ламинат
     if (state.doLaminate) {
       final rows = _extractRows(results, 'floor_laminate', {
-        'packsNeeded': ('Ламинат', 'упак.'),
-        'underlayRolls': ('Подложка', 'рулонов'),
-        'plinthPieces': ('Плинтус', 'шт'),
+        'packsNeeded': (loc.translate('room.result.laminate'), loc.translate('room.unit.packs')),
+        'underlayRolls': (loc.translate('room.result.underlay'), loc.translate('room.unit.rolls')),
+        'plinthPieces': (loc.translate('room.result.plinth'), loc.translate('room.unit.pcs')),
       });
       if (rows.isNotEmpty) {
         cards.add(_ResultGroupCard(
-          title: 'Ламинат',
+          title: loc.translate('room.section.laminate'),
           icon: Icons.view_stream,
           rows: rows,
           accentColor: accentColor,
@@ -862,13 +862,13 @@ class _ResultsSection extends StatelessWidget {
     // Плитка
     if (state.doTile) {
       final rows = _extractRows(results, 'floor_tile', {
-        'tilesNeeded': ('Плитка', 'шт'),
-        'groutNeeded': ('Затирка', 'кг'),
-        'glueNeeded': ('Клей', 'кг'),
+        'tilesNeeded': (loc.translate('room.result.tile'), loc.translate('room.unit.pcs')),
+        'groutNeeded': (loc.translate('room.result.grout'), loc.translate('room.unit.kg')),
+        'glueNeeded': (loc.translate('room.result.glue'), loc.translate('room.unit.kg')),
       });
       if (rows.isNotEmpty) {
         cards.add(_ResultGroupCard(
-          title: 'Плитка на пол',
+          title: loc.translate('room.section.tile'),
           icon: Icons.grid_on,
           rows: rows,
           accentColor: accentColor,
@@ -879,12 +879,12 @@ class _ResultsSection extends StatelessWidget {
     // Покраска потолка
     if (state.doPaintCeiling) {
       final rows = _extractRows(results, 'ceiling_paint', {
-        'paintLiters': ('Краска', 'л'),
-        'primerLiters': ('Грунтовка', 'л'),
+        'paintLiters': (loc.translate('room.result.paint'), loc.translate('room.unit.liters')),
+        'primerLiters': (loc.translate('room.result.primer'), loc.translate('room.unit.liters')),
       });
       if (rows.isNotEmpty) {
         cards.add(_ResultGroupCard(
-          title: 'Покраска потолка',
+          title: loc.translate('room.section.paint_ceiling'),
           icon: Icons.imagesearch_roller,
           rows: rows,
           accentColor: accentColor,

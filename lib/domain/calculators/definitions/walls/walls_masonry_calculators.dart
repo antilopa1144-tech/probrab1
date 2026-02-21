@@ -10,7 +10,7 @@ import '../../../models/calculator_hint.dart';
 import '../../calculator_constants.dart';
 import '../../../usecases/calculate_brick_partition.dart';
 import '../../../usecases/calculate_gasblock_partition.dart';
-import '../../../usecases/calculate_decorative_stone.dart';
+import '../../../usecases/calculate_decor_stone_v2.dart';
 
 final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
   // 1. partitions_blocks - Перегородки из блоков
@@ -214,18 +214,34 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
           order: 1,
         ),
         const CalculatorField(
-          key: 'thickness',
-          labelKey: 'input.thickness',
-          unitType: UnitType.millimeters,
-          inputType: FieldInputType.slider,
-          defaultValue: 15.0,
-          minValue: 5.0,
-          maxValue: 50.0,
-          step: 1.0,
-          iconName: 'height',
+          key: 'stoneType',
+          labelKey: 'input.stoneType',
+          unitType: UnitType.pieces,
+          inputType: FieldInputType.select,
+          defaultValue: 0.0,
+          iconName: 'texture',
           group: 'material',
           required: true,
           order: 2,
+          options: [
+            FieldOption(value: 0.0, labelKey: 'input.stoneType.gypsum'),
+            FieldOption(value: 1.0, labelKey: 'input.stoneType.concrete'),
+            FieldOption(value: 2.0, labelKey: 'input.stoneType.natural'),
+          ],
+        ),
+        const CalculatorField(
+          key: 'jointWidth',
+          labelKey: 'input.jointWidth',
+          unitType: UnitType.millimeters,
+          inputType: FieldInputType.slider,
+          defaultValue: 10.0,
+          minValue: 0.0,
+          maxValue: 20.0,
+          step: 1.0,
+          iconName: 'space_bar',
+          group: 'material',
+          required: false,
+          order: 3,
         ),
       ],
       beforeHints: [
@@ -238,7 +254,7 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya_3'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obrabotayte_kamen_gidrofobizatorom'),
       ],
-      useCase: CalculateDecorativeStone(),
+      useCase: CalculateDecorStoneV2(),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,

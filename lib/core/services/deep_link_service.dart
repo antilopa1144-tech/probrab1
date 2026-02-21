@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/shareable_content.dart';
 import '../../domain/models/project_v2.dart';
+import '../../core/database/database_provider.dart';
 import '../../presentation/utils/calculator_navigation_helper.dart';
 
 /// Сервис для обработки Deep Links
@@ -205,17 +207,29 @@ class DeepLinkHandler {
     );
 
     if (result == true && context.mounted) {
-      // Пользователь подтвердил импорт
-      // TODO: Импортировать проект в базу данных
-      // final projectRepo = ref.read(projectRepositoryV2Provider);
-      // final project = shareableProject.toProject();
-      // await projectRepo.createProject(project);
+      try {
+        final container = ProviderScope.containerOf(context);
+        final repo = await container.read(projectRepositoryProvider.future);
+        final project = shareableProject.toProject();
+        await repo.createProject(project);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Проект "${shareableProject.name}" импортирован'),
-        ),
-      );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Проект "${shareableProject.name}" импортирован'),
+            ),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Ошибка импорта проекта: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
 

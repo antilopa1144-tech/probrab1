@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
 import '../../../core/localization/app_localizations.dart';
@@ -140,6 +142,16 @@ class _ChatMessage {
       isStreaming: isStreaming ?? this.isStreaming,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'text': text,
+        'isUser': isUser,
+      };
+
+  factory _ChatMessage.fromJson(Map<String, dynamic> json) => _ChatMessage(
+        text: json['text'] as String? ?? '',
+        isUser: json['isUser'] as bool? ?? false,
+      );
 }
 
 // =============================================================================
@@ -154,6 +166,10 @@ class _ChatMessage {
 /// - `_isLoading = false` в onDone/onError ВСЕГДА
 /// - Корректная отмена в dispose() (cancel)
 /// - Никаких зависших спиннеров
+///
+/// **История диалога:**
+/// Сохраняется между сеансами в SharedPreferences.
+/// Ограничение — последние 20 сообщений.
 class MikhalychBottomSheet extends StatefulWidget {
   final String calculatorName;
   final Map<String, dynamic> data;
@@ -178,7 +194,10 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
   final ScrollController _scrollController = ScrollController();
 
   String? _error;
-  bool _isLoading = true;
+  bool _isLoading = false;
+
+  /// Флаг: показываем Welcome-экран (до первого вопроса)
+  bool _showWelcome = true;
 
   /// Кэшированный сервис — без повторного await на каждое сообщение
   AiService? _service;
@@ -186,13 +205,16 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
   /// Текущая подписка на стрим — для cancel() в dispose
   StreamSubscription<String>? _streamSub;
 
-  /// Safety-таймер: если _isLoading висит > 75 сек — принудительный сброс
+  /// Safety-таймер: если _isLoading висит > 90 сек — принудительный сброс
   Timer? _safetyTimer;
+
+  static const _historyPrefsKey = 'mikhalych_chat_history';
+  static const _maxSavedMessages = 20;
 
   @override
   void initState() {
     super.initState();
-    _initAndAsk();
+    _initService();
   }
 
   @override
@@ -208,7 +230,7 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
   // Инициализация
   // ---------------------------------------------------------------------------
 
-  Future<void> _initAndAsk() async {
+  Future<void> _initService() async {
     try {
       _service = AiService.instanceSync ?? await AiService.instance;
       _service!.startChat(
@@ -219,49 +241,106 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
     } catch (_) {
       // Ошибка инициализации — _askStream обработает null _service
     }
-    _askStream(_buildInitialQuestion());
+
+    // Загружаем историю диалога из памяти
+    await _loadHistory();
+
+    // Если есть сохранённая история — сразу показываем чат (не welcome)
+    if (_messages.isNotEmpty && mounted) {
+      setState(() {
+        _showWelcome = false;
+      });
+      _scrollToBottom();
+    }
   }
 
-  static const _generalGreetings = [
-    'Михалыч, здорова! Что посоветуешь сегодня?',
-    'Михалыч, есть минутка? Нужен совет от старшего.',
-    'Михалыч, подскажи — с чего начать?',
-    'Михалыч, ты тут? Есть вопрос по стройке.',
-    'Михалыч, давай обсудим — что на объекте делать будем?',
-  ];
+  Future<void> _loadHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final json = prefs.getString(_historyPrefsKey);
+      if (json == null) return;
+      final list = jsonDecode(json) as List<dynamic>;
+      final loaded = list
+          .cast<Map<String, dynamic>>()
+          .map(_ChatMessage.fromJson)
+          .toList();
+      if (mounted && loaded.isNotEmpty) {
+        setState(() => _messages.addAll(loaded));
+      }
+    } catch (_) {
+      // Ошибка загрузки истории — начинаем с чистого листа
+    }
+  }
 
-  static const _calculatorGreetings = [
-    'Михалыч, считаю {name}. На что обратить внимание?',
-    'Михалыч, взялся за {name} — подскажи, где народ косячит?',
-    'Михалыч, тут {name}. Какие подводные камни?',
-    'Михалыч, {name} — дай пару советов от практика.',
-    'Михалыч, прикидываю {name}. Чего не забыть?',
-  ];
+  Future<void> _saveHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final toSave = _messages.length > _maxSavedMessages
+          ? _messages.sublist(_messages.length - _maxSavedMessages)
+          : _messages;
+      final json = jsonEncode(toSave.map((m) => m.toJson()).toList());
+      await prefs.setString(_historyPrefsKey, json);
+    } catch (_) {}
+  }
 
-  static const _dataGreetings = [
-    'Михалыч, глянь мой расчёт — всё ли правильно?',
-    'Михалыч, проверь цифры — не налажал ли я?',
-    'Михалыч, посмотри расчёт и скажи честно — нормально?',
-    'Михалыч, вот что насчитал — ругай если что не так.',
-  ];
+  Future<void> _clearHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_historyPrefsKey);
+    } catch (_) {}
+  }
 
-  String _buildInitialQuestion() {
+  // ---------------------------------------------------------------------------
+  // Welcome-экран и быстрые вопросы
+  // ---------------------------------------------------------------------------
+
+  List<String> _getQuickQuestions() {
     if (widget.calculatorName == 'Главный экран') {
-      const greetings = _generalGreetings;
-      return greetings[DateTime.now().millisecond % greetings.length];
+      return [
+        'Что важно не забыть при ремонте в новостройке?',
+        'С чего начать расчёт материалов для ванной?',
+        'Какие ошибки чаще всего делают при укладке плитки?',
+        'Как правильно выбрать тип штукатурки?',
+      ];
     }
-    if (widget.data.isEmpty) {
-      const greetings = _calculatorGreetings;
-      final template = greetings[DateTime.now().millisecond % greetings.length];
-      return template.replaceAll('{name}', widget.calculatorName);
+    if (widget.data.isNotEmpty) {
+      return [
+        'Проверь мой расчёт — всё правильно?',
+        'Что я мог забыть в этом расчёте?',
+        'Какой материал посоветуешь для этого случая?',
+        'На что обратить внимание при работе с этим?',
+      ];
     }
-    const greetings = _dataGreetings;
-    final greeting = greetings[DateTime.now().millisecond % greetings.length];
-    final dataStr =
-        widget.data.entries.map((e) => '${e.key}: ${e.value}').join(', ');
-    final truncated =
-        dataStr.length > 5000 ? '${dataStr.substring(0, 5000)}...' : dataStr;
-    return '$greeting\n\nДанные: $truncated';
+    return [
+      'Дай практический совет по ${widget.calculatorName}.',
+      'Какие ошибки чаще всего делают?',
+      'Какой материал посоветуешь?',
+      'С чего начать?',
+    ];
+  }
+
+  String _getWelcomePhrase() {
+    final hour = DateTime.now().hour;
+    if (widget.calculatorName == 'Главный экран') {
+      if (hour < 12) {
+        return 'Доброе утро. Ну что, за работу?';
+      } else if (hour < 18) {
+        return 'О, заявился. Давай, спрашивай — время не ждёт.';
+      } else {
+        return 'Поздновато, конечно, но ладно. Чего хотел?';
+      }
+    }
+    return 'Смотрю на ${widget.calculatorName}. Ну, задавай вопрос.';
+  }
+
+  void _onQuickQuestion(String question) {
+    setState(() {
+      _showWelcome = false;
+      _messages.add(_ChatMessage(text: question, isUser: true));
+      _error = null;
+    });
+    _scrollToBottom();
+    _askStream(question);
   }
 
   // ---------------------------------------------------------------------------
@@ -273,6 +352,7 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
     if (text.isEmpty || _isLoading) return;
 
     setState(() {
+      _showWelcome = false;
       _messages.add(_ChatMessage(text: text, isUser: true));
       _error = null;
     });
@@ -305,8 +385,8 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
       _error = null;
     });
 
-    // Safety-таймер: если через 135 сек ответ не пришёл — сбросить спиннер
-    _safetyTimer = Timer(const Duration(seconds: 135), () {
+    // Safety-таймер: если через 90 сек ответ не пришёл — сбросить спиннер
+    _safetyTimer = Timer(const Duration(seconds: 90), () {
       if (!mounted || !_isLoading) return;
       _streamSub?.cancel();
       final loc = AppLocalizations.of(context);
@@ -368,6 +448,7 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
           }
           _isLoading = false;
         });
+        _saveHistory();
         _scrollToBottom();
       },
 
@@ -382,6 +463,7 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
           }
           _isLoading = false;
         });
+        _saveHistory();
         _scrollToBottom();
       },
 
@@ -398,6 +480,25 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
           curve: Curves.easeOut,
         );
       }
+    });
+  }
+
+  void _resetChat() {
+    _streamSub?.cancel();
+    _safetyTimer?.cancel();
+    _service?.resetChat();
+    _clearHistory();
+    // Переинициализируем чат в сервисе
+    _service?.startChat(
+      calculatorName: widget.calculatorName,
+      data: widget.data,
+      calculationHistory: widget.calculationHistory,
+    );
+    setState(() {
+      _messages.clear();
+      _error = null;
+      _isLoading = false;
+      _showWelcome = true;
     });
   }
 
@@ -475,6 +576,17 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
                     ],
                   ),
                 ),
+                // Кнопка "Начать заново" — только если есть история
+                if (_messages.isNotEmpty)
+                  IconButton(
+                    onPressed: _resetChat,
+                    tooltip: loc.translate('ai.clear_chat'),
+                    icon: Icon(
+                      Icons.refresh_rounded,
+                      color: isDark ? Colors.white38 : Colors.black38,
+                      size: 20,
+                    ),
+                  ),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: Icon(
@@ -493,19 +605,21 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
                 isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.06),
           ),
 
-          // Сообщения
+          // Контент: Welcome или чат
           Flexible(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              itemCount: _messages.length + (_error != null ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (_error != null && index == _messages.length) {
-                  return _buildErrorBubble(isDark);
-                }
-                return _buildMessageBubble(_messages[index], isDark, loc);
-              },
-            ),
+            child: _showWelcome
+                ? _buildWelcomeScreen(isDark, loc)
+                : ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                    itemCount: _messages.length + (_error != null ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (_error != null && index == _messages.length) {
+                        return _buildErrorBubble(isDark);
+                      }
+                      return _buildMessageBubble(_messages[index], isDark, loc);
+                    },
+                  ),
           ),
 
           Divider(
@@ -525,6 +639,7 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
                     enabled: !_isLoading,
                     textInputAction: TextInputAction.send,
                     onSubmitted: (_) => _sendMessage(),
+                    maxLines: null,
                     style: TextStyle(
                       fontSize: 15,
                       color: isDark ? Colors.white : Colors.black87,
@@ -589,6 +704,116 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
   }
 
   // ---------------------------------------------------------------------------
+  // Welcome-экран
+  // ---------------------------------------------------------------------------
+
+  Widget _buildWelcomeScreen(bool isDark, AppLocalizations loc) {
+    final questions = _getQuickQuestions();
+    final welcomePhrase = _getWelcomePhrase();
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Приветственное сообщение от Михалыча
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.05),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+                bottomLeft: Radius.circular(4),
+                bottomRight: Radius.circular(16),
+              ),
+            ),
+            child: Text(
+              welcomePhrase,
+              style: TextStyle(
+                fontSize: 15,
+                height: 1.5,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.87)
+                    : Colors.black87,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Заголовок быстрых вопросов
+          Text(
+            'Быстрые вопросы:',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.white38 : Colors.black38,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Кнопки быстрых вопросов
+          ...questions.map(
+            (q) => _buildQuickQuestionChip(q, isDark),
+          ),
+
+          const SizedBox(height: 4),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickQuestionChip(String question, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _onQuickQuestion(question),
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: widget.accentColor.withValues(alpha: 0.4),
+              ),
+              borderRadius: BorderRadius.circular(12),
+              color: widget.accentColor.withValues(
+                alpha: isDark ? 0.08 : 0.05,
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    question,
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.4,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 16,
+                  color: widget.accentColor.withValues(alpha: 0.7),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
   // Виджеты сообщений
   // ---------------------------------------------------------------------------
 
@@ -633,7 +858,7 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: const EdgeInsets.only(right: 48),
+            margin: const EdgeInsets.only(right: 48, bottom: 2),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               color: isDark
@@ -661,7 +886,7 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
           ),
           if (isComplete)
             Padding(
-              padding: const EdgeInsets.only(left: 4, top: 4, bottom: 8),
+              padding: const EdgeInsets.only(left: 4, bottom: 8),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

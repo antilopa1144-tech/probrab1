@@ -394,7 +394,7 @@ void main() {
         }
       });
 
-      testWidgets('не проверяет premium когда checkPremium = false', (tester) async {
+      testWidgets('открывает калькулятор без premium проверки', (tester) async {
         setTestViewportSize(tester);
         await tester.pumpWidget(
           createTestApp(
@@ -406,7 +406,6 @@ void main() {
                       await CalculatorNavigationHelper.navigateToCalculatorById(
                         context,
                         'three_d_panels',
-                        checkPremium: false,
                       );
                     },
                     child: const Text('Open'),

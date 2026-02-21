@@ -9,27 +9,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     _loadAppVersion();
   }
 
-  String _getLanguageName(AppLocalizations loc, String code) {
-    switch (code) {
-      case 'ru':
-        return loc.translate('language.ru');
-      case 'en':
-        return loc.translate('language.en');
-      case 'kk':
-        return loc.translate('language.kk');
-      case 'ky':
-        return loc.translate('language.ky');
-      case 'tg':
-        return loc.translate('language.tg');
-      case 'tk':
-        return loc.translate('language.tk');
-      case 'uz':
-        return loc.translate('language.uz');
-      default:
-        return loc.translate('language.ru');
-    }
-  }
-
   Future<void> _loadAppVersion() async {
     try {
       final info = await PackageInfo.fromPlatform();
@@ -186,31 +165,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           ),
           const SizedBox(height: 24),
 
-          // Регион и единицы
-          _SettingsSection(
-            title: loc.translate('settings.section.region_units'),
-            icon: Icons.location_on_outlined,
-            children: [
-              ListTile(
-                title: Text(loc.translate('settings.region.title')),
-                subtitle: Text(settings.region),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showRegionDialog(context, ref),
-              ),
-              ListTile(
-                title: Text(loc.translate('settings.units.title')),
-                subtitle: Text(
-                  settings.unitSystem == 'metric'
-                      ? loc.translate('settings.units.metric.short')
-                      : loc.translate('settings.units.imperial.short'),
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showUnitSystemDialog(context, ref),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-
           // Поведение приложения
           _SettingsSection(
             title: loc.translate('settings.section.behavior'),
@@ -253,21 +207,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       .read(settingsProvider.notifier)
                       .updateNotifications(value);
                 },
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-
-          // Язык
-          _SettingsSection(
-            title: loc.translate('settings.section.language'),
-            icon: Icons.language_outlined,
-            children: [
-              ListTile(
-                title: Text(loc.translate('settings.language.title')),
-                subtitle: Text(_getLanguageName(loc, settings.language)),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showLanguageDialog(context, ref),
               ),
             ],
           ),
@@ -333,13 +272,23 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   final success =
                       await ref.read(reviewProvider.notifier).requestReview();
                   if (!success && context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          loc.translate('settings.about.rate_app.error'),
-                        ),
-                      ),
+                    // RuStore SDK недоступен — открываем страницу в RuStore/браузере
+                    final uri = Uri.parse(
+                      'https://www.rustore.ru/catalog/app/ru.masterok.app',
                     );
+                    final opened = await launchUrl(
+                      uri,
+                      mode: LaunchMode.externalApplication,
+                    );
+                    if (!opened && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            loc.translate('settings.about.rate_app.error'),
+                          ),
+                        ),
+                      );
+                    }
                   }
                 },
               ),
@@ -360,144 +309,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           ),
           const SizedBox(height: 24),
         ],
-      ),
-    );
-  }
-
-  void _showRegionDialog(BuildContext context, WidgetRef ref) {
-    const regions = AppConstants.regions;
-    final loc = AppLocalizations.of(context);
-    final currentRegion = ref.watch(settingsProvider).region;
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(loc.translate('settings.region.dialog_title')),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: regions.map((region) {
-            final isSelected = region == currentRegion;
-            return ListTile(
-              title: Text(region),
-              leading: Icon(
-                isSelected
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_unchecked,
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primary
-                    : null,
-              ),
-              onTap: () {
-                ref.read(settingsProvider.notifier).updateRegion(region);
-                ref.read(regionProvider.notifier).setRegion(region);
-                TrackerService.trackSettingsChanged(
-                  setting: 'region',
-                  value: region,
-                );
-                Navigator.pop(context);
-              },
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  void _showUnitSystemDialog(BuildContext context, WidgetRef ref) {
-    final currentSystem = ref.watch(settingsProvider).unitSystem;
-    final loc = AppLocalizations.of(context);
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(loc.translate('settings.units.title')),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text(loc.translate('settings.units.metric.title')),
-              subtitle: Text(loc.translate('settings.units.metric.subtitle')),
-              leading: Icon(
-                currentSystem == 'metric'
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_unchecked,
-                color: currentSystem == 'metric'
-                    ? Theme.of(context).colorScheme.primary
-                    : null,
-              ),
-              onTap: () {
-                ref.read(settingsProvider.notifier).updateUnitSystem('metric');
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text(loc.translate('settings.units.imperial.title')),
-              subtitle: Text(loc.translate('settings.units.imperial.subtitle')),
-              leading: Icon(
-                currentSystem == 'imperial'
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_unchecked,
-                color: currentSystem == 'imperial'
-                    ? Theme.of(context).colorScheme.primary
-                    : null,
-              ),
-              onTap: () {
-                ref
-                    .read(settingsProvider.notifier)
-                    .updateUnitSystem('imperial');
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showLanguageDialog(BuildContext context, WidgetRef ref) {
-    final currentLanguage = ref.watch(settingsProvider).language;
-    final loc = AppLocalizations.of(context);
-    const languages = ['ru', 'en', 'kk', 'ky', 'tg', 'tk', 'uz'];
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(loc.translate('settings.language.title')),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: languages.length,
-            itemBuilder: (context, index) {
-              final langCode = languages[index];
-              final isSelected = langCode == currentLanguage;
-              return ListTile(
-                title: Text(_getLanguageName(loc, langCode)),
-                leading: Icon(
-                  isSelected
-                      ? Icons.radio_button_checked
-                      : Icons.radio_button_unchecked,
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : null,
-                ),
-                onTap: () async {
-                  await ref
-                      .read(settingsProvider.notifier)
-                      .updateLanguage(langCode);
-                  TrackerService.trackSettingsChanged(
-                    setting: 'language',
-                    value: langCode,
-                  );
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                    // MaterialApp перезагрузится автоматически благодаря key в main.dart
-                  }
-                },
-              );
-            },
-          ),
-        ),
       ),
     );
   }

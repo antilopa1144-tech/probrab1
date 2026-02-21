@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter/widgets.dart';
 import 'package:share_plus/share_plus.dart';
 import '../models/project_v2.dart';
 import '../models/shareable_content.dart';
@@ -7,6 +7,8 @@ import '../models/export_data.dart';
 import '../services/csv_export_service.dart';
 import '../../core/services/deep_link_service.dart';
 import '../../core/exceptions/export_exception.dart';
+// ignore: implementation_imports
+import '../../presentation/services/pdf_export_service.dart';
 
 /// Use case для шаринга проектов в различных форматах
 class ShareProjectUseCase {
@@ -66,27 +68,23 @@ class ShareProjectUseCase {
   }
 
   /// Поделиться проектом как PDF файл
-  Future<ShareResult> shareAsPdf(ProjectV2 project) async {
+  Future<ShareResult> shareAsPdf(ProjectV2 project, [BuildContext? context]) async {
     try {
-      // Создаем временный файл для PDF
-      final directory = await getTemporaryDirectory();
-      final filename = _generatePdfFilename(project.name);
-      final filePath = '${directory.path}/$filename';
+      if (context == null) throw ExportException.generationError('PDF', 'BuildContext required');
+      // ignore: use_build_context_synchronously
+      final filePath = await PdfExportService.exportProject(project, context);
 
-      // TODO: Implement actual PDF generation
-      // For now, just create a placeholder
-      final file = File(filePath);
-      await file.writeAsString('PDF generation not implemented yet');
-
-      // ignore: deprecated_member_use
-      await Share.shareXFiles(
-        [XFile(filePath)],
-        subject: 'Проект ${project.name}',
-        text: 'PDF экспорт проекта "${project.name}"',
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(filePath)],
+          subject: 'Проект ${project.name}',
+          text: 'PDF экспорт проекта "${project.name}"',
+        ),
       );
 
       return ShareResult.success('pdf');
     } catch (e) {
+      if (e is ExportException) rethrow;
       throw ExportException.generationError('PDF', e);
     }
   }
@@ -143,21 +141,6 @@ class ShareProjectUseCase {
     );
   }
 
-  /// Генерировать имя PDF файла
-  String _generatePdfFilename(String projectName) {
-    final now = DateTime.now();
-    final dateStr =
-        '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
-    final timeStr =
-        '${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}';
-
-    final cleanName = projectName
-        .replaceAll(RegExp(r'[^\w\s-]'), '')
-        .replaceAll(RegExp(r'\s+'), '_')
-        .toLowerCase();
-
-    return 'probrab_${cleanName}_${dateStr}_$timeStr.pdf';
-  }
 }
 
 /// Результат операции шаринга

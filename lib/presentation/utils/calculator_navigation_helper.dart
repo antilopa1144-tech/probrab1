@@ -6,7 +6,6 @@ import '../../domain/calculators/calculator_registry.dart';
 import '../../domain/models/calculator_definition_v2.dart';
 import '../../domain/models/calculator_result_payload.dart';
 import '../../core/animations/page_transitions.dart';
-import '../widgets/common/premium_lock_dialog.dart';
 import 'calculator_screen_registry.dart';
 
 /// Помощник для навигации к калькуляторам.
@@ -23,17 +22,8 @@ class CalculatorNavigationHelper {
     BuildContext context,
     CalculatorDefinitionV2 definition, {
     Map<String, double>? initialInputs,
-    int? projectId, // NEW: Pass project context for "Save to Project" functionality
-    bool checkPremium = true, // Check premium access before opening
+    int? projectId,
   }) async {
-    // Проверить доступ к Premium калькулятору
-    if (checkPremium && _isPremiumCalculator(definition.id)) {
-      final hasAccess = await _checkPremiumAccess(context, definition.id);
-      if (!hasAccess || !context.mounted) {
-        return null; // Доступ запрещён или контекст недоступен
-      }
-    }
-
     final screen = CalculatorScreenRegistry.buildWithFallback(
       definition,
       initialInputs,
@@ -48,40 +38,6 @@ class CalculatorNavigationHelper {
     return result;
   }
 
-  /// Проверить, является ли калькулятор Premium
-  static bool _isPremiumCalculator(String calculatorId) {
-    const premiumCalculators = <String>{
-      'three_d_panels',
-      'underfloor_heating',
-      'tile_adhesive_v2',
-      'wood_lining',
-    };
-    return premiumCalculators.contains(calculatorId);
-  }
-
-  /// Проверить Premium доступ и показать диалог если нужно
-  static Future<bool> _checkPremiumAccess(
-    BuildContext context,
-    String calculatorId,
-  ) async {
-    // TODO: Интегрировать с PremiumService
-    // Временно всегда разрешаем доступ в разработке
-    // final premiumService = await PremiumService.instance;
-    // if (premiumService.hasCalculatorAccess(calculatorId)) {
-    //   return true;
-    // }
-
-    // Показать диалог блокировки
-    final loc = AppLocalizations.of(context);
-    await PremiumLockDialog.show(
-      context,
-      featureName: loc.translate('calculator.$calculatorId.title'),
-      description: 'Расширенные калькуляторы доступны только в Premium версии',
-    );
-
-    return false;
-  }
-
   /// Открыть калькулятор по ID.
   /// Сначала пытается найти определение, затем открывает экран.
   ///
@@ -92,7 +48,6 @@ class CalculatorNavigationHelper {
     String calculatorId, {
     Map<String, double>? initialInputs,
     int? projectId,
-    bool checkPremium = true,
   }) async {
     final canonicalId = CalculatorIdMigration.canonicalize(calculatorId);
     final definition = CalculatorRegistry.getById(canonicalId);
@@ -103,7 +58,6 @@ class CalculatorNavigationHelper {
         definition,
         initialInputs: initialInputs,
         projectId: projectId,
-        checkPremium: checkPremium,
       );
     }
 

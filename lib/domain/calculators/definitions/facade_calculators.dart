@@ -10,7 +10,7 @@ import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
 import '../../usecases/calculate_brick_facing.dart';
 import '../../usecases/calculate_facade_panels.dart';
-import '../../usecases/calculate_fence.dart';
+import '../../usecases/calculate_fence_v2.dart';
 import '../../usecases/calculate_stairs.dart';
 import '../../usecases/calculate_terrace.dart';
 import '../../usecases/calculate_insulation_mineral_wool.dart';
@@ -253,13 +253,13 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
       subCategoryKey: 'subcategory.fences',
       fields: [
         const CalculatorField(
-          key: 'length',
+          key: 'fenceLength',
           labelKey: 'input.length',
           unitType: UnitType.meters,
           inputType: FieldInputType.slider,
-          defaultValue: 10.0,
+          defaultValue: 50.0,
           minValue: 1.0,
-          maxValue: 500.0,
+          maxValue: 1000.0,
           step: 1.0,
           iconName: 'straighten',
           group: 'dimensions',
@@ -267,31 +267,48 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           order: 1,
         ),
         const CalculatorField(
-          key: 'height',
+          key: 'fenceHeight',
           labelKey: 'input.height',
           unitType: UnitType.meters,
           inputType: FieldInputType.slider,
           defaultValue: 2.0,
-          minValue: 0.5,
-          maxValue: 4.0,
-          step: 1.0,
+          minValue: 1.0,
+          maxValue: 3.0,
+          step: 0.1,
           iconName: 'height',
           group: 'dimensions',
           required: true,
           order: 2,
         ),
         const CalculatorField(
-          key: 'materialType',
-          labelKey: 'input.type',
+          key: 'postSpacing',
+          labelKey: 'input.postSpacing',
+          unitType: UnitType.meters,
+          inputType: FieldInputType.slider,
+          defaultValue: 2.5,
+          minValue: 2.0,
+          maxValue: 3.5,
+          step: 0.1,
+          iconName: 'fence',
+          group: 'dimensions',
+          required: false,
+          order: 3,
+        ),
+        const CalculatorField(
+          key: 'fenceType',
+          labelKey: 'input.fenceType',
           unitType: UnitType.pieces,
-          inputType: FieldInputType.number,
-          defaultValue: 1.0,
-          minValue: 1.0,
-          maxValue: 4.0,
+          inputType: FieldInputType.select,
+          defaultValue: 0.0,
           iconName: 'category',
           group: 'material',
           required: true,
-          order: 3,
+          order: 4,
+          options: [
+            FieldOption(value: 0.0, labelKey: 'input.fenceType.profsheet'),
+            FieldOption(value: 1.0, labelKey: 'input.fenceType.picket'),
+            FieldOption(value: 2.0, labelKey: 'input.fenceType.chainlink'),
+          ],
         ),
         const CalculatorField(
           key: 'gates',
@@ -338,7 +355,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.rasstoyanie_mezhdu_stolbami_2'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.vorota_i_kalitki_dolzhny'),
       ],
-      useCase: CalculateFence(),
+      useCase: CalculateFenceV2(),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 10,
