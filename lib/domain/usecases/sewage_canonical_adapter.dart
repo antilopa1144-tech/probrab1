@@ -1,143 +1,7 @@
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
-class SewageSeptikTypeSpec {
-  final int id;
-  final String key;
-  final String label;
-
-  const SewageSeptikTypeSpec({
-    required this.id,
-    required this.key,
-    required this.label,
-  });
-}
-
-class SewageGroundTypeSpec {
-  final int id;
-  final String key;
-  final String label;
-  final double gravelM3;
-
-  const SewageGroundTypeSpec({
-    required this.id,
-    required this.key,
-    required this.label,
-    required this.gravelM3,
-  });
-}
-
-class SewagePackagingRules {
-  final String unit;
-  final double packageSize;
-
-  const SewagePackagingRules({
-    required this.unit,
-    required this.packageSize,
-  });
-}
-
-class SewageMaterialRules {
-  final double litersPerPersonPerDay;
-  final double reserveDays;
-  final double ringVolumeM3;
-  final double eurocubeUsableM3;
-  final double pipeSectionM;
-  final double pipeReserve;
-  final int defaultElbows;
-  final int defaultTees;
-  final Map<int, double> gravelByGround;
-  final double geotextileFactor;
-  final double sandBackfillFactor;
-
-  const SewageMaterialRules({
-    required this.litersPerPersonPerDay,
-    required this.reserveDays,
-    required this.ringVolumeM3,
-    required this.eurocubeUsableM3,
-    required this.pipeSectionM,
-    required this.pipeReserve,
-    required this.defaultElbows,
-    required this.defaultTees,
-    required this.gravelByGround,
-    required this.geotextileFactor,
-    required this.sandBackfillFactor,
-  });
-}
-
-class SewageWarningRules {
-  final int bioTreatmentResidentsThreshold;
-
-  const SewageWarningRules({
-    required this.bioTreatmentResidentsThreshold,
-  });
-}
-
-class SewageCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final List<SewageSeptikTypeSpec> septikTypes;
-  final List<SewageGroundTypeSpec> groundTypes;
-  final SewagePackagingRules packagingRules;
-  final SewageMaterialRules materialRules;
-  final SewageWarningRules warningRules;
-
-  const SewageCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.septikTypes,
-    required this.groundTypes,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-const SewageCanonicalSpec sewageCanonicalSpecV1 = SewageCanonicalSpec(
-  calculatorId: 'sewage',
-  formulaVersion: 'sewage-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'residents', defaultValue: 4, min: 1, max: 20),
-    CanonicalInputField(key: 'septikType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'chambersCount', defaultValue: 2, min: 1, max: 3),
-    CanonicalInputField(key: 'pipeLength', unit: 'm', defaultValue: 10, min: 1, max: 50),
-    CanonicalInputField(key: 'groundType', defaultValue: 0, min: 0, max: 2),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  septikTypes: [
-    SewageSeptikTypeSpec(id: 0, key: 'concrete_rings', label: 'Бетонные кольца'),
-    SewageSeptikTypeSpec(id: 1, key: 'plastic', label: 'Пластиковый септик'),
-    SewageSeptikTypeSpec(id: 2, key: 'eurocubes', label: 'Еврокубы'),
-  ],
-  groundTypes: [
-    SewageGroundTypeSpec(id: 0, key: 'sand', label: 'Песок', gravelM3: 0),
-    SewageGroundTypeSpec(id: 1, key: 'loam', label: 'Суглинок', gravelM3: 2),
-    SewageGroundTypeSpec(id: 2, key: 'clay', label: 'Глина', gravelM3: 4),
-  ],
-  packagingRules: SewagePackagingRules(
-    unit: 'шт',
-    packageSize: 1,
-  ),
-  materialRules: SewageMaterialRules(
-    litersPerPersonPerDay: 200,
-    reserveDays: 3,
-    ringVolumeM3: 0.71,
-    eurocubeUsableM3: 0.8,
-    pipeSectionM: 3,
-    pipeReserve: 1.05,
-    defaultElbows: 3,
-    defaultTees: 2,
-    gravelByGround: {0: 0, 1: 2, 2: 4},
-    geotextileFactor: 2,
-    sandBackfillFactor: 0.5,
-  ),
-  warningRules: SewageWarningRules(
-    bioTreatmentResidentsThreshold: 10,
-  ),
-);
+import 'canonical_adapter_utils.dart';
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.95, 'REC': 1.0, 'MAX': 1.1},
@@ -145,52 +9,21 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.05},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(SewageCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(SewageCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(SewageCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
 CanonicalCalculatorContractResult calculateCanonicalSewage(
   Map<String, double> inputs, {
-  SewageCanonicalSpec spec = sewageCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
-  final residents = (inputs['residents'] ?? _defaultFor(spec, 'residents', 4)).round().clamp(1, 20);
-  final septikType = (inputs['septikType'] ?? _defaultFor(spec, 'septikType', 0)).round().clamp(0, 2);
-  final chambersCount = (inputs['chambersCount'] ?? _defaultFor(spec, 'chambersCount', 2)).round().clamp(1, 3);
-  final pipeLength = (inputs['pipeLength'] ?? _defaultFor(spec, 'pipeLength', 10)).clamp(1.0, 50.0);
-  final groundType = (inputs['groundType'] ?? _defaultFor(spec, 'groundType', 0)).round().clamp(0, 2);
+  final spec = specOverride ?? const SpecReader(sewageSpecData);
+
+  final residents = (inputs['residents'] ?? defaultFor(spec, 'residents', 4)).round().clamp(1, 20);
+  final septikType = (inputs['septikType'] ?? defaultFor(spec, 'septikType', 0)).round().clamp(0, 2);
+  final chambersCount = (inputs['chambersCount'] ?? defaultFor(spec, 'chambersCount', 2)).round().clamp(1, 3);
+  final pipeLength = (inputs['pipeLength'] ?? defaultFor(spec, 'pipeLength', 10)).clamp(1.0, 50.0);
+  final groundType = (inputs['groundType'] ?? defaultFor(spec, 'groundType', 0)).round().clamp(0, 2);
 
   /* ─── volume calculation ─── */
-  final dailyVolumeLiters = residents * spec.materialRules.litersPerPersonPerDay;
-  final totalVolumeLiters = dailyVolumeLiters * spec.materialRules.reserveDays;
+  final dailyVolumeLiters = residents * spec.materialRule<num>('liters_per_person_per_day').toDouble();
+  final totalVolumeLiters = dailyVolumeLiters * spec.materialRule<num>('reserve_days').toDouble();
   final totalVolume = totalVolumeLiters / 1000;
   final volumePerChamber = totalVolume / chambersCount;
 
@@ -210,7 +43,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
 
   if (septikType == 0) {
     // Concrete rings KS 10-9
-    ringsPerChamber = (volumePerChamber / spec.materialRules.ringVolumeM3).ceil();
+    ringsPerChamber = (volumePerChamber / spec.materialRule<num>('ring_volume_m3').toDouble()).ceil();
     totalRings = ringsPerChamber * chambersCount;
     bottomPlates = chambersCount;
     topPlates = chambersCount;
@@ -224,7 +57,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: totalRings.toDouble(),
         unit: 'шт',
         withReserve: totalRings.toDouble(),
-        purchaseQty: totalRings,
+        purchaseQty: totalRings.toInt(),
         category: 'Ёмкость',
       ),
       CanonicalMaterialResult(
@@ -232,7 +65,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: bottomPlates.toDouble(),
         unit: 'шт',
         withReserve: bottomPlates.toDouble(),
-        purchaseQty: bottomPlates,
+        purchaseQty: bottomPlates.toInt(),
         category: 'Ёмкость',
       ),
       CanonicalMaterialResult(
@@ -240,7 +73,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: topPlates.toDouble(),
         unit: 'шт',
         withReserve: topPlates.toDouble(),
-        purchaseQty: topPlates,
+        purchaseQty: topPlates.toInt(),
         category: 'Ёмкость',
       ),
       CanonicalMaterialResult(
@@ -248,7 +81,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: covers.toDouble(),
         unit: 'шт',
         withReserve: covers.toDouble(),
-        purchaseQty: covers,
+        purchaseQty: covers.toInt(),
         category: 'Ёмкость',
       ),
       CanonicalMaterialResult(
@@ -256,14 +89,14 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: sealingRings.toDouble(),
         unit: 'шт',
         withReserve: sealingRings.toDouble(),
-        purchaseQty: sealingRings,
+        purchaseQty: sealingRings.toInt(),
         category: 'Герметизация',
       ),
     ]);
   } else if (septikType == 1) {
     // Plastic septic
     septicCount = 1;
-    sandBackfill = (totalVolume * spec.materialRules.sandBackfillFactor).ceil();
+    sandBackfill = (totalVolume * spec.materialRule<num>('sand_backfill_factor').toDouble()).ceil();
     basePrimary = septicCount.toDouble();
 
     materials.addAll([
@@ -272,7 +105,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: septicCount.toDouble(),
         unit: 'шт',
         withReserve: septicCount.toDouble(),
-        purchaseQty: septicCount,
+        purchaseQty: septicCount.toInt(),
         category: 'Ёмкость',
       ),
       CanonicalMaterialResult(
@@ -280,13 +113,13 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: sandBackfill.toDouble(),
         unit: 'м\u00b3',
         withReserve: sandBackfill.toDouble(),
-        purchaseQty: sandBackfill,
+        purchaseQty: sandBackfill.toInt(),
         category: 'Обсыпка',
       ),
     ]);
   } else {
     // Eurocubes
-    eurocubes = (totalVolume / spec.materialRules.eurocubeUsableM3).ceil();
+    eurocubes = (totalVolume / spec.materialRule<num>('eurocube_usable_m3').toDouble()).ceil();
     basePrimary = eurocubes.toDouble();
 
     materials.add(CanonicalMaterialResult(
@@ -294,17 +127,17 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       quantity: eurocubes.toDouble(),
       unit: 'шт',
       withReserve: eurocubes.toDouble(),
-      purchaseQty: eurocubes,
+      purchaseQty: eurocubes.toInt(),
       category: 'Ёмкость',
     ));
   }
 
   /* ─── common materials ─── */
-  final pipeSections = (pipeLength * spec.materialRules.pipeReserve / spec.materialRules.pipeSectionM).ceil();
-  final elbows = spec.materialRules.defaultElbows;
-  final tees = spec.materialRules.defaultTees;
-  final gravel = (spec.materialRules.gravelByGround[groundType] ?? 0).round();
-  final geotextile = groundType >= 1 ? (totalVolume * spec.materialRules.geotextileFactor).ceil() : 0;
+  final pipeSections = (pipeLength * spec.materialRule<num>('pipe_reserve').toDouble() / spec.materialRule<num>('pipe_section_m').toDouble()).ceil();
+  final elbows = spec.materialRule<num>('default_elbows').toDouble();
+  final tees = spec.materialRule<num>('default_tees').toDouble();
+  final gravel = ((spec.materialRule<Map>('gravel_by_ground')['$groundType'] as num?)?.toDouble() ?? 0).round();
+  final geotextile = groundType >= 1 ? (totalVolume * spec.materialRule<num>('geotextile_factor').toDouble()).ceil() : 0;
 
   materials.addAll([
     CanonicalMaterialResult(
@@ -312,7 +145,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       quantity: pipeSections.toDouble(),
       unit: 'шт',
       withReserve: pipeSections.toDouble(),
-      purchaseQty: pipeSections,
+      purchaseQty: pipeSections.toInt(),
       category: 'Трубопровод',
     ),
     CanonicalMaterialResult(
@@ -320,7 +153,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       quantity: elbows.toDouble(),
       unit: 'шт',
       withReserve: elbows.toDouble(),
-      purchaseQty: elbows,
+      purchaseQty: elbows.toInt(),
       category: 'Фасонные',
     ),
     CanonicalMaterialResult(
@@ -328,7 +161,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       quantity: tees.toDouble(),
       unit: 'шт',
       withReserve: tees.toDouble(),
-      purchaseQty: tees,
+      purchaseQty: tees.toInt(),
       category: 'Фасонные',
     ),
   ]);
@@ -339,7 +172,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       quantity: gravel.toDouble(),
       unit: 'м\u00b3',
       withReserve: gravel.toDouble(),
-      purchaseQty: gravel,
+      purchaseQty: gravel.toInt(),
       category: 'Дренаж',
     ));
   }
@@ -350,7 +183,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       quantity: geotextile.toDouble(),
       unit: 'м\u00b2',
       withReserve: geotextile.toDouble(),
-      purchaseQty: geotextile,
+      purchaseQty: geotextile.toInt(),
       category: 'Дренаж',
     ));
   }
@@ -358,15 +191,15 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
   /* ─── scenarios ─── */
   final scenarios = <String, CanonicalScenarioResult>{};
 
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(basePrimary * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(basePrimary * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
-    final purchaseQuantity = _roundValue(packageCount.toDouble(), 6);
+    final purchaseQuantity = roundValue(packageCount.toDouble(), 6);
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: purchaseQuantity,
-      leftover: _roundValue(purchaseQuantity - exactNeed, 6),
+      leftover: roundValue(purchaseQuantity - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'septikType:$septikType',
@@ -375,8 +208,8 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         'packaging:sewage-unit',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: 'sewage-unit',
@@ -394,7 +227,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
   if (groundType == 2) {
     warnings.add('Глинистый грунт \u2014 рекомендуется дренажный тоннель');
   }
-  if (residents > spec.warningRules.bioTreatmentResidentsThreshold) {
+  if (residents > spec.warningRule<num>('bio_treatment_residents_threshold').toDouble()) {
     warnings.add('Более 10 жителей \u2014 рекомендуется станция биологической очистки');
   }
   if (chambersCount == 1) {
@@ -409,12 +242,12 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       'residents': residents.toDouble(),
       'septikType': septikType.toDouble(),
       'chambersCount': chambersCount.toDouble(),
-      'pipeLength': _roundValue(pipeLength, 3),
+      'pipeLength': roundValue(pipeLength, 3),
       'groundType': groundType.toDouble(),
       'dailyVolumeLiters': dailyVolumeLiters,
       'totalVolumeLiters': totalVolumeLiters,
-      'totalVolume': _roundValue(totalVolume, 3),
-      'volumePerChamber': _roundValue(volumePerChamber, 3),
+      'totalVolume': roundValue(totalVolume, 3),
+      'volumePerChamber': roundValue(volumePerChamber, 3),
       'totalRings': totalRings.toDouble(),
       'ringsPerChamber': ringsPerChamber.toDouble(),
       'bottomPlates': bottomPlates.toDouble(),

@@ -1,55 +1,7 @@
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
-const PrimerCanonicalSpec primerCanonicalSpecV1 = PrimerCanonicalSpec(
-  calculatorId: 'primer',
-  formulaVersion: 'primer-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'inputMode', defaultValue: 1, min: 0, max: 1),
-    CanonicalInputField(key: 'area', unit: 'm2', defaultValue: 50, min: 1, max: 500),
-    CanonicalInputField(key: 'roomWidth', unit: 'm', defaultValue: 4, min: 0.5, max: 20),
-    CanonicalInputField(key: 'roomLength', unit: 'm', defaultValue: 5, min: 0.5, max: 20),
-    CanonicalInputField(key: 'roomHeight', unit: 'm', defaultValue: 2.7, min: 2, max: 5),
-    CanonicalInputField(key: 'surfaceType', defaultValue: 0, min: 0, max: 3),
-    CanonicalInputField(key: 'primerType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'coats', defaultValue: 1, min: 1, max: 3),
-    CanonicalInputField(key: 'canSize', unit: 'l', defaultValue: 5, min: 5, max: 20),
-  ],
-  enabledFactors: [
-    'surface_quality',
-    'geometry_complexity',
-    'installation_method',
-    'worker_skill',
-    'waste_factor',
-    'logistics_buffer',
-    'packaging_rounding',
-  ],
-  surfaceTypes: [
-    PrimerSurfaceSpec(id: 0, key: 'absorbent_mineral', label: 'Бетон, пеноблок (впитывающая)', multiplier: 1.5),
-    PrimerSurfaceSpec(id: 1, key: 'plasterboard_and_plaster', label: 'Гипсокартон, штукатурка', multiplier: 1.0),
-    PrimerSurfaceSpec(id: 2, key: 'non_porous', label: 'Кафель, стекло (непористая)', multiplier: 1.2),
-    PrimerSurfaceSpec(id: 3, key: 'wood_osb', label: 'Дерево, OSB', multiplier: 1.3),
-  ],
-  primerTypes: [
-    PrimerTypeSpec(id: 0, key: 'deep_penetration', label: 'Грунтовка глубокого проникновения', baseLitersPerM2: 0.1),
-    PrimerTypeSpec(id: 1, key: 'contact', label: 'Бетон-контакт', baseLitersPerM2: 0.35),
-    PrimerTypeSpec(id: 2, key: 'for_gkl', label: 'Грунтовка для ГКЛ', baseLitersPerM2: 0.12),
-  ],
-  packagingRules: PrimerPackagingRules(
-    unit: 'л',
-    defaultPackageSize: 5,
-    allowedPackageSizes: [5, 10, 15, 20],
-  ),
-  materialRules: PrimerMaterialRules(
-    rollerAreaM2PerPiece: 30,
-    brushesCount: 2,
-    traysCount: 1,
-    dryingTimeHoursByType: {0: 4, 1: 3, 2: 2},
-  ),
-  warningRules: PrimerWarningRules(
-    absorbentSurfaceIds: [0],
-    recommendedDoubleCoatSurfaceIds: [0],
-  ),
-);
+import 'canonical_adapter_utils.dart';
 
 const Map<String, Map<String, double>> _factorTable = {
   'surface_quality': {'MIN': 0.95, 'REC': 1.0, 'MAX': 1.08},
@@ -61,98 +13,67 @@ const Map<String, Map<String, double>> _factorTable = {
   'packaging_rounding': {'MIN': 1.0, 'REC': 1.01, 'MAX': 1.03},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
 bool hasCanonicalPrimerInputs(Map<String, double> inputs) {
   const canonicalKeys = ['inputMode', 'surfaceType', 'primerType', 'coats', 'roomWidth', 'roomLength', 'roomHeight'];
   return canonicalKeys.any(inputs.containsKey);
 }
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(PrimerCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-double _resolveWorkArea(PrimerCanonicalSpec spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? _defaultFor(spec, 'inputMode', 1)).round();
+double _resolveWorkArea(SpecReader spec, Map<String, double> inputs) {
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 1)).round();
   final hasRoomDimensions = inputs.containsKey('roomWidth') && inputs.containsKey('roomLength') && inputs.containsKey('roomHeight');
   if ((inputMode == 0 || (!inputs.containsKey('inputMode') && hasRoomDimensions)) && hasRoomDimensions) {
-    final roomWidth = (inputs['roomWidth'] ?? _defaultFor(spec, 'roomWidth', 4)).clamp(0.5, 20).toDouble();
-    final roomLength = (inputs['roomLength'] ?? _defaultFor(spec, 'roomLength', 5)).clamp(0.5, 20).toDouble();
-    final roomHeight = (inputs['roomHeight'] ?? _defaultFor(spec, 'roomHeight', 2.7)).clamp(2, 5).toDouble();
+    final roomWidth = (inputs['roomWidth'] ?? defaultFor(spec, 'roomWidth', 4)).clamp(0.5, 20).toDouble();
+    final roomLength = (inputs['roomLength'] ?? defaultFor(spec, 'roomLength', 5)).clamp(0.5, 20).toDouble();
+    final roomHeight = (inputs['roomHeight'] ?? defaultFor(spec, 'roomHeight', 2.7)).clamp(2, 5).toDouble();
     return 2 * (roomWidth + roomLength) * roomHeight;
   }
-  return (inputs['area'] ?? _defaultFor(spec, 'area', 50)).clamp(1, 500).toDouble();
+  return (inputs['area'] ?? defaultFor(spec, 'area', 50)).clamp(1, 500).toDouble();
 }
 
-double _resolveCanSize(PrimerCanonicalSpec spec, Map<String, double> inputs) {
-  final canSize = (inputs['canSize'] ?? spec.packagingRules.defaultPackageSize).toDouble();
-  if (spec.packagingRules.allowedPackageSizes.contains(canSize)) {
+double _resolveCanSize(SpecReader spec, Map<String, double> inputs) {
+  final canSize = (inputs['canSize'] ?? spec.packagingRule<num>('default_package_size').toDouble());
+  if ((spec.packagingRule<List>('allowed_package_sizes') ?? []).contains(canSize)) {
     return canSize;
   }
-  return spec.packagingRules.defaultPackageSize;
+  return spec.packagingRule<num>('default_package_size').toDouble();
 }
 
-PrimerSurfaceSpec _resolveSurface(PrimerCanonicalSpec spec, Map<String, double> inputs) {
-  final surfaceType = (inputs['surfaceType'] ?? _defaultFor(spec, 'surfaceType', 0)).round().clamp(0, 3);
-  for (final surface in spec.surfaceTypes) {
-    if (surface.id == surfaceType) return surface;
+Map<String, dynamic> _resolveSurface(SpecReader spec, Map<String, double> inputs) {
+  final surfaceType = (inputs['surfaceType'] ?? defaultFor(spec, 'surfaceType', 0)).round().clamp(0, 3);
+  for (final surface in spec.normativeList('surface_types')) {
+    if ((surface['id'] as num).toInt() == surfaceType) return surface;
   }
-  return spec.surfaceTypes.first;
+  return spec.normativeList('surface_types').first;
 }
 
-PrimerTypeSpec _resolvePrimerType(PrimerCanonicalSpec spec, Map<String, double> inputs) {
-  final primerType = (inputs['primerType'] ?? _defaultFor(spec, 'primerType', 0)).round().clamp(0, 2);
-  for (final type in spec.primerTypes) {
-    if (type.id == primerType) return type;
+Map<String, dynamic> _resolvePrimerType(SpecReader spec, Map<String, double> inputs) {
+  final primerType = (inputs['primerType'] ?? defaultFor(spec, 'primerType', 0)).round().clamp(0, 2);
+  for (final type in spec.normativeList('primer_types')) {
+    if ((type['id'] as num).toInt() == primerType) return type;
   }
-  return spec.primerTypes.first;
-}
-
-Map<String, double> _keyFactors(PrimerCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(PrimerCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
+  return spec.normativeList('primer_types').first;
 }
 
 CanonicalCalculatorContractResult calculateCanonicalPrimer(
   Map<String, double> inputs, {
-  PrimerCanonicalSpec spec = primerCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(primerSpecData);
+
   final workArea = _resolveWorkArea(spec, inputs);
   final surface = _resolveSurface(spec, inputs);
   final primerType = _resolvePrimerType(spec, inputs);
-  final coats = (inputs['coats'] ?? _defaultFor(spec, 'coats', 1)).round().clamp(1, 3);
+  final coats = (inputs['coats'] ?? defaultFor(spec, 'coats', 1)).round().clamp(1, 3);
   final canSize = _resolveCanSize(spec, inputs);
-  final lPerSqm = primerType.baseLitersPerM2 * surface.multiplier;
+  final lPerSqm = (primerType['baseLitersPerM2'] as num).toDouble() * (surface['multiplier'] as num).toDouble();
   final scenarios = <String, CanonicalScenarioResult>{};
 
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(workArea * lPerSqm * coats * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(workArea * lPerSqm * coats * multiplier, 6);
     final packagesCount = (exactNeed / canSize).ceil();
-    final purchaseQuantity = _roundValue(packagesCount * canSize, 6);
-    final leftover = _roundValue(purchaseQuantity - exactNeed, 6);
+    final purchaseQuantity = roundValue(packagesCount * canSize, 6);
+    final leftover = roundValue(purchaseQuantity - exactNeed, 6);
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
@@ -160,28 +81,28 @@ CanonicalCalculatorContractResult calculateCanonicalPrimer(
       leftover: leftover,
       assumptions: [
         'formula_version:${spec.formulaVersion}',
-        'surface:${surface.key}',
-        'primer:${primerType.key}',
+        'surface:${surface['key'] as String}',
+        'primer:${primerType['key'] as String}',
       ],
-      keyFactors: _keyFactors(spec, scenarioName),
+      keyFactors: buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
       buyPlan: CanonicalBuyPlan(
         packageLabel: 'primer-can-${canSize.toInt()}l',
         packageSize: canSize,
         packagesCount: packagesCount,
-        unit: spec.packagingRules.unit,
+        unit: spec.packagingRule<String>('unit'),
       ),
     );
   }
 
   final recScenario = scenarios['REC']!;
   final warnings = <String>[];
-  if (spec.warningRules.absorbentSurfaceIds.contains(surface.id) && primerType.id != 0) {
+  if ((spec.warningRule<List>('absorbent_surface_ids') ?? []).contains((surface['id'] as num).toInt()) && (primerType['id'] as num).toInt() != 0) {
     warnings.add('Для сильно впитывающих поверхностей рекомендуется грунтовка глубокого проникновения');
   }
-  if (spec.warningRules.absorbentSurfaceIds.contains(surface.id) && primerType.id == 1) {
+  if ((spec.warningRule<List>('absorbent_surface_ids') ?? []).contains((surface['id'] as num).toInt()) && (primerType['id'] as num).toInt() == 1) {
     warnings.add('Бетон-контакт применяют в основном по гладким невпитывающим основаниям');
   }
-  if (spec.warningRules.recommendedDoubleCoatSurfaceIds.contains(surface.id) && coats == 1) {
+  if ((spec.warningRule<List>('recommended_double_coat_surface_ids') ?? []).contains((surface['id'] as num).toInt()) && coats == 1) {
     warnings.add('Для впитывающих оснований обычно рекомендуют 2 слоя грунтовки');
   }
 
@@ -190,7 +111,7 @@ CanonicalCalculatorContractResult calculateCanonicalPrimer(
     formulaVersion: spec.formulaVersion,
     materials: [
       CanonicalMaterialResult(
-        name: '${primerType.label} (${canSize.toInt()} л)',
+        name: '${primerType['label'] as String} (${canSize.toInt()} л)',
         quantity: recScenario.exactNeed,
         unit: 'л',
         withReserve: recScenario.purchaseQuantity,
@@ -199,44 +120,44 @@ CanonicalCalculatorContractResult calculateCanonicalPrimer(
       ),
       CanonicalMaterialResult(
         name: 'Валик малярный 250 мм',
-        quantity: (workArea / spec.materialRules.rollerAreaM2PerPiece).ceilToDouble(),
+        quantity: (workArea / spec.materialRule<num>('roller_area_m2_per_piece').toDouble()).ceilToDouble(),
         unit: 'шт',
-        withReserve: (workArea / spec.materialRules.rollerAreaM2PerPiece).ceilToDouble(),
-        purchaseQty: (workArea / spec.materialRules.rollerAreaM2PerPiece).ceil(),
+        withReserve: (workArea / spec.materialRule<num>('roller_area_m2_per_piece').toDouble()).ceilToDouble(),
+        purchaseQty: (workArea / spec.materialRule<num>('roller_area_m2_per_piece').toDouble()).ceil(),
         category: 'Инструмент',
       ),
       CanonicalMaterialResult(
         name: 'Кисть для углов и примыканий',
-        quantity: spec.materialRules.brushesCount.toDouble(),
+        quantity: spec.materialRule<num>('brushes_count').toDouble(),
         unit: 'шт',
-        withReserve: spec.materialRules.brushesCount.toDouble(),
-        purchaseQty: spec.materialRules.brushesCount,
+        withReserve: spec.materialRule<num>('brushes_count').toDouble(),
+        purchaseQty: spec.materialRule<num>('brushes_count').toInt(),
         category: 'Инструмент',
       ),
       CanonicalMaterialResult(
         name: 'Кювета для грунтовки',
-        quantity: spec.materialRules.traysCount.toDouble(),
+        quantity: spec.materialRule<num>('trays_count').toDouble(),
         unit: 'шт',
-        withReserve: spec.materialRules.traysCount.toDouble(),
-        purchaseQty: spec.materialRules.traysCount,
+        withReserve: spec.materialRule<num>('trays_count').toDouble(),
+        purchaseQty: spec.materialRule<num>('trays_count').toInt(),
         category: 'Инструмент',
       ),
     ],
     totals: {
-      'area': _roundValue(workArea, 3),
-      'inputMode': (inputs['inputMode'] ?? _defaultFor(spec, 'inputMode', 1)).round().toDouble(),
-      'surfaceType': surface.id.toDouble(),
-      'primerType': primerType.id.toDouble(),
+      'area': roundValue(workArea, 3),
+      'inputMode': (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 1)).round().toDouble(),
+      'surfaceType': (surface['id'] as num).toInt().toDouble(),
+      'primerType': (primerType['id'] as num).toInt().toDouble(),
       'coats': coats.toDouble(),
       'canSize': canSize,
-      'lPerSqm': _roundValue(lPerSqm, 4),
+      'lPerSqm': roundValue(lPerSqm, 4),
       'minExactNeedL': scenarios['MIN']!.exactNeed,
       'recExactNeedL': recScenario.exactNeed,
       'maxExactNeedL': scenarios['MAX']!.exactNeed,
       'minPurchaseL': scenarios['MIN']!.purchaseQuantity,
       'recPurchaseL': recScenario.purchaseQuantity,
       'maxPurchaseL': scenarios['MAX']!.purchaseQuantity,
-      'dryingTimeHours': spec.materialRules.dryingTimeHoursByType[primerType.id] ?? 4,
+      'dryingTimeHours': (spec.materialRule<Map>('drying_time_hours_by_type')['${(primerType['id'] as num).toInt()}'] as num?)?.toDouble() ?? 4,
     },
     warnings: warnings,
     scenarios: scenarios,

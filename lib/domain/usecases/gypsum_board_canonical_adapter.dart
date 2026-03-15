@@ -1,114 +1,9 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
-class GypsumBoardPackagingRules {
-  final String unit;
-  final double packageSize;
-
-  const GypsumBoardPackagingRules({
-    required this.unit,
-    required this.packageSize,
-  });
-}
-
-class GypsumBoardMaterialRules {
-  final double sheetArea;
-  final double sheetReserve;
-  final double ppStepDefault;
-  final double screwsGklPerSheet;
-  final double dubelStep;
-  final double dubelReserve;
-  final double serpyankaReserve;
-  final double puttyPerSerpyanka;
-  final double puttyBag;
-  final double primerLPerM2;
-  final double primerReserve;
-  final double primerCan;
-  final double profileLength;
-
-  const GypsumBoardMaterialRules({
-    required this.sheetArea,
-    required this.sheetReserve,
-    required this.ppStepDefault,
-    required this.screwsGklPerSheet,
-    required this.dubelStep,
-    required this.dubelReserve,
-    required this.serpyankaReserve,
-    required this.puttyPerSerpyanka,
-    required this.puttyBag,
-    required this.primerLPerM2,
-    required this.primerReserve,
-    required this.primerCan,
-    required this.profileLength,
-  });
-}
-
-class GypsumBoardWarningRules {
-  final double largeAreaThresholdM2;
-  final bool doubleLayerNote;
-
-  const GypsumBoardWarningRules({
-    required this.largeAreaThresholdM2,
-    required this.doubleLayerNote,
-  });
-}
-
-class GypsumBoardCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final GypsumBoardPackagingRules packagingRules;
-  final GypsumBoardMaterialRules materialRules;
-  final GypsumBoardWarningRules warningRules;
-
-  const GypsumBoardCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-const GypsumBoardCanonicalSpec gypsumBoardCanonicalSpecV1 = GypsumBoardCanonicalSpec(
-  calculatorId: 'gypsum-board',
-  formulaVersion: 'gypsum-board-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'area', unit: 'm²', defaultValue: 40, min: 1, max: 1000),
-    CanonicalInputField(key: 'constructionType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'layers', defaultValue: 1, min: 1, max: 2),
-    CanonicalInputField(key: 'gklType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'profileStep', unit: 'mm', defaultValue: 600, min: 400, max: 600),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: GypsumBoardPackagingRules(
-    unit: '\u0448\u0442',
-    packageSize: 1,
-  ),
-  materialRules: GypsumBoardMaterialRules(
-    sheetArea: 3.0,
-    sheetReserve: 1.1,
-    ppStepDefault: 600,
-    screwsGklPerSheet: 24,
-    dubelStep: 0.5,
-    dubelReserve: 1.1,
-    serpyankaReserve: 1.1,
-    puttyPerSerpyanka: 0.025,
-    puttyBag: 25,
-    primerLPerM2: 0.15,
-    primerReserve: 1.15,
-    primerCan: 10,
-    profileLength: 3,
-  ),
-  warningRules: GypsumBoardWarningRules(
-    largeAreaThresholdM2: 200,
-    doubleLayerNote: true,
-  ),
-);
+import 'canonical_adapter_utils.dart';
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
@@ -116,54 +11,23 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(GypsumBoardCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(GypsumBoardCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(GypsumBoardCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
 CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
   Map<String, double> inputs, {
-  GypsumBoardCanonicalSpec spec = gypsumBoardCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
-  final area = math.max(1.0, math.min(1000.0, inputs['area'] ?? _defaultFor(spec, 'area', 40)));
-  final constructionType = (inputs['constructionType'] ?? _defaultFor(spec, 'constructionType', 0)).round().clamp(0, 2);
-  final layersRaw = (inputs['layers'] ?? _defaultFor(spec, 'layers', 1)).round();
+  final spec = specOverride ?? const SpecReader(gypsumBoardSpecData);
+
+  final area = math.max(1.0, math.min(1000.0, inputs['area'] ?? defaultFor(spec, 'area', 40)));
+  final constructionType = (inputs['constructionType'] ?? defaultFor(spec, 'constructionType', 0)).round().clamp(0, 2);
+  final layersRaw = (inputs['layers'] ?? defaultFor(spec, 'layers', 1)).round();
   final layers = layersRaw == 2 ? 2 : 1;
-  final gklType = (inputs['gklType'] ?? _defaultFor(spec, 'gklType', 0)).round().clamp(0, 2);
-  final profileStepRaw = (inputs['profileStep'] ?? _defaultFor(spec, 'profileStep', 600)).round();
+  final gklType = (inputs['gklType'] ?? defaultFor(spec, 'gklType', 0)).round().clamp(0, 2);
+  final profileStepRaw = (inputs['profileStep'] ?? defaultFor(spec, 'profileStep', 600)).round();
   final profileStep = profileStepRaw <= 400 ? 400 : 600;
   final stepM = profileStep / 1000.0;
 
   // Sheets
-  final sheetsOneSide = (area * layers / spec.materialRules.sheetArea * spec.materialRules.sheetReserve).ceil();
+  final sheetsOneSide = (area * layers / spec.materialRule<num>('sheet_area').toDouble() * spec.materialRule<num>('sheet_reserve').toDouble()).ceil();
   final totalSheets = constructionType == 1 ? sheetsOneSide * 2 : sheetsOneSide;
   final sides = constructionType == 1 ? 2 : 1;
 
@@ -178,39 +42,39 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       ? (wallLength / stepM).ceil() * (height / stepM).ceil()
       : (wallLength / stepM).ceil() + 1;
   final ppMeters = ppCount * height;
-  final ppPcs = (ppMeters * 1.05 / spec.materialRules.profileLength).ceil();
+  final ppPcs = (ppMeters * 1.05 / spec.materialRule<num>('profile_length').toDouble()).ceil();
 
   // PN guide profiles
   final guideM = constructionType == 1
       ? (wallLength + height) * 2 * 2
       : (wallLength + height) * 2;
-  final guidePcs = (guideM * 1.05 / spec.materialRules.profileLength).ceil();
+  final guidePcs = (guideM * 1.05 / spec.materialRule<num>('profile_length').toDouble()).ceil();
 
   // Screws & dubels
-  final screws = (totalSheets * spec.materialRules.screwsGklPerSheet).round();
-  final dubels = (guideM / spec.materialRules.dubelStep * 2 * spec.materialRules.dubelReserve).ceil();
+  final screws = (totalSheets * spec.materialRule<num>('screws_gkl_per_sheet').toDouble()).round();
+  final dubels = (guideM / spec.materialRule<num>('dubel_step').toDouble() * 2 * spec.materialRule<num>('dubel_reserve').toDouble()).ceil();
 
   // Serpyanka
-  final jointsM = (totalSheets * height * layers * spec.materialRules.serpyankaReserve).ceil();
-  final puttyBags = (jointsM / 10 / spec.materialRules.puttyBag).ceil();
+  final jointsM = (totalSheets * height * layers * spec.materialRule<num>('serpyanka_reserve').toDouble()).ceil();
+  final puttyBags = (jointsM / 10 / spec.materialRule<num>('putty_bag').toDouble()).ceil();
 
   // Primer
-  final primerCans = (area * sides * spec.materialRules.primerLPerM2 * spec.materialRules.primerReserve / spec.materialRules.primerCan).ceil();
+  final primerCans = (area * sides * spec.materialRule<num>('primer_l_per_m2').toDouble() * spec.materialRule<num>('primer_reserve').toDouble() / spec.materialRule<num>('primer_can').toDouble()).ceil();
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
 
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(totalSheets * multiplier, 6);
-    final packageSize = spec.packagingRules.packageSize;
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(totalSheets * multiplier, 6);
+    final packageSize = spec.packagingRule<num>('package_size').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
-    final purchaseQuantity = _roundValue(packageCount * packageSize, 6);
+    final purchaseQuantity = roundValue(packageCount * packageSize, 6);
     final packageLabel = 'gkl-sheet-${packageSize == packageSize.roundToDouble() ? packageSize.toInt() : packageSize}';
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: purchaseQuantity,
-      leftover: _roundValue(purchaseQuantity - exactNeed, 6),
+      leftover: roundValue(purchaseQuantity - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'constructionType:$constructionType',
@@ -220,14 +84,14 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
         packageSize: packageSize,
         packagesCount: packageCount,
-        unit: spec.packagingRules.unit,
+        unit: spec.packagingRule<String>('unit'),
       ),
     );
   }
@@ -235,7 +99,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
   final recScenario = scenarios['REC']!;
 
   final warnings = <String>[];
-  if (area > spec.warningRules.largeAreaThresholdM2) {
+  if (area > spec.warningRule<num>('large_area_threshold_m2').toDouble()) {
     warnings.add('\u0411\u043e\u043b\u044c\u0448\u0430\u044f \u043f\u043b\u043e\u0449\u0430\u0434\u044c \u2014 \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0443\u0435\u0442\u0441\u044f \u043f\u0440\u043e\u0444\u0435\u0441\u0441\u0438\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0439 \u043c\u043e\u043d\u0442\u0430\u0436');
   }
   if (layers == 2) {
@@ -258,7 +122,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: ppPcs.toDouble(),
       unit: '\u0448\u0442',
       withReserve: ppPcs.toDouble(),
-      purchaseQty: ppPcs,
+      purchaseQty: ppPcs.toInt(),
       category: '\u041a\u0430\u0440\u043a\u0430\u0441',
     ),
     CanonicalMaterialResult(
@@ -266,7 +130,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: guidePcs.toDouble(),
       unit: '\u0448\u0442',
       withReserve: guidePcs.toDouble(),
-      purchaseQty: guidePcs,
+      purchaseQty: guidePcs.toInt(),
       category: '\u041a\u0430\u0440\u043a\u0430\u0441',
     ),
     CanonicalMaterialResult(
@@ -274,7 +138,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: screws.toDouble(),
       unit: '\u0448\u0442',
       withReserve: screws.toDouble(),
-      purchaseQty: screws,
+      purchaseQty: screws.toInt(),
       category: '\u041a\u0440\u0435\u043f\u0451\u0436',
     ),
     CanonicalMaterialResult(
@@ -282,7 +146,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: dubels.toDouble(),
       unit: '\u0448\u0442',
       withReserve: dubels.toDouble(),
-      purchaseQty: dubels,
+      purchaseQty: dubels.toInt(),
       category: '\u041a\u0440\u0435\u043f\u0451\u0436',
     ),
     CanonicalMaterialResult(
@@ -290,7 +154,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: jointsM.toDouble(),
       unit: '\u043c',
       withReserve: jointsM.toDouble(),
-      purchaseQty: jointsM,
+      purchaseQty: jointsM.toInt(),
       category: '\u041e\u0442\u0434\u0435\u043b\u043a\u0430',
     ),
     CanonicalMaterialResult(
@@ -298,7 +162,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: puttyBags.toDouble(),
       unit: '\u043c\u0435\u0448\u043a\u043e\u0432',
       withReserve: puttyBags.toDouble(),
-      purchaseQty: puttyBags,
+      purchaseQty: puttyBags.toInt(),
       category: '\u041e\u0442\u0434\u0435\u043b\u043a\u0430',
     ),
     CanonicalMaterialResult(
@@ -306,7 +170,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: primerCans.toDouble(),
       unit: '\u043a\u0430\u043d\u0438\u0441\u0442\u0440',
       withReserve: primerCans.toDouble(),
-      purchaseQty: primerCans,
+      purchaseQty: primerCans.toInt(),
       category: '\u041e\u0442\u0434\u0435\u043b\u043a\u0430',
     ),
   ];
@@ -316,20 +180,20 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'area': _roundValue(area, 3),
+      'area': roundValue(area, 3),
       'constructionType': constructionType.toDouble(),
       'layers': layers.toDouble(),
       'gklType': gklType.toDouble(),
       'profileStep': profileStep.toDouble(),
       'sides': sides.toDouble(),
-      'height': _roundValue(height, 3),
-      'wallLength': _roundValue(wallLength, 3),
+      'height': roundValue(height, 3),
+      'wallLength': roundValue(wallLength, 3),
       'sheetsOneSide': sheetsOneSide.toDouble(),
       'totalSheets': totalSheets.toDouble(),
       'ppCount': ppCount.toDouble(),
       'ppPcs': ppPcs.toDouble(),
       'guidePcs': guidePcs.toDouble(),
-      'guideM': _roundValue(guideM, 3),
+      'guideM': roundValue(guideM, 3),
       'screws': screws.toDouble(),
       'dubels': dubels.toDouble(),
       'jointsM': jointsM.toDouble(),

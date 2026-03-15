@@ -1,96 +1,11 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
+import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
-class WaterproofingPackagingRules {
-  final String unit;
-  final int packageSize;
-
-  const WaterproofingPackagingRules({required this.unit, required this.packageSize});
-}
-
-class WaterproofingMaterialRules {
-  final Map<int, double> consumptionPerLayer;
-  final Map<int, double> bucketKg;
-  final double tapeReserve;
-  final double siliconeMPerTube;
-  final double primerKgPerM2;
-  final double primerCanKg;
-  final double bitumenLPerM2;
-  final double bitumenCanL;
-  final double jointSealantMPerTube;
-
-  const WaterproofingMaterialRules({
-    required this.consumptionPerLayer,
-    required this.bucketKg,
-    required this.tapeReserve,
-    required this.siliconeMPerTube,
-    required this.primerKgPerM2,
-    required this.primerCanKg,
-    required this.bitumenLPerM2,
-    required this.bitumenCanL,
-    required this.jointSealantMPerTube,
-  });
-}
-
-class WaterproofingWarningRules {
-  final int minLayersResidential;
-  final int minWallHeightMm;
-
-  const WaterproofingWarningRules({required this.minLayersResidential, required this.minWallHeightMm});
-}
-
-class WaterproofingCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final WaterproofingPackagingRules packagingRules;
-  final WaterproofingMaterialRules materialRules;
-  final WaterproofingWarningRules warningRules;
-
-  const WaterproofingCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-/* ─── spec instance ─── */
-
-const WaterproofingCanonicalSpec waterproofingCanonicalSpecV1 = WaterproofingCanonicalSpec(
-  calculatorId: 'waterproofing',
-  formulaVersion: 'waterproofing-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'floorArea', unit: 'm2', defaultValue: 6, min: 1, max: 50),
-    CanonicalInputField(key: 'wallHeight', unit: 'mm', defaultValue: 200, min: 0, max: 2000),
-    CanonicalInputField(key: 'roomPerimeter', unit: 'm', defaultValue: 10, min: 4, max: 40),
-    CanonicalInputField(key: 'masticType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'layers', defaultValue: 2, min: 1, max: 3),
-  ],
-  enabledFactors: ['surface_quality', 'worker_skill', 'waste_factor'],
-  packagingRules: WaterproofingPackagingRules(unit: 'вёдер', packageSize: 1),
-  materialRules: WaterproofingMaterialRules(
-    consumptionPerLayer: {0: 1.0, 1: 1.2, 2: 0.8},
-    bucketKg: {0: 15, 1: 20, 2: 15},
-    tapeReserve: 1.10,
-    siliconeMPerTube: 6,
-    primerKgPerM2: 0.15,
-    primerCanKg: 2,
-    bitumenLPerM2: 0.3,
-    bitumenCanL: 20,
-    jointSealantMPerTube: 10,
-  ),
-  warningRules: WaterproofingWarningRules(minLayersResidential: 2, minWallHeightMm: 200),
-);
-
-/* ─── factor table ─── */
 
 const Map<String, Map<String, double>> _factorTable = {
   'surface_quality': {'MIN': 0.95, 'REC': 1.0, 'MAX': 1.10},
@@ -98,15 +13,12 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
 const Map<int, String> _masticTypeLabels = {
   0: 'Ceresit CL 51',
   1: 'Жидкая резина',
   2: 'Полимерная мастика',
 };
 
-/* ─── helpers ─── */
 
 bool hasCanonicalWaterproofingInputs(Map<String, double> inputs) {
   return inputs.containsKey('masticType') ||
@@ -124,69 +36,39 @@ Map<String, double> normalizeLegacyWaterproofingInputs(Map<String, double> input
   return normalized;
 }
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(WaterproofingCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(WaterproofingCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(WaterproofingCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
-/* ─── main ─── */
 
 CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
   Map<String, double> inputs, {
-  WaterproofingCanonicalSpec spec = waterproofingCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(waterproofingSpecData);
+
   final normalized = hasCanonicalWaterproofingInputs(inputs)
       ? Map<String, double>.from(inputs)
       : normalizeLegacyWaterproofingInputs(inputs);
 
-  final floorArea = math.max(1.0, math.min(50.0, (normalized['floorArea'] ?? _defaultFor(spec, 'floorArea', 6)).toDouble()));
-  final wallHeightMm = math.max(0.0, math.min(2000.0, (normalized['wallHeight'] ?? _defaultFor(spec, 'wallHeight', 200)).toDouble()));
-  final roomPerimeter = math.max(4.0, math.min(40.0, (normalized['roomPerimeter'] ?? _defaultFor(spec, 'roomPerimeter', 10)).toDouble()));
-  final masticType = (normalized['masticType'] ?? _defaultFor(spec, 'masticType', 0)).round().clamp(0, 2);
-  final layers = (normalized['layers'] ?? _defaultFor(spec, 'layers', 2)).round().clamp(1, 3);
+  final floorArea = math.max(1.0, math.min(50.0, (normalized['floorArea'] ?? defaultFor(spec, 'floorArea', 6)).toDouble()));
+  final wallHeightMm = math.max(0.0, math.min(2000.0, (normalized['wallHeight'] ?? defaultFor(spec, 'wallHeight', 200)).toDouble()));
+  final roomPerimeter = math.max(4.0, math.min(40.0, (normalized['roomPerimeter'] ?? defaultFor(spec, 'roomPerimeter', 10)).toDouble()));
+  final masticType = (normalized['masticType'] ?? defaultFor(spec, 'masticType', 0)).round().clamp(0, 2);
+  final layers = (normalized['layers'] ?? defaultFor(spec, 'layers', 2)).round().clamp(1, 3);
 
   // Areas
-  final wallArea = _roundValue(roomPerimeter * (wallHeightMm / 1000), 3);
-  final totalArea = _roundValue(floorArea + wallArea, 3);
+  final wallArea = roundValue(roomPerimeter * (wallHeightMm / 1000), 3);
+  final totalArea = roundValue(floorArea + wallArea, 3);
 
   // Mastic
-  final consumption = spec.materialRules.consumptionPerLayer[masticType] ?? 1.0;
-  final bucketKg = spec.materialRules.bucketKg[masticType] ?? 15.0;
-  final masticKg = _roundValue(totalArea * consumption * layers, 3);
+  final consumption = (spec.materialRule<Map>('consumption_per_layer')['$masticType'] as num?)?.toDouble() ?? 1.0;
+  final bucketKg = (spec.materialRule<Map>('bucket_kg')['$masticType'] as num?)?.toDouble() ?? 15.0;
+  final masticKg = roundValue(totalArea * consumption * layers, 3);
   final masticBuckets = (masticKg / bucketKg).ceil();
 
   // Tape
-  final tapeM = _roundValue((roomPerimeter + (wallHeightMm > 0 ? roomPerimeter * 1.2 : 0)) * spec.materialRules.tapeReserve, 3);
+  final tapeM = roundValue((roomPerimeter + (wallHeightMm > 0 ? roomPerimeter * 1.2 : 0)) * spec.materialRule<num>('tape_reserve').toDouble(), 3);
   final tapeRolls = (tapeM / 10).ceil();
 
   // Silicone
-  final siliconeTubes = (roomPerimeter / spec.materialRules.siliconeMPerTube).ceil() + 1;
+  final siliconeTubes = (roomPerimeter / spec.materialRule<num>('silicone_m_per_tube').toDouble()).ceil() + 1;
 
   // Primer / bitumen
   var primerKg = 0.0;
@@ -195,27 +77,27 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
   var bitumenCans = 0;
 
   if (masticType == 0) {
-    primerKg = _roundValue(totalArea * spec.materialRules.primerKgPerM2 * 1.1, 3);
-    primerCans = (primerKg / spec.materialRules.primerCanKg).ceil();
+    primerKg = roundValue(totalArea * spec.materialRule<num>('primer_kg_per_m2').toDouble() * 1.1, 3);
+    primerCans = (primerKg / spec.materialRule<num>('primer_can_kg').toDouble()).ceil();
   } else {
-    bitumenL = _roundValue(totalArea * spec.materialRules.bitumenLPerM2 * 1.1, 3);
-    bitumenCans = (bitumenL / spec.materialRules.bitumenCanL).ceil();
+    bitumenL = roundValue(totalArea * spec.materialRule<num>('bitumen_l_per_m2').toDouble() * 1.1, 3);
+    bitumenCans = (bitumenL / spec.materialRule<num>('bitumen_can_l').toDouble()).ceil();
   }
 
   // Joint sealant
-  final jointTubes = (roomPerimeter * 0.5 / spec.materialRules.jointSealantMPerTube).ceil();
+  final jointTubes = (roomPerimeter * 0.5 / spec.materialRule<num>('joint_sealant_m_per_tube').toDouble()).ceil();
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(masticBuckets * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(masticBuckets * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: packageCount.toDouble(),
-      leftover: _roundValue(packageCount - exactNeed, 6),
+      leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'masticType:$masticType',
@@ -223,14 +105,14 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
         'packaging:mastic-bucket-${bucketKg.round()}kg',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: 'mastic-bucket-${bucketKg.round()}kg',
         packageSize: 1,
         packagesCount: packageCount,
-        unit: spec.packagingRules.unit,
+        unit: spec.packagingRule<String>('unit'),
       ),
     );
   }
@@ -239,11 +121,11 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
 
   // Warnings
   final warnings = <String>[];
-  if (layers < spec.warningRules.minLayersResidential) {
+  if (layers < spec.warningRule<num>('min_layers_residential').toDouble()) {
     warnings.add('Один слой допускается только для нежилых помещений');
   }
   if (wallHeightMm == 0) {
-    warnings.add('Обработка стен обязательна минимум на ${spec.warningRules.minWallHeightMm} мм от пола');
+    warnings.add('Обработка стен обязательна минимум на ${spec.warningRule<num>('min_wall_height_mm').toDouble()} мм от пола');
   }
 
   // Materials
@@ -261,7 +143,7 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
       quantity: tapeM,
       unit: 'м',
       withReserve: (tapeRolls * 10).toDouble(),
-      purchaseQty: tapeRolls,
+      purchaseQty: tapeRolls.toInt(),
       category: 'Лента',
     ),
     CanonicalMaterialResult(
@@ -269,27 +151,27 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
       quantity: siliconeTubes.toDouble(),
       unit: 'туб',
       withReserve: siliconeTubes.toDouble(),
-      purchaseQty: siliconeTubes,
+      purchaseQty: siliconeTubes.toInt(),
       category: 'Герметик',
     ),
   ];
 
   if (masticType == 0) {
     materials.add(CanonicalMaterialResult(
-      name: 'Грунтовка Ceresit (${spec.materialRules.primerCanKg.round()} кг)',
+      name: 'Грунтовка Ceresit (${spec.materialRule<num>('primer_can_kg').toDouble().round()} кг)',
       quantity: primerKg,
       unit: 'кг',
-      withReserve: (primerCans * spec.materialRules.primerCanKg).toDouble(),
-      purchaseQty: primerCans,
+      withReserve: (primerCans * spec.materialRule<num>('primer_can_kg').toDouble()),
+      purchaseQty: primerCans.toInt(),
       category: 'Подготовка',
     ));
   } else {
     materials.add(CanonicalMaterialResult(
-      name: 'Битумный праймер (${spec.materialRules.bitumenCanL.round()} л)',
+      name: 'Битумный праймер (${spec.materialRule<num>('bitumen_can_l').toDouble().round()} л)',
       quantity: bitumenL,
       unit: 'л',
-      withReserve: (bitumenCans * spec.materialRules.bitumenCanL).toDouble(),
-      purchaseQty: bitumenCans,
+      withReserve: (bitumenCans * spec.materialRule<num>('bitumen_can_l').toDouble()),
+      purchaseQty: bitumenCans.toInt(),
       category: 'Подготовка',
     ));
   }
@@ -299,7 +181,7 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
     quantity: jointTubes.toDouble(),
     unit: 'туб',
     withReserve: jointTubes.toDouble(),
-    purchaseQty: jointTubes,
+    purchaseQty: jointTubes.toInt(),
     category: 'Герметик',
   ));
 
@@ -308,9 +190,9 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'floorArea': _roundValue(floorArea, 3),
+      'floorArea': roundValue(floorArea, 3),
       'wallHeightMm': wallHeightMm,
-      'roomPerimeter': _roundValue(roomPerimeter, 3),
+      'roomPerimeter': roundValue(roomPerimeter, 3),
       'masticType': masticType.toDouble(),
       'layers': layers.toDouble(),
       'wallArea': wallArea,

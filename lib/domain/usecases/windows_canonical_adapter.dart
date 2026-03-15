@@ -1,118 +1,10 @@
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
+import 'canonical_adapter_utils.dart';
 
 /* ─── spec types ─── */
 
-class WindowsPackagingRules {
-  final String unit;
-  final int packageSize;
-
-  const WindowsPackagingRules({required this.unit, required this.packageSize});
-}
-
-class WindowsMaterialRules {
-  final double psulRollM;
-  final double iflulRollM;
-  final double psulReserve;
-  final double anchorStep;
-  final double foamPerPerim;
-  final double foamReserve;
-  final double windowsillOverhang;
-  final double windowsillRoll;
-  final double sandwichPanelM2;
-  final double gklSheetM2;
-  final double plasterKgPerM2;
-  final double plasterBag;
-  final double slopeSandwichReserve;
-  final double slopeGklReserve;
-  final double anchorReserve;
-  final double screwReserve;
-  final double fProfileLength;
-
-  const WindowsMaterialRules({
-    required this.psulRollM,
-    required this.iflulRollM,
-    required this.psulReserve,
-    required this.anchorStep,
-    required this.foamPerPerim,
-    required this.foamReserve,
-    required this.windowsillOverhang,
-    required this.windowsillRoll,
-    required this.sandwichPanelM2,
-    required this.gklSheetM2,
-    required this.plasterKgPerM2,
-    required this.plasterBag,
-    required this.slopeSandwichReserve,
-    required this.slopeGklReserve,
-    required this.anchorReserve,
-    required this.screwReserve,
-    required this.fProfileLength,
-  });
-}
-
-class WindowsWarningRules {
-  final int wideWindowThresholdMm;
-  final int thickWallThresholdMm;
-
-  const WindowsWarningRules({required this.wideWindowThresholdMm, required this.thickWallThresholdMm});
-}
-
-class WindowsCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final WindowsPackagingRules packagingRules;
-  final WindowsMaterialRules materialRules;
-  final WindowsWarningRules warningRules;
-
-  const WindowsCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-/* ─── spec instance ─── */
-
-const WindowsCanonicalSpec windowsCanonicalSpecV1 = WindowsCanonicalSpec(
-  calculatorId: 'windows',
-  formulaVersion: 'windows-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'windowCount', defaultValue: 5, min: 1, max: 20),
-    CanonicalInputField(key: 'windowWidth', unit: 'mm', defaultValue: 1200, min: 600, max: 2100),
-    CanonicalInputField(key: 'windowHeight', unit: 'mm', defaultValue: 1400, min: 900, max: 2000),
-    CanonicalInputField(key: 'wallThickness', unit: 'mm', defaultValue: 500, min: 200, max: 600),
-    CanonicalInputField(key: 'slopeType', defaultValue: 0, min: 0, max: 2),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: WindowsPackagingRules(unit: 'баллонов', packageSize: 1),
-  materialRules: WindowsMaterialRules(
-    psulRollM: 5.6,
-    iflulRollM: 8.5,
-    psulReserve: 1.1,
-    anchorStep: 0.7,
-    foamPerPerim: 0.333,
-    foamReserve: 1.1,
-    windowsillOverhang: 0.15,
-    windowsillRoll: 6,
-    sandwichPanelM2: 3.6,
-    gklSheetM2: 3.0,
-    plasterKgPerM2: 10,
-    plasterBag: 25,
-    slopeSandwichReserve: 1.1,
-    slopeGklReserve: 1.12,
-    anchorReserve: 1.05,
-    screwReserve: 1.05,
-    fProfileLength: 3,
-  ),
-  warningRules: WindowsWarningRules(wideWindowThresholdMm: 1800, thickWallThresholdMm: 500),
-);
-
-/* ─── factor table ─── */
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
@@ -120,15 +12,12 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
 const Map<int, String> _slopeTypeLabels = {
   0: 'Сэндвич-панели ПВХ',
   1: 'Штукатурка',
   2: 'ГКЛ',
 };
 
-/* ─── helpers ─── */
 
 bool hasCanonicalWindowsInputs(Map<String, double> inputs) {
   return inputs.containsKey('windowCount') ||
@@ -146,70 +35,40 @@ Map<String, double> normalizeLegacyWindowsInputs(Map<String, double> inputs) {
   return normalized;
 }
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(WindowsCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(WindowsCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(WindowsCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
-/* ─── main ─── */
 
 CanonicalCalculatorContractResult calculateCanonicalWindows(
   Map<String, double> inputs, {
-  WindowsCanonicalSpec spec = windowsCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(windowsSpecData);
+
   final normalized = hasCanonicalWindowsInputs(inputs)
       ? Map<String, double>.from(inputs)
       : normalizeLegacyWindowsInputs(inputs);
 
-  final windowCount = (normalized['windowCount'] ?? _defaultFor(spec, 'windowCount', 5)).round().clamp(1, 20);
-  final windowWidth = (normalized['windowWidth'] ?? _defaultFor(spec, 'windowWidth', 1200)).round().clamp(600, 2100);
-  final windowHeight = (normalized['windowHeight'] ?? _defaultFor(spec, 'windowHeight', 1400)).round().clamp(900, 2000);
-  final wallThickness = (normalized['wallThickness'] ?? _defaultFor(spec, 'wallThickness', 500)).round().clamp(200, 600);
-  final slopeType = (normalized['slopeType'] ?? _defaultFor(spec, 'slopeType', 0)).round().clamp(0, 2);
+  final windowCount = (normalized['windowCount'] ?? defaultFor(spec, 'windowCount', 5)).round().clamp(1, 20);
+  final windowWidth = (normalized['windowWidth'] ?? defaultFor(spec, 'windowWidth', 1200)).round().clamp(600, 2100);
+  final windowHeight = (normalized['windowHeight'] ?? defaultFor(spec, 'windowHeight', 1400)).round().clamp(900, 2000);
+  final wallThickness = (normalized['wallThickness'] ?? defaultFor(spec, 'wallThickness', 500)).round().clamp(200, 600);
+  final slopeType = (normalized['slopeType'] ?? defaultFor(spec, 'slopeType', 0)).round().clamp(0, 2);
 
   // Geometry
   final perimM = 2 * (windowWidth + windowHeight) / 1000;
 
   // PSUL / IFLUL
-  final psulRolls = (perimM * windowCount * spec.materialRules.psulReserve / spec.materialRules.psulRollM).ceil();
-  final iflulRolls = (perimM * windowCount * spec.materialRules.psulReserve / spec.materialRules.iflulRollM).ceil();
+  final psulRolls = (perimM * windowCount * spec.materialRule<num>('psul_reserve').toDouble() / spec.materialRule<num>('psul_roll_m').toDouble()).ceil();
+  final iflulRolls = (perimM * windowCount * spec.materialRule<num>('psul_reserve').toDouble() / spec.materialRule<num>('iflul_roll_m').toDouble()).ceil();
 
   // Foam
-  final foamCans = (perimM / 3 * windowCount * spec.materialRules.foamReserve).ceil();
+  final foamCans = (perimM / 3 * windowCount * spec.materialRule<num>('foam_reserve').toDouble()).ceil();
 
   // Anchors & screws
-  final anchorsPerWindow = (perimM / spec.materialRules.anchorStep).ceil();
-  final totalAnchors = (anchorsPerWindow * windowCount * spec.materialRules.anchorReserve).ceil();
-  final screws = (totalAnchors * 2 * spec.materialRules.screwReserve).ceil();
+  final anchorsPerWindow = (perimM / spec.materialRule<num>('anchor_step').toDouble()).ceil();
+  final totalAnchors = (anchorsPerWindow * windowCount * spec.materialRule<num>('anchor_reserve').toDouble()).ceil();
+  final screws = (totalAnchors * 2 * spec.materialRule<num>('screw_reserve').toDouble()).ceil();
 
   // Windowsill
-  final sillWidth = wallThickness / 1000 + spec.materialRules.windowsillOverhang;
+  final sillWidth = wallThickness / 1000 + spec.materialRule<num>('windowsill_overhang').toDouble();
   final sillPcs = windowCount;
 
   // Slopes
@@ -227,16 +86,16 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
   var puttyBags = 0;
 
   if (slopeType == 0) {
-    sandwichPcs = (totalSlopeArea * spec.materialRules.slopeSandwichReserve / spec.materialRules.sandwichPanelM2).ceil();
-    final fProfileLen = perimM * 0.75 * windowCount * spec.materialRules.psulReserve;
-    fProfilePcs = (fProfileLen / spec.materialRules.fProfileLength).ceil();
+    sandwichPcs = (totalSlopeArea * spec.materialRule<num>('slope_sandwich_reserve').toDouble() / spec.materialRule<num>('sandwich_panel_m2').toDouble()).ceil();
+    final fProfileLen = perimM * 0.75 * windowCount * spec.materialRule<num>('psul_reserve').toDouble();
+    fProfilePcs = (fProfileLen / spec.materialRule<num>('f_profile_length').toDouble()).ceil();
   } else if (slopeType == 1) {
-    plasterBags = (totalSlopeArea * spec.materialRules.plasterKgPerM2 / spec.materialRules.plasterBag).ceil();
-    cornerPcs = (perimM * 0.75 * windowCount * spec.materialRules.psulReserve / 3).ceil();
+    plasterBags = (totalSlopeArea * spec.materialRule<num>('plaster_kg_per_m2').toDouble() / spec.materialRule<num>('plaster_bag').toDouble()).ceil();
+    cornerPcs = (perimM * 0.75 * windowCount * spec.materialRule<num>('psul_reserve').toDouble() / 3).ceil();
   } else {
-    gklSheets = (totalSlopeArea * spec.materialRules.slopeGklReserve / spec.materialRules.gklSheetM2).ceil();
-    screwsGKL = (gklSheets * 20 * spec.materialRules.screwReserve).ceil();
-    puttyBags = (totalSlopeArea * 1.2 / spec.materialRules.plasterBag).ceil();
+    gklSheets = (totalSlopeArea * spec.materialRule<num>('slope_gkl_reserve').toDouble() / spec.materialRule<num>('gkl_sheet_m2').toDouble()).ceil();
+    screwsGKL = (gklSheets * 20 * spec.materialRule<num>('screw_reserve').toDouble()).ceil();
+    puttyBags = (totalSlopeArea * 1.2 / spec.materialRule<num>('plaster_bag').toDouble()).ceil();
   }
 
   // Scenarios
@@ -245,15 +104,15 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
   const packageUnit = 'баллонов';
 
   final scenarios = <String, CanonicalScenarioResult>{};
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(basePrimary * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(basePrimary * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: packageCount.toDouble(),
-      leftover: _roundValue(packageCount - exactNeed, 6),
+      leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'slopeType:$slopeType',
@@ -262,8 +121,8 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
@@ -278,29 +137,29 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
 
   // Warnings
   final warnings = <String>[];
-  if (windowWidth >= spec.warningRules.wideWindowThresholdMm) {
+  if (windowWidth >= spec.warningRule<num>('wide_window_threshold_mm').toDouble()) {
     warnings.add('Для широких окон рекомендуется усиленный монтаж');
   }
-  if (wallThickness >= spec.warningRules.thickWallThresholdMm) {
+  if (wallThickness >= spec.warningRule<num>('thick_wall_threshold_mm').toDouble()) {
     warnings.add('Толстые стены — проверьте глубину подоконника');
   }
 
   // Materials
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: 'ПСУЛ (рулон ${spec.materialRules.psulRollM} м)',
+      name: 'ПСУЛ (рулон ${spec.materialRule<num>('psul_roll_m').toDouble()} м)',
       quantity: psulRolls.toDouble(),
       unit: 'рулонов',
       withReserve: psulRolls.toDouble(),
-      purchaseQty: psulRolls,
+      purchaseQty: psulRolls.toInt(),
       category: 'Лента',
     ),
     CanonicalMaterialResult(
-      name: 'Внутренняя лента (рулон ${spec.materialRules.iflulRollM} м)',
+      name: 'Внутренняя лента (рулон ${spec.materialRule<num>('iflul_roll_m').toDouble()} м)',
       quantity: iflulRolls.toDouble(),
       unit: 'рулонов',
       withReserve: iflulRolls.toDouble(),
-      purchaseQty: iflulRolls,
+      purchaseQty: iflulRolls.toInt(),
       category: 'Лента',
     ),
     CanonicalMaterialResult(
@@ -316,7 +175,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
       quantity: totalAnchors.toDouble(),
       unit: 'шт',
       withReserve: totalAnchors.toDouble(),
-      purchaseQty: totalAnchors,
+      purchaseQty: totalAnchors.toInt(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -324,7 +183,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
       quantity: screws.toDouble(),
       unit: 'шт',
       withReserve: screws.toDouble(),
-      purchaseQty: screws,
+      purchaseQty: screws.toInt(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -332,7 +191,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
       quantity: sillPcs.toDouble(),
       unit: 'шт',
       withReserve: sillPcs.toDouble(),
-      purchaseQty: sillPcs,
+      purchaseQty: sillPcs.toInt(),
       category: 'Подоконники',
     ),
   ];
@@ -344,26 +203,26 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
         quantity: sandwichPcs.toDouble(),
         unit: 'шт',
         withReserve: sandwichPcs.toDouble(),
-        purchaseQty: sandwichPcs,
+        purchaseQty: sandwichPcs.toInt(),
         category: 'Откосы',
       ),
       CanonicalMaterialResult(
-        name: 'F-профиль (${spec.materialRules.fProfileLength.round()} м)',
+        name: 'F-профиль (${spec.materialRule<num>('f_profile_length').toDouble().round()} м)',
         quantity: fProfilePcs.toDouble(),
         unit: 'шт',
         withReserve: fProfilePcs.toDouble(),
-        purchaseQty: fProfilePcs,
+        purchaseQty: fProfilePcs.toInt(),
         category: 'Откосы',
       ),
     ]);
   } else if (slopeType == 1) {
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'Штукатурка (мешки ${spec.materialRules.plasterBag.round()} кг)',
+        name: 'Штукатурка (мешки ${spec.materialRule<num>('plaster_bag').toDouble().round()} кг)',
         quantity: plasterBags.toDouble(),
         unit: 'мешков',
         withReserve: plasterBags.toDouble(),
-        purchaseQty: plasterBags,
+        purchaseQty: plasterBags.toInt(),
         category: 'Откосы',
       ),
       CanonicalMaterialResult(
@@ -371,7 +230,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
         quantity: cornerPcs.toDouble(),
         unit: 'шт',
         withReserve: cornerPcs.toDouble(),
-        purchaseQty: cornerPcs,
+        purchaseQty: cornerPcs.toInt(),
         category: 'Откосы',
       ),
     ]);
@@ -382,7 +241,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
         quantity: gklSheets.toDouble(),
         unit: 'листов',
         withReserve: gklSheets.toDouble(),
-        purchaseQty: gklSheets,
+        purchaseQty: gklSheets.toInt(),
         category: 'Откосы',
       ),
       CanonicalMaterialResult(
@@ -390,15 +249,15 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
         quantity: screwsGKL.toDouble(),
         unit: 'шт',
         withReserve: screwsGKL.toDouble(),
-        purchaseQty: screwsGKL,
+        purchaseQty: screwsGKL.toInt(),
         category: 'Крепёж',
       ),
       CanonicalMaterialResult(
-        name: 'Шпаклёвка (мешки ${spec.materialRules.plasterBag.round()} кг)',
+        name: 'Шпаклёвка (мешки ${spec.materialRule<num>('plaster_bag').toDouble().round()} кг)',
         quantity: puttyBags.toDouble(),
         unit: 'мешков',
         withReserve: puttyBags.toDouble(),
-        purchaseQty: puttyBags,
+        purchaseQty: puttyBags.toInt(),
         category: 'Откосы',
       ),
     ]);
@@ -414,18 +273,18 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
       'windowHeight': windowHeight.toDouble(),
       'wallThickness': wallThickness.toDouble(),
       'slopeType': slopeType.toDouble(),
-      'perimM': _roundValue(perimM, 3),
+      'perimM': roundValue(perimM, 3),
       'psulRolls': psulRolls.toDouble(),
       'iflulRolls': iflulRolls.toDouble(),
       'foamCans': foamCans.toDouble(),
       'anchorsPerWindow': anchorsPerWindow.toDouble(),
       'totalAnchors': totalAnchors.toDouble(),
       'screws': screws.toDouble(),
-      'sillWidth': _roundValue(sillWidth, 3),
+      'sillWidth': roundValue(sillWidth, 3),
       'sillPcs': sillPcs.toDouble(),
-      'slopeSideArea': _roundValue(slopeSideArea, 4),
-      'slopeTopArea': _roundValue(slopeTopArea, 4),
-      'totalSlopeArea': _roundValue(totalSlopeArea, 4),
+      'slopeSideArea': roundValue(slopeSideArea, 4),
+      'slopeTopArea': roundValue(slopeTopArea, 4),
+      'totalSlopeArea': roundValue(totalSlopeArea, 4),
       'sandwichPcs': sandwichPcs.toDouble(),
       'fProfilePcs': fProfilePcs.toDouble(),
       'plasterBags': plasterBags.toDouble(),

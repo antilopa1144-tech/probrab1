@@ -1,104 +1,17 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
+import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
-class TerracePackagingRules {
-  final String unit;
-  final int packageSize;
-
-  const TerracePackagingRules({required this.unit, required this.packageSize});
-}
-
-class TerraceMaterialRules {
-  final Map<int, int> boardWidths;
-  final Map<int, int> boardGaps;
-  final double lagLength;
-  final double treatmentLPerM2;
-  final Map<int, int> treatmentLayers;
-  final double geotextileRoll;
-  final double boardReserve;
-  final double lagReserve;
-  final int klaymerCountPerLagRow;
-
-  const TerraceMaterialRules({
-    required this.boardWidths,
-    required this.boardGaps,
-    required this.lagLength,
-    required this.treatmentLPerM2,
-    required this.treatmentLayers,
-    required this.geotextileRoll,
-    required this.boardReserve,
-    required this.lagReserve,
-    required this.klaymerCountPerLagRow,
-  });
-}
-
-class TerraceWarningRules {
-  final double largeAreaThresholdM2;
-
-  const TerraceWarningRules({required this.largeAreaThresholdM2});
-}
-
-class TerraceCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final TerracePackagingRules packagingRules;
-  final TerraceMaterialRules materialRules;
-  final TerraceWarningRules warningRules;
-
-  const TerraceCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-/* ─── spec instance ─── */
-
-const TerraceCanonicalSpec terraceCanonicalSpecV1 = TerraceCanonicalSpec(
-  calculatorId: 'terrace',
-  formulaVersion: 'terrace-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'length', unit: 'm', defaultValue: 5, min: 1, max: 30),
-    CanonicalInputField(key: 'width', unit: 'm', defaultValue: 3, min: 1, max: 15),
-    CanonicalInputField(key: 'boardType', defaultValue: 0, min: 0, max: 3),
-    CanonicalInputField(key: 'boardLength', unit: 'mm', defaultValue: 3000, min: 2000, max: 6000),
-    CanonicalInputField(key: 'lagStep', unit: 'mm', defaultValue: 400, min: 300, max: 600),
-    CanonicalInputField(key: 'withTreatment', defaultValue: 0, min: 0, max: 2),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: TerracePackagingRules(unit: 'шт', packageSize: 1),
-  materialRules: TerraceMaterialRules(
-    boardWidths: {0: 150, 1: 120, 2: 90, 3: 120},
-    boardGaps: {0: 5, 1: 5, 2: 5, 3: 0},
-    lagLength: 3,
-    treatmentLPerM2: 0.15,
-    treatmentLayers: {0: 0, 1: 2, 2: 2},
-    geotextileRoll: 50,
-    boardReserve: 1.1,
-    lagReserve: 1.05,
-    klaymerCountPerLagRow: 1,
-  ),
-  warningRules: TerraceWarningRules(largeAreaThresholdM2: 50),
-);
-
-/* ─── factor table ─── */
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
   'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
-
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
 
 const Map<int, String> _boardTypeLabels = {
   0: 'ДПК 150 мм',
@@ -113,7 +26,6 @@ const Map<int, String> _treatmentLabels = {
   2: 'Антисептик',
 };
 
-/* ─── helpers ─── */
 
 bool hasCanonicalTerraceInputs(Map<String, double> inputs) {
   return inputs.containsKey('boardType') ||
@@ -132,78 +44,48 @@ Map<String, double> normalizeLegacyTerraceInputs(Map<String, double> inputs) {
   return normalized;
 }
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(TerraceCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(TerraceCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(TerraceCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
-/* ─── main ─── */
 
 CanonicalCalculatorContractResult calculateCanonicalTerrace(
   Map<String, double> inputs, {
-  TerraceCanonicalSpec spec = terraceCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(terraceSpecData);
+
   final normalized = hasCanonicalTerraceInputs(inputs)
       ? Map<String, double>.from(inputs)
       : normalizeLegacyTerraceInputs(inputs);
 
-  final length = math.max(1.0, math.min(30.0, (normalized['length'] ?? _defaultFor(spec, 'length', 5)).toDouble()));
-  final width = math.max(1.0, math.min(15.0, (normalized['width'] ?? _defaultFor(spec, 'width', 3)).toDouble()));
-  final boardType = (normalized['boardType'] ?? _defaultFor(spec, 'boardType', 0)).round().clamp(0, 3);
-  final boardLength = math.max(2000.0, math.min(6000.0, (normalized['boardLength'] ?? _defaultFor(spec, 'boardLength', 3000)).toDouble()));
-  final lagStep = math.max(300.0, math.min(600.0, (normalized['lagStep'] ?? _defaultFor(spec, 'lagStep', 400)).toDouble()));
-  final withTreatment = (normalized['withTreatment'] ?? _defaultFor(spec, 'withTreatment', 0)).round().clamp(0, 2);
+  final length = math.max(1.0, math.min(30.0, (normalized['length'] ?? defaultFor(spec, 'length', 5)).toDouble()));
+  final width = math.max(1.0, math.min(15.0, (normalized['width'] ?? defaultFor(spec, 'width', 3)).toDouble()));
+  final boardType = (normalized['boardType'] ?? defaultFor(spec, 'boardType', 0)).round().clamp(0, 3);
+  final boardLength = math.max(2000.0, math.min(6000.0, (normalized['boardLength'] ?? defaultFor(spec, 'boardLength', 3000)).toDouble()));
+  final lagStep = math.max(300.0, math.min(600.0, (normalized['lagStep'] ?? defaultFor(spec, 'lagStep', 400)).toDouble()));
+  final withTreatment = (normalized['withTreatment'] ?? defaultFor(spec, 'withTreatment', 0)).round().clamp(0, 2);
 
   // Geometry
   final area = length * width;
-  final boardWidth = spec.materialRules.boardWidths[boardType] ?? 150;
-  final gap = spec.materialRules.boardGaps[boardType] ?? 5;
+  final boardWidth = (spec.materialRule<Map>('board_widths')['$boardType'] as num?)?.toDouble() ?? 150;
+  final gap = (spec.materialRule<Map>('board_gaps')['$boardType'] as num?)?.toDouble() ?? 5;
   final boardPitch = (boardWidth + gap) / 1000.0;
   final rowCount = (width / boardPitch).ceil();
   final boardsPerRow = (length / (boardLength / 1000.0)).ceil();
-  final totalBoards = (rowCount * boardsPerRow * spec.materialRules.boardReserve).ceil();
+  final totalBoards = (rowCount * boardsPerRow * spec.materialRule<num>('board_reserve').toDouble()).ceil();
 
   // Lags
   final lagRowCount = (length / (lagStep / 1000.0)).ceil() + 1;
-  final lagTotalLen = lagRowCount * width * spec.materialRules.lagReserve;
-  final lagPcs = (lagTotalLen / spec.materialRules.lagLength).ceil();
+  final lagTotalLen = lagRowCount * width * spec.materialRule<num>('lag_reserve').toDouble();
+  final lagPcs = (lagTotalLen / spec.materialRule<num>('lag_length').toDouble()).ceil();
 
   // Fasteners
   final klaymerCount = lagRowCount * rowCount;
   final screwCount = (lagRowCount * rowCount * (boardType == 3 ? 2.0 : 1.2)).ceil();
 
   // Treatment
-  final treatmentLayers = spec.materialRules.treatmentLayers[withTreatment] ?? 0;
-  final treatmentL = _roundValue(area * treatmentLayers * spec.materialRules.treatmentLPerM2 * 1.1, 2);
+  final treatmentLayers = (spec.materialRule<Map>('treatment_layers')['$withTreatment'] as num?)?.toDouble() ?? 0;
+  final treatmentL = roundValue(area * treatmentLayers * spec.materialRule<num>('treatment_l_per_m2').toDouble() * 1.1, 2);
 
   // Geotextile
-  final geotextileRolls = (area * 1.05 / spec.materialRules.geotextileRoll).ceil();
+  final geotextileRolls = (area * 1.05 / spec.materialRule<num>('geotextile_roll').toDouble()).ceil();
 
   // Scenarios
   final basePrimary = totalBoards;
@@ -211,15 +93,15 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
   const packageUnit = 'шт';
 
   final scenarios = <String, CanonicalScenarioResult>{};
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(basePrimary * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(basePrimary * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: packageCount.toDouble(),
-      leftover: _roundValue(packageCount - exactNeed, 6),
+      leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'boardType:$boardType',
@@ -227,8 +109,8 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
@@ -246,7 +128,7 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
   if (boardType != 0 && withTreatment == 0) {
     warnings.add('Деревянная доска без обработки подвержена гниению — рекомендуется масло или антисептик');
   }
-  if (area > spec.warningRules.largeAreaThresholdM2) {
+  if (area > spec.warningRule<num>('large_area_threshold_m2').toDouble()) {
     warnings.add('Для террас большой площади рекомендуется профессиональный монтаж');
   }
 
@@ -261,11 +143,11 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
       category: 'Доска',
     ),
     CanonicalMaterialResult(
-      name: 'Лаги 50×50 мм (${spec.materialRules.lagLength.round()} м)',
+      name: 'Лаги 50×50 мм (${spec.materialRule<num>('lag_length').toDouble().round()} м)',
       quantity: lagPcs.toDouble(),
       unit: 'шт',
       withReserve: lagPcs.toDouble(),
-      purchaseQty: lagPcs,
+      purchaseQty: lagPcs.toInt(),
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
@@ -273,7 +155,7 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
       quantity: klaymerCount.toDouble(),
       unit: 'шт',
       withReserve: klaymerCount.toDouble(),
-      purchaseQty: klaymerCount,
+      purchaseQty: klaymerCount.toInt(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -281,15 +163,15 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
       quantity: screwCount.toDouble(),
       unit: 'шт',
       withReserve: screwCount.toDouble(),
-      purchaseQty: screwCount,
+      purchaseQty: screwCount.toInt(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
-      name: 'Геотекстиль (${spec.materialRules.geotextileRoll.round()} м²)',
+      name: 'Геотекстиль (${spec.materialRule<num>('geotextile_roll').toDouble().round()} м²)',
       quantity: geotextileRolls.toDouble(),
       unit: 'рулонов',
       withReserve: geotextileRolls.toDouble(),
-      purchaseQty: geotextileRolls,
+      purchaseQty: geotextileRolls.toInt(),
       category: 'Подготовка',
     ),
   ];
@@ -310,21 +192,21 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'length': _roundValue(length, 3),
-      'width': _roundValue(width, 3),
-      'area': _roundValue(area, 3),
+      'length': roundValue(length, 3),
+      'width': roundValue(width, 3),
+      'area': roundValue(area, 3),
       'boardType': boardType.toDouble(),
       'boardLength': boardLength,
       'lagStep': lagStep,
       'withTreatment': withTreatment.toDouble(),
       'boardWidth': boardWidth.toDouble(),
       'gap': gap.toDouble(),
-      'boardPitch': _roundValue(boardPitch, 4),
+      'boardPitch': roundValue(boardPitch, 4),
       'rowCount': rowCount.toDouble(),
       'boardsPerRow': boardsPerRow.toDouble(),
       'totalBoards': totalBoards.toDouble(),
       'lagRowCount': lagRowCount.toDouble(),
-      'lagTotalLen': _roundValue(lagTotalLen, 3),
+      'lagTotalLen': roundValue(lagTotalLen, 3),
       'lagPcs': lagPcs.toDouble(),
       'klaymerCount': klaymerCount.toDouble(),
       'screwCount': screwCount.toDouble(),

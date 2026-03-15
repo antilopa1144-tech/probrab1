@@ -1,35 +1,8 @@
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
+import 'canonical_adapter_utils.dart';
 
-/* ─── spec instance ─── */
-
-const MdfPanelsCanonicalSpec mdfPanelsCanonicalSpecV1 = MdfPanelsCanonicalSpec(
-  calculatorId: 'mdf-panels',
-  formulaVersion: 'mdf-panels-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'inputMode', defaultValue: 0, min: 0, max: 1),
-    CanonicalInputField(key: 'area', unit: 'm2', defaultValue: 20, min: 1, max: 500),
-    CanonicalInputField(key: 'wallWidth', unit: 'm', defaultValue: 4, min: 0.5, max: 30),
-    CanonicalInputField(key: 'wallHeight', unit: 'm', defaultValue: 2.7, min: 0.5, max: 10),
-    CanonicalInputField(key: 'panelWidth', unit: 'm', defaultValue: 0.25, min: 0.1, max: 0.4),
-    CanonicalInputField(key: 'panelType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'needProfile', defaultValue: 1, min: 0, max: 1),
-    CanonicalInputField(key: 'needPlinth', defaultValue: 1, min: 0, max: 1),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: MdfPanelsPackagingRules(unit: 'шт', packageSize: 1),
-  materialRules: MdfPanelsMaterialRules(
-    panelReserve: 1.10,
-    profileReserve: 1.10,
-    profileStep: 0.5,
-    standardPanelLength: 2.7,
-    clipsPerPanel: 5,
-    plinthLength: 2.7,
-    plinthExtra: 2.0,
-  ),
-  warningRules: MdfPanelsWarningRules(largeAreaThresholdM2: 100),
-);
-
-/* ─── factor table ─── */
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
@@ -37,85 +10,51 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
-/* ─── helpers ─── */
-
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(MdfPanelsCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(MdfPanelsCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(MdfPanelsCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
-/* ─── main ─── */
 
 CanonicalCalculatorContractResult calculateCanonicalMdfPanels(
   Map<String, double> inputs, {
-  MdfPanelsCanonicalSpec spec = mdfPanelsCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
-  final inputMode = (inputs['inputMode'] ?? _defaultFor(spec, 'inputMode', 0)).round().clamp(0, 1);
-  final areaInput = (inputs['area'] ?? _defaultFor(spec, 'area', 20)).clamp(1.0, 500.0);
-  final wallWidth = (inputs['wallWidth'] ?? _defaultFor(spec, 'wallWidth', 4)).clamp(0.5, 30.0);
-  final wallHeight = (inputs['wallHeight'] ?? _defaultFor(spec, 'wallHeight', 2.7)).clamp(0.5, 10.0);
-  final panelWidth = (inputs['panelWidth'] ?? _defaultFor(spec, 'panelWidth', 0.25)).clamp(0.1, 0.4);
-  final panelType = (inputs['panelType'] ?? _defaultFor(spec, 'panelType', 0)).round().clamp(0, 2);
-  final needProfile = (inputs['needProfile'] ?? _defaultFor(spec, 'needProfile', 1)).round() == 1 ? 1 : 0;
-  final needPlinth = (inputs['needPlinth'] ?? _defaultFor(spec, 'needPlinth', 1)).round() == 1 ? 1 : 0;
+  final spec = specOverride ?? const SpecReader(mdfPanelsSpecData);
+
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round().clamp(0, 1);
+  final areaInput = (inputs['area'] ?? defaultFor(spec, 'area', 20)).clamp(1.0, 500.0);
+  final wallWidth = (inputs['wallWidth'] ?? defaultFor(spec, 'wallWidth', 4)).clamp(0.5, 30.0);
+  final wallHeight = (inputs['wallHeight'] ?? defaultFor(spec, 'wallHeight', 2.7)).clamp(0.5, 10.0);
+  final panelWidth = (inputs['panelWidth'] ?? defaultFor(spec, 'panelWidth', 0.25)).clamp(0.1, 0.4);
+  final panelType = (inputs['panelType'] ?? defaultFor(spec, 'panelType', 0)).round().clamp(0, 2);
+  final needProfile = (inputs['needProfile'] ?? defaultFor(spec, 'needProfile', 1)).round() == 1 ? 1 : 0;
+  final needPlinth = (inputs['needPlinth'] ?? defaultFor(spec, 'needPlinth', 1)).round() == 1 ? 1 : 0;
 
   // Area
-  final area = inputMode == 1 ? _roundValue(wallWidth * wallHeight, 3) : areaInput;
+  final area = inputMode == 1 ? roundValue(wallWidth * wallHeight, 3) : areaInput;
 
   // Panels
-  final panelArea = panelWidth * spec.materialRules.standardPanelLength;
-  final panels = (area * spec.materialRules.panelReserve / panelArea).ceil();
+  final panelArea = panelWidth * spec.materialRule<num>('standard_panel_length').toDouble();
+  final panels = (area * spec.materialRule<num>('panel_reserve').toDouble() / panelArea).ceil();
 
   // Clips
-  final clips = panels * spec.materialRules.clipsPerPanel;
+  final clips = panels * spec.materialRule<num>('clips_per_panel').toDouble();
 
   // Profile (conditional)
-  final profileRows = needProfile == 1 ? (wallHeight / spec.materialRules.profileStep).ceil() + 1 : 0;
-  final profileLen = profileRows * wallWidth * spec.materialRules.profileReserve;
+  final profileRows = needProfile == 1 ? (wallHeight / spec.materialRule<num>('profile_step').toDouble()).ceil() + 1 : 0;
+  final profileLen = profileRows * wallWidth * spec.materialRule<num>('profile_reserve').toDouble();
 
   // Plinth (conditional)
-  final plinthLen = needPlinth == 1 ? wallWidth * 2 + spec.materialRules.plinthExtra : 0.0;
-  final plinthPcs = (plinthLen / spec.materialRules.plinthLength).ceil();
+  final plinthLen = needPlinth == 1 ? wallWidth * 2 + spec.materialRule<num>('plinth_extra').toDouble() : 0.0;
+  final plinthPcs = (plinthLen / spec.materialRule<num>('plinth_length').toDouble()).ceil();
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(panels * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(panels * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: packageCount.toDouble(),
-      leftover: _roundValue(packageCount - exactNeed, 6),
+      leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'inputMode:$inputMode',
@@ -125,8 +64,8 @@ CanonicalCalculatorContractResult calculateCanonicalMdfPanels(
         'packaging:mdf-panel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: 'mdf-panel',
@@ -141,7 +80,7 @@ CanonicalCalculatorContractResult calculateCanonicalMdfPanels(
 
   // Warnings
   final warnings = <String>[];
-  if (area > spec.warningRules.largeAreaThresholdM2) {
+  if (area > spec.warningRule<num>('large_area_threshold_m2').toDouble()) {
     warnings.add('Большая площадь — рассмотрите оптовую закупку панелей');
   }
   if (panelType == 0) {
@@ -163,7 +102,7 @@ CanonicalCalculatorContractResult calculateCanonicalMdfPanels(
       quantity: clips.toDouble(),
       unit: 'шт',
       withReserve: clips.toDouble(),
-      purchaseQty: clips,
+      purchaseQty: clips.toInt(),
       category: 'Крепёж',
     ),
   ];
@@ -171,7 +110,7 @@ CanonicalCalculatorContractResult calculateCanonicalMdfPanels(
   if (needProfile == 1) {
     materials.add(CanonicalMaterialResult(
       name: 'Профиль обрешётки (п.м.)',
-      quantity: _roundValue(profileLen, 2),
+      quantity: roundValue(profileLen, 2),
       unit: 'п.м.',
       withReserve: profileLen.ceilToDouble(),
       purchaseQty: profileLen.ceil(),
@@ -185,7 +124,7 @@ CanonicalCalculatorContractResult calculateCanonicalMdfPanels(
       quantity: plinthPcs.toDouble(),
       unit: 'шт',
       withReserve: plinthPcs.toDouble(),
-      purchaseQty: plinthPcs,
+      purchaseQty: plinthPcs.toInt(),
       category: 'Профиль',
     ));
   }
@@ -197,18 +136,18 @@ CanonicalCalculatorContractResult calculateCanonicalMdfPanels(
     totals: {
       'area': area,
       'inputMode': inputMode.toDouble(),
-      'wallWidth': _roundValue(wallWidth, 3),
-      'wallHeight': _roundValue(wallHeight, 3),
-      'panelWidth': _roundValue(panelWidth, 3),
+      'wallWidth': roundValue(wallWidth, 3),
+      'wallHeight': roundValue(wallHeight, 3),
+      'panelWidth': roundValue(panelWidth, 3),
       'panelType': panelType.toDouble(),
       'needProfile': needProfile.toDouble(),
       'needPlinth': needPlinth.toDouble(),
-      'panelArea': _roundValue(panelArea, 4),
+      'panelArea': roundValue(panelArea, 4),
       'panels': panels.toDouble(),
       'clips': clips.toDouble(),
       'profileRows': profileRows.toDouble(),
-      'profileLen': _roundValue(profileLen, 3),
-      'plinthLen': _roundValue(plinthLen, 3),
+      'profileLen': roundValue(profileLen, 3),
+      'plinthLen': roundValue(plinthLen, 3),
       'plinthPcs': plinthPcs.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,
       'recExactNeed': recScenario.exactNeed,

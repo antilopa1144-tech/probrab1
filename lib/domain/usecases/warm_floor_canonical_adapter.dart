@@ -1,153 +1,9 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
-class WarmFloorHeatingTypeSpec {
-  final int id;
-  final String key;
-  final String label;
-
-  const WarmFloorHeatingTypeSpec({
-    required this.id,
-    required this.key,
-    required this.label,
-  });
-}
-
-class WarmFloorPackagingRules {
-  final String matUnit;
-  final String cableUnit;
-  final String pipeUnit;
-
-  const WarmFloorPackagingRules({
-    required this.matUnit,
-    required this.cableUnit,
-    required this.pipeUnit,
-  });
-}
-
-class WarmFloorMaterialRules {
-  final double matArea;
-  final double cableStepM;
-  final double cableReserve;
-  final double pipeStepM;
-  final double pipeReserve;
-  final double substrateReserve;
-  final double substrateRollM2;
-  final double corrugatedTubeM;
-  final double tileAdhesiveKgPerM2;
-  final double tileAdhesiveBagKg;
-  final double epsSheetM2;
-  final double epsReserve;
-  final double screedThicknessM;
-  final double screedDensity;
-  final double screedBagKg;
-  final double meshReserve;
-  final double mountingTapeRollM;
-  final double pipeInsulationReserve;
-  final double maxCircuitM;
-
-  const WarmFloorMaterialRules({
-    required this.matArea,
-    required this.cableStepM,
-    required this.cableReserve,
-    required this.pipeStepM,
-    required this.pipeReserve,
-    required this.substrateReserve,
-    required this.substrateRollM2,
-    required this.corrugatedTubeM,
-    required this.tileAdhesiveKgPerM2,
-    required this.tileAdhesiveBagKg,
-    required this.epsSheetM2,
-    required this.epsReserve,
-    required this.screedThicknessM,
-    required this.screedDensity,
-    required this.screedBagKg,
-    required this.meshReserve,
-    required this.mountingTapeRollM,
-    required this.pipeInsulationReserve,
-    required this.maxCircuitM,
-  });
-}
-
-class WarmFloorWarningRules {
-  final double separateBreakerKwThreshold;
-  final double ineffectiveCoverageRatio;
-
-  const WarmFloorWarningRules({
-    required this.separateBreakerKwThreshold,
-    required this.ineffectiveCoverageRatio,
-  });
-}
-
-class WarmFloorCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final List<WarmFloorHeatingTypeSpec> heatingTypes;
-  final WarmFloorPackagingRules packagingRules;
-  final WarmFloorMaterialRules materialRules;
-  final WarmFloorWarningRules warningRules;
-
-  const WarmFloorCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.heatingTypes,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-const WarmFloorCanonicalSpec warmFloorCanonicalSpecV1 = WarmFloorCanonicalSpec(
-  calculatorId: 'warm-floor',
-  formulaVersion: 'warm-floor-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'roomArea', unit: 'm2', defaultValue: 10, min: 1, max: 100),
-    CanonicalInputField(key: 'furnitureArea', unit: 'm2', defaultValue: 2, min: 0, max: 50),
-    CanonicalInputField(key: 'heatingType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'powerDensity', unit: 'W/m2', defaultValue: 150, min: 100, max: 200),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  heatingTypes: [
-    WarmFloorHeatingTypeSpec(id: 0, key: 'mat', label: 'Нагревательный мат'),
-    WarmFloorHeatingTypeSpec(id: 1, key: 'cable', label: 'Кабель в стяжку'),
-    WarmFloorHeatingTypeSpec(id: 2, key: 'water_pipes', label: 'Водяные трубы'),
-  ],
-  packagingRules: WarmFloorPackagingRules(
-    matUnit: 'шт',
-    cableUnit: 'м',
-    pipeUnit: 'м',
-  ),
-  materialRules: WarmFloorMaterialRules(
-    matArea: 2.0,
-    cableStepM: 0.15,
-    cableReserve: 1.05,
-    pipeStepM: 0.15,
-    pipeReserve: 1.05,
-    substrateReserve: 1.1,
-    substrateRollM2: 25,
-    corrugatedTubeM: 1,
-    tileAdhesiveKgPerM2: 5,
-    tileAdhesiveBagKg: 25,
-    epsSheetM2: 0.72,
-    epsReserve: 1.1,
-    screedThicknessM: 0.04,
-    screedDensity: 2000,
-    screedBagKg: 50,
-    meshReserve: 1.05,
-    mountingTapeRollM: 25,
-    pipeInsulationReserve: 1.0,
-    maxCircuitM: 80,
-  ),
-  warningRules: WarmFloorWarningRules(
-    separateBreakerKwThreshold: 3.5,
-    ineffectiveCoverageRatio: 0.5,
-  ),
-);
+import 'canonical_adapter_utils.dart';
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
@@ -155,51 +11,20 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(WarmFloorCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(WarmFloorCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(WarmFloorCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
 CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
   Map<String, double> inputs, {
-  WarmFloorCanonicalSpec spec = warmFloorCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
-  final roomArea = (inputs['roomArea'] ?? _defaultFor(spec, 'roomArea', 10)).clamp(1.0, 100.0);
-  final furnitureArea = (inputs['furnitureArea'] ?? _defaultFor(spec, 'furnitureArea', 2)).clamp(0.0, 50.0);
-  final heatingType = (inputs['heatingType'] ?? _defaultFor(spec, 'heatingType', 0)).round().clamp(0, 2);
-  final powerDensity = (inputs['powerDensity'] ?? _defaultFor(spec, 'powerDensity', 150)).clamp(100.0, 200.0);
+  final spec = specOverride ?? const SpecReader(warmFloorSpecData);
+
+  final roomArea = (inputs['roomArea'] ?? defaultFor(spec, 'roomArea', 10)).clamp(1.0, 100.0);
+  final furnitureArea = (inputs['furnitureArea'] ?? defaultFor(spec, 'furnitureArea', 2)).clamp(0.0, 50.0);
+  final heatingType = (inputs['heatingType'] ?? defaultFor(spec, 'heatingType', 0)).round().clamp(0, 2);
+  final powerDensity = (inputs['powerDensity'] ?? defaultFor(spec, 'powerDensity', 150)).clamp(100.0, 200.0);
 
   final heatingArea = math.max(0.0, roomArea - furnitureArea);
   final totalPowerW = heatingArea * powerDensity;
-  final totalPowerKW = _roundValue(totalPowerW / 1000, 3);
+  final totalPowerKW = roundValue(totalPowerW / 1000, 3);
 
   /* ─── per-type calculations ─── */
   double basePrimary;
@@ -212,9 +37,9 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
 
   if (heatingType == 0) {
     // Mats
-    mats = (heatingArea / spec.materialRules.matArea).ceil();
-    substrateRolls = (heatingArea * spec.materialRules.substrateReserve / spec.materialRules.substrateRollM2).ceil();
-    adhesiveBags = (heatingArea * spec.materialRules.tileAdhesiveKgPerM2 / spec.materialRules.tileAdhesiveBagKg).ceil();
+    mats = (heatingArea / spec.materialRule<num>('mat_area').toDouble()).ceil();
+    substrateRolls = (heatingArea * spec.materialRule<num>('substrate_reserve').toDouble() / spec.materialRule<num>('substrate_roll_m2').toDouble()).ceil();
+    adhesiveBags = (heatingArea * spec.materialRule<num>('tile_adhesive_kg_per_m2').toDouble() / spec.materialRule<num>('tile_adhesive_bag_kg').toDouble()).ceil();
 
     basePrimary = mats.toDouble();
     materials = [
@@ -223,7 +48,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: mats.toDouble(),
         unit: 'шт',
         withReserve: mats.toDouble(),
-        purchaseQty: mats,
+        purchaseQty: mats.toInt(),
         category: 'Основное',
       ),
       const CanonicalMaterialResult(
@@ -236,10 +61,10 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
       ),
       CanonicalMaterialResult(
         name: 'Гофротрубка для датчика',
-        quantity: spec.materialRules.corrugatedTubeM,
+        quantity: spec.materialRule<num>('corrugated_tube_m').toDouble(),
         unit: 'м',
-        withReserve: spec.materialRules.corrugatedTubeM,
-        purchaseQty: spec.materialRules.corrugatedTubeM.ceil(),
+        withReserve: spec.materialRule<num>('corrugated_tube_m').toDouble(),
+        purchaseQty: spec.materialRule<num>('corrugated_tube_m').toDouble().ceil(),
         category: 'Монтаж',
       ),
       CanonicalMaterialResult(
@@ -247,24 +72,24 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: substrateRolls.toDouble(),
         unit: 'рулонов',
         withReserve: substrateRolls.toDouble(),
-        purchaseQty: substrateRolls,
+        purchaseQty: substrateRolls.toInt(),
         category: 'Подготовка',
       ),
       CanonicalMaterialResult(
         name: 'Плиточный клей (мешки 25 кг)',
-        quantity: _roundValue(heatingArea * spec.materialRules.tileAdhesiveKgPerM2, 3),
+        quantity: roundValue(heatingArea * spec.materialRule<num>('tile_adhesive_kg_per_m2').toDouble(), 3),
         unit: 'кг',
-        withReserve: (adhesiveBags * spec.materialRules.tileAdhesiveBagKg),
-        purchaseQty: adhesiveBags,
+        withReserve: (adhesiveBags * spec.materialRule<num>('tile_adhesive_bag_kg').toDouble()),
+        purchaseQty: adhesiveBags.toInt(),
         category: 'Основное',
       ),
     ];
   } else if (heatingType == 1) {
     // Cable in screed
-    cableLength = (heatingArea / spec.materialRules.cableStepM * spec.materialRules.cableReserve).ceil();
-    mountingTapeRolls = (cableLength / spec.materialRules.mountingTapeRollM).ceil();
-    epsSheets = (heatingArea * spec.materialRules.epsReserve / spec.materialRules.epsSheetM2).ceil();
-    screedBags = (heatingArea * spec.materialRules.screedThicknessM * spec.materialRules.screedDensity / spec.materialRules.screedBagKg).ceil();
+    cableLength = (heatingArea / spec.materialRule<num>('cable_step_m').toDouble() * spec.materialRule<num>('cable_reserve').toDouble()).ceil();
+    mountingTapeRolls = (cableLength / spec.materialRule<num>('mounting_tape_roll_m').toDouble()).ceil();
+    epsSheets = (heatingArea * spec.materialRule<num>('eps_reserve').toDouble() / spec.materialRule<num>('eps_sheet_m2').toDouble()).ceil();
+    screedBags = (heatingArea * spec.materialRule<num>('screed_thickness_m').toDouble() * spec.materialRule<num>('screed_density').toDouble() / spec.materialRule<num>('screed_bag_kg').toDouble()).ceil();
 
     basePrimary = cableLength.toDouble();
     materials = [
@@ -273,7 +98,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: cableLength.toDouble(),
         unit: 'м',
         withReserve: cableLength.toDouble(),
-        purchaseQty: cableLength,
+        purchaseQty: cableLength.toInt(),
         category: 'Основное',
       ),
       const CanonicalMaterialResult(
@@ -289,7 +114,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: mountingTapeRolls.toDouble(),
         unit: 'рулонов',
         withReserve: mountingTapeRolls.toDouble(),
-        purchaseQty: mountingTapeRolls,
+        purchaseQty: mountingTapeRolls.toInt(),
         category: 'Монтаж',
       ),
       CanonicalMaterialResult(
@@ -297,24 +122,24 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: epsSheets.toDouble(),
         unit: 'листов',
         withReserve: epsSheets.toDouble(),
-        purchaseQty: epsSheets,
+        purchaseQty: epsSheets.toInt(),
         category: 'Утепление',
       ),
       CanonicalMaterialResult(
         name: 'Стяжка ЦПС (мешки 50 кг)',
-        quantity: _roundValue(heatingArea * spec.materialRules.screedThicknessM * spec.materialRules.screedDensity, 3),
+        quantity: roundValue(heatingArea * spec.materialRule<num>('screed_thickness_m').toDouble() * spec.materialRule<num>('screed_density').toDouble(), 3),
         unit: 'кг',
-        withReserve: (screedBags * spec.materialRules.screedBagKg),
-        purchaseQty: screedBags,
+        withReserve: (screedBags * spec.materialRule<num>('screed_bag_kg').toDouble()),
+        purchaseQty: screedBags.toInt(),
         category: 'Основное',
       ),
     ];
   } else {
     // Water pipes
-    pipeLength = (heatingArea / spec.materialRules.pipeStepM * spec.materialRules.pipeReserve).ceil();
-    circuits = math.max(1, (pipeLength / spec.materialRules.maxCircuitM).ceil());
-    pipeInsulation = pipeLength * spec.materialRules.pipeInsulationReserve;
-    meshArea = heatingArea * spec.materialRules.meshReserve;
+    pipeLength = (heatingArea / spec.materialRule<num>('pipe_step_m').toDouble() * spec.materialRule<num>('pipe_reserve').toDouble()).ceil();
+    circuits = math.max(1, (pipeLength / spec.materialRule<num>('max_circuit_m').toDouble()).ceil());
+    pipeInsulation = pipeLength * spec.materialRule<num>('pipe_insulation_reserve').toDouble();
+    meshArea = heatingArea * spec.materialRule<num>('mesh_reserve').toDouble();
 
     basePrimary = pipeLength.toDouble();
     materials = [
@@ -323,7 +148,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: pipeLength.toDouble(),
         unit: 'м',
         withReserve: pipeLength.toDouble(),
-        purchaseQty: pipeLength,
+        purchaseQty: pipeLength.toInt(),
         category: 'Основное',
       ),
       const CanonicalMaterialResult(
@@ -344,7 +169,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
       ),
       CanonicalMaterialResult(
         name: 'Армирующая сетка',
-        quantity: _roundValue(meshArea, 3),
+        quantity: roundValue(meshArea, 3),
         unit: 'м²',
         withReserve: meshArea.ceil().toDouble(),
         purchaseQty: meshArea.ceil(),
@@ -362,15 +187,15 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
           : 'warm-floor-pipe-m';
   final packageUnit = heatingType == 0 ? 'шт' : 'м';
 
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(basePrimary * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(basePrimary * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
-    final purchaseQuantity = _roundValue(packageCount.toDouble(), 6);
+    final purchaseQuantity = roundValue(packageCount.toDouble(), 6);
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: purchaseQuantity,
-      leftover: _roundValue(purchaseQuantity - exactNeed, 6),
+      leftover: roundValue(purchaseQuantity - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'heatingType:$heatingType',
@@ -378,8 +203,8 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
@@ -394,10 +219,10 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
 
   /* ─── warnings ─── */
   final warnings = <String>[];
-  if (totalPowerKW > spec.warningRules.separateBreakerKwThreshold) {
+  if (totalPowerKW > spec.warningRule<num>('separate_breaker_kw_threshold').toDouble()) {
     warnings.add('Мощность более 3.5 кВт — требуется отдельный автомат');
   }
-  if (roomArea > 0 && heatingArea / roomArea < spec.warningRules.ineffectiveCoverageRatio) {
+  if (roomArea > 0 && heatingArea / roomArea < spec.warningRule<num>('ineffective_coverage_ratio').toDouble()) {
     warnings.add('Обогреваемая площадь менее 50% — неэффективное покрытие');
   }
 
@@ -406,12 +231,12 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'roomArea': _roundValue(roomArea, 3),
-      'furnitureArea': _roundValue(furnitureArea, 3),
-      'heatingArea': _roundValue(heatingArea, 3),
+      'roomArea': roundValue(roomArea, 3),
+      'furnitureArea': roundValue(furnitureArea, 3),
+      'heatingArea': roundValue(heatingArea, 3),
       'heatingType': heatingType.toDouble(),
       'powerDensity': powerDensity,
-      'totalPowerW': _roundValue(totalPowerW, 3),
+      'totalPowerW': roundValue(totalPowerW, 3),
       'totalPowerKW': totalPowerKW,
       'thermostat': 1.0,
       'mats': mats.toDouble(),
@@ -422,7 +247,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
       'pipeLength': pipeLength.toDouble(),
       'circuits': circuits.toDouble(),
       'pipeInsulation': pipeInsulation,
-      'meshArea': _roundValue(meshArea, 3),
+      'meshArea': roundValue(meshArea, 3),
       'substrateRolls': substrateRolls.toDouble(),
       'adhesiveBags': adhesiveBags.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,

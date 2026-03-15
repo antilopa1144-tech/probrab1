@@ -1,102 +1,7 @@
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
-const PuttyCanonicalSpec puttyCanonicalSpecV1 = PuttyCanonicalSpec(
-  calculatorId: 'putty',
-  formulaVersion: 'putty-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'inputMode', defaultValue: 0, min: 0, max: 1),
-    CanonicalInputField(key: 'length', unit: 'm', defaultValue: 5, min: 1, max: 50),
-    CanonicalInputField(key: 'width', unit: 'm', defaultValue: 4, min: 1, max: 50),
-    CanonicalInputField(key: 'height', unit: 'm', defaultValue: 2.7, min: 2, max: 5),
-    CanonicalInputField(key: 'area', unit: 'm2', defaultValue: 50, min: 1, max: 500),
-    CanonicalInputField(key: 'surface', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'puttyType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'bagWeight', unit: 'kg', defaultValue: 20, min: 5, max: 25),
-    CanonicalInputField(key: 'qualityClass', defaultValue: 0, min: 0, max: 3),
-    CanonicalInputField(key: 'layers', defaultValue: 0, min: 0, max: 5),
-    CanonicalInputField(key: 'startLayers', defaultValue: 0, min: 0, max: 5),
-    CanonicalInputField(key: 'finishLayers', defaultValue: 0, min: 0, max: 5),
-  ],
-  enabledFactors: [
-    'surface_quality',
-    'geometry_complexity',
-    'installation_method',
-    'worker_skill',
-    'waste_factor',
-    'logistics_buffer',
-    'packaging_rounding',
-  ],
-  components: [
-    PuttyComponentSpec(
-      key: 'finish',
-      label: 'Финишная',
-      category: 'Финишная',
-      enabledForPuttyTypes: [0, 1],
-      consumptionKgPerM2Mm: 1.1,
-      thicknessMm: 1,
-    ),
-    PuttyComponentSpec(
-      key: 'start',
-      label: 'Стартовая',
-      category: 'Стартовая',
-      enabledForPuttyTypes: [1, 2],
-      consumptionKgPerM2Mm: 2.7,
-      thicknessMm: 1,
-    ),
-  ],
-  qualityProfiles: [
-    PuttyQualityProfile(
-      id: 0,
-      key: 'legacy_web',
-      components: {
-        'finish': PuttyQualityComponentProfile(consumptionKgPerM2Layer: 1.1, defaultLayers: 1),
-        'start': PuttyQualityComponentProfile(consumptionKgPerM2Layer: 2.7, defaultLayers: 1),
-      },
-    ),
-    PuttyQualityProfile(
-      id: 1,
-      key: 'economy',
-      components: {
-        'finish': PuttyQualityComponentProfile(consumptionKgPerM2Layer: 1.0, defaultLayers: 1),
-        'start': PuttyQualityComponentProfile(consumptionKgPerM2Layer: 1.8, defaultLayers: 1),
-      },
-    ),
-    PuttyQualityProfile(
-      id: 2,
-      key: 'standard',
-      components: {
-        'finish': PuttyQualityComponentProfile(consumptionKgPerM2Layer: 0.8, defaultLayers: 1),
-        'start': PuttyQualityComponentProfile(consumptionKgPerM2Layer: 1.5, defaultLayers: 2),
-      },
-    ),
-    PuttyQualityProfile(
-      id: 3,
-      key: 'premium',
-      components: {
-        'finish': PuttyQualityComponentProfile(consumptionKgPerM2Layer: 0.5, defaultLayers: 2),
-        'start': PuttyQualityComponentProfile(consumptionKgPerM2Layer: 1.2, defaultLayers: 2),
-      },
-    ),
-  ],
-  packagingRules: PuttyPackagingRules(
-    unit: 'kg',
-    defaultPackageSize: 20,
-    allowedPackageSizes: [5, 20, 25],
-  ),
-  materialRules: PuttyAuxiliaryRules(
-    primerLitersPerM2PerCoat: 0.15,
-    finishOnlyPrimerCoats: 1,
-    withStartPrimerCoats: 2,
-    startOnlyPrimerCoats: 1,
-    serpyankaLinearMPerM2: 1.2,
-    serpyankaReserveFactor: 1.1,
-    serpyankaRollLengthM: 45,
-    sandpaperM2PerSheet: 5,
-    sandpaperReserveFactor: 1.1,
-    sandpaperEnabledForPuttyTypes: [0, 1],
-  ),
-  warningRules: PuttyWarningRules(mechanizedAreaThresholdM2: 100),
-);
+import 'canonical_adapter_utils.dart';
 
 const Map<String, Map<String, double>> _factorTable = {
   'surface_quality': {'MIN': 0.95, 'REC': 1.0, 'MAX': 1.08},
@@ -108,10 +13,8 @@ const Map<String, Map<String, double>> _factorTable = {
   'packaging_rounding': {'MIN': 1.0, 'REC': 1.01, 'MAX': 1.03},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
 class _ComponentScenario {
-  final PuttyComponentSpec component;
+  final Map<String, dynamic> component;
   final double exactNeed;
   final double purchaseQuantity;
   final double leftover;
@@ -127,7 +30,7 @@ class _ComponentScenario {
 }
 
 class _ResolvedPuttyComponent {
-  final PuttyComponentSpec component;
+  final Map<String, dynamic> component;
   final double consumptionPerLayer;
   final int layers;
 
@@ -143,116 +46,90 @@ bool hasCanonicalPuttyInputs(Map<String, double> inputs) {
   return canonicalKeys.any(inputs.containsKey);
 }
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(PuttyCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-double _resolveWorkArea(PuttyCanonicalSpec spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? _defaultFor(spec, 'inputMode', 0)).round();
+double _resolveWorkArea(SpecReader spec, Map<String, double> inputs) {
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
   if (inputMode == 0) {
-    final length = (inputs['length'] ?? _defaultFor(spec, 'length', 5)).clamp(1, 50).toDouble();
-    final width = (inputs['width'] ?? _defaultFor(spec, 'width', 4)).clamp(1, 50).toDouble();
-    final height = (inputs['height'] ?? _defaultFor(spec, 'height', 2.7)).clamp(2, 5).toDouble();
+    final length = (inputs['length'] ?? defaultFor(spec, 'length', 5)).clamp(1, 50).toDouble();
+    final width = (inputs['width'] ?? defaultFor(spec, 'width', 4)).clamp(1, 50).toDouble();
+    final height = (inputs['height'] ?? defaultFor(spec, 'height', 2.7)).clamp(2, 5).toDouble();
     final ceilingArea = length * width;
     final wallsArea = 2 * (length + width) * height;
-    final surfaceMode = (inputs['surface'] ?? _defaultFor(spec, 'surface', 0)).round();
+    final surfaceMode = (inputs['surface'] ?? defaultFor(spec, 'surface', 0)).round();
     if (surfaceMode == 0) return wallsArea;
     if (surfaceMode == 1) return ceilingArea;
     return wallsArea + ceilingArea;
   }
-  return (inputs['area'] ?? _defaultFor(spec, 'area', 50)).clamp(1, 500).toDouble();
+  return (inputs['area'] ?? defaultFor(spec, 'area', 50)).clamp(1, 500).toDouble();
 }
 
-double _resolveBagWeight(PuttyCanonicalSpec spec, Map<String, double> inputs) {
-  final bagWeight = (inputs['bagWeight'] ?? spec.packagingRules.defaultPackageSize).toDouble();
-  if (spec.packagingRules.allowedPackageSizes.contains(bagWeight)) {
+double _resolveBagWeight(SpecReader spec, Map<String, double> inputs) {
+  final bagWeight = (inputs['bagWeight'] ?? spec.packagingRule<num>('default_package_size').toDouble());
+  if ((spec.packagingRule<List>('allowed_package_sizes') ?? []).contains(bagWeight)) {
     return bagWeight;
   }
-  return spec.packagingRules.defaultPackageSize;
+  return spec.packagingRule<num>('default_package_size').toDouble();
 }
 
-PuttyQualityProfile _resolveQualityProfile(PuttyCanonicalSpec spec, Map<String, double> inputs) {
-  final qualityClass = (inputs['qualityClass'] ?? _defaultFor(spec, 'qualityClass', 0)).round().clamp(0, 3);
-  for (final profile in spec.qualityProfiles) {
-    if (profile.id == qualityClass) return profile;
+Map<String, dynamic> _resolveQualityProfile(SpecReader spec, Map<String, double> inputs) {
+  final qualityClass = (inputs['qualityClass'] ?? defaultFor(spec, 'qualityClass', 0)).round().clamp(0, 3);
+  for (final profile in spec.normativeList('quality_profiles')) {
+    if ((profile['id'] as num).toInt() == qualityClass) return profile;
   }
-  return spec.qualityProfiles.first;
+  return spec.normativeList('quality_profiles').first;
 }
 
 int _resolveComponentLayers(
-  PuttyCanonicalSpec spec,
+  SpecReader spec,
   Map<String, double> inputs,
   String componentKey,
   int fallbackLayers,
 ) {
-  final legacyLayers = (inputs['layers'] ?? _defaultFor(spec, 'layers', 0)).round().clamp(0, 5);
+  final legacyLayers = (inputs['layers'] ?? defaultFor(spec, 'layers', 0)).round().clamp(0, 5);
   final overrideKey = componentKey == 'start' ? 'startLayers' : 'finishLayers';
-  final explicitLayers = (inputs[overrideKey] ?? _defaultFor(spec, overrideKey, 0)).round().clamp(0, 5);
+  final explicitLayers = (inputs[overrideKey] ?? defaultFor(spec, overrideKey, 0)).round().clamp(0, 5);
   if (explicitLayers > 0) return explicitLayers;
   if (legacyLayers > 0) return legacyLayers;
   return fallbackLayers;
 }
 
 List<_ResolvedPuttyComponent> _resolveComponents(
-  PuttyCanonicalSpec spec,
+  SpecReader spec,
   Map<String, double> inputs,
   int puttyType,
-  PuttyQualityProfile qualityProfile,
+  Map<String, dynamic> qualityProfile,
 ) {
-  return spec.components
-      .where((component) => component.enabledForPuttyTypes.contains(puttyType))
+  final components = spec.normativeList('components');
+  final profileComponents = (qualityProfile['components'] as Map<String, dynamic>?) ?? {};
+  return components
+      .where((component) => ((component['enabled_for_putty_types'] as List?) ?? []).contains(puttyType))
       .map((component) {
-        final profileComponent = qualityProfile.components[component.key];
-        final fallbackLayers = profileComponent?.defaultLayers ?? component.thicknessMm.round();
+        final componentKey = component['key'] as String;
+        final profileComponent = profileComponents[componentKey] as Map<String, dynamic>?;
+        final fallbackLayers = (profileComponent?['default_layers'] as num?)?.toInt() ?? (component['thickness_mm'] as num).round();
         return _ResolvedPuttyComponent(
           component: component,
-          consumptionPerLayer: profileComponent?.consumptionKgPerM2Layer ?? component.consumptionKgPerM2Mm,
-          layers: _resolveComponentLayers(spec, inputs, component.key, fallbackLayers),
+          consumptionPerLayer: (profileComponent?['consumption_kg_per_m2_layer'] as num?)?.toDouble() ?? (component['consumption_kg_per_m2_mm'] as num).toDouble(),
+          layers: _resolveComponentLayers(spec, inputs, componentKey, fallbackLayers),
         );
       })
       .toList(growable: false);
 }
 
-Map<String, double> _keyFactors(PuttyCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(PuttyCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
 double _findResolvedLayers(List<_ResolvedPuttyComponent> components, String key) {
   for (final component in components) {
-    if (component.component.key == key) return component.layers.toDouble();
+    if (component.component['key'] == key) return component.layers.toDouble();
   }
   return 0;
 }
 
 CanonicalCalculatorContractResult calculateCanonicalPutty(
   Map<String, double> inputs, {
-  PuttyCanonicalSpec spec = puttyCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(puttySpecData);
+
   final workArea = _resolveWorkArea(spec, inputs);
-  final puttyType = (inputs['puttyType'] ?? _defaultFor(spec, 'puttyType', 0)).round().clamp(0, 2);
+  final puttyType = (inputs['puttyType'] ?? defaultFor(spec, 'puttyType', 0)).round().clamp(0, 2);
   final bagWeight = _resolveBagWeight(spec, inputs);
   final qualityProfile = _resolveQualityProfile(spec, inputs);
   final resolvedComponents = _resolveComponents(spec, inputs, puttyType, qualityProfile);
@@ -260,17 +137,17 @@ CanonicalCalculatorContractResult calculateCanonicalPutty(
   final scenarios = <String, CanonicalScenarioResult>{};
   final recComponentScenarios = <_ComponentScenario>[];
 
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final keyFactors = _keyFactors(spec, scenarioName);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final keyFactors = buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName);
     final componentScenarios = resolvedComponents.map((resolved) {
-      final exactNeed = _roundValue(
+      final exactNeed = roundValue(
         workArea * resolved.layers * resolved.consumptionPerLayer * multiplier,
         3,
       );
       final packageCount = (exactNeed / bagWeight).ceil();
-      final purchaseQuantity = _roundValue(packageCount * bagWeight, 3);
-      final leftover = _roundValue(purchaseQuantity - exactNeed, 3);
+      final purchaseQuantity = roundValue(packageCount * bagWeight, 3);
+      final leftover = roundValue(purchaseQuantity - exactNeed, 3);
       return _ComponentScenario(
         component: resolved.component,
         exactNeed: exactNeed,
@@ -284,15 +161,15 @@ CanonicalCalculatorContractResult calculateCanonicalPutty(
       recComponentScenarios.addAll(componentScenarios);
     }
 
-    final exactNeed = _roundValue(
+    final exactNeed = roundValue(
       componentScenarios.fold(0.0, (sum, component) => sum + component.exactNeed),
       3,
     );
-    final purchaseQuantity = _roundValue(
+    final purchaseQuantity = roundValue(
       componentScenarios.fold(0.0, (sum, component) => sum + component.purchaseQuantity),
       3,
     );
-    final leftover = _roundValue(
+    final leftover = roundValue(
       componentScenarios.fold(0.0, (sum, component) => sum + component.leftover),
       3,
     );
@@ -303,16 +180,16 @@ CanonicalCalculatorContractResult calculateCanonicalPutty(
       leftover: leftover,
       assumptions: [
         'formula_version:${spec.formulaVersion}',
-        'quality_profile:${qualityProfile.key}',
+        'quality_profile:${qualityProfile['key'] as String}',
         for (final component in componentScenarios)
-          'component:${component.component.key}:layers:${component.exactNeed > 0 ? component.component.key == "start" ? _findResolvedLayers(resolvedComponents, "start").toInt() : _findResolvedLayers(resolvedComponents, "finish").toInt() : 0}',
+          'component:${component.component['key']}:layers:${component.exactNeed > 0 ? component.component['key'] == "start" ? _findResolvedLayers(resolvedComponents, "start").toInt() : _findResolvedLayers(resolvedComponents, "finish").toInt() : 0}',
       ],
       keyFactors: keyFactors,
       buyPlan: CanonicalBuyPlan(
         packageLabel: 'bag-${bagWeight.toInt()}kg-total',
         packageSize: bagWeight,
         packagesCount: (purchaseQuantity / bagWeight).ceil(),
-        unit: spec.packagingRules.unit,
+        unit: spec.packagingRule<String>('unit'),
       ),
     );
   }
@@ -320,39 +197,39 @@ CanonicalCalculatorContractResult calculateCanonicalPutty(
   final materials = <CanonicalMaterialResult>[
     for (final componentScenario in recComponentScenarios)
       CanonicalMaterialResult(
-        name: 'Шпаклёвка ${componentScenario.component.label.toLowerCase()} (мешки ${bagWeight.toInt()} кг)',
-        quantity: _roundValue(componentScenario.exactNeed / bagWeight, 3),
+        name: 'Шпаклёвка ${(componentScenario.component['label'] as String).toLowerCase()} (мешки ${bagWeight.toInt()} кг)',
+        quantity: roundValue(componentScenario.exactNeed / bagWeight, 3),
         unit: 'мешков',
         withReserve: (componentScenario.purchaseQuantity / bagWeight).ceilToDouble(),
         purchaseQty: (componentScenario.purchaseQuantity / bagWeight).ceil(),
-        category: componentScenario.component.category,
+        category: componentScenario.component['category'] as String,
       ),
   ];
 
   if (puttyType == 1 || puttyType == 2) {
-    final serpyankaMeters = workArea * spec.materialRules.serpyankaLinearMPerM2 * spec.materialRules.serpyankaReserveFactor;
+    final serpyankaMeters = workArea * spec.materialRule<num>('serpyanka_linear_m_per_m2').toDouble() * spec.materialRule<num>('serpyanka_reserve_factor').toDouble();
     materials.add(
       CanonicalMaterialResult(
-        name: 'Серпянка (лента армировочная 45 мм, рулон ${spec.materialRules.serpyankaRollLengthM.toInt()} м)',
-        quantity: _roundValue(workArea * spec.materialRules.serpyankaLinearMPerM2, 3),
+        name: 'Серпянка (лента армировочная 45 мм, рулон ${spec.materialRule<num>('serpyanka_roll_length_m').toInt()} м)',
+        quantity: roundValue(workArea * spec.materialRule<num>('serpyanka_linear_m_per_m2').toDouble(), 3),
         unit: 'м.п.',
         withReserve: serpyankaMeters.ceilToDouble(),
-        purchaseQty: (serpyankaMeters / spec.materialRules.serpyankaRollLengthM).ceil(),
+        purchaseQty: (serpyankaMeters / spec.materialRule<num>('serpyanka_roll_length_m').toDouble()).ceil(),
         category: 'Армирование',
       ),
     );
   }
 
   final primerCoats = puttyType == 0
-      ? spec.materialRules.finishOnlyPrimerCoats
+      ? spec.materialRule<num>('finish_only_primer_coats').toDouble()
       : puttyType == 1
-          ? spec.materialRules.withStartPrimerCoats
-          : spec.materialRules.startOnlyPrimerCoats;
-  final primerLiters = workArea * spec.materialRules.primerLitersPerM2PerCoat * primerCoats;
+          ? spec.materialRule<num>('with_start_primer_coats').toDouble()
+          : spec.materialRule<num>('start_only_primer_coats').toDouble();
+  final primerLiters = workArea * spec.materialRule<num>('primer_liters_per_m2_per_coat').toDouble() * primerCoats;
   materials.add(
     CanonicalMaterialResult(
       name: 'Грунтовка глубокого проникновения (10 л)',
-      quantity: _roundValue(primerLiters / 10, 3),
+      quantity: roundValue(primerLiters / 10, 3),
       unit: 'канистр',
       withReserve: (primerLiters / 10).ceilToDouble(),
       purchaseQty: (primerLiters / 10).ceil(),
@@ -360,23 +237,23 @@ CanonicalCalculatorContractResult calculateCanonicalPutty(
     ),
   );
 
-  if (spec.materialRules.sandpaperEnabledForPuttyTypes.contains(puttyType)) {
-    final sandpaperSheets = (workArea / spec.materialRules.sandpaperM2PerSheet).ceil();
-    final purchaseQty = (sandpaperSheets * spec.materialRules.sandpaperReserveFactor).ceil();
+  if ((spec.materialRule<List>('sandpaper_enabled_for_putty_types') ?? []).contains(puttyType)) {
+    final sandpaperSheets = (workArea / spec.materialRule<num>('sandpaper_m2_per_sheet').toDouble()).ceil();
+    final purchaseQty = (sandpaperSheets * spec.materialRule<num>('sandpaper_reserve_factor').toDouble()).ceil();
     materials.add(
       CanonicalMaterialResult(
         name: 'Наждачная бумага P180-P240',
         quantity: sandpaperSheets.toDouble(),
         unit: 'листов',
         withReserve: purchaseQty.toDouble(),
-        purchaseQty: purchaseQty,
+        purchaseQty: purchaseQty.toInt(),
         category: 'Шлифовка',
       ),
     );
   }
 
   final warnings = <String>[];
-  if (workArea > spec.warningRules.mechanizedAreaThresholdM2) {
+  if (workArea > spec.warningRule<num>('mechanized_area_threshold_m2').toDouble()) {
     warnings.add('Для больших площадей рекомендуется нанесение шпаклёвки механизированным методом');
   }
 
@@ -385,10 +262,10 @@ CanonicalCalculatorContractResult calculateCanonicalPutty(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'wallArea': _roundValue(workArea, 3),
+      'wallArea': roundValue(workArea, 3),
       'puttyType': puttyType.toDouble(),
       'bagWeight': bagWeight,
-      'qualityClass': qualityProfile.id.toDouble(),
+      'qualityClass': (qualityProfile['id'] as num).toInt().toDouble(),
       'startLayers': _findResolvedLayers(resolvedComponents, 'start'),
       'finishLayers': _findResolvedLayers(resolvedComponents, 'finish'),
       'minExactNeedKg': scenarios['MIN']!.exactNeed,

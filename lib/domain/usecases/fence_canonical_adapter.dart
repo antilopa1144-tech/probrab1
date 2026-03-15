@@ -1,120 +1,11 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
+import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
-class FencePackagingRules {
-  final String unit;
-  final int packageSize;
-
-  const FencePackagingRules({required this.unit, required this.packageSize});
-}
-
-class FenceMaterialRules {
-  final double postBurialM;
-  final double profnastilUsefulWidth;
-  final double profnastilReserve;
-  final int profnastilScrewsPerSheet;
-  final int screwsPack;
-  final double primerSprayMPerCan;
-  final double postConcreteM3;
-  final double capsReserve;
-  final double rabicaRollM;
-  final double tensionWireReserve;
-  final double slatWidth;
-  final double slatGap;
-  final double slatReserve;
-  final double antisepticLPerM2;
-  final double antisepticCanL;
-  final double gateWidth;
-  final double wicketWidth;
-
-  const FenceMaterialRules({
-    required this.postBurialM,
-    required this.profnastilUsefulWidth,
-    required this.profnastilReserve,
-    required this.profnastilScrewsPerSheet,
-    required this.screwsPack,
-    required this.primerSprayMPerCan,
-    required this.postConcreteM3,
-    required this.capsReserve,
-    required this.rabicaRollM,
-    required this.tensionWireReserve,
-    required this.slatWidth,
-    required this.slatGap,
-    required this.slatReserve,
-    required this.antisepticLPerM2,
-    required this.antisepticCanL,
-    required this.gateWidth,
-    required this.wicketWidth,
-  });
-}
-
-class FenceWarningRules {
-  final int reinforcedPostGateThreshold;
-
-  const FenceWarningRules({required this.reinforcedPostGateThreshold});
-}
-
-class FenceCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final FencePackagingRules packagingRules;
-  final FenceMaterialRules materialRules;
-  final FenceWarningRules warningRules;
-
-  const FenceCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-/* ─── spec instance ─── */
-
-const FenceCanonicalSpec fenceCanonicalSpecV1 = FenceCanonicalSpec(
-  calculatorId: 'fence',
-  formulaVersion: 'fence-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'fenceLength', unit: 'm', defaultValue: 50, min: 5, max: 500),
-    CanonicalInputField(key: 'fenceHeight', unit: 'm', defaultValue: 2, min: 1, max: 3),
-    CanonicalInputField(key: 'fenceType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'postStep', unit: 'm', defaultValue: 2.5, min: 2.0, max: 3.0),
-    CanonicalInputField(key: 'gatesCount', defaultValue: 1, min: 0, max: 5),
-    CanonicalInputField(key: 'wicketsCount', defaultValue: 1, min: 0, max: 5),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: FencePackagingRules(unit: 'шт', packageSize: 1),
-  materialRules: FenceMaterialRules(
-    postBurialM: 0.9,
-    profnastilUsefulWidth: 1.15,
-    profnastilReserve: 1.02,
-    profnastilScrewsPerSheet: 7,
-    screwsPack: 200,
-    primerSprayMPerCan: 20,
-    postConcreteM3: 0.03,
-    capsReserve: 1.05,
-    rabicaRollM: 10,
-    tensionWireReserve: 1.05,
-    slatWidth: 0.1,
-    slatGap: 0.03,
-    slatReserve: 1.05,
-    antisepticLPerM2: 0.15,
-    antisepticCanL: 5,
-    gateWidth: 4,
-    wicketWidth: 1,
-  ),
-  warningRules: FenceWarningRules(reinforcedPostGateThreshold: 0),
-);
-
-/* ─── factor table ─── */
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
@@ -122,15 +13,12 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
 const Map<int, String> _fenceTypeLabels = {
   0: 'Профнастил',
   1: 'Сетка-рабица',
   2: 'Деревянный штакетник',
 };
 
-/* ─── helpers ─── */
 
 bool hasCanonicalFenceInputs(Map<String, double> inputs) {
   return inputs.containsKey('fenceType') ||
@@ -149,67 +37,37 @@ Map<String, double> normalizeLegacyFenceInputs(Map<String, double> inputs) {
   return normalized;
 }
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(FenceCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(FenceCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(FenceCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
-/* ─── main ─── */
 
 CanonicalCalculatorContractResult calculateCanonicalFence(
   Map<String, double> inputs, {
-  FenceCanonicalSpec spec = fenceCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(fenceSpecData);
+
   final normalized = hasCanonicalFenceInputs(inputs)
       ? Map<String, double>.from(inputs)
       : normalizeLegacyFenceInputs(inputs);
 
-  final fenceLength = math.max(5.0, math.min(500.0, (normalized['fenceLength'] ?? _defaultFor(spec, 'fenceLength', 50)).toDouble()));
-  final fenceHeight = math.max(1.0, math.min(3.0, (normalized['fenceHeight'] ?? _defaultFor(spec, 'fenceHeight', 2)).toDouble()));
-  final fenceType = (normalized['fenceType'] ?? _defaultFor(spec, 'fenceType', 0)).round().clamp(0, 2);
-  final postStep = math.max(2.0, math.min(3.0, (normalized['postStep'] ?? _defaultFor(spec, 'postStep', 2.5)).toDouble()));
-  final gatesCount = (normalized['gatesCount'] ?? _defaultFor(spec, 'gatesCount', 1)).round().clamp(0, 5);
-  final wicketsCount = (normalized['wicketsCount'] ?? _defaultFor(spec, 'wicketsCount', 1)).round().clamp(0, 5);
+  final fenceLength = math.max(5.0, math.min(500.0, (normalized['fenceLength'] ?? defaultFor(spec, 'fenceLength', 50)).toDouble()));
+  final fenceHeight = math.max(1.0, math.min(3.0, (normalized['fenceHeight'] ?? defaultFor(spec, 'fenceHeight', 2)).toDouble()));
+  final fenceType = (normalized['fenceType'] ?? defaultFor(spec, 'fenceType', 0)).round().clamp(0, 2);
+  final postStep = math.max(2.0, math.min(3.0, (normalized['postStep'] ?? defaultFor(spec, 'postStep', 2.5)).toDouble()));
+  final gatesCount = (normalized['gatesCount'] ?? defaultFor(spec, 'gatesCount', 1)).round().clamp(0, 5);
+  final wicketsCount = (normalized['wicketsCount'] ?? defaultFor(spec, 'wicketsCount', 1)).round().clamp(0, 5);
 
   // Common geometry
-  final netLength = math.max(1.0, fenceLength - gatesCount * spec.materialRules.gateWidth - wicketsCount * spec.materialRules.wicketWidth);
+  final netLength = math.max(1.0, fenceLength - gatesCount * spec.materialRule<num>('gate_width').toDouble() - wicketsCount * spec.materialRule<num>('wicket_width').toDouble());
   final postsCount = (netLength / postStep).ceil() + 1 + gatesCount * 2 + wicketsCount * 2;
   final lagsPerSpan = fenceHeight > 2 ? 3 : 2;
   final lagSpans = (netLength / postStep).ceil();
   final lagsCount = lagSpans * lagsPerSpan;
-  final postLength = _roundValue(fenceHeight + spec.materialRules.postBurialM, 2);
+  final postLength = roundValue(fenceHeight + spec.materialRule<num>('post_burial_m').toDouble(), 2);
 
   // Concrete for posts
-  final concrete = _roundValue(postsCount * spec.materialRules.postConcreteM3, 3);
+  final concrete = roundValue(postsCount * spec.materialRule<num>('post_concrete_m3').toDouble(), 3);
 
   // Caps for posts
-  final caps = (postsCount * spec.materialRules.capsReserve).ceil();
+  final caps = (postsCount * spec.materialRule<num>('caps_reserve').toDouble()).ceil();
 
   // Type-specific covering
   var sheets = 0;
@@ -223,18 +81,18 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
 
   if (fenceType == 0) {
     // Profnastil
-    sheets = (netLength / spec.materialRules.profnastilUsefulWidth * spec.materialRules.profnastilReserve).ceil();
-    screws = (sheets * spec.materialRules.profnastilScrewsPerSheet).ceil();
-    screwPacks = (screws / spec.materialRules.screwsPack).ceil();
-    primerCans = (fenceLength / spec.materialRules.primerSprayMPerCan).ceil();
+    sheets = (netLength / spec.materialRule<num>('profnastil_useful_width').toDouble() * spec.materialRule<num>('profnastil_reserve').toDouble()).ceil();
+    screws = (sheets * spec.materialRule<num>('profnastil_screws_per_sheet').toDouble()).ceil();
+    screwPacks = (screws / spec.materialRule<num>('screws_pack').toDouble()).ceil();
+    primerCans = (fenceLength / spec.materialRule<num>('primer_spray_m_per_can').toDouble()).ceil();
   } else if (fenceType == 1) {
     // Rabica
-    rolls = (netLength / spec.materialRules.rabicaRollM).ceil();
-    wireLength = _roundValue(netLength * lagsPerSpan * spec.materialRules.tensionWireReserve, 2);
+    rolls = (netLength / spec.materialRule<num>('rabica_roll_m').toDouble()).ceil();
+    wireLength = roundValue(netLength * lagsPerSpan * spec.materialRule<num>('tension_wire_reserve').toDouble(), 2);
   } else {
     // Wooden slats
-    slats = (netLength / (spec.materialRules.slatWidth + spec.materialRules.slatGap) * spec.materialRules.slatReserve).ceil();
-    antisepticCans = (netLength * fenceHeight * 2 * spec.materialRules.antisepticLPerM2 / spec.materialRules.antisepticCanL).ceil();
+    slats = (netLength / (spec.materialRule<num>('slat_width').toDouble() + spec.materialRule<num>('slat_gap').toDouble()) * spec.materialRule<num>('slat_reserve').toDouble()).ceil();
+    antisepticCans = (netLength * fenceHeight * 2 * spec.materialRule<num>('antiseptic_l_per_m2').toDouble() / spec.materialRule<num>('antiseptic_can_l').toDouble()).ceil();
   }
 
   // Scenarios
@@ -247,15 +105,15 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
   final packageUnit = fenceType == 0 ? 'шт' : fenceType == 1 ? 'рулонов' : 'шт';
 
   final scenarios = <String, CanonicalScenarioResult>{};
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(basePrimary * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(basePrimary * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: packageCount.toDouble(),
-      leftover: _roundValue(packageCount - exactNeed, 6),
+      leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'fenceType:$fenceType',
@@ -263,8 +121,8 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
@@ -279,7 +137,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
 
   // Warnings
   final warnings = <String>[];
-  if (gatesCount > spec.warningRules.reinforcedPostGateThreshold) {
+  if (gatesCount > spec.warningRule<num>('reinforced_post_gate_threshold').toDouble()) {
     warnings.add('При наличии ворот рекомендуются усиленные столбы 80×80 или 100×100 мм');
   }
 
@@ -290,7 +148,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
       quantity: postsCount.toDouble(),
       unit: 'шт',
       withReserve: postsCount.toDouble(),
-      purchaseQty: postsCount,
+      purchaseQty: postsCount.toInt(),
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
@@ -298,7 +156,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
       quantity: lagsCount.toDouble(),
       unit: 'шт',
       withReserve: lagsCount.toDouble(),
-      purchaseQty: lagsCount,
+      purchaseQty: lagsCount.toInt(),
       category: 'Каркас',
     ),
   ];
@@ -314,11 +172,11 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
         category: 'Покрытие',
       ),
       CanonicalMaterialResult(
-        name: 'Саморезы кровельные (упаковка ${spec.materialRules.screwsPack} шт)',
+        name: 'Саморезы кровельные (упаковка ${spec.materialRule<num>('screws_pack').toDouble()} шт)',
         quantity: screws.toDouble(),
         unit: 'шт',
-        withReserve: (screwPacks * spec.materialRules.screwsPack).toDouble(),
-        purchaseQty: screwPacks,
+        withReserve: (screwPacks * spec.materialRule<num>('screws_pack').toDouble()),
+        purchaseQty: screwPacks.toInt(),
         category: 'Крепёж',
       ),
       CanonicalMaterialResult(
@@ -326,14 +184,14 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
         quantity: primerCans.toDouble(),
         unit: 'баллонов',
         withReserve: primerCans.toDouble(),
-        purchaseQty: primerCans,
+        purchaseQty: primerCans.toInt(),
         category: 'Защита',
       ),
     ]);
   } else if (fenceType == 1) {
     materials.addAll([
       CanonicalMaterialResult(
-        name: '${_fenceTypeLabels[1]} ($fenceHeight м, рулон ${spec.materialRules.rabicaRollM.round()} м)',
+        name: '${_fenceTypeLabels[1]} ($fenceHeight м, рулон ${spec.materialRule<num>('rabica_roll_m').toDouble().round()} м)',
         quantity: recScenario.exactNeed,
         unit: 'рулонов',
         withReserve: recScenario.exactNeed.ceilToDouble(),
@@ -360,11 +218,11 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
         category: 'Покрытие',
       ),
       CanonicalMaterialResult(
-        name: 'Антисептик (${spec.materialRules.antisepticCanL.round()} л)',
+        name: 'Антисептик (${spec.materialRule<num>('antiseptic_can_l').toDouble().round()} л)',
         quantity: antisepticCans.toDouble(),
         unit: 'канистр',
         withReserve: antisepticCans.toDouble(),
-        purchaseQty: antisepticCans,
+        purchaseQty: antisepticCans.toInt(),
         category: 'Защита',
       ),
     ]);
@@ -384,7 +242,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
       quantity: caps.toDouble(),
       unit: 'шт',
       withReserve: caps.toDouble(),
-      purchaseQty: caps,
+      purchaseQty: caps.toInt(),
       category: 'Каркас',
     ),
   ]);
@@ -394,13 +252,13 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'fenceLength': _roundValue(fenceLength, 3),
-      'fenceHeight': _roundValue(fenceHeight, 3),
+      'fenceLength': roundValue(fenceLength, 3),
+      'fenceHeight': roundValue(fenceHeight, 3),
       'fenceType': fenceType.toDouble(),
-      'postStep': _roundValue(postStep, 2),
+      'postStep': roundValue(postStep, 2),
       'gatesCount': gatesCount.toDouble(),
       'wicketsCount': wicketsCount.toDouble(),
-      'netLength': _roundValue(netLength, 3),
+      'netLength': roundValue(netLength, 3),
       'postsCount': postsCount.toDouble(),
       'lagsPerSpan': lagsPerSpan.toDouble(),
       'lagSpans': lagSpans.toDouble(),

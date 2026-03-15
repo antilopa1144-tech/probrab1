@@ -1,34 +1,8 @@
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
+import 'canonical_adapter_utils.dart';
 
-/* ─── spec instance ─── */
-
-const PvcPanelsCanonicalSpec pvcPanelsCanonicalSpecV1 = PvcPanelsCanonicalSpec(
-  calculatorId: 'pvc-panels',
-  formulaVersion: 'pvc-panels-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'inputMode', defaultValue: 0, min: 0, max: 1),
-    CanonicalInputField(key: 'area', unit: 'm2', defaultValue: 15, min: 1, max: 500),
-    CanonicalInputField(key: 'wallWidth', unit: 'm', defaultValue: 3, min: 0.5, max: 30),
-    CanonicalInputField(key: 'wallHeight', unit: 'm', defaultValue: 2.5, min: 0.5, max: 10),
-    CanonicalInputField(key: 'panelWidth', unit: 'm', defaultValue: 0.25, min: 0.1, max: 0.5),
-    CanonicalInputField(key: 'panelType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'needProfile', defaultValue: 1, min: 0, max: 1),
-    CanonicalInputField(key: 'needCorners', defaultValue: 1, min: 0, max: 1),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: PvcPanelsPackagingRules(unit: 'шт', packageSize: 1),
-  materialRules: PvcPanelsMaterialRules(
-    panelReserve: 1.10,
-    profileReserve: 1.10,
-    profileStep: 0.4,
-    panelLengths: [2.7, 3.0, 2.7],
-    cornerProfileLength: 3.0,
-    standardCorners: 4,
-  ),
-  warningRules: PvcPanelsWarningRules(largeAreaThresholdM2: 100),
-);
-
-/* ─── factor table ─── */
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
@@ -36,73 +10,38 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
-/* ─── helpers ─── */
-
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(PvcPanelsCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(PvcPanelsCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(PvcPanelsCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
-/* ─── main ─── */
 
 CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
   Map<String, double> inputs, {
-  PvcPanelsCanonicalSpec spec = pvcPanelsCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
-  final inputMode = (inputs['inputMode'] ?? _defaultFor(spec, 'inputMode', 0)).round().clamp(0, 1);
-  final areaInput = (inputs['area'] ?? _defaultFor(spec, 'area', 15)).clamp(1.0, 500.0);
-  final wallWidth = (inputs['wallWidth'] ?? _defaultFor(spec, 'wallWidth', 3)).clamp(0.5, 30.0);
-  final wallHeight = (inputs['wallHeight'] ?? _defaultFor(spec, 'wallHeight', 2.5)).clamp(0.5, 10.0);
-  final panelWidth = (inputs['panelWidth'] ?? _defaultFor(spec, 'panelWidth', 0.25)).clamp(0.1, 0.5);
-  final panelType = (inputs['panelType'] ?? _defaultFor(spec, 'panelType', 0)).round().clamp(0, 2);
-  final needProfile = (inputs['needProfile'] ?? _defaultFor(spec, 'needProfile', 1)).round() == 1 ? 1 : 0;
-  final needCorners = (inputs['needCorners'] ?? _defaultFor(spec, 'needCorners', 1)).round() == 1 ? 1 : 0;
+  final spec = specOverride ?? const SpecReader(pvcPanelsSpecData);
+
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round().clamp(0, 1);
+  final areaInput = (inputs['area'] ?? defaultFor(spec, 'area', 15)).clamp(1.0, 500.0);
+  final wallWidth = (inputs['wallWidth'] ?? defaultFor(spec, 'wallWidth', 3)).clamp(0.5, 30.0);
+  final wallHeight = (inputs['wallHeight'] ?? defaultFor(spec, 'wallHeight', 2.5)).clamp(0.5, 10.0);
+  final panelWidth = (inputs['panelWidth'] ?? defaultFor(spec, 'panelWidth', 0.25)).clamp(0.1, 0.5);
+  final panelType = (inputs['panelType'] ?? defaultFor(spec, 'panelType', 0)).round().clamp(0, 2);
+  final needProfile = (inputs['needProfile'] ?? defaultFor(spec, 'needProfile', 1)).round() == 1 ? 1 : 0;
+  final needCorners = (inputs['needCorners'] ?? defaultFor(spec, 'needCorners', 1)).round() == 1 ? 1 : 0;
 
   // Area
-  final area = inputMode == 1 ? _roundValue(wallWidth * wallHeight, 3) : areaInput;
+  final area = inputMode == 1 ? roundValue(wallWidth * wallHeight, 3) : areaInput;
 
   // Panels
-  final panelLength = panelType < spec.materialRules.panelLengths.length
-      ? spec.materialRules.panelLengths[panelType]
-      : spec.materialRules.panelLengths[0];
+  final panelLengthsMap = spec.materialRule<Map>('panel_lengths');
+  final panelLength = (panelLengthsMap['$panelType'] as num?)?.toDouble() ?? (panelLengthsMap['0'] as num?)?.toDouble() ?? 2.7;
   final panelArea = panelWidth * panelLength;
-  final panels = (area * spec.materialRules.panelReserve / panelArea).ceil();
+  final panels = (area * spec.materialRule<num>('panel_reserve').toDouble() / panelArea).ceil();
 
   // Profile (conditional)
-  final profileRows = needProfile == 1 ? (wallHeight / spec.materialRules.profileStep).ceil() + 1 : 0;
-  final profileLen = profileRows * wallWidth * spec.materialRules.profileReserve;
+  final profileRows = needProfile == 1 ? (wallHeight / spec.materialRule<num>('profile_step').toDouble()).ceil() + 1 : 0;
+  final profileLen = profileRows * wallWidth * spec.materialRule<num>('profile_reserve').toDouble();
 
   // Corner profile (conditional)
   final cornerPcs = needCorners == 1
-      ? (wallHeight * spec.materialRules.standardCorners / spec.materialRules.cornerProfileLength).ceil()
+      ? (wallHeight * spec.materialRule<num>('standard_corners').toDouble() / spec.materialRule<num>('corner_profile_length').toDouble()).ceil()
       : 0;
 
   // Start profile
@@ -113,15 +52,15 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(panels * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(panels * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: packageCount.toDouble(),
-      leftover: _roundValue(packageCount - exactNeed, 6),
+      leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'inputMode:$inputMode',
@@ -131,8 +70,8 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
         'packaging:pvc-panel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: 'pvc-panel',
@@ -147,7 +86,7 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
 
   // Warnings
   final warnings = <String>[];
-  if (area > spec.warningRules.largeAreaThresholdM2) {
+  if (area > spec.warningRule<num>('large_area_threshold_m2').toDouble()) {
     warnings.add('Большая площадь — рассмотрите оптовую закупку панелей');
   }
   if (panelType == 2) {
@@ -169,7 +108,7 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
   if (needProfile == 1) {
     materials.add(CanonicalMaterialResult(
       name: 'Профиль обрешётки (п.м.)',
-      quantity: _roundValue(profileLen, 2),
+      quantity: roundValue(profileLen, 2),
       unit: 'п.м.',
       withReserve: profileLen.ceilToDouble(),
       purchaseQty: profileLen.ceil(),
@@ -183,7 +122,7 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
       quantity: cornerPcs.toDouble(),
       unit: 'шт',
       withReserve: cornerPcs.toDouble(),
-      purchaseQty: cornerPcs,
+      purchaseQty: cornerPcs.toInt(),
       category: 'Профиль',
     ));
   }
@@ -191,7 +130,7 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
   materials.addAll([
     CanonicalMaterialResult(
       name: 'Стартовый профиль (п.м.)',
-      quantity: _roundValue(startProfile, 2),
+      quantity: roundValue(startProfile, 2),
       unit: 'п.м.',
       withReserve: startProfile.ceilToDouble(),
       purchaseQty: startProfile.ceil(),
@@ -199,7 +138,7 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
     ),
     CanonicalMaterialResult(
       name: 'Плинтус (п.м.)',
-      quantity: _roundValue(plinthLen, 2),
+      quantity: roundValue(plinthLen, 2),
       unit: 'п.м.',
       withReserve: plinthLen.ceilToDouble(),
       purchaseQty: plinthLen.ceil(),
@@ -214,20 +153,20 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
     totals: {
       'area': area,
       'inputMode': inputMode.toDouble(),
-      'wallWidth': _roundValue(wallWidth, 3),
-      'wallHeight': _roundValue(wallHeight, 3),
-      'panelWidth': _roundValue(panelWidth, 3),
+      'wallWidth': roundValue(wallWidth, 3),
+      'wallHeight': roundValue(wallHeight, 3),
+      'panelWidth': roundValue(panelWidth, 3),
       'panelType': panelType.toDouble(),
       'needProfile': needProfile.toDouble(),
       'needCorners': needCorners.toDouble(),
       'panelLength': panelLength,
-      'panelArea': _roundValue(panelArea, 4),
+      'panelArea': roundValue(panelArea, 4),
       'panels': panels.toDouble(),
       'profileRows': profileRows.toDouble(),
-      'profileLen': _roundValue(profileLen, 3),
+      'profileLen': roundValue(profileLen, 3),
       'cornerPcs': cornerPcs.toDouble(),
-      'startProfile': _roundValue(startProfile, 3),
-      'plinthLen': _roundValue(plinthLen, 3),
+      'startProfile': roundValue(startProfile, 3),
+      'plinthLen': roundValue(plinthLen, 3),
       'minExactNeed': scenarios['MIN']!.exactNeed,
       'recExactNeed': recScenario.exactNeed,
       'maxExactNeed': scenarios['MAX']!.exactNeed,

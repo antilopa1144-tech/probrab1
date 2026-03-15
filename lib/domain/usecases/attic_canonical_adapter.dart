@@ -1,124 +1,17 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
+import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
-class AtticPackagingRules {
-  final String unit;
-  final int packageSize;
-
-  const AtticPackagingRules({required this.unit, required this.packageSize});
-}
-
-class AtticMaterialRules {
-  final Map<int, int> plateThickness;
-  final Map<int, double> plateArea;
-  final double windMembraneRoll;
-  final double vaporRoll;
-  final double tapeRoll;
-  final double plateReserve;
-  final double membraneReserve;
-  final double tapeAreaCoeff;
-  final double panelArea;
-  final double panelReserve;
-  final double battenPitch;
-  final double gklSheet;
-  final double gklReserve;
-  final double profileStep;
-  final double puttyKgPerM2;
-  final double puttyBag;
-
-  const AtticMaterialRules({
-    required this.plateThickness,
-    required this.plateArea,
-    required this.windMembraneRoll,
-    required this.vaporRoll,
-    required this.tapeRoll,
-    required this.plateReserve,
-    required this.membraneReserve,
-    required this.tapeAreaCoeff,
-    required this.panelArea,
-    required this.panelReserve,
-    required this.battenPitch,
-    required this.gklSheet,
-    required this.gklReserve,
-    required this.profileStep,
-    required this.puttyKgPerM2,
-    required this.puttyBag,
-  });
-}
-
-class AtticWarningRules {
-  final int thinInsulationThresholdMm;
-
-  const AtticWarningRules({required this.thinInsulationThresholdMm});
-}
-
-class AtticCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final AtticPackagingRules packagingRules;
-  final AtticMaterialRules materialRules;
-  final AtticWarningRules warningRules;
-
-  const AtticCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-/* ─── spec instance ─── */
-
-const AtticCanonicalSpec atticCanonicalSpecV1 = AtticCanonicalSpec(
-  calculatorId: 'attic',
-  formulaVersion: 'attic-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'roofArea', unit: 'm2', defaultValue: 60, min: 10, max: 300),
-    CanonicalInputField(key: 'insulationThickness', unit: 'mm', defaultValue: 200, min: 150, max: 250),
-    CanonicalInputField(key: 'insulationType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'finishType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'withVapourBarrier', defaultValue: 1, min: 0, max: 2),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: AtticPackagingRules(unit: 'шт', packageSize: 1),
-  materialRules: AtticMaterialRules(
-    plateThickness: {0: 100, 1: 150, 2: 100},
-    plateArea: {0: 0.6, 1: 0.6, 2: 0.72},
-    windMembraneRoll: 70,
-    vaporRoll: 70,
-    tapeRoll: 25,
-    plateReserve: 1.05,
-    membraneReserve: 1.15,
-    tapeAreaCoeff: 40,
-    panelArea: 0.288,
-    panelReserve: 1.12,
-    battenPitch: 0.4,
-    gklSheet: 3.0,
-    gklReserve: 1.1,
-    profileStep: 0.6,
-    puttyKgPerM2: 0.5,
-    puttyBag: 25,
-  ),
-  warningRules: AtticWarningRules(thinInsulationThresholdMm: 200),
-);
-
-/* ─── factor table ─── */
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
   'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
-
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
 
 const Map<int, String> _insulationTypeLabels = {
   0: 'Минвата плиты',
@@ -132,7 +25,6 @@ const Map<int, String> _vapourLabels = {
   2: 'Армированная',
 };
 
-/* ─── helpers ─── */
 
 bool hasCanonicalAtticInputs(Map<String, double> inputs) {
   return inputs.containsKey('roofArea') ||
@@ -150,61 +42,31 @@ Map<String, double> normalizeLegacyAtticInputs(Map<String, double> inputs) {
   return normalized;
 }
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(AtticCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(AtticCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(AtticCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
-/* ─── main ─── */
 
 CanonicalCalculatorContractResult calculateCanonicalAttic(
   Map<String, double> inputs, {
-  AtticCanonicalSpec spec = atticCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(atticSpecData);
+
   final normalized = hasCanonicalAtticInputs(inputs)
       ? Map<String, double>.from(inputs)
       : normalizeLegacyAtticInputs(inputs);
 
-  final roofArea = math.max(10.0, math.min(300.0, (normalized['roofArea'] ?? _defaultFor(spec, 'roofArea', 60)).toDouble()));
-  final insulationThickness = math.max(150.0, math.min(250.0, (normalized['insulationThickness'] ?? _defaultFor(spec, 'insulationThickness', 200)).toDouble()));
-  final insulationType = (normalized['insulationType'] ?? _defaultFor(spec, 'insulationType', 0)).round().clamp(0, 2);
-  final finishType = (normalized['finishType'] ?? _defaultFor(spec, 'finishType', 0)).round().clamp(0, 2);
-  final withVapourBarrier = (normalized['withVapourBarrier'] ?? _defaultFor(spec, 'withVapourBarrier', 1)).round().clamp(0, 2);
+  final roofArea = math.max(10.0, math.min(300.0, (normalized['roofArea'] ?? defaultFor(spec, 'roofArea', 60)).toDouble()));
+  final insulationThickness = math.max(150.0, math.min(250.0, (normalized['insulationThickness'] ?? defaultFor(spec, 'insulationThickness', 200)).toDouble()));
+  final insulationType = (normalized['insulationType'] ?? defaultFor(spec, 'insulationType', 0)).round().clamp(0, 2);
+  final finishType = (normalized['finishType'] ?? defaultFor(spec, 'finishType', 0)).round().clamp(0, 2);
+  final withVapourBarrier = (normalized['withVapourBarrier'] ?? defaultFor(spec, 'withVapourBarrier', 1)).round().clamp(0, 2);
 
   // Insulation
-  final plateThickness = spec.materialRules.plateThickness[insulationType] ?? 100;
-  final plateArea = spec.materialRules.plateArea[insulationType] ?? 0.6;
+  final plateThickness = (spec.materialRule<Map>('plate_thickness')['$insulationType'] as num?)?.toDouble() ?? 100;
+  final plateArea = (spec.materialRule<Map>('plate_area')['$insulationType'] as num?)?.toDouble() ?? 0.6;
   final layerCount = (insulationThickness / plateThickness).ceil();
-  final insPlates = (roofArea * spec.materialRules.plateReserve / plateArea).ceil() * layerCount;
-  final windRolls = (roofArea * spec.materialRules.membraneReserve / spec.materialRules.windMembraneRoll).ceil();
-  final vbRolls = withVapourBarrier > 0 ? (roofArea * spec.materialRules.membraneReserve / spec.materialRules.vaporRoll).ceil() : 0;
-  final tapeRolls = (roofArea / spec.materialRules.tapeAreaCoeff).ceil();
+  final insPlates = (roofArea * spec.materialRule<num>('plate_reserve').toDouble() / plateArea).ceil() * layerCount;
+  final windRolls = (roofArea * spec.materialRule<num>('membrane_reserve').toDouble() / spec.materialRule<num>('wind_membrane_roll').toDouble()).ceil();
+  final vbRolls = withVapourBarrier > 0 ? (roofArea * spec.materialRule<num>('membrane_reserve').toDouble() / spec.materialRule<num>('vapor_roll').toDouble()).ceil() : 0;
+  final tapeRolls = (roofArea / spec.materialRule<num>('tape_area_coeff').toDouble()).ceil();
 
   // Finish: wood
   var panels = 0;
@@ -217,13 +79,13 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
   var puttyBags = 0;
 
   if (finishType == 0) {
-    panels = (roofArea * spec.materialRules.panelReserve / spec.materialRules.panelArea).ceil();
-    battenPcs = (roofArea / spec.materialRules.battenPitch).ceil();
+    panels = (roofArea * spec.materialRule<num>('panel_reserve').toDouble() / spec.materialRule<num>('panel_area').toDouble()).ceil();
+    battenPcs = (roofArea / spec.materialRule<num>('batten_pitch').toDouble()).ceil();
     antisepticCans = (roofArea * 0.15 * 1.1 / 5).ceil();
   } else if (finishType == 1) {
-    gklSheets = (roofArea * spec.materialRules.gklReserve / spec.materialRules.gklSheet).ceil();
-    profilePcs = (roofArea / spec.materialRules.profileStep / 3).ceil();
-    puttyBags = (roofArea * spec.materialRules.puttyKgPerM2 / spec.materialRules.puttyBag).ceil();
+    gklSheets = (roofArea * spec.materialRule<num>('gkl_reserve').toDouble() / spec.materialRule<num>('gkl_sheet').toDouble()).ceil();
+    profilePcs = (roofArea / spec.materialRule<num>('profile_step').toDouble() / 3).ceil();
+    puttyBags = (roofArea * spec.materialRule<num>('putty_kg_per_m2').toDouble() / spec.materialRule<num>('putty_bag').toDouble()).ceil();
   }
 
   // Scenarios
@@ -232,15 +94,15 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
   const packageUnit = 'шт';
 
   final scenarios = <String, CanonicalScenarioResult>{};
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(basePrimary * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(basePrimary * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: packageCount.toDouble(),
-      leftover: _roundValue(packageCount - exactNeed, 6),
+      leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'insulationType:$insulationType',
@@ -248,8 +110,8 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
@@ -264,7 +126,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
 
   // Warnings
   final warnings = <String>[];
-  if (insulationThickness < spec.warningRules.thinInsulationThresholdMm) {
+  if (insulationThickness < spec.warningRule<num>('thin_insulation_threshold_mm').toDouble()) {
     warnings.add('Толщина утеплителя менее 200 мм — рекомендуется увеличить для средней полосы России');
   }
   if (withVapourBarrier == 0) {
@@ -286,7 +148,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
       quantity: windRolls.toDouble(),
       unit: 'рулонов',
       withReserve: windRolls.toDouble(),
-      purchaseQty: windRolls,
+      purchaseQty: windRolls.toInt(),
       category: 'Мембраны',
     ),
   ];
@@ -297,7 +159,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
       quantity: vbRolls.toDouble(),
       unit: 'рулонов',
       withReserve: vbRolls.toDouble(),
-      purchaseQty: vbRolls,
+      purchaseQty: vbRolls.toInt(),
       category: 'Мембраны',
     ));
   }
@@ -307,7 +169,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
     quantity: tapeRolls.toDouble(),
     unit: 'рулонов',
     withReserve: tapeRolls.toDouble(),
-    purchaseQty: tapeRolls,
+    purchaseQty: tapeRolls.toInt(),
     category: 'Расходные',
   ));
 
@@ -318,7 +180,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         quantity: panels.toDouble(),
         unit: 'шт',
         withReserve: panels.toDouble(),
-        purchaseQty: panels,
+        purchaseQty: panels.toInt(),
         category: 'Отделка',
       ),
       CanonicalMaterialResult(
@@ -326,7 +188,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         quantity: battenPcs.toDouble(),
         unit: 'шт',
         withReserve: battenPcs.toDouble(),
-        purchaseQty: battenPcs,
+        purchaseQty: battenPcs.toInt(),
         category: 'Каркас',
       ),
       CanonicalMaterialResult(
@@ -334,7 +196,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         quantity: antisepticCans.toDouble(),
         unit: 'канистр',
         withReserve: antisepticCans.toDouble(),
-        purchaseQty: antisepticCans,
+        purchaseQty: antisepticCans.toInt(),
         category: 'Защита',
       ),
     ]);
@@ -345,7 +207,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         quantity: gklSheets.toDouble(),
         unit: 'листов',
         withReserve: gklSheets.toDouble(),
-        purchaseQty: gklSheets,
+        purchaseQty: gklSheets.toInt(),
         category: 'Отделка',
       ),
       CanonicalMaterialResult(
@@ -353,7 +215,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         quantity: profilePcs.toDouble(),
         unit: 'шт',
         withReserve: profilePcs.toDouble(),
-        purchaseQty: profilePcs,
+        purchaseQty: profilePcs.toInt(),
         category: 'Каркас',
       ),
       CanonicalMaterialResult(
@@ -361,7 +223,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         quantity: puttyBags.toDouble(),
         unit: 'мешков',
         withReserve: puttyBags.toDouble(),
-        purchaseQty: puttyBags,
+        purchaseQty: puttyBags.toInt(),
         category: 'Отделка',
       ),
     ]);
@@ -372,7 +234,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'roofArea': _roundValue(roofArea, 3),
+      'roofArea': roundValue(roofArea, 3),
       'insulationThickness': insulationThickness,
       'insulationType': insulationType.toDouble(),
       'finishType': finishType.toDouble(),

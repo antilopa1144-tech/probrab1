@@ -1,111 +1,11 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
+import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
-class BlindAreaPackagingRules {
-  final String unit;
-  final int packageSize;
-
-  const BlindAreaPackagingRules({required this.unit, required this.packageSize});
-}
-
-class BlindAreaMaterialRules {
-  final double concreteReserve;
-  final double meshReserve;
-  final double damperReserve;
-  final double gravelLayer;
-  final double sandLayer;
-  final double tileReserve;
-  final double tileMixKgPerM2;
-  final double borderLength;
-  final double membraneReserve;
-  final double geotextileRoll;
-  final double eppsPlate;
-  final double eppsReserve;
-
-  const BlindAreaMaterialRules({
-    required this.concreteReserve,
-    required this.meshReserve,
-    required this.damperReserve,
-    required this.gravelLayer,
-    required this.sandLayer,
-    required this.tileReserve,
-    required this.tileMixKgPerM2,
-    required this.borderLength,
-    required this.membraneReserve,
-    required this.geotextileRoll,
-    required this.eppsPlate,
-    required this.eppsReserve,
-  });
-}
-
-class BlindAreaWarningRules {
-  final double narrowWidthThresholdM;
-  final int thinConcreteThresholdMm;
-
-  const BlindAreaWarningRules({
-    required this.narrowWidthThresholdM,
-    required this.thinConcreteThresholdMm,
-  });
-}
-
-class BlindAreaCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final BlindAreaPackagingRules packagingRules;
-  final BlindAreaMaterialRules materialRules;
-  final BlindAreaWarningRules warningRules;
-
-  const BlindAreaCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-/* ─── spec instance ─── */
-
-const BlindAreaCanonicalSpec blindAreaCanonicalSpecV1 = BlindAreaCanonicalSpec(
-  calculatorId: 'blind-area',
-  formulaVersion: 'blind-area-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'perimeter', unit: 'm', defaultValue: 40, min: 10, max: 200),
-    CanonicalInputField(key: 'width', unit: 'm', defaultValue: 1.0, min: 0.6, max: 1.5),
-    CanonicalInputField(key: 'thickness', unit: 'mm', defaultValue: 100, min: 70, max: 150),
-    CanonicalInputField(key: 'materialType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'withInsulation', unit: 'mm', defaultValue: 0, min: 0, max: 100),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: BlindAreaPackagingRules(unit: 'м²', packageSize: 1),
-  materialRules: BlindAreaMaterialRules(
-    concreteReserve: 1.05,
-    meshReserve: 1.1,
-    damperReserve: 1.05,
-    gravelLayer: 0.15,
-    sandLayer: 0.1,
-    tileReserve: 1.08,
-    tileMixKgPerM2: 6,
-    borderLength: 0.5,
-    membraneReserve: 1.15,
-    geotextileRoll: 50,
-    eppsPlate: 0.72,
-    eppsReserve: 1.05,
-  ),
-  warningRules: BlindAreaWarningRules(
-    narrowWidthThresholdM: 0.8,
-    thinConcreteThresholdMm: 100,
-  ),
-);
-
-/* ─── factor table ─── */
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
@@ -113,9 +13,6 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
-/* ─── helpers ─── */
 
 bool hasCanonicalBlindAreaInputs(Map<String, double> inputs) {
   return inputs.containsKey('perimeter') ||
@@ -133,52 +30,22 @@ Map<String, double> normalizeLegacyBlindAreaInputs(Map<String, double> inputs) {
   return normalized;
 }
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(BlindAreaCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(BlindAreaCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(BlindAreaCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
-/* ─── main ─── */
 
 CanonicalCalculatorContractResult calculateCanonicalBlindArea(
   Map<String, double> inputs, {
-  BlindAreaCanonicalSpec spec = blindAreaCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(blindAreaSpecData);
+
   final normalized = hasCanonicalBlindAreaInputs(inputs)
       ? Map<String, double>.from(inputs)
       : normalizeLegacyBlindAreaInputs(inputs);
 
-  final perimeter = math.max(10.0, math.min(200.0, (normalized['perimeter'] ?? _defaultFor(spec, 'perimeter', 40)).toDouble()));
-  final width = math.max(0.6, math.min(1.5, (normalized['width'] ?? _defaultFor(spec, 'width', 1.0)).toDouble()));
-  final thickness = math.max(70.0, math.min(150.0, (normalized['thickness'] ?? _defaultFor(spec, 'thickness', 100)).toDouble()));
-  final materialType = (normalized['materialType'] ?? _defaultFor(spec, 'materialType', 0)).round().clamp(0, 2);
-  final withInsulation = math.max(0.0, math.min(100.0, (normalized['withInsulation'] ?? _defaultFor(spec, 'withInsulation', 0)).toDouble()));
+  final perimeter = math.max(10.0, math.min(200.0, (normalized['perimeter'] ?? defaultFor(spec, 'perimeter', 40)).toDouble()));
+  final width = math.max(0.6, math.min(1.5, (normalized['width'] ?? defaultFor(spec, 'width', 1.0)).toDouble()));
+  final thickness = math.max(70.0, math.min(150.0, (normalized['thickness'] ?? defaultFor(spec, 'thickness', 100)).toDouble()));
+  final materialType = (normalized['materialType'] ?? defaultFor(spec, 'materialType', 0)).round().clamp(0, 2);
+  final withInsulation = math.max(0.0, math.min(100.0, (normalized['withInsulation'] ?? defaultFor(spec, 'withInsulation', 0)).toDouble()));
 
   // Base geometry
   final area = perimeter * width;
@@ -195,25 +62,25 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
 
   if (materialType == 0) {
     // Concrete
-    concreteM3 = (area * (thickness / 1000.0) * spec.materialRules.concreteReserve * 10).ceil() / 10.0;
-    meshPcs = thickness >= 100 ? (area * spec.materialRules.meshReserve).ceil() : 0;
-    damperM = _roundValue(perimeter * spec.materialRules.damperReserve, 2);
+    concreteM3 = (area * (thickness / 1000.0) * spec.materialRule<num>('concrete_reserve').toDouble() * 10).ceil() / 10.0;
+    meshPcs = thickness >= 100 ? (area * spec.materialRule<num>('mesh_reserve').toDouble()).ceil() : 0;
+    damperM = roundValue(perimeter * spec.materialRule<num>('damper_reserve').toDouble(), 2);
   } else if (materialType == 1) {
     // Tile
-    tileM2 = (area * spec.materialRules.tileReserve).ceil();
-    mixBags = (area * spec.materialRules.tileMixKgPerM2 / 50).ceil();
-    borderPcs = (perimeter / spec.materialRules.borderLength).ceil();
+    tileM2 = (area * spec.materialRule<num>('tile_reserve').toDouble()).ceil();
+    mixBags = (area * spec.materialRule<num>('tile_mix_kg_per_m2').toDouble() / 50).ceil();
+    borderPcs = (perimeter / spec.materialRule<num>('border_length').toDouble()).ceil();
   } else {
     // Soft membrane
-    membraneM2 = (area * spec.materialRules.membraneReserve).ceil();
-    decorGravelM3 = _roundValue(area * 0.1, 3);
+    membraneM2 = (area * spec.materialRule<num>('membrane_reserve').toDouble()).ceil();
+    decorGravelM3 = roundValue(area * 0.1, 3);
   }
 
   // Common layers
-  final gravel = _roundValue(area * spec.materialRules.gravelLayer, 3);
-  final sand = _roundValue(area * spec.materialRules.sandLayer, 3);
-  final geotextileRolls = (area * 1.15 / spec.materialRules.geotextileRoll).ceil();
-  final eppsPlates = withInsulation > 0 ? (area * spec.materialRules.eppsReserve / spec.materialRules.eppsPlate).ceil() : 0;
+  final gravel = roundValue(area * spec.materialRule<num>('gravel_layer').toDouble(), 3);
+  final sand = roundValue(area * spec.materialRule<num>('sand_layer').toDouble(), 3);
+  final geotextileRolls = (area * 1.15 / spec.materialRule<num>('geotextile_roll').toDouble()).ceil();
+  final eppsPlates = withInsulation > 0 ? (area * spec.materialRule<num>('epps_reserve').toDouble() / spec.materialRule<num>('epps_plate').toDouble()).ceil() : 0;
 
   // Scenarios
   final basePrimary = materialType == 0 ? concreteM3 : materialType == 1 ? tileM2.toDouble() : membraneM2.toDouble();
@@ -225,15 +92,15 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
   final packageUnit = materialType == 0 ? 'м³' : 'м²';
 
   final scenarios = <String, CanonicalScenarioResult>{};
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(basePrimary * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(basePrimary * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: packageCount.toDouble(),
-      leftover: _roundValue(packageCount - exactNeed, 6),
+      leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'materialType:$materialType',
@@ -241,8 +108,8 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
@@ -257,10 +124,10 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
 
   // Warnings
   final warnings = <String>[];
-  if (width < spec.warningRules.narrowWidthThresholdM) {
+  if (width < spec.warningRule<num>('narrow_width_threshold_m').toDouble()) {
     warnings.add('Ширина отмостки менее 0.8 м — может не обеспечить достаточной защиты фундамента');
   }
-  if (materialType == 0 && thickness < spec.warningRules.thinConcreteThresholdMm) {
+  if (materialType == 0 && thickness < spec.warningRule<num>('thin_concrete_threshold_mm').toDouble()) {
     warnings.add('Толщина бетона менее 100 мм — рекомендуется армосетка при увеличении толщины');
   }
 
@@ -282,7 +149,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
         quantity: meshPcs.toDouble(),
         unit: 'шт',
         withReserve: meshPcs.toDouble(),
-        purchaseQty: meshPcs,
+        purchaseQty: meshPcs.toInt(),
         category: 'Армирование',
       ));
     }
@@ -301,7 +168,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
         quantity: recScenario.exactNeed,
         unit: 'м²',
         withReserve: tileM2.toDouble(),
-        purchaseQty: tileM2,
+        purchaseQty: tileM2.toInt(),
         category: 'Покрытие',
       ),
       CanonicalMaterialResult(
@@ -309,7 +176,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
         quantity: mixBags.toDouble(),
         unit: 'мешков',
         withReserve: mixBags.toDouble(),
-        purchaseQty: mixBags,
+        purchaseQty: mixBags.toInt(),
         category: 'Смеси',
       ),
       CanonicalMaterialResult(
@@ -317,7 +184,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
         quantity: borderPcs.toDouble(),
         unit: 'шт',
         withReserve: borderPcs.toDouble(),
-        purchaseQty: borderPcs,
+        purchaseQty: borderPcs.toInt(),
         category: 'Покрытие',
       ),
     ]);
@@ -328,7 +195,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
         quantity: recScenario.exactNeed,
         unit: 'м²',
         withReserve: membraneM2.toDouble(),
-        purchaseQty: membraneM2,
+        purchaseQty: membraneM2.toInt(),
         category: 'Покрытие',
       ),
       CanonicalMaterialResult(
@@ -361,11 +228,11 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
       category: 'Подготовка',
     ),
     CanonicalMaterialResult(
-      name: 'Геотекстиль (${spec.materialRules.geotextileRoll.round()} м²)',
+      name: 'Геотекстиль (${spec.materialRule<num>('geotextile_roll').toDouble().round()} м²)',
       quantity: geotextileRolls.toDouble(),
       unit: 'рулонов',
       withReserve: geotextileRolls.toDouble(),
-      purchaseQty: geotextileRolls,
+      purchaseQty: geotextileRolls.toInt(),
       category: 'Подготовка',
     ),
   ]);
@@ -376,7 +243,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
       quantity: eppsPlates.toDouble(),
       unit: 'шт',
       withReserve: eppsPlates.toDouble(),
-      purchaseQty: eppsPlates,
+      purchaseQty: eppsPlates.toInt(),
       category: 'Утепление',
     ));
   }
@@ -386,9 +253,9 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'perimeter': _roundValue(perimeter, 3),
-      'width': _roundValue(width, 3),
-      'area': _roundValue(area, 3),
+      'perimeter': roundValue(perimeter, 3),
+      'width': roundValue(width, 3),
+      'area': roundValue(area, 3),
       'thickness': thickness,
       'materialType': materialType.toDouble(),
       'withInsulation': withInsulation,

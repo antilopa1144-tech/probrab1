@@ -1,120 +1,11 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
+import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
-class VentilationPackagingRules {
-  final String unit;
-  final int packageSize;
-
-  const VentilationPackagingRules({required this.unit, required this.packageSize});
-}
-
-class VentilationMaterialRules {
-  final List<double> exchangeRates;
-  final double airPerPerson;
-  final double fanReserve;
-  final int airflowRounding;
-  final double mainDuctLengthCoeff;
-  final double mainDuctReserve;
-  final int ductSectionM;
-  final int flexDuctCoilM;
-  final double fittingsPerSection;
-  final double fittingsReserve;
-  final double grilleAreaM2;
-  final int grilleBase;
-  final int clampsPerSection;
-  final double clampsReserve;
-  final int silencerCount;
-
-  const VentilationMaterialRules({
-    required this.exchangeRates,
-    required this.airPerPerson,
-    required this.fanReserve,
-    required this.airflowRounding,
-    required this.mainDuctLengthCoeff,
-    required this.mainDuctReserve,
-    required this.ductSectionM,
-    required this.flexDuctCoilM,
-    required this.fittingsPerSection,
-    required this.fittingsReserve,
-    required this.grilleAreaM2,
-    required this.grilleBase,
-    required this.clampsPerSection,
-    required this.clampsReserve,
-    required this.silencerCount,
-  });
-}
-
-class VentilationWarningRules {
-  final double professionalAirflowThreshold;
-  final int supplyExhaustPeopleThreshold;
-
-  const VentilationWarningRules({
-    required this.professionalAirflowThreshold,
-    required this.supplyExhaustPeopleThreshold,
-  });
-}
-
-class VentilationCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final VentilationPackagingRules packagingRules;
-  final VentilationMaterialRules materialRules;
-  final VentilationWarningRules warningRules;
-
-  const VentilationCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-/* ─── spec instance ─── */
-
-const VentilationCanonicalSpec ventilationCanonicalSpecV1 = VentilationCanonicalSpec(
-  calculatorId: 'ventilation',
-  formulaVersion: 'ventilation-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'totalArea', unit: 'm2', defaultValue: 80, min: 10, max: 1000),
-    CanonicalInputField(key: 'ceilingHeight', unit: 'm', defaultValue: 2.7, min: 2.5, max: 3.5),
-    CanonicalInputField(key: 'buildingType', defaultValue: 0, min: 0, max: 3),
-    CanonicalInputField(key: 'peopleCount', defaultValue: 3, min: 1, max: 50),
-    CanonicalInputField(key: 'ductType', defaultValue: 0, min: 0, max: 2),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: VentilationPackagingRules(unit: 'секций', packageSize: 1),
-  materialRules: VentilationMaterialRules(
-    exchangeRates: [1.5, 2.0, 3.0, 5.0],
-    airPerPerson: 30,
-    fanReserve: 1.2,
-    airflowRounding: 50,
-    mainDuctLengthCoeff: 2.5,
-    mainDuctReserve: 1.15,
-    ductSectionM: 3,
-    flexDuctCoilM: 10,
-    fittingsPerSection: 0.5,
-    fittingsReserve: 1.1,
-    grilleAreaM2: 15,
-    grilleBase: 1,
-    clampsPerSection: 2,
-    clampsReserve: 1.1,
-    silencerCount: 1,
-  ),
-  warningRules: VentilationWarningRules(
-    professionalAirflowThreshold: 2000,
-    supplyExhaustPeopleThreshold: 6,
-  ),
-);
-
-/* ─── factor table ─── */
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
@@ -122,16 +13,12 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
-
 const Map<int, String> _ductTypeLabels = {
   0: 'Круглый ø100–160',
   1: 'Прямоугольный 200×100',
   2: 'Гибкий ø125',
 };
 
-/* ─── helpers ─── */
 
 bool hasCanonicalVentilationInputs(Map<String, double> inputs) {
   return inputs.containsKey('buildingType') ||
@@ -149,109 +36,79 @@ Map<String, double> normalizeLegacyVentilationInputs(Map<String, double> inputs)
   return normalized;
 }
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(VentilationCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(VentilationCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(VentilationCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
-/* ─── main ─── */
 
 CanonicalCalculatorContractResult calculateCanonicalVentilation(
   Map<String, double> inputs, {
-  VentilationCanonicalSpec spec = ventilationCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(ventilationSpecData);
+
   final normalized = hasCanonicalVentilationInputs(inputs)
       ? Map<String, double>.from(inputs)
       : normalizeLegacyVentilationInputs(inputs);
 
-  final totalArea = math.max(10.0, math.min(1000.0, (normalized['totalArea'] ?? _defaultFor(spec, 'totalArea', 80)).toDouble()));
-  final ceilingHeight = math.max(2.5, math.min(3.5, (normalized['ceilingHeight'] ?? _defaultFor(spec, 'ceilingHeight', 2.7)).toDouble()));
-  final buildingType = (normalized['buildingType'] ?? _defaultFor(spec, 'buildingType', 0)).round().clamp(0, 3);
-  final peopleCount = (normalized['peopleCount'] ?? _defaultFor(spec, 'peopleCount', 3)).round().clamp(1, 50);
-  final ductType = (normalized['ductType'] ?? _defaultFor(spec, 'ductType', 0)).round().clamp(0, 2);
+  final totalArea = math.max(10.0, math.min(1000.0, (normalized['totalArea'] ?? defaultFor(spec, 'totalArea', 80)).toDouble()));
+  final ceilingHeight = math.max(2.5, math.min(3.5, (normalized['ceilingHeight'] ?? defaultFor(spec, 'ceilingHeight', 2.7)).toDouble()));
+  final buildingType = (normalized['buildingType'] ?? defaultFor(spec, 'buildingType', 0)).round().clamp(0, 3);
+  final peopleCount = (normalized['peopleCount'] ?? defaultFor(spec, 'peopleCount', 3)).round().clamp(1, 50);
+  final ductType = (normalized['ductType'] ?? defaultFor(spec, 'ductType', 0)).round().clamp(0, 2);
 
   // Airflow calculation
   final volume = totalArea * ceilingHeight;
-  final airByVolume = volume * spec.materialRules.exchangeRates[buildingType];
-  final airByPeople = peopleCount * spec.materialRules.airPerPerson;
+  final airByVolume = volume * ((spec.materialRule<Map>('exchange_rates')['$buildingType'] as num?)?.toDouble() ?? 1.0);
+  final airByPeople = peopleCount * spec.materialRule<num>('air_per_person').toDouble();
   final requiredAirflow = math.max(airByVolume, airByPeople);
-  final requiredAirflowRounded = (requiredAirflow / spec.materialRules.airflowRounding).ceil() * spec.materialRules.airflowRounding;
+  final requiredAirflowRounded = (requiredAirflow / spec.materialRule<num>('airflow_rounding').toDouble()).ceil() * spec.materialRule<num>('airflow_rounding').toDouble();
 
   // Fan
-  final fanCapacity = (requiredAirflowRounded * spec.materialRules.fanReserve / spec.materialRules.airflowRounding).ceil() * spec.materialRules.airflowRounding;
+  final fanCapacity = (requiredAirflowRounded * spec.materialRule<num>('fan_reserve').toDouble() / spec.materialRule<num>('airflow_rounding').toDouble()).ceil() * spec.materialRule<num>('airflow_rounding').toDouble();
   final fanDiameter = fanCapacity <= 300 ? 100 : fanCapacity <= 500 ? 125 : fanCapacity <= 800 ? 150 : 200;
 
   // Duct length
-  final mainDuctLength = math.sqrt(totalArea) * spec.materialRules.mainDuctLengthCoeff * spec.materialRules.mainDuctReserve;
+  final mainDuctLength = math.sqrt(totalArea) * spec.materialRule<num>('main_duct_length_coeff').toDouble() * spec.materialRule<num>('main_duct_reserve').toDouble();
 
   // Duct sections / coils
   var ductSections = 0;
   var ductCoils = 0;
 
   if (ductType <= 1) {
-    ductSections = (mainDuctLength / spec.materialRules.ductSectionM).ceil();
+    ductSections = (mainDuctLength / spec.materialRule<num>('duct_section_m').toDouble()).ceil();
   } else {
-    ductCoils = (mainDuctLength / spec.materialRules.flexDuctCoilM).ceil();
+    ductCoils = (mainDuctLength / spec.materialRule<num>('flex_duct_coil_m').toDouble()).ceil();
   }
 
   // Fittings
   final fittingsBase = ductType <= 1 ? ductSections : ductCoils;
-  final fittings = (fittingsBase * spec.materialRules.fittingsPerSection * spec.materialRules.fittingsReserve).ceil();
+  final fittings = (fittingsBase * spec.materialRule<num>('fittings_per_section').toDouble() * spec.materialRule<num>('fittings_reserve').toDouble()).ceil();
 
   // Grilles
-  final grilles = (totalArea / spec.materialRules.grilleAreaM2).ceil() + spec.materialRules.grilleBase;
+  final grilles = (totalArea / spec.materialRule<num>('grille_area_m2').toDouble()).ceil() + spec.materialRule<num>('grille_base').toDouble();
 
   // Clamps
   final clampsBase = ductType <= 1 ? ductSections : ductCoils;
-  final clamps = (clampsBase * spec.materialRules.clampsPerSection * spec.materialRules.clampsReserve).ceil();
+  final clamps = (clampsBase * spec.materialRule<num>('clamps_per_section').toDouble() * spec.materialRule<num>('clamps_reserve').toDouble()).ceil();
 
   // Silencer
-  final silencer = buildingType <= 1 ? spec.materialRules.silencerCount : 0;
+  final silencer = buildingType <= 1 ? spec.materialRule<num>('silencer_count').toDouble() : 0;
 
   // Primary quantity for scenarios
   final primaryQuantity = ductType <= 1 ? ductSections : ductCoils;
   final primaryUnit = ductType <= 1 ? 'секций' : 'бухт';
   final primaryLabel = ductType <= 1
-      ? 'duct-section-${spec.materialRules.ductSectionM}m'
-      : 'flex-duct-coil-${spec.materialRules.flexDuctCoilM}m';
+      ? 'duct-section-${spec.materialRule<num>('duct_section_m').toDouble()}m'
+      : 'flex-duct-coil-${spec.materialRule<num>('flex_duct_coil_m').toDouble()}m';
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(primaryQuantity * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(primaryQuantity * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: packageCount.toDouble(),
-      leftover: _roundValue(packageCount - exactNeed, 6),
+      leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'buildingType:$buildingType',
@@ -259,8 +116,8 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
         'packaging:$primaryLabel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: primaryLabel,
@@ -273,10 +130,10 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
 
   // Warnings
   final warnings = <String>[];
-  if (requiredAirflow > spec.warningRules.professionalAirflowThreshold) {
+  if (requiredAirflow > spec.warningRule<num>('professional_airflow_threshold').toDouble()) {
     warnings.add('Требуемый воздухообмен превышает 2000 м³/ч — рекомендуется профессиональное проектирование');
   }
-  if (buildingType == 0 && peopleCount > spec.warningRules.supplyExhaustPeopleThreshold) {
+  if (buildingType == 0 && peopleCount > spec.warningRule<num>('supply_exhaust_people_threshold').toDouble()) {
     warnings.add('Для квартиры с числом жильцов более 6 рекомендуется приточно-вытяжная установка');
   }
 
@@ -294,20 +151,20 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
 
   if (ductType <= 1) {
     materials.add(CanonicalMaterialResult(
-      name: 'Воздуховод ${_ductTypeLabels[ductType]} (${spec.materialRules.ductSectionM} м)',
+      name: 'Воздуховод ${_ductTypeLabels[ductType]} (${spec.materialRule<num>('duct_section_m').toDouble()} м)',
       quantity: ductSections.toDouble(),
       unit: 'секций',
       withReserve: ductSections.toDouble(),
-      purchaseQty: ductSections,
+      purchaseQty: ductSections.toInt(),
       category: 'Воздуховоды',
     ));
   } else {
     materials.add(CanonicalMaterialResult(
-      name: 'Воздуховод ${_ductTypeLabels[2]} (${spec.materialRules.flexDuctCoilM} м)',
+      name: 'Воздуховод ${_ductTypeLabels[2]} (${spec.materialRule<num>('flex_duct_coil_m').toDouble()} м)',
       quantity: ductCoils.toDouble(),
       unit: 'бухт',
       withReserve: ductCoils.toDouble(),
-      purchaseQty: ductCoils,
+      purchaseQty: ductCoils.toInt(),
       category: 'Воздуховоды',
     ));
   }
@@ -318,7 +175,7 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
       quantity: fittings.toDouble(),
       unit: 'шт',
       withReserve: fittings.toDouble(),
-      purchaseQty: fittings,
+      purchaseQty: fittings.toInt(),
       category: 'Фасонные',
     ),
     CanonicalMaterialResult(
@@ -326,7 +183,7 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
       quantity: grilles.toDouble(),
       unit: 'шт',
       withReserve: grilles.toDouble(),
-      purchaseQty: grilles,
+      purchaseQty: grilles.toInt(),
       category: 'Распределение',
     ),
     CanonicalMaterialResult(
@@ -334,7 +191,7 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
       quantity: clamps.toDouble(),
       unit: 'шт',
       withReserve: clamps.toDouble(),
-      purchaseQty: clamps,
+      purchaseQty: clamps.toInt(),
       category: 'Крепёж',
     ),
   ]);
@@ -345,7 +202,7 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
       quantity: silencer.toDouble(),
       unit: 'шт',
       withReserve: silencer.toDouble(),
-      purchaseQty: silencer,
+      purchaseQty: silencer.toInt(),
       category: 'Оборудование',
     ));
   }
@@ -355,19 +212,19 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'totalArea': _roundValue(totalArea, 3),
-      'ceilingHeight': _roundValue(ceilingHeight, 3),
+      'totalArea': roundValue(totalArea, 3),
+      'ceilingHeight': roundValue(ceilingHeight, 3),
       'buildingType': buildingType.toDouble(),
       'peopleCount': peopleCount.toDouble(),
       'ductType': ductType.toDouble(),
-      'volume': _roundValue(volume, 3),
-      'airByVolume': _roundValue(airByVolume, 3),
-      'airByPeople': _roundValue(airByPeople, 3),
-      'requiredAirflow': _roundValue(requiredAirflow, 3),
+      'volume': roundValue(volume, 3),
+      'airByVolume': roundValue(airByVolume, 3),
+      'airByPeople': roundValue(airByPeople, 3),
+      'requiredAirflow': roundValue(requiredAirflow, 3),
       'requiredAirflowRounded': requiredAirflowRounded.toDouble(),
       'fanCapacity': fanCapacity.toDouble(),
       'fanDiameter': fanDiameter.toDouble(),
-      'mainDuctLength': _roundValue(mainDuctLength, 3),
+      'mainDuctLength': roundValue(mainDuctLength, 3),
       'ductSections': ductSections.toDouble(),
       'ductCoils': ductCoils.toDouble(),
       'fittings': fittings.toDouble(),

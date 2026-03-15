@@ -1,139 +1,9 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
-class SoundInsulationPackagingRules {
-  final String unit;
-  final double packageSize;
-
-  const SoundInsulationPackagingRules({
-    required this.unit,
-    required this.packageSize,
-  });
-}
-
-class SoundInsulationMaterialRules {
-  final double rockwoolPlate;
-  final double rockwoolReserve;
-  final double gklSheet;
-  final double gklReserve2layers;
-  final double ppSpacing;
-  final double ppLength;
-  final double vibroPerM2;
-  final double vibroReserve;
-  final double vibroTapeRoll;
-  final double zipsPlate;
-  final double zipsReserve;
-  final double zipsDubelsPerPanel;
-  final double zipsDubelReserve;
-  final double floatMatRoll;
-  final double floatReserve;
-  final double dampTapeRoll;
-  final double screedThickness;
-  final double screedDensity;
-  final double screedBag;
-  final double sealantPerPerim;
-  final double sealTapeRoll;
-  final double sealTapeReserve;
-
-  const SoundInsulationMaterialRules({
-    required this.rockwoolPlate,
-    required this.rockwoolReserve,
-    required this.gklSheet,
-    required this.gklReserve2layers,
-    required this.ppSpacing,
-    required this.ppLength,
-    required this.vibroPerM2,
-    required this.vibroReserve,
-    required this.vibroTapeRoll,
-    required this.zipsPlate,
-    required this.zipsReserve,
-    required this.zipsDubelsPerPanel,
-    required this.zipsDubelReserve,
-    required this.floatMatRoll,
-    required this.floatReserve,
-    required this.dampTapeRoll,
-    required this.screedThickness,
-    required this.screedDensity,
-    required this.screedBag,
-    required this.sealantPerPerim,
-    required this.sealTapeRoll,
-    required this.sealTapeReserve,
-  });
-}
-
-class SoundInsulationWarningRules {
-  final double largeAreaThresholdM2;
-  final bool professionalSystemNote;
-
-  const SoundInsulationWarningRules({
-    required this.largeAreaThresholdM2,
-    required this.professionalSystemNote,
-  });
-}
-
-class SoundInsulationCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final SoundInsulationPackagingRules packagingRules;
-  final SoundInsulationMaterialRules materialRules;
-  final SoundInsulationWarningRules warningRules;
-
-  const SoundInsulationCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-const SoundInsulationCanonicalSpec soundInsulationCanonicalSpecV1 = SoundInsulationCanonicalSpec(
-  calculatorId: 'sound-insulation',
-  formulaVersion: 'sound-insulation-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'area', unit: 'm\u00b2', defaultValue: 30, min: 1, max: 500),
-    CanonicalInputField(key: 'surfaceType', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'system', defaultValue: 0, min: 0, max: 3),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: SoundInsulationPackagingRules(
-    unit: '\u0448\u0442',
-    packageSize: 1,
-  ),
-  materialRules: SoundInsulationMaterialRules(
-    rockwoolPlate: 0.6,
-    rockwoolReserve: 1.1,
-    gklSheet: 3,
-    gklReserve2layers: 2,
-    ppSpacing: 0.6,
-    ppLength: 3,
-    vibroPerM2: 2,
-    vibroReserve: 1.05,
-    vibroTapeRoll: 30,
-    zipsPlate: 0.72,
-    zipsReserve: 1.1,
-    zipsDubelsPerPanel: 6,
-    zipsDubelReserve: 1.05,
-    floatMatRoll: 20,
-    floatReserve: 1.1,
-    dampTapeRoll: 25,
-    screedThickness: 0.05,
-    screedDensity: 1800,
-    screedBag: 50,
-    sealantPerPerim: 20,
-    sealTapeRoll: 30,
-    sealTapeReserve: 1.1,
-  ),
-  warningRules: SoundInsulationWarningRules(
-    largeAreaThresholdM2: 200,
-    professionalSystemNote: true,
-  ),
-);
+import 'canonical_adapter_utils.dart';
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
@@ -141,46 +11,15 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(SoundInsulationCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(SoundInsulationCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(SoundInsulationCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
 CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
   Map<String, double> inputs, {
-  SoundInsulationCanonicalSpec spec = soundInsulationCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
-  final area = math.max(1.0, math.min(500.0, inputs['area'] ?? _defaultFor(spec, 'area', 30)));
-  final surfaceType = (inputs['surfaceType'] ?? _defaultFor(spec, 'surfaceType', 0)).round().clamp(0, 2);
-  final system = (inputs['system'] ?? _defaultFor(spec, 'system', 0)).round().clamp(0, 3);
+  final spec = specOverride ?? const SpecReader(soundInsulationSpecData);
+
+  final area = math.max(1.0, math.min(500.0, inputs['area'] ?? defaultFor(spec, 'area', 30)));
+  final surfaceType = (inputs['surfaceType'] ?? defaultFor(spec, 'surfaceType', 0)).round().clamp(0, 2);
+  final system = (inputs['system'] ?? defaultFor(spec, 'system', 0)).round().clamp(0, 3);
 
   final perim = math.sqrt(area) * 4;
   final materials = <CanonicalMaterialResult>[];
@@ -190,11 +29,11 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
 
   // System 0: Basic GKL + Rockwool
   if (system == 0) {
-    final rockwoolPlates = (area * spec.materialRules.rockwoolReserve / spec.materialRules.rockwoolPlate).ceil();
-    final gklSheets = (area * spec.materialRules.rockwoolReserve * spec.materialRules.gklReserve2layers / spec.materialRules.gklSheet).ceil();
-    final ppPcs = ((area / spec.materialRules.ppSpacing) * spec.materialRules.ppLength * spec.materialRules.rockwoolReserve / spec.materialRules.ppLength).ceil();
-    final vibro = (area * spec.materialRules.vibroPerM2 * spec.materialRules.vibroReserve).ceil();
-    final vibroTape = ((area / spec.materialRules.ppSpacing) * spec.materialRules.ppLength * spec.materialRules.rockwoolReserve / spec.materialRules.vibroTapeRoll).ceil();
+    final rockwoolPlates = (area * spec.materialRule<num>('rockwool_reserve').toDouble() / spec.materialRule<num>('rockwool_plate').toDouble()).ceil();
+    final gklSheets = (area * spec.materialRule<num>('rockwool_reserve').toDouble() * spec.materialRule<num>('gkl_reserve2layers').toDouble() / spec.materialRule<num>('gkl_sheet').toDouble()).ceil();
+    final ppPcs = ((area / spec.materialRule<num>('pp_spacing').toDouble()) * spec.materialRule<num>('pp_length').toDouble() * spec.materialRule<num>('rockwool_reserve').toDouble() / spec.materialRule<num>('pp_length').toDouble()).ceil();
+    final vibro = (area * spec.materialRule<num>('vibro_per_m2').toDouble() * spec.materialRule<num>('vibro_reserve').toDouble()).ceil();
+    final vibroTape = ((area / spec.materialRule<num>('pp_spacing').toDouble()) * spec.materialRule<num>('pp_length').toDouble() * spec.materialRule<num>('rockwool_reserve').toDouble() / spec.materialRule<num>('vibro_tape_roll').toDouble()).ceil();
     final screws = (gklSheets * 25 / 200).ceil();
 
     primaryQty = rockwoolPlates;
@@ -213,9 +52,9 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
 
   // System 1: ZIPS panels
   if (system == 1) {
-    final zipsPanels = (area * spec.materialRules.zipsReserve / spec.materialRules.zipsPlate).ceil();
-    final dubels = (zipsPanels * spec.materialRules.zipsDubelsPerPanel * spec.materialRules.zipsDubelReserve).ceil();
-    final gklOverlay = (area * spec.materialRules.zipsReserve / spec.materialRules.gklSheet).ceil();
+    final zipsPanels = (area * spec.materialRule<num>('zips_reserve').toDouble() / spec.materialRule<num>('zips_plate').toDouble()).ceil();
+    final dubels = (zipsPanels * spec.materialRule<num>('zips_dubels_per_panel').toDouble() * spec.materialRule<num>('zips_dubel_reserve').toDouble()).ceil();
+    final gklOverlay = (area * spec.materialRule<num>('zips_reserve').toDouble() / spec.materialRule<num>('gkl_sheet').toDouble()).ceil();
 
     primaryQty = zipsPanels;
     primaryUnit = '\u0448\u0442';
@@ -230,9 +69,9 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
 
   // System 2: Floating floor
   if (system == 2) {
-    final mats = (area * spec.materialRules.floatReserve / spec.materialRules.floatMatRoll).ceil();
-    final dampTape = (perim / spec.materialRules.dampTapeRoll).ceil();
-    final screedBags = (area * spec.materialRules.screedThickness * spec.materialRules.screedDensity / spec.materialRules.screedBag).ceil();
+    final mats = (area * spec.materialRule<num>('float_reserve').toDouble() / spec.materialRule<num>('float_mat_roll').toDouble()).ceil();
+    final dampTape = (perim / spec.materialRule<num>('damp_tape_roll').toDouble()).ceil();
+    final screedBags = (area * spec.materialRule<num>('screed_thickness').toDouble() * spec.materialRule<num>('screed_density').toDouble() / spec.materialRule<num>('screed_bag').toDouble()).ceil();
 
     primaryQty = mats;
     primaryUnit = '\u0440\u0443\u043b\u043e\u043d\u043e\u0432';
@@ -247,9 +86,9 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
 
   // System 3: Acoustic ceiling
   if (system == 3) {
-    final rockwoolPlates = (area * spec.materialRules.rockwoolReserve / spec.materialRules.rockwoolPlate).ceil();
-    final gklSheets = (area * spec.materialRules.rockwoolReserve * spec.materialRules.gklReserve2layers / spec.materialRules.gklSheet).ceil();
-    final vibro = (area * spec.materialRules.vibroPerM2 * spec.materialRules.vibroReserve).ceil();
+    final rockwoolPlates = (area * spec.materialRule<num>('rockwool_reserve').toDouble() / spec.materialRule<num>('rockwool_plate').toDouble()).ceil();
+    final gklSheets = (area * spec.materialRule<num>('rockwool_reserve').toDouble() * spec.materialRule<num>('gkl_reserve2layers').toDouble() / spec.materialRule<num>('gkl_sheet').toDouble()).ceil();
+    final vibro = (area * spec.materialRule<num>('vibro_per_m2').toDouble() * spec.materialRule<num>('vibro_reserve').toDouble()).ceil();
 
     primaryQty = rockwoolPlates;
     primaryUnit = '\u0448\u0442';
@@ -263,8 +102,8 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
   }
 
   // Common: sealant + sealing tape
-  final sealant = (perim * 2 / spec.materialRules.sealantPerPerim).ceil();
-  final sealTape = (perim * 2 * spec.materialRules.sealTapeReserve / spec.materialRules.sealTapeRoll).ceil();
+  final sealant = (perim * 2 / spec.materialRule<num>('sealant_per_perim').toDouble()).ceil();
+  final sealTape = (perim * 2 * spec.materialRule<num>('seal_tape_reserve').toDouble() / spec.materialRule<num>('seal_tape_roll').toDouble()).ceil();
 
   materials.addAll([
     CanonicalMaterialResult(name: '\u0413\u0435\u0440\u043c\u0435\u0442\u0438\u043a', quantity: sealant.toDouble(), unit: '\u0442\u044e\u0431\u0438\u043a\u043e\u0432', withReserve: sealant.toDouble(), purchaseQty: sealant, category: '\u0413\u0435\u0440\u043c\u0435\u0442\u0438\u0437\u0430\u0446\u0438\u044f'),
@@ -274,16 +113,16 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
 
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(primaryQty * multiplier, 6);
-    final packageSize = spec.packagingRules.packageSize;
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(primaryQty * multiplier, 6);
+    final packageSize = spec.packagingRule<num>('package_size').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
-    final purchaseQuantity = _roundValue(packageCount * packageSize, 6);
+    final purchaseQuantity = roundValue(packageCount * packageSize, 6);
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: purchaseQuantity,
-      leftover: _roundValue(purchaseQuantity - exactNeed, 6),
+      leftover: roundValue(purchaseQuantity - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'surfaceType:$surfaceType',
@@ -291,8 +130,8 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
         'packaging:$primaryLabel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: primaryLabel,
@@ -306,7 +145,7 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
   final recScenario = scenarios['REC']!;
 
   final warnings = <String>[];
-  if (area > spec.warningRules.largeAreaThresholdM2) {
+  if (area > spec.warningRule<num>('large_area_threshold_m2').toDouble()) {
     warnings.add('\u0411\u043e\u043b\u044c\u0448\u0430\u044f \u043f\u043b\u043e\u0449\u0430\u0434\u044c \u2014 \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0443\u0435\u0442\u0441\u044f \u043f\u0440\u043e\u0444\u0435\u0441\u0441\u0438\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0439 \u043c\u043e\u043d\u0442\u0430\u0436');
   }
   if (system == 1) {
@@ -318,10 +157,10 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'area': _roundValue(area, 3),
+      'area': roundValue(area, 3),
       'surfaceType': surfaceType.toDouble(),
       'system': system.toDouble(),
-      'perim': _roundValue(perim, 3),
+      'perim': roundValue(perim, 3),
       'primaryQty': primaryQty.toDouble(),
       'sealant': sealant.toDouble(),
       'sealTape': sealTape.toDouble(),

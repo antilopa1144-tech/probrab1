@@ -1,141 +1,9 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
-// ─── Concrete-specific spec classes (inline, not in canonical_calculator_contract.dart) ───
-
-class ConcreteProportionSpec {
-  final int grade;
-  final String label;
-  final double cementKg;
-  final double sandM3;
-  final double gravelM3;
-  final double waterL;
-
-  const ConcreteProportionSpec({
-    required this.grade,
-    required this.label,
-    required this.cementKg,
-    required this.sandM3,
-    required this.gravelM3,
-    required this.waterL,
-  });
-}
-
-class ConcretePackagingRules {
-  final String unit;
-  final double volumeStepM3;
-  final double cementBagKg;
-  final double masticBucketKg;
-  final double filmRollM2;
-
-  const ConcretePackagingRules({
-    required this.unit,
-    required this.volumeStepM3,
-    required this.cementBagKg,
-    required this.masticBucketKg,
-    required this.filmRollM2,
-  });
-}
-
-class ConcreteMaterialRules {
-  final double waterproofMasticKgPerM2;
-  final double waterproofReserveFactor;
-  final double filmReserveFactor;
-  final double sandReserveFactor;
-  final double gravelReserveFactor;
-  final double estimatedSlabThicknessM;
-
-  const ConcreteMaterialRules({
-    required this.waterproofMasticKgPerM2,
-    required this.waterproofReserveFactor,
-    required this.filmReserveFactor,
-    required this.sandReserveFactor,
-    required this.gravelReserveFactor,
-    required this.estimatedSlabThicknessM,
-  });
-}
-
-class ConcreteWarningRules {
-  final double smallVolumeThresholdM3;
-  final int manualMixMaxGrade;
-
-  const ConcreteWarningRules({
-    required this.smallVolumeThresholdM3,
-    required this.manualMixMaxGrade,
-  });
-}
-
-class ConcreteCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final List<ConcreteProportionSpec> proportions;
-  final ConcretePackagingRules packagingRules;
-  final ConcreteMaterialRules materialRules;
-  final ConcreteWarningRules warningRules;
-
-  const ConcreteCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.proportions,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-// ─── Spec constant ───
-
-const ConcreteCanonicalSpec concreteCanonicalSpecV1 = ConcreteCanonicalSpec(
-  calculatorId: 'concrete',
-  formulaVersion: 'concrete-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'inputMode', defaultValue: 0, min: 0, max: 1),
-    CanonicalInputField(key: 'concreteVolume', unit: 'm3', defaultValue: 5, min: 0.1, max: 500),
-    CanonicalInputField(key: 'concreteGrade', defaultValue: 3, min: 1, max: 7),
-    CanonicalInputField(key: 'manualMix', defaultValue: 0, min: 0, max: 1),
-    CanonicalInputField(key: 'reserve', unit: '%', defaultValue: 10, min: 0, max: 50),
-    CanonicalInputField(key: 'area', unit: 'm2', defaultValue: 20, min: 0.1, max: 1000),
-    CanonicalInputField(key: 'thickness', unit: 'mm', defaultValue: 200, min: 50, max: 1000),
-  ],
-  enabledFactors: [
-    'geometry_complexity',
-    'worker_skill',
-    'waste_factor',
-  ],
-  proportions: [
-    ConcreteProportionSpec(grade: 1, label: 'М100 (В7.5)', cementKg: 170, sandM3: 0.56, gravelM3: 0.88, waterL: 210),
-    ConcreteProportionSpec(grade: 2, label: 'М150 (В12.5)', cementKg: 215, sandM3: 0.54, gravelM3: 0.86, waterL: 200),
-    ConcreteProportionSpec(grade: 3, label: 'М200 (В15)', cementKg: 290, sandM3: 0.50, gravelM3: 0.82, waterL: 190),
-    ConcreteProportionSpec(grade: 4, label: 'М250 (В20)', cementKg: 340, sandM3: 0.47, gravelM3: 0.80, waterL: 185),
-    ConcreteProportionSpec(grade: 5, label: 'М300 (В22.5)', cementKg: 380, sandM3: 0.44, gravelM3: 0.78, waterL: 180),
-    ConcreteProportionSpec(grade: 6, label: 'М350 (В25)', cementKg: 420, sandM3: 0.41, gravelM3: 0.76, waterL: 175),
-    ConcreteProportionSpec(grade: 7, label: 'М400 (В30)', cementKg: 480, sandM3: 0.38, gravelM3: 0.73, waterL: 170),
-  ],
-  packagingRules: ConcretePackagingRules(
-    unit: 'м³',
-    volumeStepM3: 0.1,
-    cementBagKg: 50,
-    masticBucketKg: 20,
-    filmRollM2: 30,
-  ),
-  materialRules: ConcreteMaterialRules(
-    waterproofMasticKgPerM2: 1.0,
-    waterproofReserveFactor: 1.15,
-    filmReserveFactor: 1.1,
-    sandReserveFactor: 1.05,
-    gravelReserveFactor: 1.05,
-    estimatedSlabThicknessM: 0.2,
-  ),
-  warningRules: ConcreteWarningRules(
-    smallVolumeThresholdM3: 0.5,
-    manualMixMaxGrade: 5,
-  ),
-);
+import 'canonical_adapter_utils.dart';
 
 // ─── Grade labels ───
 
@@ -149,119 +17,62 @@ const Map<int, String> _gradeLabels = {
   7: 'М400 (В30)',
 };
 
-// ─── Factor table ───
-
-const Map<String, Map<String, double>> _factorTable = {
-  'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
-  'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
-  'waste_factor': {'MIN': 1.0, 'REC': 1.06, 'MAX': 1.15},
-};
-
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
 // ─── Detection & normalization ───
 
 bool hasCanonicalConcreteInputs(Map<String, double> inputs) {
   final hasVolume = inputs.containsKey('concreteVolume') ||
       (inputs.containsKey('area') && inputs.containsKey('thickness'));
   if (!hasVolume) return false;
-
-  const canonicalKeys = [
-    'concreteGrade',
-    'manualMix',
-    'reserve',
-  ];
+  const canonicalKeys = ['concreteGrade', 'manualMix', 'reserve'];
   return canonicalKeys.any(inputs.containsKey);
 }
 
 Map<String, double> normalizeLegacyConcreteInputs(Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? 0).round().clamp(0, 1);
-  final concreteVolume = math.max(0.1, inputs['concreteVolume'] ?? 5);
-  final concreteGrade = (inputs['concreteGrade'] ?? 3).round().clamp(1, 7);
-  final manualMix = (inputs['manualMix'] ?? 0).round().clamp(0, 1);
-  final reserve = (inputs['reserve'] ?? 10).clamp(0, 50);
-  final area = math.max(0.1, inputs['area'] ?? 20);
-  final thickness = (inputs['thickness'] ?? 200).clamp(50, 1000);
-
   return {
-    'inputMode': inputMode.toDouble(),
-    'concreteVolume': concreteVolume.toDouble(),
-    'concreteGrade': concreteGrade.toDouble(),
-    'manualMix': manualMix.toDouble(),
-    'reserve': reserve.toDouble(),
-    'area': area.toDouble(),
-    'thickness': thickness.toDouble(),
+    'inputMode': (inputs['inputMode'] ?? 0).round().clamp(0, 1).toDouble(),
+    'concreteVolume': math.max(0.1, inputs['concreteVolume'] ?? 5).toDouble(),
+    'concreteGrade': (inputs['concreteGrade'] ?? 3).round().clamp(1, 7).toDouble(),
+    'manualMix': (inputs['manualMix'] ?? 0).round().clamp(0, 1).toDouble(),
+    'reserve': (inputs['reserve'] ?? 10).clamp(0, 50).toDouble(),
+    'area': math.max(0.1, inputs['area'] ?? 20).toDouble(),
+    'thickness': (inputs['thickness'] ?? 200).clamp(50, 1000).toDouble(),
   };
 }
 
 // ─── Helpers ───
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(ConcreteCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-ConcreteProportionSpec _resolveProportions(ConcreteCanonicalSpec spec, int grade) {
-  for (final p in spec.proportions) {
-    if (p.grade == grade) return p;
-  }
-  return spec.proportions[2]; // default to grade 3 (M200)
-}
-
-Map<String, double> _resolveVolume(ConcreteCanonicalSpec spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? _defaultFor(spec, 'inputMode', 0)).round();
+Map<String, double> _resolveVolume(SpecReader spec, Map<String, double> inputs) {
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
   if (inputMode == 1) {
-    final area = math.max(0.1, inputs['area'] ?? _defaultFor(spec, 'area', 20));
-    final thickness = (inputs['thickness'] ?? _defaultFor(spec, 'thickness', 200)).clamp(50, 1000).toDouble();
-    return {
-      'inputMode': 1.0,
-      'sourceVolume': _roundValue(area * (thickness / 1000), 6),
-    };
+    final area = math.max(0.1, inputs['area'] ?? defaultFor(spec, 'area', 20));
+    final thickness = (inputs['thickness'] ?? defaultFor(spec, 'thickness', 200)).clamp(50.0, 1000.0).toDouble();
+    return {'inputMode': 1, 'sourceVolume': roundValue(area * (thickness / 1000), 6)};
   }
   return {
-    'inputMode': 0.0,
-    'sourceVolume': _roundValue(
-      math.max(0.1, inputs['concreteVolume'] ?? _defaultFor(spec, 'concreteVolume', 5)),
+    'inputMode': 0,
+    'sourceVolume': roundValue(
+      math.max(0.1, inputs['concreteVolume'] ?? defaultFor(spec, 'concreteVolume', 5)),
       6,
     ),
   };
 }
 
-Map<String, double> _keyFactors(ConcreteCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
+Map<String, dynamic> _resolveProportions(SpecReader spec, int grade) {
+  final proportions = spec.normativeList('proportions');
+  for (final p in proportions) {
+    if ((p['grade'] as num).toInt() == grade) return p;
   }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(ConcreteCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
+  return proportions.length > 2 ? proportions[2] : proportions.first;
 }
 
 Map<String, dynamic> _pickPackage(double exactNeed, double stepSize, String unit) {
   final count = exactNeed > 0 ? (exactNeed / stepSize).ceil() : 0;
-  final purchase = _roundValue(count * stepSize, 6);
-  final leftover = _roundValue(purchase - exactNeed, 6);
+  final purchase = roundValue(count * stepSize, 6);
   return {
     'size': stepSize,
     'count': count,
     'purchase': purchase,
-    'leftover': leftover,
+    'leftover': roundValue(purchase - exactNeed, 6),
     'label': 'concrete-$stepSize$unit',
   };
 }
@@ -270,56 +81,68 @@ Map<String, dynamic> _pickPackage(double exactNeed, double stepSize, String unit
 
 CanonicalCalculatorContractResult calculateCanonicalConcrete(
   Map<String, double> inputs, {
-  ConcreteCanonicalSpec spec = concreteCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(concreteSpecData);
+
   final volume = _resolveVolume(spec, inputs);
   final sourceVolume = volume['sourceVolume']!;
   final inputMode = volume['inputMode']!;
-  final concreteGrade = (inputs['concreteGrade'] ?? _defaultFor(spec, 'concreteGrade', 3)).round().clamp(1, 7);
-  final manualMix = (inputs['manualMix'] ?? _defaultFor(spec, 'manualMix', 0)).round() == 1 ? 1 : 0;
-  final reserve = (inputs['reserve'] ?? _defaultFor(spec, 'reserve', 10)).clamp(0, 50).toDouble();
+  final concreteGrade = (inputs['concreteGrade'] ?? defaultFor(spec, 'concreteGrade', 3)).round().clamp(1, 7);
+  final manualMix = (inputs['manualMix'] ?? defaultFor(spec, 'manualMix', 0)).round() == 1 ? 1 : 0;
+  final reserve = (inputs['reserve'] ?? defaultFor(spec, 'reserve', 10)).clamp(0.0, 50.0).toDouble();
   final proportions = _resolveProportions(spec, concreteGrade);
   final gradeLabel = _gradeLabels[concreteGrade] ?? _gradeLabels[3]!;
 
-  final totalVolume = _roundValue(sourceVolume * (1 + reserve / 100), 6);
+  final cementKgPerM3 = (proportions['cement_kg'] as num).toDouble();
+  final sandM3PerM3 = (proportions['sand_m3'] as num).toDouble();
+  final gravelM3PerM3 = (proportions['gravel_m3'] as num).toDouble();
+  final waterLPerM3 = (proportions['water_l'] as num).toDouble();
+
+  final totalVolume = roundValue(sourceVolume * (1 + reserve / 100), 6);
 
   // Waterproofing
-  final estimatedThickness = spec.materialRules.estimatedSlabThicknessM;
-  final topSurfaceArea = _roundValue(totalVolume / estimatedThickness, 6);
-  final perimeterEst = _roundValue(math.sqrt(topSurfaceArea) * 4, 6);
-  final waterproofArea = _roundValue(perimeterEst * estimatedThickness, 6);
-  final masticKg = _roundValue(
-    waterproofArea * spec.materialRules.waterproofMasticKgPerM2 * spec.materialRules.waterproofReserveFactor,
-    6,
-  );
-  final masticBuckets = (masticKg / spec.packagingRules.masticBucketKg).ceil();
+  final estimatedThickness = spec.materialRule<num>('estimated_slab_thickness_m', 0.2).toDouble();
+  final topSurfaceArea = roundValue(totalVolume / estimatedThickness, 6);
+  final perimeterEst = roundValue(math.sqrt(topSurfaceArea) * 4, 6);
+  final waterproofArea = roundValue(perimeterEst * estimatedThickness, 6);
+  final masticKgPerM2 = spec.materialRule<num>('waterproof_mastic_kg_per_m2', 1.0).toDouble();
+  final waterproofReserve = spec.materialRule<num>('waterproof_reserve_factor', 1.15).toDouble();
+  final masticKg = roundValue(waterproofArea * masticKgPerM2 * waterproofReserve, 6);
+  final masticBucketKg = spec.packagingRule<num>('mastic_bucket_kg', 20).toDouble();
+  final masticBuckets = (masticKg / masticBucketKg).ceil();
 
   // Film
-  final filmArea = _roundValue(topSurfaceArea * spec.materialRules.filmReserveFactor, 6);
-  final filmRolls = (filmArea / spec.packagingRules.filmRollM2).ceil();
+  final filmReserve = spec.materialRule<num>('film_reserve_factor', 1.1).toDouble();
+  final filmArea = roundValue(topSurfaceArea * filmReserve, 6);
+  final filmRollM2 = spec.packagingRule<num>('film_roll_m2', 30).toDouble();
+  final filmRolls = (filmArea / filmRollM2).ceil();
 
-  // Manual mix components
+  // Manual mix
   var cementKg = 0.0;
   var cementBags = 0;
   var sandM3 = 0.0;
   var gravelM3 = 0.0;
   var waterL = 0.0;
+  final cementBagKg = spec.packagingRule<num>('cement_bag_kg', 50).toDouble();
 
   if (manualMix == 1) {
-    cementKg = _roundValue(totalVolume * proportions.cementKg, 6);
-    cementBags = (cementKg / spec.packagingRules.cementBagKg).ceil();
-    sandM3 = _roundValue(totalVolume * proportions.sandM3 * spec.materialRules.sandReserveFactor, 6);
-    gravelM3 = _roundValue(totalVolume * proportions.gravelM3 * spec.materialRules.gravelReserveFactor, 6);
-    waterL = _roundValue(totalVolume * proportions.waterL, 6);
+    cementKg = roundValue(totalVolume * cementKgPerM3, 6);
+    cementBags = (cementKg / cementBagKg).ceil();
+    sandM3 = roundValue(totalVolume * sandM3PerM3 * spec.materialRule<num>('sand_reserve_factor', 1.05).toDouble(), 6);
+    gravelM3 = roundValue(totalVolume * gravelM3PerM3 * spec.materialRule<num>('gravel_reserve_factor', 1.05).toDouble(), 6);
+    waterL = roundValue(totalVolume * waterLPerM3, 6);
   }
 
   // Scenarios
+  final volumeStepM3 = spec.packagingRule<num>('volume_step_m3', 0.1).toDouble();
+  final unit = spec.packagingRule<String>('unit', 'м³');
   final scenarios = <String, CanonicalScenarioResult>{};
 
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(totalVolume * multiplier, 6);
-    final package = _pickPackage(exactNeed, spec.packagingRules.volumeStepM3, spec.packagingRules.unit);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
+    final exactNeed = roundValue(totalVolume * multiplier, 6);
+    final package = _pickPackage(exactNeed, volumeStepM3, unit);
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
@@ -327,19 +150,19 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
       leftover: package['leftover'] as double,
       assumptions: [
         'formula_version:${spec.formulaVersion}',
-        'grade:${proportions.grade}',
+        'grade:$concreteGrade',
         'manual_mix:$manualMix',
         'packaging:${package['label']}',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: package['label'] as String,
         packageSize: package['size'] as double,
         packagesCount: package['count'] as int,
-        unit: spec.packagingRules.unit,
+        unit: unit,
       ),
     );
   }
@@ -348,14 +171,16 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
 
   // Warnings
   final warnings = <String>[];
-  if (sourceVolume < spec.warningRules.smallVolumeThresholdM3) {
+  final smallVolumeThreshold = spec.warningRule<num>('small_volume_threshold_m3', 0.5).toDouble();
+  final manualMixMaxGrade = spec.warningRule<num>('manual_mix_max_grade', 5).toInt();
+  if (sourceVolume < smallVolumeThreshold) {
     warnings.add('Малый объём бетона — перерасход на замес и доставку может быть значительным');
   }
-  if (concreteGrade >= spec.warningRules.manualMixMaxGrade && manualMix == 1) {
+  if (concreteGrade >= manualMixMaxGrade && manualMix == 1) {
     warnings.add('Бетон высоких марок сложно замешивать вручную — рекомендуется заводской бетон');
   }
 
-  // Materials list
+  // Materials
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
       name: 'Бетон $gradeLabel',
@@ -370,34 +195,34 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
   if (manualMix == 1) {
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'Цемент М400 (${spec.packagingRules.cementBagKg.toInt()} кг)',
-        quantity: _roundValue(cementKg, 3),
+        name: 'Цемент М400 (${cementBagKg.toInt()} кг)',
+        quantity: roundValue(cementKg, 3),
         unit: 'кг',
-        withReserve: _roundValue(cementBags * spec.packagingRules.cementBagKg, 3),
-        purchaseQty: cementBags,
+        withReserve: roundValue(cementBags * cementBagKg, 3),
+        purchaseQty: cementBags.toInt(),
         category: 'Компоненты',
       ),
       CanonicalMaterialResult(
         name: 'Песок строительный',
-        quantity: _roundValue(sandM3, 3),
+        quantity: roundValue(sandM3, 3),
         unit: 'м³',
-        withReserve: _roundValue(sandM3, 3),
+        withReserve: roundValue(sandM3, 3),
         purchaseQty: sandM3.ceil(),
         category: 'Компоненты',
       ),
       CanonicalMaterialResult(
         name: 'Щебень',
-        quantity: _roundValue(gravelM3, 3),
+        quantity: roundValue(gravelM3, 3),
         unit: 'м³',
-        withReserve: _roundValue(gravelM3, 3),
+        withReserve: roundValue(gravelM3, 3),
         purchaseQty: gravelM3.ceil(),
         category: 'Компоненты',
       ),
       CanonicalMaterialResult(
         name: 'Вода',
-        quantity: _roundValue(waterL, 3),
+        quantity: roundValue(waterL, 3),
         unit: 'л',
-        withReserve: _roundValue(waterL, 3),
+        withReserve: roundValue(waterL, 3),
         purchaseQty: waterL.ceil(),
         category: 'Компоненты',
       ),
@@ -406,19 +231,19 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
 
   materials.addAll([
     CanonicalMaterialResult(
-      name: 'Мастика гидроизоляционная (${spec.packagingRules.masticBucketKg.toInt()} кг)',
-      quantity: _roundValue(masticKg, 3),
+      name: 'Мастика гидроизоляционная (${masticBucketKg.toInt()} кг)',
+      quantity: roundValue(masticKg, 3),
       unit: 'кг',
-      withReserve: _roundValue(masticBuckets * spec.packagingRules.masticBucketKg, 3),
-      purchaseQty: masticBuckets,
+      withReserve: roundValue(masticBuckets * masticBucketKg, 3),
+      purchaseQty: masticBuckets.toInt(),
       category: 'Гидроизоляция',
     ),
     CanonicalMaterialResult(
-      name: 'Плёнка полиэтиленовая (${spec.packagingRules.filmRollM2.toInt()} м²)',
-      quantity: _roundValue(filmArea, 3),
+      name: 'Плёнка полиэтиленовая (${filmRollM2.toInt()} м²)',
+      quantity: roundValue(filmArea, 3),
       unit: 'м²',
-      withReserve: _roundValue(filmRolls * spec.packagingRules.filmRollM2, 3),
-      purchaseQty: filmRolls,
+      withReserve: roundValue(filmRolls * filmRollM2, 3),
+      purchaseQty: filmRolls.toInt(),
       category: 'Гидроизоляция',
     ),
   ]);
@@ -428,29 +253,29 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'sourceVolume': _roundValue(sourceVolume, 3),
-      'totalVolume': _roundValue(totalVolume, 3),
+      'sourceVolume': roundValue(sourceVolume, 3),
+      'totalVolume': roundValue(totalVolume, 3),
       'inputMode': inputMode,
       'concreteGrade': concreteGrade.toDouble(),
       'manualMix': manualMix.toDouble(),
-      'reserve': _roundValue(reserve, 3),
+      'reserve': roundValue(reserve, 3),
       'gradeIndex': concreteGrade.toDouble(),
-      'cementKgPerM3': proportions.cementKg,
-      'sandM3PerM3': proportions.sandM3,
-      'gravelM3PerM3': proportions.gravelM3,
-      'waterLPerM3': proportions.waterL,
-      'topSurfaceArea': _roundValue(topSurfaceArea, 3),
-      'perimeterEst': _roundValue(perimeterEst, 3),
-      'waterproofArea': _roundValue(waterproofArea, 3),
-      'masticKg': _roundValue(masticKg, 3),
+      'cementKgPerM3': cementKgPerM3,
+      'sandM3PerM3': sandM3PerM3,
+      'gravelM3PerM3': gravelM3PerM3,
+      'waterLPerM3': waterLPerM3,
+      'topSurfaceArea': roundValue(topSurfaceArea, 3),
+      'perimeterEst': roundValue(perimeterEst, 3),
+      'waterproofArea': roundValue(waterproofArea, 3),
+      'masticKg': roundValue(masticKg, 3),
       'masticBuckets': masticBuckets.toDouble(),
-      'filmArea': _roundValue(filmArea, 3),
+      'filmArea': roundValue(filmArea, 3),
       'filmRolls': filmRolls.toDouble(),
-      'cementKg': _roundValue(cementKg, 3),
+      'cementKg': roundValue(cementKg, 3),
       'cementBags': cementBags.toDouble(),
-      'sandM3': _roundValue(sandM3, 3),
-      'gravelM3': _roundValue(gravelM3, 3),
-      'waterL': _roundValue(waterL, 3),
+      'sandM3': roundValue(sandM3, 3),
+      'gravelM3': roundValue(gravelM3, 3),
+      'waterL': roundValue(waterL, 3),
       'minExactNeedM3': scenarios['MIN']!.exactNeed,
       'recExactNeedM3': recScenario.exactNeed,
       'maxExactNeedM3': scenarios['MAX']!.exactNeed,

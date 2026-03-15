@@ -1,132 +1,9 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
-class PartitionsBlockDimsSpec {
-  final int id;
-  final double lengthMm;
-  final double heightMm;
-
-  const PartitionsBlockDimsSpec({
-    required this.id,
-    required this.lengthMm,
-    required this.heightMm,
-  });
-}
-
-class PartitionsPackagingRules {
-  final String unit;
-  final double packageSize;
-
-  const PartitionsPackagingRules({
-    required this.unit,
-    required this.packageSize,
-  });
-}
-
-class PartitionsMaterialRules {
-  final Map<int, PartitionsBlockDimsSpec> blockDims;
-  final Map<int, double> glueRate;
-  final double gypsumMilkRate;
-  final double gypsumBag;
-  final double glueBag;
-  final double blockReserve;
-  final double meshInterval;
-  final double meshReserve;
-  final double meshRoll;
-  final double foamPerPerim;
-  final double foamCan;
-  final double primerLPerM2;
-  final double primerReserve;
-  final double primerCan;
-  final double sealTapeReserve;
-
-  const PartitionsMaterialRules({
-    required this.blockDims,
-    required this.glueRate,
-    required this.gypsumMilkRate,
-    required this.gypsumBag,
-    required this.glueBag,
-    required this.blockReserve,
-    required this.meshInterval,
-    required this.meshReserve,
-    required this.meshRoll,
-    required this.foamPerPerim,
-    required this.foamCan,
-    required this.primerLPerM2,
-    required this.primerReserve,
-    required this.primerCan,
-    required this.sealTapeReserve,
-  });
-}
-
-class PartitionsWarningRules {
-  final double highWallThresholdM;
-
-  const PartitionsWarningRules({
-    required this.highWallThresholdM,
-  });
-}
-
-class PartitionsCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final PartitionsPackagingRules packagingRules;
-  final PartitionsMaterialRules materialRules;
-  final PartitionsWarningRules warningRules;
-
-  const PartitionsCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-const PartitionsCanonicalSpec partitionsCanonicalSpecV1 = PartitionsCanonicalSpec(
-  calculatorId: 'partitions',
-  formulaVersion: 'partitions-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'length', unit: 'm', defaultValue: 5, min: 1, max: 50),
-    CanonicalInputField(key: 'height', unit: 'm', defaultValue: 2.7, min: 2, max: 4),
-    CanonicalInputField(key: 'thickness', unit: 'mm', defaultValue: 100, min: 75, max: 200),
-    CanonicalInputField(key: 'blockType', defaultValue: 0, min: 0, max: 2),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: PartitionsPackagingRules(
-    unit: 'шт',
-    packageSize: 1,
-  ),
-  materialRules: PartitionsMaterialRules(
-    blockDims: {
-      0: PartitionsBlockDimsSpec(id: 0, lengthMm: 625, heightMm: 250),
-      1: PartitionsBlockDimsSpec(id: 1, lengthMm: 625, heightMm: 250),
-      2: PartitionsBlockDimsSpec(id: 2, lengthMm: 667, heightMm: 500),
-    },
-    glueRate: {0: 1.5, 1: 1.5, 2: 0},
-    gypsumMilkRate: 0.8,
-    gypsumBag: 20,
-    glueBag: 25,
-    blockReserve: 1.05,
-    meshInterval: 0.75,
-    meshReserve: 1.05,
-    meshRoll: 50,
-    foamPerPerim: 5,
-    foamCan: 750,
-    primerLPerM2: 0.15,
-    primerReserve: 1.15,
-    primerCan: 10,
-    sealTapeReserve: 1.1,
-  ),
-  warningRules: PartitionsWarningRules(
-    highWallThresholdM: 3.5,
-  ),
-);
+import 'canonical_adapter_utils.dart';
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
@@ -134,93 +11,62 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(PartitionsCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(PartitionsCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(PartitionsCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
 CanonicalCalculatorContractResult calculateCanonicalPartitions(
   Map<String, double> inputs, {
-  PartitionsCanonicalSpec spec = partitionsCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
-  final length = math.max(1.0, math.min(50.0, inputs['length'] ?? _defaultFor(spec, 'length', 5)));
-  final height = math.max(2.0, math.min(4.0, inputs['height'] ?? _defaultFor(spec, 'height', 2.7)));
-  final thickness = math.max(75.0, math.min(200.0, (inputs['thickness'] ?? _defaultFor(spec, 'thickness', 100)).roundToDouble()));
-  final blockType = (inputs['blockType'] ?? _defaultFor(spec, 'blockType', 0)).round().clamp(0, 2);
+  final spec = specOverride ?? const SpecReader(partitionsSpecData);
+
+  final length = math.max(1.0, math.min(50.0, inputs['length'] ?? defaultFor(spec, 'length', 5)));
+  final height = math.max(2.0, math.min(4.0, inputs['height'] ?? defaultFor(spec, 'height', 2.7)));
+  final thickness = math.max(75.0, math.min(200.0, (inputs['thickness'] ?? defaultFor(spec, 'thickness', 100)).roundToDouble()));
+  final blockType = (inputs['blockType'] ?? defaultFor(spec, 'blockType', 0)).round().clamp(0, 2);
 
   // Wall area
   final wallArea = length * height;
 
   // Block dimensions
-  final dims = spec.materialRules.blockDims[blockType] ?? spec.materialRules.blockDims[0]!;
-  final blockArea = (dims.lengthMm / 1000) * (dims.heightMm / 1000);
-  final blocks = (wallArea / blockArea * spec.materialRules.blockReserve).ceil();
+  final dimsMap = spec.materialRule<Map>('block_dims')['$blockType'] as Map? ?? spec.materialRule<Map>('block_dims')['0'] as Map? ?? {'lengthMm': 625, 'heightMm': 250};
+  final blockArea = (((dimsMap['lengthMm'] as num?)?.toDouble() ?? 625) / 1000) * (((dimsMap['heightMm'] as num?)?.toDouble() ?? 250) / 1000);
+  final blocks = (wallArea / blockArea * spec.materialRule<num>('block_reserve').toDouble()).ceil();
 
   // Glue / gypsum
-  final glueRate = spec.materialRules.glueRate[blockType] ?? 0;
+  final glueRate = (spec.materialRule<Map>('glue_rate')['$blockType'] as num?)?.toDouble() ?? 0;
   final glueBags = blockType != 2
-      ? (wallArea * glueRate / spec.materialRules.glueBag).ceil()
+      ? (wallArea * glueRate / spec.materialRule<num>('glue_bag').toDouble()).ceil()
       : 0;
   final gypsumBags = blockType == 2
-      ? (wallArea * spec.materialRules.gypsumMilkRate / spec.materialRules.gypsumBag).ceil()
+      ? (wallArea * spec.materialRule<num>('gypsum_milk_rate').toDouble() / spec.materialRule<num>('gypsum_bag').toDouble()).ceil()
       : 0;
 
   // Reinforcing mesh
-  final armRows = (height / spec.materialRules.meshInterval).ceil();
-  final meshLen = length * armRows * spec.materialRules.meshReserve;
-  final meshRolls = (meshLen / spec.materialRules.meshRoll).ceil();
+  final armRows = (height / spec.materialRule<num>('mesh_interval').toDouble()).ceil();
+  final meshLen = length * armRows * spec.materialRule<num>('mesh_reserve').toDouble();
+  final meshRolls = (meshLen / spec.materialRule<num>('mesh_roll').toDouble()).ceil();
 
   // Foam
-  final foamBottles = ((length + height * 2) / spec.materialRules.foamPerPerim).ceil();
+  final foamBottles = ((length + height * 2) / spec.materialRule<num>('foam_per_perim').toDouble()).ceil();
 
   // Primer (both sides)
-  final primer = (wallArea * 2 * spec.materialRules.primerLPerM2 * spec.materialRules.primerReserve / spec.materialRules.primerCan).ceil();
+  final primer = (wallArea * 2 * spec.materialRule<num>('primer_l_per_m2').toDouble() * spec.materialRule<num>('primer_reserve').toDouble() / spec.materialRule<num>('primer_can').toDouble()).ceil();
 
   // Sealing tape
-  final sealTape = ((length * 2 + height * 2) * spec.materialRules.sealTapeReserve).ceil();
+  final sealTape = ((length * 2 + height * 2) * spec.materialRule<num>('seal_tape_reserve').toDouble()).ceil();
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
 
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(blocks * multiplier, 6);
-    final packageSize = spec.packagingRules.packageSize;
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(blocks * multiplier, 6);
+    final packageSize = spec.packagingRule<num>('package_size').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
-    final purchaseQuantity = _roundValue(packageCount * packageSize, 6);
+    final purchaseQuantity = roundValue(packageCount * packageSize, 6);
     const packageLabel = 'partition-block';
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: purchaseQuantity,
-      leftover: _roundValue(purchaseQuantity - exactNeed, 6),
+      leftover: roundValue(purchaseQuantity - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'blockType:$blockType',
@@ -228,14 +74,14 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
         packageSize: packageSize,
         packagesCount: packageCount,
-        unit: spec.packagingRules.unit,
+        unit: spec.packagingRule<String>('unit'),
       ),
     );
   }
@@ -243,7 +89,7 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
   final recScenario = scenarios['REC']!;
 
   final warnings = <String>[];
-  if (height > spec.warningRules.highWallThresholdM) {
+  if (height > spec.warningRule<num>('high_wall_threshold_m').toDouble()) {
     warnings.add('Высота перегородки более 3.5 м — рекомендуется усиленное армирование');
   }
   if (blockType == 2 && thickness > 100) {
@@ -267,7 +113,7 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
       quantity: glueBags.toDouble(),
       unit: 'мешков',
       withReserve: glueBags.toDouble(),
-      purchaseQty: glueBags,
+      purchaseQty: glueBags.toInt(),
       category: 'Кладка',
     ));
   }
@@ -278,18 +124,18 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
       quantity: gypsumBags.toDouble(),
       unit: 'мешков',
       withReserve: gypsumBags.toDouble(),
-      purchaseQty: gypsumBags,
+      purchaseQty: gypsumBags.toInt(),
       category: 'Кладка',
     ));
   }
 
   materials.addAll([
     CanonicalMaterialResult(
-      name: 'Армирующая сетка (рулон ${spec.materialRules.meshRoll.toInt()} м)',
+      name: 'Армирующая сетка (рулон ${spec.materialRule<num>('mesh_roll').toInt()} м)',
       quantity: meshRolls.toDouble(),
       unit: 'рулонов',
       withReserve: meshRolls.toDouble(),
-      purchaseQty: meshRolls,
+      purchaseQty: meshRolls.toInt(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -297,15 +143,15 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
       quantity: foamBottles.toDouble(),
       unit: 'шт',
       withReserve: foamBottles.toDouble(),
-      purchaseQty: foamBottles,
+      purchaseQty: foamBottles.toInt(),
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
-      name: 'Грунтовка (канистра ${spec.materialRules.primerCan.toInt()} л)',
+      name: 'Грунтовка (канистра ${spec.materialRule<num>('primer_can').toInt()} л)',
       quantity: primer.toDouble(),
       unit: 'канистр',
       withReserve: primer.toDouble(),
-      purchaseQty: primer,
+      purchaseQty: primer.toInt(),
       category: 'Грунтовка',
     ),
     CanonicalMaterialResult(
@@ -313,7 +159,7 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
       quantity: sealTape.toDouble(),
       unit: 'м',
       withReserve: sealTape.toDouble(),
-      purchaseQty: sealTape,
+      purchaseQty: sealTape.toInt(),
       category: 'Монтаж',
     ),
   ]);
@@ -323,17 +169,17 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'length': _roundValue(length, 3),
-      'height': _roundValue(height, 3),
+      'length': roundValue(length, 3),
+      'height': roundValue(height, 3),
       'thickness': thickness,
       'blockType': blockType.toDouble(),
-      'wallArea': _roundValue(wallArea, 3),
-      'blockArea': _roundValue(blockArea, 6),
+      'wallArea': roundValue(wallArea, 3),
+      'blockArea': roundValue(blockArea, 6),
       'blocks': blocks.toDouble(),
       'glueBags': glueBags.toDouble(),
       'gypsumBags': gypsumBags.toDouble(),
       'armRows': armRows.toDouble(),
-      'meshLen': _roundValue(meshLen, 3),
+      'meshLen': roundValue(meshLen, 3),
       'meshRolls': meshRolls.toDouble(),
       'foamBottles': foamBottles.toDouble(),
       'primer': primer.toDouble(),

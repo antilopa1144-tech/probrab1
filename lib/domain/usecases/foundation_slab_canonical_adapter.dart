@@ -1,110 +1,10 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
+import 'canonical_adapter_utils.dart';
 // ─── Foundation Slab spec classes ───
-
-class FoundationSlabPackagingRules {
-  final String unit;
-  final double volumeStepM3;
-
-  const FoundationSlabPackagingRules({
-    required this.unit,
-    required this.volumeStepM3,
-  });
-}
-
-class FoundationSlabMaterialRules {
-  final Map<int, double> weightPerMeter;
-  final double wirePerJoint;
-  final double eppsPlateM2;
-  final double geotextileReserve;
-  final double formworkReserve;
-  final double concreteReserve;
-  final double gravelLayer;
-  final double sandLayer;
-  final double insulationReserve;
-
-  const FoundationSlabMaterialRules({
-    required this.weightPerMeter,
-    required this.wirePerJoint,
-    required this.eppsPlateM2,
-    required this.geotextileReserve,
-    required this.formworkReserve,
-    required this.concreteReserve,
-    required this.gravelLayer,
-    required this.sandLayer,
-    required this.insulationReserve,
-  });
-}
-
-class FoundationSlabWarningRules {
-  final double largeAreaThresholdM2;
-  final int thinSlabThresholdMm;
-
-  const FoundationSlabWarningRules({
-    required this.largeAreaThresholdM2,
-    required this.thinSlabThresholdMm,
-  });
-}
-
-class FoundationSlabCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final FoundationSlabPackagingRules packagingRules;
-  final FoundationSlabMaterialRules materialRules;
-  final FoundationSlabWarningRules warningRules;
-
-  const FoundationSlabCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-// ─── Spec constant ───
-
-const FoundationSlabCanonicalSpec foundationSlabCanonicalSpecV1 = FoundationSlabCanonicalSpec(
-  calculatorId: 'foundation-slab',
-  formulaVersion: 'foundation-slab-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'area', unit: 'm2', defaultValue: 60, min: 10, max: 500),
-    CanonicalInputField(key: 'thickness', unit: 'mm', defaultValue: 200, min: 150, max: 300),
-    CanonicalInputField(key: 'rebarDiam', unit: 'mm', defaultValue: 12, min: 10, max: 16),
-    CanonicalInputField(key: 'rebarStep', unit: 'mm', defaultValue: 200, min: 150, max: 250),
-    CanonicalInputField(key: 'insulationThickness', unit: 'mm', defaultValue: 0, min: 0, max: 150),
-  ],
-  enabledFactors: [
-    'geometry_complexity',
-    'worker_skill',
-    'waste_factor',
-  ],
-  packagingRules: FoundationSlabPackagingRules(
-    unit: 'м³',
-    volumeStepM3: 0.1,
-  ),
-  materialRules: FoundationSlabMaterialRules(
-    weightPerMeter: {10: 0.617, 12: 0.888, 14: 1.208, 16: 1.578},
-    wirePerJoint: 0.02,
-    eppsPlateM2: 0.72,
-    geotextileReserve: 1.2,
-    formworkReserve: 1.1,
-    concreteReserve: 1.05,
-    gravelLayer: 0.15,
-    sandLayer: 0.1,
-    insulationReserve: 1.05,
-  ),
-  warningRules: FoundationSlabWarningRules(
-    largeAreaThresholdM2: 200,
-    thinSlabThresholdMm: 150,
-  ),
-);
 
 // ─── Factor table ───
 
@@ -114,45 +14,12 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 1.0, 'REC': 1.06, 'MAX': 1.15},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
 // ─── Helpers ───
-
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(FoundationSlabCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(FoundationSlabCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(FoundationSlabCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
 
 Map<String, dynamic> _pickPackage(double exactNeed, double stepSize, String unit) {
   final count = exactNeed > 0 ? (exactNeed / stepSize).ceil() : 0;
-  final purchase = _roundValue(count * stepSize, 6);
-  final leftover = _roundValue(purchase - exactNeed, 6);
+  final purchase = roundValue(count * stepSize, 6);
+  final leftover = roundValue(purchase - exactNeed, 6);
   return {
     'size': stepSize,
     'count': count,
@@ -166,37 +33,39 @@ Map<String, dynamic> _pickPackage(double exactNeed, double stepSize, String unit
 
 CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
   Map<String, double> inputs, {
-  FoundationSlabCanonicalSpec spec = foundationSlabCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
-  final area = math.max(10, inputs['area'] ?? _defaultFor(spec, 'area', 60)).toDouble().clamp(10, 500).toDouble();
-  final thickness = (inputs['thickness'] ?? _defaultFor(spec, 'thickness', 200)).clamp(150, 300).toDouble();
-  final rebarDiam = (inputs['rebarDiam'] ?? _defaultFor(spec, 'rebarDiam', 12)).round().clamp(10, 16);
-  final rebarStep = (inputs['rebarStep'] ?? _defaultFor(spec, 'rebarStep', 200)).clamp(150, 250).toDouble();
-  final insulationThickness = (inputs['insulationThickness'] ?? _defaultFor(spec, 'insulationThickness', 0)).clamp(0, 150).toDouble();
+  final spec = specOverride ?? const SpecReader(foundationSlabSpecData);
 
-  final weightPerMeter = spec.materialRules.weightPerMeter[rebarDiam] ?? 0.888;
+  final area = math.max(10, inputs['area'] ?? defaultFor(spec, 'area', 60)).toDouble().clamp(10, 500).toDouble();
+  final thickness = (inputs['thickness'] ?? defaultFor(spec, 'thickness', 200)).clamp(150, 300).toDouble();
+  final rebarDiam = (inputs['rebarDiam'] ?? defaultFor(spec, 'rebarDiam', 12)).round().clamp(10, 16);
+  final rebarStep = (inputs['rebarStep'] ?? defaultFor(spec, 'rebarStep', 200)).clamp(150, 250).toDouble();
+  final insulationThickness = (inputs['insulationThickness'] ?? defaultFor(spec, 'insulationThickness', 0)).clamp(0, 150).toDouble();
+
+  final weightPerMeter = (spec.materialRule<Map>('weight_per_meter')['$rebarDiam'] as num?)?.toDouble() ?? 0.888;
   final side = math.sqrt(area);
   final perimeter = side * 4;
-  final concreteM3 = _roundValue(area * (thickness / 1000) * spec.materialRules.concreteReserve, 6);
+  final concreteM3 = roundValue(area * (thickness / 1000) * spec.materialRule<num>('concrete_reserve').toDouble(), 6);
   final barsPerDir = (side / (rebarStep / 1000)).ceil() + 1;
   final totalBarLen = barsPerDir * side * 2 * 2;
-  final rebarKg = _roundValue(totalBarLen * weightPerMeter, 6);
-  final wireKg = _roundValue(barsPerDir * barsPerDir * 2 * spec.materialRules.wirePerJoint, 6);
-  final formworkArea = _roundValue(perimeter * (thickness / 1000) * spec.materialRules.formworkReserve, 6);
-  final geotextile = _roundValue(area * spec.materialRules.geotextileReserve, 6);
-  final gravel = _roundValue(area * spec.materialRules.gravelLayer, 6);
-  final sand = _roundValue(area * spec.materialRules.sandLayer, 6);
+  final rebarKg = roundValue(totalBarLen * weightPerMeter, 6);
+  final wireKg = roundValue(barsPerDir * barsPerDir * 2 * spec.materialRule<num>('wire_per_joint').toDouble(), 6);
+  final formworkArea = roundValue(perimeter * (thickness / 1000) * spec.materialRule<num>('formwork_reserve').toDouble(), 6);
+  final geotextile = roundValue(area * spec.materialRule<num>('geotextile_reserve').toDouble(), 6);
+  final gravel = roundValue(area * spec.materialRule<num>('gravel_layer').toDouble(), 6);
+  final sand = roundValue(area * spec.materialRule<num>('sand_layer').toDouble(), 6);
   final eppsPlates = insulationThickness > 0
-      ? (area * spec.materialRules.insulationReserve / spec.materialRules.eppsPlateM2).ceil()
+      ? (area * spec.materialRule<num>('insulation_reserve').toDouble() / spec.materialRule<num>('epps_plate_m2').toDouble()).ceil()
       : 0;
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
 
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(concreteM3 * multiplier, 6);
-    final package = _pickPackage(exactNeed, spec.packagingRules.volumeStepM3, spec.packagingRules.unit);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(concreteM3 * multiplier, 6);
+    final package = _pickPackage(exactNeed, spec.packagingRule<num>('volume_step_m3').toDouble(), spec.packagingRule<String>('unit'));
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
@@ -209,14 +78,14 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
         'packaging:${package['label']}',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: package['label'] as String,
         packageSize: package['size'] as double,
         packagesCount: package['count'] as int,
-        unit: spec.packagingRules.unit,
+        unit: spec.packagingRule<String>('unit'),
       ),
     );
   }
@@ -225,10 +94,10 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
 
   // Warnings
   final warnings = <String>[];
-  if (thickness <= spec.warningRules.thinSlabThresholdMm) {
+  if (thickness <= spec.warningRule<num>('thin_slab_threshold_mm').toDouble()) {
     warnings.add('Тонкая плита — убедитесь, что расчёт соответствует нагрузкам');
   }
-  if (area > spec.warningRules.largeAreaThresholdM2) {
+  if (area > spec.warningRule<num>('large_area_threshold_m2').toDouble()) {
     warnings.add('Большая площадь плиты — рекомендуется профессиональный расчёт нагрузок');
   }
 
@@ -236,15 +105,15 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
       name: 'Бетон М300',
-      quantity: _roundValue(concreteM3, 3),
+      quantity: roundValue(concreteM3, 3),
       unit: 'м³',
-      withReserve: _roundValue(concreteM3, 3),
+      withReserve: roundValue(concreteM3, 3),
       purchaseQty: concreteM3.ceil(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
       name: 'Арматура ∅$rebarDiam мм',
-      quantity: _roundValue(rebarKg, 3),
+      quantity: roundValue(rebarKg, 3),
       unit: 'кг',
       withReserve: rebarKg.ceil().toDouble(),
       purchaseQty: rebarKg.ceil(),
@@ -252,7 +121,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
     ),
     CanonicalMaterialResult(
       name: 'Проволока вязальная',
-      quantity: _roundValue(wireKg, 3),
+      quantity: roundValue(wireKg, 3),
       unit: 'кг',
       withReserve: wireKg.ceil().toDouble(),
       purchaseQty: wireKg.ceil(),
@@ -260,7 +129,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
     ),
     CanonicalMaterialResult(
       name: 'Опалубка (доска)',
-      quantity: _roundValue(formworkArea, 3),
+      quantity: roundValue(formworkArea, 3),
       unit: 'м²',
       withReserve: formworkArea.ceil().toDouble(),
       purchaseQty: formworkArea.ceil(),
@@ -268,7 +137,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
     ),
     CanonicalMaterialResult(
       name: 'Геотекстиль',
-      quantity: _roundValue(geotextile, 3),
+      quantity: roundValue(geotextile, 3),
       unit: 'м²',
       withReserve: geotextile.ceil().toDouble(),
       purchaseQty: geotextile.ceil(),
@@ -276,17 +145,17 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
     ),
     CanonicalMaterialResult(
       name: 'Щебень (подушка)',
-      quantity: _roundValue(gravel, 3),
+      quantity: roundValue(gravel, 3),
       unit: 'м³',
-      withReserve: _roundValue(gravel, 3),
+      withReserve: roundValue(gravel, 3),
       purchaseQty: gravel.ceil(),
       category: 'Подготовка',
     ),
     CanonicalMaterialResult(
       name: 'Песок (подушка)',
-      quantity: _roundValue(sand, 3),
+      quantity: roundValue(sand, 3),
       unit: 'м³',
-      withReserve: _roundValue(sand, 3),
+      withReserve: roundValue(sand, 3),
       purchaseQty: sand.ceil(),
       category: 'Подготовка',
     ),
@@ -298,7 +167,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       quantity: eppsPlates.toDouble(),
       unit: 'шт',
       withReserve: eppsPlates.toDouble(),
-      purchaseQty: eppsPlates,
+      purchaseQty: eppsPlates.toInt(),
       category: 'Утепление',
     ));
   }
@@ -308,22 +177,22 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'area': _roundValue(area, 3),
-      'thickness': _roundValue(thickness, 3),
+      'area': roundValue(area, 3),
+      'thickness': roundValue(thickness, 3),
       'rebarDiam': rebarDiam.toDouble(),
-      'rebarStep': _roundValue(rebarStep, 3),
-      'insulationThickness': _roundValue(insulationThickness, 3),
-      'side': _roundValue(side, 3),
-      'perimeter': _roundValue(perimeter, 3),
-      'concreteM3': _roundValue(concreteM3, 3),
+      'rebarStep': roundValue(rebarStep, 3),
+      'insulationThickness': roundValue(insulationThickness, 3),
+      'side': roundValue(side, 3),
+      'perimeter': roundValue(perimeter, 3),
+      'concreteM3': roundValue(concreteM3, 3),
       'barsPerDir': barsPerDir.toDouble(),
-      'totalBarLen': _roundValue(totalBarLen, 3),
-      'rebarKg': _roundValue(rebarKg, 3),
-      'wireKg': _roundValue(wireKg, 3),
-      'formworkArea': _roundValue(formworkArea, 3),
-      'geotextile': _roundValue(geotextile, 3),
-      'gravel': _roundValue(gravel, 3),
-      'sand': _roundValue(sand, 3),
+      'totalBarLen': roundValue(totalBarLen, 3),
+      'rebarKg': roundValue(rebarKg, 3),
+      'wireKg': roundValue(wireKg, 3),
+      'formworkArea': roundValue(formworkArea, 3),
+      'geotextile': roundValue(geotextile, 3),
+      'gravel': roundValue(gravel, 3),
+      'sand': roundValue(sand, 3),
       'eppsPlates': eppsPlates.toDouble(),
       'minExactNeedM3': scenarios['MIN']!.exactNeed,
       'recExactNeedM3': recScenario.exactNeed,

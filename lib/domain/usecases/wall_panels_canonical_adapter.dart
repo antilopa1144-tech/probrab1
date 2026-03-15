@@ -1,118 +1,17 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
+import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
-class WallPanelsPackagingRules {
-  final String unit;
-  final int packageSize;
-
-  const WallPanelsPackagingRules({required this.unit, required this.packageSize});
-}
-
-class WallPanelsMaterialRules {
-  final Map<int, double> panelAreas;
-  final double panelReserve;
-  final double glueCoverage;
-  final double primerLPerM2;
-  final double primerReserve;
-  final double primerCan;
-  final Map<int, double> battenSpacing;
-  final double battenLength;
-  final double battenReserve;
-  final double dubelStep;
-  final int klaymerPerM2;
-  final double moldingLength;
-  final double moldingReserve;
-  final double sealantPerPerim;
-
-  const WallPanelsMaterialRules({
-    required this.panelAreas,
-    required this.panelReserve,
-    required this.glueCoverage,
-    required this.primerLPerM2,
-    required this.primerReserve,
-    required this.primerCan,
-    required this.battenSpacing,
-    required this.battenLength,
-    required this.battenReserve,
-    required this.dubelStep,
-    required this.klaymerPerM2,
-    required this.moldingLength,
-    required this.moldingReserve,
-    required this.sealantPerPerim,
-  });
-}
-
-class WallPanelsWarningRules {
-  final double largeAreaThresholdM2;
-  final List<int> flatSurfaceWarningPanelTypes;
-
-  const WallPanelsWarningRules({required this.largeAreaThresholdM2, required this.flatSurfaceWarningPanelTypes});
-}
-
-class WallPanelsCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final WallPanelsPackagingRules packagingRules;
-  final WallPanelsMaterialRules materialRules;
-  final WallPanelsWarningRules warningRules;
-
-  const WallPanelsCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-/* ─── spec instance ─── */
-
-const WallPanelsCanonicalSpec wallPanelsCanonicalSpecV1 = WallPanelsCanonicalSpec(
-  calculatorId: 'wall-panels',
-  formulaVersion: 'wall-panels-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'area', unit: 'm2', defaultValue: 20, min: 1, max: 200),
-    CanonicalInputField(key: 'panelType', defaultValue: 0, min: 0, max: 4),
-    CanonicalInputField(key: 'mountMethod', defaultValue: 0, min: 0, max: 1),
-    CanonicalInputField(key: 'height', unit: 'm', defaultValue: 2.7, min: 2, max: 4),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: WallPanelsPackagingRules(unit: 'шт', packageSize: 1),
-  materialRules: WallPanelsMaterialRules(
-    panelAreas: {0: 0.75, 1: 0.494, 2: 0.25, 3: 0.3, 4: 0.5},
-    panelReserve: 1.1,
-    glueCoverage: 4,
-    primerLPerM2: 0.15,
-    primerReserve: 1.15,
-    primerCan: 10,
-    battenSpacing: {0: 0.5, 1: 0.5, 2: 0.4, 3: 0.4, 4: 0.4},
-    battenLength: 3,
-    battenReserve: 1.05,
-    dubelStep: 0.5,
-    klaymerPerM2: 5,
-    moldingLength: 3,
-    moldingReserve: 1.05,
-    sealantPerPerim: 10,
-  ),
-  warningRules: WallPanelsWarningRules(largeAreaThresholdM2: 100, flatSurfaceWarningPanelTypes: [2]),
-);
-
-/* ─── factor table ─── */
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
   'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
-
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
 
 const Map<int, String> _panelTypeLabels = {
   0: 'ПВХ-панели (0.75 м\u00b2)',
@@ -122,7 +21,6 @@ const Map<int, String> _panelTypeLabels = {
   4: 'Каменный шпон (0.5 м\u00b2)',
 };
 
-/* ─── helpers ─── */
 
 bool hasCanonicalWallPanelsInputs(Map<String, double> inputs) {
   return inputs.containsKey('panelType') ||
@@ -139,58 +37,28 @@ Map<String, double> normalizeLegacyWallPanelsInputs(Map<String, double> inputs) 
   return normalized;
 }
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(WallPanelsCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(WallPanelsCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(WallPanelsCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
-/* ─── main ─── */
 
 CanonicalCalculatorContractResult calculateCanonicalWallPanels(
   Map<String, double> inputs, {
-  WallPanelsCanonicalSpec spec = wallPanelsCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(wallPanelsSpecData);
+
   final normalized = hasCanonicalWallPanelsInputs(inputs)
       ? Map<String, double>.from(inputs)
       : normalizeLegacyWallPanelsInputs(inputs);
 
-  final area = (normalized['area'] ?? _defaultFor(spec, 'area', 20)).round().clamp(1, 200);
-  final panelType = (normalized['panelType'] ?? _defaultFor(spec, 'panelType', 0)).round().clamp(0, 4);
-  final mountMethod = (normalized['mountMethod'] ?? _defaultFor(spec, 'mountMethod', 0)).round().clamp(0, 1);
-  final height = (normalized['height'] ?? _defaultFor(spec, 'height', 2.7)).clamp(2.0, 4.0);
+  final area = (normalized['area'] ?? defaultFor(spec, 'area', 20)).round().clamp(1, 200);
+  final panelType = (normalized['panelType'] ?? defaultFor(spec, 'panelType', 0)).round().clamp(0, 4);
+  final mountMethod = (normalized['mountMethod'] ?? defaultFor(spec, 'mountMethod', 0)).round().clamp(0, 1);
+  final height = (normalized['height'] ?? defaultFor(spec, 'height', 2.7)).clamp(2.0, 4.0);
 
   // Panel area
-  final panelArea = spec.materialRules.panelAreas[panelType] ?? 0.75;
-  final battenSpacing = spec.materialRules.battenSpacing[panelType] ?? 0.5;
+  final panelArea = (spec.materialRule<Map>('panel_areas')['$panelType'] as num?)?.toDouble() ?? 0.75;
+  final battenSpacing = (spec.materialRule<Map>('batten_spacing')['$panelType'] as num?)?.toDouble() ?? 0.5;
 
   // Common formulas
-  final panels = (area * spec.materialRules.panelReserve / panelArea).ceil();
+  final panels = (area * spec.materialRule<num>('panel_reserve').toDouble() / panelArea).ceil();
   final perim = math.sqrt(area) * 4;
 
   // Mount-specific
@@ -205,36 +73,36 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
 
   if (mountMethod == 0) {
     // Glue
-    glueBottles = (area / spec.materialRules.glueCoverage).ceil();
-    primer = (area * spec.materialRules.primerLPerM2 * spec.materialRules.primerReserve / spec.materialRules.primerCan).ceil();
+    glueBottles = (area / spec.materialRule<num>('glue_coverage').toDouble()).ceil();
+    primer = (area * spec.materialRule<num>('primer_l_per_m2').toDouble() * spec.materialRule<num>('primer_reserve').toDouble() / spec.materialRule<num>('primer_can').toDouble()).ceil();
   } else {
     // Batten frame
     battenRows = (height / battenSpacing).ceil() + 1;
     wallLength = area / height;
-    battenM = battenRows * wallLength * spec.materialRules.battenReserve;
-    battenPcs = (battenM / spec.materialRules.battenLength).ceil();
-    dubels = (battenM / spec.materialRules.dubelStep).ceil();
-    klaimers = (area * spec.materialRules.klaymerPerM2).ceil();
+    battenM = battenRows * wallLength * spec.materialRule<num>('batten_reserve').toDouble();
+    battenPcs = (battenM / spec.materialRule<num>('batten_length').toDouble()).ceil();
+    dubels = (battenM / spec.materialRule<num>('dubel_step').toDouble()).ceil();
+    klaimers = (area * spec.materialRule<num>('klaymer_per_m2').toDouble()).ceil();
   }
 
   // All methods
-  final molding = (perim * spec.materialRules.moldingReserve / spec.materialRules.moldingLength).ceil();
-  final sealant = (perim / spec.materialRules.sealantPerPerim).ceil();
+  final molding = (perim * spec.materialRule<num>('molding_reserve').toDouble() / spec.materialRule<num>('molding_length').toDouble()).ceil();
+  final sealant = (perim / spec.materialRule<num>('sealant_per_perim').toDouble()).ceil();
 
   // Scenarios
   const packageLabel = 'wall-panel';
   const packageUnit = 'шт';
 
   final scenarios = <String, CanonicalScenarioResult>{};
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(panels * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(panels * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: packageCount.toDouble(),
-      leftover: _roundValue(packageCount - exactNeed, 6),
+      leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'panelType:$panelType',
@@ -242,8 +110,8 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
@@ -258,10 +126,10 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
 
   // Warnings
   final warnings = <String>[];
-  if (area > spec.warningRules.largeAreaThresholdM2) {
+  if (area > spec.warningRule<num>('large_area_threshold_m2').toDouble()) {
     warnings.add('Большая площадь — рассмотрите оптовую закупку панелей');
   }
-  if (spec.warningRules.flatSurfaceWarningPanelTypes.contains(panelType) && mountMethod == 0) {
+  if ((spec.warningRule<List>('flat_surface_warning_panel_types') ?? []).contains(panelType) && mountMethod == 0) {
     warnings.add('3D-панели на клей — убедитесь в ровности основания');
   }
 
@@ -284,26 +152,26 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
         quantity: glueBottles.toDouble(),
         unit: 'шт',
         withReserve: glueBottles.toDouble(),
-        purchaseQty: glueBottles,
+        purchaseQty: glueBottles.toInt(),
         category: 'Монтаж',
       ),
       CanonicalMaterialResult(
-        name: 'Грунтовка (канистра ${spec.materialRules.primerCan.round()} л)',
+        name: 'Грунтовка (канистра ${spec.materialRule<num>('primer_can').toDouble().round()} л)',
         quantity: primer.toDouble(),
         unit: 'канистр',
         withReserve: primer.toDouble(),
-        purchaseQty: primer,
+        purchaseQty: primer.toInt(),
         category: 'Грунтовка',
       ),
     ]);
   } else {
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'Обрешётка (бруски ${spec.materialRules.battenLength.round()} м)',
+        name: 'Обрешётка (бруски ${spec.materialRule<num>('batten_length').toDouble().round()} м)',
         quantity: battenPcs.toDouble(),
         unit: 'шт',
         withReserve: battenPcs.toDouble(),
-        purchaseQty: battenPcs,
+        purchaseQty: battenPcs.toInt(),
         category: 'Подсистема',
       ),
       CanonicalMaterialResult(
@@ -311,7 +179,7 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
         quantity: dubels.toDouble(),
         unit: 'шт',
         withReserve: dubels.toDouble(),
-        purchaseQty: dubels,
+        purchaseQty: dubels.toInt(),
         category: 'Крепёж',
       ),
       CanonicalMaterialResult(
@@ -319,7 +187,7 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
         quantity: klaimers.toDouble(),
         unit: 'шт',
         withReserve: klaimers.toDouble(),
-        purchaseQty: klaimers,
+        purchaseQty: klaimers.toInt(),
         category: 'Крепёж',
       ),
     ]);
@@ -327,11 +195,11 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
 
   materials.addAll([
     CanonicalMaterialResult(
-      name: 'Молдинги (${spec.materialRules.moldingLength.round()} м)',
+      name: 'Молдинги (${spec.materialRule<num>('molding_length').toDouble().round()} м)',
       quantity: molding.toDouble(),
       unit: 'шт',
       withReserve: molding.toDouble(),
-      purchaseQty: molding,
+      purchaseQty: molding.toInt(),
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
@@ -339,7 +207,7 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
       quantity: sealant.toDouble(),
       unit: 'шт',
       withReserve: sealant.toDouble(),
-      purchaseQty: sealant,
+      purchaseQty: sealant.toInt(),
       category: 'Монтаж',
     ),
   ]);
@@ -356,12 +224,12 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
       'panelArea': panelArea,
       'battenSpacing': battenSpacing,
       'panels': panels.toDouble(),
-      'perim': _roundValue(perim, 4),
+      'perim': roundValue(perim, 4),
       'glueBottles': glueBottles.toDouble(),
       'primer': primer.toDouble(),
       'battenRows': battenRows.toDouble(),
-      'wallLength': _roundValue(wallLength, 4),
-      'battenM': _roundValue(battenM, 4),
+      'wallLength': roundValue(wallLength, 4),
+      'battenM': roundValue(battenM, 4),
       'battenPcs': battenPcs.toDouble(),
       'dubels': dubels.toDouble(),
       'klaimers': klaimers.toDouble(),

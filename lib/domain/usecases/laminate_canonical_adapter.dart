@@ -1,67 +1,15 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
-const LaminateCanonicalSpec laminateCanonicalSpecV1 = LaminateCanonicalSpec(
-  calculatorId: 'laminate',
-  formulaVersion: 'laminate-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'inputMode', defaultValue: 1, min: 0, max: 1),
-    CanonicalInputField(key: 'length', unit: 'm', defaultValue: 5, min: 1, max: 30),
-    CanonicalInputField(key: 'width', unit: 'm', defaultValue: 4, min: 1, max: 30),
-    CanonicalInputField(key: 'area', unit: 'm2', defaultValue: 20, min: 1, max: 500),
-    CanonicalInputField(key: 'perimeter', unit: 'm', defaultValue: 0, min: 0, max: 200),
-    CanonicalInputField(key: 'packArea', unit: 'm2', defaultValue: 2.397, min: 0.5, max: 5),
-    CanonicalInputField(key: 'layoutProfileId', defaultValue: 7, min: 1, max: 8),
-    CanonicalInputField(key: 'reservePercent', defaultValue: 10, min: 0, max: 25),
-    CanonicalInputField(key: 'hasUnderlayment', defaultValue: 1, min: 0, max: 1),
-    CanonicalInputField(key: 'underlaymentRollArea', unit: 'm2', defaultValue: 10, min: 5, max: 20),
-    CanonicalInputField(key: 'doorThresholds', defaultValue: 1, min: 0, max: 10),
-    CanonicalInputField(key: 'underlayType', defaultValue: 3, min: 2, max: 5),
-    CanonicalInputField(key: 'laminateClass', defaultValue: 32, min: 31, max: 34),
-    CanonicalInputField(key: 'laminateThickness', defaultValue: 8, min: 6, max: 14),
-  ],
-  enabledFactors: ['geometry_complexity', 'installation_method', 'worker_skill'],
-  layoutProfiles: [
-    LaminateLayoutProfileSpec(id: 1, key: 'straight_random', label: 'Прямая, хаотичное смещение', wastePercent: 5),
-    LaminateLayoutProfileSpec(id: 2, key: 'straight_one_third', label: 'Прямая, смещение 1/3', wastePercent: 8),
-    LaminateLayoutProfileSpec(id: 3, key: 'straight_half', label: 'Прямая, смещение 1/2', wastePercent: 12),
-    LaminateLayoutProfileSpec(id: 4, key: 'diagonal', label: 'Диагональная', wastePercent: 15),
-    LaminateLayoutProfileSpec(id: 5, key: 'herringbone', label: 'Ёлочка', wastePercent: 20),
-    LaminateLayoutProfileSpec(id: 6, key: 'quarter_shift', label: 'Смещение 1/4', wastePercent: 7),
-    LaminateLayoutProfileSpec(id: 7, key: 'chaotic', label: 'Хаотичная', wastePercent: 10),
-    LaminateLayoutProfileSpec(id: 8, key: 'deck', label: 'Палубная', wastePercent: 12),
-  ],
-  packagingRules: LaminatePackagingRules(
-    laminatePackAreaUnit: 'м²',
-    plinthPieceLengthM: 2.5,
-    underlaymentRollAreaM2: 10,
-  ),
-  materialRules: LaminateMaterialRules(
-    smallRoomThresholdM2: 15,
-    smallRoomWastePerM2Percent: 0.5,
-    reservePercentDefault: 10,
-    underlaymentOverlapPercent: 5,
-    vaporBarrierOverlapPercent: 10,
-    wedgeSpacingM: 0.5,
-    defaultDoorOpeningWidthM: 0.9,
-    rectangleInnerCorners: 4,
-  ),
-  warningRules: LaminateWarningRules(
-    smallAreaWarningThresholdM2: 5,
-    diagonalWarningProfileIds: [4],
-    herringboneWarningProfileIds: [5],
-    halfShiftWarningProfileIds: [3, 8],
-  ),
-);
+import 'canonical_adapter_utils.dart';
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
   'installation_method': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.1},
   'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
 };
-
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
 
 bool hasCanonicalLaminateInputs(Map<String, double> inputs) {
   return inputs.containsKey('layoutProfileId') ||
@@ -135,167 +83,138 @@ Map<String, double> normalizeLegacyLaminateInputs(Map<String, double> inputs) {
   return normalized;
 }
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(LaminateCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
 double _estimatePerimeter(double area) {
   if (area <= 0) return 0;
   return 4 * math.sqrt(area);
 }
 
-Map<String, double> _resolveGeometry(LaminateCanonicalSpec spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? _defaultFor(spec, 'inputMode', 1)).round();
+Map<String, double> _resolveGeometry(SpecReader spec, Map<String, double> inputs) {
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 1)).round();
   if (inputMode == 0) {
-    final length = math.max(1, inputs['length'] ?? _defaultFor(spec, 'length', 5)).toDouble();
-    final width = math.max(1, inputs['width'] ?? _defaultFor(spec, 'width', 4)).toDouble();
+    final length = math.max(1, inputs['length'] ?? defaultFor(spec, 'length', 5)).toDouble();
+    final width = math.max(1, inputs['width'] ?? defaultFor(spec, 'width', 4)).toDouble();
     return {
       'inputMode': 0.0,
-      'area': _roundValue(length * width, 3),
-      'perimeter': _roundValue(2 * (length + width), 3),
+      'area': roundValue(length * width, 3),
+      'perimeter': roundValue(2 * (length + width), 3),
     };
   }
 
-  final area = math.max(1, inputs['area'] ?? _defaultFor(spec, 'area', 20)).toDouble();
+  final area = math.max(1, inputs['area'] ?? defaultFor(spec, 'area', 20)).toDouble();
   final explicitPerimeter = math.max(0, inputs['perimeter'] ?? 0).toDouble();
   return {
     'inputMode': 1.0,
-    'area': _roundValue(area, 3),
-    'perimeter': _roundValue(explicitPerimeter > 0 ? explicitPerimeter : _estimatePerimeter(area), 3),
+    'area': roundValue(area, 3),
+    'perimeter': roundValue(explicitPerimeter > 0 ? explicitPerimeter : _estimatePerimeter(area), 3),
   };
 }
 
-LaminateLayoutProfileSpec _resolveLayoutProfile(LaminateCanonicalSpec spec, Map<String, double> inputs) {
-  final profileId = (inputs['layoutProfileId'] ?? _defaultFor(spec, 'layoutProfileId', 7)).round().clamp(1, 8);
-  return spec.layoutProfiles.firstWhere(
-    (profile) => profile.id == profileId,
-    orElse: () => spec.layoutProfiles.first,
+Map<String, dynamic> _resolveLayoutProfile(SpecReader spec, Map<String, double> inputs) {
+  final profileId = (inputs['layoutProfileId'] ?? defaultFor(spec, 'layoutProfileId', 7)).round().clamp(1, 8);
+  return spec.normativeList('layout_profiles').firstWhere(
+    (profile) => (profile['id'] as num).toInt() == profileId,
+    orElse: () => spec.normativeList('layout_profiles').first,
   );
-}
-
-Map<String, double> _keyFactors(LaminateCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(LaminateCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
 }
 
 CanonicalCalculatorContractResult calculateCanonicalLaminate(
   Map<String, double> inputs, {
-  LaminateCanonicalSpec spec = laminateCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(laminateSpecData);
+
   final normalized = hasCanonicalLaminateInputs(inputs)
       ? Map<String, double>.from(inputs)
       : normalizeLegacyLaminateInputs(inputs);
   final geometry = _resolveGeometry(spec, normalized);
-  final packArea = (normalized['packArea'] ?? _defaultFor(spec, 'packArea', 2.397)).clamp(0.5, 5).toDouble();
+  final packArea = (normalized['packArea'] ?? defaultFor(spec, 'packArea', 2.397)).clamp(0.5, 5).toDouble();
   final layoutProfile = _resolveLayoutProfile(spec, normalized);
-  final reservePercent = (normalized['reservePercent'] ?? _defaultFor(spec, 'reservePercent', spec.materialRules.reservePercentDefault))
+  final reservePercent = (normalized['reservePercent'] ?? defaultFor(spec, 'reservePercent', spec.materialRule<num>('reserve_percent_default').toDouble()))
       .clamp(0, 25)
       .toDouble();
-  final smallRoomAdjustment = geometry['area']! < spec.materialRules.smallRoomThresholdM2
-      ? (spec.materialRules.smallRoomThresholdM2 - geometry['area']!) * spec.materialRules.smallRoomWastePerM2Percent
+  final smallRoomAdjustment = geometry['area']! < spec.materialRule<num>('small_room_threshold_m2').toDouble()
+      ? (spec.materialRule<num>('small_room_threshold_m2').toDouble() - geometry['area']!) * spec.materialRule<num>('small_room_waste_per_m2_percent').toDouble()
       : 0.0;
-  final effectiveWastePercent = math.max(layoutProfile.wastePercent + smallRoomAdjustment, reservePercent);
-  final baseExactNeedArea = _roundValue(geometry['area']! * (1 + effectiveWastePercent / 100), 6);
+  final effectiveWastePercent = math.max((layoutProfile['waste_percent'] as num).toDouble() + smallRoomAdjustment, reservePercent);
+  final baseExactNeedArea = roundValue(geometry['area']! * (1 + effectiveWastePercent / 100), 6);
   final scenarios = <String, CanonicalScenarioResult>{};
 
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(baseExactNeedArea * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(baseExactNeedArea * multiplier, 6);
     final packageCount = exactNeed > 0 ? (exactNeed / packArea).ceil() : 0;
-    final purchaseQuantity = _roundValue(packageCount * packArea, 6);
+    final purchaseQuantity = roundValue(packageCount * packArea, 6);
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: purchaseQuantity,
-      leftover: _roundValue(purchaseQuantity - exactNeed, 6),
+      leftover: roundValue(purchaseQuantity - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
-        'layout:${layoutProfile.key}',
-        'packaging:laminate-pack-${_roundValue(packArea, 3)}',
+        'layout:${layoutProfile['key'] as String}',
+        'packaging:laminate-pack-${roundValue(packArea, 3)}',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
-        'reserve_percent': _roundValue(reservePercent, 3),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
+        'reserve_percent': roundValue(reservePercent, 3),
       },
       buyPlan: CanonicalBuyPlan(
-        packageLabel: 'laminate-pack-${_roundValue(packArea, 3)}',
+        packageLabel: 'laminate-pack-${roundValue(packArea, 3)}',
         packageSize: packArea,
         packagesCount: packageCount,
-        unit: spec.packagingRules.laminatePackAreaUnit,
+        unit: spec.packagingRule<String>('laminate_pack_area_unit'),
       ),
     );
   }
 
-  final hasUnderlayment = (normalized['hasUnderlayment'] ?? _defaultFor(spec, 'hasUnderlayment', 1)) > 0;
-  final underlaymentRollArea = (normalized['underlaymentRollArea'] ?? _defaultFor(spec, 'underlaymentRollArea', spec.packagingRules.underlaymentRollAreaM2))
+  final hasUnderlayment = (normalized['hasUnderlayment'] ?? defaultFor(spec, 'hasUnderlayment', 1)) > 0;
+  final underlaymentRollArea = (normalized['underlaymentRollArea'] ?? defaultFor(spec, 'underlaymentRollArea', spec.packagingRule<num>('underlayment_roll_area_m2').toDouble()))
       .clamp(5, 20)
       .toDouble();
   final underlaymentArea = hasUnderlayment
-      ? _roundValue(geometry['area']! * (1 + spec.materialRules.underlaymentOverlapPercent / 100), 6)
+      ? roundValue(geometry['area']! * (1 + spec.materialRule<num>('underlayment_overlap_percent').toDouble() / 100), 6)
       : 0.0;
   final underlaymentRolls = hasUnderlayment ? (underlaymentArea / underlaymentRollArea).ceil() : 0;
-  final doorThresholds = math.max(0, (normalized['doorThresholds'] ?? _defaultFor(spec, 'doorThresholds', 1)).round());
-  final plinthLengthRaw = math.max(0, geometry['perimeter']! - doorThresholds * spec.materialRules.defaultDoorOpeningWidthM);
-  final plinthPieces = (plinthLengthRaw / spec.packagingRules.plinthPieceLengthM).ceil();
-  final plinthLength = _roundValue(plinthPieces * spec.packagingRules.plinthPieceLengthM, 6);
-  final innerCorners = spec.materialRules.rectangleInnerCorners;
+  final doorThresholds = math.max(0, (normalized['doorThresholds'] ?? defaultFor(spec, 'doorThresholds', 1)).round());
+  final plinthLengthRaw = math.max(0, geometry['perimeter']! - doorThresholds * spec.materialRule<num>('default_door_opening_width_m').toDouble());
+  final plinthPieces = (plinthLengthRaw / spec.packagingRule<num>('plinth_piece_length_m').toDouble()).ceil();
+  final plinthLength = roundValue(plinthPieces * spec.packagingRule<num>('plinth_piece_length_m').toDouble(), 6);
+  final innerCorners = spec.materialRule<num>('rectangle_inner_corners').toDouble();
   final plinthConnectors = math.max(0, plinthPieces - innerCorners);
-  final wedges = (geometry['perimeter']! / spec.materialRules.wedgeSpacingM).ceil();
-  final vaporBarrierArea = _roundValue(geometry['area']! * (1 + spec.materialRules.vaporBarrierOverlapPercent / 100), 6);
+  final wedges = (geometry['perimeter']! / spec.materialRule<num>('wedge_spacing_m').toDouble()).ceil();
+  final vaporBarrierArea = roundValue(geometry['area']! * (1 + spec.materialRule<num>('vapor_barrier_overlap_percent').toDouble() / 100), 6);
   final recScenario = scenarios['REC']!;
 
   final warnings = <String>[];
-  if (geometry['area']! < spec.warningRules.smallAreaWarningThresholdM2) {
+  if (geometry['area']! < spec.warningRule<num>('small_area_warning_threshold_m2').toDouble()) {
     warnings.add('Маленькая площадь: процент отходов может быть выше из-за коротких обрезков');
   }
-  if (spec.warningRules.diagonalWarningProfileIds.contains(layoutProfile.id)) {
+  if ((spec.warningRule<List>('diagonal_warning_profile_ids') ?? []).contains((layoutProfile['id'] as num).toInt())) {
     warnings.add('Диагональная укладка требует более высокого запаса и аккуратной раскладки');
   }
-  if (spec.warningRules.herringboneWarningProfileIds.contains(layoutProfile.id)) {
+  if ((spec.warningRule<List>('herringbone_warning_profile_ids') ?? []).contains((layoutProfile['id'] as num).toInt())) {
     warnings.add('Укладка ёлочкой требует идеально ровного основания и высокой квалификации');
   }
-  if (spec.warningRules.halfShiftWarningProfileIds.contains(layoutProfile.id)) {
+  if ((spec.warningRule<List>('half_shift_warning_profile_ids') ?? []).contains((layoutProfile['id'] as num).toInt())) {
     warnings.add('Смещение досок на 1/2 увеличивает количество коротких обрезков');
   }
 
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: 'Ламинат (${_roundValue(packArea, 3)} м² в упаковке)',
-      quantity: _roundValue(recScenario.exactNeed / packArea, 6),
+      name: 'Ламинат (${roundValue(packArea, 3)} м² в упаковке)',
+      quantity: roundValue(recScenario.exactNeed / packArea, 6),
       unit: 'упак.',
       withReserve: recScenario.buyPlan.packagesCount.toDouble(),
       purchaseQty: recScenario.buyPlan.packagesCount,
       category: 'Напольное покрытие',
     ),
     CanonicalMaterialResult(
-      name: 'Плинтус напольный (${spec.packagingRules.plinthPieceLengthM} м)',
-      quantity: _roundValue(plinthLength / spec.packagingRules.plinthPieceLengthM, 6),
+      name: 'Плинтус напольный (${spec.packagingRule<num>('plinth_piece_length_m').toDouble()} м)',
+      quantity: roundValue(plinthLength / spec.packagingRule<num>('plinth_piece_length_m').toDouble(), 6),
       unit: 'шт',
       withReserve: plinthPieces.toDouble(),
-      purchaseQty: plinthPieces,
+      purchaseQty: plinthPieces.toInt(),
       category: 'Плинтус',
     ),
     CanonicalMaterialResult(
@@ -303,7 +222,7 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       quantity: innerCorners.toDouble(),
       unit: 'шт',
       withReserve: innerCorners.toDouble(),
-      purchaseQty: innerCorners,
+      purchaseQty: innerCorners.toInt(),
       category: 'Плинтус',
     ),
     CanonicalMaterialResult(
@@ -311,7 +230,7 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       quantity: plinthConnectors.toDouble(),
       unit: 'шт',
       withReserve: plinthConnectors.toDouble(),
-      purchaseQty: plinthConnectors,
+      purchaseQty: plinthConnectors.toInt(),
       category: 'Плинтус',
     ),
     CanonicalMaterialResult(
@@ -319,7 +238,7 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       quantity: wedges.toDouble(),
       unit: 'шт',
       withReserve: wedges.toDouble(),
-      purchaseQty: wedges,
+      purchaseQty: wedges.toInt(),
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
@@ -335,7 +254,7 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       quantity: doorThresholds.toDouble(),
       unit: 'шт',
       withReserve: doorThresholds.toDouble(),
-      purchaseQty: doorThresholds,
+      purchaseQty: doorThresholds.toInt(),
       category: 'Плинтус',
     ),
   ];
@@ -345,10 +264,10 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       1,
       CanonicalMaterialResult(
         name: 'Подложка под ламинат',
-        quantity: _roundValue(underlaymentArea / underlaymentRollArea, 6),
+        quantity: roundValue(underlaymentArea / underlaymentRollArea, 6),
         unit: 'рулонов',
         withReserve: underlaymentRolls.toDouble(),
-        purchaseQty: underlaymentRolls,
+        purchaseQty: underlaymentRolls.toInt(),
         category: 'Подложка',
       ),
     );
@@ -372,11 +291,11 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       'area': geometry['area']!,
       'perimeter': geometry['perimeter']!,
       'inputMode': geometry['inputMode']!,
-      'packArea': _roundValue(packArea, 6),
-      'layoutProfileId': layoutProfile.id.toDouble(),
-      'reservePercent': _roundValue(reservePercent, 3),
-      'smallRoomAdjustment': _roundValue(smallRoomAdjustment, 3),
-      'wastePercent': _roundValue(effectiveWastePercent, 3),
+      'packArea': roundValue(packArea, 6),
+      'layoutProfileId': (layoutProfile['id'] as num).toInt().toDouble(),
+      'reservePercent': roundValue(reservePercent, 3),
+      'smallRoomAdjustment': roundValue(smallRoomAdjustment, 3),
+      'wastePercent': roundValue(effectiveWastePercent, 3),
       'baseExactNeedArea': baseExactNeedArea,
       'packsNeeded': recScenario.buyPlan.packagesCount.toDouble(),
       'underlayArea': underlaymentArea,
@@ -388,9 +307,9 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       'wedgesNeeded': wedges.toDouble(),
       'vaporBarrierArea': vaporBarrierArea,
       'doorThresholds': doorThresholds.toDouble(),
-      'underlayType': ((normalized['underlayType'] ?? _defaultFor(spec, 'underlayType', 3)).round().clamp(2, 5)).toDouble(),
-      'laminateClass': ((normalized['laminateClass'] ?? _defaultFor(spec, 'laminateClass', 32)).round().clamp(31, 34)).toDouble(),
-      'laminateThickness': ((normalized['laminateThickness'] ?? _defaultFor(spec, 'laminateThickness', 8)).round().clamp(6, 14)).toDouble(),
+      'underlayType': ((normalized['underlayType'] ?? defaultFor(spec, 'underlayType', 3)).round().clamp(2, 5)).toDouble(),
+      'laminateClass': ((normalized['laminateClass'] ?? defaultFor(spec, 'laminateClass', 32)).round().clamp(31, 34)).toDouble(),
+      'laminateThickness': ((normalized['laminateThickness'] ?? defaultFor(spec, 'laminateThickness', 8)).round().clamp(6, 14)).toDouble(),
       'minExactNeedArea': scenarios['MIN']!.exactNeed,
       'recExactNeedArea': recScenario.exactNeed,
       'maxExactNeedArea': scenarios['MAX']!.exactNeed,

@@ -1,109 +1,11 @@
 import 'dart:math' as math;
 
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
-
+import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
-class BrickworkPackagingRules {
-  final String unit;
-  final int packageSize;
-
-  const BrickworkPackagingRules({required this.unit, required this.packageSize});
-}
-
-class BrickworkMaterialRules {
-  final Map<int, Map<int, int>> bricksPerSqm;
-  final Map<int, double> mortarPerM3;
-  final Map<int, int> wallThicknessMm;
-  final Map<int, int> brickHeights;
-  final Map<int, int> bricksPerPallet;
-  final double blockReserve;
-  final double mortarDensity;
-  final double mortarBagKg;
-
-  const BrickworkMaterialRules({
-    required this.bricksPerSqm,
-    required this.mortarPerM3,
-    required this.wallThicknessMm,
-    required this.brickHeights,
-    required this.bricksPerPallet,
-    required this.blockReserve,
-    required this.mortarDensity,
-    required this.mortarBagKg,
-  });
-}
-
-class BrickworkWarningRules {
-  final int nonLoadBearingWallThickness;
-  final double armorBeltHeightThreshold;
-  final int armorBeltWallThicknessThreshold;
-
-  const BrickworkWarningRules({
-    required this.nonLoadBearingWallThickness,
-    required this.armorBeltHeightThreshold,
-    required this.armorBeltWallThicknessThreshold,
-  });
-}
-
-class BrickworkCanonicalSpec {
-  final String calculatorId;
-  final String formulaVersion;
-  final List<CanonicalInputField> inputSchema;
-  final List<String> enabledFactors;
-  final BrickworkPackagingRules packagingRules;
-  final BrickworkMaterialRules materialRules;
-  final BrickworkWarningRules warningRules;
-
-  const BrickworkCanonicalSpec({
-    required this.calculatorId,
-    required this.formulaVersion,
-    required this.inputSchema,
-    required this.enabledFactors,
-    required this.packagingRules,
-    required this.materialRules,
-    required this.warningRules,
-  });
-}
-
-/* ─── spec instance ─── */
-
-const BrickworkCanonicalSpec brickworkCanonicalSpecV1 = BrickworkCanonicalSpec(
-  calculatorId: 'brickwork',
-  formulaVersion: 'brickwork-canonical-v1',
-  inputSchema: [
-    CanonicalInputField(key: 'inputMode', defaultValue: 0, min: 0, max: 1),
-    CanonicalInputField(key: 'wallLength', unit: 'm', defaultValue: 10, min: 1, max: 100),
-    CanonicalInputField(key: 'wallHeight', unit: 'm', defaultValue: 2.7, min: 1, max: 5),
-    CanonicalInputField(key: 'area', unit: 'm2', defaultValue: 27, min: 1, max: 500),
-    CanonicalInputField(key: 'openingsArea', unit: 'm2', defaultValue: 5, min: 0, max: 50),
-    CanonicalInputField(key: 'brickFormat', defaultValue: 0, min: 0, max: 2),
-    CanonicalInputField(key: 'wallThickness', defaultValue: 1, min: 0, max: 3),
-    CanonicalInputField(key: 'mortarJoint', unit: 'mm', defaultValue: 10, min: 8, max: 15),
-  ],
-  enabledFactors: ['geometry_complexity', 'worker_skill', 'waste_factor'],
-  packagingRules: BrickworkPackagingRules(unit: 'шт', packageSize: 1),
-  materialRules: BrickworkMaterialRules(
-    bricksPerSqm: {
-      0: {0: 51, 1: 102, 2: 153, 3: 204},
-      1: {0: 39, 1: 78, 2: 117, 3: 156},
-      2: {0: 26, 1: 52, 2: 78, 3: 104},
-    },
-    mortarPerM3: {0: 0.221, 1: 0.195, 2: 0.166},
-    wallThicknessMm: {0: 120, 1: 250, 2: 380, 3: 510},
-    brickHeights: {0: 65, 1: 88, 2: 138},
-    bricksPerPallet: {0: 480, 1: 352, 2: 176},
-    blockReserve: 1.05,
-    mortarDensity: 1700,
-    mortarBagKg: 50,
-  ),
-  warningRules: BrickworkWarningRules(
-    nonLoadBearingWallThickness: 0,
-    armorBeltHeightThreshold: 3,
-    armorBeltWallThicknessThreshold: 2,
-  ),
-);
-
-/* ─── factor table ─── */
 
 const Map<String, Map<String, double>> _factorTable = {
   'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
@@ -111,15 +13,12 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
 };
 
-const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
 const Map<int, String> _brickFormatLabels = {
   0: 'Кирпич одинарный (65 мм)',
   1: 'Кирпич полуторный (88 мм)',
   2: 'Кирпич двойной (138 мм)',
 };
 
-/* ─── helpers ─── */
 
 bool hasCanonicalBrickworkInputs(Map<String, double> inputs) {
   return inputs.containsKey('brickFormat') ||
@@ -140,91 +39,62 @@ Map<String, double> normalizeLegacyBrickworkInputs(Map<String, double> inputs) {
   return normalized;
 }
 
-double _roundValue(double value, int decimals) {
-  var scale = 1.0;
-  for (var index = 0; index < decimals; index++) {
-    scale *= 10;
-  }
-  return (value * scale).round() / scale;
-}
-
-double _defaultFor(BrickworkCanonicalSpec spec, String key, double fallback) {
-  for (final field in spec.inputSchema) {
-    if (field.key == key) return field.defaultValue;
-  }
-  return fallback;
-}
-
-Map<String, double> _keyFactors(BrickworkCanonicalSpec spec, String scenario) {
-  final keyFactors = <String, double>{};
-  for (final factorName in spec.enabledFactors) {
-    keyFactors[factorName] = _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return keyFactors;
-}
-
-double _scenarioMultiplier(BrickworkCanonicalSpec spec, String scenario) {
-  var multiplier = 1.0;
-  for (final factorName in spec.enabledFactors) {
-    multiplier *= _factorTable[factorName]?[scenario] ?? 1.0;
-  }
-  return multiplier;
-}
-
-/* ─── main ─── */
 
 CanonicalCalculatorContractResult calculateCanonicalBrickwork(
   Map<String, double> inputs, {
-  BrickworkCanonicalSpec spec = brickworkCanonicalSpecV1,
+  SpecReader? specOverride,
 }) {
+  final spec = specOverride ?? const SpecReader(brickworkSpecData);
+
   final normalized = hasCanonicalBrickworkInputs(inputs)
       ? Map<String, double>.from(inputs)
       : normalizeLegacyBrickworkInputs(inputs);
 
-  final inputMode = (normalized['inputMode'] ?? _defaultFor(spec, 'inputMode', 0)).round();
+  final inputMode = (normalized['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
   double wallLength;
   double wallHeight;
   double wallArea;
 
   if (inputMode == 0) {
-    wallLength = math.max(1, math.min(100, (normalized['wallLength'] ?? _defaultFor(spec, 'wallLength', 10)).toDouble()));
-    wallHeight = math.max(1, math.min(5, (normalized['wallHeight'] ?? _defaultFor(spec, 'wallHeight', 2.7)).toDouble()));
-    wallArea = _roundValue(wallLength * wallHeight, 3);
+    wallLength = math.max(1, math.min(100, (normalized['wallLength'] ?? defaultFor(spec, 'wallLength', 10)).toDouble()));
+    wallHeight = math.max(1, math.min(5, (normalized['wallHeight'] ?? defaultFor(spec, 'wallHeight', 2.7)).toDouble()));
+    wallArea = roundValue(wallLength * wallHeight, 3);
   } else {
-    wallArea = math.max(1, math.min(500, (normalized['area'] ?? _defaultFor(spec, 'area', 27)).toDouble()));
-    wallLength = (normalized['wallLength'] ?? _defaultFor(spec, 'wallLength', 10)).toDouble();
-    wallHeight = (normalized['wallHeight'] ?? _defaultFor(spec, 'wallHeight', 2.7)).toDouble();
+    wallArea = math.max(1, math.min(500, (normalized['area'] ?? defaultFor(spec, 'area', 27)).toDouble()));
+    wallLength = (normalized['wallLength'] ?? defaultFor(spec, 'wallLength', 10)).toDouble();
+    wallHeight = (normalized['wallHeight'] ?? defaultFor(spec, 'wallHeight', 2.7)).toDouble();
   }
 
-  final openingsArea = math.max(0.0, math.min(50.0, (normalized['openingsArea'] ?? _defaultFor(spec, 'openingsArea', 5)).toDouble()));
-  final brickFormat = (normalized['brickFormat'] ?? _defaultFor(spec, 'brickFormat', 0)).round().clamp(0, 2);
-  final wallThicknessIdx = (normalized['wallThickness'] ?? _defaultFor(spec, 'wallThickness', 1)).round().clamp(0, 3);
-  final mortarJoint = math.max(8.0, math.min(15.0, (normalized['mortarJoint'] ?? _defaultFor(spec, 'mortarJoint', 10)).toDouble()));
+  final openingsArea = math.max(0.0, math.min(50.0, (normalized['openingsArea'] ?? defaultFor(spec, 'openingsArea', 5)).toDouble()));
+  final brickFormat = (normalized['brickFormat'] ?? defaultFor(spec, 'brickFormat', 0)).round().clamp(0, 2);
+  final wallThicknessIdx = (normalized['wallThickness'] ?? defaultFor(spec, 'wallThickness', 1)).round().clamp(0, 3);
+  final mortarJoint = math.max(8.0, math.min(15.0, (normalized['mortarJoint'] ?? defaultFor(spec, 'mortarJoint', 10)).toDouble()));
 
   // Area
   final netArea = math.max(0.0, wallArea - openingsArea);
 
   // Bricks
-  final baseBricks = (spec.materialRules.bricksPerSqm[brickFormat]?[wallThicknessIdx] ?? 102).toDouble();
+  final bricksMap = spec.materialRule<Map>('bricks_per_sqm');
+  final baseBricks = ((bricksMap['$brickFormat'] as Map?)?['$wallThicknessIdx'] as num?)?.toDouble() ?? 102.0;
   final jointCoeff = mortarJoint == 10 ? 1.0 : (10 / mortarJoint) * 0.97 + 0.03;
   final bricksPerSqm = baseBricks * jointCoeff;
   final totalBricks = netArea * bricksPerSqm;
-  final bricksWithReserve = (totalBricks * spec.materialRules.blockReserve).ceil();
+  final bricksWithReserve = (totalBricks * spec.materialRule<num>('block_reserve').toDouble()).ceil();
 
   // Mortar
-  final wallThicknessMm = (spec.materialRules.wallThicknessMm[wallThicknessIdx] ?? 250).toDouble();
-  final wallVolume = _roundValue(netArea * (wallThicknessMm / 1000), 6);
-  final mortarCoeff = spec.materialRules.mortarPerM3[brickFormat] ?? 0.221;
-  final mortarM3 = _roundValue(wallVolume * mortarCoeff, 6);
-  final mortarKg = _roundValue(mortarM3 * spec.materialRules.mortarDensity, 3);
-  final mortarBags = (mortarKg / spec.materialRules.mortarBagKg).ceil();
+  final wallThicknessMm = (spec.materialRule<Map>('wall_thickness_mm')['$wallThicknessIdx'] as num?)?.toDouble() ?? 250.0;
+  final wallVolume = roundValue(netArea * (wallThicknessMm / 1000), 6);
+  final mortarCoeff = (spec.materialRule<Map>('mortar_per_m3')['$brickFormat'] as num?)?.toDouble() ?? 0.221;
+  final mortarM3 = roundValue(wallVolume * mortarCoeff, 6);
+  final mortarKg = roundValue(mortarM3 * spec.materialRule<num>('mortar_density').toDouble(), 3);
+  final mortarBags = (mortarKg / spec.materialRule<num>('mortar_bag_kg').toDouble()).ceil();
 
   // Mesh
-  final brickH = (spec.materialRules.brickHeights[brickFormat] ?? 65).toDouble();
+  final brickH = (spec.materialRule<Map>('brick_heights')['$brickFormat'] as num?)?.toDouble() ?? 65.0;
   final rowHeight = (brickH + mortarJoint) / 1000;
   final totalRows = (wallHeight / rowHeight).ceil();
   final meshRows = (totalRows / 5).floor();
-  final meshArea = _roundValue(wallLength * (wallThicknessMm / 1000) * meshRows, 3);
+  final meshArea = roundValue(wallLength * (wallThicknessMm / 1000) * meshRows, 3);
 
   // Lintels
   final openingsCount = (openingsArea / 2).ceil();
@@ -232,20 +102,20 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
   final totalLintels = openingsCount * lintelsPerOpening;
 
   // Pallets
-  final bricksPerPallet = spec.materialRules.bricksPerPallet[brickFormat] ?? 480;
+  final bricksPerPallet = (spec.materialRule<Map>('bricks_per_pallet')['$brickFormat'] as num?)?.toDouble() ?? 480;
   final pallets = (bricksWithReserve / bricksPerPallet).ceil();
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
-  for (final scenarioName in _scenarioNames) {
-    final multiplier = _scenarioMultiplier(spec, scenarioName);
-    final exactNeed = _roundValue(bricksWithReserve * multiplier, 6);
+  for (final scenarioName in scenarioNames) {
+    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final exactNeed = roundValue(bricksWithReserve * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: packageCount.toDouble(),
-      leftover: _roundValue(packageCount - exactNeed, 6),
+      leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'brickFormat:$brickFormat',
@@ -254,14 +124,14 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
         'packaging:brickwork-piece',
       ],
       keyFactors: {
-        ..._keyFactors(spec, scenarioName),
-        'field_multiplier': _roundValue(multiplier, 6),
+        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: 'brickwork-piece',
         packageSize: 1,
         packagesCount: packageCount,
-        unit: spec.packagingRules.unit,
+        unit: spec.packagingRule<String>('unit'),
       ),
     );
   }
@@ -270,11 +140,11 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
 
   // Warnings
   final warnings = <String>[];
-  if (wallThicknessIdx == spec.warningRules.nonLoadBearingWallThickness) {
+  if (wallThicknessIdx == spec.warningRule<num>('non_load_bearing_wall_thickness').toDouble()) {
     warnings.add('Толщина стены в 0.5 кирпича (120 мм) — только для ненесущих перегородок');
   }
-  if (wallThicknessIdx >= spec.warningRules.armorBeltWallThicknessThreshold &&
-      wallHeight > spec.warningRules.armorBeltHeightThreshold) {
+  if (wallThicknessIdx >= spec.warningRule<num>('armor_belt_wall_thickness_threshold').toDouble() &&
+      wallHeight > spec.warningRule<num>('armor_belt_height_threshold').toDouble()) {
     warnings.add('При толщине стены 1.5+ кирпича и высоте более 3 м необходим армопояс');
   }
   if (brickFormat == 2 && wallThicknessIdx == 0) {
@@ -285,7 +155,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
       name: _brickFormatLabels[brickFormat] ?? 'Кирпич',
-      quantity: _roundValue(totalBricks, 3),
+      quantity: roundValue(totalBricks, 3),
       unit: 'шт',
       withReserve: bricksWithReserve.toDouble(),
       purchaseQty: recScenario.exactNeed.ceil(),
@@ -296,15 +166,15 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
       quantity: pallets.toDouble(),
       unit: 'шт',
       withReserve: pallets.toDouble(),
-      purchaseQty: pallets,
+      purchaseQty: pallets.toInt(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
-      name: 'Раствор кладочный (${spec.materialRules.mortarBagKg.round()} кг)',
+      name: 'Раствор кладочный (${spec.materialRule<num>('mortar_bag_kg').toDouble().round()} кг)',
       quantity: mortarBags.toDouble(),
       unit: 'мешков',
       withReserve: mortarBags.toDouble(),
-      purchaseQty: mortarBags,
+      purchaseQty: mortarBags.toInt(),
       category: 'Раствор',
     ),
     CanonicalMaterialResult(
@@ -320,7 +190,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
       quantity: totalLintels.toDouble(),
       unit: 'шт',
       withReserve: totalLintels.toDouble(),
-      purchaseQty: totalLintels,
+      purchaseQty: totalLintels.toInt(),
       category: 'Проёмы',
     ),
   ];
@@ -331,19 +201,19 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
     materials: materials,
     totals: {
       'inputMode': inputMode.toDouble(),
-      'wallLength': _roundValue(wallLength, 3),
-      'wallHeight': _roundValue(wallHeight, 3),
-      'wallArea': _roundValue(wallArea, 3),
-      'openingsArea': _roundValue(openingsArea, 3),
-      'netArea': _roundValue(netArea, 3),
+      'wallLength': roundValue(wallLength, 3),
+      'wallHeight': roundValue(wallHeight, 3),
+      'wallArea': roundValue(wallArea, 3),
+      'openingsArea': roundValue(openingsArea, 3),
+      'netArea': roundValue(netArea, 3),
       'brickFormat': brickFormat.toDouble(),
       'wallThicknessIdx': wallThicknessIdx.toDouble(),
       'wallThicknessMm': wallThicknessMm,
       'mortarJoint': mortarJoint,
       'baseBricks': baseBricks,
-      'jointCoeff': _roundValue(jointCoeff, 6),
-      'bricksPerSqm': _roundValue(bricksPerSqm, 3),
-      'totalBricks': _roundValue(totalBricks, 3),
+      'jointCoeff': roundValue(jointCoeff, 6),
+      'bricksPerSqm': roundValue(bricksPerSqm, 3),
+      'totalBricks': roundValue(totalBricks, 3),
       'bricksWithReserve': bricksWithReserve.toDouble(),
       'wallVolume': wallVolume,
       'mortarCoeff': mortarCoeff,
@@ -351,7 +221,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
       'mortarKg': mortarKg,
       'mortarBags': mortarBags.toDouble(),
       'brickH': brickH,
-      'rowHeight': _roundValue(rowHeight, 4),
+      'rowHeight': roundValue(rowHeight, 4),
       'totalRows': totalRows.toDouble(),
       'meshRows': meshRows.toDouble(),
       'meshArea': meshArea,
