@@ -15,9 +15,9 @@ import './base_calculator.dart';
 class CalculateVentilationV2 extends BaseCalculator {
   /// Кратность воздухообмена по типу вентиляции
   static const Map<int, double> exchangeRates = {
-    0: 1.0,  // естественная
-    1: 2.0,  // приточная
-    2: 1.5,  // вытяжная
+    0: 1.0, // естественная
+    1: 2.0, // приточная
+    2: 1.5, // вытяжная
   };
 
   /// Длина воздуховода на комнату (м)
@@ -45,7 +45,7 @@ class CalculateVentilationV2 extends BaseCalculator {
 
     final roomArea = inputs['roomArea'] ?? 0;
     if (roomArea <= 0) {
-      return 'Площадь помещений должна быть больше нуля';
+      return positiveValueMessage('roomArea');
     }
 
     return null;
@@ -57,11 +57,43 @@ class CalculateVentilationV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final roomArea = getInput(inputs, 'roomArea', defaultValue: 50.0, minValue: 10.0, maxValue: 500.0);
-    final ceilingHeight = getInput(inputs, 'ceilingHeight', defaultValue: 2.7, minValue: 2.2, maxValue: 5.0);
-    final roomsCount = getIntInput(inputs, 'roomsCount', defaultValue: 4, minValue: 1, maxValue: 20);
-    final ventilationType = getIntInput(inputs, 'ventilationType', defaultValue: 1, minValue: 0, maxValue: 2);
-    final needRecovery = getIntInput(inputs, 'needRecovery', defaultValue: 0, minValue: 0, maxValue: 1) == 1;
+    final roomArea = getInput(
+      inputs,
+      'roomArea',
+      defaultValue: 50.0,
+      minValue: 10.0,
+      maxValue: 500.0,
+    );
+    final ceilingHeight = getInput(
+      inputs,
+      'ceilingHeight',
+      defaultValue: 2.7,
+      minValue: 2.2,
+      maxValue: 5.0,
+    );
+    final roomsCount = getIntInput(
+      inputs,
+      'roomsCount',
+      defaultValue: 4,
+      minValue: 1,
+      maxValue: 20,
+    );
+    final ventilationType = getIntInput(
+      inputs,
+      'ventilationType',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final needRecovery =
+        getIntInput(
+          inputs,
+          'needRecovery',
+          defaultValue: 0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
 
     // Объём помещений
     final roomVolume = roomArea * ceilingHeight;
@@ -73,7 +105,9 @@ class CalculateVentilationV2 extends BaseCalculator {
     final airflowRequired = roomVolume * exchangeRate;
 
     // Воздуховоды: на комнаты + магистраль с запасом
-    final ductLength = roomsCount * ductPerRoom + (roomArea * mainDuctCoef) * (1 + ductWastePercent / 100);
+    final ductLength =
+        roomsCount * ductPerRoom +
+        (roomArea * mainDuctCoef) * (1 + ductWastePercent / 100);
 
     // Решётки: по 2 на комнату
     final grillsCount = roomsCount * grillsPerRoom;
@@ -85,10 +119,24 @@ class CalculateVentilationV2 extends BaseCalculator {
     final recuperatorCount = needRecovery ? 1 : 0;
 
     // Расчёт стоимости
-    final ductPrice = findPrice(priceList, ['duct', 'воздуховод', 'ventilation_duct']);
-    final grillPrice = findPrice(priceList, ['grill', 'решётка', 'ventilation_grill']);
-    final fittingPrice = findPrice(priceList, ['fitting', 'фитинг', 'ventilation_fitting']);
-    final recuperatorPrice = needRecovery ? findPrice(priceList, ['recuperator', 'рекуператор']) : null;
+    final ductPrice = findPrice(priceList, [
+      'duct',
+      'воздуховод',
+      'ventilation_duct',
+    ]);
+    final grillPrice = findPrice(priceList, [
+      'grill',
+      'решётка',
+      'ventilation_grill',
+    ]);
+    final fittingPrice = findPrice(priceList, [
+      'fitting',
+      'фитинг',
+      'ventilation_fitting',
+    ]);
+    final recuperatorPrice = needRecovery
+        ? findPrice(priceList, ['recuperator', 'рекуператор'])
+        : null;
 
     final costs = [
       calculateCost(ductLength, ductPrice?.price),

@@ -124,12 +124,6 @@ const Map<String, Map<String, double>> _factorTable = {
 
 const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
 
-const Map<int, String> _buildingTypeLabels = {
-  0: 'Квартира',
-  1: 'Частный дом',
-  2: 'Офис',
-  3: 'Производство',
-};
 
 const Map<int, String> _ductTypeLabels = {
   0: 'Круглый ø100–160',

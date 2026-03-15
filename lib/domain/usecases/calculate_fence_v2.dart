@@ -40,7 +40,7 @@ class CalculateFenceV2 extends BaseCalculator {
 
     final fenceLength = inputs['fenceLength'] ?? 0;
     if (fenceLength <= 0) {
-      return 'Длина забора должна быть больше нуля';
+      return positiveValueMessage('fenceLength');
     }
 
     return null;
@@ -52,10 +52,34 @@ class CalculateFenceV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final fenceLength = getInput(inputs, 'fenceLength', defaultValue: 50.0, minValue: 1.0, maxValue: 1000.0);
-    final fenceHeight = getInput(inputs, 'fenceHeight', defaultValue: 2.0, minValue: 1.0, maxValue: 3.0);
-    final postSpacing = getInput(inputs, 'postSpacing', defaultValue: 2.5, minValue: 2.0, maxValue: 3.5);
-    final fenceType = getIntInput(inputs, 'fenceType', defaultValue: 0, minValue: 0, maxValue: 2);
+    final fenceLength = getInput(
+      inputs,
+      'fenceLength',
+      defaultValue: 50.0,
+      minValue: 1.0,
+      maxValue: 1000.0,
+    );
+    final fenceHeight = getInput(
+      inputs,
+      'fenceHeight',
+      defaultValue: 2.0,
+      minValue: 1.0,
+      maxValue: 3.0,
+    );
+    final postSpacing = getInput(
+      inputs,
+      'postSpacing',
+      defaultValue: 2.5,
+      minValue: 2.0,
+      maxValue: 3.5,
+    );
+    final fenceType = getIntInput(
+      inputs,
+      'fenceType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
 
     // Площадь забора
     final fenceArea = fenceLength * fenceHeight;
@@ -87,14 +111,26 @@ class CalculateFenceV2 extends BaseCalculator {
     // Расчёт стоимости
     final postsPrice = findPrice(priceList, ['post', 'столб', 'fence_post']);
     final lagsPrice = findPrice(priceList, ['lag', 'лага', 'crossbar']);
-    final fastenersPrice = findPrice(priceList, ['fasteners', 'саморезы', 'screws']);
+    final fastenersPrice = findPrice(priceList, [
+      'fasteners',
+      'саморезы',
+      'screws',
+    ]);
 
     PriceItem? sheetsPrice;
     switch (fenceType) {
       case 0:
-        sheetsPrice = findPrice(priceList, ['profiled', 'профлист', 'profiled_sheet']);
+        sheetsPrice = findPrice(priceList, [
+          'profiled',
+          'профлист',
+          'profiled_sheet',
+        ]);
       case 1:
-        sheetsPrice = findPrice(priceList, ['picket', 'штакетник', 'fence_picket']);
+        sheetsPrice = findPrice(priceList, [
+          'picket',
+          'штакетник',
+          'fence_picket',
+        ]);
       case 2:
         sheetsPrice = findPrice(priceList, ['chain', 'сетка', 'chain_link']);
     }

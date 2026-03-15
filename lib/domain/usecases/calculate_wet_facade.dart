@@ -20,7 +20,7 @@ class CalculateWetFacade extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -31,15 +31,33 @@ class CalculateWetFacade extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final insulationThickness = getInput(inputs, 'insulationThickness', defaultValue: 100.0, minValue: 50.0, maxValue: 200.0);
-    final insulationType = getIntInput(inputs, 'insulationType', defaultValue: 2, minValue: 1, maxValue: 3);
+    final insulationThickness = getInput(
+      inputs,
+      'insulationThickness',
+      defaultValue: 100.0,
+      minValue: 50.0,
+      maxValue: 200.0,
+    );
+    final insulationType = getIntInput(
+      inputs,
+      'insulationType',
+      defaultValue: 2,
+      minValue: 1,
+      maxValue: 3,
+    );
 
     // Объём утеплителя
     final insulationVolume = calculateVolume(area, insulationThickness);
 
     // Площадь одного листа утеплителя
-    final sheetArea = insulationType == 1 ? 0.72 : (insulationType == 2 ? 0.5 : 0.72);
-    final sheetsNeeded = calculateUnitsNeeded(area, sheetArea, marginPercent: 5.0);
+    final sheetArea = insulationType == 1
+        ? 0.72
+        : (insulationType == 2 ? 0.5 : 0.72);
+    final sheetsNeeded = calculateUnitsNeeded(
+      area,
+      sheetArea,
+      marginPercent: 5.0,
+    );
 
     // Клей для утеплителя: 5-6 кг/м²
     final glueNeeded = area * 5;
@@ -66,24 +84,57 @@ class CalculateWetFacade extends BaseCalculator {
     final cornerProfileLength = getInput(inputs, 'corners', defaultValue: 0.0);
 
     // Стартовый профиль (цокольный): по периметру
-    final startProfileLength = getInput(inputs, 'startProfile', defaultValue: 0.0);
+    final startProfileLength = getInput(
+      inputs,
+      'startProfile',
+      defaultValue: 0.0,
+    );
 
     // Деформационный профиль: по факту
     // Расчёт стоимости
     final insulationPrice = insulationType == 1
-        ? findPrice(priceList, ['mineral_wool', 'wool_insulation', 'facade_wool'])
-        : (insulationType == 2 
-            ? findPrice(priceList, ['foam', 'foam_insulation', 'eps', 'polystyrene'])
-            : findPrice(priceList, ['xps', 'extruded_polystyrene', 'epps']));
-    final gluePrice = findPrice(priceList, ['glue_insulation', 'glue_foam', 'facade_adhesive']);
-    final fastenerPrice = findPrice(priceList, ['fastener_insulation', 'dowel_umbrella']);
-    final meshPrice = findPrice(priceList, ['mesh_armor', 'mesh_facade', 'fiberglass_mesh']);
+        ? findPrice(priceList, [
+            'mineral_wool',
+            'wool_insulation',
+            'facade_wool',
+          ])
+        : (insulationType == 2
+              ? findPrice(priceList, [
+                  'foam',
+                  'foam_insulation',
+                  'eps',
+                  'polystyrene',
+                ])
+              : findPrice(priceList, ['xps', 'extruded_polystyrene', 'epps']));
+    final gluePrice = findPrice(priceList, [
+      'glue_insulation',
+      'glue_foam',
+      'facade_adhesive',
+    ]);
+    final fastenerPrice = findPrice(priceList, [
+      'fastener_insulation',
+      'dowel_umbrella',
+    ]);
+    final meshPrice = findPrice(priceList, [
+      'mesh_armor',
+      'mesh_facade',
+      'fiberglass_mesh',
+    ]);
     final baseCoatPrice = findPrice(priceList, ['base_coat', 'adhesive_layer']);
     final primerPrice = findPrice(priceList, ['primer', 'primer_facade']);
-    final finishPlasterPrice = findPrice(priceList, ['plaster_decorative', 'plaster_facade']);
+    final finishPlasterPrice = findPrice(priceList, [
+      'plaster_decorative',
+      'plaster_facade',
+    ]);
     final paintPrice = findPrice(priceList, ['paint_facade', 'facade_paint']);
-    final cornerProfilePrice = findPrice(priceList, ['profile_corner', 'corner_bead']);
-    final startProfilePrice = findPrice(priceList, ['profile_start', 'base_profile']);
+    final cornerProfilePrice = findPrice(priceList, [
+      'profile_corner',
+      'corner_bead',
+    ]);
+    final startProfilePrice = findPrice(priceList, [
+      'profile_start',
+      'base_profile',
+    ]);
 
     final costs = [
       calculateCost(sheetsNeeded.toDouble(), insulationPrice?.price),
@@ -94,8 +145,10 @@ class CalculateWetFacade extends BaseCalculator {
       calculateCost(primerNeeded, primerPrice?.price),
       calculateCost(finishPlasterNeeded, finishPlasterPrice?.price),
       calculateCost(paintNeeded, paintPrice?.price),
-      if (cornerProfileLength > 0) calculateCost(cornerProfileLength, cornerProfilePrice?.price),
-      if (startProfileLength > 0) calculateCost(startProfileLength, startProfilePrice?.price),
+      if (cornerProfileLength > 0)
+        calculateCost(cornerProfileLength, cornerProfilePrice?.price),
+      if (startProfileLength > 0)
+        calculateCost(startProfileLength, startProfilePrice?.price),
     ];
 
     return createResult(

@@ -18,7 +18,7 @@ class CalculateCeilingTiles extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -29,13 +29,23 @@ class CalculateCeilingTiles extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final tileSize = getInput(inputs, 'tileSize', defaultValue: 50.0, minValue: 30.0, maxValue: 100.0);
+    final tileSize = getInput(
+      inputs,
+      'tileSize',
+      defaultValue: 50.0,
+      minValue: 30.0,
+      maxValue: 100.0,
+    );
 
     // Площадь одной плитки в м²
     final tileArea = calculateTileArea(tileSize, tileSize);
 
     // Количество плиток с запасом 10%
-    final tilesNeeded = calculateUnitsNeeded(area, tileArea, marginPercent: 10.0);
+    final tilesNeeded = calculateUnitsNeeded(
+      area,
+      tileArea,
+      marginPercent: 10.0,
+    );
 
     // Клей для потолочной плитки: ~0.4-0.5 кг/м²
     final glueNeeded = area * 0.5;
@@ -56,17 +66,37 @@ class CalculateCeilingTiles extends BaseCalculator {
     final puttyNeeded = area * 0.2;
 
     // Краска (если плитка под покраску): ~0.12 л/м² в 2 слоя
-    final isPaintable = getIntInput(inputs, 'paintable', defaultValue: 0, minValue: 0, maxValue: 1);
+    final isPaintable = getIntInput(
+      inputs,
+      'paintable',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
     final paintNeeded = isPaintable > 0 ? area * 0.12 * 2 : 0.0;
 
     // Расчёт стоимости
-    final tilePrice = findPrice(priceList, ['ceiling_tile', 'tile_ceiling', 'polystyrene_tile']);
-    final gluePrice = findPrice(priceList, ['glue_tile', 'glue', 'tile_adhesive']);
+    final tilePrice = findPrice(priceList, [
+      'ceiling_tile',
+      'tile_ceiling',
+      'polystyrene_tile',
+    ]);
+    final gluePrice = findPrice(priceList, [
+      'glue_tile',
+      'glue',
+      'tile_adhesive',
+    ]);
     final primerPrice = findPrice(priceList, ['primer', 'primer_ceiling']);
-    final plinthPrice = findPrice(priceList, ['plinth_ceiling', 'ceiling_molding', 'cornice']);
+    final plinthPrice = findPrice(priceList, [
+      'plinth_ceiling',
+      'ceiling_molding',
+      'cornice',
+    ]);
     final plinthGluePrice = findPrice(priceList, ['glue_plinth', 'glue']);
     final puttyPrice = findPrice(priceList, ['putty', 'putty_finish']);
-    final paintPrice = isPaintable > 0 ? findPrice(priceList, ['paint_ceiling', 'paint']) : null;
+    final paintPrice = isPaintable > 0
+        ? findPrice(priceList, ['paint_ceiling', 'paint'])
+        : null;
 
     final costs = [
       calculateCost(tilesNeeded.toDouble(), tilePrice?.price),

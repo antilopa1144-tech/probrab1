@@ -19,7 +19,7 @@ class CalculateSlab extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -30,7 +30,13 @@ class CalculateSlab extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 0.2, minValue: 0.1, maxValue: 0.5);
+    final thickness = getInput(
+      inputs,
+      'thickness',
+      defaultValue: 0.2,
+      minValue: 0.1,
+      maxValue: 0.5,
+    );
 
     // Объём бетона (thickness уже в метрах, не нужно конвертировать)
     final concreteVolume = area * thickness;
@@ -54,8 +60,14 @@ class CalculateSlab extends BaseCalculator {
     final waterproofingArea = addMargin(area, 10.0);
 
     // Утеплитель (ЭППС): опционально, под плитой (толщина в метрах)
-    final insulationThickness = getInput(inputs, 'insulation', defaultValue: 0.0);
-    final insulationVolume = insulationThickness > 0 ? area * insulationThickness : 0.0;
+    final insulationThickness = getInput(
+      inputs,
+      'insulation',
+      defaultValue: 0.0,
+    );
+    final insulationVolume = insulationThickness > 0
+        ? area * insulationThickness
+        : 0.0;
 
     // Опалубка: по периметру плиты
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
@@ -68,12 +80,26 @@ class CalculateSlab extends BaseCalculator {
     final plasticizerNeeded = concreteVolume * 0.5;
 
     // Расчёт стоимости
-    final concretePrice = findPrice(priceList, ['concrete', 'concrete_m300', 'ready_mix_concrete']);
-    final rebarPrice = findPrice(priceList, ['rebar', 'rebar12', 'reinforcement']);
+    final concretePrice = findPrice(priceList, [
+      'concrete',
+      'concrete_m300',
+      'ready_mix_concrete',
+    ]);
+    final rebarPrice = findPrice(priceList, [
+      'rebar',
+      'rebar12',
+      'reinforcement',
+    ]);
     final sandPrice = findPrice(priceList, ['sand', 'sand_construction']);
     final gravelPrice = findPrice(priceList, ['gravel', 'crushed_stone']);
-    final waterproofingPrice = findPrice(priceList, ['waterproofing', 'waterproofing_membrane']);
-    final insulationPrice = findPrice(priceList, ['xps', 'extruded_polystyrene']);
+    final waterproofingPrice = findPrice(priceList, [
+      'waterproofing',
+      'waterproofing_membrane',
+    ]);
+    final insulationPrice = findPrice(priceList, [
+      'xps',
+      'extruded_polystyrene',
+    ]);
     final formworkPrice = findPrice(priceList, ['formwork', 'plywood']);
 
     final costs = [
@@ -82,7 +108,8 @@ class CalculateSlab extends BaseCalculator {
       calculateCost(sandVolume, sandPrice?.price),
       calculateCost(gravelVolume, gravelPrice?.price),
       calculateCost(waterproofingArea, waterproofingPrice?.price),
-      if (insulationVolume > 0) calculateCost(insulationVolume, insulationPrice?.price),
+      if (insulationVolume > 0)
+        calculateCost(insulationVolume, insulationPrice?.price),
       calculateCost(formworkArea, formworkPrice?.price),
     ];
 

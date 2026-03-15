@@ -21,7 +21,7 @@ class CalculateSlopes extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final windows = inputs['windows'] ?? 1;
-    if (windows < 0) return 'Количество окон не может быть отрицательным';
+    if (windows < 0) return nonNegativeValueMessage('windows');
 
     return null;
   }
@@ -31,11 +31,41 @@ class CalculateSlopes extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final windows = getIntInput(inputs, 'windows', defaultValue: 1, minValue: 0, maxValue: 50);
-    final windowWidth = getInput(inputs, 'windowWidth', defaultValue: 1.5, minValue: 0.5, maxValue: 4.0);
-    final windowHeight = getInput(inputs, 'windowHeight', defaultValue: 1.4, minValue: 0.5, maxValue: 3.0);
-    final slopeWidth = getInput(inputs, 'slopeWidth', defaultValue: 0.3, minValue: 0.15, maxValue: 0.6);
-    final material = getIntInput(inputs, 'material', defaultValue: 1, minValue: 1, maxValue: 3);
+    final windows = getIntInput(
+      inputs,
+      'windows',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 50,
+    );
+    final windowWidth = getInput(
+      inputs,
+      'windowWidth',
+      defaultValue: 1.5,
+      minValue: 0.5,
+      maxValue: 4.0,
+    );
+    final windowHeight = getInput(
+      inputs,
+      'windowHeight',
+      defaultValue: 1.4,
+      minValue: 0.5,
+      maxValue: 3.0,
+    );
+    final slopeWidth = getInput(
+      inputs,
+      'slopeWidth',
+      defaultValue: 0.3,
+      minValue: 0.15,
+      maxValue: 0.6,
+    );
+    final material = getIntInput(
+      inputs,
+      'material',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 3,
+    );
 
     // Периметр одного окна
     final windowPerimeter = (windowWidth + windowHeight) * 2;
@@ -44,18 +74,18 @@ class CalculateSlopes extends BaseCalculator {
     final slopeArea = windowPerimeter * slopeWidth * windows;
 
     // Материалы зависят от типа откосов
-    
+
     // 1. Штукатурка
     double plasterNeeded = 0;
     double puttyNeeded = 0;
     double primerNeeded = 0;
     double paintNeeded = 0;
-    
+
     // 2. ПВХ панели
     double panelArea = 0;
     double startProfileLength = 0;
     double fProfileLength = 0;
-    
+
     // 3. ГКЛ
     double gklArea = 0;
     double profileLength = 0;
@@ -69,7 +99,8 @@ class CalculateSlopes extends BaseCalculator {
     } else if (material == 2) {
       // ПВХ панели
       panelArea = slopeArea * 1.05; // +5% запас
-      startProfileLength = windowPerimeter * windows; // стартовый профиль по периметру
+      startProfileLength =
+          windowPerimeter * windows; // стартовый профиль по периметру
       fProfileLength = windowPerimeter * windows; // F-профиль для стыка
     } else if (material == 3) {
       // ГКЛ
@@ -81,14 +112,13 @@ class CalculateSlopes extends BaseCalculator {
     }
 
     // Общие материалы
-    
+
     // Угловые профили (перфоуголки): периметр окон
     final cornerLength = windowPerimeter * windows;
 
     // Утеплитель (минвата, опционально): площадь откосов
-    final insulationNeeded = getInput(inputs, 'insulation', defaultValue: 0.0) > 0 
-        ? slopeArea 
-        : 0.0;
+    final insulationNeeded =
+        getInput(inputs, 'insulation', defaultValue: 0.0) > 0 ? slopeArea : 0.0;
 
     // Монтажная пена: ~0.5 баллона на окно для откосов
     final foamNeeded = windows * 0.5;
@@ -97,14 +127,32 @@ class CalculateSlopes extends BaseCalculator {
     final plasterPrice = findPrice(priceList, ['plaster', 'plaster_gypsum']);
     final puttyPrice = findPrice(priceList, ['putty', 'putty_finish']);
     final primerPrice = findPrice(priceList, ['primer', 'primer_deep']);
-    final paintPrice = findPrice(priceList, ['paint', 'paint_white', 'paint_water_disp']);
-    final panelPrice = findPrice(priceList, ['panel_pvc', 'pvc_panel', 'slope_panel']);
-    final startProfilePrice = findPrice(priceList, ['profile_start', 'start_profile']);
+    final paintPrice = findPrice(priceList, [
+      'paint',
+      'paint_white',
+      'paint_water_disp',
+    ]);
+    final panelPrice = findPrice(priceList, [
+      'panel_pvc',
+      'pvc_panel',
+      'slope_panel',
+    ]);
+    final startProfilePrice = findPrice(priceList, [
+      'profile_start',
+      'start_profile',
+    ]);
     final fProfilePrice = findPrice(priceList, ['profile_f', 'f_profile']);
     final gklPrice = findPrice(priceList, ['gkl', 'drywall']);
     final profilePrice = findPrice(priceList, ['profile', 'guide_profile']);
-    final cornerPrice = findPrice(priceList, ['corner_slope', 'corner', 'angle_bead']);
-    final insulationPrice = findPrice(priceList, ['insulation', 'mineral_wool']);
+    final cornerPrice = findPrice(priceList, [
+      'corner_slope',
+      'corner',
+      'angle_bead',
+    ]);
+    final insulationPrice = findPrice(priceList, [
+      'insulation',
+      'mineral_wool',
+    ]);
     final foamPrice = findPrice(priceList, ['foam', 'foam_mounting']);
 
     final costs = [
@@ -127,7 +175,8 @@ class CalculateSlopes extends BaseCalculator {
         calculateCost(paintNeeded, paintPrice?.price),
       ],
       calculateCost(cornerLength, cornerPrice?.price),
-      if (insulationNeeded > 0) calculateCost(insulationNeeded, insulationPrice?.price),
+      if (insulationNeeded > 0)
+        calculateCost(insulationNeeded, insulationPrice?.price),
       calculateCost(foamNeeded, foamPrice?.price),
     ];
 
@@ -165,9 +214,6 @@ class CalculateSlopes extends BaseCalculator {
       values['insulationNeeded'] = insulationNeeded;
     }
 
-    return createResult(
-      values: values,
-      totalPrice: sumCosts(costs),
-    );
+    return createResult(values: values, totalPrice: sumCosts(costs));
   }
 }

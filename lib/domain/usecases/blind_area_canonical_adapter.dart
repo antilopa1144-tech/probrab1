@@ -115,12 +115,6 @@ const Map<String, Map<String, double>> _factorTable = {
 
 const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
 
-const Map<int, String> _materialTypeLabels = {
-  0: 'Бетон',
-  1: 'Тротуарная плитка',
-  2: 'Мягкая мембрана',
-};
-
 /* ─── helpers ─── */
 
 bool hasCanonicalBlindAreaInputs(Map<String, double> inputs) {

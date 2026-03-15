@@ -41,9 +41,9 @@ class CalculateStairsV2 extends BaseCalculator {
 
   /// Коэффициенты длины по типу лестницы
   static const Map<int, double> lengthCoefficients = {
-    0: 1.0,   // прямая
-    1: 0.75,  // Г-образная (с площадкой)
-    2: 0.55,  // П-образная (компактнее)
+    0: 1.0, // прямая
+    1: 0.75, // Г-образная (с площадкой)
+    2: 0.55, // П-образная (компактнее)
   };
 
   @override
@@ -53,7 +53,7 @@ class CalculateStairsV2 extends BaseCalculator {
 
     final floorHeight = inputs['floorHeight'] ?? 0;
     if (floorHeight <= 0) {
-      return 'Высота этажа должна быть больше нуля';
+      return positiveValueMessage('floorHeight');
     }
 
     return null;
@@ -65,11 +65,45 @@ class CalculateStairsV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final floorHeight = getInput(inputs, 'floorHeight', defaultValue: 2.8, minValue: 2.0, maxValue: 6.0);
-    final stairsWidth = getInput(inputs, 'stairsWidth', defaultValue: 0.9, minValue: 0.6, maxValue: 1.5);
-    final stairsType = getIntInput(inputs, 'stairsType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final needRailing = getIntInput(inputs, 'needRailing', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
-    final needBothSides = getIntInput(inputs, 'needBothSides', defaultValue: 0, minValue: 0, maxValue: 1) == 1;
+    final floorHeight = getInput(
+      inputs,
+      'floorHeight',
+      defaultValue: 2.8,
+      minValue: 2.0,
+      maxValue: 6.0,
+    );
+    final stairsWidth = getInput(
+      inputs,
+      'stairsWidth',
+      defaultValue: 0.9,
+      minValue: 0.6,
+      maxValue: 1.5,
+    );
+    final stairsType = getIntInput(
+      inputs,
+      'stairsType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final needRailing =
+        getIntInput(
+          inputs,
+          'needRailing',
+          defaultValue: 1,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
+    final needBothSides =
+        getIntInput(
+          inputs,
+          'needBothSides',
+          defaultValue: 0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
 
     // Количество ступеней (оптимальная высота ~17 см)
     final stepsCount = (floorHeight / optimalStepHeight).ceil();
@@ -89,7 +123,8 @@ class CalculateStairsV2 extends BaseCalculator {
     final stringerCount = stairsWidth > 1.2 ? 3 : 2;
 
     // Длина косоура по теореме Пифагора + запас
-    final stringerLength = math.sqrt(floorHeight * floorHeight + stairsLength * stairsLength) *
+    final stringerLength =
+        math.sqrt(floorHeight * floorHeight + stairsLength * stairsLength) *
         (1 + stringerWastePercent / 100);
 
     // Перила
@@ -102,12 +137,22 @@ class CalculateStairsV2 extends BaseCalculator {
     }
 
     // Проверка комфортности
-    final isComfortable = stepHeight >= minComfortStepHeight && stepHeight <= maxComfortStepHeight;
+    final isComfortable =
+        stepHeight >= minComfortStepHeight &&
+        stepHeight <= maxComfortStepHeight;
 
     // Расчёт стоимости
     final stepsPrice = findPrice(priceList, ['step', 'ступень', 'stairs_step']);
-    final stringerPrice = findPrice(priceList, ['stringer', 'косоур', 'stairs_stringer']);
-    final railingPrice = findPrice(priceList, ['railing', 'перила', 'stairs_railing']);
+    final stringerPrice = findPrice(priceList, [
+      'stringer',
+      'косоур',
+      'stairs_stringer',
+    ]);
+    final railingPrice = findPrice(priceList, [
+      'railing',
+      'перила',
+      'stairs_railing',
+    ]);
 
     final costs = [
       calculateCost(stepsCount.toDouble(), stepsPrice?.price),

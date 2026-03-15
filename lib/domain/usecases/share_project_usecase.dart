@@ -24,6 +24,7 @@ class ShareProjectUseCase {
   /// Поделиться проектом как Deep Link
   Future<ShareResult> shareAsLink(
     ProjectV2 project, {
+    required ProjectShareCopy shareCopy,
     bool compact = true,
   }) async {
     try {
@@ -35,74 +36,83 @@ class ShareProjectUseCase {
 
       await SharePlus.instance.share(
         ShareParams(
-          text: 'Проект "${project.name}"\n\n'
-              'Откройте ссылку в приложении Мастерок:\n'
-              '$link',
-          subject: 'Проект ${project.name}',
+          text: shareCopy.text.replaceAll('{link}', link),
+          subject: shareCopy.subject,
         ),
       );
 
       return ShareResult.success('link');
     } catch (e) {
-      throw ExportException.generationError('Link', e);
+      throw ExportException.generationError('link', e);
     }
   }
 
   /// Поделиться проектом как CSV файл
   Future<ShareResult> shareAsCsv(
     ProjectV2 project, {
+    required CsvExportLabels labels,
+    required CsvShareCopy shareCopy,
     String? filename,
   }) async {
     try {
       final exportData = _projectToExportData(project);
       await _csvExportService.exportAndShare(
         exportData,
+        labels: labels,
+        shareCopy: shareCopy,
         filename: filename,
       );
 
       return ShareResult.success('csv');
     } catch (e) {
       if (e is ExportException) rethrow;
-      throw ExportException.generationError('CSV', e);
+      throw ExportException.generationError('csv', e);
     }
   }
 
   /// Поделиться проектом как PDF файл
-  Future<ShareResult> shareAsPdf(ProjectV2 project, [BuildContext? context]) async {
+  Future<ShareResult> shareAsPdf(
+    ProjectV2 project, {
+    required ProjectShareCopy shareCopy,
+    BuildContext? context,
+  }) async {
     try {
-      if (context == null) throw ExportException.generationError('PDF', 'BuildContext required');
-      // ignore: use_build_context_synchronously
+      if (context == null) {
+        throw ExportException.generationError('pdf', 'context_missing');
+      }
       final filePath = await PdfExportService.exportProject(project, context);
 
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(filePath)],
-          subject: 'Проект ${project.name}',
-          text: 'PDF экспорт проекта "${project.name}"',
+          subject: shareCopy.subject,
+          text: shareCopy.text,
         ),
       );
 
       return ShareResult.success('pdf');
     } catch (e) {
       if (e is ExportException) rethrow;
-      throw ExportException.generationError('PDF', e);
+      throw ExportException.generationError('pdf', e);
     }
   }
 
   /// Экспортировать проект в CSV файл (без шаринга)
   Future<File> exportToCsv(
     ProjectV2 project, {
+    required CsvExportLabels labels,
     String? filename,
   }) async {
     try {
       final exportData = _projectToExportData(project);
       return await _csvExportService.exportToCsv(
         exportData,
+        labels: labels,
         filename: filename,
       );
     } catch (e) {
       if (e is ExportException) rethrow;
-      throw ExportException.generationError('CSV', e);
+      throw ExportException.generationError('csv', e);
     }
   }
 
@@ -140,7 +150,16 @@ class ShareProjectUseCase {
       notes: project.notes,
     );
   }
+}
 
+class ProjectShareCopy {
+  final String subject;
+  final String text;
+
+  const ProjectShareCopy({
+    required this.subject,
+    required this.text,
+  });
 }
 
 /// Результат операции шаринга

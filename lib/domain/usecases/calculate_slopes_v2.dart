@@ -1,5 +1,4 @@
 import '../../data/models/price_item.dart';
-import '../../core/exceptions/calculation_exception.dart';
 import 'base_calculator.dart';
 import 'calculator_usecase.dart';
 
@@ -10,6 +9,24 @@ import 'calculator_usecase.dart';
 /// - 1: Гипсовые (gypsum)
 /// - 2: Сэндвич-панели (sandwich)
 class CalculateSlopesV2 extends BaseCalculator {
+  @override
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    if ((inputs['windowsCount'] ?? 3.0) <= 0) {
+      return positiveValueMessage('windowsCount');
+    }
+    if ((inputs['windowWidth'] ?? 1.4) <= 0) {
+      return positiveValueMessage('windowWidth');
+    }
+    if ((inputs['windowHeight'] ?? 1.5) <= 0) {
+      return positiveValueMessage('windowHeight');
+    }
+
+    return null;
+  }
+
   // Константы расчёта
   static const double materialWastePercent = 15.0;
   static const double cornerWastePercent = 10.0;
@@ -22,38 +39,59 @@ class CalculateSlopesV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final windowsCount = getIntInput(inputs, 'windowsCount', defaultValue: 3, minValue: 1, maxValue: 30);
-    final windowWidth = getInput(inputs, 'windowWidth', defaultValue: 1.4, minValue: 0.4, maxValue: 3.0);
-    final windowHeight = getInput(inputs, 'windowHeight', defaultValue: 1.5, minValue: 0.4, maxValue: 2.5);
-    final slopeDepth = getInput(inputs, 'slopeDepth', defaultValue: 0.25, minValue: 0.1, maxValue: 0.5);
-    final slopesType = getIntInput(inputs, 'slopesType', defaultValue: 1, minValue: 0, maxValue: 2);
-    final needCorners = getInput(inputs, 'needCorners', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
-    final needPrimer = getInput(inputs, 'needPrimer', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
-
-    // Валидация
-    final rawWindowsCount = inputs['windowsCount'] ?? 3.0;
-    if (rawWindowsCount <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateSlopesV2',
-        'Количество окон должно быть положительным',
-      );
-    }
-
-    final rawWidth = inputs['windowWidth'] ?? 1.4;
-    if (rawWidth <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateSlopesV2',
-        'Ширина окна должна быть положительной',
-      );
-    }
-
-    final rawHeight = inputs['windowHeight'] ?? 1.5;
-    if (rawHeight <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateSlopesV2',
-        'Высота окна должна быть положительной',
-      );
-    }
+    final windowsCount = getIntInput(
+      inputs,
+      'windowsCount',
+      defaultValue: 3,
+      minValue: 1,
+      maxValue: 30,
+    );
+    final windowWidth = getInput(
+      inputs,
+      'windowWidth',
+      defaultValue: 1.4,
+      minValue: 0.4,
+      maxValue: 3.0,
+    );
+    final windowHeight = getInput(
+      inputs,
+      'windowHeight',
+      defaultValue: 1.5,
+      minValue: 0.4,
+      maxValue: 2.5,
+    );
+    final slopeDepth = getInput(
+      inputs,
+      'slopeDepth',
+      defaultValue: 0.25,
+      minValue: 0.1,
+      maxValue: 0.5,
+    );
+    final slopesType = getIntInput(
+      inputs,
+      'slopesType',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final needCorners =
+        getInput(
+          inputs,
+          'needCorners',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
+    final needPrimer =
+        getInput(
+          inputs,
+          'needPrimer',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
 
     // Расчёт площади откосов
     // Площадь откосов на одно окно: 2 боковых + 1 верхний

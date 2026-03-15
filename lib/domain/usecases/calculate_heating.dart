@@ -20,7 +20,7 @@ class CalculateHeating extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -31,8 +31,20 @@ class CalculateHeating extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final rooms = getIntInput(inputs, 'rooms', defaultValue: 1, minValue: 1, maxValue: 20);
-    final ceilingHeight = getInput(inputs, 'ceilingHeight', defaultValue: 2.5, minValue: 2.0, maxValue: 4.0);
+    final rooms = getIntInput(
+      inputs,
+      'rooms',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 20,
+    );
+    final ceilingHeight = getInput(
+      inputs,
+      'ceilingHeight',
+      defaultValue: 2.5,
+      minValue: 2.0,
+      maxValue: 4.0,
+    );
 
     // Объём помещения
     final volume = area * ceilingHeight;
@@ -64,7 +76,13 @@ class CalculateHeating extends BaseCalculator {
     final bracketsNeeded = rooms * 2;
 
     // Котёл (если автономное отопление): 1 шт
-    final boilerNeeded = getIntInput(inputs, 'boiler', defaultValue: 0, minValue: 0, maxValue: 1);
+    final boilerNeeded = getIntInput(
+      inputs,
+      'boiler',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
 
     // Расширительный бак: 1 шт
     final expansionTankNeeded = boilerNeeded > 0 ? 1 : 0;
@@ -73,15 +91,37 @@ class CalculateHeating extends BaseCalculator {
     final pumpNeeded = boilerNeeded > 0 ? 1 : 0;
 
     // Расчёт стоимости
-    final radiatorPrice = findPrice(priceList, ['radiator', 'radiator_section', 'heating_radiator']);
-    final pipePrice = findPrice(priceList, ['pipe_heating', 'pipe', 'heating_pipe']);
+    final radiatorPrice = findPrice(priceList, [
+      'radiator',
+      'radiator_section',
+      'heating_radiator',
+    ]);
+    final pipePrice = findPrice(priceList, [
+      'pipe_heating',
+      'pipe',
+      'heating_pipe',
+    ]);
     final fittingPrice = findPrice(priceList, ['fitting_heating', 'fitting']);
-    final ballValvePrice = findPrice(priceList, ['valve_heating', 'valve', 'ball_valve']);
-    final thermostatPrice = findPrice(priceList, ['thermostat_heating', 'thermostat', 'thermostatic_head']);
+    final ballValvePrice = findPrice(priceList, [
+      'valve_heating',
+      'valve',
+      'ball_valve',
+    ]);
+    final thermostatPrice = findPrice(priceList, [
+      'thermostat_heating',
+      'thermostat',
+      'thermostatic_head',
+    ]);
     final bracketPrice = findPrice(priceList, ['bracket_radiator', 'bracket']);
     final boilerPrice = findPrice(priceList, ['boiler', 'heating_boiler']);
-    final tankPrice = findPrice(priceList, ['tank_expansion', 'expansion_tank']);
-    final pumpPrice = findPrice(priceList, ['pump_circulation', 'circulation_pump']);
+    final tankPrice = findPrice(priceList, [
+      'tank_expansion',
+      'expansion_tank',
+    ]);
+    final pumpPrice = findPrice(priceList, [
+      'pump_circulation',
+      'circulation_pump',
+    ]);
 
     final costs = [
       calculateCost(totalSections.toDouble(), radiatorPrice?.price),
@@ -90,9 +130,12 @@ class CalculateHeating extends BaseCalculator {
       calculateCost(ballValvesNeeded.toDouble(), ballValvePrice?.price),
       calculateCost(thermostatsNeeded.toDouble(), thermostatPrice?.price),
       calculateCost(bracketsNeeded.toDouble(), bracketPrice?.price),
-      if (boilerNeeded > 0) calculateCost(boilerNeeded.toDouble(), boilerPrice?.price),
-      if (expansionTankNeeded > 0) calculateCost(expansionTankNeeded.toDouble(), tankPrice?.price),
-      if (pumpNeeded > 0) calculateCost(pumpNeeded.toDouble(), pumpPrice?.price),
+      if (boilerNeeded > 0)
+        calculateCost(boilerNeeded.toDouble(), boilerPrice?.price),
+      if (expansionTankNeeded > 0)
+        calculateCost(expansionTankNeeded.toDouble(), tankPrice?.price),
+      if (pumpNeeded > 0)
+        calculateCost(pumpNeeded.toDouble(), pumpPrice?.price),
     ];
 
     return createResult(
@@ -110,7 +153,8 @@ class CalculateHeating extends BaseCalculator {
         'thermostatsNeeded': thermostatsNeeded.toDouble(),
         'bracketsNeeded': bracketsNeeded.toDouble(),
         if (boilerNeeded > 0) 'boilerNeeded': boilerNeeded.toDouble(),
-        if (expansionTankNeeded > 0) 'expansionTankNeeded': expansionTankNeeded.toDouble(),
+        if (expansionTankNeeded > 0)
+          'expansionTankNeeded': expansionTankNeeded.toDouble(),
         if (pumpNeeded > 0) 'pumpNeeded': pumpNeeded.toDouble(),
         'rooms': rooms.toDouble(),
         'ceilingHeight': ceilingHeight,

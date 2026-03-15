@@ -22,16 +22,16 @@ import './base_calculator.dart';
 class CalculatePrimerV2 extends BaseCalculator {
   /// Базовый расход грунтовки по типу (л/м²)
   static const Map<int, double> baseConsumptionRate = {
-    0: 0.1,   // Глубокого проникновения
-    1: 0.3,   // Бетонконтакт
-    2: 0.15,  // Универсальная
+    0: 0.1, // Глубокого проникновения
+    1: 0.3, // Бетонконтакт
+    2: 0.15, // Универсальная
   };
 
   /// Коэффициент поверхности
   static const Map<int, double> surfaceMultiplier = {
-    0: 1.3,  // Бетон (пористый)
-    1: 1.0,  // Штукатурка
-    2: 0.8,  // Гипсокартон
+    0: 1.3, // Бетон (пористый)
+    1: 1.0, // Штукатурка
+    2: 0.8, // Гипсокартон
   };
 
   /// Запас на потери (%)
@@ -41,7 +41,10 @@ class CalculatePrimerV2 extends BaseCalculator {
   static const List<double> availableCanSizes = [5.0, 10.0, 20.0];
 
   /// Оптимальный подбор канистр с минимальным излишком
-  static Map<double, int> selectOptimalCans(double litersNeeded, double preferredCanSize) {
+  static Map<double, int> selectOptimalCans(
+    double litersNeeded,
+    double preferredCanSize,
+  ) {
     final result = <double, int>{};
 
     // Если нужно меньше минимальной канистры - берём одну минимальную
@@ -91,8 +94,9 @@ class CalculatePrimerV2 extends BaseCalculator {
     final roomHeight = inputs['roomHeight'];
 
     // Нужна либо площадь, либо размеры комнаты
-    if (area <= 0 && (roomWidth == null || roomLength == null || roomHeight == null)) {
-      return 'Необходимо указать площадь или размеры комнаты';
+    if (area <= 0 &&
+        (roomWidth == null || roomLength == null || roomHeight == null)) {
+      return areaOrRoomDimensionsRequiredMessage();
     }
 
     return null;
@@ -104,10 +108,34 @@ class CalculatePrimerV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final surfaceType = getIntInput(inputs, 'surfaceType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final primerType = getIntInput(inputs, 'primerType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 3);
-    final canSize = getInput(inputs, 'canSize', defaultValue: 10.0, minValue: 1.0, maxValue: 50.0);
+    final surfaceType = getIntInput(
+      inputs,
+      'surfaceType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final primerType = getIntInput(
+      inputs,
+      'primerType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final layers = getIntInput(
+      inputs,
+      'layers',
+      defaultValue: 2,
+      minValue: 1,
+      maxValue: 3,
+    );
+    final canSize = getInput(
+      inputs,
+      'canSize',
+      defaultValue: 10.0,
+      minValue: 1.0,
+      maxValue: 50.0,
+    );
 
     // Площадь: либо напрямую, либо из размеров комнаты (площадь стен)
     double area;
@@ -115,9 +143,27 @@ class CalculatePrimerV2 extends BaseCalculator {
     if (inputArea > 0) {
       area = inputArea;
     } else {
-      final roomWidth = getInput(inputs, 'roomWidth', defaultValue: 4.0, minValue: 0.5, maxValue: 20);
-      final roomLength = getInput(inputs, 'roomLength', defaultValue: 5.0, minValue: 0.5, maxValue: 20);
-      final roomHeight = getInput(inputs, 'roomHeight', defaultValue: 2.7, minValue: 2.0, maxValue: 5);
+      final roomWidth = getInput(
+        inputs,
+        'roomWidth',
+        defaultValue: 4.0,
+        minValue: 0.5,
+        maxValue: 20,
+      );
+      final roomLength = getInput(
+        inputs,
+        'roomLength',
+        defaultValue: 5.0,
+        minValue: 0.5,
+        maxValue: 20,
+      );
+      final roomHeight = getInput(
+        inputs,
+        'roomHeight',
+        defaultValue: 2.7,
+        minValue: 2.0,
+        maxValue: 5,
+      );
       // Площадь стен = периметр × высота
       area = 2 * (roomWidth + roomLength) * roomHeight;
     }
@@ -128,7 +174,8 @@ class CalculatePrimerV2 extends BaseCalculator {
     final consumptionRate = baseRate * surfaceMult;
 
     // Количество грунтовки с запасом
-    final litersNeeded = area * consumptionRate * layers * (1 + wastePercent / 100);
+    final litersNeeded =
+        area * consumptionRate * layers * (1 + wastePercent / 100);
 
     // Оптимальный подбор канистр
     final optimalCans = selectOptimalCans(litersNeeded, canSize);
@@ -145,7 +192,13 @@ class CalculatePrimerV2 extends BaseCalculator {
     final excess = totalLiters - litersNeeded;
 
     // Расчёт стоимости (цена за канистру, не за литр)
-    final primerPrice = findPrice(priceList, ['primer', 'primer_deep', 'primer_contact', 'primer_universal', 'грунтовка']);
+    final primerPrice = findPrice(priceList, [
+      'primer',
+      'primer_deep',
+      'primer_contact',
+      'primer_universal',
+      'грунтовка',
+    ]);
 
     final totalPrice = calculateCost(totalCans.toDouble(), primerPrice?.price);
 
@@ -168,9 +221,6 @@ class CalculatePrimerV2 extends BaseCalculator {
       values['cans_${entry.key.toInt()}l'] = entry.value.toDouble();
     }
 
-    return createResult(
-      values: values,
-      totalPrice: totalPrice,
-    );
+    return createResult(values: values, totalPrice: totalPrice);
   }
 }

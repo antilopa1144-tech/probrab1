@@ -19,7 +19,7 @@ class CalculateRailCeiling extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -30,9 +30,21 @@ class CalculateRailCeiling extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final railWidth = getInput(inputs, 'railWidth', defaultValue: 10.0, minValue: 5.0, maxValue: 20.0);
-    final railLength = getInput(inputs, 'railLength', defaultValue: 300.0, minValue: 200.0, maxValue: 400.0);
-    
+    final railWidth = getInput(
+      inputs,
+      'railWidth',
+      defaultValue: 10.0,
+      minValue: 5.0,
+      maxValue: 20.0,
+    );
+    final railLength = getInput(
+      inputs,
+      'railLength',
+      defaultValue: 300.0,
+      minValue: 200.0,
+      maxValue: 400.0,
+    );
+
     final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
         ? getInput(inputs, 'perimeter', minValue: 0.1)
         : estimatePerimeter(area);
@@ -41,7 +53,11 @@ class CalculateRailCeiling extends BaseCalculator {
     final railArea = calculateTileArea(railWidth, railLength);
 
     // Количество реек с запасом 5%
-    final railsNeeded = calculateUnitsNeeded(area, railArea, marginPercent: 5.0);
+    final railsNeeded = calculateUnitsNeeded(
+      area,
+      railArea,
+      marginPercent: 5.0,
+    );
 
     // Направляющие (траверсы, гребенки): по длине комнаты с шагом 120 см
     final guideCount = ceilToInt((perimeter / 4) / 1.2); // примерно
@@ -57,10 +73,26 @@ class CalculateRailCeiling extends BaseCalculator {
     final insertsLength = railsNeeded * (railLength / 100);
 
     // Расчёт стоимости
-    final railPrice = findPrice(priceList, ['rail_ceiling', 'ceiling_rail', 'rail_panel']);
-    final guidePrice = findPrice(priceList, ['guide_rail', 'rail_guide', 'stringer']);
-    final hangerPrice = findPrice(priceList, ['hanger_rail', 'hanger', 'suspension']);
-    final cornerPrice = findPrice(priceList, ['corner_rail', 'corner', 'trim_angle']);
+    final railPrice = findPrice(priceList, [
+      'rail_ceiling',
+      'ceiling_rail',
+      'rail_panel',
+    ]);
+    final guidePrice = findPrice(priceList, [
+      'guide_rail',
+      'rail_guide',
+      'stringer',
+    ]);
+    final hangerPrice = findPrice(priceList, [
+      'hanger_rail',
+      'hanger',
+      'suspension',
+    ]);
+    final cornerPrice = findPrice(priceList, [
+      'corner_rail',
+      'corner',
+      'trim_angle',
+    ]);
     final insertPrice = findPrice(priceList, ['insert', 'decorative_insert']);
 
     final costs = [

@@ -126,12 +126,6 @@ const Map<int, String> _insulationTypeLabels = {
   2: 'ЭППС',
 };
 
-const Map<int, String> _finishTypeLabels = {
-  0: 'Деревянная вагонка',
-  1: 'ГКЛ',
-  2: 'Без отделки',
-};
-
 const Map<int, String> _vapourLabels = {
   0: 'Без пароизоляции',
   1: 'Стандартная',
@@ -234,8 +228,8 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
 
   // Scenarios
   final basePrimary = insPlates;
-  final packageLabel = 'insulation-plate';
-  final packageUnit = 'шт';
+  const packageLabel = 'insulation-plate';
+  const packageUnit = 'шт';
 
   final scenarios = <String, CanonicalScenarioResult>{};
   for (final scenarioName in _scenarioNames) {

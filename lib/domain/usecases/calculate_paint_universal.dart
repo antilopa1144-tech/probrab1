@@ -35,7 +35,7 @@ class CalculatePaintUniversal extends BaseCalculator {
 
     final layers = inputs['layers'] ?? 2;
     if (layers < 1 || layers > 4) {
-      return 'Количество слоёв должно быть от 1 до 4';
+      return rangeMessage('layers', 1, 4);
     }
 
     return null;
@@ -47,30 +47,63 @@ class CalculatePaintUniversal extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Получаем базовые параметры
-    final paintType = getIntInput(inputs, 'paintType', defaultValue: 0); // 0=стены, 1=потолок, 2=оба
-    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 0); // 0=площадь, 1=размеры
-    final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 4);
-    final reservePercent = getInput(inputs, 'reserve', defaultValue: 10, minValue: 0);
-    final doorsWindows = getInput(inputs, 'doorsWindows', defaultValue: 0, minValue: 0);
-    final consumption = getInput(inputs, 'consumption', defaultValue: 0.11, minValue: 0.01);
+    final paintType = getIntInput(
+      inputs,
+      'paintType',
+      defaultValue: 0,
+    ); // 0=стены, 1=потолок, 2=оба
+    final inputMode = getIntInput(
+      inputs,
+      'inputMode',
+      defaultValue: 0,
+    ); // 0=площадь, 1=размеры
+    final layers = getIntInput(
+      inputs,
+      'layers',
+      defaultValue: 2,
+      minValue: 1,
+      maxValue: 4,
+    );
+    final reservePercent = getInput(
+      inputs,
+      'reserve',
+      defaultValue: 10,
+      minValue: 0,
+    );
+    final doorsWindows = getInput(
+      inputs,
+      'doorsWindows',
+      defaultValue: 0,
+      minValue: 0,
+    );
+    final consumption = getInput(
+      inputs,
+      'consumption',
+      defaultValue: 0.11,
+      minValue: 0.01,
+    );
 
     // Подготовка поверхности: влияет на расход краски
     // 1=загрунтованная (1.0×), 2=новая необработанная (1.2×), 3=ранее окрашенная (0.95×)
     final surfacePrep = getIntInput(inputs, 'surfacePrep', defaultValue: 1);
     final double surfacePrepMultiplier = switch (surfacePrep) {
-      1 => 1.0,   // загрунтованная — нормальный расход
-      2 => 1.2,   // новая необработанная — впитывание +20%
-      3 => 0.95,  // ранее окрашенная — меньше впитывания
+      1 => 1.0, // загрунтованная — нормальный расход
+      2 => 1.2, // новая необработанная — впитывание +20%
+      3 => 0.95, // ранее окрашенная — меньше впитывания
       _ => 1.0,
     };
 
     // Интенсивность цвета: тёмные и яркие цвета требуют больше краски
     // 1=светлый/белый (1.0×), 2=яркий/насыщенный (1.15×), 3=тёмный (1.3×)
-    final colorIntensity = getIntInput(inputs, 'colorIntensity', defaultValue: 1);
+    final colorIntensity = getIntInput(
+      inputs,
+      'colorIntensity',
+      defaultValue: 1,
+    );
     final double colorMultiplier = switch (colorIntensity) {
-      1 => 1.0,   // светлый/белый — базовый расход
-      2 => 1.15,  // яркий/насыщенный — нужно больше для укрывистости
-      3 => 1.3,   // тёмный — максимальный расход для укрывистости
+      1 => 1.0, // светлый/белый — базовый расход
+      2 => 1.15, // яркий/насыщенный — нужно больше для укрывистости
+      3 => 1.3, // тёмный — максимальный расход для укрывистости
       _ => 1.0,
     };
 
@@ -82,7 +115,12 @@ class CalculatePaintUniversal extends BaseCalculator {
     if (inputMode == 0) {
       // Режим "По площади"
       wallArea = getInput(inputs, 'wallArea', defaultValue: 0, minValue: 0);
-      ceilingArea = getInput(inputs, 'ceilingArea', defaultValue: 0, minValue: 0);
+      ceilingArea = getInput(
+        inputs,
+        'ceilingArea',
+        defaultValue: 0,
+        minValue: 0,
+      );
       // Оценка периметра комнаты: из площади потолка (≈ площадь пола)
       if (ceilingArea > 0) {
         roomPerimeter = estimatePerimeter(ceilingArea);
@@ -150,10 +188,14 @@ class CalculatePaintUniversal extends BaseCalculator {
 
     // Расходные материалы
     final rollersNeeded = ceilToInt(totalArea / 50); // 1 валик на ~50 м²
-    final brushesNeeded = ceilToInt(totalArea / 40).clamp(2, 10); // минимум 2 кисти
+    final brushesNeeded = ceilToInt(
+      totalArea / 40,
+    ).clamp(2, 10); // минимум 2 кисти
 
     // Малярный скотч: по стыку стена/потолок + вокруг проёмов (с двух сторон рамы)
-    final openingsPerimeter = doorsWindows > 0 ? estimatePerimeter(doorsWindows) * 2 : 0.0;
+    final openingsPerimeter = doorsWindows > 0
+        ? estimatePerimeter(doorsWindows) * 2
+        : 0.0;
     final tapeNeeded = (roomPerimeter + openingsPerimeter) * 1.1;
 
     // Округление

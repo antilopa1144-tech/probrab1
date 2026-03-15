@@ -1,5 +1,4 @@
 import '../../data/models/price_item.dart';
-import '../../core/exceptions/calculation_exception.dart';
 import 'base_calculator.dart';
 import 'calculator_usecase.dart';
 
@@ -10,6 +9,24 @@ import 'calculator_usecase.dart';
 /// - 1: Тёплая (warm) - с утеплением
 /// - 2: Жилая (living) - с утеплением и отделкой
 class CalculateAtticV2 extends BaseCalculator {
+  @override
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    if ((inputs['floorLength'] ?? 8.0) <= 0) {
+      return positiveValueMessage('floorLength');
+    }
+    if ((inputs['floorWidth'] ?? 6.0) <= 0) {
+      return positiveValueMessage('floorWidth');
+    }
+    if ((inputs['roofHeight'] ?? 2.5) <= 0) {
+      return positiveValueMessage('roofHeight');
+    }
+
+    return null;
+  }
+
   // Константы расчёта
   static const double insulationFrontalMultiplier = 1.2; // +20% для фронтонов
   static const double insulationWastePercent = 10.0;
@@ -23,41 +40,76 @@ class CalculateAtticV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final floorLength = getInput(inputs, 'floorLength', defaultValue: 8.0, minValue: 3, maxValue: 20);
-    final floorWidth = getInput(inputs, 'floorWidth', defaultValue: 6.0, minValue: 3, maxValue: 15);
-    final roofHeight = getInput(inputs, 'roofHeight', defaultValue: 2.5, minValue: 1.5, maxValue: 5);
-    final insulationThickness = getInput(inputs, 'insulationThickness', defaultValue: 150.0, minValue: 50, maxValue: 300);
-    final atticType = getIntInput(inputs, 'atticType', defaultValue: 1, minValue: 0, maxValue: 2);
+    final floorLength = getInput(
+      inputs,
+      'floorLength',
+      defaultValue: 8.0,
+      minValue: 3,
+      maxValue: 20,
+    );
+    final floorWidth = getInput(
+      inputs,
+      'floorWidth',
+      defaultValue: 6.0,
+      minValue: 3,
+      maxValue: 15,
+    );
+    final roofHeight = getInput(
+      inputs,
+      'roofHeight',
+      defaultValue: 2.5,
+      minValue: 1.5,
+      maxValue: 5,
+    );
+    final insulationThickness = getInput(
+      inputs,
+      'insulationThickness',
+      defaultValue: 150.0,
+      minValue: 50,
+      maxValue: 300,
+    );
+    final atticType = getIntInput(
+      inputs,
+      'atticType',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 2,
+    );
     // Тип утеплителя: 0=минвата, 1=пенопласт, 2=ЭППС
-    final insulationType = getIntInput(inputs, 'insulationType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final needVaporBarrier = getInput(inputs, 'needVaporBarrier', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
-    final needMembrane = getInput(inputs, 'needMembrane', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
-    final needGypsum = getInput(inputs, 'needGypsum', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
-
-    // Валидация
-    final rawLength = inputs['floorLength'] ?? 8.0;
-    if (rawLength <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateAtticV2',
-        'Длина должна быть положительной',
-      );
-    }
-
-    final rawWidth = inputs['floorWidth'] ?? 6.0;
-    if (rawWidth <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateAtticV2',
-        'Ширина должна быть положительной',
-      );
-    }
-
-    final rawHeight = inputs['roofHeight'] ?? 2.5;
-    if (rawHeight <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateAtticV2',
-        'Высота крыши должна быть положительной',
-      );
-    }
+    final insulationType = getIntInput(
+      inputs,
+      'insulationType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final needVaporBarrier =
+        getInput(
+          inputs,
+          'needVaporBarrier',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
+    final needMembrane =
+        getInput(
+          inputs,
+          'needMembrane',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
+    final needGypsum =
+        getInput(
+          inputs,
+          'needGypsum',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
 
     // Расчёт площадей
     final floorArea = floorLength * floorWidth;
@@ -71,7 +123,8 @@ class CalculateAtticV2 extends BaseCalculator {
     double insulationArea = 0.0;
     if (atticType != 0) {
       // Не холодная мансарда
-      insulationArea = roofArea * insulationFrontalMultiplier * insulationWasteFactor;
+      insulationArea =
+          roofArea * insulationFrontalMultiplier * insulationWasteFactor;
     }
 
     // Пароизоляция (только если есть утепление И не ЭППС)

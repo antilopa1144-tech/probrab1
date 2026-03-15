@@ -21,7 +21,7 @@ class CalculateGvlWall extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -32,16 +32,32 @@ class CalculateGvlWall extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final layers = getIntInput(inputs, 'layers', defaultValue: 1, minValue: 1, maxValue: 2);
-    final wallHeight = getInput(inputs, 'height', defaultValue: 2.5, minValue: 2.0, maxValue: 4.0);
-    
+    final layers = getIntInput(
+      inputs,
+      'layers',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 2,
+    );
+    final wallHeight = getInput(
+      inputs,
+      'height',
+      defaultValue: 2.5,
+      minValue: 2.0,
+      maxValue: 4.0,
+    );
+
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
     // Площадь одного листа ГВЛ (стандарт 1.2×2.5 м = 3 м²)
     final sheetArea = 3.0;
 
     // Количество листов с запасом 8%
-    final sheetsNeeded = calculateUnitsNeeded(area * layers, sheetArea, marginPercent: 10.0);
+    final sheetsNeeded = calculateUnitsNeeded(
+      area * layers,
+      sheetArea,
+      marginPercent: 10.0,
+    );
 
     // Стоечный профиль (CW): шаг 60 см по всему периметру
     final studsCount = ceilToInt(perimeter / 0.6);
@@ -73,14 +89,37 @@ class CalculateGvlWall extends BaseCalculator {
     final insulationNeeded = getInput(inputs, 'insulation', defaultValue: 0.0);
 
     // Расчёт стоимости
-    final gvlPrice = findPrice(priceList, ['gvl', 'gvl_sheet', 'gypsum_fiber_board']);
-    final studPrice = findPrice(priceList, ['profile_stud', 'stud_profile', 'profile_cw']);
-    final guidePrice = findPrice(priceList, ['profile_guide', 'guide_profile', 'profile_uw']);
-    final hangerPrice = findPrice(priceList, ['hanger', 'hanger_wall', 'direct_hanger']);
-    final puttyPrice = findPrice(priceList, ['putty', 'putty_finish', 'joint_compound']);
+    final gvlPrice = findPrice(priceList, [
+      'gvl',
+      'gvl_sheet',
+      'gypsum_fiber_board',
+    ]);
+    final studPrice = findPrice(priceList, [
+      'profile_stud',
+      'stud_profile',
+      'profile_cw',
+    ]);
+    final guidePrice = findPrice(priceList, [
+      'profile_guide',
+      'guide_profile',
+      'profile_uw',
+    ]);
+    final hangerPrice = findPrice(priceList, [
+      'hanger',
+      'hanger_wall',
+      'direct_hanger',
+    ]);
+    final puttyPrice = findPrice(priceList, [
+      'putty',
+      'putty_finish',
+      'joint_compound',
+    ]);
     final tapePrice = findPrice(priceList, ['tape', 'serpyanka', 'joint_tape']);
     final primerPrice = findPrice(priceList, ['primer', 'primer_deep']);
-    final insulationPrice = findPrice(priceList, ['insulation', 'mineral_wool']);
+    final insulationPrice = findPrice(priceList, [
+      'insulation',
+      'mineral_wool',
+    ]);
 
     final costs = [
       calculateCost(sheetsNeeded.toDouble(), gvlPrice?.price),
@@ -90,7 +129,8 @@ class CalculateGvlWall extends BaseCalculator {
       calculateCost(puttyNeeded, puttyPrice?.price),
       calculateCost(tapeNeeded, tapePrice?.price),
       calculateCost(primerNeeded, primerPrice?.price),
-      if (insulationNeeded > 0) calculateCost(insulationNeeded, insulationPrice?.price),
+      if (insulationNeeded > 0)
+        calculateCost(insulationNeeded, insulationPrice?.price),
     ];
 
     return createResult(

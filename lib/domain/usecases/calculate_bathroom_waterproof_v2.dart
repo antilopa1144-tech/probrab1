@@ -1,5 +1,4 @@
 import '../../data/models/price_item.dart';
-import '../../core/exceptions/calculation_exception.dart';
 import 'base_calculator.dart';
 import 'calculator_usecase.dart';
 
@@ -10,6 +9,21 @@ import 'calculator_usecase.dart';
 /// - 1: Рулонная (roll) - 1.0 м²/м²
 /// - 2: Цементная (cement) - 3.0 кг/м² на слой
 class CalculateBathroomWaterproofV2 extends BaseCalculator {
+  @override
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    if ((inputs['length'] ?? 2.5) <= 0) {
+      return positiveValueMessage('length');
+    }
+    if ((inputs['width'] ?? 1.8) <= 0) {
+      return positiveValueMessage('width');
+    }
+
+    return null;
+  }
+
   // Расход гидроизоляции по типам (кг/м² на слой)
   static const List<double> consumptionPerSqm = [1.5, 1.0, 3.0];
 
@@ -24,31 +38,60 @@ class CalculateBathroomWaterproofV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final length = getInput(inputs, 'length', defaultValue: 2.5, minValue: 1, maxValue: 10);
-    final width = getInput(inputs, 'width', defaultValue: 1.8, minValue: 1, maxValue: 10);
+    final length = getInput(
+      inputs,
+      'length',
+      defaultValue: 2.5,
+      minValue: 1,
+      maxValue: 10,
+    );
+    final width = getInput(
+      inputs,
+      'width',
+      defaultValue: 1.8,
+      minValue: 1,
+      maxValue: 10,
+    );
     // Высота обработки стен: минимум 1.5 м для мокрых зон по СНиП 3.04.01-87
-    final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 1.5, minValue: 0.2, maxValue: 3.0);
-    final waterproofType = getIntInput(inputs, 'waterproofType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 3);
-    final needPrimer = getInput(inputs, 'needPrimer', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
-    final needTape = getInput(inputs, 'needTape', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
-
-    // Валидация
-    final rawLength = inputs['length'] ?? 2.5;
-    if (rawLength <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateBathroomWaterproofV2',
-        'Длина должна быть положительной',
-      );
-    }
-
-    final rawWidth = inputs['width'] ?? 1.8;
-    if (rawWidth <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateBathroomWaterproofV2',
-        'Ширина должна быть положительной',
-      );
-    }
+    final wallHeight = getInput(
+      inputs,
+      'wallHeight',
+      defaultValue: 1.5,
+      minValue: 0.2,
+      maxValue: 3.0,
+    );
+    final waterproofType = getIntInput(
+      inputs,
+      'waterproofType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final layers = getIntInput(
+      inputs,
+      'layers',
+      defaultValue: 2,
+      minValue: 1,
+      maxValue: 3,
+    );
+    final needPrimer =
+        getInput(
+          inputs,
+          'needPrimer',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
+    final needTape =
+        getInput(
+          inputs,
+          'needTape',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
 
     // Расчёт площадей
     final floorArea = length * width;

@@ -22,8 +22,8 @@ class CalculateCeilingPaint extends BaseCalculator {
     final area = inputs['area'] ?? 0;
     final layers = inputs['layers'] ?? 2;
 
-    if (area <= 0) return 'Площадь должна быть больше нуля';
-    if (layers < 1 || layers > 4) return 'Количество слоёв должно быть от 1 до 4';
+    if (area <= 0) return positiveValueMessage('area');
+    if (layers < 1 || layers > 4) return rangeMessage('layers', 1, 4);
 
     return null;
   }
@@ -34,8 +34,20 @@ class CalculateCeilingPaint extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 4);
-    final consumption = getInput(inputs, 'consumption', defaultValue: 0.12, minValue: 0.08, maxValue: 0.2);
+    final layers = getIntInput(
+      inputs,
+      'layers',
+      defaultValue: 2,
+      minValue: 1,
+      maxValue: 4,
+    );
+    final consumption = getInput(
+      inputs,
+      'consumption',
+      defaultValue: 0.12,
+      minValue: 0.08,
+      maxValue: 0.2,
+    );
 
     final paintNeeded = area * consumption * layers * 1.1;
 
@@ -46,7 +58,8 @@ class CalculateCeilingPaint extends BaseCalculator {
     final puttyNeeded = area * 1.1;
 
     // Малярная сетка для трещин: площадь с запасом
-    final meshArea = area * 0.1; // ~10% площади потолка обычно требует армирования
+    final meshArea =
+        area * 0.1; // ~10% площади потолка обычно требует армирования
 
     // Валики: 1 шт на ~40 м²
     final rollersNeeded = ceilToInt(area / 40);
@@ -61,11 +74,32 @@ class CalculateCeilingPaint extends BaseCalculator {
     final tapeNeeded = perimeter;
 
     // Расчёт стоимости
-    final paintPrice = findPrice(priceList, ['paint_ceiling', 'paint', 'paint_water_disp', 'ceiling_paint']);
-    final primerPrice = findPrice(priceList, ['primer', 'primer_deep', 'primer_ceiling']);
-    final puttyPrice = findPrice(priceList, ['putty', 'putty_finish', 'ceiling_putty']);
-    final meshPrice = findPrice(priceList, ['mesh', 'fiberglass_mesh', 'reinforcement_mesh']);
-    final tapePrice = findPrice(priceList, ['tape', 'masking_tape', 'painter_tape']);
+    final paintPrice = findPrice(priceList, [
+      'paint_ceiling',
+      'paint',
+      'paint_water_disp',
+      'ceiling_paint',
+    ]);
+    final primerPrice = findPrice(priceList, [
+      'primer',
+      'primer_deep',
+      'primer_ceiling',
+    ]);
+    final puttyPrice = findPrice(priceList, [
+      'putty',
+      'putty_finish',
+      'ceiling_putty',
+    ]);
+    final meshPrice = findPrice(priceList, [
+      'mesh',
+      'fiberglass_mesh',
+      'reinforcement_mesh',
+    ]);
+    final tapePrice = findPrice(priceList, [
+      'tape',
+      'masking_tape',
+      'painter_tape',
+    ]);
 
     final costs = [
       calculateCost(paintNeeded, paintPrice?.price),

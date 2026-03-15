@@ -22,7 +22,7 @@ class CalculateWaterproofing extends BaseCalculator {
 
     final floorArea = inputs['floorArea'] ?? 0;
 
-    if (floorArea < 0) return 'Площадь пола не может быть отрицательной';
+    if (floorArea < 0) return nonNegativeValueMessage('floorArea');
 
     return null;
   }
@@ -32,12 +32,31 @@ class CalculateWaterproofing extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final floorArea = getInput(inputs, 'floorArea', defaultValue: 0.0, minValue: 0.0);
+    final floorArea = getInput(
+      inputs,
+      'floorArea',
+      defaultValue: 0.0,
+      minValue: 0.0,
+    );
     // СП 29.13330: мокрые зоны → минимум 1.2м, зона душа → до потолка
-    final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 1.2, minValue: 0.1, maxValue: 3.0);
+    final wallHeight = getInput(
+      inputs,
+      'wallHeight',
+      defaultValue: 1.2,
+      minValue: 0.1,
+      maxValue: 3.0,
+    );
     final perimeterInput = inputs['perimeter'] ?? 0.0;
-    final perimeter = perimeterInput > 0 ? perimeterInput : estimatePerimeter(floorArea);
-    final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 3);
+    final perimeter = perimeterInput > 0
+        ? perimeterInput
+        : estimatePerimeter(floorArea);
+    final layers = getIntInput(
+      inputs,
+      'layers',
+      defaultValue: 2,
+      minValue: 1,
+      maxValue: 3,
+    );
 
     // Площадь гидроизоляции: пол + стены на высоту
     final wallArea = perimeter * wallHeight;
@@ -46,7 +65,8 @@ class CalculateWaterproofing extends BaseCalculator {
     // Расход материала: ~1.5 кг/м² на слой для обмазочной гидроизоляции
     // (Ceresit CR 65 — 1.5-2.0 кг/м², Weber.tec 822 — 1.3-1.5 кг/м²)
     const consumptionPerLayer = 1.5; // кг/м²
-    final materialNeeded = totalArea * consumptionPerLayer * layers * 1.1; // +10%
+    final materialNeeded =
+        totalArea * consumptionPerLayer * layers * 1.1; // +10%
 
     // Грунтовка: ~0.2-0.25 л/м², 1 слой перед гидроизоляцией
     final primerNeeded = totalArea * 0.2 * 1.1;
@@ -63,28 +83,28 @@ class CalculateWaterproofing extends BaseCalculator {
 
     // Расчёт стоимости
     final materialPrice = findPrice(priceList, [
-      'waterproofing', 
-      'waterproofing_bathroom', 
+      'waterproofing',
+      'waterproofing_bathroom',
       'waterproofing_coating',
-      'bitumen_mastic'
+      'bitumen_mastic',
     ]);
     final primerPrice = findPrice(priceList, [
-      'primer', 
-      'primer_waterproofing', 
-      'primer_adhesion'
+      'primer',
+      'primer_waterproofing',
+      'primer_adhesion',
     ]);
     final tapePrice = findPrice(priceList, [
-      'tape_waterproofing', 
-      'tape_armor', 
-      'sealing_tape'
+      'tape_waterproofing',
+      'tape_armor',
+      'sealing_tape',
     ]);
     final hydroTapePrice = findPrice(priceList, [
-      'tape_hydro', 
-      'waterproof_tape'
+      'tape_hydro',
+      'waterproof_tape',
     ]);
     final penetratingPrice = findPrice(priceList, [
       'waterproofing_penetrating',
-      'penetrating_seal'
+      'penetrating_seal',
     ]);
 
     final costs = [

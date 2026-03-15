@@ -39,14 +39,14 @@ class CalculateCeilingInsulationV2 extends BaseCalculator {
       // Manual mode
       final area = inputs['area'] ?? 0;
       if (area <= 0) {
-        return 'Площадь должна быть больше нуля';
+        return positiveValueMessage('area');
       }
     } else {
       // Room mode
       final width = inputs['roomWidth'] ?? 0;
       final length = inputs['roomLength'] ?? 0;
       if (width <= 0 || length <= 0) {
-        return 'Размеры комнаты должны быть больше нуля';
+        return areaOrRoomDimensionsRequiredMessage();
       }
     }
 
@@ -59,11 +59,45 @@ class CalculateCeilingInsulationV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 0, minValue: 0, maxValue: 1);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 100.0, minValue: 20.0, maxValue: 300.0);
-    final insulationType = getIntInput(inputs, 'insulationType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final needVaporBarrier = getIntInput(inputs, 'needVaporBarrier', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
-    final needMembrane = getIntInput(inputs, 'needMembrane', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
+    final inputMode = getIntInput(
+      inputs,
+      'inputMode',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final thickness = getInput(
+      inputs,
+      'thickness',
+      defaultValue: 100.0,
+      minValue: 20.0,
+      maxValue: 300.0,
+    );
+    final insulationType = getIntInput(
+      inputs,
+      'insulationType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final needVaporBarrier =
+        getIntInput(
+          inputs,
+          'needVaporBarrier',
+          defaultValue: 1,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
+    final needMembrane =
+        getIntInput(
+          inputs,
+          'needMembrane',
+          defaultValue: 1,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
 
     // Площадь
     double area;
@@ -72,11 +106,29 @@ class CalculateCeilingInsulationV2 extends BaseCalculator {
 
     if (inputMode == 0) {
       // Manual mode
-      area = getInput(inputs, 'area', defaultValue: 20.0, minValue: 1.0, maxValue: 1000.0);
+      area = getInput(
+        inputs,
+        'area',
+        defaultValue: 20.0,
+        minValue: 1.0,
+        maxValue: 1000.0,
+      );
     } else {
       // Room mode
-      roomWidth = getInput(inputs, 'roomWidth', defaultValue: 4.0, minValue: 0.5, maxValue: 50.0);
-      roomLength = getInput(inputs, 'roomLength', defaultValue: 5.0, minValue: 0.5, maxValue: 50.0);
+      roomWidth = getInput(
+        inputs,
+        'roomWidth',
+        defaultValue: 4.0,
+        minValue: 0.5,
+        maxValue: 50.0,
+      );
+      roomLength = getInput(
+        inputs,
+        'roomLength',
+        defaultValue: 5.0,
+        minValue: 0.5,
+        maxValue: 50.0,
+      );
       area = roomWidth * roomLength;
     }
 
@@ -90,15 +142,32 @@ class CalculateCeilingInsulationV2 extends BaseCalculator {
 
     // Пароизоляция +15% (ЭППС не требует пароизоляции по СП 50.13330.2012)
     final isXps = insulationType == 2;
-    final vaporBarrierArea = (needVaporBarrier && !isXps) ? area * (1 + filmWastePercent / 100) : 0.0;
+    final vaporBarrierArea = (needVaporBarrier && !isXps)
+        ? area * (1 + filmWastePercent / 100)
+        : 0.0;
 
     // Мембрана +15%
-    final membraneArea = needMembrane ? area * (1 + filmWastePercent / 100) : 0.0;
+    final membraneArea = needMembrane
+        ? area * (1 + filmWastePercent / 100)
+        : 0.0;
 
     // Расчёт стоимости
-    final insulationPrice = findPrice(priceList, ['insulation', 'утеплитель', 'минвата', 'ceiling_insulation']);
-    final vaporPrice = findPrice(priceList, ['vapor_barrier', 'пароизоляция', 'vapor']);
-    final membranePrice = findPrice(priceList, ['membrane', 'мембрана', 'ceiling_membrane']);
+    final insulationPrice = findPrice(priceList, [
+      'insulation',
+      'утеплитель',
+      'минвата',
+      'ceiling_insulation',
+    ]);
+    final vaporPrice = findPrice(priceList, [
+      'vapor_barrier',
+      'пароизоляция',
+      'vapor',
+    ]);
+    final membranePrice = findPrice(priceList, [
+      'membrane',
+      'мембрана',
+      'ceiling_membrane',
+    ]);
 
     final costs = [
       calculateCost(insulationPacks.toDouble(), insulationPrice?.price),

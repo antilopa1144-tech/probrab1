@@ -245,8 +245,8 @@ CanonicalCalculatorContractResult calculateCanonicalFrameHouse(
 
   // Scenarios
   final basePrimary = totalPlates;
-  final packageLabel = 'insulation-pack-8';
-  final packageUnit = 'уп';
+  const packageLabel = 'insulation-pack-8';
+  const packageUnit = 'уп';
 
   final scenarios = <String, CanonicalScenarioResult>{};
   for (final scenarioName in _scenarioNames) {

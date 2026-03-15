@@ -25,8 +25,8 @@ import './base_calculator.dart';
 class CalculateLaminateV2 extends BaseCalculator {
   /// Процент отходов по способу укладки
   static const Map<int, double> wastePercent = {
-    0: 5.0,   // Прямой
-    1: 15.0,  // Диагональный
+    0: 5.0, // Прямой
+    1: 15.0, // Диагональный
   };
 
   /// Площадь рулона подложки (м²)
@@ -52,7 +52,7 @@ class CalculateLaminateV2 extends BaseCalculator {
 
     // Нужна либо площадь, либо размеры комнаты
     if (area <= 0 && (roomWidth == null || roomLength == null)) {
-      return 'Необходимо указать площадь или размеры комнаты';
+      return areaOrRoomDimensionsRequiredMessage();
     }
 
     return null;
@@ -64,10 +64,38 @@ class CalculateLaminateV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final pattern = getIntInput(inputs, 'pattern', defaultValue: 0, minValue: 0, maxValue: 1);
-    final packArea = getInput(inputs, 'packArea', defaultValue: 2.4, minValue: 1.0, maxValue: 5.0);
-    final needUnderlay = getIntInput(inputs, 'needUnderlay', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
-    final needPlinth = getIntInput(inputs, 'needPlinth', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
+    final pattern = getIntInput(
+      inputs,
+      'pattern',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final packArea = getInput(
+      inputs,
+      'packArea',
+      defaultValue: 2.4,
+      minValue: 1.0,
+      maxValue: 5.0,
+    );
+    final needUnderlay =
+        getIntInput(
+          inputs,
+          'needUnderlay',
+          defaultValue: 1,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
+    final needPlinth =
+        getIntInput(
+          inputs,
+          'needPlinth',
+          defaultValue: 1,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
 
     // Площадь: либо напрямую, либо из размеров комнаты
     double area;
@@ -77,8 +105,20 @@ class CalculateLaminateV2 extends BaseCalculator {
     if (inputArea > 0) {
       area = inputArea;
     } else {
-      roomWidth = getInput(inputs, 'roomWidth', defaultValue: 4.0, minValue: 0.5, maxValue: 30);
-      roomLength = getInput(inputs, 'roomLength', defaultValue: 5.0, minValue: 0.5, maxValue: 30);
+      roomWidth = getInput(
+        inputs,
+        'roomWidth',
+        defaultValue: 4.0,
+        minValue: 0.5,
+        maxValue: 30,
+      );
+      roomLength = getInput(
+        inputs,
+        'roomLength',
+        defaultValue: 5.0,
+        minValue: 0.5,
+        maxValue: 30,
+      );
       area = roomWidth * roomLength;
     }
 
@@ -113,8 +153,16 @@ class CalculateLaminateV2 extends BaseCalculator {
     }
 
     // Расчёт стоимости (цены не используются, только для совместимости с системой)
-    final laminatePrice = findPrice(priceList, ['laminate', 'laminate_pack', 'ламинат']);
-    final underlayPrice = findPrice(priceList, ['underlay', 'underlay_roll', 'подложка']);
+    final laminatePrice = findPrice(priceList, [
+      'laminate',
+      'laminate_pack',
+      'ламинат',
+    ]);
+    final underlayPrice = findPrice(priceList, [
+      'underlay',
+      'underlay_roll',
+      'подложка',
+    ]);
     final plinthPrice = findPrice(priceList, ['plinth', 'плинтус']);
 
     final costs = [

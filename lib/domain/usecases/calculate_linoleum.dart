@@ -1,49 +1,41 @@
-// ignore_for_file: prefer_const_declarations
-import 'dart:math' as math;
 import '../../data/models/price_item.dart';
+import '../models/canonical_calculator_contract.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
+import './linoleum_canonical_adapter.dart';
 
-/// Калькулятор линолеума с гибридным режимом ввода.
-///
-/// Поддерживает два режима ввода:
-/// 1. **По размерам** (inputMode = 0): длина и ширина комнаты → точный расчёт резов
-/// 2. **По площади** (inputMode = 1): площадь + ширина комнаты → расчёт резов
-///
-/// КРИТИЧНО: Требует ширину комнаты в режиме "По площади" для расчёта количества резов!
-///
-/// Нормативы:
-/// - СНиП 3.04.01-87 "Изоляционные и отделочные покрытия"
-/// - ГОСТ 18108-80 "Линолеум поливинилхлоридный"
-///
-/// Поля:
-/// - inputMode: режим ввода (0 = по размерам, 1 = по площади)
-/// - length, width: размеры комнаты (м) - только для режима 0
-/// - area: площадь пола (м²) - только для режима 1
-/// - roomWidth: ширина комнаты (м) - ОБЯЗАТЕЛЬНО для режима 1
-/// - rollWidth: ширина рулона (м), по умолчанию 3.0
-/// - withGlue: использовать клей (bool)
-/// - withPlinth: использовать плинтус (bool)
 class CalculateLinoleum extends BaseCalculator {
+  Map<String, double> _normalizeInputs(Map<String, double> inputs) {
+    if (hasCanonicalLinoleumInputs(inputs)) {
+      return Map<String, double>.from(inputs);
+    }
+    return normalizeLegacyLinoleumInputs(inputs);
+  }
+
+  CanonicalCalculatorContractResult calculateCanonical(
+    Map<String, double> inputs,
+  ) {
+    return calculateCanonicalLinoleum(_normalizeInputs(inputs));
+  }
+
   @override
   String? validateInputs(Map<String, double> inputs) {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final inputMode = (inputs['inputMode'] ?? 0).toInt();
-
+    final normalized = _normalizeInputs(inputs);
+    final inputMode = (normalized['inputMode'] ?? 0).toInt();
     if (inputMode == 0) {
-      // Режим "По размерам": проверяем length и width
-      final length = inputs['length'] ?? 0;
-      final width = inputs['width'] ?? 0;
-      if (length <= 0) return 'Длина должна быть больше нуля';
-      if (width <= 0) return 'Ширина должна быть больше нуля';
+      final length = normalized['length'] ?? 0;
+      final width = normalized['width'] ?? 0;
+      if (length <= 0) return positiveValueMessage('length');
+      if (width <= 0) return positiveValueMessage('width');
     } else {
-      // Режим "По площади": проверяем area и roomWidth
-      if ((inputs['area'] ?? 0) <= 0) return 'Площадь должна быть больше нуля';
-      if ((inputs['roomWidth'] ?? 0) <= 0) return 'Укажите ширину комнаты для расчёта резов';
+      final area = normalized['area'] ?? 0;
+      final roomWidth = normalized['roomWidth'] ?? 0;
+      if (area <= 0) return positiveValueMessage('area');
+      if (roomWidth <= 0) return positiveValueMessage('roomWidth');
     }
-
     return null;
   }
 
@@ -52,95 +44,68 @@ class CalculateLinoleum extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    // --- Режим ввода: по размерам (0) или по площади (1) ---
-    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 0);
-
-    // Вычисляем площадь и размеры в зависимости от режима
-    double area;
-    double roomWidth;
-    double roomLength;
-    double perimeter;
-
-    if (inputMode == 0) {
-      // Режим "По размерам": точные размеры комнаты
-      roomLength = getInput(inputs, 'length', minValue: 0.1);
-      roomWidth = getInput(inputs, 'width', minValue: 0.1);
-
-      area = roomLength * roomWidth;
-      perimeter = (roomLength + roomWidth) * 2;
-    } else {
-      // Режим "По площади": требуем ширину для расчёта резов
-      area = getInput(inputs, 'area', minValue: 0.1);
-      roomWidth = getInput(inputs, 'roomWidth', minValue: 0.1);
-
-      roomLength = area / roomWidth;
-      final perimeterInput = inputs['perimeter'] ?? 0.0;
-      perimeter = perimeterInput > 0 ? perimeterInput : estimatePerimeter(area);
+    final contract = calculateCanonical(inputs);
+    final area = contract.totals['area'] ?? 0;
+    if (area <= 0) {
+      return createResult(values: {'error': 1.0});
     }
 
-    // --- Получаем остальные входные данные ---
-    final rollWidth = getInput(inputs, 'rollWidth', defaultValue: 3.0, minValue: 1.5, maxValue: 5.0);
-    final withGlue = getIntInput(inputs, 'withGlue', defaultValue: 0) != 0;
-    final withPlinth = getIntInput(inputs, 'withPlinth', defaultValue: 1) != 0;
+    final linoleumAreaNeeded = contract.totals['totalCoverageArea'] ?? 0;
+    final linearMeters = contract.totals['linearMeters'] ?? 0;
+    final cutsNeeded = contract.totals['stripsNeeded'] ?? 0;
+    final cutLength = contract.totals['stripLengthBase'] ?? 0;
+    final plinthLength = contract.totals['plinthLengthWithReserve'] ?? 0;
+    final plinthPieces = contract.totals['plinthPieces'] ?? 0;
+    final glueNeededKg = contract.totals['glueNeededKg'] ?? 0;
+    final coldWeldingTubes = contract.totals['coldWeldingTubes'] ?? 0;
 
-    // --- Расчёт количества резов (полос) ---
-    // Количество полос = ширина комнаты / ширина рулона (округление вверх)
-    final cutsNeeded = (roomWidth / rollWidth).ceil();
-
-    // Длина одного реза = длина комнаты + 10 см запаса
-    final cutLength = roomLength + 0.1;
-
-    // Общая площадь линолеума с учетом резов
-    final totalLinoleumArea = cutsNeeded * cutLength * rollWidth;
-
-    // --- Аксессуары ---
-    // Холодная сварка для швов: 1 туба на 20-25 пог. м шва
-    final seamsLength = cutsNeeded > 1 ? (cutsNeeded - 1) * roomLength : 0.0;
-    final coldWeldingTubes = seamsLength > 0 ? math.max(1, (seamsLength / 20).ceil()) : 0;
-
-    // Клей (если используется): ~0.3-0.5 кг/м²
-    final glueNeeded = withGlue ? area * 0.4 : 0.0;
-
-    // Плинтус (если используется): периметр + 5% на подрезку
-    final plinthLength = withPlinth ? perimeter * 1.05 : 0.0;
-    final plinthPieces = withPlinth ? (plinthLength / 2.5).ceil() : 0; // Плинтус обычно 2.5 м
-
-    // --- Применяем правила округления ---
-    final finalLinoleumArea = roundBulk(totalLinoleumArea);
-    final finalGlue = withGlue ? roundBulk(glueNeeded) : 0.0;
-    final finalPlinthLength = withPlinth ? roundBulk(plinthLength) : 0.0;
-
-    // --- Расчёт стоимости ---
-    final linoleumPrice = findPrice(priceList, ['linoleum', 'linoleum_pvc', 'vinyl_flooring']);
-    final plinthPrice = findPrice(priceList, ['plinth', 'plinth_linoleum', 'baseboard']);
-    final gluePrice = findPrice(priceList, ['glue_linoleum', 'glue', 'flooring_adhesive']);
-    final coldWeldingPrice = findPrice(priceList, ['cold_welding', 'linoleum_welding']);
-
-    final costs = [
-      calculateCost(finalLinoleumArea, linoleumPrice?.price),
-      withPlinth ? calculateCost(finalPlinthLength, plinthPrice?.price) : null,
-      withGlue ? calculateCost(finalGlue, gluePrice?.price) : null,
-      coldWeldingTubes > 0 ? calculateCost(coldWeldingTubes.toDouble(), coldWeldingPrice?.price) : null,
-    ];
-
-    // Погонные метры: количество полос × длина одной полосы
-    final linearMeters = roundBulk(cutsNeeded * cutLength);
+    final linoleumPrice = findPrice(priceList, [
+      'linoleum',
+      'linoleum_pvc',
+      'vinyl_flooring',
+    ]);
+    final plinthPrice = findPrice(priceList, [
+      'plinth',
+      'plinth_linoleum',
+      'baseboard',
+    ]);
+    final gluePrice = findPrice(priceList, [
+      'glue_linoleum',
+      'glue',
+      'flooring_adhesive',
+    ]);
+    final coldWeldingPrice = findPrice(priceList, [
+      'cold_welding',
+      'linoleum_welding',
+    ]);
 
     return createResult(
       values: {
-        'area': roundBulk(area),
-        'linoleumAreaNeeded': finalLinoleumArea,
+        'area': area,
+        'linoleumAreaNeeded': linoleumAreaNeeded,
         'linearMeters': linearMeters,
-        'rollWidth': rollWidth,
-        'cutsNeeded': cutsNeeded.toDouble(),
-        'cutLength': roundBulk(cutLength),
-        if (coldWeldingTubes > 0) 'coldWeldingTubes': coldWeldingTubes.toDouble(),
-        if (withGlue) 'glueNeededKg': finalGlue,
-        if (withPlinth) 'plinthLengthMeters': finalPlinthLength,
-        if (withPlinth) 'plinthPieces': plinthPieces.toDouble(),
+        'rollWidth': contract.totals['rollWidth'] ?? 3.0,
+        'cutsNeeded': cutsNeeded,
+        'cutLength': cutLength,
+        if (coldWeldingTubes > 0) 'coldWeldingTubes': coldWeldingTubes,
+        if (glueNeededKg > 0) 'glueNeededKg': glueNeededKg,
+        if (plinthLength > 0) 'plinthLengthMeters': plinthLength,
+        if (plinthPieces > 0) 'plinthPieces': plinthPieces,
+        if ((contract.totals['tapeLength'] ?? 0) > 0)
+          'tapeLength': contract.totals['tapeLength'] ?? 0,
       },
-      totalPrice: sumCosts(costs),
-      norms: ['СНиП 3.04.01-87', 'ГОСТ 18108-80'],
+      totalPrice: sumCosts([
+        calculateCost(linoleumAreaNeeded, linoleumPrice?.price),
+        plinthLength > 0
+            ? calculateCost(plinthLength, plinthPrice?.price)
+            : null,
+        glueNeededKg > 0 ? calculateCost(glueNeededKg, gluePrice?.price) : null,
+        coldWeldingTubes > 0
+            ? calculateCost(coldWeldingTubes, coldWeldingPrice?.price)
+            : null,
+      ]),
+      norms: [...normativeSources, contract.formulaVersion],
+      calculatorId: 'linoleum-canonical',
     );
   }
 }

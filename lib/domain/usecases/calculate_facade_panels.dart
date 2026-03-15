@@ -21,7 +21,7 @@ class CalculateFacadePanels extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -32,16 +32,32 @@ class CalculateFacadePanels extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final panelWidth = getInput(inputs, 'panelWidth', defaultValue: 50.0, minValue: 20.0, maxValue: 150.0);
-    final panelHeight = getInput(inputs, 'panelHeight', defaultValue: 100.0, minValue: 50.0, maxValue: 300.0);
-    
+    final panelWidth = getInput(
+      inputs,
+      'panelWidth',
+      defaultValue: 50.0,
+      minValue: 20.0,
+      maxValue: 150.0,
+    );
+    final panelHeight = getInput(
+      inputs,
+      'panelHeight',
+      defaultValue: 100.0,
+      minValue: 50.0,
+      maxValue: 300.0,
+    );
+
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
     // Площадь одной панели в м²
     final panelArea = calculateTileArea(panelWidth, panelHeight);
 
     // Количество панелей с запасом 10%
-    final panelsNeeded = calculateUnitsNeeded(area, panelArea, marginPercent: 10.0);
+    final panelsNeeded = calculateUnitsNeeded(
+      area,
+      panelArea,
+      marginPercent: 10.0,
+    );
 
     // Обрешётка (металлический профиль или деревянные бруски)
     final battensCount = ceilToInt((perimeter / 4) / 0.6);
@@ -65,13 +81,37 @@ class CalculateFacadePanels extends BaseCalculator {
     final hProfileLength = hProfileCount * wallHeight;
 
     // Расчёт стоимости
-    final panelPrice = findPrice(priceList, ['facade_panel', 'panel_facade', 'siding_panel']);
-    final battensPrice = findPrice(priceList, ['battens', 'metal_profile', 'facade_profile']);
-    final fastenerPrice = findPrice(priceList, ['fastener_facade', 'fastener', 'panel_fastener']);
-    final cornerPrice = findPrice(priceList, ['corner_facade', 'corner', 'corner_panel']);
-    final startStripPrice = findPrice(priceList, ['start_strip_facade', 'start_strip', 'base_strip']);
+    final panelPrice = findPrice(priceList, [
+      'facade_panel',
+      'panel_facade',
+      'siding_panel',
+    ]);
+    final battensPrice = findPrice(priceList, [
+      'battens',
+      'metal_profile',
+      'facade_profile',
+    ]);
+    final fastenerPrice = findPrice(priceList, [
+      'fastener_facade',
+      'fastener',
+      'panel_fastener',
+    ]);
+    final cornerPrice = findPrice(priceList, [
+      'corner_facade',
+      'corner',
+      'corner_panel',
+    ]);
+    final startStripPrice = findPrice(priceList, [
+      'start_strip_facade',
+      'start_strip',
+      'base_strip',
+    ]);
     final jProfilePrice = findPrice(priceList, ['profile_j', 'j_trim']);
-    final hProfilePrice = findPrice(priceList, ['profile_h', 'h_trim', 'joiner']);
+    final hProfilePrice = findPrice(priceList, [
+      'profile_h',
+      'h_trim',
+      'joiner',
+    ]);
 
     final costs = [
       calculateCost(panelsNeeded.toDouble(), panelPrice?.price),
@@ -79,7 +119,8 @@ class CalculateFacadePanels extends BaseCalculator {
       calculateCost(fastenersNeeded.toDouble(), fastenerPrice?.price),
       calculateCost(cornersLength, cornerPrice?.price),
       calculateCost(startStripLength, startStripPrice?.price),
-      if (jProfileLength > 0) calculateCost(jProfileLength, jProfilePrice?.price),
+      if (jProfileLength > 0)
+        calculateCost(jProfileLength, jProfilePrice?.price),
       calculateCost(hProfileLength, hProfilePrice?.price),
     ];
 

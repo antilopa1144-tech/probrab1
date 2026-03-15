@@ -207,8 +207,8 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
 
   // Scenarios
   final basePrimary = totalBoards;
-  final packageLabel = 'terrace-board';
-  final packageUnit = 'шт';
+  const packageLabel = 'terrace-board';
+  const packageUnit = 'шт';
 
   final scenarios = <String, CanonicalScenarioResult>{};
   for (final scenarioName in _scenarioNames) {

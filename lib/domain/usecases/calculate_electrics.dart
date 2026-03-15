@@ -21,7 +21,7 @@ class CalculateElectrics extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -32,15 +32,33 @@ class CalculateElectrics extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final rooms = getIntInput(inputs, 'rooms', defaultValue: 1, minValue: 1, maxValue: 20);
+    final rooms = getIntInput(
+      inputs,
+      'rooms',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 20,
+    );
 
     // Розетки: 1 на 4 м² (норма) + дополнительные
     final socketsDefault = ceilToInt(area / 4);
-    final sockets = getIntInput(inputs, 'sockets', defaultValue: socketsDefault, minValue: 1, maxValue: 100);
+    final sockets = getIntInput(
+      inputs,
+      'sockets',
+      defaultValue: socketsDefault,
+      minValue: 1,
+      maxValue: 100,
+    );
 
     // Выключатели: 1-2 на комнату
     final switchesDefault = ceilToInt(rooms * 1.5);
-    final switches = getIntInput(inputs, 'switches', defaultValue: switchesDefault, minValue: 1, maxValue: 50);
+    final switches = getIntInput(
+      inputs,
+      'switches',
+      defaultValue: switchesDefault,
+      minValue: 1,
+      maxValue: 50,
+    );
 
     // Провод ВВГнг-LS 3×2.5: ~3 м на розетку, ~2 м на выключатель + 20%
     final wireLength = addMargin((sockets * 3.0 + switches * 2.0), 20.0);
@@ -64,13 +82,40 @@ class CalculateElectrics extends BaseCalculator {
     final lightsNeeded = rooms * 2;
 
     // Расчёт стоимости
-    final wirePrice = findPrice(priceList, ['wire', 'cable', 'wire_electrical', 'vvgng']);
-    final socketPrice = findPrice(priceList, ['socket', 'socket_electrical', 'outlet']);
-    final switchPrice = findPrice(priceList, ['switch', 'switch_electrical', 'light_switch']);
-    final cableChannelPrice = findPrice(priceList, ['cable_channel', 'channel', 'conduit']);
-    final breakerPrice = findPrice(priceList, ['circuit_breaker', 'breaker', 'mcb']);
-    final junctionBoxPrice = findPrice(priceList, ['junction_box', 'box_electrical']);
-    final panelPrice = findPrice(priceList, ['panel_electrical', 'distribution_board']);
+    final wirePrice = findPrice(priceList, [
+      'wire',
+      'cable',
+      'wire_electrical',
+      'vvgng',
+    ]);
+    final socketPrice = findPrice(priceList, [
+      'socket',
+      'socket_electrical',
+      'outlet',
+    ]);
+    final switchPrice = findPrice(priceList, [
+      'switch',
+      'switch_electrical',
+      'light_switch',
+    ]);
+    final cableChannelPrice = findPrice(priceList, [
+      'cable_channel',
+      'channel',
+      'conduit',
+    ]);
+    final breakerPrice = findPrice(priceList, [
+      'circuit_breaker',
+      'breaker',
+      'mcb',
+    ]);
+    final junctionBoxPrice = findPrice(priceList, [
+      'junction_box',
+      'box_electrical',
+    ]);
+    final panelPrice = findPrice(priceList, [
+      'panel_electrical',
+      'distribution_board',
+    ]);
     final rcdPrice = findPrice(priceList, ['rcd', 'residual_current_device']);
 
     final costs = [

@@ -20,7 +20,7 @@ class CalculateSoundInsulation extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -31,14 +31,30 @@ class CalculateSoundInsulation extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 50.0, minValue: 20.0, maxValue: 150.0);
-    final type = getIntInput(inputs, 'insulationType', defaultValue: 1, minValue: 1, maxValue: 3);
+    final thickness = getInput(
+      inputs,
+      'thickness',
+      defaultValue: 50.0,
+      minValue: 20.0,
+      maxValue: 150.0,
+    );
+    final type = getIntInput(
+      inputs,
+      'insulationType',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 3,
+    );
 
     // Площадь одного листа/плиты (зависит от типа)
     final sheetArea = type == 1 ? 0.72 : (type == 2 ? 0.5 : 0.6);
 
     // Количество листов с запасом 5%
-    final sheetsNeeded = calculateUnitsNeeded(area, sheetArea, marginPercent: 5.0);
+    final sheetsNeeded = calculateUnitsNeeded(
+      area,
+      sheetArea,
+      marginPercent: 5.0,
+    );
 
     // Объём материала
     final volume = calculateVolume(area, thickness);
@@ -64,30 +80,58 @@ class CalculateSoundInsulation extends BaseCalculator {
 
     // Расчёт стоимости
     final insulationPrice = type == 1
-        ? findPrice(priceList, ['mineral_wool', 'wool_insulation', 'acoustic_wool'])
-        : (type == 2 
-            ? findPrice(priceList, ['foam_pu', 'foam_sound', 'polyurethane_foam'])
-            : findPrice(priceList, ['panel_acoustic', 'acoustic_panel', 'sound_panel']));
-    final fastenerPrice = findPrice(priceList, ['fastener_insulation', 'dowel', 'anchor']);
+        ? findPrice(priceList, [
+            'mineral_wool',
+            'wool_insulation',
+            'acoustic_wool',
+          ])
+        : (type == 2
+              ? findPrice(priceList, [
+                  'foam_pu',
+                  'foam_sound',
+                  'polyurethane_foam',
+                ])
+              : findPrice(priceList, [
+                  'panel_acoustic',
+                  'acoustic_panel',
+                  'sound_panel',
+                ]));
+    final fastenerPrice = findPrice(priceList, [
+      'fastener_insulation',
+      'dowel',
+      'anchor',
+    ]);
     final membranePrice = findPrice(priceList, [
-      'membrane_sound', 
-      'acoustic_membrane', 
-      'sound_barrier_membrane'
+      'membrane_sound',
+      'acoustic_membrane',
+      'sound_barrier_membrane',
     ]);
     final vibroSuspensionPrice = findPrice(priceList, [
-      'suspension_vibro', 
-      'vibro_suspension', 
-      'anti_vibration_hanger'
+      'suspension_vibro',
+      'vibro_suspension',
+      'anti_vibration_hanger',
     ]);
-    final damperTapePrice = findPrice(priceList, ['tape_damper', 'damper_tape', 'sealing_tape']);
-    final sealantPrice = findPrice(priceList, ['sealant_acoustic', 'acoustic_sealant', 'sealant']);
+    final damperTapePrice = findPrice(priceList, [
+      'tape_damper',
+      'damper_tape',
+      'sealing_tape',
+    ]);
+    final sealantPrice = findPrice(priceList, [
+      'sealant_acoustic',
+      'acoustic_sealant',
+      'sealant',
+    ]);
     final profilePrice = findPrice(priceList, ['profile', 'metal_profile']);
 
     final costs = [
       calculateCost(sheetsNeeded.toDouble(), insulationPrice?.price),
       calculateCost(fastenersNeeded.toDouble(), fastenerPrice?.price),
       calculateCost(membraneArea, membranePrice?.price),
-      if (vibroSuspensionsNeeded > 0) calculateCost(vibroSuspensionsNeeded.toDouble(), vibroSuspensionPrice?.price),
+      if (vibroSuspensionsNeeded > 0)
+        calculateCost(
+          vibroSuspensionsNeeded.toDouble(),
+          vibroSuspensionPrice?.price,
+        ),
       calculateCost(damperTapeLength, damperTapePrice?.price),
       calculateCost(sealantTubes.toDouble(), sealantPrice?.price),
       if (profileLength > 0) calculateCost(profileLength, profilePrice?.price),
@@ -101,7 +145,8 @@ class CalculateSoundInsulation extends BaseCalculator {
         'sheetsNeeded': sheetsNeeded.toDouble(),
         'fastenersNeeded': fastenersNeeded.toDouble(),
         'membraneArea': membraneArea,
-        if (vibroSuspensionsNeeded > 0) 'vibroSuspensionsNeeded': vibroSuspensionsNeeded.toDouble(),
+        if (vibroSuspensionsNeeded > 0)
+          'vibroSuspensionsNeeded': vibroSuspensionsNeeded.toDouble(),
         'damperTapeLength': damperTapeLength,
         'sealantTubes': sealantTubes.toDouble(),
         if (profileLength > 0) 'profileLength': profileLength,

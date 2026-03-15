@@ -33,11 +33,27 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
   /// [sheetL] - длина листа (м)
   /// [sheetW] - ширина листа (м)
   /// [layers] - количество слоёв обшивки
-  int _gridLayoutSheets(double wallLength, double wallHeight, double sheetL, double sheetW, int layers) {
+  int _gridLayoutSheets(
+    double wallLength,
+    double wallHeight,
+    double sheetL,
+    double sheetW,
+    int layers,
+  ) {
     // Ориентация 1: лист горизонтально (длинная сторона по длине стены)
-    final sheetsH = _layoutOneOrientation(wallLength, wallHeight, sheetL, sheetW);
+    final sheetsH = _layoutOneOrientation(
+      wallLength,
+      wallHeight,
+      sheetL,
+      sheetW,
+    );
     // Ориентация 2: лист вертикально (длинная сторона по высоте стены)
-    final sheetsV = _layoutOneOrientation(wallLength, wallHeight, sheetW, sheetL);
+    final sheetsV = _layoutOneOrientation(
+      wallLength,
+      wallHeight,
+      sheetW,
+      sheetL,
+    );
 
     // Берём лучший результат (меньше листов = меньше отходов)
     final bestSheets = sheetsH < sheetsV ? sheetsH : sheetsV;
@@ -45,7 +61,12 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
   }
 
   /// Раскладка в одной ориентации.
-  int _layoutOneOrientation(double surfaceLength, double surfaceHeight, double sheetAlongLength, double sheetAlongHeight) {
+  int _layoutOneOrientation(
+    double surfaceLength,
+    double surfaceHeight,
+    double sheetAlongLength,
+    double sheetAlongHeight,
+  ) {
     if (sheetAlongLength <= 0 || sheetAlongHeight <= 0) return 999999;
     final columnsNeeded = (surfaceLength / sheetAlongLength).ceil();
     final rowsNeeded = (surfaceHeight / sheetAlongHeight).ceil();
@@ -65,12 +86,12 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
       if (length <= 0 || width <= 0) {
         final fallbackArea = inputs['area'] ?? 0;
         if (fallbackArea <= 0) {
-          return 'Длина и ширина должны быть больше нуля';
+          return areaOrRoomDimensionsRequiredMessage();
         }
       }
     } else {
       final area = inputs['area'] ?? 0;
-      if (area <= 0) return 'Площадь должна быть больше нуля';
+      if (area <= 0) return positiveValueMessage('area');
     }
 
     return null;
@@ -103,7 +124,13 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
     }
 
     // --- Размер плиты ---
-    final sheetSize = getIntInput(inputs, 'sheetSize', defaultValue: 1, minValue: 0, maxValue: 5);
+    final sheetSize = getIntInput(
+      inputs,
+      'sheetSize',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 5,
+    );
     double sheetLength;
     double sheetWidth;
 
@@ -129,31 +156,91 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
         sheetWidth = 1.22;
         break;
       default: // Пользовательский размер
-        sheetLength = getInput(inputs, 'sheetLength', defaultValue: 2.5, minValue: 1.0, maxValue: 3.6);
-        sheetWidth = getInput(inputs, 'sheetWidth', defaultValue: 1.25, minValue: 0.5, maxValue: 1.5);
+        sheetLength = getInput(
+          inputs,
+          'sheetLength',
+          defaultValue: 2.5,
+          minValue: 1.0,
+          maxValue: 3.6,
+        );
+        sheetWidth = getInput(
+          inputs,
+          'sheetWidth',
+          defaultValue: 1.25,
+          minValue: 0.5,
+          maxValue: 1.5,
+        );
     }
 
     final sheetArea = sheetLength * sheetWidth;
 
     // --- Толщина плиты ---
-    final thickness = getIntInput(inputs, 'thickness', defaultValue: 9, minValue: 6, maxValue: 22);
+    final thickness = getIntInput(
+      inputs,
+      'thickness',
+      defaultValue: 9,
+      minValue: 6,
+      maxValue: 22,
+    );
 
     // --- Класс ОСБ ---
-    final osbClass = getIntInput(inputs, 'osbClass', defaultValue: 3, minValue: 1, maxValue: 4);
+    final osbClass = getIntInput(
+      inputs,
+      'osbClass',
+      defaultValue: 3,
+      minValue: 1,
+      maxValue: 4,
+    );
 
     // --- Тип конструкции ---
-    final constructionType = getIntInput(inputs, 'constructionType', defaultValue: 1, minValue: 1, maxValue: 6);
+    final constructionType = getIntInput(
+      inputs,
+      'constructionType',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 6,
+    );
 
     // --- Шаг опор (для пола/кровли) ---
-    final joistStep = getIntInput(inputs, 'joistStep', defaultValue: 600, minValue: 300, maxValue: 800);
-    final rafterStep = getIntInput(inputs, 'rafterStep', defaultValue: 600, minValue: 300, maxValue: 1200);
+    final joistStep = getIntInput(
+      inputs,
+      'joistStep',
+      defaultValue: 600,
+      minValue: 300,
+      maxValue: 800,
+    );
+    final rafterStep = getIntInput(
+      inputs,
+      'rafterStep',
+      defaultValue: 600,
+      minValue: 300,
+      maxValue: 1200,
+    );
 
     // --- Условия эксплуатации ---
-    final environment = getIntInput(inputs, 'environment', defaultValue: 1, minValue: 1, maxValue: 3);
-    final loadLevel = getIntInput(inputs, 'loadLevel', defaultValue: 1, minValue: 1, maxValue: 2);
+    final environment = getIntInput(
+      inputs,
+      'environment',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 3,
+    );
+    final loadLevel = getIntInput(
+      inputs,
+      'loadLevel',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 2,
+    );
 
     // Ориентация листа (1=авто, 2=горизонтально, 3=вертикально)
-    final sheetOrientation = getIntInput(inputs, 'sheetOrientation', defaultValue: 1, minValue: 1, maxValue: 3);
+    final sheetOrientation = getIntInput(
+      inputs,
+      'sheetOrientation',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 3,
+    );
 
     // --- Множитель площади ОСБ (двусторонняя обшивка) ---
     double osbAreaMultiplier;
@@ -204,7 +291,13 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
     // --- Запас материала ---
     // Рекомендуемые значения по справочнику:
     // стены 7-12%, полы 5%, кровля 10-20%, перегородки 10%
-    double reserve = getInput(inputs, 'reserve', defaultValue: 10.0, minValue: 5.0, maxValue: 20.0);
+    double reserve = getInput(
+      inputs,
+      'reserve',
+      defaultValue: 10.0,
+      minValue: 5.0,
+      maxValue: 20.0,
+    );
     if (area > 0 && openingsArea / area > 0.30 && reserve < 15.0) {
       reserve = 15.0;
     }
@@ -218,7 +311,9 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
     int sheetsNeeded;
 
     // Определяем число слоёв обшивки
-    final int layers = (osbAreaMultiplier > 1.5) ? 2 : 1; // перегородки/СИП = 2 стороны
+    final int layers = (osbAreaMultiplier > 1.5)
+        ? 2
+        : 1; // перегородки/СИП = 2 стороны
 
     if (inputMode == 0) {
       final wallLength = getInput(inputs, 'length', minValue: 0.1);
@@ -229,26 +324,55 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
         int gridSheets;
         if (sheetOrientation == 2) {
           // Принудительно горизонтально
-          gridSheets = _layoutOneOrientation(wallLength, wallHeight, sheetLength, sheetWidth) * layers;
+          gridSheets =
+              _layoutOneOrientation(
+                wallLength,
+                wallHeight,
+                sheetLength,
+                sheetWidth,
+              ) *
+              layers;
         } else if (sheetOrientation == 3) {
           // Принудительно вертикально
-          gridSheets = _layoutOneOrientation(wallLength, wallHeight, sheetWidth, sheetLength) * layers;
+          gridSheets =
+              _layoutOneOrientation(
+                wallLength,
+                wallHeight,
+                sheetWidth,
+                sheetLength,
+              ) *
+              layers;
         } else {
           // Авто — лучший из двух
-          gridSheets = _gridLayoutSheets(wallLength, wallHeight, sheetLength, sheetWidth, layers);
+          gridSheets = _gridLayoutSheets(
+            wallLength,
+            wallHeight,
+            sheetLength,
+            sheetWidth,
+            layers,
+          );
         }
 
         // Добавляем запас на подрезку (меньше чем area-based, т.к. раскладка точнее)
         // Для grid layout 5% достаточно (обрезки частично переиспользуются)
-        final gridReserve = reserve.clamp(5.0, 20.0) / 2; // половина от пользовательского
+        final gridReserve =
+            reserve.clamp(5.0, 20.0) / 2; // половина от пользовательского
         sheetsNeeded = (gridSheets * (1 + gridReserve / 100)).ceil();
       } else {
         // Fallback на area-based
-        sheetsNeeded = calculateUnitsNeeded(osbBaseArea, sheetArea, marginPercent: reserve);
+        sheetsNeeded = calculateUnitsNeeded(
+          osbBaseArea,
+          sheetArea,
+          marginPercent: reserve,
+        );
       }
     } else {
       // Режим по площади — area-based формула
-      sheetsNeeded = calculateUnitsNeeded(osbBaseArea, sheetArea, marginPercent: reserve);
+      sheetsNeeded = calculateUnitsNeeded(
+        osbBaseArea,
+        sheetArea,
+        marginPercent: reserve,
+      );
     }
 
     // --- Расчёт крепежа в зависимости от типа конструкции ---
@@ -370,7 +494,8 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
     // ОСБ-1/2 — только для сухих интерьеров (ГОСТ Р 56309)
     // Предупреждаем для наружных условий, кровли и опалубки
     // Стены (type 1) могут быть интерьерными — проверяем через environment
-    final warningClassOutdoor = isLowClass &&
+    final warningClassOutdoor =
+        isLowClass &&
         (environment == 3 || constructionType == 3 || constructionType == 6);
     final warningClassWet = isLowClass && environment == 2;
     final warningClassLoad = isLowClass && loadLevel == 2;
@@ -416,11 +541,19 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
     }
 
     // --- Расчёт стоимости ---
-    final sheetPrice = findPrice(
-      priceList,
-      ['osb_${thickness}mm', 'osb', 'plywood_${thickness}mm', 'plywood', 'sheet_material'],
-    );
-    final screwPrice = findPrice(priceList, [fastenerType, 'screws', 'screws_wood', 'fasteners']);
+    final sheetPrice = findPrice(priceList, [
+      'osb_${thickness}mm',
+      'osb',
+      'plywood_${thickness}mm',
+      'plywood',
+      'sheet_material',
+    ]);
+    final screwPrice = findPrice(priceList, [
+      fastenerType,
+      'screws',
+      'screws_wood',
+      'fasteners',
+    ]);
     final windBarrierPrice = findPrice(priceList, [
       'wind_barrier',
       'membrane_wind',
@@ -437,9 +570,20 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
       'roof_underlayment',
       'roofing_felt',
     ]);
-    final counterBattensPrice = findPrice(priceList, ['counter_battens', 'battens']);
-    final foamPrice = findPrice(priceList, ['foam', 'mounting_foam', 'polyurethane_foam']);
-    final gluePrice = findPrice(priceList, ['sip_glue', 'glue_polyurethane', 'adhesive']);
+    final counterBattensPrice = findPrice(priceList, [
+      'counter_battens',
+      'battens',
+    ]);
+    final foamPrice = findPrice(priceList, [
+      'foam',
+      'mounting_foam',
+      'polyurethane_foam',
+    ]);
+    final gluePrice = findPrice(priceList, [
+      'sip_glue',
+      'glue_polyurethane',
+      'adhesive',
+    ]);
 
     final costs = [
       calculateCost(sheetsNeeded.toDouble(), sheetPrice?.price),
@@ -460,12 +604,16 @@ class CalculateSheetingOsbPlywood extends BaseCalculator {
         'screwDiameter': screwDiameter,
         'screwLength': screwLength,
         'materialArea': roundBulk(materialArea),
-        if (recommendedThickness != null) 'recommendedThickness': recommendedThickness.toDouble(),
+        if (recommendedThickness != null)
+          'recommendedThickness': recommendedThickness.toDouble(),
         if (windBarrierArea > 0) 'windBarrierArea': roundBulk(windBarrierArea),
-        if (vaporBarrierArea > 0) 'vaporBarrierArea': roundBulk(vaporBarrierArea),
+        if (vaporBarrierArea > 0)
+          'vaporBarrierArea': roundBulk(vaporBarrierArea),
         if (underlayArea > 0) 'underlayArea': roundBulk(underlayArea),
-        if (underlaymentArea > 0) 'underlaymentArea': roundBulk(underlaymentArea),
-        if (counterBattensLength > 0) 'counterBattensLength': roundBulk(counterBattensLength),
+        if (underlaymentArea > 0)
+          'underlaymentArea': roundBulk(underlaymentArea),
+        if (counterBattensLength > 0)
+          'counterBattensLength': roundBulk(counterBattensLength),
         if (clips > 0) 'clips': clips,
         if (studsLength > 0) 'studsLength': roundBulk(studsLength),
         if (insulationArea > 0) 'insulationArea': roundBulk(insulationArea),

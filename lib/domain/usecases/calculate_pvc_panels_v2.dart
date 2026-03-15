@@ -51,14 +51,14 @@ class CalculatePvcPanelsV2 extends BaseCalculator {
       // Manual mode
       final area = inputs['area'] ?? 0;
       if (area <= 0) {
-        return 'Площадь должна быть больше нуля';
+        return positiveValueMessage('area');
       }
     } else {
       // Dimensions mode
       final width = inputs['wallWidth'] ?? 0;
       final height = inputs['wallHeight'] ?? 0;
       if (width <= 0 || height <= 0) {
-        return 'Размеры стены должны быть больше нуля';
+        return wallAreaOrDimensionsRequiredMessage();
       }
     }
 
@@ -71,11 +71,45 @@ class CalculatePvcPanelsV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 0, minValue: 0, maxValue: 1);
-    final panelType = getIntInput(inputs, 'panelType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final panelWidth = getInput(inputs, 'panelWidth', defaultValue: 0.25, minValue: 0.1, maxValue: 0.5);
-    final needProfile = getIntInput(inputs, 'needProfile', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
-    final needCorners = getIntInput(inputs, 'needCorners', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
+    final inputMode = getIntInput(
+      inputs,
+      'inputMode',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final panelType = getIntInput(
+      inputs,
+      'panelType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final panelWidth = getInput(
+      inputs,
+      'panelWidth',
+      defaultValue: 0.25,
+      minValue: 0.1,
+      maxValue: 0.5,
+    );
+    final needProfile =
+        getIntInput(
+          inputs,
+          'needProfile',
+          defaultValue: 1,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
+    final needCorners =
+        getIntInput(
+          inputs,
+          'needCorners',
+          defaultValue: 1,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
 
     // Площадь и размеры
     double area;
@@ -84,12 +118,30 @@ class CalculatePvcPanelsV2 extends BaseCalculator {
 
     if (inputMode == 1) {
       // Dimensions mode
-      wallWidth = getInput(inputs, 'wallWidth', defaultValue: 3.0, minValue: 0.5, maxValue: 30.0);
-      wallHeight = getInput(inputs, 'wallHeight', defaultValue: 2.5, minValue: 0.5, maxValue: 10.0);
+      wallWidth = getInput(
+        inputs,
+        'wallWidth',
+        defaultValue: 3.0,
+        minValue: 0.5,
+        maxValue: 30.0,
+      );
+      wallHeight = getInput(
+        inputs,
+        'wallHeight',
+        defaultValue: 2.5,
+        minValue: 0.5,
+        maxValue: 10.0,
+      );
       area = wallWidth * wallHeight;
     } else {
       // Manual mode - вычисляем размеры для расчёта профиля
-      area = getInput(inputs, 'area', defaultValue: 15.0, minValue: 1.0, maxValue: 500.0);
+      area = getInput(
+        inputs,
+        'area',
+        defaultValue: 15.0,
+        minValue: 1.0,
+        maxValue: 500.0,
+      );
       final side = math.sqrt(area);
       wallWidth = side * 1.5;
       wallHeight = side / 1.5;
@@ -156,7 +208,8 @@ class CalculatePvcPanelsV2 extends BaseCalculator {
         cornerCount = (perimeter / cornerProfileLength).ceil();
       } else {
         // Стена: угловые профили по высоте × количество углов
-        cornerCount = (wallHeight * standardCornersCount / cornerProfileLength).ceil();
+        cornerCount = (wallHeight * standardCornersCount / cornerProfileLength)
+            .ceil();
       }
     }
 
@@ -170,16 +223,30 @@ class CalculatePvcPanelsV2 extends BaseCalculator {
     }
 
     // Расчёт стоимости
-    final panelPrice = findPrice(priceList, ['pvc_panel', 'пвх_панель', 'panel']);
-    final profilePrice = findPrice(priceList, ['profile', 'профиль', 'pvc_profile']);
+    final panelPrice = findPrice(priceList, [
+      'pvc_panel',
+      'пвх_панель',
+      'panel',
+    ]);
+    final profilePrice = findPrice(priceList, [
+      'profile',
+      'профиль',
+      'pvc_profile',
+    ]);
     final cornerPrice = findPrice(priceList, ['corner', 'угол', 'pvc_corner']);
-    final plinthPrice = findPrice(priceList, ['plinth', 'плинтус', 'pvc_plinth']);
+    final plinthPrice = findPrice(priceList, [
+      'plinth',
+      'плинтус',
+      'pvc_plinth',
+    ]);
 
     final costs = [
       calculateCost(panelsCount.toDouble(), panelPrice?.price),
       if (needProfile) calculateCost(profileLength, profilePrice?.price),
-      if (needCorners) calculateCost(cornerCount.toDouble(), cornerPrice?.price),
-      if (plinthPieces > 0) calculateCost(plinthPieces.toDouble(), plinthPrice?.price),
+      if (needCorners)
+        calculateCost(cornerCount.toDouble(), cornerPrice?.price),
+      if (plinthPieces > 0)
+        calculateCost(plinthPieces.toDouble(), plinthPrice?.price),
     ];
 
     return createResult(

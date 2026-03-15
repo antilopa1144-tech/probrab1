@@ -284,7 +284,7 @@ CanonicalCalculatorContractResult calculateCanonicalAeratedConcrete(
 
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: '\u0413\u0430\u0437\u043e\u0431\u043b\u043e\u043a ${blockLength}\u00d7${blockHeight}\u00d7$blockThickness \u043c\u043c',
+      name: '\u0413\u0430\u0437\u043e\u0431\u043b\u043e\u043a $blockLength\u00d7$blockHeight\u00d7$blockThickness \u043c\u043c',
       quantity: _roundValue(blocksNet, 3),
       unit: '\u0448\u0442',
       withReserve: blocksWithReserve.toDouble(),

@@ -42,8 +42,11 @@ class CalculateGuttersV2 extends BaseCalculator {
     final roofLength = inputs['roofLength'] ?? 0;
     final roofWidth = inputs['roofWidth'] ?? 0;
 
-    if (roofLength <= 0 || roofWidth <= 0) {
-      return 'Размеры крыши должны быть больше нуля';
+    if (roofLength <= 0) {
+      return positiveValueMessage('roofLength');
+    }
+    if (roofWidth <= 0) {
+      return positiveValueMessage('roofWidth');
     }
 
     return null;
@@ -55,11 +58,43 @@ class CalculateGuttersV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final roofLength = getInput(inputs, 'roofLength', defaultValue: 10.0, minValue: 1.0, maxValue: 100.0);
-    final roofWidth = getInput(inputs, 'roofWidth', defaultValue: 8.0, minValue: 1.0, maxValue: 50.0);
-    final wallHeight = getInput(inputs, 'wallHeight', defaultValue: 3.0, minValue: 2.0, maxValue: 15.0);
-    final downpipesCount = getIntInput(inputs, 'downpipesCount', defaultValue: 4, minValue: 1, maxValue: 20);
-    final needHeating = getIntInput(inputs, 'needHeating', defaultValue: 0, minValue: 0, maxValue: 1) == 1;
+    final roofLength = getInput(
+      inputs,
+      'roofLength',
+      defaultValue: 10.0,
+      minValue: 1.0,
+      maxValue: 100.0,
+    );
+    final roofWidth = getInput(
+      inputs,
+      'roofWidth',
+      defaultValue: 8.0,
+      minValue: 1.0,
+      maxValue: 50.0,
+    );
+    final wallHeight = getInput(
+      inputs,
+      'wallHeight',
+      defaultValue: 3.0,
+      minValue: 2.0,
+      maxValue: 15.0,
+    );
+    final downpipesCount = getIntInput(
+      inputs,
+      'downpipesCount',
+      defaultValue: 4,
+      minValue: 1,
+      maxValue: 20,
+    );
+    final needHeating =
+        getIntInput(
+          inputs,
+          'needHeating',
+          defaultValue: 0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
 
     // Периметр крыши
     final perimeter = 2 * (roofLength + roofWidth);
@@ -68,7 +103,8 @@ class CalculateGuttersV2 extends BaseCalculator {
     final gutterLength = perimeter * (1 + gutterWastePercent / 100);
 
     // Водосточные трубы
-    final downpipeLength = downpipesCount * wallHeight * (1 + downpipeWastePercent / 100);
+    final downpipeLength =
+        downpipesCount * wallHeight * (1 + downpipeWastePercent / 100);
 
     // Воронки: по количеству водосточных труб
     final funnelsCount = downpipesCount;
@@ -77,7 +113,10 @@ class CalculateGuttersV2 extends BaseCalculator {
     final bracketsCount = (perimeter / bracketSpacing).ceil();
 
     // Хомуты для труб: через 1 м + верх и низ
-    final downpipeBrackets = downpipesCount * ((wallHeight / downpipeBracketSpacing).ceil() + extraBracketsPerDownpipe);
+    final downpipeBrackets =
+        downpipesCount *
+        ((wallHeight / downpipeBracketSpacing).ceil() +
+            extraBracketsPerDownpipe);
 
     // Колена: 2 на каждую трубу
     final elbowsCount = downpipesCount * elbowsPerDownpipe;
@@ -91,11 +130,29 @@ class CalculateGuttersV2 extends BaseCalculator {
     // Расчёт стоимости
     final gutterPrice = findPrice(priceList, ['gutter', 'желоб', 'gutters']);
     final downpipePrice = findPrice(priceList, ['downpipe', 'труба', 'pipe']);
-    final cornerPrice = findPrice(priceList, ['corner', 'угол', 'gutter_corner']);
-    final funnelPrice = findPrice(priceList, ['funnel', 'воронка', 'gutter_funnel']);
-    final bracketPrice = findPrice(priceList, ['bracket', 'кронштейн', 'gutter_bracket']);
-    final elbowPrice = findPrice(priceList, ['elbow', 'колено', 'gutter_elbow']);
-    final heatingPrice = needHeating ? findPrice(priceList, ['heating', 'обогрев', 'gutter_heating']) : null;
+    final cornerPrice = findPrice(priceList, [
+      'corner',
+      'угол',
+      'gutter_corner',
+    ]);
+    final funnelPrice = findPrice(priceList, [
+      'funnel',
+      'воронка',
+      'gutter_funnel',
+    ]);
+    final bracketPrice = findPrice(priceList, [
+      'bracket',
+      'кронштейн',
+      'gutter_bracket',
+    ]);
+    final elbowPrice = findPrice(priceList, [
+      'elbow',
+      'колено',
+      'gutter_elbow',
+    ]);
+    final heatingPrice = needHeating
+        ? findPrice(priceList, ['heating', 'обогрев', 'gutter_heating'])
+        : null;
 
     final costs = [
       calculateCost(gutterLength, gutterPrice?.price),

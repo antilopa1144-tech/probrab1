@@ -20,7 +20,7 @@ class CalculateVentilation extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -31,8 +31,20 @@ class CalculateVentilation extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final rooms = getIntInput(inputs, 'rooms', defaultValue: 1, minValue: 1, maxValue: 20);
-    final ceilingHeight = getInput(inputs, 'ceilingHeight', defaultValue: 2.5, minValue: 2.0, maxValue: 4.0);
+    final rooms = getIntInput(
+      inputs,
+      'rooms',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 20,
+    );
+    final ceilingHeight = getInput(
+      inputs,
+      'ceilingHeight',
+      defaultValue: 2.5,
+      minValue: 2.0,
+      maxValue: 4.0,
+    );
 
     // Объём помещения
     final volume = area * ceilingHeight;
@@ -56,17 +68,43 @@ class CalculateVentilation extends BaseCalculator {
     final diffusersNeeded = rooms;
 
     // Вент.установка с рекуперацией (опционально): 1 шт
-    final recuperatorNeeded = getIntInput(inputs, 'recuperator', defaultValue: 0, minValue: 0, maxValue: 1);
+    final recuperatorNeeded = getIntInput(
+      inputs,
+      'recuperator',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
 
     // Фильтры: комплект
     final filtersNeeded = recuperatorNeeded > 0 ? 2 : fansNeeded;
 
     // Расчёт стоимости
-    final ductPrice = findPrice(priceList, ['ventilation_duct', 'duct', 'air_duct']);
-    final grillePrice = findPrice(priceList, ['ventilation_grille', 'grille', 'vent_cover']);
-    final fanPrice = findPrice(priceList, ['ventilation_fan', 'fan', 'exhaust_fan']);
-    final diffuserPrice = findPrice(priceList, ['diffuser', 'anemostat', 'air_diffuser']);
-    final recuperatorPrice = findPrice(priceList, ['recuperator', 'hrv', 'ventilation_unit']);
+    final ductPrice = findPrice(priceList, [
+      'ventilation_duct',
+      'duct',
+      'air_duct',
+    ]);
+    final grillePrice = findPrice(priceList, [
+      'ventilation_grille',
+      'grille',
+      'vent_cover',
+    ]);
+    final fanPrice = findPrice(priceList, [
+      'ventilation_fan',
+      'fan',
+      'exhaust_fan',
+    ]);
+    final diffuserPrice = findPrice(priceList, [
+      'diffuser',
+      'anemostat',
+      'air_diffuser',
+    ]);
+    final recuperatorPrice = findPrice(priceList, [
+      'recuperator',
+      'hrv',
+      'ventilation_unit',
+    ]);
     final filterPrice = findPrice(priceList, ['filter', 'air_filter']);
 
     final costs = [
@@ -74,7 +112,8 @@ class CalculateVentilation extends BaseCalculator {
       calculateCost(grillesNeeded.toDouble(), grillePrice?.price),
       calculateCost(fansNeeded.toDouble(), fanPrice?.price),
       calculateCost(diffusersNeeded.toDouble(), diffuserPrice?.price),
-      if (recuperatorNeeded > 0) calculateCost(recuperatorNeeded.toDouble(), recuperatorPrice?.price),
+      if (recuperatorNeeded > 0)
+        calculateCost(recuperatorNeeded.toDouble(), recuperatorPrice?.price),
       calculateCost(filtersNeeded.toDouble(), filterPrice?.price),
     ];
 
@@ -89,7 +128,8 @@ class CalculateVentilation extends BaseCalculator {
         'fansNeeded': fansNeeded.toDouble(),
         'ductLength': ductLength,
         'diffusersNeeded': diffusersNeeded.toDouble(),
-        if (recuperatorNeeded > 0) 'recuperatorNeeded': recuperatorNeeded.toDouble(),
+        if (recuperatorNeeded > 0)
+          'recuperatorNeeded': recuperatorNeeded.toDouble(),
         'filtersNeeded': filtersNeeded.toDouble(),
         'rooms': rooms.toDouble(),
         'ceilingHeight': ceilingHeight,

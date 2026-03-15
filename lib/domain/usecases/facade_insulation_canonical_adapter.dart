@@ -205,7 +205,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeInsulation(
     final packageSize = spec.packagingRules.packageSize;
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
     final purchaseQuantity = _roundValue(packageCount * packageSize, 6);
-    final packageLabel = 'insulation-plate';
+    const packageLabel = 'insulation-plate';
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: purchaseQuantity,

@@ -6,33 +6,37 @@ import './base_calculator.dart';
 
 /// Калькулятор ленточного фундамента.
 ///
-/// Нормативы:
-/// - СП 63.13330.2018 "Бетонные и железобетонные конструкции"
-/// - СП 70.13330.2012 "Несущие и ограждающие конструкции"
+/// Поддерживает legacy perimeter/area path и screen-level contract:
+/// - houseLength / houseWidth
+/// - foundationType: 0=monolithic, 1=prefab, 2=shallow, 3=deep
+/// - needWaterproof / needInsulation
+/// - hasInternalWalls / internalWallsLength
 ///
-/// Поля:
-/// - area: площадь контура (м²), используется для оценки периметра
-/// - width: ширина ленты (м)
-/// - height: высота ленты (м)
+/// Legacy поля сохранены:
+/// - area / perimeter / concreteVolume / rebarWeight / formworkArea
+/// - waterproofingArea / sandVolume / gravelVolume / cementBags
 class CalculateStripFoundation extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
+    final houseLength = inputs['houseLength'] ?? 0;
+    final houseWidth = inputs['houseWidth'] ?? 0;
     final area = inputs['area'] ?? 0;
     final perimeter = inputs['perimeter'] ?? 0;
     final width = inputs['width'] ?? 0;
     final height = inputs['height'] ?? 0;
 
-    if (area <= 0 && perimeter <= 0) {
-      return 'Площадь или периметр должны быть больше нуля';
+    if ((houseLength <= 0 || houseWidth <= 0) && area <= 0 && perimeter <= 0) {
+      return houseDimensionsAreaOrPerimeterRequiredMessage();
     }
-    if (area > 10000 || perimeter > 10000) {
-      return 'Площадь/периметр слишком большие';
+    if (width <= 0 || width > 3) {
+      return rangeMessage('width', 0.1, 3, unit: 'м');
     }
-    if (width <= 0 || width > 3) return 'Ширина ленты должна быть от 0.1 до 3 м';
-    if (height <= 0 || height > 3) return 'Высота ленты должна быть от 0.1 до 3 м';
+    if (height <= 0 || height > 3) {
+      return rangeMessage('height', 0.1, 3, unit: 'м');
+    }
 
     return null;
   }
@@ -42,101 +46,165 @@ class CalculateStripFoundation extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    // Получаем валидированные входные данные
-    final inputPerimeter = inputs['perimeter'] ?? 0.0;
-    final perimeter = inputPerimeter > 0
-        ? getInput(inputs, 'perimeter', minValue: 0.1, maxValue: 10000.0)
-        : estimatePerimeter(getInput(inputs, 'area', minValue: 0.1, maxValue: 10000.0));
+    final houseLengthInput = inputs['houseLength'] ?? 0.0;
+    final houseWidthInput = inputs['houseWidth'] ?? 0.0;
+    final hasHouseDimensions = houseLengthInput > 0 && houseWidthInput > 0;
 
-    // Если площадь не задана, оцениваем её из периметра (квадратная аппроксимация)
+    final houseLength = hasHouseDimensions
+        ? getInput(inputs, 'houseLength', minValue: 1.0, maxValue: 100.0)
+        : 0.0;
+    final houseWidth = hasHouseDimensions
+        ? getInput(inputs, 'houseWidth', minValue: 1.0, maxValue: 100.0)
+        : 0.0;
+
+    final inputPerimeter = inputs['perimeter'] ?? 0.0;
+    final outerPerimeter = hasHouseDimensions
+        ? 2 * (houseLength + houseWidth)
+        : inputPerimeter > 0
+        ? getInput(inputs, 'perimeter', minValue: 0.1, maxValue: 10000.0)
+        : estimatePerimeter(
+            getInput(inputs, 'area', minValue: 0.1, maxValue: 10000.0),
+          );
+
+    final hasInternalWalls =
+        getIntInput(inputs, 'hasInternalWalls', defaultValue: 0) != 0;
+    final internalWallsLength = hasInternalWalls
+        ? getInput(
+            inputs,
+            'internalWallsLength',
+            defaultValue: 0.0,
+            minValue: 0.0,
+            maxValue: 500.0,
+          )
+        : 0.0;
+    final perimeter = outerPerimeter + internalWallsLength;
+
     final inputArea = inputs['area'] ?? 0.0;
-    final area = inputArea > 0
+    final area = hasHouseDimensions
+        ? houseLength * houseWidth
+        : inputArea > 0
         ? getInput(inputs, 'area', minValue: 0.1, maxValue: 10000.0)
-        : pow(perimeter / 4, 2).toDouble();
+        : pow(outerPerimeter / 4, 2).toDouble();
+
     final width = getInput(
       inputs,
       'width',
-      defaultValue: 0.1,
+      defaultValue: 0.4,
       minValue: 0.1,
       maxValue: 3.0,
     );
     final height = getInput(
       inputs,
       'height',
-      defaultValue: 0.1,
+      defaultValue: 0.8,
       minValue: 0.1,
       maxValue: 3.0,
     );
+    final foundationType = getIntInput(
+      inputs,
+      'foundationType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 3,
+    );
+    final needWaterproof =
+        getIntInput(inputs, 'needWaterproof', defaultValue: 1) != 0;
+    final needInsulation =
+        getIntInput(inputs, 'needInsulation', defaultValue: 0) != 0;
 
-    // Чистый объём бетона для фундамента (без запаса — для расчёта компонентов)
-    final rawConcreteVolume = perimeter * width * height;
-    // Объём бетона с запасом 5% на разлив (для заказа)
-    const concreteWastePercent = 5.0;
-    final concreteVolume = rawConcreteVolume * (1 + concreteWastePercent / 100);
+    final stripVolume = perimeter * width * height;
 
-    // Армирование (СП 63.13330.2018):
-    // - Продольная арматура: 4-6 стержней диаметром 12-14 мм
-    // - Поперечные хомуты: диаметр 8-10 мм, шаг 30-40 см
-    // Общий вес арматуры: ~80 кг на м³ бетона (норма 50-100 кг/м³ для типового ленточного)
-    final rebarWeight = rawConcreteVolume * 80;
+    double concreteVolume = stripVolume * 1.05;
+    double rebarWeight = 0.0;
+    double formworkArea = 0.0;
+    int fbsBlocksCount = 0;
 
-    // Количество стержней продольной арматуры (4-6 шт, по 2-3 сверху и снизу)
-    const longitudinalBars = 6;
+    if (foundationType == 1) {
+      const fbsVolume = 2.4 * 0.6 * 0.58;
+      fbsBlocksCount = (stripVolume / fbsVolume).ceil();
+      concreteVolume = fbsBlocksCount * 0.02;
+    } else {
+      rebarWeight = stripVolume * 80;
+      formworkArea = perimeter * height * 2;
+    }
+
+    final waterproofingArea = needWaterproof
+        ? perimeter * (width + height * 2) * 1.1
+        : 0.0;
+    final insulationArea = needInsulation ? outerPerimeter * height * 1.1 : 0.0;
+
+    final cushionArea = perimeter * (width + 0.2);
+    final sandVolume = cushionArea * 0.15;
+    final gravelVolume = cushionArea * 0.10;
+    final cementBags = (stripVolume * 6.6).ceil();
+    final longitudinalBars = foundationType == 1 ? 0 : 6;
     final longitudinalLength = perimeter * longitudinalBars;
 
-    // Опалубка: площадь боковых поверхностей (с запасом 10% на раскрой)
-    const formworkWastePercent = 10.0;
-    final formworkArea = perimeter * height * 2 * (1 + formworkWastePercent / 100);
-
-    // Гидроизоляция: площадь дна и боковых стенок (с запасом 15% на перекат и стыки)
-    const waterproofingWastePercent = 15.0;
-    final waterproofingArea = ((perimeter * width) + (perimeter * height * 2)) * (1 + waterproofingWastePercent / 100);
-
-    // Песчаная подушка (толщина 15-20 см, запас 10%)
-    const sandCushionThickness = 0.15; // м
-    const sandWastePercent = 10.0;
-    final sandVolume = perimeter * width * sandCushionThickness * (1 + sandWastePercent / 100);
-
-    // Щебень для подушки (10-15 см поверх песка, запас 10%)
-    const gravelThickness = 0.1; // м
-    const gravelWastePercent = 10.0;
-    final gravelVolume = perimeter * width * gravelThickness * (1 + gravelWastePercent / 100);
-
-    // Если делать бетон самостоятельно:
-    // Для М300: цемент М400 — 330 кг/м³ = 6.6 мешков по 50 кг на 1 м³
-    // Используем чистый объём (запас 5% — это на разлив при заливке, а не на компоненты)
-    final cementBags = (rawConcreteVolume * 6.6).ceil();
-
-    // Расчёт стоимости
-    final concretePrice = findPrice(priceList, ['concrete_m300', 'concrete_m250', 'concrete']);
-    final rebarPrice = findPrice(priceList, ['rebar', 'rebar_12mm', 'reinforcement']);
+    final concretePrice = findPrice(priceList, [
+      'concrete_m300',
+      'concrete_m250',
+      'concrete',
+    ]);
+    final rebarPrice = findPrice(priceList, [
+      'rebar',
+      'rebar_12mm',
+      'reinforcement',
+    ]);
     final formworkPrice = findPrice(priceList, ['formwork', 'plywood']);
-    final waterproofingPrice = findPrice(priceList, ['waterproofing', 'film_pe', 'bitumen']);
+    final waterproofingPrice = findPrice(priceList, [
+      'waterproofing',
+      'film_pe',
+      'bitumen',
+    ]);
     final sandPrice = findPrice(priceList, ['sand', 'sand_construction']);
     final gravelPrice = findPrice(priceList, ['gravel', 'crushed_stone']);
+    final fbsPrice = findPrice(priceList, [
+      'fbs',
+      'fbs_24_6_6',
+      'foundation_block',
+    ]);
 
-    final costs = [
-      calculateCost(concreteVolume, concretePrice?.price),
-      calculateCost(rebarWeight, rebarPrice?.price),
-      calculateCost(formworkArea, formworkPrice?.price),
-      calculateCost(waterproofingArea, waterproofingPrice?.price),
-      calculateCost(sandVolume, sandPrice?.price),
-      calculateCost(gravelVolume, gravelPrice?.price),
-    ];
+    final costs = foundationType == 1
+        ? [
+            calculateCost(fbsBlocksCount.toDouble(), fbsPrice?.price),
+            calculateCost(concreteVolume, concretePrice?.price),
+            calculateCost(sandVolume, sandPrice?.price),
+            calculateCost(gravelVolume, gravelPrice?.price),
+            calculateCost(waterproofingArea, waterproofingPrice?.price),
+          ]
+        : [
+            calculateCost(concreteVolume, concretePrice?.price),
+            calculateCost(rebarWeight, rebarPrice?.price),
+            calculateCost(formworkArea, formworkPrice?.price),
+            calculateCost(waterproofingArea, waterproofingPrice?.price),
+            calculateCost(sandVolume, sandPrice?.price),
+            calculateCost(gravelVolume, gravelPrice?.price),
+          ];
 
     return createResult(
       values: {
+        'foundationType': foundationType.toDouble(),
         'area': area,
         'perimeter': perimeter,
+        'outerPerimeter': outerPerimeter,
+        'houseLength': houseLength,
+        'houseWidth': houseWidth,
+        'hasInternalWalls': hasInternalWalls ? 1.0 : 0.0,
+        'internalWallsLength': internalWallsLength,
+        'width': width,
+        'height': height,
+        'stripVolume': stripVolume,
         'concreteVolume': concreteVolume,
         'rebarWeight': rebarWeight,
         'longitudinalBars': longitudinalBars.toDouble(),
         'longitudinalLength': longitudinalLength,
         'formworkArea': formworkArea,
         'waterproofingArea': waterproofingArea,
+        'insulationArea': insulationArea,
         'sandVolume': sandVolume,
         'gravelVolume': gravelVolume,
         'cementBags': cementBags.toDouble(),
+        'fbsBlocksCount': fbsBlocksCount.toDouble(),
       },
       totalPrice: sumCosts(costs),
     );

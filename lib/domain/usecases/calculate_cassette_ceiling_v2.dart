@@ -46,14 +46,14 @@ class CalculateCassetteCeilingV2 extends BaseCalculator {
       // Manual mode
       final area = inputs['area'] ?? 0;
       if (area <= 0) {
-        return 'Площадь должна быть больше нуля';
+        return positiveValueMessage('area');
       }
     } else {
       // Room mode
       final width = inputs['roomWidth'] ?? 0;
       final length = inputs['roomLength'] ?? 0;
       if (width <= 0 || length <= 0) {
-        return 'Размеры комнаты должны быть больше нуля';
+        return areaOrRoomDimensionsRequiredMessage();
       }
     }
 
@@ -66,9 +66,27 @@ class CalculateCassetteCeilingV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 1, minValue: 0, maxValue: 1);
-    final ceilingType = getIntInput(inputs, 'ceilingType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final cassetteSize = getIntInput(inputs, 'cassetteSize', defaultValue: 0, minValue: 0, maxValue: 2);
+    final inputMode = getIntInput(
+      inputs,
+      'inputMode',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final ceilingType = getIntInput(
+      inputs,
+      'ceilingType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final cassetteSize = getIntInput(
+      inputs,
+      'cassetteSize',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
 
     // Площадь и размеры
     double area;
@@ -77,12 +95,30 @@ class CalculateCassetteCeilingV2 extends BaseCalculator {
 
     if (inputMode == 1) {
       // Room mode
-      roomWidth = getInput(inputs, 'roomWidth', defaultValue: 4.0, minValue: 0.5, maxValue: 30.0);
-      roomLength = getInput(inputs, 'roomLength', defaultValue: 5.0, minValue: 0.5, maxValue: 30.0);
+      roomWidth = getInput(
+        inputs,
+        'roomWidth',
+        defaultValue: 4.0,
+        minValue: 0.5,
+        maxValue: 30.0,
+      );
+      roomLength = getInput(
+        inputs,
+        'roomLength',
+        defaultValue: 5.0,
+        minValue: 0.5,
+        maxValue: 30.0,
+      );
       area = roomWidth * roomLength;
     } else {
       // Manual mode - вычисляем "квадратные" размеры для расчёта профилей
-      area = getInput(inputs, 'area', defaultValue: 20.0, minValue: 1.0, maxValue: 500.0);
+      area = getInput(
+        inputs,
+        'area',
+        defaultValue: 20.0,
+        minValue: 1.0,
+        maxValue: 500.0,
+      );
       final side = math.sqrt(area);
       roomWidth = side;
       roomLength = side;
@@ -95,7 +131,8 @@ class CalculateCassetteCeilingV2 extends BaseCalculator {
     final cassetteArea = cassetteAreas[cassetteSize];
 
     // Количество кассет с запасом
-    final cassettesCount = (area * (1 + cassetteWastePercent / 100) / cassetteArea).ceil();
+    final cassettesCount =
+        (area * (1 + cassetteWastePercent / 100) / cassetteArea).ceil();
 
     // Главный профиль: 2.0 м.п. на м² (согласно СНиП)
     final mainProfileTotalLength = area * mainProfilePerM2;
@@ -110,11 +147,31 @@ class CalculateCassetteCeilingV2 extends BaseCalculator {
     final hangersCount = (area * hangersPerM2).ceil();
 
     // Расчёт стоимости
-    final cassettePrice = findPrice(priceList, ['cassette', 'кассета', 'ceiling_cassette']);
-    final mainProfilePrice = findPrice(priceList, ['main_profile', 'основной_профиль', 'cassette_main']);
-    final crossProfilePrice = findPrice(priceList, ['cross_profile', 'поперечный_профиль', 'cassette_cross']);
-    final wallProfilePrice = findPrice(priceList, ['wall_profile', 'пристенный_профиль', 'cassette_wall']);
-    final hangerPrice = findPrice(priceList, ['hanger', 'подвес', 'cassette_hanger']);
+    final cassettePrice = findPrice(priceList, [
+      'cassette',
+      'кассета',
+      'ceiling_cassette',
+    ]);
+    final mainProfilePrice = findPrice(priceList, [
+      'main_profile',
+      'основной_профиль',
+      'cassette_main',
+    ]);
+    final crossProfilePrice = findPrice(priceList, [
+      'cross_profile',
+      'поперечный_профиль',
+      'cassette_cross',
+    ]);
+    final wallProfilePrice = findPrice(priceList, [
+      'wall_profile',
+      'пристенный_профиль',
+      'cassette_wall',
+    ]);
+    final hangerPrice = findPrice(priceList, [
+      'hanger',
+      'подвес',
+      'cassette_hanger',
+    ]);
 
     final costs = [
       calculateCost(cassettesCount.toDouble(), cassettePrice?.price),

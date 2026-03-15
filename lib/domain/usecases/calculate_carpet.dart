@@ -20,7 +20,7 @@ class CalculateCarpet extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -31,16 +31,32 @@ class CalculateCarpet extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final rollWidth = getInput(inputs, 'rollWidth', defaultValue: 4.0, minValue: 2.0, maxValue: 5.0);
-    final rollLength = getInput(inputs, 'rollLength', defaultValue: 25.0, minValue: 10.0, maxValue: 50.0);
-    
+    final rollWidth = getInput(
+      inputs,
+      'rollWidth',
+      defaultValue: 4.0,
+      minValue: 2.0,
+      maxValue: 5.0,
+    );
+    final rollLength = getInput(
+      inputs,
+      'rollLength',
+      defaultValue: 25.0,
+      minValue: 10.0,
+      maxValue: 50.0,
+    );
+
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
     // Площадь рулона
     final rollArea = rollWidth * rollLength;
 
     // Количество рулонов с запасом 10%
-    final rollsNeeded = calculateUnitsNeeded(area, rollArea, marginPercent: 10.0);
+    final rollsNeeded = calculateUnitsNeeded(
+      area,
+      rollArea,
+      marginPercent: 10.0,
+    );
 
     // Плинтус: периметр + 5%
     final plinthLength = addMargin(perimeter, 5.0);
@@ -58,16 +74,45 @@ class CalculateCarpet extends BaseCalculator {
     final gripperLength = perimeter;
 
     // Стыковочные планки для порогов: обычно 1-2 шт
-    final thresholdsNeeded = getIntInput(inputs, 'thresholds', defaultValue: 1, minValue: 0, maxValue: 10);
+    final thresholdsNeeded = getIntInput(
+      inputs,
+      'thresholds',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 10,
+    );
 
     // Расчёт стоимости
-    final carpetPrice = findPrice(priceList, ['carpet', 'carpet_roll', 'carpeting']);
-    final plinthPrice = findPrice(priceList, ['plinth', 'plinth_carpet', 'baseboard']);
-    final gluePrice = findPrice(priceList, ['glue_carpet', 'glue', 'carpet_adhesive']);
-    final tapePrice = findPrice(priceList, ['tape_double', 'double_sided_tape', 'carpet_tape']);
-    final underlayPrice = findPrice(priceList, ['underlay', 'underlay_carpet', 'carpet_padding']);
+    final carpetPrice = findPrice(priceList, [
+      'carpet',
+      'carpet_roll',
+      'carpeting',
+    ]);
+    final plinthPrice = findPrice(priceList, [
+      'plinth',
+      'plinth_carpet',
+      'baseboard',
+    ]);
+    final gluePrice = findPrice(priceList, [
+      'glue_carpet',
+      'glue',
+      'carpet_adhesive',
+    ]);
+    final tapePrice = findPrice(priceList, [
+      'tape_double',
+      'double_sided_tape',
+      'carpet_tape',
+    ]);
+    final underlayPrice = findPrice(priceList, [
+      'underlay',
+      'underlay_carpet',
+      'carpet_padding',
+    ]);
     final gripperPrice = findPrice(priceList, ['gripper', 'tack_strip']);
-    final thresholdPrice = findPrice(priceList, ['threshold', 'transition_strip']);
+    final thresholdPrice = findPrice(priceList, [
+      'threshold',
+      'transition_strip',
+    ]);
 
     final costs = [
       calculateCost(rollsNeeded.toDouble(), carpetPrice?.price),

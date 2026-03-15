@@ -6,12 +6,12 @@ import './base_calculator.dart';
 
 /// Тип кровельного материала
 enum RoofingType {
-  metalTile,      // Металлочерепица
-  softRoofing,    // Мягкая кровля (битумная черепица)
-  profiledSheet,  // Профнастил
-  ondulin,        // Ондулин
-  slate,          // Шифер
-  ceramicTile,    // Керамическая черепица
+  metalTile, // Металлочерепица
+  softRoofing, // Мягкая кровля (битумная черепица)
+  profiledSheet, // Профнастил
+  ondulin, // Ондулин
+  slate, // Шифер
+  ceramicTile, // Керамическая черепица
 }
 
 /// Единый калькулятор кровли.
@@ -38,13 +38,57 @@ enum RoofingType {
 /// - sheetWidth: ширина листа (м), для листовых материалов
 /// - sheetLength: длина листа (м), для листовых материалов
 class CalculateUnifiedRoofing extends BaseCalculator {
+  Map<String, double> _normalizeInputs(Map<String, double> inputs) {
+    if (!_hasScreenInputs(inputs)) return inputs;
+
+    final normalized = Map<String, double>.from(inputs);
+    final inputMode = getIntInput(
+      normalized,
+      'inputMode',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
+    if (inputMode == 1) {
+      final length = getInput(
+        normalized,
+        'length',
+        defaultValue: 5.0,
+        minValue: 1.0,
+        maxValue: 100.0,
+      );
+      final width = getInput(
+        normalized,
+        'width',
+        defaultValue: 4.0,
+        minValue: 1.0,
+        maxValue: 100.0,
+      );
+      normalized['area'] = length * width;
+      normalized['perimeter'] = (length + width) * 2;
+      if ((normalized['ridgeLength'] ?? 0) <= 0) {
+        normalized['ridgeLength'] = length;
+      }
+    }
+    normalized['inputMode'] = inputMode.toDouble();
+    return normalized;
+  }
+
+  bool _hasScreenInputs(Map<String, double> inputs) {
+    return inputs.containsKey('inputMode') ||
+        inputs.containsKey('length') ||
+        inputs.containsKey('width');
+  }
+
   @override
   String? validateInputs(Map<String, double> inputs) {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    final hasDimensions =
+        (inputs['length'] ?? 0) > 0 && (inputs['width'] ?? 0) > 0;
+    if (area <= 0 && !hasDimensions) return areaOrDimensionsRequiredMessage();
 
     return null;
   }
@@ -54,8 +98,9 @@ class CalculateUnifiedRoofing extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
+    final normalizedInputs = _normalizeInputs(inputs);
     final roofingTypeIndex = getIntInput(
-      inputs,
+      normalizedInputs,
       'roofingType',
       defaultValue: 0,
       minValue: 0,
@@ -64,12 +109,21 @@ class CalculateUnifiedRoofing extends BaseCalculator {
     final roofingType = RoofingType.values[roofingTypeIndex];
 
     return switch (roofingType) {
-      RoofingType.metalTile => _calculateMetalTile(inputs, priceList),
-      RoofingType.softRoofing => _calculateSoftRoofing(inputs, priceList),
-      RoofingType.profiledSheet => _calculateProfiledSheet(inputs, priceList),
-      RoofingType.ondulin => _calculateOndulin(inputs, priceList),
-      RoofingType.slate => _calculateSlate(inputs, priceList),
-      RoofingType.ceramicTile => _calculateCeramicTile(inputs, priceList),
+      RoofingType.metalTile => _calculateMetalTile(normalizedInputs, priceList),
+      RoofingType.softRoofing => _calculateSoftRoofing(
+        normalizedInputs,
+        priceList,
+      ),
+      RoofingType.profiledSheet => _calculateProfiledSheet(
+        normalizedInputs,
+        priceList,
+      ),
+      RoofingType.ondulin => _calculateOndulin(normalizedInputs, priceList),
+      RoofingType.slate => _calculateSlate(normalizedInputs, priceList),
+      RoofingType.ceramicTile => _calculateCeramicTile(
+        normalizedInputs,
+        priceList,
+      ),
     };
   }
 
@@ -79,16 +133,38 @@ class CalculateUnifiedRoofing extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final slope = getInput(inputs, 'slope', defaultValue: 30.0, minValue: 5.0, maxValue: 60.0);
-    final sheetWidth = getInput(inputs, 'sheetWidth', defaultValue: 1.18, minValue: 0.5, maxValue: 2.0);
-    final sheetLength = getInput(inputs, 'sheetLength', defaultValue: 2.5, minValue: 1.0, maxValue: 8.0);
+    final slope = getInput(
+      inputs,
+      'slope',
+      defaultValue: 30.0,
+      minValue: 5.0,
+      maxValue: 60.0,
+    );
+    final sheetWidth = getInput(
+      inputs,
+      'sheetWidth',
+      defaultValue: 1.18,
+      minValue: 0.5,
+      maxValue: 2.0,
+    );
+    final sheetLength = getInput(
+      inputs,
+      'sheetLength',
+      defaultValue: 2.5,
+      minValue: 1.0,
+      maxValue: 8.0,
+    );
 
     final slopeFactor = 1 / cos(slope * pi / 180);
     final realArea = area * slopeFactor;
 
     final effectiveWidth = sheetWidth * 0.92;
     final sheetArea = effectiveWidth * sheetLength;
-    final sheetsNeeded = calculateUnitsNeeded(realArea, sheetArea, marginPercent: 10.0);
+    final sheetsNeeded = calculateUnitsNeeded(
+      realArea,
+      sheetArea,
+      marginPercent: 10.0,
+    );
 
     final ridgeLength = inputs['ridgeLength'] ?? sqrt(area);
     final valleyLength = inputs['valleyLength'] ?? 0.0;
@@ -101,11 +177,18 @@ class CalculateUnifiedRoofing extends BaseCalculator {
     final battensLength = realArea / 0.35 * 1.05;
     final counterBattensLength = realArea / (sheetWidth / slopeFactor) * 1.05;
 
-    final sheetPrice = findPrice(priceList, ['metal_tile', 'roofing_metal', 'metal_roof']);
+    final sheetPrice = findPrice(priceList, [
+      'metal_tile',
+      'roofing_metal',
+      'metal_roof',
+    ]);
     final ridgePrice = findPrice(priceList, ['ridge', 'ridge_metal']);
     final valleyPrice = findPrice(priceList, ['valley', 'valley_metal']);
     final snowGuardPrice = findPrice(priceList, ['snow_guard', 'snow_barrier']);
-    final waterproofingPrice = findPrice(priceList, ['waterproofing_roof', 'roof_membrane']);
+    final waterproofingPrice = findPrice(priceList, [
+      'waterproofing_roof',
+      'roof_membrane',
+    ]);
     final battensPrice = findPrice(priceList, ['battens', 'roofing_battens']);
 
     final costs = [
@@ -121,6 +204,7 @@ class CalculateUnifiedRoofing extends BaseCalculator {
       values: {
         'roofingType': 0,
         'area': area,
+        'perimeter': perimeter,
         'realArea': realArea,
         'sheetsNeeded': sheetsNeeded.toDouble(),
         'ridgeLength': ridgeLength,
@@ -143,7 +227,13 @@ class CalculateUnifiedRoofing extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final slope = getInput(inputs, 'slope', defaultValue: 30.0, minValue: 12.0, maxValue: 60.0);
+    final slope = getInput(
+      inputs,
+      'slope',
+      defaultValue: 30.0,
+      minValue: 12.0,
+      maxValue: 60.0,
+    );
 
     final ridgeLength = inputs['ridgeLength'] ?? sqrt(area);
     final perimeter = _getPerimeter(inputs, area);
@@ -153,7 +243,11 @@ class CalculateUnifiedRoofing extends BaseCalculator {
     final realArea = area * slopeFactor;
 
     const packArea = 3.0;
-    final packsNeeded = calculateUnitsNeeded(realArea, packArea, marginPercent: 10.0);
+    final packsNeeded = calculateUnitsNeeded(
+      realArea,
+      packArea,
+      marginPercent: 10.0,
+    );
     final underlaymentArea = addMargin(realArea, 10.0);
     final ridgeStripLength = ridgeLength + perimeter;
     final valleyCarpetLength = addMargin(valleyLength, 10.0);
@@ -163,8 +257,15 @@ class CalculateUnifiedRoofing extends BaseCalculator {
     final dripEdgeLength = perimeter;
     final ventilationsNeeded = ceilToInt(realArea / 55);
 
-    final roofingPrice = findPrice(priceList, ['soft_roofing', 'bitumen_tile', 'shingles']);
-    final underlaymentPrice = findPrice(priceList, ['underlayment_roof', 'roof_underlayment']);
+    final roofingPrice = findPrice(priceList, [
+      'soft_roofing',
+      'bitumen_tile',
+      'shingles',
+    ]);
+    final underlaymentPrice = findPrice(priceList, [
+      'underlayment_roof',
+      'roof_underlayment',
+    ]);
     final ridgeStripPrice = findPrice(priceList, ['ridge_strip', 'ridge_soft']);
     final valleyPrice = findPrice(priceList, ['valley_soft', 'valley_carpet']);
     final masticPrice = findPrice(priceList, ['mastic_roof', 'mastic']);
@@ -175,7 +276,8 @@ class CalculateUnifiedRoofing extends BaseCalculator {
       calculateCost(packsNeeded.toDouble(), roofingPrice?.price),
       calculateCost(underlaymentArea, underlaymentPrice?.price),
       calculateCost(ridgeStripLength, ridgeStripPrice?.price),
-      if (valleyCarpetLength > 0) calculateCost(valleyCarpetLength, valleyPrice?.price),
+      if (valleyCarpetLength > 0)
+        calculateCost(valleyCarpetLength, valleyPrice?.price),
       calculateCost(masticNeeded, masticPrice?.price),
       calculateCost(deckingArea, deckingPrice?.price),
       calculateCost(dripEdgeLength, dripEdgePrice?.price),
@@ -185,6 +287,7 @@ class CalculateUnifiedRoofing extends BaseCalculator {
       values: {
         'roofingType': 1,
         'area': area,
+        'perimeter': perimeter,
         'realArea': realArea,
         'packsNeeded': packsNeeded.toDouble(),
         'underlaymentArea': underlaymentArea,
@@ -207,26 +310,58 @@ class CalculateUnifiedRoofing extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final slope = getInput(inputs, 'slope', defaultValue: 15.0, minValue: 8.0, maxValue: 45.0);
-    final sheetWidth = getInput(inputs, 'sheetWidth', defaultValue: 1.1, minValue: 0.8, maxValue: 1.5);
-    final sheetLength = getInput(inputs, 'sheetLength', defaultValue: 3.0, minValue: 1.5, maxValue: 12.0);
+    final slope = getInput(
+      inputs,
+      'slope',
+      defaultValue: 15.0,
+      minValue: 8.0,
+      maxValue: 45.0,
+    );
+    final sheetWidth = getInput(
+      inputs,
+      'sheetWidth',
+      defaultValue: 1.1,
+      minValue: 0.8,
+      maxValue: 1.5,
+    );
+    final sheetLength = getInput(
+      inputs,
+      'sheetLength',
+      defaultValue: 3.0,
+      minValue: 1.5,
+      maxValue: 12.0,
+    );
 
     final slopeFactor = 1 / cos(slope * pi / 180);
     final realArea = area * slopeFactor;
 
-    final effectiveWidth = sheetWidth * 0.95; // меньше потерь чем у металлочерепицы
+    final effectiveWidth =
+        sheetWidth * 0.95; // меньше потерь чем у металлочерепицы
     final sheetArea = effectiveWidth * sheetLength;
-    final sheetsNeeded = calculateUnitsNeeded(realArea, sheetArea, marginPercent: 10.0);
+    final sheetsNeeded = calculateUnitsNeeded(
+      realArea,
+      sheetArea,
+      marginPercent: 10.0,
+    );
 
     final ridgeLength = inputs['ridgeLength'] ?? sqrt(area);
+    final perimeter = _getPerimeter(inputs, area);
 
-    final screwsNeeded = realArea * 7; // меньше саморезов чем для металлочерепицы
+    final screwsNeeded =
+        realArea * 7; // меньше саморезов чем для металлочерепицы
     final waterproofingArea = addMargin(realArea, 10.0);
     final battensLength = realArea / 0.5 * 1.05; // шаг обрешетки 500мм
 
-    final sheetPrice = findPrice(priceList, ['profiled_sheet', 'corrugated_sheet', 'профнастил']);
+    final sheetPrice = findPrice(priceList, [
+      'profiled_sheet',
+      'corrugated_sheet',
+      'профнастил',
+    ]);
     final ridgePrice = findPrice(priceList, ['ridge', 'ridge_metal']);
-    final waterproofingPrice = findPrice(priceList, ['waterproofing_roof', 'roof_membrane']);
+    final waterproofingPrice = findPrice(priceList, [
+      'waterproofing_roof',
+      'roof_membrane',
+    ]);
     final battensPrice = findPrice(priceList, ['battens', 'roofing_battens']);
 
     final costs = [
@@ -240,6 +375,7 @@ class CalculateUnifiedRoofing extends BaseCalculator {
       values: {
         'roofingType': 2,
         'area': area,
+        'perimeter': perimeter,
         'realArea': realArea,
         'sheetsNeeded': sheetsNeeded.toDouble(),
         'ridgeLength': ridgeLength,
@@ -258,21 +394,38 @@ class CalculateUnifiedRoofing extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final slope = getInput(inputs, 'slope', defaultValue: 15.0, minValue: 5.0, maxValue: 45.0);
+    final slope = getInput(
+      inputs,
+      'slope',
+      defaultValue: 15.0,
+      minValue: 5.0,
+      maxValue: 45.0,
+    );
 
     final slopeFactor = 1 / cos(slope * pi / 180);
     final realArea = area * slopeFactor;
 
     // Стандартный лист ондулина: 2.0 x 0.95 м, полезная площадь ~1.6 м²
     const sheetArea = 1.6;
-    final sheetsNeeded = calculateUnitsNeeded(realArea, sheetArea, marginPercent: 15.0);
+    final sheetsNeeded = calculateUnitsNeeded(
+      realArea,
+      sheetArea,
+      marginPercent: 15.0,
+    );
 
     final ridgeLength = inputs['ridgeLength'] ?? sqrt(area);
+    final perimeter = _getPerimeter(inputs, area);
 
     final nailsNeeded = sheetsNeeded * 20; // 20 гвоздей на лист
-    final ridgeElements = ceilToInt(ridgeLength / 0.85); // коньковые элементы 0.85м
+    final ridgeElements = ceilToInt(
+      ridgeLength / 0.85,
+    ); // коньковые элементы 0.85м
 
-    final sheetPrice = findPrice(priceList, ['ondulin', 'ondulina', 'bitumen_sheet']);
+    final sheetPrice = findPrice(priceList, [
+      'ondulin',
+      'ondulina',
+      'bitumen_sheet',
+    ]);
     final ridgePrice = findPrice(priceList, ['ridge_ondulin', 'ridge']);
     final nailsPrice = findPrice(priceList, ['ondulin_nails', 'roofing_nails']);
 
@@ -286,6 +439,7 @@ class CalculateUnifiedRoofing extends BaseCalculator {
       values: {
         'roofingType': 3,
         'area': area,
+        'perimeter': perimeter,
         'realArea': realArea,
         'sheetsNeeded': sheetsNeeded.toDouble(),
         'ridgeLength': ridgeLength,
@@ -303,20 +457,35 @@ class CalculateUnifiedRoofing extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final slope = getInput(inputs, 'slope', defaultValue: 25.0, minValue: 12.0, maxValue: 45.0);
+    final slope = getInput(
+      inputs,
+      'slope',
+      defaultValue: 25.0,
+      minValue: 12.0,
+      maxValue: 45.0,
+    );
 
     final slopeFactor = 1 / cos(slope * pi / 180);
     final realArea = area * slopeFactor;
 
     // Стандартный лист шифера: 1.75 x 1.13 м, полезная площадь ~1.5 м²
     const sheetArea = 1.5;
-    final sheetsNeeded = calculateUnitsNeeded(realArea, sheetArea, marginPercent: 10.0);
+    final sheetsNeeded = calculateUnitsNeeded(
+      realArea,
+      sheetArea,
+      marginPercent: 10.0,
+    );
 
     final ridgeLength = inputs['ridgeLength'] ?? sqrt(area);
+    final perimeter = _getPerimeter(inputs, area);
 
     final nailsNeeded = sheetsNeeded * 6; // 6 гвоздей на лист
 
-    final sheetPrice = findPrice(priceList, ['slate', 'шифер', 'asbestos_cement']);
+    final sheetPrice = findPrice(priceList, [
+      'slate',
+      'шифер',
+      'asbestos_cement',
+    ]);
     final ridgePrice = findPrice(priceList, ['ridge_slate', 'ridge']);
     final nailsPrice = findPrice(priceList, ['slate_nails', 'roofing_nails']);
 
@@ -330,6 +499,7 @@ class CalculateUnifiedRoofing extends BaseCalculator {
       values: {
         'roofingType': 4,
         'area': area,
+        'perimeter': perimeter,
         'realArea': realArea,
         'sheetsNeeded': sheetsNeeded.toDouble(),
         'ridgeLength': ridgeLength,
@@ -346,16 +516,25 @@ class CalculateUnifiedRoofing extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final slope = getInput(inputs, 'slope', defaultValue: 30.0, minValue: 22.0, maxValue: 60.0);
+    final slope = getInput(
+      inputs,
+      'slope',
+      defaultValue: 30.0,
+      minValue: 22.0,
+      maxValue: 60.0,
+    );
 
     final slopeFactor = 1 / cos(slope * pi / 180);
     final realArea = area * slopeFactor;
 
     // Керамическая черепица: ~10-15 шт на м²
     const tilesPerSqm = 12.0;
-    final tilesNeeded = ceilToInt(realArea * tilesPerSqm * 1.05); // 5% запас на бой
+    final tilesNeeded = ceilToInt(
+      realArea * tilesPerSqm * 1.05,
+    ); // 5% запас на бой
 
     final ridgeLength = inputs['ridgeLength'] ?? sqrt(area);
+    final perimeter = _getPerimeter(inputs, area);
 
     // Коньковые элементы: ~3 шт на м.п.
     final ridgeTiles = ceilToInt(ridgeLength * 3);
@@ -366,9 +545,16 @@ class CalculateUnifiedRoofing extends BaseCalculator {
     // Обрешетка: шаг 30-35 см
     final battensLength = realArea / 0.32 * 1.05;
 
-    final tilePrice = findPrice(priceList, ['ceramic_tile', 'roof_tile', 'clay_tile']);
+    final tilePrice = findPrice(priceList, [
+      'ceramic_tile',
+      'roof_tile',
+      'clay_tile',
+    ]);
     final ridgePrice = findPrice(priceList, ['ridge_ceramic', 'ridge']);
-    final waterproofingPrice = findPrice(priceList, ['waterproofing_roof', 'roof_membrane']);
+    final waterproofingPrice = findPrice(priceList, [
+      'waterproofing_roof',
+      'roof_membrane',
+    ]);
     final battensPrice = findPrice(priceList, ['battens', 'roofing_battens']);
 
     final costs = [
@@ -382,6 +568,7 @@ class CalculateUnifiedRoofing extends BaseCalculator {
       values: {
         'roofingType': 5,
         'area': area,
+        'perimeter': perimeter,
         'realArea': realArea,
         'tilesNeeded': tilesNeeded.toDouble(),
         'ridgeLength': ridgeLength,

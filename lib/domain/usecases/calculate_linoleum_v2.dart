@@ -3,53 +3,58 @@ import 'dart:math' as math;
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
+import './linoleum_canonical_adapter.dart';
 
-/// Калькулятор линолеума.
-///
-/// Рассчитывает количество линолеума, двустороннего скотча и плинтуса.
-///
-/// Поддерживает два режима ввода:
-/// 1. По размерам комнаты (roomWidth × roomLength) — точный расчёт
-/// 2. По площади (area) — приблизительный расчёт для квадратной комнаты
-///
-/// Поля:
-/// - area: площадь (м²) — альтернатива размерам комнаты
-/// - roomWidth: ширина комнаты (м)
-/// - roomLength: длина комнаты (м)
-/// - rollWidth: ширина рулона (м), 2-5 м
-/// - marginCm: запас по краям (см), по умолчанию 20 см
-/// - needTape: нужен ли двусторонний скотч (0/1)
-/// - needPlinth: нужен ли плинтус (0/1)
 class CalculateLinoleumV2 extends BaseCalculator {
-  /// Запас по умолчанию (см) — добавляется к каждой стороне
-  static const double defaultMarginCm = 20.0;
-
-  /// Длина рулона (м.п.)
   static const double rollLength = 25.0;
 
-  /// Длина плинтуса (м)
-  static const double plinthLength = 2.5;
+  Map<String, double> _toCanonicalInputs(Map<String, double> inputs) {
+    final area = inputs['area'] ?? 0;
+    final roomWidth = inputs['roomWidth'] ?? 0;
+    final roomLength = inputs['roomLength'] ?? 0;
+    final hasRoomDimensions = roomWidth > 0 && roomLength > 0;
 
-  /// Ширина дверного проёма (м)
-  static const double doorWidth = 0.9;
+    final canonical = <String, double>{
+      'rollWidth': (inputs['rollWidth'] ?? 3.0).toDouble(),
+      'needTape': ((inputs['needTape'] ?? 1) > 0 ? 1 : 0).toDouble(),
+      'needPlinth': ((inputs['needPlinth'] ?? 1) > 0 ? 1 : 0).toDouble(),
+      'needGlue': ((inputs['withGlue'] ?? inputs['needGlue'] ?? 0) > 0 ? 1 : 0)
+          .toDouble(),
+      'hasPattern': ((inputs['hasPattern'] ?? 0) > 0 ? 1 : 0).toDouble(),
+      'patternRepeatCm':
+          (inputs['patternRepeatCm'] ?? inputs['patternRepeat'] ?? 30)
+              .toDouble(),
+    };
+
+    if (hasRoomDimensions) {
+      canonical['inputMode'] = 0.0;
+      canonical['length'] = roomLength.toDouble();
+      canonical['width'] = roomWidth.toDouble();
+    } else if (area > 0) {
+      canonical['inputMode'] = 1.0;
+      canonical['area'] = area.toDouble();
+      canonical['roomWidth'] = roomWidth > 0
+          ? roomWidth.toDouble()
+          : math.sqrt(area);
+      if ((inputs['perimeter'] ?? 0) > 0) {
+        canonical['perimeter'] = inputs['perimeter']!.toDouble();
+      }
+    }
+
+    return canonical;
+  }
 
   @override
   String? validateInputs(Map<String, double> inputs) {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final area = inputs['area'];
-    final roomWidth = inputs['roomWidth'];
-    final roomLength = inputs['roomLength'];
-
-    // Нужны или размеры комнаты, или площадь
-    final hasRoomDimensions = roomWidth != null && roomLength != null;
-    final hasArea = area != null && area > 0;
-
-    if (!hasRoomDimensions && !hasArea) {
-      return 'Необходимо указать размеры комнаты или площадь';
+    final area = inputs['area'] ?? 0;
+    final roomWidth = inputs['roomWidth'] ?? 0;
+    final roomLength = inputs['roomLength'] ?? 0;
+    if (area <= 0 && !(roomWidth > 0 && roomLength > 0)) {
+      return areaOrRoomDimensionsRequiredMessage();
     }
-
     return null;
   }
 
@@ -58,100 +63,56 @@ class CalculateLinoleumV2 extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    // Входные параметры
-    final rollWidth = getInput(inputs, 'rollWidth', defaultValue: 3.0, minValue: 2.0, maxValue: 5.0);
-    final marginCm = getInput(inputs, 'marginCm', defaultValue: defaultMarginCm, minValue: 0, maxValue: 50);
-    final needTape = getIntInput(inputs, 'needTape', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
-    final needPlinth = getIntInput(inputs, 'needPlinth', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
+    final contract = calculateCanonicalLinoleum(_toCanonicalInputs(inputs));
+    final area = contract.totals['area'] ?? 0;
+    final roomWidth = contract.totals['roomWidth'] ?? math.sqrt(area);
+    final roomLength = contract.totals['roomLength'] ?? math.sqrt(area);
+    final rollWidth = contract.totals['rollWidth'] ?? 3.0;
+    final linearMeters = contract.totals['linearMeters'] ?? 0;
+    final areaWithWaste = contract.totals['totalCoverageArea'] ?? 0;
+    final rollLengthValue = (inputs['rollLength'] ?? rollLength).toDouble();
+    final rollsNeeded = rollLengthValue > 0
+        ? linearMeters / rollLengthValue
+        : 0.0;
+    final needTape = (inputs['needTape'] ?? 1) > 0;
+    final needPlinth = (inputs['needPlinth'] ?? 1) > 0;
+    final tapeLength = needTape ? (contract.totals['tapeLength'] ?? 0) : 0.0;
+    final plinthLength = needPlinth
+        ? (contract.totals['plinthLengthRaw'] ?? 0)
+        : 0.0;
+    final plinthPieces = needPlinth
+        ? (contract.totals['plinthPieces'] ?? 0)
+        : 0.0;
 
-    // Размеры комнаты — из roomWidth/roomLength или вычисляем из area
-    final double roomWidth;
-    final double roomLength;
-    final double area;
-
-    final inputArea = inputs['area'];
-    final inputRoomWidth = inputs['roomWidth'];
-    final inputRoomLength = inputs['roomLength'];
-
-    if (inputRoomWidth != null && inputRoomLength != null) {
-      // Приоритет размерам комнаты
-      roomWidth = getInput(inputs, 'roomWidth', defaultValue: 4.0, minValue: 0.5, maxValue: 30);
-      roomLength = getInput(inputs, 'roomLength', defaultValue: 5.0, minValue: 0.5, maxValue: 30);
-      area = roomWidth * roomLength;
-    } else if (inputArea != null && inputArea > 0) {
-      // Если только площадь — аппроксимируем квадратной комнатой
-      area = getInput(inputs, 'area', defaultValue: 20.0, minValue: 1.0, maxValue: 500);
-      final side = math.sqrt(area);
-      roomWidth = side;
-      roomLength = side;
-    } else {
-      // Дефолтные значения
-      roomWidth = 4.0;
-      roomLength = 5.0;
-      area = roomWidth * roomLength;
-    }
-
-    // Запас в метрах (добавляется к длине и ширине)
-    final marginM = marginCm / 100;
-
-    // Размеры с запасом
-    final widthWithMargin = roomWidth + marginM;
-    final lengthWithMargin = roomLength + marginM;
-
-    // Площадь с запасом
-    final areaWithWaste = widthWithMargin * lengthWithMargin;
-
-    // Погонные метры: площадь с запасом / ширина рулона
-    final linearMeters = areaWithWaste / rollWidth;
-
-    // Количество рулонов
-    final rollArea = rollWidth * rollLength;
-    final rollsNeeded = areaWithWaste / rollArea;
-
-    // Двусторонний скотч: периметр + швы
-    double tapeLength = 0;
-    if (needTape) {
-      // Периметр + один шов по длине комнаты
-      tapeLength = 2 * (roomWidth + roomLength) + roomLength;
-    }
-
-    // Плинтус
-    double plinthTotalLength = 0;
-    int plinthPieces = 0;
-    if (needPlinth) {
-      plinthTotalLength = 2 * (roomWidth + roomLength) - doorWidth;
-      plinthPieces = (plinthTotalLength / plinthLength).ceil();
-    }
-
-    // Расчёт стоимости
     final linoleumPrice = findPrice(priceList, ['linoleum', 'линолеум']);
     final tapePrice = findPrice(priceList, ['tape', 'double_tape', 'скотч']);
     final plinthPrice = findPrice(priceList, ['plinth', 'плинтус']);
-
-    final costs = [
-      calculateCost(areaWithWaste, linoleumPrice?.price),
-      calculateCost(tapeLength, tapePrice?.price),
-      calculateCost(plinthPieces.toDouble(), plinthPrice?.price),
-    ];
 
     return createResult(
       values: {
         'area': area,
         'roomWidth': roomWidth,
         'roomLength': roomLength,
-        'marginCm': marginCm,
         'areaWithWaste': areaWithWaste,
         'rollWidth': rollWidth,
-        'rollLength': rollLength,
+        'rollLength': rollLengthValue,
         'rollsNeeded': rollsNeeded,
         'linearMeters': linearMeters,
         'needTape': needTape ? 1.0 : 0.0,
         'tapeLength': tapeLength,
         'needPlinth': needPlinth ? 1.0 : 0.0,
-        'plinthLength': plinthTotalLength,
-        'plinthPieces': plinthPieces.toDouble(),
+        'plinthLength': plinthLength,
+        'plinthPieces': plinthPieces,
+        'hasPattern': (contract.totals['hasPattern'] ?? 0),
+        'patternRepeatCm': (contract.totals['patternRepeatCm'] ?? 0),
       },
-      totalPrice: sumCosts(costs),
+      totalPrice: sumCosts([
+        calculateCost(areaWithWaste, linoleumPrice?.price),
+        calculateCost(tapeLength, tapePrice?.price),
+        calculateCost(plinthPieces, plinthPrice?.price),
+      ]),
+      norms: [...normativeSources, contract.formulaVersion],
+      calculatorId: 'linoleum-canonical-v2',
     );
   }
 }

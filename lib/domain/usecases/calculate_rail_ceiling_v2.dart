@@ -49,14 +49,14 @@ class CalculateRailCeilingV2 extends BaseCalculator {
       // Manual mode
       final area = inputs['area'] ?? 0;
       if (area <= 0) {
-        return 'Площадь должна быть больше нуля';
+        return positiveValueMessage('area');
       }
     } else {
       // Room mode
       final width = inputs['roomWidth'] ?? 0;
       final length = inputs['roomLength'] ?? 0;
       if (width <= 0 || length <= 0) {
-        return 'Размеры комнаты должны быть больше нуля';
+        return areaOrRoomDimensionsRequiredMessage();
       }
     }
 
@@ -69,9 +69,27 @@ class CalculateRailCeilingV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 1, minValue: 0, maxValue: 1);
-    final ceilingType = getIntInput(inputs, 'ceilingType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final railWidthIndex = getIntInput(inputs, 'railWidth', defaultValue: 1, minValue: 0, maxValue: 2);
+    final inputMode = getIntInput(
+      inputs,
+      'inputMode',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final ceilingType = getIntInput(
+      inputs,
+      'ceilingType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final railWidthIndex = getIntInput(
+      inputs,
+      'railWidth',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 2,
+    );
     final railWidth = railWidths[railWidthIndex];
 
     // Площадь и размеры
@@ -81,12 +99,30 @@ class CalculateRailCeilingV2 extends BaseCalculator {
 
     if (inputMode == 1) {
       // Room mode
-      roomWidth = getInput(inputs, 'roomWidth', defaultValue: 3.0, minValue: 0.5, maxValue: 30.0);
-      roomLength = getInput(inputs, 'roomLength', defaultValue: 4.0, minValue: 0.5, maxValue: 30.0);
+      roomWidth = getInput(
+        inputs,
+        'roomWidth',
+        defaultValue: 3.0,
+        minValue: 0.5,
+        maxValue: 30.0,
+      );
+      roomLength = getInput(
+        inputs,
+        'roomLength',
+        defaultValue: 4.0,
+        minValue: 0.5,
+        maxValue: 30.0,
+      );
       area = roomWidth * roomLength;
     } else {
       // Manual mode - вычисляем "квадратные" размеры
-      area = getInput(inputs, 'area', defaultValue: 12.0, minValue: 1.0, maxValue: 500.0);
+      area = getInput(
+        inputs,
+        'area',
+        defaultValue: 12.0,
+        minValue: 1.0,
+        maxValue: 500.0,
+      );
       final side = math.sqrt(area);
       roomWidth = side;
       roomLength = side;
@@ -104,7 +140,8 @@ class CalculateRailCeilingV2 extends BaseCalculator {
 
     // Стрингеры (несущие шины): через каждые 1.2 м
     final stringerRows = (roomWidth / stringerSpacing).ceil();
-    final stringerLength = stringerRows * roomLength * (1 + stringerWastePercent / 100);
+    final stringerLength =
+        stringerRows * roomLength * (1 + stringerWastePercent / 100);
 
     // Пристенный профиль = периметр + 10%
     final wallProfileLength = perimeter * (1 + wallProfileWastePercent / 100);
@@ -114,10 +151,26 @@ class CalculateRailCeilingV2 extends BaseCalculator {
     final hangersCount = stringerRows * hangersPerRow;
 
     // Расчёт стоимости
-    final railPrice = findPrice(priceList, ['rail', 'рейка', 'rail_ceiling_rail']);
-    final stringerPrice = findPrice(priceList, ['stringer', 'стрингер', 'rail_stringer']);
-    final wallProfilePrice = findPrice(priceList, ['wall_profile', 'пристенный', 'rail_wall_profile']);
-    final hangerPrice = findPrice(priceList, ['hanger', 'подвес', 'rail_hanger']);
+    final railPrice = findPrice(priceList, [
+      'rail',
+      'рейка',
+      'rail_ceiling_rail',
+    ]);
+    final stringerPrice = findPrice(priceList, [
+      'stringer',
+      'стрингер',
+      'rail_stringer',
+    ]);
+    final wallProfilePrice = findPrice(priceList, [
+      'wall_profile',
+      'пристенный',
+      'rail_wall_profile',
+    ]);
+    final hangerPrice = findPrice(priceList, [
+      'hanger',
+      'подвес',
+      'rail_hanger',
+    ]);
 
     final costs = [
       calculateCost(railLength, railPrice?.price),

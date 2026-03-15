@@ -7,7 +7,7 @@ import './calculator_usecase.dart';
 /// Signature of every canonical adapter function.
 ///
 /// All canonical adapters follow the pattern:
-///   CanonicalCalculatorContractResult calculateCanonicalXxx(Map<String, double> inputs, {XxxSpec spec = ...})
+///   `CanonicalCalculatorContractResult calculateCanonicalXxx(Map<String, double> inputs, {XxxSpec spec = ...})`
 ///
 /// Because the spec parameter is optional with a default, we can ignore it
 /// and treat every adapter as this typedef.

@@ -23,8 +23,10 @@ class CalculateInsulationFoam extends BaseCalculator {
     final area = inputs['area'] ?? 0;
     final thickness = inputs['thickness'] ?? 50;
 
-    if (area <= 0) return 'Площадь должна быть больше нуля';
-    if (thickness < 20 || thickness > 200) return 'Толщина должна быть от 20 до 200 мм';
+    if (area <= 0) return positiveValueMessage('area');
+    if (thickness < 20 || thickness > 200) {
+      return rangeMessage('thickness', 20, 200, unit: 'мм');
+    }
 
     return null;
   }
@@ -35,9 +37,27 @@ class CalculateInsulationFoam extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 50.0, minValue: 20.0, maxValue: 200.0);
-    final density = getInput(inputs, 'density', defaultValue: 25.0, minValue: 15.0, maxValue: 50.0);
-    final type = getIntInput(inputs, 'type', defaultValue: 1, minValue: 1, maxValue: 2);
+    final thickness = getInput(
+      inputs,
+      'thickness',
+      defaultValue: 50.0,
+      minValue: 20.0,
+      maxValue: 200.0,
+    );
+    final density = getInput(
+      inputs,
+      'density',
+      defaultValue: 25.0,
+      minValue: 15.0,
+      maxValue: 50.0,
+    );
+    final type = getIntInput(
+      inputs,
+      'type',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 2,
+    );
 
     // Объём утеплителя в м³
     final volume = calculateVolume(area, thickness);
@@ -46,7 +66,11 @@ class CalculateInsulationFoam extends BaseCalculator {
     final sheetArea = type == 1 ? 0.5 : 0.72;
 
     // Количество листов с запасом 5%
-    final sheetsNeeded = calculateUnitsNeeded(area, sheetArea, marginPercent: 5.0);
+    final sheetsNeeded = calculateUnitsNeeded(
+      area,
+      sheetArea,
+      marginPercent: 5.0,
+    );
 
     // Вес утеплителя
     final weight = volume * density;
@@ -86,37 +110,87 @@ class CalculateInsulationFoam extends BaseCalculator {
     final cornerProfileLength = getInput(inputs, 'corners', defaultValue: 0.0);
 
     // Стартовый профиль (цокольный): по периметру фасада
-    final startProfileLength = getInput(inputs, 'startProfile', defaultValue: 0.0);
+    final startProfileLength = getInput(
+      inputs,
+      'startProfile',
+      defaultValue: 0.0,
+    );
 
     // Расчёт стоимости
     final foamPrice = type == 1
-        ? findPrice(priceList, ['foam', 'foam_insulation', 'eps', 'polystyrene'])
-        : findPrice(priceList, ['xps', 'extruded_polystyrene', 'epps', 'foam_extruded']);
-    final gluePrice = findPrice(priceList, ['glue_foam', 'glue_insulation', 'adhesive_foam']);
-    final foamGluePrice = findPrice(priceList, ['foam_glue', 'adhesive_foam_gun']);
-    final fastenerPrice = findPrice(priceList, ['fastener_insulation', 'dowel_umbrella', 'mushroom_dowel']);
-    final meshPrice = findPrice(priceList, ['mesh_armor', 'mesh_facade', 'fiberglass_mesh']);
+        ? findPrice(priceList, [
+            'foam',
+            'foam_insulation',
+            'eps',
+            'polystyrene',
+          ])
+        : findPrice(priceList, [
+            'xps',
+            'extruded_polystyrene',
+            'epps',
+            'foam_extruded',
+          ]);
+    final gluePrice = findPrice(priceList, [
+      'glue_foam',
+      'glue_insulation',
+      'adhesive_foam',
+    ]);
+    final foamGluePrice = findPrice(priceList, [
+      'foam_glue',
+      'adhesive_foam_gun',
+    ]);
+    final fastenerPrice = findPrice(priceList, [
+      'fastener_insulation',
+      'dowel_umbrella',
+      'mushroom_dowel',
+    ]);
+    final meshPrice = findPrice(priceList, [
+      'mesh_armor',
+      'mesh_facade',
+      'fiberglass_mesh',
+    ]);
     final baseCoatPrice = findPrice(priceList, ['base_coat', 'adhesive_layer']);
     final primerPrice = findPrice(priceList, ['primer', 'primer_adhesion']);
-    final vaporBarrierPrice = findPrice(priceList, ['vapor_barrier', 'film_vapor', 'barrier_membrane']);
-    final windBarrierPrice = findPrice(priceList, ['wind_barrier', 'membrane_wind', 'windproof_membrane']);
-    final tapePrice = findPrice(priceList, ['tape', 'joining_tape', 'sealing_tape']);
-    final cornerProfilePrice = findPrice(priceList, ['profile_corner', 'corner_bead_mesh']);
-    final startProfilePrice = findPrice(priceList, ['profile_start', 'base_profile']);
+    final vaporBarrierPrice = findPrice(priceList, [
+      'vapor_barrier',
+      'film_vapor',
+      'barrier_membrane',
+    ]);
+    final windBarrierPrice = findPrice(priceList, [
+      'wind_barrier',
+      'membrane_wind',
+      'windproof_membrane',
+    ]);
+    final tapePrice = findPrice(priceList, [
+      'tape',
+      'joining_tape',
+      'sealing_tape',
+    ]);
+    final cornerProfilePrice = findPrice(priceList, [
+      'profile_corner',
+      'corner_bead_mesh',
+    ]);
+    final startProfilePrice = findPrice(priceList, [
+      'profile_start',
+      'base_profile',
+    ]);
 
     final costs = [
       calculateCost(sheetsNeeded.toDouble(), foamPrice?.price),
       calculateCost(glueNeeded, gluePrice?.price),
       calculateCost(foamGlueNeeded.toDouble(), foamGluePrice?.price),
       calculateCost(fastenersNeeded.toDouble(), fastenerPrice?.price),
-      if (vaporBarrierArea > 0) calculateCost(vaporBarrierArea, vaporBarrierPrice?.price),
+      if (vaporBarrierArea > 0)
+        calculateCost(vaporBarrierArea, vaporBarrierPrice?.price),
       calculateCost(windBarrierArea, windBarrierPrice?.price),
       calculateCost(tapeNeeded, tapePrice?.price),
       calculateCost(meshArea, meshPrice?.price),
       calculateCost(baseCoatNeeded, baseCoatPrice?.price),
       calculateCost(primerNeeded, primerPrice?.price),
-      if (cornerProfileLength > 0) calculateCost(cornerProfileLength, cornerProfilePrice?.price),
-      if (startProfileLength > 0) calculateCost(startProfileLength, startProfilePrice?.price),
+      if (cornerProfileLength > 0)
+        calculateCost(cornerProfileLength, cornerProfilePrice?.price),
+      if (startProfileLength > 0)
+        calculateCost(startProfileLength, startProfilePrice?.price),
     ];
 
     return createResult(

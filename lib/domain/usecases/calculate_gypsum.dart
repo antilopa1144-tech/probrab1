@@ -25,10 +25,10 @@ class CalculateGypsum extends BaseCalculator {
     final area = inputs['area'] ?? 0;
     final constructionType = inputs['construction_type'] ?? 1;
 
-    if (area <= 0) return 'Площадь должна быть больше нуля';
-    if (area > 10000) return 'Площадь превышает допустимый максимум';
+    if (area <= 0) return positiveValueMessage('area');
+    if (area > 10000) return maxValueMessage('area', 10000);
     if (constructionType < 1 || constructionType > 3) {
-      return 'Неверный тип конструкции';
+      return rangeMessage('construction_type', 1, 3);
     }
 
     return null;
@@ -39,12 +39,7 @@ class CalculateGypsum extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = getInput(
-      inputs,
-      'area',
-      minValue: 0.1,
-      maxValue: 10000.0,
-    );
+    final area = getInput(inputs, 'area', minValue: 0.1, maxValue: 10000.0);
     final constructionType = getIntInput(
       inputs,
       'construction_type',
@@ -75,13 +70,15 @@ class CalculateGypsum extends BaseCalculator {
       minValue: 1,
       maxValue: 3,
     );
-    final useInsulation = getIntInput(
-      inputs,
-      'use_insulation',
-      defaultValue: 0,
-      minValue: 0,
-      maxValue: 1,
-    ) == 1;
+    final useInsulation =
+        getIntInput(
+          inputs,
+          'use_insulation',
+          defaultValue: 0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
 
     // Площадь листа стандартного 2500×1200 мм = 3 м²
     const sheetArea = 3.0;
@@ -115,8 +112,8 @@ class CalculateGypsum extends BaseCalculator {
 
     if (constructionType == 1) {
       // Облицовка стен (система Knauf C 623)
-      pnMeters = area * 0.8;  // ПН 28×27 (направляющий)
-      ppMeters = area * 2.4;  // ПП 60×27 (стоечный, шаг 50 см по СП 163.1325800)
+      pnMeters = area * 0.8; // ПН 28×27 (направляющий)
+      ppMeters = area * 2.4; // ПП 60×27 (стоечный, шаг 50 см по СП 163.1325800)
       pnPieces = (pnMeters / profileLength).ceil();
       ppPieces = (ppMeters / profileLength).ceil();
       suspensions = (area * 1.3).ceil();
@@ -126,23 +123,23 @@ class CalculateGypsum extends BaseCalculator {
       sealingTape = area * 0.8;
     } else if (constructionType == 2) {
       // Перегородка (система Knauf C 111)
-      pnMeters = area * 0.7;  // ПН 50×40 (направляющий)
-      ppMeters = area * 2.0;  // ПС 50×50 (стоечный)
+      pnMeters = area * 0.7; // ПН 50×40 (направляющий)
+      ppMeters = area * 2.0; // ПС 50×50 (стоечный)
       pnPieces = (pnMeters / profileLength).ceil();
       ppPieces = (ppMeters / profileLength).ceil();
       dowels = (area * 1.5).ceil();
-      screwsTN25 = (area * 34).ceil();  // с обеих сторон
+      screwsTN25 = (area * 34).ceil(); // с обеих сторон
       screwsLN = (area * 4).ceil();
       sealingTape = area * 1.2;
     } else if (constructionType == 3) {
       // Потолок одноуровневый (система Knauf P 113)
-      pnMeters = area * 0.4;  // ПНП 27×28 (периметр)
-      ppMeters = area * 3.3;  // ПП 60×27 (несущий + основной)
+      pnMeters = area * 0.4; // ПНП 27×28 (периметр)
+      ppMeters = area * 3.3; // ПП 60×27 (несущий + основной)
       pnPieces = (pnMeters / profileLength).ceil();
       ppPieces = (ppMeters / profileLength).ceil();
       suspensions = (area * 0.7).ceil();
-      connectors = (area * 1.7).ceil();  // крабы
-      dowels = (suspensions * 2);  // анкер-клины по 2 на подвес
+      connectors = (area * 1.7).ceil(); // крабы
+      dowels = (suspensions * 2); // анкер-клины по 2 на подвес
       screwsTN25 = (area * 23).ceil();
       screwsLN = (area * 7).ceil();
     }
@@ -163,31 +160,80 @@ class CalculateGypsum extends BaseCalculator {
 
     // Расчёт стоимости
     final gklPrice = _getGKLPrice(priceList, gklType);
-    final pnPrice = findPrice(priceList, ['profile_pn', 'pn_profile', 'guide_profile']);
-    final ppPrice = findPrice(priceList, ['profile_pp', 'pp_profile', 'ceiling_profile']);
-    final screwTN25Price = findPrice(priceList, ['screw_tn25', 'screw_gkl', 'screw']);
-    final screwTN35Price = findPrice(priceList, ['screw_tn35', 'screw_gkl', 'screw']);
-    final screwLNPrice = findPrice(priceList, ['screw_ln', 'screw_profile', 'screw']);
+    final pnPrice = findPrice(priceList, [
+      'profile_pn',
+      'pn_profile',
+      'guide_profile',
+    ]);
+    final ppPrice = findPrice(priceList, [
+      'profile_pp',
+      'pp_profile',
+      'ceiling_profile',
+    ]);
+    final screwTN25Price = findPrice(priceList, [
+      'screw_tn25',
+      'screw_gkl',
+      'screw',
+    ]);
+    final screwTN35Price = findPrice(priceList, [
+      'screw_tn35',
+      'screw_gkl',
+      'screw',
+    ]);
+    final screwLNPrice = findPrice(priceList, [
+      'screw_ln',
+      'screw_profile',
+      'screw',
+    ]);
     final dowelPrice = findPrice(priceList, ['dowel', 'anchor', 'dowel_nail']);
-    final suspensionPrice = findPrice(priceList, ['suspension', 'hanger', 'p_suspension']);
-    final connectorPrice = findPrice(priceList, ['connector', 'crab', 'connector_crab']);
-    final insulationPrice = findPrice(priceList, ['minvata', 'insulation', 'rockwool']);
-    final tapePrice = findPrice(priceList, ['tape_sealing', 'sealing_tape', 'damper_tape']);
-    final armatureTapePrice = findPrice(priceList, ['tape_armature', 'serpyanka', 'joint_tape']);
-    final fillerPrice = findPrice(priceList, ['filler_fugen', 'filler', 'joint_compound']);
+    final suspensionPrice = findPrice(priceList, [
+      'suspension',
+      'hanger',
+      'p_suspension',
+    ]);
+    final connectorPrice = findPrice(priceList, [
+      'connector',
+      'crab',
+      'connector_crab',
+    ]);
+    final insulationPrice = findPrice(priceList, [
+      'minvata',
+      'insulation',
+      'rockwool',
+    ]);
+    final tapePrice = findPrice(priceList, [
+      'tape_sealing',
+      'sealing_tape',
+      'damper_tape',
+    ]);
+    final armatureTapePrice = findPrice(priceList, [
+      'tape_armature',
+      'serpyanka',
+      'joint_tape',
+    ]);
+    final fillerPrice = findPrice(priceList, [
+      'filler_fugen',
+      'filler',
+      'joint_compound',
+    ]);
     final primerPrice = findPrice(priceList, ['primer', 'primer_deep']);
 
     final costs = [
       calculateCost(gklArea, gklPrice?.price),
       calculateCost(pnMeters, pnPrice?.price),
       calculateCost(ppMeters, ppPrice?.price),
-      if (screwsTN25 > 0) calculateCost(screwsTN25.toDouble(), screwTN25Price?.price),
-      if (screwsTN35 > 0) calculateCost(screwsTN35.toDouble(), screwTN35Price?.price),
+      if (screwsTN25 > 0)
+        calculateCost(screwsTN25.toDouble(), screwTN25Price?.price),
+      if (screwsTN35 > 0)
+        calculateCost(screwsTN35.toDouble(), screwTN35Price?.price),
       if (screwsLN > 0) calculateCost(screwsLN.toDouble(), screwLNPrice?.price),
       if (dowels > 0) calculateCost(dowels.toDouble(), dowelPrice?.price),
-      if (suspensions > 0) calculateCost(suspensions.toDouble(), suspensionPrice?.price),
-      if (connectors > 0) calculateCost(connectors.toDouble(), connectorPrice?.price),
-      if (insulationArea > 0) calculateCost(insulationArea, insulationPrice?.price),
+      if (suspensions > 0)
+        calculateCost(suspensions.toDouble(), suspensionPrice?.price),
+      if (connectors > 0)
+        calculateCost(connectors.toDouble(), connectorPrice?.price),
+      if (insulationArea > 0)
+        calculateCost(insulationArea, insulationPrice?.price),
       if (sealingTape > 0) calculateCost(sealingTape, tapePrice?.price),
       calculateCost(armatureTape, armatureTapePrice?.price),
       calculateCost(fillerKg, fillerPrice?.price),

@@ -1,27 +1,36 @@
 // ignore_for_file: prefer_const_declarations
+import 'dart:math' as math;
+
 import '../../data/models/price_item.dart';
+import '../models/canonical_calculator_contract.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
+import './parquet_canonical_adapter.dart';
 
-/// Калькулятор паркета / массива.
-///
-/// Нормативы:
-/// - СНиП 3.04.01-87 "Изоляционные и отделочные покрытия"
-/// - ГОСТ 862.1-85 "Паркет штучный"
-///
-/// Поля:
-/// - area: площадь пола (м²)
-/// - plankWidth: ширина планки (см), по умолчанию 7
-/// - plankLength: длина планки (см), по умолчанию 40
-/// - thickness: толщина (мм), по умолчанию 15
 class CalculateParquet extends BaseCalculator {
+  Map<String, double> _normalizeInputs(Map<String, double> inputs) {
+    if (hasCanonicalParquetInputs(inputs)) {
+      return Map<String, double>.from(inputs);
+    }
+    return normalizeLegacyParquetInputs(inputs);
+  }
+
+  CanonicalCalculatorContractResult calculateCanonical(
+    Map<String, double> inputs,
+  ) {
+    return calculateCanonicalParquet(_normalizeInputs(inputs));
+  }
+
   @override
   String? validateInputs(Map<String, double> inputs) {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    final normalized = _normalizeInputs(inputs);
+    final hasArea = (normalized['area'] ?? 0) > 0;
+    final hasRoom =
+        (normalized['length'] ?? 0) > 0 && (normalized['width'] ?? 0) > 0;
+    if (!hasArea && !hasRoom) return areaOrRoomDimensionsRequiredMessage();
 
     return null;
   }
@@ -31,60 +40,65 @@ class CalculateParquet extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = getInput(inputs, 'area', minValue: 0.1);
-    final plankWidth = getInput(inputs, 'plankWidth', defaultValue: 7.0, minValue: 5.0, maxValue: 20.0);
-    final plankLength = getInput(inputs, 'plankLength', defaultValue: 40.0, minValue: 20.0, maxValue: 100.0);
-    
-    final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
-        ? getInput(inputs, 'perimeter', minValue: 0.1)
-        : estimatePerimeter(area);
-
-    // Площадь одной планки
-    final plankArea = calculateTileArea(plankWidth, plankLength);
-
-    // Количество планок с запасом 5-7% (для паркета)
-    final planksNeeded = calculateUnitsNeeded(area, plankArea, marginPercent: 7.0);
-
-    // Лак: расход ~0.1 л/м² на слой, обычно 3 слоя
+    final normalized = _normalizeInputs(inputs);
+    final contract = calculateCanonical(normalized);
+    final area = contract.totals['area'] ?? 0;
+    final plankWidthCm = (inputs['plankWidth'] ?? 7.0).clamp(5.0, 20.0);
+    final plankLengthCm = (inputs['plankLength'] ?? 40.0).clamp(20.0, 100.0);
+    final plankArea = (plankWidthCm / 100) * (plankLengthCm / 100);
+    final plankWastePercent =
+        normalized.containsKey('pattern') ||
+            normalized.containsKey('layingMethod')
+        ? (contract.totals['wastePercent'] ?? 0)
+        : 7.0;
+    final planksNeeded = plankArea > 0
+        ? ((area / plankArea) * (1 + plankWastePercent / 100)).ceil()
+        : 0;
     final varnishLayers = 3;
     final varnishNeeded = area * 0.1 * varnishLayers;
-
-    // Грунтовка для паркета: ~0.08 л/м²
     final primerNeeded = area * 0.08;
-
-    // Плинтус: периметр + 5%
-    final plinthLength = perimeter;
-
-    // Клей для паркета: ~1.2-1.5 кг/м²
     final glueNeeded = area * 1.5;
-
-    // Подложка (фанера): площадь пола (для массивной доски)
     final plywoodArea = area;
-
-    // Шпатлёвка для швов: ~0.3 кг/м²
     final fillerNeeded = area * 0.3;
+    final sandpaperSets = math.max(1, (area / 20).ceil());
+    final plinthLength =
+        ((inputs['perimeter'] != null && inputs['perimeter']! > 0)
+                ? inputs['perimeter']!
+                : (contract.totals['perimeter'] ?? 0))
+            .toDouble();
 
-    // Шлифовальная бумага: комплект на комнату
-    final sandpaperSets = ceilToInt(area / 20); // 1 комплект на 20 м²
-
-    // Расчёт стоимости
-    final parquetPrice = findPrice(priceList, ['parquet', 'parquet_plank', 'wood_floor', 'hardwood']);
-    final varnishPrice = findPrice(priceList, ['varnish', 'varnish_parquet', 'floor_finish']);
-    final primerPrice = findPrice(priceList, ['primer_parquet', 'primer', 'wood_primer']);
-    final plinthPrice = findPrice(priceList, ['plinth_parquet', 'plinth', 'wood_baseboard']);
-    final gluePrice = findPrice(priceList, ['glue_parquet', 'glue', 'wood_adhesive']);
+    final parquetPrice = findPrice(priceList, [
+      'parquet',
+      'parquet_plank',
+      'wood_floor',
+      'hardwood',
+    ]);
+    final varnishPrice = findPrice(priceList, [
+      'varnish',
+      'varnish_parquet',
+      'floor_finish',
+    ]);
+    final primerPrice = findPrice(priceList, [
+      'primer_parquet',
+      'primer',
+      'wood_primer',
+    ]);
+    final plinthPrice = findPrice(priceList, [
+      'plinth_parquet',
+      'plinth',
+      'wood_baseboard',
+    ]);
+    final gluePrice = findPrice(priceList, [
+      'glue_parquet',
+      'glue',
+      'wood_adhesive',
+    ]);
     final plywoodPrice = findPrice(priceList, ['plywood', 'plywood_sheet']);
-    final fillerPrice = findPrice(priceList, ['filler', 'wood_filler', 'putty']);
-
-    final costs = [
-      calculateCost(planksNeeded.toDouble(), parquetPrice?.price),
-      calculateCost(varnishNeeded, varnishPrice?.price),
-      calculateCost(primerNeeded, primerPrice?.price),
-      calculateCost(plinthLength, plinthPrice?.price),
-      calculateCost(glueNeeded, gluePrice?.price),
-      calculateCost(plywoodArea, plywoodPrice?.price),
-      calculateCost(fillerNeeded, fillerPrice?.price),
-    ];
+    final fillerPrice = findPrice(priceList, [
+      'filler',
+      'wood_filler',
+      'putty',
+    ]);
 
     return createResult(
       values: {
@@ -98,8 +112,21 @@ class CalculateParquet extends BaseCalculator {
         'plywoodArea': plywoodArea,
         'fillerNeeded': fillerNeeded,
         'sandpaperSets': sandpaperSets.toDouble(),
+        'packArea': contract.totals['packArea'] ?? 2.0,
+        'packsNeeded': contract.totals['packsNeeded'] ?? 0,
+        'wastePercent': contract.totals['wastePercent'] ?? 0,
       },
-      totalPrice: sumCosts(costs),
+      totalPrice: sumCosts([
+        calculateCost(planksNeeded.toDouble(), parquetPrice?.price),
+        calculateCost(varnishNeeded, varnishPrice?.price),
+        calculateCost(primerNeeded, primerPrice?.price),
+        calculateCost(plinthLength, plinthPrice?.price),
+        calculateCost(glueNeeded, gluePrice?.price),
+        calculateCost(plywoodArea, plywoodPrice?.price),
+        calculateCost(fillerNeeded, fillerPrice?.price),
+      ]),
+      norms: [...normativeSources, contract.formulaVersion],
+      calculatorId: 'parquet-canonical',
     );
   }
 }

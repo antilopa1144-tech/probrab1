@@ -24,8 +24,10 @@ class CalculateInsulationMineralWool extends BaseCalculator {
     final area = inputs['area'] ?? 0;
     final thickness = inputs['thickness'] ?? 100;
 
-    if (area <= 0) return 'Площадь должна быть больше нуля';
-    if (thickness < 50 || thickness > 300) return 'Толщина должна быть от 50 до 300 мм';
+    if (area <= 0) return positiveValueMessage('area');
+    if (thickness < 50 || thickness > 300) {
+      return rangeMessage('thickness', 50, 300, unit: 'мм');
+    }
 
     return null;
   }
@@ -36,9 +38,27 @@ class CalculateInsulationMineralWool extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 100.0, minValue: 50.0, maxValue: 300.0);
-    final density = getInput(inputs, 'density', defaultValue: 50.0, minValue: 30.0, maxValue: 200.0);
-    final applicationSurface = getIntInput(inputs, 'applicationSurface', defaultValue: 1, minValue: 1, maxValue: 4);
+    final thickness = getInput(
+      inputs,
+      'thickness',
+      defaultValue: 100.0,
+      minValue: 50.0,
+      maxValue: 300.0,
+    );
+    final density = getInput(
+      inputs,
+      'density',
+      defaultValue: 50.0,
+      minValue: 30.0,
+      maxValue: 200.0,
+    );
+    final applicationSurface = getIntInput(
+      inputs,
+      'applicationSurface',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 4,
+    );
 
     // Объём утеплителя в м³
     final volume = calculateVolume(area, thickness);
@@ -47,7 +67,11 @@ class CalculateInsulationMineralWool extends BaseCalculator {
     final sheetArea = 0.72;
 
     // Количество плит/рулонов с запасом 5%
-    final sheetsNeeded = calculateUnitsNeeded(area, sheetArea, marginPercent: 5.0);
+    final sheetsNeeded = calculateUnitsNeeded(
+      area,
+      sheetArea,
+      marginPercent: 5.0,
+    );
 
     // Вес утеплителя
     final weight = volume * density;
@@ -62,15 +86,15 @@ class CalculateInsulationMineralWool extends BaseCalculator {
     // Базовое количество по толщине
     int baseFastenersPerSqm;
     if (thickness <= 50) {
-      baseFastenersPerSqm = 4;      // Тонкий слой — 4 по углам плиты
+      baseFastenersPerSqm = 4; // Тонкий слой — 4 по углам плиты
     } else if (thickness <= 100) {
-      baseFastenersPerSqm = 5;      // Стандарт — 4 по углам + 1 центр
+      baseFastenersPerSqm = 5; // Стандарт — 4 по углам + 1 центр
     } else if (thickness <= 150) {
-      baseFastenersPerSqm = 6;      // Рекомендация СП 50.13330
+      baseFastenersPerSqm = 6; // Рекомендация СП 50.13330
     } else if (thickness <= 200) {
-      baseFastenersPerSqm = 8;      // Толстый — усиленное крепление
+      baseFastenersPerSqm = 8; // Толстый — усиленное крепление
     } else {
-      baseFastenersPerSqm = 10;     // Очень толстый (250-300мм)
+      baseFastenersPerSqm = 10; // Очень толстый (250-300мм)
     }
 
     // Корректировка по плотности (СП 50.13330):
@@ -89,13 +113,15 @@ class CalculateInsulationMineralWool extends BaseCalculator {
 
     // Множитель по типу поверхности
     final double fastenerMultiplier = switch (applicationSurface) {
-      2 => 0.0,   // пол — гравитация держит, крепёж не нужен
-      3 => 1.5,   // потолок — против гравитации, усиленный крепёж
-      4 => 1.2,   // скат крыши — умеренно усиленный крепёж
-      _ => 1.0,   // стена — стандарт
+      2 => 0.0, // пол — гравитация держит, крепёж не нужен
+      3 => 1.5, // потолок — против гравитации, усиленный крепёж
+      4 => 1.2, // скат крыши — умеренно усиленный крепёж
+      _ => 1.0, // стена — стандарт
     };
 
-    final fastenersNeeded = ceilToInt(area * fastenersPerSqm * fastenerMultiplier);
+    final fastenersNeeded = ceilToInt(
+      area * fastenersPerSqm * fastenerMultiplier,
+    );
 
     // Соединительная лента для пароизоляции: по швам
     final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
@@ -108,29 +134,37 @@ class CalculateInsulationMineralWool extends BaseCalculator {
 
     // Расчёт стоимости
     final woolPrice = findPrice(priceList, [
-      'mineral_wool', 
-      'wool_insulation', 
+      'mineral_wool',
+      'wool_insulation',
       'insulation_wool',
       'rockwool',
-      'stone_wool'
+      'stone_wool',
     ]);
     final vaporBarrierPrice = findPrice(priceList, [
-      'vapor_barrier', 
-      'film_vapor', 
-      'barrier_membrane'
+      'vapor_barrier',
+      'film_vapor',
+      'barrier_membrane',
     ]);
     final windBarrierPrice = findPrice(priceList, [
-      'wind_barrier', 
-      'membrane_wind', 
-      'windproof_membrane'
+      'wind_barrier',
+      'membrane_wind',
+      'windproof_membrane',
     ]);
     final fastenerPrice = findPrice(priceList, [
-      'fastener_insulation', 
-      'dowel_umbrella', 
-      'mushroom_dowel'
+      'fastener_insulation',
+      'dowel_umbrella',
+      'mushroom_dowel',
     ]);
-    final tapePrice = findPrice(priceList, ['tape', 'joining_tape', 'sealing_tape']);
-    final battensPrice = findPrice(priceList, ['battens', 'timber', 'wood_strips']);
+    final tapePrice = findPrice(priceList, [
+      'tape',
+      'joining_tape',
+      'sealing_tape',
+    ]);
+    final battensPrice = findPrice(priceList, [
+      'battens',
+      'timber',
+      'wood_strips',
+    ]);
 
     final costs = [
       calculateCost(sheetsNeeded.toDouble(), woolPrice?.price),
@@ -157,7 +191,8 @@ class CalculateInsulationMineralWool extends BaseCalculator {
         'applicationSurface': applicationSurface.toDouble(),
         'fastenersPerSqm': fastenersPerSqm.toDouble(),
         // Предупреждение: тонкий утеплитель (<100мм) на наружной стене
-        if (thickness < 100 && applicationSurface == 1) 'warningThinExterior': 1.0,
+        if (thickness < 100 && applicationSurface == 1)
+          'warningThinExterior': 1.0,
         // Предупреждение: пол без механического крепежа
         // Для жёстких плит под стяжку может понадобиться фиксация
         if (applicationSurface == 2) 'warningFloorNoFasteners': 1.0,

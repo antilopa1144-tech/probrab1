@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import '../models/canonical_calculator_contract.dart';
 
 /* ─── spec types ─── */
@@ -108,11 +106,6 @@ const Map<int, String> _textureLabels = {
   2: 'Камешковая',
   3: 'Шуба',
   4: 'Венецианская',
-};
-
-const Map<int, String> _surfaceLabels = {
-  0: 'Фасад',
-  1: 'Интерьер',
 };
 
 /* ─── helpers ─── */

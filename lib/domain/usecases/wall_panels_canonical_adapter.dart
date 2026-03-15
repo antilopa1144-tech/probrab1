@@ -122,11 +122,6 @@ const Map<int, String> _panelTypeLabels = {
   4: 'Каменный шпон (0.5 м\u00b2)',
 };
 
-const Map<int, String> _mountMethodLabels = {
-  0: 'На клей',
-  1: 'На обрешётку',
-};
-
 /* ─── helpers ─── */
 
 bool hasCanonicalWallPanelsInputs(Map<String, double> inputs) {

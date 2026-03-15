@@ -22,11 +22,14 @@ import './calculator_usecase.dart';
 class CalculateBasement extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
     final area = inputs['area'] ?? 0;
     if (area <= 0) {
-      return 'Площадь подвала должна быть больше 0';
+      return positiveValueMessage('area');
     }
-    return super.validateInputs(inputs);
+    return null;
   }
 
   @override
@@ -88,13 +91,15 @@ class CalculateBasement extends BaseCalculator {
 
     // Гидроизоляция
     final waterproofingArea = waterproofing == 1
-        ? (floorArea + wallArea) * 1.1 // +10% на нахлёст
+        ? (floorArea + wallArea) *
+              1.1 // +10% на нахлёст
         : 0.0;
 
     // Утепление (если требуется)
     final insulationArea = insulation == 1 ? wallArea * 1.1 : 0.0;
-    final insulationVolume =
-        insulation == 1 ? wallArea * 0.1 : 0.0; // 10 см утеплителя
+    final insulationVolume = insulation == 1
+        ? wallArea * 0.1
+        : 0.0; // 10 см утеплителя
 
     // Армирование для бетонных стен
     double rebarWeight = 0.0;
@@ -103,48 +108,52 @@ class CalculateBasement extends BaseCalculator {
     }
 
     // Вентиляция: трубы и решётки
-    final ventilationPipes =
-        ventilation == 1 ? 2.0 : 0.0; // приточная и вытяжная
+    final ventilationPipes = ventilation == 1
+        ? 2.0
+        : 0.0; // приточная и вытяжная
     final ventilationGrilles = ventilation == 1 ? 2.0 : 0.0;
 
     // Лестница (если нужна)
     final stairsNeeded = inputs['stairs'] ?? 1.0;
 
     // Цены
-    final concretePrice = findPrice(
-      priceList,
-      ['concrete', 'concrete_m300', 'concrete_m200'],
-    )?.price;
+    final concretePrice = findPrice(priceList, [
+      'concrete',
+      'concrete_m300',
+      'concrete_m200',
+    ])?.price;
 
-    final brickPrice = findPrice(
-      priceList,
-      ['brick', 'brick_facing'],
-    )?.price;
+    final brickPrice = findPrice(priceList, ['brick', 'brick_facing'])?.price;
 
-    final blockPrice = findPrice(
-      priceList,
-      ['gas_block', 'foam_block', 'block'],
-    )?.price;
+    final blockPrice = findPrice(priceList, [
+      'gas_block',
+      'foam_block',
+      'block',
+    ])?.price;
 
-    final mortarPrice = findPrice(
-      priceList,
-      ['mortar', 'cement_mortar'],
-    )?.price;
+    final mortarPrice = findPrice(priceList, [
+      'mortar',
+      'cement_mortar',
+    ])?.price;
 
-    final waterproofingPrice = findPrice(
-      priceList,
-      ['waterproofing', 'waterproofing_membrane', 'bitumen'],
-    )?.price;
+    final waterproofingPrice = findPrice(priceList, [
+      'waterproofing',
+      'waterproofing_membrane',
+      'bitumen',
+    ])?.price;
 
-    final insulationPrice = findPrice(
-      priceList,
-      ['insulation_eps', 'eps', 'xps', 'insulation'],
-    )?.price;
+    final insulationPrice = findPrice(priceList, [
+      'insulation_eps',
+      'eps',
+      'xps',
+      'insulation',
+    ])?.price;
 
-    final rebarPrice = findPrice(
-      priceList,
-      ['rebar', 'reinforcement', 'rebar_12'],
-    )?.price;
+    final rebarPrice = findPrice(priceList, [
+      'rebar',
+      'reinforcement',
+      'rebar_12',
+    ])?.price;
 
     double? totalPrice;
 
@@ -173,8 +182,7 @@ class CalculateBasement extends BaseCalculator {
 
     // Гидроизоляция
     if (waterproofingPrice != null && waterproofingArea > 0) {
-      totalPrice =
-          (totalPrice ?? 0) + waterproofingArea * waterproofingPrice;
+      totalPrice = (totalPrice ?? 0) + waterproofingArea * waterproofingPrice;
     }
 
     // Утепление

@@ -21,8 +21,8 @@ class CalculateStretchCeiling extends BaseCalculator {
     final area = inputs['area'] ?? 0;
     final corners = inputs['corners'] ?? 4;
 
-    if (area <= 0) return 'Площадь должна быть больше нуля';
-    if (corners < 0 || corners > 20) return 'Количество углов должно быть от 0 до 20';
+    if (area <= 0) return positiveValueMessage('area');
+    if (corners < 0 || corners > 20) return rangeMessage('corners', 0, 20);
 
     return null;
   }
@@ -34,8 +34,20 @@ class CalculateStretchCeiling extends BaseCalculator {
   ) {
     // Получаем валидированные входные данные
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final corners = getIntInput(inputs, 'corners', defaultValue: 4, minValue: 0, maxValue: 20);
-    final fixtures = getIntInput(inputs, 'fixtures', defaultValue: 1, minValue: 0, maxValue: 20);
+    final corners = getIntInput(
+      inputs,
+      'corners',
+      defaultValue: 4,
+      minValue: 0,
+      maxValue: 20,
+    );
+    final fixtures = getIntInput(
+      inputs,
+      'fixtures',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 20,
+    );
 
     // Периметр: если указан - используем, иначе оцениваем
     final perimeter = inputs['perimeter'] != null && inputs['perimeter']! > 0
@@ -56,26 +68,60 @@ class CalculateStretchCeiling extends BaseCalculator {
     final thermoRingsNeeded = fixtures;
 
     // Вентиляционные решётки (если нужны): обычно 1-2 шт
-    final ventGrillesNeeded = getIntInput(inputs, 'ventGrilles', defaultValue: 0, minValue: 0, maxValue: 10);
+    final ventGrillesNeeded = getIntInput(
+      inputs,
+      'ventGrilles',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 10,
+    );
 
     // Обход труб (если есть): обычно в санузлах
-    final pipesNeeded = getIntInput(inputs, 'pipes', defaultValue: 0, minValue: 0, maxValue: 10);
+    final pipesNeeded = getIntInput(
+      inputs,
+      'pipes',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 10,
+    );
 
     // Заглушка для багета: периметр (м)
     final insertLength = perimeter;
 
     // Тип потолка влияет на цену (глянцевый дороже матового на ~20-30%)
-    final ceilingType = getIntInput(inputs, 'ceilingType', defaultValue: 1, minValue: 1, maxValue: 3);
+    final ceilingType = getIntInput(
+      inputs,
+      'ceilingType',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 3,
+    );
     // 1 = матовый, 2 = сатиновый, 3 = глянцевый
-    final typeMultiplier = ceilingType == 3 ? 1.3 : (ceilingType == 2 ? 1.15 : 1.0);
+    final typeMultiplier = ceilingType == 3
+        ? 1.3
+        : (ceilingType == 2 ? 1.15 : 1.0);
 
     // Расчёт стоимости
-    final canvasPrice = findPrice(priceList, ['ceiling_stretch', 'ceiling_canvas', 'stretch_ceiling']);
-    final baguettePrice = findPrice(priceList, ['baguette', 'baguette_ceiling', 'ceiling_profile']);
+    final canvasPrice = findPrice(priceList, [
+      'ceiling_stretch',
+      'ceiling_canvas',
+      'stretch_ceiling',
+    ]);
+    final baguettePrice = findPrice(priceList, [
+      'baguette',
+      'baguette_ceiling',
+      'ceiling_profile',
+    ]);
     final cornerPrice = findPrice(priceList, ['corner_profile', 'corner']);
     final thermoRingPrice = findPrice(priceList, ['thermo_ring', 'light_ring']);
-    final ventGrillePrice = findPrice(priceList, ['vent_grille', 'ventilation']);
-    final pipeBypassPrice = findPrice(priceList, ['pipe_bypass', 'pipe_collar']);
+    final ventGrillePrice = findPrice(priceList, [
+      'vent_grille',
+      'ventilation',
+    ]);
+    final pipeBypassPrice = findPrice(priceList, [
+      'pipe_bypass',
+      'pipe_collar',
+    ]);
     final insertPrice = findPrice(priceList, ['insert', 'baguette_insert']);
 
     final costs = [
@@ -104,4 +150,3 @@ class CalculateStretchCeiling extends BaseCalculator {
     );
   }
 }
-

@@ -128,21 +128,21 @@ class CalculateScreedUnified extends BaseCalculator {
     final roomLength = inputs['roomLength'];
 
     if (inputMode == 0 && area <= 0) {
-      return 'Площадь должна быть больше нуля';
+      return positiveValueMessage('area');
     }
 
     if (inputMode == 1) {
       if (roomWidth == null || roomWidth <= 0) {
-        return 'Ширина комнаты должна быть больше нуля';
+        return positiveValueMessage('roomWidth');
       }
       if (roomLength == null || roomLength <= 0) {
-        return 'Длина комнаты должна быть больше нуля';
+        return positiveValueMessage('roomLength');
       }
     }
 
     final thickness = inputs['thickness'] ?? 50;
     if (thickness < 10 || thickness > 200) {
-      return 'Толщина слоя должна быть от 10 до 200 мм';
+      return rangeMessage('thickness', 10, 200, unit: 'мм');
     }
 
     return null;
@@ -162,26 +162,63 @@ class CalculateScreedUnified extends BaseCalculator {
 
     if (inputMode == 0) {
       // Режим "По площади"
-      area = getInput(inputs, 'area', defaultValue: 20.0, minValue: 1.0, maxValue: 500.0);
+      area = getInput(
+        inputs,
+        'area',
+        defaultValue: 20.0,
+        minValue: 1.0,
+        maxValue: 500.0,
+      );
       perimeter = estimatePerimeter(area);
     } else {
       // Режим "По комнате"
-      final roomWidth = getInput(inputs, 'roomWidth', defaultValue: 4.0, minValue: 0.5, maxValue: 30.0);
-      final roomLength = getInput(inputs, 'roomLength', defaultValue: 5.0, minValue: 0.5, maxValue: 30.0);
+      final roomWidth = getInput(
+        inputs,
+        'roomWidth',
+        defaultValue: 4.0,
+        minValue: 0.5,
+        maxValue: 30.0,
+      );
+      final roomLength = getInput(
+        inputs,
+        'roomLength',
+        defaultValue: 5.0,
+        minValue: 0.5,
+        maxValue: 30.0,
+      );
       area = roomWidth * roomLength;
       perimeter = (roomWidth + roomLength) * 2;
     }
 
     // --- Параметры смеси ---
-    final mixType = getIntInput(inputs, 'mixType', defaultValue: 0, minValue: 0, maxValue: 1);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 50.0, minValue: 10.0, maxValue: 150.0);
-    final bagWeight = getInput(inputs, 'bagWeight', defaultValue: 40.0, minValue: 25.0, maxValue: 50.0);
+    final mixType = getIntInput(
+      inputs,
+      'mixType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final thickness = getInput(
+      inputs,
+      'thickness',
+      defaultValue: 50.0,
+      minValue: 10.0,
+      maxValue: 150.0,
+    );
+    final bagWeight = getInput(
+      inputs,
+      'bagWeight',
+      defaultValue: 40.0,
+      minValue: 25.0,
+      maxValue: 50.0,
+    );
 
     // --- Опции ---
     final needMesh = getIntInput(inputs, 'needMesh', defaultValue: 1) == 1;
     final needFilm = getIntInput(inputs, 'needFilm', defaultValue: 1) == 1;
     final needTape = getIntInput(inputs, 'needTape', defaultValue: 1) == 1;
-    final needBeacons = getIntInput(inputs, 'needBeacons', defaultValue: 1) == 1;
+    final needBeacons =
+        getIntInput(inputs, 'needBeacons', defaultValue: 1) == 1;
 
     // --- Объём стяжки ---
     final volume = calculateVolume(area, thickness);
@@ -192,11 +229,23 @@ class CalculateScreedUnified extends BaseCalculator {
 
     if (mixType == 0) {
       // ЦПС
-      marka = getIntInput(inputs, 'cpsMarka', defaultValue: 1, minValue: 0, maxValue: 2);
+      marka = getIntInput(
+        inputs,
+        'cpsMarka',
+        defaultValue: 1,
+        minValue: 0,
+        maxValue: 2,
+      );
       consumption = cpsConsumption[marka] ?? 17.0;
     } else {
       // Пескобетон
-      marka = getIntInput(inputs, 'peskobetonMarka', defaultValue: 1, minValue: 0, maxValue: 2);
+      marka = getIntInput(
+        inputs,
+        'peskobetonMarka',
+        defaultValue: 1,
+        minValue: 0,
+        maxValue: 2,
+      );
       consumption = peskobetonConsumption[marka] ?? 20.0;
     }
 
@@ -221,7 +270,9 @@ class CalculateScreedUnified extends BaseCalculator {
     final thicknessWarning = thickness < minSafeThickness ? 1.0 : 0.0;
 
     // Предупреждение о минимальной толщине для типа смеси
-    final minThicknessForType = mixType == 0 ? minCpsThickness : minPeskobetonThickness;
+    final minThicknessForType = mixType == 0
+        ? minCpsThickness
+        : minPeskobetonThickness;
     final typeThicknessWarning = thickness < minThicknessForType ? 1.0 : 0.0;
 
     // --- Расчёт стоимости ---
@@ -232,14 +283,24 @@ class CalculateScreedUnified extends BaseCalculator {
     if (mixType == 0) {
       mixSku = marka == 0 ? 'cps_m100' : (marka == 1 ? 'cps_m150' : 'cps_m200');
     } else {
-      mixSku = marka == 0 ? 'peskobeton_m200' : (marka == 1 ? 'peskobeton_m300' : 'peskobeton_m400');
+      mixSku = marka == 0
+          ? 'peskobeton_m200'
+          : (marka == 1 ? 'peskobeton_m300' : 'peskobeton_m400');
     }
-    final mixPrice = findPrice(priceList, [mixSku, 'dry_mix', 'cement_sand_mix']);
+    final mixPrice = findPrice(priceList, [
+      mixSku,
+      'dry_mix',
+      'cement_sand_mix',
+    ]);
     costs.add(calculateCost(mixBags.toDouble(), mixPrice?.price));
 
     // Дополнительные материалы
     if (needMesh) {
-      final meshPrice = findPrice(priceList, ['mesh', 'armature_mesh', 'mesh_reinforcing']);
+      final meshPrice = findPrice(priceList, [
+        'mesh',
+        'armature_mesh',
+        'mesh_reinforcing',
+      ]);
       costs.add(calculateCost(meshArea, meshPrice?.price));
     }
 
@@ -254,7 +315,11 @@ class CalculateScreedUnified extends BaseCalculator {
     }
 
     if (needBeacons) {
-      final beaconPrice = findPrice(priceList, ['beacon', 'beacon_metal', 'profile_beacon']);
+      final beaconPrice = findPrice(priceList, [
+        'beacon',
+        'beacon_metal',
+        'profile_beacon',
+      ]);
       costs.add(calculateCost(beaconsNeeded.toDouble(), beaconPrice?.price));
     }
 

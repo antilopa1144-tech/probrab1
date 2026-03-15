@@ -1,31 +1,72 @@
 // ignore_for_file: prefer_const_declarations
-import 'dart:math' as math;
 import '../../data/models/price_item.dart';
+import '../models/canonical_calculator_contract.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
+import './plaster_canonical_adapter.dart';
 
-/// Калькулятор штукатурки.
-///
-/// Нормативы:
-/// - СНиП 3.04.01-87 "Изоляционные и отделочные покрытия"
-/// - ГОСТ 31377-2008 "Смеси сухие строительные"
-/// - СП 71.13330.2017 "Изоляционные и отделочные покрытия"
-///
-/// Учитывает тип основания, ровность стен, автодобавление сетки.
 class CalculatePlaster extends BaseCalculator {
+  bool _hasCanonicalInputs(Map<String, double> inputs) =>
+      hasCanonicalPlasterInputs(inputs);
+
+  Map<String, double> _normalizeInputs(Map<String, double> inputs) {
+    if (_hasCanonicalInputs(inputs)) {
+      return {
+        'inputMode': inputs['inputMode'] ?? 0,
+        'length': inputs['length'] ?? 5,
+        'width': inputs['width'] ?? 4,
+        'height': inputs['height'] ?? 2.7,
+        'area': inputs['area'] ?? 50,
+        'openingsArea': inputs['openingsArea'] ?? 5,
+        'plasterType': inputs['plasterType'] ?? 0,
+        'thickness': inputs['thickness'] ?? 15,
+        'bagWeight': inputs['bagWeight'] ?? 30,
+        'substrateType': inputs['substrateType'] ?? 1,
+        'wallEvenness': inputs['wallEvenness'] ?? 1,
+      };
+    }
+
+    final legacyType = getIntInput(
+      inputs,
+      'type',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 2,
+    );
+    return {
+      'inputMode': 1.0,
+      'area': inputs['area'] ?? 0,
+      'openingsArea': 0.0,
+      'plasterType': (legacyType - 1).toDouble(),
+      'thickness': inputs['thickness'] ?? 10,
+      'bagWeight': legacyType == 1 ? 30.0 : 25.0,
+      'substrateType': inputs['substrateType'] ?? 1,
+      'wallEvenness': inputs['wallEvenness'] ?? 1,
+    };
+  }
+
+  CanonicalCalculatorContractResult calculateCanonical(
+    Map<String, double> inputs,
+  ) {
+    return calculateCanonicalPlaster(_normalizeInputs(inputs));
+  }
+
   @override
   String? validateInputs(Map<String, double> inputs) {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final area = inputs['area'] ?? 0;
-    final thickness = inputs['thickness'] ?? 10;
-
-    if (area <= 0) return 'Площадь должна быть больше нуля';
-    if (area > 100000) return 'Площадь превышает допустимый максимум';
-    if (thickness < 0) return 'Толщина не может быть отрицательной';
-    if (thickness > 100) return 'Толщина должна быть не более 100 мм';
-
+    final normalized = _normalizeInputs(inputs);
+    final area = normalized['area'] ?? 0;
+    if ((_hasCanonicalInputs(inputs) &&
+            area <= 0 &&
+            (normalized['length'] ?? 0) <= 0) ||
+        (!_hasCanonicalInputs(inputs) && area <= 0)) {
+      return positiveValueMessage('area');
+    }
+    if (area > 100000) return maxValueMessage('area', 100000, unit: 'м²');
+    final thickness = normalized['thickness'] ?? 10;
+    if (thickness > 100) return maxValueMessage('thickness', 100, unit: 'мм');
     return null;
   }
 
@@ -34,111 +75,93 @@ class CalculatePlaster extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final area = getInput(inputs, 'area', minValue: 0.1, maxValue: 100000.0);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 10.0, minValue: 5.0, maxValue: 100.0);
-    final type = getIntInput(inputs, 'type', defaultValue: 1, minValue: 1, maxValue: 2);
-    final substrateType = getIntInput(inputs, 'substrateType', defaultValue: 1, minValue: 1, maxValue: 5);
-    final wallEvenness = getIntInput(inputs, 'wallEvenness', defaultValue: 1, minValue: 1, maxValue: 3);
+    final normalized = _normalizeInputs(inputs);
+    final contract = calculateCanonicalPlaster(normalized);
+    final legacyType = getIntInput(
+      inputs,
+      'type',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 2,
+    );
+    final plasterKg = contract.totals['totalKg'] ?? 0;
+    final plasterBags = _findMaterialPurchaseQty(
+      contract,
+      'Основное',
+      nameFallback: 'штукатурка',
+    );
+    final primerNeeded = contract.totals['primerNeed'] ?? 0;
+    final primerType = contract.totals['primerType'] ?? 1;
+    final meshArea = contract.totals['meshArea'] ?? 0;
+    final beacons = contract.totals['beacons'] ?? 0;
+    final beaconSize = contract.totals['beaconSize'] ?? 10;
+    final ruleSize = contract.totals['ruleSize'] ?? 1.5;
 
-    // Базовый расход на 10 мм слоя (кг/м²):
-    // Гипсовая (Ротбанд и аналоги): 8.5 кг/м²
-    // Цементная (ЦПС): 17.0 кг/м²
-    final baseConsumption = type == 1 ? 8.5 : 17.0;
-
-    // Множитель по типу основания:
-    // 1 - бетон: поверхность гладкая, адгезия средняя -> 1.0
-    // 2 - новый кирпич: шероховатый, впитывает умеренно -> 1.15
-    // 3 - старый кирпич: пористый, неровный, впитывает сильно -> 1.3
-    // 4 - газоблок: сильно впитывает влагу -> 1.25
-    // 5 - пенобетон: пористый, средне впитывает -> 1.2
-    final substrateMultiplier = switch (substrateType) {
-      2 => 1.15,
-      3 => 1.30,
-      4 => 1.25,
-      5 => 1.20,
-      _ => 1.0, // бетон
-    };
-
-    // Множитель по ровности стен:
-    // 1 - ровная (<5мм/м): минимум подрезки -> 1.0
-    // 2 - неровная (5-10мм/м): средний перерасход -> 1.15
-    // 3 - очень неровная (>10мм/м): сильный перерасход -> 1.3
-    final evennessMultiplier = switch (wallEvenness) {
-      2 => 1.15,
-      3 => 1.30,
-      _ => 1.0,
-    };
-
-    // Общий расход с учётом всех факторов + 10% запас на потери
-    final plasterKg = area * baseConsumption * (thickness / 10) * substrateMultiplier * evennessMultiplier * 1.1;
-
-    // Вес мешка: гипсовая 30 кг, цементная 25 кг
-    final bagWeight = type == 1 ? 30.0 : 25.0;
-    final plasterBags = (plasterKg / bagWeight).ceil();
-
-    // Грунтовка зависит от типа основания:
-    // Бетон -> бетоноконтакт 0.3 кг/м² (густая, дорогая)
-    // Кирпич/газоблок/пенобетон -> глубокого проникновения 0.1 л/м²
-    final double primerRate;
-    final int primerType; // 1=глубокого проникновения, 2=бетоноконтакт
-    if (substrateType == 1) {
-      primerRate = 0.3; // бетоноконтакт кг/м²
-      primerType = 2;
-    } else {
-      primerRate = 0.1; // глубокого проникновения л/м²
-      primerType = 1;
-    }
-    final primerNeeded = (area * primerRate * 1.1).ceil(); // +10% запас
-
-    // Маяки: размер зависит от толщины слоя
-    // <15мм -> 6мм маяки
-    // 15-30мм -> 10мм маяки
-    // >30мм -> 10мм маяки + армирующая сетка
-    final beaconSizeMm = thickness < 15 ? 6 : 10;
-
-    // Количество маяков: на каждые 2.5 м² нужен ~1 маяк по 3 м
-    final beaconsCount = math.max(2, (area / 2.5).ceil());
-
-    // Армирующая сетка: обязательна при толщине >30мм
-    final needsMesh = thickness > 30;
-    final meshArea = needsMesh ? area * 1.1 : 0.0; // +10% нахлёст
-
-    // Правило: рекомендуемый размер
-    const ruleSizeM = 1.5;
-
-    // Расчёт стоимости
-    final plasterPrice = type == 1
+    final plasterPrice = legacyType == 1
         ? findPrice(priceList, ['plaster_gypsum', 'plaster', 'gypsum_plaster'])
         : findPrice(priceList, ['plaster_cement', 'cement_plaster', 'plaster']);
     final primerPrice = primerType == 2
         ? findPrice(priceList, ['betonkontakt', 'primer_contact', 'primer'])
         : findPrice(priceList, ['primer_deep', 'primer', 'primer_penetrating']);
-    final meshPrice = findPrice(priceList, ['mesh', 'plaster_mesh', 'reinforcement_mesh']);
-    final beaconPrice = findPrice(priceList, ['beacon', 'beacon_plaster', 'profile_beacon']);
+    final meshPrice = findPrice(priceList, [
+      'mesh',
+      'plaster_mesh',
+      'reinforcement_mesh',
+    ]);
+    final beaconPrice = findPrice(priceList, [
+      'beacon',
+      'beacon_plaster',
+      'profile_beacon',
+    ]);
+    final bagWeight =
+        contract.totals['bagWeight'] ?? (legacyType == 1 ? 30 : 25);
 
     final costs = [
       calculateCost(plasterBags.toDouble() * bagWeight, plasterPrice?.price),
-      calculateCost(primerNeeded.toDouble(), primerPrice?.price),
+      calculateCost(primerNeeded, primerPrice?.price),
       if (meshArea > 0) calculateCost(meshArea, meshPrice?.price),
-      calculateCost(beaconsCount.toDouble(), beaconPrice?.price),
+      calculateCost(beacons, beaconPrice?.price),
     ];
 
     return createResult(
       values: {
         'plasterBags': plasterBags.toDouble(),
         'plasterKg': plasterKg,
-        'primerLiters': primerNeeded.toDouble(),
-        'primerType': primerType.toDouble(),
+        'bagWeight': bagWeight,
+        'primerLiters': primerNeeded,
+        'primerType': primerType,
         if (meshArea > 0) 'meshArea': meshArea,
-        'beacons': beaconsCount.toDouble(),
-        'beaconSize': beaconSizeMm.toDouble(),
-        'ruleSize': ruleSizeM,
-        // Flags for conditional hints
-        if (thickness > 40) 'warningThickLayer': 1.0,
-        if (substrateType == 3 && wallEvenness == 3) 'tipObryzg': 1.0,
+        'beacons': beacons,
+        'beaconSize': beaconSize,
+        'ruleSize': ruleSize,
+        if ((contract.totals['warningThickLayer'] ?? 0) > 0)
+          'warningThickLayer': 1.0,
+        if ((contract.totals['tipObryzg'] ?? 0) > 0) 'tipObryzg': 1.0,
       },
       totalPrice: sumCosts(costs),
       decimals: 1,
+      norms: [...normativeSources, contract.formulaVersion],
+      calculatorId: 'plaster-canonical',
     );
+  }
+
+  int _findMaterialPurchaseQty(
+    CanonicalCalculatorContractResult contract,
+    String categoryPart, {
+    String? nameFallback,
+  }) {
+    for (final material in contract.materials) {
+      if ((material.category ?? '').contains(categoryPart)) {
+        return material.purchaseQty ?? 0;
+      }
+    }
+    if (nameFallback != null) {
+      for (final material in contract.materials) {
+        if (material.name.toLowerCase().contains(nameFallback)) {
+          return material.purchaseQty ?? 0;
+        }
+      }
+    }
+    return 0;
   }
 }

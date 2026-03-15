@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import '../models/canonical_calculator_contract.dart';
 
 /* ─── spec types ─── */
@@ -110,13 +108,6 @@ const Map<String, Map<String, double>> _factorTable = {
 };
 
 const List<String> _scenarioNames = ['MIN', 'REC', 'MAX'];
-
-const Map<int, String> _openingTypeLabels = {
-  0: 'Окно 1200\u00d71400 (3 стороны)',
-  1: 'Окно 900\u00d71200 (3 стороны)',
-  2: 'Дверь 800\u00d72000 (2 стороны)',
-  3: 'Балконная дверь 900\u00d72000 (3 стороны)',
-};
 
 const Map<int, String> _finishTypeLabels = {
   0: 'Сэндвич-панели ПВХ',

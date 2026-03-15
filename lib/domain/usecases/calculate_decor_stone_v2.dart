@@ -1,5 +1,4 @@
 import '../../data/models/price_item.dart';
-import '../../core/exceptions/calculation_exception.dart';
 import 'base_calculator.dart';
 import 'calculator_usecase.dart';
 
@@ -14,6 +13,29 @@ import 'calculator_usecase.dart';
 /// - 0: Ручной ввод площади
 /// - 1: По размерам стены
 class CalculateDecorStoneV2 extends BaseCalculator {
+  @override
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final inputMode = inputs['inputMode']?.toInt() ?? 0;
+
+    if (inputMode == 1) {
+      final width = inputs['wallWidth'] ?? 0;
+      final height = inputs['wallHeight'] ?? 0;
+      if (width <= 0 || height <= 0) {
+        return wallAreaOrDimensionsRequiredMessage();
+      }
+    } else {
+      final area = inputs['area'] ?? 0;
+      if (area <= 0) {
+        return positiveValueMessage('area');
+      }
+    }
+
+    return null;
+  }
+
   // Расход клея по типам камня (кг/м²)
   static const List<double> gluePerSqm = [3.0, 5.0, 7.0];
 
@@ -29,11 +51,45 @@ class CalculateDecorStoneV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 0, minValue: 0, maxValue: 1);
-    final stoneType = getIntInput(inputs, 'stoneType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final jointWidth = getInput(inputs, 'jointWidth', defaultValue: 10.0, minValue: 0, maxValue: 20);
-    final needGrout = getInput(inputs, 'needGrout', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
-    final needPrimer = getInput(inputs, 'needPrimer', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
+    final inputMode = getIntInput(
+      inputs,
+      'inputMode',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final stoneType = getIntInput(
+      inputs,
+      'stoneType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final jointWidth = getInput(
+      inputs,
+      'jointWidth',
+      defaultValue: 10.0,
+      minValue: 0,
+      maxValue: 20,
+    );
+    final needGrout =
+        getInput(
+          inputs,
+          'needGrout',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
+    final needPrimer =
+        getInput(
+          inputs,
+          'needPrimer',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
 
     // Площадь и размеры
     double area;
@@ -42,39 +98,32 @@ class CalculateDecorStoneV2 extends BaseCalculator {
 
     if (inputMode == 1) {
       // Режим стены
-      wallWidth = getInput(inputs, 'wallWidth', defaultValue: 4.0, minValue: 0.5, maxValue: 30);
-      wallHeight = getInput(inputs, 'wallHeight', defaultValue: 2.7, minValue: 0.5, maxValue: 10);
+      wallWidth = getInput(
+        inputs,
+        'wallWidth',
+        defaultValue: 4.0,
+        minValue: 0.5,
+        maxValue: 30,
+      );
+      wallHeight = getInput(
+        inputs,
+        'wallHeight',
+        defaultValue: 2.7,
+        minValue: 0.5,
+        maxValue: 10,
+      );
       area = wallWidth * wallHeight;
-
-      // Валидация
-      final rawWidth = inputs['wallWidth'] ?? 4.0;
-      final rawHeight = inputs['wallHeight'] ?? 2.7;
-      if (rawWidth <= 0) {
-        throw CalculationException.invalidInput(
-          'CalculateDecorStoneV2',
-          'Ширина стены должна быть положительной',
-        );
-      }
-      if (rawHeight <= 0) {
-        throw CalculationException.invalidInput(
-          'CalculateDecorStoneV2',
-          'Высота стены должна быть положительной',
-        );
-      }
     } else {
       // Ручной режим
-      area = getInput(inputs, 'area', defaultValue: 15.0, minValue: 1, maxValue: 500);
+      area = getInput(
+        inputs,
+        'area',
+        defaultValue: 15.0,
+        minValue: 1,
+        maxValue: 500,
+      );
       wallWidth = (area / 2.7).clamp(0.5, 30.0);
       wallHeight = 2.7;
-
-      // Валидация
-      final rawArea = inputs['area'] ?? 15.0;
-      if (rawArea <= 0) {
-        throw CalculationException.invalidInput(
-          'CalculateDecorStoneV2',
-          'Площадь должна быть положительной',
-        );
-      }
     }
 
     const wasteFactor = 1 + wastePercent / 100;
@@ -95,7 +144,9 @@ class CalculateDecorStoneV2 extends BaseCalculator {
     }
 
     // Грунтовка
-    final primerLiters = needPrimer ? area * primerConsumption * wasteFactor : 0.0;
+    final primerLiters = needPrimer
+        ? area * primerConsumption * wasteFactor
+        : 0.0;
 
     // Формируем результат
     final values = <String, double>{

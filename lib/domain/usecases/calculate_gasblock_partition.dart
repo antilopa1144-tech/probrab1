@@ -26,7 +26,7 @@ class CalculateGasblockPartition extends BaseCalculator {
       final length = inputs['length'] ?? 0;
       final height = inputs['height'] ?? 0;
       if (length <= 0 || height <= 0) {
-        return 'Площадь должна быть больше нуля';
+        return wallAreaOrDimensionsRequiredMessage();
       }
     }
 
@@ -43,13 +43,42 @@ class CalculateGasblockPartition extends BaseCalculator {
       area = getInput(inputs, 'area', minValue: 0.1);
     } else {
       final length = getInput(inputs, 'length', minValue: 0.1);
-      final height = getInput(inputs, 'height', defaultValue: 2.5, minValue: 0.1);
+      final height = getInput(
+        inputs,
+        'height',
+        defaultValue: 2.5,
+        minValue: 0.1,
+      );
       area = length * height;
     }
-    final blockWidth = getInput(inputs, 'blockWidth', defaultValue: 10.0, minValue: 7.5, maxValue: 20.0);
-    final blockLength = getInput(inputs, 'blockLength', defaultValue: 60.0, minValue: 50.0, maxValue: 62.5);
-    final blockHeight = getInput(inputs, 'blockHeight', defaultValue: 25.0, minValue: 20.0, maxValue: 30.0);
-    final wallHeight = getInput(inputs, 'height', defaultValue: 2.5, minValue: 2.0, maxValue: 4.0);
+    final blockWidth = getInput(
+      inputs,
+      'blockWidth',
+      defaultValue: 10.0,
+      minValue: 7.5,
+      maxValue: 20.0,
+    );
+    final blockLength = getInput(
+      inputs,
+      'blockLength',
+      defaultValue: 60.0,
+      minValue: 50.0,
+      maxValue: 62.5,
+    );
+    final blockHeight = getInput(
+      inputs,
+      'blockHeight',
+      defaultValue: 25.0,
+      minValue: 20.0,
+      maxValue: 30.0,
+    );
+    final wallHeight = getInput(
+      inputs,
+      'height',
+      defaultValue: 2.5,
+      minValue: 2.0,
+      maxValue: 4.0,
+    );
 
     // Площадь одного блока (по фасаду) в м²
     final blockFaceArea = (blockLength / 100) * (blockHeight / 100);
@@ -81,12 +110,31 @@ class CalculateGasblockPartition extends BaseCalculator {
     final meshArea = area * 2 * 1.05;
 
     // Перемычки над проёмами: по факту
-    final lintelsNeeded = getIntInput(inputs, 'lintels', defaultValue: 0, minValue: 0, maxValue: 20);
+    final lintelsNeeded = getIntInput(
+      inputs,
+      'lintels',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 20,
+    );
 
     // Расчёт стоимости
-    final blockPrice = findPrice(priceList, ['gasblock', 'gas_block', 'foam_block', 'aerated_concrete']);
-    final gluePrice = findPrice(priceList, ['glue_gasblock', 'glue_block', 'thin_bed_mortar']);
-    final reinforcementPrice = findPrice(priceList, ['rebar', 'rebar_6mm', 'reinforcement_bar']);
+    final blockPrice = findPrice(priceList, [
+      'gasblock',
+      'gas_block',
+      'foam_block',
+      'aerated_concrete',
+    ]);
+    final gluePrice = findPrice(priceList, [
+      'glue_gasblock',
+      'glue_block',
+      'thin_bed_mortar',
+    ]);
+    final reinforcementPrice = findPrice(priceList, [
+      'rebar',
+      'rebar_6mm',
+      'reinforcement_bar',
+    ]);
     final primerPrice = findPrice(priceList, ['primer', 'primer_deep']);
     final plasterPrice = findPrice(priceList, ['plaster', 'plaster_gypsum']);
     final meshPrice = findPrice(priceList, ['mesh', 'plaster_mesh']);
@@ -99,7 +147,8 @@ class CalculateGasblockPartition extends BaseCalculator {
       calculateCost(primerNeeded, primerPrice?.price),
       calculateCost(plasterNeeded, plasterPrice?.price),
       calculateCost(meshArea, meshPrice?.price),
-      if (lintelsNeeded > 0) calculateCost(lintelsNeeded.toDouble(), lintelPrice?.price),
+      if (lintelsNeeded > 0)
+        calculateCost(lintelsNeeded.toDouble(), lintelPrice?.price),
     ];
 
     return createResult(

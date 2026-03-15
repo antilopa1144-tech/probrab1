@@ -51,14 +51,14 @@ class CalculateMdfPanelsV2 extends BaseCalculator {
       // Manual mode
       final area = inputs['area'] ?? 0;
       if (area <= 0) {
-        return 'Площадь должна быть больше нуля';
+        return positiveValueMessage('area');
       }
     } else {
       // Wall mode
       final width = inputs['wallWidth'] ?? 0;
       final height = inputs['wallHeight'] ?? 0;
       if (width <= 0 || height <= 0) {
-        return 'Размеры стены должны быть больше нуля';
+        return wallAreaOrDimensionsRequiredMessage();
       }
     }
 
@@ -71,11 +71,45 @@ class CalculateMdfPanelsV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 0, minValue: 0, maxValue: 1);
-    final panelType = getIntInput(inputs, 'panelType', defaultValue: 1, minValue: 0, maxValue: 2);
-    final panelWidth = getInput(inputs, 'panelWidth', defaultValue: 0.25, minValue: 0.1, maxValue: 0.4);
-    final needProfile = getIntInput(inputs, 'needProfile', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
-    final needPlinth = getIntInput(inputs, 'needPlinth', defaultValue: 1, minValue: 0, maxValue: 1) == 1;
+    final inputMode = getIntInput(
+      inputs,
+      'inputMode',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final panelType = getIntInput(
+      inputs,
+      'panelType',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final panelWidth = getInput(
+      inputs,
+      'panelWidth',
+      defaultValue: 0.25,
+      minValue: 0.1,
+      maxValue: 0.4,
+    );
+    final needProfile =
+        getIntInput(
+          inputs,
+          'needProfile',
+          defaultValue: 1,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
+    final needPlinth =
+        getIntInput(
+          inputs,
+          'needPlinth',
+          defaultValue: 1,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1;
 
     // Площадь и размеры
     double area;
@@ -84,12 +118,30 @@ class CalculateMdfPanelsV2 extends BaseCalculator {
 
     if (inputMode == 1) {
       // Wall mode
-      wallWidth = getInput(inputs, 'wallWidth', defaultValue: 4.0, minValue: 0.5, maxValue: 30.0);
-      wallHeight = getInput(inputs, 'wallHeight', defaultValue: 2.7, minValue: 0.5, maxValue: 10.0);
+      wallWidth = getInput(
+        inputs,
+        'wallWidth',
+        defaultValue: 4.0,
+        minValue: 0.5,
+        maxValue: 30.0,
+      );
+      wallHeight = getInput(
+        inputs,
+        'wallHeight',
+        defaultValue: 2.7,
+        minValue: 0.5,
+        maxValue: 10.0,
+      );
       area = wallWidth * wallHeight;
     } else {
       // Manual mode - вычисляем размеры для расчёта профиля
-      area = getInput(inputs, 'area', defaultValue: 20.0, minValue: 1.0, maxValue: 500.0);
+      area = getInput(
+        inputs,
+        'area',
+        defaultValue: 20.0,
+        minValue: 1.0,
+        maxValue: 500.0,
+      );
       final side = math.sqrt(area);
       wallWidth = side * 1.5;
       wallHeight = side / 1.5;
@@ -99,7 +151,8 @@ class CalculateMdfPanelsV2 extends BaseCalculator {
     final panelArea = panelWidth * standardPanelLength;
 
     // Количество панелей с запасом
-    final panelsCount = (area * (1 + panelWastePercent / 100) / panelArea).ceil();
+    final panelsCount = (area * (1 + panelWastePercent / 100) / panelArea)
+        .ceil();
 
     // Кляймеры: 5 шт на панель
     final clipsCount = panelsCount * clipsPerPanel;
@@ -108,7 +161,8 @@ class CalculateMdfPanelsV2 extends BaseCalculator {
     double profileTotalLength = 0;
     if (needProfile) {
       final horizontalProfiles = (wallHeight / profileStep).ceil() + 1;
-      profileTotalLength = horizontalProfiles * wallWidth * (1 + profileWastePercent / 100);
+      profileTotalLength =
+          horizontalProfiles * wallWidth * (1 + profileWastePercent / 100);
     }
 
     // Плинтус
@@ -120,16 +174,29 @@ class CalculateMdfPanelsV2 extends BaseCalculator {
     }
 
     // Расчёт стоимости
-    final panelPrice = findPrice(priceList, ['mdf_panel', 'мдф_панель', 'panel']);
+    final panelPrice = findPrice(priceList, [
+      'mdf_panel',
+      'мдф_панель',
+      'panel',
+    ]);
     final clipsPrice = findPrice(priceList, ['clips', 'кляймер', 'mdf_clips']);
-    final profilePrice = findPrice(priceList, ['profile', 'профиль', 'mdf_profile']);
-    final plinthPrice = findPrice(priceList, ['plinth', 'плинтус', 'mdf_plinth']);
+    final profilePrice = findPrice(priceList, [
+      'profile',
+      'профиль',
+      'mdf_profile',
+    ]);
+    final plinthPrice = findPrice(priceList, [
+      'plinth',
+      'плинтус',
+      'mdf_plinth',
+    ]);
 
     final costs = [
       calculateCost(panelsCount.toDouble(), panelPrice?.price),
       calculateCost(clipsCount.toDouble(), clipsPrice?.price),
       if (needProfile) calculateCost(profileTotalLength, profilePrice?.price),
-      if (needPlinth) calculateCost(plinthPieces.toDouble(), plinthPrice?.price),
+      if (needPlinth)
+        calculateCost(plinthPieces.toDouble(), plinthPrice?.price),
     ];
 
     return createResult(

@@ -39,10 +39,11 @@ class CalculateTileGrout extends BaseCalculator {
     if (inputMode == 0) {
       final length = inputs['length'] ?? 0;
       final width = inputs['width'] ?? 0;
-      if (length <= 0 || width <= 0) return 'Длина и ширина должны быть больше нуля';
+      if (length <= 0) return positiveValueMessage('length');
+      if (width <= 0) return positiveValueMessage('width');
     } else {
       final area = inputs['area'] ?? 0;
-      if (area <= 0) return 'Площадь должна быть больше нуля';
+      if (area <= 0) return positiveValueMessage('area');
     }
 
     return null;
@@ -71,8 +72,20 @@ class CalculateTileGrout extends BaseCalculator {
 
     if (tileSize == 0) {
       // Пользовательский размер
-      tileWidth = getInput(inputs, 'tileWidth', defaultValue: 60.0, minValue: 1.0, maxValue: 200.0);
-      tileHeight = getInput(inputs, 'tileHeight', defaultValue: 60.0, minValue: 1.0, maxValue: 200.0);
+      tileWidth = getInput(
+        inputs,
+        'tileWidth',
+        defaultValue: 60.0,
+        minValue: 1.0,
+        maxValue: 200.0,
+      );
+      tileHeight = getInput(
+        inputs,
+        'tileHeight',
+        defaultValue: 60.0,
+        minValue: 1.0,
+        maxValue: 200.0,
+      );
     } else if (tileSize == 120) {
       // Прямоугольная плитка 120×60
       tileWidth = 120.0;
@@ -84,11 +97,27 @@ class CalculateTileGrout extends BaseCalculator {
     }
 
     // --- Параметры шва ---
-    final jointWidth = getInput(inputs, 'jointWidth', defaultValue: 3.0, minValue: 1.0, maxValue: 12.0); // мм
-    final jointDepth = getInput(inputs, 'jointDepth', defaultValue: 2.0, minValue: 1.0, maxValue: 5.0);   // мм
+    final jointWidth = getInput(
+      inputs,
+      'jointWidth',
+      defaultValue: 3.0,
+      minValue: 1.0,
+      maxValue: 12.0,
+    ); // мм
+    final jointDepth = getInput(
+      inputs,
+      'jointDepth',
+      defaultValue: 2.0,
+      minValue: 1.0,
+      maxValue: 5.0,
+    ); // мм
 
     // --- Тип затирки ---
-    final groutType = getIntInput(inputs, 'groutType', defaultValue: 0); // 0=цементная, 1=эпоксидная, 2=полиуретановая
+    final groutType = getIntInput(
+      inputs,
+      'groutType',
+      defaultValue: 0,
+    ); // 0=цементная, 1=эпоксидная, 2=полиуретановая
 
     // --- Плотность затирки (кг/м³) ---
     final density = switch (groutType) {
@@ -98,20 +127,21 @@ class CalculateTileGrout extends BaseCalculator {
     };
 
     // --- Перевод размеров плитки в метры ---
-    final tileWidthM = tileWidth / 100.0;   // см → м
+    final tileWidthM = tileWidth / 100.0; // см → м
     final tileHeightM = tileHeight / 100.0; // см → м
 
     // --- Перевод параметров шва в метры ---
-    final jointWidthM = jointWidth / 1000.0;  // мм → м
-    final jointDepthM = jointDepth / 1000.0;  // мм → м
+    final jointWidthM = jointWidth / 1000.0; // мм → м
+    final jointDepthM = jointDepth / 1000.0; // мм → м
 
     // --- Расход затирки (кг/м²) по формуле из единиц СИ ---
     // Суммарная длина швов на 1 м² поверхности:
     //   горизонтальные: 1/tileHeightM (штук ряда на метр высоты) × 1 м ширины
     //   вертикальные:   1/tileWidthM  (штук столбца на метр ширины) × 1 м высоты
     //   итого: 1/tileWidthM + 1/tileHeightM  (м шва / м² поверхности)
-    final jointsLengthPerM2 = safeDivide(1.0, tileWidthM, defaultValue: 0.0)
-        + safeDivide(1.0, tileHeightM, defaultValue: 0.0);
+    final jointsLengthPerM2 =
+        safeDivide(1.0, tileWidthM, defaultValue: 0.0) +
+        safeDivide(1.0, tileHeightM, defaultValue: 0.0);
 
     // Сечение шва (м²)
     final jointCrossSection = jointWidthM * jointDepthM;
@@ -144,9 +174,7 @@ class CalculateTileGrout extends BaseCalculator {
 
     // --- Стоимость ---
     final groutPrice = findPrice(priceList, ['grout', 'grout_tile', 'затирка']);
-    final costs = [
-      calculateCost(groutNeeded, groutPrice?.price),
-    ];
+    final costs = [calculateCost(groutNeeded, groutPrice?.price)];
 
     return createResult(
       values: {

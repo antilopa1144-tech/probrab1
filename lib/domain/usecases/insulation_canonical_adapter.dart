@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import '../models/canonical_calculator_contract.dart';
 
 /* ─── Spec model classes ─── */
@@ -164,8 +162,6 @@ const InsulationCanonicalSpec insulationCanonicalSpecV1 = InsulationCanonicalSpe
 
 const Map<int, double> _plateAreas = {0: 0.72, 1: 0.50, 2: 2.00};
 const Map<int, String> _plateLabels = {0: '1200×600', 1: '1000×500', 2: '2000×1000'};
-const double _plateReserve = 1.05;
-
 const Map<int, int> _dowelsPerSqm = {0: 7, 1: 5, 2: 6, 3: 0};
 const double _dowelReserve = 1.05;
 

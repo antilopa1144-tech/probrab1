@@ -250,8 +250,8 @@ CanonicalCalculatorContractResult calculateCanonicalBasement(
   // Scenarios
   final totalConcrete = _roundValue(floorConcrete + wallConcrete, 3);
   final basePrimary = totalConcrete;
-  final packageLabel = 'concrete-m3';
-  final packageUnit = 'м³';
+  const packageLabel = 'concrete-m3';
+  const packageUnit = 'м³';
 
   final scenarios = <String, CanonicalScenarioResult>{};
   for (final scenarioName in _scenarioNames) {

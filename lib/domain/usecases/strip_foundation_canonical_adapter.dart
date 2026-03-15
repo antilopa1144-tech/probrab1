@@ -156,7 +156,7 @@ Map<String, dynamic> _pickPackage(double exactNeed, double stepSize, String unit
     'count': count,
     'purchase': purchase,
     'leftover': leftover,
-    'label': 'strip-foundation-${stepSize}$unit',
+    'label': 'strip-foundation-$stepSize$unit',
   };
 }
 

@@ -34,14 +34,14 @@ class CalculateStretchCeilingV2 extends BaseCalculator {
       // Manual mode
       final area = inputs['area'] ?? 0;
       if (area <= 0) {
-        return 'Площадь должна быть больше нуля';
+        return positiveValueMessage('area');
       }
     } else {
       // Room mode
       final width = inputs['roomWidth'] ?? 0;
       final length = inputs['roomLength'] ?? 0;
       if (width <= 0 || length <= 0) {
-        return 'Размеры комнаты должны быть больше нуля';
+        return areaOrRoomDimensionsRequiredMessage();
       }
     }
 
@@ -54,9 +54,27 @@ class CalculateStretchCeilingV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 1, minValue: 0, maxValue: 1);
-    final ceilingType = getIntInput(inputs, 'ceilingType', defaultValue: 0, minValue: 0, maxValue: 3);
-    final lightsCount = getIntInput(inputs, 'lightsCount', defaultValue: 4, minValue: 0, maxValue: 50);
+    final inputMode = getIntInput(
+      inputs,
+      'inputMode',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final ceilingType = getIntInput(
+      inputs,
+      'ceilingType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 3,
+    );
+    final lightsCount = getIntInput(
+      inputs,
+      'lightsCount',
+      defaultValue: 4,
+      minValue: 0,
+      maxValue: 50,
+    );
 
     // Площадь и размеры
     double area;
@@ -65,12 +83,30 @@ class CalculateStretchCeilingV2 extends BaseCalculator {
 
     if (inputMode == 1) {
       // Room mode
-      roomWidth = getInput(inputs, 'roomWidth', defaultValue: 4.0, minValue: 0.5, maxValue: 30.0);
-      roomLength = getInput(inputs, 'roomLength', defaultValue: 4.0, minValue: 0.5, maxValue: 30.0);
+      roomWidth = getInput(
+        inputs,
+        'roomWidth',
+        defaultValue: 4.0,
+        minValue: 0.5,
+        maxValue: 30.0,
+      );
+      roomLength = getInput(
+        inputs,
+        'roomLength',
+        defaultValue: 4.0,
+        minValue: 0.5,
+        maxValue: 30.0,
+      );
       area = roomWidth * roomLength;
     } else {
       // Manual mode - вычисляем "квадратные" размеры для периметра
-      area = getInput(inputs, 'area', defaultValue: 16.0, minValue: 1.0, maxValue: 500.0);
+      area = getInput(
+        inputs,
+        'area',
+        defaultValue: 16.0,
+        minValue: 1.0,
+        maxValue: 500.0,
+      );
       final side = math.sqrt(area);
       roomWidth = side;
       roomLength = side;
@@ -83,15 +119,32 @@ class CalculateStretchCeilingV2 extends BaseCalculator {
     final profileLength = perimeter * (1 + profileWastePercent / 100);
 
     // Расчёт стоимости
-    final canvasPrice = findPrice(priceList, ['canvas', 'полотно', 'stretch_canvas']);
-    final profilePrice = findPrice(priceList, ['profile', 'профиль', 'stretch_profile']);
-    final lightPrice = findPrice(priceList, ['light', 'светильник', 'spotlight']);
-    final cornerPrice = findPrice(priceList, ['corner', 'угол', 'stretch_corner']);
+    final canvasPrice = findPrice(priceList, [
+      'canvas',
+      'полотно',
+      'stretch_canvas',
+    ]);
+    final profilePrice = findPrice(priceList, [
+      'profile',
+      'профиль',
+      'stretch_profile',
+    ]);
+    final lightPrice = findPrice(priceList, [
+      'light',
+      'светильник',
+      'spotlight',
+    ]);
+    final cornerPrice = findPrice(priceList, [
+      'corner',
+      'угол',
+      'stretch_corner',
+    ]);
 
     final costs = [
       calculateCost(area, canvasPrice?.price),
       calculateCost(profileLength, profilePrice?.price),
-      if (lightsCount > 0) calculateCost(lightsCount.toDouble(), lightPrice?.price),
+      if (lightsCount > 0)
+        calculateCost(lightsCount.toDouble(), lightPrice?.price),
       calculateCost(standardCornersCount.toDouble(), cornerPrice?.price),
     ];
 

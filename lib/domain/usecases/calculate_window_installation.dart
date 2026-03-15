@@ -10,17 +10,19 @@ import './base_calculator.dart';
 /// - ГОСТ 30674-99 "Блоки оконные"
 ///
 /// Поля:
-/// - windows: количество окон, по умолчанию 1
+/// - windows/windowsCount: количество окон, по умолчанию 1
 /// - windowWidth: ширина окна (м), по умолчанию 1.5
 /// - windowHeight: высота окна (м), по умолчанию 1.4
+/// - needSill: 1/0, нужен ли подоконник
+/// - needSlopes: 1/0, нужны ли откосы
 class CalculateWindowInstallation extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final windows = inputs['windows'] ?? 1;
-    if (windows < 1) return 'Количество окон должно быть больше нуля';
+    final windows = inputs['windows'] ?? inputs['windowsCount'] ?? 1;
+    if (windows < 1) return positiveValueMessage('windows');
 
     return null;
   }
@@ -30,9 +32,31 @@ class CalculateWindowInstallation extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final windows = getIntInput(inputs, 'windows', defaultValue: 1, minValue: 1, maxValue: 50);
-    final windowWidth = getInput(inputs, 'windowWidth', defaultValue: 1.5, minValue: 0.5, maxValue: 4.0);
-    final windowHeight = getInput(inputs, 'windowHeight', defaultValue: 1.4, minValue: 0.5, maxValue: 3.0);
+    final windows = getIntInput(
+      inputs.containsKey('windows')
+          ? inputs
+          : {...inputs, 'windows': inputs['windowsCount'] ?? 1.0},
+      'windows',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 50,
+    );
+    final windowWidth = getInput(
+      inputs,
+      'windowWidth',
+      defaultValue: 1.5,
+      minValue: 0.5,
+      maxValue: 4.0,
+    );
+    final windowHeight = getInput(
+      inputs,
+      'windowHeight',
+      defaultValue: 1.4,
+      minValue: 0.5,
+      maxValue: 3.0,
+    );
+    final needSill = getIntInput(inputs, 'needSill', defaultValue: 1) != 0;
+    final needSlopes = getIntInput(inputs, 'needSlopes', defaultValue: 1) != 0;
 
     // Площадь одного окна
     final windowArea = windowWidth * windowHeight;
@@ -46,12 +70,20 @@ class CalculateWindowInstallation extends BaseCalculator {
     final foamNeeded = ceilToInt(windows * foamPerWindow);
 
     // Подоконники: длина окна + 5 см с каждой стороны
-    final sillLength = (windowWidth + 0.1) * windows;
-    final sillsNeeded = windows;
+    final sillLength = needSill ? (windowWidth + 0.1) * windows : 0.0;
+    final sillsNeeded = needSill ? windows : 0;
 
     // Откосы: периметр окна × ширина откоса (30 см) + 10% запас на подрезку
-    final slopeWidth = getInput(inputs, 'slopeWidth', defaultValue: 0.3, minValue: 0.2, maxValue: 0.5);
-    final slopeArea = windowPerimeter * slopeWidth * windows * 1.1;
+    final slopeWidth = getInput(
+      inputs,
+      'slopeWidth',
+      defaultValue: 0.3,
+      minValue: 0.2,
+      maxValue: 0.5,
+    );
+    final slopeArea = needSlopes
+        ? windowPerimeter * slopeWidth * windows * 1.1
+        : 0.0;
 
     // Отливы: ширина окна + 5 см с каждой стороны
     final dripLength = (windowWidth + 0.1) * windows;
@@ -69,14 +101,44 @@ class CalculateWindowInstallation extends BaseCalculator {
     final vaporTapeLength = windowPerimeter * windows * 1.1;
 
     // Расчёт стоимости
-    final windowPrice = findPrice(priceList, ['window', 'window_pvc', 'plastic_window']);
-    final foamPrice = findPrice(priceList, ['foam_mounting', 'foam', 'polyurethane_foam']);
-    final sillPrice = findPrice(priceList, ['sill', 'window_sill', 'windowsill']);
-    final slopePrice = findPrice(priceList, ['slope', 'slope_material', 'slope_panel']);
-    final dripPrice = findPrice(priceList, ['drip', 'drip_window', 'window_sill_exterior']);
-    final sealantTapePrice = findPrice(priceList, ['tape_psul', 'sealing_tape']);
-    final sealantPrice = findPrice(priceList, ['sealant', 'silicone', 'window_sealant']);
-    final vaporTapePrice = findPrice(priceList, ['tape_vapor', 'vapor_barrier_tape']);
+    final windowPrice = findPrice(priceList, [
+      'window',
+      'window_pvc',
+      'plastic_window',
+    ]);
+    final foamPrice = findPrice(priceList, [
+      'foam_mounting',
+      'foam',
+      'polyurethane_foam',
+    ]);
+    final sillPrice = findPrice(priceList, [
+      'sill',
+      'window_sill',
+      'windowsill',
+    ]);
+    final slopePrice = findPrice(priceList, [
+      'slope',
+      'slope_material',
+      'slope_panel',
+    ]);
+    final dripPrice = findPrice(priceList, [
+      'drip',
+      'drip_window',
+      'window_sill_exterior',
+    ]);
+    final sealantTapePrice = findPrice(priceList, [
+      'tape_psul',
+      'sealing_tape',
+    ]);
+    final sealantPrice = findPrice(priceList, [
+      'sealant',
+      'silicone',
+      'window_sealant',
+    ]);
+    final vaporTapePrice = findPrice(priceList, [
+      'tape_vapor',
+      'vapor_barrier_tape',
+    ]);
 
     final costs = [
       calculateCost(windows.toDouble(), windowPrice?.price),
@@ -92,12 +154,15 @@ class CalculateWindowInstallation extends BaseCalculator {
     return createResult(
       values: {
         'windows': windows.toDouble(),
+        'windowsCount': windows.toDouble(),
         'windowArea': windowArea,
         'totalArea': totalArea,
         'foamNeeded': foamNeeded.toDouble(),
         'sillsNeeded': sillsNeeded.toDouble(),
         'sillLength': sillLength,
         'slopeArea': slopeArea,
+        'needSill': needSill ? 1.0 : 0.0,
+        'needSlopes': needSlopes ? 1.0 : 0.0,
         'dripLength': dripLength,
         'sealantTapeLength': sealantTapeLength,
         'anchorsNeeded': anchorsNeeded.toDouble(),

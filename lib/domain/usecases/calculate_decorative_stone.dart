@@ -20,7 +20,7 @@ class CalculateDecorativeStone extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -31,14 +31,30 @@ class CalculateDecorativeStone extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final stoneWidth = getInput(inputs, 'stoneWidth', defaultValue: 20.0, minValue: 5.0, maxValue: 50.0);
-    final stoneHeight = getInput(inputs, 'stoneHeight', defaultValue: 5.0, minValue: 2.0, maxValue: 30.0);
+    final stoneWidth = getInput(
+      inputs,
+      'stoneWidth',
+      defaultValue: 20.0,
+      minValue: 5.0,
+      maxValue: 50.0,
+    );
+    final stoneHeight = getInput(
+      inputs,
+      'stoneHeight',
+      defaultValue: 5.0,
+      minValue: 2.0,
+      maxValue: 30.0,
+    );
 
     // Площадь одного камня в м²
     final stoneArea = calculateTileArea(stoneWidth, stoneHeight);
 
     // Количество камней с запасом 15% (для подрезки и боя)
-    final stonesNeeded = calculateUnitsNeeded(area, stoneArea, marginPercent: 15.0);
+    final stonesNeeded = calculateUnitsNeeded(
+      area,
+      stoneArea,
+      marginPercent: 15.0,
+    );
 
     // Клей для искусственного камня: 4-6 кг/м² (в среднем 5)
     final glueNeeded = area * 5.0;
@@ -56,34 +72,51 @@ class CalculateDecorativeStone extends BaseCalculator {
     final meshArea = area;
 
     // Угловые элементы: по факту (опционально)
-    final cornerElements = getIntInput(inputs, 'corners', defaultValue: 0, minValue: 0, maxValue: 100);
+    final cornerElements = getIntInput(
+      inputs,
+      'corners',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 100,
+    );
 
     // Расчёт стоимости
     final stonePrice = findPrice(priceList, [
-      'stone_decorative', 
-      'stone', 
+      'stone_decorative',
+      'stone',
       'stone_artificial',
-      'facade_stone'
+      'facade_stone',
     ]);
     final gluePrice = findPrice(priceList, [
-      'glue_stone', 
-      'glue', 
+      'glue_stone',
+      'glue',
       'adhesive_stone',
-      'tile_adhesive'
+      'tile_adhesive',
     ]);
     final groutPrice = findPrice(priceList, [
-      'grout_stone', 
-      'grout', 
-      'joint_filler'
+      'grout_stone',
+      'grout',
+      'joint_filler',
     ]);
-    final primerPrice = findPrice(priceList, ['primer', 'primer_stone', 'primer_adhesion']);
+    final primerPrice = findPrice(priceList, [
+      'primer',
+      'primer_stone',
+      'primer_adhesion',
+    ]);
     final hydrophobicPrice = findPrice(priceList, [
-      'hydrophobic', 
-      'water_repellent', 
-      'protective_coating'
+      'hydrophobic',
+      'water_repellent',
+      'protective_coating',
     ]);
-    final meshPrice = findPrice(priceList, ['mesh', 'fiberglass_mesh', 'reinforcement_mesh']);
-    final cornerPrice = findPrice(priceList, ['corner_stone', 'corner_element']);
+    final meshPrice = findPrice(priceList, [
+      'mesh',
+      'fiberglass_mesh',
+      'reinforcement_mesh',
+    ]);
+    final cornerPrice = findPrice(priceList, [
+      'corner_stone',
+      'corner_element',
+    ]);
 
     final costs = [
       calculateCost(stonesNeeded.toDouble(), stonePrice?.price),
@@ -92,7 +125,8 @@ class CalculateDecorativeStone extends BaseCalculator {
       calculateCost(primerNeeded, primerPrice?.price),
       calculateCost(hydrophobicNeeded, hydrophobicPrice?.price),
       calculateCost(meshArea, meshPrice?.price),
-      if (cornerElements > 0) calculateCost(cornerElements.toDouble(), cornerPrice?.price),
+      if (cornerElements > 0)
+        calculateCost(cornerElements.toDouble(), cornerPrice?.price),
     ];
 
     return createResult(

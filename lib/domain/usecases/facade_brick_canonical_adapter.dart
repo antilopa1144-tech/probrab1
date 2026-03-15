@@ -211,9 +211,9 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeBrick(
       ? Map<String, double>.from(inputs)
       : normalizeLegacyFacadeBrickInputs(inputs);
 
-  final area = math.max(5, math.min(1000, (normalized['area'] ?? _defaultFor(spec, 'area', 80)).toDouble()));
+  final area = math.max(5.0, math.min(1000.0, (normalized['area'] ?? _defaultFor(spec, 'area', 80)).toDouble()));
   final brickType = (normalized['brickType'] ?? _defaultFor(spec, 'brickType', 0)).round().clamp(0, 3);
-  final jointThickness = math.max(8, math.min(12, (normalized['jointThickness'] ?? _defaultFor(spec, 'jointThickness', 10)).toDouble()));
+  final jointThickness = math.max(8.0, math.min(12.0, (normalized['jointThickness'] ?? _defaultFor(spec, 'jointThickness', 10)).toDouble()));
   final withTie = (normalized['withTie'] ?? _defaultFor(spec, 'withTie', 0)).round().clamp(0, 2);
 
   // Bricks

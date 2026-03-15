@@ -188,7 +188,7 @@ CanonicalCalculatorContractResult calculateCanonicalFasteners(
     final packageSize = spec.packagingRules.packageSize;
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
     final purchaseQuantity = _roundValue(packageCount * packageSize, 6);
-    final packageLabel = 'fastener-unit';
+    const packageLabel = 'fastener-unit';
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: purchaseQuantity,

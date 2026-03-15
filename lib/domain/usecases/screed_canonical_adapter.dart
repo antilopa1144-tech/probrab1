@@ -279,18 +279,14 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
   final perimeter = work['perimeter']!;
   final volume = _roundValue(area * (thickness / 1000) * _volumeMultiplier, 6);
 
-  // Determine primary kg and effective consumption for scenarios
-  double primaryKg;
+  // Determine effective consumption for scenarios
   double effectiveConsumptionKgPerM2Mm;
 
   if (screedType.id == 0) {
-    primaryKg = _roundValue(volume * _cementFraction * _cementDensity, 3);
     effectiveConsumptionKgPerM2Mm = (_cementFraction * _cementDensity * _volumeMultiplier) / 1000;
   } else if (screedType.id == 1) {
-    primaryKg = _roundValue(volume * _cpsDensityReady, 3);
     effectiveConsumptionKgPerM2Mm = (_cpsDensityReady * _volumeMultiplier) / 1000;
   } else {
-    primaryKg = _roundValue(volume * _cpsDensitySemidry, 3);
     effectiveConsumptionKgPerM2Mm = (_cpsDensitySemidry * _volumeMultiplier) / 1000;
   }
 

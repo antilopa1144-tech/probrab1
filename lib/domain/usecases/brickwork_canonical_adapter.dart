@@ -196,13 +196,13 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
     wallHeight = (normalized['wallHeight'] ?? _defaultFor(spec, 'wallHeight', 2.7)).toDouble();
   }
 
-  final openingsArea = math.max(0, math.min(50, (normalized['openingsArea'] ?? _defaultFor(spec, 'openingsArea', 5)).toDouble()));
+  final openingsArea = math.max(0.0, math.min(50.0, (normalized['openingsArea'] ?? _defaultFor(spec, 'openingsArea', 5)).toDouble()));
   final brickFormat = (normalized['brickFormat'] ?? _defaultFor(spec, 'brickFormat', 0)).round().clamp(0, 2);
   final wallThicknessIdx = (normalized['wallThickness'] ?? _defaultFor(spec, 'wallThickness', 1)).round().clamp(0, 3);
-  final mortarJoint = math.max(8, math.min(15, (normalized['mortarJoint'] ?? _defaultFor(spec, 'mortarJoint', 10)).toDouble()));
+  final mortarJoint = math.max(8.0, math.min(15.0, (normalized['mortarJoint'] ?? _defaultFor(spec, 'mortarJoint', 10)).toDouble()));
 
   // Area
-  final netArea = math.max(0, wallArea - openingsArea);
+  final netArea = math.max(0.0, wallArea - openingsArea);
 
   // Bricks
   final baseBricks = (spec.materialRules.bricksPerSqm[brickFormat]?[wallThicknessIdx] ?? 102).toDouble();

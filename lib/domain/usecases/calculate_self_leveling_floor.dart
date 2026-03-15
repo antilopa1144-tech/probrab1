@@ -1,52 +1,44 @@
-// ignore_for_file: prefer_const_declarations
+import 'dart:math' as math;
+
 import '../../data/models/price_item.dart';
+import '../models/canonical_calculator_contract.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
+import './self_leveling_canonical_adapter.dart';
 
-/// Калькулятор наливного пола с гибридным режимом ввода.
-///
-/// Поддерживает два режима ввода:
-/// 1. **По размерам** (inputMode = 0): длина и ширина → автоматический расчёт площади/периметра
-/// 2. **По площади** (inputMode = 1): готовая площадь
-///
-/// Логика (согласно спецификации):
-/// - Расход: Площадь × Толщина (мм) × Расход (~1.6 кг/мм)
-/// - Вывод: Общий вес (кг) и количество мешков (20/25кг)
-/// - Дополнительно: Грунтовка (литры), Демпферная лента (периметр)
-///
-/// Нормативы:
-/// - СНиП 2.03.13-88 "Полы"
-/// - ГОСТ 31356-2007 "Смеси сухие строительные"
-///
-/// Поля:
-/// - inputMode: режим ввода (0 = по размерам, 1 = по площади)
-/// - length, width: размеры помещения (м) - только для режима 0
-/// - area: площадь пола (м²) - только для режима 1
-/// - thickness: толщина слоя (мм), по умолчанию 10
-/// - consumption: расход смеси (кг/м²·мм), по умолчанию 1.6
-/// - bagWeight: вес мешка (20 или 25 кг)
 class CalculateSelfLevelingFloor extends BaseCalculator {
+  Map<String, double> _normalizeInputs(Map<String, double> inputs) {
+    if (hasCanonicalSelfLevelingInputs(inputs)) {
+      return Map<String, double>.from(inputs);
+    }
+    return normalizeLegacySelfLevelingInputs(inputs);
+  }
+
+  CanonicalCalculatorContractResult calculateCanonical(
+    Map<String, double> inputs,
+  ) {
+    return calculateCanonicalSelfLeveling(_normalizeInputs(inputs));
+  }
+
   @override
   String? validateInputs(Map<String, double> inputs) {
     final baseError = super.validateInputs(inputs);
     if (baseError != null) return baseError;
 
-    final inputMode = (inputs['inputMode'] ?? 0).toInt();
-
+    final normalized = _normalizeInputs(inputs);
+    final inputMode = (normalized['inputMode'] ?? 0).toInt();
     if (inputMode == 0) {
-      // Режим "По размерам": проверяем length и width
-      final length = inputs['length'] ?? 0;
-      final width = inputs['width'] ?? 0;
-      if (length <= 0) return 'Длина должна быть больше нуля';
-      if (width <= 0) return 'Ширина должна быть больше нуля';
+      final length = normalized['length'] ?? 0;
+      final width = normalized['width'] ?? 0;
+      if (length <= 0) return positiveValueMessage('length');
+      if (width <= 0) return positiveValueMessage('width');
     } else {
-      // Режим "По площади": проверяем area
-      if ((inputs['area'] ?? 0) <= 0) return 'Площадь должна быть больше нуля';
+      if ((normalized['area'] ?? 0) <= 0) return positiveValueMessage('area');
     }
 
-    final thickness = inputs['thickness'] ?? 10.0;
+    final thickness = normalized['thickness'] ?? 10.0;
     if (thickness < 3 || thickness > 100) {
-      return 'Толщина должна быть от 3 до 100 мм';
+      return rangeMessage('thickness', 3, 100, unit: 'мм');
     }
 
     return null;
@@ -57,72 +49,64 @@ class CalculateSelfLevelingFloor extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    // --- Режим ввода: по размерам (0) или по площади (1) ---
-    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 0);
-
-    // Вычисляем площадь и периметр в зависимости от режима
-    double area;
-    double perimeter;
-
-    if (inputMode == 0) {
-      // Режим "По размерам": вычисляем площадь и периметр
-      final length = getInput(inputs, 'length', minValue: 0.1);
-      final width = getInput(inputs, 'width', minValue: 0.1);
-
-      area = length * width;
-      perimeter = (length + width) * 2;
-    } else {
-      // Режим "По площади": берём готовую площадь, оцениваем периметр
-      area = getInput(inputs, 'area', minValue: 0.1);
-      perimeter = estimatePerimeter(area);
+    final contract = calculateCanonical(inputs);
+    final area = contract.totals['area'] ?? 0;
+    if (area <= 0) {
+      return createResult(values: {'error': 1.0});
     }
 
-    // --- Получаем остальные входные данные ---
-    final thickness = getInput(inputs, 'thickness', defaultValue: 10.0, minValue: 3.0, maxValue: 100.0);
-    final consumption = getInput(inputs, 'consumption', defaultValue: 1.6, minValue: 1.3, maxValue: 2.0);
-    final bagWeight = getInput(inputs, 'bagWeight', defaultValue: 25.0);
+    final mixNeededKg = contract.totals['totalKg'] ?? 0;
+    final primerNeededLiters = contract.totals['primerNeededLiters'] ?? 0;
+    final damperTapeLengthMeters =
+        contract.totals['damperTapeLengthMeters'] ?? 0;
+    final spikeRollerArea = (inputs['spikeRollerArea'] ?? 50.0).clamp(
+      1.0,
+      1000.0,
+    );
+    final spikeRollers = math.max(1, (area / spikeRollerArea).ceil());
+    final spikeShoesCount = ((inputs['spikeShoesCount'] ?? 1.0).round()).clamp(
+      1,
+      9999,
+    );
 
-    // --- Расчёт материалов (согласно спецификации) ---
-    // Расход наливного пола: Площадь × Толщина (мм) × Расход (кг/м²·мм)
-    final mixNeededKg = area * thickness * consumption;
-
-    // Количество мешков (округление вверх до целых)
-    final bagsNeeded = (mixNeededKg / bagWeight).ceil();
-
-    // Грунтовка глубокого проникновения: ~0.15 л/м²
-    final primerNeededLiters = area * 0.15;
-
-    // Демпферная лента по периметру (м)
-    final damperTapeLengthMeters = perimeter;
-
-    // --- Применяем правила округления ---
-    final finalMixKg = roundBulk(mixNeededKg);
-    final finalPrimerLiters = roundBulk(primerNeededLiters);
-    final finalDamperTapeMeters = roundBulk(damperTapeLengthMeters);
-
-    // --- Расчёт стоимости ---
-    final mixPrice = findPrice(priceList, ['self_leveling', 'self_leveling_floor', 'leveling_compound', 'floor_leveler']);
-    final primerPrice = findPrice(priceList, ['primer', 'primer_deep', 'primer_penetrating']);
-    final damperTapePrice = findPrice(priceList, ['damper_tape', 'tape_edge', 'expansion_tape']);
-
-    final costs = [
-      calculateCost(finalMixKg, mixPrice?.price),
-      calculateCost(finalPrimerLiters, primerPrice?.price),
-      calculateCost(finalDamperTapeMeters, damperTapePrice?.price),
-    ];
+    final mixPrice = findPrice(priceList, [
+      'self_leveling',
+      'self_leveling_floor',
+      'leveling_compound',
+      'floor_leveler',
+    ]);
+    final primerPrice = findPrice(priceList, [
+      'primer',
+      'primer_deep',
+      'primer_penetrating',
+    ]);
+    final damperTapePrice = findPrice(priceList, [
+      'damper_tape',
+      'tape_edge',
+      'expansion_tape',
+    ]);
 
     return createResult(
       values: {
-        'area': roundBulk(area),
-        'thickness': thickness,
-        'mixNeededKg': finalMixKg,
-        'bagsNeeded': bagsNeeded.toDouble(),
-        'bagWeight': bagWeight,
-        'primerNeededLiters': finalPrimerLiters,
-        'damperTapeLengthMeters': finalDamperTapeMeters,
+        'area': area,
+        'thickness': contract.totals['thickness'] ?? 10,
+        'mixNeededKg': mixNeededKg,
+        'bagsNeeded': contract.totals['bagsNeeded'] ?? 0,
+        'bagWeight': contract.totals['bagWeight'] ?? 25,
+        'mixtureType': contract.totals['mixtureType'] ?? 0,
+        'primerNeededLiters': primerNeededLiters,
+        'damperTapeLengthMeters': damperTapeLengthMeters,
+        'damperTapeRolls': contract.totals['damperTapeRolls'] ?? 0,
+        'spikeRollers': spikeRollers.toDouble(),
+        'spikeShoesCount': spikeShoesCount.toDouble(),
       },
-      totalPrice: sumCosts(costs),
-      norms: ['СНиП 2.03.13-88', 'ГОСТ 31356-2007'],
+      totalPrice: sumCosts([
+        calculateCost(mixNeededKg, mixPrice?.price),
+        calculateCost(primerNeededLiters, primerPrice?.price),
+        calculateCost(damperTapeLengthMeters, damperTapePrice?.price),
+      ]),
+      norms: [...normativeSources, contract.formulaVersion],
+      calculatorId: 'self-leveling-canonical',
     );
   }
 }

@@ -1,5 +1,4 @@
 import '../../data/models/price_item.dart';
-import '../../core/exceptions/calculation_exception.dart';
 import 'base_calculator.dart';
 import 'calculator_usecase.dart';
 
@@ -10,6 +9,24 @@ import 'calculator_usecase.dart';
 /// - 1: Жилой (living)
 /// - 2: Гараж (garage)
 class CalculateBasementV2 extends BaseCalculator {
+  @override
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    if ((inputs['length'] ?? 10.0) <= 0) {
+      return positiveValueMessage('length');
+    }
+    if ((inputs['width'] ?? 8.0) <= 0) {
+      return positiveValueMessage('width');
+    }
+    if ((inputs['depth'] ?? 2.5) <= 0) {
+      return positiveValueMessage('depth');
+    }
+
+    return null;
+  }
+
   // Константы расчёта
   static const double floorThickness = 0.15; // 15 см
   static const double concreteWastePercent = 5.0;
@@ -23,39 +40,68 @@ class CalculateBasementV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final length = getInput(inputs, 'length', defaultValue: 10.0, minValue: 3, maxValue: 30);
-    final width = getInput(inputs, 'width', defaultValue: 8.0, minValue: 3, maxValue: 20);
-    final depth = getInput(inputs, 'depth', defaultValue: 2.5, minValue: 1.5, maxValue: 4);
-    final wallThickness = getInput(inputs, 'wallThickness', defaultValue: 0.3, minValue: 0.15, maxValue: 0.6);
-    final basementType = getIntInput(inputs, 'basementType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final needWaterproof = getInput(inputs, 'needWaterproof', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
-    final needInsulation = getInput(inputs, 'needInsulation', defaultValue: 0.0, minValue: 0, maxValue: 1) == 1.0;
-    final needDrainage = getInput(inputs, 'needDrainage', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
-
-    // Валидация
-    final rawLength = inputs['length'] ?? 10.0;
-    if (rawLength <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateBasementV2',
-        'Длина должна быть положительной',
-      );
-    }
-
-    final rawWidth = inputs['width'] ?? 8.0;
-    if (rawWidth <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateBasementV2',
-        'Ширина должна быть положительной',
-      );
-    }
-
-    final rawDepth = inputs['depth'] ?? 2.5;
-    if (rawDepth <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateBasementV2',
-        'Глубина должна быть положительной',
-      );
-    }
+    final length = getInput(
+      inputs,
+      'length',
+      defaultValue: 10.0,
+      minValue: 3,
+      maxValue: 30,
+    );
+    final width = getInput(
+      inputs,
+      'width',
+      defaultValue: 8.0,
+      minValue: 3,
+      maxValue: 20,
+    );
+    final depth = getInput(
+      inputs,
+      'depth',
+      defaultValue: 2.5,
+      minValue: 1.5,
+      maxValue: 4,
+    );
+    final wallThickness = getInput(
+      inputs,
+      'wallThickness',
+      defaultValue: 0.3,
+      minValue: 0.15,
+      maxValue: 0.6,
+    );
+    final basementType = getIntInput(
+      inputs,
+      'basementType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final needWaterproof =
+        getInput(
+          inputs,
+          'needWaterproof',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
+    final needInsulation =
+        getInput(
+          inputs,
+          'needInsulation',
+          defaultValue: 0.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
+    final needDrainage =
+        getInput(
+          inputs,
+          'needDrainage',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
 
     // Расчёт площадей
     final floorArea = length * width;
@@ -82,9 +128,7 @@ class CalculateBasementV2 extends BaseCalculator {
 
     // Дренаж по периметру
     const drainageWasteFactor = 1 + drainageWastePercent / 100;
-    final drainageLength = needDrainage
-        ? perimeter * drainageWasteFactor
-        : 0.0;
+    final drainageLength = needDrainage ? perimeter * drainageWasteFactor : 0.0;
 
     // Формируем результат
     final values = <String, double>{

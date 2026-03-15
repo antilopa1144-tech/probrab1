@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import '../models/canonical_calculator_contract.dart';
 
 // ─── Balcony spec classes ───

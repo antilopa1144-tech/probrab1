@@ -21,7 +21,7 @@ class CalculateDoorInstallation extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final doors = inputs['doors'] ?? 1;
-    if (doors < 0) return 'Количество дверей не может быть отрицательным';
+    if (doors < 0) return nonNegativeValueMessage('doors');
 
     return null;
   }
@@ -31,10 +31,34 @@ class CalculateDoorInstallation extends BaseCalculator {
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
-    final doors = getIntInput(inputs, 'doors', defaultValue: 1, minValue: 0, maxValue: 30);
-    final doorWidth = getInput(inputs, 'doorWidth', defaultValue: 0.9, minValue: 0.6, maxValue: 1.4);
-    final doorHeight = getInput(inputs, 'doorHeight', defaultValue: 2.1, minValue: 1.8, maxValue: 2.5);
-    final doorType = getIntInput(inputs, 'doorType', defaultValue: 1, minValue: 1, maxValue: 2);
+    final doors = getIntInput(
+      inputs,
+      'doors',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 30,
+    );
+    final doorWidth = getInput(
+      inputs,
+      'doorWidth',
+      defaultValue: 0.9,
+      minValue: 0.6,
+      maxValue: 1.4,
+    );
+    final doorHeight = getInput(
+      inputs,
+      'doorHeight',
+      defaultValue: 2.1,
+      minValue: 1.8,
+      maxValue: 2.5,
+    );
+    final doorType = getIntInput(
+      inputs,
+      'doorType',
+      defaultValue: 1,
+      minValue: 1,
+      maxValue: 2,
+    );
 
     // Площадь одной двери
     final doorArea = doorWidth * doorHeight;
@@ -79,14 +103,37 @@ class CalculateDoorInstallation extends BaseCalculator {
     // Расчёт стоимости
     final doorPrice = doorType == 1
         ? findPrice(priceList, ['door', 'door_interior', 'interior_door'])
-        : findPrice(priceList, ['door_entrance', 'door_exterior', 'entrance_door']);
-    final foamPrice = findPrice(priceList, ['foam_mounting', 'foam', 'polyurethane_foam']);
-    final architravePrice = findPrice(priceList, ['architrave', 'door_architrave', 'trim']);
+        : findPrice(priceList, [
+            'door_entrance',
+            'door_exterior',
+            'entrance_door',
+          ]);
+    final foamPrice = findPrice(priceList, [
+      'foam_mounting',
+      'foam',
+      'polyurethane_foam',
+    ]);
+    final architravePrice = findPrice(priceList, [
+      'architrave',
+      'door_architrave',
+      'trim',
+    ]);
     final hingePrice = findPrice(priceList, ['hinge', 'door_hinge']);
-    final lockPrice = findPrice(priceList, ['lock', 'door_lock', 'door_handle']);
+    final lockPrice = findPrice(priceList, [
+      'lock',
+      'door_lock',
+      'door_handle',
+    ]);
     final closerPrice = findPrice(priceList, ['closer', 'door_closer']);
-    final sealPrice = findPrice(priceList, ['seal', 'door_seal', 'weather_strip']);
-    final thresholdPrice = findPrice(priceList, ['threshold', 'door_threshold']);
+    final sealPrice = findPrice(priceList, [
+      'seal',
+      'door_seal',
+      'weather_strip',
+    ]);
+    final thresholdPrice = findPrice(priceList, [
+      'threshold',
+      'door_threshold',
+    ]);
 
     final costs = [
       calculateCost(doors.toDouble(), doorPrice?.price),
@@ -94,7 +141,8 @@ class CalculateDoorInstallation extends BaseCalculator {
       calculateCost(architraveLength, architravePrice?.price),
       calculateCost(hingesNeeded.toDouble(), hingePrice?.price),
       calculateCost(locksNeeded.toDouble(), lockPrice?.price),
-      if (closersNeeded > 0) calculateCost(closersNeeded.toDouble(), closerPrice?.price),
+      if (closersNeeded > 0)
+        calculateCost(closersNeeded.toDouble(), closerPrice?.price),
       if (sealLength > 0) calculateCost(sealLength, sealPrice?.price),
       calculateCost(thresholdsNeeded.toDouble(), thresholdPrice?.price),
     ];

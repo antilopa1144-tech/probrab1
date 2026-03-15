@@ -1,5 +1,4 @@
 import '../../data/models/price_item.dart';
-import '../../core/exceptions/calculation_exception.dart';
 import 'base_calculator.dart';
 import 'calculator_usecase.dart';
 
@@ -14,6 +13,27 @@ import 'calculator_usecase.dart';
 /// - 0: Ручной ввод площади
 /// - 1: По размерам стены
 class CalculateDecorPlasterV2 extends BaseCalculator {
+  @override
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final inputMode = inputs['inputMode']?.toInt() ?? 0;
+
+    if (inputMode == 1) {
+      if ((inputs['wallWidth'] ?? 5.0) <= 0 ||
+          (inputs['wallHeight'] ?? 2.7) <= 0) {
+        return wallAreaOrDimensionsRequiredMessage();
+      }
+    } else {
+      if ((inputs['area'] ?? 30.0) <= 0) {
+        return positiveValueMessage('area');
+      }
+    }
+
+    return null;
+  }
+
   // Расход штукатурки по типам (кг/м² на слой)
   static const List<double> consumptionPerSqm = [0.4, 2.5, 0.3];
 
@@ -29,11 +49,45 @@ class CalculateDecorPlasterV2 extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final inputMode = getIntInput(inputs, 'inputMode', defaultValue: 0, minValue: 0, maxValue: 1);
-    final plasterType = getIntInput(inputs, 'plasterType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 5);
-    final needPrimer = getInput(inputs, 'needPrimer', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
-    final needWax = getInput(inputs, 'needWax', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
+    final inputMode = getIntInput(
+      inputs,
+      'inputMode',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final plasterType = getIntInput(
+      inputs,
+      'plasterType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final layers = getIntInput(
+      inputs,
+      'layers',
+      defaultValue: 2,
+      minValue: 1,
+      maxValue: 5,
+    );
+    final needPrimer =
+        getInput(
+          inputs,
+          'needPrimer',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
+    final needWax =
+        getInput(
+          inputs,
+          'needWax',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
 
     // Площадь и размеры
     double area;
@@ -42,39 +96,32 @@ class CalculateDecorPlasterV2 extends BaseCalculator {
 
     if (inputMode == 1) {
       // Режим стены
-      wallWidth = getInput(inputs, 'wallWidth', defaultValue: 5.0, minValue: 1, maxValue: 30);
-      wallHeight = getInput(inputs, 'wallHeight', defaultValue: 2.7, minValue: 1, maxValue: 10);
+      wallWidth = getInput(
+        inputs,
+        'wallWidth',
+        defaultValue: 5.0,
+        minValue: 1,
+        maxValue: 30,
+      );
+      wallHeight = getInput(
+        inputs,
+        'wallHeight',
+        defaultValue: 2.7,
+        minValue: 1,
+        maxValue: 10,
+      );
       area = wallWidth * wallHeight;
-
-      // Валидация
-      final rawWidth = inputs['wallWidth'] ?? 5.0;
-      final rawHeight = inputs['wallHeight'] ?? 2.7;
-      if (rawWidth <= 0) {
-        throw CalculationException.invalidInput(
-          'CalculateDecorPlasterV2',
-          'Ширина стены должна быть положительной',
-        );
-      }
-      if (rawHeight <= 0) {
-        throw CalculationException.invalidInput(
-          'CalculateDecorPlasterV2',
-          'Высота стены должна быть положительной',
-        );
-      }
     } else {
       // Ручной режим
-      area = getInput(inputs, 'area', defaultValue: 30.0, minValue: 1, maxValue: 500);
+      area = getInput(
+        inputs,
+        'area',
+        defaultValue: 30.0,
+        minValue: 1,
+        maxValue: 500,
+      );
       wallWidth = (area / 2.7).clamp(1.0, 30.0);
       wallHeight = 2.7;
-
-      // Валидация
-      final rawArea = inputs['area'] ?? 30.0;
-      if (rawArea <= 0) {
-        throw CalculationException.invalidInput(
-          'CalculateDecorPlasterV2',
-          'Площадь должна быть положительной',
-        );
-      }
     }
 
     // Расход штукатурки
@@ -86,7 +133,9 @@ class CalculateDecorPlasterV2 extends BaseCalculator {
     final plasterBuckets = (plasterKg / bucketSize).ceil();
 
     // Грунтовка
-    final primerLiters = needPrimer ? area * primerConsumption * wasteFactor : 0.0;
+    final primerLiters = needPrimer
+        ? area * primerConsumption * wasteFactor
+        : 0.0;
 
     // Воск (только для венецианской)
     final waxKg = (needWax && plasterType == 0)

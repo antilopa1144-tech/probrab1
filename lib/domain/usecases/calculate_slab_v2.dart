@@ -1,5 +1,4 @@
 import '../../data/models/price_item.dart';
-import '../../core/exceptions/calculation_exception.dart';
 import 'base_calculator.dart';
 import 'calculator_usecase.dart';
 
@@ -21,35 +20,72 @@ class CalculateSlabV2 extends BaseCalculator {
   static const double insulationWastePercent = 5.0;
 
   @override
+  String? validateInputs(Map<String, double> inputs) {
+    final baseError = super.validateInputs(inputs);
+    if (baseError != null) return baseError;
+
+    final length = inputs['length'] ?? 10.0;
+    final width = inputs['width'] ?? 8.0;
+    if (length <= 0) return positiveValueMessage('length');
+    if (width <= 0) return positiveValueMessage('width');
+
+    return null;
+  }
+
+  @override
   CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final slabType = getIntInput(inputs, 'slabType', defaultValue: 0, minValue: 0, maxValue: 2);
-    final needWaterproof = getInput(inputs, 'needWaterproof', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
-    final needInsulation = getInput(inputs, 'needInsulation', defaultValue: 1.0, minValue: 0, maxValue: 1) == 1.0;
+    final slabType = getIntInput(
+      inputs,
+      'slabType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final needWaterproof =
+        getInput(
+          inputs,
+          'needWaterproof',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
+    final needInsulation =
+        getInput(
+          inputs,
+          'needInsulation',
+          defaultValue: 1.0,
+          minValue: 0,
+          maxValue: 1,
+        ) ==
+        1.0;
 
     // Размеры плиты
-    final length = getInput(inputs, 'length', defaultValue: 10.0, minValue: 3, maxValue: 50);
-    final width = getInput(inputs, 'width', defaultValue: 8.0, minValue: 3, maxValue: 30);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 0.3, minValue: 0.2, maxValue: 0.5);
-
-    // Валидация
-    final rawLength = inputs['length'] ?? 10.0;
-    final rawWidth = inputs['width'] ?? 8.0;
-    if (rawLength <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateSlabV2',
-        'Длина плиты должна быть положительной',
-      );
-    }
-    if (rawWidth <= 0) {
-      throw CalculationException.invalidInput(
-        'CalculateSlabV2',
-        'Ширина плиты должна быть положительной',
-      );
-    }
+    final length = getInput(
+      inputs,
+      'length',
+      defaultValue: 10.0,
+      minValue: 3,
+      maxValue: 50,
+    );
+    final width = getInput(
+      inputs,
+      'width',
+      defaultValue: 8.0,
+      minValue: 3,
+      maxValue: 30,
+    );
+    final thickness = getInput(
+      inputs,
+      'thickness',
+      defaultValue: 0.3,
+      minValue: 0.2,
+      maxValue: 0.5,
+    );
 
     // Площадь плиты
     final slabArea = length * width;
@@ -66,10 +102,12 @@ class CalculateSlabV2 extends BaseCalculator {
     final reinforcementWeight = concreteVolume * reinforcementPerCubicMeter;
 
     // Песчаная подушка
-    final sandVolume = slabArea * sandLayerThickness * (1 + materialWastePercent / 100);
+    final sandVolume =
+        slabArea * sandLayerThickness * (1 + materialWastePercent / 100);
 
     // Щебень
-    final gravelVolume = slabArea * gravelLayerThickness * (1 + materialWastePercent / 100);
+    final gravelVolume =
+        slabArea * gravelLayerThickness * (1 + materialWastePercent / 100);
 
     // Гидроизоляция
     final waterproofArea = needWaterproof

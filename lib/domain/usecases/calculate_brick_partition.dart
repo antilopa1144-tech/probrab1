@@ -24,7 +24,7 @@ class CalculateBrickPartition extends BaseCalculator {
       final length = inputs['length'] ?? 0;
       final height = inputs['height'] ?? 0;
       if (length <= 0 || height <= 0) {
-        return 'Площадь должна быть больше нуля';
+        return wallAreaOrDimensionsRequiredMessage();
       }
     }
 
@@ -41,21 +41,37 @@ class CalculateBrickPartition extends BaseCalculator {
       area = getInput(inputs, 'area', minValue: 0.1);
     } else {
       final length = getInput(inputs, 'length', minValue: 0.1);
-      final height = getInput(inputs, 'height', defaultValue: 2.5, minValue: 0.1);
+      final height = getInput(
+        inputs,
+        'height',
+        defaultValue: 2.5,
+        minValue: 0.1,
+      );
       area = length * height;
     }
-    final thickness = getInput(inputs, 'thickness', defaultValue: 0.5, minValue: 0.5, maxValue: 2.0);
-    final wallHeight = getInput(inputs, 'height', defaultValue: 2.5, minValue: 2.0, maxValue: 4.0);
+    final thickness = getInput(
+      inputs,
+      'thickness',
+      defaultValue: 0.5,
+      minValue: 0.5,
+      maxValue: 2.0,
+    );
+    final wallHeight = getInput(
+      inputs,
+      'height',
+      defaultValue: 2.5,
+      minValue: 2.0,
+      maxValue: 4.0,
+    );
 
     // Количество кирпичей на 1 м² стены (с учётом швов)
     // 0.5 кирпича (120 мм): ~61.5 шт/м²
     // 1.0 кирпич (250 мм): ~128 шт/м²
     // 1.5 кирпича (380 мм): ~189 шт/м²
     // 2.0 кирпича (510 мм): ~256 шт/м²
-    final bricksPerM2 = thickness == 0.5 ? 61.5 
-        : (thickness == 1.0 ? 128.0 
-        : (thickness == 1.5 ? 189.0 
-        : 256.0));
+    final bricksPerM2 = thickness == 0.5
+        ? 61.5
+        : (thickness == 1.0 ? 128.0 : (thickness == 1.5 ? 189.0 : 256.0));
 
     // Количество кирпичей с запасом 5% (на бой и подрезку)
     final bricksNeeded = ceilToInt(area * bricksPerM2 * 1.05);
@@ -87,10 +103,27 @@ class CalculateBrickPartition extends BaseCalculator {
     final plasterNeeded = area * 15 * 2;
 
     // Расчёт стоимости
-    final brickPrice = findPrice(priceList, ['brick', 'brick_red', 'brick_ceramic', 'building_brick']);
-    final cementPrice = findPrice(priceList, ['cement', 'cement_bag', 'portland_cement']);
-    final sandPrice = findPrice(priceList, ['sand', 'sand_construction', 'masonry_sand']);
-    final meshPrice = findPrice(priceList, ['mesh', 'reinforcement_mesh', 'masonry_mesh']);
+    final brickPrice = findPrice(priceList, [
+      'brick',
+      'brick_red',
+      'brick_ceramic',
+      'building_brick',
+    ]);
+    final cementPrice = findPrice(priceList, [
+      'cement',
+      'cement_bag',
+      'portland_cement',
+    ]);
+    final sandPrice = findPrice(priceList, [
+      'sand',
+      'sand_construction',
+      'masonry_sand',
+    ]);
+    final meshPrice = findPrice(priceList, [
+      'mesh',
+      'reinforcement_mesh',
+      'masonry_mesh',
+    ]);
     final primerPrice = findPrice(priceList, ['primer', 'primer_deep']);
     final plasterPrice = findPrice(priceList, ['plaster', 'plaster_cement']);
 

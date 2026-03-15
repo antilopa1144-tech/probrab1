@@ -21,7 +21,7 @@ class CalculateWoodWall extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -32,20 +32,42 @@ class CalculateWoodWall extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final boardWidth = getInput(inputs, 'boardWidth', defaultValue: 10.0, minValue: 5.0, maxValue: 20.0);
-    final boardLength = getInput(inputs, 'boardLength', defaultValue: 3.0, minValue: 2.0, maxValue: 6.0);
-    
+    final boardWidth = getInput(
+      inputs,
+      'boardWidth',
+      defaultValue: 10.0,
+      minValue: 5.0,
+      maxValue: 20.0,
+    );
+    final boardLength = getInput(
+      inputs,
+      'boardLength',
+      defaultValue: 3.0,
+      minValue: 2.0,
+      maxValue: 6.0,
+    );
+
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
     // Площадь одной доски в м²
     final boardArea = (boardWidth / 100) * boardLength;
 
     // Количество досок с запасом 10%
-    final boardsNeeded = calculateUnitsNeeded(area, boardArea, marginPercent: 10.0);
+    final boardsNeeded = calculateUnitsNeeded(
+      area,
+      boardArea,
+      marginPercent: 10.0,
+    );
 
     // Обрешётка (бруски 40×40 мм): шаг 50-60 см
     final battensCount = ceilToInt((perimeter / 4) / 0.55);
-    final wallHeight = getInput(inputs, 'height', defaultValue: 2.5, minValue: 2.0, maxValue: 4.0);
+    final wallHeight = getInput(
+      inputs,
+      'height',
+      defaultValue: 2.5,
+      minValue: 2.0,
+      maxValue: 4.0,
+    );
     final battensLength = battensCount * wallHeight;
 
     // Плинтус напольный: по периметру
@@ -74,13 +96,40 @@ class CalculateWoodWall extends BaseCalculator {
     final clampsNeeded = ceilToInt(boardsNeeded * 5);
 
     // Расчёт стоимости
-    final boardPrice = findPrice(priceList, ['wood_wall', 'wood_board', 'lining', 'clapboard']);
-    final battensPrice = findPrice(priceList, ['battens', 'timber', 'wood_strips']);
-    final plinthPrice = findPrice(priceList, ['plinth_wood', 'plinth', 'wood_baseboard']);
-    final cornerPrice = findPrice(priceList, ['corner_wood', 'corner', 'wood_corner']);
-    final ceilingPlinthPrice = findPrice(priceList, ['plinth_ceiling', 'ceiling_molding']);
-    final antisepticPrice = findPrice(priceList, ['antiseptic', 'wood_preservative']);
-    final finishPrice = findPrice(priceList, ['varnish_wood', 'oil_wood', 'wood_finish']);
+    final boardPrice = findPrice(priceList, [
+      'wood_wall',
+      'wood_board',
+      'lining',
+      'clapboard',
+    ]);
+    final battensPrice = findPrice(priceList, [
+      'battens',
+      'timber',
+      'wood_strips',
+    ]);
+    final plinthPrice = findPrice(priceList, [
+      'plinth_wood',
+      'plinth',
+      'wood_baseboard',
+    ]);
+    final cornerPrice = findPrice(priceList, [
+      'corner_wood',
+      'corner',
+      'wood_corner',
+    ]);
+    final ceilingPlinthPrice = findPrice(priceList, [
+      'plinth_ceiling',
+      'ceiling_molding',
+    ]);
+    final antisepticPrice = findPrice(priceList, [
+      'antiseptic',
+      'wood_preservative',
+    ]);
+    final finishPrice = findPrice(priceList, [
+      'varnish_wood',
+      'oil_wood',
+      'wood_finish',
+    ]);
     final primerPrice = findPrice(priceList, ['primer_wood', 'wood_primer']);
 
     final costs = [

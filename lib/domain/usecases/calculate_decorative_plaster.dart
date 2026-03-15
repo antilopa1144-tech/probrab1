@@ -21,7 +21,7 @@ class CalculateDecorativePlaster extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -32,15 +32,40 @@ class CalculateDecorativePlaster extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final thickness = getInput(inputs, 'thickness', defaultValue: 2.0, minValue: 0.5, maxValue: 10.0);
-    final windowsArea = getInput(inputs, 'windowsArea', defaultValue: 0.0, minValue: 0.0);
-    final doorsArea = getInput(inputs, 'doorsArea', defaultValue: 0.0, minValue: 0.0);
+    final thickness = getInput(
+      inputs,
+      'thickness',
+      defaultValue: 2.0,
+      minValue: 0.5,
+      maxValue: 10.0,
+    );
+    final windowsArea = getInput(
+      inputs,
+      'windowsArea',
+      defaultValue: 0.0,
+      minValue: 0.0,
+    );
+    final doorsArea = getInput(
+      inputs,
+      'doorsArea',
+      defaultValue: 0.0,
+      minValue: 0.0,
+    );
 
     // Полезная площадь
-    final usefulArea = [area - windowsArea - doorsArea, 0.0].reduce((a, b) => a > b ? a : b).toDouble();
+    final usefulArea = [
+      area - windowsArea - doorsArea,
+      0.0,
+    ].reduce((a, b) => a > b ? a : b).toDouble();
 
     // Тип декоративной штукатурки (влияет на расход и технологию)
-    final plasterType = getIntInput(inputs, 'plasterType', defaultValue: 0, minValue: 0, maxValue: 2);
+    final plasterType = getIntInput(
+      inputs,
+      'plasterType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
 
     // Расход зависит от типа штукатурки:
     // 0 = Фактурная ("шуба", "барашек"): 1.5 кг/м²·мм — наносится слоем
@@ -49,10 +74,18 @@ class CalculateDecorativePlaster extends BaseCalculator {
     double plasterNeeded;
     if (plasterType == 2) {
       // Венецианская: 3-5 тонких слоёв по 0.3-0.5 кг/м²
-      final layers = getIntInput(inputs, 'layers', defaultValue: 4, minValue: 3, maxValue: 5);
+      final layers = getIntInput(
+        inputs,
+        'layers',
+        defaultValue: 4,
+        minValue: 3,
+        maxValue: 5,
+      );
       plasterNeeded = usefulArea * 0.4 * layers * 1.1; // +10%
     } else {
-      final consumptionPerMm = plasterType == 1 ? 2.5 : 1.5; // структурная vs фактурная
+      final consumptionPerMm = plasterType == 1
+          ? 2.5
+          : 1.5; // структурная vs фактурная
       plasterNeeded = usefulArea * consumptionPerMm * thickness * 1.1; // +10%
     }
 
@@ -76,14 +109,26 @@ class CalculateDecorativePlaster extends BaseCalculator {
 
     // Расчёт стоимости
     final plasterPrice = findPrice(priceList, [
-      'plaster_decor', 
-      'plaster_venetian', 
+      'plaster_decor',
+      'plaster_venetian',
       'plaster_texture',
-      'decorative_plaster'
+      'decorative_plaster',
     ]);
-    final primerPrice = findPrice(priceList, ['primer_deep', 'primer', 'primer_adhesion']);
-    final baseCoatPrice = findPrice(priceList, ['putty_base', 'base_coat', 'leveling_compound']);
-    final waxPrice = findPrice(priceList, ['wax_decorative', 'wax', 'protective_coating']);
+    final primerPrice = findPrice(priceList, [
+      'primer_deep',
+      'primer',
+      'primer_adhesion',
+    ]);
+    final baseCoatPrice = findPrice(priceList, [
+      'putty_base',
+      'base_coat',
+      'leveling_compound',
+    ]);
+    final waxPrice = findPrice(priceList, [
+      'wax_decorative',
+      'wax',
+      'protective_coating',
+    ]);
     final meshPrice = findPrice(priceList, ['mesh', 'fiberglass_mesh']);
     final colorantPrice = findPrice(priceList, ['colorant', 'tint', 'pigment']);
 

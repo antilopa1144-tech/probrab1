@@ -35,10 +35,10 @@ class CalculateWallPaint extends BaseCalculator {
     // В режиме "по размерам" area вычисляется и может быть 0 до ввода данных
     final inputMode = inputs['inputMode'] ?? 0;
     if (inputMode == 1 && (inputs['area'] ?? 0) <= 0) {
-      return 'Площадь должна быть больше нуля';
+      return positiveValueMessage('area');
     }
     if ((inputs['layers'] ?? 2) < 1) {
-      return 'Количество слоёв должно быть не меньше 1';
+      return rangeMessage('layers', 1, 5);
     }
 
     return null;
@@ -71,15 +71,36 @@ class CalculateWallPaint extends BaseCalculator {
     }
 
     // --- Получаем остальные входные данные ---
-    final layers = getIntInput(inputs, 'layers', defaultValue: 2, minValue: 1, maxValue: 5);
-    final consumption = getInput(inputs, 'consumption', defaultValue: 0.12, minValue: 0.08, maxValue: 0.25);
-    final reservePercent = getInput(inputs, 'reserve', defaultValue: 5, minValue: 0);
+    final layers = getIntInput(
+      inputs,
+      'layers',
+      defaultValue: 2,
+      minValue: 1,
+      maxValue: 5,
+    );
+    final consumption = getInput(
+      inputs,
+      'consumption',
+      defaultValue: 0.12,
+      minValue: 0.08,
+      maxValue: 0.25,
+    );
+    final reservePercent = getInput(
+      inputs,
+      'reserve',
+      defaultValue: 5,
+      minValue: 0,
+    );
 
     final windowsArea = getInput(inputs, 'windowsArea', minValue: 0.0);
     final doorsArea = getInput(inputs, 'doorsArea', minValue: 0.0);
 
     // --- Вычисляем полезную площадь ---
-    final usefulArea = calculateUsefulArea(area, windowsArea: windowsArea, doorsArea: doorsArea);
+    final usefulArea = calculateUsefulArea(
+      area,
+      windowsArea: windowsArea,
+      doorsArea: doorsArea,
+    );
 
     if (usefulArea <= 0) {
       return createResult(values: {'error': 1.0, 'usefulArea': 0.0});
@@ -90,9 +111,12 @@ class CalculateWallPaint extends BaseCalculator {
 
     // Расход краски: первый слой берёт на 20% больше
     final firstLayerConsumption = consumption * 1.2;
-    final otherLayersConsumption = layers > 1 ? (layers - 1) * consumption : 0.0;
-    final totalPaintConsumption = firstLayerConsumption + otherLayersConsumption;
-    
+    final otherLayersConsumption = layers > 1
+        ? (layers - 1) * consumption
+        : 0.0;
+    final totalPaintConsumption =
+        firstLayerConsumption + otherLayersConsumption;
+
     final rawPaintNeeded = usefulArea * totalPaintConsumption;
     final paintWithReserve = rawPaintNeeded * reserveFactor;
 

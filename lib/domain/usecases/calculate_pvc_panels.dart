@@ -20,7 +20,7 @@ class CalculatePvcPanels extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -31,21 +31,37 @@ class CalculatePvcPanels extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final panelWidth = getInput(inputs, 'panelWidth', defaultValue: 25.0, minValue: 10.0, maxValue: 50.0);
-    final panelLength = getInput(inputs, 'panelLength', defaultValue: 300.0, minValue: 200.0, maxValue: 600.0);
-    
+    final panelWidth = getInput(
+      inputs,
+      'panelWidth',
+      defaultValue: 25.0,
+      minValue: 10.0,
+      maxValue: 50.0,
+    );
+    final panelLength = getInput(
+      inputs,
+      'panelLength',
+      defaultValue: 300.0,
+      minValue: 200.0,
+      maxValue: 600.0,
+    );
+
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
     // Площадь одной панели в м²
     final panelArea = calculateTileArea(panelWidth, panelLength);
 
     // Количество панелей с запасом 10%
-    final panelsNeeded = calculateUnitsNeeded(area, panelArea, marginPercent: 10.0);
+    final panelsNeeded = calculateUnitsNeeded(
+      area,
+      panelArea,
+      marginPercent: 10.0,
+    );
 
     // Профили: стартовый, финишный, универсальный
     final startProfileLength = perimeter;
     final finishProfileLength = perimeter;
-    
+
     // Обрешётка (деревянная или металлическая): шаг 40-50 см
     final battensCount = ceilToInt((perimeter / 4) / 0.45);
     final battensLength = battensCount * (perimeter / 4);
@@ -63,11 +79,29 @@ class CalculatePvcPanels extends BaseCalculator {
     final moldingLength = perimeter;
 
     // Расчёт стоимости
-    final panelPrice = findPrice(priceList, ['pvc_panel', 'panel_pvc', 'plastic_panel']);
-    final startProfilePrice = findPrice(priceList, ['profile_start_pvc', 'profile_start']);
-    final finishProfilePrice = findPrice(priceList, ['profile_finish_pvc', 'profile_finish']);
-    final battensPrice = findPrice(priceList, ['battens', 'timber', 'profile_metal']);
-    final cornerPrice = findPrice(priceList, ['corner_pvc', 'corner', 'corner_profile']);
+    final panelPrice = findPrice(priceList, [
+      'pvc_panel',
+      'panel_pvc',
+      'plastic_panel',
+    ]);
+    final startProfilePrice = findPrice(priceList, [
+      'profile_start_pvc',
+      'profile_start',
+    ]);
+    final finishProfilePrice = findPrice(priceList, [
+      'profile_finish_pvc',
+      'profile_finish',
+    ]);
+    final battensPrice = findPrice(priceList, [
+      'battens',
+      'timber',
+      'profile_metal',
+    ]);
+    final cornerPrice = findPrice(priceList, [
+      'corner_pvc',
+      'corner',
+      'corner_profile',
+    ]);
     final fProfilePrice = findPrice(priceList, ['profile_f', 'f_profile']);
     final moldingPrice = findPrice(priceList, ['molding', 'ceiling_molding']);
 
@@ -77,7 +111,8 @@ class CalculatePvcPanels extends BaseCalculator {
       calculateCost(finishProfileLength, finishProfilePrice?.price),
       calculateCost(battensLength, battensPrice?.price),
       calculateCost(cornerLength, cornerPrice?.price),
-      if (fProfileLength > 0) calculateCost(fProfileLength, fProfilePrice?.price),
+      if (fProfileLength > 0)
+        calculateCost(fProfileLength, fProfilePrice?.price),
       calculateCost(moldingLength, moldingPrice?.price),
     ];
 

@@ -159,14 +159,6 @@ const RebarCanonicalSpec rebarCanonicalSpecV1 = RebarCanonicalSpec(
   ),
 );
 
-// ─── Structure type labels ───
-
-const Map<int, String> _structureTypeLabels = {
-  0: 'Плита (двойная сетка)',
-  1: 'Ленточный фундамент',
-  2: 'Армопояс',
-  3: 'Плита перекрытия',
-};
 
 // ─── Factor table ───
 
@@ -341,8 +333,8 @@ _RebarCalcResult _computeStripFoundationRebar(
   final perimeter = 2 * (length + width);
   final mainRebarLength = perimeter * 4 * _rebarOverlapFactor;
   final stirrupCount = (perimeter / 0.4).ceil();
-  final sectionPerimeter = 2 * (0.3 + height - 0.1);
-  final tieRebarLength = stirrupCount * math.max(0.8, sectionPerimeter);
+  final sectionPerimeter = 2.0 * (0.3 + height - 0.1);
+  final tieRebarLength = (stirrupCount * math.max(0.8, sectionPerimeter)).toDouble();
   const stirrupDiameter = 8;
   final intersections = stirrupCount * 4;
 
@@ -468,7 +460,7 @@ CanonicalCalculatorContractResult calculateCanonicalRebar(
     final multiplier = _scenarioMultiplier(spec, scenarioName);
     final exactNeed = _roundValue(mainRebarKg * multiplier, 6);
     final rodCount = (mainRods * multiplier).ceil();
-    final packageLabel = 'rebar-rod-${_standardRodLengthM}m';
+    const packageLabel = 'rebar-rod-${_standardRodLengthM}m';
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,

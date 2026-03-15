@@ -89,7 +89,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
   List<String> get normativeSources => const ['ГЭСН-2024', 'ФЕР-2022'];
 
   /// Поиск цены по списку возможных SKU.
-  /// 
+  ///
   /// Возвращает первый найденный PriceItem или null.
   PriceItem? findPrice(List<PriceItem> priceList, List<String> skus) {
     for (final sku in skus) {
@@ -103,7 +103,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
   }
 
   /// Получить входное значение с валидацией и значением по умолчанию.
-  /// 
+  ///
   /// - [inputs]: карта входных данных
   /// - [key]: ключ параметра
   /// - [defaultValue]: значение по умолчанию
@@ -117,7 +117,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
     double? maxValue,
   }) {
     var value = inputs[key] ?? defaultValue;
-    
+
     // Применяем ограничения
     if (minValue != null && value < minValue) {
       value = minValue;
@@ -125,7 +125,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
     if (maxValue != null && value > maxValue) {
       value = maxValue;
     }
-    
+
     return value;
   }
 
@@ -138,19 +138,19 @@ abstract class BaseCalculator implements CalculatorUseCase {
     int? maxValue,
   }) {
     var value = (inputs[key] ?? defaultValue.toDouble()).round();
-    
+
     if (minValue != null && value < minValue) {
       value = minValue;
     }
     if (maxValue != null && value > maxValue) {
       value = maxValue;
     }
-    
+
     return value;
   }
 
   /// Вычислить периметр квадратной/прямоугольной комнаты по площади.
-  /// 
+  ///
   /// Используется когда периметр не указан явно.
   /// Предполагается квадратная комната как приближение.
   double estimatePerimeter(double area) {
@@ -159,7 +159,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
   }
 
   /// Вычислить объём по площади и толщине.
-  /// 
+  ///
   /// - [area]: площадь в м²
   /// - [thickness]: толщина в мм
   /// - Результат в м³
@@ -169,7 +169,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
   }
 
   /// Добавить процентный запас к количеству.
-  /// 
+  ///
   /// - [quantity]: исходное количество
   /// - [percent]: процент запаса (10 = 10%)
   double addMargin(double quantity, double percent) {
@@ -184,7 +184,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
   }
 
   /// Безопасное деление с проверкой на ноль.
-  /// 
+  ///
   /// Выбрасывает CalculationException при делении на ноль, если [throwOnZero] = true.
   double safeDivide(
     double numerator,
@@ -214,7 +214,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
   }
 
   /// Вычислить полезную площадь (за вычетом проёмов).
-  /// 
+  ///
   /// - [totalArea]: общая площадь
   /// - [windowsArea]: площадь окон
   /// - [doorsArea]: площадь дверей
@@ -228,7 +228,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
   }
 
   /// Вычислить количество единиц с учётом запаса.
-  /// 
+  ///
   /// - [totalQuantity]: общее требуемое количество
   /// - [unitSize]: размер одной единицы
   /// - [marginPercent]: процент запаса (по умолчанию 10%)
@@ -249,7 +249,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
   }
 
   /// Вычислить площадь плитки/панели в м².
-  /// 
+  ///
   /// - [width]: ширина в см
   /// - [height]: высота в см
   double calculateTileArea(double width, double height) {
@@ -298,7 +298,7 @@ abstract class BaseCalculator implements CalculatorUseCase {
   }
 
   /// Создать результат с автоматическим округлением.
-  /// 
+  ///
   /// Округляет все значения до 2 знаков после запятой для читаемости.
   /// Проверяет на переполнение и некорректные значения.
   CalculatorResult createResult({
@@ -309,25 +309,25 @@ abstract class BaseCalculator implements CalculatorUseCase {
     List<String>? norms,
   }) {
     final roundedValues = <String, double>{};
-    
+
     for (final entry in values.entries) {
       final value = entry.value;
-      
+
       // Проверка на переполнение
       if (value.isInfinite || value.isNaN) {
         throw CalculationException.overflow(
           'Значение ${entry.key} = $value в калькуляторе ${calculatorId ?? "unknown"}',
         );
       }
-      
+
       // Проверка на разумные пределы (предотвращение ошибок ввода)
       if (value.abs() > 1e10) {
         throw CalculationException.custom(
-          'Значение ${entry.key} слишком большое: $value',
+          'Значение ${_displayInputName(entry.key)} слишком большое: $value',
           calculatorId: calculatorId,
         );
       }
-      
+
       roundedValues[entry.key] = _roundToDecimals(value, decimals);
     }
 
@@ -576,26 +576,141 @@ abstract class BaseCalculator implements CalculatorUseCase {
   // ============================================================================
 
   /// Валидация входных данных (переопределить в подклассе при необходимости).
-  /// 
+  ///
   /// Возвращает null если данные валидны, иначе сообщение об ошибке.
   String? validateInputs(Map<String, double> inputs) {
     // Базовая реализация - проверка на отрицательные значения
     for (final entry in inputs.entries) {
       if (entry.value.isNaN || entry.value.isInfinite) {
-        return 'Значение ${entry.key} некорректно';
+        return 'Значение ${_displayInputName(entry.key)} некорректно';
       }
       if (entry.value < 0) {
-        return 'Значение ${entry.key} не может быть отрицательным';
+        return nonNegativeValueMessage(entry.key);
       }
     }
     return null;
   }
 
+  String inputDisplayName(String key) => _displayInputName(key);
+
+  String positiveValueMessage(String key) {
+    return 'Поле "${_displayInputName(key)}" должно быть больше нуля';
+  }
+
+  String nonNegativeValueMessage(String key) {
+    return 'Поле "${_displayInputName(key)}" не может быть отрицательным';
+  }
+
+  String areaOrRoomDimensionsRequiredMessage() {
+    return 'Необходимо указать площадь или размеры помещения';
+  }
+
+  String areaOrDimensionsRequiredMessage() {
+    return 'Необходимо указать площадь или размеры';
+  }
+
+  String perimeterOrRoomDimensionsRequiredMessage() {
+    return 'Необходимо указать периметр или размеры помещения';
+  }
+
+  String wallAreaOrDimensionsRequiredMessage() {
+    return 'Необходимо указать площадь или размеры стены';
+  }
+
+  String houseDimensionsAreaOrPerimeterRequiredMessage() {
+    return 'Необходимо указать размеры дома, площадь или периметр';
+  }
+
+  String rangeMessage(String key, num min, num max, {String? unit}) {
+    final unitSuffix = (unit == null || unit.isEmpty) ? '' : ' $unit';
+    return 'Поле "${_displayInputName(key)}" должно быть от ${_formatMessageNumber(min)} до ${_formatMessageNumber(max)}$unitSuffix';
+  }
+
+  String maxValueMessage(String key, num max, {String? unit}) {
+    final unitSuffix = (unit == null || unit.isEmpty) ? '' : ' $unit';
+    return 'Поле "${_displayInputName(key)}" должно быть не больше ${_formatMessageNumber(max)}$unitSuffix';
+  }
+
+  static String _formatMessageNumber(num value) {
+    if (value == value.roundToDouble()) {
+      return value.toInt().toString();
+    }
+    return value.toString();
+  }
+
+  static String _displayInputName(String key) {
+    return _displayNames[key] ?? _humanizeKey(key);
+  }
+
+  static const Map<String, String> _displayNames = {
+    'area': 'площадь',
+    'volume': 'объём',
+    'perimeter': 'периметр',
+    'length': 'длина',
+    'width': 'ширина',
+    'height': 'высота',
+    'thickness': 'толщина',
+    'insulationThickness': 'толщина утеплителя',
+    'roomLength': 'длина комнаты',
+    'roomWidth': 'ширина комнаты',
+    'roomHeight': 'высота комнаты',
+    'rooms': 'количество помещений',
+    'bathroomsCount': 'количество санузлов',
+    'toiletsCount': 'количество туалетов',
+    'kitchensCount': 'количество кухонь',
+    'doors': 'количество дверей',
+    'corners': 'количество углов',
+    'windows': 'количество окон',
+    'windowsCount': 'количество окон',
+    'windowWidth': 'ширина окна',
+    'windowHeight': 'высота окна',
+    'wallHeight': 'высота стены',
+    'wallWidth': 'ширина стены',
+    'ceilingHeight': 'высота потолка',
+    'floorHeight': 'высота этажа',
+    'roomArea': 'площадь помещений',
+    'floorArea': 'площадь пола',
+    'roofArea': 'площадь крыши',
+    'type': 'тип',
+    'houseLength': 'длина дома',
+    'houseWidth': 'ширина дома',
+    'floorLength': 'длина пола',
+    'floorWidth': 'ширина пола',
+    'roofHeight': 'высота крыши',
+    'roofLength': 'длина крыши',
+    'roofWidth': 'ширина крыши',
+    'fenceLength': 'длина забора',
+    'fenceHeight': 'высота забора',
+    'depth': 'глубина',
+    'windowsArea': 'площадь окон',
+    'doorsArea': 'площадь дверей',
+    'rollWidth': 'ширина рулона',
+    'rollLength': 'длина рулона',
+    'patternRepeat': 'раппорт',
+    'layers': 'количество слоёв',
+    'coats': 'количество слоёв',
+    'coverage': 'укрывистость',
+    'construction_type': 'тип конструкции',
+    'power': 'мощность',
+    'tileWidthCm': 'ширина плитки',
+    'tileHeightCm': 'высота плитки',
+    'packArea': 'площадь упаковки',
+  };
+
+  static String _humanizeKey(String key) {
+    final withSpaces = key
+        .replaceAllMapped(
+          RegExp(r'([a-zа-я])([A-ZА-Я])'),
+          (match) => '${match.group(1)} ${match.group(2)}',
+        )
+        .replaceAll('_', ' ')
+        .trim()
+        .toLowerCase();
+    return withSpaces.isEmpty ? 'поле' : withSpaces;
+  }
+
   @override
-  CalculatorResult call(
-    Map<String, double> inputs,
-    List<PriceItem> priceList,
-  ) {
+  CalculatorResult call(Map<String, double> inputs, List<PriceItem> priceList) {
     try {
       // Валидация входных данных
       final validationError = validateInputs(inputs);

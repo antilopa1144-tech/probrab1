@@ -21,7 +21,7 @@ class CalculateBrickFacing extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -54,7 +54,11 @@ class CalculateBrickFacing extends BaseCalculator {
     final bricksPerM2 = thickness == 0.5 ? 51.0 : 102.0;
 
     // Количество кирпичей с запасом 5%
-    final bricksNeeded = calculateUnitsNeeded(usefulArea, 1.0 / bricksPerM2, marginPercent: 5.0);
+    final bricksNeeded = calculateUnitsNeeded(
+      usefulArea,
+      1.0 / bricksPerM2,
+      marginPercent: 5.0,
+    );
 
     // Раствор (СНиП 3.03.01-87): нормы расхода по толщине кладки
     // Полкирпича (0.5): 0.023 м³/м² — облицовочная кладка с полным заполнением швов
@@ -77,11 +81,27 @@ class CalculateBrickFacing extends BaseCalculator {
     final flexibleTiesNeeded = ceilToInt(usefulArea * 4);
 
     // Расчёт стоимости
-    final brickPrice = findPrice(priceList, ['brick_facing', 'brick_red', 'brick_ceramic', 'facing_brick']);
-    final cementPrice = findPrice(priceList, ['cement', 'cement_bag', 'portland_cement']);
+    final brickPrice = findPrice(priceList, [
+      'brick_facing',
+      'brick_red',
+      'brick_ceramic',
+      'facing_brick',
+    ]);
+    final cementPrice = findPrice(priceList, [
+      'cement',
+      'cement_bag',
+      'portland_cement',
+    ]);
     final sandPrice = findPrice(priceList, ['sand', 'sand_construction']);
-    final reinforcementPrice = findPrice(priceList, ['rebar', 'rebar_4mm', 'mesh']);
-    final flexibleTiesPrice = findPrice(priceList, ['tie_flexible', 'wall_tie']);
+    final reinforcementPrice = findPrice(priceList, [
+      'rebar',
+      'rebar_4mm',
+      'mesh',
+    ]);
+    final flexibleTiesPrice = findPrice(priceList, [
+      'tie_flexible',
+      'wall_tie',
+    ]);
 
     final costs = [
       calculateCost(bricksNeeded.toDouble(), brickPrice?.price),

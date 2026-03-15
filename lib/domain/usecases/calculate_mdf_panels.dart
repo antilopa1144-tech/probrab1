@@ -21,7 +21,7 @@ class CalculateMdfPanels extends BaseCalculator {
     if (baseError != null) return baseError;
 
     final area = inputs['area'] ?? 0;
-    if (area <= 0) return 'Площадь должна быть больше нуля';
+    if (area <= 0) return positiveValueMessage('area');
 
     return null;
   }
@@ -32,20 +32,42 @@ class CalculateMdfPanels extends BaseCalculator {
     List<PriceItem> priceList,
   ) {
     final area = getInput(inputs, 'area', minValue: 0.1);
-    final panelWidth = getInput(inputs, 'panelWidth', defaultValue: 20.0, minValue: 10.0, maxValue: 50.0);
-    final panelLength = getInput(inputs, 'panelLength', defaultValue: 260.0, minValue: 200.0, maxValue: 300.0);
-    
+    final panelWidth = getInput(
+      inputs,
+      'panelWidth',
+      defaultValue: 20.0,
+      minValue: 10.0,
+      maxValue: 50.0,
+    );
+    final panelLength = getInput(
+      inputs,
+      'panelLength',
+      defaultValue: 260.0,
+      minValue: 200.0,
+      maxValue: 300.0,
+    );
+
     final perimeter = inputs['perimeter'] ?? estimatePerimeter(area);
 
     // Площадь одной панели в м²
     final panelArea = calculateTileArea(panelWidth, panelLength);
 
     // Количество панелей с запасом 10%
-    final panelsNeeded = calculateUnitsNeeded(area, panelArea, marginPercent: 10.0);
+    final panelsNeeded = calculateUnitsNeeded(
+      area,
+      panelArea,
+      marginPercent: 10.0,
+    );
 
     // Обрешётка (бруски): шаг 40-50 см по вертикали
     final battensCount = ceilToInt((perimeter / 4) / 0.45);
-    final wallHeight = getInput(inputs, 'height', defaultValue: 2.5, minValue: 2.0, maxValue: 4.0);
+    final wallHeight = getInput(
+      inputs,
+      'height',
+      defaultValue: 2.5,
+      minValue: 2.0,
+      maxValue: 4.0,
+    );
     final battensLength = battensCount * wallHeight;
 
     // Кляймеры (крепёж для МДФ): ~4-5 шт на панель
@@ -67,12 +89,31 @@ class CalculateMdfPanels extends BaseCalculator {
     final screwsNeeded = ceilToInt(battensLength * 3); // ~3 шт на м.п.
 
     // Расчёт стоимости
-    final panelPrice = findPrice(priceList, ['mdf_panel', 'panel_mdf', 'mdf_board']);
-    final battensPrice = findPrice(priceList, ['battens', 'timber', 'wood_strips']);
+    final panelPrice = findPrice(priceList, [
+      'mdf_panel',
+      'panel_mdf',
+      'mdf_board',
+    ]);
+    final battensPrice = findPrice(priceList, [
+      'battens',
+      'timber',
+      'wood_strips',
+    ]);
     final clampPrice = findPrice(priceList, ['clamp_mdf', 'clamp', 'kleimer']);
-    final cornerPrice = findPrice(priceList, ['corner_mdf', 'corner', 'decorative_corner']);
-    final plinthPrice = findPrice(priceList, ['plinth_mdf', 'plinth', 'baseboard']);
-    final ceilingPlinthPrice = findPrice(priceList, ['plinth_ceiling', 'ceiling_molding']);
+    final cornerPrice = findPrice(priceList, [
+      'corner_mdf',
+      'corner',
+      'decorative_corner',
+    ]);
+    final plinthPrice = findPrice(priceList, [
+      'plinth_mdf',
+      'plinth',
+      'baseboard',
+    ]);
+    final ceilingPlinthPrice = findPrice(priceList, [
+      'plinth_ceiling',
+      'ceiling_molding',
+    ]);
     final connectorPrice = findPrice(priceList, ['connector', 'joining_strip']);
 
     final costs = [
@@ -82,7 +123,8 @@ class CalculateMdfPanels extends BaseCalculator {
       calculateCost(cornersLength, cornerPrice?.price),
       calculateCost(plinthLength, plinthPrice?.price),
       calculateCost(ceilingPlinthLength, ceilingPlinthPrice?.price),
-      if (connectorsLength > 0) calculateCost(connectorsLength, connectorPrice?.price),
+      if (connectorsLength > 0)
+        calculateCost(connectorsLength, connectorPrice?.price),
     ];
 
     return createResult(

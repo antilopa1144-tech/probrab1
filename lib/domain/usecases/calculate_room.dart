@@ -2,7 +2,7 @@ import '../../data/models/price_item.dart';
 import '../services/room_area_service.dart';
 import 'base_calculator.dart';
 import 'calculate_laminate.dart';
-import 'calculate_paint_universal.dart';
+import 'calculate_paint.dart';
 import 'calculate_plaster.dart';
 import 'calculate_putty.dart';
 import 'calculate_tile.dart';
@@ -36,7 +36,7 @@ import 'calculator_usecase.dart';
 class CalculateRoom extends BaseCalculator {
   final _plaster = CalculatePlaster();
   final _putty = CalculatePutty();
-  final _paint = CalculatePaintUniversal();
+  final _paint = CalculatePaint();
   final _wallpaper = CalculateWallpaper();
   final _laminate = CalculateLaminate();
   final _tile = CalculateTile();
@@ -101,8 +101,10 @@ class CalculateRoom extends BaseCalculator {
     // --- Стены: Шпаклёвка ---
     if (doPutty && wallAreaNet > 0) {
       final result = _putty.call({
+        'inputMode': 1.0,
         'area': wallAreaNet,
-        'type': 2.0, // финишная шпаклёвка
+        'puttyType': 0.0, // финишная шпаклёвка
+        'bagWeight': 20.0,
         'qualityClass': puttyQuality.toDouble(),
       }, priceList);
       _mergeResults(values, result.values, 'walls_putty');
@@ -111,20 +113,20 @@ class CalculateRoom extends BaseCalculator {
     // --- Стены: Покраска ---
     if (doPaintWalls && wallAreaNet > 0) {
       final result = _paint.call({
-        'paintType': 0.0,    // стены
-        'inputMode': 0.0,    // по площади
+        'paintType': 0.0,
         'wallArea': wallAreaNet,
         'ceilingArea': 0.0,
-        'doorsWindows': 0.0, // проёмы уже вычтены из wallAreaNet
-        'layers': paintLayers.toDouble(),
-        'surfacePrep': 1.0,
-        'colorIntensity': 1.0,
-        'consumption': 0.11,
-        'reserve': 10.0,
+        'openingsArea': 0.0,
+        'surfaceType': 0.0,
+        'surfacePrep': 0.0,
+        'colorIntensity': 0.0,
+        'coats': paintLayers.toDouble(),
+        'coverage': 9.091,
       }, priceList);
       _mergeResults(values, result.values, 'walls_paint');
     }
 
+    // --- Стены: Обои ---
     // --- Стены: Обои ---
     if (doWallpaper && wallAreaNet > 0) {
       final result = _wallpaper.call({
@@ -144,20 +146,20 @@ class CalculateRoom extends BaseCalculator {
     // --- Потолок: Покраска ---
     if (doPaintCeiling && room.ceilingArea > 0) {
       final result = _paint.call({
-        'paintType': 1.0,  // потолок
-        'inputMode': 0.0,  // по площади
+        'paintType': 1.0,
         'wallArea': 0.0,
         'ceilingArea': room.ceilingArea,
-        'doorsWindows': 0.0,
-        'layers': 2.0,
-        'surfacePrep': 1.0,
-        'colorIntensity': 1.0,
-        'consumption': 0.11,
-        'reserve': 10.0,
+        'openingsArea': 0.0,
+        'surfaceType': 0.0,
+        'surfacePrep': 0.0,
+        'colorIntensity': 0.0,
+        'coats': 2.0,
+        'coverage': 9.091,
       }, priceList);
       _mergeResults(values, result.values, 'ceiling_paint');
     }
 
+    // --- Пол: Ламинат ---
     // --- Пол: Ламинат ---
     if (doLaminate && room.floorArea > 0) {
       final result = _laminate.call({
@@ -200,3 +202,12 @@ class CalculateRoom extends BaseCalculator {
     }
   }
 }
+
+
+
+
+
+
+
+
+
