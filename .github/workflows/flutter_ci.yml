@@ -31,18 +31,30 @@ jobs:
       - run: flutter analyze --no-fatal-infos --no-fatal-warnings
       - run: flutter test
 
-      - name: Decode google-services.json
-        if: github.ref == 'refs/heads/main' && env.GOOGLE_SERVICES_JSON != ''
+      - name: Setup signing
+        if: github.ref == 'refs/heads/main'
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo "$GOOGLE_SERVICES_JSON" | base64 -d > android/app/google-services.json
+          ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        run: |
+          echo "$GOOGLE_SERVICES_JSON" | base64 -d > android/app/google-services.json
+          echo "$ANDROID_KEYSTORE" | base64 -d > android/masterok-release.jks
+          cat > android/key.properties << EOL
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=../masterok-release.jks
+          EOL
 
       - name: Build APK
-        if: github.ref == 'refs/heads/main' && hashFiles('android/app/google-services.json') != ''
+        if: github.ref == 'refs/heads/main'
         run: flutter build apk --release
 
       - name: Upload APK
-        if: github.ref == 'refs/heads/main' && hashFiles('android/app/google-services.json') != ''
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: android-release-apk
