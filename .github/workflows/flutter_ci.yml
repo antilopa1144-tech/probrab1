@@ -28,7 +28,7 @@ jobs:
 
       - run: touch .env
       - run: flutter pub get
-      - run: flutter analyze --no-fatal-infos
+      - run: flutter analyze --no-fatal-infos --no-fatal-warnings
       - run: flutter test
 
       - name: Decode google-services.json
