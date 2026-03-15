@@ -40,10 +40,7 @@ void main() {
 
     test('calculates mortar volume', () {
       final calculator = CalculateBrickPartition();
-      final inputs = {
-        'area': 10.0,
-        'thickness': 0.5,
-      };
+      final inputs = {'area': 10.0, 'thickness': 0.5};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -54,10 +51,7 @@ void main() {
 
     test('calculates cement and sand needed', () {
       final calculator = CalculateBrickPartition();
-      final inputs = {
-        'area': 10.0,
-        'thickness': 0.5,
-      };
+      final inputs = {'area': 10.0, 'thickness': 0.5};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -69,9 +63,7 @@ void main() {
 
     test('uses default thickness when missing', () {
       final calculator = CalculateBrickPartition();
-      final inputs = {
-        'area': 10.0,
-      };
+      final inputs = {'area': 10.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -83,14 +75,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateBrickPartition();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Необходимо указать площадь или размеры стены'),
+          ),
+        ),
       );
     });
   });

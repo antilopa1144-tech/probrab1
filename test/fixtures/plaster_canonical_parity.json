@@ -1,0 +1,97 @@
+{
+  "formulaVersion": "plaster-canonical-v1",
+  "cases": [
+    {
+      "id": "room_gypsum_default",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "height": 2.7,
+        "openingsArea": 5,
+        "plasterType": 0,
+        "thickness": 15,
+        "bagWeight": 30,
+        "substrateType": 1,
+        "wallEvenness": 1
+      },
+      "expected": {
+        "formulaVersion": "plaster-canonical-v1",
+        "netArea": 43.6,
+        "totalKg": 611.49,
+        "warningsCount": 0,
+        "materials": {
+          "plasterBags": 21,
+          "primerPackages": 3,
+          "beacons": 18,
+          "hasMesh": 0
+        },
+        "recScenario": {
+          "packageSize": 30,
+          "exactNeed": 611.49,
+          "purchaseQuantity": 630
+        }
+      }
+    },
+    {
+      "id": "area_cement_old_brick_uneven",
+      "inputs": {
+        "inputMode": 1,
+        "area": 50,
+        "openingsArea": 0,
+        "plasterType": 1,
+        "thickness": 20,
+        "bagWeight": 25,
+        "substrateType": 3,
+        "wallEvenness": 3
+      },
+      "expected": {
+        "formulaVersion": "plaster-canonical-v1",
+        "netArea": 50,
+        "totalKg": 3160.3,
+        "warningsCount": 0,
+        "materials": {
+          "plasterBags": 127,
+          "primerPackages": 2,
+          "beacons": 20,
+          "hasMesh": 0
+        },
+        "recScenario": {
+          "packageSize": 25,
+          "exactNeed": 3160.3,
+          "purchaseQuantity": 3175
+        }
+      }
+    },
+    {
+      "id": "small_area_thick_gypsum_warning",
+      "inputs": {
+        "inputMode": 1,
+        "area": 4,
+        "openingsArea": 0,
+        "plasterType": 0,
+        "thickness": 35,
+        "bagWeight": 30,
+        "substrateType": 1,
+        "wallEvenness": 1
+      },
+      "expected": {
+        "formulaVersion": "plaster-canonical-v1",
+        "netArea": 4,
+        "totalKg": 130.9,
+        "warningsCount": 3,
+        "materials": {
+          "plasterBags": 5,
+          "primerPackages": 1,
+          "beacons": 2,
+          "hasMesh": 1
+        },
+        "recScenario": {
+          "packageSize": 30,
+          "exactNeed": 130.9,
+          "purchaseQuantity": 150
+        }
+      }
+    }
+  ]
+}

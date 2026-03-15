@@ -5,6 +5,7 @@ import '../../../../data/models/calculation.dart';
 import '../../../../domain/calculators/calculator_registry.dart';
 import '../../../../domain/calculators/history_category.dart';
 import '../../../utils/calculator_navigation_helper.dart';
+import '../../../../core/localization/app_localizations.dart';
 
 /// Карточка расчёта в истории.
 class HistoryCalculationCard extends StatelessWidget {
@@ -54,6 +55,7 @@ class HistoryCalculationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd.MM.yyyy HH:mm');
+    final loc = AppLocalizations.of(context);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -87,19 +89,19 @@ class HistoryCalculationCard extends StatelessWidget {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: const Text('Удалить расчёт?'),
-                content: Text('Удалить "${calculation.title}"?'),
+                title: Text(loc.translate('history.delete_title')),
+                content: Text(loc.translate('history.delete_message', {'title': calculation.title})),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Отмена'),
+                    child: Text(loc.translate('button.cancel')),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context);
                       onDelete();
                     },
-                    child: const Text('Удалить'),
+                    child: Text(loc.translate('button.delete')),
                   ),
                 ],
               ),
@@ -153,6 +155,7 @@ class HistoryCalculationDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inputs = jsonDecode(calculation.inputsJson) as Map<String, dynamic>;
+    final loc = AppLocalizations.of(context);
     final results = jsonDecode(calculation.resultsJson) as Map<String, dynamic>;
     final definition = CalculatorRegistry.getById(calculation.calculatorId);
 
@@ -211,17 +214,17 @@ class HistoryCalculationDetails extends StatelessWidget {
                       icon: const Icon(Icons.play_arrow_rounded),
                       label: Text(
                         definition == null
-                            ? 'Калькулятор недоступен'
-                            : 'Открыть калькулятор',
+                            ? loc.translate('history.calculator_unavailable')
+                            : loc.translate('history.open_calculator'),
                       ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
-              const Text(
-                'Введённые данные:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                loc.translate('history.inputs'),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               ...inputs.entries.map(
@@ -240,9 +243,9 @@ class HistoryCalculationDetails extends StatelessWidget {
                 ),
               ),
               const Divider(height: 32),
-              const Text(
-                'Результаты:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                loc.translate('history.results'),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               ...results.entries.map(
@@ -266,9 +269,9 @@ class HistoryCalculationDetails extends StatelessWidget {
               if (calculation.notes != null &&
                   calculation.notes!.isNotEmpty) ...[
                 const SizedBox(height: 24),
-                const Text(
-                  'Заметки:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  loc.translate('history.notes'),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Text(calculation.notes!),
@@ -280,3 +283,6 @@ class HistoryCalculationDetails extends StatelessWidget {
     );
   }
 }
+
+
+

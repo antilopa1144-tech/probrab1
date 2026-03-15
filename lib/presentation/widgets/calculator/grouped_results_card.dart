@@ -227,6 +227,7 @@ class GroupedResultsCard extends StatelessWidget {
     if (translated == resultKey) {
       final fallback = loc.translate(key);
       if (fallback != key) return fallback;
+      return key;
     }
     return translated;
   }
@@ -238,6 +239,7 @@ class GroupedResultsCard extends StatelessWidget {
       final fallbackKey = 'group.$key';
       final fallback = loc.translate(fallbackKey);
       if (fallback != fallbackKey) return fallback;
+      return key;
     }
     return translated;
   }

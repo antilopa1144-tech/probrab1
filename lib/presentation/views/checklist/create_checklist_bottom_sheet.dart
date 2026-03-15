@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/localization/app_localizations.dart';
+import '../../../core/errors/global_error_handler.dart';
 import '../../../domain/models/checklist.dart';
 import '../../../domain/models/checklist_template.dart';
 import '../../providers/checklist_provider.dart';
@@ -40,6 +42,7 @@ class _CreateChecklistBottomSheetState
   Future<void> _createChecklist() async {
     if (_selectedTemplate == null) return;
 
+    final loc = AppLocalizations.of(context);
     setState(() => _isCreating = true);
 
     try {
@@ -56,7 +59,9 @@ class _CreateChecklistBottomSheetState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка создания чек-листа: $e'),
+            content: Text(
+              loc.translate('checklist.creation_error').replaceFirst('{error}', GlobalErrorHandler.getUserFriendlyMessage(context, e)),
+            ),
             backgroundColor: Colors.orange,
           ),
         );
@@ -67,6 +72,7 @@ class _CreateChecklistBottomSheetState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final templates = ref.watch(checklistTemplatesProvider);
 
@@ -83,7 +89,6 @@ class _CreateChecklistBottomSheetState
         builder: (context, scrollController) {
           return Column(
             children: [
-              // Хэндл
               Container(
                 margin: const EdgeInsets.only(top: 12, bottom: 8),
                 width: 32,
@@ -93,8 +98,6 @@ class _CreateChecklistBottomSheetState
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-
-              // Заголовок
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 child: Row(
@@ -106,7 +109,7 @@ class _CreateChecklistBottomSheetState
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Создать чек-лист',
+                      loc.translate('checklist.create_checklist'),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -119,10 +122,7 @@ class _CreateChecklistBottomSheetState
                   ],
                 ),
               ),
-
               const Divider(),
-
-              // Список шаблонов
               Expanded(
                 child: ListView.builder(
                   controller: scrollController,
@@ -150,13 +150,11 @@ class _CreateChecklistBottomSheetState
                             children: [
                               Row(
                                 children: [
-                                  // Иконка категории
                                   Text(
                                     template.category.icon,
                                     style: const TextStyle(fontSize: 32),
                                   ),
                                   const SizedBox(width: 12),
-                                  // Название
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,7 +181,6 @@ class _CreateChecklistBottomSheetState
                                       ],
                                     ),
                                   ),
-                                  // Чекбокс
                                   if (isSelected)
                                     Icon(
                                       Icons.check_circle_rounded,
@@ -193,7 +190,6 @@ class _CreateChecklistBottomSheetState
                                 ],
                               ),
                               const SizedBox(height: 12),
-                              // Количество задач
                               Row(
                                 children: [
                                   Icon(
@@ -205,7 +201,9 @@ class _CreateChecklistBottomSheetState
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    '${template.items.length} задач',
+                                    loc
+                                        .translate('checklist.tasks_count')
+                                        .replaceFirst('{count}', '${template.items.length}'),
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: isSelected
                                           ? theme.colorScheme.onPrimaryContainer
@@ -222,8 +220,6 @@ class _CreateChecklistBottomSheetState
                   },
                 ),
               ),
-
-              // Кнопка создания
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -238,7 +234,11 @@ class _CreateChecklistBottomSheetState
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.add_task_rounded),
-                    label: Text(_isCreating ? 'Создание...' : 'Создать чек-лист'),
+                    label: Text(
+                      _isCreating
+                          ? loc.translate('checklist.creating')
+                          : loc.translate('checklist.create_checklist'),
+                    ),
                     style: FilledButton.styleFrom(
                       minimumSize: const Size(double.infinity, 56),
                     ),

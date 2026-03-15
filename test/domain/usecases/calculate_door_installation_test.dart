@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_door_installation.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateDoorInstallation', () {
@@ -20,11 +21,7 @@ void main() {
 
     test('calculates architrave length', () {
       final calculator = CalculateDoorInstallation();
-      final inputs = {
-        'doors': 2.0,
-        'doorWidth': 0.9,
-        'doorHeight': 2.1,
-      };
+      final inputs = {'doors': 2.0, 'doorWidth': 0.9, 'doorHeight': 2.1};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -36,9 +33,7 @@ void main() {
 
     test('calculates frames needed', () {
       final calculator = CalculateDoorInstallation();
-      final inputs = {
-        'doors': 3.0,
-      };
+      final inputs = {'doors': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -49,9 +44,7 @@ void main() {
 
     test('calculates hinges needed', () {
       final calculator = CalculateDoorInstallation();
-      final inputs = {
-        'doors': 3.0,
-      };
+      final inputs = {'doors': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -62,9 +55,7 @@ void main() {
 
     test('calculates locks needed', () {
       final calculator = CalculateDoorInstallation();
-      final inputs = {
-        'doors': 3.0,
-      };
+      final inputs = {'doors': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -87,15 +78,30 @@ void main() {
 
     test('handles zero doors', () {
       final calculator = CalculateDoorInstallation();
-      final inputs = {
-        'doors': 0.0,
-      };
+      final inputs = {'doors': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
       expect(result.values['doors'], equals(0.0));
       expect(result.values['foamNeeded'], equals(0.0));
+    });
+
+    test('throws localized exception for negative doors', () {
+      final calculator = CalculateDoorInstallation();
+      final inputs = {'doors': -1.0};
+      final emptyPriceList = <PriceItem>[];
+
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "количество дверей" не может быть отрицательным'),
+          ),
+        ),
+      );
     });
   });
 }

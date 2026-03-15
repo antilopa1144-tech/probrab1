@@ -151,6 +151,69 @@ final proCalculatorProvider = StateNotifierProvider.autoDispose
   (ref, definition) => ProCalculatorNotifier(ref, definition),
 );
 
+class _IconMatchRule {
+  final IconData icon;
+  final List<String> tokens;
+
+  const _IconMatchRule(this.icon, this.tokens);
+}
+
+class _CalculatorIconMatcher {
+  static final List<_IconMatchRule> _groupRules = [
+    const _IconMatchRule(Icons.straighten, ['geometry', 'геометрия']),
+    const _IconMatchRule(Icons.category, ['material', 'материал']),
+    const _IconMatchRule(Icons.door_front_door, ['opening', 'проем', 'проём']),
+    const _IconMatchRule(Icons.tune, ['parameter', 'параметр']),
+    const _IconMatchRule(Icons.settings, ['option', 'опци']),
+  ];
+
+  static final List<_IconMatchRule> _optionRules = [
+    const _IconMatchRule(Icons.home_repair_service, ['gypsum', 'гипс']),
+    const _IconMatchRule(Icons.construction, ['cement', 'цемент']),
+    const _IconMatchRule(Icons.format_paint, ['paint', 'краск']),
+    const _IconMatchRule(Icons.carpenter, ['wood', 'дерев']),
+    const _IconMatchRule(Icons.square, ['wall', 'стен']),
+    const _IconMatchRule(Icons.layers, ['floor', 'пол']),
+    const _IconMatchRule(Icons.horizontal_rule, ['ceiling', 'потолок']),
+  ];
+
+  static final List<_IconMatchRule> _resultRules = [
+    const _IconMatchRule(Icons.straighten, ['area', 'площадь']),
+    const _IconMatchRule(Icons.shopping_bag, ['bag', 'мешк']),
+    const _IconMatchRule(Icons.scale, ['weight', 'вес']),
+    const _IconMatchRule(Icons.water_drop, ['volume', 'объем', 'объём']),
+    const _IconMatchRule(Icons.inventory_2, ['count', 'количество']),
+    const _IconMatchRule(Icons.attach_money, ['price', 'стоимость']),
+  ];
+
+  static IconData group(String rawKey) => _match(rawKey, _groupRules, Icons.folder);
+
+  static IconData option(String rawKey) => _match(rawKey, _optionRules, Icons.check_circle);
+
+  static IconData result(String rawKey) => _match(rawKey, _resultRules, Icons.check_circle);
+
+  static IconData _match(
+    String rawKey,
+    List<_IconMatchRule> rules,
+    IconData fallback,
+  ) {
+    final normalized = _normalize(rawKey);
+    for (final rule in rules) {
+      if (rule.tokens.any(normalized.contains)) {
+        return rule.icon;
+      }
+    }
+    return fallback;
+  }
+
+  static String _normalize(String rawKey) {
+    return ' ${rawKey
+        .toLowerCase()
+        .replaceAll(RegExp(r'^(group|result|option)\.'), '')
+        .replaceAll(RegExp(r'[_\-.]'), ' ')
+        .replaceAll('ё', 'е')} ';
+  }
+}
 /// Универсальный PRO калькулятор с темным дизайном.
 ///
 /// Автоматически генерирует UI на основе CalculatorDefinitionV2.
@@ -238,7 +301,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
       buffer.writeln(_loc.translate('share.results').toUpperCase());
       buffer.writeln('─' * 40);
       for (final entry in calcState.results!.entries) {
-        buffer.writeln('${entry.key}: ${entry.value.toStringAsFixed(2)}');
+        buffer.writeln('${_translateResultLabel(entry.key)}: ${entry.value.toStringAsFixed(2)}');
       }
     }
 
@@ -342,15 +405,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     return widgets;
   }
 
-  IconData _getIconForGroup(String groupKey) {
-    // Подбираем иконку по типу группы
-    if (groupKey.contains('geometry') || groupKey.contains('геометрия')) return Icons.straighten;
-    if (groupKey.contains('material') || groupKey.contains('материал')) return Icons.category;
-    if (groupKey.contains('opening') || groupKey.contains('проем')) return Icons.door_front_door;
-    if (groupKey.contains('parameter') || groupKey.contains('параметр')) return Icons.tune;
-    if (groupKey.contains('option') || groupKey.contains('опци')) return Icons.settings;
-    return Icons.folder;
-  }
+  IconData _getIconForGroup(String groupKey) => _CalculatorIconMatcher.group(groupKey);
 
   Widget _buildField(CalculatorField field, Map<String, double> inputs, Color accentColor) {
     return Padding(
@@ -597,18 +652,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     );
   }
 
-  IconData _getIconForOption(String labelKey) {
-    // Подбираем иконку на основе ключа перевода
-    final key = labelKey.toLowerCase();
-    if (key.contains('gypsum') || key.contains('гипс')) return Icons.home_repair_service;
-    if (key.contains('cement') || key.contains('цемент')) return Icons.construction;
-    if (key.contains('paint') || key.contains('краск')) return Icons.format_paint;
-    if (key.contains('wood') || key.contains('дерев')) return Icons.carpenter;
-    if (key.contains('wall') || key.contains('стен')) return Icons.square;
-    if (key.contains('floor') || key.contains('пол')) return Icons.layers;
-    if (key.contains('ceiling') || key.contains('потолок')) return Icons.horizontal_rule;
-    return Icons.check_circle;
-  }
+  IconData _getIconForOption(String labelKey) => _CalculatorIconMatcher.option(labelKey);
 
   Widget _buildToggleField(CalculatorField field, Map<String, double> inputs) {
     final value = inputs[field.key] ?? field.defaultValue;
@@ -741,20 +785,12 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     if (translated == resultKey) {
       final fallback = _loc.translate(key);
       if (fallback != key) return fallback;
+      return key;
     }
     return translated;
   }
 
-  IconData _getIconForResult(String key) {
-    // Подбираем иконку по типу результата
-    if (key.contains('area') || key.contains('площадь')) return Icons.straighten;
-    if (key.contains('bag') || key.contains('мешк')) return Icons.shopping_bag;
-    if (key.contains('weight') || key.contains('вес')) return Icons.scale;
-    if (key.contains('volume') || key.contains('объем')) return Icons.water_drop;
-    if (key.contains('count') || key.contains('количество')) return Icons.inventory_2;
-    if (key.contains('price') || key.contains('стоимость')) return Icons.attach_money;
-    return Icons.check_circle;
-  }
+  IconData _getIconForResult(String key) => _CalculatorIconMatcher.result(key);
 
   Widget _buildDetailsCard(Map<String, double>? results) {
     if (results == null || results.length <= 1) return const SizedBox();
@@ -774,3 +810,6 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     );
   }
 }
+
+
+

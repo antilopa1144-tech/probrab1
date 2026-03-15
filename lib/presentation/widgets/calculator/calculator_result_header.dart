@@ -56,8 +56,7 @@ class CalculatorResultHeader extends StatelessWidget {
     required this.results,
     this.useWhiteCard = true,
     this.bottomPadding = 24.0,
-  }) : assert(results.length >= 2 && results.length <= 4,
-          'Results должен содержать от 2 до 4 элементов');
+  }) : assert(results.length >= 2 && results.length <= 4);
 
   @override
   Widget build(BuildContext context) {
@@ -201,3 +200,4 @@ class CalculatorResultHeaderColored extends StatelessWidget {
     );
   }
 }
+

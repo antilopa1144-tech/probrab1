@@ -20,7 +20,7 @@ void main() {
         final inputs = {
           'area': 30.0,
           'surfaceType': 0.0, // concrete
-          'primerType': 0.0,  // deep
+          'primerType': 0.0, // deep
           'layers': 2.0,
           'canSize': 10.0,
         };
@@ -38,7 +38,7 @@ void main() {
         final inputs = {
           'area': 50.0,
           'surfaceType': 1.0, // plaster
-          'primerType': 1.0,  // contact
+          'primerType': 1.0, // contact
           'layers': 1.0,
           'canSize': 10.0,
         };
@@ -55,7 +55,7 @@ void main() {
         final inputs = {
           'area': 20.0,
           'surfaceType': 2.0, // drywall
-          'primerType': 2.0,  // universal
+          'primerType': 2.0, // universal
           'layers': 3.0,
           'canSize': 5.0,
         };
@@ -94,7 +94,9 @@ void main() {
           greaterThan(drywallResult.values['litersNeeded']!),
         );
         // Ratio should be 1.3/0.8 = 1.625
-        final ratio = concreteResult.values['litersNeeded']! / drywallResult.values['litersNeeded']!;
+        final ratio =
+            concreteResult.values['litersNeeded']! /
+            drywallResult.values['litersNeeded']!;
         expect(ratio, closeTo(1.625, 0.01));
       });
     });
@@ -124,7 +126,9 @@ void main() {
           greaterThan(deepResult.values['litersNeeded']!),
         );
         // Ratio should be 0.3/0.1 = 3.0
-        final ratio = contactResult.values['litersNeeded']! / deepResult.values['litersNeeded']!;
+        final ratio =
+            contactResult.values['litersNeeded']! /
+            deepResult.values['litersNeeded']!;
         expect(ratio, closeTo(3.0, 0.01));
       });
     });
@@ -150,7 +154,9 @@ void main() {
         final threeResult = calculator(threeLayersInputs, emptyPriceList);
 
         // 3 layers should need 3x more
-        final ratio = threeResult.values['litersNeeded']! / oneResult.values['litersNeeded']!;
+        final ratio =
+            threeResult.values['litersNeeded']! /
+            oneResult.values['litersNeeded']!;
         expect(ratio, closeTo(3.0, 0.01));
       });
     });
@@ -227,9 +233,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not specified', () {
-        final inputs = {
-          'area': 30.0,
-        };
+        final inputs = {'area': 30.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -308,9 +312,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero area without dimensions', () {
-        final inputs = {
-          'area': 0.0,
-        };
+        final inputs = {'area': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -319,9 +321,7 @@ void main() {
       });
 
       test('throws exception for negative area', () {
-        final inputs = {
-          'area': -10.0,
-        };
+        final inputs = {'area': -10.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -340,7 +340,13 @@ void main() {
           'canSize': 10.0,
         };
         final priceList = [
-          const PriceItem(sku: 'primer', name: 'Грунтовка', price: 450.0, unit: 'шт', imageUrl: ''),
+          const PriceItem(
+            sku: 'primer',
+            name: 'Грунтовка',
+            price: 450.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -350,9 +356,7 @@ void main() {
       });
 
       test('returns null price when no price available', () {
-        final inputs = {
-          'area': 30.0,
-        };
+        final inputs = {'area': 30.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -380,32 +384,51 @@ void main() {
     group('All surface and primer combinations', () {
       final testCases = <(int, int, double)>[
         // (surfaceType, primerType, expectedRate)
-        (0, 0, 0.13),  // concrete, deep: 0.1 * 1.3
-        (0, 1, 0.39),  // concrete, contact: 0.3 * 1.3
-        (0, 2, 0.20),  // concrete, universal: 0.15 * 1.3 (rounded)
-        (1, 0, 0.10),  // plaster, deep: 0.1 * 1.0
-        (1, 1, 0.30),  // plaster, contact: 0.3 * 1.0
-        (1, 2, 0.15),  // plaster, universal: 0.15 * 1.0
-        (2, 0, 0.08),  // drywall, deep: 0.1 * 0.8
-        (2, 1, 0.24),  // drywall, contact: 0.3 * 0.8
-        (2, 2, 0.12),  // drywall, universal: 0.15 * 0.8
+        (0, 0, 0.13), // concrete, deep: 0.1 * 1.3
+        (0, 1, 0.39), // concrete, contact: 0.3 * 1.3
+        (0, 2, 0.20), // concrete, universal: 0.15 * 1.3 (rounded)
+        (1, 0, 0.10), // plaster, deep: 0.1 * 1.0
+        (1, 1, 0.30), // plaster, contact: 0.3 * 1.0
+        (1, 2, 0.15), // plaster, universal: 0.15 * 1.0
+        (2, 0, 0.08), // drywall, deep: 0.1 * 0.8
+        (2, 1, 0.24), // drywall, contact: 0.3 * 0.8
+        (2, 2, 0.12), // drywall, universal: 0.15 * 0.8
       ];
 
       for (final (surfaceType, primerType, expectedRate) in testCases) {
-        test('surface=$surfaceType, primer=$primerType → rate=$expectedRate', () {
-          final inputs = {
-            'area': 10.0,
-            'surfaceType': surfaceType.toDouble(),
-            'primerType': primerType.toDouble(),
-            'layers': 1.0,
-            'canSize': 10.0,
-          };
+        test(
+          'surface=$surfaceType, primer=$primerType → rate=$expectedRate',
+          () {
+            final inputs = {
+              'area': 10.0,
+              'surfaceType': surfaceType.toDouble(),
+              'primerType': primerType.toDouble(),
+              'layers': 1.0,
+              'canSize': 10.0,
+            };
 
-          final result = calculator(inputs, emptyPriceList);
+            final result = calculator(inputs, emptyPriceList);
 
-          expect(result.values['consumptionRate'], closeTo(expectedRate, 0.001));
-        });
+            expect(
+              result.values['consumptionRate'],
+              closeTo(expectedRate, 0.001),
+            );
+          },
+        );
       }
+    });
+
+    group('validation messages', () {
+      test('area or room dimensions requirement uses shared helper', () {
+        final calculator = CalculatePrimerV2();
+
+        final error = calculator.validateInputs({'area': 0.0});
+
+        expect(
+          error,
+          equals('Необходимо указать площадь или размеры помещения'),
+        );
+      });
     });
   });
 }

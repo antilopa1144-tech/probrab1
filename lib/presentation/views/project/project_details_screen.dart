@@ -47,20 +47,21 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return FutureBuilder<ProjectV2?>(
       future: _projectFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Загрузка...')),
+            appBar: AppBar(title: Text(loc.translate('common.loading'))),
             body: const Center(child: CircularProgressIndicator()),
           );
         }
 
         if (snapshot.hasError) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Ошибка')),
+            appBar: AppBar(title: Text(loc.translate('common.error'))),
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -72,14 +73,14 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen>
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Ошибка загрузки проекта',
+                    loc.translate('project.error.loading_project'),
                     style: theme.textTheme.titleLarge,
                   ),
                   const SizedBox(height: 24),
                   FilledButton.icon(
                     onPressed: _refreshProject,
                     icon: const Icon(Icons.refresh_rounded),
-                    label: const Text('Повторить'),
+                    label: Text(loc.translate('button.retry')),
                   ),
                 ],
               ),
@@ -91,7 +92,7 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen>
 
         if (project == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Проект')),
+            appBar: AppBar(title: Text(loc.translate('project.title'))),
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -102,11 +103,11 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen>
                     color: theme.colorScheme.outline,
                   ),
                   const SizedBox(height: 16),
-                  Text('Проект не найден', style: theme.textTheme.titleLarge),
+                  Text(loc.translate('project.not_found'), style: theme.textTheme.titleLarge),
                   const SizedBox(height: 24),
                   FilledButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Назад'),
+                    child: Text(loc.translate('button.back')),
                   ),
                 ],
               ),
@@ -133,38 +134,38 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen>
               IconButton(
                 icon: const Icon(Icons.edit_rounded),
                 onPressed: () => _editProjectInfo(project),
-                tooltip: 'Редактировать',
+                tooltip: AppLocalizations.of(context).translate('button.edit'),
               ),
               // Меню
               PopupMenuButton(
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'qr',
                     child: Row(
                       children: [
-                        Icon(Icons.qr_code_rounded),
-                        SizedBox(width: 12),
-                        Flexible(child: Text('Поделиться QR кодом')),
+                        const Icon(Icons.qr_code_rounded),
+                        const SizedBox(width: 12),
+                        Flexible(child: Text(loc.translate('project.share_project'))),
                       ],
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'export',
                     child: Row(
                       children: [
-                        Icon(Icons.share_rounded),
-                        SizedBox(width: 12),
-                        Flexible(child: Text('Экспортировать')),
+                        const Icon(Icons.share_rounded),
+                        const SizedBox(width: 12),
+                        Flexible(child: Text(loc.translate('project.export'))),
                       ],
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'status',
                     child: Row(
                       children: [
-                        Icon(Icons.flag_rounded),
-                        SizedBox(width: 12),
-                        Flexible(child: Text('Изменить статус')),
+                        const Icon(Icons.flag_rounded),
+                        const SizedBox(width: 12),
+                        Flexible(child: Text(loc.translate('project.change_status'))),
                       ],
                     ),
                   ),
@@ -196,7 +197,7 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen>
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () => _addCalculation(project),
             icon: const Icon(Icons.add_rounded),
-            label: const Text('Добавить расчёт'),
+            label: Text(loc.translate('project.add_calculation')),
           ),
         );
       },

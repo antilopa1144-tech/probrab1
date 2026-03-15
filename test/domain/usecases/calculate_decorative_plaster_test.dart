@@ -40,10 +40,7 @@ void main() {
 
     test('calculates primer needed', () {
       final calculator = CalculateDecorativePlaster();
-      final inputs = {
-        'area': 50.0,
-        'thickness': 2.0,
-      };
+      final inputs = {'area': 50.0, 'thickness': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -54,9 +51,7 @@ void main() {
 
     test('uses default thickness when missing', () {
       final calculator = CalculateDecorativePlaster();
-      final inputs = {
-        'area': 50.0,
-      };
+      final inputs = {'area': 50.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -119,11 +114,7 @@ void main() {
 
     test('venetian plaster 5 layers', () {
       final calculator = CalculateDecorativePlaster();
-      final inputs = {
-        'area': 30.0,
-        'plasterType': 2.0,
-        'layers': 5.0,
-      };
+      final inputs = {'area': 30.0, 'plasterType': 2.0, 'layers': 5.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -134,14 +125,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateDecorativePlaster();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле \"площадь\" должно быть больше нуля'),
+          ),
+        ),
       );
     });
 

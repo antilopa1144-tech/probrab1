@@ -272,11 +272,7 @@ void main() {
 
     group('Input modes', () {
       test('wall mode calculates area from dimensions', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'wallWidth': 5.0,
-          'wallHeight': 3.0,
-        };
+        final inputs = {'inputMode': 1.0, 'wallWidth': 5.0, 'wallHeight': 3.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -286,10 +282,7 @@ void main() {
       });
 
       test('manual mode uses area and calculates dimensions', () {
-        final inputs = {
-          'inputMode': 0.0,
-          'area': 20.0,
-        };
+        final inputs = {'inputMode': 0.0, 'area': 20.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -302,9 +295,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not specified', () {
-        final inputs = <String, double>{
-          'area': 20.0,
-        };
+        final inputs = <String, double>{'area': 20.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -342,11 +333,7 @@ void main() {
       });
 
       test('handles small wall', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'wallWidth': 1.0,
-          'wallHeight': 2.0,
-        };
+        final inputs = {'inputMode': 1.0, 'wallWidth': 1.0, 'wallHeight': 2.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -356,11 +343,7 @@ void main() {
       });
 
       test('handles large wall', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'wallWidth': 10.0,
-          'wallHeight': 4.0,
-        };
+        final inputs = {'inputMode': 1.0, 'wallWidth': 10.0, 'wallHeight': 4.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -371,10 +354,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero area in manual mode', () {
-        final inputs = {
-          'inputMode': 0.0,
-          'area': 0.0,
-        };
+        final inputs = {'inputMode': 0.0, 'area': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -383,10 +363,7 @@ void main() {
       });
 
       test('throws exception for negative area', () {
-        final inputs = {
-          'inputMode': 0.0,
-          'area': -20.0,
-        };
+        final inputs = {'inputMode': 0.0, 'area': -20.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -395,11 +372,7 @@ void main() {
       });
 
       test('throws exception for zero wall width', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'wallWidth': 0.0,
-          'wallHeight': 2.7,
-        };
+        final inputs = {'inputMode': 1.0, 'wallWidth': 0.0, 'wallHeight': 2.7};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -410,16 +383,36 @@ void main() {
 
     group('Price calculations', () {
       test('calculates total price when prices available', () {
-        final inputs = {
-          'wallWidth': 4.0,
-          'wallHeight': 2.7,
-          'inputMode': 1.0,
-        };
+        final inputs = {'wallWidth': 4.0, 'wallHeight': 2.7, 'inputMode': 1.0};
         final priceList = [
-          const PriceItem(sku: 'mdf_panel', name: 'МДФ панель', price: 200.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'clips', name: 'Кляймер', price: 5.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'profile', name: 'Профиль', price: 50.0, unit: 'м', imageUrl: ''),
-          const PriceItem(sku: 'plinth', name: 'Плинтус', price: 150.0, unit: 'шт', imageUrl: ''),
+          const PriceItem(
+            sku: 'mdf_panel',
+            name: 'МДФ панель',
+            price: 200.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'clips',
+            name: 'Кляймер',
+            price: 5.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'profile',
+            name: 'Профиль',
+            price: 50.0,
+            unit: 'м',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'plinth',
+            name: 'Плинтус',
+            price: 150.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -429,11 +422,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'wallWidth': 4.0,
-          'wallHeight': 2.7,
-          'inputMode': 1.0,
-        };
+        final inputs = {'wallWidth': 4.0, 'wallHeight': 2.7, 'inputMode': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -503,6 +492,25 @@ void main() {
         expect(result.values['panelsCount'], equals(21.0));
         // Clips = 21 * 5 = 105
         expect(result.values['clipsCount'], equals(105.0));
+      });
+    });
+
+    group('validation messages', () {
+      test('wall dimensions requirement uses shared helper', () {
+        expect(
+          () => calculator({
+            'inputMode': 1.0,
+            'wallWidth': 0.0,
+            'wallHeight': 2.7,
+          }, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Необходимо указать площадь или размеры стены'),
+            ),
+          ),
+        );
       });
     });
   });

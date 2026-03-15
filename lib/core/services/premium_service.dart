@@ -178,16 +178,16 @@ class PremiumService {
         type: SubscriptionType.monthly,
         price: '399 ₽',
         priceValue: 399.0,
-        title: 'Месячная подписка',
-        description: 'Доступ ко всем функциям на 1 месяц',
+        titleKey: 'premium.product.monthly.title',
+        descriptionKey: 'premium.product.monthly.description',
       ),
       const PremiumProduct(
         id: 'premium_yearly',
         type: SubscriptionType.yearly,
         price: '3990 ₽',
         priceValue: 3990.0,
-        title: 'Годовая подписка',
-        description: 'Доступ ко всем функциям на 1 год. Экономия 17%!',
+        titleKey: 'premium.product.yearly.title',
+        descriptionKey: 'premium.product.yearly.description',
         discount: 17,
       ),
       const PremiumProduct(
@@ -195,8 +195,8 @@ class PremiumService {
         type: SubscriptionType.lifetime,
         price: '7990 ₽',
         priceValue: 7990.0,
-        title: 'Пожизненная покупка',
-        description: 'Разовая покупка. Все функции навсегда!',
+        titleKey: 'premium.product.lifetime.title',
+        descriptionKey: 'premium.product.lifetime.description',
       ),
     ];
   }
@@ -337,8 +337,8 @@ class PremiumProduct {
   final SubscriptionType type;
   final String price;
   final double priceValue;
-  final String title;
-  final String description;
+  final String titleKey;
+  final String descriptionKey;
   final int? discount; // Процент скидки
 
   const PremiumProduct({
@@ -346,16 +346,11 @@ class PremiumProduct {
     required this.type,
     required this.price,
     required this.priceValue,
-    required this.title,
-    required this.description,
+    required this.titleKey,
+    required this.descriptionKey,
     this.discount,
   });
 
-  /// Текст со скидкой
-  String? get discountText {
-    if (discount == null) return null;
-    return 'Скидка $discount%';
-  }
 
   /// Рекомендуемый продукт (годовая подписка)
   bool get isRecommended => type == SubscriptionType.yearly;

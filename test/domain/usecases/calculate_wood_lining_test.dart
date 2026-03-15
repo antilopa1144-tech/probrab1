@@ -89,22 +89,25 @@ void main() {
       expect(result.values['battenLength'], closeTo(99.0, 5.0));
     });
 
-    test('calculates batten length for diagonal mounting with increased margin', () {
-      final calculator = CalculateWoodLining();
-      final inputs = {
-        'area': 20.0,
-        'height': 2.5,
-        'perimeter': 18.0,
-        'mountingDirection': 3.0, // diagonal - 30% margin
-      };
-      final emptyPriceList = <PriceItem>[];
+    test(
+      'calculates batten length for diagonal mounting with increased margin',
+      () {
+        final calculator = CalculateWoodLining();
+        final inputs = {
+          'area': 20.0,
+          'height': 2.5,
+          'perimeter': 18.0,
+          'mountingDirection': 3.0, // diagonal - 30% margin
+        };
+        final emptyPriceList = <PriceItem>[];
 
-      final result = calculator(inputs, emptyPriceList);
+        final result = calculator(inputs, emptyPriceList);
 
-      // Batten count: 18 / 0.5 = 36 columns
-      // Batten length: 36 * 2.5 * 1.3 = 117 м
-      expect(result.values['battenLength'], closeTo(117.0, 5.0));
-    });
+        // Batten count: 18 / 0.5 = 36 columns
+        // Batten length: 36 * 2.5 * 1.3 = 117 м
+        expect(result.values['battenLength'], closeTo(117.0, 5.0));
+      },
+    );
 
     test('calculates fasteners for klyaymery', () {
       final calculator = CalculateWoodLining();
@@ -139,10 +142,7 @@ void main() {
 
     test('calculates antiseptic when enabled', () {
       final calculator = CalculateWoodLining();
-      final inputs = {
-        'area': 20.0,
-        'useAntiseptic': 1.0,
-      };
+      final inputs = {'area': 20.0, 'useAntiseptic': 1.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -153,10 +153,7 @@ void main() {
 
     test('does not include antiseptic when disabled', () {
       final calculator = CalculateWoodLining();
-      final inputs = {
-        'area': 20.0,
-        'useAntiseptic': 0.0,
-      };
+      final inputs = {'area': 20.0, 'useAntiseptic': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -196,10 +193,7 @@ void main() {
 
     test('calculates insulation when enabled', () {
       final calculator = CalculateWoodLining();
-      final inputs = {
-        'area': 20.0,
-        'useInsulation': 1.0,
-      };
+      final inputs = {'area': 20.0, 'useInsulation': 1.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -210,10 +204,7 @@ void main() {
 
     test('calculates vapor barrier when enabled', () {
       final calculator = CalculateWoodLining();
-      final inputs = {
-        'area': 20.0,
-        'useVaporBarrier': 1.0,
-      };
+      final inputs = {'area': 20.0, 'useVaporBarrier': 1.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -224,9 +215,7 @@ void main() {
 
     test('uses default values when missing', () {
       final calculator = CalculateWoodLining();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -241,14 +230,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateWoodLining();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "площадь" должно быть больше нуля'),
+          ),
+        ),
       );
     });
 
@@ -267,6 +260,57 @@ void main() {
       // Batten count: 2.5 / 0.5 = 5 rows
       // Batten length: 5 * 16 * 1.1 = 88 м
       expect(result.values['battenLength'], closeTo(88.0, 5.0));
+    });
+
+    test('supports wood lining screen dimensions mode via domain layer', () {
+      final calculator = CalculateWoodLining();
+      final inputs = {
+        'inputMode': 1.0,
+        'length': 5.0,
+        'width': 4.0,
+        'height': 2.5,
+        'liningType': 0.0,
+        'mountingDirection': 0.0,
+        'fasteningType': 0.0,
+        'reserve': 10.0,
+        'useAntiseptic': 1.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['area'], closeTo(45.0, 0.01));
+      expect(result.values['perimeter'], closeTo(18.0, 0.01));
+      expect(result.values['liningPieces'], equals(188.0));
+      expect(result.values['battenLength'], closeTo(99.0, 0.5));
+      expect(result.values['fasteners'], equals(991.0));
+      expect(result.values['antiseptic'], closeTo(9.9, 0.1));
+    });
+
+    test('supports wood lining screen optional materials and metadata', () {
+      final calculator = CalculateWoodLining();
+      final inputs = {
+        'inputMode': 0.0,
+        'area': 20.0,
+        'liningType': 1.0,
+        'mountingDirection': 2.0,
+        'fasteningType': 1.0,
+        'useFinish': 1.0,
+        'finishType': 1.0,
+        'useInsulation': 1.0,
+        'useVaporBarrier': 1.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['liningBoardWidth'], equals(96.0));
+      expect(result.values['liningBoardLength'], equals(2.5));
+      expect(result.values['finishConsumption'], closeTo(0.1, 0.001));
+      expect(result.values['finish'], closeTo(2.64, 0.1));
+      expect(result.values['insulation'], closeTo(22.0, 0.1));
+      expect(result.values['vaporBarrier'], closeTo(24.0, 0.1));
+      expect(result.values['vaporBarrierWeight'], closeTo(3.6, 0.1));
     });
   });
 }

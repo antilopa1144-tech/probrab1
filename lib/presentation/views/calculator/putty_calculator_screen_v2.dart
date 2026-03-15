@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../../domain/data/putty_materials_database.dart';
+import '../../../domain/usecases/calculate_putty.dart';
+import '../../../domain/models/canonical_calculator_contract.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Упрощённый калькулятор шпаклёвки V2 с выбором класса материалов
@@ -61,6 +63,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
 
   late _CalculationResult _result;
   late AppLocalizations _loc;
+  final _calculator = CalculatePutty();
 
   @override
   void initState() {
@@ -72,14 +75,16 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
     if (_inputMode == InputMode.byArea) {
       return _area;
     }
-    // Периметр × высота
+    if (_surfaceType == SurfaceType.ceiling) {
+      return _length * _width;
+    }
     return (_length + _width) * 2 * _height;
   }
 
   double get _netArea {
     final calculatedArea = _getCalculatedArea();
 
-    if (!_showOpenings) {
+    if (!_showOpenings || _surfaceType == SurfaceType.ceiling) {
       return calculatedArea;
     }
 
@@ -91,21 +96,64 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
     return (calculatedArea - openingsArea).clamp(0, double.infinity);
   }
 
-  int get _startLayers => _isPainting ? 2 : 1;
-  int get _finishLayers => _isPainting ? 2 : 1;
-
-  double get _startLayerThickness {
+  int get _startLayers {
     switch (_wallCondition) {
       case WallCondition.smooth:
-        return 1.5;
+        return 1;
       case WallCondition.medium:
-        return 3.0;
+        return 2;
       case WallCondition.rough:
-        return 5.0;
+        return 3;
     }
   }
 
-  double get _finishLayerThickness => 1.0;
+  int get _finishLayers => _isPainting ? 2 : 1;
+
+  int get _qualityClass {
+    switch (_materialTier) {
+      case MaterialTier.economy:
+        return 1;
+      case MaterialTier.standard:
+        return 2;
+      case MaterialTier.premium:
+        return 3;
+    }
+  }
+
+  double get _canonicalBagWeight {
+    const allowedWeights = [5.0, 20.0, 25.0];
+    final selectedWeight = _selectedFinishWeight;
+    if (selectedWeight == null) {
+      return 20.0;
+    }
+    if (allowedWeights.contains(selectedWeight)) {
+      return selectedWeight;
+    }
+
+    var bestWeight = allowedWeights.first;
+    var bestDiff = (selectedWeight - bestWeight).abs();
+    for (final candidate in allowedWeights.skip(1)) {
+      final diff = (selectedWeight - candidate).abs();
+      if (diff < bestDiff) {
+        bestWeight = candidate;
+        bestDiff = diff;
+      }
+    }
+    return bestWeight;
+  }
+
+  Map<String, double> _buildCanonicalInputs() {
+    return {
+      'inputMode': 1.0,
+      'area': _netArea,
+      'surface': _surfaceType == SurfaceType.ceiling ? 1.0 : 0.0,
+      'puttyType': 1.0,
+      'bagWeight': _canonicalBagWeight,
+      'qualityClass': _qualityClass.toDouble(),
+      'startLayers': _startLayers.toDouble(),
+      'finishLayers': _finishLayers.toDouble(),
+    };
+  }
 
   // Получить материалы по тиру
   PuttyMaterial _getStartMaterialForTier() {
@@ -121,7 +169,6 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
   }
 
   PuttyMaterial _getFinishMaterialForTier() {
-    // Получаем материалы в зависимости от типа поверхности
     final List<PuttyMaterial> availableMaterials;
     if (_surfaceType == SurfaceType.ceiling) {
       availableMaterials = PuttyMaterialsDatabase.getFinishCeilingMaterialsSorted();
@@ -131,7 +178,6 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
 
     switch (_materialTier) {
       case MaterialTier.economy:
-        // Для эконома берём сухие смеси
         final dryMaterials = availableMaterials.where((m) => m.form == PuttyForm.dry).toList();
         if (dryMaterials.isNotEmpty) {
           return dryMaterials.firstWhere(
@@ -141,19 +187,11 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
         }
         return availableMaterials.first;
       case MaterialTier.standard:
-        // Стандарт: Vetonit, Knauf — НЕ Sheetrock (это премиум)
-        if (_surfaceType == SurfaceType.ceiling) {
-          return availableMaterials.firstWhere(
-            (m) => m.id == 'vetonit_lr_plus' || m.id == 'knauf_hp_finish',
-            orElse: () => availableMaterials.first,
-          );
-        }
         return availableMaterials.firstWhere(
           (m) => m.id == 'vetonit_lr_plus' || m.id == 'knauf_hp_finish',
           orElse: () => availableMaterials.first,
         );
       case MaterialTier.premium:
-        // Для премиума - топовые пасты
         if (_surfaceType == SurfaceType.ceiling) {
           return availableMaterials.firstWhere(
             (m) => m.id == 'terraco_handycoat_ready' || m.id == 'sheetrock_superfinish',
@@ -167,13 +205,10 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
     }
   }
 
-  /// Получить доступный вес для выбранного материала
   double _getSelectedWeight(PuttyMaterial material) {
-    if (_selectedFinishWeight != null &&
-        material.weights.contains(_selectedFinishWeight)) {
+    if (_selectedFinishWeight != null && material.weights.contains(_selectedFinishWeight)) {
       return _selectedFinishWeight!;
     }
-    // Возвращаем наибольший вес по умолчанию
     return material.weights.last;
   }
 
@@ -181,31 +216,47 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
     final startMaterial = _getStartMaterialForTier();
     final finishMaterial = _getFinishMaterialForTier();
     final selectedWeight = _getSelectedWeight(finishMaterial);
+    final contract = _calculator.calculateCanonical(_buildCanonicalInputs());
+    final canonicalBagWeight = contract.totals['bagWeight'] ?? _canonicalBagWeight;
 
-    // Расчёт старта
-    final startConsumption = _netArea *
-        startMaterial.consumptionPerMm *
-        _startLayerThickness *
-        _startLayers;
+    CanonicalMaterialResult? findMaterial(String categoryPart, {String? nameFallback}) {
+      for (final material in contract.materials) {
+        if ((material.category ?? '').contains(categoryPart)) {
+          return material;
+        }
+      }
+      if (nameFallback != null) {
+        for (final material in contract.materials) {
+          if (material.name.contains(nameFallback)) {
+            return material;
+          }
+        }
+      }
+      return null;
+    }
+
+    double materialExactNeed(String categoryPart, {String? nameFallback}) {
+      final material = findMaterial(categoryPart, nameFallback: nameFallback);
+      return material != null ? material.quantity * canonicalBagWeight : 0;
+    }
+
+    int materialPurchaseQty(String categoryPart, {String? nameFallback}) {
+      final material = findMaterial(categoryPart, nameFallback: nameFallback);
+      return material?.purchaseQty ?? 0;
+    }
+
+    double materialQuantity(String categoryPart, {String? nameFallback}) {
+      final material = findMaterial(categoryPart, nameFallback: nameFallback);
+      return material?.quantity ?? 0;
+    }
+
+    final startConsumption = materialExactNeed(CalculatePutty.puttyMaterialCategoryStart, nameFallback: CalculatePutty.puttyMaterialNameFallbackStart);
+    final finishConsumption = materialExactNeed(CalculatePutty.puttyMaterialCategoryFinish, nameFallback: CalculatePutty.puttyMaterialNameFallbackFinish);
     final startPackages = (startConsumption / startMaterial.packageSize).ceil();
-
-    // Расчёт финиша с учётом выбранной фасовки
-    final finishConsumption = _netArea *
-        finishMaterial.consumptionPerMm *
-        _finishLayerThickness *
-        _finishLayers;
     final finishPackages = (finishConsumption / selectedWeight).ceil();
-
-    // Грунтовка: 0.15 л/м² на каждый слой
-    final primerLayers = _startLayers + _finishLayers + 1;
-    final primerVolume = _netArea * 0.15 * primerLayers;
-    final primerCanisters = (primerVolume / 10).ceil();
-
-    // Абразив: 1 лист на 10 м², 2 этапа шлифовки
-    final sandingSheets = ((_netArea / 10) * 2).ceil();
-
-    // Время работы (часы)
-    final workTime = _calculateWorkTime();
+    final primerVolume = materialQuantity(CalculatePutty.puttyMaterialCategoryPrimer, nameFallback: CalculatePutty.puttyMaterialNameFallbackPrimer) * 10;
+    final primerCanisters = materialPurchaseQty(CalculatePutty.puttyMaterialCategoryPrimer, nameFallback: CalculatePutty.puttyMaterialNameFallbackPrimer);
+    final sandingSheets = materialPurchaseQty(CalculatePutty.puttyMaterialCategorySandpaper, nameFallback: CalculatePutty.puttyMaterialNameFallbackSandpaper);
 
     return _CalculationResult(
       netArea: _netArea,
@@ -219,7 +270,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
       primerVolume: primerVolume,
       primerCanisters: primerCanisters,
       sandingSheets: sandingSheets,
-      workTimeHours: workTime,
+      workTimeHours: _calculateWorkTime(),
       totalDays: _calculateTotalDays(),
     );
   }
@@ -259,7 +310,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
     buffer.writeln('═' * 40);
     buffer.writeln();
     buffer.writeln('${_loc.translate('putty.export.target')}: $targetLabel');
-    buffer.writeln('${_loc.translate('putty.export.area')}: ${result.netArea.toStringAsFixed(1)} м²');
+    buffer.writeln('${_loc.translate('putty.export.area')}: ${result.netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
     buffer.writeln('${_loc.translate('putty.export.wall_condition')}: ${_loc.translate(_wallCondition.labelKey)}');
     buffer.writeln('${_loc.translate('putty.export.material_tier')}: ${_loc.translate(_materialTier.nameKey)}');
     buffer.writeln();
@@ -297,7 +348,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
         results: [
           ResultItem(
             label: _loc.translate('putty.header.area'),
-            value: '${_result.netArea.toStringAsFixed(0)} м²',
+            value: '${_result.netArea.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -459,7 +510,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
         value: _area,
         min: 5,
         max: 200,
-        suffix: 'м²',
+        suffix: _loc.translate('common.sqm'),
         accentColor: accentColor,
         decimalPlaces: 1,
         onChanged: (v) {
@@ -556,7 +607,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} м²',
+                  '${_result.netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -894,7 +945,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                 _buildDetailRow(
                   Icons.straighten,
                   _loc.translate('putty.consumption'),
-                  '${m.consumptionPerMm} кг/м²·мм',
+                  '${m.consumptionPerMm} ${_loc.translate('common.kg_per_sqm_mm')}',
                 ),
                 // Фасовка
                 _buildDetailRow(
@@ -906,13 +957,13 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
                 _buildDetailRow(
                   Icons.height,
                   _loc.translate('putty.layer_thickness'),
-                  '${m.minLayerThickness.toInt()}–${m.maxLayerThickness.toInt()} мм',
+                  '${m.minLayerThickness.toInt()}–${m.maxLayerThickness.toInt()} ${_loc.translate('common.mm')}',
                 ),
                 // Время высыхания
                 _buildDetailRow(
                   Icons.schedule,
                   _loc.translate('putty.drying_time'),
-                  '${m.dryingTimeHours} ч',
+                  '${m.dryingTimeHours} ${_loc.translate('common.hour_short')}',
                 ),
               ],
             ),
@@ -1321,3 +1372,15 @@ class _CalculationResult {
     required this.totalDays,
   });
 }
+
+
+
+
+
+
+
+
+
+
+
+

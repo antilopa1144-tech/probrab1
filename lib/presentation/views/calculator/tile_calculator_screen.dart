@@ -4,6 +4,7 @@ import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
+import '../../../domain/usecases/calculate_tile.dart';
 import '../../providers/constants_provider.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -251,6 +252,7 @@ class _TileResult {
   // Подложка
   final bool useUnderlay;
   final double? underlayArea;
+  final double wastePercent;
 
   const _TileResult({
     required this.area,
@@ -274,6 +276,7 @@ class _TileResult {
     this.waterproofingWeight,
     required this.useUnderlay,
     this.underlayArea,
+    required this.wastePercent,
   });
 }
 
@@ -293,6 +296,7 @@ class TileCalculatorScreen extends ConsumerStatefulWidget {
 
 class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     with ExportableConsumerMixin {
+  final CalculateTile _calculator = CalculateTile();
   @override
   AppLocalizations get loc => _loc;
 
@@ -340,13 +344,15 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     if (initial['area'] != null) _area = initial['area']!.clamp(1.0, 1000.0);
     if (initial['length'] != null) _length = initial['length']!.clamp(0.1, 100.0);
     if (initial['width'] != null) _width = initial['width']!.clamp(0.1, 100.0);
-    if (initial['tileWidth'] != null) _tileWidth = initial['tileWidth']!.clamp(5.0, 200.0);
-    if (initial['tileHeight'] != null) _tileHeight = initial['tileHeight']!.clamp(5.0, 200.0);
-    if (initial['jointWidth'] != null) _jointWidth = initial['jointWidth']!.clamp(0.0, 20.0);
+    final tileWidth = initial['tileWidthCm'] ?? initial['tileWidth'];
+    final tileHeight = initial['tileHeightCm'] ?? initial['tileHeight'];
+    if (tileWidth != null) _tileWidth = tileWidth.clamp(5.0, 200.0);
+    if (tileHeight != null) _tileHeight = tileHeight.clamp(5.0, 200.0);
+    if (initial['jointWidth'] != null) _jointWidth = initial['jointWidth']!.clamp(1.0, 10.0);
 
     if (initial['inputMode'] != null) {
-      final mode = initial['inputMode']!.toInt();
-      _inputMode = mode == 0 ? InputMode.byArea : InputMode.byDimensions;
+      final mode = initial['inputMode']!.round();
+      _inputMode = mode == 0 ? InputMode.byDimensions : InputMode.byArea;
     }
 
     if (initial['material'] != null) {
@@ -356,10 +362,19 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       }
     }
 
-    if (initial['layout'] != null) {
-      final layout = initial['layout']!.toInt();
-      if (layout >= 0 && layout < LayoutPattern.values.length) {
-        _layout = LayoutPattern.values[layout];
+    final layout = (initial['layoutPattern'] ?? initial['layout'])?.toInt();
+    if (layout != null) {
+      final resolved = layout > 0 ? layout - 1 : layout;
+      if (resolved >= 0 && resolved < LayoutPattern.values.length) {
+        _layout = LayoutPattern.values[resolved];
+      }
+    }
+
+    final complexity = initial['roomComplexity']?.toInt();
+    if (complexity != null) {
+      final resolved = complexity > 0 ? complexity - 1 : complexity;
+      if (resolved >= 0 && resolved < RoomComplexity.values.length) {
+        _roomComplexity = RoomComplexity.values[resolved];
       }
     }
 
@@ -370,105 +385,75 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       }
     }
 
+    final tileSize = initial['tileSize']?.toInt();
+    if (tileSize != null) {
+      _tileSizePreset = tileSize;
+    }
+
     if (initial['useSVP'] != null) _useSVP = initial['useSVP']! > 0;
     if (initial['useWaterproofing'] != null) _useWaterproofing = initial['useWaterproofing']! > 0;
     if (initial['useUnderlay'] != null) _useUnderlay = initial['useUnderlay']! > 0;
   }
 
-  double _getCalculatedArea() {
-    if (_inputMode == InputMode.byArea) {
-      return _area;
-    }
-    return _length * _width;
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'inputMode': _inputMode == InputMode.byDimensions ? 0 : 1,
+      'area': _area,
+      'length': _length,
+      'width': _width,
+      'tileWidthCm': _tileWidth,
+      'tileHeightCm': _tileHeight,
+      'jointWidth': _jointWidth,
+      'layoutPattern': (_layout.index + 1).toDouble(),
+      'roomComplexity': (_roomComplexity.index + 1).toDouble(),
+      'material': _material.index.toDouble(),
+      'roomType': _roomType.index.toDouble(),
+      'useSVP': _useSVP ? 1.0 : 0.0,
+      'useWaterproofing': _useWaterproofing ? 1.0 : 0.0,
+      'useUnderlay': _useUnderlay ? 1.0 : 0.0,
+    };
   }
 
   _TileResult _calculate() {
-    final calculatedArea = _getCalculatedArea();
-
-    // Размер плитки в метрах
-    final tileWidthM = _tileWidth / 100;
-    final tileHeightM = _tileHeight / 100;
-    final tileAreaM2 = tileWidthM * tileHeightM;
-
-    // Запас: базовый по укладке + бонус за сложность (аддитивный)
-    final layoutMargin = _constants.getLayoutMargin(_layout);
-    final totalMarginPercent = layoutMargin + _roomComplexity.bonusPercent;
-
-    // Количество плиток с запасом
-    final tilesNeeded = ((calculatedArea / tileAreaM2) * (1 + totalMarginPercent / 100)).ceil();
-    final tilesArea = tilesNeeded * tileAreaM2;
-
-    // Упаковка плитки (обычно 1-1.5 м² в коробке)
-    final boxArea = _constants.getBoxArea(_material);
-    final boxesNeeded = (tilesArea / boxArea).ceil();
-
-    // Клей (расход зависит от материала плитки) + запас 10%
-    final glueWeight = calculatedArea * _constants.getGlueConsumption(_material) * 1.1;
-    final glueBags = (glueWeight / _constants.getGlueBagSize()).ceil();
-
-    // Затирка + запас
-    // Формула: (tileWidth + tileHeight) / (tileWidth × tileHeight) × jointWidth × depth × density × area
-    final avgTileSize = (_tileWidth + _tileHeight) / 2;
-    final jointDepth = _constants.getGroutJointDepth(avgTileSize);
-    final groutDensity = _constants.getGroutDensity();
-    final groutConsumptionPerM2 = ((_tileWidth + _tileHeight) / (_tileWidth * _tileHeight)) *
-        _jointWidth *
-        jointDepth *
-        groutDensity;
-    final groutWeight = calculatedArea * groutConsumptionPerM2 * _constants.getGroutMarginFactor();
-
-    // Грунтовка + запас
-    final primerLiters = calculatedArea * _constants.getPrimerBase() * _constants.getPrimerMarginFactor();
-
-    // Крестики: ~1 на пересечение + 20% запас на поломки
-    final crossesNeeded = (tilesNeeded * _constants.getCrossesMultiplier()).ceil();
-
-    // СВП
-    int? svpCount;
-    if (_useSVP) {
-      // Количество клипс зависит от размера плитки
-      final avgSize = (_tileWidth + _tileHeight) / 2;
-      final clipsPerTile = _constants.getSvpClipsPerTile(avgSize);
-      svpCount = tilesNeeded * clipsPerTile;
-    }
-
-    // Гидроизоляция + запас
-    double? waterproofingWeight;
-    if (_useWaterproofing || _roomType.needsWaterproofing) {
-      waterproofingWeight = calculatedArea *
-          _constants.getWaterproofingPerLayer() *
-          _constants.getWaterproofingLayers() *
-          _constants.getWaterproofingMarginFactor();
-    }
-
-    // Подложка для выравнивания (с запасом)
-    double? underlayArea;
-    if (_useUnderlay) {
-      underlayArea = calculatedArea * _constants.getUnderlayMarginFactor();
-    }
+    final contract = _calculator.calculateCanonical(_buildCalculationInputs());
+    final totals = contract.totals;
+    final calculatedArea = totals['area'] ?? 0;
+    final tileWidthCm = totals['tileWidthCm'] ?? _tileWidth;
+    final tileHeightCm = totals['tileHeightCm'] ?? _tileHeight;
+    final tilesNeeded = (totals['tilesNeeded'] ?? 0).round();
+    final tilesArea = totals['tilesArea'] ?? 0;
+    final glueWeight = totals['glueNeededKg'] ?? 0;
+    final groutWeight = totals['groutNeededKg'] ?? 0;
+    final primerLiters = totals['primerNeededL'] ?? 0;
+    final crossesNeeded = (totals['crossesNeeded'] ?? 0).round();
+    final svpCount = (totals['svpCount'] ?? 0).round();
+    final waterproofingWeight = totals['waterproofingWeight'] ?? 0;
+    final underlayArea = totals['underlayArea'] ?? 0;
+    final effectiveWaterproofing = (totals['effectiveWaterproofing'] ?? 0) > 0;
 
     return _TileResult(
       area: calculatedArea,
       material: _material,
       layout: _layout,
       roomType: _roomType,
-      tileWidth: _tileWidth,
-      tileHeight: _tileHeight,
-      jointWidth: _jointWidth,
+      tileWidth: tileWidthCm,
+      tileHeight: tileHeightCm,
+      jointWidth: totals['jointWidth'] ?? _jointWidth,
       tilesNeeded: tilesNeeded,
       tilesArea: tilesArea,
-      boxesNeeded: boxesNeeded,
+      boxesNeeded: (totals['boxesNeeded'] ?? 0).round(),
       glueWeight: glueWeight,
-      glueBags: glueBags,
+      glueBags: (totals['glueBags'] ?? 0).round(),
       groutWeight: groutWeight,
       primerLiters: primerLiters,
       crossesNeeded: crossesNeeded,
       useSVP: _useSVP,
-      svpCount: svpCount,
-      useWaterproofing: _useWaterproofing || _roomType.needsWaterproofing,
-      waterproofingWeight: waterproofingWeight,
+      svpCount: svpCount > 0 ? svpCount : null,
+      useWaterproofing: effectiveWaterproofing,
+      waterproofingWeight: waterproofingWeight > 0 ? waterproofingWeight : null,
       useUnderlay: _useUnderlay,
-      underlayArea: underlayArea,
+      underlayArea: underlayArea > 0 ? underlayArea : null,
+      wastePercent: totals['wastePercent'] ?? (_constants.getLayoutMargin(_layout) + _roomComplexity.bonusPercent).toDouble(),
     );
   }
 
@@ -506,7 +491,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     buffer.writeln('${_loc.translate('tile.export.area')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
     buffer.writeln('${_loc.translate('tile.export.material')}: ${_loc.translate(_result.material.nameKey)}');
     buffer.writeln('${_loc.translate('tile.export.tile_size')}: ${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} ${_loc.translate('common.cm')}');
-    buffer.writeln('${_loc.translate('tile.export.layout')}: ${_loc.translate(_result.layout.nameKey)} (${_loc.translate('tile.export.reserve')} ${_constants.getLayoutMargin(_result.layout)}%)');
+    buffer.writeln('${_loc.translate('tile.export.layout')}: ${_loc.translate(_result.layout.nameKey)} (${_loc.translate('tile.export.reserve')} ${_constants.getLayoutMargin(_result.layout)}${_loc.translate('common.percent')})');
     buffer.writeln('${_loc.translate('tile.export.room')}: ${_loc.translate(_result.roomType.nameKey)}');
     buffer.writeln();
 
@@ -713,7 +698,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                  '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -1427,3 +1412,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     );
   }
 }
+
+
+
+
+
+

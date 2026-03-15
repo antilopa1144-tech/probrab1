@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
+import '../../../domain/usecases/calculate_concrete_universal.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -11,30 +12,6 @@ enum ConcreteGrade {
   m200, // М200 - фундаменты, стяжки (самый популярный)
   m300, // М300 - несущие конструкции
   m400, // М400 - особо прочные конструкции
-}
-
-/// Пропорции для каждой марки (на 1 м³ готового бетона)
-class _GradeProportions {
-  final double cementKg; // кг цемента
-  final double sandKg;   // кг песка
-  final double gravelKg; // кг щебня
-  final double waterL;   // литры воды
-
-  const _GradeProportions({
-    required this.cementKg,
-    required this.sandKg,
-    required this.gravelKg,
-    required this.waterL,
-  });
-
-  // Мешков цемента (по 50 кг)
-  int cementBags(double volume) => (cementKg * volume / 50).ceil();
-  // Объём песка в м³ (плотность ~1500 кг/м³)
-  double sandVolume(double volume) => sandKg * volume / 1500;
-  // Объём щебня в м³ (плотность ~1400 кг/м³)
-  double gravelVolume(double volume) => gravelKg * volume / 1400;
-  // Литры воды
-  double waterLiters(double volume) => waterL * volume;
 }
 
 /// Калькулятор универсального бетона
@@ -52,6 +29,7 @@ class ConcreteUniversalCalculatorScreen extends StatefulWidget {
     this.initialInputs,
   });
 
+
   @override
   State<ConcreteUniversalCalculatorScreen> createState() =>
       _ConcreteUniversalCalculatorScreenState();
@@ -60,21 +38,13 @@ class ConcreteUniversalCalculatorScreen extends StatefulWidget {
 class _ConcreteUniversalCalculatorScreenState
     extends State<ConcreteUniversalCalculatorScreen> with ExportableMixin {
   bool _isDark = false;
+  final CalculateConcreteUniversal _calculator = CalculateConcreteUniversal();
 
   @override
   AppLocalizations get loc => _loc;
 
   @override
   String get exportSubject => _loc.translate(widget.definition.titleKey);
-
-  // Пропорции по маркам бетона (на 1 м³)
-  static const _proportions = {
-    ConcreteGrade.m100: _GradeProportions(cementKg: 170, sandKg: 780, gravelKg: 1080, waterL: 200),
-    ConcreteGrade.m150: _GradeProportions(cementKg: 210, sandKg: 735, gravelKg: 1080, waterL: 200),
-    ConcreteGrade.m200: _GradeProportions(cementKg: 265, sandKg: 680, gravelKg: 1080, waterL: 195),
-    ConcreteGrade.m300: _GradeProportions(cementKg: 340, sandKg: 620, gravelKg: 1080, waterL: 190),
-    ConcreteGrade.m400: _GradeProportions(cementKg: 420, sandKg: 540, gravelKg: 1080, waterL: 185),
-  };
 
   // Режим ввода
   bool _inputByArea = false; // false = по объёму, true = по площади
@@ -96,6 +66,52 @@ class _ConcreteUniversalCalculatorScreenState
   late _ConcreteResult _result;
   late AppLocalizations _loc;
 
+  double _toConcreteGradeId(ConcreteGrade grade) {
+    switch (grade) {
+      case ConcreteGrade.m100:
+        return 1.0;
+      case ConcreteGrade.m150:
+        return 2.0;
+      case ConcreteGrade.m200:
+        return 3.0;
+      case ConcreteGrade.m300:
+        return 5.0;
+      case ConcreteGrade.m400:
+        return 7.0;
+    }
+  }
+
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'inputMode': _inputByArea ? 1.0 : 0.0,
+      'concreteVolume': _concreteVolume,
+      'area': _area,
+      'thickness': _thickness,
+      'manualMix': _manualMix ? 1.0 : 0.0,
+      'reserve': _reserve,
+      'concreteGrade': _toConcreteGradeId(_grade),
+      'mixerVolume': _mixerVolume,
+    };
+  }
+
+  _ConcreteResult _calculate() {
+    final values = _calculator(_buildCalculationInputs(), const []).values;
+    return _ConcreteResult(
+      baseVolume: values['baseConcreteVolume'] ?? 0,
+      concreteVolume: values['concreteVolumeExact'] ?? values['concreteVolume'] ?? 0,
+      mixerCount: (values['mixerCount'] ?? 0).round(),
+      totalWeight: values['totalWeight'] ?? 0,
+      cementBags: (values['cementBags'] ?? 0).round(),
+      sandVolume: values['sandVolumeExact'] ?? values['sandVolume'] ?? 0,
+      gravelVolume: values['gravelVolumeExact'] ?? values['gravelVolume'] ?? 0,
+      waterLiters: values['waterNeededExact'] ?? values['waterNeeded'] ?? 0,
+      batchCount: (values['batchCount'] ?? 0).round(),
+      grade: _grade,
+    );
+  }
+
+  void _update() => setState(() => _result = _calculate());
+
   @override
   void initState() {
     super.initState();
@@ -107,6 +123,10 @@ class _ConcreteUniversalCalculatorScreenState
     final initial = widget.initialInputs;
     if (initial == null) return;
 
+    if (initial['inputMode'] != null) {
+      _inputByArea = initial['inputMode']!.round() == 1;
+    }
+
     if (initial['concreteVolume'] != null) {
       _concreteVolume = initial['concreteVolume']!.clamp(0.01, 1000.0);
     }
@@ -117,6 +137,7 @@ class _ConcreteUniversalCalculatorScreenState
       _reserve = initial['reserve']!.clamp(0.0, 30.0);
     }
     if (initial['area'] != null) {
+      _inputByArea = true;
       _area = initial['area']!.clamp(0.1, 1000.0);
     }
     if (initial['thickness'] != null) {
@@ -126,53 +147,10 @@ class _ConcreteUniversalCalculatorScreenState
       final gradeIndex = initial['grade']!.toInt().clamp(0, ConcreteGrade.values.length - 1);
       _grade = ConcreteGrade.values[gradeIndex];
     }
-  }
-
-  /// Вычисляет объём бетона в зависимости от режима ввода
-  double _getBaseVolume() {
-    if (_inputByArea) {
-      // Площадь (м²) × толщина (мм→м)
-      return _area * (_thickness / 1000);
+    if (initial['mixerVolume'] != null) {
+      _mixerVolume = initial['mixerVolume']!.clamp(120.0, 200.0);
     }
-    return _concreteVolume;
   }
-
-  _ConcreteResult _calculate() {
-    final baseVolume = _getBaseVolume();
-    final volumeWithReserve = baseVolume * (1 + _reserve / 100);
-
-    // Для готового бетона
-    // Стандартный миксер: 7-8 м³, берём 7 для расчёта
-    final mixerCount = (volumeWithReserve / 7.0).ceil();
-    // Вес бетона: ~2400 кг/м³
-    final totalWeight = volumeWithReserve * 2400;
-
-    // Пропорции по выбранной марке бетона
-    final props = _proportions[_grade]!;
-    final cementBags = _manualMix ? props.cementBags(volumeWithReserve) : 0;
-    final sandVolume = _manualMix ? props.sandVolume(volumeWithReserve) : 0.0;
-    final gravelVolume = _manualMix ? props.gravelVolume(volumeWithReserve) : 0.0;
-    final waterLiters = _manualMix ? props.waterLiters(volumeWithReserve) : 0.0;
-
-    // Количество замесов в бетономешалке
-    // Объём готового бетона = 0.65 от объёма барабана (коэффициент выхода)
-    final mixerOutputVolume = (_mixerVolume / 1000) * 0.65; // м³ за замес
-    final batchCount = _manualMix ? (volumeWithReserve / mixerOutputVolume).ceil() : 0;
-
-    return _ConcreteResult(
-      concreteVolume: volumeWithReserve,
-      mixerCount: mixerCount,
-      totalWeight: totalWeight,
-      cementBags: cementBags,
-      sandVolume: sandVolume,
-      gravelVolume: gravelVolume,
-      waterLiters: waterLiters,
-      batchCount: batchCount,
-      grade: _grade,
-    );
-  }
-
-  void _update() => setState(() => _result = _calculate());
 
   @override
   String generateExportText() {
@@ -191,7 +169,7 @@ class _ConcreteUniversalCalculatorScreenState
           '${_loc.translate('input.concreteVolume')}: ${_concreteVolume.toStringAsFixed(1)} ${_loc.translate('unit.cubicMeters')}');
     }
     buffer.writeln(
-        '${_loc.translate('input.reserve')}: ${_reserve.toStringAsFixed(0)}%');
+        '${_loc.translate('input.reserve')}: ${_reserve.toStringAsFixed(0)}${_loc.translate('common.percent')}');
     buffer.writeln('');
     buffer.writeln(
         '${_loc.translate('concrete.volume_with_reserve')}: ${_result.concreteVolume.toStringAsFixed(2)} ${_loc.translate('unit.cubicMeters')}');
@@ -495,7 +473,7 @@ class _ConcreteUniversalCalculatorScreenState
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    '${_loc.translate('concrete.calculated_volume')}: ${_getBaseVolume().toStringAsFixed(2)} ${_loc.translate('unit.cubicMeters')}',
+                    '${_loc.translate('concrete.calculated_volume')}: ${_result.baseVolume.toStringAsFixed(2)} ${_loc.translate('unit.cubicMeters')}',
                     style: TextStyle(
                       color: accentColor,
                       fontWeight: FontWeight.w600,
@@ -513,15 +491,15 @@ class _ConcreteUniversalCalculatorScreenState
   String _gradeLabel(ConcreteGrade grade) {
     switch (grade) {
       case ConcreteGrade.m100:
-        return 'М100';
+        return _loc.translate('concrete.grade.m100.short');
       case ConcreteGrade.m150:
-        return 'М150';
+        return _loc.translate('concrete.grade.m150.short');
       case ConcreteGrade.m200:
-        return 'М200';
+        return _loc.translate('concrete.grade.m200.short');
       case ConcreteGrade.m300:
-        return 'М300';
+        return _loc.translate('concrete.grade.m300.short');
       case ConcreteGrade.m400:
-        return 'М400';
+        return _loc.translate('concrete.grade.m400.short');
     }
   }
 
@@ -777,7 +755,7 @@ class _ConcreteUniversalCalculatorScreenState
             value: _reserve,
             min: 0,
             max: 30,
-            suffix: '%',
+            suffix: _loc.translate('common.percent'),
             accentColor: accentColor,
             onChanged: (v) {
               setState(() {
@@ -816,7 +794,7 @@ class _ConcreteUniversalCalculatorScreenState
       MaterialItem(
         name: _loc.translate('concrete.volume_with_reserve'),
         value: '${_result.concreteVolume.toStringAsFixed(2)} ${_loc.translate('unit.cubicMeters')}',
-        subtitle: '${_loc.translate('input.reserve')}: ${_reserve.toStringAsFixed(0)}%',
+        subtitle: '${_loc.translate('input.reserve')}: ${_reserve.toStringAsFixed(0)}${_loc.translate('common.percent')}',
         icon: Icons.view_in_ar,
       ),
     ];
@@ -888,6 +866,7 @@ class _ConcreteUniversalCalculatorScreenState
 }
 
 class _ConcreteResult {
+  final double baseVolume;
   final double concreteVolume;
   final int mixerCount;
   final double totalWeight;
@@ -899,6 +878,7 @@ class _ConcreteResult {
   final ConcreteGrade grade;
 
   const _ConcreteResult({
+    required this.baseVolume,
     required this.concreteVolume,
     required this.mixerCount,
     required this.totalWeight,
@@ -910,3 +890,6 @@ class _ConcreteResult {
     required this.grade,
   });
 }
+
+
+

@@ -11,12 +11,17 @@ class NetworkException extends AppException {
     this.statusCode,
     this.url,
     super.details,
+    super.userMessageKey,
+    super.userMessageParams,
+    super.fallbackUserMessage,
   });
 
   factory NetworkException.noConnection() {
     return const NetworkException(
       'Отсутствует подключение к интернету',
       code: 'NO_CONNECTION',
+      userMessageKey: 'error.message.network_no_connection',
+      fallbackUserMessage: 'Проверьте подключение к интернету',
     );
   }
 
@@ -25,6 +30,8 @@ class NetworkException extends AppException {
       'Превышено время ожидания ответа от сервера',
       code: 'TIMEOUT',
       url: url,
+      userMessageKey: 'error.message.network_timeout',
+      fallbackUserMessage: 'Сервер не отвечает. Попробуйте позже',
     );
   }
 
@@ -34,6 +41,9 @@ class NetworkException extends AppException {
       code: 'SERVER_ERROR',
       statusCode: statusCode,
       url: url,
+      userMessageKey: 'error.message.network_server_error',
+      userMessageParams: {'statusCode': statusCode.toString()},
+      fallbackUserMessage: 'Ошибка на сервере. Попробуйте позже',
     );
   }
 
@@ -43,6 +53,9 @@ class NetworkException extends AppException {
       code: 'BAD_REQUEST',
       statusCode: statusCode,
       url: url,
+      userMessageKey: 'error.message.network_bad_request',
+      userMessageParams: {'statusCode': statusCode.toString()},
+      fallbackUserMessage: 'Неверный запрос. Обратитесь в поддержку',
     );
   }
 
@@ -52,24 +65,8 @@ class NetworkException extends AppException {
       code: 'NOT_FOUND',
       statusCode: 404,
       url: url,
+      userMessageKey: 'error.message.network_not_found',
+      fallbackUserMessage: 'Запрошенные данные не найдены',
     );
-  }
-
-  @override
-  String getUserMessage() {
-    switch (code) {
-      case 'NO_CONNECTION':
-        return 'Проверьте подключение к интернету';
-      case 'TIMEOUT':
-        return 'Сервер не отвечает. Попробуйте позже';
-      case 'SERVER_ERROR':
-        return 'Ошибка на сервере. Попробуйте позже';
-      case 'BAD_REQUEST':
-        return 'Неверный запрос. Обратитесь в поддержку';
-      case 'NOT_FOUND':
-        return 'Запрошенные данные не найдены';
-      default:
-        return 'Ошибка сети. Проверьте подключение';
-    }
   }
 }

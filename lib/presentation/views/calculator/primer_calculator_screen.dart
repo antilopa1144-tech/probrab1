@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../../domain/usecases/calculate_primer_v2.dart';
+import '../../../domain/models/canonical_calculator_contract.dart';
+import '../../../domain/usecases/calculate_primer.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -55,17 +56,23 @@ class _PrimerResult {
     required this.cans20l,
   });
 
-  factory _PrimerResult.fromCalculatorResult(Map<String, double> values) {
+  factory _PrimerResult.fromContract(CanonicalCalculatorContractResult contract) {
+    final totals = contract.totals;
+    final recScenario = contract.scenarios['REC'];
+    final canSize = totals['canSize'] ?? 5;
+    final cansNeeded = recScenario?.buyPlan.packagesCount ?? 0;
+    final totalLiters = recScenario?.purchaseQuantity ?? (cansNeeded * canSize);
+
     return _PrimerResult(
-      area: values['area'] ?? 0,
-      litersNeeded: values['litersNeeded'] ?? 0,
-      cansNeeded: (values['cansNeeded'] ?? 0).toInt(),
-      canSize: values['canSize'] ?? 10,
-      totalLiters: values['totalLiters'] ?? 0,
-      excess: values['excess'] ?? 0,
-      cans5l: (values['cans_5l'] ?? 0).toInt(),
-      cans10l: (values['cans_10l'] ?? 0).toInt(),
-      cans20l: (values['cans_20l'] ?? 0).toInt(),
+      area: totals['area'] ?? 0,
+      litersNeeded: recScenario?.exactNeed ?? totals['recExactNeedL'] ?? 0,
+      cansNeeded: cansNeeded,
+      canSize: canSize,
+      totalLiters: totalLiters,
+      excess: recScenario?.leftover ?? (totalLiters - (recScenario?.exactNeed ?? 0)),
+      cans5l: canSize == 5 ? cansNeeded : 0,
+      cans10l: canSize == 10 ? cansNeeded : 0,
+      cans20l: canSize == 20 ? cansNeeded : 0,
     );
   }
 }
@@ -87,7 +94,7 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
   String get exportSubject => _loc.translate('primer_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculatePrimerV2();
+  final _calculator = CalculatePrimer();
 
   // Состояние
   double _area = 30.0;
@@ -114,16 +121,15 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
     _result = _calculate();
   }
 
-  /// Использует domain layer для расчёта
-  _PrimerResult _calculate() {
+  Map<String, double> _buildCalculationInputs() {
     final inputs = <String, double>{
+      'inputMode': _inputMode == PrimerInputMode.room ? 0.0 : 1.0,
       'surfaceType': _surfaceType.index.toDouble(),
       'primerType': _primerType.index.toDouble(),
-      'layers': _layers.toDouble(),
+      'coats': _layers.toDouble(),
       'canSize': _canSize,
     };
 
-    // Передаём либо площадь, либо размеры комнаты
     if (_inputMode == PrimerInputMode.manual) {
       inputs['area'] = _area;
     } else {
@@ -132,8 +138,13 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
       inputs['roomHeight'] = _roomHeight;
     }
 
-    final result = _calculator(inputs, []);
-    return _PrimerResult.fromCalculatorResult(result.values);
+    return inputs;
+  }
+
+  /// Использует canonical contract для расчёта
+  _PrimerResult _calculate() {
+    final contract = _calculator.calculateCanonical(_buildCalculationInputs());
+    return _PrimerResult.fromContract(contract);
   }
 
   void _update() => setState(() => _result = _calculate());
@@ -368,9 +379,9 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
 
     // Показываем оптимальный подбор канистр
     final cansInfo = <String>[];
-    if (_result.cans5l > 0) cansInfo.add('${_result.cans5l}×5л');
-    if (_result.cans10l > 0) cansInfo.add('${_result.cans10l}×10л');
-    if (_result.cans20l > 0) cansInfo.add('${_result.cans20l}×20л');
+    if (_result.cans5l > 0) cansInfo.add('${_result.cans5l}×5${_loc.translate('common.liter_short')}');
+    if (_result.cans10l > 0) cansInfo.add('${_result.cans10l}×10${_loc.translate('common.liter_short')}');
+    if (_result.cans20l > 0) cansInfo.add('${_result.cans20l}×20${_loc.translate('common.liter_short')}');
 
     items.add(MaterialItem(
       name: _loc.translate('primer_calc.materials.cans'),
@@ -442,3 +453,7 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
     );
   }
 }
+
+
+
+

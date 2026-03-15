@@ -15,11 +15,7 @@ void main() {
 
     group('Basic calculations', () {
       test('2.5x1.8m bathroom, 0.2m wall height', () {
-        final inputs = {
-          'length': 2.5,
-          'width': 1.8,
-          'wallHeight': 0.2,
-        };
+        final inputs = {'length': 2.5, 'width': 1.8, 'wallHeight': 0.2};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -32,15 +28,9 @@ void main() {
       });
 
       test('larger bathroom needs more materials', () {
-        final small = calculator({
-          'length': 2.0,
-          'width': 1.5,
-        }, emptyPriceList);
+        final small = calculator({'length': 2.0, 'width': 1.5}, emptyPriceList);
 
-        final large = calculator({
-          'length': 4.0,
-          'width': 3.0,
-        }, emptyPriceList);
+        final large = calculator({'length': 4.0, 'width': 3.0}, emptyPriceList);
 
         expect(
           large.values['totalArea'],
@@ -148,10 +138,7 @@ void main() {
       });
 
       test('default is 2 layers', () {
-        final inputs = {
-          'length': 2.5,
-          'width': 1.8,
-        };
+        final inputs = {'length': 2.5, 'width': 1.8};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -176,11 +163,7 @@ void main() {
       });
 
       test('no primer when disabled', () {
-        final inputs = {
-          'length': 2.5,
-          'width': 1.8,
-          'needPrimer': 0.0,
-        };
+        final inputs = {'length': 2.5, 'width': 1.8, 'needPrimer': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -188,10 +171,7 @@ void main() {
       });
 
       test('primer enabled by default', () {
-        final inputs = {
-          'length': 2.5,
-          'width': 1.8,
-        };
+        final inputs = {'length': 2.5, 'width': 1.8};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -202,11 +182,7 @@ void main() {
 
     group('Tape calculations', () {
       test('tape with 30% extra for corners and joints', () {
-        final inputs = {
-          'length': 2.0,
-          'width': 2.0,
-          'needTape': 1.0,
-        };
+        final inputs = {'length': 2.0, 'width': 2.0, 'needTape': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -216,11 +192,7 @@ void main() {
       });
 
       test('no tape when disabled', () {
-        final inputs = {
-          'length': 2.5,
-          'width': 1.8,
-          'needTape': 0.0,
-        };
+        final inputs = {'length': 2.5, 'width': 1.8, 'needTape': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -228,10 +200,7 @@ void main() {
       });
 
       test('tape enabled by default', () {
-        final inputs = {
-          'length': 2.5,
-          'width': 1.8,
-        };
+        final inputs = {'length': 2.5, 'width': 1.8};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -254,21 +223,12 @@ void main() {
           'wallHeight': 0.5,
         }, emptyPriceList);
 
-        expect(
-          high.values['wallArea'],
-          greaterThan(low.values['wallArea']!),
-        );
-        expect(
-          high.values['totalArea'],
-          greaterThan(low.values['totalArea']!),
-        );
+        expect(high.values['wallArea'], greaterThan(low.values['wallArea']!));
+        expect(high.values['totalArea'], greaterThan(low.values['totalArea']!));
       });
 
       test('default wall height is 1.5m', () {
-        final inputs = {
-          'length': 2.5,
-          'width': 1.8,
-        };
+        final inputs = {'length': 2.5, 'width': 1.8};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -324,11 +284,7 @@ void main() {
       });
 
       test('handles minimum dimensions', () {
-        final inputs = {
-          'length': 1.0,
-          'width': 1.0,
-          'wallHeight': 0.2,
-        };
+        final inputs = {'length': 1.0, 'width': 1.0, 'wallHeight': 0.2};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -338,11 +294,7 @@ void main() {
       });
 
       test('handles maximum dimensions', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 10.0,
-          'wallHeight': 3.0,
-        };
+        final inputs = {'length': 10.0, 'width': 10.0, 'wallHeight': 3.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -352,9 +304,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero length', () {
-        final inputs = {
-          'length': 0.0,
-        };
+        final inputs = {'length': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -363,9 +313,7 @@ void main() {
       });
 
       test('throws exception for negative length', () {
-        final inputs = {
-          'length': -2.0,
-        };
+        final inputs = {'length': -2.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -374,9 +322,7 @@ void main() {
       });
 
       test('throws exception for zero width', () {
-        final inputs = {
-          'width': 0.0,
-        };
+        final inputs = {'width': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -385,9 +331,7 @@ void main() {
       });
 
       test('throws exception for negative width', () {
-        final inputs = {
-          'width': -1.5,
-        };
+        final inputs = {'width': -1.5};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -405,9 +349,27 @@ void main() {
           'needTape': 1.0,
         };
         final priceList = [
-          const PriceItem(sku: 'waterproof', name: 'Гидроизоляция', price: 500.0, unit: 'кг', imageUrl: ''),
-          const PriceItem(sku: 'primer', name: 'Грунтовка', price: 200.0, unit: 'л', imageUrl: ''),
-          const PriceItem(sku: 'waterproof_tape', name: 'Лента', price: 50.0, unit: 'м.п.', imageUrl: ''),
+          const PriceItem(
+            sku: 'waterproof',
+            name: 'Гидроизоляция',
+            price: 500.0,
+            unit: 'кг',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'primer',
+            name: 'Грунтовка',
+            price: 200.0,
+            unit: 'л',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'waterproof_tape',
+            name: 'Лента',
+            price: 50.0,
+            unit: 'м.п.',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -417,10 +379,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'length': 2.5,
-          'width': 1.8,
-        };
+        final inputs = {'length': 2.5, 'width': 1.8};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -429,9 +388,27 @@ void main() {
 
       test('price includes only enabled options', () {
         final priceList = [
-          const PriceItem(sku: 'waterproof', name: 'Гидроизоляция', price: 500.0, unit: 'кг', imageUrl: ''),
-          const PriceItem(sku: 'primer', name: 'Грунтовка', price: 200.0, unit: 'л', imageUrl: ''),
-          const PriceItem(sku: 'waterproof_tape', name: 'Лента', price: 50.0, unit: 'м.п.', imageUrl: ''),
+          const PriceItem(
+            sku: 'waterproof',
+            name: 'Гидроизоляция',
+            price: 500.0,
+            unit: 'кг',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'primer',
+            name: 'Грунтовка',
+            price: 200.0,
+            unit: 'л',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'waterproof_tape',
+            name: 'Лента',
+            price: 50.0,
+            unit: 'м.п.',
+            imageUrl: '',
+          ),
         ];
 
         final withAll = calculator({
@@ -448,10 +425,7 @@ void main() {
           'needTape': 1.0,
         }, priceList);
 
-        expect(
-          withAll.totalPrice,
-          greaterThan(withoutPrimer.totalPrice!),
-        );
+        expect(withAll.totalPrice, greaterThan(withoutPrimer.totalPrice!));
       });
     });
 
@@ -491,7 +465,10 @@ void main() {
         expect(result.values['floorArea'], equals(20.0));
         expect(result.values['waterproofType'], equals(2.0));
         expect(result.values['layers'], equals(3.0));
-        expect(result.values['waterproofKg'], greaterThan(100)); // cement uses a lot
+        expect(
+          result.values['waterproofKg'],
+          greaterThan(100),
+        ); // cement uses a lot
       });
 
       test('roll waterproof without extras', () {
@@ -510,6 +487,20 @@ void main() {
         expect(result.values['waterproofType'], equals(1.0));
         expect(result.values['primerLiters'], equals(0.0));
         expect(result.values['tapeMeters'], equals(0.0));
+      });
+    });
+    group('validation messages', () {
+      test('bathroom width uses shared helper', () {
+        expect(
+          () => calculator({'length': 2.5, 'width': 0.0}, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Поле "ширина" должно быть больше нуля'),
+            ),
+          ),
+        );
       });
     });
   });

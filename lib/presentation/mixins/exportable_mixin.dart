@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/localization/app_localizations.dart';
+import '../../core/errors/global_error_handler.dart';
 import '../services/pdf_export_service.dart';
 import '../services/pdf_file_handler.dart';
 
@@ -64,7 +65,7 @@ mixin ExportableMixin<T extends StatefulWidget> on State<T> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка при создании PDF: $e'),
+            content: Text(GlobalErrorHandler.getUserFriendlyMessage(context, e)),
             backgroundColor: Colors.red,
           ),
         );
@@ -88,7 +89,7 @@ mixin ExportableMixin<T extends StatefulWidget> on State<T> {
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 5),
             action: SnackBarAction(
-              label: 'OK',
+              label: loc.translate('button.close'),
               onPressed: () {},
             ),
           ),
@@ -98,7 +99,7 @@ mixin ExportableMixin<T extends StatefulWidget> on State<T> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка при создании PDF: $e'),
+            content: Text(GlobalErrorHandler.getUserFriendlyMessage(context, e)),
             backgroundColor: Colors.red,
           ),
         );

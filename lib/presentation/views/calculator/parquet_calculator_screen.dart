@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../../domain/usecases/calculate_parquet_v2.dart';
+import '../../../domain/usecases/calculate_parquet.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -39,7 +39,8 @@ class _ParquetResult {
   final double underlayArea;
   final double plinthLength;
   final int plinthPieces;
-  final double glueLiters;
+  final double glueKg;
+  final double wastePercent;
 
   const _ParquetResult({
     required this.area,
@@ -49,7 +50,8 @@ class _ParquetResult {
     required this.underlayArea,
     required this.plinthLength,
     required this.plinthPieces,
-    required this.glueLiters,
+    required this.glueKg,
+    required this.wastePercent,
   });
 
   factory _ParquetResult.fromCalculatorResult(Map<String, double> values) {
@@ -61,7 +63,8 @@ class _ParquetResult {
       underlayArea: values['underlayArea'] ?? 0,
       plinthLength: values['plinthLength'] ?? 0,
       plinthPieces: (values['plinthPieces'] ?? 0).toInt(),
-      glueLiters: values['glueLiters'] ?? 0,
+      glueKg: values['glueKg'] ?? values['glueNeededKg'] ?? 0,
+      wastePercent: values['wastePercent'] ?? 0,
     );
   }
 }
@@ -83,7 +86,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
   String get exportSubject => _loc.translate('parquet_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateParquetV2();
+  final CalculateParquet _calculator = CalculateParquet();
 
   double _area = 20.0;
   double _roomWidth = 4.0;
@@ -110,25 +113,32 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
     _result = _calculate();
   }
 
-  /// Использует domain layer для расчёта
+  /// Использует canonical domain layer для расчёта
   _ParquetResult _calculate() {
     final inputs = <String, double>{
-      'pattern': _pattern.index.toDouble(),
+      'inputMode': _inputMode == ParquetInputMode.manual ? 1.0 : 0.0,
+      'layoutProfileId': (_pattern.index + 1).toDouble(),
       'packArea': _packArea,
-      'needUnderlay': _needUnderlay ? 1.0 : 0.0,
+      'needUnderlayment': _needUnderlay ? 1.0 : 0.0,
       'needPlinth': _needPlinth ? 1.0 : 0.0,
       'needGlue': _needGlue ? 1.0 : 0.0,
+      'doorThresholds': _needPlinth ? 1.0 : 0.0,
     };
 
     if (_inputMode == ParquetInputMode.manual) {
       inputs['area'] = _area;
     } else {
-      inputs['roomWidth'] = _roomWidth;
-      inputs['roomLength'] = _roomLength;
+      inputs['length'] = _roomLength;
+      inputs['width'] = _roomWidth;
     }
 
-    final result = _calculator(inputs, []);
-    return _ParquetResult.fromCalculatorResult(result.values);
+    final contract = _calculator.calculateCanonical(inputs);
+    return _ParquetResult.fromCalculatorResult({
+      ...contract.totals,
+      'areaWithWaste': contract.totals['recExactNeedArea'] ?? 0,
+      'plinthLength': _needPlinth ? (contract.totals['plinthLengthWithReserve'] ?? 0) : 0,
+      'glueKg': _needGlue ? (contract.totals['glueNeededKg'] ?? 0) : 0,
+    });
   }
 
   void _update() => setState(() => _result = _calculate());
@@ -146,7 +156,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
     buffer.writeln(_loc.translate('parquet_calc.export.pattern')
         .replaceFirst('{value}', _loc.translate(_pattern.nameKey)));
     buffer.writeln(_loc.translate('parquet_calc.export.waste')
-        .replaceFirst('{value}', _pattern.wastePercent.toString()));
+        .replaceFirst('{value}', _result.wastePercent.toStringAsFixed(0)));
     buffer.writeln();
     buffer.writeln(_loc.translate('parquet_calc.export.materials_title'));
     buffer.writeln('─' * 40);
@@ -163,7 +173,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
     }
     if (_needGlue) {
       buffer.writeln(_loc.translate('parquet_calc.export.glue')
-          .replaceFirst('{value}', _result.glueLiters.toStringAsFixed(1)));
+          .replaceFirst('{value}', _result.glueKg.toStringAsFixed(1)));
     }
     buffer.writeln();
     buffer.writeln('═' * 40);
@@ -292,7 +302,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
           ),
           const SizedBox(height: 8),
           Text(
-            _loc.translate('parquet_calc.pattern.waste_info').replaceFirst('{value}', _pattern.wastePercent.toString()),
+            _loc.translate('parquet_calc.pattern.waste_info').replaceFirst('{value}', _result.wastePercent.toStringAsFixed(0)),
             style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
           ),
         ],
@@ -435,10 +445,10 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
       ));
     }
 
-    if (_needGlue && _result.glueLiters > 0) {
+    if (_needGlue && _result.glueKg > 0) {
       items.add(MaterialItem(
         name: _loc.translate('parquet_calc.materials.glue'),
-        value: '${_result.glueLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
+        value: '${_result.glueKg.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
         icon: Icons.water_drop,
       ));
     }
@@ -463,3 +473,8 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
     );
   }
 }
+
+
+
+
+

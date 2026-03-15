@@ -3,37 +3,62 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 import '../../domain/models/project_v2.dart';
 
+class NotificationReminderCopy {
+  final String channelName;
+  final String channelDescription;
+  final String titleToday;
+  final String titleTomorrow;
+  final String titleUpcoming;
+  final String bodyToday;
+  final String bodyTomorrow;
+  final String bodyUpcomingOne;
+  final String bodyUpcomingFew;
+  final String bodyUpcomingMany;
+
+  const NotificationReminderCopy({
+    required this.channelName,
+    required this.channelDescription,
+    required this.titleToday,
+    required this.titleTomorrow,
+    required this.titleUpcoming,
+    required this.bodyToday,
+    required this.bodyTomorrow,
+    required this.bodyUpcomingOne,
+    required this.bodyUpcomingFew,
+    required this.bodyUpcomingMany,
+  });
+}
+
 /// Сервис для управления локальными уведомлениями о дедлайнах проектов.
-///
-/// Функции:
-/// - Напоминания о приближающихся дедлайнах (за 1, 3, 7 дней)
-/// - Уведомления о просроченных дедлайнах
-/// - Настраиваемое время уведомлений
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
 
   static const String _channelId = 'deadline_reminders';
-  static const String _channelName = 'Напоминания о дедлайнах';
-  static const String _channelDescription =
-      'Уведомления о приближающихся и просроченных дедлайнах проектов';
 
   static const String _enabledKey = 'notifications_enabled';
   static const String _reminderDaysKey = 'notification_reminder_days';
   static const String _reminderHourKey = 'notification_reminder_hour';
 
   static bool _initialized = false;
+  static String? _channelName;
+  static String? _channelDescription;
 
   /// Инициализация сервиса уведомлений
-  static Future<void> initialize() async {
+  static Future<void> initialize({
+    required String channelName,
+    required String channelDescription,
+  }) async {
+    _channelName = channelName;
+    _channelDescription = channelDescription;
+
     if (_initialized) return;
 
-    // Инициализация часовых поясов
     tz.initializeTimeZones();
 
     const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -56,13 +81,10 @@ class NotificationService {
     _initialized = true;
   }
 
-  /// Обработчик нажатия на уведомление
   static void _onNotificationTapped(NotificationResponse response) {
-    // Здесь можно добавить навигацию к проекту по payload
     debugPrint('Notification tapped: ${response.payload}');
   }
 
-  /// Запросить разрешение на уведомления
   static Future<bool> requestPermission() async {
     if (Platform.isAndroid) {
       final androidPlugin = _notifications
@@ -86,13 +108,11 @@ class NotificationService {
     return false;
   }
 
-  /// Проверить, включены ли уведомления
   static Future<bool> areNotificationsEnabled() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_enabledKey) ?? false;
   }
 
-  /// Включить/выключить уведомления
   static Future<void> setNotificationsEnabled(bool enabled) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_enabledKey, enabled);
@@ -102,17 +122,15 @@ class NotificationService {
     }
   }
 
-  /// Получить список дней для напоминаний (по умолчанию: 1, 3, 7)
   static Future<List<int>> getReminderDays() async {
     final prefs = await SharedPreferences.getInstance();
     final daysString = prefs.getStringList(_reminderDaysKey);
     if (daysString != null) {
       return daysString.map((s) => int.tryParse(s) ?? 1).toList();
     }
-    return [1, 3, 7]; // По умолчанию
+    return [1, 3, 7];
   }
 
-  /// Установить дни для напоминаний
   static Future<void> setReminderDays(List<int> days) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(
@@ -121,20 +139,20 @@ class NotificationService {
     );
   }
 
-  /// Получить час для напоминаний (по умолчанию: 9:00)
   static Future<int> getReminderHour() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(_reminderHourKey) ?? 9;
   }
 
-  /// Установить час для напоминаний
   static Future<void> setReminderHour(int hour) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_reminderHourKey, hour);
   }
 
-  /// Запланировать напоминания для проекта
-  static Future<void> scheduleProjectReminders(ProjectV2 project) async {
+  static Future<void> scheduleProjectReminders(
+    ProjectV2 project, {
+    required NotificationReminderCopy copy,
+  }) async {
     if (!await areNotificationsEnabled()) return;
     if (project.deadline == null) return;
     if (project.status == ProjectStatus.completed ||
@@ -142,7 +160,10 @@ class NotificationService {
       return;
     }
 
-    await initialize();
+    await initialize(
+      channelName: copy.channelName,
+      channelDescription: copy.channelDescription,
+    );
 
     final reminderDays = await getReminderDays();
     final reminderHour = await getReminderHour();
@@ -152,15 +173,16 @@ class NotificationService {
         project: project,
         daysBefore: days,
         hour: reminderHour,
+        copy: copy,
       );
     }
   }
 
-  /// Запланировать конкретное напоминание
   static Future<void> _scheduleReminder({
     required ProjectV2 project,
     required int daysBefore,
     required int hour,
+    required NotificationReminderCopy copy,
   }) async {
     final deadline = project.deadline!;
     final reminderDate = deadline.subtract(Duration(days: daysBefore));
@@ -172,20 +194,19 @@ class NotificationService {
       0,
     );
 
-    // Не планируем уведомления в прошлом
     if (scheduledDate.isBefore(DateTime.now())) return;
 
     final notificationId = _generateNotificationId(project.id, daysBefore);
 
     final androidDetails = AndroidNotificationDetails(
       _channelId,
-      _channelName,
-      channelDescription: _channelDescription,
+      _channelName ?? copy.channelName,
+      channelDescription: _channelDescription ?? copy.channelDescription,
       importance: Importance.high,
       priority: Priority.high,
       styleInformation: BigTextStyleInformation(
-        _getReminderBody(project.name, daysBefore),
-        contentTitle: _getReminderTitle(daysBefore),
+        _getReminderBody(copy, project.name, daysBefore),
+        contentTitle: _getReminderTitle(copy, daysBefore),
       ),
     );
 
@@ -202,8 +223,8 @@ class NotificationService {
 
     await _notifications.zonedSchedule(
       notificationId,
-      _getReminderTitle(daysBefore),
-      _getReminderBody(project.name, daysBefore),
+      _getReminderTitle(copy, daysBefore),
+      _getReminderBody(copy, project.name, daysBefore),
       tz.TZDateTime.from(scheduledDate, tz.local),
       details,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -213,7 +234,6 @@ class NotificationService {
     );
   }
 
-  /// Отменить все напоминания для проекта
   static Future<void> cancelProjectReminders(int projectId) async {
     final reminderDays = await getReminderDays();
     for (final days in reminderDays) {
@@ -222,34 +242,37 @@ class NotificationService {
     }
   }
 
-  /// Отменить все уведомления
   static Future<void> cancelAllNotifications() async {
     await _notifications.cancelAll();
   }
 
-  /// Обновить напоминания для всех проектов
-  static Future<void> updateAllReminders(List<ProjectV2> projects) async {
+  static Future<void> updateAllReminders(
+    List<ProjectV2> projects, {
+    required NotificationReminderCopy copy,
+  }) async {
     if (!await areNotificationsEnabled()) return;
 
     await cancelAllNotifications();
 
     for (final project in projects) {
-      await scheduleProjectReminders(project);
+      await scheduleProjectReminders(project, copy: copy);
     }
   }
 
-  /// Показать мгновенное уведомление
   static Future<void> showNotification({
     required String title,
     required String body,
     String? payload,
   }) async {
-    await initialize();
+    await initialize(
+      channelName: _channelName ?? _channelId,
+      channelDescription: _channelDescription ?? _channelId,
+    );
 
-    const androidDetails = AndroidNotificationDetails(
+    final androidDetails = AndroidNotificationDetails(
       _channelId,
-      _channelName,
-      channelDescription: _channelDescription,
+      _channelName ?? _channelId,
+      channelDescription: _channelDescription ?? _channelId,
       importance: Importance.high,
       priority: Priority.high,
     );
@@ -278,33 +301,42 @@ class NotificationService {
     return projectId * 100 + daysBefore;
   }
 
-  static String _getReminderTitle(int daysBefore) {
+  static String _getReminderTitle(NotificationReminderCopy copy, int daysBefore) {
     if (daysBefore == 0) {
-      return 'Дедлайн сегодня!';
+      return copy.titleToday;
     } else if (daysBefore == 1) {
-      return 'Дедлайн завтра!';
-    } else {
-      return 'Напоминание о дедлайне';
+      return copy.titleTomorrow;
     }
+    return copy.titleUpcoming;
   }
 
-  static String _getReminderBody(String projectName, int daysBefore) {
+  static String _getReminderBody(
+    NotificationReminderCopy copy,
+    String projectName,
+    int daysBefore,
+  ) {
     if (daysBefore == 0) {
-      return 'Сегодня дедлайн проекта "$projectName"';
+      return copy.bodyToday.replaceAll('{name}', projectName);
     } else if (daysBefore == 1) {
-      return 'Завтра дедлайн проекта "$projectName"';
-    } else {
-      return 'Через $daysBefore ${_getDaysWord(daysBefore)} дедлайн проекта "$projectName"';
+      return copy.bodyTomorrow.replaceAll('{name}', projectName);
     }
+
+    final template = _selectUpcomingTemplate(copy, daysBefore);
+    return template
+        .replaceAll('{days}', daysBefore.toString())
+        .replaceAll('{name}', projectName);
   }
 
-  static String _getDaysWord(int days) {
-    if (days % 10 == 1 && days % 100 != 11) {
-      return 'день';
-    } else if ([2, 3, 4].contains(days % 10) && ![12, 13, 14].contains(days % 100)) {
-      return 'дня';
-    } else {
-      return 'дней';
+  static String _selectUpcomingTemplate(
+    NotificationReminderCopy copy,
+    int daysBefore,
+  ) {
+    if (daysBefore % 10 == 1 && daysBefore % 100 != 11) {
+      return copy.bodyUpcomingOne;
+    } else if ([2, 3, 4].contains(daysBefore % 10) &&
+        ![12, 13, 14].contains(daysBefore % 100)) {
+      return copy.bodyUpcomingFew;
     }
+    return copy.bodyUpcomingMany;
   }
 }

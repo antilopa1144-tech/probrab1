@@ -23,10 +23,7 @@ void main() {
 
     test('calculates primer needed', () {
       final calculator = CalculateCeilingPaint();
-      final inputs = {
-        'area': 30.0,
-        'layers': 2.0,
-      };
+      final inputs = {'area': 30.0, 'layers': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -37,10 +34,7 @@ void main() {
 
     test('uses default consumption when missing', () {
       final calculator = CalculateCeilingPaint();
-      final inputs = {
-        'area': 30.0,
-        'layers': 2.0,
-      };
+      final inputs = {'area': 30.0, 'layers': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -52,9 +46,7 @@ void main() {
 
     test('uses default layers when missing', () {
       final calculator = CalculateCeilingPaint();
-      final inputs = {
-        'area': 30.0,
-      };
+      final inputs = {'area': 30.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -81,15 +73,23 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateCeilingPaint();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
         throwsA(isA<CalculationException>()),
       );
+    });
+
+    group('validation messages', () {
+      test('layers range uses shared helper', () {
+        final calculator = CalculateCeilingPaint();
+
+        final error = calculator.validateInputs({'area': 12.0, 'layers': 0.0});
+
+        expect(error, equals('Поле "количество слоёв" должно быть от 1 до 4'));
+      });
     });
   });
 }

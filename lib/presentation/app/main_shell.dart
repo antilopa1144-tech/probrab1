@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:app_links/app_links.dart';
+import '../../core/localization/app_localizations.dart';
+import '../../core/errors/global_error_handler.dart';
 import '../../core/services/deep_link_service.dart';
 import '../../core/services/tracker_service_web.dart'
     if (dart.library.io) '../../core/services/tracker_service.dart';
@@ -45,7 +47,6 @@ class _MainShellState extends State<MainShell> {
   Future<void> _initDeepLinks() async {
     final appLinks = AppLinks();
 
-    // Обработка начальной ссылки (когда приложение открыто через Deep Link)
     try {
       final initialUri = await appLinks.getInitialLink();
       if (initialUri != null && mounted) {
@@ -55,7 +56,6 @@ class _MainShellState extends State<MainShell> {
       debugPrint('Error getting initial link: $e');
     }
 
-    // Подписка на входящие Deep Links (когда приложение уже открыто)
     _deepLinkSubscription = appLinks.uriLinkStream.listen(
       (uri) {
         if (mounted) {
@@ -80,9 +80,13 @@ class _MainShellState extends State<MainShell> {
     } catch (e) {
       debugPrint('Error handling deep link: $e');
       if (mounted) {
+        final loc = AppLocalizations.of(context);
+        final message = GlobalErrorHandler.getUserFriendlyMessage(context, e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка обработки ссылки: $e'),
+            content: Text(
+              loc.translate('share.project.handle_error', {'error': message}),
+            ),
             backgroundColor: Colors.orange,
           ),
         );
@@ -145,6 +149,7 @@ class _MainShellState extends State<MainShell> {
   Widget build(BuildContext context) {
     final navigator = _navigatorKeys[_currentIndex].currentState;
     final canPopRoot = navigator == null ? true : !navigator.canPop();
+    final loc = AppLocalizations.of(context);
 
     return PopScope(
       canPop: canPopRoot,
@@ -173,18 +178,18 @@ class _MainShellState extends State<MainShell> {
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
           onTap: _selectTab,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: 'Главная',
+              icon: const Icon(Icons.home_rounded),
+              label: loc.translate('home.main_screen'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.checklist_rounded),
-              label: 'Чек-листы',
+              icon: const Icon(Icons.checklist_rounded),
+              label: loc.translate('project.checklists'),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.star_rounded),
-              label: 'Избранное',
+              icon: const Icon(Icons.star_rounded),
+              label: loc.translate('favorites.title'),
             ),
           ],
         ),

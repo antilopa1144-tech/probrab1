@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../core/errors/global_error_handler.dart';
 import '../../../domain/models/project_v2.dart';
 import '../../providers/project_v2_provider.dart';
 import '../../views/project/project_details_screen.dart';
@@ -241,7 +242,9 @@ class AddToProjectButton extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${loc.translate('common.error')}: $e'),
+            content: Text(
+              GlobalErrorHandler.getUserFriendlyMessage(context, e),
+            ),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),

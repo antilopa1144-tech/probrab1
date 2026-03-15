@@ -59,7 +59,10 @@ void main() {
         // Economy start: 1.8 kg/m², default 1 layer
         // 20 * 1.8 * 1 * 1.1 = 39.6 kg
         expect(result.values['consumptionPerLayer'], equals(1.8));
-        expect(result.values['layers'], equals(1.0)); // default for economy start
+        expect(
+          result.values['layers'],
+          equals(1.0),
+        ); // default for economy start
         expect(result.values['puttyNeeded'], closeTo(39.6, 0.5));
       });
 
@@ -77,7 +80,10 @@ void main() {
         // Premium start: 1.2 kg/m², default 2 layers
         // 20 * 1.2 * 2 * 1.1 = 52.8 kg
         expect(result.values['consumptionPerLayer'], equals(1.2));
-        expect(result.values['layers'], equals(2.0)); // default for premium start
+        expect(
+          result.values['layers'],
+          equals(2.0),
+        ); // default for premium start
         expect(result.values['puttyNeeded'], closeTo(52.8, 0.5));
       });
 
@@ -186,9 +192,7 @@ void main() {
     group('Auxiliary materials', () {
       test('calculates spatulas needed', () {
         final calculator = CalculatePutty();
-        final inputs = {
-          'area': 50.0,
-        };
+        final inputs = {'area': 50.0};
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator(inputs, emptyPriceList);
@@ -243,9 +247,7 @@ void main() {
     group('Default values', () {
       test('uses standard quality class by default', () {
         final calculator = CalculatePutty();
-        final inputs = {
-          'area': 50.0,
-        };
+        final inputs = {'area': 50.0};
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator(inputs, emptyPriceList);
@@ -253,7 +255,10 @@ void main() {
         // Default: standard (Q3), start type, 2 layers
         expect(result.values['qualityClass'], equals(2.0));
         expect(result.values['layers'], equals(2.0)); // standard start default
-        expect(result.values['consumptionPerLayer'], equals(1.5)); // standard start
+        expect(
+          result.values['consumptionPerLayer'],
+          equals(1.5),
+        ); // standard start
       });
 
       test('can override default layers', () {
@@ -272,12 +277,44 @@ void main() {
       });
     });
 
+    group('Canonical derived packaging totals', () {
+      test(
+        'moves package and auxiliary material totals into canonical domain output',
+        () {
+          final calculator = CalculatePutty();
+          final contract = calculator.calculateCanonical({
+            'inputMode': 1.0,
+            'area': 30.0,
+            'puttyType': 1.0,
+            'bagWeight': 20.0,
+            'qualityClass': 2.0,
+            'startLayers': 2.0,
+            'finishLayers': 1.0,
+            'startPackageWeight': 25.0,
+            'finishPackageWeight': 5.0,
+          });
+
+          final startExactNeedKg = contract.totals['startExactNeedKg']!;
+          final finishExactNeedKg = contract.totals['finishExactNeedKg']!;
+          expect(
+            contract.totals['startPackages'],
+            equals((startExactNeedKg / 25).ceilToDouble()),
+          );
+          expect(
+            contract.totals['finishPackages'],
+            equals((finishExactNeedKg / 5).ceilToDouble()),
+          );
+          expect(contract.totals['primerCanisters'], greaterThan(0));
+          expect(contract.totals['primerVolumeLiters'], greaterThan(0));
+          expect(contract.totals['sandingSheets'], greaterThan(0));
+        },
+      );
+    });
+
     group('Validation', () {
       test('throws exception for zero area', () {
         final calculator = CalculatePutty();
-        final inputs = {
-          'area': 0.0,
-        };
+        final inputs = {'area': 0.0};
         final emptyPriceList = <PriceItem>[];
 
         expect(
@@ -288,9 +325,7 @@ void main() {
 
       test('throws exception for negative area', () {
         final calculator = CalculatePutty();
-        final inputs = {
-          'area': -10.0,
-        };
+        final inputs = {'area': -10.0};
         final emptyPriceList = <PriceItem>[];
 
         expect(
@@ -303,14 +338,29 @@ void main() {
     group('Price calculations', () {
       test('calculates total price when prices available', () {
         final calculator = CalculatePutty();
-        final inputs = {
-          'area': 20.0,
-          'type': 1.0,
-        };
+        final inputs = {'area': 20.0, 'type': 1.0};
         final priceList = [
-          const PriceItem(sku: 'putty_start', name: 'Start Putty', price: 15.0, unit: 'kg', imageUrl: ''),
-          const PriceItem(sku: 'primer', name: 'Primer', price: 100.0, unit: 'L', imageUrl: ''),
-          const PriceItem(sku: 'mesh', name: 'Mesh', price: 50.0, unit: 'm2', imageUrl: ''),
+          const PriceItem(
+            sku: 'putty_start',
+            name: 'Start Putty',
+            price: 15.0,
+            unit: 'kg',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'primer',
+            name: 'Primer',
+            price: 100.0,
+            unit: 'L',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'mesh',
+            name: 'Mesh',
+            price: 50.0,
+            unit: 'm2',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -321,14 +371,27 @@ void main() {
 
       test('returns null price when no prices available', () {
         final calculator = CalculatePutty();
-        final inputs = {
-          'area': 20.0,
-        };
+        final inputs = {'area': 20.0};
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator(inputs, emptyPriceList);
 
         expect(result.totalPrice, isNull);
+      });
+    });
+
+    group('Validation messages', () {
+      test('canonical dimensions mode returns field-safe message', () {
+        final calculator = CalculatePutty();
+
+        final error = calculator.validateInputs({
+          'inputMode': 0.0,
+          'length': 0.0,
+          'width': 3.0,
+          'height': 2.7,
+        });
+
+        expect(error, equals('Поле "длина" должно быть больше нуля'));
       });
     });
   });

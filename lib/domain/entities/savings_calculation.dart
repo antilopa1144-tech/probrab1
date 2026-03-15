@@ -2,12 +2,12 @@
 class SavingsCalculation {
   final String workType;
   final double materialCost;
-  final double laborCost; // стоимость работы мастеров
-  final double selfWorkTimeHours; // время самостоятельной работы
-  final double hourlyRate; // ваша почасовая ставка (если работаете)
-  final double savings; // экономия
-  final double timeCost; // стоимость вашего времени
-  final bool isWorthIt; // стоит ли делать самому
+  final double laborCost;
+  final double selfWorkTimeHours;
+  final double hourlyRate;
+  final double savings;
+  final double timeCost;
+  final bool isWorthIt;
 
   const SavingsCalculation({
     required this.workType,
@@ -26,16 +26,14 @@ class SavingsCalculation {
     required double materialCost,
     required double laborCost,
     required double selfWorkTimeHours,
-    double hourlyRate = 0, // если 0, не учитываем стоимость времени
+    double hourlyRate = 0,
   }) {
     final timeCost = selfWorkTimeHours * hourlyRate;
     final totalSelfCost = materialCost + timeCost;
     final totalHiredCost = materialCost + laborCost;
     final savings = totalHiredCost - totalSelfCost;
-    
-    // Стоит делать самому, если экономия положительная и разумная
     final isWorthIt = savings > 0 && (hourlyRate == 0 || savings > timeCost * 0.5);
-    
+
     return SavingsCalculation(
       workType: workType,
       materialCost: materialCost,
@@ -48,17 +46,21 @@ class SavingsCalculation {
     );
   }
 
-  /// Получить рекомендацию.
-  String getRecommendation() {
+  String get recommendationKey {
     if (!isWorthIt) {
-      return 'Рекомендуется нанять мастеров. Экономия незначительна или отсутствует.';
+      return 'savings.recommendation.hire';
     }
-    
     if (savings > laborCost * 0.5) {
-      return 'Выгодно делать самостоятельно. Экономия составляет ${savings.toStringAsFixed(0)} ₽.';
+      return 'savings.recommendation.self_high';
     }
-    
-    return 'Можно делать самостоятельно, но экономия небольшая.';
+    return 'savings.recommendation.self_small';
+  }
+
+  Map<String, String>? get recommendationParams {
+    if (recommendationKey == 'savings.recommendation.self_high') {
+      return {'amount': savings.toStringAsFixed(0)};
+    }
+    return null;
   }
 }
 
@@ -67,11 +69,11 @@ class MaterialPayback {
   final String materialId;
   final String materialName;
   final double initialCost;
-  final double alternativeCost; // стоимость альтернативы
+  final double alternativeCost;
   final int durabilityYears;
   final int alternativeDurabilityYears;
   final double annualSavings;
-  final double paybackYears; // окупаемость в годах
+  final double paybackYears;
 
   const MaterialPayback({
     required this.materialId,
@@ -93,18 +95,15 @@ class MaterialPayback {
     required int durabilityYears,
     required int alternativeDurabilityYears,
   }) {
-    // Стоимость в год для каждого варианта
     final costPerYear = initialCost / durabilityYears;
     final altCostPerYear = alternativeCost / alternativeDurabilityYears;
-    
+
     final annualSavings = altCostPerYear - costPerYear;
-    
-    // Окупаемость: разница в начальной стоимости / годовая экономия
     final costDifference = initialCost - alternativeCost;
-    final paybackYears = annualSavings > 0 
+    final paybackYears = annualSavings > 0
         ? (costDifference / annualSavings).abs()
         : double.infinity;
-    
+
     return MaterialPayback(
       materialId: materialId,
       materialName: materialName,
@@ -117,21 +116,23 @@ class MaterialPayback {
     );
   }
 
-  /// Получить рекомендацию.
-  String getRecommendation() {
+  String get recommendationKey {
     if (paybackYears.isInfinite) {
-      return 'Альтернативный вариант дешевле в долгосрочной перспективе.';
+      return 'savings.payback.alternative';
     }
-    
     if (paybackYears < 2) {
-      return 'Отличная инвестиция! Окупится за ${paybackYears.toStringAsFixed(1)} лет.';
+      return 'savings.payback.excellent';
     }
-    
     if (paybackYears < 5) {
-      return 'Хорошая инвестиция. Окупится за ${paybackYears.toStringAsFixed(1)} лет.';
+      return 'savings.payback.good';
     }
-    
-    return 'Долгосрочная инвестиция. Окупится за ${paybackYears.toStringAsFixed(1)} лет.';
+    return 'savings.payback.long_term';
+  }
+
+  Map<String, String>? get recommendationParams {
+    if (paybackYears.isInfinite) {
+      return null;
+    }
+    return {'years': paybackYears.toStringAsFixed(1)};
   }
 }
-

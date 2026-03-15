@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../domain/models/project_v2.dart';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -24,6 +25,7 @@ class BudgetMetricCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final loc = AppLocalizations.of(context);
     final utilization = budgetTotal > 0 ? budgetSpent / budgetTotal : 0.0;
     final percent = (utilization * 100).round().clamp(0, 999);
 
@@ -47,7 +49,7 @@ class BudgetMetricCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Бюджет',
+                  loc.translate('project.dashboard.budget'),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -80,7 +82,7 @@ class BudgetMetricCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'израсходовано',
+                            loc.translate('project.dashboard.spent_label'),
                             style: theme.textTheme.labelSmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -97,20 +99,20 @@ class BudgetMetricCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _BudgetDetailRow(
-                        label: 'Потрачено',
+                        label: loc.translate('project.dashboard.spent'),
                         value: budgetSpent,
                         color: progressColor,
                         isBold: true,
                       ),
                       const SizedBox(height: 8),
                       _BudgetDetailRow(
-                        label: 'Бюджет',
+                        label: loc.translate('project.dashboard.budget'),
                         value: budgetTotal,
                         color: colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(height: 8),
                       _BudgetDetailRow(
-                        label: 'Остаток',
+                        label: loc.translate('project.dashboard.remaining'),
                         value: budgetTotal - budgetSpent,
                         color: isOverBudget
                             ? Colors.red
@@ -140,7 +142,7 @@ class BudgetMetricCard extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Бюджет превышен на ${_formatMoney((budgetSpent - budgetTotal).abs())}',
+                        loc.translate('project.dashboard.overbudget_amount', {'amount': _formatMoney((budgetSpent - budgetTotal).abs())}),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: Colors.red,
                           fontWeight: FontWeight.w600,
@@ -231,6 +233,7 @@ class DeadlineMetricCard extends StatelessWidget {
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final loc = AppLocalizations.of(context);
     final dateFormat = DateFormat('dd MMMM yyyy', 'ru');
 
     final Color statusColor;
@@ -240,15 +243,15 @@ class DeadlineMetricCard extends StatelessWidget {
     if (isOverdue) {
       statusColor = Colors.red;
       statusIcon = Icons.event_busy_rounded;
-      statusText = 'Просрочен';
+      statusText = loc.translate('project.dashboard.overdue');
     } else if (isClose) {
       statusColor = Colors.orange;
       statusIcon = Icons.warning_amber_rounded;
-      statusText = 'Скоро дедлайн';
+      statusText = loc.translate('project.dashboard.deadline_soon');
     } else {
       statusColor = Colors.green;
       statusIcon = Icons.event_available_rounded;
-      statusText = 'В графике';
+      statusText = loc.translate('project.dashboard.on_track');
     }
 
     return Card(
@@ -262,7 +265,7 @@ class DeadlineMetricCard extends StatelessWidget {
                 Icon(Icons.schedule_rounded, color: statusColor),
                 const SizedBox(width: 12),
                 Text(
-                  'Дедлайн',
+                  loc.translate('project.dashboard.deadline'),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -315,7 +318,7 @@ class DeadlineMetricCard extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          _getDaysWord(daysLeft),
+                          _getDaysWord(daysLeft, loc),
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: statusColor,
                           ),
@@ -338,7 +341,7 @@ class DeadlineMetricCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _getWeekdayName(deadline!),
+                        DateFormat('EEEE', 'ru').format(deadline!),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -346,7 +349,7 @@ class DeadlineMetricCard extends StatelessWidget {
                       if (isOverdue) ...[
                         const SizedBox(height: 8),
                         Text(
-                          'Просрочен на ${(-daysLeft).abs()} ${_getDaysWord((-daysLeft).abs())}',
+                          loc.translate('project.dashboard.overdue_by', {'count': (-daysLeft).abs().toString(), 'unit': _getDaysWord((-daysLeft).abs(), loc)}),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: Colors.red,
                             fontWeight: FontWeight.w600,
@@ -364,29 +367,17 @@ class DeadlineMetricCard extends StatelessWidget {
     );
   }
 
-  String _getDaysWord(int days) {
+  String _getDaysWord(int days, AppLocalizations loc) {
     if (days == 0) return '';
-    if (days == 1) return 'день';
-    if (days >= 2 && days <= 4) return 'дня';
-    if (days >= 5 && days <= 20) return 'дней';
+    if (days == 1) return loc.translate('project.dashboard.days_left_1');
+    if (days >= 2 && days <= 4) return loc.translate('project.dashboard.days_left_2_4');
+    if (days >= 5 && days <= 20) return loc.translate('project.dashboard.days_left');
     final lastDigit = days % 10;
-    if (lastDigit == 1) return 'день';
-    if (lastDigit >= 2 && lastDigit <= 4) return 'дня';
-    return 'дней';
+    if (lastDigit == 1) return loc.translate('project.dashboard.days_left_1');
+    if (lastDigit >= 2 && lastDigit <= 4) return loc.translate('project.dashboard.days_left_2_4');
+    return loc.translate('project.dashboard.days_left');
   }
 
-  String _getWeekdayName(DateTime date) {
-    const weekdays = [
-      'Понедельник',
-      'Вторник',
-      'Среда',
-      'Четверг',
-      'Пятница',
-      'Суббота',
-      'Воскресенье',
-    ];
-    return weekdays[date.weekday - 1];
-  }
 }
 
 /// Карточка прогресса задач
@@ -406,6 +397,7 @@ class TasksProgressCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final loc = AppLocalizations.of(context);
     final percent = (progress * 100).round();
     final progressColor = _getProgressColor(progress, theme);
 
@@ -420,7 +412,7 @@ class TasksProgressCard extends StatelessWidget {
                 Icon(Icons.task_alt_rounded, color: progressColor),
                 const SizedBox(width: 12),
                 Text(
-                  'Прогресс',
+                  loc.translate('project.dashboard.progress'),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -453,7 +445,7 @@ class TasksProgressCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'выполнено',
+                            loc.translate('project.dashboard.completed_percent'),
                             style: theme.textTheme.labelSmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -471,21 +463,21 @@ class TasksProgressCard extends StatelessWidget {
                     children: [
                       _TaskDetailRow(
                         icon: Icons.check_circle_rounded,
-                        label: 'Выполнено',
+                        label: loc.translate('project.dashboard.completed_label'),
                         value: tasksCompleted,
                         color: Colors.green,
                       ),
                       const SizedBox(height: 12),
                       _TaskDetailRow(
                         icon: Icons.pending_rounded,
-                        label: 'Осталось',
+                        label: loc.translate('project.dashboard.remaining_label'),
                         value: tasksTotal - tasksCompleted,
                         color: Colors.orange,
                       ),
                       const SizedBox(height: 12),
                       _TaskDetailRow(
                         icon: Icons.format_list_numbered_rounded,
-                        label: 'Всего',
+                        label: loc.translate('project.dashboard.total_label'),
                         value: tasksTotal,
                         color: colorScheme.primary,
                       ),
@@ -514,7 +506,7 @@ class TasksProgressCard extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Все задачи выполнены!',
+                        loc.translate('project.dashboard.all_tasks_done'),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: Colors.green,
                           fontWeight: FontWeight.w600,
@@ -587,7 +579,8 @@ class AttentionNeededCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final issues = _getIssues(project);
+    final loc = AppLocalizations.of(context);
+    final issues = _getIssues(project, loc);
     if (issues.isEmpty) return const SizedBox.shrink();
 
     final theme = Theme.of(context);
@@ -604,7 +597,7 @@ class AttentionNeededCard extends StatelessWidget {
                 const Icon(Icons.warning_amber_rounded, color: Colors.orange),
                 const SizedBox(width: 12),
                 Text(
-                  'Требует внимания',
+                  loc.translate('project.dashboard.attention_needed'),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.orange,
@@ -640,13 +633,13 @@ class AttentionNeededCard extends StatelessWidget {
     );
   }
 
-  List<_IssueItem> _getIssues(ProjectV2 project) {
+  List<_IssueItem> _getIssues(ProjectV2 project, AppLocalizations loc) {
     final issues = <_IssueItem>[];
 
     if (project.status == ProjectStatus.problem) {
       issues.add(_IssueItem(
         icon: Icons.error_rounded,
-        message: 'Проект отмечен как проблемный',
+        message: loc.translate('project.dashboard.attention_reason_problem'),
         color: Colors.red,
       ));
     }
@@ -654,7 +647,7 @@ class AttentionNeededCard extends StatelessWidget {
     if (project.isOverBudget) {
       issues.add(_IssueItem(
         icon: Icons.money_off_rounded,
-        message: 'Бюджет превышен',
+        message: loc.translate('project.dashboard.attention_reason_budget'),
         color: Colors.red,
       ));
     }
@@ -662,13 +655,13 @@ class AttentionNeededCard extends StatelessWidget {
     if (project.isDeadlineOverdue) {
       issues.add(_IssueItem(
         icon: Icons.event_busy_rounded,
-        message: 'Дедлайн просрочен',
+        message: loc.translate('project.dashboard.attention_reason_deadline'),
         color: Colors.red,
       ));
     } else if (project.isDeadlineClose) {
       issues.add(_IssueItem(
         icon: Icons.schedule_rounded,
-        message: 'Дедлайн через ${project.daysLeft} дн.',
+        message: loc.translate('project.dashboard.attention_reason_close_days', {'count': project.daysLeft.toString()}),
         color: Colors.orange,
       ));
     }
@@ -676,7 +669,7 @@ class AttentionNeededCard extends StatelessWidget {
     if (project.budgetUtilization > 0.9 && !project.isOverBudget) {
       issues.add(_IssueItem(
         icon: Icons.trending_up_rounded,
-        message: 'Использовано >90% бюджета',
+        message: loc.translate('project.dashboard.attention_reason_budget_threshold'),
         color: Colors.orange,
       ));
     }
@@ -707,6 +700,7 @@ class QuickStatsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final loc = AppLocalizations.of(context);
     final formatter = NumberFormat.compact(locale: 'ru_RU');
 
     return Row(
@@ -714,7 +708,7 @@ class QuickStatsRow extends StatelessWidget {
         Expanded(
           child: _QuickStatCard(
             icon: Icons.calculate_rounded,
-            label: 'Расчётов',
+            label: loc.translate('project.dashboard.calculations'),
             value: '${project.calculations.length}',
             color: colorScheme.primary,
           ),
@@ -723,7 +717,7 @@ class QuickStatsRow extends StatelessWidget {
         Expanded(
           child: _QuickStatCard(
             icon: Icons.shopping_cart_rounded,
-            label: 'Материалов',
+            label: loc.translate('project.dashboard.materials'),
             value: '${project.allMaterials.length}',
             color: Colors.teal,
           ),
@@ -732,7 +726,7 @@ class QuickStatsRow extends StatelessWidget {
         Expanded(
           child: _QuickStatCard(
             icon: Icons.payments_rounded,
-            label: 'Стоимость',
+            label: loc.translate('project.dashboard.cost'),
             value: formatter.format(project.totalCost),
             color: Colors.green,
           ),
@@ -842,3 +836,8 @@ class _CircularProgressPainter extends CustomPainter {
         oldDelegate.backgroundColor != backgroundColor;
   }
 }
+
+
+
+
+

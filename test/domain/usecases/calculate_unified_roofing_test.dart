@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_unified_roofing.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateUnifiedRoofing', () {
@@ -33,15 +34,30 @@ void main() {
       expect(result.values, isNotEmpty);
       expect(result.values['area'], equals(100.0));
       // slope is used but not stored in values
-      expect(result.values['realArea'], greaterThan(100.0)); // due to slope factor
+      expect(
+        result.values['realArea'],
+        greaterThan(100.0),
+      ); // due to slope factor
+    });
+
+    test('throws exception when neither area nor dimensions are provided', () {
+      final inputs = <String, double>{'area': 0.0};
+      final emptyPriceList = <PriceItem>[];
+
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Необходимо указать площадь или размеры'),
+          ),
+        ),
+      );
     });
 
     test('handles price list correctly', () {
-      final inputs = {
-        'area': 100.0,
-        'slope': 30.0,
-        'roofingType': 0.0,
-      };
+      final inputs = {'area': 100.0, 'slope': 30.0, 'roofingType': 0.0};
       final priceList = [
         const PriceItem(
           sku: 'metal-tile-1',
@@ -83,11 +99,7 @@ void main() {
     });
 
     test('calculates soft roofing (type 1) correctly', () {
-      final inputs = {
-        'area': 100.0,
-        'slope': 30.0,
-        'roofingType': 1.0,
-      };
+      final inputs = {'area': 100.0, 'slope': 30.0, 'roofingType': 1.0};
 
       final result = calculator(inputs, emptyPriceList);
 
@@ -112,11 +124,7 @@ void main() {
     });
 
     test('calculates ondulin (type 3) correctly', () {
-      final inputs = {
-        'area': 100.0,
-        'slope': 30.0,
-        'roofingType': 3.0,
-      };
+      final inputs = {'area': 100.0, 'slope': 30.0, 'roofingType': 3.0};
 
       final result = calculator(inputs, emptyPriceList);
 
@@ -126,11 +134,7 @@ void main() {
     });
 
     test('calculates slate (type 4) correctly', () {
-      final inputs = {
-        'area': 100.0,
-        'slope': 30.0,
-        'roofingType': 4.0,
-      };
+      final inputs = {'area': 100.0, 'slope': 30.0, 'roofingType': 4.0};
 
       final result = calculator(inputs, emptyPriceList);
 
@@ -139,11 +143,7 @@ void main() {
     });
 
     test('calculates ceramic tile (type 5) correctly', () {
-      final inputs = {
-        'area': 100.0,
-        'slope': 30.0,
-        'roofingType': 5.0,
-      };
+      final inputs = {'area': 100.0, 'slope': 30.0, 'roofingType': 5.0};
 
       final result = calculator(inputs, emptyPriceList);
 
@@ -161,44 +161,34 @@ void main() {
     });
 
     test('slope affects real area calculation', () {
-      final inputsFlat = {
-        'area': 100.0,
-        'slope': 0.0,
-        'roofingType': 0.0,
-      };
+      final inputsFlat = {'area': 100.0, 'slope': 0.0, 'roofingType': 0.0};
 
-      final inputsSteep = {
-        'area': 100.0,
-        'slope': 45.0,
-        'roofingType': 0.0,
-      };
+      final inputsSteep = {'area': 100.0, 'slope': 45.0, 'roofingType': 0.0};
 
       final resultFlat = calculator(inputsFlat, emptyPriceList);
       final resultSteep = calculator(inputsSteep, emptyPriceList);
 
       // Крутой уклон = большая реальная площадь
-      expect(resultSteep.values['realArea'], greaterThan(resultFlat.values['realArea']!));
+      expect(
+        resultSteep.values['realArea'],
+        greaterThan(resultFlat.values['realArea']!),
+      );
     });
 
     test('validates slope boundaries affect realArea', () {
-      final inputsMin = {
-        'area': 100.0,
-        'slope': 5.0,
-        'roofingType': 0.0,
-      };
+      final inputsMin = {'area': 100.0, 'slope': 5.0, 'roofingType': 0.0};
 
-      final inputsMax = {
-        'area': 100.0,
-        'slope': 60.0,
-        'roofingType': 0.0,
-      };
+      final inputsMax = {'area': 100.0, 'slope': 60.0, 'roofingType': 0.0};
 
       final resultMin = calculator(inputsMin, emptyPriceList);
       final resultMax = calculator(inputsMax, emptyPriceList);
 
       // Both should calculate, with different realArea values
       expect(resultMin.values['realArea'], greaterThan(100.0));
-      expect(resultMax.values['realArea'], greaterThan(resultMin.values['realArea']!));
+      expect(
+        resultMax.values['realArea'],
+        greaterThan(resultMin.values['realArea']!),
+      );
     });
   });
 
@@ -258,11 +248,7 @@ void main() {
     });
 
     test('calculates total price for metal tile', () {
-      final inputs = {
-        'area': 100.0,
-        'slope': 30.0,
-        'roofingType': 0.0,
-      };
+      final inputs = {'area': 100.0, 'slope': 30.0, 'roofingType': 0.0};
       final priceList = [
         const PriceItem(
           sku: 'metal_tile',
@@ -286,11 +272,7 @@ void main() {
     });
 
     test('calculates total price for soft roofing', () {
-      final inputs = {
-        'area': 100.0,
-        'slope': 30.0,
-        'roofingType': 1.0,
-      };
+      final inputs = {'area': 100.0, 'slope': 30.0, 'roofingType': 1.0};
       final priceList = [
         const PriceItem(
           sku: 'soft_roofing',
@@ -305,6 +287,46 @@ void main() {
 
       // Price should be calculated when material matches
       expect(result.values['packsNeeded'], greaterThan(0));
+    });
+    test('supports roofing unified dimensions mode via domain layer', () {
+      final inputs = {
+        'inputMode': 1.0,
+        'length': 6.0,
+        'width': 4.0,
+        'slope': 30.0,
+        'roofingType': 0.0,
+        'sheetWidth': 1.18,
+        'sheetLength': 2.5,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['area'], closeTo(24.0, 0.01));
+      expect(result.values['perimeter'], closeTo(20.0, 0.01));
+      expect(result.values['ridgeLength'], closeTo(6.0, 0.01));
+      expect(result.values['realArea'], closeTo(27.7, 0.1));
+      expect(result.values['sheetsNeeded'], greaterThan(0));
+    });
+
+    test('preserves explicit ridge length in roofing unified screen path', () {
+      final inputs = {
+        'inputMode': 1.0,
+        'length': 6.0,
+        'width': 4.0,
+        'slope': 30.0,
+        'roofingType': 2.0,
+        'sheetWidth': 1.15,
+        'sheetLength': 3.0,
+        'ridgeLength': 3.5,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['area'], closeTo(24.0, 0.01));
+      expect(result.values['ridgeLength'], closeTo(3.5, 0.01));
+      expect(result.values['sheetsNeeded'], greaterThan(0));
     });
   });
 }

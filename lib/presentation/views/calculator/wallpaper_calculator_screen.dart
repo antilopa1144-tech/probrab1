@@ -1,57 +1,22 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_constant.dart';
+import '../../../domain/usecases/calculate_wallpaper.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-
-/// Вспомогательный класс для работы с константами калькулятора обоев
-class _WallpaperConstants {
-  final CalculatorConstants? _data;
-
-  const _WallpaperConstants([this._data]);
-
-  double _getDouble(String constantKey, String valueKey, double defaultValue) {
-    if (_data == null) return defaultValue;
-    final constant = _data.constants[constantKey];
-    if (constant == null) return defaultValue;
-    final value = constant.values[valueKey];
-    if (value is double) return value;
-    if (value is int) return value.toDouble();
-    if (value is num) return value.toDouble();
-    return defaultValue;
-  }
-
-  // Roll sizes
-  double getRollWidth(String sizeKey) {
-    final defaults = {'s053x10': 0.53, 's106x10': 1.06, 's106x25': 1.06};
-    return _getDouble('roll_sizes', '${sizeKey}_width', defaults[sizeKey] ?? 0.53);
-  }
-
-  double getRollLength(String sizeKey) {
-    final defaults = {'s053x10': 10.0, 's106x10': 10.0, 's106x25': 25.0};
-    return _getDouble('roll_sizes', '${sizeKey}_length', defaults[sizeKey] ?? 10.0);
-  }
-
-  // Materials consumption
-  // Клей обойный - СУХАЯ СМЕСЬ (разводится водой): ~8 г/м² = 0.008 кг/м²
-  double get gluePerM2 => _getDouble('materials_consumption', 'glue_per_m2', 0.008);
-  double get primerPerM2 => _getDouble('materials_consumption', 'primer_per_m2', 0.15);
-}
 
 enum InputMode { byArea, byRoom }
 enum WallpaperRollSize { s053x10, s106x10, s106x25, custom }
 
 /// Тип обоев — влияет на расход клея (сухая смесь, кг/м²)
-/// Типичная пачка 250г = ~30-40 м² покрытия
 enum WallpaperType {
-  paper(0.007),      // Бумажные: 7 г/м² — лёгкие, минимальный расход
-  vinyl(0.012),      // Виниловые: 12 г/м² — тяжёлые, клей на стену
-  nonWoven(0.010);   // Флизелиновые: 10 г/м² — средний расход, клей на стену
+  paper(1),
+  vinyl(2),
+  nonWoven(3);
 
-  final double pasteRate;
-  const WallpaperType(this.pasteRate);
+  final int canonicalId;
+  const WallpaperType(this.canonicalId);
 }
 
 class _WallpaperResult {
@@ -60,7 +25,6 @@ class _WallpaperResult {
   final double deductedArea;
   final int rollsNeeded;
   final int stripsNeeded;
-  final double rollArea;
   final String rollSizeName;
   final double glueNeededKg;
   final double primerLiters;
@@ -73,7 +37,6 @@ class _WallpaperResult {
     required this.deductedArea,
     required this.rollsNeeded,
     required this.stripsNeeded,
-    required this.rollArea,
     required this.rollSizeName,
     required this.glueNeededKg,
     required this.primerLiters,
@@ -98,6 +61,8 @@ class WallpaperCalculatorScreen extends StatefulWidget {
 
 class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     with ExportableMixin {
+  final CalculateWallpaper _calculator = CalculateWallpaper();
+
   @override
   AppLocalizations get loc => _loc;
 
@@ -119,13 +84,9 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
   late _WallpaperResult _result;
   late AppLocalizations _loc;
 
-  // Константы калькулятора (null = используются hardcoded defaults)
-  late final _WallpaperConstants _constants;
-
   @override
   void initState() {
     super.initState();
-    _constants = const _WallpaperConstants(null);
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -133,98 +94,128 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
   void _applyInitialInputs() {
     final initial = widget.initialInputs;
     if (initial == null) return;
+
+    if (initial['inputMode'] != null) {
+      _inputMode = initial['inputMode']!.round() == 1
+          ? InputMode.byArea
+          : InputMode.byRoom;
+    }
     if (initial['area'] != null) _area = initial['area']!.clamp(1.0, 1000.0);
     if (initial['length'] != null) _length = initial['length']!.clamp(1.0, 20.0);
     if (initial['width'] != null) _width = initial['width']!.clamp(1.0, 20.0);
-    if (initial['height'] != null) _height = initial['height']!.clamp(2.0, 5.0);
+    final wallHeight = initial['wallHeight'] ?? initial['height'];
+    if (wallHeight != null) _height = wallHeight.clamp(2.0, 5.0);
+    if (initial['openingsArea'] != null) {
+      _windowsDoors = initial['openingsArea']!.clamp(0.0, 50.0);
+    } else {
+      final windowsArea = initial['windowsArea'] ?? 0.0;
+      final doorsArea = initial['doorsArea'] ?? 0.0;
+      _windowsDoors = (windowsArea + doorsArea).clamp(0.0, 50.0);
+    }
+    if (initial['rapport'] != null) {
+      _rapport = initial['rapport']!.round().clamp(0, 100);
+    }
+    if (initial['wallpaperType'] != null) {
+      _wallpaperType = _resolveWallpaperType(initial['wallpaperType']!);
+    }
+    if (initial['rollSize'] != null) {
+      _rollSize = _resolveRollSize(initial['rollSize']!.round());
+    }
+    if (initial['rollWidth'] != null) {
+      _customWidth = initial['rollWidth']!.clamp(0.5, 2.0);
+    }
+    if (initial['rollLength'] != null) {
+      _customLength = initial['rollLength']!.clamp(5.0, 50.0);
+    }
   }
 
-  double _getCalculatedArea() {
-    if (_inputMode == InputMode.byArea) {
-      return _area;
+  WallpaperType _resolveWallpaperType(double rawValue) {
+    final rounded = rawValue.round();
+    if (rounded >= 1 && rounded <= WallpaperType.values.length) {
+      return WallpaperType.values[rounded - 1];
     }
-    // Площадь стен: периметр × высота
-    return (_length + _width) * 2 * _height;
+    return WallpaperType.values[rounded.clamp(0, WallpaperType.values.length - 1)];
+  }
+
+  WallpaperRollSize _resolveRollSize(int rawValue) {
+    switch (rawValue) {
+      case 0:
+        return WallpaperRollSize.custom;
+      case 2:
+        return WallpaperRollSize.s106x10;
+      case 3:
+        return WallpaperRollSize.s106x25;
+      default:
+        return WallpaperRollSize.s053x10;
+    }
+  }
+
+  Map<String, double> _selectedRollDimensions() {
+    switch (_rollSize) {
+      case WallpaperRollSize.s053x10:
+        return {'rollWidth': 0.53, 'rollLength': 10.05, 'rollSize': 1.0};
+      case WallpaperRollSize.s106x10:
+        return {'rollWidth': 1.06, 'rollLength': 10.05, 'rollSize': 2.0};
+      case WallpaperRollSize.s106x25:
+        return {'rollWidth': 1.06, 'rollLength': 25.0, 'rollSize': 3.0};
+      case WallpaperRollSize.custom:
+        return {
+          'rollWidth': _customWidth,
+          'rollLength': _customLength,
+          'rollSize': 0.0,
+        };
+    }
+  }
+
+  String _resolveRollSizeName(double rollWidth, double rollLength) {
+    if ((rollWidth - 0.53).abs() < 0.001 && (rollLength - 10.05).abs() < 0.1) {
+      return '0.53×10';
+    }
+    if ((rollWidth - 1.06).abs() < 0.001 && (rollLength - 10.05).abs() < 0.1) {
+      return '1.06×10';
+    }
+    if ((rollWidth - 1.06).abs() < 0.001 && (rollLength - 25.0).abs() < 0.1) {
+      return '1.06×25';
+    }
+    final lengthLabel = (rollLength - rollLength.roundToDouble()).abs() < 0.05
+        ? rollLength.toStringAsFixed(0)
+        : rollLength.toStringAsFixed(1);
+    return '${rollWidth.toStringAsFixed(2)}×$lengthLabel';
+  }
+
+  Map<String, double> _buildCalculationInputs() {
+    final roll = _selectedRollDimensions();
+    return {
+      'inputMode': _inputMode == InputMode.byRoom ? 0 : 1,
+      'area': _area,
+      'length': _length,
+      'width': _width,
+      'wallHeight': _height,
+      'openingsArea': _windowsDoors,
+      'rapport': _rapport.toDouble(),
+      'wallpaperType': _wallpaperType.canonicalId.toDouble(),
+      'rollSize': roll['rollSize']!,
+      'rollWidth': roll['rollWidth']!,
+      'rollLength': roll['rollLength']!,
+      'reserveRolls': 0,
+    };
   }
 
   _WallpaperResult _calculate() {
-    final wallsArea = _getCalculatedArea();
-    final deductedArea = wallsArea - _windowsDoors;
-    final effectiveArea = deductedArea > 0 ? deductedArea : wallsArea;
-
-    // Размер рулона из констант
-    double rollWidth;
-    double rollLength;
-    String rollSizeName;
-
-    switch (_rollSize) {
-      case WallpaperRollSize.s053x10:
-        rollWidth = _constants.getRollWidth('s053x10');
-        rollLength = _constants.getRollLength('s053x10');
-        rollSizeName = '${rollWidth.toStringAsFixed(2)}×${rollLength.toInt()}';
-        break;
-      case WallpaperRollSize.s106x10:
-        rollWidth = _constants.getRollWidth('s106x10');
-        rollLength = _constants.getRollLength('s106x10');
-        rollSizeName = '${rollWidth.toStringAsFixed(2)}×${rollLength.toInt()}';
-        break;
-      case WallpaperRollSize.s106x25:
-        rollWidth = _constants.getRollWidth('s106x25');
-        rollLength = _constants.getRollLength('s106x25');
-        rollSizeName = '${rollWidth.toStringAsFixed(2)}×${rollLength.toInt()}';
-        break;
-      case WallpaperRollSize.custom:
-        rollWidth = _customWidth;
-        rollLength = _customLength;
-        rollSizeName = '${_customWidth.toStringAsFixed(2)}×${_customLength.toStringAsFixed(1)}';
-        break;
-    }
-
-    final rollArea = rollWidth * rollLength;
-
-    // Высота полотна с учётом раппорта
-    double stripHeight = _height;
-    if (_rapport > 0) {
-      // Округляем высоту до ближайшего кратного раппорту
-      final rapportMeters = _rapport / 100.0;
-      stripHeight = ((_height / rapportMeters).ceil()) * rapportMeters;
-    }
-
-    // Количество полос из одного рулона
-    final stripsPerRoll = (rollLength / stripHeight).floor();
-
-    // Общее количество полос
-    final perimeter = (_inputMode == InputMode.byRoom)
-        ? (_length + _width) * 2
-        : (effectiveArea / _height); // Приблизительный периметр для режима "по площади"
-
-    final totalStrips = (perimeter / rollWidth).ceil();
-
-    // Количество рулонов
-    int rollsNeeded;
-    if (stripsPerRoll > 0) {
-      rollsNeeded = (totalStrips / stripsPerRoll).ceil();
-    } else {
-      // Если полоса выше рулона, считаем по площади
-      rollsNeeded = (effectiveArea / rollArea).ceil();
-    }
-
-    // Расчёт материалов
-    // Клей - сухая смесь, расход зависит от типа обоев
-    final glueNeededKg = effectiveArea * _wallpaperType.pasteRate;
-    // Грунтовка: 0.15 л/м² × 1.1 запас
-    final primerLiters = effectiveArea * 0.15 * 1.1;
+    final contract = _calculator.calculateCanonical(_buildCalculationInputs());
+    final totals = contract.totals;
+    final rollWidth = totals['rollWidth'] ?? _selectedRollDimensions()['rollWidth']!;
+    final rollLength = totals['rollLength'] ?? _selectedRollDimensions()['rollLength']!;
 
     return _WallpaperResult(
-      area: effectiveArea,
-      wallsArea: wallsArea,
-      deductedArea: deductedArea,
-      rollsNeeded: rollsNeeded,
-      stripsNeeded: totalStrips,
-      rollArea: rollArea,
-      rollSizeName: rollSizeName,
-      glueNeededKg: glueNeededKg,
-      primerLiters: primerLiters,
+      area: totals['netArea'] ?? 0,
+      wallsArea: totals['wallArea'] ?? 0,
+      deductedArea: totals['openingsArea'] ?? _windowsDoors,
+      rollsNeeded: (totals['rollsNeeded'] ?? 0).round(),
+      stripsNeeded: (totals['stripsNeeded'] ?? 0).round(),
+      rollSizeName: _resolveRollSizeName(rollWidth, rollLength),
+      glueNeededKg: totals['pasteNeededKg'] ?? 0,
+      primerLiters: totals['primerNeededL'] ?? 0,
       rollWidth: rollWidth,
       rollLength: rollLength,
     );
@@ -241,9 +232,9 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
 
     buffer.writeln(_loc.translate('wallpaper.export.walls_area')
         .replaceFirst('{value}', _result.wallsArea.toStringAsFixed(1)));
-    if (_windowsDoors > 0) {
+    if (_result.deductedArea > 0) {
       buffer.writeln(_loc.translate('wallpaper.export.deduction')
-          .replaceFirst('{value}', _windowsDoors.toStringAsFixed(1)));
+          .replaceFirst('{value}', _result.deductedArea.toStringAsFixed(1)));
       buffer.writeln(_loc.translate('wallpaper.export.gluing_area')
           .replaceFirst('{value}', _result.area.toStringAsFixed(1)));
     }
@@ -484,7 +475,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
                   ),
                 ),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                  '${_result.wallsArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -703,9 +694,8 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
       ),
       MaterialItem(
         name: _loc.translate('wallpaper.materials.glue'),
-        // Показываем в граммах если меньше 1 кг
         value: _result.glueNeededKg < 1
-            ? '${(_result.glueNeededKg * 1000).toStringAsFixed(0)} г'
+            ? '${(_result.glueNeededKg * 1000).toStringAsFixed(0)} ${_loc.translate('common.gram_short')}'
             : '${_result.glueNeededKg.toStringAsFixed(1)} ${_loc.translate('wallpaper.materials.kg')}',
         icon: Icons.colorize,
       ),
@@ -728,7 +718,6 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     const accentColor = CalculatorColors.interior;
     final tips = <String>[];
 
-    // Контекстные подсказки по типу обоев
     switch (_wallpaperType) {
       case WallpaperType.paper:
         tips.add(_loc.translate('hint.wallpaper.paper_glue_on_strip'));
@@ -766,3 +755,4 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     );
   }
 }
+

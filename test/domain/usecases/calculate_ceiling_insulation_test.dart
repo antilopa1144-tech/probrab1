@@ -40,10 +40,7 @@ void main() {
 
     test('calculates volume', () {
       final calculator = CalculateCeilingInsulation();
-      final inputs = {
-        'area': 20.0,
-        'insulationThickness': 100.0,
-      };
+      final inputs = {'area': 20.0, 'insulationThickness': 100.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -54,9 +51,7 @@ void main() {
 
     test('calculates vapor barrier area', () {
       final calculator = CalculateCeilingInsulation();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -67,9 +62,7 @@ void main() {
 
     test('calculates fasteners needed', () {
       final calculator = CalculateCeilingInsulation();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -80,9 +73,7 @@ void main() {
 
     test('uses default values when missing', () {
       final calculator = CalculateCeilingInsulation();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -94,15 +85,29 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateCeilingInsulation();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
         throwsA(isA<CalculationException>()),
       );
+    });
+
+    group('validation messages', () {
+      test('insulation thickness range uses shared helper', () {
+        final calculator = CalculateCeilingInsulation();
+
+        final error = calculator.validateInputs({
+          'area': 12.0,
+          'insulationThickness': 40.0,
+        });
+
+        expect(
+          error,
+          equals('Поле "толщина утеплителя" должно быть от 50 до 300 мм'),
+        );
+      });
     });
   });
 }

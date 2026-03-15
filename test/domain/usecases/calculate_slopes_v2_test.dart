@@ -197,10 +197,7 @@ void main() {
       });
 
       test('no primer when disabled', () {
-        final inputs = {
-          'windowsCount': 5.0,
-          'needPrimer': 0.0,
-        };
+        final inputs = {'windowsCount': 5.0, 'needPrimer': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -211,28 +208,20 @@ void main() {
     group('Sealant calculations', () {
       test('1 tube per 2.5 windows', () {
         // 3 windows -> ceil(3/2.5) = 2 tubes
-        final result3 = calculator({
-          'windowsCount': 3.0,
-        }, emptyPriceList);
+        final result3 = calculator({'windowsCount': 3.0}, emptyPriceList);
         expect(result3.values['sealantTubes'], equals(2.0));
 
         // 5 windows -> ceil(5/2.5) = 2 tubes
-        final result5 = calculator({
-          'windowsCount': 5.0,
-        }, emptyPriceList);
+        final result5 = calculator({'windowsCount': 5.0}, emptyPriceList);
         expect(result5.values['sealantTubes'], equals(2.0));
 
         // 6 windows -> ceil(6/2.5) = 3 tubes
-        final result6 = calculator({
-          'windowsCount': 6.0,
-        }, emptyPriceList);
+        final result6 = calculator({'windowsCount': 6.0}, emptyPriceList);
         expect(result6.values['sealantTubes'], equals(3.0));
       });
 
       test('minimum 1 tube for any window count', () {
-        final result = calculator({
-          'windowsCount': 1.0,
-        }, emptyPriceList);
+        final result = calculator({'windowsCount': 1.0}, emptyPriceList);
 
         expect(result.values['sealantTubes'], equals(1.0));
       });
@@ -312,9 +301,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero windows', () {
-        final inputs = {
-          'windowsCount': 0.0,
-        };
+        final inputs = {'windowsCount': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -323,9 +310,7 @@ void main() {
       });
 
       test('throws exception for negative windows', () {
-        final inputs = {
-          'windowsCount': -3.0,
-        };
+        final inputs = {'windowsCount': -3.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -334,9 +319,7 @@ void main() {
       });
 
       test('throws exception for zero window width', () {
-        final inputs = {
-          'windowWidth': 0.0,
-        };
+        final inputs = {'windowWidth': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -345,9 +328,7 @@ void main() {
       });
 
       test('throws exception for zero window height', () {
-        final inputs = {
-          'windowHeight': 0.0,
-        };
+        final inputs = {'windowHeight': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -366,10 +347,34 @@ void main() {
           'needPrimer': 1.0,
         };
         final priceList = [
-          const PriceItem(sku: 'slopes_material', name: 'Материал для откосов', price: 500.0, unit: 'м²', imageUrl: ''),
-          const PriceItem(sku: 'corner_profile', name: 'Уголок', price: 50.0, unit: 'м.п.', imageUrl: ''),
-          const PriceItem(sku: 'primer', name: 'Грунтовка', price: 100.0, unit: 'л', imageUrl: ''),
-          const PriceItem(sku: 'sealant', name: 'Герметик', price: 300.0, unit: 'шт', imageUrl: ''),
+          const PriceItem(
+            sku: 'slopes_material',
+            name: 'Материал для откосов',
+            price: 500.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'corner_profile',
+            name: 'Уголок',
+            price: 50.0,
+            unit: 'м.п.',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'primer',
+            name: 'Грунтовка',
+            price: 100.0,
+            unit: 'л',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'sealant',
+            name: 'Герметик',
+            price: 300.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -379,9 +384,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'windowsCount': 5.0,
-        };
+        final inputs = {'windowsCount': 5.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -447,6 +450,24 @@ void main() {
         expect(result.values['slopesType'], equals(0.0));
         expect(result.values['cornerLength'], equals(0.0));
         expect(result.values['primerLiters'], greaterThan(0));
+      });
+    });
+    group('validation messages', () {
+      test('window height uses shared helper', () {
+        expect(
+          () => calculator({
+            'windowsCount': 3.0,
+            'windowWidth': 1.4,
+            'windowHeight': 0.0,
+          }, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Поле "высота окна" должно быть больше нуля'),
+            ),
+          ),
+        );
       });
     });
   });

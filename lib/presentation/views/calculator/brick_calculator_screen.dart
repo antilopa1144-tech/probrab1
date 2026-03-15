@@ -157,6 +157,7 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
     final inputs = <String, double>{
       'brickType': _brickType.index.toDouble(),
       'wallThickness': _wallThickness.index.toDouble(),
+      'workingConditions': (_workingConditions.index + 1).toDouble(),
     };
 
     // Передаём либо площадь, либо размеры стены
@@ -201,6 +202,7 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
       'wallHeight': _wallHeight,
       'brickType': _brickType.index.toDouble(),
       'wallThickness': _wallThickness.index.toDouble(),
+      'workingConditions': (_workingConditions.index + 1).toDouble(),
       'inputMode': (_inputMode == BrickInputMode.manual ? 0 : 1).toDouble(),
     };
   }
@@ -498,3 +500,5 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
     );
   }
 }
+
+

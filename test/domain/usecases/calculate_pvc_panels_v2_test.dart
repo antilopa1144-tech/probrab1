@@ -278,11 +278,7 @@ void main() {
 
     group('Input modes', () {
       test('dimensions mode calculates area from dimensions', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'wallWidth': 4.0,
-          'wallHeight': 3.0,
-        };
+        final inputs = {'inputMode': 1.0, 'wallWidth': 4.0, 'wallHeight': 3.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -292,10 +288,7 @@ void main() {
       });
 
       test('manual mode uses area and calculates dimensions', () {
-        final inputs = {
-          'inputMode': 0.0,
-          'area': 15.0,
-        };
+        final inputs = {'inputMode': 0.0, 'area': 15.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -308,9 +301,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not specified', () {
-        final inputs = <String, double>{
-          'area': 15.0,
-        };
+        final inputs = <String, double>{'area': 15.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -378,10 +369,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero area in manual mode', () {
-        final inputs = {
-          'inputMode': 0.0,
-          'area': 0.0,
-        };
+        final inputs = {'inputMode': 0.0, 'area': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -390,10 +378,7 @@ void main() {
       });
 
       test('throws exception for negative area', () {
-        final inputs = {
-          'inputMode': 0.0,
-          'area': -15.0,
-        };
+        final inputs = {'inputMode': 0.0, 'area': -15.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -402,11 +387,7 @@ void main() {
       });
 
       test('throws exception for zero wall width', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'wallWidth': 0.0,
-          'wallHeight': 2.5,
-        };
+        final inputs = {'inputMode': 1.0, 'wallWidth': 0.0, 'wallHeight': 2.5};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -424,10 +405,34 @@ void main() {
           'inputMode': 1.0,
         };
         final priceList = [
-          const PriceItem(sku: 'pvc_panel', name: 'ПВХ панель', price: 150.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'profile', name: 'Профиль', price: 50.0, unit: 'м', imageUrl: ''),
-          const PriceItem(sku: 'corner', name: 'Угол', price: 80.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'plinth', name: 'Плинтус', price: 120.0, unit: 'шт', imageUrl: ''),
+          const PriceItem(
+            sku: 'pvc_panel',
+            name: 'ПВХ панель',
+            price: 150.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'profile',
+            name: 'Профиль',
+            price: 50.0,
+            unit: 'м',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'corner',
+            name: 'Угол',
+            price: 80.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'plinth',
+            name: 'Плинтус',
+            price: 120.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -437,11 +442,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'wallWidth': 3.0,
-          'wallHeight': 2.5,
-          'inputMode': 1.0,
-        };
+        final inputs = {'wallWidth': 3.0, 'wallHeight': 2.5, 'inputMode': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -532,6 +533,25 @@ void main() {
         // Panel area = 0.3 * 2.7 = 0.81
         // Panels = ceil(20 * 1.1 / 0.81) = ceil(27.16) = 28
         expect(result.values['panelsCount'], equals(28.0));
+      });
+    });
+
+    group('validation messages', () {
+      test('wall dimensions requirement uses shared helper', () {
+        expect(
+          () => calculator({
+            'inputMode': 1.0,
+            'wallWidth': 0.0,
+            'wallHeight': 2.5,
+          }, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Необходимо указать площадь или размеры стены'),
+            ),
+          ),
+        );
       });
     });
   });

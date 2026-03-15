@@ -82,11 +82,7 @@ void main() {
     });
 
     test('throws exception for zero area', () {
-      final inputs = {
-        'inputMode': 1.0,
-        'area': 0.0,
-        'rollSize': 1.0,
-      };
+      final inputs = {'inputMode': 1.0, 'area': 0.0, 'rollSize': 1.0};
       final emptyPriceList = <PriceItem>[];
 
       // Калькулятор должен выбросить исключение при area <= 0
@@ -97,10 +93,7 @@ void main() {
     });
 
     test('uses default roll dimensions when not provided', () {
-      final inputs = {
-        'inputMode': 1.0,
-        'area': 50.0,
-      };
+      final inputs = {'inputMode': 1.0, 'area': 50.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -236,24 +229,20 @@ void main() {
 
       test('vinyl paste > fleece paste > paper paste for same area', () {
         final emptyPriceList = <PriceItem>[];
-        final baseInputs = {
-          'inputMode': 1.0,
-          'area': 50.0,
-          'rollSize': 1.0,
-        };
+        final baseInputs = {'inputMode': 1.0, 'area': 50.0, 'rollSize': 1.0};
 
-        final paperResult = calculator(
-          {...baseInputs, 'wallpaperType': 1.0},
-          emptyPriceList,
-        );
-        final vinylResult = calculator(
-          {...baseInputs, 'wallpaperType': 2.0},
-          emptyPriceList,
-        );
-        final fleeceResult = calculator(
-          {...baseInputs, 'wallpaperType': 3.0},
-          emptyPriceList,
-        );
+        final paperResult = calculator({
+          ...baseInputs,
+          'wallpaperType': 1.0,
+        }, emptyPriceList);
+        final vinylResult = calculator({
+          ...baseInputs,
+          'wallpaperType': 2.0,
+        }, emptyPriceList);
+        final fleeceResult = calculator({
+          ...baseInputs,
+          'wallpaperType': 3.0,
+        }, emptyPriceList);
 
         expect(
           vinylResult.values['pasteNeeded'],
@@ -339,11 +328,7 @@ void main() {
 
     group('Primer cans (5L packaging)', () {
       test('small area — 1 can', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'area': 10.0,
-          'rollSize': 1.0,
-        };
+        final inputs = {'inputMode': 1.0, 'area': 10.0, 'rollSize': 1.0};
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator(inputs, emptyPriceList);
@@ -353,11 +338,7 @@ void main() {
       });
 
       test('medium area — correct can count', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'area': 50.0,
-          'rollSize': 1.0,
-        };
+        final inputs = {'inputMode': 1.0, 'area': 50.0, 'rollSize': 1.0};
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator(inputs, emptyPriceList);
@@ -369,11 +350,7 @@ void main() {
       });
 
       test('large area — multiple cans', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'area': 200.0,
-          'rollSize': 1.0,
-        };
+        final inputs = {'inputMode': 1.0, 'area': 200.0, 'rollSize': 1.0};
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator(inputs, emptyPriceList);
@@ -401,7 +378,10 @@ void main() {
 
         expect(result.values['glueNeeded'], isNotNull);
         expect(result.values['pasteNeeded'], isNotNull);
-        expect(result.values['glueNeeded'], equals(result.values['pasteNeeded']));
+        expect(
+          result.values['glueNeeded'],
+          equals(result.values['pasteNeeded']),
+        );
       });
     });
 
@@ -429,13 +409,13 @@ void main() {
         // Полезная площадь = 45 - 3 - 1.8 = 40.2 м²
         expect(result.values['usefulArea'], closeTo(40.2, 0.1));
 
-        // Периметр = (4+5) × 2 = 18 м
-        // Полос = ceil(18 / 0.53) = 34
-        expect(result.values['stripsNeeded'], equals(34.0));
+        // Полезная площадь = 40.2 м², рабочая ширина полосы = 0.53 × 2.5 = 1.325 м²
+        // Полос = ceil(40.2 / 1.325) = 31
+        expect(result.values['stripsNeeded'], equals(31.0));
 
         // Полос из рулона: floor(10.05 / 2.5) = 4
-        // Рулонов = ceil(34 / 4) = 9
-        expect(result.values['rollsNeeded'], equals(9.0));
+        // Рулонов = ceil(31 / 4) = 8
+        expect(result.values['rollsNeeded'], equals(8.0));
 
         // Клей (виниловые): 40.2 × 0.010 × 1.1 = 0.4422 → rounded 0.44
         expect(result.values['pasteNeeded'], closeTo(0.44, 0.01));
@@ -448,6 +428,26 @@ void main() {
 
         // Канистры: ceil(6.633 / 5.0) = 2
         expect(result.values['primerCans'], equals(2.0));
+      });
+    });
+
+    group('validation messages', () {
+      test('perimeter or room dimensions requirement uses shared helper', () {
+        final calculator = CalculateWallpaper();
+
+        final error = calculator.validateInputs({
+          'inputMode': 0.0,
+          'perimeter': 0.0,
+          'roomWidth': 0.0,
+          'roomLength': 0.0,
+          'length': 0.0,
+          'width': 0.0,
+        });
+
+        expect(
+          error,
+          equals('Необходимо указать периметр или размеры помещения'),
+        );
       });
     });
   });

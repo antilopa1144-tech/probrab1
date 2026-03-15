@@ -96,26 +96,23 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
     _result = _calculate();
   }
 
-  /// Возвращает рассчитанную площадь в зависимости от режима ввода
-  double _getCalculatedArea() {
-    if (_inputMode == SoundInsulationInputMode.manual) return _area;
-    return _length * _height;
-  }
-
-  /// Использует domain layer для расчёта
-  _SoundInsulationResult _calculate() {
-    final calculatedArea = _getCalculatedArea();
-
-    final inputs = <String, double>{
-      'area': calculatedArea,
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'inputMode': _inputMode.index.toDouble(),
+      'area': _area,
+      'length': _length,
+      'height': _height,
       'thickness': _thickness,
       'insulationType': _insulationType.index.toDouble(),
       'surfaceType': _surfaceType.index.toDouble(),
       'needGypsum': _needGypsum ? 1.0 : 0.0,
       'needProfile': _needProfile ? 1.0 : 0.0,
     };
+  }
 
-    final result = _calculator(inputs, []);
+  /// Использует domain layer для расчёта
+  _SoundInsulationResult _calculate() {
+    final result = _calculator(_buildCalculationInputs(), []);
     return _SoundInsulationResult.fromCalculatorResult(result.values);
   }
 
@@ -377,7 +374,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
                         style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w600),
                       ),
                       Text(
-                        '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                        '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                         style: CalculatorDesignSystem.headlineMedium.copyWith(
                           color: _accentColor,
                           fontWeight: FontWeight.bold,
@@ -501,3 +498,4 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
     );
   }
 }
+

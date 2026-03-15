@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_slab.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateSlab', () {
@@ -11,10 +12,7 @@ void main() {
     });
 
     test('calculates basic values correctly', () {
-      final inputs = {
-        'area': 100.0,
-        'perimeter': 10.0,
-      };
+      final inputs = {'area': 100.0, 'perimeter': 10.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -25,9 +23,7 @@ void main() {
 
     test('uses default values when not provided', () {
       final calculator = CalculateSlab();
-      final inputs = {
-        'area': 10.0,
-      };
+      final inputs = {'area': 10.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -38,9 +34,7 @@ void main() {
 
     test('preserves input values in result', () {
       final calculator = CalculateSlab();
-      final inputs = {
-        'area': 42.5,
-      };
+      final inputs = {'area': 42.5};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -50,9 +44,7 @@ void main() {
 
     test('handles price list correctly', () {
       final calculator = CalculateSlab();
-      final inputs = {
-        'area': 100.0,
-      };
+      final inputs = {'area': 100.0};
       final priceList = [
         const PriceItem(
           sku: 'test-1',
@@ -66,6 +58,22 @@ void main() {
       final result = calculator(inputs, priceList);
 
       expect(result.values, isNotEmpty);
+    });
+
+    test('throws exception for zero area', () {
+      final inputs = {'area': 0.0};
+      final emptyPriceList = <PriceItem>[];
+
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "площадь" должно быть больше нуля'),
+          ),
+        ),
+      );
     });
   });
 }

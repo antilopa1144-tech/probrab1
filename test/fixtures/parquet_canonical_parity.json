@@ -1,0 +1,100 @@
+{
+  "cases": [
+    {
+      "id": "room_straight_default_accessories",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "packArea": 1.892,
+        "layoutProfileId": 1,
+        "needUnderlayment": 1,
+        "needPlinth": 1,
+        "needGlue": 0,
+        "doorThresholds": 1
+      },
+      "expected": {
+        "formulaVersion": "parquet-canonical-v1",
+        "area": 20,
+        "perimeter": 18,
+        "wastePercent": 5,
+        "warningsCount": 0,
+        "materials": {
+          "packs": 12,
+          "underlaymentRolls": 3,
+          "plinthPieces": 8,
+          "thresholds": 1
+        },
+        "recScenario": {
+          "packageSize": 1.892,
+          "exactNeed": 21,
+          "purchaseQuantity": 22.704
+        }
+      }
+    },
+    {
+      "id": "room_diagonal_default_accessories",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "packArea": 1.892,
+        "layoutProfileId": 2,
+        "needUnderlayment": 1,
+        "needPlinth": 1,
+        "needGlue": 0,
+        "doorThresholds": 1
+      },
+      "expected": {
+        "formulaVersion": "parquet-canonical-v1",
+        "area": 20,
+        "perimeter": 18,
+        "wastePercent": 15,
+        "warningsCount": 1,
+        "materials": {
+          "packs": 13,
+          "underlaymentRolls": 3,
+          "plinthPieces": 8,
+          "thresholds": 1
+        },
+        "recScenario": {
+          "packageSize": 1.892,
+          "exactNeed": 23,
+          "purchaseQuantity": 24.596
+        }
+      }
+    },
+    {
+      "id": "area_herringbone_with_glue",
+      "inputs": {
+        "inputMode": 1,
+        "area": 18,
+        "perimeter": 18,
+        "packArea": 2,
+        "layoutProfileId": 3,
+        "needUnderlayment": 0,
+        "needPlinth": 1,
+        "needGlue": 1,
+        "doorThresholds": 2
+      },
+      "expected": {
+        "formulaVersion": "parquet-canonical-v1",
+        "area": 18,
+        "perimeter": 18,
+        "wastePercent": 20,
+        "warningsCount": 1,
+        "materials": {
+          "packs": 11,
+          "plinthPieces": 7,
+          "glueBuckets": 3,
+          "thresholds": 2
+        },
+        "recScenario": {
+          "packageSize": 2,
+          "exactNeed": 21.6,
+          "purchaseQuantity": 22
+        }
+      }
+    }
+  ]
+}

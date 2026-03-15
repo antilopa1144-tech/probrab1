@@ -40,10 +40,7 @@ void main() {
 
     test('calculates mortar volume', () {
       final calculator = CalculateBrickFacing();
-      final inputs = {
-        'area': 50.0,
-        'thickness': 0.5,
-      };
+      final inputs = {'area': 50.0, 'thickness': 0.5};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -54,10 +51,7 @@ void main() {
 
     test('calculates mortar for full brick', () {
       final calculator = CalculateBrickFacing();
-      final inputs = {
-        'area': 50.0,
-        'thickness': 1.0,
-      };
+      final inputs = {'area': 50.0, 'thickness': 1.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -68,11 +62,7 @@ void main() {
 
     test('calculates reinforcement length', () {
       final calculator = CalculateBrickFacing();
-      final inputs = {
-        'area': 50.0,
-        'perimeter': 30.0,
-        'wallHeight': 2.5,
-      };
+      final inputs = {'area': 50.0, 'perimeter': 30.0, 'wallHeight': 2.5};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -83,9 +73,7 @@ void main() {
 
     test('uses default values when missing', () {
       final calculator = CalculateBrickFacing();
-      final inputs = {
-        'area': 50.0,
-      };
+      final inputs = {'area': 50.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -96,14 +84,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateBrickFacing();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "площадь" должно быть больше нуля'),
+          ),
+        ),
       );
     });
   });

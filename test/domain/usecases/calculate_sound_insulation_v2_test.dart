@@ -37,14 +37,8 @@ void main() {
       });
 
       test('larger area needs more materials', () {
-        final smallInputs = {
-          'area': 10.0,
-          'insulationType': 0.0,
-        };
-        final largeInputs = {
-          'area': 50.0,
-          'insulationType': 0.0,
-        };
+        final smallInputs = {'area': 10.0, 'insulationType': 0.0};
+        final largeInputs = {'area': 50.0, 'insulationType': 0.0};
 
         final smallResult = calculator(smallInputs, emptyPriceList);
         final largeResult = calculator(largeInputs, emptyPriceList);
@@ -115,10 +109,7 @@ void main() {
 
     group('Waste percentages', () {
       test('insulation has 10% waste', () {
-        final inputs = {
-          'area': 100.0,
-          'insulationType': 0.0,
-        };
+        final inputs = {'area': 100.0, 'insulationType': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -127,10 +118,7 @@ void main() {
       });
 
       test('membrane has 15% waste', () {
-        final inputs = {
-          'area': 100.0,
-          'insulationType': 1.0,
-        };
+        final inputs = {'area': 100.0, 'insulationType': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -139,10 +127,7 @@ void main() {
       });
 
       test('gypsum has 10% waste', () {
-        final inputs = {
-          'area': 100.0,
-          'needGypsum': 1.0,
-        };
+        final inputs = {'area': 100.0, 'needGypsum': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -198,13 +183,16 @@ void main() {
       });
 
       test('ceiling needs more profile than wall', () {
-        final baseInputs = {
-          'area': 20.0,
-          'needProfile': 1.0,
-        };
+        final baseInputs = {'area': 20.0, 'needProfile': 1.0};
 
-        final wallResult = calculator({...baseInputs, 'surfaceType': 0.0}, emptyPriceList);
-        final ceilingResult = calculator({...baseInputs, 'surfaceType': 1.0}, emptyPriceList);
+        final wallResult = calculator({
+          ...baseInputs,
+          'surfaceType': 0.0,
+        }, emptyPriceList);
+        final ceilingResult = calculator({
+          ...baseInputs,
+          'surfaceType': 1.0,
+        }, emptyPriceList);
 
         expect(
           ceilingResult.values['profileLength'],
@@ -254,10 +242,7 @@ void main() {
 
     group('Optional materials', () {
       test('no gypsum when disabled', () {
-        final inputs = {
-          'area': 20.0,
-          'needGypsum': 0.0,
-        };
+        final inputs = {'area': 20.0, 'needGypsum': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -265,10 +250,7 @@ void main() {
       });
 
       test('no profile when disabled', () {
-        final inputs = {
-          'area': 20.0,
-          'needProfile': 0.0,
-        };
+        final inputs = {'area': 20.0, 'needProfile': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -310,9 +292,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not specified', () {
-        final inputs = <String, double>{
-          'area': 20.0,
-        };
+        final inputs = <String, double>{'area': 20.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -347,10 +327,7 @@ void main() {
       });
 
       test('handles minimum area', () {
-        final inputs = {
-          'area': 1.0,
-          'insulationType': 0.0,
-        };
+        final inputs = {'area': 1.0, 'insulationType': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -358,10 +335,7 @@ void main() {
       });
 
       test('handles maximum area', () {
-        final inputs = {
-          'area': 500.0,
-          'insulationType': 2.0,
-        };
+        final inputs = {'area': 500.0, 'insulationType': 2.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -374,9 +348,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero area', () {
-        final inputs = {
-          'area': 0.0,
-        };
+        final inputs = {'area': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -385,9 +357,7 @@ void main() {
       });
 
       test('throws exception for negative area', () {
-        final inputs = {
-          'area': -20.0,
-        };
+        final inputs = {'area': -20.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -405,10 +375,34 @@ void main() {
           'needProfile': 1.0,
         };
         final priceList = [
-          const PriceItem(sku: 'insulation', name: 'Минвата', price: 200.0, unit: 'м²', imageUrl: ''),
-          const PriceItem(sku: 'membrane', name: 'Мембрана', price: 150.0, unit: 'м²', imageUrl: ''),
-          const PriceItem(sku: 'gypsum', name: 'Гипсокартон', price: 350.0, unit: 'м²', imageUrl: ''),
-          const PriceItem(sku: 'profile', name: 'Профиль', price: 50.0, unit: 'м', imageUrl: ''),
+          const PriceItem(
+            sku: 'insulation',
+            name: 'Минвата',
+            price: 200.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'membrane',
+            name: 'Мембрана',
+            price: 150.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'gypsum',
+            name: 'Гипсокартон',
+            price: 350.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'profile',
+            name: 'Профиль',
+            price: 50.0,
+            unit: 'м',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -418,9 +412,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'area': 20.0,
-        };
+        final inputs = {'area': 20.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -499,6 +491,68 @@ void main() {
         expect(result.values['profileLength'], equals(0.0));
         // No hangers for floor
         expect(result.values['hangersCount'], equals(0.0));
+      });
+    });
+    group('screen path', () {
+      test('supports sound insulation dimensions mode via domain layer', () {
+        final inputs = {
+          'inputMode': 1.0,
+          'length': 5.0,
+          'height': 2.7,
+          'thickness': 50.0,
+          'insulationType': 0.0,
+          'surfaceType': 0.0,
+          'needGypsum': 1.0,
+          'needProfile': 1.0,
+        };
+
+        final result = calculator(inputs, emptyPriceList);
+
+        expect(result.values['area'], closeTo(13.5, 0.01));
+        expect(result.values['insulationArea'], closeTo(14.85, 0.1));
+        expect(result.values['gypsumArea'], closeTo(14.85, 0.1));
+        expect(result.values['profileLength'], closeTo(75.9, 0.1));
+      });
+
+      test(
+        'supports sound insulation ceiling dimensions mode with hangers',
+        () {
+          final inputs = {
+            'inputMode': 1.0,
+            'length': 4.0,
+            'height': 3.0,
+            'thickness': 50.0,
+            'insulationType': 2.0,
+            'surfaceType': 1.0,
+            'needGypsum': 1.0,
+            'needProfile': 1.0,
+          };
+
+          final result = calculator(inputs, emptyPriceList);
+
+          expect(result.values['area'], closeTo(12.0, 0.01));
+          expect(result.values['insulationArea'], closeTo(13.2, 0.1));
+          expect(result.values['membraneArea'], closeTo(13.8, 0.1));
+          expect(result.values['profileLength'], closeTo(99.0, 0.1));
+          expect(result.values['hangersCount'], equals(10.0));
+        },
+      );
+    });
+
+    group('validation messages', () {
+      test('area or dimensions requirement uses shared helper', () {
+        final calculator = CalculateSoundInsulationV2();
+
+        final error = calculator.validateInputs({
+          'area': 0.0,
+          'length': 0.0,
+          'height': 0.0,
+        });
+
+        expect(
+          error,
+          equals('Необходимо указать площадь или размеры помещения'),
+        );
       });
     });
   });

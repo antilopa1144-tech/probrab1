@@ -85,11 +85,7 @@ void main() {
     });
 
     test('calculates insulation area equal to total area', () {
-      final inputs = {
-        'area': 20.0,
-        'power': 150.0,
-        'type': 2.0,
-      };
+      final inputs = {'area': 20.0, 'power': 150.0, 'type': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -99,9 +95,7 @@ void main() {
     });
 
     test('uses default values when not provided', () {
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -114,16 +108,18 @@ void main() {
     });
 
     test('throws exception for zero area', () {
-      final inputs = {
-        'area': 0.0,
-        'power': 150.0,
-        'type': 2.0,
-      };
+      final inputs = {'area': 0.0, 'power': 150.0, 'type': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "площадь" должно быть больше нуля'),
+          ),
+        ),
       );
     });
 
@@ -157,11 +153,7 @@ void main() {
     });
 
     test('preserves area in results', () {
-      final inputs = {
-        'area': 25.5,
-        'power': 150.0,
-        'type': 2.0,
-      };
+      final inputs = {'area': 25.5, 'power': 150.0, 'type': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -183,6 +175,28 @@ void main() {
       // Мощность = 70 * 150 = 10500 Вт
       expect(result.values['usefulArea'], closeTo(70.0, 3.5));
       expect(result.values['totalPower'], closeTo(10500.0, 525.0));
+    });
+
+    group('validation messages', () {
+      test('power range uses shared helper', () {
+        final calculator = CalculateWarmFloor();
+
+        final error = calculator.validateInputs({
+          'area': 12.0,
+          'power': 250.0,
+          'type': 2.0,
+        });
+
+        expect(error, equals('Поле "мощность" должно быть от 80 до 200 Вт/м²'));
+      });
+
+      test('type range uses shared helper', () {
+        final calculator = CalculateWarmFloor();
+
+        final error = calculator.validateInputs({'area': 12.0, 'type': 3.0});
+
+        expect(error, equals('Поле "тип" должно быть от 1 до 2'));
+      });
     });
   });
 }

@@ -1,3 +1,35 @@
+abstract final class WeatherWorkTypeId {
+  static const String paint = 'paint';
+  static const String plaster = 'plaster';
+  static const String facade = 'facade';
+  static const String general = 'general';
+}
+
+abstract final class WeatherWorkTypeCatalog {
+  static String normalize(String workType) {
+    final raw = workType.trim().toLowerCase();
+    if (raw.isEmpty) return WeatherWorkTypeId.general;
+
+    if (_matchesAny(raw, const ['paint', 'покраска', 'краска'])) {
+      return WeatherWorkTypeId.paint;
+    }
+    if (_matchesAny(raw, const ['plaster', 'штукатурка', 'шпаклёвка', 'шпаклевка'])) {
+      return WeatherWorkTypeId.plaster;
+    }
+    if (_matchesAny(raw, const ['facade', 'фасад', 'наружн'])) {
+      return WeatherWorkTypeId.facade;
+    }
+    return WeatherWorkTypeId.general;
+  }
+
+  static bool _matchesAny(String raw, List<String> tokens) {
+    for (final token in tokens) {
+      if (raw.contains(token)) return true;
+    }
+    return false;
+  }
+}
+
 /// Погодные условия для работ.
 class WeatherConditions {
   final double temperature;
@@ -19,8 +51,9 @@ class WeatherConditions {
 class WeatherAdvice {
   final String workType;
   final bool canWork;
-  final String reason;
-  final List<String> recommendations;
+  final List<String> issueKeys;
+  final List<Map<String, String>> issueParams;
+  final List<String> recommendationKeys;
   final double? minTemperature;
   final double? maxTemperature;
   final double? maxHumidity;
@@ -29,8 +62,9 @@ class WeatherAdvice {
   const WeatherAdvice({
     required this.workType,
     required this.canWork,
-    required this.reason,
-    this.recommendations = const [],
+    this.issueKeys = const [],
+    this.issueParams = const [],
+    this.recommendationKeys = const [],
     this.minTemperature,
     this.maxTemperature,
     this.maxHumidity,
@@ -42,54 +76,66 @@ class WeatherAdvice {
     String workType,
     WeatherConditions conditions,
   ) {
-    final rules = _getWorkRules(workType);
-    
+    final normalizedWorkType = WeatherWorkTypeCatalog.normalize(workType);
+    final rules = _getWorkRules(normalizedWorkType);
+
     bool canWork = true;
-    final reasons = <String>[];
-    final recommendations = <String>[];
-    
-    // Проверка температуры
-    if (rules.minTemperature != null && 
+    final issueKeys = <String>[];
+    final issueParams = <Map<String, String>>[];
+    final recommendationKeys = <String>[];
+
+    if (rules.minTemperature != null &&
         conditions.temperature < rules.minTemperature!) {
       canWork = false;
-      reasons.add('Температура слишком низкая (${conditions.temperature}°C < ${rules.minTemperature}°C)');
+      issueKeys.add('weather.issue.temp_low');
+      issueParams.add({
+        'current': conditions.temperature.toStringAsFixed(1),
+        'limit': rules.minTemperature!.toStringAsFixed(1),
+      });
     }
-    
-    if (rules.maxTemperature != null && 
+
+    if (rules.maxTemperature != null &&
         conditions.temperature > rules.maxTemperature!) {
       canWork = false;
-      reasons.add('Температура слишком высокая (${conditions.temperature}°C > ${rules.maxTemperature}°C)');
+      issueKeys.add('weather.issue.temp_high');
+      issueParams.add({
+        'current': conditions.temperature.toStringAsFixed(1),
+        'limit': rules.maxTemperature!.toStringAsFixed(1),
+      });
     }
-    
-    // Проверка влажности
-    if (rules.maxHumidity != null && 
+
+    if (rules.maxHumidity != null &&
         conditions.humidity > rules.maxHumidity!) {
       canWork = false;
-      reasons.add('Влажность слишком высокая (${conditions.humidity}% > ${rules.maxHumidity}%)');
+      issueKeys.add('weather.issue.humidity_high');
+      issueParams.add({
+        'current': conditions.humidity.toStringAsFixed(0),
+        'limit': rules.maxHumidity!.toStringAsFixed(0),
+      });
     }
-    
-    // Проверка дождя
+
     if (rules.requiresDryWeather && conditions.isRaining) {
       canWork = false;
-      reasons.add('Требуется сухая погода, идёт дождь');
+      issueKeys.add('weather.issue.rain');
+      issueParams.add(const {});
     }
-    
-    // Проверка ветра
-    if (conditions.windSpeed > 15 && workType.contains('фасад')) {
-      recommendations.add('Сильный ветер - будьте осторожны при работе на высоте');
+
+    if (conditions.windSpeed > 15 && normalizedWorkType == WeatherWorkTypeId.facade) {
+      recommendationKeys.add('weather.recommendation.wind_high');
     }
-    
+
     if (!canWork) {
-      recommendations.add('Отложите работы до улучшения погодных условий');
+      recommendationKeys.add('weather.recommendation.wait');
     } else {
-      recommendations.addAll(rules.recommendations);
+      recommendationKeys.addAll(rules.recommendationKeys);
     }
-    
+
     return WeatherAdvice(
-      workType: workType,
+      workType: normalizedWorkType,
       canWork: canWork,
-      reason: reasons.isEmpty ? 'Условия подходят для работ' : reasons.join('; '),
-      recommendations: recommendations,
+      issueKeys: issueKeys,
+      issueParams: issueParams,
+      recommendationKeys: recommendationKeys,
       minTemperature: rules.minTemperature,
       maxTemperature: rules.maxTemperature,
       maxHumidity: rules.maxHumidity,
@@ -98,64 +144,64 @@ class WeatherAdvice {
   }
 
   static WeatherAdvice _getWorkRules(String workType) {
-    // Правила для разных типов работ
-    if (workType.contains('покраска') || workType.contains('краска')) {
-      return const WeatherAdvice(
-        workType: 'покраска',
+    switch (WeatherWorkTypeCatalog.normalize(workType)) {
+      case WeatherWorkTypeId.paint:
+        return const WeatherAdvice(
+          workType: WeatherWorkTypeId.paint,
         canWork: true,
-        reason: '',
-        recommendations: [
-          'Идеальная температура: 15-25°C',
-          'Избегайте прямых солнечных лучей',
-          'Влажность должна быть 40-60%',
+        recommendationKeys: [
+          'weather.recommendation.paint_ideal',
+          'weather.recommendation.paint_sun',
+          'weather.recommendation.paint_humidity',
         ],
         minTemperature: 5.0,
         maxTemperature: 30.0,
         maxHumidity: 80.0,
         requiresDryWeather: true,
       );
-    }
-    
-    if (workType.contains('штукатурка') || workType.contains('шпаклёвка')) {
-      return const WeatherAdvice(
-        workType: 'штукатурка',
+      case WeatherWorkTypeId.plaster:
+        return const WeatherAdvice(
+          workType: WeatherWorkTypeId.plaster,
         canWork: true,
-        reason: '',
-        recommendations: [
-          'Температура должна быть выше +5°C',
-          'Избегайте сквозняков',
-          'Дайте материалу высохнуть естественным путём',
+        recommendationKeys: [
+          'weather.recommendation.plaster_temp',
+          'weather.recommendation.plaster_draft',
+          'weather.recommendation.plaster_dry',
         ],
         minTemperature: 5.0,
         maxTemperature: 35.0,
         maxHumidity: 75.0,
         requiresDryWeather: false,
       );
-    }
-    
-    if (workType.contains('фасад') || workType.contains('наружн')) {
-      return const WeatherAdvice(
-        workType: 'фасад',
+      case WeatherWorkTypeId.facade:
+        return const WeatherAdvice(
+          workType: WeatherWorkTypeId.facade,
         canWork: true,
-        reason: '',
-        recommendations: [
-          'Работы при температуре +5°C и выше',
-          'Избегайте дождя и сильного ветра',
-          'Защитите материалы от влаги',
+        recommendationKeys: [
+          'weather.recommendation.facade_temp',
+          'weather.recommendation.facade_rain',
+          'weather.recommendation.facade_protect',
         ],
         minTemperature: 5.0,
         maxTemperature: 40.0,
         maxHumidity: 85.0,
         requiresDryWeather: true,
       );
+      case WeatherWorkTypeId.general:
+        return const WeatherAdvice(
+          workType: WeatherWorkTypeId.general,
+          canWork: true,
+          recommendationKeys: ['weather.recommendation.common'],
+          minTemperature: 0.0,
+          maxTemperature: 40.0,
+          requiresDryWeather: false,
+        );
     }
-    
-    // По умолчанию
+
     return const WeatherAdvice(
-      workType: 'общие',
+      workType: WeatherWorkTypeId.general,
       canWork: true,
-      reason: '',
-      recommendations: ['Проверьте погодные условия перед началом работ'],
+      recommendationKeys: ['weather.recommendation.common'],
       minTemperature: 0.0,
       maxTemperature: 40.0,
       requiresDryWeather: false,

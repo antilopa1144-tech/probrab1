@@ -96,8 +96,10 @@ void main() {
           'groutType': 0.0,
         }, []);
 
-        expect(resultDims.values['groutNeeded'],
-            closeTo(resultArea.values['groutNeeded']!, 0.01));
+        expect(
+          resultDims.values['groutNeeded'],
+          closeTo(resultArea.values['groutNeeded']!, 0.01),
+        );
       });
     });
 
@@ -120,25 +122,30 @@ void main() {
           'groutType': 0.0,
         }, []);
 
-        expect(result20.values['consumptionPerM2'],
-            greaterThan(result60.values['consumptionPerM2']!));
+        expect(
+          result20.values['consumptionPerM2'],
+          greaterThan(result60.values['consumptionPerM2']!),
+        );
       });
 
-      test('пользовательский размер tileSize=0: берётся tileWidth/tileHeight', () {
-        final result = useCase.calculate({
-          'inputMode': 1.0,
-          'area': 10.0,
-          'tileSize': 0.0,
-          'tileWidth': 40.0,
-          'tileHeight': 80.0,
-          'jointWidth': 3.0,
-          'jointDepth': 2.0,
-          'groutType': 0.0,
-        }, []);
+      test(
+        'пользовательский размер tileSize=0: берётся tileWidth/tileHeight',
+        () {
+          final result = useCase.calculate({
+            'inputMode': 1.0,
+            'area': 10.0,
+            'tileSize': 0.0,
+            'tileWidth': 40.0,
+            'tileHeight': 80.0,
+            'jointWidth': 3.0,
+            'jointDepth': 2.0,
+            'groutType': 0.0,
+          }, []);
 
-        expect(result.values['tileWidth'], equals(40.0));
-        expect(result.values['tileHeight'], equals(80.0));
-      });
+          expect(result.values['tileWidth'], equals(40.0));
+          expect(result.values['tileHeight'], equals(80.0));
+        },
+      );
 
       test('прямоугольная плитка tileSize=120 → 120×60', () {
         final result = useCase.calculate({
@@ -174,8 +181,10 @@ void main() {
           'groutType': 1.0,
         }, []);
 
-        expect(resultCement.values['groutNeeded'],
-            greaterThan(resultEpoxy.values['groutNeeded']!));
+        expect(
+          resultCement.values['groutNeeded'],
+          greaterThan(resultEpoxy.values['groutNeeded']!),
+        );
       });
 
       test('эпоксидная: вес мешка 2.5 кг', () {
@@ -222,8 +231,10 @@ void main() {
           'groutType': 2.0,
         }, []);
 
-        expect(resultEpoxy.values['groutNeeded'],
-            greaterThan(resultPU.values['groutNeeded']!));
+        expect(
+          resultEpoxy.values['groutNeeded'],
+          greaterThan(resultPU.values['groutNeeded']!),
+        );
       });
 
       test('полиуретановая: вес упаковки 2.0 кг', () {
@@ -252,10 +263,14 @@ void main() {
         final epoxy = useCase.calculate({...inputs, 'groutType': 1.0}, []);
         final pu = useCase.calculate({...inputs, 'groutType': 2.0}, []);
 
-        expect(cement.values['groutNeeded'],
-            greaterThan(epoxy.values['groutNeeded']!));
-        expect(epoxy.values['groutNeeded'],
-            greaterThan(pu.values['groutNeeded']!));
+        expect(
+          cement.values['groutNeeded'],
+          greaterThan(epoxy.values['groutNeeded']!),
+        );
+        expect(
+          epoxy.values['groutNeeded'],
+          greaterThan(pu.values['groutNeeded']!),
+        );
       });
     });
 
@@ -278,8 +293,10 @@ void main() {
           'groutType': 0.0,
         }, []);
 
-        expect(resultWide.values['consumptionPerM2'],
-            greaterThan(resultNarrow.values['consumptionPerM2']!));
+        expect(
+          resultWide.values['consumptionPerM2'],
+          greaterThan(resultNarrow.values['consumptionPerM2']!),
+        );
       });
 
       test('глубокий шов 4 мм: расход выше мелкого 1 мм', () {
@@ -300,8 +317,10 @@ void main() {
           'groutType': 0.0,
         }, []);
 
-        expect(resultDeep.values['consumptionPerM2'],
-            greaterThan(resultShallow.values['consumptionPerM2']!));
+        expect(
+          resultDeep.values['consumptionPerM2'],
+          greaterThan(resultShallow.values['consumptionPerM2']!),
+        );
       });
 
       test('расход линейно пропорционален площади', () {
@@ -322,8 +341,10 @@ void main() {
           'groutType': 0.0,
         }, []);
 
-        expect(result20.values['groutNeeded'],
-            closeTo(result10.values['groutNeeded']! * 2, 0.01));
+        expect(
+          result20.values['groutNeeded'],
+          closeTo(result10.values['groutNeeded']! * 2, 0.01),
+        );
       });
     });
 
@@ -359,11 +380,8 @@ void main() {
       });
 
       test('validateInputs: inputMode=1, area=0 → ошибка', () {
-        final error = useCase.validateInputs({
-          'inputMode': 1.0,
-          'area': 0.0,
-        });
-        expect(error, isNotNull);
+        final error = useCase.validateInputs({'inputMode': 1.0, 'area': 0.0});
+        expect(error, contains('Поле "площадь" должно быть больше нуля'));
       });
 
       test('validateInputs: inputMode=0, length=0 → ошибка', () {
@@ -372,14 +390,11 @@ void main() {
           'length': 0.0,
           'width': 5.0,
         });
-        expect(error, isNotNull);
+        expect(error, contains('Поле "длина" должно быть больше нуля'));
       });
 
       test('validateInputs: корректные данные → null', () {
-        final error = useCase.validateInputs({
-          'inputMode': 1.0,
-          'area': 10.0,
-        });
+        final error = useCase.validateInputs({'inputMode': 1.0, 'area': 10.0});
         expect(error, isNull);
       });
     });

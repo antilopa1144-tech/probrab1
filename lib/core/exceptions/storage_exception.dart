@@ -11,6 +11,9 @@ class StorageException extends AppException {
     this.operation,
     this.entityType,
     super.details,
+    super.userMessageKey,
+    super.userMessageParams,
+    super.fallbackUserMessage,
   });
 
   factory StorageException.notFound(String entityType, String id) {
@@ -20,6 +23,9 @@ class StorageException extends AppException {
       operation: 'read',
       entityType: entityType,
       details: id,
+      userMessageKey: 'error.message.storage_not_found',
+      userMessageParams: {'entityType': entityType},
+      fallbackUserMessage: 'Данные не найдены',
     );
   }
 
@@ -30,6 +36,9 @@ class StorageException extends AppException {
       operation: 'save',
       entityType: entityType,
       details: error,
+      userMessageKey: 'error.message.storage_save_error',
+      userMessageParams: {'entityType': entityType},
+      fallbackUserMessage: 'Не удалось сохранить данные',
     );
   }
 
@@ -40,6 +49,9 @@ class StorageException extends AppException {
       operation: 'delete',
       entityType: entityType,
       details: error,
+      userMessageKey: 'error.message.storage_delete_error',
+      userMessageParams: {'entityType': entityType},
+      fallbackUserMessage: 'Не удалось удалить данные',
     );
   }
 
@@ -50,6 +62,9 @@ class StorageException extends AppException {
       operation: 'read',
       entityType: entityType,
       details: error,
+      userMessageKey: 'error.message.storage_read_error',
+      userMessageParams: {'entityType': entityType},
+      fallbackUserMessage: 'Не удалось прочитать данные',
     );
   }
 
@@ -58,22 +73,8 @@ class StorageException extends AppException {
       'Ошибка базы данных: $message',
       code: 'DATABASE_ERROR',
       details: error,
+      userMessageKey: 'error.message.storage_database_error',
+      fallbackUserMessage: 'Ошибка при работе с данными',
     );
-  }
-
-  @override
-  String getUserMessage() {
-    switch (code) {
-      case 'NOT_FOUND':
-        return 'Данные не найдены';
-      case 'SAVE_ERROR':
-        return 'Не удалось сохранить данные';
-      case 'DELETE_ERROR':
-        return 'Не удалось удалить данные';
-      case 'READ_ERROR':
-        return 'Не удалось прочитать данные';
-      default:
-        return 'Ошибка при работе с данными';
-    }
   }
 }

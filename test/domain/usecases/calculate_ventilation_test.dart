@@ -22,9 +22,7 @@ void main() {
 
     test('calculates air exchange', () {
       final calculator = CalculateVentilation();
-      final inputs = {
-        'area': 30.0,
-      };
+      final inputs = {'area': 30.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -35,10 +33,7 @@ void main() {
 
     test('calculates ducts needed', () {
       final calculator = CalculateVentilation();
-      final inputs = {
-        'area': 30.0,
-        'rooms': 3.0,
-      };
+      final inputs = {'area': 30.0, 'rooms': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -49,10 +44,7 @@ void main() {
 
     test('calculates grilles needed', () {
       final calculator = CalculateVentilation();
-      final inputs = {
-        'area': 30.0,
-        'rooms': 3.0,
-      };
+      final inputs = {'area': 30.0, 'rooms': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -63,10 +55,7 @@ void main() {
 
     test('calculates fans needed', () {
       final calculator = CalculateVentilation();
-      final inputs = {
-        'area': 30.0,
-        'rooms': 3.0,
-      };
+      final inputs = {'area': 30.0, 'rooms': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -77,10 +66,7 @@ void main() {
 
     test('calculates duct length', () {
       final calculator = CalculateVentilation();
-      final inputs = {
-        'area': 30.0,
-        'rooms': 3.0,
-      };
+      final inputs = {'area': 30.0, 'rooms': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -91,9 +77,7 @@ void main() {
 
     test('uses default values when missing', () {
       final calculator = CalculateVentilation();
-      final inputs = {
-        'area': 30.0,
-      };
+      final inputs = {'area': 30.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -106,14 +90,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateVentilation();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле \"площадь\" должно быть больше нуля'),
+          ),
+        ),
       );
     });
   });

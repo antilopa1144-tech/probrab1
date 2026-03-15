@@ -25,10 +25,7 @@ void main() {
 
     test('calculates guide length', () {
       final calculator = CalculateRailCeiling();
-      final inputs = {
-        'area': 20.0,
-        'perimeter': 18.0,
-      };
+      final inputs = {'area': 20.0, 'perimeter': 18.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -39,10 +36,7 @@ void main() {
 
     test('calculates hangers needed', () {
       final calculator = CalculateRailCeiling();
-      final inputs = {
-        'area': 20.0,
-        'perimeter': 18.0,
-      };
+      final inputs = {'area': 20.0, 'perimeter': 18.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -53,10 +47,7 @@ void main() {
 
     test('calculates corner length', () {
       final calculator = CalculateRailCeiling();
-      final inputs = {
-        'area': 20.0,
-        'perimeter': 18.0,
-      };
+      final inputs = {'area': 20.0, 'perimeter': 18.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -67,9 +58,7 @@ void main() {
 
     test('estimates perimeter when missing', () {
       final calculator = CalculateRailCeiling();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -80,9 +69,7 @@ void main() {
 
     test('uses default rail dimensions when missing', () {
       final calculator = CalculateRailCeiling();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -93,14 +80,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateRailCeiling();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле \"площадь\" должно быть больше нуля'),
+          ),
+        ),
       );
     });
   });

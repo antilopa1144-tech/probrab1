@@ -16,8 +16,7 @@ void main() {
     group('validation', () {
       test('returns error for zero area', () {
         final error = calculator.validateInputs({'area': 0.0});
-        expect(error, isNotNull);
-        expect(error, contains('больше нуля'));
+        expect(error, equals('Поле "площадь" должно быть больше нуля'));
       });
 
       test('returns error for negative area', () {
@@ -27,8 +26,7 @@ void main() {
 
       test('returns error for area exceeding maximum', () {
         final error = calculator.validateInputs({'area': 15000.0});
-        expect(error, isNotNull);
-        expect(error, contains('максимум'));
+        expect(error, equals('Поле "площадь" должно быть не больше 10000'));
       });
 
       test('returns error for invalid construction type', () {
@@ -36,8 +34,7 @@ void main() {
           'area': 20.0,
           'construction_type': 5.0,
         });
-        expect(error, isNotNull);
-        expect(error, contains('тип конструкции'));
+        expect(error, equals('Поле "тип конструкции" должно быть от 1 до 3'));
       });
 
       test('returns null for valid inputs', () {
@@ -256,7 +253,13 @@ void main() {
       test('throws for zero area via calculate', () {
         expect(
           () => calculator({'area': 0.0}, emptyPriceList),
-          throwsA(isA<CalculationException>()),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Поле "площадь" должно быть больше нуля'),
+            ),
+          ),
         );
       });
     });

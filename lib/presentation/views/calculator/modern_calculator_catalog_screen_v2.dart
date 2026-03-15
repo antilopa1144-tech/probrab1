@@ -1180,7 +1180,7 @@ class _MikhalychPromoCard extends ConsumerWidget {
       backgroundColor: Colors.transparent,
       builder: (sheetContext) {
         return MikhalychBottomSheet(
-          calculatorName: 'Главный экран',
+          calculatorName: AppLocalizations.of(context).translate('home.main_screen'),
           data: const {},
           accentColor: const Color(0xFFE0823D),
           calculationHistory: calculationHistory,

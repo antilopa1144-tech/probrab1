@@ -224,9 +224,9 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
     final current = (_wallThickness * 100).round();
 
     if (current < recommended) {
-      return '★ Рекомендуется от $recommended см';
+      return _loc.translate('basement.wall_thickness_recommended', {'value': recommended.toString(), 'unit': _loc.translate('room.unit.cm')});
     } else if (current == recommended) {
-      return '★ Оптимально для ${_loc.translate(_basementType.nameKey).toLowerCase()}';
+      return _loc.translate('basement.wall_thickness_optimal', {'value': _loc.translate(_basementType.nameKey).toLowerCase()});
     }
     return '';
   }

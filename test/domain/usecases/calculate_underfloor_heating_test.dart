@@ -284,7 +284,10 @@ void main() {
         // Демпферная лента: 20 * 1.1 = 22 м
         final expectedPerimeter = sqrt(25.0) * 4;
         expect(result.values['perimeter'], closeTo(expectedPerimeter, 0.1));
-        expect(result.values['damperTapeLength'], closeTo(expectedPerimeter * 1.1, 0.5));
+        expect(
+          result.values['damperTapeLength'],
+          closeTo(expectedPerimeter * 1.1, 0.5),
+        );
       });
 
       test('скобы зависят от площади обогрева', () {
@@ -323,11 +326,20 @@ void main() {
         }, emptyPriceList);
 
         // heatingArea: 9.0 vs 12.75
-        expect(result60.values['heatingArea'], lessThan(result85.values['heatingArea']!));
+        expect(
+          result60.values['heatingArea'],
+          lessThan(result85.values['heatingArea']!),
+        );
         // matArea follows heatingArea
-        expect(result60.values['matArea'], lessThan(result85.values['matArea']!));
+        expect(
+          result60.values['matArea'],
+          lessThan(result85.values['matArea']!),
+        );
         // totalPower follows heatingArea
-        expect(result60.values['totalPower'], lessThan(result85.values['totalPower']!));
+        expect(
+          result60.values['totalPower'],
+          lessThan(result85.values['totalPower']!),
+        );
       });
 
       test('увеличение % → увеличение длины кабеля (электрокабель)', () {
@@ -347,7 +359,10 @@ void main() {
           'usefulAreaPercent': 90.0,
         }, emptyPriceList);
 
-        expect(result50.values['cableLength'], lessThan(result90.values['cableLength']!));
+        expect(
+          result50.values['cableLength'],
+          lessThan(result90.values['cableLength']!),
+        );
       });
 
       test('увеличение % → увеличение длины трубы (водяной)', () {
@@ -367,8 +382,14 @@ void main() {
           'usefulAreaPercent': 90.0,
         }, emptyPriceList);
 
-        expect(result50.values['pipeLength'], lessThan(result90.values['pipeLength']!));
-        expect(result50.values['bracketsCount'], lessThan(result90.values['bracketsCount']!));
+        expect(
+          result50.values['pipeLength'],
+          lessThan(result90.values['pipeLength']!),
+        );
+        expect(
+          result50.values['bracketsCount'],
+          lessThan(result90.values['bracketsCount']!),
+        );
       });
 
       test('% НЕ влияет на теплоизоляцию и стяжку (полная площадь)', () {
@@ -389,10 +410,19 @@ void main() {
         }, emptyPriceList);
 
         // Insulation and screed use full area, not heatingArea
-        expect(result50.values['insulationArea'], equals(result90.values['insulationArea']));
-        expect(result50.values['screedVolume'], equals(result90.values['screedVolume']));
+        expect(
+          result50.values['insulationArea'],
+          equals(result90.values['insulationArea']),
+        );
+        expect(
+          result50.values['screedVolume'],
+          equals(result90.values['screedVolume']),
+        );
         // Damper tape also doesn't depend on usefulAreaPercent (based on perimeter)
-        expect(result50.values['damperTapeLength'], equals(result90.values['damperTapeLength']));
+        expect(
+          result50.values['damperTapeLength'],
+          equals(result90.values['damperTapeLength']),
+        );
       });
 
       test('% НЕ влияет на отражающую подложку ИК-плёнки (полная площадь)', () {
@@ -423,9 +453,7 @@ void main() {
     group('Значения по умолчанию', () {
       test('при отсутствии параметров — электромат, жилая, 72%', () {
         final calculator = CalculateUnderfloorHeating();
-        final inputs = {
-          'area': 10.0,
-        };
+        final inputs = {'area': 10.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -439,10 +467,7 @@ void main() {
     group('Общие материалы', () {
       test('термостат, датчик, гофротруба для всех типов', () {
         final calculator = CalculateUnderfloorHeating();
-        final inputs = {
-          'area': 15.0,
-          'systemType': 1.0,
-        };
+        final inputs = {'area': 15.0, 'systemType': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -455,11 +480,7 @@ void main() {
     group('Теплоизоляция', () {
       test('опциональна для электрических систем', () {
         final calculator = CalculateUnderfloorHeating();
-        final inputs = {
-          'area': 20.0,
-          'systemType': 1.0,
-          'addInsulation': 1.0,
-        };
+        final inputs = {'area': 20.0, 'systemType': 1.0, 'addInsulation': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -468,11 +489,7 @@ void main() {
 
       test('обязательна для водяной системы (игнорирует addInsulation)', () {
         final calculator = CalculateUnderfloorHeating();
-        final inputs = {
-          'area': 20.0,
-          'systemType': 4.0,
-          'addInsulation': 0.0,
-        };
+        final inputs = {'area': 20.0, 'systemType': 4.0, 'addInsulation': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -483,9 +500,7 @@ void main() {
     group('Граничные условия', () {
       test('нулевая площадь → исключение', () {
         final calculator = CalculateUnderfloorHeating();
-        final inputs = {
-          'area': 0.0,
-        };
+        final inputs = {'area': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -495,11 +510,7 @@ void main() {
 
       test('минимальная площадь 0.1 м² — расчёт без ошибок', () {
         final calculator = CalculateUnderfloorHeating();
-        final inputs = {
-          'area': 0.1,
-          'systemType': 1.0,
-          'roomType': 2.0,
-        };
+        final inputs = {'area': 0.1, 'systemType': 1.0, 'roomType': 2.0};
 
         final result = calculator(inputs, emptyPriceList);
         expect(result.values['area'], closeTo(0.1, 0.01));
@@ -523,6 +534,23 @@ void main() {
         expect(result.values['pipeLength'], greaterThan(500));
         // Много контуров
         expect(result.values['loopCount'], greaterThan(5));
+      });
+    });
+
+    group('validation messages', () {
+      test('area or room dimensions requirement uses shared helper', () {
+        final calculator = CalculateUnderfloorHeating();
+
+        final error = calculator.validateInputs({
+          'area': 0.0,
+          'length': 0.0,
+          'width': 0.0,
+        });
+
+        expect(
+          error,
+          equals('Необходимо указать площадь или размеры помещения'),
+        );
       });
     });
   });

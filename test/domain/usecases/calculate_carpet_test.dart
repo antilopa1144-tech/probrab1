@@ -24,25 +24,21 @@ void main() {
 
     test('calculates tape length', () {
       final calculator = CalculateCarpet();
-      final inputs = {
-        'area': 25.0,
-        'perimeter': 20.0,
-      };
+      final inputs = {'area': 25.0, 'perimeter': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
       // Скотч: 20 * 1.2 = 24 м (check if field exists)
-      if (result.values.containsKey('tapeLength') && result.values['tapeLength'] != null) {
+      if (result.values.containsKey('tapeLength') &&
+          result.values['tapeLength'] != null) {
         expect(result.values['tapeLength'], closeTo(24.0, 2.0));
       }
     });
 
     test('calculates underlay area', () {
       final calculator = CalculateCarpet();
-      final inputs = {
-        'area': 25.0,
-      };
+      final inputs = {'area': 25.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -53,26 +49,22 @@ void main() {
 
     test('estimates perimeter when missing', () {
       final calculator = CalculateCarpet();
-      final inputs = {
-        'area': 25.0,
-      };
+      final inputs = {'area': 25.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
       // Периметр должен быть рассчитан
       expect(result.values['plinthLength'], greaterThan(0));
-      if (result.values.containsKey('tapeLength') && result.values['tapeLength'] != null) {
+      if (result.values.containsKey('tapeLength') &&
+          result.values['tapeLength'] != null) {
         expect(result.values['tapeLength'], greaterThan(0));
       }
     });
 
     test('uses provided perimeter', () {
       final calculator = CalculateCarpet();
-      final inputs = {
-        'area': 25.0,
-        'perimeter': 20.0,
-      };
+      final inputs = {'area': 25.0, 'perimeter': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -83,9 +75,7 @@ void main() {
 
     test('uses default roll dimensions when missing', () {
       final calculator = CalculateCarpet();
-      final inputs = {
-        'area': 25.0,
-      };
+      final inputs = {'area': 25.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -96,14 +86,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateCarpet();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "площадь" должно быть больше нуля'),
+          ),
+        ),
       );
     });
   });

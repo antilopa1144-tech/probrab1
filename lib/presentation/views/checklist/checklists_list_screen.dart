@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/checklist.dart';
 import '../../providers/checklist_provider.dart';
 import 'checklist_details_screen.dart';
@@ -12,11 +13,12 @@ class ChecklistsListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final checklistsAsync = ref.watch(allChecklistsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Чек-листы'),
+        title: Text(loc.translate('checklist.title')),
       ),
       body: checklistsAsync.when(
         loading: () => const Center(
@@ -33,7 +35,7 @@ class ChecklistsListScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Ошибка загрузки',
+                loc.translate('checklist.loading_error'),
                 style: theme.textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
@@ -46,7 +48,7 @@ class ChecklistsListScreen extends ConsumerWidget {
               FilledButton.icon(
                 onPressed: () => ref.invalidate(allChecklistsProvider),
                 icon: const Icon(Icons.refresh),
-                label: const Text('Повторить'),
+                label: Text(loc.translate('button.retry')),
               ),
             ],
           ),
@@ -81,7 +83,7 @@ class ChecklistsListScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateChecklistSheet(context),
         icon: const Icon(Icons.add_rounded),
-        label: const Text('Создать'),
+        label: Text(loc.translate('button.create')),
       ),
     );
   }
@@ -94,7 +96,6 @@ class ChecklistsListScreen extends ConsumerWidget {
       builder: (context) => const CreateChecklistBottomSheet(),
     );
 
-    // Если чек-лист создан, открываем его детали
     if (result != null && context.mounted) {
       Navigator.push(
         context,
@@ -120,6 +121,7 @@ class _ChecklistCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final items = checklist.items.toList();
     final completedCount = items.where((i) => i.isCompleted).length;
@@ -166,8 +168,11 @@ class _ChecklistCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           totalCount == 0
-                              ? 'Нет задач'
-                              : '$completedCount из $totalCount выполнено',
+                              ? loc.translate('checklist.no_tasks')
+                              : loc
+                                  .translate('checklist.completed_status')
+                                  .replaceFirst('{completed}', '$completedCount')
+                                  .replaceFirst('{total}', '$totalCount'),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -234,6 +239,7 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     return Center(
@@ -256,14 +262,14 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'Нет чек-листов',
+              loc.translate('checklist.empty_list'),
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              'Создайте чек-лист для отслеживания\nзадач вашего ремонта',
+              loc.translate('checklist.empty_list_hint'),
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
@@ -273,7 +279,7 @@ class _EmptyState extends StatelessWidget {
             FilledButton.icon(
               onPressed: onCreatePressed,
               icon: const Icon(Icons.add_rounded),
-              label: const Text('Создать чек-лист'),
+              label: Text(loc.translate('checklist.create_checklist')),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,

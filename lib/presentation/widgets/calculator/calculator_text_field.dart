@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
 
@@ -276,13 +277,14 @@ class RoomDimensionsFields extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: CalculatorTextField(
-                label: 'Длина (м)',
+                label: '${loc.translate('input.length')} (${loc.translate('unit.meters')})',
                 value: length,
                 onChanged: onLengthChanged,
                 icon: Icons.straighten,
@@ -294,7 +296,7 @@ class RoomDimensionsFields extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: CalculatorTextField(
-                label: 'Ширина (м)',
+                label: '${loc.translate('input.width')} (${loc.translate('unit.meters')})',
                 value: width,
                 onChanged: onWidthChanged,
                 icon: Icons.straighten,
@@ -307,7 +309,7 @@ class RoomDimensionsFields extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         CalculatorTextField(
-          label: 'Высота потолка (м)',
+          label: '${loc.translate('input.height')} (${loc.translate('unit.meters')})',
           value: height,
           onChanged: onHeightChanged,
           icon: Icons.height,
@@ -366,3 +368,4 @@ class CalculatorTextFieldWithPresets extends StatelessWidget {
     );
   }
 }
+

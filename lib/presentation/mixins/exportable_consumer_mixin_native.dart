@@ -149,7 +149,7 @@ mixin ExportableConsumerMixin<T extends ConsumerStatefulWidget> on ConsumerState
           IconButton(
             icon: const Icon(Icons.qr_code_2_rounded),
             onPressed: shareAsQrCode,
-            tooltip: 'Поделиться QR-кодом',
+            tooltip: loc.translate('common.show_qr_to_scan'),
           ),
       ];
 }

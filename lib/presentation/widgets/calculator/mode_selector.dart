@@ -41,7 +41,7 @@ class ModeSelector extends StatelessWidget {
     required this.onSelect,
     this.accentColor,
     this.height = 40,
-  }) : assert(options.length >= 2, 'Должно быть минимум 2 опции');
+  }) : assert(options.length >= 2);
 
   @override
   Widget build(BuildContext context) {
@@ -312,3 +312,4 @@ class ModeSelectorVertical extends StatelessWidget {
     );
   }
 }
+

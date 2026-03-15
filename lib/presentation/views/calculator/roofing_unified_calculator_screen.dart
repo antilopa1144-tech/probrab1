@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../../data/models/price_item.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_unified_roofing.dart';
 import '../../mixins/exportable_mixin.dart';
@@ -35,6 +34,7 @@ class RoofingUnifiedCalculatorScreen extends StatefulWidget {
 class _RoofingUnifiedCalculatorScreenState
     extends State<RoofingUnifiedCalculatorScreen> with ExportableMixin {
   bool _isDark = false;
+  final CalculateUnifiedRoofing _calculator = CalculateUnifiedRoofing();
 
   @override
   AppLocalizations get loc => _loc;
@@ -68,103 +68,58 @@ class _RoofingUnifiedCalculatorScreenState
     _result = _calculate();
   }
 
+  T _enumFromStoredIndex<T>(List<T> values, double? rawValue, T fallback) {
+    if (rawValue == null) return fallback;
+    final index = rawValue.round();
+    if (index < 0 || index >= values.length) return fallback;
+    return values[index];
+  }
+
   void _applyInitialInputs() {
     final initial = widget.initialInputs;
     if (initial == null) return;
 
-    if (initial['area'] != null) {
-      _area = initial['area']!.clamp(_minArea, _maxArea);
-    }
-    if (initial['slope'] != null) {
-      _slope = initial['slope']!.clamp(_minSlope, _maxSlope);
-    }
-    if (initial['ridgeLength'] != null) {
-      _ridgeLength = initial['ridgeLength']!;
-    }
-    if (initial['valleyLength'] != null) {
-      _valleyLength = initial['valleyLength']!;
-    }
-    if (initial['sheetWidth'] != null) {
-      _sheetWidth = initial['sheetWidth']!;
-    }
-    if (initial['sheetLength'] != null) {
-      _sheetLength = initial['sheetLength']!;
-    }
+    _inputMode = _enumFromStoredIndex(RoofingUnifiedInputMode.values, initial['inputMode'], _inputMode);
+    if (initial['area'] != null) _area = initial['area']!.clamp(_minArea, _maxArea);
+    if (initial['length'] != null) _length = initial['length']!.clamp(1.0, 100.0);
+    if (initial['width'] != null) _width = initial['width']!.clamp(1.0, 100.0);
+    if (initial['slope'] != null) _slope = initial['slope']!.clamp(_minSlope, _maxSlope);
+    if (initial['ridgeLength'] != null) _ridgeLength = initial['ridgeLength']!;
+    if (initial['valleyLength'] != null) _valleyLength = initial['valleyLength']!;
+    if (initial['sheetWidth'] != null) _sheetWidth = initial['sheetWidth']!;
+    if (initial['sheetLength'] != null) _sheetLength = initial['sheetLength']!;
     if (initial['roofingType'] != null) {
       final raw = initial['roofingType']!.round().clamp(0, 5);
       _roofingType = RoofingType.values[raw];
     }
   }
 
-  
-
-  /// Возвращает рассчитанную площадь в зависимости от режима ввода
-
-
-  double _getCalculatedArea() {
-
-
-    if (_inputMode == RoofingUnifiedInputMode.manual) return _area;
-
-
-    return _length * _width;
-
-
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'inputMode': _inputMode.index.toDouble(),
+      'area': _area,
+      'length': _length,
+      'width': _width,
+      'slope': _slope,
+      'ridgeLength': _ridgeLength,
+      'valleyLength': _valleyLength,
+      'sheetWidth': _sheetWidth,
+      'sheetLength': _sheetLength,
+      'roofingType': _roofingType.index.toDouble(),
+    };
   }
 
-
-
   _RoofingResult _calculate() {
-    final slopeFactor = 1 / cos(_slope * pi / 180);
-    final realArea = _area * slopeFactor;
-    final ridgeLength = _ridgeLength > 0 ? _ridgeLength : sqrt(_area);
-
-    int sheetsNeeded = 0;
-    int packsNeeded = 0;
-    int tilesNeeded = 0;
-    final waterproofingArea = realArea * 1.1;
-    final double battensLength;
-
-    switch (_roofingType) {
-      case RoofingType.metalTile:
-        final effectiveWidth = _sheetWidth * 0.92;
-        final sheetArea = effectiveWidth * _sheetLength;
-        sheetsNeeded = (realArea / sheetArea * 1.1).ceil();
-        battensLength = realArea / 0.35 * 1.05;
-        break;
-      case RoofingType.softRoofing:
-        packsNeeded = (realArea / 3.0 * 1.1).ceil();
-        battensLength = 0; // OSB вместо обрешетки
-        break;
-      case RoofingType.profiledSheet:
-        final effectiveWidth = _sheetWidth * 0.95;
-        final sheetArea = effectiveWidth * _sheetLength;
-        sheetsNeeded = (realArea / sheetArea * 1.1).ceil();
-        battensLength = realArea / 0.5 * 1.05;
-        break;
-      case RoofingType.ondulin:
-        sheetsNeeded = (realArea / 1.6 * 1.15).ceil();
-        battensLength = realArea / 0.45 * 1.05;
-        break;
-      case RoofingType.slate:
-        sheetsNeeded = (realArea / 1.5 * 1.1).ceil();
-        battensLength = realArea / 0.5 * 1.05;
-        break;
-      case RoofingType.ceramicTile:
-        tilesNeeded = (realArea * 12 * 1.05).ceil();
-        battensLength = realArea / 0.32 * 1.05;
-        break;
-    }
-
+    final values = _calculator(_buildCalculationInputs(), <PriceItem>[]).values;
     return _RoofingResult(
-      area: _area,
-      realArea: realArea,
-      ridgeLength: ridgeLength,
-      sheetsNeeded: sheetsNeeded,
-      packsNeeded: packsNeeded,
-      tilesNeeded: tilesNeeded,
-      waterproofingArea: waterproofingArea,
-      battensLength: battensLength,
+      area: values['area'] ?? 0,
+      realArea: values['realArea'] ?? 0,
+      ridgeLength: values['ridgeLength'] ?? 0,
+      sheetsNeeded: (values['sheetsNeeded'] ?? 0).round(),
+      packsNeeded: (values['packsNeeded'] ?? 0).round(),
+      tilesNeeded: (values['tilesNeeded'] ?? 0).round(),
+      waterproofingArea: values['waterproofingArea'] ?? values['underlaymentArea'] ?? 0,
+      battensLength: values['battensLength'] ?? 0,
     );
   }
 
@@ -441,7 +396,7 @@ class _RoofingUnifiedCalculatorScreenState
                         ),
                       ),
                       Text(
-                        '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                        '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                         style: CalculatorDesignSystem.headlineMedium.copyWith(
                           color: accentColor,
                           fontWeight: FontWeight.bold,
@@ -821,3 +776,5 @@ class _RoofingResult {
     required this.battensLength,
   });
 }
+
+

@@ -1,40 +1,12 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../../data/models/price_item.dart';
+import '../../../domain/usecases/calculate_3d_panels.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-
-/// Вспомогательный класс для работы с константами калькулятора 3D панелей
-class _PanelsConstants {
-  final CalculatorConstants? _data;
-
-  const _PanelsConstants([this._data]);
-
-  double _getDouble(String constantKey, String valueKey, double defaultValue) {
-    if (_data == null) return defaultValue;
-    final constant = _data.constants[constantKey];
-    if (constant == null) return defaultValue;
-    final value = constant.values[valueKey];
-    if (value is double) return value;
-    if (value is int) return value.toDouble();
-    if (value is num) return value.toDouble();
-    return defaultValue;
-  }
-
-  // Margins
-  double get panelsMargin => _getDouble('margins', 'panels_margin', 1.1);
-
-  // Materials consumption
-  double get gluePerM2 => _getDouble('materials_consumption', 'glue_per_m2', 5.0);
-  double get primerPerM2 => _getDouble('materials_consumption', 'primer_per_m2', 0.18);
-  double get puttyPerM2 => _getDouble('materials_consumption', 'putty_per_m2', 1.0);
-  double get paintPerM2 => _getDouble('materials_consumption', 'paint_per_m2', 0.24);
-  double get varnishPerM2 => _getDouble('materials_consumption', 'varnish_per_m2', 0.08);
-}
 
 enum PanelsInputMode { byArea, byDimensions }
 
@@ -100,76 +72,63 @@ class _ThreeDPanelsCalculatorScreenState
   late _PanelsResult _result;
   late AppLocalizations _loc;
 
-  // Константы калькулятора (null = используются hardcoded defaults)
-  late final _PanelsConstants _constants;
+  final Calculate3dPanels _calculator = Calculate3dPanels();
 
   @override
   void initState() {
     super.initState();
-    _constants = const _PanelsConstants(null);
     _applyInitialInputs();
     _result = _calculate();
+  }
+
+  T _enumFromStoredIndex<T>(List<T> values, double? rawValue, T fallback) {
+    if (rawValue == null) return fallback;
+    final index = rawValue.round();
+    if (index < 0 || index >= values.length) return fallback;
+    return values[index];
   }
 
   void _applyInitialInputs() {
     final initial = widget.initialInputs;
     if (initial == null) return;
 
-    if (initial['area'] != null) {
-      _area = initial['area']!.clamp(3.0, 150.0);
-    }
-    if (initial['length'] != null) {
-      _length = initial['length']!.clamp(1.0, 12.0);
-    }
-    if (initial['height'] != null) {
-      _height = initial['height']!.clamp(2.0, 4.0);
-    }
+    _inputMode = _enumFromStoredIndex(PanelsInputMode.values, initial['inputMode'], _inputMode);
+    if (initial['area'] != null) _area = initial['area']!.clamp(3.0, 150.0);
+    if (initial['length'] != null) _length = initial['length']!.clamp(1.0, 12.0);
+    if (initial['height'] != null) _height = initial['height']!.clamp(2.0, 4.0);
     if (initial['panelSize'] != null) {
       final raw = initial['panelSize']!;
       _panelSize = (raw < 5 ? raw * 100 : raw).clamp(30.0, 100.0);
     }
-    if (initial['paintable'] != null) {
-      _paintable = initial['paintable']!.round() == 1;
-    }
+    if (initial['paintable'] != null) _paintable = initial['paintable']!.round() == 1;
+    if (initial['withVarnish'] != null) _withVarnish = initial['withVarnish']!.round() == 1;
   }
 
-  double _getCalculatedArea() {
-    if (_inputMode == PanelsInputMode.byArea) return _area;
-    return _length * _height;
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'inputMode': _inputMode.index.toDouble(),
+      'area': _area,
+      'length': _length,
+      'height': _height,
+      'panelSize': _panelSize,
+      'paintable': _paintable ? 1.0 : 0.0,
+      'withVarnish': _withVarnish ? 1.0 : 0.0,
+    };
   }
 
   _PanelsResult _calculate() {
-    final area = _getCalculatedArea();
-
-    // Размер панели в м²
-    final panelArea = (_panelSize / 100) * (_panelSize / 100);
-
-    // Количество панелей с запасом из констант
-    final panelsCount = (area / panelArea * _constants.panelsMargin).ceil();
-
-    // Материалы по нормативам из констант
-    final glueKg = area * _constants.gluePerM2;
-    final primerLiters = area * _constants.primerPerM2;
-    final puttyKg = area * _constants.puttyPerM2;
-    final paintLiters = _paintable ? area * _constants.paintPerM2 : 0.0;
-    final varnishLiters = _withVarnish ? area * _constants.varnishPerM2 : 0.0;
-
-    // Периметр для молдингов
-    final perimeter = _inputMode == PanelsInputMode.byDimensions
-        ? (_length + _height) * 2
-        : 4 * sqrt(area);
-
+    final result = _calculator(_buildCalculationInputs(), <PriceItem>[]).values;
     return _PanelsResult(
-      area: area,
-      panelsCount: panelsCount,
-      panelSizeCm: _panelSize,
-      panelArea: panelArea,
-      glueKg: glueKg,
-      primerLiters: primerLiters,
-      puttyKg: puttyKg,
-      paintLiters: paintLiters,
-      varnishLiters: varnishLiters,
-      moldingLength: perimeter,
+      area: result['area'] ?? 0,
+      panelsCount: (result['panelsCount'] ?? result['panelsNeeded'] ?? 0).round(),
+      panelSizeCm: result['panelSize'] ?? _panelSize,
+      panelArea: result['panelArea'] ?? ((_panelSize / 100) * (_panelSize / 100)),
+      glueKg: result['glueKg'] ?? result['glueNeeded'] ?? 0,
+      primerLiters: result['primerLiters'] ?? result['primerNeeded'] ?? 0,
+      puttyKg: result['puttyKg'] ?? result['puttyNeeded'] ?? 0,
+      paintLiters: result['paintLiters'] ?? result['paintNeeded'] ?? 0,
+      varnishLiters: result['varnishLiters'] ?? result['varnishNeeded'] ?? 0,
+      moldingLength: result['moldingLength'] ?? result['perimeter'] ?? 0,
     );
   }
 
@@ -407,7 +366,7 @@ class _ThreeDPanelsCalculatorScreenState
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                  '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -739,3 +698,4 @@ class _ThreeDPanelsCalculatorScreenState
     );
   }
 }
+

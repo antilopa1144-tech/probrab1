@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../core/localization/app_localizations.dart';
+import '../../../core/services/deep_link_service.dart';
 import '../../../domain/models/project_v2.dart';
 import '../../../domain/models/shareable_content.dart';
-import '../../../core/services/deep_link_service.dart';
 
 /// Экран для генерации и шаринга QR кода проекта
 class QRShareScreen extends StatefulWidget {
@@ -43,15 +44,16 @@ class _QRShareScreenState extends State<QRShareScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Поделиться проектом'),
+        title: Text(loc.translate('project.share_project')),
         actions: [
           IconButton(
             onPressed: _shareLink,
             icon: const Icon(Icons.share_rounded),
-            tooltip: 'Поделиться ссылкой',
+            tooltip: loc.translate('common.share_link'),
           ),
         ],
       ),
@@ -60,7 +62,6 @@ class _QRShareScreenState extends State<QRShareScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Название проекта
             Text(
               widget.project.name,
               style: theme.textTheme.headlineSmall?.copyWith(
@@ -77,10 +78,7 @@ class _QRShareScreenState extends State<QRShareScreen> {
                 ),
                 textAlign: TextAlign.center,
               ),
-
             const SizedBox(height: 32),
-
-            // QR код
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
@@ -88,7 +86,7 @@ class _QRShareScreenState extends State<QRShareScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha:0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -106,10 +104,7 @@ class _QRShareScreenState extends State<QRShareScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 24),
-
-            // Информация о проекте
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -118,29 +113,26 @@ class _QRShareScreenState extends State<QRShareScreen> {
                   children: [
                     _InfoRow(
                       icon: Icons.calculate_rounded,
-                      label: 'Расчётов',
+                      label: loc.translate('project.qr.calculations'),
                       value: '${widget.project.calculations.length}',
                     ),
                     const SizedBox(height: 8),
                     _InfoRow(
                       icon: Icons.shopping_cart_outlined,
-                      label: 'Стоимость материалов',
+                      label: loc.translate('project.qr.material_cost'),
                       value: '${widget.project.totalMaterialCost.toStringAsFixed(0)} ₽',
                     ),
                     const SizedBox(height: 8),
                     _InfoRow(
                       icon: Icons.handyman_outlined,
-                      label: 'Стоимость работ',
+                      label: loc.translate('project.qr.labor_cost'),
                       value: '${widget.project.totalLaborCost.toStringAsFixed(0)} ₽',
                     ),
                   ],
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
-
-            // Переключатель формата
             SwitchListTile(
               value: _useCompactFormat,
               onChanged: (value) {
@@ -149,13 +141,10 @@ class _QRShareScreenState extends State<QRShareScreen> {
                   _updateDeepLink();
                 });
               },
-              title: const Text('Компактный QR код'),
-              subtitle: const Text('Меньше размер, проще сканировать'),
+              title: Text(loc.translate('share.qr.compact_qr')),
+              subtitle: Text(loc.translate('share.qr.compact_qr_hint')),
             ),
-
             const SizedBox(height: 16),
-
-            // Ссылка
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -171,7 +160,7 @@ class _QRShareScreenState extends State<QRShareScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Прямая ссылка',
+                          loc.translate('project.qr.direct_link'),
                           style: theme.textTheme.titleSmall,
                         ),
                       ],
@@ -196,17 +185,14 @@ class _QRShareScreenState extends State<QRShareScreen> {
                       child: FilledButton.icon(
                         onPressed: _copyLink,
                         icon: const Icon(Icons.copy_rounded),
-                        label: const Text('Скопировать ссылку'),
+                        label: Text(loc.translate('project.qr.copy_link')),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-
             const SizedBox(height: 16),
-
-            // Инструкция
             Card(
               color: theme.colorScheme.primaryContainer,
               child: Padding(
@@ -222,7 +208,7 @@ class _QRShareScreenState extends State<QRShareScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Как поделиться',
+                          loc.translate('project.qr.how_to_share'),
                           style: theme.textTheme.titleSmall?.copyWith(
                             color: theme.colorScheme.onPrimaryContainer,
                           ),
@@ -231,9 +217,7 @@ class _QRShareScreenState extends State<QRShareScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      '1. Покажите QR код другому пользователю\n'
-                      '2. Он отсканирует код в приложении Мастерок\n'
-                      '3. Проект автоматически импортируется к нему',
+                      loc.translate('project.qr.how_to_share_steps'),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onPrimaryContainer,
                       ),
@@ -252,9 +236,9 @@ class _QRShareScreenState extends State<QRShareScreen> {
     await Clipboard.setData(ClipboardData(text: _deepLink));
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Ссылка скопирована'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).translate('project.qr.link_copied')),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
@@ -263,10 +247,14 @@ class _QRShareScreenState extends State<QRShareScreen> {
   void _shareLink() async {
     await SharePlus.instance.share(
       ShareParams(
-        text: 'Проект "${widget.project.name}"\n\n'
-            'Откройте ссылку в приложении Мастерок:\n'
-            '$_deepLink',
-        subject: 'Проект ${widget.project.name}',
+        text: AppLocalizations.of(context).translate(
+          'project.qr.share_text',
+          {'name': widget.project.name, 'link': _deepLink},
+        ),
+        subject: AppLocalizations.of(context).translate(
+          'project.qr.share_subject',
+          {'name': widget.project.name},
+        ),
       ),
     );
   }

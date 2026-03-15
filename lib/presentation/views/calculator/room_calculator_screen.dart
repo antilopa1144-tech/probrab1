@@ -252,7 +252,7 @@ class RoomCalculatorScreen extends ConsumerWidget {
                 value: state.length,
                 min: 1.0,
                 max: 30.0,
-                suffix: 'м',
+                suffix: loc.translate('room.unit.meters'),
                 accentColor: accentColor,
                 decimalPlaces: 1,
                 onChanged: (v) => notifier.update(state.copyWith(length: v)),
@@ -262,7 +262,7 @@ class RoomCalculatorScreen extends ConsumerWidget {
                 value: state.width,
                 min: 1.0,
                 max: 30.0,
-                suffix: 'м',
+                suffix: loc.translate('room.unit.meters'),
                 accentColor: accentColor,
                 decimalPlaces: 1,
                 onChanged: (v) => notifier.update(state.copyWith(width: v)),
@@ -272,7 +272,7 @@ class RoomCalculatorScreen extends ConsumerWidget {
                 value: state.height,
                 min: 2.0,
                 max: 5.0,
-                suffix: 'м',
+                suffix: loc.translate('room.unit.meters'),
                 accentColor: accentColor,
                 decimalPlaces: 1,
                 onChanged: (v) => notifier.update(state.copyWith(height: v)),
@@ -282,7 +282,7 @@ class RoomCalculatorScreen extends ConsumerWidget {
                 value: state.doorsCount.toDouble(),
                 min: 0,
                 max: 5,
-                suffix: 'шт',
+                suffix: loc.translate('room.unit.pcs'),
                 accentColor: accentColor,
                 decimalPlaces: 0,
                 onChanged: (v) => notifier.update(state.copyWith(doorsCount: v.round())),
@@ -292,7 +292,7 @@ class RoomCalculatorScreen extends ConsumerWidget {
                 value: state.windowsCount.toDouble(),
                 min: 0,
                 max: 10,
-                suffix: 'шт',
+                suffix: loc.translate('room.unit.pcs'),
                 accentColor: accentColor,
                 decimalPlaces: 0,
                 onChanged: (v) => notifier.update(state.copyWith(windowsCount: v.round())),
@@ -401,7 +401,7 @@ class RoomCalculatorScreen extends ConsumerWidget {
                         value: state.laminatePackArea,
                         min: 0.5,
                         max: 3.0,
-                        suffix: 'м²',
+                        suffix: loc.translate('room.unit.sqm'),
                         accentColor: accentColor,
                         decimalPlaces: 1,
                         onChanged: (v) =>
@@ -422,7 +422,7 @@ class RoomCalculatorScreen extends ConsumerWidget {
                         value: state.tileSizeRoom,
                         min: 10.0,
                         max: 200.0,
-                        suffix: 'см',
+                        suffix: loc.translate('room.unit.cm'),
                         accentColor: accentColor,
                         decimalPlaces: 0,
                         onChanged: (v) =>
@@ -564,9 +564,9 @@ class _AreaSummaryRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _AreaChip(label: loc.translate('room.section.floor'), value: '${floorArea.toStringAsFixed(1)} м²'),
-          _AreaChip(label: loc.translate('room.section.walls'), value: '${wallArea.toStringAsFixed(1)} м²'),
-          _AreaChip(label: loc.translate('room.section.ceiling'), value: '${ceilingArea.toStringAsFixed(1)} м²'),
+          _AreaChip(label: loc.translate('room.section.floor'), value: '${floorArea.toStringAsFixed(1)} ${loc.translate('room.unit.sqm')}'),
+          _AreaChip(label: loc.translate('room.section.walls'), value: '${wallArea.toStringAsFixed(1)} ${loc.translate('room.unit.sqm')}'),
+          _AreaChip(label: loc.translate('room.section.ceiling'), value: '${ceilingArea.toStringAsFixed(1)} ${loc.translate('room.unit.sqm')}'),
         ],
       ),
     );
@@ -693,23 +693,23 @@ class _PlasterOptions extends StatelessWidget {
           value: thickness,
           min: 5.0,
           max: 50.0,
-          suffix: 'мм',
+          suffix: loc.translate('room.unit.mm'),
           accentColor: accentColor,
           decimalPlaces: 0,
           onChanged: onThicknessChanged,
         ),
         const SizedBox(height: 8),
         SegmentedButton<int>(
-          segments: const [
+          segments: [
             ButtonSegment(
               value: 1,
-              label: Text('Гипсовая'),
-              icon: Icon(Icons.texture, size: 16),
+              label: Text(loc.translate('room.option.plaster_gypsum')),
+              icon: const Icon(Icons.texture, size: 16),
             ),
             ButtonSegment(
               value: 2,
-              label: Text('Цементная'),
-              icon: Icon(Icons.construction, size: 16),
+              label: Text(loc.translate('room.option.plaster_cement')),
+              icon: const Icon(Icons.construction, size: 16),
             ),
           ],
           selected: {plasterType},
@@ -744,7 +744,7 @@ class _PaintLayersOption extends StatelessWidget {
       value: layers.toDouble(),
       min: 1,
       max: 4,
-      suffix: 'сл.',
+      suffix: loc.translate('room.unit.layers_short'),
       accentColor: accentColor,
       decimalPlaces: 0,
       onChanged: (v) => onChanged(v.round()),
@@ -797,7 +797,10 @@ class _ResultsSection extends StatelessWidget {
     if (state.doPutty) {
       final rows = _extractRows(results, 'walls_putty', {
         'puttyNeeded': (loc.translate('room.result.putty'), loc.translate('room.unit.kg')),
+        'finishPackages': (loc.translate('room.result.putty_bags'), loc.translate('room.unit.bags')),
         'primerNeeded': (loc.translate('room.result.primer'), loc.translate('room.unit.liters')),
+        'primerCanisters': (loc.translate('room.result.primer_canisters'), loc.translate('room.unit.pcs')),
+        'sandpaperSets': (loc.translate('room.result.sandpaper_sets'), loc.translate('room.unit.pcs')),
       });
       if (rows.isNotEmpty) {
         cards.add(_ResultGroupCard(
@@ -813,7 +816,10 @@ class _ResultsSection extends StatelessWidget {
     if (state.doPaintWalls) {
       final rows = _extractRows(results, 'walls_paint', {
         'paintLiters': (loc.translate('room.result.paint'), loc.translate('room.unit.liters')),
+        'paintCans': (loc.translate('room.result.paint_cans'), loc.translate('room.unit.pcs')),
         'primerLiters': (loc.translate('room.result.primer'), loc.translate('room.unit.liters')),
+        'tapeRolls': (loc.translate('room.result.tape_rolls'), loc.translate('room.unit.rolls')),
+        'rollersNeeded': (loc.translate('room.result.rollers'), loc.translate('room.unit.pcs')),
       });
       if (rows.isNotEmpty) {
         cards.add(_ResultGroupCard(
@@ -847,7 +853,9 @@ class _ResultsSection extends StatelessWidget {
       final rows = _extractRows(results, 'floor_laminate', {
         'packsNeeded': (loc.translate('room.result.laminate'), loc.translate('room.unit.packs')),
         'underlayRolls': (loc.translate('room.result.underlay'), loc.translate('room.unit.rolls')),
+        'vaporBarrierArea': (loc.translate('room.result.vapor_barrier'), loc.translate('room.unit.sqm')),
         'plinthPieces': (loc.translate('room.result.plinth'), loc.translate('room.unit.pcs')),
+        'doorThresholds': (loc.translate('room.result.door_thresholds'), loc.translate('room.unit.pcs')),
       });
       if (rows.isNotEmpty) {
         cards.add(_ResultGroupCard(
@@ -880,7 +888,10 @@ class _ResultsSection extends StatelessWidget {
     if (state.doPaintCeiling) {
       final rows = _extractRows(results, 'ceiling_paint', {
         'paintLiters': (loc.translate('room.result.paint'), loc.translate('room.unit.liters')),
+        'paintCans': (loc.translate('room.result.paint_cans'), loc.translate('room.unit.pcs')),
         'primerLiters': (loc.translate('room.result.primer'), loc.translate('room.unit.liters')),
+        'tapeRolls': (loc.translate('room.result.tape_rolls'), loc.translate('room.unit.rolls')),
+        'rollersNeeded': (loc.translate('room.result.rollers'), loc.translate('room.unit.pcs')),
       });
       if (rows.isNotEmpty) {
         cards.add(_ResultGroupCard(
@@ -963,3 +974,6 @@ class _ResultGroupCard extends StatelessWidget {
     );
   }
 }
+
+
+

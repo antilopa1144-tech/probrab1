@@ -373,21 +373,21 @@ mixin ProjectsListActions on ConsumerState<ProjectsListScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Удалить проект?'),
+        title: Text(AppLocalizations.of(context).translate('project.list.delete_confirm_title')),
         content: Text(
-          'Проект "${project.name}" и все его расчёты будут удалены безвозвратно.',
+          AppLocalizations.of(context).translate('project.list.delete_confirm_message', {'name': project.name}),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Отмена'),
+            child: Text(AppLocalizations.of(context).translate('button.cancel')),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Удалить'),
+            child: Text(AppLocalizations.of(context).translate('button.delete')),
           ),
         ],
       ),
@@ -402,7 +402,7 @@ mixin ProjectsListActions on ConsumerState<ProjectsListScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Проект "${project.name}" удалён'),
+              content: Text(AppLocalizations.of(context).translate('project.list.project_deleted', {'name': project.name})),
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -581,17 +581,17 @@ mixin ProjectsListActions on ConsumerState<ProjectsListScreen> {
   String _getStatusLabel(ProjectStatus status) {
     switch (status) {
       case ProjectStatus.planning:
-        return 'Планирование';
+        return AppLocalizations.of(context).translate('project.status.planning');
       case ProjectStatus.inProgress:
-        return 'В работе';
+        return AppLocalizations.of(context).translate('project.status.in_progress');
       case ProjectStatus.onHold:
-        return 'Приостановлен';
+        return AppLocalizations.of(context).translate('project.status.on_hold');
       case ProjectStatus.completed:
-        return 'Завершён';
+        return AppLocalizations.of(context).translate('project.status.completed');
       case ProjectStatus.cancelled:
-        return 'Отменён';
+        return AppLocalizations.of(context).translate('project.status.cancelled');
       case ProjectStatus.problem:
-        return 'Проблема';
+        return AppLocalizations.of(context).translate('project.status.problem');
     }
   }
 
@@ -607,8 +607,8 @@ mixin ProjectsListActions on ConsumerState<ProjectsListScreen> {
       // Если QR код успешно отсканирован и проект импортирован
       if (result == true && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Проект успешно импортирован'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context).translate('project.list.project_imported')),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -619,3 +619,8 @@ mixin ProjectsListActions on ConsumerState<ProjectsListScreen> {
   }
 
 }
+
+
+
+
+

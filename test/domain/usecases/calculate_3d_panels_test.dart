@@ -23,9 +23,7 @@ void main() {
 
     test('calculates glue needed', () {
       final calculator = Calculate3dPanels();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -36,9 +34,7 @@ void main() {
 
     test('calculates primer needed', () {
       final calculator = Calculate3dPanels();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -49,9 +45,7 @@ void main() {
 
     test('uses default panel size when missing', () {
       final calculator = Calculate3dPanels();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -78,16 +72,61 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = Calculate3dPanels();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       // Теперь должно выбрасываться исключение при нулевой площади
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Необходимо указать площадь или размеры стены'),
+          ),
+        ),
       );
+    });
+    test('supports 3d panels screen dimensions mode via domain layer', () {
+      final calculator = Calculate3dPanels();
+      final inputs = {
+        'inputMode': 1.0,
+        'length': 4.0,
+        'height': 2.7,
+        'panelSize': 50.0,
+        'paintable': 1.0,
+        'withVarnish': 1.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['area'], closeTo(10.8, 0.01));
+      expect(result.values['perimeter'], closeTo(13.4, 0.01));
+      expect(result.values['panelArea'], closeTo(0.25, 0.001));
+      expect(result.values['panelsCount'], equals(48.0));
+      expect(result.values['paintLiters'], closeTo(2.6, 0.1));
+      expect(result.values['varnishLiters'], closeTo(0.9, 0.1));
+      expect(result.values['moldingLength'], closeTo(13.4, 0.01));
+    });
+
+    test('supports disabling varnish in 3d panels screen path', () {
+      final calculator = Calculate3dPanels();
+      final inputs = {
+        'inputMode': 0.0,
+        'area': 12.0,
+        'panelSize': 50.0,
+        'paintable': 0.0,
+        'withVarnish': 0.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['varnishLiters'], equals(0.0));
+      expect(result.values['varnishNeeded'], equals(0.0));
+      expect(result.values['paintLiters'], equals(0.0));
+      expect(result.values['panelsCount'], equals(53.0));
     });
   });
 }

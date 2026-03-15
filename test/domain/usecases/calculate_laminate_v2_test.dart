@@ -214,9 +214,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not specified', () {
-        final inputs = {
-          'area': 20.0,
-        };
+        final inputs = {'area': 20.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -274,9 +272,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero area without dimensions', () {
-        final inputs = {
-          'area': 0.0,
-        };
+        final inputs = {'area': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -285,9 +281,7 @@ void main() {
       });
 
       test('throws exception for negative area', () {
-        final inputs = {
-          'area': -10.0,
-        };
+        final inputs = {'area': -10.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -306,9 +300,27 @@ void main() {
           'needPlinth': 1.0,
         };
         final priceList = [
-          const PriceItem(sku: 'laminate', name: 'Ламинат', price: 1200.0, unit: 'уп', imageUrl: ''),
-          const PriceItem(sku: 'underlay', name: 'Подложка', price: 500.0, unit: 'рулон', imageUrl: ''),
-          const PriceItem(sku: 'plinth', name: 'Плинтус', price: 150.0, unit: 'шт', imageUrl: ''),
+          const PriceItem(
+            sku: 'laminate',
+            name: 'Ламинат',
+            price: 1200.0,
+            unit: 'уп',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'underlay',
+            name: 'Подложка',
+            price: 500.0,
+            unit: 'рулон',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'plinth',
+            name: 'Плинтус',
+            price: 150.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -318,9 +330,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'area': 20.0,
-        };
+        final inputs = {'area': 20.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -330,7 +340,7 @@ void main() {
 
     group('Pattern waste percentages', () {
       final testCases = <(int, double)>[
-        (0, 5.0),  // straight
+        (0, 5.0), // straight
         (1, 15.0), // diagonal
       ];
 
@@ -603,6 +613,19 @@ void main() {
         expect(
           diagonalResult.values['plinthPieces'],
           equals(straightResult.values['plinthPieces']),
+        );
+      });
+    });
+
+    group('validation messages', () {
+      test('area or room dimensions requirement uses shared helper', () {
+        final calculator = CalculateLaminateV2();
+
+        final error = calculator.validateInputs({'area': 0.0});
+
+        expect(
+          error,
+          equals('Необходимо указать площадь или размеры помещения'),
         );
       });
     });

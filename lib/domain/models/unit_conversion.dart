@@ -23,9 +23,6 @@ class Unit {
   /// Идентификатор единицы
   final String id;
 
-  /// Название единицы (например: "метр", "килограмм")
-  final String name;
-
   /// Короткое обозначение (например: "м", "кг")
   final String symbol;
 
@@ -43,7 +40,6 @@ class Unit {
 
   const Unit({
     required this.id,
-    required this.name,
     required this.symbol,
     required this.category,
     required this.toBaseUnit,
@@ -104,39 +100,4 @@ class ConversionResult {
 
   @override
   String toString() => formatted;
-}
-
-/// Расширение для работы с категориями
-extension UnitCategoryExtension on UnitCategory {
-  /// Название категории для UI
-  String get displayName {
-    switch (this) {
-      case UnitCategory.area:
-        return 'Площадь';
-      case UnitCategory.length:
-        return 'Длина';
-      case UnitCategory.volume:
-        return 'Объём';
-      case UnitCategory.weight:
-        return 'Вес';
-      case UnitCategory.quantity:
-        return 'Количество';
-    }
-  }
-
-  /// Иконка категории
-  String get icon {
-    switch (this) {
-      case UnitCategory.area:
-        return '📐';
-      case UnitCategory.length:
-        return '📏';
-      case UnitCategory.volume:
-        return '🧊';
-      case UnitCategory.weight:
-        return '⚖️';
-      case UnitCategory.quantity:
-        return '📦';
-    }
-  }
 }

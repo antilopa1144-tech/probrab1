@@ -25,10 +25,7 @@ void main() {
 
     test('calculates glue needed', () {
       final calculator = CalculateGasblockPartition();
-      final inputs = {
-        'area': 12.0,
-        'blockWidth': 20.0,
-      };
+      final inputs = {'area': 12.0, 'blockWidth': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -55,9 +52,7 @@ void main() {
 
     test('uses default block dimensions when missing', () {
       final calculator = CalculateGasblockPartition();
-      final inputs = {
-        'area': 12.0,
-      };
+      final inputs = {'area': 12.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -68,10 +63,7 @@ void main() {
 
     test('estimates perimeter when missing', () {
       final calculator = CalculateGasblockPartition();
-      final inputs = {
-        'area': 12.0,
-        'height': 2.5,
-      };
+      final inputs = {'area': 12.0, 'height': 2.5};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -82,14 +74,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateGasblockPartition();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Необходимо указать площадь или размеры стены'),
+          ),
+        ),
       );
     });
   });

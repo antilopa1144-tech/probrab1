@@ -33,16 +33,8 @@ void main() {
       });
 
       test('larger slab needs more materials', () {
-        final smallInputs = {
-          'length': 6.0,
-          'width': 6.0,
-          'thickness': 0.3,
-        };
-        final largeInputs = {
-          'length': 12.0,
-          'width': 10.0,
-          'thickness': 0.3,
-        };
+        final smallInputs = {'length': 6.0, 'width': 6.0, 'thickness': 0.3};
+        final largeInputs = {'length': 12.0, 'width': 10.0, 'thickness': 0.3};
 
         final smallResult = calculator(smallInputs, emptyPriceList);
         final largeResult = calculator(largeInputs, emptyPriceList);
@@ -125,16 +117,8 @@ void main() {
 
     group('Thickness variations', () {
       test('thicker slab needs more concrete', () {
-        final thinInputs = {
-          'length': 10.0,
-          'width': 8.0,
-          'thickness': 0.2,
-        };
-        final thickInputs = {
-          'length': 10.0,
-          'width': 8.0,
-          'thickness': 0.5,
-        };
+        final thinInputs = {'length': 10.0, 'width': 8.0, 'thickness': 0.2};
+        final thickInputs = {'length': 10.0, 'width': 8.0, 'thickness': 0.5};
 
         final thinResult = calculator(thinInputs, emptyPriceList);
         final thickResult = calculator(thickInputs, emptyPriceList);
@@ -168,10 +152,7 @@ void main() {
 
     group('Sand and gravel', () {
       test('sand layer calculated correctly', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 10.0,
-        };
+        final inputs = {'length': 10.0, 'width': 10.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -180,10 +161,7 @@ void main() {
       });
 
       test('gravel layer calculated correctly', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 10.0,
-        };
+        final inputs = {'length': 10.0, 'width': 10.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -192,14 +170,8 @@ void main() {
       });
 
       test('larger slab needs more sand and gravel', () {
-        final smallInputs = {
-          'length': 6.0,
-          'width': 6.0,
-        };
-        final largeInputs = {
-          'length': 12.0,
-          'width': 10.0,
-        };
+        final smallInputs = {'length': 6.0, 'width': 6.0};
+        final largeInputs = {'length': 12.0, 'width': 10.0};
 
         final smallResult = calculator(smallInputs, emptyPriceList);
         final largeResult = calculator(largeInputs, emptyPriceList);
@@ -232,16 +204,8 @@ void main() {
       });
 
       test('more concrete = more reinforcement', () {
-        final smallInputs = {
-          'length': 6.0,
-          'width': 6.0,
-          'thickness': 0.3,
-        };
-        final largeInputs = {
-          'length': 12.0,
-          'width': 10.0,
-          'thickness': 0.3,
-        };
+        final smallInputs = {'length': 6.0, 'width': 6.0, 'thickness': 0.3};
+        final largeInputs = {'length': 12.0, 'width': 10.0, 'thickness': 0.3};
 
         final smallResult = calculator(smallInputs, emptyPriceList);
         final largeResult = calculator(largeInputs, emptyPriceList);
@@ -255,11 +219,7 @@ void main() {
 
     group('Waterproofing', () {
       test('waterproof calculated when needed', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 10.0,
-          'needWaterproof': 1.0,
-        };
+        final inputs = {'length': 10.0, 'width': 10.0, 'needWaterproof': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -268,11 +228,7 @@ void main() {
       });
 
       test('no waterproof when not needed', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 10.0,
-          'needWaterproof': 0.0,
-        };
+        final inputs = {'length': 10.0, 'width': 10.0, 'needWaterproof': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -282,11 +238,7 @@ void main() {
 
     group('Insulation', () {
       test('insulation calculated when needed', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 10.0,
-          'needInsulation': 1.0,
-        };
+        final inputs = {'length': 10.0, 'width': 10.0, 'needInsulation': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -295,11 +247,7 @@ void main() {
       });
 
       test('no insulation when not needed', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 10.0,
-          'needInsulation': 0.0,
-        };
+        final inputs = {'length': 10.0, 'width': 10.0, 'needInsulation': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -338,11 +286,7 @@ void main() {
       });
 
       test('handles minimum dimensions', () {
-        final inputs = {
-          'length': 3.0,
-          'width': 3.0,
-          'thickness': 0.2,
-        };
+        final inputs = {'length': 3.0, 'width': 3.0, 'thickness': 0.2};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -351,11 +295,7 @@ void main() {
       });
 
       test('handles large slab', () {
-        final inputs = {
-          'length': 30.0,
-          'width': 20.0,
-          'thickness': 0.4,
-        };
+        final inputs = {'length': 30.0, 'width': 20.0, 'thickness': 0.4};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -366,22 +306,22 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero length', () {
-        final inputs = {
-          'length': 0.0,
-          'width': 8.0,
-        };
+        final inputs = {'length': 0.0, 'width': 8.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
-          throwsA(isA<CalculationException>()),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Поле "длина" должно быть больше нуля'),
+            ),
+          ),
         );
       });
 
       test('throws exception for negative length', () {
-        final inputs = {
-          'length': -10.0,
-          'width': 8.0,
-        };
+        final inputs = {'length': -10.0, 'width': 8.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -390,14 +330,17 @@ void main() {
       });
 
       test('throws exception for zero width', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 0.0,
-        };
+        final inputs = {'length': 10.0, 'width': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
-          throwsA(isA<CalculationException>()),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Поле "ширина" должно быть больше нуля'),
+            ),
+          ),
         );
       });
     });
@@ -412,12 +355,48 @@ void main() {
           'needInsulation': 1.0,
         };
         final priceList = [
-          const PriceItem(sku: 'concrete', name: 'Бетон', price: 5000.0, unit: 'м³', imageUrl: ''),
-          const PriceItem(sku: 'reinforcement', name: 'Арматура', price: 50.0, unit: 'кг', imageUrl: ''),
-          const PriceItem(sku: 'sand', name: 'Песок', price: 800.0, unit: 'м³', imageUrl: ''),
-          const PriceItem(sku: 'gravel', name: 'Щебень', price: 1200.0, unit: 'м³', imageUrl: ''),
-          const PriceItem(sku: 'waterproof', name: 'Гидроизоляция', price: 200.0, unit: 'м²', imageUrl: ''),
-          const PriceItem(sku: 'insulation', name: 'Утеплитель', price: 300.0, unit: 'м²', imageUrl: ''),
+          const PriceItem(
+            sku: 'concrete',
+            name: 'Бетон',
+            price: 5000.0,
+            unit: 'м³',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'reinforcement',
+            name: 'Арматура',
+            price: 50.0,
+            unit: 'кг',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'sand',
+            name: 'Песок',
+            price: 800.0,
+            unit: 'м³',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'gravel',
+            name: 'Щебень',
+            price: 1200.0,
+            unit: 'м³',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'waterproof',
+            name: 'Гидроизоляция',
+            price: 200.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'insulation',
+            name: 'Утеплитель',
+            price: 300.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -427,10 +406,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 8.0,
-        };
+        final inputs = {'length': 10.0, 'width': 8.0};
 
         final result = calculator(inputs, emptyPriceList);
 

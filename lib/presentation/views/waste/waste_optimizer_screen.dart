@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../domain/entities/waste_optimization.dart';
 
 /// Экран оптимизации отходов.
@@ -16,6 +17,7 @@ class WasteOptimizerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final optimization = WasteOptimization.calculate(
       materialId: materialId,
@@ -24,13 +26,12 @@ class WasteOptimizerScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Оптимизация отходов')),
+      appBar: AppBar(title: Text(loc.translate('waste.title'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Результаты оптимизации
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -38,7 +39,7 @@ class WasteOptimizerScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Результаты оптимизации',
+                      loc.translate('waste.results_title'),
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -46,30 +47,38 @@ class WasteOptimizerScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     _StatCard(
                       icon: Icons.square_foot,
-                      label: 'Требуемая площадь',
-                      value: '${requiredArea.toStringAsFixed(2)} м²',
+                      label: loc.translate('waste.required_area'),
+                      value: loc.translate('waste.value.area', {
+                        'value': requiredArea.toStringAsFixed(2),
+                      }),
                     ),
                     const SizedBox(height: 12),
                     _StatCard(
                       icon: Icons.inventory_2,
-                      label: 'Оптимальное количество',
-                      value: '${optimization.optimizedQuantity.toStringAsFixed(1)} шт',
+                      label: loc.translate('waste.optimized_quantity'),
+                      value: loc.translate('waste.value.items', {
+                        'value': optimization.optimizedQuantity.toStringAsFixed(1),
+                      }),
                     ),
                     const SizedBox(height: 12),
                     _StatCard(
                       icon: Icons.percent,
-                      label: 'Процент отходов',
-                      value: '${optimization.wastePercentage.toStringAsFixed(1)}%',
-                      color: optimization.wastePercentage < 10 
-                          ? Colors.green 
+                      label: loc.translate('waste.waste_percent'),
+                      value: loc.translate('waste.value.percent', {
+                        'value': optimization.wastePercentage.toStringAsFixed(1),
+                      }),
+                      color: optimization.wastePercentage < 10
+                          ? Colors.green
                           : Colors.orange,
                     ),
                     const SizedBox(height: 12),
                     if (optimization.wasteReduction > 0)
                       _StatCard(
                         icon: Icons.trending_down,
-                        label: 'Снижение отходов',
-                        value: '${optimization.wasteReduction.toStringAsFixed(1)}%',
+                        label: loc.translate('waste.reduction'),
+                        value: loc.translate('waste.value.percent', {
+                          'value': optimization.wasteReduction.toStringAsFixed(1),
+                        }),
                         color: Colors.green,
                       ),
                   ],
@@ -77,8 +86,7 @@ class WasteOptimizerScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Рекомендации
-            if (optimization.recommendations.isNotEmpty)
+            if (optimization.recommendationKeys.isNotEmpty)
               Card(
                 color: theme.colorScheme.primaryContainer,
                 child: Padding(
@@ -88,11 +96,11 @@ class WasteOptimizerScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.lightbulb_outline, 
+                          Icon(Icons.lightbulb_outline,
                               color: theme.colorScheme.primary),
                           const SizedBox(width: 8),
                           Text(
-                            'Рекомендации',
+                            loc.translate('waste.recommendations'),
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -100,16 +108,18 @@ class WasteOptimizerScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      ...optimization.recommendations.map((rec) => Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('• '),
-                                Expanded(child: Text(rec)),
-                              ],
-                            ),
-                          )),
+                      ...optimization.recommendationKeys.map(
+                        (key) => Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('• '),
+                              Expanded(child: Text(loc.translate(key))),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -166,4 +176,3 @@ class _StatCard extends StatelessWidget {
     );
   }
 }
-

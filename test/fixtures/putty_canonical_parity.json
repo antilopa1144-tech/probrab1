@@ -1,0 +1,140 @@
+{
+  "formulaVersion": "putty-canonical-v1",
+  "cases": [
+    {
+      "id": "finish-room-20kg",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "height": 2.7,
+        "surface": 0,
+        "puttyType": 0,
+        "bagWeight": 20
+      },
+      "expected": {
+        "wallArea": 48.6,
+        "formulaVersion": "putty-canonical-v1",
+        "materials": {
+          "finishBags": 3,
+          "primerCans": 1,
+          "sandpaperSheets": 11
+        },
+        "warningsCount": 0,
+        "recScenario": {
+          "packageSize": 20,
+          "exactNeed": 58.379,
+          "purchaseQuantity": 60
+        }
+      }
+    },
+    {
+      "id": "start-finish-area-25kg",
+      "inputs": {
+        "inputMode": 1,
+        "area": 48.6,
+        "surface": 0,
+        "puttyType": 1,
+        "bagWeight": 25
+      },
+      "expected": {
+        "wallArea": 48.6,
+        "formulaVersion": "putty-canonical-v1",
+        "materials": {
+          "finishBags": 3,
+          "startBags": 6,
+          "primerCans": 2,
+          "serpyankaRolls": 2,
+          "sandpaperSheets": 11
+        },
+        "warningsCount": 0,
+        "recScenario": {
+          "packageSize": 25,
+          "exactNeed": 201.673,
+          "purchaseQuantity": 225
+        }
+      }
+    },
+    {
+      "id": "start-only-area-20kg",
+      "inputs": {
+        "inputMode": 1,
+        "area": 48.6,
+        "surface": 0,
+        "puttyType": 2,
+        "bagWeight": 20
+      },
+      "expected": {
+        "wallArea": 48.6,
+        "formulaVersion": "putty-canonical-v1",
+        "materials": {
+          "startBags": 8,
+          "primerCans": 1,
+          "serpyankaRolls": 2
+        },
+        "warningsCount": 0,
+        "recScenario": {
+          "packageSize": 20,
+          "exactNeed": 143.294,
+          "purchaseQuantity": 160
+        }
+      }
+    },
+    {
+      "id": "finish-large-area-warning",
+      "inputs": {
+        "inputMode": 1,
+        "area": 120,
+        "surface": 0,
+        "puttyType": 0,
+        "bagWeight": 20
+      },
+      "expected": {
+        "wallArea": 120,
+        "formulaVersion": "putty-canonical-v1",
+        "materials": {
+          "finishBags": 8,
+          "primerCans": 2,
+          "sandpaperSheets": 27
+        },
+        "warningsCount": 1,
+        "recScenario": {
+          "packageSize": 20,
+          "exactNeed": 144.146,
+          "purchaseQuantity": 160
+        }
+      }
+    },
+    {
+      "id": "start-finish-explicit-layers",
+      "inputs": {
+        "inputMode": 1,
+        "area": 20,
+        "surface": 0,
+        "puttyType": 1,
+        "bagWeight": 20,
+        "qualityClass": 2,
+        "startLayers": 3,
+        "finishLayers": 1
+      },
+      "expected": {
+        "wallArea": 20,
+        "formulaVersion": "putty-canonical-v1",
+        "materials": {
+          "finishBags": 1,
+          "startBags": 5,
+          "primerCans": 1,
+          "serpyankaRolls": 1,
+          "sandpaperSheets": 5
+        },
+        "warningsCount": 0,
+        "recScenario": {
+          "packageSize": 20,
+          "exactNeed": 115.753,
+          "purchaseQuantity": 120
+        }
+      }
+    }
+  ]
+}
+

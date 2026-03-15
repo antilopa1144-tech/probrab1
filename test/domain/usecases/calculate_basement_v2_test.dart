@@ -130,11 +130,7 @@ void main() {
       });
 
       test('no waterproof when disabled', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 8.0,
-          'needWaterproof': 0.0,
-        };
+        final inputs = {'length': 10.0, 'width': 8.0, 'needWaterproof': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -158,11 +154,7 @@ void main() {
       });
 
       test('no insulation when disabled', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 8.0,
-          'needInsulation': 0.0,
-        };
+        final inputs = {'length': 10.0, 'width': 8.0, 'needInsulation': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -172,11 +164,7 @@ void main() {
 
     group('Drainage calculations', () {
       test('drainage with 10% waste', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 8.0,
-          'needDrainage': 1.0,
-        };
+        final inputs = {'length': 10.0, 'width': 8.0, 'needDrainage': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -186,11 +174,7 @@ void main() {
       });
 
       test('no drainage when disabled', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 8.0,
-          'needDrainage': 0.0,
-        };
+        final inputs = {'length': 10.0, 'width': 8.0, 'needDrainage': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -249,11 +233,7 @@ void main() {
       });
 
       test('handles large basement', () {
-        final inputs = {
-          'length': 30.0,
-          'width': 20.0,
-          'depth': 4.0,
-        };
+        final inputs = {'length': 30.0, 'width': 20.0, 'depth': 4.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -263,9 +243,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero length', () {
-        final inputs = {
-          'length': 0.0,
-        };
+        final inputs = {'length': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -274,9 +252,7 @@ void main() {
       });
 
       test('throws exception for negative length', () {
-        final inputs = {
-          'length': -10.0,
-        };
+        final inputs = {'length': -10.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -285,9 +261,7 @@ void main() {
       });
 
       test('throws exception for zero width', () {
-        final inputs = {
-          'width': 0.0,
-        };
+        final inputs = {'width': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -296,9 +270,7 @@ void main() {
       });
 
       test('throws exception for zero depth', () {
-        final inputs = {
-          'depth': 0.0,
-        };
+        final inputs = {'depth': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -318,10 +290,34 @@ void main() {
           'needDrainage': 1.0,
         };
         final priceList = [
-          const PriceItem(sku: 'concrete', name: 'Бетон', price: 5000.0, unit: 'м³', imageUrl: ''),
-          const PriceItem(sku: 'waterproof', name: 'Гидроизоляция', price: 300.0, unit: 'м²', imageUrl: ''),
-          const PriceItem(sku: 'insulation', name: 'Утеплитель', price: 400.0, unit: 'м²', imageUrl: ''),
-          const PriceItem(sku: 'drainage', name: 'Дренаж', price: 500.0, unit: 'м.п.', imageUrl: ''),
+          const PriceItem(
+            sku: 'concrete',
+            name: 'Бетон',
+            price: 5000.0,
+            unit: 'м³',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'waterproof',
+            name: 'Гидроизоляция',
+            price: 300.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'insulation',
+            name: 'Утеплитель',
+            price: 400.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'drainage',
+            name: 'Дренаж',
+            price: 500.0,
+            unit: 'м.п.',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -331,10 +327,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 8.0,
-        };
+        final inputs = {'length': 10.0, 'width': 8.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -400,6 +393,24 @@ void main() {
         expect(result.values['floorArea'], equals(24.0));
         expect(result.values['insulationArea'], equals(0.0));
         expect(result.values['drainageLength'], equals(0.0));
+      });
+    });
+    group('validation messages', () {
+      test('depth uses shared helper', () {
+        expect(
+          () => calculator({
+            'length': 10.0,
+            'width': 8.0,
+            'depth': 0.0,
+          }, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Поле "глубина" должно быть больше нуля'),
+            ),
+          ),
+        );
       });
     });
   });

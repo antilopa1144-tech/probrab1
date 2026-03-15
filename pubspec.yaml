@@ -8,7 +8,7 @@ description: |
 # Публикация в Pub.dev отключена, потому что это внутренний проект
 publish_to: "none"
 
-version: 1.2.0+3
+version: 1.4.0+4
 
 environment:
   sdk: ">=3.10.0 <4.0.0"

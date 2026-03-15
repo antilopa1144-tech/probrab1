@@ -22,10 +22,7 @@ void main() {
 
     test('calculates sheets needed', () {
       final calculator = CalculateInsulationFoam();
-      final inputs = {
-        'area': 20.0,
-        'thickness': 50.0,
-      };
+      final inputs = {'area': 20.0, 'thickness': 50.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -52,9 +49,7 @@ void main() {
 
     test('calculates glue needed', () {
       final calculator = CalculateInsulationFoam();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -65,9 +60,7 @@ void main() {
 
     test('calculates fasteners needed', () {
       final calculator = CalculateInsulationFoam();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -78,9 +71,7 @@ void main() {
 
     test('calculates mesh area', () {
       final calculator = CalculateInsulationFoam();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -91,9 +82,7 @@ void main() {
 
     test('uses default thickness when missing', () {
       final calculator = CalculateInsulationFoam();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -105,10 +94,7 @@ void main() {
 
     test('uses default density when missing', () {
       final calculator = CalculateInsulationFoam();
-      final inputs = {
-        'area': 20.0,
-        'thickness': 50.0,
-      };
+      final inputs = {'area': 20.0, 'thickness': 50.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -119,15 +105,26 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateInsulationFoam();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
         throwsA(isA<CalculationException>()),
       );
+    });
+
+    group('validation messages', () {
+      test('thickness range uses shared helper', () {
+        final calculator = CalculateInsulationFoam();
+
+        final error = calculator.validateInputs({
+          'area': 12.0,
+          'thickness': 10.0,
+        });
+
+        expect(error, equals('Поле "толщина" должно быть от 20 до 200 мм'));
+      });
     });
   });
 }

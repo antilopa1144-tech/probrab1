@@ -21,10 +21,7 @@ void main() {
 
     test('calculates baguette length', () {
       final calculator = CalculateStretchCeiling();
-      final inputs = {
-        'area': 20.0,
-        'perimeter': 18.0,
-      };
+      final inputs = {'area': 20.0, 'perimeter': 18.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -35,10 +32,7 @@ void main() {
 
     test('calculates corners needed', () {
       final calculator = CalculateStretchCeiling();
-      final inputs = {
-        'area': 20.0,
-        'corners': 4.0,
-      };
+      final inputs = {'area': 20.0, 'corners': 4.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -48,10 +42,7 @@ void main() {
 
     test('calculates fixtures', () {
       final calculator = CalculateStretchCeiling();
-      final inputs = {
-        'area': 20.0,
-        'fixtures': 3.0,
-      };
+      final inputs = {'area': 20.0, 'fixtures': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -61,9 +52,7 @@ void main() {
 
     test('estimates perimeter when missing', () {
       final calculator = CalculateStretchCeiling();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -74,9 +63,7 @@ void main() {
 
     test('uses default values when missing', () {
       final calculator = CalculateStretchCeiling();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -88,14 +75,35 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateStretchCeiling();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "площадь" должно быть больше нуля'),
+          ),
+        ),
+      );
+    });
+
+    test('throws exception for invalid corners range', () {
+      final calculator = CalculateStretchCeiling();
+      final inputs = {'area': 20.0, 'corners': 21.0};
+      final emptyPriceList = <PriceItem>[];
+
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "количество углов" должно быть от 0 до 20'),
+          ),
+        ),
       );
     });
   });

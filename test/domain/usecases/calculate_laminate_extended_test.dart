@@ -103,9 +103,8 @@ void main() {
 
         // patternWaste = 10% (хаотичная), areaAdj = 0 (100 > 15)
         // totalWaste = max(10, 5) = 10%
-        // ceil(100 / 2 * 1.10) = ceil(55.0000...01) = 56
-        // (IEEE 754: 100 * 1.1 = 110.00000000000001, /2 = 55.00000000000001)
-        expect(result.values['packsNeeded'], 56.0);
+        // Детеминированный расчёт: ceil(100 / 2 * 1.10) = 55
+        expect(result.values['packsNeeded'], 55.0);
         expect(result.values['wastePercent'], 10.0);
       });
 
@@ -685,3 +684,4 @@ void main() {
     });
   });
 }
+

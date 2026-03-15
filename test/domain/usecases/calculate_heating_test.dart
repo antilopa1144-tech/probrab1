@@ -36,10 +36,7 @@ void main() {
 
     test('calculates power correctly for high ceilings', () {
       final calculator = CalculateHeating();
-      final inputs = {
-        'area': 50.0,
-        'ceilingHeight': 3.5,
-      };
+      final inputs = {'area': 50.0, 'ceilingHeight': 3.5};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -52,10 +49,7 @@ void main() {
 
     test('calculates total sections', () {
       final calculator = CalculateHeating();
-      final inputs = {
-        'area': 50.0,
-        'rooms': 2.0,
-      };
+      final inputs = {'area': 50.0, 'rooms': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -68,10 +62,7 @@ void main() {
 
     test('calculates pipe length', () {
       final calculator = CalculateHeating();
-      final inputs = {
-        'area': 50.0,
-        'rooms': 2.0,
-      };
+      final inputs = {'area': 50.0, 'rooms': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -82,10 +73,7 @@ void main() {
 
     test('calculates fittings needed', () {
       final calculator = CalculateHeating();
-      final inputs = {
-        'area': 50.0,
-        'rooms': 2.0,
-      };
+      final inputs = {'area': 50.0, 'rooms': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -96,10 +84,7 @@ void main() {
 
     test('calculates valves needed', () {
       final calculator = CalculateHeating();
-      final inputs = {
-        'area': 50.0,
-        'rooms': 2.0,
-      };
+      final inputs = {'area': 50.0, 'rooms': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -110,10 +95,7 @@ void main() {
 
     test('calculates thermostats needed', () {
       final calculator = CalculateHeating();
-      final inputs = {
-        'area': 50.0,
-        'rooms': 2.0,
-      };
+      final inputs = {'area': 50.0, 'rooms': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -124,9 +106,7 @@ void main() {
 
     test('uses default values when missing', () {
       final calculator = CalculateHeating();
-      final inputs = {
-        'area': 50.0,
-      };
+      final inputs = {'area': 50.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -138,14 +118,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateHeating();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле \"площадь\" должно быть больше нуля'),
+          ),
+        ),
       );
     });
   });

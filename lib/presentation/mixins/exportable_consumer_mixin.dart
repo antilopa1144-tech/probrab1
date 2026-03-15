@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/localization/app_localizations.dart';
+import '../../core/errors/global_error_handler.dart';
 import '../../domain/models/calculator_result_payload.dart';
 import '../../domain/models/shareable_content.dart';
 import '../services/pdf_export_service.dart';
@@ -145,9 +146,10 @@ mixin ExportableConsumerMixin<T extends ConsumerStatefulWidget> on ConsumerState
       await openPdfFile(filePath);
     } catch (e) {
       if (mounted) {
+        final message = GlobalErrorHandler.getUserFriendlyMessage(context, e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка при создании PDF: $e'),
+            content: Text(loc.translate('common.export_error', {'error': message})),
             backgroundColor: Colors.red,
           ),
         );
@@ -171,7 +173,7 @@ mixin ExportableConsumerMixin<T extends ConsumerStatefulWidget> on ConsumerState
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 5),
             action: SnackBarAction(
-              label: 'OK',
+              label: loc.translate('button.close'),
               onPressed: () {},
             ),
           ),
@@ -179,9 +181,10 @@ mixin ExportableConsumerMixin<T extends ConsumerStatefulWidget> on ConsumerState
       }
     } catch (e) {
       if (mounted) {
+        final message = GlobalErrorHandler.getUserFriendlyMessage(context, e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка при создании PDF: $e'),
+            content: Text(loc.translate('common.export_error', {'error': message})),
             backgroundColor: Colors.red,
           ),
         );
@@ -211,7 +214,7 @@ mixin ExportableConsumerMixin<T extends ConsumerStatefulWidget> on ConsumerState
           IconButton(
             icon: const Icon(Icons.qr_code_2_rounded),
             onPressed: shareAsQrCode,
-            tooltip: 'Поделиться QR-кодом',
+            tooltip: loc.translate('common.show_qr_to_scan'),
           ),
       ];
 }

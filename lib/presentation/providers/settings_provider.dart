@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/constants/region_ids.dart';
 
 // Условный импорт для NotificationService
 // На вебе используется заглушка без Isar-зависимостей
@@ -17,7 +18,7 @@ class AppSettings {
   final bool darkMode;
 
   const AppSettings({
-    this.region = 'Москва',
+    this.region = RegionCatalog.defaultId,
     this.language = 'ru',
     this.autoSave = true,
     this.notificationsEnabled = true,
@@ -60,7 +61,7 @@ class AppSettings {
 
   factory AppSettings.fromJson(Map<String, dynamic> json) {
     return AppSettings(
-      region: json['region'] ?? 'Москва',
+      region: RegionCatalog.normalize(json['region'] as String?),
       language: json['language'] ?? 'ru',
       autoSave: json['autoSave'] ?? true,
       notificationsEnabled: json['notificationsEnabled'] ?? true,
@@ -92,7 +93,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     final prefs = await SharedPreferences.getInstance();
 
     // Загружаем настройки по отдельности для надежности
-    final region = prefs.getString('region') ?? 'Москва';
+    final region = RegionCatalog.normalize(prefs.getString('region'));
     final language = prefs.getString('language') ?? 'ru';
     final autoSave = prefs.getBool('autoSave') ?? true;
     final notificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
@@ -104,7 +105,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     if (_hasBeenUpdated) return;
 
     state = AppSettings(
-      region: region,
+      region: RegionCatalog.normalize(region),
       language: language,
       autoSave: autoSave,
       notificationsEnabled: notificationsEnabled,
@@ -116,7 +117,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
 
   Future<void> _saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('region', state.region);
+    await prefs.setString('region', RegionCatalog.normalize(state.region));
     await prefs.setString('language', state.language);
     await prefs.setBool('autoSave', state.autoSave);
     await prefs.setBool('notificationsEnabled', state.notificationsEnabled);
@@ -127,7 +128,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
 
   Future<void> updateRegion(String region) async {
     _hasBeenUpdated = true;
-    state = state.copyWith(region: region);
+    state = state.copyWith(region: RegionCatalog.normalize(region));
     await _saveSettings();
   }
 

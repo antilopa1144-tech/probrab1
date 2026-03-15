@@ -1,9 +1,31 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:probrab_ai/core/database/database_provider.dart';
 import 'package:probrab_ai/core/services/deep_link_service.dart';
+import 'package:probrab_ai/data/repositories/interfaces/project_repository_interface.dart';
+import 'package:probrab_ai/data/repositories/project_repository_v2.dart';
 import 'package:probrab_ai/domain/models/shareable_content.dart';
 import 'package:probrab_ai/domain/models/project_v2.dart';
+
+class _FakeProjectRepository implements IProjectRepository {
+  @override Future<int> createProject(ProjectV2 project) async => 1;
+  @override Future<void> deleteProject(int id) async {}
+  @override Future<List<ProjectV2>> getAllProjects() async => [];
+  @override Future<ProjectV2?> getProjectById(int id) async => null;
+  @override Future<void> updateProject(ProjectV2 project) async {}
+  @override Future<List<ProjectV2>> getFavoriteProjects() async => [];
+  @override Future<List<ProjectV2>> getProjectsByStatus(ProjectStatus status) async => [];
+  @override Future<List<ProjectV2>> searchProjects(String query) async => [];
+  @override Future<void> toggleFavorite(int id) async {}
+  @override Future<void> addCalculationToProject(int projectId, ProjectCalculation calculation) async {}
+  @override Future<void> removeCalculationFromProject(int calculationId) async {}
+  @override Future<void> toggleMaterialPurchased(int calculationId, int materialIndex) async {}
+  @override Future<List<ProjectCalculation>> getProjectCalculations(int projectId) async => [];
+  @override Future<ProjectStatistics> getStatistics() async => const ProjectStatistics(total: 0, favorites: 0, planning: 0, inProgress: 0, completed: 0);
+  @override Future<void> clearAllProjects() async {}
+}
 
 void main() {
   group('DeepLinkService', () {
@@ -299,26 +321,33 @@ void main() {
 
     testWidgets('показывает SnackBar после импорта', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) {
-              return Scaffold(
-                body: ElevatedButton(
-                  onPressed: () {
-                    final handler = DeepLinkHandler(context);
-                    handler.handle(DeepLinkData(
-                      type: 'project',
-                      data: {
-                        'name': 'Import Test',
-                        'status': 'planning',
-                        'calculations': [],
-                      },
-                    ));
-                  },
-                  child: const Text('Handle'),
-                ),
-              );
-            },
+        ProviderScope(
+          overrides: [
+            projectRepositoryProvider.overrideWith(
+              (ref) async => _FakeProjectRepository(),
+            ),
+          ],
+          child: MaterialApp(
+            home: Builder(
+              builder: (context) {
+                return Scaffold(
+                  body: ElevatedButton(
+                    onPressed: () {
+                      final handler = DeepLinkHandler(context);
+                      handler.handle(DeepLinkData(
+                        type: 'project',
+                        data: {
+                          'name': 'Import Test',
+                          'status': 'planning',
+                          'calculations': [],
+                        },
+                      ));
+                    },
+                    child: const Text('Handle'),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       );

@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
+
 import '../../../core/localization/app_localizations.dart';
+import '../../../domain/models/canonical_calculator_contract.dart';
+import '../../../domain/usecases/calculate_paint.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
+
+const _paintMaterialCategoryConsumables = 'Расходники';
 
 /// Экран расчета краски (Интерьер/Фасад)
 class PaintScreen extends StatefulWidget {
@@ -15,6 +20,7 @@ class PaintScreen extends StatefulWidget {
 class _PaintScreenState extends State<PaintScreen> {
   bool _isDark = false;
   late AppLocalizations _loc;
+  final CalculatePaint _calculator = CalculatePaint();
 
   // Геометрия
   double _roomWidth = 4.0;
@@ -31,13 +37,11 @@ class _PaintScreenState extends State<PaintScreen> {
   // Индекс типа поверхности
   int _surfaceIndex = 0;
 
-  // Подготовка поверхности: 0=загрунтованная (1.0), 1=новая необработанная (1.2), 2=ранее окрашенная (0.95)
+  // Подготовка поверхности: 0=загрунтованная, 1=новая необработанная, 2=ранее окрашенная
   int _surfacePrep = 0;
-  static const _surfacePrepMultipliers = [1.0, 1.2, 0.95];
 
-  // Интенсивность цвета: 0=светлый (1.0), 1=яркий (1.15), 2=тёмный (1.3)
+  // Интенсивность цвета: 0=светлый, 1=яркий, 2=тёмный
   int _colorIntensity = 0;
-  static const _colorIntensityMultipliers = [1.0, 1.15, 1.3];
 
   // Параметры
   double _coverage = 10.0; // м²/л (по умолчанию для интерьера)
@@ -45,13 +49,11 @@ class _PaintScreenState extends State<PaintScreen> {
 
   // Данные типов поверхностей (геттер — использует _loc, доступен после build)
   List<List<Map<String, dynamic>>> get _surfaces => [
-    // Интерьер
     [
       {'name': _loc.translate('paint.surface.smooth'), 'subtitle': 'х1.0', 'factor': 1.0},
       {'name': _loc.translate('paint.surface.wallpaper'), 'subtitle': 'х1.2', 'factor': 1.2},
       {'name': _loc.translate('paint.surface.relief'), 'subtitle': 'х1.4', 'factor': 1.4},
     ],
-    // Фасад
     [
       {'name': _loc.translate('paint.surface.concrete'), 'subtitle': 'х1.0', 'factor': 1.0},
       {'name': _loc.translate('paint.surface.brick'), 'subtitle': 'х1.15', 'factor': 1.15},
@@ -59,59 +61,114 @@ class _PaintScreenState extends State<PaintScreen> {
     ],
   ];
 
-  double _getArea() {
-    if (_inputMode == 0) return _manualArea;
-    return (_roomWidth + _roomLength) * 2 * _roomHeight - _openingsArea;
-  }
 
-  // Обновление параметров при переключении типа краски
   void _onPaintTypeChanged(int newType) {
     setState(() {
       _paintType = newType;
       _surfaceIndex = 0;
-      // Меняем стандартный расход: интерьер = 10, фасад = 7
       _coverage = newType == 0 ? 10.0 : 7.0;
     });
   }
 
+  int _surfaceTypeId() {
+    if (_paintType == 0) {
+      const interiorMapping = [0, 4, 5];
+      return interiorMapping[_surfaceIndex.clamp(0, interiorMapping.length - 1)];
+    }
+    const facadeMapping = [6, 7, 8];
+    return facadeMapping[_surfaceIndex.clamp(0, facadeMapping.length - 1)];
+  }
+
+  double get _canonicalCanSize => _paintType == 0 ? 9.0 : 10.0;
+
+  Map<String, double> _buildCanonicalInputs() {
+    final inputs = <String, double>{
+      'inputMode': _inputMode == 1 ? 0.0 : 1.0,
+      'paintType': _paintType.toDouble(),
+      'surfaceType': _surfaceTypeId().toDouble(),
+      'surfacePrep': _surfacePrep.toDouble(),
+      'colorIntensity': _colorIntensity.toDouble(),
+      'coats': _layers.toDouble(),
+      'coverage': _coverage,
+      'canSize': _canonicalCanSize,
+    };
+
+    if (_inputMode == 0) {
+      inputs['area'] = _manualArea;
+    } else {
+      inputs['roomWidth'] = _roomWidth;
+      inputs['roomLength'] = _roomLength;
+      inputs['roomHeight'] = _roomHeight;
+      inputs['openingsArea'] = _openingsArea;
+    }
+
+    return inputs;
+  }
+
+  CanonicalCalculatorContractResult _calculateResult() {
+    return _calculator.calculateCanonical(_buildCanonicalInputs());
+  }
+
+  int _findMaterialPurchaseQty(
+    CanonicalCalculatorContractResult contract, {
+    required String category,
+    required String fallbackNamePart,
+  }) {
+    for (final material in contract.materials) {
+      if (material.category == category && material.name.contains(fallbackNamePart)) {
+        return material.purchaseQty ?? 0;
+      }
+    }
+    for (final material in contract.materials) {
+      if (material.name.contains(fallbackNamePart)) {
+        return material.purchaseQty ?? 0;
+      }
+    }
+    return 0;
+  }
+
   String _generateExportText() {
-    final netArea = _getArea();
+    final result = _calculateResult();
+    final recScenario = result.scenarios['REC'];
+    final netArea = result.totals['area'] ?? 0;
+    final liters = recScenario?.exactNeed ?? (result.totals['recExactNeedL'] ?? 0);
+    final cans = recScenario?.buyPlan.packagesCount ?? 0;
+    final canSize = recScenario?.buyPlan.packageSize ?? (result.totals['canSize'] ?? _canonicalCanSize);
+    final tape = _findMaterialPurchaseQty(
+      result,
+      category: _paintMaterialCategoryConsumables,
+      fallbackNamePart: 'Малярная лента',
+    );
     final surface = _surfaces[_paintType][_surfaceIndex];
-    final factor = surface['factor'] as double;
-    final prepMul = _surfacePrepMultipliers[_surfacePrep];
-    final colorMul = _colorIntensityMultipliers[_colorIntensity];
-    final liters = (netArea * _layers * factor * prepMul * colorMul) / _coverage;
-    final canSize = _paintType == 0 ? 9 : 10;
-    final cans = (liters / canSize).ceil();
-    final perimeter = (_roomWidth + _roomLength) * 2;
-    final tape = ((perimeter * 2) / 50).ceil();
 
     final buffer = StringBuffer();
-    buffer.writeln('🎨 РАСЧЁТ КРАСКИ');
+    buffer.writeln('🎨 ${_loc.translate('paint.export.title').toUpperCase()}');
     buffer.writeln('═' * 40);
     buffer.writeln();
 
-    buffer.writeln('Тип: ${_paintType == 0 ? "Интерьер" : "Фасад"}');
-    buffer.writeln('Поверхность: ${surface['name']} (${surface['subtitle']})');
-    buffer.writeln('Площадь: ${netArea.toStringAsFixed(1)} м²');
+    buffer.writeln('${_loc.translate('paint.export.type')}: ${_paintType == 0 ? _loc.translate('paint.export.type_interior') : _loc.translate('paint.export.type_facade')}');
+    buffer.writeln('${_loc.translate('paint.export.surface')}: ${surface['name']} (${surface['subtitle']})');
+    buffer.writeln('${_loc.translate('paint.export.area')}: ${netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
     buffer.writeln();
 
-    buffer.writeln('🎨 МАТЕРИАЛЫ:');
+    buffer.writeln('🎨 ${_loc.translate('paint.export.materials_title').toUpperCase()}:');
     buffer.writeln('─' * 40);
-    buffer.writeln('• Краска: ${liters.toStringAsFixed(1)} л ($_layers слоя)');
-    buffer.writeln('• Банки: $cans шт (по $canSize л)');
-    buffer.writeln('• Малярный скотч: $tape рул. (50м)');
+    buffer.writeln('• ${_loc.translate('paint.export.paint')}: ${liters.toStringAsFixed(1)} ${_loc.translate('common.liters')} ($_layers ${_loc.translate('paint.layers_label')})');
+    buffer.writeln('• ${_loc.translate('paint.export.cans')}: $cans ${_loc.translate('common.pcs')} (${_loc.translate('paint.per')} ${canSize.toStringAsFixed(0)} ${_loc.translate('common.liters')})');
+    buffer.writeln('• ${_loc.translate('paint.export.tape')}: $tape ${_loc.translate('paint.packs')} (50 ${_loc.translate('common.meters')})');
 
     buffer.writeln();
     buffer.writeln('═' * 40);
-    buffer.writeln('Создано в ПроРаб');
+    buffer.writeln(_loc.translate('paint.export.footer'));
 
     return buffer.toString();
   }
 
   Future<void> _shareCalculation() async {
     final text = _generateExportText();
-    await SharePlus.instance.share(ShareParams(text: text, subject: 'Расчёт краски'));
+    await SharePlus.instance.share(
+      ShareParams(text: text, subject: _loc.translate('paint.share_subject')),
+    );
   }
 
   void _copyToClipboard() {
@@ -129,28 +186,21 @@ class _PaintScreenState extends State<PaintScreen> {
   Widget build(BuildContext context) {
     _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
-    // Цвет зависит от типа: интерьер = interior, фасад = facade
     final accentColor = _paintType == 0 ? CalculatorColors.interior : CalculatorColors.facade;
 
-    final netArea = _getArea();
-    final perimeter = (_roomWidth + _roomLength) * 2;
-
+    final calculation = _calculateResult();
+    final recScenario = calculation.scenarios['REC'];
+    final netArea = calculation.totals['area'] ?? 0;
     final surface = _surfaces[_paintType][_surfaceIndex];
     final factor = surface['factor'] as double;
-
-    // Расчет краски с учётом подготовки и интенсивности цвета
-    final prepMultiplier = _surfacePrepMultipliers[_surfacePrep];
-    final colorMultiplier = _colorIntensityMultipliers[_colorIntensity];
-    final liters = (netArea * _layers * factor * prepMultiplier * colorMultiplier) / _coverage;
-
-    // Размер банок: интерьер = 9л, фасад = 10л
-    final canSize = _paintType == 0 ? 9 : 10;
-    final cans = (liters / canSize).ceil();
-
-    // Малярный скотч: периметр х 2 (обвод плинтуса и потолка) / 50м рулон
-    final tape = ((perimeter * 2) / 50).ceil();
-
-    // Предупреждение для короеда на фасаде
+    final liters = recScenario?.exactNeed ?? (calculation.totals['recExactNeedL'] ?? 0);
+    final canSize = recScenario?.buyPlan.packageSize ?? (calculation.totals['canSize'] ?? _canonicalCanSize);
+    final cans = recScenario?.buyPlan.packagesCount ?? 0;
+    final tape = _findMaterialPurchaseQty(
+      calculation,
+      category: _paintMaterialCategoryConsumables,
+      fallbackNamePart: 'Малярная лента',
+    );
     final showWarning = _paintType == 1 && _surfaceIndex == 2;
 
     return CalculatorScaffold(
@@ -173,7 +223,7 @@ class _PaintScreenState extends State<PaintScreen> {
         results: [
           ResultItem(
             label: _loc.translate('paint.area').toUpperCase(),
-            value: '${netArea.toStringAsFixed(1)} м²',
+            value: '${netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -182,14 +232,13 @@ class _PaintScreenState extends State<PaintScreen> {
             icon: Icons.shopping_bag,
           ),
           ResultItem(
-            label: '${liters.toStringAsFixed(1)} л',
+            label: '${liters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
             value: '$_layers ${_loc.translate('paint.layers_label')}',
             icon: Icons.layers,
           ),
         ],
       ),
       children: [
-        // Тип краски (Интерьер/Фасад)
         _card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,39 +262,28 @@ class _PaintScreenState extends State<PaintScreen> {
             ],
           ),
         ),
-
         const SizedBox(height: 16),
-
-        // Выбор поверхности
         TypeSelectorGroup(
-          options: _surfaces[_paintType].map((s) => TypeSelectorOption(
-            icon: Icons.texture,
-            title: s['name'] as String,
-            subtitle: s['subtitle'] as String,
-          )).toList(),
+          options: _surfaces[_paintType]
+              .map(
+                (s) => TypeSelectorOption(
+                  icon: Icons.texture,
+                  title: s['name'] as String,
+                  subtitle: s['subtitle'] as String,
+                ),
+              )
+              .toList(),
           selectedIndex: _surfaceIndex,
           onSelect: (index) => setState(() => _surfaceIndex = index),
           accentColor: accentColor,
         ),
-
         const SizedBox(height: 16),
-
-        // Подготовка поверхности
         _buildSurfacePrepSelector(accentColor),
-
         const SizedBox(height: 16),
-
-        // Интенсивность цвета
         _buildColorIntensitySelector(accentColor),
-
         const SizedBox(height: 16),
-
-        // Геометрия
         _buildGeometryCard(accentColor),
-
         const SizedBox(height: 16),
-
-        // Параметры (Расход и Слои)
         _card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,7 +302,7 @@ class _PaintScreenState extends State<PaintScreen> {
                       label: _loc.translate('paint.coverage'),
                       value: _coverage,
                       onChanged: (v) => setState(() => _coverage = v),
-                      suffix: 'м²/л',
+                      suffix: _loc.translate('common.sqm_per_liter'),
                       accentColor: accentColor,
                       minValue: 4,
                       maxValue: 15,
@@ -284,7 +322,6 @@ class _PaintScreenState extends State<PaintScreen> {
                   ),
                 ],
               ),
-              // Предупреждение для Короеда
               if (showWarning)
                 Padding(
                   padding: const EdgeInsets.only(top: 12),
@@ -312,30 +349,27 @@ class _PaintScreenState extends State<PaintScreen> {
             ],
           ),
         ),
-
         const SizedBox(height: 16),
-
-        // Результаты
         MaterialsCardModern(
           title: _loc.translate('paint.results_title'),
           titleIcon: Icons.receipt_long,
           items: [
             MaterialItem(
               name: _loc.translate('paint.area'),
-              value: '${netArea.toStringAsFixed(1)} м²',
+              value: '${netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
               icon: Icons.straighten,
             ),
             MaterialItem(
               name: _loc.translate('paint.paint'),
-              value: '${liters.toStringAsFixed(1)} л',
+              value: '${liters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
               icon: Icons.format_paint,
-              subtitle: '$_layers ${_loc.translate('paint.layers_label')}, ${factor}x',
+              subtitle: '$_layers ${_loc.translate('paint.layers_label')}, ×$factor',
             ),
             MaterialItem(
               name: _loc.translate('paint.cans'),
               value: '$cans ${_loc.translate('paint.packs')}',
               icon: Icons.shopping_bag,
-              subtitle: '${_loc.translate('paint.per')} $canSize л',
+              subtitle: '${_loc.translate('paint.per')} ${canSize.toStringAsFixed(0)} ${_loc.translate('common.liters')}',
             ),
             MaterialItem(
               name: _loc.translate('paint.tape'),
@@ -346,12 +380,8 @@ class _PaintScreenState extends State<PaintScreen> {
           ],
           accentColor: accentColor,
         ),
-
         const SizedBox(height: 24),
-
-        // Подсказки
         _buildTipsCard(),
-
         const SizedBox(height: 20),
       ],
     );
@@ -448,7 +478,7 @@ class _PaintScreenState extends State<PaintScreen> {
               label: _loc.translate('input.room_width'),
               value: _roomWidth,
               onChanged: (v) => setState(() => _roomWidth = v),
-              suffix: 'м',
+              suffix: _loc.translate('common.meters'),
               accentColor: accentColor,
               minValue: 0.1,
               maxValue: 100,
@@ -460,7 +490,7 @@ class _PaintScreenState extends State<PaintScreen> {
               label: _loc.translate('input.room_length'),
               value: _roomLength,
               onChanged: (v) => setState(() => _roomLength = v),
-              suffix: 'м',
+              suffix: _loc.translate('common.meters'),
               accentColor: accentColor,
               minValue: 0.1,
               maxValue: 100,
@@ -473,7 +503,7 @@ class _PaintScreenState extends State<PaintScreen> {
         label: _loc.translate('input.room_height'),
         value: _roomHeight,
         onChanged: (v) => setState(() => _roomHeight = v),
-        suffix: 'м',
+        suffix: _loc.translate('common.meters'),
         accentColor: accentColor,
         minValue: 1.5,
         maxValue: 10,
@@ -484,7 +514,7 @@ class _PaintScreenState extends State<PaintScreen> {
         label: _loc.translate('input.paint.doors_windows'),
         value: _openingsArea,
         onChanged: (v) => setState(() => _openingsArea = v),
-        suffix: 'м²',
+        suffix: _loc.translate('common.sqm'),
         accentColor: accentColor,
         minValue: 0,
         maxValue: 100,
@@ -499,7 +529,7 @@ class _PaintScreenState extends State<PaintScreen> {
         label: _loc.translate('input.paint.wall_area'),
         value: _manualArea,
         onChanged: (v) => setState(() => _manualArea = v),
-        suffix: 'м²',
+        suffix: _loc.translate('common.sqm'),
         accentColor: accentColor,
         minValue: 1,
         maxValue: 500,
@@ -534,3 +564,8 @@ class _PaintScreenState extends State<PaintScreen> {
     );
   }
 }
+
+
+
+
+

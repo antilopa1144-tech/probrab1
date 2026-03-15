@@ -1,16 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_waterproofing.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateWaterproofing', () {
     test('calculates total area correctly', () {
       final calculator = CalculateWaterproofing();
-      final inputs = {
-        'floorArea': 5.0,
-        'wallHeight': 0.3,
-        'perimeter': 10.0,
-      };
+      final inputs = {'floorArea': 5.0, 'wallHeight': 0.3, 'perimeter': 10.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -22,11 +19,7 @@ void main() {
 
     test('calculates material needed', () {
       final calculator = CalculateWaterproofing();
-      final inputs = {
-        'floorArea': 5.0,
-        'wallHeight': 0.3,
-        'perimeter': 10.0,
-      };
+      final inputs = {'floorArea': 5.0, 'wallHeight': 0.3, 'perimeter': 10.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -38,11 +31,7 @@ void main() {
 
     test('calculates primer needed', () {
       final calculator = CalculateWaterproofing();
-      final inputs = {
-        'floorArea': 5.0,
-        'wallHeight': 0.3,
-        'perimeter': 10.0,
-      };
+      final inputs = {'floorArea': 5.0, 'wallHeight': 0.3, 'perimeter': 10.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -52,10 +41,7 @@ void main() {
 
     test('calculates tape length', () {
       final calculator = CalculateWaterproofing();
-      final inputs = {
-        'floorArea': 5.0,
-        'perimeter': 10.0,
-      };
+      final inputs = {'floorArea': 5.0, 'perimeter': 10.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -65,10 +51,7 @@ void main() {
 
     test('uses default wall height 1.2m when missing', () {
       final calculator = CalculateWaterproofing();
-      final inputs = {
-        'floorArea': 5.0,
-        'perimeter': 10.0,
-      };
+      final inputs = {'floorArea': 5.0, 'perimeter': 10.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -80,11 +63,7 @@ void main() {
 
     test('handles explicit wall height 0.5', () {
       final calculator = CalculateWaterproofing();
-      final inputs = {
-        'floorArea': 5.0,
-        'wallHeight': 0.5,
-        'perimeter': 10.0,
-      };
+      final inputs = {'floorArea': 5.0, 'wallHeight': 0.5, 'perimeter': 10.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -94,10 +73,7 @@ void main() {
 
     test('handles zero floor area', () {
       final calculator = CalculateWaterproofing();
-      final inputs = {
-        'floorArea': 0.0,
-        'perimeter': 10.0,
-      };
+      final inputs = {'floorArea': 0.0, 'perimeter': 10.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -109,10 +85,7 @@ void main() {
 
     test('handles zero perimeter', () {
       final calculator = CalculateWaterproofing();
-      final inputs = {
-        'floorArea': 5.0,
-        'perimeter': 0.0,
-      };
+      final inputs = {'floorArea': 5.0, 'perimeter': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -123,6 +96,23 @@ void main() {
       expect(result.values['totalArea'], closeTo(15.73, 0.1));
       expect(result.values['wallArea'], closeTo(10.73, 0.1));
       expect(result.values['tapeLength'], closeTo(8.94, 0.01));
+    });
+
+    test('throws exception for negative floor area', () {
+      final calculator = CalculateWaterproofing();
+      final inputs = {'floorArea': -1.0};
+      final emptyPriceList = <PriceItem>[];
+
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "площадь пола" не может быть отрицательным'),
+          ),
+        ),
+      );
     });
   });
 }

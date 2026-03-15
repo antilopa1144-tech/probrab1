@@ -23,10 +23,7 @@ void main() {
 
     test('calculates with multiple layers', () {
       final calculator = CalculateGvlWall();
-      final inputs = {
-        'area': 15.0,
-        'layers': 2.0,
-      };
+      final inputs = {'area': 15.0, 'layers': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -38,10 +35,7 @@ void main() {
 
     test('calculates screws needed', () {
       final calculator = CalculateGvlWall();
-      final inputs = {
-        'area': 15.0,
-        'layers': 1.0,
-      };
+      final inputs = {'area': 15.0, 'layers': 1.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -53,10 +47,7 @@ void main() {
 
     test('calculates putty needed', () {
       final calculator = CalculateGvlWall();
-      final inputs = {
-        'area': 15.0,
-        'layers': 1.0,
-      };
+      final inputs = {'area': 15.0, 'layers': 1.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -67,9 +58,7 @@ void main() {
 
     test('estimates perimeter when missing', () {
       final calculator = CalculateGvlWall();
-      final inputs = {
-        'area': 15.0,
-      };
+      final inputs = {'area': 15.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -81,9 +70,7 @@ void main() {
 
     test('uses default values when missing', () {
       final calculator = CalculateGvlWall();
-      final inputs = {
-        'area': 15.0,
-      };
+      final inputs = {'area': 15.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -95,14 +82,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateGvlWall();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле \"площадь\" должно быть больше нуля'),
+          ),
+        ),
       );
     });
   });

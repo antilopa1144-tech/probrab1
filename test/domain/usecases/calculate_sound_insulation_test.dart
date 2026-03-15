@@ -24,10 +24,7 @@ void main() {
 
     test('calculates volume', () {
       final calculator = CalculateSoundInsulation();
-      final inputs = {
-        'area': 15.0,
-        'thickness': 50.0,
-      };
+      final inputs = {'area': 15.0, 'thickness': 50.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -38,9 +35,7 @@ void main() {
 
     test('calculates fasteners needed', () {
       final calculator = CalculateSoundInsulation();
-      final inputs = {
-        'area': 15.0,
-      };
+      final inputs = {'area': 15.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -51,9 +46,7 @@ void main() {
 
     test('uses default values when missing', () {
       final calculator = CalculateSoundInsulation();
-      final inputs = {
-        'area': 15.0,
-      };
+      final inputs = {'area': 15.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -65,14 +58,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateSoundInsulation();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле \"площадь\" должно быть больше нуля'),
+          ),
+        ),
       );
     });
   });

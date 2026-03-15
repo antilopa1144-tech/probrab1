@@ -80,7 +80,7 @@ class _CalculationItemCardState extends State<CalculationItemCard> {
                   IconButton(
                     icon: const Icon(Icons.delete_outline_rounded),
                     onPressed: widget.onDelete,
-                    tooltip: 'Удалить',
+                    tooltip: loc.translate('button.delete'),
                   ),
                 ],
               ),
@@ -120,7 +120,7 @@ class _CalculationItemCardState extends State<CalculationItemCard> {
                           ),
                         ),
                         Text(
-                          _formatResultValue(entry.key, entry.value),
+                          _formatResultValue(entry.key, entry.value, loc),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -200,20 +200,16 @@ class _CalculationItemCardState extends State<CalculationItemCard> {
   }
 
   String _formatResultKey(String key, AppLocalizations loc) {
-    // Пробуем найти локализованное название
     final localized = loc.translate('share.result_labels.$key');
-    if (localized != 'share.result_labels.$key') {
-      return localized;
-    }
+    if (localized != 'share.result_labels.$key') return localized;
 
-    // Фallback: форматируем snake_case в Title Case
-    return key
-        .replaceAll('_', ' ')
-        .split(' ')
-        .map(
-          (word) => word.isEmpty ? '' : word[0].toUpperCase() + word.substring(1),
-        )
-        .join(' ');
+    final resultLocalized = loc.translate('result.$key');
+    if (resultLocalized != 'result.$key') return resultLocalized;
+
+    final directLocalized = loc.translate(key);
+    if (directLocalized != key) return directLocalized;
+
+    return key;
   }
 
   String _formatCalculatorId(String calculatorId, AppLocalizations loc) {
@@ -225,29 +221,31 @@ class _CalculationItemCardState extends State<CalculationItemCard> {
     return calculatorId;
   }
 
-  String _formatResultValue(String key, double value) {
+  String _formatResultValue(String key, double value, AppLocalizations loc) {
     final format = NumberFormat('#,##0.00', 'ru_RU');
+    final formatted = format.format(value);
 
-    if (key.contains('area')) return '${format.format(value)} м?';
-    if (key.contains('volume')) return '${format.format(value)} м?';
+    if (key.contains('area')) return '$formatted ${loc.translate('unit.sqm')}';
+    if (key.contains('volume')) return '$formatted ${loc.translate('unit.cubicMeters')}';
     if (key.contains('length') || key.contains('perimeter')) {
-      return '${format.format(value)} м';
+      return '$formatted ${loc.translate('unit.meters')}';
     }
     if (key.contains('kg') || key.contains('weight')) {
-      return '${format.format(value)} кг';
+      return '$formatted ${loc.translate('unit.kilograms')}';
     }
-    if (key.contains('liters') || key.contains('l')) {
-      return '${format.format(value)} л';
+    if (key.contains('liter') || key.contains('liters') || key.endsWith('_l')) {
+      return '$formatted ${loc.translate('unit.liters')}';
     }
     if (key.contains('pieces') ||
         key.contains('pcs') ||
-        key.contains('needed')) {
-      return '${format.format(value)} шт.';
+        key.contains('needed') ||
+        key.contains('count')) {
+      return '$formatted ${loc.translate('unit.pieces')}';
     }
     if (key.contains('price') || key.contains('cost')) {
-      return '${format.format(value)} ?';
+      return '$formatted ₽';
     }
 
-    return format.format(value);
+    return formatted;
   }
 }

@@ -80,7 +80,7 @@ class ShareOptionsDialog extends StatelessWidget {
             const SizedBox(height: 8),
             _OptionTile(
               icon: Icons.qr_code_2_rounded,
-              title: qrLabel ?? 'QR код',
+              title: qrLabel ?? loc.translate('common.qr_code'),
               subtitle: loc.translate('common.show_qr_to_scan'),
               onTap: () => Navigator.pop(context, ShareAction.qr),
             ),
@@ -233,7 +233,7 @@ class CompactShareOptionsDialog extends StatelessWidget {
               children: [
                 Icon(Icons.qr_code_2_rounded, color: theme.colorScheme.primary),
                 const SizedBox(width: 16),
-                const Text('QR код'),
+                Text(loc.translate('common.qr_code')),
               ],
             ),
           ),
@@ -241,3 +241,4 @@ class CompactShareOptionsDialog extends StatelessWidget {
     );
   }
 }
+

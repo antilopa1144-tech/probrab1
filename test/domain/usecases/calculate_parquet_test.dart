@@ -25,9 +25,7 @@ void main() {
 
     test('calculates varnish needed', () {
       final calculator = CalculateParquet();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -38,9 +36,7 @@ void main() {
 
     test('calculates primer needed', () {
       final calculator = CalculateParquet();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -51,9 +47,7 @@ void main() {
 
     test('calculates glue needed', () {
       final calculator = CalculateParquet();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -64,9 +58,7 @@ void main() {
 
     test('estimates perimeter when missing', () {
       final calculator = CalculateParquet();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -77,10 +69,7 @@ void main() {
 
     test('uses provided perimeter', () {
       final calculator = CalculateParquet();
-      final inputs = {
-        'area': 20.0,
-        'perimeter': 18.0,
-      };
+      final inputs = {'area': 20.0, 'perimeter': 18.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -90,9 +79,7 @@ void main() {
 
     test('uses default plank dimensions when missing', () {
       final calculator = CalculateParquet();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -103,14 +90,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateParquet();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Необходимо указать площадь или размеры помещения'),
+          ),
+        ),
       );
     });
   });

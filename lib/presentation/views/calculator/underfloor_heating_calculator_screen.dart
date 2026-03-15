@@ -1,8 +1,9 @@
-import 'dart:math' show max, sqrt;
 
 import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../../data/models/price_item.dart';
+import '../../../domain/usecases/calculate_underfloor_heating.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_constant.dart';
@@ -217,8 +218,6 @@ class _UnderfloorHeatingCalculatorScreenState
   bool _addInsulation = false;
   int _filmWidthIndex = 1; // 0=50см, 1=80см, 2=100см
 
-  // Ширины ИК плёнки в метрах
-  static const _filmWidths = {0: 0.5, 1: 0.8, 2: 1.0};
   late double _usefulAreaPercent;
   late _HeatingResult _result;
   late AppLocalizations _loc;
@@ -235,148 +234,87 @@ class _UnderfloorHeatingCalculatorScreenState
     _result = _calculate();
   }
 
+  final CalculateUnderfloorHeating _calculator = CalculateUnderfloorHeating();
+
+  T _enumFromStoredIndex<T>(List<T> values, double? rawValue, T fallback, {bool oneBased = false}) {
+    if (rawValue == null) return fallback;
+    final rawIndex = rawValue.round() - (oneBased ? 1 : 0);
+    if (rawIndex < 0 || rawIndex >= values.length) return fallback;
+    return values[rawIndex];
+  }
+
   void _applyInitialInputs() {
     final initial = widget.initialInputs;
     if (initial == null) return;
+    _inputMode = _enumFromStoredIndex(InputMode.values, initial['inputMode'], _inputMode);
     if (initial['area'] != null) _area = initial['area']!.clamp(1.0, 1000.0);
-    if (initial['length'] != null) {
-      _length = initial['length']!.clamp(0.1, 100.0);
-    }
+    if (initial['length'] != null) _length = initial['length']!.clamp(0.1, 100.0);
     if (initial['width'] != null) _width = initial['width']!.clamp(0.1, 100.0);
+    _systemType = _enumFromStoredIndex(HeatingSystemType.values, initial['systemType'], _systemType, oneBased: true);
+    _roomType = _enumFromStoredIndex(RoomType.values, initial['roomType'], _roomType, oneBased: true);
+    if (initial['usefulAreaPercent'] != null) {
+      _usefulAreaPercent = initial['usefulAreaPercent']!.clamp(_constants.usefulAreaMin, _constants.usefulAreaMax);
+    }
+    if (initial['addInsulation'] != null) _addInsulation = initial['addInsulation']! >= 1;
+    if (initial['filmWidth'] != null) _filmWidthIndex = initial['filmWidth']!.round().clamp(0, 2);
   }
 
-  double _getCalculatedArea() {
-    if (_inputMode == InputMode.byArea) {
-      return _area;
-    }
-    return _length * _width;
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'inputMode': _inputMode.index.toDouble(),
+      'area': _area,
+      'length': _length,
+      'width': _width,
+      'systemType': (_systemType.index + 1).toDouble(),
+      'roomType': (_roomType.index + 1).toDouble(),
+      'usefulAreaPercent': _usefulAreaPercent,
+      'addInsulation': _addInsulation ? 1.0 : 0.0,
+      'filmWidth': _filmWidthIndex.toDouble(),
+    };
+  }
+
+  _HeatingResult _mapCalculationResult(Map<String, double> values) {
+    final systemType = _enumFromStoredIndex(
+      HeatingSystemType.values,
+      values['systemType'],
+      HeatingSystemType.electricMat,
+      oneBased: true,
+    );
+    final roomType = _enumFromStoredIndex(
+      RoomType.values,
+      values['roomType'],
+      RoomType.living,
+      oneBased: true,
+    );
+    return _HeatingResult(
+      area: values['area'] ?? 0,
+      perimeter: values['perimeter'] ?? 0,
+      systemType: systemType,
+      roomType: roomType,
+      heatingArea: values['heatingArea'] ?? 0,
+      totalPower: (values['totalPower'] ?? 0).round(),
+      needsThermostat: true,
+      needsInsulation: values['insulationArea'] != null,
+      matArea: values['matArea'],
+      cableLength: values['cableLength'],
+      filmArea: values['filmArea'],
+      filmLinearMeters: values['filmLinearMeters'],
+      filmWidthCm: values['filmWidthCm']?.round(),
+      contactClips: values['contactClips']?.round(),
+      pipeLength: values['pipeLength'],
+      loopCount: values['loopCount']?.round(),
+      collectorOutputs: values['collectorOutputs']?.round(),
+      insulationArea: values['insulationArea'],
+      screedVolume: values['screedVolume'],
+      thermostatCount: values['thermostatCount'] ?? _constants.thermostatCount.toDouble(),
+      sensorCount: values['sensorCount'] ?? _constants.sensorCount.toDouble(),
+      corrugatedTubeLength: values['corrugatedTubeLength'] ?? _constants.corrugatedTubeLength,
+    );
   }
 
   _HeatingResult _calculate() {
-    final calculatedArea = _getCalculatedArea();
-
-    // Периметр: из размеров или оценка по площади (√area × 4)
-    final perimeter = _inputMode == InputMode.byDimensions
-        ? (_length + _width) * 2
-        : sqrt(calculatedArea) * 4;
-
-    // Площадь обогрева = настраиваемый % от общей (минус мебель, сантехника)
-    final heatingArea = calculatedArea * (_usefulAreaPercent / 100);
-
-    // Мощность из констант по типу помещения
-    final roomPower = _constants.getRoomPower(_roomType.key);
-    final totalPower = (heatingArea * roomPower).round();
-
-    // Общие материалы из констант
-    final thermostatCount = _constants.thermostatCount.toDouble();
-    final sensorCount = _constants.sensorCount.toDouble();
-    final corrugatedTubeLength = _constants.corrugatedTubeLength;
-
-    double? matArea;
-    double? cableLength;
-    double? filmArea;
-    double? filmLinearMeters;
-    int? filmWidthCm;
-    int? contactClips;
-    double? pipeLength;
-    int? loopCount;
-    int? collectorOutputs;
-    double? insulationArea;
-    double? screedVolume;
-
-    switch (_systemType) {
-      case HeatingSystemType.electricMat:
-        // Нагревательный мат продаётся готовыми комплектами по площади
-        matArea = heatingArea;
-        break;
-
-      case HeatingSystemType.electricCable:
-        // Кабель: длина зависит от мощности кабеля (обычно 17-20 Вт/м)
-        final cablePowerPerMeter = _constants.cablePowerPerMeter;
-        cableLength = totalPower / cablePowerPerMeter;
-        break;
-
-      case HeatingSystemType.infraredFilm:
-        // ИК плёнка: ширина из выбора пользователя (50/80/100 см)
-        final filmWidthM = _filmWidths[_filmWidthIndex] ?? 0.8;
-        final filmWidthCmVal = (filmWidthM * 100).toInt();
-
-        // Отступы от стен: 30 см с каждой стороны (требование производителей Caleo, Q-Term)
-        const wallOffset = 0.30; // м
-
-        // Эффективные размеры (без отступов от стен)
-        double effectiveLength, effectiveWidth;
-        if (_inputMode == InputMode.byDimensions) {
-          effectiveLength = max(_length - 2 * wallOffset, 0.5);
-          effectiveWidth = max(_width - 2 * wallOffset, 0.5);
-        } else {
-          // Оценка размеров из площади (соотношение ~4:3)
-          final side = sqrt(calculatedArea);
-          effectiveLength = max(side * 1.15 - 2 * wallOffset, 0.5);
-          effectiveWidth = max(side * 0.87 - 2 * wallOffset, 0.5);
-        }
-
-        // Количество полос = сколько полос шириной filmWidth вмещается по ширине комнаты
-        final stripCount = max((effectiveWidth / filmWidthM).floor(), 1);
-        // Длина каждой полосы = эффективная длина комнаты
-        final stripLength = effectiveLength;
-        // Итого погонных метров
-        filmLinearMeters = stripCount * stripLength;
-        // Фактическая площадь покрытия плёнкой
-        filmArea = filmLinearMeters * filmWidthM;
-        // На каждую полосу: контактные зажимы (2 шт на полосу)
-        contactClips = stripCount * _constants.contactsPerStrip;
-        filmWidthCm = filmWidthCmVal;
-        break;
-
-      case HeatingSystemType.waterBased:
-        // Водяной: расчёт трубы по шагу укладки из констант
-        final pipeStep = _constants.getPipeStep(_roomType.key);
-        final stepM = pipeStep / 1000; // мм в метры
-        final pipePerM2 = 1 / stepM; // метров трубы на м²
-        pipeLength = heatingArea * pipePerM2 * _constants.pipeMargin;
-
-        // Количество контуров
-        loopCount = (pipeLength / _constants.maxLoopLength).ceil();
-        collectorOutputs = loopCount;
-
-        // Теплоизоляция обязательна для водяного
-        insulationArea = calculatedArea;
-
-        // Стяжка: толщина из констант
-        screedVolume = calculatedArea * _constants.screedThickness;
-        break;
-    }
-
-    // Теплоизоляция (опционально для электрических, обязательна для водяного)
-    if (_addInsulation && _systemType != HeatingSystemType.waterBased) {
-      insulationArea = calculatedArea;
-    }
-
-    return _HeatingResult(
-      area: calculatedArea,
-      perimeter: perimeter,
-      systemType: _systemType,
-      roomType: _roomType,
-      heatingArea: heatingArea,
-      totalPower: totalPower,
-      needsThermostat: true,
-      needsInsulation: _addInsulation || _systemType == HeatingSystemType.waterBased,
-      matArea: matArea,
-      cableLength: cableLength,
-      filmArea: filmArea,
-      filmLinearMeters: filmLinearMeters,
-      filmWidthCm: filmWidthCm,
-      contactClips: contactClips,
-      pipeLength: pipeLength,
-      loopCount: loopCount,
-      collectorOutputs: collectorOutputs,
-      insulationArea: insulationArea,
-      screedVolume: screedVolume,
-      thermostatCount: thermostatCount,
-      sensorCount: sensorCount,
-      corrugatedTubeLength: corrugatedTubeLength,
-    );
+    final result = _calculator(_buildCalculationInputs(), <PriceItem>[]);
+    return _mapCalculationResult(result.values);
   }
 
   void _recalculate() => _result = _calculate();
@@ -388,8 +326,8 @@ class _UnderfloorHeatingCalculatorScreenState
     buffer.writeln('═' * 40);
     buffer.writeln();
 
-    buffer.writeln('${_loc.translate('warmfloor.export.room_area')}: ${_result.area.toStringAsFixed(1)} м²');
-    buffer.writeln('${_loc.translate('warmfloor.export.heating_area')}: ${_result.heatingArea.toStringAsFixed(1)} м²');
+    buffer.writeln('${_loc.translate('warmfloor.export.room_area')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+    buffer.writeln('${_loc.translate('warmfloor.export.heating_area')}: ${_result.heatingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
     buffer.writeln('${_loc.translate('warmfloor.export.system_type')}: ${_loc.translate(_result.systemType.nameKey)}');
     buffer.writeln('${_loc.translate('warmfloor.export.room_type')}: ${_loc.translate(_result.roomType.nameKey)}');
     buffer.writeln('${_loc.translate('warmfloor.export.power')}: ${_result.totalPower} ${_loc.translate('common.watt')}');
@@ -400,36 +338,36 @@ class _UnderfloorHeatingCalculatorScreenState
 
     switch (_result.systemType) {
       case HeatingSystemType.electricMat:
-        buffer.writeln('• ${_loc.translate('warmfloor.export.heating_mat')}: ${_result.matArea!.toStringAsFixed(1)} м² (${_result.totalPower} ${_loc.translate('common.watt')})');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.heating_mat')}: ${_result.matArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')} (${_result.totalPower} ${_loc.translate('common.watt')})');
         break;
       case HeatingSystemType.electricCable:
         buffer.writeln('• ${_loc.translate('warmfloor.export.heating_cable')}: ${_result.cableLength!.toStringAsFixed(1)} ${_loc.translate('common.meters')} (${_result.totalPower} ${_loc.translate('common.watt')})');
         buffer.writeln('• ${_loc.translate('warmfloor.export.mounting_tape')}: ${(_result.heatingArea * _constants.montageTapeMultiplier).toStringAsFixed(0)} ${_loc.translate('common.meters')}');
         break;
       case HeatingSystemType.infraredFilm:
-        buffer.writeln('• ${_loc.translate('warmfloor.export.ir_film')}: ${_result.filmLinearMeters!.toStringAsFixed(1)} м.п. (${_loc.translate('warmfloor.film_width.label')}: ${_result.filmWidthCm} см)');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.ir_film')}: ${_result.filmLinearMeters!.toStringAsFixed(1)} ${_loc.translate('common.meters')} (${_loc.translate('warmfloor.film_width.label')}: ${_result.filmWidthCm} ${_loc.translate('common.cm')})');
         buffer.writeln('• ${_loc.translate('warmfloor.export.contact_clips')}: ${_result.contactClips} ${_loc.translate('common.pcs')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.contact_insulation')}: ${_result.contactClips} ${_loc.translate('common.pcs')}');
-        buffer.writeln('• ${_loc.translate('warmfloor.export.reflective_substrate')}: ${_result.area.toStringAsFixed(1)} м²');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.reflective_substrate')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
         break;
       case HeatingSystemType.waterBased:
         buffer.writeln('• ${_loc.translate('warmfloor.export.pipe_pert')}: ${_result.pipeLength!.toStringAsFixed(0)} ${_loc.translate('common.meters')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.collector')}: ${_result.collectorOutputs} ${_loc.translate('warmfloor.materials.outputs')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.loops')}: ${_result.loopCount}');
-        buffer.writeln('• ${_loc.translate('warmfloor.export.insulation_psb')}: ${_result.insulationArea!.toStringAsFixed(1)} м²');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.insulation_psb')}: ${_result.insulationArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.damper_tape')}: ${(_result.perimeter * 1.1).toStringAsFixed(0)} ${_loc.translate('common.meters')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.brackets')}: ${(_result.heatingArea * _constants.bracketsPerM2).toStringAsFixed(0)} ${_loc.translate('common.pcs')}');
-        buffer.writeln('• ${_loc.translate('warmfloor.export.screed')}: ${_result.screedVolume!.toStringAsFixed(2)} м³');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.screed')}: ${_result.screedVolume!.toStringAsFixed(2)} ${_loc.translate('unit.cubicMeters')}');
         break;
     }
 
     buffer.writeln('• ${_loc.translate('warmfloor.export.thermostat')}: ${_result.thermostatCount.toStringAsFixed(0)} ${_loc.translate('common.pcs')}');
-    buffer.writeln('• ${_loc.translate('warmfloor.export.temp_sensor')}: ${_result.sensorCount.toStringAsFixed(0)} ${_loc.translate('common.pcs')}');
     buffer.writeln('• ${_loc.translate('warmfloor.export.corrugated_tube')}: ${_result.corrugatedTubeLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}');
 
     if (_result.insulationArea != null && _result.systemType != HeatingSystemType.waterBased) {
-      buffer.writeln('• ${_loc.translate('warmfloor.export.insulation')}: ${_result.insulationArea!.toStringAsFixed(1)} м²');
+      buffer.writeln('• ${_loc.translate('warmfloor.export.insulation')}: ${_result.insulationArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
     }
+
 
     buffer.writeln();
     buffer.writeln('═' * 40);
@@ -453,12 +391,12 @@ class _UnderfloorHeatingCalculatorScreenState
         results: [
           ResultItem(
             label: _loc.translate('warmfloor.header.area'),
-            value: '${_result.heatingArea.toStringAsFixed(0)} м²',
+            value: '${_result.heatingArea.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
             label: _loc.translate('warmfloor.header.power'),
-            value: '${(_result.totalPower / 1000).toStringAsFixed(1)} кВт',
+            value: '${(_result.totalPower / 1000).toStringAsFixed(1)} ${_loc.translate('common.kilowatt')}',
             icon: Icons.bolt,
           ),
           ResultItem(
@@ -466,12 +404,12 @@ class _UnderfloorHeatingCalculatorScreenState
                 ? _loc.translate('warmfloor.header.pipe')
                 : _loc.translate('warmfloor.header.system'),
             value: _result.systemType == HeatingSystemType.waterBased
-                ? '${_result.pipeLength!.toStringAsFixed(0)} м'
+                ? '${_result.pipeLength!.toStringAsFixed(0)} ${_loc.translate('common.meters')}'
                 : _result.systemType == HeatingSystemType.electricMat
-                    ? '${_result.matArea!.toStringAsFixed(1)} м²'
+                    ? '${_result.matArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}'
                     : _result.systemType == HeatingSystemType.electricCable
-                        ? '${_result.cableLength!.toStringAsFixed(0)} м'
-                        : '${_result.filmLinearMeters!.toStringAsFixed(1)} м.п.',
+                        ? '${_result.cableLength!.toStringAsFixed(0)} ${_loc.translate('common.meters')}'
+                        : '${_result.filmLinearMeters!.toStringAsFixed(1)} ${_loc.translate('common.linear_meter_short')}',
             icon: Icons.thermostat,
           ),
         ],
@@ -548,7 +486,7 @@ class _UnderfloorHeatingCalculatorScreenState
             _recalculate();
           });
         },
-        suffix: 'м²',
+        suffix: _loc.translate('common.sqm'),
         accentColor: accentColor,
         minValue: 1,
         maxValue: 200,
@@ -574,7 +512,7 @@ class _UnderfloorHeatingCalculatorScreenState
                       _recalculate();
                     });
                   },
-                  suffix: 'м',
+                  suffix: _loc.translate('common.meters'),
                   accentColor: accentColor,
                   minValue: 0.5,
                   maxValue: 30,
@@ -592,7 +530,7 @@ class _UnderfloorHeatingCalculatorScreenState
                       _recalculate();
                     });
                   },
-                  suffix: 'м',
+                  suffix: _loc.translate('common.meters'),
                   accentColor: accentColor,
                   minValue: 0.5,
                   maxValue: 30,
@@ -617,7 +555,7 @@ class _UnderfloorHeatingCalculatorScreenState
                   ),
                 ),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} м²',
+                  '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.titleMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.w600,
@@ -803,7 +741,7 @@ class _UnderfloorHeatingCalculatorScreenState
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${_loc.translate(type.descriptionKey)} • ${_constants.getRoomPower(type.key)} Вт/м²',
+                              '${_loc.translate(type.descriptionKey)} • ${_constants.getRoomPower(type.key)} ${_loc.translate('watt_per_sqm')}',
                               style: CalculatorDesignSystem.bodySmall.copyWith(
                                 color: CalculatorColors.getTextSecondary(_isDark),
                               ),
@@ -913,7 +851,7 @@ class _UnderfloorHeatingCalculatorScreenState
                 _recalculate();
               });
             },
-            suffix: '%',
+            suffix: _loc.translate('common.percent'),
             accentColor: accentColor,
             minValue: _constants.usefulAreaMin,
             maxValue: _constants.usefulAreaMax,
@@ -938,7 +876,7 @@ class _UnderfloorHeatingCalculatorScreenState
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: const ['50 см', '80 см', '100 см'],
+            options: ['50 ${_loc.translate('room.unit.cm')}', '80 ${_loc.translate('room.unit.cm')}', '100 ${_loc.translate('room.unit.cm')}'],
             selectedIndex: _filmWidthIndex,
             onSelect: (index) {
               setState(() {
@@ -1002,8 +940,8 @@ class _UnderfloorHeatingCalculatorScreenState
       case HeatingSystemType.electricMat:
         materials.add(MaterialItem(
           name: _loc.translate('warmfloor.materials.heating_mat'),
-          value: '${_result.matArea!.toStringAsFixed(1)} м²',
-          subtitle: '${_result.totalPower} Вт',
+          value: '${_result.matArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          subtitle: '${_result.totalPower} ${_loc.translate('common.watt')}',
           icon: Icons.grid_on,
         ));
         break;
@@ -1012,13 +950,13 @@ class _UnderfloorHeatingCalculatorScreenState
         materials.addAll([
           MaterialItem(
             name: _loc.translate('warmfloor.materials.heating_cable'),
-            value: '${_result.cableLength!.toStringAsFixed(0)} м',
-            subtitle: '${_result.totalPower} Вт',
+            value: '${_result.cableLength!.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
+            subtitle: '${_result.totalPower} ${_loc.translate('common.watt')}',
             icon: Icons.cable,
           ),
           MaterialItem(
             name: _loc.translate('warmfloor.materials.mounting_tape'),
-            value: '${(_result.heatingArea * _constants.montageTapeMultiplier).toStringAsFixed(0)} м',
+            value: '${(_result.heatingArea * _constants.montageTapeMultiplier).toStringAsFixed(0)} ${_loc.translate('common.meters')}',
             icon: Icons.straighten,
           ),
         ]);
@@ -1028,8 +966,8 @@ class _UnderfloorHeatingCalculatorScreenState
         materials.addAll([
           MaterialItem(
             name: _loc.translate('warmfloor.materials.ir_film'),
-            value: '${_result.filmLinearMeters!.toStringAsFixed(1)} м.п. × ${_result.filmWidthCm} см',
-            subtitle: '${_loc.translate('warmfloor.materials.coverage')}: ${_result.filmArea!.toStringAsFixed(1)} м²',
+            value: '${_result.filmLinearMeters!.toStringAsFixed(1)} ${_loc.translate('common.meters')} × ${_result.filmWidthCm} ${_loc.translate('common.cm')}',
+            subtitle: '${_loc.translate('warmfloor.materials.coverage')}: ${_result.filmArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
             icon: Icons.view_module,
           ),
           MaterialItem(
@@ -1044,7 +982,7 @@ class _UnderfloorHeatingCalculatorScreenState
           ),
           MaterialItem(
             name: _loc.translate('warmfloor.materials.reflective_substrate'),
-            value: '${_result.area.toStringAsFixed(1)} м²',
+            value: '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
             icon: Icons.layers,
           ),
         ]);
@@ -1054,8 +992,8 @@ class _UnderfloorHeatingCalculatorScreenState
         materials.addAll([
           MaterialItem(
             name: _loc.translate('warmfloor.materials.pipe_pert'),
-            value: '${_result.pipeLength!.toStringAsFixed(0)} м',
-            subtitle: '${_loc.translate('warmfloor.materials.pipe_step')}: ${_constants.getPipeStep(_roomType.key)} мм',
+            value: '${_result.pipeLength!.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
+            subtitle: '${_loc.translate('warmfloor.materials.pipe_step')}: ${_constants.getPipeStep(_roomType.key)} ${_loc.translate('common.mm')}',
             icon: Icons.timeline,
           ),
           MaterialItem(
@@ -1070,13 +1008,13 @@ class _UnderfloorHeatingCalculatorScreenState
           ),
           MaterialItem(
             name: _loc.translate('warmfloor.materials.insulation_psb'),
-            value: '${_result.insulationArea!.toStringAsFixed(1)} м²',
-            subtitle: '50 мм',
+            value: '${_result.insulationArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+            subtitle: '50 ${_loc.translate('common.mm')}',
             icon: Icons.layers,
           ),
           MaterialItem(
             name: _loc.translate('warmfloor.materials.damper_tape'),
-            value: '${(_result.perimeter * 1.1).toStringAsFixed(0)} м',
+            value: '${(_result.perimeter * 1.1).toStringAsFixed(0)} ${_loc.translate('common.meters')}',
             icon: Icons.straighten,
           ),
           MaterialItem(
@@ -1086,7 +1024,7 @@ class _UnderfloorHeatingCalculatorScreenState
           ),
           MaterialItem(
             name: _loc.translate('warmfloor.materials.screed'),
-            value: '${_result.screedVolume!.toStringAsFixed(2)} м³',
+            value: '${_result.screedVolume!.toStringAsFixed(2)} ${_loc.translate('unit.cubicMeters')}',
             icon: Icons.foundation,
           ),
         ]);
@@ -1107,7 +1045,7 @@ class _UnderfloorHeatingCalculatorScreenState
       ),
       MaterialItem(
         name: _loc.translate('warmfloor.materials.corrugated_tube'),
-        value: '${_result.corrugatedTubeLength.toStringAsFixed(1)} м',
+        value: '${_result.corrugatedTubeLength.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
         subtitle: _loc.translate('warmfloor.materials.for_sensor'),
         icon: Icons.sensor_door,
       ),
@@ -1116,7 +1054,7 @@ class _UnderfloorHeatingCalculatorScreenState
     if (_result.insulationArea != null && _result.systemType != HeatingSystemType.waterBased) {
       materials.add(MaterialItem(
         name: _loc.translate('warmfloor.materials.insulation'),
-        value: '${_result.insulationArea!.toStringAsFixed(1)} м²',
+        value: '${_result.insulationArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
         icon: Icons.layers,
       ));
     }
@@ -1139,24 +1077,24 @@ class _UnderfloorHeatingCalculatorScreenState
     final infoItems = <MaterialItem>[
       MaterialItem(
         name: _loc.translate('warmfloor.info.system_power'),
-        value: '${(_result.totalPower / 1000).toStringAsFixed(2)} кВт',
+        value: '${(_result.totalPower / 1000).toStringAsFixed(2)} ${_loc.translate('common.kilowatt')}',
         icon: Icons.bolt,
       ),
       MaterialItem(
         name: _loc.translate('warmfloor.info.heating_area'),
-        value: '${_result.heatingArea.toStringAsFixed(1)} м²',
-        subtitle: '${_usefulAreaPercent.round()}% ${_loc.translate('warmfloor.info.heating_area_hint')}',
+        value: '${_result.heatingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+        subtitle: '${_usefulAreaPercent.round()}${_loc.translate('common.percent')} ${_loc.translate('warmfloor.info.heating_area_hint')}',
         icon: Icons.heat_pump,
       ),
       MaterialItem(
         name: _loc.translate('warmfloor.info.monthly_consumption'),
-        value: '~${monthlyConsumption.toStringAsFixed(0)} кВт⋅ч',
+        value: '~${monthlyConsumption.toStringAsFixed(0)} ${_loc.translate('common.kilowatt_hour')}',
         subtitle: _loc.translate('warmfloor.info.monthly_hint'),
         icon: Icons.calendar_month,
       ),
       MaterialItem(
         name: _loc.translate('warmfloor.info.season_consumption'),
-        value: '~${seasonConsumption.toStringAsFixed(0)} кВт⋅ч',
+        value: '~${seasonConsumption.toStringAsFixed(0)} ${_loc.translate('common.kilowatt_hour')}',
         subtitle: _loc.translate('warmfloor.info.season_hint'),
         icon: Icons.calendar_today,
       ),
@@ -1224,3 +1162,8 @@ class _UnderfloorHeatingCalculatorScreenState
     );
   }
 }
+
+
+
+
+

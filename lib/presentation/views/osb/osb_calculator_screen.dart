@@ -339,101 +339,139 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
 
   String _generateExportText() {
     final buffer = StringBuffer();
-    buffer.writeln('📋 РАСЧЁТ МАТЕРИАЛОВ ДЛЯ ОСБ');
+    buffer.writeln(_loc.translate('osb.export.title'));
     buffer.writeln('═' * 40);
     buffer.writeln();
 
-    // Площадь
-    buffer.writeln('Площадь: ${_result.area.toStringAsFixed(1)} м²');
+    final constructionName = _loc.translate(
+      'osb.construction.${_constructionType.name}.name',
+    );
 
-    // Тип конструкции
-    String constructionName;
-    switch (_constructionType) {
-      case OsbConstructionType.wall:
-        constructionName = 'Обшивка стен';
-        break;
-      case OsbConstructionType.floor:
-        constructionName = 'Пол';
-        break;
-      case OsbConstructionType.roof:
-        constructionName = 'Крыша';
-        break;
-      case OsbConstructionType.partition:
-        constructionName = 'Перегородки';
-        break;
-      case OsbConstructionType.sip:
-        constructionName = 'СИП-панели';
-        break;
-      case OsbConstructionType.formwork:
-        constructionName = 'Опалубка';
-        break;
-    }
-    buffer.writeln('Тип: $constructionName');
-    buffer.writeln('Толщина: $_thickness мм');
+    buffer.writeln(_loc.translate('osb.export.area', {
+      'value': _result.area.toStringAsFixed(1),
+      'unit': _loc.translate('common.square_meter_short'),
+    }));
+    buffer.writeln(_loc.translate('osb.export.type', {
+      'value': constructionName,
+    }));
+    buffer.writeln(_loc.translate('osb.export.thickness', {
+      'value': _thickness.toString(),
+      'unit': _loc.translate('room.unit.mm'),
+    }));
     buffer.writeln();
 
-    buffer.writeln('📦 МАТЕРИАЛЫ:');
+    buffer.writeln(_loc.translate('osb.export.materials_title'));
     buffer.writeln('─' * 40);
-    buffer.writeln('• ОСБ ${_result.sheetSizeName} мм: ${_result.sheetsNeeded} шт');
-    buffer.writeln('• Площадь материала: ${_result.materialArea.toStringAsFixed(1)} м²');
+    buffer.writeln(_loc.translate('osb.export.sheets', {
+      'size': _result.sheetSizeName,
+      'unit': _loc.translate('room.unit.mm'),
+      'value': _result.sheetsNeeded.toString(),
+      'pieces': _loc.translate('common.piece_short'),
+    }));
+    buffer.writeln(_loc.translate('osb.export.material_area', {
+      'value': _result.materialArea.toStringAsFixed(1),
+      'unit': _loc.translate('common.square_meter_short'),
+    }));
+
     final screwFormatted = ScrewFormatter.formatWithWeight(
       quantity: _result.screwsNeeded,
       diameter: _result.screwDiameter,
       length: _result.screwLength,
     );
-    buffer.writeln('• Саморезы ⌀${_result.screwDiameter.toStringAsFixed(1)}×${_result.screwLength.toStringAsFixed(0)} мм: $screwFormatted');
+    buffer.writeln(
+      '${_loc.translate('osb.materials.screws')} '
+      '⌀${_result.screwDiameter.toStringAsFixed(1)}'
+      '×${_result.screwLength.toStringAsFixed(0)} '
+      '${_loc.translate('room.unit.mm')}: $screwFormatted',
+    );
 
     if (_result.windBarrierArea > 0) {
-      buffer.writeln('• Ветрозащита: ${_result.windBarrierArea.toStringAsFixed(1)} м²');
+      buffer.writeln(_loc.translate('osb.export.wind_barrier', {
+        'value': _result.windBarrierArea.toStringAsFixed(1),
+        'unit': _loc.translate('common.square_meter_short'),
+      }));
     }
     if (_result.vaporBarrierArea > 0) {
-      buffer.writeln('• Пароизоляция: ${_result.vaporBarrierArea.toStringAsFixed(1)} м²');
+      buffer.writeln(_loc.translate('osb.export.vapor_barrier', {
+        'value': _result.vaporBarrierArea.toStringAsFixed(1),
+        'unit': _loc.translate('common.square_meter_short'),
+      }));
     }
     if (_result.underlayArea > 0) {
-      buffer.writeln('• Подложка: ${_result.underlayArea.toStringAsFixed(1)} м²');
+      buffer.writeln(_loc.translate('osb.export.underlay', {
+        'value': _result.underlayArea.toStringAsFixed(1),
+        'unit': _loc.translate('common.square_meter_short'),
+      }));
     }
     if (_result.underlaymentArea > 0) {
-      buffer.writeln('• Кровельная подложка: ${_result.underlaymentArea.toStringAsFixed(1)} м²');
+      buffer.writeln(_loc.translate('osb.export.roofing_underlay', {
+        'value': _result.underlaymentArea.toStringAsFixed(1),
+        'unit': _loc.translate('common.square_meter_short'),
+      }));
     }
     if (_result.counterBattensLength > 0) {
-      buffer.writeln('• Контррейка: ${_result.counterBattensLength.toStringAsFixed(1)} м');
+      buffer.writeln(_loc.translate('osb.export.counter_batten', {
+        'value': _result.counterBattensLength.toStringAsFixed(1),
+        'unit': _loc.translate('room.unit.meters'),
+      }));
     }
     if (_result.clips > 0) {
-      buffer.writeln('• Кляймеры: ${_result.clips.toStringAsFixed(0)} шт');
+      buffer.writeln(_loc.translate('osb.export.clips', {
+        'value': _result.clips.toStringAsFixed(0),
+        'unit': _loc.translate('common.piece_short'),
+      }));
     }
     if (_result.studsLength > 0) {
-      buffer.writeln('• Брус для стоек: ${_result.studsLength.toStringAsFixed(1)} м');
+      buffer.writeln(_loc.translate('osb.export.studs', {
+        'value': _result.studsLength.toStringAsFixed(1),
+        'unit': _loc.translate('room.unit.meters'),
+      }));
     }
     if (_result.insulationArea > 0) {
-      buffer.writeln('• Утеплитель: ${_result.insulationArea.toStringAsFixed(1)} м²');
+      buffer.writeln(_loc.translate('osb.export.insulation', {
+        'value': _result.insulationArea.toStringAsFixed(1),
+        'unit': _loc.translate('common.square_meter_short'),
+      }));
     }
     if (_result.battensLength > 0) {
-      buffer.writeln('• Рейки: ${_result.battensLength.toStringAsFixed(1)} м');
+      buffer.writeln(_loc.translate('osb.export.battens', {
+        'value': _result.battensLength.toStringAsFixed(1),
+        'unit': _loc.translate('room.unit.meters'),
+      }));
     }
     if (_result.glueNeededKg > 0) {
-      buffer.writeln('• Клей для СИП: ${_result.glueNeededKg.toStringAsFixed(1)} кг');
+      buffer.writeln(_loc.translate('osb.export.sip_glue', {
+        'value': _result.glueNeededKg.toStringAsFixed(1),
+        'unit': _loc.translate('common.kg_short'),
+      }));
     }
     if (_result.foamNeeded > 0) {
-      buffer.writeln('• Монтажная пена: ${_result.foamNeeded.toStringAsFixed(0)} баллонов');
+      buffer.writeln(_loc.translate('osb.export.foam', {
+        'value': _result.foamNeeded.toStringAsFixed(0),
+        'unit': _loc.translate('common.balloon_short'),
+      }));
     }
 
     if (_result.recommendedThickness != null) {
       buffer.writeln();
-      buffer.writeln('💡 РЕКОМЕНДАЦИЯ:');
+      buffer.writeln(_loc.translate('osb.export.recommendation_title'));
       buffer.writeln('─' * 40);
-      buffer.writeln('Рекомендуемая толщина: ${_result.recommendedThickness} мм');
+      buffer.writeln(_loc.translate('osb.export.recommended_thickness', {
+        'value': _result.recommendedThickness.toString(),
+        'unit': _loc.translate('room.unit.mm'),
+      }));
     }
 
     buffer.writeln();
     buffer.writeln('═' * 40);
-    buffer.writeln('Создано с помощью Калькулятора Стройматериалов');
+    buffer.writeln(_loc.translate('osb.export.footer'));
 
     return buffer.toString();
   }
 
   Future<void> _shareCalculation() async {
     final text = _generateExportText();
-    await SharePlus.instance.share(ShareParams(text: text, subject: 'Расчёт материалов для ОСБ'));
+    await SharePlus.instance.share(ShareParams(text: text, subject: _loc.translate('osb.export.share_subject')));
   }
 
   void _copyToClipboard() {
@@ -472,17 +510,17 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
         accentColor: accentColor,
         results: [
           ResultItem(
-            label: 'ПЛОЩАДЬ',
-            value: '${_result.area.toStringAsFixed(0)} м²',
+            label: _loc.translate('osb.result.area').toUpperCase(),
+            value: '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.square_meter_short')}',
             icon: Icons.straighten,
           ),
           ResultItem(
-            label: 'ЛИСТОВ',
-            value: '${_result.sheetsNeeded} шт',
+            label: _loc.translate('osb.result.sheets').toUpperCase(),
+            value: '${_result.sheetsNeeded} ${_loc.translate('common.piece_short')}',
             icon: Icons.layers,
           ),
           ResultItem(
-            label: 'САМОРЕЗОВ',
+            label: _loc.translate('osb.result.screws').toUpperCase(),
             value: ScrewFormatter.formatWithWeight(
               quantity: _result.screwsNeeded,
               diameter: _result.screwDiameter,
@@ -527,8 +565,8 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
             Expanded(
               child: TypeSelectorCard(
                 icon: Icons.square,
-                title: 'Стены',
-                subtitle: 'Обшивка',
+                title: _loc.translate('osb.construction.wall.title'),
+                subtitle: _loc.translate('osb.construction.wall.subtitle'),
                 isSelected: _constructionType == OsbConstructionType.wall,
                 accentColor: accentColor,
                 onTap: () {
@@ -543,8 +581,8 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
             Expanded(
               child: TypeSelectorCard(
                 icon: Icons.layers,
-                title: 'Пол',
-                subtitle: 'Настил',
+                title: _loc.translate('osb.construction.floor.title'),
+                subtitle: _loc.translate('osb.construction.floor.subtitle'),
                 isSelected: _constructionType == OsbConstructionType.floor,
                 accentColor: accentColor,
                 onTap: () {
@@ -559,8 +597,8 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
             Expanded(
               child: TypeSelectorCard(
                 icon: Icons.roofing,
-                title: 'Крыша',
-                subtitle: 'Обрешётка',
+                title: _loc.translate('osb.construction.roof.title'),
+                subtitle: _loc.translate('osb.construction.roof.subtitle'),
                 isSelected: _constructionType == OsbConstructionType.roof,
                 accentColor: accentColor,
                 onTap: () {
@@ -580,8 +618,8 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
             Expanded(
               child: TypeSelectorCard(
                 icon: Icons.view_week,
-                title: 'Стена',
-                subtitle: 'Двойная',
+                title: _loc.translate('osb.construction.partition.title'),
+                subtitle: _loc.translate('osb.construction.partition.subtitle'),
                 isSelected: _constructionType == OsbConstructionType.partition,
                 accentColor: accentColor,
                 onTap: () {
@@ -596,8 +634,8 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
             Expanded(
               child: TypeSelectorCard(
                 icon: Icons.holiday_village,
-                title: 'СИП',
-                subtitle: 'Панели',
+                title: _loc.translate('osb.construction.sip.title'),
+                subtitle: _loc.translate('osb.construction.sip.subtitle'),
                 isSelected: _constructionType == OsbConstructionType.sip,
                 accentColor: accentColor,
                 onTap: () {
@@ -612,8 +650,8 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
             Expanded(
               child: TypeSelectorCard(
                 icon: Icons.factory,
-                title: 'Опалубка',
-                subtitle: 'Бетон',
+                title: _loc.translate('osb.construction.formwork.title'),
+                subtitle: _loc.translate('osb.construction.formwork.subtitle'),
                 isSelected: _constructionType == OsbConstructionType.formwork,
                 accentColor: accentColor,
                 onTap: () {
@@ -637,20 +675,20 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Размер листа',
+            _loc.translate('osb.sheet_size.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
           ModeSelectorVertical(
-            options: const [
-              '2500×1250 мм (3.1 м²) — стандарт',
-              '2440×1220 мм (3.0 м²) — США',
-              '2500×625 мм (1.6 м²) — шпунт/пол',
-              '2800×1250 мм (3.5 м²)',
-              '3000×1500 мм (4.5 м²) — большой',
-              '2440×590 мм (1.4 м²) — узкий/пол',
+            options: [
+              _loc.translate('osb.sheet_size.option.2500x1250'),
+              _loc.translate('osb.sheet_size.option.2440x1220'),
+              _loc.translate('osb.sheet_size.option.2500x625'),
+              _loc.translate('osb.sheet_size.option.2800x1250'),
+              _loc.translate('osb.sheet_size.option.3000x1500'),
+              _loc.translate('osb.sheet_size.option.2440x590'),
             ],
             selectedIndex: _sheetSize.index,
             onSelect: (index) {
@@ -692,15 +730,15 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
   String _getThicknessHint(int thickness) {
     switch (thickness) {
       case 9:
-        return 'Стены, потолки';
+        return _loc.translate('osb.thickness_hint.9');
       case 12:
-        return 'Кровля, СИП, перегородки';
+        return _loc.translate('osb.thickness_hint.12');
       case 15:
-        return 'Пол (шаг лаг до 400 мм)';
+        return _loc.translate('osb.thickness_hint.15');
       case 18:
-        return 'Пол (шаг лаг до 600 мм)';
+        return _loc.translate('osb.thickness_hint.18');
       case 22:
-        return 'Пол с нагрузкой, опалубка';
+        return _loc.translate('osb.thickness_hint.22');
       default:
         return '';
     }
@@ -744,7 +782,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Толщина ОСБ',
+            _loc.translate('osb.thickness.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.getTextPrimary(_isDark),
             ),
@@ -753,7 +791,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
           ModeSelector(
             options: _availableThicknesses.map((t) {
               final isRecommended = t == recommended;
-              return isRecommended ? '$t мм ★' : '$t мм';
+              return isRecommended ? _loc.translate('osb.thickness.option_recommended', {'value': t.toString(), 'unit': _loc.translate('room.unit.mm')}) : _loc.translate('osb.thickness.option', {'value': t.toString(), 'unit': _loc.translate('room.unit.mm')});
             }).toList(),
             selectedIndex: _getThicknessIndex(),
             onSelect: (index) {
@@ -783,7 +821,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
                 Expanded(
                   child: Text(
                     _thickness == recommended
-                        ? 'Рекомендовано: ${_getThicknessHint(_thickness)}'
+                        ? _loc.translate('osb.thickness.recommended', {'value': _getThicknessHint(_thickness)})
                         : _getThicknessHint(_thickness),
                     style: CalculatorDesignSystem.bodySmall.copyWith(
                       color: CalculatorColors.getTextSecondary(_isDark),
@@ -816,14 +854,17 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Режим ввода',
+            _loc.translate('osb.input_mode.title'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: const ['По площади', 'По размерам'],
+            options: [
+              _loc.translate('osb.input_mode.by_area'),
+              _loc.translate('osb.input_mode.by_dimensions'),
+            ],
             selectedIndex: _inputMode.index,
             onSelect: (index) {
               setState(() {
@@ -842,12 +883,12 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
     const accentColor = CalculatorColors.walls;
     return _card(
       child: CalculatorSliderField(
-        label: 'Площадь',
+        label: _loc.translate('osb.label.area'),
         value: _area,
         min: 1.0,
         max: 200.0,
         divisions: 199,
-        suffix: 'м²',
+        suffix: _loc.translate('common.square_meter_short'),
         accentColor: accentColor,
         decimalPlaces: 1,
         onChanged: (value) {
@@ -867,19 +908,19 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Размеры помещения',
+            _loc.translate('osb.label.room_dimensions'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.getTextPrimary(_isDark),
             ),
           ),
           const SizedBox(height: 16),
           CalculatorSliderField(
-            label: 'Длина',
+            label: _loc.translate('osb.label.length'),
             value: _length,
             min: 1.0,
             max: 20.0,
             divisions: 190,
-            suffix: 'м',
+            suffix: _loc.translate('room.unit.m'),
             accentColor: accentColor,
             decimalPlaces: 1,
             onChanged: (v) {
@@ -891,12 +932,12 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
           ),
           const SizedBox(height: 16),
           CalculatorSliderField(
-            label: 'Ширина',
+            label: _loc.translate('osb.label.width'),
             value: _width,
             min: 1.0,
             max: 20.0,
             divisions: 190,
-            suffix: 'м',
+            suffix: _loc.translate('room.unit.m'),
             accentColor: accentColor,
             decimalPlaces: 1,
             onChanged: (v) {
@@ -917,13 +958,13 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Расчётная площадь',
+                  _loc.translate('osb.label.calculated_area'),
                   style: CalculatorDesignSystem.bodyMedium.copyWith(
                     color: CalculatorColors.getTextSecondary(_isDark),
                   ),
                 ),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} м²',
+                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.square_meter_short')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -941,7 +982,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
     const accentColor = CalculatorColors.walls;
     return _card(
       child: CalculatorSliderField(
-        label: 'Запас материала',
+        label: _loc.translate('osb.label.reserve'),
         value: _reserve,
         min: 5.0,
         max: 20.0,
@@ -964,18 +1005,18 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
 
     final items = <MaterialItem>[
       MaterialItem(
-        name: 'ОСБ плиты',
-        value: '${_result.sheetsNeeded} шт',
-        subtitle: '${_result.sheetSizeName} мм',
+        name: _loc.translate('osb.materials.osb_sheets'),
+        value: '${_result.sheetsNeeded} ${_loc.translate('common.piece_short')}',
+        subtitle: '${_result.sheetSizeName} ${_loc.translate('room.unit.mm')}',
         icon: Icons.dashboard,
       ),
       MaterialItem(
-        name: 'Площадь материала',
-        value: '${_result.materialArea.toStringAsFixed(1)} м²',
+        name: _loc.translate('osb.materials.material_area'),
+        value: '${_result.materialArea.toStringAsFixed(1)} ${_loc.translate('common.square_meter_short')}',
         icon: Icons.straighten,
       ),
       MaterialItem(
-        name: 'Саморезы ⌀${_result.screwDiameter.toStringAsFixed(1)}×${_result.screwLength.toStringAsFixed(0)}',
+        name: '${_loc.translate('osb.materials.screws')} ⌀${_result.screwDiameter.toStringAsFixed(1)}×${_result.screwLength.toStringAsFixed(0)}',
         value: ScrewFormatter.formatWithWeight(
           quantity: _result.screwsNeeded,
           diameter: _result.screwDiameter,
@@ -986,7 +1027,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
     ];
 
     return MaterialsCardModern(
-      title: 'Основные материалы',
+      title: _loc.translate('osb.section.basic_materials'),
       titleIcon: Icons.dashboard,
       items: items,
       accentColor: accentColor,
@@ -1013,84 +1054,84 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
 
     if (_result.windBarrierArea > 0) {
       items.add(MaterialItem(
-        name: 'Ветрозащита',
-        value: '${_result.windBarrierArea.toStringAsFixed(1)} м²',
+        name: _loc.translate('osb.materials.wind_barrier'),
+        value: '${_result.windBarrierArea.toStringAsFixed(1)} ${_loc.translate('common.square_meter_short')}',
         icon: Icons.air,
       ));
     }
     if (_result.vaporBarrierArea > 0) {
       items.add(MaterialItem(
-        name: 'Пароизоляция',
-        value: '${_result.vaporBarrierArea.toStringAsFixed(1)} м²',
+        name: _loc.translate('osb.materials.vapor_barrier'),
+        value: '${_result.vaporBarrierArea.toStringAsFixed(1)} ${_loc.translate('common.square_meter_short')}',
         icon: Icons.water_drop,
       ));
     }
     if (_result.underlayArea > 0) {
       items.add(MaterialItem(
-        name: 'Подложка',
-        value: '${_result.underlayArea.toStringAsFixed(1)} м²',
+        name: _loc.translate('osb.materials.underlay'),
+        value: '${_result.underlayArea.toStringAsFixed(1)} ${_loc.translate('common.square_meter_short')}',
         icon: Icons.layers,
       ));
     }
     if (_result.underlaymentArea > 0) {
       items.add(MaterialItem(
-        name: 'Кровельная подложка',
-        value: '${_result.underlaymentArea.toStringAsFixed(1)} м²',
+        name: _loc.translate('osb.materials.roofing_underlay'),
+        value: '${_result.underlaymentArea.toStringAsFixed(1)} ${_loc.translate('common.square_meter_short')}',
         icon: Icons.roofing,
       ));
     }
     if (_result.counterBattensLength > 0) {
       items.add(MaterialItem(
-        name: 'Контррейка',
-        value: '${_result.counterBattensLength.toStringAsFixed(1)} м',
+        name: _loc.translate('osb.materials.counter_batten'),
+        value: '${_result.counterBattensLength.toStringAsFixed(1)} ${_loc.translate('room.unit.m')}',
         icon: Icons.horizontal_rule,
       ));
     }
     if (_result.clips > 0) {
       items.add(MaterialItem(
-        name: 'Кляймеры',
-        value: '${_result.clips.toStringAsFixed(0)} шт',
+        name: _loc.translate('osb.materials.clips'),
+        value: '${_result.clips.toStringAsFixed(0)} ${_loc.translate('common.piece_short')}',
         icon: Icons.attachment,
       ));
     }
     if (_result.studsLength > 0) {
       items.add(MaterialItem(
-        name: 'Брус для стоек',
-        value: '${_result.studsLength.toStringAsFixed(1)} м',
+        name: _loc.translate('osb.materials.studs'),
+        value: '${_result.studsLength.toStringAsFixed(1)} ${_loc.translate('room.unit.m')}',
         icon: Icons.architecture,
       ));
     }
     if (_result.insulationArea > 0) {
       items.add(MaterialItem(
-        name: 'Утеплитель',
-        value: '${_result.insulationArea.toStringAsFixed(1)} м²',
+        name: _loc.translate('osb.materials.insulation'),
+        value: '${_result.insulationArea.toStringAsFixed(1)} ${_loc.translate('common.square_meter_short')}',
         icon: Icons.layers,
       ));
     }
     if (_result.battensLength > 0) {
       items.add(MaterialItem(
-        name: 'Рейки',
-        value: '${_result.battensLength.toStringAsFixed(1)} м',
+        name: _loc.translate('osb.materials.battens'),
+        value: '${_result.battensLength.toStringAsFixed(1)} ${_loc.translate('room.unit.m')}',
         icon: Icons.horizontal_rule,
       ));
     }
     if (_result.glueNeededKg > 0) {
       items.add(MaterialItem(
-        name: 'Клей для СИП',
-        value: '${_result.glueNeededKg.toStringAsFixed(1)} кг',
+        name: _loc.translate('osb.materials.sip_glue'),
+        value: '${_result.glueNeededKg.toStringAsFixed(1)} ${_loc.translate('common.kg_short')}',
         icon: Icons.colorize,
       ));
     }
     if (_result.foamNeeded > 0) {
       items.add(MaterialItem(
-        name: 'Монтажная пена',
-        value: '${_result.foamNeeded.toStringAsFixed(0)} балл.',
+        name: _loc.translate('osb.materials.foam'),
+        value: '${_result.foamNeeded.toStringAsFixed(0)} ${_loc.translate('common.balloon_short')}',
         icon: Icons.format_paint,
       ));
     }
 
     return MaterialsCardModern(
-      title: 'Дополнительные материалы',
+      title: _loc.translate('osb.section.additional_materials'),
       titleIcon: Icons.add_circle_outline,
       items: items,
       accentColor: accentColor,
@@ -1124,3 +1165,13 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+

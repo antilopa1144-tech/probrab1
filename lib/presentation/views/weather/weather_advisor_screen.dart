@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../domain/entities/weather_advice.dart';
 
 /// Экран погодных рекомендаций.
@@ -32,7 +33,8 @@ class _WeatherAdvisorScreenState extends ConsumerState<WeatherAdvisorScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final loc = AppLocalizations.of(context);
+
     final conditions = WeatherConditions(
       temperature: double.tryParse(_tempController.text) ?? 20,
       humidity: double.tryParse(_humidityController.text) ?? 50,
@@ -40,17 +42,17 @@ class _WeatherAdvisorScreenState extends ConsumerState<WeatherAdvisorScreen> {
       windSpeed: double.tryParse(_windController.text) ?? 5,
       date: DateTime.now(),
     );
-    
+
     final advice = WeatherAdvice.check(widget.workType, conditions);
+    final reason = _buildReasonText(loc, advice);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Погодные рекомендации')),
+      appBar: AppBar(title: Text(loc.translate('weather.title'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Ввод условий
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -58,16 +60,16 @@ class _WeatherAdvisorScreenState extends ConsumerState<WeatherAdvisorScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Текущие условия',
+                      loc.translate('weather.current_conditions'),
                       style: theme.textTheme.titleMedium,
                     ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: _tempController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(
-                        labelText: 'Температура (°C)',
-                        prefixIcon: Icon(Icons.thermostat),
+                      decoration: InputDecoration(
+                        labelText: loc.translate('weather.field.temperature'),
+                        prefixIcon: const Icon(Icons.thermostat),
                       ),
                       onChanged: (_) => setState(() {}),
                     ),
@@ -75,15 +77,15 @@ class _WeatherAdvisorScreenState extends ConsumerState<WeatherAdvisorScreen> {
                     TextField(
                       controller: _humidityController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(
-                        labelText: 'Влажность (%)',
-                        prefixIcon: Icon(Icons.water_drop),
+                      decoration: InputDecoration(
+                        labelText: loc.translate('weather.field.humidity'),
+                        prefixIcon: const Icon(Icons.water_drop),
                       ),
                       onChanged: (_) => setState(() {}),
                     ),
                     const SizedBox(height: 12),
                     SwitchListTile(
-                      title: const Text('Идёт дождь'),
+                      title: Text(loc.translate('weather.field.raining')),
                       value: _isRaining,
                       onChanged: (value) => setState(() => _isRaining = value),
                     ),
@@ -91,9 +93,9 @@ class _WeatherAdvisorScreenState extends ConsumerState<WeatherAdvisorScreen> {
                     TextField(
                       controller: _windController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(
-                        labelText: 'Скорость ветра (м/с)',
-                        prefixIcon: Icon(Icons.air),
+                      decoration: InputDecoration(
+                        labelText: loc.translate('weather.field.wind'),
+                        prefixIcon: const Icon(Icons.air),
                       ),
                       onChanged: (_) => setState(() {}),
                     ),
@@ -102,9 +104,8 @@ class _WeatherAdvisorScreenState extends ConsumerState<WeatherAdvisorScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            // Результат проверки
             Card(
-              color: advice.canWork 
+              color: advice.canWork
                   ? Colors.green.withValues(alpha: 0.1)
                   : Colors.red.withValues(alpha: 0.1),
               child: Padding(
@@ -122,9 +123,9 @@ class _WeatherAdvisorScreenState extends ConsumerState<WeatherAdvisorScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            advice.canWork 
-                                ? 'Условия подходят для работ'
-                                : 'Условия не подходят',
+                            advice.canWork
+                                ? loc.translate('weather.status.good')
+                                : loc.translate('weather.status.bad'),
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: advice.canWork ? Colors.green : Colors.red,
@@ -135,7 +136,7 @@ class _WeatherAdvisorScreenState extends ConsumerState<WeatherAdvisorScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      advice.reason,
+                      reason,
                       style: theme.textTheme.bodyMedium,
                     ),
                   ],
@@ -143,8 +144,7 @@ class _WeatherAdvisorScreenState extends ConsumerState<WeatherAdvisorScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            // Рекомендации
-            if (advice.recommendations.isNotEmpty)
+            if (advice.recommendationKeys.isNotEmpty)
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -152,28 +152,29 @@ class _WeatherAdvisorScreenState extends ConsumerState<WeatherAdvisorScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Рекомендации',
+                        loc.translate('weather.recommendations'),
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      ...advice.recommendations.map((rec) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Icon(Icons.info_outline, size: 20),
-                                const SizedBox(width: 8),
-                                Expanded(child: Text(rec)),
-                              ],
-                            ),
-                          )),
+                      ...advice.recommendationKeys.map(
+                        (key) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(Icons.info_outline, size: 20),
+                              const SizedBox(width: 8),
+                              Expanded(child: Text(loc.translate(key))),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
-            // Ограничения
             if (advice.minTemperature != null || advice.maxTemperature != null)
               Card(
                 child: Padding(
@@ -182,20 +183,32 @@ class _WeatherAdvisorScreenState extends ConsumerState<WeatherAdvisorScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Ограничения',
+                        loc.translate('weather.constraints'),
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
                       if (advice.minTemperature != null)
-                        Text('Минимальная температура: ${advice.minTemperature}°C'),
+                        Text(
+                          loc.translate('weather.constraint.min_temperature', {
+                            'value': advice.minTemperature!.toStringAsFixed(1),
+                          }),
+                        ),
                       if (advice.maxTemperature != null)
-                        Text('Максимальная температура: ${advice.maxTemperature}°C'),
+                        Text(
+                          loc.translate('weather.constraint.max_temperature', {
+                            'value': advice.maxTemperature!.toStringAsFixed(1),
+                          }),
+                        ),
                       if (advice.maxHumidity != null)
-                        Text('Максимальная влажность: ${advice.maxHumidity}%'),
+                        Text(
+                          loc.translate('weather.constraint.max_humidity', {
+                            'value': advice.maxHumidity!.toStringAsFixed(0),
+                          }),
+                        ),
                       if (advice.requiresDryWeather)
-                        const Text('Требуется сухая погода'),
+                        Text(loc.translate('weather.constraint.dry_weather')),
                     ],
                   ),
                 ),
@@ -205,5 +218,17 @@ class _WeatherAdvisorScreenState extends ConsumerState<WeatherAdvisorScreen> {
       ),
     );
   }
-}
 
+  String _buildReasonText(AppLocalizations loc, WeatherAdvice advice) {
+    if (advice.issueKeys.isEmpty) {
+      return loc.translate('weather.status.good_reason');
+    }
+
+    final parts = <String>[];
+    for (var index = 0; index < advice.issueKeys.length; index++) {
+      final params = index < advice.issueParams.length ? advice.issueParams[index] : null;
+      parts.add(loc.translate(advice.issueKeys[index], params));
+    }
+    return parts.join('; ');
+  }
+}

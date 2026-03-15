@@ -1,0 +1,83 @@
+{
+  "cases": [
+    {
+      "id": "room_leveling_25kg",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "thickness": 10,
+        "mixtureType": 0,
+        "bagWeight": 25
+      },
+      "expected": {
+        "formulaVersion": "self-leveling-canonical-v1",
+        "area": 20,
+        "perimeter": 18,
+        "warningsCount": 0,
+        "materials": {
+          "bags": 14,
+          "primerCans": 1,
+          "tapeRolls": 1
+        },
+        "recScenario": {
+          "packageSize": 25,
+          "exactNeed": 336,
+          "purchaseQuantity": 350
+        }
+      }
+    },
+    {
+      "id": "area_finish_warning",
+      "inputs": {
+        "inputMode": 1,
+        "area": 20,
+        "thickness": 35,
+        "mixtureType": 1,
+        "bagWeight": 25
+      },
+      "expected": {
+        "formulaVersion": "self-leveling-canonical-v1",
+        "area": 20,
+        "perimeter": 17.889,
+        "warningsCount": 1,
+        "materials": {
+          "bags": 42,
+          "primerCans": 1,
+          "tapeRolls": 1
+        },
+        "recScenario": {
+          "packageSize": 25,
+          "exactNeed": 1029,
+          "purchaseQuantity": 1050
+        }
+      }
+    },
+    {
+      "id": "area_fast_large_area_20kg",
+      "inputs": {
+        "inputMode": 1,
+        "area": 40,
+        "thickness": 8,
+        "mixtureType": 2,
+        "bagWeight": 20
+      },
+      "expected": {
+        "formulaVersion": "self-leveling-canonical-v1",
+        "area": 40,
+        "perimeter": 25.298,
+        "warningsCount": 1,
+        "materials": {
+          "bags": 31,
+          "primerCans": 2,
+          "tapeRolls": 2
+        },
+        "recScenario": {
+          "packageSize": 20,
+          "exactNeed": 604.8,
+          "purchaseQuantity": 620
+        }
+      }
+    }
+  ]
+}

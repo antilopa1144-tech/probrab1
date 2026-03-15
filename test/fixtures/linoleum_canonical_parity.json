@@ -1,0 +1,99 @@
+{
+  "cases": [
+    {
+      "id": "room_single_strip_plain",
+      "inputs": {
+        "roomLength": 5,
+        "roomWidth": 3,
+        "rollWidth": 3.5,
+        "hasPattern": 0,
+        "withGlue": 1,
+        "withPlinth": 1,
+        "needTape": 1
+      },
+      "expected": {
+        "formulaVersion": "linoleum-canonical-v1",
+        "area": 15,
+        "linearMeters": 5.1,
+        "wastePercent": 19,
+        "warningsCount": 0,
+        "materials": {
+          "linearMetersX10": 51,
+          "primerCans": 1,
+          "glueBuckets": 1,
+          "plinthPieces": 7,
+          "tapeMeters": 21
+        },
+        "recScenario": {
+          "packageSize": 0.1,
+          "exactNeed": 5.1,
+          "purchaseQuantity": 5.1
+        }
+      }
+    },
+    {
+      "id": "room_two_strips_pattern_repeat",
+      "inputs": {
+        "roomLength": 5,
+        "roomWidth": 4,
+        "rollWidth": 2.0,
+        "hasPattern": 1,
+        "patternRepeat": 30,
+        "withGlue": 0,
+        "withPlinth": 1,
+        "needTape": 1
+      },
+      "expected": {
+        "formulaVersion": "linoleum-canonical-v1",
+        "area": 20,
+        "linearMeters": 10.5,
+        "wastePercent": 5,
+        "warningsCount": 2,
+        "materials": {
+          "linearMetersX10": 105,
+          "primerCans": 1,
+          "plinthPieces": 8,
+          "tapeMeters": 23,
+          "coldWeldingTubes": 1
+        },
+        "recScenario": {
+          "packageSize": 0.1,
+          "exactNeed": 10.5,
+          "purchaseQuantity": 10.5
+        }
+      }
+    },
+    {
+      "id": "area_mode_with_room_width",
+      "inputs": {
+        "inputMode": 1,
+        "area": 30,
+        "roomWidth": 3,
+        "rollWidth": 3.0,
+        "hasPattern": 0,
+        "withGlue": 1,
+        "withPlinth": 1,
+        "needTape": 1
+      },
+      "expected": {
+        "formulaVersion": "linoleum-canonical-v1",
+        "area": 30,
+        "linearMeters": 10.1,
+        "wastePercent": 1,
+        "warningsCount": 0,
+        "materials": {
+          "linearMetersX10": 101,
+          "primerCans": 1,
+          "glueBuckets": 2,
+          "plinthPieces": 9,
+          "tapeMeters": 32
+        },
+        "recScenario": {
+          "packageSize": 0.1,
+          "exactNeed": 10.1,
+          "purchaseQuantity": 10.1
+        }
+      }
+    }
+  ]
+}

@@ -149,7 +149,7 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                         ),
                       ),
                       Text(
-                        'Калькуляторы материалов',
+                        loc.translate('home.new.material_calculators'),
                         style: TextStyle(
                           fontSize: 12,
                           color:
@@ -178,7 +178,7 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
               onChanged: _onSearchChanged,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Что нужно посчитать?',
+                hintText: loc.translate('home.new.search_hint'),
                 hintStyle: const TextStyle(color: Color(0xFF71717A)),
                 prefixIcon: const Icon(
                   Icons.search_rounded,
@@ -269,7 +269,7 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
           return Padding(
             padding: const EdgeInsets.only(bottom: 4),
             child: Text(
-              'Найдено: ${results.length}',
+              loc.translate('home.new.found_count', {'count': results.length.toString()}),
               style: const TextStyle(
                 fontSize: 14,
                 color: Color(0xFFA1A1AA),
@@ -294,17 +294,17 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           children: [
-            Icon(
+            const Icon(
               Icons.flash_on_rounded,
               size: 16,
               color: Color(0xFFFBBF24),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Text(
-              'Быстрый доступ',
-              style: TextStyle(
+              loc.translate('home.new.quick_access'),
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFFD4D4D8),
@@ -367,17 +367,17 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           children: [
-            Icon(
+            const Icon(
               Icons.trending_up_rounded,
               size: 16,
               color: Color(0xFF71717A),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Text(
-              'Часто считают',
-              style: TextStyle(
+              loc.translate('home.new.frequent'),
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFFD4D4D8),
@@ -446,17 +446,17 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           children: [
-            Icon(
+            const Icon(
               Icons.grid_view_rounded,
               size: 16,
               color: Color(0xFF71717A),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Text(
-              'Категории',
-              style: TextStyle(
+              loc.translate('home.new.categories'),
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFFD4D4D8),
@@ -483,7 +483,7 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
 
   Widget _buildCategoryTile(_HomeCategory category, AppLocalizations loc) {
     final label = category.subCategoryKey == null
-        ? 'Все калькуляторы'
+        ? loc.translate('home.new.all_calculators')
         : loc.translate(category.subCategoryKey!);
 
     return Material(
@@ -602,7 +602,7 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                 height: 36,
                 child: IconButton(
                   padding: EdgeInsets.zero,
-                  tooltip: isFavorite ? 'Убрать из избранного' : 'В избранное',
+                  tooltip: isFavorite ? loc.translate('favorites.remove') : loc.translate('favorites.add'),
                   onPressed: () => ref
                       .read(favoritesProvider.notifier)
                       .toggleFavorite(calc.id),
@@ -620,7 +620,7 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                 height: 36,
                 child: IconButton(
                   padding: EdgeInsets.zero,
-                  tooltip: 'Пресеты',
+                  tooltip: loc.translate('common.presets'),
                   onPressed: () => _showCalculatorPresets(calc),
                   icon: const Icon(
                     Icons.more_horiz_rounded,
@@ -762,11 +762,11 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Пресеты:',
-                    style: TextStyle(
+                    loc.translate('home.new.presets'),
+                    style: const TextStyle(
                       fontSize: 14,
                       color: Color(0xFFA1A1AA),
                     ),
@@ -781,10 +781,10 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                   crossAxisSpacing: 8,
                   childAspectRatio: 2.5,
                   children: [
-                    _buildPresetButton(calc, '🚿', 'Ванная', '4 м²', 4.0),
-                    _buildPresetButton(calc, '🍳', 'Кухня', '10 м²', 10.0),
-                    _buildPresetButton(calc, '🛏️', 'Спальня', '15 м²', 15.0),
-                    _buildPresetButton(calc, '📏', 'Свои размеры', '', null),
+                    _buildPresetButton(calc, '🚿', loc.translate('home.new.preset.bathroom.title'), '4 ${loc.translate('common.square_meter_short')}', 4.0),
+                    _buildPresetButton(calc, '🍳', loc.translate('home.new.preset.kitchen.title'), '10 ${loc.translate('common.square_meter_short')}', 10.0),
+                    _buildPresetButton(calc, '🛏️', loc.translate('home.new.preset.bedroom.title'), '15 ${loc.translate('common.square_meter_short')}', 15.0),
+                    _buildPresetButton(calc, '📏', loc.translate('home.new.preset.custom.title'), '', null),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -799,14 +799,14 @@ class _NewHomeScreenState extends ConsumerState<NewHomeScreen> {
                       backgroundColor: accentColor,
                       foregroundColor: const Color(0xFF18181B),
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Открыть калькулятор',
-                      style: TextStyle(
+                    child: Text(
+                      loc.translate('home.new.open_calculator'),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),

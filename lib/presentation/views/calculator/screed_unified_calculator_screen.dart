@@ -18,27 +18,38 @@ enum ScreedMixType {
 }
 
 /// Марки ЦПС
+/// Марки ЦПС
 enum CpsMarka {
-  m100('screed_unified.cps.m100', 'screed_unified.cps.m100_desc', '15 кг/м²/см'),
-  m150('screed_unified.cps.m150', 'screed_unified.cps.m150_desc', '17 кг/м²/см'),
-  m200('screed_unified.cps.m200', 'screed_unified.cps.m200_desc', '18 кг/м²/см');
+  m100('screed_unified.cps.m100', 'screed_unified.cps.m100_desc', 15),
+  m150('screed_unified.cps.m150', 'screed_unified.cps.m150_desc', 17),
+  m200('screed_unified.cps.m200', 'screed_unified.cps.m200_desc', 18);
 
   final String nameKey;
   final String descKey;
-  final String consumption;
+  final double consumption;
   const CpsMarka(this.nameKey, this.descKey, this.consumption);
+
+  String consumptionLabel(AppLocalizations loc) {
+    final value = consumption % 1 == 0 ? consumption.toStringAsFixed(0) : consumption.toStringAsFixed(1);
+    return '$value ${loc.translate('common.kg_per_sqm_cm')}';
+  }
 }
 
 /// Марки Пескобетона
 enum PeskobetonMarka {
-  m200('screed_unified.peskobeton.m200', 'screed_unified.peskobeton.m200_desc', '19 кг/м²/см'),
-  m300('screed_unified.peskobeton.m300', 'screed_unified.peskobeton.m300_desc', '20 кг/м²/см'),
-  m400('screed_unified.peskobeton.m400', 'screed_unified.peskobeton.m400_desc', '22 кг/м²/см');
+  m200('screed_unified.peskobeton.m200', 'screed_unified.peskobeton.m200_desc', 19),
+  m300('screed_unified.peskobeton.m300', 'screed_unified.peskobeton.m300_desc', 20),
+  m400('screed_unified.peskobeton.m400', 'screed_unified.peskobeton.m400_desc', 22);
 
   final String nameKey;
   final String descKey;
-  final String consumption;
+  final double consumption;
   const PeskobetonMarka(this.nameKey, this.descKey, this.consumption);
+
+  String consumptionLabel(AppLocalizations loc) {
+    final value = consumption % 1 == 0 ? consumption.toStringAsFixed(0) : consumption.toStringAsFixed(1);
+    return '$value ${loc.translate('common.kg_per_sqm_cm')}';
+  }
 }
 
 /// Режим ввода площади
@@ -190,14 +201,20 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
     return CalculateScreedUnified.getRecommendedMarka(_mixType.index, _thickness);
   }
 
+  String? _recommendedMarkaSuffix(String recommended) {
+    final match = RegExp(r'(\d+)').firstMatch(recommended);
+    return match?.group(1);
+  }
+
   /// Проверить, выбрана ли рекомендуемая марка
   bool _isRecommendedMarka() {
-    final recommended = _getRecommendedMarka();
+    final recommendedSuffix = _recommendedMarkaSuffix(_getRecommendedMarka());
+    if (recommendedSuffix == null) return false;
+    final expectedToken = '.m$recommendedSuffix';
     if (_mixType == ScreedMixType.cps) {
-      return _cpsMarka.nameKey.contains(recommended.replaceAll('М', 'm'));
-    } else {
-      return _peskobetonMarka.nameKey.contains(recommended.replaceAll('М', 'm'));
+      return _cpsMarka.nameKey.endsWith(expectedToken);
     }
+    return _peskobetonMarka.nameKey.endsWith(expectedToken);
   }
 
   @override
@@ -354,7 +371,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
               options: CpsMarka.values.map((m) => TypeSelectorOption(
                 icon: Icons.inventory_2,
                 title: _loc.translate(m.nameKey),
-                subtitle: m.consumption,
+                subtitle: m.consumptionLabel(_loc),
               )).toList(),
               selectedIndex: _cpsMarka.index,
               onSelect: (index) {
@@ -407,7 +424,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
               options: PeskobetonMarka.values.map((m) => TypeSelectorOption(
                 icon: Icons.inventory_2,
                 title: _loc.translate(m.nameKey),
-                subtitle: m.consumption,
+                subtitle: m.consumptionLabel(_loc),
               )).toList(),
               selectedIndex: _peskobetonMarka.index,
               onSelect: (index) {
@@ -798,3 +815,5 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
     );
   }
 }
+
+

@@ -137,6 +137,18 @@ void main() {
         );
         expect(message, contains('ошибка'));
       });
+
+      test('returns friendly message for logical validation error without context', () {
+        final error = ValidationException.custom(
+          'Площадь 12000 м² кажется слишком большой. Проверьте значение.',
+          fieldName: 'area',
+          userMessageKey: 'error.message.validation_area_too_large',
+          userMessageParams: {'area': '12000'},
+        );
+        final message = GlobalErrorHandler.getUserFriendlyMessage(error);
+        expect(message, contains('12000'));
+        expect(message, contains('слишком большой'));
+      });
     });
 
     group('logError', () {

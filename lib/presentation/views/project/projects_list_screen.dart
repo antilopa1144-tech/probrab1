@@ -355,7 +355,7 @@ class _ProjectsListScreenState extends ConsumerState<ProjectsListScreen>
           ),
           const SizedBox(height: 8),
           Text(
-            error.toString(),
+            GlobalErrorHandler.getUserFriendlyMessage(context, error),
             style: theme.textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
@@ -561,7 +561,7 @@ class _ProblemProjectsAlert extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '$count ${_getProjectWord(count)} ${loc.translate('project.dashboard.needs_attention')}',
+                    '$count ${_getProjectWord(loc, count)} ${loc.translate('project.dashboard.needs_attention')}',
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: Colors.orange,
                       fontWeight: FontWeight.bold,
@@ -586,10 +586,10 @@ class _ProblemProjectsAlert extends StatelessWidget {
     );
   }
 
-  String _getProjectWord(int count) {
-    if (count == 1) return 'проект';
-    if (count >= 2 && count <= 4) return 'проекта';
-    return 'проектов';
+  String _getProjectWord(AppLocalizations loc, int count) {
+    if (count == 1) return loc.translate('project.dashboard.project_one');
+    if (count >= 2 && count <= 4) return loc.translate('project.dashboard.project_few');
+    return loc.translate('project.dashboard.project_many');
   }
 }
 
@@ -668,6 +668,7 @@ class _SelectableProjectCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final loc = AppLocalizations.of(context);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -734,7 +735,7 @@ class _SelectableProjectCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        _getStatusLabel(project.status),
+                        _getStatusLabel(loc, project.status),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: _getStatusColor(project.status),
                           fontWeight: FontWeight.w600,
@@ -768,20 +769,23 @@ class _SelectableProjectCard extends StatelessWidget {
     }
   }
 
-  String _getStatusLabel(ProjectStatus status) {
+  String _getStatusLabel(AppLocalizations loc, ProjectStatus status) {
     switch (status) {
       case ProjectStatus.planning:
-        return 'Планирование';
+        return loc.translate('project.status.planning');
       case ProjectStatus.inProgress:
-        return 'В работе';
+        return loc.translate('project.status.in_progress');
       case ProjectStatus.onHold:
-        return 'На паузе';
+        return loc.translate('project.status.on_hold_alt');
       case ProjectStatus.completed:
-        return 'Завершён';
+        return loc.translate('project.status.completed');
       case ProjectStatus.cancelled:
-        return 'Отменён';
+        return loc.translate('project.status.cancelled');
       case ProjectStatus.problem:
-        return 'Проблема';
+        return loc.translate('project.status.problem');
     }
   }
 }
+
+
+

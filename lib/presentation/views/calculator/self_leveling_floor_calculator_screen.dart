@@ -1,10 +1,10 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_constant.dart';
+import '../../../domain/usecases/calculate_self_leveling_floor.dart';
+import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Вспомогательный класс для работы с константами калькулятора наливного пола
@@ -35,9 +35,6 @@ class _SelfLevelingConstants {
     return defaultValue;
   }
 
-  // Materials
-  double get primerPerM2 => _getDouble('materials_consumption', 'primer_per_m2', 0.1);
-
   // Tools
   double get spikeRollerArea => _getDouble('tools', 'spike_roller_area', 50.0);
   int get spikeShoesCount => _getInt('tools', 'spike_shoes_count', 1);
@@ -59,12 +56,15 @@ enum MixtureBrand {
   osnovit(1.5, 'Основит Скорлайн', [20]),
   bergauf(1.6, 'Bergauf Easy Boden', [25]),
   starateli(1.6, 'Старатели', [20, 25]),
-  average(1.6, 'Средний расход', [20, 25]);
+  average(1.6, 'average', [20, 25], localizedNameKey: 'common.average_consumption');
 
   final double consumption;
   final String name;
   final List<int> availableBagSizes;
-  const MixtureBrand(this.consumption, this.name, this.availableBagSizes);
+  final String? localizedNameKey;
+  const MixtureBrand(this.consumption, this.name, this.availableBagSizes, {this.localizedNameKey});
+
+  String localizedName(AppLocalizations loc) => localizedNameKey != null ? loc.translate(localizedNameKey!) : name;
 
   bool hasBagSize(int size) => availableBagSizes.contains(size);
   int get defaultBagSize => availableBagSizes.first;
@@ -115,6 +115,8 @@ class SelfLevelingFloorCalculatorScreen extends StatefulWidget {
 class _SelfLevelingFloorCalculatorScreenState
     extends State<SelfLevelingFloorCalculatorScreen>
     with ExportableMixin {
+  final CalculateSelfLevelingFloor _calculator = CalculateSelfLevelingFloor();
+
   @override
   AppLocalizations get loc => _loc;
 
@@ -147,64 +149,86 @@ class _SelfLevelingFloorCalculatorScreenState
   void _applyInitialInputs() {
     final initial = widget.initialInputs;
     if (initial == null) return;
+
+    if (initial['inputMode'] != null) {
+      _inputMode = initial['inputMode']!.round() == 1
+          ? InputMode.byArea
+          : InputMode.byDimensions;
+    }
     if (initial['area'] != null) _area = initial['area']!.clamp(1.0, 1000.0);
-    if (initial['length'] != null) _length = initial['length']!.clamp(0.1, 100.0);
-    if (initial['width'] != null) _width = initial['width']!.clamp(0.1, 100.0);
+    if (initial['length'] != null) {
+      _length = initial['length']!.clamp(0.1, 100.0);
+    }
+    if (initial['width'] != null) {
+      _width = initial['width']!.clamp(0.1, 100.0);
+    }
     if (initial['thickness'] != null) {
       _thickness = initial['thickness']!.clamp(3.0, 100.0);
     }
+    if (initial['consumption'] != null) {
+      _mixtureBrand = _resolveMixtureBrand(initial['consumption']!);
+    }
+    if (initial['bagWeight'] != null) {
+      _bagWeight = initial['bagWeight']!.round() == 20
+          ? BagWeight.kg20
+          : BagWeight.kg25;
+    }
+
+    _ensureCompatibleBagWeight();
   }
 
-  double _getCalculatedArea() {
-    if (_inputMode == InputMode.byArea) {
-      return _area;
-    }
-    return _length * _width;
+  MixtureBrand _resolveMixtureBrand(double consumption) {
+    return MixtureBrand.values.reduce((best, current) {
+      final bestDiff = (best.consumption - consumption).abs();
+      final currentDiff = (current.consumption - consumption).abs();
+      return currentDiff < bestDiff ? current : best;
+    });
+  }
+
+  void _ensureCompatibleBagWeight() {
+    final currentBagWeight = _selectedBagWeight;
+    if (_mixtureBrand.hasBagSize(currentBagWeight)) return;
+    _bagWeight = _mixtureBrand.defaultBagSize == 20
+        ? BagWeight.kg20
+        : BagWeight.kg25;
+  }
+
+  int get _selectedBagWeight => _bagWeight == BagWeight.kg20 ? 20 : 25;
+
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'inputMode': _inputMode == InputMode.byDimensions ? 0 : 1,
+      'length': _length,
+      'width': _width,
+      'area': _area,
+      'thickness': _thickness,
+      'consumption': _mixtureBrand.consumption,
+      'bagWeight': _selectedBagWeight.toDouble(),
+    };
   }
 
   _SelfLevelingFloorResult _calculate() {
-    final calculatedArea = _getCalculatedArea();
-
-    // Расчёт общего веса смеси
-    // Формула: Площадь × Толщина (мм) × Расход (кг/м²/мм)
-    final totalWeight = calculatedArea * _thickness * _mixtureBrand.consumption;
-
-    // Вес мешка
-    final bagWeightKg = _bagWeight == BagWeight.kg20 ? 20 : 25;
-
-    // Количество мешков
-    final bagsNeeded = (totalWeight / bagWeightKg).ceil();
-
-    // Грунтовка из констант
-    final primerLiters = calculatedArea * _constants.primerPerM2;
-
-    // Демпферная лента (периметр комнаты)
-    double damperTape;
-    if (_inputMode == InputMode.byDimensions) {
-      damperTape = (_length + _width) * 2;
-    } else {
-      // Приблизительный расчёт для квадратной площади
-      final side = sqrt(calculatedArea);
-      damperTape = side * 4;
-    }
-
-    // Игольчатый валик из констант
-    final spikeRollers = (calculatedArea / _constants.spikeRollerArea).ceil();
-
-    // Краскоступы из констант
-    final spikeShoesCount = _constants.spikeShoesCount;
+    final calculation = _calculator.calculate(_buildCalculationInputs(), const []);
+    final values = calculation.values;
+    final area = values['area'] ?? 0;
+    final totalWeight = values['mixNeededKg'] ?? 0;
+    final bagWeight = (values['bagWeight'] ?? _selectedBagWeight.toDouble()).round();
+    final bagsNeeded = (values['bagsNeeded'] ?? 0).round();
+    final primerLiters = values['primerNeededLiters'] ?? 0;
+    final damperTape = values['damperTapeLengthMeters'] ?? 0;
+    final spikeRollers = (area / _constants.spikeRollerArea).ceil().clamp(1, 9999);
 
     return _SelfLevelingFloorResult(
-      area: calculatedArea,
-      thickness: _thickness,
+      area: area,
+      thickness: values['thickness'] ?? _thickness,
       consumption: _mixtureBrand.consumption,
       totalWeight: totalWeight,
       bagsNeeded: bagsNeeded,
-      bagWeight: bagWeightKg,
+      bagWeight: bagWeight,
       primerLiters: primerLiters,
       damperTape: damperTape,
       spikeRollers: spikeRollers,
-      spikeShoesCount: spikeShoesCount,
+      spikeShoesCount: _constants.spikeShoesCount,
     );
   }
 
@@ -406,7 +430,7 @@ class _SelfLevelingFloorCalculatorScreenState
                   ),
                 ),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                  '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -488,19 +512,12 @@ class _SelfLevelingFloorCalculatorScreenState
           ),
           const SizedBox(height: 12),
           ModeSelectorVertical(
-            options: MixtureBrand.values.map((brand) => brand.name).toList(),
+            options: MixtureBrand.values.map((brand) => brand.localizedName(_loc)).toList(),
             selectedIndex: _mixtureBrand.index,
             onSelect: (index) {
               setState(() {
                 _mixtureBrand = MixtureBrand.values[index];
-                // Автоматически устанавливаем доступный вес мешка
-                final currentBagWeight = _bagWeight == BagWeight.kg20 ? 20 : 25;
-                if (!_mixtureBrand.hasBagSize(currentBagWeight)) {
-                  // Если текущий вес недоступен для нового бренда, устанавливаем дефолтный
-                  _bagWeight = _mixtureBrand.defaultBagSize == 20
-                      ? BagWeight.kg20
-                      : BagWeight.kg25;
-                }
+                _ensureCompatibleBagWeight();
                 _update();
               });
             },
@@ -512,33 +529,25 @@ class _SelfLevelingFloorCalculatorScreenState
   }
 
   Widget _buildBagWeightSelector() {
-    // Если у бренда только одна доступная фасовка, не показываем выбор
     if (!_mixtureBrand.hasMultipleSizes) {
       return const SizedBox.shrink();
     }
 
     const accentColor = CalculatorColors.interior;
     final availableSizes = _mixtureBrand.availableBagSizes;
-
-    // Создаем опции только для доступных фасовок
     final options = <String>[];
     final indexMapping = <int, BagWeight>{};
-    int currentMappedIndex = 0;
+    var currentMappedIndex = 0;
 
-    for (var i = 0; i < BagWeight.values.length; i++) {
-      final weight = BagWeight.values[i];
+    for (final weight in BagWeight.values) {
       final weightKg = weight == BagWeight.kg20 ? 20 : 25;
-
-      if (availableSizes.contains(weightKg)) {
-        options.add(_loc.translate('self_leveling.bag_weight.kg$weightKg'));
-        indexMapping[currentMappedIndex] = weight;
-        currentMappedIndex++;
-      }
+      if (!availableSizes.contains(weightKg)) continue;
+      options.add(_loc.translate('self_leveling.bag_weight.kg$weightKg'));
+      indexMapping[currentMappedIndex] = weight;
+      currentMappedIndex++;
     }
 
-    // Определяем текущий выбранный индекс среди доступных опций
-    final currentWeightKg = _bagWeight == BagWeight.kg20 ? 20 : 25;
-    final selectedIndex = availableSizes.indexOf(currentWeightKg);
+    final selectedIndex = availableSizes.indexOf(_selectedBagWeight);
 
     return _card(
       child: Column(
@@ -655,3 +664,9 @@ class _SelfLevelingFloorCalculatorScreenState
     );
   }
 }
+
+
+
+
+
+

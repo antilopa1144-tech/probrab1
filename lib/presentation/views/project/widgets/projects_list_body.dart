@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../domain/models/project_v2.dart';
+import '../../../../core/localization/app_localizations.dart';
 import 'dashboard_project_card.dart';
 
 /// Основной список проектов с фильтрами и результатами.
@@ -42,6 +43,7 @@ class ProjectsListBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -54,7 +56,7 @@ class ProjectsListBody extends StatelessWidget {
               children: [
                 if (showFavoritesOnly)
                   Chip(
-                    label: const Text('Только избранные'),
+                    label: Text(loc.translate('project.list.only_favorites')),
                     avatar: const Icon(Icons.star, size: 16),
                     onDeleted: onClearFavorites,
                   ),
@@ -70,7 +72,7 @@ class ProjectsListBody extends StatelessWidget {
                   ),
                 if (searchQuery.isNotEmpty)
                   Chip(
-                    label: Text('Поиск: "$searchQuery"'),
+                    label: Text(loc.translate('project.filter.search_query', {'query': searchQuery})),
                     avatar: const Icon(Icons.search, size: 16),
                     onDeleted: onClearSearch,
                   ),
@@ -81,7 +83,7 @@ class ProjectsListBody extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(
-              'Найдено: ${filtered.length} из ${projects.length}',
+              loc.translate('project.filter.found_summary', {'filtered': filtered.length.toString(), 'total': projects.length.toString()}),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -106,3 +108,4 @@ class ProjectsListBody extends StatelessWidget {
     );
   }
 }
+

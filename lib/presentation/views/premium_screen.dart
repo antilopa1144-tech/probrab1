@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/premium_provider.dart';
 import '../../domain/models/premium_subscription.dart';
 import '../../core/services/premium_service.dart';
+import '../../core/errors/global_error_handler.dart';
+import '../../core/localization/app_localizations.dart';
 
 /// Экран Premium подписки
 class PremiumScreen extends ConsumerWidget {
@@ -11,6 +13,7 @@ class PremiumScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final subscriptionAsync = ref.watch(currentSubscriptionProvider);
+    final loc = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -22,7 +25,7 @@ class PremiumScreen extends ConsumerWidget {
               color: Colors.amber.shade700,
             ),
             const SizedBox(width: 8),
-            const Text('Premium'),
+            Text(loc.translate('premium.title')),
           ],
         ),
       ),
@@ -40,7 +43,12 @@ class PremiumScreen extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 48),
               const SizedBox(height: 16),
-              Text('Ошибка загрузки: $error'),
+              Text(
+                loc.translate(
+                  'premium.loading_error',
+                  {'error': GlobalErrorHandler.getUserFriendlyMessage(context, error)},
+                ),
+              ),
             ],
           ),
         ),
@@ -58,6 +66,7 @@ class _PremiumActiveView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -83,7 +92,7 @@ class _PremiumActiveView extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Premium активен',
+                loc.translate('premium.active'),
                 style: theme.textTheme.headlineSmall?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -91,7 +100,7 @@ class _PremiumActiveView extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                _getSubscriptionTypeText(subscription.type),
+                _getSubscriptionTypeText(context, subscription.type),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: Colors.white.withValues(alpha:0.9),
                 ),
@@ -99,7 +108,7 @@ class _PremiumActiveView extends StatelessWidget {
               if (subscription.expiryDate != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Действует до ${_formatDate(subscription.expiryDate!)}',
+                  loc.translate('premium.active_until', {'date': _formatDate(subscription.expiryDate!)}),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.white.withValues(alpha:0.8),
                   ),
@@ -113,37 +122,37 @@ class _PremiumActiveView extends StatelessWidget {
 
         // Доступные функции
         Text(
-          'Доступные функции',
+          loc.translate('premium.features_title'),
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 16),
 
-        const _FeatureItem(
+        _FeatureItem(
           icon: Icons.calculate_rounded,
-          title: 'Расширенные калькуляторы',
-          description: '3D панели, тёплый пол, деревянная вагонка и другие',
+          title: loc.translate('premium.lock.feature_advanced_calculators'),
+          description: loc.translate('premium.screen.feature_advanced_desc'),
         ),
-        const _FeatureItem(
+        _FeatureItem(
           icon: Icons.picture_as_pdf_rounded,
-          title: 'Экспорт в PDF',
-          description: 'Сохраняйте расчёты в PDF документы',
+          title: loc.translate('premium.lock.feature_pdf_export'),
+          description: loc.translate('premium.screen.feature_pdf_desc'),
         ),
-        const _FeatureItem(
+        _FeatureItem(
           icon: Icons.list_alt_rounded,
-          title: 'Детальные списки материалов',
-          description: 'Полные списки с количеством',
+          title: loc.translate('premium.screen.feature_materials_title'),
+          description: loc.translate('premium.screen.feature_materials_desc'),
         ),
-        const _FeatureItem(
+        _FeatureItem(
           icon: Icons.qr_code_rounded,
-          title: 'QR-коды расчётов',
-          description: 'Делитесь расчётами через QR-коды',
+          title: loc.translate('premium.screen.feature_qr_title'),
+          description: loc.translate('premium.screen.feature_qr_desc'),
         ),
-        const _FeatureItem(
+        _FeatureItem(
           icon: Icons.mic_rounded,
-          title: 'Голосовой ввод',
-          description: 'Вводите размеры голосом',
+          title: loc.translate('premium.screen.feature_voice_title'),
+          description: loc.translate('premium.screen.feature_voice_desc'),
         ),
 
         const SizedBox(height: 24),
@@ -159,7 +168,7 @@ class _PremiumActiveView extends StatelessWidget {
                       .cancelSubscription();
                 },
                 icon: const Icon(Icons.settings_rounded),
-                label: const Text('Управление подпиской'),
+                label: Text(loc.translate('premium.manage')),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
                 ),
@@ -171,16 +180,16 @@ class _PremiumActiveView extends StatelessWidget {
     );
   }
 
-  String _getSubscriptionTypeText(SubscriptionType type) {
+  String _getSubscriptionTypeText(BuildContext context, SubscriptionType type) {
     switch (type) {
       case SubscriptionType.monthly:
-        return 'Месячная подписка';
+        return AppLocalizations.of(context).translate('premium.plan.monthly');
       case SubscriptionType.yearly:
-        return 'Годовая подписка';
+        return AppLocalizations.of(context).translate('premium.plan.yearly');
       case SubscriptionType.lifetime:
-        return 'Пожизненная лицензия';
+        return AppLocalizations.of(context).translate('premium.plan.lifetime');
       case SubscriptionType.free:
-        return 'Бесплатная версия';
+        return AppLocalizations.of(context).translate('premium.plan.free');
     }
   }
 
@@ -196,6 +205,7 @@ class _PremiumOffersView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final productsAsync = ref.watch(availableProductsProvider);
 
     return ListView(
@@ -203,7 +213,7 @@ class _PremiumOffersView extends ConsumerWidget {
       children: [
         // Заголовок
         Text(
-          'Получите Premium',
+          loc.translate('premium.get'),
           style: theme.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -211,7 +221,7 @@ class _PremiumOffersView extends ConsumerWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Разблокируйте все возможности приложения',
+          loc.translate('premium.unlock_all'),
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -221,30 +231,30 @@ class _PremiumOffersView extends ConsumerWidget {
         const SizedBox(height: 32),
 
         // Функции Premium
-        const _FeatureItem(
+        _FeatureItem(
           icon: Icons.calculate_rounded,
-          title: 'Расширенные калькуляторы',
-          description: '3D панели, тёплый пол, деревянная вагонка и другие',
+          title: loc.translate('premium.lock.feature_advanced_calculators'),
+          description: loc.translate('premium.screen.feature_advanced_desc'),
         ),
-        const _FeatureItem(
+        _FeatureItem(
           icon: Icons.picture_as_pdf_rounded,
-          title: 'Экспорт в PDF',
-          description: 'Сохраняйте расчёты в PDF документы',
+          title: loc.translate('premium.lock.feature_pdf_export'),
+          description: loc.translate('premium.screen.feature_pdf_desc'),
         ),
-        const _FeatureItem(
+        _FeatureItem(
           icon: Icons.list_alt_rounded,
-          title: 'Детальные списки материалов',
-          description: 'Полные списки с количеством',
+          title: loc.translate('premium.screen.feature_materials_title'),
+          description: loc.translate('premium.screen.feature_materials_desc'),
         ),
-        const _FeatureItem(
+        _FeatureItem(
           icon: Icons.qr_code_rounded,
-          title: 'QR-коды расчётов',
-          description: 'Делитесь расчётами через QR-коды',
+          title: loc.translate('premium.screen.feature_qr_title'),
+          description: loc.translate('premium.screen.feature_qr_desc'),
         ),
-        const _FeatureItem(
+        _FeatureItem(
           icon: Icons.mic_rounded,
-          title: 'Голосовой ввод',
-          description: 'Вводите размеры голосом',
+          title: loc.translate('premium.screen.feature_voice_title'),
+          description: loc.translate('premium.screen.feature_voice_desc'),
         ),
 
         const SizedBox(height: 32),
@@ -279,14 +289,14 @@ class _PremiumOffersView extends ConsumerWidget {
 
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Покупки восстановлены'),
+                          SnackBar(
+                            content: Text(loc.translate('premium.restored')),
                           ),
                         );
                       }
                     },
               icon: const Icon(Icons.restore_rounded),
-              label: const Text('Восстановить покупки'),
+              label: Text(loc.translate('premium.restore_purchases')),
             );
           },
         ),
@@ -304,6 +314,7 @@ class _ProductCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final purchaseState = ref.watch(premiumPurchaseProvider);
 
     return Card(
@@ -323,14 +334,14 @@ class _ProductCard extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            product.title,
+                            loc.translate(product.titleKey),
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            product.description,
+                            loc.translate(product.descriptionKey),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -360,7 +371,7 @@ class _ProductCard extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      product.discountText!,
+                      loc.translate('premium.discount', {'percent': product.discount!.toString()}),
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: Colors.green.shade900,
                         fontWeight: FontWeight.bold,
@@ -383,8 +394,8 @@ class _ProductCard extends ConsumerWidget {
                               final success = ref.read(premiumPurchaseProvider).value ?? false;
                               if (success) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Premium активирован!'),
+                                  SnackBar(
+                                    content: Text(loc.translate('premium.activated')),
                                   ),
                                 );
                                 Navigator.of(context).pop();
@@ -406,7 +417,7 @@ class _ProductCard extends ConsumerWidget {
                               color: Colors.white,
                             ),
                           )
-                        : const Text('Купить'),
+                        : Text(loc.translate('premium.buy')),
                   ),
                 ),
               ],
@@ -429,7 +440,7 @@ class _ProductCard extends ConsumerWidget {
                   ),
                 ),
                 child: Text(
-                  'Рекомендуем',
+                  loc.translate('premium.recommended'),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -454,7 +465,7 @@ class _ProductCard extends ConsumerWidget {
                   ),
                 ),
                 child: Text(
-                  'Лучшая цена',
+                  loc.translate('premium.best_value'),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -527,3 +538,8 @@ class _FeatureItem extends StatelessWidget {
     );
   }
 }
+
+
+
+
+

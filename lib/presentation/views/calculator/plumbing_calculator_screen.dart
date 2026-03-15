@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../../domain/usecases/calculate_plumbing.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -60,49 +61,40 @@ class _PlumbingCalculatorScreenState extends State<PlumbingCalculatorScreen>
   late _PlumbingResult _result;
   late AppLocalizations _loc;
 
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'bathroomsCount': _bathroomsCount.toDouble(),
+      'toiletsCount': _toiletsCount.toDouble(),
+      'kitchensCount': _kitchensCount.toDouble(),
+      'avgPipeLength': _avgPipeLength,
+      'needHotWater': _needHotWater ? 1.0 : 0.0,
+    };
+  }
+
+  _PlumbingResult _calculate() {
+    final values = _calculator(_buildCalculationInputs(), const []).values;
+    return _PlumbingResult(
+      pointsCount: (values['points'] ?? 0).round(),
+      coldWaterPipes: values['coldWaterLength'] ?? 0,
+      hotWaterPipes: values['hotWaterLength'] ?? 0,
+      sewagePipes: values['sewerLength'] ?? 0,
+      fittingsCount: (values['fittingsNeeded'] ?? 0).round(),
+      valvesCount: (values['ballValvesNeeded'] ?? values['tapsNeeded'] ?? 0).round(),
+    );
+  }
+
+  void _update() => setState(() => _result = _calculate());
+
   static const _accentColor = CalculatorColors.interior;
 
   bool _isDark = false;
+  final CalculatePlumbing _calculator = CalculatePlumbing();
 
   @override
   void initState() {
     super.initState();
     _result = _calculate();
   }
-
-  _PlumbingResult _calculate() {
-    // Точки подключения
-    final bathroomPoints = _bathroomsCount * 4; // раковина, ванна/душ, унитаз, стиралка
-    final toiletPoints = _toiletsCount * 2; // унитаз, раковина
-    final kitchenPoints = _kitchensCount * 3; // мойка, посудомойка, фильтр
-    final pointsCount = bathroomPoints + toiletPoints + kitchenPoints;
-
-    // Трубы холодной воды
-    final coldWaterPipes = pointsCount * _avgPipeLength * 1.15;
-
-    // Трубы горячей воды
-    final hotWaterPipes = _needHotWater ? pointsCount * _avgPipeLength * 0.8 * 1.15 : 0.0;
-
-    // Канализация
-    final sewagePipes = pointsCount * (_avgPipeLength * 0.7) * 1.1;
-
-    // Фитинги: примерно 4 на каждую точку
-    final fittingsCount = pointsCount * 4;
-
-    // Краны/вентили: по 2 на каждую точку с горячей водой
-    final valvesCount = _needHotWater ? pointsCount * 2 : pointsCount;
-
-    return _PlumbingResult(
-      pointsCount: pointsCount,
-      coldWaterPipes: coldWaterPipes,
-      hotWaterPipes: hotWaterPipes,
-      sewagePipes: sewagePipes,
-      fittingsCount: fittingsCount,
-      valvesCount: valvesCount,
-    );
-  }
-
-  void _update() => setState(() => _result = _calculate());
 
   @override
   String generateExportText() {

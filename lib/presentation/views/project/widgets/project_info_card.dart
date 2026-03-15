@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../domain/models/project_v2.dart';
 
 /// Карточка информации о проекте.
@@ -11,6 +12,7 @@ class ProjectInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final dateFormat = DateFormat('dd.MM.yyyy HH:mm');
 
     return Card(
@@ -27,13 +29,13 @@ class ProjectInfoCard extends StatelessWidget {
             ],
             _InfoRow(
               icon: Icons.calendar_today_rounded,
-              label: 'Создан',
+              label: loc.translate('project.created'),
               value: dateFormat.format(project.createdAt),
             ),
             const SizedBox(height: 8),
             _InfoRow(
               icon: Icons.update_rounded,
-              label: 'Обновлён',
+              label: loc.translate('project.updated'),
               value: dateFormat.format(project.updatedAt),
             ),
             if (project.tags.isNotEmpty) ...[
@@ -51,7 +53,7 @@ class ProjectInfoCard extends StatelessWidget {
             ],
             if (project.notes != null && project.notes!.isNotEmpty) ...[
               const Divider(height: 24),
-              Text('Заметки', style: theme.textTheme.titleSmall),
+              Text(loc.translate('project.notes'), style: theme.textTheme.titleSmall),
               const SizedBox(height: 8),
               Text(
                 project.notes!,
@@ -103,4 +105,3 @@ class _InfoRow extends StatelessWidget {
     );
   }
 }
-

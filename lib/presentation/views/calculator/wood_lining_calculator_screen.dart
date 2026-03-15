@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
+import '../../../domain/usecases/calculate_wood_lining.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -231,6 +232,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
 
   // Константы калькулятора (null = используются hardcoded defaults)
   late final _WoodLiningConstants _constants;
+  final CalculateWoodLining _calculator = CalculateWoodLining();
 
   @override
   void initState() {
@@ -252,96 +254,39 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
     _reserve = inputs['reserve']?.clamp(5.0, 20.0) ?? 10.0;
   }
 
-  double _getCalculatedArea() {
-    if (_inputMode == InputMode.byArea) {
-      return _area;
-    }
-    // Площадь стен = периметр × высота (для обшивки стен, не пола)
-    return 2 * (_length + _width) * _height;
+
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'inputMode': _inputMode.index.toDouble(),
+      'area': _area,
+      'length': _length,
+      'width': _width,
+      'height': _height,
+      'liningType': _liningType.index.toDouble(),
+      'mountingDirection': _mountingDirection.index.toDouble(),
+      'fasteningType': _fasteningType.index.toDouble(),
+      'reserve': _reserve,
+      'useInsulation': _useInsulation ? 1.0 : 0.0,
+      'useVaporBarrier': _useVaporBarrier ? 1.0 : 0.0,
+      'useAntiseptic': _useAntiseptic ? 1.0 : 0.0,
+      'useFinish': _useFinish ? 1.0 : 0.0,
+      'finishType': _finishType.index.toDouble(),
+    };
   }
 
   _WoodLiningResult _calculate() {
-    final calculatedArea = _getCalculatedArea();
-    if (calculatedArea <= 0) {
-      return const _WoodLiningResult(
-        area: 0,
-        liningArea: 0,
-        liningPieces: 0,
-        battenLength: 0,
-        fasteners: 0,
-        antiseptic: 0,
-        finish: 0,
-        insulation: 0,
-        vaporBarrier: 0,
-        vaporBarrierWeight: 0,
-      );
-    }
-
-    // Вагонка с запасом (используем только пользовательский запас)
-    final liningArea = calculatedArea * (1 + _reserve / 100);
-    final liningLength = _constants.getLiningLength(_liningType.key);
-    final liningWidth = _constants.getLiningWidth(_liningType.key);
-    final boardAreaM2 = liningLength * (liningWidth / 1000);
-    final liningPieces = (liningArea / boardAreaM2).ceil();
-
-    // Обрешётка
-    final battenStep = _constants.battenStep;
-    double battenLength;
-    if (_mountingDirection == MountingDirection.vertical) {
-      final battenCount = (_height / battenStep).ceil();
-      final perimeterLength = _inputMode == InputMode.byArea
-          ? math.sqrt(calculatedArea) * 4
-          : 2 * (_length + _width);
-      battenLength = battenCount * perimeterLength * _constants.battenMarginVertical;
-    } else if (_mountingDirection == MountingDirection.horizontal) {
-      final battenCount = _inputMode == InputMode.byArea
-          ? (math.sqrt(calculatedArea) * 4 / battenStep).ceil()
-          : ((_length + _width) * 2 / battenStep).ceil();
-      battenLength = battenCount * _height * _constants.battenMarginHorizontal;
-    } else {
-      final battenCount = _inputMode == InputMode.byArea
-          ? (math.sqrt(calculatedArea) * 4 / battenStep).ceil()
-          : ((_length + _width) * 2 / battenStep).ceil();
-      battenLength = battenCount * _height * _constants.battenMarginDiagonal;
-    }
-
-    // Крепёж
-    final fasteningPerM2 = _constants.getFasteningPerM2(_fasteningType.key);
-    final fasteners = (liningArea * fasteningPerM2).ceil();
-
-    // Антисептик
-    final antiseptic = _useAntiseptic
-        ? calculatedArea * _constants.antisepticConsumption * _constants.antisepticMargin
-        : 0.0;
-
-    // Финишное покрытие
-    final finishConsumption = _constants.getFinishConsumption(_finishType.key);
-    final finish = _useFinish
-        ? calculatedArea * finishConsumption * _constants.finishMargin
-        : 0.0;
-
-    // Утеплитель
-    final insulation = _useInsulation
-        ? calculatedArea * _constants.insulationMargin
-        : 0.0;
-
-    // Пароизоляция (нахлёсты из констант)
-    final vaporBarrier = _useVaporBarrier
-        ? calculatedArea * _constants.vaporBarrierOverlapMargin
-        : 0.0;
-    final vaporBarrierWeight = vaporBarrier * _constants.vaporBarrierWeightPerM2;
-
+    final values = _calculator(_buildCalculationInputs(), const []).values;
     return _WoodLiningResult(
-      area: calculatedArea,
-      liningArea: liningArea,
-      liningPieces: liningPieces,
-      battenLength: battenLength,
-      fasteners: fasteners,
-      antiseptic: antiseptic,
-      finish: finish,
-      insulation: insulation,
-      vaporBarrier: vaporBarrier,
-      vaporBarrierWeight: vaporBarrierWeight,
+      area: values['area'] ?? 0,
+      liningArea: values['liningArea'] ?? 0,
+      liningPieces: (values['liningPieces'] ?? 0).round(),
+      battenLength: values['battenLength'] ?? 0,
+      fasteners: (values['fasteners'] ?? 0).round(),
+      antiseptic: values['antiseptic'] ?? 0,
+      finish: values['finish'] ?? 0,
+      insulation: values['insulation'] ?? 0,
+      vaporBarrier: values['vaporBarrier'] ?? 0,
+      vaporBarrierWeight: values['vaporBarrierWeight'] ?? ((values['vaporBarrier'] ?? 0) * _constants.vaporBarrierWeightPerM2),
     );
   }
 
@@ -785,7 +730,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
         value: _reserve,
         min: 5.0,
         max: 20.0,
-        suffix: '%',
+        suffix: _loc.translate('common.percent'),
         accentColor: accentColor,
         onChanged: (v) {
           setState(() {
@@ -962,7 +907,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
       items.add(MaterialItem(
         name: _loc.translate(_finishType.nameKey),
         value: '${_result.finish.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
-        subtitle: _loc.translate('woodlining.material.consumption').replaceFirst('{value}', _constants.getFinishConsumption(_finishType.key).toString()),
+        subtitle: _loc.translate('woodlining.material.consumption').replaceFirst('{value}', ((_calculator(_buildCalculationInputs(), const []).values['finishConsumption'] ?? _constants.getFinishConsumption(_finishType.key))).toString()),
         icon: Icons.format_paint,
       ));
     }
@@ -1148,3 +1093,6 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
     );
   }
 }
+
+
+

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../../domain/usecases/calculate_strip_foundation.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -79,6 +80,7 @@ class _StripFoundationCalculatorScreenState
   String get exportSubject => _loc.translate('strip_calc.title');
 
   bool _isDark = false;
+  final CalculateStripFoundation _calculator = CalculateStripFoundation();
   // Размеры дома
   double _houseLength = 10.0;
   double _houseWidth = 8.0;
@@ -97,6 +99,38 @@ class _StripFoundationCalculatorScreenState
   late _StripResult _result;
   late AppLocalizations _loc;
 
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'houseLength': _houseLength,
+      'houseWidth': _houseWidth,
+      'width': _stripWidth,
+      'height': _stripHeight,
+      'foundationType': _foundationType.index.toDouble(),
+      'needWaterproof': _needWaterproof ? 1.0 : 0.0,
+      'needInsulation': _needInsulation ? 1.0 : 0.0,
+      'hasInternalWalls': _hasInternalWalls ? 1.0 : 0.0,
+      'internalWallsLength': _internalWallsLength,
+    };
+  }
+
+  _StripResult _calculate() {
+    final values = _calculator(_buildCalculationInputs(), const []).values;
+    return _StripResult(
+      perimeter: values['perimeter'] ?? 0,
+      stripVolume: values['stripVolume'] ?? 0,
+      concreteVolume: values['concreteVolume'] ?? 0,
+      rebarWeight: values['rebarWeight'] ?? 0,
+      formworkArea: values['formworkArea'] ?? 0,
+      waterproofingArea: values['waterproofingArea'] ?? 0,
+      insulationArea: values['insulationArea'] ?? 0,
+      sandVolume: values['sandVolume'] ?? 0,
+      gravelVolume: values['gravelVolume'] ?? 0,
+      fbsBlocksCount: (values['fbsBlocksCount'] ?? 0).round(),
+    );
+  }
+
+  void _update() => setState(() => _result = _calculate());
+
   static const _accentColor = CalculatorColors.foundation;
 
   @override
@@ -104,67 +138,6 @@ class _StripFoundationCalculatorScreenState
     super.initState();
     _result = _calculate();
   }
-
-  _StripResult _calculate() {
-    // Расчёт периметра
-    double perimeter = 2 * (_houseLength + _houseWidth);
-    if (_hasInternalWalls) {
-      perimeter += _internalWallsLength;
-    }
-
-    // Объём ленты
-    final stripVolume = perimeter * _stripWidth * _stripHeight;
-
-    // Бетон (с запасом 5%)
-    double concreteVolume = stripVolume * 1.05;
-
-    // Для сборного фундамента бетон только на швы
-    int fbsBlocksCount = 0;
-    if (_foundationType == StripFoundationType.prefab) {
-      // Стандартный ФБС 2400x600x580мм = 0.84 м³
-      const fbsVolume = 2.4 * 0.6 * 0.58;
-      fbsBlocksCount = (stripVolume / fbsVolume).ceil();
-      concreteVolume = fbsBlocksCount * 0.02; // раствор на швы
-    }
-
-    // Арматура: ~80 кг на м³ бетона для монолитного
-    double rebarWeight = 0;
-    if (_foundationType != StripFoundationType.prefab) {
-      rebarWeight = stripVolume * 80;
-    }
-
-    // Опалубка: две стороны по высоте ленты
-    final formworkArea =
-        _foundationType != StripFoundationType.prefab ? perimeter * _stripHeight * 2 : 0.0;
-
-    // Гидроизоляция: дно + стены
-    final waterproofingArea =
-        _needWaterproof ? perimeter * (_stripWidth + _stripHeight * 2) * 1.1 : 0.0;
-
-    // Утепление: только внешние стены
-    final insulationArea =
-        _needInsulation ? 2 * (_houseLength + _houseWidth) * _stripHeight * 1.1 : 0.0;
-
-    // Подушка: песок 15см, щебень 10см
-    final cushionArea = perimeter * (_stripWidth + 0.2); // +20см по бокам
-    final sandVolume = cushionArea * 0.15;
-    final gravelVolume = cushionArea * 0.10;
-
-    return _StripResult(
-      perimeter: perimeter,
-      stripVolume: stripVolume,
-      concreteVolume: concreteVolume,
-      rebarWeight: rebarWeight,
-      formworkArea: formworkArea,
-      waterproofingArea: waterproofingArea,
-      insulationArea: insulationArea,
-      sandVolume: sandVolume,
-      gravelVolume: gravelVolume,
-      fbsBlocksCount: fbsBlocksCount,
-    );
-  }
-
-  void _update() => setState(() => _result = _calculate());
 
   @override
   String generateExportText() {

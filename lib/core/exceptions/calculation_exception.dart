@@ -11,6 +11,9 @@ class CalculationException extends AppException {
     this.calculatorId,
     this.inputs,
     super.details,
+    super.userMessageKey,
+    super.userMessageParams,
+    super.fallbackUserMessage,
   });
 
   factory CalculationException.divisionByZero(String context) {
@@ -18,6 +21,9 @@ class CalculationException extends AppException {
       'Деление на ноль в расчёте: $context',
       code: 'DIVISION_BY_ZERO',
       details: context,
+      userMessageKey: 'error.message.calculation_division_by_zero',
+      userMessageParams: {'context': context},
+      fallbackUserMessage: 'Ошибка расчёта. Деление на ноль: $context',
     );
   }
 
@@ -30,6 +36,13 @@ class CalculationException extends AppException {
       code: 'INVALID_INPUT',
       calculatorId: calculatorId,
       details: reason,
+      userMessageKey: 'error.message.calculation_invalid_input',
+      userMessageParams: {
+        'calculatorId': calculatorId,
+        'reason': reason,
+      },
+      fallbackUserMessage:
+          'Некорректные входные данные для расчёта "$calculatorId": $reason',
     );
   }
 
@@ -38,6 +51,9 @@ class CalculationException extends AppException {
       'Переполнение при расчёте: $context',
       code: 'OVERFLOW',
       details: context,
+      userMessageKey: 'error.message.calculation_overflow',
+      userMessageParams: {'context': context},
+      fallbackUserMessage: 'Ошибка расчёта. Слишком большое значение: $context',
     );
   }
 
@@ -46,6 +62,9 @@ class CalculationException extends AppException {
       'Отсутствуют необходимые данные: $dataType',
       code: 'MISSING_DATA',
       details: dataType,
+      userMessageKey: 'error.message.calculation_missing_data',
+      userMessageParams: {'dataType': dataType},
+      fallbackUserMessage: 'Не хватает данных для расчёта: $dataType',
     );
   }
 
@@ -59,11 +78,20 @@ class CalculationException extends AppException {
       code: 'CUSTOM',
       calculatorId: calculatorId,
       inputs: inputs,
+      fallbackUserMessage: message,
     );
   }
 
   @override
-  String getUserMessage() {
-    return 'Ошибка расчёта: $message';
+  String getUserMessage([String Function(String key)? translate]) {
+    if (userMessageKey != null) {
+      return super.getUserMessage(translate);
+    }
+
+    final title = translate != null
+        ? translate('error.calculation')
+        : 'Ошибка расчёта';
+    final baseMessage = fallbackUserMessage ?? message;
+    return '$title: $baseMessage';
   }
 }

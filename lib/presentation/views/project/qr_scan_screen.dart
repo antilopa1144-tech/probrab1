@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../core/services/deep_link_service.dart';
+import '../../../core/errors/global_error_handler.dart';
+import '../../../core/localization/app_localizations.dart';
 
 /// Экран сканирования QR кодов
 class QRScanScreen extends StatefulWidget {
@@ -35,10 +37,11 @@ class _QRScanScreenState extends State<QRScanScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Сканировать QR код'),
+        title: Text(loc.translate('project.list.scan_qr')),
         actions: [
           IconButton(
             onPressed: _toggleTorch,
@@ -93,7 +96,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Наведите камеру на QR код',
+                    loc.translate('project.qr.point_camera'),
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -102,7 +105,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'QR код будет отсканирован автоматически',
+                    loc.translate('project.qr.auto_scan'),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: Colors.white.withValues(alpha:0.8),
                     ),
@@ -143,7 +146,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
 
       if (deepLinkData == null) {
         if (mounted) {
-          _showError('Неверный QR код', 'Этот QR код не является ссылкой на проект');
+          _showError(AppLocalizations.of(context).translate('project.qr.invalid_title'), AppLocalizations.of(context).translate('project.qr.invalid_message'));
         }
         return;
       }
@@ -158,9 +161,10 @@ class _QRScanScreenState extends State<QRScanScreen> {
           Navigator.of(context).pop(true);
         }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (mounted) {
-        _showError('Ошибка', 'Не удалось обработать QR код: $e');
+        final message = GlobalErrorHandler.getUserFriendlyMessage(context, e, stackTrace);
+        _showError(AppLocalizations.of(context).translate('project.error.loading'), AppLocalizations.of(context).translate('project.qr.process_error', {'error': message}));
       }
     } finally {
       if (mounted) {
@@ -184,7 +188,7 @@ class _QRScanScreenState extends State<QRScanScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context).translate('button.close')),
           ),
         ],
       ),
@@ -277,3 +281,6 @@ class _ScannerOverlayPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+
+

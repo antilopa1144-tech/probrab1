@@ -110,14 +110,27 @@ void main() {
           'roomsCount': 4.0,
         };
 
-        final naturalResult = calculator({...baseInputs, 'ventilationType': 0.0}, emptyPriceList);
-        final supplyResult = calculator({...baseInputs, 'ventilationType': 1.0}, emptyPriceList);
-        final exhaustResult = calculator({...baseInputs, 'ventilationType': 2.0}, emptyPriceList);
+        final naturalResult = calculator({
+          ...baseInputs,
+          'ventilationType': 0.0,
+        }, emptyPriceList);
+        final supplyResult = calculator({
+          ...baseInputs,
+          'ventilationType': 1.0,
+        }, emptyPriceList);
+        final exhaustResult = calculator({
+          ...baseInputs,
+          'ventilationType': 2.0,
+        }, emptyPriceList);
 
-        expect(supplyResult.values['airflowRequired'],
-            greaterThan(exhaustResult.values['airflowRequired']!));
-        expect(exhaustResult.values['airflowRequired'],
-            greaterThan(naturalResult.values['airflowRequired']!));
+        expect(
+          supplyResult.values['airflowRequired'],
+          greaterThan(exhaustResult.values['airflowRequired']!),
+        );
+        expect(
+          exhaustResult.values['airflowRequired'],
+          greaterThan(naturalResult.values['airflowRequired']!),
+        );
       });
     });
 
@@ -243,9 +256,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not specified', () {
-        final inputs = <String, double>{
-          'roomArea': 50.0,
-        };
+        final inputs = <String, double>{'roomArea': 50.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -304,10 +315,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero area', () {
-        final inputs = {
-          'roomArea': 0.0,
-          'ceilingHeight': 2.7,
-        };
+        final inputs = {'roomArea': 0.0, 'ceilingHeight': 2.7};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -316,10 +324,7 @@ void main() {
       });
 
       test('throws exception for negative area', () {
-        final inputs = {
-          'roomArea': -50.0,
-          'ceilingHeight': 2.7,
-        };
+        final inputs = {'roomArea': -50.0, 'ceilingHeight': 2.7};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -338,9 +343,27 @@ void main() {
           'needRecovery': 0.0,
         };
         final priceList = [
-          const PriceItem(sku: 'duct', name: 'Воздуховод', price: 150.0, unit: 'м', imageUrl: ''),
-          const PriceItem(sku: 'grill', name: 'Решётка', price: 300.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'fitting', name: 'Фитинг', price: 100.0, unit: 'шт', imageUrl: ''),
+          const PriceItem(
+            sku: 'duct',
+            name: 'Воздуховод',
+            price: 150.0,
+            unit: 'м',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'grill',
+            name: 'Решётка',
+            price: 300.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'fitting',
+            name: 'Фитинг',
+            price: 100.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -350,10 +373,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'roomArea': 50.0,
-          'ceilingHeight': 2.7,
-        };
+        final inputs = {'roomArea': 50.0, 'ceilingHeight': 2.7};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -425,6 +445,23 @@ void main() {
         expect(result.values['airflowRequired'], closeTo(37.5, 0.1));
         // Minimal fittings
         expect(result.values['fittingsCount'], equals(7.0));
+      });
+    });
+    group('validation messages', () {
+      test('room area uses shared helper', () {
+        expect(
+          () => calculator({
+            'roomArea': 0.0,
+            'ceilingHeight': 2.7,
+          }, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Поле "площадь помещений" должно быть больше нуля'),
+            ),
+          ),
+        );
       });
     });
   });

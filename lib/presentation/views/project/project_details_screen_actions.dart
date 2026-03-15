@@ -28,24 +28,27 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
     final descriptionController = TextEditingController(
       text: project.description ?? '',
     );
+    final loc = AppLocalizations.of(context);
 
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Редактировать проект'),
+        title: Text(loc.translate('project.form.edit_project')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(labelText: 'Название проекта'),
+              decoration: InputDecoration(labelText: loc.translate('project.name')),
               autofocus: true,
               textCapitalization: TextCapitalization.sentences,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'Описание'),
+              decoration: InputDecoration(
+                labelText: loc.translate('project.form.description_label'),
+              ),
               maxLines: 3,
               textCapitalization: TextCapitalization.sentences,
             ),
@@ -54,11 +57,11 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Отмена'),
+            child: Text(loc.translate('button.cancel')),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Сохранить'),
+            child: Text(loc.translate('button.save')),
           ),
         ],
       ),
@@ -94,8 +97,8 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Проект обновлён'),
+            SnackBar(
+              content: Text(loc.translate('project.updated_project')),
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -114,10 +117,11 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
   }
 
   void _changeStatus(ProjectV2 project) async {
+    final loc = AppLocalizations.of(context);
     final newStatus = await showDialog<ProjectStatus>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Изменить статус'),
+        title: Text(loc.translate('project.change_status')),
         children: ProjectStatus.values.map((status) {
           return SimpleDialogOption(
             onPressed: () => Navigator.pop(context, status),
@@ -125,7 +129,7 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
               children: [
                 Icon(_getStatusIcon(status), color: _getStatusColor(status)),
                 const SizedBox(width: 12),
-                Text(_getStatusLabel(status)),
+                Text(_getStatusLabel(context, status)),
               ],
             ),
           );
@@ -163,7 +167,10 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Статус изменён на "${_getStatusLabel(newStatus)}"',
+                loc.translate('project.status_changed_to').replaceFirst(
+                  '{status}',
+                  _getStatusLabel(context, newStatus),
+                ),
               ),
               behavior: SnackBarBehavior.floating,
             ),
@@ -189,8 +196,8 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
     if (allCalcs.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Нет доступных калькуляторов'),
+          SnackBar(
+            content: Text(loc.translate('project.no_available_calculators')),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -204,7 +211,7 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
         String? selected;
         return StatefulBuilder(
           builder: (context, setState) => AlertDialog(
-            title: const Text('Выберите калькулятор'),
+            title: Text(loc.translate('project.select_calculator')),
             content: SizedBox(
               width: double.maxFinite,
               height: MediaQuery.of(context).size.height * 0.5,
@@ -229,13 +236,13 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Отмена'),
+                child: Text(loc.translate('button.cancel')),
               ),
               FilledButton(
                 onPressed: selected != null
                     ? () => Navigator.pop(dialogContext, selected)
                     : null,
-                child: const Text('Выбрать'),
+                child: Text(loc.translate('button.select')),
               ),
             ],
           ),
@@ -246,14 +253,12 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
     if (selectedCalcId != null) {
       final calcDef = CalculatorRegistry.getById(selectedCalcId);
       if (calcDef != null && mounted) {
-        // Navigate to calculator and await result
         final result = await CalculatorNavigationHelper.navigateToCalculator(
           context,
           calcDef,
           projectId: project.id,
         );
 
-        // If user saved the calculation, add it to project
         if (result != null && mounted) {
           try {
             final calculation = result.toProjectCalculation();
@@ -266,7 +271,12 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Расчёт "${calculation.name}" добавлен'),
+                  content: Text(
+                    loc.translate('project.calculation_added').replaceFirst(
+                      '{name}',
+                      calculation.name,
+                    ),
+                  ),
                   behavior: SnackBarBehavior.floating,
                 ),
               );
@@ -277,7 +287,9 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
                 context,
                 e,
                 stackTrace: stack,
-                contextMessage: 'Ошибка сохранения расчёта в проект',
+                contextMessage: loc.translate(
+                  'project.error.save_calculation_to_project',
+                ),
               );
             }
           }
@@ -287,10 +299,8 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
   }
 
   void _openCalculation(ProjectCalculation calculation) async {
-    // Получаем определение калькулятора
     final calcDef = CalculatorRegistry.getById(calculation.calculatorId);
     if (calcDef == null) {
-      // Логируем ошибку в Crashlytics
       try {
         FirebaseCrashlytics.instance.recordError(
           Exception('Calculator not found: ${calculation.calculatorId}'),
@@ -323,7 +333,6 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
       return;
     }
 
-    // Открываем калькулятор с предзаполненными данными
     if (mounted) {
       final initialInputs = <String, double>{};
       for (final pair in calculation.inputs) {
@@ -338,24 +347,28 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
   }
 
   void _deleteCalculation(ProjectCalculation calculation) async {
+    final loc = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Удалить расчёт?'),
+        title: Text(loc.translate('project.delete_calculation_title')),
         content: Text(
-          'Расчёт "${calculation.name}" будет удалён безвозвратно.',
+          loc.translate('project.delete_calculation_message').replaceFirst(
+            '{name}',
+            calculation.name,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Отмена'),
+            child: Text(loc.translate('button.cancel')),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Удалить'),
+            child: Text(loc.translate('button.delete')),
           ),
         ],
       ),
@@ -371,7 +384,12 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Расчёт "${calculation.name}" удалён'),
+              content: Text(
+                loc.translate('project.calculation_deleted').replaceFirst(
+                  '{name}',
+                  calculation.name,
+                ),
+              ),
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -391,7 +409,7 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
 
   void _exportProject(ProjectV2 project) async {
     try {
-      // Создаём данные для экспорта
+      final loc = AppLocalizations.of(context);
       final exportCalcs = project.calculations.map((calc) {
         return ExportCalculation(
           calculatorName: calc.name,
@@ -414,14 +432,35 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
         notes: project.notes,
       );
 
-      // Экспортируем через CSV сервис
       final csvService = CsvExportService();
-      await csvService.exportAndShare(exportData);
+      await csvService.exportAndShare(
+        exportData,
+        labels: CsvExportLabels(
+          project: loc.translate('project.export_csv.project'),
+          description: loc.translate('project.export_csv.description'),
+          createdAt: loc.translate('project.export_csv.created_at'),
+          calculator: loc.translate('project.export_csv.calculator'),
+          parameter: loc.translate('project.export_csv.parameter'),
+          value: loc.translate('common.value'),
+          unit: loc.translate('common.unit_label'),
+          materialCost: loc.translate('project.export_csv.material_cost'),
+          laborCost: loc.translate('project.export_csv.labor_cost'),
+          total: loc.translate('project.total'),
+          materials: loc.translate('project.materials'),
+          labor: loc.translate('project.labor'),
+          grandTotal: loc.translate('project.export_csv.grand_total'),
+          notes: loc.translate('project.notes'),
+        ),
+        shareCopy: CsvShareCopy(
+          subject: loc.translate('project.export_csv.share_subject', {'name': project.name}),
+          text: loc.translate('project.export_csv.share_text', {'name': project.name}),
+        ),
+      );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Проект экспортирован'),
+          SnackBar(
+            content: Text(loc.translate('project.exported')),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -507,20 +546,21 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
     }
   }
 
-  String _getStatusLabel(ProjectStatus status) {
+  String _getStatusLabel(BuildContext context, ProjectStatus status) {
+    final loc = AppLocalizations.of(context);
     switch (status) {
       case ProjectStatus.planning:
-        return 'Планирование';
+        return loc.translate('project.status.planning');
       case ProjectStatus.inProgress:
-        return 'В работе';
+        return loc.translate('project.status.in_progress');
       case ProjectStatus.onHold:
-        return 'Приостановлен';
+        return loc.translate('project.status.on_hold');
       case ProjectStatus.completed:
-        return 'Завершён';
+        return loc.translate('project.status.completed');
       case ProjectStatus.cancelled:
-        return 'Отменён';
+        return loc.translate('project.status.cancelled');
       case ProjectStatus.problem:
-        return 'Проблема';
+        return loc.translate('project.status.problem');
     }
   }
 
@@ -566,7 +606,7 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 5),
             action: SnackBarAction(
-              label: 'OK',
+              label: loc.translate('button.close'),
               onPressed: () {},
             ),
           ),
@@ -585,6 +625,7 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
   }
 
   void _showExportOptions(ProjectV2 project) {
+    final loc = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       builder: (context) => SafeArea(
@@ -594,7 +635,7 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                AppLocalizations.of(context).translate('project.export'),
+                loc.translate('project.export'),
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -602,8 +643,8 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.picture_as_pdf_rounded),
-              title: const Text('Экспорт в PDF'),
-              subtitle: const Text('Открыть в приложении для просмотра'),
+              title: Text(loc.translate('project.export_options.pdf')),
+              subtitle: Text(loc.translate('project.export_options.pdf_subtitle')),
               onTap: () {
                 Navigator.pop(context);
                 _exportProjectToPdf(project);
@@ -611,8 +652,10 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.download_rounded),
-              title: const Text('Скачать PDF'),
-              subtitle: const Text('Сохранить файл на устройство'),
+              title: Text(loc.translate('project.export_options.download_pdf')),
+              subtitle: Text(
+                loc.translate('project.export_options.download_pdf_subtitle'),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 _downloadProjectToPdf(project);
@@ -620,8 +663,8 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.table_chart_rounded),
-              title: const Text('Экспорт в CSV'),
-              subtitle: const Text('Таблица для Excel'),
+              title: Text(loc.translate('project.export_options.csv')),
+              subtitle: Text(loc.translate('project.export_options.csv_subtitle')),
               onTap: () {
                 Navigator.pop(context);
                 _exportProject(project);
@@ -629,8 +672,8 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.qr_code_rounded),
-              title: const Text('Поделиться QR-кодом'),
-              subtitle: const Text('Для передачи на другое устройство'),
+              title: Text(loc.translate('project.export_options.share_qr')),
+              subtitle: Text(loc.translate('project.export_options.share_qr_subtitle')),
               onTap: () {
                 Navigator.pop(context);
                 _shareViaQR(project);
@@ -643,3 +686,6 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
     );
   }
 }
+
+
+

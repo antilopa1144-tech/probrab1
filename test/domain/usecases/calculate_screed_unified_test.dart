@@ -343,33 +343,69 @@ void main() {
 
     group('Рекомендации по маркам', () {
       test('recommends CPS M100 for thickness <= 30 mm', () {
-        expect(CalculateScreedUnified.getRecommendedMarka(0, 30.0), equals('М100'));
-        expect(CalculateScreedUnified.getRecommendedMarka(0, 20.0), equals('М100'));
+        expect(
+          CalculateScreedUnified.getRecommendedMarka(0, 30.0),
+          equals('М100'),
+        );
+        expect(
+          CalculateScreedUnified.getRecommendedMarka(0, 20.0),
+          equals('М100'),
+        );
       });
 
       test('recommends CPS M150 for thickness 31-50 mm', () {
-        expect(CalculateScreedUnified.getRecommendedMarka(0, 40.0), equals('М150'));
-        expect(CalculateScreedUnified.getRecommendedMarka(0, 50.0), equals('М150'));
+        expect(
+          CalculateScreedUnified.getRecommendedMarka(0, 40.0),
+          equals('М150'),
+        );
+        expect(
+          CalculateScreedUnified.getRecommendedMarka(0, 50.0),
+          equals('М150'),
+        );
       });
 
       test('recommends CPS M200 for thickness > 50 mm', () {
-        expect(CalculateScreedUnified.getRecommendedMarka(0, 60.0), equals('М200'));
-        expect(CalculateScreedUnified.getRecommendedMarka(0, 100.0), equals('М200'));
+        expect(
+          CalculateScreedUnified.getRecommendedMarka(0, 60.0),
+          equals('М200'),
+        );
+        expect(
+          CalculateScreedUnified.getRecommendedMarka(0, 100.0),
+          equals('М200'),
+        );
       });
 
       test('recommends Peskobeton M200 for thickness <= 40 mm', () {
-        expect(CalculateScreedUnified.getRecommendedMarka(1, 30.0), equals('М200'));
-        expect(CalculateScreedUnified.getRecommendedMarka(1, 40.0), equals('М200'));
+        expect(
+          CalculateScreedUnified.getRecommendedMarka(1, 30.0),
+          equals('М200'),
+        );
+        expect(
+          CalculateScreedUnified.getRecommendedMarka(1, 40.0),
+          equals('М200'),
+        );
       });
 
       test('recommends Peskobeton M300 for thickness 41-80 mm', () {
-        expect(CalculateScreedUnified.getRecommendedMarka(1, 50.0), equals('М300'));
-        expect(CalculateScreedUnified.getRecommendedMarka(1, 80.0), equals('М300'));
+        expect(
+          CalculateScreedUnified.getRecommendedMarka(1, 50.0),
+          equals('М300'),
+        );
+        expect(
+          CalculateScreedUnified.getRecommendedMarka(1, 80.0),
+          equals('М300'),
+        );
       });
 
       test('recommends Peskobeton M400 for thickness > 80 mm', () {
-        expect(CalculateScreedUnified.getRecommendedMarka(1, 90.0), equals('М400'));
-        expect(CalculateScreedUnified.getRecommendedMarka(1, 150.0), equals('М400'));
+        expect(
+          CalculateScreedUnified.getRecommendedMarka(1, 90.0),
+          equals('М400'),
+        );
+        expect(
+          CalculateScreedUnified.getRecommendedMarka(1, 150.0),
+          equals('М400'),
+        );
       });
     });
 
@@ -389,8 +425,20 @@ void main() {
         };
 
         final priceList = [
-          const PriceItem(sku: 'cps_m150', name: 'ЦПС М150', price: 180, unit: 'мешок', imageUrl: ''),
-          const PriceItem(sku: 'mesh', name: 'Сетка', price: 50, unit: 'м²', imageUrl: ''),
+          const PriceItem(
+            sku: 'cps_m150',
+            name: 'ЦПС М150',
+            price: 180,
+            unit: 'мешок',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'mesh',
+            name: 'Сетка',
+            price: 50,
+            unit: 'м²',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -416,7 +464,13 @@ void main() {
         };
 
         final priceList = [
-          const PriceItem(sku: 'peskobeton_m300', name: 'Пескобетон М300', price: 200, unit: 'мешок', imageUrl: ''),
+          const PriceItem(
+            sku: 'peskobeton_m300',
+            name: 'Пескобетон М300',
+            price: 200,
+            unit: 'мешок',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -459,9 +513,7 @@ void main() {
 
       test('handles default values correctly', () {
         // Минимальные входные данные с площадью
-        final inputs = {
-          'area': 20.0,
-        };
+        final inputs = {'area': 20.0};
 
         final result = calculator(inputs, []);
 
@@ -519,6 +571,20 @@ void main() {
 
         // Объём: 25 × 0.08 = 2.0 м³
         expect(result.values['volume'], equals(2.0));
+      });
+    });
+
+    group('validation messages', () {
+      test('thickness range uses shared helper', () {
+        final calculator = CalculateScreedUnified();
+
+        final error = calculator.validateInputs({
+          'inputMode': 0.0,
+          'area': 20.0,
+          'thickness': 205.0,
+        });
+
+        expect(error, equals('Поле "толщина" должно быть от 10 до 200 мм'));
       });
     });
   });

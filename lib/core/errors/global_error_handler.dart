@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import '../localization/app_localizations.dart';
 import '../exceptions/app_exception.dart';
 import '../exceptions/validation_exception.dart';
 import '../exceptions/calculation_exception.dart';
@@ -48,34 +49,169 @@ class GlobalErrorHandler {
   }
 
   /// Получить удобное для пользователя сообщение.
-  static String getUserFriendlyMessage(Object error, [StackTrace? stackTrace]) {
-    // Обработка AppException
+  static String getUserFriendlyMessage(
+    dynamic contextOrError, [
+    Object? errorOrStackTrace,
+    StackTrace? stackTrace,
+  ]) {
+    BuildContext? context;
+    late final Object error;
+
+    if (contextOrError is BuildContext) {
+      context = contextOrError;
+      error = errorOrStackTrace as Object;
+    } else {
+      error = contextOrError as Object;
+      if (errorOrStackTrace is StackTrace) {
+        stackTrace = errorOrStackTrace;
+      }
+    }
+
+    final translate = _getTranslator(context);
+
     if (error is AppException) {
-      return error.getUserMessage();
+      return error.getUserMessage(translate);
     }
 
-    // Обработка стандартных Flutter ошибок
     if (error is FlutterError) {
-      return 'Произошла ошибка интерфейса. Попробуйте перезапустить приложение.';
+      return translate('error.message.ui');
     }
 
-    // Обработка по категории
     final category = getErrorCategory(error);
     return switch (category) {
-      ErrorCategory.network =>
-        'Проблема с сетью. Проверьте подключение к интернету.',
-      ErrorCategory.storage =>
-        'Ошибка базы данных. Попробуйте перезапустить приложение.',
-      ErrorCategory.validation =>
-        'Неверные данные. Проверьте введённые значения.',
-      ErrorCategory.calculation => 'Ошибка расчёта. Проверьте входные данные.',
-      ErrorCategory.export =>
-        'Не удалось экспортировать данные. Попробуйте ещё раз.',
-      ErrorCategory.ui =>
-        'Ошибка отображения. Попробуйте перезапустить приложение.',
-      ErrorCategory.unknown =>
-        'Произошла неожиданная ошибка. Попробуйте ещё раз.',
+      ErrorCategory.network => translate('error.message.network'),
+      ErrorCategory.storage => translate('error.message.storage'),
+      ErrorCategory.validation => translate('error.message.validation'),
+      ErrorCategory.calculation => translate('error.message.calculation'),
+      ErrorCategory.export => translate('error.message.export'),
+      ErrorCategory.ui => translate('error.message.ui'),
+      ErrorCategory.unknown => translate('error.message.unknown'),
     };
+  }
+
+
+  static String Function(String key) _getTranslator(BuildContext? context) {
+    if (context != null) {
+      try {
+        return AppLocalizations.of(context).translate;
+      } catch (_) {
+        // В тестах и ранних фазах инициализации локализация может быть ещё недоступна.
+      }
+    }
+    return _getFallbackTranslation;
+  }
+
+  static String _translate(BuildContext? context, String key) {
+    return _getTranslator(context)(key);
+  }
+
+  static String _getFallbackTranslation(String key) {
+    switch (key) {
+      case 'retry':
+        return 'Повторить';
+      case 'button.close':
+        return 'ОК';
+      case 'error.calculation':
+        return 'Ошибка расчёта';
+      case 'error.title.validation':
+        return 'Проверьте данные';
+      case 'error.title.calculation':
+        return 'Ошибка расчёта';
+      case 'error.title.storage':
+        return 'Ошибка данных';
+      case 'error.title.network':
+        return 'Ошибка сети';
+      case 'error.title.export':
+        return 'Ошибка экспорта';
+      case 'error.title.ui':
+        return 'Ошибка интерфейса';
+      case 'error.title.unknown':
+        return 'Что-то пошло не так';
+      case 'error.message.network':
+        return 'Проблема с сетью. Проверьте подключение к интернету.';
+      case 'error.message.storage':
+        return 'Ошибка при работе с данными. Попробуйте ещё раз.';
+      case 'error.message.validation':
+        return 'Проверьте введённые данные.';
+      case 'error.message.calculation':
+        return 'Ошибка расчёта. Проверьте исходные данные.';
+      case 'error.message.export':
+        return 'Не удалось выполнить экспорт. Попробуйте ещё раз.';
+      case 'error.message.ui':
+        return 'Произошла ошибка интерфейса. Попробуйте повторить действие.';
+      case 'error.message.unknown':
+        return 'Произошла ошибка. Попробуйте ещё раз.';
+      case 'error.message.calculation_division_by_zero':
+        return 'Ошибка расчёта. Деление на ноль: {context}';
+      case 'error.message.calculation_invalid_input':
+        return 'Некорректные входные данные для расчёта "{calculatorId}": {reason}';
+      case 'error.message.calculation_overflow':
+        return 'Ошибка расчёта. Слишком большое значение: {context}';
+      case 'error.message.calculation_missing_data':
+        return 'Не хватает данных для расчёта: {dataType}';
+      case 'error.message.export_generation_error':
+        return 'Не удалось создать файл формата {format}. Попробуйте ещё раз.';
+      case 'error.message.export_permission_denied':
+        return 'Нет прав доступа к файлам. Проверьте разрешения приложения.';
+      case 'error.message.export_insufficient_space':
+        return 'Недостаточно места на устройстве.';
+      case 'error.message.export_invalid_data':
+        return 'Некорректные данные для экспорта: {reason}';
+      case 'error.message.network_no_connection':
+        return 'Проверьте подключение к интернету.';
+      case 'error.message.network_timeout':
+        return 'Сервер не отвечает. Попробуйте позже.';
+      case 'error.message.network_server_error':
+        return 'Ошибка на сервере. Попробуйте позже.';
+      case 'error.message.network_bad_request':
+        return 'Неверный запрос. Обратитесь в поддержку.';
+      case 'error.message.network_not_found':
+        return 'Запрошенные данные не найдены.';
+      case 'error.message.storage_not_found':
+        return 'Данные не найдены.';
+      case 'error.message.storage_save_error':
+        return 'Не удалось сохранить данные.';
+      case 'error.message.storage_delete_error':
+        return 'Не удалось удалить данные.';
+      case 'error.message.storage_read_error':
+        return 'Не удалось прочитать данные.';
+      case 'error.message.storage_database_error':
+        return 'Ошибка при работе с данными.';
+      case 'error.message.validation_required_field':
+        return 'Поле "{field}" обязательно для заполнения';
+      case 'error.message.validation_min_value':
+        return 'Значение поля "{field}" должно быть не меньше {min}';
+      case 'error.message.validation_max_value':
+        return 'Значение поля "{field}" должно быть не больше {max}';
+      case 'error.message.validation_invalid_format':
+        return 'Неверный формат поля "{field}". Ожидается: {expectedFormat}';
+      case 'error.message.validation_negative_value':
+        return 'Значение поля "{field}" не может быть отрицательным';
+      case 'error.message.validation_area_too_large':
+        return 'Площадь {area} м² кажется слишком большой. Проверьте значение.';
+      case 'error.message.validation_volume_too_large':
+        return 'Объём {volume} м³ кажется слишком большим. Проверьте значение.';
+      case 'error.message.validation_length_width_ratio':
+        return 'Длина ({length} м) значительно больше ширины ({width} м). Возможно, вы перепутали значения?';
+      case 'error.message.validation_width_length_ratio':
+        return 'Ширина ({width} м) значительно больше длины ({length} м). Возможно, вы перепутали значения?';
+      case 'error.message.validation_thickness_too_large':
+        return 'Толщина {thickness} мм кажется слишком большой. Проверьте единицы измерения.';
+      case 'error.message.validation_thickness_too_small':
+        return 'Толщина {thickness} мм кажется слишком маленькой. Проверьте значение.';
+      case 'error.message.validation_height_too_large':
+        return 'Высота {height} м кажется слишком большой для помещения. Проверьте значение.';
+      case 'error.message.validation_perimeter_too_small':
+        return 'Периметр ({perimeter} м) слишком мал для указанной площади ({area} м²). Проверьте значения.';
+      case 'error.message.validation_paint_consumption_too_large':
+        return 'Расход краски ({consumption} л/м²) кажется слишком большим. Обычно 0.1-0.2 л/м².';
+      case 'error.message.validation_primer_consumption_too_large':
+        return 'Расход грунтовки ({consumption} л/м²) кажется слишком большим. Обычно 0.08-0.15 л/м².';
+      case 'error.message.validation_plaster_consumption_too_large':
+        return 'Расход штукатурки ({consumption} кг/м²) кажется слишком большим. Проверьте толщину слоя.';
+      default:
+        return key;
+    }
   }
 
   /// Логировать ошибку.
@@ -187,7 +323,7 @@ class GlobalErrorHandler {
   }) {
     logError(error, stackTrace, contextMessage);
 
-    final message = getUserFriendlyMessage(error, stackTrace);
+    final message = getUserFriendlyMessage(context, error, stackTrace);
     final messenger = ScaffoldMessenger.of(context);
 
     messenger.showSnackBar(
@@ -197,7 +333,7 @@ class GlobalErrorHandler {
         behavior: SnackBarBehavior.floating,
         action: onRetry != null
             ? SnackBarAction(
-                label: 'Повторить',
+                label: _translate(context, 'retry'),
                 textColor: Colors.white,
                 onPressed: onRetry,
               )
@@ -218,7 +354,7 @@ class GlobalErrorHandler {
   }) async {
     logError(error, stackTrace, contextMessage);
 
-    final message = getUserFriendlyMessage(error, stackTrace);
+    final message = getUserFriendlyMessage(context, error, stackTrace);
     final category = getErrorCategory(error);
 
     return showDialog<void>(
@@ -229,7 +365,7 @@ class GlobalErrorHandler {
           size: 48,
           color: Theme.of(dialogContext).colorScheme.error,
         ),
-        title: Text(title ?? _getTitleForCategory(category)),
+        title: Text(title ?? _getTitleForCategory(dialogContext, category)),
         content: Text(message),
         actions: [
           if (onRetry != null)
@@ -238,11 +374,11 @@ class GlobalErrorHandler {
                 Navigator.of(dialogContext).pop();
                 onRetry();
               },
-              child: const Text('Повторить'),
+              child: Text(_translate(dialogContext, 'retry')),
             ),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('ОК'),
+            child: Text(_translate(dialogContext, 'button.close')),
           ),
         ],
       ),
@@ -263,15 +399,19 @@ class GlobalErrorHandler {
   }
 
   /// Получить заголовок для категории ошибки.
-  static String _getTitleForCategory(ErrorCategory category) {
+  static String _getTitleForCategory(
+    BuildContext context,
+    ErrorCategory category,
+  ) {
+    final translate = _getTranslator(context);
     return switch (category) {
-      ErrorCategory.validation => 'Ошибка ввода',
-      ErrorCategory.calculation => 'Ошибка расчёта',
-      ErrorCategory.storage => 'Ошибка хранилища',
-      ErrorCategory.network => 'Ошибка сети',
-      ErrorCategory.export => 'Ошибка экспорта',
-      ErrorCategory.ui => 'Ошибка интерфейса',
-      ErrorCategory.unknown => 'Ошибка',
+      ErrorCategory.validation => translate('error.title.validation'),
+      ErrorCategory.calculation => translate('error.title.calculation'),
+      ErrorCategory.storage => translate('error.title.storage'),
+      ErrorCategory.network => translate('error.title.network'),
+      ErrorCategory.export => translate('error.title.export'),
+      ErrorCategory.ui => translate('error.title.ui'),
+      ErrorCategory.unknown => translate('error.title.unknown'),
     };
   }
 

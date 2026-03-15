@@ -11,17 +11,22 @@
     "calculate": "Рассчитать",
     "clear": "Очистить",
     "delete": "Удалить",
+    "edit": "Редактировать",
     "open_for_recalculation": "Открыть для пересчёта",
     "save": "Сохранить",
     "save_to_project": "Сохранить в проект",
     "close": "Закрыть",
+    "create": "Создать",
     "next": "Далее",
     "back": "Назад",
     "cancel": "Отмена",
     "show_more": "Показать ещё {count}",
     "show_less": "Скрыть",
     "retry": "Повторить",
-    "show": "Показать"
+    "select": "Выбрать",
+    "show": "Показать",
+    "qr_code": "QR код",
+    "import": "Импортировать"
   },
   "category": {
     "all": "Все",
@@ -57,7 +62,39 @@
     "history": "История",
     "popular_conversions": "Популярные конвертации",
     "clear": "Очистить",
-    "swap": "Поменять местами"
+    "swap": "Поменять местами",
+    "category": {
+      "area": "Площадь",
+      "length": "Длина",
+      "volume": "Объём",
+      "weight": "Вес",
+      "quantity": "Количество"
+    },
+    "unit": {
+      "sq_m": "Квадратный метр",
+      "sq_cm": "Квадратный сантиметр",
+      "sq_mm": "Квадратный миллиметр",
+      "hectare": "Гектар",
+      "sq_km": "Квадратный километр",
+      "meter": "Метр",
+      "cm": "Сантиметр",
+      "mm": "Миллиметр",
+      "km": "Километр",
+      "cubic_m": "Кубический метр",
+      "liter": "Литр",
+      "cubic_cm": "Кубический сантиметр",
+      "cubic_dm": "Кубический дециметр",
+      "kg": "Килограмм",
+      "gram": "Грамм",
+      "ton": "Тонна",
+      "centner": "Центнер",
+      "piece": "Штука",
+      "roll": "Рулон",
+      "bag": "Мешок",
+      "sheet": "Лист",
+      "pack": "Упаковка",
+      "box": "Коробка"
+    }
   },
   "chart": {
     "no_data": "Нет данных",
@@ -81,8 +118,10 @@
     "found_count": "Найдено: {count}"
   },
   "favorites": {
+    "title": "Избранное",
     "add": "В избранное",
-    "remove": "Удалить из избранного"
+    "remove": "Удалить из избранного",
+    "empty_hint": "Добавьте калькуляторы в избранное, чтобы быстро открывать их здесь."
   },
   "settings": {
     "title": "Настройки",
@@ -132,6 +171,19 @@
         "title": "Показывать подсказки",
         "subtitle": "Отображать советы в калькуляторах"
       },
+      "home.new.material_calculators": "Калькуляторы материалов",
+      "home.new.search_hint": "Что нужно посчитать?",
+      "home.new.found_count": "Найдено: {count}",
+      "home.new.quick_access": "Быстрый доступ",
+      "home.new.frequent": "Часто считают",
+      "home.new.categories": "Категории",
+      "home.new.all_calculators": "Все калькуляторы",
+      "home.new.presets": "Пресеты:",
+      "home.new.preset.bathroom.title": "Ванная",
+      "home.new.preset.kitchen.title": "Кухня",
+      "home.new.preset.bedroom.title": "Спальня",
+      "home.new.preset.custom.title": "Свои размеры",
+      "home.new.open_calculator": "Открыть калькулятор",
       "notifications": {
         "title": "Уведомления",
         "subtitle": "Напоминания о запланированных работах"
@@ -176,11 +228,121 @@
     "theme_light": "Светлая тема"
   },
   "error": {
+
     "calculator_not_found": "Калькулятор \"{id}\" не найден",
+
     "calculation": "Ошибка расчета",
+
     "unexpected": "Непредвиденная ошибка",
-    "qr_not_supported": "QR-коды не поддерживаются на этой платформе"
+
+    "qr_not_supported": "QR-коды не поддерживаются на этой платформе",
+
+    "title": {
+
+      "validation": "Проверьте данные",
+
+      "calculation": "Ошибка расчёта",
+
+      "storage": "Ошибка данных",
+
+      "network": "Ошибка сети",
+
+      "export": "Ошибка экспорта",
+
+      "ui": "Ошибка интерфейса",
+
+      "unknown": "Что-то пошло не так"
+
+    },
+
+    "message": {
+
+      "network": "Проблема с сетью. Проверьте подключение к интернету.",
+
+      "storage": "Ошибка при работе с данными. Попробуйте ещё раз.",
+
+      "validation": "Проверьте введённые данные.",
+
+      "calculation": "Ошибка расчёта. Проверьте исходные данные.",
+
+      "export": "Не удалось выполнить экспорт. Попробуйте ещё раз.",
+
+      "ui": "Произошла ошибка интерфейса. Попробуйте повторить действие.",
+
+      "unknown": "Произошла ошибка. Попробуйте ещё раз.",
+
+      "calculation_division_by_zero": "Ошибка расчёта. Деление на ноль: {context}",
+
+      "calculation_invalid_input": "Некорректные входные данные для расчёта \"{calculatorId}\": {reason}",
+
+      "calculation_overflow": "Ошибка расчёта. Слишком большое значение: {context}",
+
+      "calculation_missing_data": "Не хватает данных для расчёта: {dataType}",
+
+      "export_generation_error": "Не удалось создать файл формата {format}. Попробуйте ещё раз.",
+
+      "export_permission_denied": "Нет прав доступа к файлам. Проверьте разрешения приложения.",
+
+      "export_insufficient_space": "Недостаточно места на устройстве.",
+
+      "export_invalid_data": "Некорректные данные для экспорта: {reason}",
+
+      "network_no_connection": "Проверьте подключение к интернету.",
+
+      "network_timeout": "Сервер не отвечает. Попробуйте позже.",
+
+      "network_server_error": "Ошибка на сервере. Попробуйте позже.",
+
+      "network_bad_request": "Неверный запрос. Обратитесь в поддержку.",
+
+      "network_not_found": "Запрошенные данные не найдены.",
+
+      "storage_not_found": "Данные не найдены.",
+
+      "storage_save_error": "Не удалось сохранить данные.",
+
+      "storage_delete_error": "Не удалось удалить данные.",
+
+      "storage_read_error": "Не удалось прочитать данные.",
+
+      "storage_database_error": "Ошибка при работе с данными.",
+
+      "validation_required_field": "Поле \"{field}\" обязательно для заполнения",
+
+      "validation_min_value": "Значение поля \"{field}\" должно быть не меньше {min}",
+
+      "validation_max_value": "Значение поля \"{field}\" должно быть не больше {max}",
+
+      "validation_invalid_format": "Неверный формат поля \"{field}\". Ожидается: {expectedFormat}",
+
+      "validation_negative_value": "Значение поля \"{field}\" не может быть отрицательным",
+
+      "validation_area_too_large": "Площадь {area} м² кажется слишком большой. Проверьте значение.",
+
+      "validation_volume_too_large": "Объём {volume} м³ кажется слишком большим. Проверьте значение.",
+
+      "validation_length_width_ratio": "Длина ({length} м) значительно больше ширины ({width} м). Возможно, вы перепутали значения?",
+
+      "validation_width_length_ratio": "Ширина ({width} м) значительно больше длины ({length} м). Возможно, вы перепутали значения?",
+
+      "validation_thickness_too_large": "Толщина {thickness} мм кажется слишком большой. Проверьте единицы измерения.",
+
+      "validation_thickness_too_small": "Толщина {thickness} мм кажется слишком маленькой. Проверьте значение.",
+
+      "validation_height_too_large": "Высота {height} м кажется слишком большой для помещения. Проверьте значение.",
+
+      "validation_perimeter_too_small": "Периметр ({perimeter} м) слишком мал для указанной площади ({area} м²). Проверьте значения.",
+
+      "validation_paint_consumption_too_large": "Расход краски ({consumption} л/м²) кажется слишком большим. Обычно 0.1-0.2 л/м².",
+
+      "validation_primer_consumption_too_large": "Расход грунтовки ({consumption} л/м²) кажется слишком большим. Обычно 0.08-0.15 л/м².",
+
+      "validation_plaster_consumption_too_large": "Расход штукатурки ({consumption} кг/м²) кажется слишком большим. Проверьте толщину слоя."
+
+    }
+
   },
+
   "material": {
     "dry": "Сухой",
     "paste": "Паста"
@@ -382,7 +544,30 @@
     "water": "Вода для смеси",
     "to_add": "добавить",
     "total_solution": "Итого раствора",
-    "ready_mix": "готовой смеси"
+    "ready_mix": "готовой смеси",
+    "share_subject": "Расчёт грунтовки",
+    "type": {
+      "universal": "Универсальная",
+      "universal_desc": "Для стен и потолков",
+      "concentrate": "Концентрат",
+      "concentrate_desc": "Разводится водой перед нанесением",
+      "concrete_contact": "Бетоноконтакт",
+      "concrete_contact_desc": "Для гладких плотных оснований",
+      "super_adhesion": "Адгезионная",
+      "super_adhesion_desc": "Для сложных и слабо впитывающих поверхностей"
+    },
+    "export": {
+      "title": "РАСЧЁТ ГРУНТОВКИ",
+      "type": "Тип: {value}",
+      "area": "Площадь: {value}",
+      "layers": "Слоёв: {value}",
+      "materials_title": "МАТЕРИАЛЫ:",
+      "primer": "Грунтовка: {value}",
+      "concentrate": "Концентрат: {value}",
+      "water": "Вода: {value}",
+      "total_solution": "Готовый раствор: {value}",
+      "footer": "Создано в ПроРаб"
+    }
   },
   "dsp": {
     "title": "ЦПС / Стяжка",
@@ -450,7 +635,8 @@
     "packs": "шт",
     "per": "по",
     "tape": "Скотч",
-    "rolls_50m": "рулонов 50м"
+    "rolls_50m": "рулонов 50м",
+    "share_subject": "Расчёт краски"
   },
   "wood": {
     "title": "Дерево",
@@ -722,6 +908,41 @@
       "metal_shears": "Ножницы по металлу"
     },
     "checklist": {
+      "title": "Чек-лист",
+      "edit_name": "Редактировать название",
+      "not_found": "Чек-лист не найден",
+      "back": "Назад",
+      "delete_checklist_menu": "Удалить чек-лист",
+      "progress": "Прогресс",
+      "completed_summary": "{completed} из {total}",
+      "empty_tasks": "Список задач пуст",
+      "empty_tasks_hint": "Добавьте первую задачу, чтобы начать отслеживать прогресс вашего ремонта",
+      "add_first_task": "Добавить первую задачу",
+      "loading_error": "Ошибка загрузки",
+      "no_tasks": "Нет задач",
+      "completed_status": "{completed} из {total} выполнено",
+      "empty_list": "Нет чек-листов",
+      "empty_list_hint": "Создайте чек-лист для отслеживания задач вашего ремонта",
+      "create_checklist": "Создать чек-лист",
+      "creation_error": "Ошибка создания чек-листа: {error}",
+      "creating": "Создание...",
+      "tasks_count": "{count} задач",
+      "add_task": "Добавить задачу",
+      "new_task": "Новая задача",
+      "task_name": "Название задачи",
+      "add": "Добавить",
+      "task_added": "Задача добавлена",
+      "rename_title": "Изменить название",
+      "checklist_name": "Название чек-листа",
+      "name_updated": "Название обновлено",
+      "delete_title": "Удалить чек-лист?",
+      "delete_message": "Это действие нельзя отменить. Все задачи будут удалены.",
+      "deleted": "Чек-лист удалён",
+      "delete_task_title": "Удалить задачу?",
+      "delete_task_message": "Удалить \"{name}\"?",
+      "task_deleted": "Задача удалена",
+      "edit_task": "Редактировать задачу",
+      "task_updated": "Задача обновлена",
       "prepare_site": "Подготовить площадку",
       "install_formwork": "Установить опалубку",
       "place_rebar": "Уложить арматуру",
@@ -1286,14 +1507,87 @@
   "onboarding": {
     "next": "Далее",
     "skip": "Пропустить",
-    "start": "Начать"
+    "start": "Начать",
+    "page1": {
+      "title": "Инструменты мастера",
+      "description": "Конвертер единиц, калькулятор площади комнаты и простой калькулятор — всегда под рукой в правом верхнем углу."
+    },
+    "page2": {
+      "title": "68+ калькуляторов",
+      "description": "От фундамента до кровли. Расход по ГОСТ, запас на подрезку — считает как прораб на объекте."
+    },
+    "page3": {
+      "title": "Комната за минуту",
+      "description": "Укажите размеры — получите полный расчёт: штукатурка, шпаклёвка, краска, обои, ламинат, плитка."
+    },
+    "page4": {
+      "title": "Михалыч — AI-прораб",
+      "description": "Встроенный помощник с 30-летним стажем. Подскажет материалы, нормы расхода и порядок работ."
+    },
+    "page5": {
+      "title": "Сохраняйте и делитесь",
+      "description": "Расчёты сохраняются автоматически. Экспортируйте смету в PDF — отправьте прорабу или возьмите в магазин."
+    }
   },
   "project": {
     "calculations": "Расчёты",
     "checklists": "Чек-листы",
     "created": "Создан",
+    "status_label": "Статус",
+    "address_label": "Адрес",
+    "deadline_label": "Дедлайн",
+    "empty_calculations": "Нет расчётов",
+    "empty_calculations_hint": "Добавьте расчёт из калькулятора",
+    "checklist_created_from_template": "Чек-лист \"{name}\" создан из шаблона",
     "export": "Экспортировать",
     "labor": "Работы",
+    "title": "Проект",
+    "share_project": "Поделиться проектом",
+    "not_found": "Проект не найден",
+    "add_calculation": "Добавить расчёт",
+    "create_checklist_from_template": "Создать из шаблона",
+    "create_empty_checklist": "Создать пустой чек-лист",
+    "created_label": "Создан: {date}",
+    "updated_label": "Обновлён: {date}",
+    "new_checklist": "Новый чек-лист",
+    "name": "Название",
+    "name_example_bathroom": "Например: Ремонт ванной",
+    "description_optional": "Описание (необязательно)",
+    "category": "Категория",
+    "delete_checklist_title": "Удалить чек-лист?",
+    "delete_checklist_message": "Чек-лист \"{name}\" будет удалён безвозвратно.",
+    "updated_project": "Проект обновлён",
+    "change_status": "Изменить статус",
+    "status_changed_to": "Статус изменён на \"{status}\"",
+    "no_available_calculators": "Нет доступных калькуляторов",
+    "select_calculator": "Выберите калькулятор",
+    "calculation_added": "Расчёт \"{name}\" добавлен",
+    "delete_calculation_title": "Удалить расчёт?",
+    "delete_calculation_message": "Расчёт \"{name}\" будет удалён безвозвратно.",
+    "calculation_deleted": "Расчёт \"{name}\" удалён",
+    "exported": "Проект экспортирован",
+    "export_csv": {
+      "project": "Проект",
+      "description": "Описание",
+      "created_at": "Дата создания",
+      "calculator": "Калькулятор",
+      "parameter": "Параметр",
+      "material_cost": "Стоимость материалов",
+      "labor_cost": "Стоимость работ",
+      "grand_total": "ВСЕГО",
+      "share_subject": "Экспорт проекта: {name}",
+      "share_text": "Данные проекта \"{name}\""
+    },
+    "export_options": {
+      "pdf": "Экспорт в PDF",
+      "pdf_subtitle": "Открыть в приложении для просмотра",
+      "download_pdf": "Скачать PDF",
+      "download_pdf_subtitle": "Сохранить файл на устройство",
+      "csv": "Экспорт в CSV",
+      "csv_subtitle": "Таблица для Excel",
+      "share_qr": "Поделиться QR-кодом",
+      "share_qr_subtitle": "Для передачи на другое устройство"
+    },
     "materials": "Материалы",
     "materials_empty": "Нет материалов",
     "materials_empty_hint": "Добавьте расчёты с детальным списком материалов",
@@ -1333,6 +1627,9 @@
       "tasks_completed": "Задач выполнено",
       "completed_percent": "выполнено",
       "all_projects": "Все проекты",
+      "project_one": "проект",
+      "project_few": "проекта",
+      "project_many": "проектов",
       "needs_attention": "требует внимания",
       "problems_description": "Есть проекты с превышением бюджета или просроченным дедлайном"
     },
@@ -1363,14 +1660,19 @@
       "only_favorites": "Только избранные",
       "filter_status": "Фильтр по статусу",
       "all_projects": "Все проекты",
+      "project_one": "проект",
+      "project_few": "проекта",
+      "project_many": "проектов",
       "scan_qr": "Сканировать QR код",
       "project_created": "Проект \"{name}\" создан",
+      "project_imported": "Проект успешно импортирован",
       "project_deleted": "Проект \"{name}\" удалён",
       "open": "Открыть",
       "delete_confirm_title": "Удалить проект?",
       "delete_confirm_message": "Проект \"{name}\" и все его расчёты будут удалены безвозвратно.",
       "add_to_favorites": "В избранное",
-      "remove_from_favorites": "Убрать из избранного"
+      "remove_from_favorites": "Убрать из избранного",
+      "delete_project": "Удалить проект"
     },
     "search": {
       "hint": "Поиск по названию, адресу, тегам..."
@@ -1399,7 +1701,8 @@
       "clear": "Сбросить"
     },
     "error": {
-      "loading": "Ошибка загрузки проектов"
+      "loading": "Ошибка загрузки проектов",
+      "loading_project": "Ошибка загрузки проекта"
     },
     "bulk": {
       "select": "Выбрать",
@@ -1720,7 +2023,6 @@
     "damperTapeLengthMeters": "Демпферная лента (м)",
     "deckingArea": "Площадь настила",
     "deckingBoards": "Досок настила",
-    "density": "Плотность",
     "diffusersNeeded": "Диффузоров нужно",
     "doorArea": "Площадь дверь",
     "dowelsNeeded": "Дюбелей нужно",
@@ -1763,7 +2065,6 @@
     "gravelVolume": "Объём щебня",
     "grillesNeeded": "Решёток нужно",
     "gripperLength": "Длина прижимной рейки",
-    "groutNeeded": "Затирки нужно",
     "guideProfileMeters": "Направляющий профиль (м)",
     "guideProfilePieces": "Направляющий профиль (шт)",
     "gutterBrackets": "Кронштейнов желоба",
@@ -1967,7 +2268,6 @@
   "related_calculators": {
     "title": "Связанные калькуляторы"
   },
-
   "link": {
     "calculate_grout": "Рассчитать затирку →",
     "calculate_primer": "Рассчитать грунтовку →",
@@ -1975,7 +2275,6 @@
     "calculate_paint": "Рассчитать краску →",
     "calculate_wallpaper": "Рассчитать обои →"
   },
-
   "room": {
     "section": {
       "geometry": "Размеры комнаты",
@@ -2027,7 +2326,6 @@
     "doors_count": "Количество дверей",
     "windows_count": "Количество окон"
   },
-
   "share": {
     "date": "Дата расчёта",
     "error": "Ошибка при отправке",
@@ -2202,6 +2500,16 @@
       "stairs_calc": "Лестница",
       "fence_calc": "Забор",
       "pool_calc": "Бассейн"
+    },
+    "project": {
+      "invalid_link": "Не удалось открыть ссылку",
+      "imported_named": "Проект \"{name}\" импортирован",
+      "import_error": "Ошибка импорта проекта: {error}",
+      "preview_status": "Статус",
+      "preview_calculations": "Расчётов",
+      "preview_tags": "Теги",
+      "preview_import_question": "Импортировать этот проект?",
+      "handle_error": "Ошибка обработки ссылки: {error}"
     }
   },
   "snackbar": {
@@ -2852,6 +3160,10 @@
       "decking": "Террасная доска: {value} м²",
       "tile": "Плитка: {value} шт",
       "board": "Настил: {value} шт",
+      "porcelain": "Керамогранит: {value} шт",
+      "wpc": "ДПК: {value} м²",
+      "solid_wood": "Массив дерева: {value} м²",
+      "rubber_tiles": "Резиновая плитка: {value} шт",
       "railing": "Ограждение: {value} м",
       "railing_posts": "Столбы: {value} шт",
       "roof_area": "Кровля: {value} м²",
@@ -3589,9 +3901,6 @@
     "height": "Высота",
     "area": "Площадь",
     "area.hint": "Площадь поверхности в м²",
-    "room_length": "Длина комнаты",
-    "room_width": "Ширина комнаты",
-    "room_height": "Высота комнаты",
     "paint.wall_area": "Площадь стен",
     "paint.doors_windows": "Площадь проёмов (окна + двери)",
     "perimeter": "Периметр",
@@ -3943,44 +4252,36 @@
     "sheetOrientation.auto": "Авто (лучший вариант)",
     "sheetOrientation.horizontal": "Горизонтально",
     "sheetOrientation.vertical": "Вертикально",
-
     "layoutPattern.offset_quarter": "Со смещением 1/4 (7%)",
     "layoutPattern.random": "Хаотичная (10%)",
     "layoutPattern.deck": "Палубная (12%)",
-
     "wallpaperType": "Тип обоев",
     "wallpaperType.hint": "Влияет на расход клея и способ нанесения",
     "wallpaperType.paper": "Бумажные",
     "wallpaperType.vinyl": "Виниловые",
     "wallpaperType.fleece": "Флизелиновые",
-
     "inputMode": "Режим ввода",
     "roomWidth": "Ширина комнаты",
     "roomLength": "Длина комнаты",
     "cassetteSize": "Размер кассеты",
     "ceilingType": "Тип потолка",
-
     "qualityClass": "Класс качества",
     "qualityClass.economy": "Эконом",
     "qualityClass.standard": "Стандарт",
     "qualityClass.premium": "Премиум",
-
     "screed_type": "Тип стяжки",
     "screed_type.hint": "Выберите тип стяжки в зависимости от условий",
     "screed_type.cement_sand": "Цементно-песчаная",
     "screed_type.semidry": "Полусухая",
     "screed_type.concrete": "Бетонная",
-
     "material_type": "Способ приготовления",
     "material_type.hint": "Готовая смесь удобнее, самозамес — дешевле",
     "material_type.ready_mix": "Готовая смесь",
     "material_type.self_mix": "Самозамес",
-
     "mix_grade": "Марка смеси",
     "mix_grade.hint": "М300 — стандарт для стяжки, М150 — для лёгких нагрузок",
     "mix_grade.m300": "М300",
     "mix_grade.m150": "М150",
-
     "need_mesh": "Армирующая сетка",
     "need_mesh.hint": "Рекомендуется при толщине стяжки более 40 мм",
     "need_film": "Плёнка ПЭ (гидроизоляция)",
@@ -3989,7 +4290,6 @@
     "need_tape.hint": "Прокладывается по периметру для компенсации расширения",
     "need_beacons": "Маяки",
     "need_beacons.hint": "Направляющие для выравнивания стяжки по уровню",
-
     "paint.surfacePrep": "Подготовка поверхности",
     "paint.surfacePrep.hint": "Влияет на впитываемость и расход краски",
     "paint.surfacePrep.primed": "Загрунтованная",
@@ -4000,7 +4300,6 @@
     "paint.colorIntensity.light": "Светлый / белый",
     "paint.colorIntensity.bright": "Яркий / насыщенный (+15%)",
     "paint.colorIntensity.dark": "Тёмный (+30%)",
-
     "concreteGrade": "Марка бетона",
     "concreteGrade.hint": "Выберите марку в зависимости от назначения конструкции",
     "concreteGrade.m100": "М100 — подготовка, подушка",
@@ -4010,20 +4309,17 @@
     "concreteGrade.m300": "М300 — фундаменты, несущие конструкции",
     "concreteGrade.m350": "М350 — ответственные конструкции",
     "concreteGrade.m400": "М400 — бассейны, гидросооружения",
-
     "applicationSurface": "Поверхность утепления",
     "applicationSurface.hint": "Тип поверхности влияет на количество крепежа",
     "applicationSurface.wall": "Стена",
     "applicationSurface.floor": "Пол",
     "applicationSurface.ceiling": "Потолок",
     "applicationSurface.roofSlope": "Скат крыши",
-
     "wallShape": "Форма стены",
     "wallShape.hint": "Нестандартная форма увеличивает расход профиля",
     "wallShape.rectangular": "Прямоугольная",
     "wallShape.lShaped": "Г-образная (+10% профиль)",
     "wallShape.complex": "Сложная (+20% профиль)",
-
     "workingConditions": "Условия работы",
     "workingConditions.hint": "Погодные условия влияют на расход раствора",
     "workingConditions.normal": "Нормальные (+5…+25 °C)",
@@ -4574,6 +4870,7 @@
     "krovlya": "Кровля"
   },
   "home": {
+    "main_screen": "Главный экран",
     "menu": {
       "favorites": {
         "tooltip": "Избранные калькуляторы"
@@ -5303,6 +5600,11 @@
     "tips": "Полезные советы",
     "copy": "Копировать",
     "share": "Поделиться",
+    "share_link": "Поделиться ссылкой",
+    "presets": "Пресеты",
+    "premium": "ПРЕМИУМ",
+    "get_premium": "Получить Премиум",
+    "unlock_all_features": "Разблокировать все функции",
     "copied_to_clipboard": "Скопировано в буфер обмена",
     "dimensions": "Размеры",
     "export_results": "Экспорт результатов",
@@ -7782,11 +8084,16 @@
     "send": "Спросить",
     "remaining_requests": "Осталось вопросов: {count}",
     "limit_reached": "Всё, начальник, смена окончена. Голова пухнет, приходи завтра!",
+    "limit_daily_reached": "Всё, начальник, на сегодня хватит — {count} вопросов отработал. Приходи завтра, голова пухнет!",
+    "limit_hourly_reached": "Эй, начальник, полегче! Давай передохнём {minutes} мин. — а то мозги перегреются.",
     "error_generic": "Что-то пошло не так. Попробуй позже.",
     "error_not_ready": "Михалыч ещё не готов. Подожди секунду.",
     "error_not_initialized": "Михалыч не инициализирован. Попробуй перезапустить.",
+    "error_not_configured": "Михалыч пока не подключён. API-ключ не настроен.",
     "error_timeout": "Михалыч задумался слишком надолго. Попробуй ещё раз.",
     "error_connection": "Михалыч на перекуре, связь барахлит. Попробуй позже.",
+    "error_empty_response": "Михалыч задумался и ничего не ответил. Попробуй ещё раз.",
+    "error_stream_interrupted": "Связь оборвалась. Попробуй ещё раз.",
     "action_copy": "Копировать",
     "action_share": "Поделиться",
     "copied_snackbar": "Совет скопирован",
@@ -7808,7 +8115,24 @@
     "project_type.dacha": "Дача / загородный дом",
     "project_type.commercial": "Коммерческое помещение",
     "project_type.bath": "Баня / сауна",
-    "project_type.garage": "Гараж"
+    "project_type.garage": "Гараж",
+    "quick_questions_title": "Быстрые вопросы:",
+    "quick_question.home.1": "Что важно не забыть при ремонте в новостройке?",
+    "quick_question.home.2": "С чего начать расчёт материалов для ванной?",
+    "quick_question.home.3": "Какие ошибки чаще всего делают при укладке плитки?",
+    "quick_question.home.4": "Как правильно выбрать тип штукатурки?",
+    "quick_question.calculation.1": "Проверь мой расчёт — всё правильно?",
+    "quick_question.calculation.2": "Что я мог забыть в этом расчёте?",
+    "quick_question.calculation.3": "Какой материал посоветуешь для этого случая?",
+    "quick_question.calculation.4": "На что обратить внимание при работе с этим?",
+    "quick_question.generic.1": "Дай практический совет по {name}.",
+    "quick_question.generic.2": "Какие ошибки чаще всего делают?",
+    "quick_question.generic.3": "Какой материал посоветуешь?",
+    "quick_question.generic.4": "С чего начать?",
+    "welcome.home.morning": "Доброе утро. Ну что, за работу?",
+    "welcome.home.day": "О, заявился. Давай, спрашивай — время не ждёт.",
+    "welcome.home.evening": "Поздновато, конечно, но ладно. Чего хотел?",
+    "welcome.calculator": "Смотрю на {name}. Ну, задавай вопрос."
   },
   "osb": {
     "orientation": {
@@ -7831,5 +8155,344 @@
   },
   "my_calc": {
     "title": "Мои расчёты"
+  },
+  "room.unit.meters": "м",
+  "room.unit.mm": "мм",
+  "room.unit.cm": "см",
+  "room.unit.layers_short": "сл.",
+  "room.option.plaster_gypsum": "Гипсовая",
+  "room.option.plaster_cement": "Цементная",
+  "room.result.putty_bags": "Мешки шпаклевки",
+  "room.result.primer_canisters": "Канистры грунтовки",
+  "room.result.sandpaper_sets": "Наборы наждачки",
+  "room.result.paint_cans": "Банки краски",
+  "room.result.tape_rolls": "Рулоны ленты",
+  "room.result.rollers": "Валики",
+  "room.result.vapor_barrier": "Пароизоляция",
+  "room.result.door_thresholds": "Порожки",
+  "common.kilowatt": "кВт",
+  "common.kilowatt_hour": "кВт⋅ч",
+  "common.percent": "%",
+  "common.add_opening": "Добавить проём",
+  "common.count_label": "Кол-во",
+  "common.sqm_per_liter": "м²/л",
+  "linoleum_calc.pattern.step": "Шаг раппорта",
+  "linoleum_calc.pattern.hint": "Раппорт увеличивает длину полос и общий расход линолеума.",
+  "linoleum_calc.export.room": "Комната: {width} × {length} {unit}",
+  "linoleum_calc.export.rapport_line": "Раппорт рисунка: {value} {unit}",
+  "reminders.title": "Напоминания",
+  "reminders.add": "Добавить напоминание",
+  "reminders.tab.all": "Все",
+  "reminders.tab.upcoming": "Скоро",
+  "reminders.tab.overdue": "Просрочено",
+  "reminders.dialog.title": "Новое напоминание",
+  "reminders.field.title": "Название",
+  "reminders.field.description": "Описание",
+  "reminders.field.date_value": "Дата: {date}",
+  "reminders.type.material_purchase": "Закупка материалов",
+  "reminders.type.work_start": "Начало работ",
+  "reminders.type.quality_check": "Проверка качества",
+  "reminders.type.next_step": "Следующий этап",
+  "reminders.type.deadline": "Дедлайн",
+  "reminders.type.custom": "Пользовательское",
+  "reminders.empty": "Нет напоминаний",
+  "reminders.complete": "Отметить как выполненное",
+  "weather.title": "Погодные рекомендации",
+  "weather.current_conditions": "Текущие условия",
+  "weather.field.temperature": "Температура (°C)",
+  "weather.field.humidity": "Влажность (%)",
+  "weather.field.raining": "Идёт дождь",
+  "weather.field.wind": "Скорость ветра (м/с)",
+  "weather.status.good": "Условия подходят для работ",
+  "weather.status.bad": "Условия не подходят",
+  "weather.status.good_reason": "Погодные условия соответствуют рекомендуемому режиму работ.",
+  "weather.recommendations": "Рекомендации",
+  "weather.constraints": "Ограничения",
+  "weather.constraint.min_temperature": "Минимальная температура: {value}°C",
+  "weather.constraint.max_temperature": "Максимальная температура: {value}°C",
+  "weather.constraint.max_humidity": "Максимальная влажность: {value}%",
+  "weather.constraint.dry_weather": "Требуется сухая погода",
+  "weather.issue.temp_low": "Температура слишком низкая ({current}°C < {limit}°C)",
+  "weather.issue.temp_high": "Температура слишком высокая ({current}°C > {limit}°C)",
+  "weather.issue.humidity_high": "Влажность слишком высокая ({current}% > {limit}%)",
+  "weather.issue.rain": "Требуется сухая погода, идёт дождь",
+  "weather.recommendation.wait": "Отложите работы до улучшения погодных условий",
+  "weather.recommendation.wind_high": "Сильный ветер: будьте осторожны при работе на высоте",
+  "weather.recommendation.paint_ideal": "Идеальная температура для покраски: 15-25°C",
+  "weather.recommendation.paint_sun": "Избегайте прямых солнечных лучей",
+  "weather.recommendation.paint_humidity": "Рекомендуемая влажность воздуха: 40-60%",
+  "weather.recommendation.plaster_temp": "Температура для штукатурных работ должна быть выше +5°C",
+  "weather.recommendation.plaster_draft": "Избегайте сквозняков во время высыхания",
+  "weather.recommendation.plaster_dry": "Дайте материалу высохнуть естественным путём",
+  "weather.recommendation.facade_temp": "Фасадные работы выполняйте при температуре выше +5°C",
+  "weather.recommendation.facade_rain": "Избегайте дождя и сильного ветра",
+  "weather.recommendation.facade_protect": "Защитите материалы и основание от влаги",
+  "weather.recommendation.common": "Проверьте погодные условия перед началом работ",
+  "savings.title": "Калькулятор экономии",
+  "savings.input": "Входные данные",
+  "savings.field.labor_cost": "Стоимость работы мастеров (₽)",
+  "savings.field.self_time": "Время самостоятельной работы (часы)",
+  "savings.field.hourly_rate": "Ваша почасовая ставка (₽/час, 0 = не учитывать)",
+  "savings.status.self": "Выгодно делать самостоятельно",
+  "savings.status.hire": "Рекомендуется нанять мастеров",
+  "savings.recommendation.hire": "Рекомендуется нанять мастеров. Экономия незначительна или отсутствует.",
+  "savings.recommendation.self_high": "Выгодно делать самостоятельно. Экономия составляет {amount} ₽.",
+  "savings.recommendation.self_small": "Можно делать самостоятельно, но экономия небольшая.",
+  "savings.payback.alternative": "Альтернативный вариант дешевле в долгосрочной перспективе.",
+  "savings.payback.excellent": "Отличная инвестиция. Окупится за {years} лет.",
+  "savings.payback.good": "Хорошая инвестиция. Окупится за {years} лет.",
+  "savings.payback.long_term": "Долгосрочная инвестиция. Окупится за {years} лет.",
+  "material_comparison.title": "Сравнение материалов",
+  "material_comparison.loading_error": "Не удалось загрузить материалы",
+  "material_comparison.empty": "Нет вариантов для сравнения",
+  "material_comparison.recommendations": "Рекомендации",
+  "material_comparison.card.cheapest": "Самое дешёвое",
+  "material_comparison.card.durable": "Самое долговечное",
+  "material_comparison.card.optimal": "Оптимальное",
+  "material_comparison.add_option": "Добавить вариант",
+  "material_comparison.in_development": "Функция в разработке",
+  "material_comparison.service_life": "Срок службы: {value} лет",
+  "labor.title": "Расчёт трудозатрат",
+  "labor.region": "Регион",
+  "labor.calculation": "Расчёт",
+  "labor.result.quantity": "Объём работ",
+  "labor.result.hours": "Оценка времени",
+  "labor.result.days": "Оценка дней",
+  "labor.value.hours": "{value} часов",
+  "labor.value.days": "{value} дней",
+  "labor.info_title": "Информация",
+  "labor.info_text": "Расчёт основан на средних нормах времени для данного типа работ. Фактическое время может отличаться в зависимости от сложности и опыта мастера.",
+  "labor.region_value.moscow": "Москва",
+  "labor.region_value.spb": "Санкт‑Петербург",
+  "labor.region_value.ekaterinburg": "Екатеринбург",
+  "labor.region_value.krasnodar": "Краснодар",
+  "labor.region_value.regions": "Регионы РФ",
+  "waste.title": "Оптимизация отходов",
+  "waste.results_title": "Результаты оптимизации",
+  "waste.required_area": "Требуемая площадь",
+  "waste.optimized_quantity": "Оптимальное количество",
+  "waste.waste_percent": "Процент отходов",
+  "waste.reduction": "Снижение отходов",
+  "waste.recommendations": "Рекомендации",
+  "waste.value.area": "{value} м²",
+  "waste.value.items": "{value} шт",
+  "waste.value.percent": "{value}%",
+  "waste.recommendation.optimize": "Используйте оптимальную раскройку для снижения отходов",
+  "waste.recommendation.smaller_size": "Рассмотрите материалы меньшего размера",
+  "common.square_meter_short": "м²",
+  "common.liter_short": "л",
+  "common.piece_short": "шт",
+  "common.kg_short": "кг",
+  "common.balloon_short": "балл.",
+  "osb.result.area": "Площадь",
+  "osb.result.sheets": "Листов",
+  "osb.result.screws": "Саморезов",
+  "osb.section.basic_materials": "Основные материалы",
+  "osb.section.additional_materials": "Дополнительные материалы",
+  "osb.materials.osb_sheets": "ОСБ плиты",
+  "osb.materials.material_area": "Площадь материала",
+  "osb.materials.screws": "Саморезы",
+  "osb.materials.wind_barrier": "Ветрозащита",
+  "osb.materials.vapor_barrier": "Пароизоляция",
+  "osb.materials.underlay": "Подложка",
+  "osb.materials.roofing_underlay": "Кровельная подложка",
+  "osb.materials.counter_batten": "Контррейка",
+  "osb.materials.clips": "Кляймеры",
+  "osb.materials.studs": "Брус для стоек",
+  "osb.materials.insulation": "Утеплитель",
+  "osb.materials.battens": "Рейки",
+  "osb.materials.sip_glue": "Клей для СИП",
+  "osb.materials.foam": "Монтажная пена",
+  "osb.export.title": "📋 РАСЧЁТ МАТЕРИАЛОВ ДЛЯ ОСБ",
+  "osb.export.area": "Площадь: {value} {unit}",
+  "osb.export.share_subject": "Расчёт материалов для ОСБ",
+  "osb.construction.wall.name": "Обшивка стен",
+  "osb.construction.wall.title": "Стены",
+  "osb.construction.wall.subtitle": "Обшивка",
+  "osb.construction.floor.name": "Пол",
+  "osb.construction.floor.title": "Пол",
+  "osb.construction.floor.subtitle": "Настил",
+  "osb.construction.roof.name": "Крыша",
+  "osb.construction.roof.title": "Крыша",
+  "osb.construction.roof.subtitle": "Обрешётка",
+  "osb.construction.partition.name": "Перегородки",
+  "osb.construction.partition.title": "Стена",
+  "osb.construction.partition.subtitle": "Двойная",
+  "osb.construction.sip.name": "СИП-панели",
+  "osb.construction.sip.title": "СИП",
+  "osb.construction.sip.subtitle": "Панели",
+  "osb.construction.formwork.name": "Опалубка",
+  "osb.construction.formwork.title": "Опалубка",
+  "osb.construction.formwork.subtitle": "Бетон",
+  "osb.sheet_size.title": "Размер листа",
+  "osb.sheet_size.option.2500x1250": "2500×1250 мм (3.1 м²) — стандарт",
+  "osb.sheet_size.option.2440x1220": "2440×1220 мм (3.0 м²) — США",
+  "osb.sheet_size.option.2500x625": "2500×625 мм (1.6 м²) — шпунт/пол",
+  "osb.sheet_size.option.2800x1250": "2800×1250 мм (3.5 м²)",
+  "osb.sheet_size.option.3000x1500": "3000×1500 мм (4.5 м²) — большой",
+  "osb.sheet_size.option.2440x590": "2440×590 мм (1.4 м²) — узкий/пол",
+  "osb.thickness.title": "Толщина ОСБ",
+  "osb.thickness.option": "{value} {unit}",
+  "osb.thickness.option_recommended": "{value} {unit} ★",
+  "osb.thickness.recommended": "Рекомендовано: {value}",
+  "osb.thickness_hint.9": "Стены, потолки",
+  "osb.thickness_hint.12": "Кровля, СИП, перегородки",
+  "osb.thickness_hint.15": "Пол (шаг лаг до 400 мм)",
+  "osb.thickness_hint.18": "Пол (шаг лаг до 600 мм)",
+  "osb.thickness_hint.22": "Пол с нагрузкой, опалубка",
+  "osb.input_mode.title": "Режим ввода",
+  "osb.input_mode.by_area": "По площади",
+  "osb.input_mode.by_dimensions": "По размерам",
+  "osb.label.area": "Площадь",
+  "osb.label.room_dimensions": "Размеры помещения",
+  "osb.label.length": "Длина",
+  "osb.label.width": "Ширина",
+  "osb.label.calculated_area": "Расчётная площадь",
+  "osb.label.reserve": "Запас материала",
+  "osb.export.type": "Тип: {value}",
+  "osb.export.thickness": "Толщина: {value} {unit}",
+  "osb.export.materials_title": "📦 МАТЕРИАЛЫ:",
+  "osb.export.sheets": "• ОСБ {size} {unit}: {value} {pieces}",
+  "osb.export.material_area": "• Площадь материала: {value} {unit}",
+  "osb.export.wind_barrier": "• Ветрозащита: {value} {unit}",
+  "osb.export.vapor_barrier": "• Пароизоляция: {value} {unit}",
+  "osb.export.underlay": "• Подложка: {value} {unit}",
+  "osb.export.roofing_underlay": "• Кровельная подложка: {value} {unit}",
+  "osb.export.counter_batten": "• Контррейка: {value} {unit}",
+  "osb.export.clips": "• Кляймеры: {value} {unit}",
+  "osb.export.studs": "• Брус для стоек: {value} {unit}",
+  "osb.export.insulation": "• Утеплитель: {value} {unit}",
+  "osb.export.battens": "• Рейки: {value} {unit}",
+  "osb.export.sip_glue": "• Клей для СИП: {value} {unit}",
+  "osb.export.foam": "• Монтажная пена: {value} {unit}",
+  "osb.export.recommendation_title": "💡 РЕКОМЕНДАЦИЯ:",
+  "osb.export.recommended_thickness": "Рекомендуемая толщина: {value} {unit}",
+  "osb.export.footer": "Создано в ПроРаб",
+  "history.loading_error": "Ошибка загрузки: {error}",
+  "premium.loading_error": "Ошибка загрузки: {error}",
+  "premium.active_until": "Действует до {date}",
+  "basement.wall_thickness_recommended": "★ Рекомендуется от {value} {unit}",
+  "basement.wall_thickness_optimal": "★ Оптимально для {value}",
+  "linoleum_calc.room_dimensions": "Размеры комнаты",
+  "linoleum_calc.parameters": "Параметры",
+  "linoleum_calc.pattern_repeat": "Рисунок с раппортом",
+  "linoleum_calc.pattern_repeat_hint": "Включайте, если требуется совмещать рисунок между полосами",
+  "concrete.grade.m100.short": "М100",
+  "concrete.grade.m150.short": "М150",
+  "concrete.grade.m200.short": "М200",
+  "concrete.grade.m300.short": "М300",
+  "concrete.grade.m400.short": "М400",
+  "common.gram_short": "г",
+  "common.kg_per_sqm_cm": "кг/м²/см",
+  "common.average_consumption": "Средний расход",
+  "notifications": {
+    "title": "Уведомления",
+    "subtitle": "Напоминания о запланированных работах",
+    "deadline": {
+      "channel_name": "Напоминания о дедлайнах",
+      "channel_description": "Уведомления о приближающихся и просроченных дедлайнах проектов",
+      "title_today": "Дедлайн сегодня!",
+      "title_tomorrow": "Дедлайн завтра!",
+      "title_upcoming": "Напоминание о дедлайне",
+      "body_today": "Сегодня дедлайн проекта \"{name}\"",
+      "body_tomorrow": "Завтра дедлайн проекта \"{name}\"",
+      "body_upcoming_one": "Через {days} день дедлайн проекта \"{name}\"",
+      "body_upcoming_few": "Через {days} дня дедлайн проекта \"{name}\"",
+      "body_upcoming_many": "Через {days} дней дедлайн проекта \"{name}\""
+    }
+  },
+  "expert": {
+    "rec": {
+      "paint": {
+        "title": "Покраска стен и потолков",
+        "description": "Профессиональные советы по покраске",
+        "mistake": {
+          "no_primer": "Покраска без грунтовки приводит к неравномерному впитыванию",
+          "thick_layer": "Слишком толстый слой краски создаёт подтёки",
+          "no_prep": "Игнорирование подготовки поверхности"
+        },
+        "practice": {
+          "use_primer": "Всегда используйте грунтовку для улучшения адгезии",
+          "thin_layers": "Наносите краску тонкими слоями (2-3 слоя лучше, чем 1 толстый)",
+          "good_tools": "Используйте качественные валики и кисти",
+          "good_light": "Красьте при хорошем освещении для контроля качества"
+        }
+      },
+      "tile": {
+        "title": "Укладка плитки",
+        "description": "Секреты качественной укладки плитки",
+        "mistake": {
+          "uneven_base": "Неровное основание приводит к трещинам",
+          "wrong_glue": "Неправильный выбор клея для типа плитки",
+          "no_joints": "Игнорирование температурных швов"
+        },
+        "practice": {
+          "level_base": "Основание должно быть ровным (перепад не более 3 мм)",
+          "use_level": "Используйте уровень для каждого ряда",
+          "start_center": "Начинайте укладку от центра комнаты",
+          "use_crosses": "Используйте крестики для равномерных швов"
+        }
+      },
+      "screed": {
+        "title": "Заливка стяжки",
+        "description": "Правильная заливка стяжки пола",
+        "mistake": {
+          "unprepared_base": "Заливка на неподготовленное основание",
+          "no_beacons": "Игнорирование маяков",
+          "fast_drying": "Слишком быстрое высыхание"
+        },
+        "practice": {
+          "use_beacons": "Используйте маяки для контроля толщины",
+          "wait_before_load": "Выдержите стяжку минимум 7 дней перед нагрузкой",
+          "protect_from_drafts": "Защитите от сквозняков и прямых солнечных лучей",
+          "check_level": "Проверьте уровень перед заливкой"
+        }
+      },
+      "wallpaper": {
+        "title": "Поклейка обоев",
+        "description": "Как правильно клеить обои",
+        "mistake": {
+          "wrong_glue": "Неправильный подбор клея",
+          "ignore_rapport": "Игнорирование раппорта рисунка",
+          "uneven_walls": "Поклейка на неровные стены"
+        },
+        "practice": {
+          "laser_first_strip": "Используйте лазерный уровень для первой полосы",
+          "check_pattern": "Проверьте совпадение рисунка перед поклейкой",
+          "add_reserve": "Добавьте 10% к площади для подрезки",
+          "from_window": "Клейте от окна к двери"
+        }
+      }
+    },
+    "tool": {
+      "roller": "Валик",
+      "brushes": "Кисти",
+      "tray": "Кювета",
+      "masking_tape": "Малярный скотч",
+      "film": "Плёнка",
+      "notched_trowel": "Зубчатый шпатель",
+      "level": "Уровень",
+      "crosses": "Крестики",
+      "tile_cutter": "Плиткорез",
+      "beacons": "Маяки",
+      "rule": "Правило",
+      "spike_roller": "Игольчатый валик",
+      "brush": "Кисть",
+      "rubber_roller": "Резиновый валик",
+      "knife": "Нож"
+    },
+    "material": {
+      "paint": "Краска",
+      "primer": "Грунтовка",
+      "putty": "Шпаклёвка",
+      "tile": "Плитка",
+      "tile_glue": "Клей",
+      "grout": "Затирка",
+      "cement": "Цемент",
+      "sand": "Песок",
+      "water": "Вода",
+      "wallpaper": "Обои",
+      "wallpaper_glue": "Клей"
+    }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../providers/premium_provider.dart';
 
 /// Badge показывающий Premium статус пользователя
@@ -18,6 +19,7 @@ class PremiumBadge extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final isPremium = ref.watch(isPremiumProvider);
 
     if (!isPremium) {
@@ -46,7 +48,7 @@ class PremiumBadge extends ConsumerWidget {
           if (showLabel) ...[
             const SizedBox(width: 6),
             Text(
-              'PREMIUM',
+              loc.translate('common.premium'),
               style: theme.textTheme.labelSmall?.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -74,6 +76,7 @@ class PremiumUpgradeButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final isPremium = ref.watch(isPremiumProvider);
 
     if (isPremium) {
@@ -87,7 +90,7 @@ class PremiumUpgradeButton extends ConsumerWidget {
           Icons.workspace_premium_outlined,
           color: Colors.amber.shade700,
         ),
-        tooltip: 'Получить Premium',
+        tooltip: loc.translate('common.get_premium'),
       );
     }
 
@@ -106,7 +109,7 @@ class PremiumUpgradeButton extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.amber.shade200.withValues(alpha:0.5),
+              color: Colors.amber.shade200.withValues(alpha: 0.5),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -126,16 +129,16 @@ class PremiumUpgradeButton extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Получить Premium',
+                  loc.translate('common.get_premium'),
                   style: theme.textTheme.titleSmall?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  'Разблокировать все функции',
+                  loc.translate('common.unlock_all_features'),
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withValues(alpha:0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -171,6 +174,7 @@ class PremiumFeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return Card(
       margin: const EdgeInsets.all(16),
@@ -230,7 +234,7 @@ class PremiumFeatureCard extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: onUpgrade,
                 icon: const Icon(Icons.workspace_premium_rounded),
-                label: const Text('Получить Premium'),
+                label: Text(loc.translate('common.get_premium')),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
@@ -258,6 +262,7 @@ class SubscriptionExpiryIndicator extends ConsumerWidget {
           return const SizedBox.shrink();
         }
 
+        final loc = AppLocalizations.of(context);
         final daysLeft = subscription.daysUntilExpiry;
         if (daysLeft == null || daysLeft > 7) {
           return const SizedBox.shrink();
@@ -283,8 +288,8 @@ class SubscriptionExpiryIndicator extends ConsumerWidget {
               Expanded(
                 child: Text(
                   daysLeft > 0
-                      ? 'Подписка истекает через $daysLeft ${_getDaysWord(daysLeft)}'
-                      : 'Подписка истекла',
+                      ? loc.translate('premium.expiring_in', {'count': daysLeft.toString(), 'unit': _getDaysWord(daysLeft, loc)})
+                      : loc.translate('premium.expired'),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.orange.shade900,
                     fontWeight: FontWeight.w600,
@@ -300,13 +305,14 @@ class SubscriptionExpiryIndicator extends ConsumerWidget {
     );
   }
 
-  String _getDaysWord(int days) {
+  String _getDaysWord(int days, AppLocalizations loc) {
     if (days % 10 == 1 && days % 100 != 11) {
-      return 'день';
+      return loc.translate('premium.days_one');
     } else if (days % 10 >= 2 && days % 10 <= 4 && (days % 100 < 10 || days % 100 >= 20)) {
-      return 'дня';
+      return loc.translate('premium.days_few');
     } else {
-      return 'дней';
+      return loc.translate('premium.days_many');
     }
   }
 }
+

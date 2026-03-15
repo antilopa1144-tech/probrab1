@@ -22,10 +22,7 @@ void main() {
 
     test('calculates sheets needed', () {
       final calculator = CalculateInsulationMineralWool();
-      final inputs = {
-        'area': 20.0,
-        'thickness': 100.0,
-      };
+      final inputs = {'area': 20.0, 'thickness': 100.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -52,10 +49,7 @@ void main() {
 
     test('calculates vapor barrier area', () {
       final calculator = CalculateInsulationMineralWool();
-      final inputs = {
-        'area': 20.0,
-        'thickness': 100.0,
-      };
+      final inputs = {'area': 20.0, 'thickness': 100.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -66,10 +60,7 @@ void main() {
 
     test('calculates fasteners needed', () {
       final calculator = CalculateInsulationMineralWool();
-      final inputs = {
-        'area': 20.0,
-        'thickness': 100.0,
-      };
+      final inputs = {'area': 20.0, 'thickness': 100.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -80,9 +71,7 @@ void main() {
 
     test('uses default thickness when missing', () {
       final calculator = CalculateInsulationMineralWool();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -94,10 +83,7 @@ void main() {
 
     test('uses default density when missing', () {
       final calculator = CalculateInsulationMineralWool();
-      final inputs = {
-        'area': 20.0,
-        'thickness': 100.0,
-      };
+      final inputs = {'area': 20.0, 'thickness': 100.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -109,9 +95,7 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateInsulationMineralWool();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
@@ -357,19 +341,22 @@ void main() {
     });
 
     group('Предупреждения', () {
-      test('Тонкий утеплитель <100мм на стену → предупреждение warningThinExterior', () {
-        final calculator = CalculateInsulationMineralWool();
-        final inputs = {
-          'area': 10.0,
-          'thickness': 50.0,
-          'applicationSurface': 1.0, // стена
-        };
-        final emptyPriceList = <PriceItem>[];
+      test(
+        'Тонкий утеплитель <100мм на стену → предупреждение warningThinExterior',
+        () {
+          final calculator = CalculateInsulationMineralWool();
+          final inputs = {
+            'area': 10.0,
+            'thickness': 50.0,
+            'applicationSurface': 1.0, // стена
+          };
+          final emptyPriceList = <PriceItem>[];
 
-        final result = calculator(inputs, emptyPriceList);
+          final result = calculator(inputs, emptyPriceList);
 
-        expect(result.values['warningThinExterior'], equals(1.0));
-      });
+          expect(result.values['warningThinExterior'], equals(1.0));
+        },
+      );
 
       test('Толщина 100мм на стену → нет предупреждения', () {
         final calculator = CalculateInsulationMineralWool();
@@ -399,18 +386,34 @@ void main() {
         expect(result.values['warningFloorNoFasteners'], equals(1.0));
       });
 
-      test('Тонкий утеплитель на пол → нет предупреждения (только для стен)', () {
+      test(
+        'Тонкий утеплитель на пол → нет предупреждения (только для стен)',
+        () {
+          final calculator = CalculateInsulationMineralWool();
+          final inputs = {
+            'area': 10.0,
+            'thickness': 50.0,
+            'applicationSurface': 2.0, // пол
+          };
+          final emptyPriceList = <PriceItem>[];
+
+          final result = calculator(inputs, emptyPriceList);
+
+          expect(result.values.containsKey('warningThinExterior'), isFalse);
+        },
+      );
+    });
+
+    group('validation messages', () {
+      test('thickness range uses shared helper', () {
         final calculator = CalculateInsulationMineralWool();
-        final inputs = {
-          'area': 10.0,
-          'thickness': 50.0,
-          'applicationSurface': 2.0, // пол
-        };
-        final emptyPriceList = <PriceItem>[];
 
-        final result = calculator(inputs, emptyPriceList);
+        final error = calculator.validateInputs({
+          'area': 12.0,
+          'thickness': 40.0,
+        });
 
-        expect(result.values.containsKey('warningThinExterior'), isFalse);
+        expect(error, equals('Поле "толщина" должно быть от 50 до 300 мм'));
       });
     });
   });

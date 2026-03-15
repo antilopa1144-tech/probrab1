@@ -23,10 +23,7 @@ void main() {
       });
 
       test('returns error for invalid layers', () {
-        final error = calculator.validateInputs({
-          'area': 20.0,
-          'layers': 0.0,
-        });
+        final error = calculator.validateInputs({'area': 20.0, 'layers': 0.0});
         expect(error, isNotNull);
         expect(error, contains('слоёв'));
       });
@@ -292,19 +289,22 @@ void main() {
         expect(result.values['paintNeededLiters'], greaterThan(0));
       });
 
-      test('returns error indicator when area becomes zero after deductions', () {
-        final result = calculator({
-          'inputMode': 1.0,
-          'area': 10.0,
-          'perimeter': 12.0,
-          'windowsArea': 6.0,
-          'doorsArea': 5.0,
-        }, emptyPriceList);
+      test(
+        'returns error indicator when area becomes zero after deductions',
+        () {
+          final result = calculator({
+            'inputMode': 1.0,
+            'area': 10.0,
+            'perimeter': 12.0,
+            'windowsArea': 6.0,
+            'doorsArea': 5.0,
+          }, emptyPriceList);
 
-        // Полезная площадь <= 0, должен вернуть ошибку
-        expect(result.values['usefulArea'], equals(0.0));
-        expect(result.values['error'], equals(1.0));
-      });
+          // Полезная площадь <= 0, должен вернуть ошибку
+          expect(result.values['usefulArea'], equals(0.0));
+          expect(result.values['error'], equals(1.0));
+        },
+      );
 
       test('handles large area', () {
         final result = calculator({
@@ -362,6 +362,20 @@ void main() {
           resultHigh.values['paintNeededLiters'],
           greaterThan(resultLow.values['paintNeededLiters']!),
         );
+      });
+    });
+
+    group('validation messages', () {
+      test('layers lower bound uses shared helper', () {
+        final calculator = CalculateWallPaint();
+
+        final error = calculator.validateInputs({
+          'inputMode': 1.0,
+          'area': 12.0,
+          'layers': 0.0,
+        });
+
+        expect(error, equals('Поле "количество слоёв" должно быть от 1 до 5'));
       });
     });
   });

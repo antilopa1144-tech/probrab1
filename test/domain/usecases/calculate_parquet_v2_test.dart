@@ -307,9 +307,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not specified', () {
-        final inputs = {
-          'area': 20.0,
-        };
+        final inputs = {'area': 20.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -373,20 +371,22 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero area without dimensions', () {
-        final inputs = {
-          'area': 0.0,
-        };
+        final inputs = {'area': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
-          throwsA(isA<CalculationException>()),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Необходимо указать площадь или размеры помещения'),
+            ),
+          ),
         );
       });
 
       test('throws exception for negative area', () {
-        final inputs = {
-          'area': -10.0,
-        };
+        final inputs = {'area': -10.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -406,10 +406,34 @@ void main() {
           'needGlue': 1.0,
         };
         final priceList = [
-          const PriceItem(sku: 'parquet', name: 'Паркет', price: 2500.0, unit: 'уп', imageUrl: ''),
-          const PriceItem(sku: 'underlay', name: 'Подложка', price: 500.0, unit: 'рулон', imageUrl: ''),
-          const PriceItem(sku: 'plinth', name: 'Плинтус', price: 200.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'glue', name: 'Клей', price: 150.0, unit: 'л', imageUrl: ''),
+          const PriceItem(
+            sku: 'parquet',
+            name: 'Паркет',
+            price: 2500.0,
+            unit: 'уп',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'underlay',
+            name: 'Подложка',
+            price: 500.0,
+            unit: 'рулон',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'plinth',
+            name: 'Плинтус',
+            price: 200.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'glue',
+            name: 'Клей',
+            price: 150.0,
+            unit: 'л',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -419,9 +443,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'area': 20.0,
-        };
+        final inputs = {'area': 20.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -431,7 +453,7 @@ void main() {
 
     group('Pattern waste percentages', () {
       final testCases = <(int, double)>[
-        (0, 5.0),  // straight
+        (0, 5.0), // straight
         (1, 15.0), // diagonal
         (2, 20.0), // herringbone
       ];

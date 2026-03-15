@@ -134,7 +134,10 @@ void main() {
         final railsCount = result.values['railsCount']!;
         final roomLength = result.values['roomLength']!;
 
-        expect(result.values['railLength'], closeTo(railsCount * roomLength * 1.05, 0.1));
+        expect(
+          result.values['railLength'],
+          closeTo(railsCount * roomLength * 1.05, 0.1),
+        );
       });
 
       test('rail length includes 5% waste', () {
@@ -150,7 +153,10 @@ void main() {
 
         // Without waste: railsCount * 5
         // With waste: railsCount * 5 * 1.05
-        expect(result.values['railLength'], closeTo(railsCount * 5 * 1.05, 0.1));
+        expect(
+          result.values['railLength'],
+          closeTo(railsCount * 5 * 1.05, 0.1),
+        );
       });
     });
 
@@ -169,40 +175,34 @@ void main() {
       });
 
       test('stringer length = rows * roomLength * 1.10', () {
-        final inputs = {
-          'roomWidth': 3.0,
-          'roomLength': 4.0,
-          'inputMode': 1.0,
-        };
+        final inputs = {'roomWidth': 3.0, 'roomLength': 4.0, 'inputMode': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
         final stringerRows = result.values['stringerRows']!;
         final roomLength = result.values['roomLength']!;
 
-        expect(result.values['stringerLength'], closeTo(stringerRows * roomLength * 1.10, 0.1));
+        expect(
+          result.values['stringerLength'],
+          closeTo(stringerRows * roomLength * 1.10, 0.1),
+        );
       });
     });
 
     group('Wall profile calculations', () {
       test('wall profile = perimeter * 1.10', () {
-        final inputs = {
-          'roomWidth': 3.0,
-          'roomLength': 4.0,
-          'inputMode': 1.0,
-        };
+        final inputs = {'roomWidth': 3.0, 'roomLength': 4.0, 'inputMode': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
         final perimeter = result.values['perimeter']!;
 
-        expect(result.values['wallProfileLength'], closeTo(perimeter * 1.10, 0.1));
+        expect(
+          result.values['wallProfileLength'],
+          closeTo(perimeter * 1.10, 0.1),
+        );
       });
 
       test('perimeter calculated correctly', () {
-        final inputs = {
-          'roomWidth': 3.0,
-          'roomLength': 5.0,
-          'inputMode': 1.0,
-        };
+        final inputs = {'roomWidth': 3.0, 'roomLength': 5.0, 'inputMode': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -251,11 +251,7 @@ void main() {
 
     group('Input modes', () {
       test('room mode calculates area from dimensions', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'roomWidth': 3.0,
-          'roomLength': 5.0,
-        };
+        final inputs = {'inputMode': 1.0, 'roomWidth': 3.0, 'roomLength': 5.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -265,10 +261,7 @@ void main() {
       });
 
       test('manual mode uses area and calculates square dimensions', () {
-        final inputs = {
-          'inputMode': 0.0,
-          'area': 16.0,
-        };
+        final inputs = {'inputMode': 0.0, 'area': 16.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -307,10 +300,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not specified', () {
-        final inputs = <String, double>{
-          'roomWidth': 3.0,
-          'roomLength': 4.0,
-        };
+        final inputs = <String, double>{'roomWidth': 3.0, 'roomLength': 4.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -346,11 +336,7 @@ void main() {
       });
 
       test('handles small room', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'roomWidth': 1.0,
-          'roomLength': 1.5,
-        };
+        final inputs = {'inputMode': 1.0, 'roomWidth': 1.0, 'roomLength': 1.5};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -376,10 +362,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero area in manual mode', () {
-        final inputs = {
-          'inputMode': 0.0,
-          'area': 0.0,
-        };
+        final inputs = {'inputMode': 0.0, 'area': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -388,10 +371,7 @@ void main() {
       });
 
       test('throws exception for negative area', () {
-        final inputs = {
-          'inputMode': 0.0,
-          'area': -12.0,
-        };
+        final inputs = {'inputMode': 0.0, 'area': -12.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -400,11 +380,7 @@ void main() {
       });
 
       test('throws exception for zero room width', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'roomWidth': 0.0,
-          'roomLength': 4.0,
-        };
+        final inputs = {'inputMode': 1.0, 'roomWidth': 0.0, 'roomLength': 4.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -415,16 +391,36 @@ void main() {
 
     group('Price calculations', () {
       test('calculates total price when prices available', () {
-        final inputs = {
-          'roomWidth': 3.0,
-          'roomLength': 4.0,
-          'inputMode': 1.0,
-        };
+        final inputs = {'roomWidth': 3.0, 'roomLength': 4.0, 'inputMode': 1.0};
         final priceList = [
-          const PriceItem(sku: 'rail', name: 'Рейка', price: 150.0, unit: 'м', imageUrl: ''),
-          const PriceItem(sku: 'stringer', name: 'Стрингер', price: 200.0, unit: 'м', imageUrl: ''),
-          const PriceItem(sku: 'wall_profile', name: 'Пристенный профиль', price: 100.0, unit: 'м', imageUrl: ''),
-          const PriceItem(sku: 'hanger', name: 'Подвес', price: 30.0, unit: 'шт', imageUrl: ''),
+          const PriceItem(
+            sku: 'rail',
+            name: 'Рейка',
+            price: 150.0,
+            unit: 'м',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'stringer',
+            name: 'Стрингер',
+            price: 200.0,
+            unit: 'м',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'wall_profile',
+            name: 'Пристенный профиль',
+            price: 100.0,
+            unit: 'м',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'hanger',
+            name: 'Подвес',
+            price: 30.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -434,11 +430,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'roomWidth': 3.0,
-          'roomLength': 4.0,
-          'inputMode': 1.0,
-        };
+        final inputs = {'roomWidth': 3.0, 'roomLength': 4.0, 'inputMode': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -504,6 +496,24 @@ void main() {
         expect(result.values['roomLength'], closeTo(3.0, 0.01));
         // Perimeter = 2 * (3 + 3) = 12
         expect(result.values['perimeter'], closeTo(12.0, 0.01));
+      });
+    });
+    group('validation messages', () {
+      test('room dimensions requirement uses shared helper', () {
+        expect(
+          () => calculator({
+            'inputMode': 1.0,
+            'roomWidth': 0.0,
+            'roomLength': 4.0,
+          }, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Необходимо указать площадь или размеры помещения'),
+            ),
+          ),
+        );
       });
     });
   });

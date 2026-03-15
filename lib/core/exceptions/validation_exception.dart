@@ -11,6 +11,9 @@ class ValidationException extends AppException {
     this.fieldName,
     this.invalidValue,
     super.details,
+    super.userMessageKey,
+    super.userMessageParams,
+    super.fallbackUserMessage,
   });
 
   factory ValidationException.required(String fieldName) {
@@ -18,6 +21,9 @@ class ValidationException extends AppException {
       'Поле "$fieldName" обязательно для заполнения',
       code: 'REQUIRED_FIELD',
       fieldName: fieldName,
+      userMessageKey: 'error.message.validation_required_field',
+      userMessageParams: {'field': fieldName},
+      fallbackUserMessage: 'Поле "$fieldName" обязательно для заполнения',
     );
   }
 
@@ -32,6 +38,14 @@ class ValidationException extends AppException {
       fieldName: fieldName,
       invalidValue: actualValue,
       details: {'min': minValue, 'actual': actualValue},
+      userMessageKey: 'error.message.validation_min_value',
+      userMessageParams: {
+        'field': fieldName,
+        'min': minValue.toString(),
+        'actual': actualValue.toString(),
+      },
+      fallbackUserMessage:
+          'Значение поля "$fieldName" должно быть не меньше $minValue',
     );
   }
 
@@ -46,6 +60,14 @@ class ValidationException extends AppException {
       fieldName: fieldName,
       invalidValue: actualValue,
       details: {'max': maxValue, 'actual': actualValue},
+      userMessageKey: 'error.message.validation_max_value',
+      userMessageParams: {
+        'field': fieldName,
+        'max': maxValue.toString(),
+        'actual': actualValue.toString(),
+      },
+      fallbackUserMessage:
+          'Значение поля "$fieldName" должно быть не больше $maxValue',
     );
   }
 
@@ -57,6 +79,13 @@ class ValidationException extends AppException {
       'Неверный формат поля "$fieldName". Ожидается: $expectedFormat',
       code: 'INVALID_FORMAT',
       fieldName: fieldName,
+      userMessageKey: 'error.message.validation_invalid_format',
+      userMessageParams: {
+        'field': fieldName,
+        'expectedFormat': expectedFormat,
+      },
+      fallbackUserMessage:
+          'Неверный формат поля "$fieldName". Ожидается: $expectedFormat',
     );
   }
 
@@ -66,19 +95,29 @@ class ValidationException extends AppException {
       code: 'NEGATIVE_VALUE',
       fieldName: fieldName,
       invalidValue: value,
+      userMessageKey: 'error.message.validation_negative_value',
+      userMessageParams: {
+        'field': fieldName,
+        'value': value.toString(),
+      },
+      fallbackUserMessage:
+          'Значение поля "$fieldName" не может быть отрицательным',
     );
   }
 
-  factory ValidationException.custom(String message, {String? fieldName}) {
+  factory ValidationException.custom(
+    String message, {
+    String? fieldName,
+    String? userMessageKey,
+    Map<String, String>? userMessageParams,
+  }) {
     return ValidationException(
       message,
       code: 'CUSTOM',
       fieldName: fieldName,
+      userMessageKey: userMessageKey,
+      userMessageParams: userMessageParams,
+      fallbackUserMessage: message,
     );
-  }
-
-  @override
-  String getUserMessage() {
-    return message;
   }
 }

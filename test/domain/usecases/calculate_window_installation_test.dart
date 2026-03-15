@@ -23,9 +23,7 @@ void main() {
 
     test('calculates foam needed', () {
       final calculator = CalculateWindowInstallation();
-      final inputs = {
-        'windows': 3.0,
-      };
+      final inputs = {'windows': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -36,10 +34,7 @@ void main() {
 
     test('calculates sills needed', () {
       final calculator = CalculateWindowInstallation();
-      final inputs = {
-        'windows': 2.0,
-        'windowWidth': 1.5,
-      };
+      final inputs = {'windows': 2.0, 'windowWidth': 1.5};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -52,11 +47,7 @@ void main() {
 
     test('calculates slope area', () {
       final calculator = CalculateWindowInstallation();
-      final inputs = {
-        'windows': 2.0,
-        'windowWidth': 1.5,
-        'windowHeight': 1.4,
-      };
+      final inputs = {'windows': 2.0, 'windowWidth': 1.5, 'windowHeight': 1.4};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -68,10 +59,7 @@ void main() {
 
     test('calculates drip length', () {
       final calculator = CalculateWindowInstallation();
-      final inputs = {
-        'windows': 2.0,
-        'windowWidth': 1.5,
-      };
+      final inputs = {'windows': 2.0, 'windowWidth': 1.5};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -94,15 +82,56 @@ void main() {
 
     test('throws exception for zero windows', () {
       final calculator = CalculateWindowInstallation();
-      final inputs = {
-        'windows': 0.0,
-      };
+      final inputs = {'windows': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
         throwsA(isA<CalculationException>()),
       );
+    });
+
+    test('supports screen windowsCount alias and sill toggle', () {
+      final calculator = CalculateWindowInstallation();
+      final inputs = {
+        'windowsCount': 4.0,
+        'windowWidth': 1.4,
+        'windowHeight': 1.5,
+        'needSill': 0.0,
+        'needSlopes': 1.0,
+      };
+      final result = calculator(inputs, <PriceItem>[]);
+
+      expect(result.values['windowsCount'], equals(4.0));
+      expect(result.values['windows'], equals(4.0));
+      expect(result.values['totalArea'], closeTo(8.4, 0.01));
+      expect(result.values['sillLength'], equals(0.0));
+      expect(result.values['slopeArea'], closeTo(7.656, 0.05));
+    });
+
+    test('disables slopes and preserves anchors calculation', () {
+      final calculator = CalculateWindowInstallation();
+      final inputs = {
+        'windows': 2.0,
+        'windowWidth': 1.2,
+        'windowHeight': 1.6,
+        'needSlopes': 0.0,
+      };
+      final result = calculator(inputs, <PriceItem>[]);
+
+      expect(result.values['slopeArea'], equals(0.0));
+      expect(result.values['anchorsNeeded'], equals(16.0));
+      expect(result.values['foamNeeded'], equals(3.0));
+    });
+
+    group('validation messages', () {
+      test('windows count lower bound uses shared helper', () {
+        final calculator = CalculateWindowInstallation();
+
+        final error = calculator.validateInputs({'windowsCount': 0.0});
+
+        expect(error, equals('Поле "количество окон" должно быть больше нуля'));
+      });
     });
   });
 }

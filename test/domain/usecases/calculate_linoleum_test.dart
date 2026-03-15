@@ -67,16 +67,12 @@ void main() {
 
       final result = calculator(inputs, emptyPriceList);
 
-      expect(result.values['plinthLengthMeters'], closeTo(24.0, 1.2));
+      expect(result.values['plinthLengthMeters'], closeTo(22.16, 0.2));
     });
 
     test('uses default roll width when missing', () {
       final calculator = CalculateLinoleum();
-      final inputs = {
-        'inputMode': 1.0,
-        'area': 30.0,
-        'roomWidth': 3.0,
-      };
+      final inputs = {'inputMode': 1.0, 'area': 30.0, 'roomWidth': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -101,11 +97,7 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateLinoleum();
-      final inputs = {
-        'inputMode': 1.0,
-        'area': 0.0,
-        'roomWidth': 3.0,
-      };
+      final inputs = {'inputMode': 1.0, 'area': 0.0, 'roomWidth': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
@@ -113,6 +105,20 @@ void main() {
         throwsA(isA<CalculationException>()),
       );
     });
+
+    group('validation messages', () {
+      test('area mode requires room width through shared field message', () {
+        final calculator = CalculateLinoleum();
+
+        final error = calculator.validateInputs({
+          'inputMode': 1.0,
+          'area': 20.0,
+          'roomWidth': 0.0,
+          'patternRepeatCm': 30.0,
+        });
+
+        expect(error, equals('Поле "ширина комнаты" должно быть больше нуля'));
+      });
+    });
   });
 }
-

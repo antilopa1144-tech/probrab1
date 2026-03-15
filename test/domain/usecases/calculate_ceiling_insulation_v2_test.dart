@@ -91,11 +91,7 @@ void main() {
       });
 
       test('room mode with different dimensions', () {
-        final inputs = {
-          'inputMode': 1.0,
-          'roomWidth': 6.0,
-          'roomLength': 8.0,
-        };
+        final inputs = {'inputMode': 1.0, 'roomWidth': 6.0, 'roomLength': 8.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -106,11 +102,7 @@ void main() {
 
     group('Thickness calculations', () {
       test('100mm thickness: pack area = 6 sqm', () {
-        final inputs = {
-          'area': 20.0,
-          'thickness': 100.0,
-          'inputMode': 0.0,
-        };
+        final inputs = {'area': 20.0, 'thickness': 100.0, 'inputMode': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -118,11 +110,7 @@ void main() {
       });
 
       test('200mm thickness: pack area = 3 sqm (half)', () {
-        final inputs = {
-          'area': 20.0,
-          'thickness': 200.0,
-          'inputMode': 0.0,
-        };
+        final inputs = {'area': 20.0, 'thickness': 200.0, 'inputMode': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -131,11 +119,7 @@ void main() {
       });
 
       test('50mm thickness: pack area = 12 sqm (double)', () {
-        final inputs = {
-          'area': 20.0,
-          'thickness': 50.0,
-          'inputMode': 0.0,
-        };
+        final inputs = {'area': 20.0, 'thickness': 50.0, 'inputMode': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -144,11 +128,7 @@ void main() {
       });
 
       test('thicker insulation needs more packs for same area', () {
-        final thinInputs = {
-          'area': 30.0,
-          'thickness': 50.0,
-          'inputMode': 0.0,
-        };
+        final thinInputs = {'area': 30.0, 'thickness': 50.0, 'inputMode': 0.0};
         final thickInputs = {
           'area': 30.0,
           'thickness': 200.0,
@@ -168,11 +148,7 @@ void main() {
     group('Pack calculations', () {
       test('exact pack fit', () {
         // 12 sqm with 10% waste = 13.2, pack area 6 = ceil(13.2/6) = 3
-        final inputs = {
-          'area': 12.0,
-          'thickness': 100.0,
-          'inputMode': 0.0,
-        };
+        final inputs = {'area': 12.0, 'thickness': 100.0, 'inputMode': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -181,11 +157,7 @@ void main() {
 
       test('rounds up partial packs', () {
         // 10 sqm with 10% waste = 11, pack area 6 = ceil(11/6) = 2
-        final inputs = {
-          'area': 10.0,
-          'thickness': 100.0,
-          'inputMode': 0.0,
-        };
+        final inputs = {'area': 10.0, 'thickness': 100.0, 'inputMode': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -195,10 +167,7 @@ void main() {
 
     group('Waste percentages', () {
       test('insulation has 10% waste', () {
-        final inputs = {
-          'area': 100.0,
-          'inputMode': 0.0,
-        };
+        final inputs = {'area': 100.0, 'inputMode': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -220,11 +189,7 @@ void main() {
       });
 
       test('membrane has 15% waste', () {
-        final inputs = {
-          'area': 100.0,
-          'inputMode': 0.0,
-          'needMembrane': 1.0,
-        };
+        final inputs = {'area': 100.0, 'inputMode': 0.0, 'needMembrane': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -247,11 +212,7 @@ void main() {
       });
 
       test('no membrane when disabled', () {
-        final inputs = {
-          'area': 20.0,
-          'inputMode': 0.0,
-          'needMembrane': 0.0,
-        };
+        final inputs = {'area': 20.0, 'inputMode': 0.0, 'needMembrane': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -313,9 +274,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not specified', () {
-        final inputs = <String, double>{
-          'area': 20.0,
-        };
+        final inputs = <String, double>{'area': 20.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -365,10 +324,7 @@ void main() {
       });
 
       test('handles minimum area', () {
-        final inputs = {
-          'area': 1.0,
-          'inputMode': 0.0,
-        };
+        final inputs = {'area': 1.0, 'inputMode': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -377,11 +333,7 @@ void main() {
       });
 
       test('handles very thin insulation', () {
-        final inputs = {
-          'area': 20.0,
-          'thickness': 20.0,
-          'inputMode': 0.0,
-        };
+        final inputs = {'area': 20.0, 'thickness': 20.0, 'inputMode': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -392,10 +344,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero area in manual mode', () {
-        final inputs = {
-          'area': 0.0,
-          'inputMode': 0.0,
-        };
+        final inputs = {'area': 0.0, 'inputMode': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -404,10 +353,7 @@ void main() {
       });
 
       test('throws exception for negative area', () {
-        final inputs = {
-          'area': -20.0,
-          'inputMode': 0.0,
-        };
+        final inputs = {'area': -20.0, 'inputMode': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -416,11 +362,7 @@ void main() {
       });
 
       test('throws exception for zero room width', () {
-        final inputs = {
-          'roomWidth': 0.0,
-          'roomLength': 5.0,
-          'inputMode': 1.0,
-        };
+        final inputs = {'roomWidth': 0.0, 'roomLength': 5.0, 'inputMode': 1.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -429,11 +371,7 @@ void main() {
       });
 
       test('throws exception for zero room length', () {
-        final inputs = {
-          'roomWidth': 4.0,
-          'roomLength': 0.0,
-          'inputMode': 1.0,
-        };
+        final inputs = {'roomWidth': 4.0, 'roomLength': 0.0, 'inputMode': 1.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -451,9 +389,27 @@ void main() {
           'needMembrane': 1.0,
         };
         final priceList = [
-          const PriceItem(sku: 'insulation', name: 'Минвата', price: 500.0, unit: 'упак', imageUrl: ''),
-          const PriceItem(sku: 'vapor_barrier', name: 'Пароизоляция', price: 50.0, unit: 'м²', imageUrl: ''),
-          const PriceItem(sku: 'membrane', name: 'Мембрана', price: 80.0, unit: 'м²', imageUrl: ''),
+          const PriceItem(
+            sku: 'insulation',
+            name: 'Минвата',
+            price: 500.0,
+            unit: 'упак',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'vapor_barrier',
+            name: 'Пароизоляция',
+            price: 50.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'membrane',
+            name: 'Мембрана',
+            price: 80.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -463,10 +419,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'area': 20.0,
-          'inputMode': 0.0,
-        };
+        final inputs = {'area': 20.0, 'inputMode': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -542,6 +495,25 @@ void main() {
         // No vapor or membrane
         expect(result.values['vaporBarrierArea'], equals(0.0));
         expect(result.values['membraneArea'], equals(0.0));
+      });
+    });
+
+    group('validation messages', () {
+      test('room dimensions requirement uses shared helper', () {
+        expect(
+          () => calculator({
+            'inputMode': 1.0,
+            'roomWidth': 0.0,
+            'roomLength': 5.0,
+          }, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Необходимо указать площадь или размеры помещения'),
+            ),
+          ),
+        );
       });
     });
   });

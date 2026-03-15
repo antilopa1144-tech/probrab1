@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../views/premium_screen.dart';
+import '../../../core/localization/app_localizations.dart';
 
 /// Диалог блокировки Premium функций
 class PremiumLockDialog extends StatelessWidget {
@@ -32,6 +33,7 @@ class PremiumLockDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return AlertDialog(
       content: Column(
@@ -65,7 +67,7 @@ class PremiumLockDialog extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            description ?? 'Эта функция доступна только в Premium версии',
+            description ?? loc.translate('premium.lock.description_default'),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -82,7 +84,7 @@ class PremiumLockDialog extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Расширенные калькуляторы',
+                  loc.translate('premium.lock.feature_advanced_calculators'),
                   style: theme.textTheme.bodySmall,
                 ),
               ),
@@ -99,7 +101,7 @@ class PremiumLockDialog extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Неограниченное число проектов',
+                  loc.translate('premium.lock.feature_unlimited_projects'),
                   style: theme.textTheme.bodySmall,
                 ),
               ),
@@ -116,7 +118,7 @@ class PremiumLockDialog extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Экспорт в PDF',
+                  loc.translate('premium.lock.feature_pdf_export'),
                   style: theme.textTheme.bodySmall,
                 ),
               ),
@@ -133,7 +135,7 @@ class PremiumLockDialog extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'И многое другое...',
+                  loc.translate('premium.lock.feature_more'),
                   style: theme.textTheme.bodySmall,
                 ),
               ),
@@ -144,7 +146,7 @@ class PremiumLockDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Отмена'),
+          child: Text(loc.translate('button.cancel')),
         ),
         FilledButton.icon(
           onPressed: () {
@@ -156,7 +158,7 @@ class PremiumLockDialog extends StatelessWidget {
             );
           },
           icon: const Icon(Icons.workspace_premium_rounded),
-          label: const Text('Получить Premium'),
+          label: Text(loc.translate('premium.get')),
           style: FilledButton.styleFrom(
             backgroundColor: Colors.amber.shade600,
           ),
@@ -165,3 +167,4 @@ class PremiumLockDialog extends StatelessWidget {
     );
   }
 }
+

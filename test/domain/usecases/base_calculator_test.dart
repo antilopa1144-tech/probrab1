@@ -433,6 +433,15 @@ void main() {
       final inputs = {'area': -25.0};
       expect(calculator.validateInputs(inputs), isNotNull);
     });
+
+
+    test('returns human-readable field name instead of raw input key', () {
+      final inputs = {'area': -25.0};
+      final message = calculator.validateInputs(inputs);
+      expect(message, isNotNull);
+      expect(message, isNot(contains('area')));
+      expect(message, contains('площад'));
+    });
   });
 
   group('BaseCalculator - call', () {

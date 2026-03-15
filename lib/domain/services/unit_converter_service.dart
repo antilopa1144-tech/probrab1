@@ -23,7 +23,6 @@ class UnitConverterService {
   List<Unit> get areaUnits => [
         const Unit(
           id: 'sq_m',
-          name: 'квадратный метр',
           symbol: 'м²',
           category: UnitCategory.area,
           toBaseUnit: 1.0,
@@ -31,28 +30,24 @@ class UnitConverterService {
         ),
         const Unit(
           id: 'sq_cm',
-          name: 'квадратный сантиметр',
           symbol: 'см²',
           category: UnitCategory.area,
           toBaseUnit: 0.0001,
         ),
         const Unit(
           id: 'sq_mm',
-          name: 'квадратный миллиметр',
           symbol: 'мм²',
           category: UnitCategory.area,
           toBaseUnit: 0.000001,
         ),
         const Unit(
           id: 'hectare',
-          name: 'гектар',
           symbol: 'га',
           category: UnitCategory.area,
           toBaseUnit: 10000.0,
         ),
         const Unit(
           id: 'sq_km',
-          name: 'квадратный километр',
           symbol: 'км²',
           category: UnitCategory.area,
           toBaseUnit: 1000000.0,
@@ -63,7 +58,6 @@ class UnitConverterService {
   List<Unit> get lengthUnits => [
         const Unit(
           id: 'meter',
-          name: 'метр',
           symbol: 'м',
           category: UnitCategory.length,
           toBaseUnit: 1.0,
@@ -71,21 +65,18 @@ class UnitConverterService {
         ),
         const Unit(
           id: 'cm',
-          name: 'сантиметр',
           symbol: 'см',
           category: UnitCategory.length,
           toBaseUnit: 0.01,
         ),
         const Unit(
           id: 'mm',
-          name: 'миллиметр',
           symbol: 'мм',
           category: UnitCategory.length,
           toBaseUnit: 0.001,
         ),
         const Unit(
           id: 'km',
-          name: 'километр',
           symbol: 'км',
           category: UnitCategory.length,
           toBaseUnit: 1000.0,
@@ -96,7 +87,6 @@ class UnitConverterService {
   List<Unit> get volumeUnits => [
         const Unit(
           id: 'cubic_m',
-          name: 'кубический метр',
           symbol: 'м³',
           category: UnitCategory.volume,
           toBaseUnit: 1.0,
@@ -104,21 +94,18 @@ class UnitConverterService {
         ),
         const Unit(
           id: 'liter',
-          name: 'литр',
           symbol: 'л',
           category: UnitCategory.volume,
           toBaseUnit: 0.001,
         ),
         const Unit(
           id: 'cubic_cm',
-          name: 'кубический сантиметр',
           symbol: 'см³',
           category: UnitCategory.volume,
           toBaseUnit: 0.000001,
         ),
         const Unit(
           id: 'cubic_dm',
-          name: 'кубический дециметр',
           symbol: 'дм³',
           category: UnitCategory.volume,
           toBaseUnit: 0.001,
@@ -129,7 +116,6 @@ class UnitConverterService {
   List<Unit> get weightUnits => [
         const Unit(
           id: 'kg',
-          name: 'килограмм',
           symbol: 'кг',
           category: UnitCategory.weight,
           toBaseUnit: 1.0,
@@ -137,21 +123,18 @@ class UnitConverterService {
         ),
         const Unit(
           id: 'gram',
-          name: 'грамм',
           symbol: 'г',
           category: UnitCategory.weight,
           toBaseUnit: 0.001,
         ),
         const Unit(
           id: 'ton',
-          name: 'тонна',
           symbol: 'т',
           category: UnitCategory.weight,
           toBaseUnit: 1000.0,
         ),
         const Unit(
           id: 'centner',
-          name: 'центнер',
           symbol: 'ц',
           category: UnitCategory.weight,
           toBaseUnit: 100.0,
@@ -162,7 +145,6 @@ class UnitConverterService {
   List<Unit> get quantityUnits => [
         const Unit(
           id: 'piece',
-          name: 'штука',
           symbol: 'шт',
           category: UnitCategory.quantity,
           toBaseUnit: 1.0,
@@ -170,35 +152,30 @@ class UnitConverterService {
         ),
         const Unit(
           id: 'roll',
-          name: 'рулон',
           symbol: 'рул',
           category: UnitCategory.quantity,
           toBaseUnit: 1.0,
         ),
         const Unit(
           id: 'bag',
-          name: 'мешок',
           symbol: 'меш',
           category: UnitCategory.quantity,
           toBaseUnit: 1.0,
         ),
         const Unit(
           id: 'sheet',
-          name: 'лист',
           symbol: 'лист',
           category: UnitCategory.quantity,
           toBaseUnit: 1.0,
         ),
         const Unit(
           id: 'pack',
-          name: 'упаковка',
           symbol: 'уп',
           category: UnitCategory.quantity,
           toBaseUnit: 1.0,
         ),
         const Unit(
           id: 'box',
-          name: 'коробка',
           symbol: 'кор',
           category: UnitCategory.quantity,
           toBaseUnit: 1.0,
@@ -295,27 +272,22 @@ class UnitConverterService {
   /// Популярные конвертации для быстрого доступа
   List<ConversionPreset> get popularPresets => [
         ConversionPreset(
-          name: 'м² → см²',
           fromUnit: findUnitById('sq_m')!,
           toUnit: findUnitById('sq_cm')!,
         ),
         ConversionPreset(
-          name: 'м → см',
           fromUnit: findUnitById('meter')!,
           toUnit: findUnitById('cm')!,
         ),
         ConversionPreset(
-          name: 'м³ → литры',
           fromUnit: findUnitById('cubic_m')!,
           toUnit: findUnitById('liter')!,
         ),
         ConversionPreset(
-          name: 'кг → г',
           fromUnit: findUnitById('kg')!,
           toUnit: findUnitById('gram')!,
         ),
         ConversionPreset(
-          name: 'т → кг',
           fromUnit: findUnitById('ton')!,
           toUnit: findUnitById('kg')!,
         ),
@@ -324,12 +296,10 @@ class UnitConverterService {
 
 /// Пресет конвертации для быстрого доступа
 class ConversionPreset {
-  final String name;
   final Unit fromUnit;
   final Unit toUnit;
 
   const ConversionPreset({
-    required this.name,
     required this.fromUnit,
     required this.toUnit,
   });

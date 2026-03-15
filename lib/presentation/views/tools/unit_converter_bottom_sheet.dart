@@ -118,6 +118,44 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
     });
   }
 
+  String _getCategoryIcon(UnitCategory category) {
+    switch (category) {
+      case UnitCategory.area:
+        return '📐';
+      case UnitCategory.length:
+        return '📏';
+      case UnitCategory.volume:
+        return '🧊';
+      case UnitCategory.weight:
+        return '⚖️';
+      case UnitCategory.quantity:
+        return '📦';
+    }
+  }
+
+  String _getCategoryLabel(AppLocalizations loc, UnitCategory category) {
+    switch (category) {
+      case UnitCategory.area:
+        return loc.translate('unit_converter.category.area');
+      case UnitCategory.length:
+        return loc.translate('unit_converter.category.length');
+      case UnitCategory.volume:
+        return loc.translate('unit_converter.category.volume');
+      case UnitCategory.weight:
+        return loc.translate('unit_converter.category.weight');
+      case UnitCategory.quantity:
+        return loc.translate('unit_converter.category.quantity');
+    }
+  }
+
+  String _getUnitName(AppLocalizations loc, Unit unit) {
+    return loc.translate('unit_converter.unit.${unit.id}');
+  }
+
+  String _getPresetLabel(ConversionPreset preset) {
+    return '${preset.fromUnit.symbol} → ${preset.toUnit.symbol}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
@@ -179,9 +217,9 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(category.icon),
+                        Text(_getCategoryIcon(category)),
                         const SizedBox(width: 8),
-                        Text(category.displayName),
+                        Text(_getCategoryLabel(loc, category)),
                       ],
                     ),
                   );
@@ -251,7 +289,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                         return DropdownMenuItem(
                           value: unit,
                           child: Text(
-                            '${unit.name} (${unit.symbol})',
+                            '${_getUnitName(loc, unit)} (${unit.symbol})',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
@@ -297,7 +335,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                         return DropdownMenuItem(
                           value: unit,
                           child: Text(
-                            '${unit.name} (${unit.symbol})',
+                            '${_getUnitName(loc, unit)} (${unit.symbol})',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           ),
@@ -410,7 +448,7 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
                       children: _service.popularPresets.map((preset) {
                         return ActionChip(
                           label: Text(
-                            preset.name,
+                            _getPresetLabel(preset),
                             overflow: TextOverflow.ellipsis,
                           ),
                           onPressed: () {
@@ -440,3 +478,8 @@ class _UnitConverterBottomSheetState extends State<UnitConverterBottomSheet>
     );
   }
 }
+
+
+
+
+

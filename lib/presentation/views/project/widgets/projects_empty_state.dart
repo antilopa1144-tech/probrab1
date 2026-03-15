@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../domain/models/project_v2.dart';
+import '../../../../core/localization/app_localizations.dart';
 
 /// Пустое состояние для списка проектов.
 class ProjectsEmptyState extends StatelessWidget {
@@ -17,20 +18,21 @@ class ProjectsEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     String message;
     IconData icon;
 
     if (searchQuery.isNotEmpty) {
-      message = 'Проекты не найдены';
+      message = loc.translate('project.empty.not_found');
       icon = Icons.search_off_rounded;
     } else if (showFavoritesOnly) {
-      message = 'Нет избранных проектов';
+      message = loc.translate('project.empty.no_favorites');
       icon = Icons.star_border_rounded;
     } else if (filterStatus != null) {
-      message = 'Нет проектов с этим статусом';
+      message = loc.translate('project.empty.no_status');
       icon = Icons.filter_list_off_rounded;
     } else {
-      message = 'Нет проектов';
+      message = loc.translate('project.empty.none');
       icon = Icons.folder_open_rounded;
     }
 
@@ -51,7 +53,7 @@ class ProjectsEmptyState extends StatelessWidget {
               filterStatus == null) ...[
             const SizedBox(height: 8),
             Text(
-              'Создайте первый проект',
+              loc.translate('project.empty.create_first'),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -62,3 +64,4 @@ class ProjectsEmptyState extends StatelessWidget {
     );
   }
 }
+

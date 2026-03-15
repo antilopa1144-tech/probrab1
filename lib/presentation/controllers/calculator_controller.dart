@@ -78,7 +78,10 @@ class CalculatorController {
       if (field.required) {
         final value = inputs[field.key];
         if (value == null || value == 0) {
-          return 'Поле ${field.labelKey} обязательно для заполнения';
+          return CalculationException.invalidInput(
+            definition.id,
+            'Поле "${FieldValidator.getDisplayName(field)}" обязательно для заполнения',
+          ).fallbackUserMessage;
         }
       }
     }

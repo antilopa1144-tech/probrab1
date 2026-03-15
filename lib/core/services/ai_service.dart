@@ -12,20 +12,38 @@ import 'tracker_service_web.dart'
 
 /// Исключение при превышении дневного лимита запросов к ИИ
 class AiDailyLimitException implements Exception {
-  final String message;
-  const AiDailyLimitException(this.message);
+  final String messageKey;
+  final Map<String, String> messageParams;
+  final String fallbackMessage;
+
+  const AiDailyLimitException(
+    this.messageKey, {
+    this.messageParams = const {},
+    required this.fallbackMessage,
+  });
+
+  String get message => fallbackMessage;
 
   @override
-  String toString() => message;
+  String toString() => fallbackMessage;
 }
 
 /// Исключение при ошибке API
 class AiApiException implements Exception {
-  final String message;
-  const AiApiException(this.message);
+  final String messageKey;
+  final Map<String, String> messageParams;
+  final String fallbackMessage;
+
+  const AiApiException(
+    this.messageKey, {
+    this.messageParams = const {},
+    required this.fallbackMessage,
+  });
+
+  String get message => fallbackMessage;
 
   @override
-  String toString() => message;
+  String toString() => fallbackMessage;
 }
 
 /// Результат ответа ИИ-прораба
@@ -92,6 +110,25 @@ class AiService {
   static const String _keyLastRequestDate = 'ai_last_request_date';
   static const String _keyHourlyTimestamps = 'ai_hourly_timestamps';
   static const String _keyProjectType = 'user_project_type';
+  static const String _defaultProjectTypeId = 'apartment';
+
+  static const Map<String, String> _projectTypeLabels = {
+    'apartment': 'Ремонт квартиры',
+    'house': 'Строительство дома',
+    'dacha': 'Дача / загородный дом',
+    'commercial': 'Коммерческое помещение',
+    'bath': 'Баня / сауна',
+    'garage': 'Гараж',
+  };
+
+  static const Map<String, String> _legacyProjectTypeIds = {
+    'Ремонт квартиры': 'apartment',
+    'Строительство дома': 'house',
+    'Дача / загородный дом': 'dacha',
+    'Коммерческое помещение': 'commercial',
+    'Баня / сауна': 'bath',
+    'Гараж': 'garage',
+  };
 
   // ---------------------------------------------------------------------------
   // Singleton
@@ -153,6 +190,7 @@ class AiService {
     String? calculatorName,
     String? calculationData,
     String? calculationHistory,
+    bool isHomeScreen = false,
   }) {
     final calcName = calculatorName ?? 'не выбран';
     final calcData = calculationData ?? 'нет данных';
@@ -162,6 +200,7 @@ class AiService {
       calculatorName: calcName,
       calculationData: calcData,
       calculationHistory: calculationHistory,
+      isHomeScreen: isHomeScreen,
     );
 
     _history.clear();
@@ -176,8 +215,8 @@ class AiService {
     required String calculatorName,
     required String calculationData,
     String? calculationHistory,
+    required bool isHomeScreen,
   }) {
-    final isHomeScreen = calculatorName == 'Главный экран';
     final hasData =
         calculationData != 'нет данных' && calculationData.isNotEmpty;
     final hasHistory =
@@ -296,10 +335,10 @@ $contextBlock
     }
 
     if (count >= _maxDailyRequests) {
-      throw const AiDailyLimitException(
-        'Всё, начальник, на сегодня хватит — '
-        '$_maxDailyRequests вопросов отработал. '
-        'Приходи завтра, голова пухнет!',
+      throw AiDailyLimitException(
+        'ai.limit_daily_reached',
+        messageParams: {'count': _maxDailyRequests.toString()},
+        fallbackMessage: 'Всё, начальник, на сегодня хватит — $_maxDailyRequests вопросов отработал. Приходи завтра, голова пухнет!',
       );
     }
   }
@@ -352,9 +391,9 @@ $contextBlock
       );
       final minutesLeft = resumeAt.difference(DateTime.now()).inMinutes + 1;
       throw AiDailyLimitException(
-        'Эй, начальник, полегче! '
-        'Давай передохнём $minutesLeft мин. — '
-        'а то мозги перегреются.',
+        'ai.limit_hourly_reached',
+        messageParams: {'minutes': minutesLeft.toString()},
+        fallbackMessage: 'Эй, начальник, полегче! Давай передохнём $minutesLeft мин. — а то мозги перегреются.',
       );
     }
   }
@@ -405,11 +444,35 @@ $contextBlock
   // ---------------------------------------------------------------------------
 
   String getProjectContext() {
-    return _prefs?.getString(_keyProjectType) ?? 'Ремонт квартиры';
+    final stored = _prefs?.getString(_keyProjectType)?.trim();
+    if (stored == null || stored.isEmpty) {
+      return _projectTypeLabels[_defaultProjectTypeId]!;
+    }
+
+    final normalizedId = _normalizeProjectTypeId(stored);
+    if (normalizedId != null) {
+      return _projectTypeLabels[normalizedId]!;
+    }
+
+    return stored;
+  }
+
+  String getProjectContextId() {
+    final stored = _prefs?.getString(_keyProjectType);
+    return _normalizeProjectTypeId(stored) ?? _defaultProjectTypeId;
   }
 
   Future<void> setProjectContext(String projectType) async {
-    await _prefs?.setString(_keyProjectType, projectType);
+    final normalized = _normalizeProjectTypeId(projectType) ?? projectType.trim();
+    await _prefs?.setString(_keyProjectType, normalized);
+  }
+
+  String? _normalizeProjectTypeId(String? value) {
+    if (value == null) return null;
+    final normalized = value.trim();
+    if (normalized.isEmpty) return null;
+    if (_projectTypeLabels.containsKey(normalized)) return normalized;
+    return _legacyProjectTypeIds[normalized];
   }
 
   // ---------------------------------------------------------------------------
@@ -514,11 +577,13 @@ $contextBlock
     required String calculatorName,
     required Map<String, dynamic> data,
     String? calculationHistory,
+    bool isHomeScreen = false,
   }) {
     _initChat(
       calculatorName: calculatorName,
       calculationData: _formatCalculationData(data),
       calculationHistory: calculationHistory,
+      isHomeScreen: isHomeScreen,
     );
   }
 
@@ -527,10 +592,14 @@ $contextBlock
     required String calculatorName,
     required Map<String, dynamic> data,
     String userQuestion = 'Проверь расчет и дай совет',
+    String? calculationHistory,
+    bool isHomeScreen = false,
   }) async {
     if (_apiKey.isEmpty) {
       throw const AiApiException(
-          'Михалыч пока не подключён. API-ключ не настроен.');
+        'ai.error_not_configured',
+        fallbackMessage: 'Михалыч пока не подключён. API-ключ не настроен.',
+      );
     }
 
     await checkDailyLimit();
@@ -541,7 +610,12 @@ $contextBlock
     TrackerService.trackAiChat(calculatorId: calculatorName);
 
     if (_systemPrompt == null) {
-      startChat(calculatorName: calculatorName, data: data);
+      startChat(
+        calculatorName: calculatorName,
+        data: data,
+        calculationHistory: calculationHistory,
+        isHomeScreen: isHomeScreen,
+      );
     }
 
     try {
@@ -566,7 +640,9 @@ $contextBlock
               '${response.body}');
         }
         throw const AiApiException(
-            'Михалыч на перекуре, связь барахлит. Попробуй позже.');
+          'ai.error_connection',
+          fallbackMessage: 'Михалыч на перекуре, связь барахлит. Попробуй позже.',
+        );
       }
 
       final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -581,7 +657,9 @@ $contextBlock
       if (text == null || text.isEmpty) {
         _removeLastUserMessage();
         throw const AiApiException(
-            'Михалыч задумался и ничего не ответил. Попробуй ещё раз.');
+          'ai.error_empty_response',
+          fallbackMessage: 'Михалыч задумался и ничего не ответил. Попробуй ещё раз.',
+        );
       }
 
       _history.add({'role': 'assistant', 'content': text});
@@ -594,11 +672,16 @@ $contextBlock
       _removeLastUserMessage();
       if (e is AiDailyLimitException || e is AiApiException) rethrow;
       if (e is TimeoutException) {
-        throw const AiApiException('Михалыч задумался слишком надолго.');
+        throw const AiApiException(
+          'ai.error_timeout',
+          fallbackMessage: 'Михалыч задумался слишком надолго.',
+        );
       }
       if (kDebugMode) debugPrint('AI error: $e');
       throw const AiApiException(
-          'Что-то пошло не так. Попробуй позже.');
+        'ai.error_generic',
+        fallbackMessage: 'Что-то пошло не так. Попробуй позже.',
+      );
     }
   }
 
@@ -612,9 +695,18 @@ $contextBlock
     required String calculatorName,
     required Map<String, dynamic> data,
     String userQuestion = 'Проверь расчет и дай совет',
+    String? calculationHistory,
+    bool isHomeScreen = false,
   }) {
     final controller = StreamController<String>();
-    _processStream(controller, calculatorName, data, userQuestion);
+    _processStream(
+      controller,
+      calculatorName,
+      data,
+      userQuestion,
+      calculationHistory,
+      isHomeScreen,
+    );
     return controller.stream;
   }
 
@@ -623,11 +715,15 @@ $contextBlock
     String calculatorName,
     Map<String, dynamic> data,
     String userQuestion,
+    String? calculationHistory,
+    bool isHomeScreen,
   ) async {
     // Проверки до начала стрима
     if (_apiKey.isEmpty) {
       controller.addError(const AiApiException(
-          'Михалыч пока не подключён. API-ключ не настроен.'));
+        'ai.error_not_configured',
+        fallbackMessage: 'Михалыч пока не подключён. API-ключ не настроен.',
+      ));
       unawaited(controller.close());
       return;
     }
@@ -645,7 +741,12 @@ $contextBlock
     }
 
     if (_systemPrompt == null) {
-      startChat(calculatorName: calculatorName, data: data);
+      startChat(
+        calculatorName: calculatorName,
+        data: data,
+        calculationHistory: calculationHistory,
+        isHomeScreen: isHomeScreen,
+      );
     }
 
     // Добавляем вопрос в историю
@@ -694,7 +795,9 @@ $contextBlock
         }
         if (!controller.isClosed) {
           controller.addError(const AiApiException(
-              'Михалыч на перекуре, связь барахлит. Попробуй позже.'));
+              'ai.error_connection',
+              fallbackMessage: 'Михалыч на перекуре, связь барахлит. Попробуй позже.',
+            ));
         }
         finish();
         return;
@@ -707,7 +810,9 @@ $contextBlock
         saveOrRollback();
         if (!controller.isClosed) {
           controller.addError(const AiApiException(
-              'Михалыч задумался слишком надолго. Попробуй ещё раз.'));
+            'ai.error_timeout',
+            fallbackMessage: 'Михалыч задумался слишком надолго. Попробуй ещё раз.',
+          ));
         }
         finish();
       });
@@ -756,7 +861,9 @@ $contextBlock
           if (kDebugMode) debugPrint('OpenRouter stream error: $e');
           if (!controller.isClosed) {
             controller.addError(const AiApiException(
-                'Михалыч на перекуре, связь барахлит. Попробуй позже.'));
+              'ai.error_connection',
+              fallbackMessage: 'Михалыч на перекуре, связь барахлит. Попробуй позже.',
+            ));
           }
           finish();
         },
@@ -778,7 +885,10 @@ $contextBlock
           controller.addError(e);
         } else {
           controller.addError(
-              const AiApiException('Связь оборвалась. Попробуй ещё раз.'));
+              const AiApiException(
+                'ai.error_stream_interrupted',
+                fallbackMessage: 'Связь оборвалась. Попробуй ещё раз.',
+              ));
         }
       }
       finish();
@@ -828,3 +938,5 @@ $contextBlock
   int get maxDailyRequests => _maxDailyRequests;
   int get maxHourlyRequests => _maxHourlyRequests;
 }
+
+

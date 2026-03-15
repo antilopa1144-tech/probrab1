@@ -78,7 +78,10 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
 
         expect(result.values['insulationArea'], greaterThan(0));
-        expect(result.values['gypsumArea'], equals(0.0)); // gypsum only for living
+        expect(
+          result.values['gypsumArea'],
+          equals(0.0),
+        ); // gypsum only for living
       });
 
       test('living attic: has insulation and gypsum', () {
@@ -115,7 +118,10 @@ void main() {
           greaterThan(lowRoof.values['roofArea']!),
         );
         // Floor areas should be same
-        expect(highRoof.values['floorArea'], equals(lowRoof.values['floorArea']));
+        expect(
+          highRoof.values['floorArea'],
+          equals(lowRoof.values['floorArea']),
+        );
       });
 
       test('roof multiplier calculation', () {
@@ -174,7 +180,10 @@ void main() {
 
         // Vapor barrier = insulation * 1.15
         final expectedVaporBarrier = result.values['insulationArea']! * 1.15;
-        expect(result.values['vaporBarrierArea'], closeTo(expectedVaporBarrier, 0.1));
+        expect(
+          result.values['vaporBarrierArea'],
+          closeTo(expectedVaporBarrier, 0.1),
+        );
       });
 
       test('no vapor barrier when disabled', () {
@@ -217,9 +226,7 @@ void main() {
       });
 
       test('no membrane when disabled', () {
-        final inputs = {
-          'needMembrane': 0.0,
-        };
+        final inputs = {'needMembrane': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -329,9 +336,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero length', () {
-        final inputs = {
-          'floorLength': 0.0,
-        };
+        final inputs = {'floorLength': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -340,9 +345,7 @@ void main() {
       });
 
       test('throws exception for negative length', () {
-        final inputs = {
-          'floorLength': -8.0,
-        };
+        final inputs = {'floorLength': -8.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -351,9 +354,7 @@ void main() {
       });
 
       test('throws exception for zero width', () {
-        final inputs = {
-          'floorWidth': 0.0,
-        };
+        final inputs = {'floorWidth': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -362,9 +363,7 @@ void main() {
       });
 
       test('throws exception for zero roof height', () {
-        final inputs = {
-          'roofHeight': 0.0,
-        };
+        final inputs = {'roofHeight': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -384,10 +383,34 @@ void main() {
           'needGypsum': 1.0,
         };
         final priceList = [
-          const PriceItem(sku: 'insulation', name: 'Утеплитель', price: 300.0, unit: 'м²', imageUrl: ''),
-          const PriceItem(sku: 'vapor_barrier', name: 'Пароизоляция', price: 50.0, unit: 'м²', imageUrl: ''),
-          const PriceItem(sku: 'membrane', name: 'Мембрана', price: 80.0, unit: 'м²', imageUrl: ''),
-          const PriceItem(sku: 'gypsum_board', name: 'Гипсокартон', price: 400.0, unit: 'м²', imageUrl: ''),
+          const PriceItem(
+            sku: 'insulation',
+            name: 'Утеплитель',
+            price: 300.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'vapor_barrier',
+            name: 'Пароизоляция',
+            price: 50.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'membrane',
+            name: 'Мембрана',
+            price: 80.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'gypsum_board',
+            name: 'Гипсокартон',
+            price: 400.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -397,10 +420,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'floorLength': 8.0,
-          'floorWidth': 6.0,
-        };
+        final inputs = {'floorLength': 8.0, 'floorWidth': 6.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -465,6 +485,24 @@ void main() {
         expect(result.values['vaporBarrierArea'], greaterThan(0));
         expect(result.values['membraneArea'], greaterThan(0));
         expect(result.values['gypsumArea'], greaterThan(0));
+      });
+    });
+    group('validation messages', () {
+      test('roof height uses shared helper', () {
+        expect(
+          () => calculator({
+            'floorLength': 8.0,
+            'floorWidth': 6.0,
+            'roofHeight': 0.0,
+          }, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Поле "высота крыши" должно быть больше нуля'),
+            ),
+          ),
+        );
       });
     });
   });

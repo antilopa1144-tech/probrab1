@@ -1,45 +1,12 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../../data/models/price_item.dart';
+import '../../../domain/usecases/calculate_terrace.dart';
 import '../../mixins/exportable_mixin.dart';
-import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-
-/// Helper class for accessing terrace calculator constants
-class _TerraceConstants {
-  final CalculatorConstants? _data;
-
-  _TerraceConstants(this._data);
-
-  double _getDouble(String category, String key, double defaultValue) {
-    return _data?.getDouble(category, key, defaultValue: defaultValue) ?? defaultValue;
-  }
-
-  // Margins
-  double get floorMargin => _getDouble('margins', 'floor_margin', 1.1);
-  double get roofMargin => _getDouble('margins', 'roof_margin', 1.2);
-  double get roofingMargin => _getDouble('margins', 'roofing_margin', 1.1);
-
-  // Floor materials
-  double get tileArea => _getDouble('floor_materials', 'tile_area', 0.25);
-  double get boardArea => _getDouble('floor_materials', 'board_area', 0.1);
-
-  // Railing
-  double get postStep => _getDouble('railing', 'post_step', 2.0);
-
-  // Roofing
-  double get polycarbonateSheetArea => _getDouble('roofing', 'polycarbonate_sheet_area', 6.0);
-  double get profiledSheetArea => _getDouble('roofing', 'profiled_sheet_area', 8.0);
-  double get areaPerPost => _getDouble('roofing', 'area_per_post', 9.0);
-
-  // Foundation
-  double get foundationWidth => _getDouble('foundation', 'post_width', 0.2);
-  double get foundationDepth => _getDouble('foundation', 'post_depth', 0.2);
-  double get foundationHeight => _getDouble('foundation', 'post_height', 0.5);
-}
 
 enum TerraceFloorType {
   decking,      // Декинг (существующий)
@@ -133,7 +100,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
   late _TerraceResult _result;
   late AppLocalizations _loc;
 
-  final _constants = _TerraceConstants(null);
+  final CalculateTerrace _calculator = CalculateTerrace();
 
   @override
   void initState() {
@@ -142,129 +109,55 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
     _result = _calculate();
   }
 
+  T _enumFromStoredIndex<T>(List<T> values, double? rawValue, T fallback, {bool oneBased = false}) {
+    if (rawValue == null) return fallback;
+    final index = rawValue.round() - (oneBased ? 1 : 0);
+    if (index < 0 || index >= values.length) return fallback;
+    return values[index];
+  }
+
   void _applyInitialInputs() {
     final initial = widget.initialInputs;
     if (initial == null) return;
 
-    if (initial['area'] != null) {
-      _area = initial['area']!.clamp(_minArea, _maxArea);
-    }
-    if (initial['floorType'] != null) {
-      final raw = initial['floorType']!.round().clamp(1, 3);
-      _floorType = TerraceFloorType.values[raw - 1];
-    }
-    if (initial['railing'] != null) {
-      _hasRailing = initial['railing']!.round() == 1;
-    }
-    if (initial['roof'] != null) {
-      _hasRoof = initial['roof']!.round() == 1;
-    }
-    if (initial['roofType'] != null) {
-      final raw = initial['roofType']!.round().clamp(1, 3);
-      _roofType = TerraceRoofType.values[raw - 1];
-    }
+    _inputMode = _enumFromStoredIndex(TerraceInputMode.values, initial['inputMode'], _inputMode);
+    if (initial['area'] != null) _area = initial['area']!.clamp(_minArea, _maxArea);
+    if (initial['length'] != null) _length = initial['length']!.clamp(1.0, 20.0);
+    if (initial['width'] != null) _width = initial['width']!.clamp(1.0, 20.0);
+    _floorType = _enumFromStoredIndex(TerraceFloorType.values, initial['floorType'], _floorType, oneBased: true);
+    if (initial['railing'] != null) _hasRailing = initial['railing']!.round() == 1;
+    if (initial['roof'] != null) _hasRoof = initial['roof']!.round() == 1;
+    _roofType = _enumFromStoredIndex(TerraceRoofType.values, initial['roofType'], _roofType, oneBased: true);
   }
 
-  double _getCalculatedArea() {
-    if (_inputMode == TerraceInputMode.manual) return _area;
-    return _length * _width;
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'inputMode': _inputMode.index.toDouble(),
+      'area': _area,
+      'length': _length,
+      'width': _width,
+      'floorType': (_floorType.index + 1).toDouble(),
+      'railing': _hasRailing ? 1.0 : 0.0,
+      'roof': _hasRoof ? 1.0 : 0.0,
+      'roofType': (_roofType.index + 1).toDouble(),
+    };
   }
 
   _TerraceResult _calculate() {
-    final area = _getCalculatedArea();
-
-    double deckingArea = 0.0;
-    int tilesNeeded = 0;
-    int deckingBoards = 0;
-
-    switch (_floorType) {
-      case TerraceFloorType.decking:
-        deckingArea = area * _constants.floorMargin;
-        break;
-      case TerraceFloorType.tile:
-        final tileArea = _constants.tileArea; // 50x50cm
-        tilesNeeded = (area / tileArea * _constants.floorMargin).ceil();
-        break;
-      case TerraceFloorType.board:
-        final boardArea = _constants.boardArea;
-        deckingBoards = (area / boardArea * _constants.floorMargin).ceil();
-        break;
-      case TerraceFloorType.porcelain:
-        const porcelainArea = 0.36; // 60x60cm
-        tilesNeeded = (area / porcelainArea * _constants.floorMargin).ceil();
-        break;
-      case TerraceFloorType.wpc:
-        deckingArea = area * _constants.floorMargin;
-        break;
-      case TerraceFloorType.solidWood:
-        deckingArea = area * _constants.floorMargin * 1.15; // Больше отходов
-        break;
-      case TerraceFloorType.rubberTiles:
-        const rubberArea = 0.25; // 50x50cm
-        tilesNeeded = (area / rubberArea * _constants.floorMargin).ceil();
-        break;
-    }
-
-    final perimeter = area > 0 ? sqrt(area) * 4 : 0.0;
-    final railingLength = _hasRailing ? perimeter : 0.0;
-    final railingPosts =
-        _hasRailing && perimeter > 0 ? (perimeter / _constants.postStep).ceil() : 0;
-
-    double roofArea = 0.0;
-    int polycarbonateSheets = 0;
-    int profiledSheets = 0;
-    double roofingMaterial = 0.0;
-    int roofPosts = 0;
-    double foundationVolume = 0.0;
-
-    if (_hasRoof) {
-      roofArea = area * _constants.roofMargin;
-
-      switch (_roofType) {
-        case TerraceRoofType.polycarbonate:
-          final sheetArea = _constants.polycarbonateSheetArea;
-          polycarbonateSheets = (roofArea / sheetArea * _constants.roofingMargin).ceil();
-          break;
-        case TerraceRoofType.profiledSheet:
-          final sheetArea = _constants.profiledSheetArea;
-          profiledSheets = (roofArea / sheetArea * _constants.roofingMargin).ceil();
-          break;
-        case TerraceRoofType.softRoof:
-          roofingMaterial = roofArea * _constants.roofingMargin;
-          break;
-        case TerraceRoofType.ondulin:
-          const ondSheetArea = 1.9; // Стандартный лист
-          profiledSheets = (roofArea / ondSheetArea * 1.15).ceil();
-          break;
-        case TerraceRoofType.metalTile:
-          roofingMaterial = roofArea * 1.2; // м²
-          break;
-        case TerraceRoofType.glass:
-          const glassSheetArea = 2.0;
-          polycarbonateSheets = (roofArea / glassSheetArea * _constants.roofingMargin).ceil();
-          break;
-      }
-
-      roofPosts = (area / _constants.areaPerPost).ceil();
-      foundationVolume = roofPosts *
-          _constants.foundationWidth *
-          _constants.foundationDepth *
-          _constants.foundationHeight;
-    }
-
+    final values = _calculator(_buildCalculationInputs(), <PriceItem>[]).values;
     return _TerraceResult(
-      area: area,
-      deckingArea: deckingArea,
-      tilesNeeded: tilesNeeded,
-      deckingBoards: deckingBoards,
-      railingLength: railingLength,
-      railingPosts: railingPosts,
-      roofArea: roofArea,
-      polycarbonateSheets: polycarbonateSheets,
-      profiledSheets: profiledSheets,
-      roofingMaterial: roofingMaterial,
-      roofPosts: roofPosts,
-      foundationVolume: foundationVolume,
+      area: values['area'] ?? 0,
+      deckingArea: values['deckingArea'] ?? 0,
+      tilesNeeded: (values['tilesNeeded'] ?? 0).round(),
+      deckingBoards: (values['deckingBoards'] ?? 0).round(),
+      railingLength: values['railingLength'] ?? 0,
+      railingPosts: (values['railingPosts'] ?? 0).round(),
+      roofArea: values['roofArea'] ?? 0,
+      polycarbonateSheets: (values['polycarbonateSheets'] ?? 0).round(),
+      profiledSheets: (values['profiledSheets'] ?? 0).round(),
+      roofingMaterial: values['roofingMaterial'] ?? 0,
+      roofPosts: (values['roofPosts'] ?? 0).round(),
+      foundationVolume: values['foundationVolume'] ?? 0,
     );
   }
 
@@ -342,16 +235,16 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
             .replaceFirst('{value}', _result.deckingBoards.toString()));
         break;
       case TerraceFloorType.porcelain:
-        buffer.writeln('${_loc.translate('terrace.floor.porcelain')}: ${_result.tilesNeeded} ${_loc.translate('common.pcs')}');
+        buffer.writeln(_loc.translate('terrace_calc.export.porcelain').replaceFirst('{value}', _result.tilesNeeded.toString()));
         break;
       case TerraceFloorType.wpc:
-        buffer.writeln('${_loc.translate('terrace.floor.wpc')}: ${_result.deckingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+        buffer.writeln(_loc.translate('terrace_calc.export.wpc').replaceFirst('{value}', _result.deckingArea.toStringAsFixed(1)));
         break;
       case TerraceFloorType.solidWood:
-        buffer.writeln('${_loc.translate('terrace.floor.solidWood')}: ${_result.deckingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+        buffer.writeln(_loc.translate('terrace_calc.export.solid_wood').replaceFirst('{value}', _result.deckingArea.toStringAsFixed(1)));
         break;
       case TerraceFloorType.rubberTiles:
-        buffer.writeln('${_loc.translate('terrace.floor.rubberTiles')}: ${_result.tilesNeeded} ${_loc.translate('common.pcs')}');
+        buffer.writeln(_loc.translate('terrace_calc.export.rubber_tiles').replaceFirst('{value}', _result.tilesNeeded.toString()));
         break;
     }
     if (_hasRailing) {
@@ -525,7 +418,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
                         ),
                       ),
                       Text(
-                        '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                        '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                         style: CalculatorDesignSystem.headlineMedium.copyWith(
                           color: accentColor,
                           fontWeight: FontWeight.bold,
@@ -1045,3 +938,5 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
     );
   }
 }
+
+

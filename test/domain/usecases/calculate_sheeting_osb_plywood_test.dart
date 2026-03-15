@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 import 'package:probrab_ai/domain/usecases/calculate_sheeting_osb_plywood.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
 
@@ -199,7 +200,10 @@ void main() {
       final result15 = calculator(inputs15, emptyPriceList);
 
       // С большим запасом нужно больше листов (или равно при малых площадях)
-      expect(result15.values['sheetsNeeded'], greaterThanOrEqualTo(result5.values['sheetsNeeded']!));
+      expect(
+        result15.values['sheetsNeeded'],
+        greaterThanOrEqualTo(result5.values['sheetsNeeded']!),
+      );
 
       // Материал с запасом отражается в итоговой площади
       expect(result5.values['materialArea'], equals(11.0));
@@ -241,7 +245,13 @@ void main() {
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<Exception>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "площадь" должно быть больше нуля'),
+          ),
+        ),
       );
     });
 
@@ -259,7 +269,13 @@ void main() {
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<Exception>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Необходимо указать площадь или размеры помещения'),
+          ),
+        ),
       );
     });
 
@@ -325,38 +341,64 @@ void main() {
       expect(result.values['materialArea'], equals(29.0));
     });
 
-    test('calculates different screw counts for different construction types', () {
-      final baseInputs = {
-        'inputMode': 1.0,
-        'area': 10.0,
-        'sheetSize': 1.0,
-        'thickness': 12.0,
-        'reserve': 10.0,
-      };
-      final emptyPriceList = <PriceItem>[];
+    test(
+      'calculates different screw counts for different construction types',
+      () {
+        final baseInputs = {
+          'inputMode': 1.0,
+          'area': 10.0,
+          'sheetSize': 1.0,
+          'thickness': 12.0,
+          'reserve': 10.0,
+        };
+        final emptyPriceList = <PriceItem>[];
 
-      final resultWalls = calculator({...baseInputs, 'constructionType': 1.0}, emptyPriceList);
-      final resultFloor = calculator({...baseInputs, 'constructionType': 2.0, 'reserve': 5.0}, emptyPriceList);
-      final resultRoof = calculator({...baseInputs, 'constructionType': 3.0, 'reserve': 12.0}, emptyPriceList);
-      final resultPartitions = calculator({...baseInputs, 'constructionType': 4.0}, emptyPriceList);
+        final resultWalls = calculator({
+          ...baseInputs,
+          'constructionType': 1.0,
+        }, emptyPriceList);
+        final resultFloor = calculator({
+          ...baseInputs,
+          'constructionType': 2.0,
+          'reserve': 5.0,
+        }, emptyPriceList);
+        final resultRoof = calculator({
+          ...baseInputs,
+          'constructionType': 3.0,
+          'reserve': 12.0,
+        }, emptyPriceList);
+        final resultPartitions = calculator({
+          ...baseInputs,
+          'constructionType': 4.0,
+        }, emptyPriceList);
 
-      // Перегородки требуют больше всего саморезов (27 шт/м² - с двух сторон)
-      expect(resultPartitions.values['screwsNeeded'], greaterThan(resultWalls.values['screwsNeeded']!));
-      expect(resultPartitions.values['screwsNeeded'], greaterThan(resultFloor.values['screwsNeeded']!));
-      expect(resultPartitions.values['screwsNeeded'], greaterThan(resultRoof.values['screwsNeeded']!));
+        // Перегородки требуют больше всего саморезов (27 шт/м² - с двух сторон)
+        expect(
+          resultPartitions.values['screwsNeeded'],
+          greaterThan(resultWalls.values['screwsNeeded']!),
+        );
+        expect(
+          resultPartitions.values['screwsNeeded'],
+          greaterThan(resultFloor.values['screwsNeeded']!),
+        );
+        expect(
+          resultPartitions.values['screwsNeeded'],
+          greaterThan(resultRoof.values['screwsNeeded']!),
+        );
 
-      // Стены: 23 шт/м² * 10 м² = 230
-      expect(resultWalls.values['screwsNeeded'], closeTo(230, 5));
+        // Стены: 23 шт/м² * 10 м² = 230
+        expect(resultWalls.values['screwsNeeded'], closeTo(230, 5));
 
-      // Пол: 18 шт/м² * 10 м² = 180
-      expect(resultFloor.values['screwsNeeded'], closeTo(180, 5));
+        // Пол: 18 шт/м² * 10 м² = 180
+        expect(resultFloor.values['screwsNeeded'], closeTo(180, 5));
 
-      // Крыша: 18 шт/м² * 10 м² = 180
-      expect(resultRoof.values['screwsNeeded'], closeTo(180, 5));
+        // Крыша: 18 шт/м² * 10 м² = 180
+        expect(resultRoof.values['screwsNeeded'], closeTo(180, 5));
 
-      // Перегородки больше всех: 27 шт/м² * 10 м² = 270
-      expect(resultPartitions.values['screwsNeeded'], closeTo(270, 5));
-    });
+        // Перегородки больше всех: 27 шт/м² * 10 м² = 270
+        expect(resultPartitions.values['screwsNeeded'], closeTo(270, 5));
+      },
+    );
 
     test('recommends thickness and flags low thickness by step', () {
       final inputs = {
@@ -511,6 +553,5 @@ void main() {
         expect(result.values['sheetsNeeded'], greaterThanOrEqualTo(12));
       });
     });
-
   });
 }

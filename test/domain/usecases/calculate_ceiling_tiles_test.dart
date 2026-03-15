@@ -23,9 +23,7 @@ void main() {
 
     test('calculates glue needed', () {
       final calculator = CalculateCeilingTiles();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -36,9 +34,7 @@ void main() {
 
     test('calculates primer needed', () {
       final calculator = CalculateCeilingTiles();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -49,9 +45,7 @@ void main() {
 
     test('uses default tile size when missing', () {
       final calculator = CalculateCeilingTiles();
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -78,14 +72,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateCeilingTiles();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "площадь" должно быть больше нуля'),
+          ),
+        ),
       );
     });
   });

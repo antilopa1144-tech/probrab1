@@ -5,28 +5,27 @@ import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculatePlaster', () {
-    test('calculates plaster needed correctly (default substrate + evenness)', () {
-      final calculator = CalculatePlaster();
-      final inputs = {
-        'area': 100.0,
-        'thickness': 10.0,
-        'type': 1.0, // гипсовая
-      };
-      final emptyPriceList = <PriceItem>[];
-      final result = calculator(inputs, emptyPriceList);
-      // Default: substrateType=1(бетон,1.0×), wallEvenness=1(ровная,1.0×)
-      // 100 * 8.5 * 1.0 * 1.0 * 1.0 * 1.1 = 935 кг
-      expect(result.values['plasterKg'], closeTo(935, 10));
-      expect(result.values['plasterBags'], equals(32)); // 935/30 = 31.2 → 32
-    });
+    test(
+      'calculates plaster needed correctly (default substrate + evenness)',
+      () {
+        final calculator = CalculatePlaster();
+        final inputs = {
+          'area': 100.0,
+          'thickness': 10.0,
+          'type': 1.0, // гипсовая
+        };
+        final emptyPriceList = <PriceItem>[];
+        final result = calculator(inputs, emptyPriceList);
+        // Default: substrateType=1(бетон,1.0×), wallEvenness=1(ровная,1.0×)
+        // 100 * 8.5 * 1.0 * 1.0 * 1.0 * 1.1 = 935 кг
+        expect(result.values['plasterKg'], closeTo(935, 10));
+        expect(result.values['plasterBags'], equals(32)); // 935/30 = 31.2 → 32
+      },
+    );
 
     test('calculates cement plaster correctly', () {
       final calculator = CalculatePlaster();
-      final inputs = {
-        'area': 50.0,
-        'thickness': 20.0,
-        'type': 2.0,
-      };
+      final inputs = {'area': 50.0, 'thickness': 20.0, 'type': 2.0};
       final emptyPriceList = <PriceItem>[];
       final result = calculator(inputs, emptyPriceList);
       // 50 * 17.0 * (20/10) * 1.0 * 1.0 * 1.1 = 1870 кг
@@ -38,7 +37,10 @@ void main() {
       final calculator = CalculatePlaster();
       final inputs = {'area': 0.0, 'thickness': 10.0};
       final emptyPriceList = <PriceItem>[];
-      expect(() => calculator(inputs, emptyPriceList), throwsA(isA<CalculationException>()));
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(isA<CalculationException>()),
+      );
     });
 
     test('uses default values when missing', () {
@@ -99,7 +101,10 @@ void main() {
       final emptyPriceList = <PriceItem>[];
 
       // <=30 мм → нет сетки
-      var result = calculator({'area': 50.0, 'thickness': 30.0}, emptyPriceList);
+      var result = calculator({
+        'area': 50.0,
+        'thickness': 30.0,
+      }, emptyPriceList);
       expect(result.values.containsKey('meshArea'), isFalse);
 
       // >30 мм → сетка
@@ -115,15 +120,23 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final resultConcrete = calculator({
-          'area': 50.0, 'thickness': 20.0, 'type': 1.0, 'substrateType': 1.0,
+          'area': 50.0,
+          'thickness': 20.0,
+          'type': 1.0,
+          'substrateType': 1.0,
         }, emptyPriceList);
 
         final resultOldBrick = calculator({
-          'area': 50.0, 'thickness': 20.0, 'type': 1.0, 'substrateType': 3.0,
+          'area': 50.0,
+          'thickness': 20.0,
+          'type': 1.0,
+          'substrateType': 3.0,
         }, emptyPriceList);
 
         // Old brick = 1.3×, concrete = 1.0×
-        final ratio = resultOldBrick.values['plasterKg']! / resultConcrete.values['plasterKg']!;
+        final ratio =
+            resultOldBrick.values['plasterKg']! /
+            resultConcrete.values['plasterKg']!;
         expect(ratio, closeTo(1.3, 0.01));
       });
 
@@ -132,14 +145,22 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final resultConcrete = calculator({
-          'area': 50.0, 'thickness': 15.0, 'type': 1.0, 'substrateType': 1.0,
+          'area': 50.0,
+          'thickness': 15.0,
+          'type': 1.0,
+          'substrateType': 1.0,
         }, emptyPriceList);
 
         final resultGasBlock = calculator({
-          'area': 50.0, 'thickness': 15.0, 'type': 1.0, 'substrateType': 4.0,
+          'area': 50.0,
+          'thickness': 15.0,
+          'type': 1.0,
+          'substrateType': 4.0,
         }, emptyPriceList);
 
-        final ratio = resultGasBlock.values['plasterKg']! / resultConcrete.values['plasterKg']!;
+        final ratio =
+            resultGasBlock.values['plasterKg']! /
+            resultConcrete.values['plasterKg']!;
         expect(ratio, closeTo(1.25, 0.01));
       });
 
@@ -148,7 +169,9 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator({
-          'area': 50.0, 'thickness': 10.0, 'substrateType': 1.0,
+          'area': 50.0,
+          'thickness': 10.0,
+          'substrateType': 1.0,
         }, emptyPriceList);
         expect(result.values['primerType'], equals(2)); // betonkontakt
         // 50 * 0.3 * 1.1 = 16.5 → ceil = 17
@@ -160,7 +183,9 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator({
-          'area': 50.0, 'thickness': 10.0, 'substrateType': 2.0,
+          'area': 50.0,
+          'thickness': 10.0,
+          'substrateType': 2.0,
         }, emptyPriceList);
         expect(result.values['primerType'], equals(1)); // deep penetration
         // 50 * 0.1 * 1.1 = 5.5 → ceil = 6
@@ -174,14 +199,21 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final resultEven = calculator({
-          'area': 50.0, 'thickness': 20.0, 'type': 1.0, 'wallEvenness': 1.0,
+          'area': 50.0,
+          'thickness': 20.0,
+          'type': 1.0,
+          'wallEvenness': 1.0,
         }, emptyPriceList);
 
         final resultUneven = calculator({
-          'area': 50.0, 'thickness': 20.0, 'type': 1.0, 'wallEvenness': 2.0,
+          'area': 50.0,
+          'thickness': 20.0,
+          'type': 1.0,
+          'wallEvenness': 2.0,
         }, emptyPriceList);
 
-        final ratio = resultUneven.values['plasterKg']! / resultEven.values['plasterKg']!;
+        final ratio =
+            resultUneven.values['plasterKg']! / resultEven.values['plasterKg']!;
         expect(ratio, closeTo(1.15, 0.01));
       });
 
@@ -190,14 +222,22 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final resultEven = calculator({
-          'area': 50.0, 'thickness': 20.0, 'type': 1.0, 'wallEvenness': 1.0,
+          'area': 50.0,
+          'thickness': 20.0,
+          'type': 1.0,
+          'wallEvenness': 1.0,
         }, emptyPriceList);
 
         final resultVeryUneven = calculator({
-          'area': 50.0, 'thickness': 20.0, 'type': 1.0, 'wallEvenness': 3.0,
+          'area': 50.0,
+          'thickness': 20.0,
+          'type': 1.0,
+          'wallEvenness': 3.0,
         }, emptyPriceList);
 
-        final ratio = resultVeryUneven.values['plasterKg']! / resultEven.values['plasterKg']!;
+        final ratio =
+            resultVeryUneven.values['plasterKg']! /
+            resultEven.values['plasterKg']!;
         expect(ratio, closeTo(1.30, 0.01));
       });
     });
@@ -208,16 +248,23 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final resultBase = calculator({
-          'area': 50.0, 'thickness': 20.0, 'type': 1.0,
-          'substrateType': 1.0, 'wallEvenness': 1.0,
+          'area': 50.0,
+          'thickness': 20.0,
+          'type': 1.0,
+          'substrateType': 1.0,
+          'wallEvenness': 1.0,
         }, emptyPriceList);
 
         final resultWorst = calculator({
-          'area': 50.0, 'thickness': 20.0, 'type': 1.0,
-          'substrateType': 3.0, 'wallEvenness': 3.0,
+          'area': 50.0,
+          'thickness': 20.0,
+          'type': 1.0,
+          'substrateType': 3.0,
+          'wallEvenness': 3.0,
         }, emptyPriceList);
 
-        final ratio = resultWorst.values['plasterKg']! / resultBase.values['plasterKg']!;
+        final ratio =
+            resultWorst.values['plasterKg']! / resultBase.values['plasterKg']!;
         expect(ratio, closeTo(1.69, 0.02));
       });
     });
@@ -227,7 +274,10 @@ void main() {
         final calculator = CalculatePlaster();
         final emptyPriceList = <PriceItem>[];
 
-        var result = calculator({'area': 50.0, 'thickness': 40.0}, emptyPriceList);
+        var result = calculator({
+          'area': 50.0,
+          'thickness': 40.0,
+        }, emptyPriceList);
         expect(result.values.containsKey('warningThickLayer'), isFalse);
 
         result = calculator({'area': 50.0, 'thickness': 41.0}, emptyPriceList);
@@ -239,15 +289,19 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         var result = calculator({
-          'area': 50.0, 'thickness': 20.0,
-          'substrateType': 3.0, 'wallEvenness': 3.0,
+          'area': 50.0,
+          'thickness': 20.0,
+          'substrateType': 3.0,
+          'wallEvenness': 3.0,
         }, emptyPriceList);
         expect(result.values['tipObryzg'], equals(1.0));
 
         // Not triggered for other combos
         result = calculator({
-          'area': 50.0, 'thickness': 20.0,
-          'substrateType': 3.0, 'wallEvenness': 2.0,
+          'area': 50.0,
+          'thickness': 20.0,
+          'substrateType': 3.0,
+          'wallEvenness': 2.0,
         }, emptyPriceList);
         expect(result.values.containsKey('tipObryzg'), isFalse);
       });
@@ -264,11 +318,24 @@ void main() {
           'thickness': 20.0,
           'type': 1.0,
           'substrateType': 2.0, // новый кирпич 1.15×
-          'wallEvenness': 2.0,  // неровная 1.15×
+          'wallEvenness': 2.0, // неровная 1.15×
         }, emptyPriceList);
 
         // 20 * 8.5 * 2.0 * 1.15 * 1.15 * 1.1 = 493.35 кг
         expect(result.values['plasterKg'], closeTo(493, 30));
+      });
+    });
+
+    group('validation messages', () {
+      test('area max uses shared helper', () {
+        final calculator = CalculatePlaster();
+
+        final error = calculator.validateInputs({
+          'area': 100001.0,
+          'thickness': 10.0,
+        });
+
+        expect(error, equals('Поле "площадь" должно быть не больше 100000 м²'));
       });
     });
   });

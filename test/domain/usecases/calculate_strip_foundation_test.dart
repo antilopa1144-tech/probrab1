@@ -26,11 +26,7 @@ void main() {
     });
 
     test('calculates rebar weight from raw volume', () {
-      final inputs = {
-        'perimeter': 40.0,
-        'width': 0.4,
-        'height': 0.8,
-      };
+      final inputs = {'perimeter': 40.0, 'width': 0.4, 'height': 0.8};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -41,11 +37,7 @@ void main() {
     });
 
     test('calculates cement bags from raw volume', () {
-      final inputs = {
-        'perimeter': 40.0,
-        'width': 0.4,
-        'height': 0.8,
-      };
+      final inputs = {'perimeter': 40.0, 'width': 0.4, 'height': 0.8};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -66,11 +58,7 @@ void main() {
     });
 
     test('calculates total price with price list', () {
-      final inputs = {
-        'perimeter': 40.0,
-        'width': 0.4,
-        'height': 0.8,
-      };
+      final inputs = {'perimeter': 40.0, 'width': 0.4, 'height': 0.8};
       final priceList = [
         PriceItem(
           sku: 'concrete',
@@ -88,11 +76,7 @@ void main() {
     });
 
     test('returns null price when price list is empty', () {
-      final inputs = {
-        'perimeter': 40.0,
-        'width': 0.4,
-        'height': 0.8,
-      };
+      final inputs = {'perimeter': 40.0, 'width': 0.4, 'height': 0.8};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -127,6 +111,64 @@ void main() {
       // Объём = 100 * 0.5 * 1.0 * 1.05 (запас 5%) = 52.5 м³
       expect(result.values['concreteVolume'], closeTo(52.5, 2.0));
     });
+
+    test('supports screen house-dimensions path with internal walls', () {
+      final inputs = {
+        'houseLength': 10.0,
+        'houseWidth': 8.0,
+        'width': 0.4,
+        'height': 0.8,
+        'hasInternalWalls': 1.0,
+        'internalWallsLength': 8.0,
+      };
+
+      final result = calculator(inputs, <PriceItem>[]);
+
+      expect(result.values['area'], equals(80.0));
+      expect(result.values['outerPerimeter'], equals(36.0));
+      expect(result.values['perimeter'], equals(44.0));
+      expect(result.values['stripVolume'], closeTo(14.08, 0.01));
+      expect(result.values['concreteVolume'], closeTo(14.784, 0.05));
+    });
+
+    test('supports prefab path and disables monolithic materials', () {
+      final inputs = {
+        'houseLength': 10.0,
+        'houseWidth': 8.0,
+        'width': 0.4,
+        'height': 0.8,
+        'foundationType': 1.0,
+        'needWaterproof': 1.0,
+        'needInsulation': 1.0,
+      };
+
+      final result = calculator(inputs, <PriceItem>[]);
+
+      expect(result.values['fbsBlocksCount'], greaterThan(0));
+      expect(result.values['rebarWeight'], equals(0.0));
+      expect(result.values['formworkArea'], equals(0.0));
+      expect(result.values['insulationArea'], closeTo(31.68, 0.1));
+      expect(result.values['concreteVolume'], closeTo(0.28, 0.05));
+    });
+
+    group('validation messages', () {
+      test('house dimensions or area requirement uses shared helper', () {
+        final calculator = CalculateStripFoundation();
+
+        final error = calculator.validateInputs({
+          'houseLength': 0.0,
+          'houseWidth': 0.0,
+          'area': 0.0,
+          'perimeter': 0.0,
+          'width': 0.4,
+          'height': 0.8,
+        });
+
+        expect(
+          error,
+          equals('Необходимо указать размеры дома, площадь или периметр'),
+        );
+      });
+    });
   });
 }
-// ignore_for_file: prefer_const_constructors

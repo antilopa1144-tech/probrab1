@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../domain/models/project_v2.dart';
 import '../../../../domain/models/checklist.dart';
 import '../../../../data/repositories/checklist_repository.dart';
@@ -81,6 +82,7 @@ class _ProjectInfoSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final dateFormat = DateFormat('dd MMMM yyyy', 'ru');
 
     return Card(
@@ -96,7 +98,7 @@ class _ProjectInfoSection extends StatelessWidget {
                 Icon(Icons.info_outline, color: theme.colorScheme.primary),
                 const SizedBox(width: 12),
                 Text(
-                  'Информация',
+                  loc.translate('project.info'),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -108,7 +110,7 @@ class _ProjectInfoSection extends StatelessWidget {
             // Статус
             _InfoRow(
               icon: Icons.flag_outlined,
-              label: 'Статус',
+              label: loc.translate('project.status_label'),
               value: _StatusChip(status: project.status),
             ),
 
@@ -117,7 +119,7 @@ class _ProjectInfoSection extends StatelessWidget {
               const SizedBox(height: 12),
               _InfoRow(
                 icon: Icons.location_on_outlined,
-                label: 'Адрес',
+                label: loc.translate('project.address_label'),
                 value: Text(project.address!),
               ),
             ],
@@ -127,7 +129,7 @@ class _ProjectInfoSection extends StatelessWidget {
               const SizedBox(height: 12),
               _InfoRow(
                 icon: Icons.event_outlined,
-                label: 'Дедлайн',
+                label: loc.translate('project.deadline_label'),
                 value: Row(
                   children: [
                     Text(dateFormat.format(project.deadline!)),
@@ -184,13 +186,13 @@ class _ProjectInfoSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Создан: ${DateFormat('dd.MM.yyyy').format(project.createdAt)}',
+                  loc.translate('project.created_label').replaceFirst('{date}', DateFormat('dd.MM.yyyy').format(project.createdAt)),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
                 Text(
-                  'Обновлён: ${DateFormat('dd.MM.yyyy').format(project.updatedAt)}',
+                  loc.translate('project.updated_label').replaceFirst('{date}', DateFormat('dd.MM.yyyy').format(project.updatedAt)),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -262,7 +264,7 @@ class _StatusChip extends StatelessWidget {
         size: 18,
         color: Colors.white,
       ),
-      label: Text(_getStatusLabel(status)),
+      label: Text(_getStatusLabel(context, status)),
       backgroundColor: _getStatusColor(status),
       labelStyle: const TextStyle(
         color: Colors.white,
@@ -306,20 +308,21 @@ class _StatusChip extends StatelessWidget {
     }
   }
 
-  String _getStatusLabel(ProjectStatus status) {
+  String _getStatusLabel(BuildContext context, ProjectStatus status) {
+    final loc = AppLocalizations.of(context);
     switch (status) {
       case ProjectStatus.planning:
-        return 'Планирование';
+        return loc.translate('project.status.planning');
       case ProjectStatus.inProgress:
-        return 'В работе';
+        return loc.translate('project.status.in_progress');
       case ProjectStatus.onHold:
-        return 'На паузе';
+        return loc.translate('project.status.on_hold_alt');
       case ProjectStatus.completed:
-        return 'Завершён';
+        return loc.translate('project.status.completed');
       case ProjectStatus.cancelled:
-        return 'Отменён';
+        return loc.translate('project.status.cancelled');
       case ProjectStatus.problem:
-        return 'Проблема';
+        return loc.translate('project.status.problem');
     }
   }
 }
@@ -345,6 +348,7 @@ class _ProjectTasksSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final calculations = project.calculations.toList();
 
     return Card(
@@ -363,7 +367,7 @@ class _ProjectTasksSection extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Задачи',
+                  loc.translate('project.calculations'),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -378,7 +382,7 @@ class _ProjectTasksSection extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline),
                   onPressed: onAddCalculation,
-                  tooltip: 'Добавить расчёт',
+                  tooltip: loc.translate('project.add_calculation'),
                 ),
               ],
             ),
@@ -400,14 +404,14 @@ class _ProjectTasksSection extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Нет расчётов',
+                        loc.translate('project.empty_calculations'),
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Добавьте расчёт из калькулятора',
+                        loc.translate('project.empty_calculations_hint'),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -453,6 +457,7 @@ class _ProjectChecklistsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final repository = ref.watch(checklistRepositoryProvider);
     final checklistsAsync = ref.watch(projectChecklistsProvider(projectId));
 
@@ -478,7 +483,7 @@ class _ProjectChecklistsSection extends ConsumerWidget {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Чек-листы',
+                      loc.translate('project.checklists'),
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -494,13 +499,13 @@ class _ProjectChecklistsSection extends ConsumerWidget {
                     IconButton(
                       icon: const Icon(Icons.library_add_rounded),
                       onPressed: () => _addChecklistFromTemplate(context, ref),
-                      tooltip: 'Создать из шаблона',
+                      tooltip: loc.translate('project.create_checklist_from_template'),
                     ),
                     // Кнопка создания пустого
                     IconButton(
                       icon: const Icon(Icons.add_circle_outline),
                       onPressed: () => _addChecklist(context, ref),
-                      tooltip: 'Создать пустой чек-лист',
+                      tooltip: loc.translate('project.create_empty_checklist'),
                     ),
                   ],
                 ),
@@ -531,7 +536,7 @@ class _ProjectChecklistsSection extends ConsumerWidget {
                                     ),
                                   ),
                                   Text(
-                                    'задач выполнено',
+                                    loc.translate('project.dashboard.tasks_completed'),
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: theme.colorScheme.onSurfaceVariant,
                                     ),
@@ -593,6 +598,7 @@ class _ProjectChecklistsSection extends ConsumerWidget {
 
   Future<void> _addChecklistFromTemplate(BuildContext context, WidgetRef ref) async {
     // Импортируем CreateChecklistBottomSheet
+    final loc = AppLocalizations.of(context);
     final checklist = await CreateChecklistBottomSheet.show(
       context,
       projectId: projectId,
@@ -601,9 +607,9 @@ class _ProjectChecklistsSection extends ConsumerWidget {
     if (checklist != null && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Чек-лист "${checklist.name}" создан из шаблона'),
+          content: Text(loc.translate('project.checklist_created_from_template').replaceFirst('{name}', checklist.name)),
           action: SnackBarAction(
-            label: 'Открыть',
+            label: loc.translate('common.open'),
             onPressed: () => _openChecklist(context, checklist),
           ),
         ),
@@ -615,12 +621,13 @@ class _ProjectChecklistsSection extends ConsumerWidget {
     final nameController = TextEditingController();
     final descController = TextEditingController();
     ChecklistCategory selectedCategory = ChecklistCategory.general;
+    final loc = AppLocalizations.of(context);
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('Новый чек-лист'),
+          title: Text(loc.translate('project.new_checklist')),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -628,9 +635,9 @@ class _ProjectChecklistsSection extends ConsumerWidget {
               children: [
                 TextField(
                   controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Название',
-                    hintText: 'Например: Ремонт ванной',
+                  decoration: InputDecoration(
+                    labelText: loc.translate('project.name'),
+                    hintText: loc.translate('project.name_example_bathroom'),
                   ),
                   autofocus: true,
                   textCapitalization: TextCapitalization.sentences,
@@ -638,15 +645,15 @@ class _ProjectChecklistsSection extends ConsumerWidget {
                 const SizedBox(height: 16),
                 TextField(
                   controller: descController,
-                  decoration: const InputDecoration(
-                    labelText: 'Описание (необязательно)',
+                  decoration: InputDecoration(
+                    labelText: loc.translate('project.description_optional'),
                   ),
                   maxLines: 2,
                   textCapitalization: TextCapitalization.sentences,
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Категория',
+                  loc.translate('project.category'),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 8),
@@ -673,7 +680,7 @@ class _ProjectChecklistsSection extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Отмена'),
+              child: Text(loc.translate('button.cancel')),
             ),
             FilledButton(
               onPressed: () {
@@ -685,7 +692,7 @@ class _ProjectChecklistsSection extends ConsumerWidget {
                   });
                 }
               },
-              child: const Text('Создать'),
+              child: Text(loc.translate('button.create')),
             ),
           ],
         ),
@@ -732,24 +739,25 @@ class _ProjectChecklistsSection extends ConsumerWidget {
     WidgetRef ref,
     RenovationChecklist checklist,
   ) async {
+    final loc = AppLocalizations.of(context);
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Удалить чек-лист?'),
+        title: Text(loc.translate('project.delete_checklist_title')),
         content: Text(
-          'Чек-лист "${checklist.name}" будет удалён безвозвратно.',
+          loc.translate('project.delete_checklist_message').replaceFirst('{name}', checklist.name),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Отмена'),
+            child: Text(loc.translate('button.cancel')),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Удалить'),
+            child: Text(loc.translate('button.delete')),
           ),
         ],
       ),
@@ -761,7 +769,7 @@ class _ProjectChecklistsSection extends ConsumerWidget {
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Чек-лист удалён')),
+          SnackBar(content: Text(loc.translate('checklist.deleted'))),
         );
       }
     }
@@ -867,3 +875,4 @@ class _ChecklistCard extends StatelessWidget {
     );
   }
 }
+

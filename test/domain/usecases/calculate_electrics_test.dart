@@ -21,10 +21,7 @@ void main() {
 
     test('calculates switches automatically', () {
       final calculator = CalculateElectrics();
-      final inputs = {
-        'area': 40.0,
-        'rooms': 3.0,
-      };
+      final inputs = {'area': 40.0, 'rooms': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -35,11 +32,7 @@ void main() {
 
     test('uses provided sockets and switches', () {
       final calculator = CalculateElectrics();
-      final inputs = {
-        'area': 40.0,
-        'sockets': 15.0,
-        'switches': 8.0,
-      };
+      final inputs = {'area': 40.0, 'sockets': 15.0, 'switches': 8.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -50,11 +43,7 @@ void main() {
 
     test('calculates wire length', () {
       final calculator = CalculateElectrics();
-      final inputs = {
-        'area': 40.0,
-        'sockets': 10.0,
-        'switches': 5.0,
-      };
+      final inputs = {'area': 40.0, 'sockets': 10.0, 'switches': 5.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -65,11 +54,7 @@ void main() {
 
     test('calculates cable channel length', () {
       final calculator = CalculateElectrics();
-      final inputs = {
-        'area': 40.0,
-        'sockets': 10.0,
-        'switches': 5.0,
-      };
+      final inputs = {'area': 40.0, 'sockets': 10.0, 'switches': 5.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -80,10 +65,7 @@ void main() {
 
     test('calculates circuit breakers', () {
       final calculator = CalculateElectrics();
-      final inputs = {
-        'area': 40.0,
-        'rooms': 3.0,
-      };
+      final inputs = {'area': 40.0, 'rooms': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -94,10 +76,7 @@ void main() {
 
     test('calculates junction boxes', () {
       final calculator = CalculateElectrics();
-      final inputs = {
-        'area': 40.0,
-        'rooms': 3.0,
-      };
+      final inputs = {'area': 40.0, 'rooms': 3.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -108,9 +87,7 @@ void main() {
 
     test('uses default values when missing', () {
       final calculator = CalculateElectrics();
-      final inputs = {
-        'area': 40.0,
-      };
+      final inputs = {'area': 40.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -122,14 +99,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateElectrics();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "площадь" должно быть больше нуля'),
+          ),
+        ),
       );
     });
   });

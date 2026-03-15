@@ -80,7 +80,9 @@ void main() {
 
         // 2-brick wall should need ~4x more than 0.5-brick (204/51 = 4)
         // Due to ceiling rounding, allow small tolerance
-        final ratio = twoResult.values['bricksNeeded']! / halfResult.values['bricksNeeded']!;
+        final ratio =
+            twoResult.values['bricksNeeded']! /
+            halfResult.values['bricksNeeded']!;
         expect(ratio, closeTo(4.0, 0.01));
       });
     });
@@ -154,11 +156,7 @@ void main() {
       });
 
       test('calculates mortar bags with 8% reserve', () {
-        final inputs = {
-          'area': 20.0,
-          'brickType': 0.0,
-          'wallThickness': 1.0,
-        };
+        final inputs = {'area': 20.0, 'brickType': 0.0, 'wallThickness': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -170,11 +168,7 @@ void main() {
 
     group('Brick type outputs', () {
       test('returns correct brick dimensions for single', () {
-        final inputs = {
-          'area': 10.0,
-          'brickType': 0.0,
-          'wallThickness': 1.0,
-        };
+        final inputs = {'area': 10.0, 'brickType': 0.0, 'wallThickness': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -184,11 +178,7 @@ void main() {
       });
 
       test('returns correct brick dimensions for oneAndHalf', () {
-        final inputs = {
-          'area': 10.0,
-          'brickType': 1.0,
-          'wallThickness': 1.0,
-        };
+        final inputs = {'area': 10.0, 'brickType': 1.0, 'wallThickness': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -198,11 +188,7 @@ void main() {
       });
 
       test('returns correct brick dimensions for double', () {
-        final inputs = {
-          'area': 10.0,
-          'brickType': 2.0,
-          'wallThickness': 1.0,
-        };
+        final inputs = {'area': 10.0, 'brickType': 2.0, 'wallThickness': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -228,34 +214,37 @@ void main() {
       // Test matrix: all combinations of brick type and wall thickness
       final testCases = <(int, int, int)>[
         // (brickType, wallThickness, expectedBricksPerSqm)
-        (0, 0, 51),   // single, 0.5 brick
-        (0, 1, 102),  // single, 1 brick
-        (0, 2, 153),  // single, 1.5 bricks
-        (0, 3, 204),  // single, 2 bricks
-        (1, 0, 39),   // oneAndHalf, 0.5 brick
-        (1, 1, 78),   // oneAndHalf, 1 brick
-        (1, 2, 117),  // oneAndHalf, 1.5 bricks
-        (1, 3, 156),  // oneAndHalf, 2 bricks
-        (2, 0, 26),   // double, 0.5 brick
-        (2, 1, 52),   // double, 1 brick
-        (2, 2, 78),   // double, 1.5 bricks
-        (2, 3, 104),  // double, 2 bricks
+        (0, 0, 51), // single, 0.5 brick
+        (0, 1, 102), // single, 1 brick
+        (0, 2, 153), // single, 1.5 bricks
+        (0, 3, 204), // single, 2 bricks
+        (1, 0, 39), // oneAndHalf, 0.5 brick
+        (1, 1, 78), // oneAndHalf, 1 brick
+        (1, 2, 117), // oneAndHalf, 1.5 bricks
+        (1, 3, 156), // oneAndHalf, 2 bricks
+        (2, 0, 26), // double, 0.5 brick
+        (2, 1, 52), // double, 1 brick
+        (2, 2, 78), // double, 1.5 bricks
+        (2, 3, 104), // double, 2 bricks
       ];
 
       for (final (brickType, wallThickness, expectedPerSqm) in testCases) {
-        test('brickType=$brickType, thickness=$wallThickness → $expectedPerSqm/m²', () {
-          final inputs = {
-            'area': 10.0,
-            'brickType': brickType.toDouble(),
-            'wallThickness': wallThickness.toDouble(),
-          };
+        test(
+          'brickType=$brickType, thickness=$wallThickness → $expectedPerSqm/m²',
+          () {
+            final inputs = {
+              'area': 10.0,
+              'brickType': brickType.toDouble(),
+              'wallThickness': wallThickness.toDouble(),
+            };
 
-          final result = calculator(inputs, emptyPriceList);
+            final result = calculator(inputs, emptyPriceList);
 
-          // 10 m² * expectedPerSqm * 1.05 margin
-          final expected = (10.0 * expectedPerSqm * 1.05).ceil();
-          expect(result.values['bricksNeeded'], equals(expected));
-        });
+            // 10 m² * expectedPerSqm * 1.05 margin
+            final expected = (10.0 * expectedPerSqm * 1.05).ceil();
+            expect(result.values['bricksNeeded'], equals(expected));
+          },
+        );
       }
     });
 
@@ -316,11 +305,7 @@ void main() {
       });
 
       test('handles small area correctly', () {
-        final inputs = {
-          'area': 1.0,
-          'brickType': 0.0,
-          'wallThickness': 0.0,
-        };
+        final inputs = {'area': 1.0, 'brickType': 0.0, 'wallThickness': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -329,11 +314,7 @@ void main() {
       });
 
       test('handles large area correctly', () {
-        final inputs = {
-          'area': 500.0,
-          'brickType': 0.0,
-          'wallThickness': 1.0,
-        };
+        final inputs = {'area': 500.0, 'brickType': 0.0, 'wallThickness': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -344,11 +325,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero area without dimensions', () {
-        final inputs = {
-          'area': 0.0,
-          'brickType': 0.0,
-          'wallThickness': 1.0,
-        };
+        final inputs = {'area': 0.0, 'brickType': 0.0, 'wallThickness': 1.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -357,11 +334,7 @@ void main() {
       });
 
       test('throws exception for negative area', () {
-        final inputs = {
-          'area': -10.0,
-          'brickType': 0.0,
-          'wallThickness': 1.0,
-        };
+        final inputs = {'area': -10.0, 'brickType': 0.0, 'wallThickness': 1.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -372,15 +345,29 @@ void main() {
 
     group('Price calculations', () {
       test('calculates total price when prices available', () {
-        final inputs = {
-          'area': 10.0,
-          'brickType': 0.0,
-          'wallThickness': 1.0,
-        };
+        final inputs = {'area': 10.0, 'brickType': 0.0, 'wallThickness': 1.0};
         final priceList = [
-          const PriceItem(sku: 'brick', name: 'Кирпич', price: 15.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'cement', name: 'Цемент', price: 350.0, unit: 'мешок', imageUrl: ''),
-          const PriceItem(sku: 'sand', name: 'Песок', price: 1500.0, unit: 'м³', imageUrl: ''),
+          const PriceItem(
+            sku: 'brick',
+            name: 'Кирпич',
+            price: 15.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'cement',
+            name: 'Цемент',
+            price: 350.0,
+            unit: 'мешок',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'sand',
+            name: 'Песок',
+            price: 1500.0,
+            unit: 'м³',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -390,11 +377,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'area': 10.0,
-          'brickType': 0.0,
-          'wallThickness': 1.0,
-        };
+        final inputs = {'area': 10.0, 'brickType': 0.0, 'wallThickness': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -404,11 +387,7 @@ void main() {
 
     group('Cement and sand calculations', () {
       test('calculates cement needed', () {
-        final inputs = {
-          'area': 20.0,
-          'brickType': 0.0,
-          'wallThickness': 1.0,
-        };
+        final inputs = {'area': 20.0, 'brickType': 0.0, 'wallThickness': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -418,11 +397,7 @@ void main() {
       });
 
       test('calculates sand needed', () {
-        final inputs = {
-          'area': 20.0,
-          'brickType': 0.0,
-          'wallThickness': 1.0,
-        };
+        final inputs = {'area': 20.0, 'brickType': 0.0, 'wallThickness': 1.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -433,20 +408,23 @@ void main() {
     });
 
     group('Working conditions multiplier', () {
-      test('normal conditions (default) — base mortar with 8% reserve only', () {
-        final inputs = {
-          'area': 20.0,
-          'brickType': 0.0,
-          'wallThickness': 1.0,
-          // workingConditions not set → default 1 (normal)
-        };
+      test(
+        'normal conditions (default) — base mortar with 8% reserve only',
+        () {
+          final inputs = {
+            'area': 20.0,
+            'brickType': 0.0,
+            'wallThickness': 1.0,
+            // workingConditions not set → default 1 (normal)
+          };
 
-        final result = calculator(inputs, emptyPriceList);
+          final result = calculator(inputs, emptyPriceList);
 
-        // mortarVolume = 20 * 0.023 * 1.08 * 1.0 = 0.4968 → rounded to 0.50
-        expect(result.values['mortarVolume'], closeTo(0.50, 0.01));
-        expect(result.values['workingConditions'], equals(1));
-      });
+          // mortarVolume = 20 * 0.023 * 1.08 * 1.0 = 0.4968 → rounded to 0.50
+          expect(result.values['mortarVolume'], closeTo(0.50, 0.01));
+          expect(result.values['workingConditions'], equals(1));
+        },
+      );
 
       test('windy — +5% mortar on top of 8% reserve', () {
         final inputs = {
@@ -518,16 +496,24 @@ void main() {
         final hotResult = calculator(hotInputs, emptyPriceList);
 
         // Same brick count for all conditions
-        expect(normalResult.values['bricksNeeded'],
-            equals(coldResult.values['bricksNeeded']));
-        expect(normalResult.values['bricksNeeded'],
-            equals(hotResult.values['bricksNeeded']));
+        expect(
+          normalResult.values['bricksNeeded'],
+          equals(coldResult.values['bricksNeeded']),
+        );
+        expect(
+          normalResult.values['bricksNeeded'],
+          equals(hotResult.values['bricksNeeded']),
+        );
 
         // But mortar differs
-        expect(coldResult.values['mortarVolume'],
-            greaterThan(normalResult.values['mortarVolume']!));
-        expect(hotResult.values['mortarVolume'],
-            greaterThan(normalResult.values['mortarVolume']!));
+        expect(
+          coldResult.values['mortarVolume'],
+          greaterThan(normalResult.values['mortarVolume']!),
+        );
+        expect(
+          hotResult.values['mortarVolume'],
+          greaterThan(normalResult.values['mortarVolume']!),
+        );
       });
     });
 
@@ -629,8 +615,10 @@ void main() {
         expect(doubleResult.values['meshLayers'], equals(4));
 
         // Double brick should have fewer mesh layers
-        expect(doubleResult.values['meshLayers'],
-            lessThan(singleResult.values['meshLayers']!));
+        expect(
+          doubleResult.values['meshLayers'],
+          lessThan(singleResult.values['meshLayers']!),
+        );
       });
 
       test('mesh cards calculated from mesh area', () {
@@ -659,6 +647,46 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
 
         expect(result.values['wallHeight'], equals(3.0));
+      });
+    });
+
+    test('working conditions also affect mortar bags in domain result', () {
+      final inputs = {
+        'area': 20.0,
+        'brickType': 0.0,
+        'wallThickness': 1.0,
+        'workingConditions': 3.0,
+      };
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['mortarVolume'], closeTo(0.54648, 0.01));
+      expect(result.values['mortarBags'], equals(37.0));
+    });
+
+    test('wall dimensions path preserves working conditions multiplier', () {
+      final inputs = {
+        'wallWidth': 5.0,
+        'wallHeight': 2.7,
+        'brickType': 0.0,
+        'wallThickness': 1.0,
+        'workingConditions': 3.0,
+      };
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['area'], closeTo(13.5, 0.01));
+      expect(result.values['workingConditions'], equals(3.0));
+      expect(result.values['mortarVolume'], closeTo(0.3699, 0.02));
+    });
+
+    group('validation messages', () {
+      test('wall dimensions requirement uses shared helper', () {
+        final calculator = CalculateBrick();
+
+        final error = calculator.validateInputs({'area': 0.0});
+
+        expect(error, equals('Необходимо указать площадь или размеры стены'));
       });
     });
   });

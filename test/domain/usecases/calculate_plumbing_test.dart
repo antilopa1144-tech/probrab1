@@ -20,9 +20,7 @@ void main() {
 
     test('calculates pipe length automatically', () {
       final calculator = CalculatePlumbing();
-      final inputs = {
-        'rooms': 2.0,
-      };
+      final inputs = {'rooms': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -33,10 +31,7 @@ void main() {
 
     test('uses provided pipe length', () {
       final calculator = CalculatePlumbing();
-      final inputs = {
-        'rooms': 2.0,
-        'pipeLength': 25.0,
-      };
+      final inputs = {'rooms': 2.0, 'pipeLength': 25.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -46,9 +41,7 @@ void main() {
 
     test('calculates fittings needed', () {
       final calculator = CalculatePlumbing();
-      final inputs = {
-        'rooms': 2.0,
-      };
+      final inputs = {'rooms': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -59,9 +52,7 @@ void main() {
 
     test('calculates taps needed', () {
       final calculator = CalculatePlumbing();
-      final inputs = {
-        'rooms': 2.0,
-      };
+      final inputs = {'rooms': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -72,9 +63,7 @@ void main() {
 
     test('calculates mixers needed', () {
       final calculator = CalculatePlumbing();
-      final inputs = {
-        'rooms': 2.0,
-      };
+      final inputs = {'rooms': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -85,9 +74,7 @@ void main() {
 
     test('calculates toilets, sinks, showers', () {
       final calculator = CalculatePlumbing();
-      final inputs = {
-        'rooms': 2.0,
-      };
+      final inputs = {'rooms': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -112,9 +99,7 @@ void main() {
 
     test('handles zero rooms', () {
       final calculator = CalculatePlumbing();
-      final inputs = {
-        'rooms': 0.0,
-      };
+      final inputs = {'rooms': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -122,6 +107,55 @@ void main() {
       expect(result.values['rooms'], equals(0.0));
       expect(result.values['points'], equals(0.0));
       expect(result.values['pipeLength'], equals(0.0));
+    });
+
+    test('supports screen room counters and hot water toggle', () {
+      final calculator = CalculatePlumbing();
+      final inputs = {
+        'bathroomsCount': 1.0,
+        'toiletsCount': 1.0,
+        'kitchensCount': 1.0,
+        'avgPipeLength': 5.0,
+        'needHotWater': 1.0,
+      };
+      final result = calculator(inputs, <PriceItem>[]);
+
+      expect(result.values['points'], equals(9.0));
+      expect(result.values['coldWaterLength'], closeTo(51.75, 0.01));
+      expect(result.values['hotWaterLength'], closeTo(41.4, 0.01));
+      expect(result.values['sewerLength'], closeTo(34.65, 0.01));
+      expect(result.values['fittingsNeeded'], equals(36.0));
+      expect(result.values['ballValvesNeeded'], equals(18.0));
+    });
+
+    test('disables hot water in screen path', () {
+      final calculator = CalculatePlumbing();
+      final inputs = {
+        'bathroomsCount': 2.0,
+        'toiletsCount': 0.0,
+        'kitchensCount': 1.0,
+        'avgPipeLength': 4.0,
+        'needHotWater': 0.0,
+      };
+      final result = calculator(inputs, <PriceItem>[]);
+
+      expect(result.values['points'], equals(11.0));
+      expect(result.values['hotWaterLength'], equals(0.0));
+      expect(result.values['ballValvesNeeded'], equals(11.0));
+      expect(result.values['fittingsNeeded'], equals(44.0));
+    });
+
+    group('validation messages', () {
+      test('negative bathrooms count uses shared helper', () {
+        final calculator = CalculatePlumbing();
+
+        final error = calculator.validateInputs({'bathroomsCount': -1.0});
+
+        expect(
+          error,
+          equals('Поле "количество санузлов" не может быть отрицательным'),
+        );
+      });
     });
   });
 }

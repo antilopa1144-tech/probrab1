@@ -68,7 +68,10 @@ void main() {
       final result = calculator(inputs, emptyPriceList);
       final tilesNeeded = result.values['tilesNeeded']!;
       // ~1.2 крестика на плитку (1 на пересечение + 20% запас)
-      expect(result.values['crossesNeeded'], equals((tilesNeeded * 1.2).ceil().toDouble()));
+      expect(
+        result.values['crossesNeeded'],
+        equals((tilesNeeded * 1.2).ceil().toDouble()),
+      );
     });
 
     // ========= NEW: Layout pattern tests =========
@@ -79,17 +82,23 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final resultStraight = calculator({
-          'inputMode': 1.0, 'area': 20.0, 'tileSize': 30.0,
+          'inputMode': 1.0,
+          'area': 20.0,
+          'tileSize': 30.0,
           'layoutPattern': 1.0,
         }, emptyPriceList);
 
         final resultDiagonal = calculator({
-          'inputMode': 1.0, 'area': 20.0, 'tileSize': 30.0,
+          'inputMode': 1.0,
+          'area': 20.0,
+          'tileSize': 30.0,
           'layoutPattern': 2.0,
         }, emptyPriceList);
 
-        expect(resultDiagonal.values['tilesNeeded'],
-            greaterThan(resultStraight.values['tilesNeeded']!));
+        expect(
+          resultDiagonal.values['tilesNeeded'],
+          greaterThan(resultStraight.values['tilesNeeded']!),
+        );
         expect(resultDiagonal.values['wastePercent'], closeTo(15, 0.5));
       });
 
@@ -98,7 +107,9 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator({
-          'inputMode': 1.0, 'area': 20.0, 'tileSize': 30.0,
+          'inputMode': 1.0,
+          'area': 20.0,
+          'tileSize': 30.0,
           'layoutPattern': 4.0,
         }, emptyPriceList);
 
@@ -110,7 +121,9 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator({
-          'inputMode': 1.0, 'area': 20.0, 'tileSize': 30.0,
+          'inputMode': 1.0,
+          'area': 20.0,
+          'tileSize': 30.0,
           'layoutPattern': 3.0,
         }, emptyPriceList);
 
@@ -124,18 +137,26 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final resultSimple = calculator({
-          'inputMode': 1.0, 'area': 20.0, 'tileSize': 30.0,
-          'layoutPattern': 1.0, 'roomComplexity': 1.0,
+          'inputMode': 1.0,
+          'area': 20.0,
+          'tileSize': 30.0,
+          'layoutPattern': 1.0,
+          'roomComplexity': 1.0,
         }, emptyPriceList);
 
         final resultLShaped = calculator({
-          'inputMode': 1.0, 'area': 20.0, 'tileSize': 30.0,
-          'layoutPattern': 1.0, 'roomComplexity': 2.0,
+          'inputMode': 1.0,
+          'area': 20.0,
+          'tileSize': 30.0,
+          'layoutPattern': 1.0,
+          'roomComplexity': 2.0,
         }, emptyPriceList);
 
         // Simple: 10% waste. L-shaped: 10% + 5% = 15%
-        expect(resultLShaped.values['tilesNeeded'],
-            greaterThanOrEqualTo(resultSimple.values['tilesNeeded']!));
+        expect(
+          resultLShaped.values['tilesNeeded'],
+          greaterThanOrEqualTo(resultSimple.values['tilesNeeded']!),
+        );
         expect(resultLShaped.values['wastePercent'], closeTo(15, 0.5));
       });
 
@@ -144,8 +165,11 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator({
-          'inputMode': 1.0, 'area': 20.0, 'tileSize': 30.0,
-          'layoutPattern': 1.0, 'roomComplexity': 3.0,
+          'inputMode': 1.0,
+          'area': 20.0,
+          'tileSize': 30.0,
+          'layoutPattern': 1.0,
+          'roomComplexity': 3.0,
         }, emptyPriceList);
 
         // 10% + 10% = 20% (аддитивная формула)
@@ -159,7 +183,9 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator({
-          'inputMode': 1.0, 'area': 20.0, 'tileSize': 80.0,
+          'inputMode': 1.0,
+          'area': 20.0,
+          'tileSize': 80.0,
           'layoutPattern': 1.0,
         }, emptyPriceList);
 
@@ -173,8 +199,11 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator({
-          'inputMode': 1.0, 'area': 20.0,
-          'tileSize': 0.0, 'tileWidth': 5.0, 'tileHeight': 5.0,
+          'inputMode': 1.0,
+          'area': 20.0,
+          'tileSize': 0.0,
+          'tileWidth': 5.0,
+          'tileHeight': 5.0,
           'layoutPattern': 1.0,
         }, emptyPriceList);
 
@@ -189,7 +218,9 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator({
-          'inputMode': 1.0, 'area': 35.0, 'tileSize': 30.0,
+          'inputMode': 1.0,
+          'area': 35.0,
+          'tileSize': 30.0,
           'layoutPattern': 4.0,
         }, emptyPriceList);
 
@@ -201,12 +232,68 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator({
-          'inputMode': 1.0, 'area': 15.0, 'tileSize': 30.0,
+          'inputMode': 1.0,
+          'area': 15.0,
+          'tileSize': 30.0,
           'layoutPattern': 4.0,
         }, emptyPriceList);
 
-        expect(result.values.containsKey('warningHerringboneLargeArea'),
-            isFalse);
+        expect(
+          result.values.containsKey('warningHerringboneLargeArea'),
+          isFalse,
+        );
+      });
+    });
+
+    group('domain-owned packaging extras', () {
+      test(
+        'calculates boxes, glue bags, svp and underlay in canonical totals',
+        () {
+          final calculator = CalculateTile();
+          final contract = calculator.calculateCanonical({
+            'inputMode': 1.0,
+            'area': 12.0,
+            'tileWidthCm': 30.0,
+            'tileHeightCm': 30.0,
+            'material': 0.0,
+            'roomType': 1.0,
+            'useSVP': 1.0,
+            'useUnderlay': 1.0,
+          });
+
+          expect(contract.totals['boxesNeeded'], closeTo(10, 0.01));
+          expect(contract.totals['glueBags'], closeTo(2, 0.01));
+          expect(contract.totals['svpCount'], closeTo(441, 0.01));
+          expect(contract.totals['underlayArea'], closeTo(13.2, 0.001));
+          expect(contract.totals['effectiveWaterproofing'], equals(0));
+        },
+      );
+
+      test('bathroom enforces waterproofing through domain totals', () {
+        final calculator = CalculateTile();
+        final contract = calculator.calculateCanonical({
+          'inputMode': 1.0,
+          'area': 6.0,
+          'tileWidthCm': 30.0,
+          'tileHeightCm': 30.0,
+          'roomType': 0.0,
+        });
+
+        expect(contract.totals['effectiveWaterproofing'], equals(1));
+        expect(contract.totals['waterproofingWeight'], closeTo(19.8, 0.001));
+      });
+
+      test('mosaic uses smaller box area in domain totals', () {
+        final calculator = CalculateTile();
+        final contract = calculator.calculateCanonical({
+          'inputMode': 1.0,
+          'area': 4.0,
+          'tileWidthCm': 5.0,
+          'tileHeightCm': 5.0,
+          'material': 2.0,
+        });
+
+        expect(contract.totals['boxesNeeded'], closeTo(9, 0.01));
       });
     });
 
@@ -216,13 +303,34 @@ void main() {
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator({
-          'inputMode': 0.0, 'length': 3.0, 'width': 2.0,
-          'tileSize': 30.0, 'layoutPattern': 2.0,
+          'inputMode': 0.0,
+          'length': 3.0,
+          'width': 2.0,
+          'tileSize': 30.0,
+          'layoutPattern': 2.0,
         }, emptyPriceList);
 
         // area=6m2, tile=0.09m2, diagonal=15%
         // 6 / 0.09 * 1.15 = 76.7 -> 77 tiles
         expect(result.values['tilesNeeded'], closeTo(77, 2));
+      });
+    });
+
+    group('validation messages', () {
+      test('tile width range uses shared message helper', () {
+        final calculator = CalculateTile();
+
+        final error = calculator.validateInputs({
+          'inputMode': 1.0,
+          'area': 12.0,
+          'tileWidthCm': 250.0,
+          'tileHeightCm': 30.0,
+        });
+
+        expect(
+          error,
+          equals('Поле "ширина плитки" должно быть от 1 до 200 см'),
+        );
       });
     });
   });

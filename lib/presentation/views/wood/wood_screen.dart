@@ -35,10 +35,10 @@ class _WoodScreenState extends State<WoodScreen> {
 
   // Данные материалов
   final List<Map<String, dynamic>> materials = [
-    {'name': 'Антисептик', 'coverage': 7.0, 'canSize': 10.0},
-    {'name': 'Краска', 'coverage': 10.0, 'canSize': 2.7},
-    {'name': 'Лак', 'coverage': 12.0, 'canSize': 2.5},
-    {'name': 'Масло', 'coverage': 15.0, 'canSize': 1.0},
+    {'coverage': 7.0, 'canSize': 10.0},
+    {'coverage': 10.0, 'canSize': 2.7},
+    {'coverage': 12.0, 'canSize': 2.5},
+    {'coverage': 15.0, 'canSize': 1.0},
   ];
 
   double _getArea() {
@@ -81,7 +81,7 @@ class _WoodScreenState extends State<WoodScreen> {
         results: [
           ResultItem(
             label: _loc.translate('wood.area').toUpperCase(),
-            value: '${netArea.toStringAsFixed(1)} м²',
+            value: '${netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -90,7 +90,7 @@ class _WoodScreenState extends State<WoodScreen> {
             icon: Icons.shopping_bag,
           ),
           ResultItem(
-            label: '${liters.toStringAsFixed(1)} л',
+            label: '${liters.toStringAsFixed(1)} ${_loc.translate('unit.liter')}',
             value: '$layers ${_loc.translate('wood.layers')}',
             icon: Icons.layers,
           ),
@@ -104,9 +104,9 @@ class _WoodScreenState extends State<WoodScreen> {
 
         // Выбор материала
         TypeSelectorGroup(
-          options: materials.map((m) => TypeSelectorOption(
+          options: materials.asMap().entries.map((entry) => TypeSelectorOption(
             icon: Icons.format_paint,
-            title: m['name'] as String,
+            title: _loc.translate('wood.material_name_${entry.key}'),
             subtitle: '',
           )).toList(),
           selectedIndex: materialIndex,
@@ -302,20 +302,20 @@ class _WoodScreenState extends State<WoodScreen> {
           results: [
             ResultRowItem(
               label: _loc.translate('wood.area'),
-              value: '${netArea.toStringAsFixed(1)} м²',
+            value: '${netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
               icon: Icons.straighten,
             ),
             ResultRowItem(
               label: _loc.translate('wood.material_name_$materialIndex'),
-              value: '${liters.toStringAsFixed(1)} л',
+              value: '${liters.toStringAsFixed(1)} ${_loc.translate('unit.liter')}',
               icon: Icons.format_paint,
-              subtitle: '${_loc.translate('wood.coverage_label')} $coverage м²/л',
+              subtitle: '${_loc.translate('wood.coverage_label')} $coverage ${_loc.translate('common.sqm')}/${_loc.translate('unit.liter')}',
             ),
             ResultRowItem(
               label: _loc.translate('wood.cans'),
               value: '$cans ${_loc.translate('wood.packs')}',
               icon: Icons.shopping_bag,
-              subtitle: '${_loc.translate('wood.per')} ${canSize.toStringAsFixed(canSize.truncateToDouble() == canSize ? 0 : 1)} л',
+              subtitle: '${_loc.translate('wood.per')} ${canSize.toStringAsFixed(canSize.truncateToDouble() == canSize ? 0 : 1)} ${_loc.translate('unit.liter')}',
             ),
           ],
           accentColor: accentColor,
@@ -370,7 +370,7 @@ class _WoodScreenState extends State<WoodScreen> {
               label: _loc.translate('plaster_pro.label.width'),
               value: _roomWidth,
               onChanged: (v) => setState(() => _roomWidth = v),
-              suffix: 'м',
+              suffix: _loc.translate('room.unit.meters'),
               accentColor: accentColor,
               minValue: 0.1,
               maxValue: 100,
@@ -382,7 +382,7 @@ class _WoodScreenState extends State<WoodScreen> {
               label: _loc.translate('plaster_pro.label.length'),
               value: _roomLength,
               onChanged: (v) => setState(() => _roomLength = v),
-              suffix: 'м',
+              suffix: _loc.translate('room.unit.meters'),
               accentColor: accentColor,
               minValue: 0.1,
               maxValue: 100,
@@ -395,7 +395,7 @@ class _WoodScreenState extends State<WoodScreen> {
         label: _loc.translate('plaster_pro.label.height'),
         value: _roomHeight,
         onChanged: (v) => setState(() => _roomHeight = v),
-        suffix: 'м',
+        suffix: _loc.translate('room.unit.meters'),
         accentColor: accentColor,
         minValue: 1.5,
         maxValue: 10,
@@ -405,7 +405,7 @@ class _WoodScreenState extends State<WoodScreen> {
         label: _loc.translate('plaster_pro.label.openings_hint'),
         value: _openingsArea,
         onChanged: (v) => setState(() => _openingsArea = v),
-        suffix: 'м²',
+        suffix: _loc.translate('common.square_meter_short'),
         accentColor: accentColor,
         minValue: 0,
         maxValue: 100,
@@ -420,7 +420,7 @@ class _WoodScreenState extends State<WoodScreen> {
         label: _loc.translate('plaster_pro.label.wall_area'),
         value: _manualArea,
         onChanged: (v) => setState(() => _manualArea = v),
-        suffix: 'м²',
+        suffix: _loc.translate('common.square_meter_short'),
         accentColor: accentColor,
         minValue: 1,
         maxValue: 500,
@@ -428,3 +428,5 @@ class _WoodScreenState extends State<WoodScreen> {
     ];
   }
 }
+
+

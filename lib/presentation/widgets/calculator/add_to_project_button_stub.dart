@@ -98,7 +98,7 @@ class AddToProjectButton extends ConsumerWidget {
         backgroundColor: Colors.orange,
         behavior: SnackBarBehavior.floating,
         action: SnackBarAction(
-          label: 'OK',
+          label: loc.translate('button.close'),
           textColor: Colors.white,
           onPressed: () {},
         ),
@@ -106,3 +106,4 @@ class AddToProjectButton extends ConsumerWidget {
     );
   }
 }
+

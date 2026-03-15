@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/localization/app_localizations.dart';
+import '../../../core/errors/global_error_handler.dart';
 import '../../../domain/models/checklist.dart';
 import '../../../presentation/providers/checklist_provider.dart';
 
@@ -15,12 +17,13 @@ class ChecklistDetailsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final checklistAsync = ref.watch(checklistProvider(checklistId));
 
     return checklistAsync.when(
       loading: () => Scaffold(
         appBar: AppBar(
-          title: const Text('Чек-лист'),
+          title: Text(loc.translate('checklist.title')),
         ),
         body: const Center(
           child: CircularProgressIndicator(),
@@ -28,7 +31,7 @@ class ChecklistDetailsScreen extends ConsumerWidget {
       ),
       error: (error, stack) => Scaffold(
         appBar: AppBar(
-          title: const Text('Чек-лист'),
+          title: Text(loc.translate('checklist.title')),
         ),
         body: Center(
           child: Column(
@@ -41,14 +44,14 @@ class ChecklistDetailsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Чек-лист не найден',
+                loc.translate('checklist.not_found'),
                 style: theme.textTheme.titleMedium,
               ),
               const SizedBox(height: 24),
               FilledButton.icon(
                 onPressed: () => Navigator.of(context).pop(),
                 icon: const Icon(Icons.arrow_back),
-                label: const Text('Назад'),
+                label: Text(loc.translate('checklist.back')),
               ),
             ],
           ),
@@ -58,7 +61,7 @@ class ChecklistDetailsScreen extends ConsumerWidget {
         if (checklist == null) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Чек-лист'),
+              title: Text(loc.translate('checklist.title')),
             ),
             body: Center(
               child: Column(
@@ -71,14 +74,14 @@ class ChecklistDetailsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Чек-лист не найден',
+                    loc.translate('checklist.not_found'),
                     style: theme.textTheme.titleMedium,
                   ),
                   const SizedBox(height: 24),
                   FilledButton.icon(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.arrow_back),
-                    label: const Text('Назад'),
+                    label: Text(loc.translate('checklist.back')),
                   ),
                 ],
               ),
@@ -105,6 +108,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final items = checklist.items.toList();
     final completedCount = items.where((i) => i.isCompleted).length;
     final totalCount = items.length;
@@ -117,7 +121,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.edit_rounded),
             onPressed: () => _editChecklistName(context, ref, checklist),
-            tooltip: 'Редактировать название',
+            tooltip: loc.translate('checklist.edit_name'),
           ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert_rounded),
@@ -127,13 +131,13 @@ class _ChecklistDetailsContent extends ConsumerWidget {
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'delete',
                 child: Row(
                   children: [
-                    Icon(Icons.delete_rounded, color: Colors.red),
-                    SizedBox(width: 8),
-                    Text('Удалить чек-лист', style: TextStyle(color: Colors.red)),
+                    const Icon(Icons.delete_rounded, color: Colors.red),
+                    const SizedBox(width: 8),
+                    Text(loc.translate('checklist.delete_checklist_menu'), style: const TextStyle(color: Colors.red)),
                   ],
                 ),
               ),
@@ -159,7 +163,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Прогресс',
+                        loc.translate('checklist.progress'),
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -194,7 +198,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    '$completedCount из $totalCount',
+                    loc.translate('checklist.completed_summary').replaceFirst('{completed}', '$completedCount').replaceFirst('{total}', '$totalCount'),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -220,14 +224,14 @@ class _ChecklistDetailsContent extends ConsumerWidget {
                           ),
                           const SizedBox(height: 24),
                           Text(
-                            'Список задач пуст',
+                            loc.translate('checklist.empty_tasks'),
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            'Добавьте первую задачу, чтобы начать отслеживать прогресс вашего ремонта',
+                            loc.translate('checklist.empty_tasks_hint'),
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
@@ -237,7 +241,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
                           FilledButton.icon(
                             onPressed: () => _addNewTask(context, ref, checklist),
                             icon: const Icon(Icons.add_rounded),
-                            label: const Text('Добавить первую задачу'),
+                            label: Text(loc.translate('checklist.add_first_task')),
                             style: FilledButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
@@ -266,23 +270,24 @@ class _ChecklistDetailsContent extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _addNewTask(context, ref, checklist),
         icon: const Icon(Icons.add_rounded),
-        label: const Text('Добавить задачу'),
+        label: Text(loc.translate('checklist.add_task')),
       ),
     );
   }
 
   Future<void> _addNewTask(BuildContext context, WidgetRef ref, RenovationChecklist checklist) async {
     final controller = TextEditingController();
+    final loc = AppLocalizations.of(context);
 
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Новая задача'),
+        title: Text(loc.translate('checklist.new_task')),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Название задачи',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: loc.translate('checklist.task_name'),
+            border: const OutlineInputBorder(),
           ),
           autofocus: true,
           maxLength: 200,
@@ -296,7 +301,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Отмена'),
+            child: Text(loc.translate('button.cancel')),
           ),
           FilledButton(
             onPressed: () {
@@ -304,7 +309,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
                 Navigator.of(context).pop(controller.text.trim());
               }
             },
-            child: const Text('Добавить'),
+            child: Text(loc.translate('checklist.add')),
           ),
         ],
       ),
@@ -319,14 +324,14 @@ class _ChecklistDetailsContent extends ConsumerWidget {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Задача добавлена')),
+            SnackBar(content: Text(loc.translate('checklist.task_added'))),
           );
         }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Ошибка: $e'),
+              content: Text(loc.translate('workflow.timeline.error').replaceFirst('{error}', GlobalErrorHandler.getUserFriendlyMessage(context, e))),
               backgroundColor: Colors.red,
             ),
           );
@@ -337,16 +342,17 @@ class _ChecklistDetailsContent extends ConsumerWidget {
 
   Future<void> _editChecklistName(BuildContext context, WidgetRef ref, RenovationChecklist checklist) async {
     final controller = TextEditingController(text: checklist.name);
+    final loc = AppLocalizations.of(context);
 
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Изменить название'),
+        title: Text(loc.translate('checklist.rename_title')),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Название чек-листа',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: loc.translate('checklist.checklist_name'),
+            border: const OutlineInputBorder(),
           ),
           autofocus: true,
           maxLength: 100,
@@ -354,7 +360,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Отмена'),
+            child: Text(loc.translate('button.cancel')),
           ),
           FilledButton(
             onPressed: () {
@@ -362,7 +368,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
                 Navigator.of(context).pop(controller.text.trim());
               }
             },
-            child: const Text('Сохранить'),
+            child: Text(loc.translate('button.save')),
           ),
         ],
       ),
@@ -375,14 +381,14 @@ class _ChecklistDetailsContent extends ConsumerWidget {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Название обновлено')),
+            SnackBar(content: Text(loc.translate('checklist.name_updated'))),
           );
         }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Ошибка: $e'),
+              content: Text(loc.translate('workflow.timeline.error').replaceFirst('{error}', GlobalErrorHandler.getUserFriendlyMessage(context, e))),
               backgroundColor: Colors.red,
             ),
           );
@@ -392,24 +398,25 @@ class _ChecklistDetailsContent extends ConsumerWidget {
   }
 
   Future<void> _deleteChecklist(BuildContext context, WidgetRef ref, RenovationChecklist checklist) async {
+    final loc = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Удалить чек-лист?'),
-        content: const Text(
-          'Это действие нельзя отменить. Все задачи будут удалены.',
+        title: Text(loc.translate('checklist.delete_title')),
+        content: Text(
+          loc.translate('checklist.delete_message'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Отмена'),
+            child: Text(loc.translate('button.cancel')),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: FilledButton.styleFrom(
               backgroundColor: Colors.red,
             ),
-            child: const Text('Удалить'),
+            child: Text(loc.translate('button.delete')),
           ),
         ],
       ),
@@ -422,14 +429,14 @@ class _ChecklistDetailsContent extends ConsumerWidget {
         if (context.mounted) {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Чек-лист удалён')),
+            SnackBar(content: Text(loc.translate('checklist.deleted'))),
           );
         }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Ошибка: $e'),
+              content: Text(loc.translate('workflow.timeline.error').replaceFirst('{error}', GlobalErrorHandler.getUserFriendlyMessage(context, e))),
               backgroundColor: Colors.red,
             ),
           );
@@ -528,13 +535,14 @@ class _ChecklistItemCard extends ConsumerWidget {
   }
 
   Future<void> _toggleItem(BuildContext context, WidgetRef ref, ChecklistItem item) async {
+    final loc = AppLocalizations.of(context);
     try {
       await ref.read(checklistNotifierProvider.notifier).toggleItem(item.id);
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка: $e'),
+            content: Text(loc.translate('workflow.timeline.error').replaceFirst('{error}', GlobalErrorHandler.getUserFriendlyMessage(context, e))),
             backgroundColor: Colors.red,
           ),
         );
@@ -543,22 +551,23 @@ class _ChecklistItemCard extends ConsumerWidget {
   }
 
   Future<bool> _confirmDeleteTask(BuildContext context, ChecklistItem item) async {
+    final loc = AppLocalizations.of(context);
     return await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Удалить задачу?'),
-            content: Text('Удалить "${item.title}"?'),
+            title: Text(loc.translate('checklist.delete_task_title')),
+            content: Text(loc.translate('checklist.delete_task_message').replaceFirst('{name}', item.title)),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Отмена'),
+                child: Text(loc.translate('button.cancel')),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 style: FilledButton.styleFrom(
                   backgroundColor: Colors.red,
                 ),
-                child: const Text('Удалить'),
+                child: Text(loc.translate('button.delete')),
               ),
             ],
           ),
@@ -567,19 +576,20 @@ class _ChecklistItemCard extends ConsumerWidget {
   }
 
   Future<void> _deleteTask(BuildContext context, WidgetRef ref, ChecklistItem item) async {
+    final loc = AppLocalizations.of(context);
     try {
       await ref.read(checklistNotifierProvider.notifier).deleteItem(item.id);
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Задача удалена')),
+            SnackBar(content: Text(loc.translate('checklist.task_deleted'))),
         );
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка: $e'),
+            content: Text(loc.translate('workflow.timeline.error').replaceFirst('{error}', GlobalErrorHandler.getUserFriendlyMessage(context, e))),
             backgroundColor: Colors.red,
           ),
         );
@@ -589,6 +599,7 @@ class _ChecklistItemCard extends ConsumerWidget {
 
   void _showTaskOptions(BuildContext context, WidgetRef ref, ChecklistItem item) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     showModalBottomSheet(
       context: context,
@@ -617,7 +628,7 @@ class _ChecklistItemCard extends ConsumerWidget {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.edit_rounded),
-              title: const Text('Редактировать'),
+              title: Text(loc.translate('button.edit')),
               onTap: () {
                 Navigator.of(context).pop();
                 _editTask(context, ref, item);
@@ -625,7 +636,7 @@ class _ChecklistItemCard extends ConsumerWidget {
             ),
             ListTile(
               leading: const Icon(Icons.delete_rounded, color: Colors.red),
-              title: const Text('Удалить', style: TextStyle(color: Colors.red)),
+              title: Text(loc.translate('button.delete'), style: const TextStyle(color: Colors.red)),
               onTap: () async {
                 Navigator.of(context).pop();
                 if (context.mounted) {
@@ -646,19 +657,20 @@ class _ChecklistItemCard extends ConsumerWidget {
   Future<void> _editTask(BuildContext context, WidgetRef ref, ChecklistItem item) async {
     final controller = TextEditingController(text: item.title);
     final descController = TextEditingController(text: item.description ?? '');
+    final loc = AppLocalizations.of(context);
 
     final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Редактировать задачу'),
+        title: Text(loc.translate('checklist.edit_task')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: controller,
-              decoration: const InputDecoration(
-                labelText: 'Название',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: loc.translate('project.name'),
+                border: const OutlineInputBorder(),
               ),
               autofocus: true,
               maxLength: 200,
@@ -666,9 +678,9 @@ class _ChecklistItemCard extends ConsumerWidget {
             const SizedBox(height: 16),
             TextField(
               controller: descController,
-              decoration: const InputDecoration(
-                labelText: 'Описание (необязательно)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: loc.translate('project.description_optional'),
+                border: const OutlineInputBorder(),
               ),
               maxLength: 500,
               maxLines: 2,
@@ -678,7 +690,7 @@ class _ChecklistItemCard extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Отмена'),
+            child: Text(loc.translate('button.cancel')),
           ),
           FilledButton(
             onPressed: () {
@@ -689,7 +701,7 @@ class _ChecklistItemCard extends ConsumerWidget {
                 });
               }
             },
-            child: const Text('Сохранить'),
+            child: Text(loc.translate('button.save')),
           ),
         ],
       ),
@@ -703,14 +715,14 @@ class _ChecklistItemCard extends ConsumerWidget {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Задача обновлена')),
+            SnackBar(content: Text(loc.translate('checklist.task_updated'))),
           );
         }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Ошибка: $e'),
+              content: Text(loc.translate('workflow.timeline.error').replaceFirst('{error}', GlobalErrorHandler.getUserFriendlyMessage(context, e))),
               backgroundColor: Colors.red,
             ),
           );

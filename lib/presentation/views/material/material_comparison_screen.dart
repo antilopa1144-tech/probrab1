@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/localization/app_localizations.dart';
 import '../../../data/repositories/material_repository.dart';
 import '../../../domain/entities/material_comparison.dart';
 
@@ -27,23 +28,24 @@ class _MaterialComparisonScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final materialsAsync =
         ref.watch(materialsForCalculatorProvider(widget.calculatorId));
 
     return materialsAsync.when(
       loading: () => Scaffold(
-        appBar: AppBar(title: const Text('Сравнение материалов')),
+        appBar: AppBar(title: Text(loc.translate('material_comparison.title'))),
         body: const Center(child: CircularProgressIndicator()),
       ),
       error: (error, _) => Scaffold(
-        appBar: AppBar(title: const Text('Сравнение материалов')),
-        body: const Center(child: Text('Не удалось загрузить материалы')),
+        appBar: AppBar(title: Text(loc.translate('material_comparison.title'))),
+        body: Center(child: Text(loc.translate('material_comparison.loading_error'))),
       ),
       data: (options) {
         if (options.isEmpty) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Сравнение материалов')),
-            body: const Center(child: Text('Нет вариантов для сравнения')),
+            appBar: AppBar(title: Text(loc.translate('material_comparison.title'))),
+            body: Center(child: Text(loc.translate('material_comparison.empty'))),
           );
         }
 
@@ -61,17 +63,17 @@ class _MaterialComparisonScreenState
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Сравнение материалов'),
+            title: Text(loc.translate('material_comparison.title')),
             actions: [
               IconButton(
                 icon: const Icon(Icons.add),
+                tooltip: loc.translate('material_comparison.add_option'),
                 onPressed: () => _showAddOptionDialog(context),
               ),
             ],
           ),
           body: Column(
             children: [
-              // Рекомендации
               Container(
                 padding: const EdgeInsets.all(16),
                 color: theme.colorScheme.primaryContainer,
@@ -79,33 +81,29 @@ class _MaterialComparisonScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Рекомендации',
+                      loc.translate('material_comparison.recommendations'),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
                     _RecommendationCard(
-                      title: 'Самое дешёвое',
+                      title: loc.translate('material_comparison.card.cheapest'),
                       option: comparison.cheapest,
-                      quantity: widget.requiredQuantity,
                     ),
                     const SizedBox(height: 8),
                     _RecommendationCard(
-                      title: 'Самое долговечное',
+                      title: loc.translate('material_comparison.card.durable'),
                       option: comparison.mostDurable,
-                      quantity: widget.requiredQuantity,
                     ),
                     const SizedBox(height: 8),
                     _RecommendationCard(
-                      title: 'Оптимальное',
+                      title: loc.translate('material_comparison.card.optimal'),
                       option: comparison.optimal,
-                      quantity: widget.requiredQuantity,
                     ),
                   ],
                 ),
               ),
-              // Список вариантов
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.all(16),
@@ -123,17 +121,11 @@ class _MaterialComparisonScreenState
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Цены временно скрыты до интеграции с магазинами
-                              // Text('${option.pricePerUnit} ?/${option.unit}'),
-                              Text('Срок службы: ${option.durabilityYears} лет'),
-                              // Text(
-                              //   'Общая стоимость: ${totalCost.toStringAsFixed(0)} ?',
-                              //   style: const TextStyle(fontWeight: FontWeight.bold),
-                              // ),
-                              // Text(
-                              //   'Стоимость/год: ${costPerYear.toStringAsFixed(0)} ?',
-                              //   style: TextStyle(color: Colors.grey.shade600),
-                              // ),
+                              Text(
+                                loc.translate('material_comparison.service_life', {
+                                  'value': option.durabilityYears.toString(),
+                                }),
+                              ),
                             ],
                           ),
                           trailing: selectedOption.id == option.id
@@ -141,6 +133,7 @@ class _MaterialComparisonScreenState
                                   color: Colors.green)
                               : IconButton(
                                   icon: const Icon(Icons.check_circle_outline),
+                                  tooltip: loc.translate('button.select'),
                                   onPressed: () {
                                     setState(() {
                                       _selectedOption = option;
@@ -166,16 +159,17 @@ class _MaterialComparisonScreenState
   }
 
   void _showAddOptionDialog(BuildContext context) {
-    // Диалог добавления нового варианта
+    final loc = AppLocalizations.of(context);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Добавить вариант'),
-        content: const Text('Функция в разработке'),
+        title: Text(loc.translate('material_comparison.add_option')),
+        content: Text(loc.translate('material_comparison.in_development')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Закрыть'),
+            child: Text(loc.translate('button.close')),
           ),
         ],
       ),
@@ -186,12 +180,10 @@ class _MaterialComparisonScreenState
 class _RecommendationCard extends StatelessWidget {
   final String title;
   final MaterialOption? option;
-  final double quantity;
 
   const _RecommendationCard({
     required this.title,
     required this.option,
-    required this.quantity,
   });
 
   @override
@@ -213,8 +205,6 @@ class _RecommendationCard extends StatelessWidget {
                     title,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  // Цены временно скрыты до интеграции с магазинами
-                  // Text('${option!.name}: ${totalCost.toStringAsFixed(0)} ?'),
                   Text(option!.name),
                 ],
               ),

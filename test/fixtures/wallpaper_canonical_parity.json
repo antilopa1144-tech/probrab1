@@ -1,0 +1,99 @@
+{
+  "formulaVersion": "wallpaper-canonical-v1",
+  "cases": [
+    {
+      "id": "perimeter_counts_with_manual_reserve",
+      "inputs": {
+        "perimeter": 14,
+        "wallHeight": 2.7,
+        "rollLength": 10,
+        "rollWidth": 0.53,
+        "rapport": 0,
+        "doorsCount": 1,
+        "windowsCount": 1,
+        "wallpaperType": 1,
+        "reserveRolls": 1,
+        "reservePercent": 0
+      },
+      "expected": {
+        "wallArea": 37.8,
+        "netArea": 34.41,
+        "formulaVersion": "wallpaper-canonical-v1",
+        "materials": {
+          "rolls": 10,
+          "pastePacks": 1,
+          "primerCans": 2
+        },
+        "warningsCount": 0,
+        "recScenario": {
+          "packageSize": 1,
+          "exactNeed": 9.333333,
+          "purchaseQuantity": 10
+        }
+      }
+    },
+    {
+      "id": "room_mode_vinyl_wide_with_rapport",
+      "inputs": {
+        "inputMode": 0,
+        "roomWidth": 4,
+        "roomLength": 5,
+        "roomHeight": 2.5,
+        "openingsArea": 4.8,
+        "rollLength": 10.05,
+        "rollWidth": 1.06,
+        "rapport": 64,
+        "wallpaperType": 2,
+        "reserveRolls": 0,
+        "reservePercent": 0
+      },
+      "expected": {
+        "wallArea": 45,
+        "netArea": 40.2,
+        "formulaVersion": "wallpaper-canonical-v1",
+        "materials": {
+          "rolls": 6,
+          "pastePacks": 2,
+          "primerCans": 2
+        },
+        "warningsCount": 2,
+        "recScenario": {
+          "packageSize": 1,
+          "exactNeed": 5.333333,
+          "purchaseQuantity": 6
+        }
+      }
+    },
+    {
+      "id": "area_mode_fleece_with_percent_reserve",
+      "inputs": {
+        "inputMode": 1,
+        "area": 50,
+        "wallHeight": 2.5,
+        "openingsArea": 8,
+        "rollLength": 10.05,
+        "rollWidth": 0.53,
+        "rapport": 0,
+        "wallpaperType": 3,
+        "reserveRolls": 0,
+        "reservePercent": 15
+      },
+      "expected": {
+        "wallArea": 50,
+        "netArea": 42,
+        "formulaVersion": "wallpaper-canonical-v1",
+        "materials": {
+          "rolls": 10,
+          "pastePacks": 2,
+          "primerCans": 2
+        },
+        "warningsCount": 0,
+        "recScenario": {
+          "packageSize": 1,
+          "exactNeed": 9.2,
+          "purchaseQuantity": 10
+        }
+      }
+    }
+  ]
+}

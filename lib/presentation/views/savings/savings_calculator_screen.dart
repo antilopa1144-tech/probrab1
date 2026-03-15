@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../domain/entities/savings_calculation.dart';
 
 /// Экран калькулятора экономии.
@@ -33,7 +34,8 @@ class _SavingsCalculatorScreenState extends ConsumerState<SavingsCalculatorScree
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final loc = AppLocalizations.of(context);
+
     final laborCost = double.tryParse(_laborCostController.text) ?? 0;
     final timeHours = double.tryParse(_timeController.text) ?? 0;
     final hourlyRate = double.tryParse(_hourlyRateController.text) ?? 0;
@@ -50,13 +52,12 @@ class _SavingsCalculatorScreenState extends ConsumerState<SavingsCalculatorScree
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Калькулятор экономии')),
+      appBar: AppBar(title: Text(loc.translate('savings.title'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Ввод данных
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -64,16 +65,16 @@ class _SavingsCalculatorScreenState extends ConsumerState<SavingsCalculatorScree
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Входные данные',
+                      loc.translate('savings.input'),
                       style: theme.textTheme.titleMedium,
                     ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: _laborCostController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(
-                        labelText: 'Стоимость работы мастеров (₽)',
-                        prefixIcon: Icon(Icons.people),
+                      decoration: InputDecoration(
+                        labelText: loc.translate('savings.field.labor_cost'),
+                        prefixIcon: const Icon(Icons.people),
                       ),
                       onChanged: (_) => setState(() {}),
                     ),
@@ -81,9 +82,9 @@ class _SavingsCalculatorScreenState extends ConsumerState<SavingsCalculatorScree
                     TextField(
                       controller: _timeController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(
-                        labelText: 'Время самостоятельной работы (часы)',
-                        prefixIcon: Icon(Icons.access_time),
+                      decoration: InputDecoration(
+                        labelText: loc.translate('savings.field.self_time'),
+                        prefixIcon: const Icon(Icons.access_time),
                       ),
                       onChanged: (_) => setState(() {}),
                     ),
@@ -91,9 +92,9 @@ class _SavingsCalculatorScreenState extends ConsumerState<SavingsCalculatorScree
                     TextField(
                       controller: _hourlyRateController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(
-                        labelText: 'Ваша почасовая ставка (₽/час, 0 = не учитывать)',
-                        prefixIcon: Icon(Icons.attach_money),
+                      decoration: InputDecoration(
+                        labelText: loc.translate('savings.field.hourly_rate'),
+                        prefixIcon: const Icon(Icons.attach_money),
                       ),
                       onChanged: (_) => setState(() {}),
                     ),
@@ -102,10 +103,9 @@ class _SavingsCalculatorScreenState extends ConsumerState<SavingsCalculatorScree
               ),
             ),
             const SizedBox(height: 16),
-            // Результаты
             if (calculation != null)
               Card(
-                color: calculation.isWorthIt 
+                color: calculation.isWorthIt
                     ? Colors.green.withValues(alpha: 0.1)
                     : Colors.orange.withValues(alpha: 0.1),
                 child: Padding(
@@ -116,61 +116,26 @@ class _SavingsCalculatorScreenState extends ConsumerState<SavingsCalculatorScree
                       Row(
                         children: [
                           Icon(
-                            calculation.isWorthIt 
-                                ? Icons.check_circle
-                                : Icons.info,
-                            color: calculation.isWorthIt 
-                                ? Colors.green
-                                : Colors.orange,
+                            calculation.isWorthIt ? Icons.check_circle : Icons.info,
+                            color: calculation.isWorthIt ? Colors.green : Colors.orange,
                             size: 32,
                           ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              calculation.isWorthIt
-                                  ? 'Выгодно делать самостоятельно'
-                                  : 'Рекомендуется нанять мастеров',
+                              loc.translate(
+                                calculation.isWorthIt
+                                    ? 'savings.status.self'
+                                    : 'savings.status.hire',
+                              ),
                               style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: calculation.isWorthIt 
-                                    ? Colors.green
-                                    : Colors.orange,
+                                color: calculation.isWorthIt ? Colors.green : Colors.orange,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      // Цены временно скрыты до интеграции с магазинами
-                      // _ResultRow(
-                      //   label: 'Стоимость материалов',
-                      //   value: '${widget.materialCost.toStringAsFixed(0)} ₽',
-                      // ),
-                      // const Divider(),
-                      // _ResultRow(
-                      //   label: 'Стоимость работы мастеров',
-                      //   value: '${calculation.laborCost.toStringAsFixed(0)} ₽',
-                      // ),
-                      // _ResultRow(
-                      //   label: 'Стоимость вашего времени',
-                      //   value: '${calculation.timeCost.toStringAsFixed(0)} ₽',
-                      // ),
-                      // const Divider(),
-                      // _ResultRow(
-                      //   label: 'Общая стоимость (мастера)',
-                      //   value: '${(widget.materialCost + calculation.laborCost).toStringAsFixed(0)} ₽',
-                      // ),
-                      // _ResultRow(
-                      //   label: 'Общая стоимость (самостоятельно)',
-                      //   value: '${(widget.materialCost + calculation.timeCost).toStringAsFixed(0)} ₽',
-                      // ),
-                      // const Divider(),
-                      // _ResultRow(
-                      //   label: 'Экономия',
-                      //   value: '${calculation.savings.toStringAsFixed(0)} ₽',
-                      //   isHighlighted: true,
-                      //   color: calculation.savings > 0 ? Colors.green : Colors.red,
-                      // ),
                       const SizedBox(height: 16),
                       Container(
                         padding: const EdgeInsets.all(12),
@@ -179,7 +144,10 @@ class _SavingsCalculatorScreenState extends ConsumerState<SavingsCalculatorScree
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          calculation.getRecommendation(),
+                          loc.translate(
+                            calculation.recommendationKey,
+                            calculation.recommendationParams,
+                          ),
                           style: theme.textTheme.bodyMedium,
                         ),
                       ),
@@ -193,46 +161,3 @@ class _SavingsCalculatorScreenState extends ConsumerState<SavingsCalculatorScree
     );
   }
 }
-
-/// Виджет для отображения строки результата (скрыт до интеграции с магазинами).
-// class _ResultRow extends StatelessWidget {
-//   final String label;
-//   final String value;
-//   final bool isHighlighted;
-//   final Color? color;
-//
-//   const _ResultRow({
-//     required this.label,
-//     required this.value,
-//     this.isHighlighted = false,
-//     this.color,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 8),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           Text(
-//             label,
-//             style: TextStyle(
-//               fontSize: isHighlighted ? 16 : 14,
-//               fontWeight: isHighlighted ? FontWeight.bold : FontWeight.normal,
-//             ),
-//           ),
-//           Text(
-//             value,
-//             style: TextStyle(
-//               fontSize: isHighlighted ? 18 : 16,
-//               fontWeight: FontWeight.bold,
-//               color: color ?? (isHighlighted ? Theme.of(context).colorScheme.primary : null),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-

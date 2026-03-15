@@ -1,36 +1,22 @@
+import '../../core/constants/region_ids.dart';
 import '../../data/repositories/price_repository.dart';
 
 /// Сервис для предзагрузки цен при старте приложения.
-///
-/// Загружает цены для всех регионов в фоновом режиме,
-/// чтобы ускорить последующие запросы.
-///
-/// ## Пример использования:
-///
-/// ```dart
-/// // В main.dart или при старте приложения
-/// await PricePreloader.preloadAll();
-/// ```
 class PricePreloader {
   /// Предзагрузить цены для всех регионов.
-  ///
-  /// Выполняется асинхронно в фоне, не блокирует UI.
   static Future<void> preloadAll(PriceRepository repository) async {
-    final regions = [
-      'Москва',
-      'Санкт‑Петербург',
-      'Екатеринбург',
-      'Краснодар',
-      'Регионы РФ',
+    const regions = [
+      RegionId.moscow,
+      RegionId.spb,
+      RegionId.ekaterinburg,
+      RegionId.krasnodar,
+      RegionId.regions,
     ];
 
-    // Загружаем все регионы параллельно
     await Future.wait(regions.map((region) => repository.getPrices(region)));
   }
 
   /// Предзагрузить цены для текущего региона.
-  ///
-  /// Используется при смене региона для предзагрузки следующего.
   static Future<void> preloadRegion(
     PriceRepository repository,
     String region,
@@ -39,23 +25,20 @@ class PricePreloader {
   }
 
   /// Предзагрузить цены для соседних регионов.
-  ///
-  /// Загружает цены для регионов, которые пользователь может выбрать.
   static Future<void> preloadAdjacentRegions(
     PriceRepository repository,
     String currentRegion,
   ) async {
-    final regionMap = {
-      'Москва': ['Санкт‑Петербург', 'Екатеринбург'],
-      'Санкт‑Петербург': ['Москва', 'Екатеринбург'],
-      'Екатеринбург': ['Москва', 'Санкт‑Петербург', 'Краснодар'],
-      'Краснодар': ['Екатеринбург', 'Регионы РФ'],
-      'Регионы РФ': ['Краснодар', 'Москва'],
+    const regionMap = {
+      RegionId.moscow: [RegionId.spb, RegionId.ekaterinburg],
+      RegionId.spb: [RegionId.moscow, RegionId.ekaterinburg],
+      RegionId.ekaterinburg: [RegionId.moscow, RegionId.spb, RegionId.krasnodar],
+      RegionId.krasnodar: [RegionId.ekaterinburg, RegionId.regions],
+      RegionId.regions: [RegionId.krasnodar, RegionId.moscow],
     };
 
-    final adjacentRegions = regionMap[currentRegion] ?? [];
-    await Future.wait(
-      adjacentRegions.map((region) => repository.getPrices(region)),
-    );
+    final normalizedRegion = RegionCatalog.normalize(currentRegion);
+    final adjacentRegions = regionMap[normalizedRegion] ?? const <String>[];
+    await Future.wait(adjacentRegions.map((region) => repository.getPrices(region)));
   }
 }

@@ -153,8 +153,10 @@ void main() {
         };
         final emptyPriceList = <PriceItem>[];
 
-        final ceilingResult =
-            calculator.calculate(ceilingInputs, emptyPriceList);
+        final ceilingResult = calculator.calculate(
+          ceilingInputs,
+          emptyPriceList,
+        );
         // Need a fresh instance to avoid caching
         final calculator2 = CalculatePaintUniversal();
         final wallResult = calculator2.calculate(wallInputs, emptyPriceList);
@@ -478,10 +480,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not provided', () {
-        final inputs = {
-          'inputMode': 0.0,
-          'wallArea': 40.0,
-        };
+        final inputs = {'inputMode': 0.0, 'wallArea': 40.0};
         final emptyPriceList = <PriceItem>[];
 
         final result = calculator.calculate(inputs, emptyPriceList);
@@ -598,8 +597,7 @@ void main() {
         final primedInputs = {...baseInputs, 'surfacePrep': 1.0};
         final rawInputs = {...baseInputs, 'surfacePrep': 2.0};
 
-        final primedResult =
-            calculator.calculate(primedInputs, emptyPriceList);
+        final primedResult = calculator.calculate(primedInputs, emptyPriceList);
         final calculator2 = CalculatePaintUniversal();
         final rawResult = calculator2.calculate(rawInputs, emptyPriceList);
 
@@ -685,8 +683,7 @@ void main() {
         final lightInputs = {...baseInputs, 'colorIntensity': 1.0};
         final darkInputs = {...baseInputs, 'colorIntensity': 3.0};
 
-        final lightResult =
-            calculator.calculate(lightInputs, emptyPriceList);
+        final lightResult = calculator.calculate(lightInputs, emptyPriceList);
         final calculator2 = CalculatePaintUniversal();
         final darkResult = calculator2.calculate(darkInputs, emptyPriceList);
 
@@ -718,16 +715,19 @@ void main() {
         };
         final emptyPriceList = <PriceItem>[];
 
-        final wallResult =
-            calculator.calculate(wallInputs, emptyPriceList);
+        final wallResult = calculator.calculate(wallInputs, emptyPriceList);
         final calculator2 = CalculatePaintUniversal();
-        final ceilingResult =
-            calculator2.calculate(ceilingInputs, emptyPriceList);
+        final ceilingResult = calculator2.calculate(
+          ceilingInputs,
+          emptyPriceList,
+        );
 
         // Wall: 0.22 * 50 + 0.3 = 11.3 => roundBulk = 12.0
         // Ceiling: 0.22 * 1.15 * 50 + 0.3 = 12.95 => roundBulk = 13.0
-        expect(ceilingResult.values['paintLiters'],
-            greaterThan(wallResult.values['paintLiters']!));
+        expect(
+          ceilingResult.values['paintLiters'],
+          greaterThan(wallResult.values['paintLiters']!),
+        );
       });
 
       test('walls+ceiling: ceiling portion adds 15% premium', () {
@@ -862,8 +862,7 @@ void main() {
     });
 
     group('Practical scenarios', () {
-      test('standard room 5x4x2.7, walls+ceiling, new surface, dark color',
-          () {
+      test('standard room 5x4x2.7, walls+ceiling, new surface, dark color', () {
         final inputs = {
           'paintType': 2.0, // walls and ceiling
           'inputMode': 1.0, // by dimensions
@@ -979,6 +978,16 @@ void main() {
         // New keys
         expect(result.values.containsKey('surfacePrep'), isTrue);
         expect(result.values.containsKey('colorIntensity'), isTrue);
+      });
+    });
+
+    group('validation messages', () {
+      test('layers range uses shared helper', () {
+        final calculator = CalculatePaintUniversal();
+
+        final error = calculator.validateInputs({'layers': 0.0});
+
+        expect(error, equals('Поле "количество слоёв" должно быть от 1 до 4'));
       });
     });
   });

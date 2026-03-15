@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../domain/models/project_v2.dart';
 
 /// Карточка проекта в списке.
@@ -20,6 +21,7 @@ class ProjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final dateFormat = DateFormat('dd.MM.yyyy');
 
     return Card(
@@ -49,13 +51,13 @@ class ProjectCard extends StatelessWidget {
                     ),
                     onPressed: onToggleFavorite,
                     tooltip: project.isFavorite
-                        ? 'Убрать из избранного'
-                        : 'Добавить в избранное',
+                        ? loc.translate('project.list.remove_from_favorites')
+                        : loc.translate('project.list.add_to_favorites'),
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete_outline_rounded),
                     onPressed: onDelete,
-                    tooltip: 'Удалить проект',
+                    tooltip: loc.translate('project.list.delete_project'),
                   ),
                 ],
               ),
@@ -107,7 +109,7 @@ class _StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Chip(
       avatar: Icon(_getIcon(), size: 16),
-      label: Text(_getLabel()),
+      label: Text(_getLabel(context)),
       backgroundColor: _getColor().withValues(alpha: 0.1),
       side: BorderSide(color: _getColor()),
       visualDensity: VisualDensity.compact,
@@ -148,20 +150,22 @@ class _StatusChip extends StatelessWidget {
     }
   }
 
-  String _getLabel() {
+  String _getLabel(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     switch (status) {
       case ProjectStatus.planning:
-        return 'Планирование';
+        return loc.translate('project.status.planning');
       case ProjectStatus.inProgress:
-        return 'В работе';
+        return loc.translate('project.status.in_progress');
       case ProjectStatus.onHold:
-        return 'Приостановлен';
+        return loc.translate('project.status.on_hold');
       case ProjectStatus.completed:
-        return 'Завершён';
+        return loc.translate('project.status.completed');
       case ProjectStatus.cancelled:
-        return 'Отменён';
+        return loc.translate('project.status.cancelled');
       case ProjectStatus.problem:
-        return 'Проблема';
+        return loc.translate('project.status.problem');
     }
   }
 }
+

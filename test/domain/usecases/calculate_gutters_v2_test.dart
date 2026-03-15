@@ -237,10 +237,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not specified', () {
-        final inputs = <String, double>{
-          'roofLength': 10.0,
-          'roofWidth': 8.0,
-        };
+        final inputs = <String, double>{'roofLength': 10.0, 'roofWidth': 8.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -300,10 +297,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero roof length', () {
-        final inputs = {
-          'roofLength': 0.0,
-          'roofWidth': 8.0,
-        };
+        final inputs = {'roofLength': 0.0, 'roofWidth': 8.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -312,10 +306,7 @@ void main() {
       });
 
       test('throws exception for zero roof width', () {
-        final inputs = {
-          'roofLength': 10.0,
-          'roofWidth': 0.0,
-        };
+        final inputs = {'roofLength': 10.0, 'roofWidth': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -324,10 +315,7 @@ void main() {
       });
 
       test('throws exception for negative values', () {
-        final inputs = {
-          'roofLength': -5.0,
-          'roofWidth': 8.0,
-        };
+        final inputs = {'roofLength': -5.0, 'roofWidth': 8.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -346,12 +334,48 @@ void main() {
           'needHeating': 0.0,
         };
         final priceList = [
-          const PriceItem(sku: 'gutter', name: 'Желоб', price: 250.0, unit: 'м', imageUrl: ''),
-          const PriceItem(sku: 'downpipe', name: 'Труба', price: 300.0, unit: 'м', imageUrl: ''),
-          const PriceItem(sku: 'corner', name: 'Угол', price: 150.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'funnel', name: 'Воронка', price: 200.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'bracket', name: 'Кронштейн', price: 50.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'elbow', name: 'Колено', price: 100.0, unit: 'шт', imageUrl: ''),
+          const PriceItem(
+            sku: 'gutter',
+            name: 'Желоб',
+            price: 250.0,
+            unit: 'м',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'downpipe',
+            name: 'Труба',
+            price: 300.0,
+            unit: 'м',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'corner',
+            name: 'Угол',
+            price: 150.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'funnel',
+            name: 'Воронка',
+            price: 200.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'bracket',
+            name: 'Кронштейн',
+            price: 50.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'elbow',
+            name: 'Колено',
+            price: 100.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -361,10 +385,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'roofLength': 10.0,
-          'roofWidth': 8.0,
-        };
+        final inputs = {'roofLength': 10.0, 'roofWidth': 8.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -421,6 +442,23 @@ void main() {
         expect(result.values['funnelsCount'], equals(8.0));
         // Elbows = 8 * 2 = 16
         expect(result.values['elbowsCount'], equals(16.0));
+      });
+    });
+    group('validation messages', () {
+      test('roof width uses shared helper', () {
+        expect(
+          () => calculator({
+            'roofLength': 10.0,
+            'roofWidth': 0.0,
+          }, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Поле "ширина крыши" должно быть больше нуля'),
+            ),
+          ),
+        );
       });
     });
   });

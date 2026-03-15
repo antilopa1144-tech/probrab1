@@ -11,9 +11,7 @@ void main() {
     });
 
     test('calculates basic values correctly', () {
-      final inputs = {
-        'concreteVolume': 100.0,
-      };
+      final inputs = {'concreteVolume': 100.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -25,9 +23,7 @@ void main() {
     });
 
     test('uses default values when not provided', () {
-      final inputs = {
-        'concreteVolume': 1.0,
-      };
+      final inputs = {'concreteVolume': 1.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -40,9 +36,7 @@ void main() {
     });
 
     test('preserves input values in result', () {
-      final inputs = {
-        'concreteVolume': 42.5,
-      };
+      final inputs = {'concreteVolume': 42.5};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -52,9 +46,7 @@ void main() {
     });
 
     test('handles price list correctly', () {
-      final inputs = {
-        'concreteVolume': 100.0,
-      };
+      final inputs = {'concreteVolume': 100.0};
       final priceList = [
         const PriceItem(
           sku: 'test-1',
@@ -86,6 +78,20 @@ void main() {
       expect(result.values['concreteGrade'], equals(5.0));
       // М300: 380 кг/м³ → ceil(1.0 * 380 / 50) = ceil(7.6) = 8 мешков
       expect(result.values['cementBags'], equals(8.0));
+    });
+
+    group('validation messages', () {
+      test('screen path uses shared thickness field message', () {
+        final calculator = CalculateConcreteUniversal();
+
+        final error = calculator.validateInputs({
+          'inputMode': 1.0,
+          'area': 12.0,
+          'thickness': 0.0,
+        });
+
+        expect(error, equals('Поле "толщина" должно быть больше нуля'));
+      });
     });
   });
 }

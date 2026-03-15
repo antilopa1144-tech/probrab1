@@ -28,10 +28,7 @@ void main() {
     });
 
     test('calculates j-profile length from perimeter', () {
-      final inputs = {
-        'area': 100.0,
-        'perimeter': 40.0,
-      };
+      final inputs = {'area': 100.0, 'perimeter': 40.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -41,10 +38,7 @@ void main() {
     });
 
     test('calculates corner length correctly', () {
-      final inputs = {
-        'area': 100.0,
-        'corners': 4.0,
-      };
+      final inputs = {'area': 100.0, 'corners': 4.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -54,10 +48,7 @@ void main() {
     });
 
     test('calculates start and finish strips from perimeter', () {
-      final inputs = {
-        'area': 100.0,
-        'perimeter': 40.0,
-      };
+      final inputs = {'area': 100.0, 'perimeter': 40.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -82,10 +73,7 @@ void main() {
     });
 
     test('uses provided soffit length', () {
-      final inputs = {
-        'area': 100.0,
-        'soffitLength': 20.0,
-      };
+      final inputs = {'area': 100.0, 'soffitLength': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -94,10 +82,7 @@ void main() {
     });
 
     test('estimates soffit length when not provided', () {
-      final inputs = {
-        'area': 100.0,
-        'perimeter': 40.0,
-      };
+      final inputs = {'area': 100.0, 'perimeter': 40.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -107,9 +92,7 @@ void main() {
     });
 
     test('estimates perimeter when not provided', () {
-      final inputs = {
-        'area': 100.0,
-      };
+      final inputs = {'area': 100.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -142,9 +125,7 @@ void main() {
     });
 
     test('uses default values when not provided', () {
-      final inputs = {
-        'area': 100.0,
-      };
+      final inputs = {'area': 100.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -155,21 +136,23 @@ void main() {
     });
 
     test('throws exception for zero area', () {
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле \"площадь\" должно быть больше нуля'),
+          ),
+        ),
       );
     });
 
     test('preserves area in results', () {
-      final inputs = {
-        'area': 150.0,
-      };
+      final inputs = {'area': 150.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);

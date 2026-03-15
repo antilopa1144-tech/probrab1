@@ -31,7 +31,7 @@ void main() {
         final error = FieldValidator.validate(field, null);
         expect(error, isNotNull);
         expect(error?.code, equals('REQUIRED_FIELD'));
-        expect(error?.fieldName, equals('area'));
+        expect(error?.fieldName, equals('площадь'));
       });
 
       test('returns null for missing optional field', () {
@@ -288,14 +288,14 @@ void main() {
         final inputs = {'area': 15000.0};
         final error = FieldValidator.validateLogical(inputs);
         expect(error, isNotNull);
-        expect(error?.fieldName, equals('area'));
+        expect(error?.fieldName, equals('площадь'));
       });
 
       test('returns error for volume > 1000', () {
         final inputs = {'volume': 1500.0};
         final error = FieldValidator.validateLogical(inputs);
         expect(error, isNotNull);
-        expect(error?.fieldName, equals('volume'));
+        expect(error?.fieldName, equals('объём'));
       });
 
       test('returns error when length >> width', () {
@@ -316,21 +316,21 @@ void main() {
         final inputs = {'thickness': 600.0};
         final error = FieldValidator.validateLogical(inputs);
         expect(error, isNotNull);
-        expect(error?.fieldName, equals('thickness'));
+        expect(error?.fieldName, equals('толщина'));
       });
 
       test('returns error for very small thickness', () {
         final inputs = {'thickness': 0.05};
         final error = FieldValidator.validateLogical(inputs);
         expect(error, isNotNull);
-        expect(error?.fieldName, equals('thickness'));
+        expect(error?.fieldName, equals('толщина'));
       });
 
       test('returns error for height > 10', () {
         final inputs = {'height': 15.0};
         final error = FieldValidator.validateLogical(inputs);
         expect(error, isNotNull);
-        expect(error?.fieldName, equals('height'));
+        expect(error?.fieldName, equals('высота'));
       });
 
       test('returns error for perimeter too small for area', () {

@@ -1,0 +1,97 @@
+{
+  "formulaVersion": "tile-canonical-v1",
+  "cases": [
+    {
+      "id": "room_straight_30x30",
+      "inputs": {
+        "inputMode": 0,
+        "length": 4,
+        "width": 3,
+        "tileWidthCm": 30,
+        "tileHeightCm": 30,
+        "layoutPattern": 1,
+        "jointWidth": 3,
+        "groutDepth": 6,
+        "roomComplexity": 1
+      },
+      "expected": {
+        "area": 12,
+        "wastePercent": 10,
+        "formulaVersion": "tile-canonical-v1",
+        "materials": {
+          "tiles": 147,
+          "glueBags": 2,
+          "groutBags": 2,
+          "primerCans": 1,
+          "crosses": 177
+        },
+        "warningsCount": 0,
+        "recScenario": {
+          "packageSize": 1,
+          "exactNeed": 146.666667,
+          "purchaseQuantity": 147
+        }
+      }
+    },
+    {
+      "id": "area_diagonal_large_format",
+      "inputs": {
+        "inputMode": 1,
+        "area": 20,
+        "tileWidthCm": 80,
+        "tileHeightCm": 80,
+        "layoutPattern": 2,
+        "jointWidth": 3,
+        "roomComplexity": 2
+      },
+      "expected": {
+        "area": 20,
+        "wastePercent": 25,
+        "formulaVersion": "tile-canonical-v1",
+        "materials": {
+          "tiles": 40,
+          "glueBags": 6,
+          "groutBags": 2,
+          "primerCans": 1,
+          "svpPackages": 1
+        },
+        "warningsCount": 2,
+        "recScenario": {
+          "packageSize": 1,
+          "exactNeed": 39.0625,
+          "purchaseQuantity": 40
+        }
+      }
+    },
+    {
+      "id": "area_herringbone_large_room",
+      "inputs": {
+        "inputMode": 1,
+        "area": 35,
+        "tileWidthCm": 20,
+        "tileHeightCm": 10,
+        "layoutPattern": 4,
+        "jointWidth": 3,
+        "roomComplexity": 3
+      },
+      "expected": {
+        "area": 35,
+        "wastePercent": 30,
+        "formulaVersion": "tile-canonical-v1",
+        "materials": {
+          "tiles": 2275,
+          "glueBags": 5,
+          "groutBags": 9,
+          "primerCans": 2,
+          "crosses": 2730
+        },
+        "warningsCount": 1,
+        "recScenario": {
+          "packageSize": 1,
+          "exactNeed": 2275,
+          "purchaseQuantity": 2275
+        }
+      }
+    }
+  ]
+}

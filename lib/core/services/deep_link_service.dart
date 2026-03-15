@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../errors/global_error_handler.dart';
+import '../../core/localization/app_localizations.dart';
 import '../../domain/models/shareable_content.dart';
 import '../../domain/models/project_v2.dart';
 import '../../core/database/database_provider.dart';
@@ -37,7 +39,6 @@ class DeepLinkService {
         debugPrint('DeepLink received: $uri');
       }
 
-      // Проверить схему
       if (uri.scheme != 'masterokapp') {
         debugPrint('Invalid scheme: ${uri.scheme}');
         return null;
@@ -45,15 +46,11 @@ class DeepLinkService {
 
       DeepLinkData? data;
 
-      // Полный формат: masterokapp://share/project?data=...
       if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 'share') {
         data = await _parseFullFormat(uri);
-      }
-      // Компактный формат: masterokapp://s/12345678?d=...
-      else if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 's') {
+      } else if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 's') {
         data = await _parseCompactFormat(uri);
-      }
-      else {
+      } else {
         debugPrint('Unknown deep link format: ${uri.path}');
         return null;
       }
@@ -72,7 +69,7 @@ class DeepLinkService {
 
   /// Парсинг полного формата: masterokapp://share/project?data=...
   Future<DeepLinkData?> _parseFullFormat(Uri uri) async {
-    final type = uri.pathSegments[1]; // project или calculator
+    final type = uri.pathSegments[1];
     final encodedData = uri.queryParameters['data'];
 
     if (encodedData == null) {
@@ -106,8 +103,6 @@ class DeepLinkService {
     try {
       final jsonString = utf8.decode(base64Url.decode(encodedData));
       final jsonData = json.decode(jsonString) as Map<String, dynamic>;
-
-      // Определить тип по структуре данных
       final type = _detectType(jsonData);
 
       return DeepLinkData(
@@ -171,26 +166,24 @@ class DeepLinkHandler {
   /// Обработать данные Deep Link и перейти на соответствующий экран
   Future<void> handle(DeepLinkData data) async {
     if (!context.mounted) return;
+    final loc = AppLocalizations.of(context);
 
-    // Обработка проекта
     final project = data.asProject();
     if (project != null) {
       await _handleProject(project);
       return;
     }
 
-    // Обработка калькулятора
     final calculator = data.asCalculator();
     if (calculator != null) {
       await _handleCalculator(calculator);
       return;
     }
 
-    // Неизвестный тип
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Не удалось открыть ссылку'),
+        SnackBar(
+          content: Text(loc.translate('share.project.invalid_link')),
         ),
       );
     }
@@ -199,8 +192,8 @@ class DeepLinkHandler {
   /// Обработка проекта из Deep Link
   Future<void> _handleProject(ShareableProject shareableProject) async {
     if (!context.mounted) return;
+    final loc = AppLocalizations.of(context);
 
-    // Показать диалог с предпросмотром и кнопками
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => _ProjectPreviewDialog(project: shareableProject),
@@ -216,15 +209,26 @@ class DeepLinkHandler {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Проект "${shareableProject.name}" импортирован'),
+              content: Text(
+                loc.translate(
+                  'share.project.imported_named',
+                  {'name': shareableProject.name},
+                ),
+              ),
             ),
           );
         }
-      } catch (e) {
+      } catch (e, stackTrace) {
         if (context.mounted) {
+          final message = GlobalErrorHandler.getUserFriendlyMessage(context, e, stackTrace);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Ошибка импорта проекта: $e'),
+              content: Text(
+                loc.translate(
+                  'share.project.import_error',
+                  {'error': message},
+                ),
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -237,7 +241,6 @@ class DeepLinkHandler {
   Future<void> _handleCalculator(ShareableCalculator calculator) async {
     if (!context.mounted) return;
 
-    // Открыть калькулятор с предзаполненными данными
     await CalculatorNavigationHelper.navigateToCalculatorById(
       context,
       calculator.calculatorId,
@@ -255,6 +258,7 @@ class _ProjectPreviewDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return AlertDialog(
       title: Row(
@@ -284,20 +288,20 @@ class _ProjectPreviewDialog extends StatelessWidget {
             ],
             _InfoRow(
               icon: Icons.info_outline,
-              label: 'Статус',
-              value: _getStatusText(project.status),
+              label: loc.translate('share.project.preview_status'),
+              value: _getStatusText(loc, project.status),
             ),
             const SizedBox(height: 8),
             _InfoRow(
               icon: Icons.calculate_rounded,
-              label: 'Расчётов',
+              label: loc.translate('share.project.preview_calculations'),
               value: '${project.calculations.length}',
             ),
             if (project.tags.isNotEmpty) ...[
               const SizedBox(height: 8),
               _InfoRow(
                 icon: Icons.label_outline,
-                label: 'Теги',
+                label: loc.translate('share.project.preview_tags'),
                 value: project.tags.join(', '),
               ),
             ],
@@ -305,7 +309,7 @@ class _ProjectPreviewDialog extends StatelessWidget {
             const Divider(),
             const SizedBox(height: 8),
             Text(
-              'Импортировать этот проект?',
+              loc.translate('share.project.preview_import_question'),
               style: theme.textTheme.titleSmall,
             ),
           ],
@@ -314,31 +318,31 @@ class _ProjectPreviewDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Отмена'),
+          child: Text(loc.translate('button.cancel')),
         ),
         FilledButton.icon(
           onPressed: () => Navigator.of(context).pop(true),
           icon: const Icon(Icons.download_rounded),
-          label: const Text('Импортировать'),
+          label: Text(loc.translate('button.import')),
         ),
       ],
     );
   }
 
-  String _getStatusText(ProjectStatus status) {
+  String _getStatusText(AppLocalizations loc, ProjectStatus status) {
     switch (status) {
       case ProjectStatus.planning:
-        return 'Планирование';
+        return loc.translate('project.status.planning');
       case ProjectStatus.inProgress:
-        return 'В работе';
+        return loc.translate('project.status.in_progress');
       case ProjectStatus.onHold:
-        return 'На паузе';
+        return loc.translate('project.status.on_hold');
       case ProjectStatus.completed:
-        return 'Завершён';
+        return loc.translate('project.status.completed');
       case ProjectStatus.cancelled:
-        return 'Отменён';
+        return loc.translate('project.status.cancelled');
       case ProjectStatus.problem:
-        return 'Проблема';
+        return loc.translate('project.status.problem');
     }
   }
 }

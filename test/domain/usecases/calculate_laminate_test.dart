@@ -24,10 +24,7 @@ void main() {
     });
 
     test('calculates underlay area with 5% reserve', () {
-      final inputs = {
-        'area': 20.0,
-        'packArea': 2.0,
-      };
+      final inputs = {'area': 20.0, 'packArea': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -64,11 +61,7 @@ void main() {
     });
 
     test('calculates wedges needed', () {
-      final inputs = {
-        'area': 20.0,
-        'packArea': 2.0,
-        'perimeter': 20.0,
-      };
+      final inputs = {'area': 20.0, 'packArea': 2.0, 'perimeter': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -104,11 +97,7 @@ void main() {
     });
 
     test('calculates total price with price list', () {
-      final inputs = {
-        'area': 20.0,
-        'packArea': 2.0,
-        'perimeter': 18.0,
-      };
+      final inputs = {'area': 20.0, 'packArea': 2.0, 'perimeter': 18.0};
       final priceList = [
         const PriceItem(
           sku: 'laminate',
@@ -126,10 +115,7 @@ void main() {
     });
 
     test('throws exception for zero area', () {
-      final inputs = {
-        'area': 0.0,
-        'packArea': 2.0,
-      };
+      final inputs = {'area': 0.0, 'packArea': 2.0};
       final emptyPriceList = <PriceItem>[];
 
       // Калькулятор должен выбросить исключение при area <= 0
@@ -140,9 +126,7 @@ void main() {
     });
 
     test('uses default pack area when not provided', () {
-      final inputs = {
-        'area': 20.0,
-      };
+      final inputs = {'area': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -150,6 +134,23 @@ void main() {
       // По умолчанию packArea = 2.0
       // ceil(20 / 2 * 1.07) = ceil(10.7) = 11
       expect(result.values['packsNeeded'], closeTo(11.0, 0.6));
+    });
+
+    group('validation messages', () {
+      test('pack area range uses shared helper', () {
+        final calculator = CalculateLaminate();
+
+        final error = calculator.validateInputs({
+          'inputMode': 1.0,
+          'area': 12.0,
+          'packArea': 0.2,
+        });
+
+        expect(
+          error,
+          equals('Поле "площадь упаковки" должно быть от 0.5 до 5 м²'),
+        );
+      });
     });
   });
 }

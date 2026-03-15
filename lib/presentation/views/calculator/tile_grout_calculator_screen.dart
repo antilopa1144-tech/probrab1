@@ -20,18 +20,27 @@ enum GroutType {
 
 /// Предустановки размера плитки
 enum TilePreset {
-  t20x20(20, 20, '20×20 см'),
-  t30x30(30, 30, '30×30 см'),
-  t40x40(40, 40, '40×40 см'),
-  t60x60(60, 60, '60×60 см'),
-  t80x80(80, 80, '80×80 см'),
-  t120x60(120, 60, '120×60 см'),
-  custom(0, 0, 'Свой размер');
+  t20x20(20, 20),
+  t30x30(30, 30),
+  t40x40(40, 40),
+  t60x60(60, 60),
+  t80x80(80, 80),
+  t120x60(120, 60),
+  custom(0, 0);
 
   final double width;
   final double height;
-  final String label;
-  const TilePreset(this.width, this.height, this.label);
+  const TilePreset(this.width, this.height);
+
+  String localizedLabel(AppLocalizations loc) {
+    if (this == TilePreset.custom) {
+      return loc.translate('grout_calc.tile.custom');
+    }
+
+    final widthLabel = width % 1 == 0 ? width.toStringAsFixed(0) : width.toStringAsFixed(1);
+    final heightLabel = height % 1 == 0 ? height.toStringAsFixed(0) : height.toStringAsFixed(1);
+    return '$widthLabel×$heightLabel ${loc.translate('common.cm')}';
+  }
 }
 
 class _GroutResult {
@@ -237,9 +246,7 @@ class _TileGroutCalculatorScreenState extends ConsumerState<TileGroutCalculatorS
               final isSelected = _tilePreset == preset;
               return ChoiceChip(
                 label: Text(
-                  preset == TilePreset.custom
-                      ? _loc.translate('grout_calc.tile.custom')
-                      : preset.label,
+                  preset.localizedLabel(_loc),
                 ),
                 selected: isSelected,
                 selectedColor: _accentColor.withValues(alpha: 0.2),
@@ -427,3 +434,4 @@ class _TileGroutCalculatorScreenState extends ConsumerState<TileGroutCalculatorS
     );
   }
 }
+

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/entities/expert_recommendation.dart';
+import '../../../core/localization/app_localizations.dart';
 
 /// Экран экспертных рекомендаций.
 class ExpertRecommendationsScreen extends ConsumerWidget {
@@ -14,19 +15,20 @@ class ExpertRecommendationsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     final recommendations = ExpertRecommendationsDatabase.getRecommendations(workType);
 
     if (recommendations.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Экспертные рекомендации')),
-        body: const Center(
-          child: Text('Рекомендации для этого типа работ пока не добавлены'),
+        appBar: AppBar(title: Text(loc.translate('expert.title'))),
+        body: Center(
+          child: Text(loc.translate('expert.empty')),
         ),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Экспертные рекомендации')),
+      appBar: AppBar(title: Text(loc.translate('expert.title'))),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: recommendations.length,
@@ -39,8 +41,8 @@ class ExpertRecommendationsScreen extends ConsumerWidget {
                 backgroundColor: _getLevelColor(rec.level),
                 child: Text(_getLevelIcon(rec.level)),
               ),
-              title: Text(rec.title),
-              subtitle: Text('Уровень: ${_getLevelName(rec.level)}'),
+              title: Text(loc.translate(rec.titleKey)),
+              subtitle: Text(loc.translate('expert.level_value', {'level': _getLevelName(loc, rec.level)})),
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16),
@@ -48,20 +50,20 @@ class ExpertRecommendationsScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        rec.description,
+                        loc.translate(rec.descriptionKey),
                         style: theme.textTheme.bodyMedium,
                       ),
-                      if (rec.commonMistakes.isNotEmpty) ...[
+                      if (rec.commonMistakeKeys.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         Text(
-                          'Типичные ошибки',
+                          loc.translate('expert.common_mistakes'),
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.red,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        ...rec.commonMistakes.map((mistake) => Padding(
+                        ...rec.commonMistakeKeys.map((mistakeKey) => Padding(
                               padding: const EdgeInsets.only(bottom: 4),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,22 +71,22 @@ class ExpertRecommendationsScreen extends ConsumerWidget {
                                   const Icon(Icons.close, 
                                       color: Colors.red, size: 16),
                                   const SizedBox(width: 8),
-                                  Expanded(child: Text(mistake)),
+                                  Expanded(child: Text(loc.translate(mistakeKey))),
                                 ],
                               ),
                             )),
                       ],
-                      if (rec.bestPractices.isNotEmpty) ...[
+                      if (rec.bestPracticeKeys.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         Text(
-                          'Лучшие практики',
+                          loc.translate('expert.best_practices'),
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.green,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        ...rec.bestPractices.map((practice) => Padding(
+                        ...rec.bestPracticeKeys.map((practiceKey) => Padding(
                               padding: const EdgeInsets.only(bottom: 4),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,15 +94,15 @@ class ExpertRecommendationsScreen extends ConsumerWidget {
                                   const Icon(Icons.check_circle,
                                       color: Colors.green, size: 16),
                                   const SizedBox(width: 8),
-                                  Expanded(child: Text(practice)),
+                                  Expanded(child: Text(loc.translate(practiceKey))),
                                 ],
                               ),
                             )),
                       ],
-                      if (rec.tools.isNotEmpty) ...[
+                      if (rec.toolKeys.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         Text(
-                          'Необходимые инструменты',
+                          loc.translate('expert.tools'),
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -108,15 +110,15 @@ class ExpertRecommendationsScreen extends ConsumerWidget {
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
-                          children: rec.tools
-                              .map((tool) => Chip(label: Text(tool)))
+                          children: rec.toolKeys
+                              .map((toolKey) => Chip(label: Text(loc.translate(toolKey))))
                               .toList(),
                         ),
                       ],
-                      if (rec.materials.isNotEmpty) ...[
+                      if (rec.materialKeys.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         Text(
-                          'Необходимые материалы',
+                          loc.translate('expert.materials'),
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -124,8 +126,8 @@ class ExpertRecommendationsScreen extends ConsumerWidget {
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
-                          children: rec.materials
-                              .map((material) => Chip(label: Text(material)))
+                          children: rec.materialKeys
+                              .map((materialKey) => Chip(label: Text(loc.translate(materialKey))))
                               .toList(),
                         ),
                       ],
@@ -166,17 +168,19 @@ class ExpertRecommendationsScreen extends ConsumerWidget {
     }
   }
 
-  String _getLevelName(RecommendationLevel level) {
+  String _getLevelName(AppLocalizations loc, RecommendationLevel level) {
     switch (level) {
       case RecommendationLevel.beginner:
-        return 'Новичок';
+        return loc.translate('expert.level.beginner');
       case RecommendationLevel.intermediate:
-        return 'Средний';
+        return loc.translate('expert.level.intermediate');
       case RecommendationLevel.advanced:
-        return 'Продвинутый';
+        return loc.translate('expert.level.advanced');
       case RecommendationLevel.expert:
-        return 'Эксперт';
+        return loc.translate('expert.level.expert');
     }
   }
 }
+
+
 

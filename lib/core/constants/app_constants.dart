@@ -1,3 +1,5 @@
+import 'region_ids.dart';
+
 /// Основные константы приложения.
 class AppConstants {
   // Название приложения
@@ -14,15 +16,15 @@ class AppConstants {
 
   // Настройки по умолчанию
   static const bool defaultDarkMode = true;
-  static const String defaultRegion = 'Москва';
+  static const String defaultRegion = RegionCatalog.defaultId;
 
   // Регионы для цен
   static const List<String> regions = [
-    'Москва',
-    'Санкт-Петербург',
-    'Екатеринбург',
-    'Краснодар',
-    'Регионы РФ',
+    RegionId.moscow,
+    RegionId.spb,
+    RegionId.ekaterinburg,
+    RegionId.krasnodar,
+    RegionId.regions,
   ];
 
   // Лимиты и ограничения

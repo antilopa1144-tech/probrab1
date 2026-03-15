@@ -27,7 +27,6 @@ class _LinoleumResult {
   final double tapeLength;
   final double plinthLength;
   final int plinthPieces;
-  final double marginCm;
 
   const _LinoleumResult({
     required this.area,
@@ -38,7 +37,6 @@ class _LinoleumResult {
     required this.tapeLength,
     required this.plinthLength,
     required this.plinthPieces,
-    required this.marginCm,
   });
 
   factory _LinoleumResult.fromCalculatorResult(Map<String, double> values) {
@@ -51,7 +49,6 @@ class _LinoleumResult {
       tapeLength: values['tapeLength'] ?? 0,
       plinthLength: values['plinthLength'] ?? 0,
       plinthPieces: (values['plinthPieces'] ?? 0).toInt(),
-      marginCm: values['marginCm'] ?? 20.0,
     );
   }
 }
@@ -83,7 +80,8 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
 
   // Параметры
   double _rollWidth = 3.0; // м
-  double _marginCm = 20.0; // запас в см
+  bool _hasPattern = false;
+  double _patternRepeatCm = 30.0;
 
   LinoleumType _linoleumType = LinoleumType.semiCommercial;
   bool _needPlinth = true;
@@ -106,7 +104,8 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
       'roomWidth': _roomWidth,
       'roomLength': _roomLength,
       'rollWidth': _rollWidth,
-      'marginCm': _marginCm,
+      'hasPattern': _hasPattern ? 1.0 : 0.0,
+      'patternRepeatCm': _patternRepeatCm,
       'needTape': _needTape ? 1.0 : 0.0,
       'needPlinth': _needPlinth ? 1.0 : 0.0,
     };
@@ -123,17 +122,19 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
     buffer.writeln(_loc.translate('linoleum_calc.export.title'));
     buffer.writeln('═' * 40);
     buffer.writeln();
-    buffer.writeln('Комната: ${_roomWidth.toStringAsFixed(1)} × ${_roomLength.toStringAsFixed(1)} м');
+    buffer.writeln(_loc.translate('linoleum_calc.export.room')
+        .replaceFirst('{width}', _roomWidth.toStringAsFixed(1))
+        .replaceFirst('{length}', _roomLength.toStringAsFixed(1))
+        .replaceFirst('{unit}', _loc.translate('common.meters')));
     buffer.writeln(_loc.translate('linoleum_calc.export.area')
         .replaceFirst('{value}', _result.area.toStringAsFixed(1)));
     buffer.writeln(_loc.translate('linoleum_calc.export.type')
         .replaceFirst('{value}', _loc.translate(_linoleumType.nameKey)));
-    buffer.writeln('Запас: +${_marginCm.toStringAsFixed(0)} см');
-    buffer.writeln();
-    buffer.writeln(_loc.translate('linoleum_calc.export.materials_title'));
-    buffer.writeln('─' * 40);
-    buffer.writeln(_loc.translate('linoleum_calc.export.linoleum')
-        .replaceFirst('{value}', _result.areaWithWaste.toStringAsFixed(1)));
+    if (_hasPattern) {
+      buffer.writeln(_loc.translate('linoleum_calc.export.rapport_line')
+          .replaceFirst('{value}', _patternRepeatCm.toStringAsFixed(0))
+          .replaceFirst('{unit}', _loc.translate('common.cm')));
+    }
     if (_needTape) {
       buffer.writeln(_loc.translate('linoleum_calc.export.tape')
           .replaceFirst('{value}', _result.tapeLength.toStringAsFixed(1)));
@@ -249,7 +250,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Размеры комнаты',
+            _loc.translate('linoleum_calc.room_dimensions'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.getTextPrimary(_isDark),
             ),
@@ -329,7 +330,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Параметры',
+            _loc.translate('linoleum_calc.parameters'),
             style: CalculatorDesignSystem.titleMedium.copyWith(
               color: CalculatorColors.getTextPrimary(_isDark),
             ),
@@ -353,53 +354,63 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
             },
           ),
           const SizedBox(height: 16),
-          // Запас
-          CalculatorSliderField(
-            label: 'Запас по краям',
-            value: _marginCm,
-            min: 0,
-            max: 50,
-            divisions: 10,
-            suffix: 'см',
-            accentColor: _accentColor,
-            decimalPlaces: 0,
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              _loc.translate('linoleum_calc.pattern_repeat'),
+              style: CalculatorDesignSystem.bodyMedium.copyWith(
+                color: CalculatorColors.getTextPrimary(_isDark),
+              ),
+            ),
+            subtitle: Text(
+              _loc.translate('linoleum_calc.pattern_repeat_hint'),
+              style: CalculatorDesignSystem.bodySmall.copyWith(
+                color: CalculatorColors.getTextSecondary(_isDark),
+              ),
+            ),
+            value: _hasPattern,
+            activeTrackColor: _accentColor,
             onChanged: (v) {
               setState(() {
-                _marginCm = v;
+                _hasPattern = v;
                 _update();
               });
             },
           ),
-          const SizedBox(height: 8),
-          // Подсказка про запас
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: _accentColor.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(8),
+          if (_hasPattern) ...[
+            const SizedBox(height: 12),
+            CalculatorSliderField(
+              label: _loc.translate('linoleum_calc.pattern.step'),
+              value: _patternRepeatCm,
+              min: 10,
+              max: 100,
+              divisions: 18,
+              suffix: _loc.translate('common.cm'),
+              accentColor: _accentColor,
+              decimalPlaces: 0,
+              onChanged: (v) {
+                setState(() {
+                  _patternRepeatCm = v;
+                  _update();
+                });
+              },
             ),
-            child: Row(
-              children: [
-                Icon(
-                  _marginCm >= 20 ? Icons.check_circle : Icons.info_outline,
-                  color: _marginCm >= 20 ? Colors.green : _accentColor,
-                  size: 18,
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: _accentColor.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                _loc.translate('linoleum_calc.pattern.hint'),
+                style: CalculatorDesignSystem.bodySmall.copyWith(
+                  color: CalculatorColors.getTextSecondary(_isDark),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    _marginCm >= 20
-                        ? 'Рекомендуемый запас для подрезки'
-                        : 'Рекомендуется минимум 20 см',
-                    style: CalculatorDesignSystem.bodySmall.copyWith(
-                      color: CalculatorColors.getTextSecondary(_isDark),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
+            const SizedBox(height: 8),
+          ],
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(
@@ -463,7 +474,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
         MaterialItem(
           name: _loc.translate('linoleum_calc.materials.linear_meters'),
           value: '${_result.linearMeters.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
-          subtitle: '${_loc.translate('linoleum_calc.materials.roll_width')}: ${_result.rollWidth.toStringAsFixed(1)} м',
+          subtitle: '${_loc.translate('linoleum_calc.materials.roll_width')}: ${_result.rollWidth.toStringAsFixed(1)} ${_loc.translate('common.meters')}',
           icon: Icons.straighten,
         ),
     ];
@@ -506,3 +517,8 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
     );
   }
 }
+
+
+
+
+

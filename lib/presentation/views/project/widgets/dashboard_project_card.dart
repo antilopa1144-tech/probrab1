@@ -362,6 +362,7 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -377,7 +378,7 @@ class _InfoRow extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                '$calculations расчётов',
+                loc.translate('project.dashboard.calculations_count', {'count': calculations.toString()}),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -392,7 +393,7 @@ class _InfoRow extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Куплено',
+                loc.translate('project.dashboard.purchased'),
                 style: theme.textTheme.labelSmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -519,3 +520,8 @@ class _DeadlineRow extends StatelessWidget {
     return '$days ${loc.translate('project.dashboard.days_left')}';
   }
 }
+
+
+
+
+

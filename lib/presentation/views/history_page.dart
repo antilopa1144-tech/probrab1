@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/calculation_provider.dart';
+import '../../core/errors/global_error_handler.dart';
 import '../../core/widgets/staggered_animation.dart';
 import '../../core/widgets/animated_empty_state.dart';
 import '../utils/calculation_display.dart';
@@ -40,7 +41,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
               children: [
                 HistoryStatCard(
                   icon: Icons.calculate,
-                  label: 'Расчётов',
+                  label: loc.translate('history.calculations'),
                   value: '${stats['totalCalculations']}',
                   color: Colors.blue,
                 ),
@@ -65,7 +66,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
             children: [
               TextField(
                 decoration: InputDecoration(
-                  hintText: 'Поиск расчётов...',
+                  hintText: loc.translate('history.search_hint'),
                   prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -163,10 +164,10 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
               if (filtered.isEmpty) {
                 return AnimatedEmptyState(
                   icon: Icons.calculate_outlined,
-                  title: 'Нет расчётов',
+                  title: loc.translate('history.empty_title'),
                   subtitle: _searchQuery.isNotEmpty
-                      ? 'Попробуйте изменить поисковый запрос'
-                      : 'Создайте первый расчёт, чтобы он появился здесь',
+                      ? loc.translate('history.empty_search')
+                      : loc.translate('history.empty_default'),
                 );
               }
 
@@ -203,11 +204,19 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) =>
-                Center(child: Text('Ошибка загрузки: $error')),
+            error: (error, stack) => Center(
+                child: Text(
+                  loc.translate(
+                    'history.loading_error',
+                    {'error': GlobalErrorHandler.getUserFriendlyMessage(context, error, stack)},
+                  ),
+                ),
+              ),
           ),
         ),
       ],
     );
   }
 }
+
+

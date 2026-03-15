@@ -2,63 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
-import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
+import '../../../domain/usecases/calculate_tile_glue.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
-
-/// Helper class for accessing tile adhesive calculator constants
-class _TileAdhesiveConstants {
-  final CalculatorConstants? _data;
-
-  _TileAdhesiveConstants(this._data);
-
-  double _getDouble(String category, String key, double defaultValue) {
-    return _data?.getDouble(category, key, defaultValue: defaultValue) ?? defaultValue;
-  }
-
-  int _getInt(String category, String key, int defaultValue) {
-    return _data?.getInt(category, key, defaultValue: defaultValue) ?? defaultValue;
-  }
-
-  // Surface factors
-  double getSurfaceFactor(String surfaceKey) {
-    final defaults = {'wall': 1.1, 'floor': 1.0};
-    return _getDouble('surface_factors', surfaceKey, defaults[surfaceKey] ?? 1.0);
-  }
-
-  // Margins
-  double get adhesiveMargin => _getDouble('margins', 'adhesive_margin', 1.1);
-  double get groutMargin => _getDouble('margins', 'grout_margin', 1.1);
-
-  // Materials consumption
-  double get primerPerM2 => _getDouble('materials_consumption', 'primer_per_m2', 0.15);
-  double get waterproofingPerLayer => _getDouble('materials_consumption', 'waterproofing_per_layer', 0.4);
-  int get waterproofingLayers => _getInt('materials_consumption', 'waterproofing_layers', 2);
-
-  // Tile sizes
-  double getTileSize(String tileTypeKey) {
-    final defaults = {
-      'mosaic': 10.0,
-      'ceramic': 30.0,
-      'porcelain': 40.0,
-      'largeFormat': 60.0,
-    };
-    return _getDouble('tile_sizes', tileTypeKey, defaults[tileTypeKey] ?? 30.0);
-  }
-
-  // Accessories
-  int get crossesPerTile => _getInt('accessories', 'crosses_per_tile', 5);
-  int get svpClipsSmall => _getInt('accessories', 'svp_clips_small', 4);
-  int get svpClipsMedium => _getInt('accessories', 'svp_clips_medium', 3);
-  int get svpClipsLarge => _getInt('accessories', 'svp_clips_large', 2);
-  int get smallTileThreshold => _getInt('accessories', 'small_tile_threshold', 20);
-  int get largeTileThreshold => _getInt('accessories', 'large_tile_threshold', 40);
-
-  // Grout parameters
-  double get jointWidth => _getDouble('grout', 'joint_width', 3.0);
-  double get jointDepth => _getDouble('grout', 'joint_depth', 2.0);
-  double get groutDensity => _getDouble('grout', 'density', 1.6);
-}
 
 enum InputMode { byDimensions, byArea }
 enum BagWeight { kg20, kg25 }
@@ -114,12 +60,15 @@ enum AdhesiveBrand {
   volmaMulti(1.6, 'Волма Мультиклей', [25]),
   starateliPlus(1.4, 'Старатели Плюс', [25]),
   osnovitMaxiplix(1.5, 'Основит Мастпликс', [25]),
-  average(1.5, 'Средний расход', [20, 25]);
+  average(1.5, 'average', [20, 25], localizedNameKey: 'common.average_consumption');
 
   final double baseConsumption; // Базовый расход (кг/м²/мм)
   final String name;
   final List<int> availableBagSizes;
-  const AdhesiveBrand(this.baseConsumption, this.name, this.availableBagSizes);
+  final String? localizedNameKey;
+  const AdhesiveBrand(this.baseConsumption, this.name, this.availableBagSizes, {this.localizedNameKey});
+
+  String localizedName(AppLocalizations loc) => localizedNameKey != null ? loc.translate(localizedNameKey!) : name;
 
   bool hasBagSize(int size) => availableBagSizes.contains(size);
   int get defaultBagSize => availableBagSizes.first;
@@ -202,8 +151,8 @@ class _TileAdhesiveCalculatorScreenState
   bool _useWaterproofing = false;
   late _TileAdhesiveResult _result;
   late AppLocalizations _loc;
+  final CalculateTileGlue _calculator = CalculateTileGlue();
 
-  final _constants = _TileAdhesiveConstants(null);
 
   @override
   void initState() {
@@ -215,109 +164,87 @@ class _TileAdhesiveCalculatorScreenState
   void _applyInitialInputs() {
     final initial = widget.initialInputs;
     if (initial == null) return;
-    if (initial['area'] != null) _area = initial['area']!.clamp(1.0, 1000.0);
+
+    if (initial['inputMode'] != null) {
+      final inputMode = initial['inputMode']!.round().clamp(0, 1);
+      _inputMode = InputMode.values[inputMode];
+    }
+    if (initial['area'] != null) {
+      _area = initial['area']!.clamp(1.0, 1000.0);
+      if (!initial.containsKey('length') && !initial.containsKey('width')) {
+        _inputMode = InputMode.byArea;
+      }
+    }
     if (initial['length'] != null) {
       _length = initial['length']!.clamp(0.1, 100.0);
+      _inputMode = InputMode.byDimensions;
     }
-    if (initial['width'] != null) _width = initial['width']!.clamp(0.1, 100.0);
+    if (initial['width'] != null) {
+      _width = initial['width']!.clamp(0.1, 100.0);
+      _inputMode = InputMode.byDimensions;
+    }
+    if (initial['tileType'] != null) {
+      _tileType = TileType.values[initial['tileType']!.round().clamp(0, TileType.values.length - 1)];
+    }
+    if (initial['adhesiveBrand'] != null) {
+      _adhesiveBrand = AdhesiveBrand.values[initial['adhesiveBrand']!.round().clamp(0, AdhesiveBrand.values.length - 1)];
+    }
+    if (initial['surfaceType'] != null) {
+      _surfaceType = SurfaceType.values[initial['surfaceType']!.round().clamp(0, SurfaceType.values.length - 1)];
+    }
+    if ((initial['useSVP'] ?? 0) > 0) _useSVP = true;
+    if ((initial['calculateGrout'] ?? 0) > 0) _calculateGrout = true;
+    if ((initial['useWaterproofing'] ?? 0) > 0) _useWaterproofing = true;
+    if (initial['bagWeight'] != null) {
+      final requestedBagWeight = initial['bagWeight']!.round();
+      if (_adhesiveBrand.hasBagSize(requestedBagWeight)) {
+        _bagWeight = requestedBagWeight == 20 ? BagWeight.kg20 : BagWeight.kg25;
+      }
+    }
+    final currentBagWeight = _bagWeight == BagWeight.kg20 ? 20 : 25;
+    if (!_adhesiveBrand.hasBagSize(currentBagWeight)) {
+      _bagWeight = _adhesiveBrand.defaultBagSize == 20 ? BagWeight.kg20 : BagWeight.kg25;
+    }
   }
 
-  double _getCalculatedArea() {
-    if (_inputMode == InputMode.byArea) {
-      return _area;
-    }
-    return _length * _width;
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'inputMode': _inputMode.index.toDouble(),
+      'area': _area,
+      'length': _length,
+      'width': _width,
+      'tileType': _tileType.index.toDouble(),
+      'adhesiveBrand': _adhesiveBrand.index.toDouble(),
+      'bagWeight': (_bagWeight == BagWeight.kg20 ? 20 : 25).toDouble(),
+      'surfaceType': _surfaceType.index.toDouble(),
+      'useSVP': _useSVP ? 1.0 : 0.0,
+      'calculateGrout': _calculateGrout ? 1.0 : 0.0,
+      'useWaterproofing': _useWaterproofing ? 1.0 : 0.0,
+    };
   }
 
   _TileAdhesiveResult _calculate() {
-    final calculatedArea = _getCalculatedArea();
-
-    // Правильная формула расчета плиточного клея:
-    // Расход = Базовый_расход × Размер_зуба × Коэффициент × Коэффициент_поверхности
-
-    final notchSize = _tileType.notchSize;
-    final coefficient = _tileType.coefficient;
-    final surfaceFactor = _constants.getSurfaceFactor(_surfaceType.name);
-
-    // Расход клея на м² (кг/м²)
-    final adhesiveConsumption =
-        _adhesiveBrand.baseConsumption * notchSize * coefficient * surfaceFactor;
-
-    // Общий вес с запасом
-    final totalWeight = calculatedArea * adhesiveConsumption * _constants.adhesiveMargin;
-
-    // Вес мешка
-    final bagWeightKg = _bagWeight == BagWeight.kg20 ? 20 : 25;
-
-    // Количество мешков
-    final bagsNeeded = (totalWeight / bagWeightKg).ceil();
-
-    // Грунтовка
-    final primerLiters = calculatedArea * _constants.primerPerM2;
-
-    // Стандартные размеры плитки в зависимости от типа
-    final tileWidth = _constants.getTileSize(_tileType.name);
-
-    final tileHeight = tileWidth; // квадратная плитка
-
-    // Рассчитываем количество плиток на основе стандартного размера
-    final tileAreaM2 = (tileWidth / 100) * (tileHeight / 100);
-    final tilesCount = (calculatedArea / tileAreaM2).ceil();
-
-    // Крестики для швов
-    final crossesNeeded = tilesCount * _constants.crossesPerTile;
-
-    // СВП (система выравнивания плитки): количество клипс зависит от размера плитки
-    final avgTileSize = (tileWidth + tileHeight) / 2;
-    final clipsPerTile = avgTileSize < _constants.smallTileThreshold
-        ? _constants.svpClipsSmall
-        : (avgTileSize <= _constants.largeTileThreshold
-            ? _constants.svpClipsMedium
-            : _constants.svpClipsLarge);
-    final svpCount = _useSVP ? tilesCount * clipsPerTile : 0;
-
-    // Расчет затирки (опционально)
-    double? groutWeight;
-    if (_calculateGrout) {
-      // Параметры затирки из констант
-      final jointWidth = _constants.jointWidth;
-      final jointDepth = _constants.jointDepth;
-      final groutDensity = _constants.groutDensity;
-      // Формула: (Длина + Ширина) / (Длина × Ширина) × Ширина_шва × Глубина_шва × Плотность × Площадь
-      final groutConsumptionPerM2 =
-          ((tileWidth + tileHeight) / (tileWidth * tileHeight)) *
-          jointWidth *
-          jointDepth *
-          groutDensity;
-      groutWeight = calculatedArea * groutConsumptionPerM2 * _constants.groutMargin;
-    }
-
-    // Гидроизоляция (опционально)
-    double? waterproofingWeight;
-    if (_useWaterproofing) {
-      waterproofingWeight = calculatedArea *
-          _constants.waterproofingPerLayer *
-          _constants.waterproofingLayers;
-    }
+    final values = _calculator(_buildCalculationInputs(), const []).values;
+    final bagWeightKg = (values['bagWeight'] ?? (_bagWeight == BagWeight.kg20 ? 20 : 25)).round();
 
     return _TileAdhesiveResult(
-      area: calculatedArea,
+      area: values['area'] ?? 0,
       tileType: _tileType,
       brand: _adhesiveBrand,
       surfaceType: _surfaceType,
-      notchSize: notchSize,
-      adhesiveConsumption: adhesiveConsumption,
-      totalWeight: totalWeight,
-      bagsNeeded: bagsNeeded,
+      notchSize: (values['notchSize'] ?? _tileType.notchSize.toDouble()).round(),
+      adhesiveConsumption: values['consumptionPerM2'] ?? 0,
+      totalWeight: values['glueNeeded'] ?? 0,
+      bagsNeeded: (values['bagsNeeded'] ?? 0).round(),
       bagWeight: bagWeightKg,
-      primerLiters: primerLiters,
-      crossesNeeded: crossesNeeded,
+      primerLiters: values['primerNeeded'] ?? 0,
+      crossesNeeded: (values['crossesNeeded'] ?? 0).round(),
       useSVP: _useSVP,
-      svpCount: svpCount,
-      tileWidth: tileWidth,
-      tileHeight: tileHeight,
-      groutWeight: groutWeight,
-      waterproofingWeight: waterproofingWeight,
+      svpCount: (values['svpCount'] ?? 0).round(),
+      tileWidth: values['tileWidth'] ?? 30,
+      tileHeight: values['tileHeight'] ?? 30,
+      groutWeight: _calculateGrout ? values['groutWeight'] : null,
+      waterproofingWeight: _useWaterproofing ? values['waterproofingWeight'] : null,
     );
   }
 
@@ -546,7 +473,7 @@ class _TileAdhesiveCalculatorScreenState
                   ),
                 ),
                 Text(
-                  '${_getCalculatedArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                  '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                   style: CalculatorDesignSystem.headlineMedium.copyWith(
                     color: accentColor,
                     fontWeight: FontWeight.bold,
@@ -664,7 +591,7 @@ class _TileAdhesiveCalculatorScreenState
           const SizedBox(height: 12),
           ModeSelectorVertical(
             options:
-                AdhesiveBrand.values.map((brand) => brand.name).toList(),
+                AdhesiveBrand.values.map((brand) => brand.localizedName(_loc)).toList(),
             selectedIndex: _adhesiveBrand.index,
             onSelect: (index) {
               setState(() {
@@ -994,3 +921,6 @@ class _TileAdhesiveCalculatorScreenState
     );
   }
 }
+
+
+

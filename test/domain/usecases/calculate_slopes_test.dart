@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/calculate_slopes.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
+import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 
 void main() {
   group('CalculateSlopes', () {
@@ -40,11 +41,7 @@ void main() {
 
     test('calculates primer needed', () {
       final calculator = CalculateSlopes();
-      final inputs = {
-        'windows': 2.0,
-        'windowWidth': 1.5,
-        'windowHeight': 1.4,
-      };
+      final inputs = {'windows': 2.0, 'windowWidth': 1.5, 'windowHeight': 1.4};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -56,11 +53,7 @@ void main() {
 
     test('calculates paint needed', () {
       final calculator = CalculateSlopes();
-      final inputs = {
-        'windows': 2.0,
-        'windowWidth': 1.5,
-        'windowHeight': 1.4,
-      };
+      final inputs = {'windows': 2.0, 'windowWidth': 1.5, 'windowHeight': 1.4};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -72,11 +65,7 @@ void main() {
 
     test('calculates corner length', () {
       final calculator = CalculateSlopes();
-      final inputs = {
-        'windows': 2.0,
-        'windowWidth': 1.5,
-        'windowHeight': 1.4,
-      };
+      final inputs = {'windows': 2.0, 'windowWidth': 1.5, 'windowHeight': 1.4};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -100,15 +89,30 @@ void main() {
 
     test('handles zero windows', () {
       final calculator = CalculateSlopes();
-      final inputs = {
-        'windows': 0.0,
-      };
+      final inputs = {'windows': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
 
       expect(result.values['windows'], equals(0.0));
       expect(result.values['slopeArea'], equals(0.0));
+    });
+
+    test('throws localized exception for negative windows', () {
+      final calculator = CalculateSlopes();
+      final inputs = {'windows': -1.0};
+      final emptyPriceList = <PriceItem>[];
+
+      expect(
+        () => calculator(inputs, emptyPriceList),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле "количество окон" не может быть отрицательным'),
+          ),
+        ),
+      );
     });
   });
 }

@@ -15,11 +15,7 @@ void main() {
 
     group('Basic calculations', () {
       test('3x1.2m balcony, 2.5m height', () {
-        final inputs = {
-          'length': 3.0,
-          'width': 1.2,
-          'height': 2.5,
-        };
+        final inputs = {'length': 3.0, 'width': 1.2, 'height': 2.5};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -125,11 +121,7 @@ void main() {
 
     group('Area calculations', () {
       test('wall area is 3 sides only', () {
-        final inputs = {
-          'length': 4.0,
-          'width': 1.5,
-          'height': 2.5,
-        };
+        final inputs = {'length': 4.0, 'width': 1.5, 'height': 2.5};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -151,10 +143,7 @@ void main() {
           'height': 3.0,
         }, emptyPriceList);
 
-        expect(
-          high.values['wallArea'],
-          greaterThan(low.values['wallArea']!),
-        );
+        expect(high.values['wallArea'], greaterThan(low.values['wallArea']!));
         // Floor/ceiling should be same
         expect(high.values['floorArea'], equals(low.values['floorArea']));
       });
@@ -316,11 +305,7 @@ void main() {
       });
 
       test('handles minimum dimensions', () {
-        final inputs = {
-          'length': 1.0,
-          'width': 0.5,
-          'height': 2.0,
-        };
+        final inputs = {'length': 1.0, 'width': 0.5, 'height': 2.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -331,11 +316,7 @@ void main() {
       });
 
       test('handles large balcony', () {
-        final inputs = {
-          'length': 10.0,
-          'width': 3.0,
-          'height': 3.5,
-        };
+        final inputs = {'length': 10.0, 'width': 3.0, 'height': 3.5};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -345,9 +326,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero length', () {
-        final inputs = {
-          'length': 0.0,
-        };
+        final inputs = {'length': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -356,9 +335,7 @@ void main() {
       });
 
       test('throws exception for negative length', () {
-        final inputs = {
-          'length': -3.0,
-        };
+        final inputs = {'length': -3.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -367,9 +344,7 @@ void main() {
       });
 
       test('throws exception for zero width', () {
-        final inputs = {
-          'width': 0.0,
-        };
+        final inputs = {'width': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -378,9 +353,7 @@ void main() {
       });
 
       test('throws exception for zero height', () {
-        final inputs = {
-          'height': 0.0,
-        };
+        final inputs = {'height': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -400,9 +373,27 @@ void main() {
           'needWallFinishing': 1.0,
         };
         final priceList = [
-          const PriceItem(sku: 'balcony_glazing', name: 'Остекление балкона', price: 5000.0, unit: 'м.п.', imageUrl: ''),
-          const PriceItem(sku: 'insulation', name: 'Утеплитель', price: 300.0, unit: 'м²', imageUrl: ''),
-          const PriceItem(sku: 'finishing_material', name: 'Отделка', price: 800.0, unit: 'м²', imageUrl: ''),
+          const PriceItem(
+            sku: 'balcony_glazing',
+            name: 'Остекление балкона',
+            price: 5000.0,
+            unit: 'м.п.',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'insulation',
+            name: 'Утеплитель',
+            price: 300.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'finishing_material',
+            name: 'Отделка',
+            price: 800.0,
+            unit: 'м²',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -412,10 +403,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'length': 3.0,
-          'width': 1.2,
-        };
+        final inputs = {'length': 3.0, 'width': 1.2};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -475,6 +463,24 @@ void main() {
         expect(result.values['insulationArea'], equals(0.0));
         // Only floor finishing = 2.5 * 1.1 = 2.75 sqm
         expect(result.values['finishingArea'], closeTo(2.75, 0.1));
+      });
+    });
+    group('validation messages', () {
+      test('balcony height uses shared helper', () {
+        expect(
+          () => calculator({
+            'length': 3.0,
+            'width': 1.2,
+            'height': 0.0,
+          }, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Поле "высота" должно быть больше нуля'),
+            ),
+          ),
+        );
       });
     });
   });

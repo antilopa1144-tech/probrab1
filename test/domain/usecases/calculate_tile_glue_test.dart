@@ -62,19 +62,22 @@ void main() {
         expect(result.values['consumptionPerM2'], closeTo(2.94, 0.1));
       });
 
-      test('small tile (10-20 cm) uses 6mm notch — slightly lower consumption', () {
-        final inputs = {
-          'area': 10.0,
-          'tileSize': 15.0,
-          'layerThickness': 5.0,
-          'surface': 2.0,
-        };
+      test(
+        'small tile (10-20 cm) uses 6mm notch — slightly lower consumption',
+        () {
+          final inputs = {
+            'area': 10.0,
+            'tileSize': 15.0,
+            'layerThickness': 5.0,
+            'surface': 2.0,
+          };
 
-        final result = calculator(inputs, emptyPriceList);
+          final result = calculator(inputs, emptyPriceList);
 
-        // Base 4.2 * 0.85 = 3.57 kg/m²
-        expect(result.values['consumptionPerM2'], closeTo(3.57, 0.1));
-      });
+          // Base 4.2 * 0.85 = 3.57 kg/m²
+          expect(result.values['consumptionPerM2'], closeTo(3.57, 0.1));
+        },
+      );
 
       test('large tile (40-60 cm) uses 8-10mm notch — higher consumption', () {
         final inputs = {
@@ -90,19 +93,22 @@ void main() {
         expect(result.values['consumptionPerM2'], closeTo(5.04, 0.1));
       });
 
-      test('extra large tile (>60 cm) uses 10-12mm notch + double application', () {
-        final inputs = {
-          'area': 10.0,
-          'tileSize': 80.0,
-          'layerThickness': 5.0,
-          'surface': 2.0,
-        };
+      test(
+        'extra large tile (>60 cm) uses 10-12mm notch + double application',
+        () {
+          final inputs = {
+            'area': 10.0,
+            'tileSize': 80.0,
+            'layerThickness': 5.0,
+            'surface': 2.0,
+          };
 
-        final result = calculator(inputs, emptyPriceList);
+          final result = calculator(inputs, emptyPriceList);
 
-        // Base 4.2 * 1.4 = 5.88 kg/m²
-        expect(result.values['consumptionPerM2'], closeTo(5.88, 0.1));
-      });
+          // Base 4.2 * 1.4 = 5.88 kg/m²
+          expect(result.values['consumptionPerM2'], closeTo(5.88, 0.1));
+        },
+      );
 
       test('standard consumption for 20-40 cm tile (base, no adjustment)', () {
         final inputs = {
@@ -151,10 +157,7 @@ void main() {
 
     group('Auxiliary materials', () {
       test('calculates primer needed', () {
-        final inputs = {
-          'area': 50.0,
-          'tileSize': 30.0,
-        };
+        final inputs = {'area': 50.0, 'tileSize': 30.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -190,9 +193,7 @@ void main() {
       });
 
       test('always needs 1 spatula and 1 bucket', () {
-        final inputs = {
-          'area': 100.0,
-        };
+        final inputs = {'area': 100.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -203,10 +204,7 @@ void main() {
 
     group('Notch size selection', () {
       test('6mm notch for tile under 20cm', () {
-        final inputs = {
-          'area': 10.0,
-          'tileSize': 15.0,
-        };
+        final inputs = {'area': 10.0, 'tileSize': 15.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -214,10 +212,7 @@ void main() {
       });
 
       test('8mm notch for tile 20-40cm', () {
-        final inputs = {
-          'area': 10.0,
-          'tileSize': 30.0,
-        };
+        final inputs = {'area': 10.0, 'tileSize': 30.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -225,10 +220,7 @@ void main() {
       });
 
       test('10mm notch for tile over 40cm', () {
-        final inputs = {
-          'area': 10.0,
-          'tileSize': 60.0,
-        };
+        final inputs = {'area': 10.0, 'tileSize': 60.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -238,9 +230,7 @@ void main() {
 
     group('Default values', () {
       test('uses defaults when not specified', () {
-        final inputs = {
-          'area': 20.0,
-        };
+        final inputs = {'area': 20.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -278,10 +268,7 @@ void main() {
       });
 
       test('handles small area', () {
-        final inputs = {
-          'area': 1.0,
-          'tileSize': 30.0,
-        };
+        final inputs = {'area': 1.0, 'tileSize': 30.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -290,10 +277,7 @@ void main() {
       });
 
       test('handles large area', () {
-        final inputs = {
-          'area': 500.0,
-          'tileSize': 30.0,
-        };
+        final inputs = {'area': 500.0, 'tileSize': 30.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -303,9 +287,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero area', () {
-        final inputs = {
-          'area': 0.0,
-        };
+        final inputs = {'area': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -314,9 +296,7 @@ void main() {
       });
 
       test('throws exception for negative area', () {
-        final inputs = {
-          'area': -10.0,
-        };
+        final inputs = {'area': -10.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -327,13 +307,22 @@ void main() {
 
     group('Price calculations', () {
       test('calculates total price when prices available', () {
-        final inputs = {
-          'area': 20.0,
-          'tileSize': 30.0,
-        };
+        final inputs = {'area': 20.0, 'tileSize': 30.0};
         final priceList = [
-          const PriceItem(sku: 'glue_tile', name: 'Tile Glue', price: 25.0, unit: 'kg', imageUrl: ''),
-          const PriceItem(sku: 'primer', name: 'Primer', price: 100.0, unit: 'L', imageUrl: ''),
+          const PriceItem(
+            sku: 'glue_tile',
+            name: 'Tile Glue',
+            price: 25.0,
+            unit: 'kg',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'primer',
+            name: 'Primer',
+            price: 100.0,
+            unit: 'L',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -343,9 +332,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'area': 20.0,
-        };
+        final inputs = {'area': 20.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -384,6 +371,89 @@ void main() {
         expect(result.values['consumptionPerM2'], closeTo(3.53, 0.1));
         // 30 * 3.528 * 1.08 = 114.31 kg
         expect(result.values['glueNeeded'], closeTo(114.31, 0.5));
+      });
+    });
+
+    group('Screen path compatibility', () {
+      test(
+        'supports tile adhesive screen dimensions mode via domain layer',
+        () {
+          final inputs = {
+            'inputMode': 0.0,
+            'length': 5.0,
+            'width': 4.0,
+            'tileType': 1.0,
+            'adhesiveBrand': 29.0,
+            'bagWeight': 25.0,
+            'surfaceType': 1.0,
+          };
+
+          final result = calculator(inputs, emptyPriceList);
+
+          expect(result.values['area'], closeTo(20.0, 0.01));
+          expect(result.values['consumptionPerM2'], closeTo(6.6, 0.01));
+          expect(result.values['glueNeeded'], closeTo(145.2, 0.1));
+          expect(result.values['bagsNeeded'], equals(6.0));
+          expect(result.values['bagWeight'], equals(25.0));
+          expect(result.values['primerNeeded'], closeTo(3.0, 0.01));
+        },
+      );
+
+      test(
+        'supports optional grout waterproofing and svp from screen path',
+        () {
+          final inputs = {
+            'inputMode': 1.0,
+            'area': 10.0,
+            'tileType': 0.0,
+            'adhesiveBrand': 0.0,
+            'bagWeight': 25.0,
+            'surfaceType': 0.0,
+            'useSVP': 1.0,
+            'calculateGrout': 1.0,
+            'useWaterproofing': 1.0,
+          };
+
+          final result = calculator(inputs, emptyPriceList);
+
+          expect(result.values['svpCount'], equals(4000.0));
+          expect(result.values['crossesNeeded'], equals(5000.0));
+          expect(result.values['groutWeight'], closeTo(21.12, 0.05));
+          expect(result.values['waterproofingWeight'], closeTo(8.0, 0.01));
+        },
+      );
+
+      test(
+        'falls back to brand default bag size when requested size is unavailable',
+        () {
+          final inputs = {
+            'inputMode': 1.0,
+            'area': 10.0,
+            'tileType': 1.0,
+            'adhesiveBrand': 0.0,
+            'bagWeight': 20.0,
+            'surfaceType': 1.0,
+          };
+
+          final result = calculator(inputs, emptyPriceList);
+
+          expect(result.values['bagWeight'], equals(25.0));
+        },
+      );
+    });
+
+    group('validation messages', () {
+      test('screen path uses shared area field message', () {
+        final calculator = CalculateTileGlue();
+
+        final error = calculator.validateInputs({
+          'inputMode': 1.0,
+          'length': 0.0,
+          'width': 0.0,
+          'tileType': 1.0,
+        });
+
+        expect(error, equals('Поле "площадь" должно быть больше нуля'));
       });
     });
   });

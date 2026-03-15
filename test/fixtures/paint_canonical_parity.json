@@ -1,0 +1,102 @@
+{
+  "formulaVersion": "paint-canonical-v1",
+  "cases": [
+    {
+      "id": "manual_interior_smooth_explicit_5l",
+      "inputs": {
+        "area": 40,
+        "paintType": 0,
+        "surfaceType": 0,
+        "surfacePrep": 0,
+        "colorIntensity": 0,
+        "coats": 2,
+        "coverage": 10,
+        "canSize": 5
+      },
+      "expected": {
+        "area": 40,
+        "formulaVersion": "paint-canonical-v1",
+        "materials": {
+          "paintCans": 2,
+          "primerCans": 1,
+          "tapeRolls": 2,
+          "rollers": 1,
+          "brushes": 1,
+          "trays": 1
+        },
+        "warningsCount": 0,
+        "recScenario": {
+          "packageSize": 5,
+          "exactNeed": 8.736096,
+          "purchaseQuantity": 10
+        }
+      }
+    },
+    {
+      "id": "manual_porous_one_coat_warning",
+      "inputs": {
+        "area": 35,
+        "paintType": 0,
+        "surfaceType": 2,
+        "surfacePrep": 0,
+        "colorIntensity": 0,
+        "coats": 1,
+        "coverage": 10,
+        "canSize": 10
+      },
+      "expected": {
+        "area": 35,
+        "formulaVersion": "paint-canonical-v1",
+        "materials": {
+          "paintCans": 1,
+          "primerCans": 1,
+          "tapeRolls": 2,
+          "rollers": 1,
+          "brushes": 1,
+          "trays": 1
+        },
+        "warningsCount": 2,
+        "recScenario": {
+          "packageSize": 10,
+          "exactNeed": 4.968655,
+          "purchaseQuantity": 10
+        }
+      }
+    },
+    {
+      "id": "room_facade_bark_beetle_dark",
+      "inputs": {
+        "inputMode": 0,
+        "roomWidth": 4,
+        "roomLength": 5,
+        "roomHeight": 2.7,
+        "openingsArea": 4,
+        "paintType": 1,
+        "surfaceType": 8,
+        "surfacePrep": 1,
+        "colorIntensity": 2,
+        "coats": 2,
+        "coverage": 7,
+        "canSize": 10
+      },
+      "expected": {
+        "area": 44.6,
+        "formulaVersion": "paint-canonical-v1",
+        "materials": {
+          "paintCans": 4,
+          "primerCans": 1,
+          "tapeRolls": 1,
+          "rollers": 1,
+          "brushes": 1,
+          "trays": 1
+        },
+        "warningsCount": 2,
+        "recScenario": {
+          "packageSize": 10,
+          "exactNeed": 30.391131,
+          "purchaseQuantity": 40
+        }
+      }
+    }
+  ]
+}

@@ -384,5 +384,45 @@ void main() {
       expect(result.values, isNotEmpty);
       expect(result.values['polycarbonateSheets'], greaterThan(0));
     });
+    test('supports terrace screen dimensions mode via domain layer', () {
+      final inputs = {
+        'inputMode': 1.0,
+        'length': 5.0,
+        'width': 4.0,
+        'floorType': 2.0,
+        'railing': 1.0,
+        'roof': 0.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['area'], closeTo(20.0, 0.01));
+      expect(result.values['perimeter'], closeTo(18.0, 0.01));
+      expect(result.values['railingLength'], closeTo(18.0, 0.01));
+      expect(result.values['railingPosts'], equals(9.0));
+      expect(result.values['tilesNeeded'], equals(88.0));
+    });
+
+    test('supports terrace screen roof and foundation path', () {
+      final inputs = {
+        'inputMode': 1.0,
+        'length': 6.0,
+        'width': 3.0,
+        'floorType': 1.0,
+        'railing': 0.0,
+        'roof': 1.0,
+        'roofType': 1.0,
+      };
+      final emptyPriceList = <PriceItem>[];
+
+      final result = calculator(inputs, emptyPriceList);
+
+      expect(result.values['area'], closeTo(18.0, 0.01));
+      expect(result.values['roofArea'], closeTo(21.6, 0.01));
+      expect(result.values['polycarbonateSheets'], equals(4.0));
+      expect(result.values['roofPosts'], equals(2.0));
+      expect(result.values['foundationVolume'], closeTo(0.04, 0.001));
+    });
   });
 }

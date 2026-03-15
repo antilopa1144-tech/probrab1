@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../core/localization/app_localizations.dart';
+import '../../../core/errors/global_error_handler.dart';
 import '../../../core/services/notification_service.dart';
 import '../../../domain/models/project_v2.dart';
 import '../../providers/project_v2_provider.dart';
@@ -93,10 +95,15 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Редактирование' : 'Новый объект'),
+        title: Text(
+          _isEditing
+              ? loc.translate('project.form.edit_project')
+              : loc.translate('project.form.new_project'),
+        ),
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _saveProject,
@@ -106,7 +113,7 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Сохранить'),
+                : Text(loc.translate('button.save')),
           ),
         ],
       ),
@@ -115,111 +122,92 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // Секция: Основная информация
             Text(
-              'Основная информация',
+              loc.translate('project.form.section_main'),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 16),
-
-            // Название
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Название объекта *',
-                hintText: 'Например: Ремонт квартиры',
-                prefixIcon: Icon(Icons.home_work_rounded),
+              decoration: InputDecoration(
+                labelText: loc.translate('project.form.name_label'),
+                hintText: loc.translate('project.form.name_hint'),
+                prefixIcon: const Icon(Icons.home_work_rounded),
               ),
               textCapitalization: TextCapitalization.sentences,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Введите название';
+                  return loc.translate('project.form.name_error');
                 }
                 return null;
               },
             ),
             const SizedBox(height: 16),
-
-            // Описание
             TextFormField(
               controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Описание',
-                hintText: 'Краткое описание проекта',
-                prefixIcon: Icon(Icons.description_rounded),
+              decoration: InputDecoration(
+                labelText: loc.translate('project.form.description_label'),
+                hintText: loc.translate('project.form.description_hint'),
+                prefixIcon: const Icon(Icons.description_rounded),
                 alignLabelWithHint: true,
               ),
               textCapitalization: TextCapitalization.sentences,
               maxLines: 3,
             ),
             const SizedBox(height: 16),
-
-            // Адрес
             TextFormField(
               controller: _addressController,
-              decoration: const InputDecoration(
-                labelText: 'Адрес',
-                prefixIcon: Icon(Icons.location_on_rounded),
+              decoration: InputDecoration(
+                labelText: loc.translate('project.form.address_label'),
+                prefixIcon: const Icon(Icons.location_on_rounded),
               ),
               textCapitalization: TextCapitalization.sentences,
             ),
-
             const SizedBox(height: 24),
-
-            // Секция: Бюджет и сроки
             Text(
-              'Бюджет и сроки',
+              loc.translate('project.form.section_budget'),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 16),
-
-            // Бюджет
             TextFormField(
               controller: _budgetController,
-              decoration: const InputDecoration(
-                labelText: 'Бюджет',
-                hintText: 'Введите сумму в рублях',
-                prefixIcon: Icon(Icons.attach_money_rounded),
-                suffixText: '\u20BD',
+              decoration: InputDecoration(
+                labelText: loc.translate('project.form.budget_label'),
+                hintText: loc.translate('project.form.budget_label'),
+                prefixIcon: const Icon(Icons.attach_money_rounded),
+                suffixText: loc.translate('project.form.budget_suffix'),
               ),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 16),
-
-            // Дедлайн
             _DatePickerField(
-              label: 'Дедлайн',
-              hint: 'Выберите дату завершения',
+              label: loc.translate('project.form.deadline_label'),
+              hint: loc.translate('project.form.deadline_hint'),
               icon: Icons.event_rounded,
               selectedDate: _selectedDeadline,
               onDateSelected: (date) {
                 setState(() => _selectedDeadline = date);
               },
             ),
-
             const SizedBox(height: 24),
-
-            // Секция: Статус проекта
             Text(
-              'Статус проекта',
+              loc.translate('project.form.section_status'),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
-
             _StatusSelector(
               selectedStatus: _selectedStatus,
               onStatusChanged: (status) {
                 setState(() => _selectedStatus = status);
               },
             ),
-
-            const SizedBox(height: 100), // Отступ для клавиатуры
+            const SizedBox(height: 100),
           ],
         ),
       ),
@@ -232,6 +220,7 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
     setState(() => _isLoading = true);
 
     try {
+      final loc = AppLocalizations.of(context);
       final budget = double.tryParse(
             _budgetController.text.replaceAll(RegExp(r'\s'), ''),
           ) ??
@@ -253,7 +242,6 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
         ..updatedAt = DateTime.now();
 
       if (_isEditing) {
-        // Сохраняем существующие поля при редактировании
         project
           ..id = widget.project!.id
           ..createdAt = widget.project!.createdAt
@@ -269,7 +257,6 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
             .read(projectV2NotifierProvider.notifier)
             .updateProject(project);
       } else {
-        // Новый проект
         project
           ..createdAt = DateTime.now()
           ..isFavorite = false
@@ -281,16 +268,34 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
         await ref.read(projectV2NotifierProvider.notifier).createProject(project);
       }
 
-      // Schedule deadline reminders if project has a deadline
       if (project.deadline != null) {
-        await NotificationService.scheduleProjectReminders(project);
+        await NotificationService.scheduleProjectReminders(
+          project,
+          copy: NotificationReminderCopy(
+            channelName: loc.translate('notifications.deadline.channel_name'),
+            channelDescription: loc.translate('notifications.deadline.channel_description'),
+            titleToday: loc.translate('notifications.deadline.title_today'),
+            titleTomorrow: loc.translate('notifications.deadline.title_tomorrow'),
+            titleUpcoming: loc.translate('notifications.deadline.title_upcoming'),
+            bodyToday: loc.translate('notifications.deadline.body_today'),
+            bodyTomorrow: loc.translate('notifications.deadline.body_tomorrow'),
+            bodyUpcomingOne: loc.translate('notifications.deadline.body_upcoming_one'),
+            bodyUpcomingFew: loc.translate('notifications.deadline.body_upcoming_few'),
+            bodyUpcomingMany: loc.translate('notifications.deadline.body_upcoming_many'),
+          ),
+        );
       }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              _isEditing ? 'Проект обновлён' : 'Проект создан',
+              _isEditing
+                  ? loc.translate('project.updated_project')
+                  : loc.translate('project.list.project_created').replaceFirst(
+                      '{name}',
+                      project.name,
+                    ),
             ),
             behavior: SnackBarBehavior.floating,
           ),
@@ -299,9 +304,15 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final loc = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ошибка: $e'),
+            content: Text(
+              loc.translate('workflow.timeline.error').replaceFirst(
+                '{error}',
+                GlobalErrorHandler.getUserFriendlyMessage(context, e),
+              ),
+            ),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
@@ -314,10 +325,6 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
     }
   }
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// Вспомогательные виджеты
-// ═══════════════════════════════════════════════════════════════════════════
 
 class _DatePickerField extends StatelessWidget {
   final String label;
@@ -367,15 +374,16 @@ class _DatePickerField extends StatelessWidget {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    final loc = AppLocalizations.of(context);
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
       initialDate: selectedDate ?? now.add(const Duration(days: 30)),
       firstDate: now,
       lastDate: now.add(const Duration(days: 365 * 5)),
-      helpText: 'Выберите дедлайн',
-      cancelText: 'Отмена',
-      confirmText: 'Выбрать',
+      helpText: loc.translate('project.form.deadline_hint'),
+      cancelText: loc.translate('button.cancel'),
+      confirmText: loc.translate('button.select'),
     );
 
     if (picked != null) {
@@ -412,7 +420,7 @@ class _StatusSelector extends StatelessWidget {
                 color: isSelected ? Colors.white : color,
               ),
               const SizedBox(width: 8),
-              Text(_getStatusLabel(status)),
+              Text(_getStatusLabel(context, status)),
             ],
           ),
           selected: isSelected,
@@ -457,20 +465,24 @@ class _StatusSelector extends StatelessWidget {
     }
   }
 
-  String _getStatusLabel(ProjectStatus status) {
+  String _getStatusLabel(BuildContext context, ProjectStatus status) {
+    final loc = AppLocalizations.of(context);
     switch (status) {
       case ProjectStatus.planning:
-        return 'Планирование';
+        return loc.translate('project.status.planning');
       case ProjectStatus.inProgress:
-        return 'В работе';
+        return loc.translate('project.status.in_progress');
       case ProjectStatus.onHold:
-        return 'На паузе';
+        return loc.translate('project.status.on_hold_alt');
       case ProjectStatus.completed:
-        return 'Завершён';
+        return loc.translate('project.status.completed');
       case ProjectStatus.cancelled:
-        return 'Отменён';
+        return loc.translate('project.status.cancelled');
       case ProjectStatus.problem:
-        return 'Проблема';
+        return loc.translate('project.status.problem');
     }
   }
 }
+
+
+

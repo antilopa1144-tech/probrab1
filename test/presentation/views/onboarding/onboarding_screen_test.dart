@@ -17,9 +17,9 @@ void main() {
       );
       await tester.pump();
 
-      // First page content
-      expect(find.text('55+ калькуляторов'), findsOneWidget);
-      expect(find.byIcon(Icons.calculate_outlined), findsOneWidget);
+      // First page content — "Инструменты мастера"
+      expect(find.text('Инструменты мастера'), findsOneWidget);
+      expect(find.byIcon(Icons.handyman_outlined), findsOneWidget);
     });
 
     testWidgets('shows skip button', (tester) async {
@@ -46,7 +46,7 @@ void main() {
       );
       await tester.pump();
 
-      // 4 page indicators
+      // 5 page indicators
       expect(find.byType(AnimatedContainer), findsWidgets);
     });
 
@@ -57,7 +57,7 @@ void main() {
       await tester.pump();
 
       // First page
-      expect(find.text('55+ калькуляторов'), findsOneWidget);
+      expect(find.text('Инструменты мастера'), findsOneWidget);
 
       // Tap next
       await tester.tap(find.text('Далее'));
@@ -65,7 +65,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       // Should show second page
-      expect(find.text('Точные расчёты'), findsOneWidget);
+      expect(find.text('68+ калькуляторов'), findsOneWidget);
     });
 
     testWidgets('swipe navigates to next page', (tester) async {
@@ -75,7 +75,7 @@ void main() {
       await tester.pump();
 
       // First page
-      expect(find.text('55+ калькуляторов'), findsOneWidget);
+      expect(find.text('Инструменты мастера'), findsOneWidget);
 
       // Swipe left
       await tester.drag(find.byType(PageView), const Offset(-400, 0));
@@ -83,35 +83,41 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       // Should show second page
-      expect(find.text('Точные расчёты'), findsOneWidget);
+      expect(find.text('68+ калькуляторов'), findsOneWidget);
     });
 
-    testWidgets('shows all 4 pages content', (tester) async {
+    testWidgets('shows all 5 pages content', (tester) async {
       await tester.pumpWidget(
         createTestApp(child: const OnboardingScreen()),
       );
       await tester.pump();
 
       // Page 1
-      expect(find.text('55+ калькуляторов'), findsOneWidget);
+      expect(find.text('Инструменты мастера'), findsOneWidget);
 
       // Navigate to page 2 using button
       await tester.tap(find.text('Далее'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
-      expect(find.text('Точные расчёты'), findsOneWidget);
+      expect(find.text('68+ калькуляторов'), findsOneWidget);
 
       // Navigate to page 3
       await tester.tap(find.text('Далее'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
-      expect(find.text('Сохраняйте расчёты'), findsOneWidget);
+      expect(find.text('Комната за минуту'), findsOneWidget);
 
       // Navigate to page 4
       await tester.tap(find.text('Далее'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
-      expect(find.text('Поделитесь сметой'), findsOneWidget);
+      expect(find.text('Михалыч — AI-прораб'), findsOneWidget);
+
+      // Navigate to page 5
+      await tester.tap(find.text('Далее'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(find.text('Сохраняйте и делитесь'), findsOneWidget);
     });
 
     testWidgets('shows start button on last page', (tester) async {
@@ -120,8 +126,8 @@ void main() {
       );
       await tester.pump();
 
-      // Navigate to last page using next button
-      for (int i = 0; i < 3; i++) {
+      // Navigate to last page (5th) using next button
+      for (int i = 0; i < 4; i++) {
         await tester.tap(find.text('Далее'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 600));

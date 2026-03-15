@@ -115,6 +115,18 @@ void main() {
       expect(result.values.keys.any((k) => k.startsWith('walls_putty_')),
           isFalse);
     });
+
+    test('room bundle exposes canonical putty packaging totals', () {
+      final result = useCase.call(baseInputs(putty: true), []);
+      expect(result.values['walls_putty_finishPackages'], isNotNull);
+      expect(result.values['walls_putty_finishPackages'], greaterThan(0));
+      expect(result.values['walls_putty_primerCanisters'], isNotNull);
+      expect(result.values['walls_putty_primerCanisters'], greaterThan(0));
+      expect(result.values['walls_putty_sandpaperSets'], isNotNull);
+      expect(result.values['walls_putty_sandpaperSets'], greaterThan(0));
+      expect(result.values['walls_putty_scenarioRecPurchase'], isNotNull);
+      expect(result.values['walls_putty_scenarioRecPurchase'], greaterThan(0));
+    });
   });
 
   group('Покраска стен', () {
@@ -130,6 +142,18 @@ void main() {
       final liters1 = useCase.call(inputs1, []).values['walls_paint_paintLiters']!;
       final liters3 = useCase.call(inputs3, []).values['walls_paint_paintLiters']!;
       expect(liters3, greaterThan(liters1));
+    });
+
+    test('room bundle preserves canonical wall paint material totals', () {
+      final result = useCase.call(baseInputs(paintWalls: true), []);
+      expect(result.values['walls_paint_paintCans'], isNotNull);
+      expect(result.values['walls_paint_paintCans'], greaterThan(0));
+      expect(result.values['walls_paint_primerLiters'], isNotNull);
+      expect(result.values['walls_paint_primerLiters'], greaterThan(0));
+      expect(result.values['walls_paint_tapeRolls'], isNotNull);
+      expect(result.values['walls_paint_tapeRolls'], greaterThan(0));
+      expect(result.values['walls_paint_rollersNeeded'], isNotNull);
+      expect(result.values['walls_paint_rollersNeeded'], greaterThan(0));
     });
   });
 
@@ -189,6 +213,18 @@ void main() {
       expect(large.values['floor_laminate_packsNeeded'],
           greaterThan(small.values['floor_laminate_packsNeeded']!));
     });
+
+    test('room bundle preserves enriched laminate packaging totals', () {
+      final result = useCase.call(baseInputs(laminate: true), []);
+      expect(result.values['floor_laminate_packsNeeded'], isNotNull);
+      expect(result.values['floor_laminate_packsNeeded'], greaterThan(0));
+      expect(result.values['floor_laminate_underlayRolls'], isNotNull);
+      expect(result.values['floor_laminate_underlayRolls'], greaterThan(0));
+      expect(result.values['floor_laminate_vaporBarrierArea'], isNotNull);
+      expect(result.values['floor_laminate_vaporBarrierArea'], greaterThan(0));
+      expect(result.values['floor_laminate_doorThresholds'], isNotNull);
+      expect(result.values['floor_laminate_doorThresholds'], greaterThan(0));
+    });
   });
 
   group('Плитка', () {
@@ -202,6 +238,15 @@ void main() {
       final result = useCase.call(baseInputs(tile: false), []);
       expect(result.values.keys.any((k) => k.startsWith('floor_tile_')),
           isFalse);
+    });
+
+    test('room bundle preserves enriched tile packaging totals', () {
+      final result = useCase.call(baseInputs(tile: true), []);
+      expect(result.values['floor_tile_boxesNeeded'], isNotNull);
+      expect(result.values['floor_tile_boxesNeeded'], greaterThan(0));
+      expect(result.values['floor_tile_glueBags'], isNotNull);
+      expect(result.values['floor_tile_glueBags'], greaterThan(0));
+      expect(result.values['floor_tile_effectiveWaterproofing'], isNotNull);
     });
   });
 
@@ -306,3 +351,9 @@ void main() {
     });
   });
 }
+
+
+
+
+
+

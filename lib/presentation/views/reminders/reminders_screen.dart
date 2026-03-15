@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../domain/entities/reminder.dart';
 import '../../providers/reminder_provider.dart';
 
@@ -9,6 +10,7 @@ class RemindersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final loc = AppLocalizations.of(context);
     final reminders = ref.watch(reminderProvider);
     final upcoming = reminders.where((r) => r.isUpcoming && !r.isCompleted).toList();
     final overdue = reminders.where((r) => r.isOverdue).toList();
@@ -18,17 +20,18 @@ class RemindersScreen extends ConsumerWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Напоминания'),
-          bottom: const TabBar(
+          title: Text(loc.translate('reminders.title')),
+          bottom: TabBar(
             tabs: [
-              Tab(text: 'Все', icon: Icon(Icons.list)),
-              Tab(text: 'Скоро', icon: Icon(Icons.schedule)),
-              Tab(text: 'Просрочено', icon: Icon(Icons.warning)),
+              Tab(text: loc.translate('reminders.tab.all'), icon: const Icon(Icons.list)),
+              Tab(text: loc.translate('reminders.tab.upcoming'), icon: const Icon(Icons.schedule)),
+              Tab(text: loc.translate('reminders.tab.overdue'), icon: const Icon(Icons.warning)),
             ],
           ),
           actions: [
             IconButton(
               icon: const Icon(Icons.add),
+              tooltip: loc.translate('reminders.add'),
               onPressed: () => _showAddReminderDialog(context, ref),
             ),
           ],
@@ -45,6 +48,7 @@ class RemindersScreen extends ConsumerWidget {
   }
 
   void _showAddReminderDialog(BuildContext context, WidgetRef ref) {
+    final loc = AppLocalizations.of(context);
     final titleController = TextEditingController();
     final descController = TextEditingController();
     DateTime selectedDate = DateTime.now().add(const Duration(days: 1));
@@ -54,23 +58,31 @@ class RemindersScreen extends ConsumerWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('Новое напоминание'),
+          title: Text(loc.translate('reminders.dialog.title')),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: titleController,
-                  decoration: const InputDecoration(labelText: 'Название'),
+                  decoration: InputDecoration(
+                    labelText: loc.translate('reminders.field.title'),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: descController,
-                  decoration: const InputDecoration(labelText: 'Описание'),
+                  decoration: InputDecoration(
+                    labelText: loc.translate('reminders.field.description'),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 ListTile(
-                  title: Text('Дата: ${_formatDate(selectedDate)}'),
+                  title: Text(
+                    loc.translate('reminders.field.date_value', {
+                      'date': _formatDate(selectedDate),
+                    }),
+                  ),
                   trailing: const Icon(Icons.calendar_today),
                   onTap: () async {
                     final date = await showDatePicker(
@@ -90,7 +102,7 @@ class RemindersScreen extends ConsumerWidget {
                   items: ReminderType.values.map((type) {
                     return DropdownMenuItem(
                       value: type,
-                      child: Text(_getTypeName(type)),
+                      child: Text(_getTypeName(loc, type)),
                     );
                   }).toList(),
                   onChanged: (value) => setState(() => selectedType = value!),
@@ -101,7 +113,7 @@ class RemindersScreen extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Отмена'),
+              child: Text(loc.translate('button.cancel')),
             ),
             ElevatedButton(
               onPressed: () {
@@ -115,7 +127,7 @@ class RemindersScreen extends ConsumerWidget {
                 ref.read(reminderProvider.notifier).addReminder(reminder);
                 Navigator.pop(context);
               },
-              child: const Text('Создать'),
+              child: Text(loc.translate('button.create')),
             ),
           ],
         ),
@@ -127,20 +139,20 @@ class RemindersScreen extends ConsumerWidget {
     return '${date.day}.${date.month}.${date.year}';
   }
 
-  String _getTypeName(ReminderType type) {
+  String _getTypeName(AppLocalizations loc, ReminderType type) {
     switch (type) {
       case ReminderType.materialPurchase:
-        return 'Закупка материалов';
+        return loc.translate('reminders.type.material_purchase');
       case ReminderType.workStart:
-        return 'Начало работ';
+        return loc.translate('reminders.type.work_start');
       case ReminderType.qualityCheck:
-        return 'Проверка качества';
+        return loc.translate('reminders.type.quality_check');
       case ReminderType.nextStep:
-        return 'Следующий этап';
+        return loc.translate('reminders.type.next_step');
       case ReminderType.deadline:
-        return 'Дедлайн';
+        return loc.translate('reminders.type.deadline');
       case ReminderType.custom:
-        return 'Пользовательское';
+        return loc.translate('reminders.type.custom');
     }
   }
 }
@@ -152,14 +164,16 @@ class _RemindersList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final loc = AppLocalizations.of(context);
+
     if (reminders.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.notifications_none, size: 64),
-            SizedBox(height: 16),
-            Text('Нет напоминаний'),
+            const Icon(Icons.notifications_none, size: 64),
+            const SizedBox(height: 16),
+            Text(loc.translate('reminders.empty')),
           ],
         ),
       );
@@ -173,48 +187,49 @@ class _RemindersList extends ConsumerWidget {
         final reminder = reminders[index];
         return RepaintBoundary(
           child: Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          color: reminder.isOverdue 
-              ? Colors.red.withValues(alpha: 0.1)
-              : reminder.isUpcoming
-                  ? Colors.orange.withValues(alpha: 0.1)
-                  : null,
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: reminder.isOverdue
-                  ? Colors.red
-                  : reminder.isUpcoming
-                      ? Colors.orange
-                      : Colors.blue,
-              child: Icon(_getTypeIcon(reminder.type)),
-            ),
-            title: Text(reminder.title),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(reminder.description),
-                const SizedBox(height: 4),
-                Text(
-                  _formatDate(reminder.scheduledDate),
-                  style: TextStyle(
-                    color: reminder.isOverdue ? Colors.red : null,
-                    fontWeight: FontWeight.bold,
+            margin: const EdgeInsets.only(bottom: 12),
+            color: reminder.isOverdue
+                ? Colors.red.withValues(alpha: 0.1)
+                : reminder.isUpcoming
+                    ? Colors.orange.withValues(alpha: 0.1)
+                    : null,
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: reminder.isOverdue
+                    ? Colors.red
+                    : reminder.isUpcoming
+                        ? Colors.orange
+                        : Colors.blue,
+                child: Icon(_getTypeIcon(reminder.type)),
+              ),
+              title: Text(reminder.title),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(reminder.description),
+                  const SizedBox(height: 4),
+                  Text(
+                    _formatDate(reminder.scheduledDate),
+                    style: TextStyle(
+                      color: reminder.isOverdue ? Colors.red : null,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+              trailing: reminder.isCompleted
+                  ? const Icon(Icons.check_circle, color: Colors.green)
+                  : IconButton(
+                      icon: const Icon(Icons.check),
+                      tooltip: loc.translate('reminders.complete'),
+                      onPressed: () {
+                        ref.read(reminderProvider.notifier).completeReminder(reminder.id);
+                      },
+                    ),
+              onTap: () {
+                // Открыть детали.
+              },
             ),
-            trailing: reminder.isCompleted
-                ? const Icon(Icons.check_circle, color: Colors.green)
-                : IconButton(
-                    icon: const Icon(Icons.check),
-                    onPressed: () {
-                      ref.read(reminderProvider.notifier).completeReminder(reminder.id);
-                    },
-                  ),
-            onTap: () {
-              // Открыть детали
-            },
-          ),
           ),
         );
       },
@@ -242,4 +257,3 @@ class _RemindersList extends ConsumerWidget {
     return '${date.day}.${date.month}.${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
 }
-

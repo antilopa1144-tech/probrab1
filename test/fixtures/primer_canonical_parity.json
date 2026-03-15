@@ -1,0 +1,85 @@
+{
+  "cases": [
+    {
+      "id": "manual_area_deep_penetration_absorbent",
+      "inputs": {
+        "area": 50,
+        "surfaceType": 0,
+        "primerType": 0,
+        "coats": 1,
+        "canSize": 5
+      },
+      "expected": {
+        "area": 50,
+        "formulaVersion": "primer-canonical-v1",
+        "materials": {
+          "primerCans": 2,
+          "rollers": 2,
+          "brushes": 2,
+          "trays": 1
+        },
+        "warningsCount": 1,
+        "recScenario": {
+          "packageSize": 5,
+          "exactNeed": 8.19009,
+          "purchaseQuantity": 10
+        }
+      }
+    },
+    {
+      "id": "manual_area_contact_absorbent",
+      "inputs": {
+        "area": 50,
+        "surfaceType": 0,
+        "primerType": 1,
+        "coats": 1,
+        "canSize": 10
+      },
+      "expected": {
+        "area": 50,
+        "formulaVersion": "primer-canonical-v1",
+        "materials": {
+          "primerCans": 3,
+          "rollers": 2,
+          "brushes": 2,
+          "trays": 1
+        },
+        "warningsCount": 3,
+        "recScenario": {
+          "packageSize": 10,
+          "exactNeed": 28.665315,
+          "purchaseQuantity": 30
+        }
+      }
+    },
+    {
+      "id": "room_dimensions_gkl",
+      "inputs": {
+        "inputMode": 0,
+        "roomWidth": 4,
+        "roomLength": 5,
+        "roomHeight": 2.7,
+        "surfaceType": 1,
+        "primerType": 2,
+        "coats": 2,
+        "canSize": 15
+      },
+      "expected": {
+        "area": 48.6,
+        "formulaVersion": "primer-canonical-v1",
+        "materials": {
+          "primerCans": 1,
+          "rollers": 2,
+          "brushes": 2,
+          "trays": 1
+        },
+        "warningsCount": 0,
+        "recScenario": {
+          "packageSize": 15,
+          "exactNeed": 12.737708,
+          "purchaseQuantity": 15
+        }
+      }
+    }
+  ]
+}

@@ -1,45 +1,12 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/models/calculator_constant.dart';
+import '../../../domain/models/canonical_calculator_contract.dart';
+import '../../../domain/usecases/calculate_plaster.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
-/// Вспомогательный класс для работы с константами калькулятора штукатурки
-class _PlasterConstants {
-  final CalculatorConstants? _data;
-
-  const _PlasterConstants([this._data]);
-
-  double _getDouble(String constantKey, String valueKey, double defaultValue) {
-    if (_data == null) return defaultValue;
-    final constant = _data.constants[constantKey];
-    if (constant == null) return defaultValue;
-    final value = constant.values[valueKey];
-    if (value is double) return value;
-    if (value is int) return value.toDouble();
-    if (value is num) return value.toDouble();
-    return defaultValue;
-  }
-
-  // Consumption rates
-  double getConsumptionRate(String materialKey) {
-    final defaults = {'gypsum': 8.5, 'cement': 17.0};
-    return _getDouble('consumption_rates', materialKey, defaults[materialKey] ?? 8.5);
-  }
-
-  // Margins
-  double get materialMargin => _getDouble('margins', 'material_margin', 1.1);
-  double get meshMargin => _getDouble('margins', 'mesh_margin', 1.1);
-  double get primerMargin => _getDouble('margins', 'primer_margin', 1.1);
-
-  // Beacons
-  double get areaPerBeacon => _getDouble('beacons', 'area_per_beacon', 2.5);
-
-  // Primer
-  double get primerConsumption => _getDouble('primer', 'consumption', 0.1);
-}
+const _plasterMaterialCategoryBase = 'Основное';
 
 enum PlasterMaterial { gypsum, cement }
 enum PlasterInputMode { manual, room }
@@ -76,6 +43,7 @@ class _PlasterResult {
   final int meshArea;
   final double primerLiters;
   final int beaconSize;
+  final int bagWeight;
 
   const _PlasterResult({
     required this.area,
@@ -85,6 +53,7 @@ class _PlasterResult {
     required this.meshArea,
     required this.primerLiters,
     required this.beaconSize,
+    required this.bagWeight,
   });
 }
 
@@ -104,6 +73,7 @@ class PlasterCalculatorScreen extends StatefulWidget {
 
 class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
     with ExportableMixin {
+  final CalculatePlaster _calculator = CalculatePlaster();
   double _roomWidth = 4.0;
   double _roomLength = 5.0;
   double _roomHeight = 2.7;
@@ -123,13 +93,10 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
   late AppLocalizations _loc;
   bool _isDark = false;
 
-  // Константы калькулятора (null = используются hardcoded defaults)
-  late final _PlasterConstants _constants;
 
   @override
   void initState() {
     super.initState();
-    _constants = const _PlasterConstants(null);
     _applyInitialInputs();
     _result = _calculate();
   }
@@ -137,45 +104,123 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
   void _applyInitialInputs() {
     final initial = widget.initialInputs;
     if (initial == null) return;
-    if (initial['thickness'] != null) _thickness = initial['thickness']!.clamp(5.0, 100.0);
-    if (initial['type']?.round() == 2) {
-      _materialType = PlasterMaterial.cement;
-      _bagWeight = 25;
+
+    final inputMode = initial['inputMode']?.round();
+    if (inputMode == 0) {
+      _inputMode = PlasterInputMode.room;
+    } else if (inputMode == 1) {
+      _inputMode = PlasterInputMode.manual;
+    }
+
+    if (initial['length'] != null && initial['length']! > 0) {
+      _roomLength = initial['length']!.clamp(0.1, 100.0);
+      _inputMode = PlasterInputMode.room;
+    }
+    if (initial['width'] != null && initial['width']! > 0) {
+      _roomWidth = initial['width']!.clamp(0.1, 100.0);
+      _inputMode = PlasterInputMode.room;
+    }
+    if (initial['height'] != null && initial['height']! > 0) {
+      _roomHeight = initial['height']!.clamp(1.5, 10.0);
+      _inputMode = PlasterInputMode.room;
+    }
+    if (initial['openingsArea'] != null) {
+      _openingsArea = initial['openingsArea']!.clamp(0.0, 100.0);
     }
     if (initial['area'] != null && initial['area']! > 0) {
       _manualArea = initial['area']!.clamp(1.0, 1000.0);
-      _inputMode = PlasterInputMode.manual;
+      if (!initial.containsKey('length') && !initial.containsKey('width')) {
+        _inputMode = PlasterInputMode.manual;
+      }
+    }
+    if (initial['thickness'] != null) {
+      _thickness = initial['thickness']!.clamp(5.0, 100.0);
+    }
+
+    final plasterType = initial['plasterType']?.round();
+    final legacyType = initial['type']?.round();
+    if (plasterType == 1 || legacyType == 2) {
+      _materialType = PlasterMaterial.cement;
+      _bagWeight = 25;
+    } else if (plasterType == 0 || legacyType == 1) {
+      _materialType = PlasterMaterial.gypsum;
+      _bagWeight = 30;
+    }
+
+    final substrateType = initial['substrateType']?.round();
+    if (substrateType != null && substrateType >= 1 && substrateType <= SubstrateType.values.length) {
+      _substrateType = SubstrateType.values[substrateType - 1];
+    }
+
+    final wallEvenness = initial['wallEvenness']?.round();
+    if (wallEvenness != null && wallEvenness >= 1 && wallEvenness <= WallEvenness.values.length) {
+      _wallEvenness = WallEvenness.values[wallEvenness - 1];
     }
   }
 
-  _PlasterResult _calculate() {
-    double area = _manualArea;
-    if (_inputMode == PlasterInputMode.room) {
-      area = math.max(0, (2 * (_roomWidth + _roomLength) * _roomHeight) - _openingsArea);
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'inputMode': _inputMode == PlasterInputMode.room ? 0.0 : 1.0,
+      'length': _roomLength,
+      'width': _roomWidth,
+      'height': _roomHeight,
+      'area': _manualArea,
+      'openingsArea': _openingsArea,
+      'plasterType': _materialType == PlasterMaterial.gypsum ? 0.0 : 1.0,
+      'thickness': _thickness,
+      'bagWeight': _bagWeight.toDouble(),
+      'substrateType': (_substrateType.index + 1).toDouble(),
+      'wallEvenness': (_wallEvenness.index + 1).toDouble(),
+    };
+  }
+
+  int _findMaterialPurchaseQty(
+    CanonicalCalculatorContractResult contract, {
+    required String category,
+    required String fallbackNamePart,
+  }) {
+    for (final material in contract.materials) {
+      if (material.category == category && material.name.toLowerCase().contains(fallbackNamePart)) {
+        return material.purchaseQty ?? 0;
+      }
     }
+    for (final material in contract.materials) {
+      if (material.name.toLowerCase().contains(fallbackNamePart)) {
+        return material.purchaseQty ?? 0;
+      }
+    }
+    return 0;
+  }
 
-    final rate = _constants.getConsumptionRate(_materialType.name);
-    // Множители основания и ровности стен
-    final substrateMultiplier = _substrateType.multiplier;
-    final evennessMultiplier = _wallEvenness.multiplier;
-    final totalWeight = area * (_thickness / 10.0) * rate * substrateMultiplier * evennessMultiplier * _constants.materialMargin;
-
-    // Толщина >30мм → автодобавление армирующей сетки
-    final autoMesh = _thickness > 30;
+  _PlasterResult _calculate() {
+    final contract = _calculator.calculateCanonical(_buildCalculationInputs());
+    final totals = contract.totals;
+    final autoMesh = (_thickness >= 30) || ((totals['warningMeshRecommended'] ?? 0) > 0);
     final meshNeeded = _useMesh || autoMesh;
-
-    // Маяки: <15мм → 6мм, 15-30мм → 10мм, >30мм → 10мм + сетка
-    final beaconSize = _thickness < 15 ? 6 : 10;
+    final primerNeed = totals['primerNeed'] ?? 0;
 
     return _PlasterResult(
-      area: area,
-      totalWeight: totalWeight,
-      bags: (totalWeight / _bagWeight).ceil(),
-      beacons: _useBeacons ? (area / _constants.areaPerBeacon).ceil() : 0,
-      meshArea: meshNeeded ? (area * _constants.meshMargin).ceil() : 0,
-      primerLiters: double.parse((_usePrimer ? area * _constants.primerConsumption * _constants.primerMargin : 0).toStringAsFixed(1)),
-      beaconSize: beaconSize,
+      area: totals['netArea'] ?? 0,
+      totalWeight: totals['totalKg'] ?? 0,
+      bags: _findMaterialPurchaseQty(
+        contract,
+        category: _plasterMaterialCategoryBase,
+        fallbackNamePart: 'штукатурка',
+      ),
+      beacons: _useBeacons ? (totals['beacons'] ?? 0).round() : 0,
+      meshArea: meshNeeded ? (totals['meshArea'] ?? 0).round() : 0,
+      primerLiters: _usePrimer ? double.parse(primerNeed.toStringAsFixed(1)) : 0,
+      beaconSize: (totals['beaconSize'] ?? 10).round(),
+      bagWeight: (totals['bagWeight'] ?? _bagWeight).round(),
     );
+  }
+
+  int _defaultBagWeightFor(PlasterMaterial material) {
+    final inputs = Map<String, double>.from(_buildCalculationInputs())
+      ..['plasterType'] = material == PlasterMaterial.gypsum ? 0.0 : 1.0
+      ..remove('bagWeight');
+    final contract = _calculator.calculateCanonical(inputs);
+    return (contract.totals['bagWeight'] ?? (material == PlasterMaterial.gypsum ? 30 : 25)).round();
   }
 
   void _update() => setState(() => _result = _calculate());
@@ -192,22 +237,22 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
     buffer.writeln(_loc.translate('plaster_pro.brand'));
     buffer.writeln('═' * 40);
     buffer.writeln();
-    buffer.writeln('${_loc.translate('plaster_pro.label.wall_area')}: ${_result.area.toStringAsFixed(1)} м²');
-    buffer.writeln('${_loc.translate('plaster_pro.label.thickness')}: $_thickness мм');
+    buffer.writeln('${_loc.translate('plaster_pro.label.wall_area')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+    buffer.writeln('${_loc.translate('plaster_pro.label.thickness')}: $_thickness ${_loc.translate('common.mm')}');
     buffer.writeln('${_loc.translate('plaster_pro.label.material')}: ${_materialType == PlasterMaterial.gypsum ? _loc.translate('plaster_pro.material.gypsum') : _loc.translate('plaster_pro.material.cement')}');
     buffer.writeln();
     buffer.writeln('─' * 40);
     buffer.writeln(_loc.translate('plaster_pro.section.results').toUpperCase());
     buffer.writeln('─' * 40);
-    buffer.writeln('${_loc.translate('plaster_pro.label.bags')}: ${_result.bags} шт (${(_result.totalWeight).toStringAsFixed(1)} кг)');
+    buffer.writeln('${_loc.translate('plaster_pro.label.bags')}: ${_result.bags} ${_loc.translate('common.pcs')} (${(_result.totalWeight).toStringAsFixed(1)} ${_loc.translate('common.kg')})');
     if (_useBeacons) {
-      buffer.writeln('${_loc.translate('plaster_pro.label.beacons')}: ${_result.beacons} шт (${_result.beaconSize} мм)');
+      buffer.writeln('${_loc.translate('plaster_pro.label.beacons')}: ${_result.beacons} ${_loc.translate('common.pcs')} (${_result.beaconSize} ${_loc.translate('common.mm')})');
     }
     if (_useMesh) {
-      buffer.writeln('${_loc.translate('plaster_pro.label.mesh')}: ${_result.meshArea} м²');
+      buffer.writeln('${_loc.translate('plaster_pro.label.mesh')}: ${_result.meshArea} ${_loc.translate('common.sqm')}');
     }
     if (_usePrimer) {
-      buffer.writeln('${_loc.translate('plaster_pro.label.primer')}: ${_result.primerLiters} л');
+      buffer.writeln('${_loc.translate('plaster_pro.label.primer')}: ${_result.primerLiters} ${_loc.translate('common.liters')}');
     }
     return buffer.toString();
   }
@@ -269,17 +314,19 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
 
   Widget _buildMaterialSelector() {
     const accentColor = CalculatorColors.walls;
+    final gypsumBagWeight = _materialType == PlasterMaterial.gypsum ? _result.bagWeight : _defaultBagWeightFor(PlasterMaterial.gypsum);
+    final cementBagWeight = _materialType == PlasterMaterial.cement ? _result.bagWeight : _defaultBagWeightFor(PlasterMaterial.cement);
     return TypeSelectorGroup(
       options: [
         TypeSelectorOption(
           icon: Icons.home_repair_service,
           title: _loc.translate('plaster_pro.material.gypsum'),
-          subtitle: '30 ${_loc.translate('common.kg')}',
+          subtitle: '$gypsumBagWeight ${_loc.translate('common.kg')}',
         ),
         TypeSelectorOption(
           icon: Icons.construction,
           title: _loc.translate('plaster_pro.material.cement'),
-          subtitle: '25 ${_loc.translate('common.kg')}',
+          subtitle: '$cementBagWeight ${_loc.translate('common.kg')}',
         ),
       ],
       selectedIndex: _materialType == PlasterMaterial.gypsum ? 0 : 1,
@@ -599,3 +646,8 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
   }
 
 }
+
+
+
+
+

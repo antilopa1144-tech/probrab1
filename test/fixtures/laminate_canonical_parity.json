@@ -1,0 +1,98 @@
+{
+  "cases": [
+    {
+      "id": "room_straight_random_explicit_reserve",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "packArea": 2.397,
+        "layoutProfileId": 1,
+        "reservePercent": 10,
+        "hasUnderlayment": 1,
+        "underlaymentRollArea": 10,
+        "doorThresholds": 1
+      },
+      "expected": {
+        "formulaVersion": "laminate-canonical-v1",
+        "area": 20,
+        "perimeter": 18,
+        "wastePercent": 10,
+        "warningsCount": 0,
+        "materials": {
+          "packs": 10,
+          "underlaymentRolls": 3,
+          "plinthPieces": 7,
+          "thresholds": 1
+        },
+        "recScenario": {
+          "packageSize": 2.397,
+          "exactNeed": 22,
+          "purchaseQuantity": 23.97
+        }
+      }
+    },
+    {
+      "id": "area_half_shift_small_room",
+      "inputs": {
+        "inputMode": 1,
+        "area": 12,
+        "perimeter": 14,
+        "packArea": 2,
+        "layoutProfileId": 3,
+        "reservePercent": 5,
+        "hasUnderlayment": 0,
+        "doorThresholds": 2
+      },
+      "expected": {
+        "formulaVersion": "laminate-canonical-v1",
+        "area": 12,
+        "perimeter": 14,
+        "wastePercent": 13.5,
+        "warningsCount": 1,
+        "materials": {
+          "packs": 7,
+          "plinthPieces": 5,
+          "thresholds": 2
+        },
+        "recScenario": {
+          "packageSize": 2,
+          "exactNeed": 13.62,
+          "purchaseQuantity": 14
+        }
+      }
+    },
+    {
+      "id": "area_herringbone_large_room",
+      "inputs": {
+        "inputMode": 1,
+        "area": 35,
+        "perimeter": 24,
+        "packArea": 2.22,
+        "layoutProfileId": 5,
+        "reservePercent": 10,
+        "hasUnderlayment": 1,
+        "underlaymentRollArea": 15,
+        "doorThresholds": 2
+      },
+      "expected": {
+        "formulaVersion": "laminate-canonical-v1",
+        "area": 35,
+        "perimeter": 24,
+        "wastePercent": 20,
+        "warningsCount": 1,
+        "materials": {
+          "packs": 19,
+          "underlaymentRolls": 3,
+          "plinthPieces": 9,
+          "thresholds": 2
+        },
+        "recScenario": {
+          "packageSize": 2.22,
+          "exactNeed": 42,
+          "purchaseQuantity": 42.18
+        }
+      }
+    }
+  ]
+}

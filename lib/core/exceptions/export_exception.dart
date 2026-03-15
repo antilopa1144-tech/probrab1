@@ -11,6 +11,9 @@ class ExportException extends AppException {
     this.exportFormat,
     this.filePath,
     super.details,
+    super.userMessageKey,
+    super.userMessageParams,
+    super.fallbackUserMessage,
   });
 
   factory ExportException.generationError(String format, Object error) {
@@ -19,6 +22,9 @@ class ExportException extends AppException {
       code: 'GENERATION_ERROR',
       exportFormat: format,
       details: error,
+      userMessageKey: 'error.message.export_generation_error',
+      userMessageParams: {'format': format},
+      fallbackUserMessage: 'Не удалось создать файл формата $format. Попробуйте ещё раз',
     );
   }
 
@@ -27,6 +33,9 @@ class ExportException extends AppException {
       'Нет прав доступа для сохранения файла: $filePath',
       code: 'PERMISSION_DENIED',
       filePath: filePath,
+      userMessageKey: 'error.message.export_permission_denied',
+      fallbackUserMessage:
+          'Нет прав доступа к файлам. Проверьте разрешения приложения',
     );
   }
 
@@ -34,6 +43,8 @@ class ExportException extends AppException {
     return const ExportException(
       'Недостаточно места на диске для сохранения файла',
       code: 'INSUFFICIENT_SPACE',
+      userMessageKey: 'error.message.export_insufficient_space',
+      fallbackUserMessage: 'Недостаточно места на устройстве',
     );
   }
 
@@ -42,22 +53,9 @@ class ExportException extends AppException {
       'Некорректные данные для экспорта: $reason',
       code: 'INVALID_DATA',
       details: reason,
+      userMessageKey: 'error.message.export_invalid_data',
+      userMessageParams: {'reason': reason},
+      fallbackUserMessage: 'Некорректные данные для экспорта: $reason',
     );
-  }
-
-  @override
-  String getUserMessage() {
-    switch (code) {
-      case 'GENERATION_ERROR':
-        return 'Не удалось создать файл. Попробуйте ещё раз';
-      case 'PERMISSION_DENIED':
-        return 'Нет прав доступа к файлам. Проверьте разрешения приложения';
-      case 'INSUFFICIENT_SPACE':
-        return 'Недостаточно места на устройстве';
-      case 'INVALID_DATA':
-        return 'Некорректные данные для экспорта';
-      default:
-        return 'Ошибка экспорта';
-    }
   }
 }

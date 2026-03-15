@@ -108,9 +108,18 @@ void main() {
           'postSpacing': 2.5,
         };
 
-        final profiledResult = calculator({...baseInputs, 'fenceType': 0.0}, emptyPriceList);
-        final picketResult = calculator({...baseInputs, 'fenceType': 1.0}, emptyPriceList);
-        final chainResult = calculator({...baseInputs, 'fenceType': 2.0}, emptyPriceList);
+        final profiledResult = calculator({
+          ...baseInputs,
+          'fenceType': 0.0,
+        }, emptyPriceList);
+        final picketResult = calculator({
+          ...baseInputs,
+          'fenceType': 1.0,
+        }, emptyPriceList);
+        final chainResult = calculator({
+          ...baseInputs,
+          'fenceType': 2.0,
+        }, emptyPriceList);
 
         // profiled: ceil(50/1.1) = 46
         // picket: ceil(50/0.15) = 334
@@ -232,9 +241,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not specified', () {
-        final inputs = <String, double>{
-          'fenceLength': 50.0,
-        };
+        final inputs = <String, double>{'fenceLength': 50.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -304,10 +311,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero length', () {
-        final inputs = {
-          'fenceLength': 0.0,
-          'fenceHeight': 2.0,
-        };
+        final inputs = {'fenceLength': 0.0, 'fenceHeight': 2.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -316,10 +320,7 @@ void main() {
       });
 
       test('throws exception for negative length', () {
-        final inputs = {
-          'fenceLength': -10.0,
-          'fenceHeight': 2.0,
-        };
+        final inputs = {'fenceLength': -10.0, 'fenceHeight': 2.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -337,10 +338,34 @@ void main() {
           'fenceType': 0.0,
         };
         final priceList = [
-          const PriceItem(sku: 'post', name: 'Столб', price: 500.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'lag', name: 'Лага', price: 150.0, unit: 'м', imageUrl: ''),
-          const PriceItem(sku: 'profiled', name: 'Профлист', price: 300.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'fasteners', name: 'Саморезы', price: 200.0, unit: 'уп', imageUrl: ''),
+          const PriceItem(
+            sku: 'post',
+            name: 'Столб',
+            price: 500.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'lag',
+            name: 'Лага',
+            price: 150.0,
+            unit: 'м',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'profiled',
+            name: 'Профлист',
+            price: 300.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'fasteners',
+            name: 'Саморезы',
+            price: 200.0,
+            unit: 'уп',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -350,10 +375,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'fenceLength': 50.0,
-          'fenceHeight': 2.0,
-        };
+        final inputs = {'fenceLength': 50.0, 'fenceHeight': 2.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -422,6 +444,23 @@ void main() {
         expect(result.values['sheetsCount'], equals(20.0));
         // High fence = 3 lags rows
         expect(result.values['lagsRows'], equals(3.0));
+      });
+    });
+    group('validation messages', () {
+      test('fence length uses shared helper', () {
+        expect(
+          () => calculator({
+            'fenceLength': 0.0,
+            'fenceHeight': 2.0,
+          }, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Поле "длина забора" должно быть больше нуля'),
+            ),
+          ),
+        );
       });
     });
   });

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/errors/global_error_handler.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/entities/timeline.dart';
 import '../../../domain/entities/workflow_step.dart';
@@ -53,7 +54,7 @@ class TimelineScreen extends ConsumerWidget {
           child: Text(
             loc.translate(
               'workflow.timeline.error',
-              {'error': error.toString()},
+              {'error': GlobalErrorHandler.getUserFriendlyMessage(context, error, stackTrace)},
             ),
           ),
         ),

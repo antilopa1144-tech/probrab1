@@ -36,14 +36,8 @@ void main() {
       });
 
       test('higher floor needs more steps', () {
-        final lowInputs = {
-          'floorHeight': 2.5,
-          'stairsType': 0.0,
-        };
-        final highInputs = {
-          'floorHeight': 3.5,
-          'stairsType': 0.0,
-        };
+        final lowInputs = {'floorHeight': 2.5, 'stairsType': 0.0};
+        final highInputs = {'floorHeight': 3.5, 'stairsType': 0.0};
 
         final lowResult = calculator(lowInputs, emptyPriceList);
         final highResult = calculator(highInputs, emptyPriceList);
@@ -69,10 +63,7 @@ void main() {
       });
 
       test('step depth follows comfort formula 2h+d=62', () {
-        final inputs = {
-          'floorHeight': 2.8,
-          'stairsType': 0.0,
-        };
+        final inputs = {'floorHeight': 2.8, 'stairsType': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
         final stepHeight = result.values['stepHeight']!;
@@ -85,10 +76,7 @@ void main() {
 
       test('step depth clamped to 25-35 cm', () {
         // Very high floor will give small step height, large depth
-        final inputs = {
-          'floorHeight': 5.0,
-          'stairsType': 0.0,
-        };
+        final inputs = {'floorHeight': 5.0, 'stairsType': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -109,7 +97,10 @@ void main() {
         final stepDepth = result.values['stepDepth']!;
 
         // Straight: length = steps * depth * 1.0
-        expect(result.values['stairsLength'], closeTo(stepsCount * stepDepth, 0.02));
+        expect(
+          result.values['stairsLength'],
+          closeTo(stepsCount * stepDepth, 0.02),
+        );
       });
 
       test('L-shaped uses 75% length', () {
@@ -123,7 +114,10 @@ void main() {
         final stepDepth = result.values['stepDepth']!;
 
         // L-shaped: length = steps * depth * 0.75
-        expect(result.values['stairsLength'], closeTo(stepsCount * stepDepth * 0.75, 0.02));
+        expect(
+          result.values['stairsLength'],
+          closeTo(stepsCount * stepDepth * 0.75, 0.02),
+        );
       });
 
       test('U-shaped uses 55% length', () {
@@ -137,50 +131,64 @@ void main() {
         final stepDepth = result.values['stepDepth']!;
 
         // U-shaped: length = steps * depth * 0.55
-        expect(result.values['stairsLength'], closeTo(stepsCount * stepDepth * 0.55, 0.02));
+        expect(
+          result.values['stairsLength'],
+          closeTo(stepsCount * stepDepth * 0.55, 0.02),
+        );
       });
 
       test('U-shaped is shortest, L-shaped middle, straight longest', () {
-        final baseInputs = {
-          'floorHeight': 2.8,
-        };
+        final baseInputs = {'floorHeight': 2.8};
 
-        final straightResult = calculator({...baseInputs, 'stairsType': 0.0}, emptyPriceList);
-        final lShapedResult = calculator({...baseInputs, 'stairsType': 1.0}, emptyPriceList);
-        final uShapedResult = calculator({...baseInputs, 'stairsType': 2.0}, emptyPriceList);
+        final straightResult = calculator({
+          ...baseInputs,
+          'stairsType': 0.0,
+        }, emptyPriceList);
+        final lShapedResult = calculator({
+          ...baseInputs,
+          'stairsType': 1.0,
+        }, emptyPriceList);
+        final uShapedResult = calculator({
+          ...baseInputs,
+          'stairsType': 2.0,
+        }, emptyPriceList);
 
-        expect(straightResult.values['stairsLength'], greaterThan(lShapedResult.values['stairsLength']!));
-        expect(lShapedResult.values['stairsLength'], greaterThan(uShapedResult.values['stairsLength']!));
+        expect(
+          straightResult.values['stairsLength'],
+          greaterThan(lShapedResult.values['stairsLength']!),
+        );
+        expect(
+          lShapedResult.values['stairsLength'],
+          greaterThan(uShapedResult.values['stairsLength']!),
+        );
       });
     });
 
     group('Stringer calculations', () {
       test('stringer length uses Pythagorean theorem', () {
-        final inputs = {
-          'floorHeight': 3.0,
-          'stairsType': 0.0,
-        };
+        final inputs = {'floorHeight': 3.0, 'stairsType': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
         final floorHeight = result.values['floorHeight']!;
         final stairsLength = result.values['stairsLength']!;
 
         // Stringer = sqrt(h² + l²) * 1.1
-        final expected = math.sqrt(floorHeight * floorHeight + stairsLength * stairsLength) * 1.1;
+        final expected =
+            math.sqrt(floorHeight * floorHeight + stairsLength * stairsLength) *
+            1.1;
         expect(result.values['stringerLength'], closeTo(expected, 0.01));
       });
 
       test('stringer includes 10% waste', () {
-        final inputs = {
-          'floorHeight': 3.0,
-          'stairsType': 0.0,
-        };
+        final inputs = {'floorHeight': 3.0, 'stairsType': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
         final floorHeight = result.values['floorHeight']!;
         final stairsLength = result.values['stairsLength']!;
 
-        final baseLength = math.sqrt(floorHeight * floorHeight + stairsLength * stairsLength);
+        final baseLength = math.sqrt(
+          floorHeight * floorHeight + stairsLength * stairsLength,
+        );
         final withWaste = baseLength * 1.1;
         expect(result.values['stringerLength'], closeTo(withWaste, 0.01));
       });
@@ -211,7 +219,10 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
         final stairsLength = result.values['stairsLength']!;
 
-        expect(result.values['railingLength'], closeTo(stairsLength + 0.5, 0.01));
+        expect(
+          result.values['railingLength'],
+          closeTo(stairsLength + 0.5, 0.01),
+        );
       });
 
       test('railing doubled for both sides', () {
@@ -225,7 +236,10 @@ void main() {
         final result = calculator(inputs, emptyPriceList);
         final stairsLength = result.values['stairsLength']!;
 
-        expect(result.values['railingLength'], closeTo((stairsLength + 0.5) * 2, 0.01));
+        expect(
+          result.values['railingLength'],
+          closeTo((stairsLength + 0.5) * 2, 0.01),
+        );
       });
     });
 
@@ -259,9 +273,7 @@ void main() {
 
     group('Default values', () {
       test('uses default values when not specified', () {
-        final inputs = <String, double>{
-          'floorHeight': 2.8,
-        };
+        final inputs = <String, double>{'floorHeight': 2.8};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -348,10 +360,7 @@ void main() {
       });
 
       test('handles minimum floor height', () {
-        final inputs = {
-          'floorHeight': 2.0,
-          'stairsType': 0.0,
-        };
+        final inputs = {'floorHeight': 2.0, 'stairsType': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -360,10 +369,7 @@ void main() {
       });
 
       test('handles maximum floor height', () {
-        final inputs = {
-          'floorHeight': 6.0,
-          'stairsType': 0.0,
-        };
+        final inputs = {'floorHeight': 6.0, 'stairsType': 0.0};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -374,9 +380,7 @@ void main() {
 
     group('Validation errors', () {
       test('throws exception for zero floor height', () {
-        final inputs = {
-          'floorHeight': 0.0,
-        };
+        final inputs = {'floorHeight': 0.0};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -385,9 +389,7 @@ void main() {
       });
 
       test('throws exception for negative floor height', () {
-        final inputs = {
-          'floorHeight': -2.8,
-        };
+        final inputs = {'floorHeight': -2.8};
 
         expect(
           () => calculator(inputs, emptyPriceList),
@@ -405,9 +407,27 @@ void main() {
           'needRailing': 1.0,
         };
         final priceList = [
-          const PriceItem(sku: 'step', name: 'Ступень', price: 500.0, unit: 'шт', imageUrl: ''),
-          const PriceItem(sku: 'stringer', name: 'Косоур', price: 800.0, unit: 'м', imageUrl: ''),
-          const PriceItem(sku: 'railing', name: 'Перила', price: 1500.0, unit: 'м', imageUrl: ''),
+          const PriceItem(
+            sku: 'step',
+            name: 'Ступень',
+            price: 500.0,
+            unit: 'шт',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'stringer',
+            name: 'Косоур',
+            price: 800.0,
+            unit: 'м',
+            imageUrl: '',
+          ),
+          const PriceItem(
+            sku: 'railing',
+            name: 'Перила',
+            price: 1500.0,
+            unit: 'м',
+            imageUrl: '',
+          ),
         ];
 
         final result = calculator(inputs, priceList);
@@ -417,9 +437,7 @@ void main() {
       });
 
       test('returns null price when no prices available', () {
-        final inputs = {
-          'floorHeight': 2.8,
-        };
+        final inputs = {'floorHeight': 2.8};
 
         final result = calculator(inputs, emptyPriceList);
 
@@ -485,7 +503,27 @@ void main() {
           ...inputs,
           'stairsType': 0.0,
         }, emptyPriceList);
-        expect(result.values['stairsLength'], lessThan(straightResult.values['stairsLength']!));
+        expect(
+          result.values['stairsLength'],
+          lessThan(straightResult.values['stairsLength']!),
+        );
+      });
+    });
+    group('validation messages', () {
+      test('floor height uses shared helper', () {
+        expect(
+          () => calculator({
+            'floorHeight': 0.0,
+            'stairsWidth': 0.9,
+          }, emptyPriceList),
+          throwsA(
+            isA<CalculationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Поле "высота этажа" должно быть больше нуля'),
+            ),
+          ),
+        );
       });
     });
   });

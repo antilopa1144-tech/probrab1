@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/localization/app_localizations.dart';
+import '../../../core/constants/region_ids.dart';
 import '../../../domain/entities/labor_cost.dart';
 import '../../providers/region_provider.dart';
 import '../../providers/settings_provider.dart';
@@ -20,41 +22,44 @@ class LaborCostScreen extends ConsumerStatefulWidget {
 }
 
 class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
+  static const _laborCategoryFinishing = 'finishing';
+  static const _laborUnitSquareMeterKey = 'common.sqm';
+
   late String _selectedRegion;
   final Map<String, LaborRate> _rates = {
-    'Москва': const LaborRate(
-      category: 'Отделка',
-      region: 'Москва',
+    RegionId.moscow: const LaborRate(
+      category: _laborCategoryFinishing,
+      region: RegionId.moscow,
       pricePerUnit: 500,
-      unit: 'м²',
+      unit: _laborUnitSquareMeterKey,
       minPrice: 5000,
     ),
-    'Санкт‑Петербург': const LaborRate(
-      category: 'Отделка',
-      region: 'Санкт‑Петербург',
+    RegionId.spb: const LaborRate(
+      category: _laborCategoryFinishing,
+      region: RegionId.spb,
       pricePerUnit: 470,
-      unit: 'м²',
+      unit: _laborUnitSquareMeterKey,
       minPrice: 4200,
     ),
-    'Екатеринбург': const LaborRate(
-      category: 'Отделка',
-      region: 'Екатеринбург',
+    RegionId.ekaterinburg: const LaborRate(
+      category: _laborCategoryFinishing,
+      region: RegionId.ekaterinburg,
       pricePerUnit: 420,
-      unit: 'м²',
+      unit: _laborUnitSquareMeterKey,
       minPrice: 3600,
     ),
-    'Краснодар': const LaborRate(
-      category: 'Отделка',
-      region: 'Краснодар',
+    RegionId.krasnodar: const LaborRate(
+      category: _laborCategoryFinishing,
+      region: RegionId.krasnodar,
       pricePerUnit: 390,
-      unit: 'м²',
+      unit: _laborUnitSquareMeterKey,
       minPrice: 3300,
     ),
-    'Регионы РФ': const LaborRate(
-      category: 'Отделка',
-      region: 'Регионы РФ',
+    RegionId.regions: const LaborRate(
+      category: _laborCategoryFinishing,
+      region: RegionId.regions,
       pricePerUnit: 350,
-      unit: 'м²',
+      unit: _laborUnitSquareMeterKey,
       minPrice: 3000,
     ),
   };
@@ -63,14 +68,16 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
   void initState() {
     super.initState();
     final preferredRegion = ref.read(regionProvider);
-    _selectedRegion = _rates.containsKey(preferredRegion)
-        ? preferredRegion
+    final normalizedRegion = RegionCatalog.normalize(preferredRegion);
+    _selectedRegion = _rates.containsKey(normalizedRegion)
+        ? normalizedRegion
         : _rates.keys.first;
   }
 
   @override
   Widget build(BuildContext context) {
-    final syncedRegion = ref.watch(regionProvider);
+    final loc = AppLocalizations.of(context);
+    final syncedRegion = RegionCatalog.normalize(ref.watch(regionProvider));
     if (_rates.containsKey(syncedRegion) && syncedRegion != _selectedRegion) {
       _selectedRegion = syncedRegion;
     }
@@ -84,20 +91,22 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Расчёт трудозатрат')),
+      appBar: AppBar(title: Text(loc.translate('labor.title'))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Выбор региона
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Регион', style: theme.textTheme.titleMedium),
+                    Text(
+                      loc.translate('labor.region'),
+                      style: theme.textTheme.titleMedium,
+                    ),
                     const SizedBox(height: 8),
                     DropdownButton<String>(
                       value: _selectedRegion,
@@ -105,7 +114,7 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
                       items: _rates.keys.map((region) {
                         return DropdownMenuItem(
                           value: region,
-                          child: Text(region),
+                          child: Text(_getRegionLabel(loc, region)),
                         );
                       }).toList(),
                       onChanged: (value) {
@@ -122,7 +131,6 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            // Результаты
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -130,43 +138,34 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Расчёт',
+                      loc.translate('labor.calculation'),
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 16),
                     _ResultRow(
-                      label: 'Объём работ',
-                      value:
-                          '${widget.quantity.toStringAsFixed(2)} ${rate.unit}',
+                      label: loc.translate('labor.result.quantity'),
+                      value: '${widget.quantity.toStringAsFixed(2)} ${_getUnitLabel(loc, rate.unit)}',
                     ),
                     const Divider(),
                     _ResultRow(
-                      label: 'Оценка времени',
-                      value: '${calculation.estimatedHours} часов',
+                      label: loc.translate('labor.result.hours'),
+                      value: loc.translate('labor.value.hours', {
+                        'value': calculation.estimatedHours.toString(),
+                      }),
                     ),
                     _ResultRow(
-                      label: 'Оценка дней',
-                      value: '${calculation.estimatedDays} дней',
+                      label: loc.translate('labor.result.days'),
+                      value: loc.translate('labor.value.days', {
+                        'value': calculation.estimatedDays.toString(),
+                      }),
                     ),
-                    // Цены временно скрыты до интеграции с магазинами
-                    // const Divider(),
-                    // _ResultRow(
-                    //   label: 'Стоимость работ',
-                    //   value: '${calculation.totalCost.toStringAsFixed(0)} ₽',
-                    //   isHighlighted: true,
-                    // ),
-                    // _ResultRow(
-                    //   label: 'Цена за единицу',
-                    //   value: '${rate.pricePerUnit} ₽/${rate.unit}',
-                    // ),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            // Информация
             Card(
               color: theme.colorScheme.primaryContainer,
               child: Padding(
@@ -182,7 +181,7 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Информация',
+                          loc.translate('labor.info_title'),
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -191,8 +190,7 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Расчёт основан на средних нормах времени для данного типа работ. '
-                      'Фактическое время может отличаться в зависимости от сложности и опыта мастера.',
+                      loc.translate('labor.info_text'),
                       style: theme.textTheme.bodyMedium,
                     ),
                   ],
@@ -203,6 +201,21 @@ class _LaborCostScreenState extends ConsumerState<LaborCostScreen> {
         ),
       ),
     );
+  }
+
+  String _getUnitLabel(AppLocalizations loc, String unitKey) {
+    if (unitKey.contains('.')) {
+      return loc.translate(unitKey);
+    }
+    return unitKey;
+  }
+
+  String _getRegionLabel(AppLocalizations loc, String region) {
+    final labelKey = RegionCatalog.laborLabelKey(region);
+    if (labelKey.isNotEmpty) {
+      return loc.translate(labelKey);
+    }
+    return RegionCatalog.legacyName(region);
   }
 }
 
@@ -241,3 +254,5 @@ class _ResultRow extends StatelessWidget {
     );
   }
 }
+
+

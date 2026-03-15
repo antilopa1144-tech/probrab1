@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/localization/app_localizations.dart';
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
 
@@ -91,6 +92,7 @@ class DynamicList<T> extends StatelessWidget {
     final canRemove = items.length > minItems;
     final canAdd = maxItems == null || items.length < maxItems!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final loc = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,7 +118,7 @@ class DynamicList<T> extends StatelessWidget {
                       addButtonIcon ?? Icons.add,
                       size: 18,
                     ),
-                    label: Text(addButtonText ?? 'Добавить'),
+                    label: Text(addButtonText ?? loc.translate('action.add')), 
                     style: TextButton.styleFrom(
                       foregroundColor: accent,
                       backgroundColor: isDark
@@ -153,7 +155,7 @@ class DynamicList<T> extends StatelessWidget {
             child: TextButton.icon(
               onPressed: onAdd,
               icon: Icon(addButtonIcon ?? Icons.add, size: 18),
-              label: Text(addButtonText ?? 'Добавить'),
+              label: Text(addButtonText ?? loc.translate('action.add')), 
               style: TextButton.styleFrom(
                 foregroundColor: accent,
               ),
@@ -259,6 +261,7 @@ class DynamicListSimple<T> extends StatelessWidget {
     final accent = accentColor ?? CalculatorColors.interior;
     final canRemove = items.length > minItems;
     final canAdd = maxItems == null || items.length < maxItems!;
+    final loc = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -288,7 +291,7 @@ class DynamicListSimple<T> extends StatelessWidget {
           TextButton.icon(
             onPressed: onAdd,
             icon: const Icon(Icons.add, size: 18),
-            label: Text(addButtonText ?? 'Добавить'),
+            label: Text(addButtonText ?? loc.translate('action.add')), 
             style: TextButton.styleFrom(foregroundColor: accent),
           ),
         ],
@@ -326,14 +329,14 @@ class OpeningsList extends StatelessWidget {
       onAdd: onAdd,
       onRemove: onRemove,
       accentColor: accentColor,
-      addButtonText: 'Добавить проём',
+      addButtonText: AppLocalizations.of(context).translate('common.add_opening'),
       itemBuilder: (context, opening, index) {
         return Row(
           children: [
             Expanded(
               child: _buildField(
                 context,
-                'Ширина',
+                AppLocalizations.of(context).translate('input.width'),
                 opening.width,
                 (v) => onWidthChanged(index, v),
               ),
@@ -342,7 +345,7 @@ class OpeningsList extends StatelessWidget {
             Expanded(
               child: _buildField(
                 context,
-                'Высота',
+                AppLocalizations.of(context).translate('input.height'),
                 opening.height,
                 (v) => onHeightChanged(index, v),
               ),
@@ -352,7 +355,7 @@ class OpeningsList extends StatelessWidget {
               width: 70,
               child: _buildField(
                 context,
-                'Кол-во',
+                AppLocalizations.of(context).translate('common.count_label'),
                 opening.count.toDouble(),
                 (v) => onCountChanged(index, v.toInt()),
                 isInt: true,
@@ -413,3 +416,5 @@ class OpeningData {
     this.count = 1,
   });
 }
+
+

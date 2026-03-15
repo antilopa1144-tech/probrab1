@@ -25,10 +25,7 @@ void main() {
 
     test('calculates plinth length', () {
       final calculator = CalculateWoodWall();
-      final inputs = {
-        'area': 25.0,
-        'perimeter': 20.0,
-      };
+      final inputs = {'area': 25.0, 'perimeter': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -39,10 +36,7 @@ void main() {
 
     test('calculates corners length', () {
       final calculator = CalculateWoodWall();
-      final inputs = {
-        'area': 25.0,
-        'perimeter': 20.0,
-      };
+      final inputs = {'area': 25.0, 'perimeter': 20.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -53,9 +47,7 @@ void main() {
 
     test('calculates finish needed', () {
       final calculator = CalculateWoodWall();
-      final inputs = {
-        'area': 25.0,
-      };
+      final inputs = {'area': 25.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -66,9 +58,7 @@ void main() {
 
     test('calculates fasteners needed', () {
       final calculator = CalculateWoodWall();
-      final inputs = {
-        'area': 25.0,
-      };
+      final inputs = {'area': 25.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -77,14 +67,15 @@ void main() {
       expect(result.values['fastenersNeeded'], greaterThan(0));
       // Ориентировочно должно быть пропорционально количеству досок
       final boardsNeeded = result.values['boardsNeeded']!;
-      expect(result.values['fastenersNeeded'], closeTo(boardsNeeded * 9, boardsNeeded * 2));
+      expect(
+        result.values['fastenersNeeded'],
+        closeTo(boardsNeeded * 9, boardsNeeded * 2),
+      );
     });
 
     test('estimates perimeter when missing', () {
       final calculator = CalculateWoodWall();
-      final inputs = {
-        'area': 25.0,
-      };
+      final inputs = {'area': 25.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -96,9 +87,7 @@ void main() {
 
     test('uses default values when missing', () {
       final calculator = CalculateWoodWall();
-      final inputs = {
-        'area': 25.0,
-      };
+      final inputs = {'area': 25.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -126,14 +115,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculateWoodWall();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле \"площадь\" должно быть больше нуля'),
+          ),
+        ),
       );
     });
   });

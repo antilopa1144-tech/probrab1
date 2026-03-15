@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../app/main_shell.dart';
 
-/// Экран онбординга с 4 шагами и анимациями.
+/// Экран онбординга с 5 шагами и анимациями.
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -28,40 +28,43 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     with TickerProviderStateMixin {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  List<OnboardingPage> _pages = [];
 
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
-  final List<OnboardingPage> _pages = [
-    const OnboardingPage(
+  List<OnboardingPage> _buildPages(AppLocalizations loc) => [
+    OnboardingPage(
+      icon: Icons.handyman_outlined,
+      title: loc.translate('onboarding.page1.title'),
+      description: loc.translate('onboarding.page1.description'),
+      color: const Color(0xFF80DEEA),
+    ),
+    OnboardingPage(
       icon: Icons.calculate_outlined,
-      title: '55+ калькуляторов',
-      description:
-          'Все расчёты для стройки и ремонта в одном месте: от фундамента до отделки.',
-      color: Color(0xFF80DEEA),
+      title: loc.translate('onboarding.page2.title'),
+      description: loc.translate('onboarding.page2.description'),
+      color: const Color(0xFFA5D6A7),
     ),
-    const OnboardingPage(
-      icon: Icons.architecture_outlined,
-      title: 'Точные расчёты',
-      description:
-          'Введите размеры — получите количество материалов с учётом запаса и норм расхода.',
-      color: Color(0xFFA5D6A7),
+    OnboardingPage(
+      icon: Icons.meeting_room_outlined,
+      title: loc.translate('onboarding.page3.title'),
+      description: loc.translate('onboarding.page3.description'),
+      color: const Color(0xFFFFD54F),
     ),
-    const OnboardingPage(
-      icon: Icons.bookmark_outline,
-      title: 'Сохраняйте расчёты',
-      description:
-          'Все ваши расчёты сохраняются автоматически. Возвращайтесь к ним в любой момент.',
-      color: Color(0xFFFFCC80),
+    OnboardingPage(
+      icon: Icons.engineering_outlined,
+      title: loc.translate('onboarding.page4.title'),
+      description: loc.translate('onboarding.page4.description'),
+      color: const Color(0xFFFFCC80),
     ),
-    const OnboardingPage(
-      icon: Icons.share_outlined,
-      title: 'Поделитесь сметой',
-      description:
-          'Экспортируйте смету в PDF или поделитесь с прорабом через мессенджеры.',
-      color: Color(0xFFFFAB91),
+    OnboardingPage(
+      icon: Icons.picture_as_pdf_outlined,
+      title: loc.translate('onboarding.page5.title'),
+      description: loc.translate('onboarding.page5.description'),
+      color: const Color(0xFFFFAB91),
     ),
   ];
 
@@ -138,6 +141,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final loc = AppLocalizations.of(context);
+    _pages = _buildPages(loc);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,

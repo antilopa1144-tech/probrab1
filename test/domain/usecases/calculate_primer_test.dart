@@ -40,11 +40,7 @@ void main() {
 
     test('calculates with multiple layers', () {
       final calculator = CalculatePrimer();
-      final inputs = {
-        'area': 50.0,
-        'layers': 2.0,
-        'type': 1.0,
-      };
+      final inputs = {'area': 50.0, 'layers': 2.0, 'type': 1.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -56,9 +52,7 @@ void main() {
 
     test('calculates rollers and trays needed', () {
       final calculator = CalculatePrimer();
-      final inputs = {
-        'area': 50.0,
-      };
+      final inputs = {'area': 50.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -71,9 +65,7 @@ void main() {
 
     test('uses default values when missing', () {
       final calculator = CalculatePrimer();
-      final inputs = {
-        'area': 50.0,
-      };
+      final inputs = {'area': 50.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -85,15 +77,32 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculatePrimer();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
         throwsA(isA<CalculationException>()),
       );
+    });
+
+    group('Validation messages', () {
+      test('canonical path requires area or room dimensions', () {
+        final calculator = CalculatePrimer();
+
+        final error = calculator.validateInputs({
+          'inputMode': 0.0,
+          'area': 0.0,
+          'roomWidth': 0.0,
+          'roomLength': 0.0,
+          'roomHeight': 0.0,
+        });
+
+        expect(
+          error,
+          equals('Необходимо указать площадь или размеры помещения'),
+        );
+      });
     });
   });
 }

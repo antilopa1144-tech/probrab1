@@ -233,11 +233,6 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
   Future<void> _initService() async {
     try {
       _service = AiService.instanceSync ?? await AiService.instance;
-      _service!.startChat(
-        calculatorName: widget.calculatorName,
-        data: widget.data,
-        calculationHistory: widget.calculationHistory,
-      );
     } catch (_) {
       // Ошибка инициализации — _askStream обработает null _service
     }
@@ -294,45 +289,60 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
   // Welcome-экран и быстрые вопросы
   // ---------------------------------------------------------------------------
 
+  bool _isHomeScreenContext(AppLocalizations loc) {
+    return widget.calculatorName == loc.translate('home.main_screen');
+  }
+
   List<String> _getQuickQuestions() {
-    if (widget.calculatorName == 'Главный экран') {
+    final loc = AppLocalizations.of(context);
+    if (_isHomeScreenContext(loc)) {
       return [
-        'Что важно не забыть при ремонте в новостройке?',
-        'С чего начать расчёт материалов для ванной?',
-        'Какие ошибки чаще всего делают при укладке плитки?',
-        'Как правильно выбрать тип штукатурки?',
+        loc.translate('ai.quick_question.home.1'),
+        loc.translate('ai.quick_question.home.2'),
+        loc.translate('ai.quick_question.home.3'),
+        loc.translate('ai.quick_question.home.4'),
       ];
     }
     if (widget.data.isNotEmpty) {
       return [
-        'Проверь мой расчёт — всё правильно?',
-        'Что я мог забыть в этом расчёте?',
-        'Какой материал посоветуешь для этого случая?',
-        'На что обратить внимание при работе с этим?',
+        loc.translate('ai.quick_question.calculation.1'),
+        loc.translate('ai.quick_question.calculation.2'),
+        loc.translate('ai.quick_question.calculation.3'),
+        loc.translate('ai.quick_question.calculation.4'),
       ];
     }
     return [
-      'Дай практический совет по ${widget.calculatorName}.',
-      'Какие ошибки чаще всего делают?',
-      'Какой материал посоветуешь?',
-      'С чего начать?',
+      loc.translate('ai.quick_question.generic.1').replaceFirst('{name}', widget.calculatorName),
+      loc.translate('ai.quick_question.generic.2'),
+      loc.translate('ai.quick_question.generic.3'),
+      loc.translate('ai.quick_question.generic.4'),
     ];
   }
 
   String _getWelcomePhrase() {
+    final loc = AppLocalizations.of(context);
     final hour = DateTime.now().hour;
-    if (widget.calculatorName == 'Главный экран') {
+    if (_isHomeScreenContext(loc)) {
       if (hour < 12) {
-        return 'Доброе утро. Ну что, за работу?';
+        return loc.translate('ai.welcome.home.morning');
       } else if (hour < 18) {
-        return 'О, заявился. Давай, спрашивай — время не ждёт.';
+        return loc.translate('ai.welcome.home.day');
       } else {
-        return 'Поздновато, конечно, но ладно. Чего хотел?';
+        return loc.translate('ai.welcome.home.evening');
       }
     }
-    return 'Смотрю на ${widget.calculatorName}. Ну, задавай вопрос.';
+    return loc.translate('ai.welcome.calculator').replaceFirst('{name}', widget.calculatorName);
   }
 
+  String _localizeAiError(Object error, AppLocalizations loc) {
+    if (error is AiApiException) {
+      return loc.translate(error.messageKey, error.messageParams);
+    }
+    if (error is AiDailyLimitException) {
+      return loc.translate(error.messageKey, error.messageParams);
+    }
+    return loc.translate('ai.error_generic');
+  }
   void _onQuickQuestion(String question) {
     setState(() {
       _showWelcome = false;
@@ -412,6 +422,8 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
       calculatorName: widget.calculatorName,
       data: widget.data,
       userQuestion: question,
+      calculationHistory: widget.calculationHistory,
+      isHomeScreen: _isHomeScreenContext(loc),
     );
 
     _streamSub = stream.listen(
@@ -436,11 +448,7 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
           if (fullText.isEmpty && aiIndex < _messages.length) {
             // Нет текста — убираем placeholder, показываем ошибку
             _messages.removeAt(aiIndex);
-            _error = error is AiApiException
-                ? error.message
-                : error is AiDailyLimitException
-                    ? error.message
-                    : loc.translate('ai.error_generic');
+            _error = _localizeAiError(error, loc);
           } else if (aiIndex < _messages.length) {
             // Есть частичный текст — оставляем, завершаем стриминг
             _messages[aiIndex] =
@@ -488,12 +496,6 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
     _safetyTimer?.cancel();
     _service?.resetChat();
     _clearHistory();
-    // Переинициализируем чат в сервисе
-    _service?.startChat(
-      calculatorName: widget.calculatorName,
-      data: widget.data,
-      calculationHistory: widget.calculationHistory,
-    );
     setState(() {
       _messages.clear();
       _error = null;
@@ -746,7 +748,7 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
 
           // Заголовок быстрых вопросов
           Text(
-            'Быстрые вопросы:',
+            loc.translate('ai.quick_questions_title'),
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -1096,3 +1098,4 @@ class _ActionChip extends StatelessWidget {
     );
   }
 }
+

@@ -32,34 +32,34 @@ class _PrimerScreenState extends State<PrimerScreen> {
 
   final List<Map<String, Object>> _primers = const [
     {
-      'name': 'Универсальная',
-      'desc': 'Глубокого проникновения',
+      'nameKey': 'primer.type.universal',
+      'descKey': 'primer.type.universal_desc',
       'consumption': 0.15,
-      'unit': 'л',
+      'unitKey': 'unit.liter',
       'pack_size': 10.0,
       'is_concentrate': false,
     },
     {
-      'name': 'Концентрат',
-      'desc': 'Требует разбавления',
+      'nameKey': 'primer.type.concentrate',
+      'descKey': 'primer.type.concentrate_desc',
       'consumption': 0.15,
-      'unit': 'л',
+      'unitKey': 'unit.liter',
       'pack_size': 1.0,
       'is_concentrate': true,
     },
     {
-      'name': 'Бетоноконтакт',
-      'desc': 'С кварцевым песком',
+      'nameKey': 'primer.type.concrete_contact',
+      'descKey': 'primer.type.concrete_contact_desc',
       'consumption': 0.35,
-      'unit': 'кг',
+      'unitKey': 'unit.kg',
       'pack_size': 15.0,
       'is_concentrate': false,
     },
     {
-      'name': 'Супер-Адгезия',
-      'desc': 'Для сложных поверхностей',
+      'nameKey': 'primer.type.super_adhesion',
+      'descKey': 'primer.type.super_adhesion_desc',
       'consumption': 0.2,
-      'unit': 'кг',
+      'unitKey': 'unit.kg',
       'pack_size': 3.0,
       'is_concentrate': false,
     },
@@ -70,14 +70,36 @@ class _PrimerScreenState extends State<PrimerScreen> {
     return (_roomWidth + _roomLength) * 2 * _roomHeight - _openingsArea;
   }
 
+  String _primerName(Map<String, Object> primer) {
+    return _loc.translate(primer['nameKey'] as String);
+  }
+
+  String _primerDescription(Map<String, Object> primer) {
+    return _loc.translate(primer['descKey'] as String);
+  }
+
+  String _primerUnit(Map<String, Object> primer) {
+    return _loc.translate(primer['unitKey'] as String);
+  }
+
+  String _translatePrimerExport(
+    String key, [
+    Map<String, String> replacements = const {},
+  ]) {
+    var text = _loc.translate('primer.export.$key');
+    replacements.forEach((token, value) {
+      text = text.replaceAll('{$token}', value);
+    });
+    return text;
+  }
+
   String _generateExportText() {
     final area = _getArea();
     final primer = _primers[_typeIndex];
-    final double consumption = primer['consumption'] as double;
     final bool isConcentrate = primer['is_concentrate'] as bool;
-    final String unit = primer['unit'] as String;
+    final String unit = _primerUnit(primer);
 
-    final double totalSolutionNeeded = area * _layers * consumption;
+    final double totalSolutionNeeded = area * _layers * (primer['consumption'] as double);
     double buyAmount;
     double waterAmount = 0;
 
@@ -90,34 +112,45 @@ class _PrimerScreenState extends State<PrimerScreen> {
     }
 
     final buffer = StringBuffer();
-    buffer.writeln('💧 РАСЧЁТ ГРУНТОВКИ');
+    buffer.writeln('💧 ${_translatePrimerExport('title')}');
     buffer.writeln('═' * 40);
     buffer.writeln();
 
-    buffer.writeln('Тип: ${primer['name']}');
-    buffer.writeln('Площадь: ${area.toStringAsFixed(1)} м²');
-    buffer.writeln('Слоёв: $_layers');
+    buffer.writeln(_translatePrimerExport('type', {'value': _primerName(primer)}));
+    buffer.writeln(_translatePrimerExport('area', {
+      'value': '${area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+    }));
+    buffer.writeln(_translatePrimerExport('layers', {'value': '$_layers'}));
     buffer.writeln();
 
-    buffer.writeln('💧 МАТЕРИАЛЫ:');
+    buffer.writeln('💧 ${_translatePrimerExport('materials_title')}');
     buffer.writeln('─' * 40);
-    buffer.writeln('• ${isConcentrate ? "Концентрат" : "Грунтовка"}: ${buyAmount.toStringAsFixed(1)} $unit');
+    buffer.writeln(_translatePrimerExport(
+      isConcentrate ? 'concentrate' : 'primer',
+      {'value': '${buyAmount.toStringAsFixed(1)} $unit'},
+    ));
 
     if (isConcentrate) {
-      buffer.writeln('• Вода: ${waterAmount.toStringAsFixed(1)} л');
-      buffer.writeln('• Готовый раствор: ${totalSolutionNeeded.toStringAsFixed(1)} л');
+      buffer.writeln(_translatePrimerExport('water', {
+        'value': '${waterAmount.toStringAsFixed(1)} ${_loc.translate('unit.liter')}',
+      }));
+      buffer.writeln(_translatePrimerExport('total_solution', {
+        'value': '${totalSolutionNeeded.toStringAsFixed(1)} ${_loc.translate('unit.liter')}',
+      }));
     }
 
     buffer.writeln();
     buffer.writeln('═' * 40);
-    buffer.writeln('Создано в ПроРаб');
+    buffer.writeln(_translatePrimerExport('footer'));
 
     return buffer.toString();
   }
 
   Future<void> _shareCalculation() async {
     final text = _generateExportText();
-    await SharePlus.instance.share(ShareParams(text: text, subject: 'Расчёт грунтовки'));
+    await SharePlus.instance.share(
+      ShareParams(text: text, subject: _loc.translate('primer.share_subject')),
+    );
   }
 
   void _copyToClipboard() {
@@ -142,7 +175,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
     final double consumption = primer['consumption'] as double;
     final bool isConcentrate = primer['is_concentrate'] as bool;
     final double packSize = primer['pack_size'] as double;
-    final String unit = primer['unit'] as String;
+    final String unit = _primerUnit(primer);
 
     final double totalSolutionNeeded = area * _layers * consumption;
     double buyAmount;
@@ -178,7 +211,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
         results: [
           ResultItem(
             label: _loc.translate('primer.area').toUpperCase(),
-            value: '${area.toStringAsFixed(1)} м²',
+            value: '${area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -198,8 +231,8 @@ class _PrimerScreenState extends State<PrimerScreen> {
         TypeSelectorGroup(
           options: _primers.map((p) => TypeSelectorOption(
             icon: Icons.water_drop,
-            title: p['name'] as String,
-            subtitle: p['desc'] as String,
+            title: _primerName(p),
+            subtitle: _primerDescription(p),
           )).toList(),
           selectedIndex: _typeIndex,
           onSelect: (index) => setState(() => _typeIndex = index),
@@ -230,7 +263,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
           items: [
             MaterialItem(
               name: _loc.translate('primer.area'),
-              value: '${area.toStringAsFixed(1)} м²',
+              value: '${area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
               icon: Icons.straighten,
             ),
             MaterialItem(
@@ -240,12 +273,12 @@ class _PrimerScreenState extends State<PrimerScreen> {
             ),
             if (isConcentrate) MaterialItem(
               name: _loc.translate('primer.water'),
-              value: '${waterAmount.toStringAsFixed(1)} л',
+              value: '${waterAmount.toStringAsFixed(1)} ${_loc.translate('unit.liter')}',
               icon: Icons.water,
             ),
             if (isConcentrate) MaterialItem(
               name: _loc.translate('primer.total_solution'),
-              value: '${totalSolutionNeeded.toStringAsFixed(1)} л',
+              value: '${totalSolutionNeeded.toStringAsFixed(1)} ${_loc.translate('unit.liter')}',
               icon: Icons.science,
             ),
           ],
@@ -301,7 +334,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
               label: _loc.translate('plaster_pro.label.width'),
               value: _roomWidth,
               onChanged: (v) => setState(() => _roomWidth = v),
-              suffix: 'м',
+              suffix: _loc.translate('unit.meters'),
               accentColor: accentColor,
               minValue: 0.1,
               maxValue: 100,
@@ -313,7 +346,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
               label: _loc.translate('plaster_pro.label.length'),
               value: _roomLength,
               onChanged: (v) => setState(() => _roomLength = v),
-              suffix: 'м',
+              suffix: _loc.translate('unit.meters'),
               accentColor: accentColor,
               minValue: 0.1,
               maxValue: 100,
@@ -326,7 +359,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
         label: _loc.translate('plaster_pro.label.height'),
         value: _roomHeight,
         onChanged: (v) => setState(() => _roomHeight = v),
-        suffix: 'м',
+        suffix: _loc.translate('unit.meters'),
         accentColor: accentColor,
         minValue: 1.5,
         maxValue: 10,
@@ -336,7 +369,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
         label: _loc.translate('plaster_pro.label.openings_hint'),
         value: _openingsArea,
         onChanged: (v) => setState(() => _openingsArea = v),
-        suffix: 'м²',
+        suffix: _loc.translate('common.sqm'),
         accentColor: accentColor,
         minValue: 0,
         maxValue: 100,
@@ -351,7 +384,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
         label: _loc.translate('plaster_pro.label.wall_area'),
         value: _manualArea,
         onChanged: (v) => setState(() => _manualArea = v),
-        suffix: 'м²',
+        suffix: _loc.translate('common.sqm'),
         accentColor: accentColor,
         minValue: 1,
         maxValue: 500,
@@ -468,3 +501,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
     );
   }
 }
+
+
+
+

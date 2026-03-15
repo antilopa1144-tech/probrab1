@@ -392,6 +392,24 @@ void main() {
           expect(e.message, contains('обязательно'));
         }
       });
+
+
+      test('не возвращает technical labelKey для обязательного поля', () async {
+        final definition = createTestDefinition();
+        final inputs = {'thickness': 10.0};
+
+        try {
+          await controller.calculate(
+            definition: definition,
+            inputs: inputs,
+            useIsolate: false,
+          );
+          fail('Should throw CalculationException');
+        } on CalculationException catch (e) {
+          expect(e.message, isNot(contains('input.area')));
+          expect(e.message.toLowerCase(), contains('площад'));
+        }
+      });
     });
 
     group('parseInputs', () {

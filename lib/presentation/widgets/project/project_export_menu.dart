@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/localization/app_localizations.dart';
+import '../../../core/errors/global_error_handler.dart';
 
 /// Callback для экспорта в PDF
 typedef OnExportPDF = Future<void> Function();
@@ -82,13 +83,13 @@ class ProjectExportMenu extends StatelessWidget {
         case 'pdf':
           await onExportPDF?.call();
           if (context.mounted) {
-            _showSuccessSnackBar(context, 'PDF экспортирован');
+            _showSuccessSnackBar(context, AppLocalizations.of(context).translate('project.export.pdf_done'));
           }
           break;
         case 'csv':
           await onExportCSV?.call();
           if (context.mounted) {
-            _showSuccessSnackBar(context, 'CSV экспортирован');
+            _showSuccessSnackBar(context, AppLocalizations.of(context).translate('project.export.csv_done'));
           }
           break;
         case 'share':
@@ -102,7 +103,11 @@ class ProjectExportMenu extends StatelessWidget {
     } catch (e) {
       if (context.mounted) {
         final loc = AppLocalizations.of(context);
-        _showErrorSnackBar(context, loc.translate('common.export_error').replaceAll('{error}', '$e'));
+        final message = GlobalErrorHandler.getUserFriendlyMessage(context, e);
+        _showErrorSnackBar(
+          context,
+          loc.translate('common.export_error').replaceAll('{error}', message),
+        );
       }
     }
   }
@@ -127,3 +132,4 @@ class ProjectExportMenu extends StatelessWidget {
     );
   }
 }
+

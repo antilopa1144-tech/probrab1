@@ -80,7 +80,7 @@ const List<BlockSizePreset> kBlockSizePresets = [
   BlockSizePreset(label: '600x300', lengthCm: 60.0, heightCm: 30.0),
   BlockSizePreset(label: '600x250', lengthCm: 60.0, heightCm: 25.0),
   BlockSizePreset(label: '625x250', lengthCm: 62.5, heightCm: 25.0),
-  BlockSizePreset(label: 'Свой', lengthCm: 0.0, heightCm: 0.0, isCustom: true),
+  BlockSizePreset(label: '', lengthCm: 0.0, heightCm: 0.0, isCustom: true),
 ];
 
 /// Helper class для работы с константами газобетонного калькулятора
@@ -327,10 +327,6 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         : _constants.getBearingThicknesses();
   }
 
-  double _getGrossArea() {
-    return _inputMode == InputMode.byArea ? _area : _length * _height;
-  }
-
   double _blockFaceArea() {
     return (_blockLength / 100) * (_blockHeight / 100);
   }
@@ -376,11 +372,11 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
     buffer.writeln('${_loc.translate('gasblock.export.wall_type')}: ${_loc.translate(_wallType.nameKey)}');
     buffer.writeln('${_loc.translate('gasblock.export.material')}: ${_loc.translate(_blockMaterial.nameKey)}');
     buffer.writeln(
-      '${_loc.translate('gasblock.export.block_size')}: ${_blockLength.toStringAsFixed(1)}x${_blockHeight.toStringAsFixed(1)} см',
+      '${_loc.translate('gasblock.export.block_size')}: ${_blockLength.toStringAsFixed(1)}×${_blockHeight.toStringAsFixed(1)} ${_loc.translate('common.cm')}',
     );
     buffer.writeln('${_loc.translate('gasblock.export.thickness')}: $_blockThickness ${_loc.translate('gasblock.thickness.mm')}');
     buffer.writeln('${_loc.translate('gasblock.export.masonry')}: ${_loc.translate(_masonryMix.nameKey)}');
-    buffer.writeln('${_loc.translate('gasblock.export.reserve')}: ${_reserve.toInt()}%');
+    buffer.writeln('${_loc.translate('gasblock.export.reserve')}: ${_reserve.toInt()}${_loc.translate('common.percent')}');
     buffer.writeln('');
     buffer.writeln('${_loc.translate('gasblock.export.blocks')}: ${_result.blocks} ${_loc.translate('common.pcs')}');
     buffer.writeln('${_loc.translate('gasblock.export.masonry_volume')}: ${_result.volume.toStringAsFixed(2)} ${_loc.translate('common.cbm')}');
@@ -595,7 +591,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
                     ),
                   ),
                   Text(
-                    '${_getGrossArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                    '${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
                     style: CalculatorDesignSystem.titleMedium.copyWith(
                       color: accentColor,
                       fontWeight: FontWeight.w600,
@@ -612,7 +608,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
 
   Widget _buildOpeningsCard() {
     const accentColor = CalculatorColors.walls;
-    final maxOpenings = math.max(1.0, _getGrossArea());
+    final maxOpenings = math.max(1.0, _result.area);
     return _card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -836,7 +832,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             value: _blockLength,
             min: 50.0,
             max: 70.0,
-            suffix: 'см',
+            suffix: _loc.translate('common.cm'),
             divisions: 40,
             decimalPlaces: 1,
             accentColor: accentColor,
@@ -853,7 +849,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             value: _blockHeight,
             min: 20.0,
             max: 35.0,
-            suffix: 'см',
+            suffix: _loc.translate('common.cm'),
             divisions: 30,
             decimalPlaces: 1,
             accentColor: accentColor,
@@ -964,7 +960,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         value: _reserve,
         min: 0.0,
         max: 15.0,
-        suffix: '%',
+        suffix: _loc.translate('common.percent'),
         divisions: 15,
         accentColor: accentColor,
         onChanged: (v) {
@@ -1439,3 +1435,6 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
     );
   }
 }
+
+
+

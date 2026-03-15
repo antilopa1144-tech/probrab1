@@ -24,11 +24,7 @@ void main() {
 
     test('calculates screws needed', () {
       final calculator = CalculatePvcPanels();
-      final inputs = {
-        'area': 30.0,
-        'panelWidth': 25.0,
-        'panelLength': 300.0,
-      };
+      final inputs = {'area': 30.0, 'panelWidth': 25.0, 'panelLength': 300.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -40,10 +36,7 @@ void main() {
 
     test('calculates profile lengths', () {
       final calculator = CalculatePvcPanels();
-      final inputs = {
-        'area': 30.0,
-        'perimeter': 22.0,
-      };
+      final inputs = {'area': 30.0, 'perimeter': 22.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -56,9 +49,7 @@ void main() {
 
     test('estimates perimeter when missing', () {
       final calculator = CalculatePvcPanels();
-      final inputs = {
-        'area': 30.0,
-      };
+      final inputs = {'area': 30.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -69,9 +60,7 @@ void main() {
 
     test('uses default panel dimensions when missing', () {
       final calculator = CalculatePvcPanels();
-      final inputs = {
-        'area': 30.0,
-      };
+      final inputs = {'area': 30.0};
       final emptyPriceList = <PriceItem>[];
 
       final result = calculator(inputs, emptyPriceList);
@@ -82,14 +71,18 @@ void main() {
 
     test('throws exception for zero area', () {
       final calculator = CalculatePvcPanels();
-      final inputs = {
-        'area': 0.0,
-      };
+      final inputs = {'area': 0.0};
       final emptyPriceList = <PriceItem>[];
 
       expect(
         () => calculator(inputs, emptyPriceList),
-        throwsA(isA<CalculationException>()),
+        throwsA(
+          isA<CalculationException>().having(
+            (e) => e.message,
+            'message',
+            contains('Поле \"площадь\" должно быть больше нуля'),
+          ),
+        ),
       );
     });
   });

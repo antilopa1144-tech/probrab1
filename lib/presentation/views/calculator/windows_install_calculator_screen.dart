@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
+import '../../../domain/usecases/calculate_window_installation.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -50,6 +51,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
   String get exportSubject => _loc.translate('windows_calc.title');
 
   bool _isDark = false;
+  final CalculateWindowInstallation _calculator = CalculateWindowInstallation();
   int _windowsCount = 5;
   double _windowWidth = 1.4;
   double _windowHeight = 1.5;
@@ -61,6 +63,30 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
   late _WindowsResult _result;
   late AppLocalizations _loc;
 
+  Map<String, double> _buildCalculationInputs() {
+    return {
+      'windowsCount': _windowsCount.toDouble(),
+      'windowWidth': _windowWidth,
+      'windowHeight': _windowHeight,
+      'needSill': _needSill ? 1.0 : 0.0,
+      'needSlopes': _needSlopes ? 1.0 : 0.0,
+    };
+  }
+
+  _WindowsResult _calculate() {
+    final values = _calculator(_buildCalculationInputs(), const []).values;
+    return _WindowsResult(
+      windowsCount: (values['windowsCount'] ?? values['windows'] ?? 0).round(),
+      totalArea: values['totalArea'] ?? 0,
+      foamCans: values['foamNeeded'] ?? 0,
+      sillLength: values['sillLength'] ?? 0,
+      sealantTubes: values['sealantTubes'] ?? 0,
+      anchorsCount: (values['anchorsNeeded'] ?? 0).round(),
+    );
+  }
+
+  void _update() => setState(() => _result = _calculate());
+
   static const _accentColor = CalculatorColors.interior;
 
   @override
@@ -68,36 +94,6 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
     super.initState();
     _result = _calculate();
   }
-
-  _WindowsResult _calculate() {
-    final windowsCount = _windowsCount;
-    final totalArea = _windowWidth * _windowHeight * windowsCount;
-
-    // Пена: зависит от размера окна и периметра
-    final perimeter = 2 * (_windowWidth + _windowHeight);
-    final foamCans = (perimeter * windowsCount / 10).ceil().toDouble(); // ~10 п.м. на баллон
-
-    // Подоконник: ширина окна + выступы
-    final sillLength = _needSill ? (_windowWidth + 0.1) * windowsCount : 0.0;
-
-    // Герметик: 1 туба на 3-4 п.м.
-    final sealantTubes = (perimeter * windowsCount / 4).ceil().toDouble();
-
-    // Анкеры: 6-8 на окно в зависимости от размера
-    final anchorsPerWindow = _windowHeight > 1.5 ? 8 : 6;
-    final anchorsCount = anchorsPerWindow * windowsCount;
-
-    return _WindowsResult(
-      windowsCount: windowsCount,
-      totalArea: totalArea,
-      foamCans: foamCans,
-      sillLength: sillLength,
-      sealantTubes: sealantTubes,
-      anchorsCount: anchorsCount,
-    );
-  }
-
-  void _update() => setState(() => _result = _calculate());
 
   @override
   String generateExportText() {

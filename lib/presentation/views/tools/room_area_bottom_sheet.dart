@@ -238,21 +238,21 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
         _buildInputField(
           controller: _lengthController,
           label: loc.translate('input.length'),
-          suffix: 'м',
+          suffix: loc.translate('unit.meters'),
           onChanged: (_) => _calculateRoom(),
         ),
         const SizedBox(height: 12),
         _buildInputField(
           controller: _widthController,
           label: loc.translate('input.width'),
-          suffix: 'м',
+          suffix: loc.translate('unit.meters'),
           onChanged: (_) => _calculateRoom(),
         ),
         const SizedBox(height: 12),
         _buildInputField(
           controller: _heightController,
           label: loc.translate('input.height'),
-          suffix: 'м',
+          suffix: loc.translate('unit.meters'),
           onChanged: (_) => _calculateRoom(),
         ),
 
@@ -265,7 +265,7 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
             theme: theme,
             icon: Icons.square_foot_rounded,
             title: loc.translate('tools.room_area.wall_area'),
-            value: '${_roomResult!.totalWallArea} м²',
+            value: '${_roomResult!.totalWallArea} ${loc.translate('common.sqm')}',
             isPrimary: true,
           ),
           const SizedBox(height: 12),
@@ -277,7 +277,7 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
                   theme: theme,
                   icon: Icons.grid_on_rounded,
                   title: loc.translate('tools.room_area.floor_area'),
-                  value: '${_roomResult!.floorArea} м²',
+                  value: '${_roomResult!.floorArea} ${loc.translate('common.sqm')}',
                 ),
               ),
               const SizedBox(width: 12),
@@ -286,7 +286,7 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
                   theme: theme,
                   icon: Icons.roofing_rounded,
                   title: loc.translate('tools.room_area.ceiling_area'),
-                  value: '${_roomResult!.ceilingArea} м²',
+                  value: '${_roomResult!.ceilingArea} ${loc.translate('common.sqm')}',
                 ),
               ),
             ],
@@ -297,7 +297,7 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
             theme: theme,
             icon: Icons.straighten_rounded,
             title: loc.translate('tools.room_area.perimeter'),
-            value: '${_roomResult!.perimeter} м',
+            value: '${_roomResult!.perimeter} ${loc.translate('unit.meters')}',
           ),
 
           const SizedBox(height: 16),
@@ -327,10 +327,10 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
                   ),
                 ),
                 title: Text(
-                  '${wall.width} × ${wall.height} м',
+                  '${wall.width} × ${wall.height} ${loc.translate('unit.meters')}',
                 ),
                 trailing: Text(
-                  '${wall.grossArea} м²',
+                  '${wall.grossArea} ${loc.translate('common.sqm')}',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.primary,
@@ -420,7 +420,7 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
                         child: _buildInputField(
                           controller: wall.widthController,
                           label: loc.translate('input.width'),
-                          suffix: 'м',
+                          suffix: loc.translate('unit.meters'),
                           onChanged: (_) => _calculateWalls(),
                         ),
                       ),
@@ -429,7 +429,7 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
                         child: _buildInputField(
                           controller: wall.heightController,
                           label: loc.translate('input.height'),
-                          suffix: 'м',
+                          suffix: loc.translate('unit.meters'),
                           onChanged: (_) => _calculateWalls(),
                         ),
                       ),
@@ -453,7 +453,7 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
                             child: _buildInputField(
                               controller: opening.widthController,
                               label: loc.translate('input.width'),
-                              suffix: 'м',
+                              suffix: loc.translate('unit.meters'),
                               onChanged: (_) => _calculateWalls(),
                               compact: true,
                             ),
@@ -463,7 +463,7 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
                             child: _buildInputField(
                               controller: opening.heightController,
                               label: loc.translate('input.height'),
-                              suffix: 'м',
+                              suffix: loc.translate('unit.meters'),
                               onChanged: (_) => _calculateWalls(),
                               compact: true,
                             ),
@@ -508,7 +508,7 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
             theme: theme,
             icon: Icons.square_foot_rounded,
             title: loc.translate('tools.room_area.net_area'),
-            value: '${_wallsResult!.totalNetArea} м²',
+            value: '${_wallsResult!.totalNetArea} ${loc.translate('common.sqm')}',
             isPrimary: true,
           ),
           const SizedBox(height: 12),
@@ -519,7 +519,7 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
                   theme: theme,
                   icon: Icons.crop_square_rounded,
                   title: loc.translate('tools.room_area.gross_area'),
-                  value: '${_wallsResult!.totalGrossArea} м²',
+                  value: '${_wallsResult!.totalGrossArea} ${loc.translate('common.sqm')}',
                 ),
               ),
               const SizedBox(width: 12),
@@ -528,7 +528,7 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
                   theme: theme,
                   icon: Icons.door_front_door_outlined,
                   title: loc.translate('tools.room_area.openings_area'),
-                  value: '${_wallsResult!.totalOpeningsArea} м²',
+                  value: '${_wallsResult!.totalOpeningsArea} ${loc.translate('common.sqm')}',
                 ),
               ),
             ],
@@ -645,24 +645,24 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
     buf.writeln(loc.translate('tools.room_area.title'));
     buf.writeln('─────────────────');
     buf.writeln(
-        '${loc.translate('input.length')}: ${_lengthController.text} м');
+        '${loc.translate('input.length')}: ${_lengthController.text} ${loc.translate('unit.meters')}');
     buf.writeln(
-        '${loc.translate('input.width')}: ${_widthController.text} м');
+        '${loc.translate('input.width')}: ${_widthController.text} ${loc.translate('unit.meters')}');
     buf.writeln(
-        '${loc.translate('input.height')}: ${_heightController.text} м');
+        '${loc.translate('input.height')}: ${_heightController.text} ${loc.translate('unit.meters')}');
     buf.writeln('');
     buf.writeln(
-        '${loc.translate('tools.room_area.floor_area')}: ${r.floorArea} м²');
+        '${loc.translate('tools.room_area.floor_area')}: ${r.floorArea} ${loc.translate('common.sqm')}');
     buf.writeln(
-        '${loc.translate('tools.room_area.ceiling_area')}: ${r.ceilingArea} м²');
+        '${loc.translate('tools.room_area.ceiling_area')}: ${r.ceilingArea} ${loc.translate('common.sqm')}');
     buf.writeln(
-        '${loc.translate('tools.room_area.wall_area')}: ${r.totalWallArea} м²');
+        '${loc.translate('tools.room_area.wall_area')}: ${r.totalWallArea} ${loc.translate('common.sqm')}');
     buf.writeln(
-        '${loc.translate('tools.room_area.perimeter')}: ${r.perimeter} м');
+        '${loc.translate('tools.room_area.perimeter')}: ${r.perimeter} ${loc.translate('unit.meters')}');
     buf.writeln('');
     for (final wall in r.walls) {
       buf.writeln(
-          '${loc.translate('tools.room_area.wall_n').replaceAll('{n}', wall.name)}: ${wall.width}×${wall.height} = ${wall.grossArea} м²');
+          '${loc.translate('tools.room_area.wall_n').replaceAll('{n}', wall.name)}: ${wall.width}×${wall.height} ${loc.translate('unit.meters')} = ${wall.grossArea} ${loc.translate('common.sqm')}');
     }
     return buf.toString();
   }
@@ -674,11 +674,11 @@ class _RoomAreaBottomSheetState extends State<RoomAreaBottomSheet>
     buf.writeln('${loc.translate('tools.room_area.title')} — ${loc.translate('tools.room_area.tab_walls')}');
     buf.writeln('─────────────────');
     buf.writeln(
-        '${loc.translate('tools.room_area.gross_area')}: ${r.totalGrossArea} м²');
+        '${loc.translate('tools.room_area.gross_area')}: ${r.totalGrossArea} ${loc.translate('common.sqm')}');
     buf.writeln(
-        '${loc.translate('tools.room_area.openings_area')}: ${r.totalOpeningsArea} м²');
+        '${loc.translate('tools.room_area.openings_area')}: ${r.totalOpeningsArea} ${loc.translate('common.sqm')}');
     buf.writeln(
-        '${loc.translate('tools.room_area.net_area')}: ${r.totalNetArea} м²');
+        '${loc.translate('tools.room_area.net_area')}: ${r.totalNetArea} ${loc.translate('common.sqm')}');
     return buf.toString();
   }
 }

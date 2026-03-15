@@ -20,10 +20,10 @@ class FavoriteCalculatorsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Избранное'),
+        title: Text(loc.translate('favorites.title')),
         actions: [
           IconButton(
-            tooltip: 'Все калькуляторы',
+            tooltip: loc.translate('catalog.all_calculators'),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
@@ -40,7 +40,7 @@ class FavoriteCalculatorsScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
-                  'Добавьте калькуляторы в избранное, чтобы быстро открывать их здесь.',
+                  loc.translate('favorites.empty_hint'),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
@@ -93,6 +93,7 @@ class _UnavailableFavoriteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
     return Material(
       borderRadius: BorderRadius.circular(16),
       color: theme.colorScheme.surfaceContainerHighest,
@@ -110,7 +111,7 @@ class _UnavailableFavoriteCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Калькулятор недоступен',
+                    loc.translate('favorites.calculator_unavailable'),
                     style: theme.textTheme.titleMedium,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -128,7 +129,7 @@ class _UnavailableFavoriteCard extends StatelessWidget {
               ),
             ),
             IconButton(
-              tooltip: 'Удалить из избранного',
+              tooltip: AppLocalizations.of(context).translate('favorites.remove'),
               onPressed: onRemove,
               icon: const Icon(Icons.delete_outline_rounded),
             ),
@@ -186,7 +187,7 @@ class _CalculatorListCard extends StatelessWidget {
                 ),
               ),
               IconButton(
-                tooltip: isFavorite ? 'Убрать из избранного' : 'В избранное',
+                tooltip: isFavorite ? AppLocalizations.of(context).translate('favorites.remove') : AppLocalizations.of(context).translate('favorites.add'),
                 onPressed: onToggleFavorite,
                 icon: Icon(
                   isFavorite ? Icons.star_rounded : Icons.star_outline_rounded,
@@ -199,3 +200,5 @@ class _CalculatorListCard extends StatelessWidget {
     );
   }
 }
+
+
