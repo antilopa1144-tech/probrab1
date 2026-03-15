@@ -1,9 +1,13 @@
 import '../../data/models/price_item.dart';
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import './base_calculator.dart';
 import './calculator_usecase.dart';
 import './calculate_paint_universal.dart';
 import './paint_canonical_adapter.dart';
+
+const _paintSpec = SpecReader(paintSpecData);
 
 const _paintMaterialCategoryConsumables = 'Расходники';
 const _paintMaterialCategoryTools = 'Инструмент';
@@ -178,7 +182,7 @@ class CalculatePaint extends BaseCalculator {
     final ceilingArea = contract.totals['ceilingArea'] ?? 0;
     final basePaintConsumption =
         consumption *
-            paintCanonicalSpecV1.materialRules.legacyFirstCoatMultiplier +
+            _paintSpec.materialRule<num>('legacy_first_coat_multiplier').toDouble() +
         (layers - 1) * consumption;
     final rawWallPaint =
         wallArea * basePaintConsumption * prepMultiplier * colorMultiplier;
@@ -187,34 +191,34 @@ class CalculatePaint extends BaseCalculator {
         basePaintConsumption *
         prepMultiplier *
         colorMultiplier *
-        paintCanonicalSpecV1.materialRules.ceilingPremiumFactor;
+        _paintSpec.materialRule<num>('ceiling_premium_factor').toDouble();
     final rawPaint = rawWallPaint + rawCeilingPaint;
     final paintLiters = roundBulk(
       rawPaint * (1 + reservePercent / 100) +
           (totalArea > 0
-              ? paintCanonicalSpecV1.materialRules.defaultRollerAbsorptionLiters
+              ? _paintSpec.materialRule<num>('default_roller_absorption_liters').toDouble()
               : 0),
     );
     final primerLiters = roundBulk(
       totalArea *
-          paintCanonicalSpecV1.materialRules.legacyUniversalPrimerLitersPerM2 *
+          _paintSpec.materialRule<num>('legacy_universal_primer_liters_per_m2').toDouble() *
           (1 + reservePercent / 100),
     );
     final tapeMeters = roundBulk(
       ((contract.totals['estimatedPerimeter'] ?? 0) +
               (contract.totals['openingsPerimeter'] ?? 0)) *
-          paintCanonicalSpecV1.materialRules.tapeReserveFactor,
+          _paintSpec.materialRule<num>('tape_reserve_factor').toDouble(),
     );
     final rollersNeeded = ceilToInt(
-      totalArea / paintCanonicalSpecV1.materialRules.rollerAreaM2PerPiece,
+      totalArea / _paintSpec.materialRule<num>('roller_area_m2_per_piece').toDouble(),
     );
     final brushesNeeded = totalArea > 0
         ? ceilToInt(
             totalArea /
-                paintCanonicalSpecV1.materialRules.legacyBrushAreaM2PerPiece,
+                _paintSpec.materialRule<num>('legacy_brush_area_m2_per_piece').toDouble(),
           ).clamp(
-            paintCanonicalSpecV1.materialRules.legacyBrushesMin,
-            paintCanonicalSpecV1.materialRules.legacyBrushesMax,
+            _paintSpec.materialRule<num>('legacy_brushes_min').toInt(),
+            _paintSpec.materialRule<num>('legacy_brushes_max').toInt(),
           )
         : 0;
 
@@ -247,19 +251,17 @@ class CalculatePaint extends BaseCalculator {
   }
 
   double _resolvePreparationMultiplier(double canonicalSurfacePrep) {
-    final preparation = paintCanonicalSpecV1.surfacePreparations.firstWhere(
-      (item) => item.id == canonicalSurfacePrep.round(),
-      orElse: () => paintCanonicalSpecV1.surfacePreparations.first,
-    );
-    return preparation.multiplier;
+    final preps = _paintSpec.normativeList('surface_preparations');
+    final match = preps.where((item) => (item['id'] as num).toInt() == canonicalSurfacePrep.round());
+    final preparation = match.isNotEmpty ? match.first : preps.first;
+    return (preparation['multiplier'] as num).toDouble();
   }
 
   double _resolveColorMultiplier(double canonicalColorIntensity) {
-    final color = paintCanonicalSpecV1.colorIntensities.firstWhere(
-      (item) => item.id == canonicalColorIntensity.round(),
-      orElse: () => paintCanonicalSpecV1.colorIntensities.first,
-    );
-    return color.multiplier;
+    final colors = _paintSpec.normativeList('color_intensities');
+    final match = colors.where((item) => (item['id'] as num).toInt() == canonicalColorIntensity.round());
+    final color = match.isNotEmpty ? match.first : colors.first;
+    return (color['multiplier'] as num).toDouble();
   }
 
   int _findMaterialPurchaseQty(

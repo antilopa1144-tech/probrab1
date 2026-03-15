@@ -1,9 +1,13 @@
 // ignore_for_file: prefer_const_declarations
 import '../../data/models/price_item.dart';
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import './base_calculator.dart';
 import './calculator_usecase.dart';
 import './tile_canonical_adapter.dart';
+
+const _tileSpec = SpecReader(tileSpecData);
 
 class CalculateTile extends BaseCalculator {
   static const int _bathroomRoomType = 0;
@@ -58,7 +62,7 @@ class CalculateTile extends BaseCalculator {
     final boxesNeeded = tilesArea > 0 ? (tilesArea / boxArea).ceil() : 0;
     final glueWeight = totals['glueNeededKg'] ?? 0;
     final glueBags = glueWeight > 0
-        ? (glueWeight / tileCanonicalSpecV1.packagingRules.glueBagKg).ceil()
+        ? (glueWeight / _tileSpec.packagingRule<num>('glue_bag_kg').toDouble()).ceil()
         : 0;
     final averageTileSize = totals['averageTileSizeCm'] ?? 0;
     final svpCount = useSVP
@@ -167,10 +171,10 @@ class CalculateTile extends BaseCalculator {
         'effectiveWaterproofing':
             contract.totals['effectiveWaterproofing'] ?? 0,
         if (avgSize >
-            tileCanonicalSpecV1.warningRules.largeTileWarningThresholdCm)
+            _tileSpec.warningRule<num>('large_tile_warning_threshold_cm').toDouble())
           'warningLargeTile': 1.0,
         if (layoutPattern == 4 &&
-            area > tileCanonicalSpecV1.warningRules.herringboneLargeAreaM2)
+            area > _tileSpec.warningRule<num>('herringbone_large_area_m2').toDouble())
           'warningHerringboneLargeArea': 1.0,
       },
       totalPrice: sumCosts([

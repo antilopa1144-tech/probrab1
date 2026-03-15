@@ -1,9 +1,13 @@
 // ignore_for_file: prefer_const_declarations
 import '../../data/models/price_item.dart';
+import '../generated/canonical_specs.g.dart';
+import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
 import './putty_canonical_adapter.dart';
+
+const _puttySpec = SpecReader(puttySpecData);
 
 class CalculatePutty extends BaseCalculator {
   static const puttyMaterialCategoryStart = 'Стартовая';
@@ -45,7 +49,7 @@ class CalculatePutty extends BaseCalculator {
     final totals = Map<String, double>.from(contract.totals);
     final bagWeight =
         totals['bagWeight'] ??
-        puttyCanonicalSpecV1.packagingRules.defaultPackageSize;
+        _puttySpec.packagingRule<num>('default_package_size').toDouble();
 
     final startMaterial = _findCanonicalMaterial(
       contract,
