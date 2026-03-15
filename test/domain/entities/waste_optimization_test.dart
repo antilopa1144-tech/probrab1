@@ -19,10 +19,10 @@ void main() {
       expect(optimization.wastePercentage, 5.0);
       expect(optimization.optimizedQuantity, 9.0);
       expect(optimization.wasteReduction, 5.0);
-      expect(optimization.recommendations, isEmpty);
+      expect(optimization.recommendationKeys, isEmpty);
     });
 
-    test('creates with recommendations', () {
+    test('creates with recommendationKeys', () {
       const optimization = WasteOptimization(
         materialId: 'mat1',
         requiredArea: 25.0,
@@ -30,12 +30,12 @@ void main() {
         wastePercentage: 5.0,
         optimizedQuantity: 9.0,
         wasteReduction: 5.0,
-        recommendations: ['Tip 1', 'Tip 2'],
+        recommendationKeys: ['waste.recommendation.optimize', 'waste.recommendation.smaller_size'],
       );
 
-      expect(optimization.recommendations.length, 2);
-      expect(optimization.recommendations[0], 'Tip 1');
-      expect(optimization.recommendations[1], 'Tip 2');
+      expect(optimization.recommendationKeys.length, 2);
+      expect(optimization.recommendationKeys[0], 'waste.recommendation.optimize');
+      expect(optimization.recommendationKeys[1], 'waste.recommendation.smaller_size');
     });
 
     group('calculate factory', () {
@@ -86,9 +86,9 @@ void main() {
         );
 
         expect(optimization.optimizedQuantity, greaterThanOrEqualTo(0.8));
-        // Should suggest smaller materials
+        // Should suggest smaller materials via i18n key
         expect(
-          optimization.recommendations.any((r) => r.contains('меньшего')),
+          optimization.recommendationKeys.any((r) => r.contains('smaller_size')),
           isTrue,
         );
       });
@@ -105,7 +105,7 @@ void main() {
         // If wasteReduction > 2, should add recommendation
         if (optimization.wasteReduction > 2) {
           expect(
-            optimization.recommendations.any((r) => r.contains('раскройку')),
+            optimization.recommendationKeys.any((r) => r.contains('optimize')),
             isTrue,
           );
         }

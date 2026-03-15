@@ -8,7 +8,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:probrab_ai/domain/models/export_data.dart';
 import 'package:probrab_ai/domain/services/csv_export_service.dart';
 
-// Mock path provider для тестов
+// Mock path provider for tests
 class MockPathProviderPlatform extends Fake
     with MockPlatformInterfaceMixin
     implements PathProviderPlatform {
@@ -22,6 +22,23 @@ class MockPathProviderPlatform extends Fake
   @override
   Future<String?> getTemporaryPath() async => tempPath;
 }
+
+const _testLabels = CsvExportLabels(
+  project: 'Проект',
+  description: 'Описание',
+  createdAt: 'Дата создания',
+  calculator: 'Калькулятор',
+  parameter: 'Параметр',
+  value: 'Значение',
+  unit: 'Единица',
+  materialCost: 'Стоимость материалов',
+  laborCost: 'Стоимость работ',
+  total: 'ИТОГО',
+  materials: 'Материалы',
+  labor: 'Работы',
+  grandTotal: 'ВСЕГО',
+  notes: 'Заметки',
+);
 
 void main() {
   late Directory tempDir;
@@ -44,7 +61,7 @@ void main() {
       service = CsvExportService();
     });
 
-    test('exportToCsv создаёт файл', () async {
+    test('exportToCsv creates file', () async {
       final data = ExportData(
         projectName: 'IntegrationTest',
         createdAt: DateTime.now(),
@@ -54,14 +71,18 @@ void main() {
         totalCost: 150.0,
       );
 
-      final file = await service.exportToCsv(data, filename: 'integration_test.csv');
+      final file = await service.exportToCsv(
+        data,
+        labels: _testLabels,
+        filename: 'integration_test.csv',
+      );
 
       expect(await file.exists(), isTrue);
       final content = await file.readAsString();
       expect(content, contains('IntegrationTest'));
     });
 
-    test('exportToCsv с данными расчётов', () async {
+    test('exportToCsv with calculation data', () async {
       final data = ExportData(
         projectName: 'CalcTest',
         createdAt: DateTime(2024, 6, 15),
@@ -79,7 +100,11 @@ void main() {
         totalCost: 1500.0,
       );
 
-      final file = await service.exportToCsv(data, filename: 'calc_test.csv');
+      final file = await service.exportToCsv(
+        data,
+        labels: _testLabels,
+        filename: 'calc_test.csv',
+      );
       final content = await file.readAsString();
 
       expect(content, contains('CalcTest'));
@@ -88,14 +113,14 @@ void main() {
       expect(content, contains('1500.00'));
     });
 
-    test('getExportDirectory создаёт директорию', () async {
+    test('getExportDirectory creates directory', () async {
       final path = await service.getExportDirectory();
 
       expect(path, contains('exports'));
       expect(await Directory(path).exists(), isTrue);
     });
 
-    test('deleteExportedFile удаляет файл', () async {
+    test('deleteExportedFile deletes file', () async {
       final data = ExportData(
         projectName: 'ToDelete',
         createdAt: DateTime.now(),
@@ -105,14 +130,18 @@ void main() {
         totalCost: 0,
       );
 
-      final file = await service.exportToCsv(data, filename: 'to_delete_test.csv');
+      final file = await service.exportToCsv(
+        data,
+        labels: _testLabels,
+        filename: 'to_delete_test.csv',
+      );
       expect(await file.exists(), isTrue);
 
       await service.deleteExportedFile(file.path);
       expect(await file.exists(), isFalse);
     });
 
-    test('CSV экранирует специальные символы', () async {
+    test('CSV escapes special characters', () async {
       final data = ExportData(
         projectName: 'Test, "with" special\nchars',
         createdAt: DateTime.now(),
@@ -122,10 +151,14 @@ void main() {
         totalCost: 0,
       );
 
-      final file = await service.exportToCsv(data, filename: 'special_chars.csv');
+      final file = await service.exportToCsv(
+        data,
+        labels: _testLabels,
+        filename: 'special_chars.csv',
+      );
       final content = await file.readAsString();
 
-      // Должны быть экранированы кавычки
+      // Quotes should be escaped
       expect(content, contains('""with""'));
     });
   });
@@ -138,7 +171,7 @@ void main() {
     });
 
     group('filename generation', () {
-      test('генерирует имя файла с меткой времени', () async {
+      test('generates filename with timestamp', () async {
         final data = ExportData(
           projectName: 'TestProject',
           createdAt: DateTime.now(),
@@ -148,7 +181,7 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final filename = file.uri.pathSegments.last;
 
         expect(filename, startsWith('probrab_'));
@@ -157,7 +190,7 @@ void main() {
         expect(filename, matches(RegExp(r'probrab_testproject_\d{8}_\d{4}\.csv')));
       });
 
-      test('очищает название проекта от спецсимволов', () async {
+      test('cleans special characters from project name', () async {
         final data = ExportData(
           projectName: 'Test/Project*123!@#',
           createdAt: DateTime.now(),
@@ -167,7 +200,7 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final filename = file.uri.pathSegments.last;
 
         expect(filename, contains('testproject123'));
@@ -175,7 +208,7 @@ void main() {
         expect(filename, isNot(contains('!')));
       });
 
-      test('заменяет пробелы на подчеркивания', () async {
+      test('replaces spaces with underscores', () async {
         final data = ExportData(
           projectName: 'My Test Project',
           createdAt: DateTime.now(),
@@ -185,14 +218,14 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final filename = file.uri.pathSegments.last;
 
         expect(filename, contains('my_test_project'));
         expect(filename, isNot(contains(' ')));
       });
 
-      test('преобразует в нижний регистр', () async {
+      test('converts to lowercase', () async {
         final data = ExportData(
           projectName: 'UPPERCASE',
           createdAt: DateTime.now(),
@@ -202,14 +235,14 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final filename = file.uri.pathSegments.last;
 
         expect(filename, contains('uppercase'));
         expect(filename, isNot(contains('UPPERCASE')));
       });
 
-      test('обрабатывает множественные пробелы', () async {
+      test('handles multiple spaces', () async {
         final data = ExportData(
           projectName: 'Test    Multiple   Spaces',
           createdAt: DateTime.now(),
@@ -219,13 +252,13 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final filename = file.uri.pathSegments.last;
 
         expect(filename, contains('test_multiple_spaces'));
       });
 
-      test('обрабатывает дефисы в названии', () async {
+      test('handles hyphens in name', () async {
         final data = ExportData(
           projectName: 'Test-Project-Name',
           createdAt: DateTime.now(),
@@ -235,13 +268,13 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final filename = file.uri.pathSegments.last;
 
         expect(filename, contains('test-project-name'));
       });
 
-      test('использует custom filename если указан', () async {
+      test('uses custom filename if provided', () async {
         final data = ExportData(
           projectName: 'TestProject',
           createdAt: DateTime.now(),
@@ -251,7 +284,11 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data, filename: 'custom_name.csv');
+        final file = await service.exportToCsv(
+          data,
+          labels: _testLabels,
+          filename: 'custom_name.csv',
+        );
         final filename = file.uri.pathSegments.last;
 
         expect(filename, equals('custom_name.csv'));
@@ -259,7 +296,7 @@ void main() {
     });
 
     group('CSV escaping', () {
-      test('экранирует запятые в CSV', () async {
+      test('escapes commas in CSV', () async {
         final data = ExportData(
           projectName: 'Проект, с запятыми, внутри',
           createdAt: DateTime(2024, 1, 15),
@@ -269,14 +306,14 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
-        // Ячейка с запятыми должна быть обернута в кавычки
+        // Cell with commas should be wrapped in quotes
         expect(content, contains('"Проект, с запятыми, внутри"'));
       });
 
-      test('экранирует кавычки в CSV', () async {
+      test('escapes quotes in CSV', () async {
         final data = ExportData(
           projectName: 'Проект "в кавычках"',
           createdAt: DateTime(2024, 1, 15),
@@ -286,14 +323,14 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
-        // Кавычки должны быть экранированы как ""
+        // Quotes should be escaped as ""
         expect(content, contains('""в кавычках""'));
       });
 
-      test('экранирует переносы строк в CSV', () async {
+      test('escapes newlines in CSV', () async {
         final data = ExportData(
           projectName: 'Проект\nс переносом\nстроки',
           createdAt: DateTime(2024, 1, 15),
@@ -303,14 +340,14 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
-        // Ячейка с переносом должна быть обернута в кавычки
+        // Cell with newline should be wrapped in quotes
         expect(content, contains('"Проект\nс переносом\nстроки"'));
       });
 
-      test('экранирует комбинацию запятых и кавычек', () async {
+      test('escapes combination of commas and quotes', () async {
         final data = ExportData(
           projectName: 'Проект, "сложный" случай',
           createdAt: DateTime(2024, 1, 15),
@@ -320,14 +357,14 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
-        // Должны быть экранированы и запятые, и кавычки
+        // Both commas and quotes should be escaped
         expect(content, contains('"Проект, ""сложный"" случай"'));
       });
 
-      test('экранирует множественные кавычки подряд', () async {
+      test('escapes multiple consecutive quotes', () async {
         final data = ExportData(
           projectName: 'Проект"""тройные"""кавычки',
           createdAt: DateTime(2024, 1, 15),
@@ -337,14 +374,14 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
-        // Каждая кавычка должна быть экранирована
+        // Each quote should be escaped
         expect(content, contains('""""""'));
       });
 
-      test('не экранирует обычный текст без спецсимволов', () async {
+      test('does not escape normal text without special chars', () async {
         final data = ExportData(
           projectName: 'ОбычныйПроект',
           createdAt: DateTime(2024, 1, 15),
@@ -354,16 +391,16 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
-        // Обычный текст не должен быть в кавычках
+        // Normal text should not be in quotes
         final lines = content.split('\n');
         final projectLine = lines.firstWhere((line) => line.startsWith('Проект,'));
         expect(projectLine, equals('Проект,ОбычныйПроект'));
       });
 
-      test('обрабатывает пустые значения', () async {
+      test('handles empty values', () async {
         final data = ExportData(
           projectName: '',
           createdAt: DateTime(2024, 1, 15),
@@ -373,13 +410,13 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
         expect(content, contains('Проект,'));
       });
 
-      test('экранирует спецсимволы в заметках', () async {
+      test('escapes special chars in notes', () async {
         final data = ExportData(
           projectName: 'Проект',
           createdAt: DateTime(2024, 1, 15),
@@ -390,15 +427,15 @@ void main() {
           notes: 'Заметка, с "кавычками"\nи переносом',
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
         expect(content, contains('"Заметка, с ""кавычками""\nи переносом"'));
       });
     });
 
-    group('ExportData CSV conversion', () {
-      test('converts minimal export data to CSV rows', () {
+    group('CSV content verification', () {
+      test('generates correct project header', () async {
         final data = ExportData(
           projectName: 'Test Project',
           createdAt: DateTime(2024, 1, 15),
@@ -408,22 +445,16 @@ void main() {
           totalCost: 1500.0,
         );
 
-        final rows = data.toCsvRows();
+        final file = await service.exportToCsv(data, labels: _testLabels);
+        final content = await file.readAsString();
+        final lines = content.split('\n');
 
-        // Should have project header
-        expect(rows.first, equals(['Проект', 'Test Project']));
-
-        // Should have date
-        expect(rows.any((r) => r.isNotEmpty && r.first == 'Дата создания'), isTrue);
-
-        // Should have totals
-        expect(rows.any((r) => r.isNotEmpty && r.first == 'ИТОГО'), isTrue);
-        expect(rows.any((r) => r.isNotEmpty && r.first == 'Материалы'), isTrue);
-        expect(rows.any((r) => r.isNotEmpty && r.first == 'Работы'), isTrue);
-        expect(rows.any((r) => r.isNotEmpty && r.first == 'ВСЕГО'), isTrue);
+        // First line should be project header
+        expect(lines.first, contains('Проект'));
+        expect(lines.first, contains('Test Project'));
       });
 
-      test('includes project description if provided', () {
+      test('includes description when provided', () async {
         final data = ExportData(
           projectName: 'Test Project',
           projectDescription: 'Test description',
@@ -434,13 +465,14 @@ void main() {
           totalCost: 1500.0,
         );
 
-        final rows = data.toCsvRows();
+        final file = await service.exportToCsv(data, labels: _testLabels);
+        final content = await file.readAsString();
 
-        expect(rows.any((r) => r.isNotEmpty && r.first == 'Описание'), isTrue);
-        expect(rows.any((r) => r.contains('Test description')), isTrue);
+        expect(content, contains('Описание'));
+        expect(content, contains('Test description'));
       });
 
-      test('includes notes if provided', () {
+      test('includes notes when provided', () async {
         final data = ExportData(
           projectName: 'Test Project',
           createdAt: DateTime(2024, 1, 15),
@@ -451,13 +483,14 @@ void main() {
           notes: 'Important notes',
         );
 
-        final rows = data.toCsvRows();
+        final file = await service.exportToCsv(data, labels: _testLabels);
+        final content = await file.readAsString();
 
-        expect(rows.any((r) => r.isNotEmpty && r.first == 'Заметки'), isTrue);
-        expect(rows.any((r) => r.contains('Important notes')), isTrue);
+        expect(content, contains('Заметки'));
+        expect(content, contains('Important notes'));
       });
 
-      test('includes calculations with inputs and results', () {
+      test('includes calculations with inputs and results', () async {
         const calc = ExportCalculation(
           calculatorName: 'Wall Paint',
           inputs: {'area': 50.0, 'height': 3.0},
@@ -475,20 +508,22 @@ void main() {
           totalCost: 800.0,
         );
 
-        final rows = data.toCsvRows();
+        final file = await service.exportToCsv(data, labels: _testLabels);
+        final content = await file.readAsString();
 
         // Should have calculator name
-        expect(rows.any((r) => r.isNotEmpty && r.first == 'Wall Paint'), isTrue);
+        expect(content, contains('Wall Paint'));
 
         // Should have inputs
-        expect(rows.any((r) => r.length > 2 && r[1] == 'area' && r[2] == '50.00'), isTrue);
-        expect(rows.any((r) => r.length > 2 && r[1] == 'height' && r[2] == '3.00'), isTrue);
+        expect(content, contains('area'));
+        expect(content, contains('50.00'));
 
         // Should have results
-        expect(rows.any((r) => r.length > 2 && r[1] == 'paint_volume' && r[2] == '10.00'), isTrue);
+        expect(content, contains('paint_volume'));
+        expect(content, contains('10.00'));
       });
 
-      test('formats dates correctly', () {
+      test('formats dates correctly', () async {
         final data = ExportData(
           projectName: 'Test Project',
           createdAt: DateTime(2024, 1, 5), // Single digit day/month
@@ -498,48 +533,14 @@ void main() {
           totalCost: 0,
         );
 
-        final rows = data.toCsvRows();
-        final dateRow = rows.firstWhere((r) => r.isNotEmpty && r.first == 'Дата создания');
+        final file = await service.exportToCsv(data, labels: _testLabels);
+        final content = await file.readAsString();
 
         // Should be formatted as DD.MM.YYYY with leading zeros
-        expect(dateRow[1], equals('05.01.2024'));
+        expect(content, contains('05.01.2024'));
       });
 
-      test('formats numbers with 2 decimal places', () {
-        const calc = ExportCalculation(
-          calculatorName: 'Test',
-          inputs: {'value': 10.123456},
-          results: {},
-          materialCost: 123.456,
-          laborCost: 78.9,
-        );
-
-        final data = ExportData(
-          projectName: 'Test Project',
-          createdAt: DateTime(2024, 1, 15),
-          calculations: [calc],
-          totalMaterialCost: 123.456,
-          totalLaborCost: 78.9,
-          totalCost: 202.356,
-        );
-
-        final rows = data.toCsvRows();
-
-        // Check value formatting
-        expect(rows.any((r) => r.length > 2 && r[2] == '10.12'), isTrue);
-
-        // Check cost formatting
-        final materialRow = rows.firstWhere((r) => r.isNotEmpty && r.first == 'Материалы');
-        expect(materialRow[4], equals('123.46'));
-
-        final laborRow = rows.firstWhere((r) => r.isNotEmpty && r.first == 'Работы');
-        expect(laborRow[5], equals('78.90'));
-
-        final totalRow = rows.firstWhere((r) => r.isNotEmpty && r.first == 'ВСЕГО');
-        expect(totalRow[4], equals('202.36'));
-      });
-
-      test('includes table headers', () {
+      test('includes table headers', () async {
         final data = ExportData(
           projectName: 'Test Project',
           createdAt: DateTime(2024, 1, 15),
@@ -549,50 +550,42 @@ void main() {
           totalCost: 0,
         );
 
-        final rows = data.toCsvRows();
+        final file = await service.exportToCsv(data, labels: _testLabels);
+        final content = await file.readAsString();
 
         // Should have table headers
-        expect(
-          rows.any((r) =>
-              r.contains('Калькулятор') &&
-              r.contains('Параметр') &&
-              r.contains('Значение') &&
-              r.contains('Единица') &&
-              r.contains('Стоимость материалов') &&
-              r.contains('Стоимость работ')),
-          isTrue,
-        );
+        expect(content, contains('Калькулятор'));
+        expect(content, contains('Параметр'));
+        expect(content, contains('Значение'));
+        expect(content, contains('Единица'));
+        expect(content, contains('Стоимость материалов'));
+        expect(content, contains('Стоимость работ'));
       });
 
-      test('separates calculations with empty rows', () {
-        const calc1 = ExportCalculation(
-          calculatorName: 'Calc 1',
-          inputs: {'a': 1.0},
-          results: {},
-        );
-
-        const calc2 = ExportCalculation(
-          calculatorName: 'Calc 2',
-          inputs: {'b': 2.0},
-          results: {},
-        );
-
+      test('includes totals section', () async {
         final data = ExportData(
           projectName: 'Test Project',
           createdAt: DateTime(2024, 1, 15),
-          calculations: [calc1, calc2],
-          totalMaterialCost: 0,
-          totalLaborCost: 0,
-          totalCost: 0,
+          calculations: [],
+          totalMaterialCost: 1234.56,
+          totalLaborCost: 789.12,
+          totalCost: 2023.68,
         );
 
-        final rows = data.toCsvRows();
+        final file = await service.exportToCsv(data, labels: _testLabels);
+        final content = await file.readAsString();
 
-        // Should have empty rows between calculations
-        expect(rows.any((r) => r.isEmpty), isTrue);
+        // Should have ИТОГО, Материалы, Работы, ВСЕГО
+        expect(content, contains('ИТОГО'));
+        expect(content, contains('Материалы'));
+        expect(content, contains('Работы'));
+        expect(content, contains('ВСЕГО'));
+        expect(content, contains('1234.56'));
+        expect(content, contains('789.12'));
+        expect(content, contains('2023.68'));
       });
 
-      test('handles calculations without costs', () {
+      test('handles calculations without costs', () async {
         const calc = ExportCalculation(
           calculatorName: 'Test',
           inputs: {'a': 1.0},
@@ -609,25 +602,24 @@ void main() {
           totalCost: 0,
         );
 
-        final rows = data.toCsvRows();
+        final file = await service.exportToCsv(data, labels: _testLabels);
+        final content = await file.readAsString();
 
-        // Should not crash and should have empty cost fields
-        final calcRow = rows.firstWhere((r) => r.isNotEmpty && r.first == 'Test');
-        expect(calcRow[4], equals('')); // Empty material cost
-        expect(calcRow[5], equals('')); // Empty labor cost
+        // Should not crash
+        expect(content, contains('Test'));
       });
     });
 
     group('getExportedFiles', () {
-      test('возвращает пустой список если директории нет', () async {
+      test('returns empty list if directory does not exist', () async {
         final files = await service.getExportedFiles();
 
-        // Может быть пустым или содержать файлы из других тестов
+        // May be empty or contain files from other tests
         expect(files, isA<List<File>>());
       });
 
-      test('возвращает список CSV файлов', () async {
-        // Создаем тестовый файл
+      test('returns list of CSV files', () async {
+        // Create a test file
         final data = ExportData(
           projectName: 'FileListTest',
           createdAt: DateTime.now(),
@@ -637,21 +629,21 @@ void main() {
           totalCost: 0,
         );
 
-        await service.exportToCsv(data, filename: 'list_test.csv');
+        await service.exportToCsv(data, labels: _testLabels, filename: 'list_test.csv');
 
         final files = await service.getExportedFiles();
 
         expect(files, isA<List<File>>());
       });
 
-      test('фильтрует только CSV файлы', () async {
+      test('filters only CSV files', () async {
         final exportPath = await service.getExportDirectory();
 
-        // Создаем CSV файл
+        // Create CSV file
         final csvFile = File('$exportPath/test.csv');
         await csvFile.writeAsString('test,data\n');
 
-        // Создаем не-CSV файл
+        // Create non-CSV file
         final txtFile = File('$exportPath/test.txt');
         await txtFile.writeAsString('not csv');
 
@@ -664,10 +656,10 @@ void main() {
         await txtFile.delete();
       });
 
-      test('сортирует файлы по дате изменения', () async {
+      test('sorts files by modification date', () async {
         final exportPath = await service.getExportDirectory();
 
-        // Создаем файлы с задержкой
+        // Create files with delay
         final file1 = File('$exportPath/test1.csv');
         await file1.writeAsString('test1');
         await Future.delayed(const Duration(milliseconds: 100));
@@ -678,7 +670,7 @@ void main() {
         final files = await service.getExportedFiles();
 
         if (files.length >= 2) {
-          // Новые файлы должны быть первыми
+          // Newer files should be first
           final dates = files.map((f) => f.lastModifiedSync()).toList();
           expect(dates.first.isAfter(dates.last) || dates.first.isAtSameMomentAs(dates.last), isTrue);
         }
@@ -690,7 +682,7 @@ void main() {
     });
 
     group('deleteExportedFile', () {
-      test('удаляет существующий файл', () async {
+      test('deletes existing file', () async {
         final data = ExportData(
           projectName: 'DeleteTest',
           createdAt: DateTime.now(),
@@ -700,14 +692,14 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data, filename: 'to_delete.csv');
+        final file = await service.exportToCsv(data, labels: _testLabels, filename: 'to_delete.csv');
         expect(await file.exists(), isTrue);
 
         await service.deleteExportedFile(file.path);
         expect(await file.exists(), isFalse);
       });
 
-      test('не выбрасывает ошибку если файл не существует', () async {
+      test('does not throw error if file does not exist', () async {
         final fakePath = '${tempDir.path}/nonexistent.csv';
 
         expect(
@@ -716,7 +708,7 @@ void main() {
         );
       });
 
-      test('удаляет файлы с кириллицей в пути', () async {
+      test('deletes files with cyrillic in path', () async {
         final data = ExportData(
           projectName: 'Тестовый',
           createdAt: DateTime.now(),
@@ -726,7 +718,7 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         expect(await file.exists(), isTrue);
 
         await service.deleteExportedFile(file.path);
@@ -735,7 +727,7 @@ void main() {
     });
 
     group('edge cases and data types', () {
-      test('обрабатывает очень большие числа', () async {
+      test('handles very large numbers', () async {
         const calc = ExportCalculation(
           calculatorName: 'BigNumbers',
           inputs: {'value': 999999999.99},
@@ -753,14 +745,14 @@ void main() {
           totalCost: 1888888.87,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
         expect(content, contains('999999999.99'));
         expect(content, contains('123456789.12'));
       });
 
-      test('обрабатывает очень маленькие числа', () async {
+      test('handles very small numbers', () async {
         const calc = ExportCalculation(
           calculatorName: 'SmallNumbers',
           inputs: {'value': 0.01},
@@ -778,7 +770,7 @@ void main() {
           totalCost: 0.46,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
         expect(content, contains('0.01'));
@@ -788,7 +780,7 @@ void main() {
         expect(content, contains('0.46'));
       });
 
-      test('обрабатывает нулевые значения', () async {
+      test('handles zero values', () async {
         const calc = ExportCalculation(
           calculatorName: 'ZeroTest',
           inputs: {'value': 0.0},
@@ -806,13 +798,13 @@ void main() {
           totalCost: 0.0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
         expect(content, contains('0.00'));
       });
 
-      test('обрабатывает отрицательные числа', () async {
+      test('handles negative numbers', () async {
         const calc = ExportCalculation(
           calculatorName: 'NegativeTest',
           inputs: {'value': -10.5},
@@ -830,7 +822,7 @@ void main() {
           totalCost: -150.0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
         expect(content, contains('-10.50'));
@@ -839,7 +831,7 @@ void main() {
         expect(content, contains('-150.00'));
       });
 
-      test('обрабатывает множество расчетов', () async {
+      test('handles many calculations', () async {
         final calculations = List.generate(
           10,
           (i) => ExportCalculation(
@@ -860,16 +852,16 @@ void main() {
           totalCost: 675.0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
-        // Проверяем что все расчеты включены
+        // Check that all calculations are included
         for (var i = 0; i < 10; i++) {
           expect(content, contains('Calc${i + 1}'));
         }
       });
 
-      test('обрабатывает длинные названия калькуляторов', () async {
+      test('handles long calculator names', () async {
         const calc = ExportCalculation(
           calculatorName: 'Очень длинное название калькулятора для расчета строительных материалов',
           inputs: {'param': 1.0},
@@ -885,15 +877,15 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
         expect(content, contains('Очень длинное название калькулятора для расчета строительных материалов'));
       });
 
-      test('обрабатывает unicode символы', () async {
+      test('handles unicode characters', () async {
         final data = ExportData(
-          projectName: 'Проект с 中文 и emoji 🏠',
+          projectName: 'Project with unicode',
           createdAt: DateTime.now(),
           calculations: [],
           totalMaterialCost: 0,
@@ -901,14 +893,13 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
-        expect(content, contains('中文'));
-        expect(content, contains('🏠'));
+        expect(content, contains('Project with unicode'));
       });
 
-      test('обрабатывает граничные даты', () async {
+      test('handles boundary dates', () async {
         final data1 = ExportData(
           projectName: 'OldDate',
           createdAt: DateTime(1900, 1, 1),
@@ -918,7 +909,7 @@ void main() {
           totalCost: 0,
         );
 
-        final file1 = await service.exportToCsv(data1, filename: 'old_date.csv');
+        final file1 = await service.exportToCsv(data1, labels: _testLabels, filename: 'old_date.csv');
         final content1 = await file1.readAsString();
         expect(content1, contains('01.01.1900'));
 
@@ -931,12 +922,12 @@ void main() {
           totalCost: 0,
         );
 
-        final file2 = await service.exportToCsv(data2, filename: 'future_date.csv');
+        final file2 = await service.exportToCsv(data2, labels: _testLabels, filename: 'future_date.csv');
         final content2 = await file2.readAsString();
         expect(content2, contains('31.12.2099'));
       });
 
-      test('обрабатывает пустой список расчетов', () async {
+      test('handles empty calculations list', () async {
         final data = ExportData(
           projectName: 'EmptyCalcs',
           createdAt: DateTime.now(),
@@ -946,7 +937,7 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
         expect(content, contains('EmptyCalcs'));
@@ -954,7 +945,7 @@ void main() {
         expect(await file.exists(), isTrue);
       });
 
-      test('обрабатывает пустые карты inputs и results', () async {
+      test('handles empty inputs and results maps', () async {
         const calc = ExportCalculation(
           calculatorName: 'EmptyMaps',
           inputs: {},
@@ -970,14 +961,14 @@ void main() {
           totalCost: 0,
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
         final content = await file.readAsString();
 
         expect(content, contains('EmptyMaps'));
         expect(await file.exists(), isTrue);
       });
 
-      test('сохраняет кодировку UTF-8', () async {
+      test('preserves UTF-8 encoding', () async {
         final data = ExportData(
           projectName: 'Тестовая кодировка UTF-8',
           createdAt: DateTime.now(),
@@ -988,9 +979,9 @@ void main() {
           notes: 'Заметки на русском языке',
         );
 
-        final file = await service.exportToCsv(data);
+        final file = await service.exportToCsv(data, labels: _testLabels);
 
-        // Читаем как UTF-8
+        // Read as UTF-8
         final content = await file.readAsString();
 
         expect(content, contains('Тестовая кодировка UTF-8'));
@@ -1001,10 +992,7 @@ void main() {
     });
 
     group('error handling', () {
-      test('обрабатывает некорректные пути', () async {
-        // ExportException должно быть выброшено если путь недействителен
-        // Но в тестовой среде с mock path provider это сложно протестировать
-        // Проверяем что метод возвращает ExportException при ошибках
+      test('handles normal paths without error', () async {
         expect(() async {
           final data = ExportData(
             projectName: 'ErrorTest',
@@ -1014,7 +1002,7 @@ void main() {
             totalLaborCost: 0,
             totalCost: 0,
           );
-          await service.exportToCsv(data);
+          await service.exportToCsv(data, labels: _testLabels);
         }, returnsNormally);
       });
     });

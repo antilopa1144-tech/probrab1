@@ -31,38 +31,38 @@ void main() {
   group('ExpertRecommendation', () {
     test('creates with required parameters', () {
       const rec = ExpertRecommendation(
-        workType: 'painting',
-        title: 'Painting Tips',
-        description: 'How to paint walls',
+        workTypeId: 'painting',
+        titleKey: 'Painting Tips',
+        descriptionKey: 'How to paint walls',
         level: RecommendationLevel.beginner,
       );
 
-      expect(rec.workType, 'painting');
-      expect(rec.title, 'Painting Tips');
-      expect(rec.description, 'How to paint walls');
+      expect(rec.workTypeId, 'painting');
+      expect(rec.titleKey, 'Painting Tips');
+      expect(rec.descriptionKey, 'How to paint walls');
       expect(rec.level, RecommendationLevel.beginner);
-      expect(rec.commonMistakes, isEmpty);
-      expect(rec.bestPractices, isEmpty);
-      expect(rec.tools, isEmpty);
-      expect(rec.materials, isEmpty);
+      expect(rec.commonMistakeKeys, isEmpty);
+      expect(rec.bestPracticeKeys, isEmpty);
+      expect(rec.toolKeys, isEmpty);
+      expect(rec.materialKeys, isEmpty);
     });
 
     test('creates with all parameters', () {
       const rec = ExpertRecommendation(
-        workType: 'tiling',
-        title: 'Tiling Guide',
-        description: 'Professional tiling',
+        workTypeId: 'tiling',
+        titleKey: 'Tiling Guide',
+        descriptionKey: 'Professional tiling',
         level: RecommendationLevel.intermediate,
-        commonMistakes: ['Mistake 1', 'Mistake 2'],
-        bestPractices: ['Practice 1', 'Practice 2'],
-        tools: ['Tool 1', 'Tool 2'],
-        materials: ['Material 1'],
+        commonMistakeKeys: ['Mistake 1', 'Mistake 2'],
+        bestPracticeKeys: ['Practice 1', 'Practice 2'],
+        toolKeys: ['Tool 1', 'Tool 2'],
+        materialKeys: ['Material 1'],
       );
 
-      expect(rec.commonMistakes.length, 2);
-      expect(rec.bestPractices.length, 2);
-      expect(rec.tools.length, 2);
-      expect(rec.materials.length, 1);
+      expect(rec.commonMistakeKeys.length, 2);
+      expect(rec.bestPracticeKeys.length, 2);
+      expect(rec.toolKeys.length, 2);
+      expect(rec.materialKeys.length, 1);
     });
   });
 
@@ -73,7 +73,7 @@ void main() {
 
       expect(recommendations, isNotEmpty);
       expect(
-        recommendations.any((r) => r.workType == 'покраска'),
+        recommendations.any((r) => r.workTypeId == ExpertWorkTypeId.paint),
         isTrue,
       );
     });
@@ -84,7 +84,7 @@ void main() {
 
       expect(recommendations, isNotEmpty);
       expect(
-        recommendations.any((r) => r.workType == 'плитка'),
+        recommendations.any((r) => r.workTypeId == ExpertWorkTypeId.tile),
         isTrue,
       );
     });
@@ -95,7 +95,7 @@ void main() {
 
       expect(recommendations, isNotEmpty);
       expect(
-        recommendations.any((r) => r.workType == 'стяжка'),
+        recommendations.any((r) => r.workTypeId == ExpertWorkTypeId.screed),
         isTrue,
       );
     });
@@ -106,7 +106,7 @@ void main() {
 
       expect(recommendations, isNotEmpty);
       expect(
-        recommendations.any((r) => r.workType == 'обои'),
+        recommendations.any((r) => r.workTypeId == ExpertWorkTypeId.wallpaper),
         isTrue,
       );
     });
@@ -150,35 +150,35 @@ void main() {
       final recommendations =
           ExpertRecommendationsDatabase.getRecommendations('покраска');
 
-      expect(recommendations.first.commonMistakes, isNotEmpty);
+      expect(recommendations.first.commonMistakeKeys, isNotEmpty);
     });
 
     test('recommendations have best practices', () {
       final recommendations =
           ExpertRecommendationsDatabase.getRecommendations('плитка');
 
-      expect(recommendations.first.bestPractices, isNotEmpty);
+      expect(recommendations.first.bestPracticeKeys, isNotEmpty);
     });
 
     test('recommendations have tools', () {
       final recommendations =
           ExpertRecommendationsDatabase.getRecommendations('стяжка');
 
-      expect(recommendations.first.tools, isNotEmpty);
+      expect(recommendations.first.toolKeys, isNotEmpty);
     });
 
     test('recommendations have materials', () {
       final recommendations =
           ExpertRecommendationsDatabase.getRecommendations('обои');
 
-      expect(recommendations.first.materials, isNotEmpty);
+      expect(recommendations.first.materialKeys, isNotEmpty);
     });
 
     test('partial match works for work type', () {
       final recommendations =
           ExpertRecommendationsDatabase.getRecommendations('крас');
 
-      // Should match "покраска"
+      // Should match "покраска" via normalize -> paint
       expect(recommendations, isNotEmpty);
     });
   });

@@ -3,28 +3,25 @@ import 'package:probrab_ai/domain/models/unit_conversion.dart';
 
 void main() {
   group('Unit', () {
-    test('создаётся с обязательными полями', () {
+    test('creates with required fields', () {
       const unit = Unit(
         id: 'meter',
-        name: 'метр',
-        symbol: 'м',
+        symbol: 'm',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
       );
 
       expect(unit.id, 'meter');
-      expect(unit.name, 'метр');
-      expect(unit.symbol, 'м');
+      expect(unit.symbol, 'm');
       expect(unit.category, UnitCategory.length);
       expect(unit.toBaseUnit, 1.0);
       expect(unit.isBase, false);
     });
 
-    test('создаётся как базовая единица', () {
+    test('creates as base unit', () {
       const unit = Unit(
         id: 'meter',
-        name: 'метр',
-        symbol: 'м',
+        symbol: 'm',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
         isBase: true,
@@ -33,67 +30,62 @@ void main() {
       expect(unit.isBase, true);
     });
 
-    test('создаётся для площади', () {
+    test('creates for area', () {
       const unit = Unit(
         id: 'square_meter',
-        name: 'квадратный метр',
-        symbol: 'м²',
+        symbol: 'm2',
         category: UnitCategory.area,
         toBaseUnit: 1.0,
         isBase: true,
       );
 
       expect(unit.category, UnitCategory.area);
-      expect(unit.symbol, 'м²');
+      expect(unit.symbol, 'm2');
     });
 
-    test('создаётся для объёма', () {
+    test('creates for volume', () {
       const unit = Unit(
         id: 'cubic_meter',
-        name: 'кубический метр',
-        symbol: 'м³',
+        symbol: 'm3',
         category: UnitCategory.volume,
         toBaseUnit: 1.0,
         isBase: true,
       );
 
       expect(unit.category, UnitCategory.volume);
-      expect(unit.symbol, 'м³');
+      expect(unit.symbol, 'm3');
     });
 
-    test('создаётся для веса', () {
+    test('creates for weight', () {
       const unit = Unit(
         id: 'kilogram',
-        name: 'килограмм',
-        symbol: 'кг',
+        symbol: 'kg',
         category: UnitCategory.weight,
         toBaseUnit: 1.0,
         isBase: true,
       );
 
       expect(unit.category, UnitCategory.weight);
-      expect(unit.symbol, 'кг');
+      expect(unit.symbol, 'kg');
     });
 
-    test('создаётся для количества', () {
+    test('creates for quantity', () {
       const unit = Unit(
         id: 'piece',
-        name: 'штука',
-        symbol: 'шт',
+        symbol: 'pcs',
         category: UnitCategory.quantity,
         toBaseUnit: 1.0,
         isBase: true,
       );
 
       expect(unit.category, UnitCategory.quantity);
-      expect(unit.symbol, 'шт');
+      expect(unit.symbol, 'pcs');
     });
 
-    test('создаётся с коэффициентом конвертации', () {
+    test('creates with conversion factor', () {
       const kilometer = Unit(
         id: 'kilometer',
-        name: 'километр',
-        symbol: 'км',
+        symbol: 'km',
         category: UnitCategory.length,
         toBaseUnit: 1000.0,
       );
@@ -101,11 +93,10 @@ void main() {
       expect(kilometer.toBaseUnit, 1000.0);
     });
 
-    test('создаётся с дробным коэффициентом', () {
+    test('creates with fractional conversion factor', () {
       const centimeter = Unit(
         id: 'centimeter',
-        name: 'сантиметр',
-        symbol: 'см',
+        symbol: 'cm',
         category: UnitCategory.length,
         toBaseUnit: 0.01,
       );
@@ -113,31 +104,28 @@ void main() {
       expect(centimeter.toBaseUnit, 0.01);
     });
 
-    test('toString возвращает символ', () {
+    test('toString returns symbol', () {
       const unit = Unit(
         id: 'meter',
-        name: 'метр',
-        symbol: 'м',
+        symbol: 'm',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
       );
 
-      expect(unit.toString(), 'м');
+      expect(unit.toString(), 'm');
     });
 
-    test('оператор == сравнивает по id', () {
+    test('operator == compares by id', () {
       const unit1 = Unit(
         id: 'meter',
-        name: 'метр',
-        symbol: 'м',
+        symbol: 'm',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
       );
 
       const unit2 = Unit(
         id: 'meter',
-        name: 'metre',
-        symbol: 'm',
+        symbol: 'metre',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
       );
@@ -145,19 +133,17 @@ void main() {
       expect(unit1, equals(unit2));
     });
 
-    test('оператор == возвращает false для разных id', () {
+    test('operator == returns false for different ids', () {
       const unit1 = Unit(
         id: 'meter',
-        name: 'метр',
-        symbol: 'м',
+        symbol: 'm',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
       );
 
       const unit2 = Unit(
         id: 'kilometer',
-        name: 'километр',
-        symbol: 'км',
+        symbol: 'km',
         category: UnitCategory.length,
         toBaseUnit: 1000.0,
       );
@@ -165,11 +151,10 @@ void main() {
       expect(unit1, isNot(equals(unit2)));
     });
 
-    test('оператор == возвращает true для идентичного объекта', () {
+    test('operator == returns true for identical object', () {
       const unit = Unit(
         id: 'meter',
-        name: 'метр',
-        symbol: 'м',
+        symbol: 'm',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
       );
@@ -177,19 +162,17 @@ void main() {
       expect(unit, equals(unit));
     });
 
-    test('hashCode зависит от id', () {
+    test('hashCode depends on id', () {
       const unit1 = Unit(
         id: 'meter',
-        name: 'метр',
-        symbol: 'м',
+        symbol: 'm',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
       );
 
       const unit2 = Unit(
         id: 'meter',
-        name: 'metre',
-        symbol: 'm',
+        symbol: 'metre',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
       );
@@ -197,19 +180,17 @@ void main() {
       expect(unit1.hashCode, equals(unit2.hashCode));
     });
 
-    test('hashCode разный для разных id', () {
+    test('hashCode differs for different ids', () {
       const unit1 = Unit(
         id: 'meter',
-        name: 'метр',
-        symbol: 'м',
+        symbol: 'm',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
       );
 
       const unit2 = Unit(
         id: 'kilometer',
-        name: 'километр',
-        symbol: 'км',
+        symbol: 'km',
         category: UnitCategory.length,
         toBaseUnit: 1000.0,
       );
@@ -219,43 +200,13 @@ void main() {
   });
 
   group('UnitCategory', () {
-    test('имеет все необходимые категории', () {
+    test('has all required categories', () {
       expect(UnitCategory.values.length, 5);
       expect(UnitCategory.values, contains(UnitCategory.area));
       expect(UnitCategory.values, contains(UnitCategory.length));
       expect(UnitCategory.values, contains(UnitCategory.volume));
       expect(UnitCategory.values, contains(UnitCategory.weight));
       expect(UnitCategory.values, contains(UnitCategory.quantity));
-    });
-  });
-
-  group('UnitCategoryExtension', () {
-    test('displayName возвращает корректные названия', () {
-      expect(UnitCategory.area.displayName, 'Площадь');
-      expect(UnitCategory.length.displayName, 'Длина');
-      expect(UnitCategory.volume.displayName, 'Объём');
-      expect(UnitCategory.weight.displayName, 'Вес');
-      expect(UnitCategory.quantity.displayName, 'Количество');
-    });
-
-    test('icon возвращает корректные иконки', () {
-      expect(UnitCategory.area.icon, '📐');
-      expect(UnitCategory.length.icon, '📏');
-      expect(UnitCategory.volume.icon, '🧊');
-      expect(UnitCategory.weight.icon, '⚖️');
-      expect(UnitCategory.quantity.icon, '📦');
-    });
-
-    test('все displayName не пустые', () {
-      for (final category in UnitCategory.values) {
-        expect(category.displayName.isNotEmpty, true);
-      }
-    });
-
-    test('все icon не пустые', () {
-      for (final category in UnitCategory.values) {
-        expect(category.icon.isNotEmpty, true);
-      }
     });
   });
 
@@ -267,8 +218,7 @@ void main() {
     setUp(() {
       meterUnit = const Unit(
         id: 'meter',
-        name: 'метр',
-        symbol: 'м',
+        symbol: 'm',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
         isBase: true,
@@ -276,8 +226,7 @@ void main() {
 
       kilometerUnit = const Unit(
         id: 'kilometer',
-        name: 'километр',
-        symbol: 'км',
+        symbol: 'km',
         category: UnitCategory.length,
         toBaseUnit: 1000.0,
       );
@@ -285,7 +234,7 @@ void main() {
       testTime = DateTime(2024, 1, 15, 10, 30);
     });
 
-    test('создаётся с обязательными полями', () {
+    test('creates with required fields', () {
       final result = ConversionResult(
         fromValue: 1000.0,
         fromUnit: meterUnit,
@@ -301,7 +250,7 @@ void main() {
       expect(result.timestamp, testTime);
     });
 
-    test('formatted возвращает читаемую строку', () {
+    test('formatted returns readable string', () {
       final result = ConversionResult(
         fromValue: 1000.0,
         fromUnit: meterUnit,
@@ -310,14 +259,13 @@ void main() {
         timestamp: testTime,
       );
 
-      expect(result.formatted, '1000 м = 1 км');
+      expect(result.formatted, '1000 m = 1 km');
     });
 
-    test('formatted форматирует дробные значения', () {
+    test('formatted formats fractional values', () {
       const centimeter = Unit(
         id: 'centimeter',
-        name: 'сантиметр',
-        symbol: 'см',
+        symbol: 'cm',
         category: UnitCategory.length,
         toBaseUnit: 0.01,
       );
@@ -330,10 +278,10 @@ void main() {
         timestamp: testTime,
       );
 
-      expect(result.formatted, '10.5 м = 1050 см');
+      expect(result.formatted, '10.5 m = 1050 cm');
     });
 
-    test('formatted округляет до 4 знаков после запятой', () {
+    test('formatted rounds to 4 decimal places', () {
       final result = ConversionResult(
         fromValue: 1.23456789,
         fromUnit: meterUnit,
@@ -347,7 +295,7 @@ void main() {
       expect(formatted, contains('0.0012'));
     });
 
-    test('formatted убирает trailing нули', () {
+    test('formatted removes trailing zeros', () {
       final result = ConversionResult(
         fromValue: 1.5000,
         fromUnit: meterUnit,
@@ -362,7 +310,7 @@ void main() {
       expect(formatted, isNot(contains('1.5000')));
     });
 
-    test('formatted показывает целые числа без дробной части', () {
+    test('formatted shows integers without decimal part', () {
       final result = ConversionResult(
         fromValue: 1000.0,
         fromUnit: meterUnit,
@@ -371,12 +319,12 @@ void main() {
         timestamp: testTime,
       );
 
-      expect(result.formatted, '1000 м = 1 км');
+      expect(result.formatted, '1000 m = 1 km');
       expect(result.formatted, isNot(contains('1000.0')));
       expect(result.formatted, isNot(contains('1.0')));
     });
 
-    test('toString возвращает formatted', () {
+    test('toString returns formatted', () {
       final result = ConversionResult(
         fromValue: 500.0,
         fromUnit: meterUnit,
@@ -386,10 +334,10 @@ void main() {
       );
 
       expect(result.toString(), result.formatted);
-      expect(result.toString(), '500 м = 0.5 км');
+      expect(result.toString(), '500 m = 0.5 km');
     });
 
-    test('работает с нулевыми значениями', () {
+    test('works with zero values', () {
       final result = ConversionResult(
         fromValue: 0.0,
         fromUnit: meterUnit,
@@ -398,14 +346,13 @@ void main() {
         timestamp: testTime,
       );
 
-      expect(result.formatted, '0 м = 0 км');
+      expect(result.formatted, '0 m = 0 km');
     });
 
-    test('работает с очень малыми значениями', () {
+    test('works with very small values', () {
       const millimeter = Unit(
         id: 'millimeter',
-        name: 'миллиметр',
-        symbol: 'мм',
+        symbol: 'mm',
         category: UnitCategory.length,
         toBaseUnit: 0.001,
       );
@@ -418,10 +365,10 @@ void main() {
         timestamp: testTime,
       );
 
-      expect(result.formatted, '0.001 м = 1 мм');
+      expect(result.formatted, '0.001 m = 1 mm');
     });
 
-    test('работает с очень большими значениями', () {
+    test('works with very large values', () {
       final result = ConversionResult(
         fromValue: 1000000.0,
         fromUnit: meterUnit,
@@ -430,10 +377,10 @@ void main() {
         timestamp: testTime,
       );
 
-      expect(result.formatted, '1000000 м = 1000 км');
+      expect(result.formatted, '1000000 m = 1000 km');
     });
 
-    test('работает с отрицательными значениями', () {
+    test('works with negative values', () {
       final result = ConversionResult(
         fromValue: -100.0,
         fromUnit: meterUnit,
@@ -442,16 +389,15 @@ void main() {
         timestamp: testTime,
       );
 
-      expect(result.formatted, '-100 м = -0.1 км');
+      expect(result.formatted, '-100 m = -0.1 km');
     });
   });
 
-  group('Unit - различные единицы длины', () {
-    test('километр имеет коэффициент 1000', () {
+  group('Unit - various length units', () {
+    test('kilometer has factor 1000', () {
       const unit = Unit(
         id: 'kilometer',
-        name: 'километр',
-        symbol: 'км',
+        symbol: 'km',
         category: UnitCategory.length,
         toBaseUnit: 1000.0,
       );
@@ -460,11 +406,10 @@ void main() {
       expect(unit.category, UnitCategory.length);
     });
 
-    test('сантиметр имеет коэффициент 0.01', () {
+    test('centimeter has factor 0.01', () {
       const unit = Unit(
         id: 'centimeter',
-        name: 'сантиметр',
-        symbol: 'см',
+        symbol: 'cm',
         category: UnitCategory.length,
         toBaseUnit: 0.01,
       );
@@ -473,11 +418,10 @@ void main() {
       expect(unit.category, UnitCategory.length);
     });
 
-    test('миллиметр имеет коэффициент 0.001', () {
+    test('millimeter has factor 0.001', () {
       const unit = Unit(
         id: 'millimeter',
-        name: 'миллиметр',
-        symbol: 'мм',
+        symbol: 'mm',
         category: UnitCategory.length,
         toBaseUnit: 0.001,
       );
@@ -487,12 +431,11 @@ void main() {
     });
   });
 
-  group('Unit - различные единицы площади', () {
-    test('квадратный метр - базовая единица', () {
+  group('Unit - various area units', () {
+    test('square meter is base unit', () {
       const unit = Unit(
         id: 'square_meter',
-        name: 'квадратный метр',
-        symbol: 'м²',
+        symbol: 'm2',
         category: UnitCategory.area,
         toBaseUnit: 1.0,
         isBase: true,
@@ -503,11 +446,10 @@ void main() {
       expect(unit.category, UnitCategory.area);
     });
 
-    test('квадратный сантиметр имеет коэффициент 0.0001', () {
+    test('square centimeter has factor 0.0001', () {
       const unit = Unit(
         id: 'square_centimeter',
-        name: 'квадратный сантиметр',
-        symbol: 'см²',
+        symbol: 'cm2',
         category: UnitCategory.area,
         toBaseUnit: 0.0001,
       );
@@ -516,11 +458,10 @@ void main() {
       expect(unit.category, UnitCategory.area);
     });
 
-    test('квадратный километр имеет коэффициент 1000000', () {
+    test('square kilometer has factor 1000000', () {
       const unit = Unit(
         id: 'square_kilometer',
-        name: 'квадратный километр',
-        symbol: 'км²',
+        symbol: 'km2',
         category: UnitCategory.area,
         toBaseUnit: 1000000.0,
       );
@@ -530,12 +471,11 @@ void main() {
     });
   });
 
-  group('Unit - различные единицы объёма', () {
-    test('кубический метр - базовая единица', () {
+  group('Unit - various volume units', () {
+    test('cubic meter is base unit', () {
       const unit = Unit(
         id: 'cubic_meter',
-        name: 'кубический метр',
-        symbol: 'м³',
+        symbol: 'm3',
         category: UnitCategory.volume,
         toBaseUnit: 1.0,
         isBase: true,
@@ -546,11 +486,10 @@ void main() {
       expect(unit.category, UnitCategory.volume);
     });
 
-    test('литр имеет коэффициент 0.001', () {
+    test('liter has factor 0.001', () {
       const unit = Unit(
         id: 'liter',
-        name: 'литр',
-        symbol: 'л',
+        symbol: 'l',
         category: UnitCategory.volume,
         toBaseUnit: 0.001,
       );
@@ -559,11 +498,10 @@ void main() {
       expect(unit.category, UnitCategory.volume);
     });
 
-    test('кубический сантиметр имеет коэффициент 0.000001', () {
+    test('cubic centimeter has factor 0.000001', () {
       const unit = Unit(
         id: 'cubic_centimeter',
-        name: 'кубический сантиметр',
-        symbol: 'см³',
+        symbol: 'cm3',
         category: UnitCategory.volume,
         toBaseUnit: 0.000001,
       );
@@ -573,12 +511,11 @@ void main() {
     });
   });
 
-  group('Unit - различные единицы веса', () {
-    test('килограмм - базовая единица', () {
+  group('Unit - various weight units', () {
+    test('kilogram is base unit', () {
       const unit = Unit(
         id: 'kilogram',
-        name: 'килограмм',
-        symbol: 'кг',
+        symbol: 'kg',
         category: UnitCategory.weight,
         toBaseUnit: 1.0,
         isBase: true,
@@ -589,11 +526,10 @@ void main() {
       expect(unit.category, UnitCategory.weight);
     });
 
-    test('грамм имеет коэффициент 0.001', () {
+    test('gram has factor 0.001', () {
       const unit = Unit(
         id: 'gram',
-        name: 'грамм',
-        symbol: 'г',
+        symbol: 'g',
         category: UnitCategory.weight,
         toBaseUnit: 0.001,
       );
@@ -602,11 +538,10 @@ void main() {
       expect(unit.category, UnitCategory.weight);
     });
 
-    test('тонна имеет коэффициент 1000', () {
+    test('ton has factor 1000', () {
       const unit = Unit(
         id: 'ton',
-        name: 'тонна',
-        symbol: 'т',
+        symbol: 't',
         category: UnitCategory.weight,
         toBaseUnit: 1000.0,
       );
@@ -616,12 +551,11 @@ void main() {
     });
   });
 
-  group('Unit - различные единицы количества', () {
-    test('штука - базовая единица', () {
+  group('Unit - various quantity units', () {
+    test('piece is base unit', () {
       const unit = Unit(
         id: 'piece',
-        name: 'штука',
-        symbol: 'шт',
+        symbol: 'pcs',
         category: UnitCategory.quantity,
         toBaseUnit: 1.0,
         isBase: true,
@@ -632,11 +566,10 @@ void main() {
       expect(unit.category, UnitCategory.quantity);
     });
 
-    test('рулон - единица количества', () {
+    test('roll is quantity unit', () {
       const unit = Unit(
         id: 'roll',
-        name: 'рулон',
-        symbol: 'рул',
+        symbol: 'roll',
         category: UnitCategory.quantity,
         toBaseUnit: 1.0,
       );
@@ -645,11 +578,10 @@ void main() {
       expect(unit.category, UnitCategory.quantity);
     });
 
-    test('упаковка - единица количества', () {
+    test('pack is quantity unit', () {
       const unit = Unit(
         id: 'pack',
-        name: 'упаковка',
-        symbol: 'уп',
+        symbol: 'pack',
         category: UnitCategory.quantity,
         toBaseUnit: 1.0,
       );
@@ -659,20 +591,18 @@ void main() {
     });
   });
 
-  group('ConversionResult - различные категории', () {
-    test('конвертация площади', () {
+  group('ConversionResult - various categories', () {
+    test('area conversion', () {
       const squareMeter = Unit(
         id: 'square_meter',
-        name: 'квадратный метр',
-        symbol: 'м²',
+        symbol: 'm2',
         category: UnitCategory.area,
         toBaseUnit: 1.0,
       );
 
       const squareCentimeter = Unit(
         id: 'square_centimeter',
-        name: 'квадратный сантиметр',
-        symbol: 'см²',
+        symbol: 'cm2',
         category: UnitCategory.area,
         toBaseUnit: 0.0001,
       );
@@ -685,22 +615,20 @@ void main() {
         timestamp: DateTime.now(),
       );
 
-      expect(result.formatted, '1 м² = 10000 см²');
+      expect(result.formatted, '1 m2 = 10000 cm2');
     });
 
-    test('конвертация объёма', () {
+    test('volume conversion', () {
       const cubicMeter = Unit(
         id: 'cubic_meter',
-        name: 'кубический метр',
-        symbol: 'м³',
+        symbol: 'm3',
         category: UnitCategory.volume,
         toBaseUnit: 1.0,
       );
 
       const liter = Unit(
         id: 'liter',
-        name: 'литр',
-        symbol: 'л',
+        symbol: 'l',
         category: UnitCategory.volume,
         toBaseUnit: 0.001,
       );
@@ -713,22 +641,20 @@ void main() {
         timestamp: DateTime.now(),
       );
 
-      expect(result.formatted, '1 м³ = 1000 л');
+      expect(result.formatted, '1 m3 = 1000 l');
     });
 
-    test('конвертация веса', () {
+    test('weight conversion', () {
       const kilogram = Unit(
         id: 'kilogram',
-        name: 'килограмм',
-        symbol: 'кг',
+        symbol: 'kg',
         category: UnitCategory.weight,
         toBaseUnit: 1.0,
       );
 
       const gram = Unit(
         id: 'gram',
-        name: 'грамм',
-        symbol: 'г',
+        symbol: 'g',
         category: UnitCategory.weight,
         toBaseUnit: 0.001,
       );
@@ -741,33 +667,31 @@ void main() {
         timestamp: DateTime.now(),
       );
 
-      expect(result.formatted, '2.5 кг = 2500 г');
+      expect(result.formatted, '2.5 kg = 2500 g');
     });
   });
 
-  group('ConversionResult - граничные случаи форматирования', () {
+  group('ConversionResult - formatting edge cases', () {
     late Unit testUnit1;
     late Unit testUnit2;
 
     setUp(() {
       testUnit1 = const Unit(
         id: 'unit1',
-        name: 'единица1',
-        symbol: 'ед1',
+        symbol: 'u1',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
       );
 
       testUnit2 = const Unit(
         id: 'unit2',
-        name: 'единица2',
-        symbol: 'ед2',
+        symbol: 'u2',
         category: UnitCategory.length,
         toBaseUnit: 0.1,
       );
     });
 
-    test('форматирование значения 0.0', () {
+    test('formatting value 0.0', () {
       final result = ConversionResult(
         fromValue: 0.0,
         fromUnit: testUnit1,
@@ -776,10 +700,10 @@ void main() {
         timestamp: DateTime.now(),
       );
 
-      expect(result.formatted, '0 ед1 = 0 ед2');
+      expect(result.formatted, '0 u1 = 0 u2');
     });
 
-    test('форматирование очень малого значения', () {
+    test('formatting very small value', () {
       final result = ConversionResult(
         fromValue: 0.00001,
         fromUnit: testUnit1,
@@ -792,7 +716,7 @@ void main() {
       expect(formatted, isNot(contains('.0000')));
     });
 
-    test('форматирование значения с 5+ знаками округляется до 4', () {
+    test('formatting value with 5+ decimals rounds to 4', () {
       final result = ConversionResult(
         fromValue: 1.123456,
         fromUnit: testUnit1,
@@ -802,12 +726,12 @@ void main() {
       );
 
       final formatted = result.formatted;
-      // Округлено до 4 знаков
+      // Rounded to 4 decimal places
       expect(formatted, contains('1.1235'));
       expect(formatted, contains('11.2346'));
     });
 
-    test('форматирование целого числа с .0', () {
+    test('formatting integer with .0', () {
       final result = ConversionResult(
         fromValue: 100.0,
         fromUnit: testUnit1,
@@ -817,11 +741,11 @@ void main() {
       );
 
       final formatted = result.formatted;
-      expect(formatted, '100 ед1 = 1000 ед2');
+      expect(formatted, '100 u1 = 1000 u2');
       expect(formatted, isNot(contains('.0')));
     });
 
-    test('форматирование убирает trailing нули после точки', () {
+    test('formatting removes trailing zeros after decimal point', () {
       final result = ConversionResult(
         fromValue: 1.2000,
         fromUnit: testUnit1,
@@ -831,12 +755,12 @@ void main() {
       );
 
       final formatted = result.formatted;
-      expect(formatted, '1.2 ед1 = 12.34 ед2');
+      expect(formatted, '1.2 u1 = 12.34 u2');
       expect(formatted, isNot(contains('1.2000')));
       expect(formatted, isNot(contains('12.3400')));
     });
 
-    test('форматирование убирает точку если все нули после', () {
+    test('formatting removes decimal point if all zeros after', () {
       final result = ConversionResult(
         fromValue: 5.0000,
         fromUnit: testUnit1,
@@ -846,29 +770,15 @@ void main() {
       );
 
       final formatted = result.formatted;
-      expect(formatted, '5 ед1 = 50 ед2');
+      expect(formatted, '5 u1 = 50 u2');
       expect(formatted, isNot(contains('.')));
     });
   });
 
-  group('Unit - граничные случаи', () {
-    test('создаётся с очень длинным названием', () {
-      final longName = 'очень длинное название единицы измерения ' * 10;
-      final unit = Unit(
-        id: 'long_unit',
-        name: longName,
-        symbol: 'длин',
-        category: UnitCategory.length,
-        toBaseUnit: 1.0,
-      );
-
-      expect(unit.name, longName);
-    });
-
-    test('создаётся с пустым символом', () {
+  group('Unit - edge cases', () {
+    test('creates with empty symbol', () {
       const unit = Unit(
         id: 'empty_symbol',
-        name: 'единица',
         symbol: '',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
@@ -878,11 +788,10 @@ void main() {
       expect(unit.toString(), '');
     });
 
-    test('создаётся с коэффициентом 0', () {
+    test('creates with factor 0', () {
       const unit = Unit(
         id: 'zero_unit',
-        name: 'нулевая единица',
-        symbol: 'нул',
+        symbol: 'z',
         category: UnitCategory.length,
         toBaseUnit: 0.0,
       );
@@ -890,11 +799,10 @@ void main() {
       expect(unit.toBaseUnit, 0.0);
     });
 
-    test('создаётся с отрицательным коэффициентом', () {
+    test('creates with negative factor', () {
       const unit = Unit(
         id: 'negative_unit',
-        name: 'отрицательная единица',
-        symbol: 'отр',
+        symbol: 'neg',
         category: UnitCategory.length,
         toBaseUnit: -1.0,
       );
@@ -902,11 +810,10 @@ void main() {
       expect(unit.toBaseUnit, -1.0);
     });
 
-    test('создаётся с очень большим коэффициентом', () {
+    test('creates with very large factor', () {
       const unit = Unit(
         id: 'huge_unit',
-        name: 'огромная единица',
-        symbol: 'огр',
+        symbol: 'huge',
         category: UnitCategory.length,
         toBaseUnit: 999999999.0,
       );
@@ -914,11 +821,10 @@ void main() {
       expect(unit.toBaseUnit, 999999999.0);
     });
 
-    test('создаётся с очень малым коэффициентом', () {
+    test('creates with very small factor', () {
       const unit = Unit(
         id: 'tiny_unit',
-        name: 'крошечная единица',
-        symbol: 'кро',
+        symbol: 'tiny',
         category: UnitCategory.length,
         toBaseUnit: 0.000000001,
       );
@@ -927,20 +833,19 @@ void main() {
     });
   });
 
-  group('ConversionResult - метки времени', () {
+  group('ConversionResult - timestamps', () {
     late Unit testUnit;
 
     setUp(() {
       testUnit = const Unit(
         id: 'test',
-        name: 'тест',
-        symbol: 'тст',
+        symbol: 'tst',
         category: UnitCategory.length,
         toBaseUnit: 1.0,
       );
     });
 
-    test('сохраняет точную метку времени', () {
+    test('preserves exact timestamp', () {
       final timestamp = DateTime(2024, 1, 15, 10, 30, 45, 123);
       final result = ConversionResult(
         fromValue: 1.0,
@@ -954,7 +859,7 @@ void main() {
       expect(result.timestamp.millisecond, 123);
     });
 
-    test('может иметь метку времени в прошлом', () {
+    test('can have past timestamp', () {
       final timestamp = DateTime(2020, 1, 1);
       final result = ConversionResult(
         fromValue: 1.0,
@@ -967,7 +872,7 @@ void main() {
       expect(result.timestamp.isBefore(DateTime.now()), true);
     });
 
-    test('может иметь метку времени в будущем', () {
+    test('can have future timestamp', () {
       final timestamp = DateTime(2030, 1, 1);
       final result = ConversionResult(
         fromValue: 1.0,

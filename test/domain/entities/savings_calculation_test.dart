@@ -70,7 +70,7 @@ void main() {
       expect(calc.isWorthIt, isTrue);
     });
 
-    test('getRecommendation returns appropriate message', () {
+    test('recommendationKey returns appropriate key', () {
       final calc1 = SavingsCalculation.calculate(
         workType: 'test',
         materialCost: 5000.0,
@@ -79,7 +79,8 @@ void main() {
         hourlyRate: 0.0,
       );
 
-      expect(calc1.getRecommendation(), contains('Выгодно делать самостоятельно'));
+      // savings = 20000, laborCost * 0.5 = 10000, savings > that -> self_high
+      expect(calc1.recommendationKey, 'savings.recommendation.self_high');
 
       final calc2 = SavingsCalculation.calculate(
         workType: 'test',
@@ -89,7 +90,8 @@ void main() {
         hourlyRate: 1000.0,
       );
 
-      expect(calc2.getRecommendation(), contains('нанять мастеров'));
+      // savings = -15000, isWorthIt = false -> hire
+      expect(calc2.recommendationKey, 'savings.recommendation.hire');
     });
   });
 
@@ -131,7 +133,7 @@ void main() {
       expect(payback.paybackYears, equals(10.0));
     });
 
-    test('getRecommendation returns appropriate message', () {
+    test('recommendationKey returns appropriate key', () {
       const payback2 = MaterialPayback(
         materialId: 'mat2',
         materialName: 'Test',
@@ -143,7 +145,7 @@ void main() {
         paybackYears: 1.5,
       );
 
-      expect(payback2.getRecommendation(), contains('Отличная инвестиция'));
+      expect(payback2.recommendationKey, 'savings.payback.excellent');
 
       const payback3 = MaterialPayback(
         materialId: 'mat3',
@@ -156,7 +158,7 @@ void main() {
         paybackYears: 3.0,
       );
 
-      expect(payback3.getRecommendation(), contains('Хорошая инвестиция'));
+      expect(payback3.recommendationKey, 'savings.payback.good');
 
       const payback4 = MaterialPayback(
         materialId: 'mat4',
@@ -169,7 +171,7 @@ void main() {
         paybackYears: 10.0,
       );
 
-      expect(payback4.getRecommendation(), contains('Долгосрочная инвестиция'));
+      expect(payback4.recommendationKey, 'savings.payback.long_term');
     });
 
     test('handles infinite payback', () {
@@ -184,7 +186,7 @@ void main() {
         paybackYears: double.infinity,
       );
 
-      expect(payback.getRecommendation(), contains('Альтернативный вариант дешевле'));
+      expect(payback.recommendationKey, 'savings.payback.alternative');
     });
   });
 }

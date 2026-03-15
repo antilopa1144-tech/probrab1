@@ -63,16 +63,16 @@ class MockPremiumService extends PremiumService {
         type: SubscriptionType.monthly,
         price: '399 ₽',
         priceValue: 399.0,
-        title: 'Месячная подписка',
-        description: 'Доступ ко всем функциям на 1 месяц',
+        titleKey: 'premium.product.monthly.title',
+        descriptionKey: 'premium.product.monthly.description',
       ),
       const PremiumProduct(
         id: 'premium_yearly',
         type: SubscriptionType.yearly,
         price: '3990 ₽',
         priceValue: 3990.0,
-        title: 'Годовая подписка',
-        description: 'Доступ ко всем функциям на 1 год',
+        titleKey: 'premium.product.yearly.title',
+        descriptionKey: 'premium.product.yearly.description',
         discount: 17,
       ),
       const PremiumProduct(
@@ -80,8 +80,8 @@ class MockPremiumService extends PremiumService {
         type: SubscriptionType.lifetime,
         price: '7990 ₽',
         priceValue: 7990.0,
-        title: 'Пожизненная покупка',
-        description: 'Разовая покупка',
+        titleKey: 'premium.product.lifetime.title',
+        descriptionKey: 'premium.product.lifetime.description',
       ),
     ];
   }
@@ -266,8 +266,8 @@ void main() {
           type: SubscriptionType.monthly,
           price: '99 ₽',
           priceValue: 99.0,
-          title: 'Test Monthly',
-          description: 'Test',
+          titleKey: 'premium.product.test.title',
+          descriptionKey: 'premium.product.test.description',
         ),
       ];
       mockService.setMockProducts(mockProducts);

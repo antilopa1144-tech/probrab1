@@ -25,13 +25,12 @@ void main() {
       const advice = WeatherAdvice(
         workType: 'painting',
         canWork: true,
-        reason: 'Good conditions',
       );
 
       expect(advice.workType, 'painting');
       expect(advice.canWork, isTrue);
-      expect(advice.reason, 'Good conditions');
-      expect(advice.recommendations, isEmpty);
+      expect(advice.issueKeys, isEmpty);
+      expect(advice.recommendationKeys, isEmpty);
       expect(advice.minTemperature, isNull);
       expect(advice.maxTemperature, isNull);
       expect(advice.maxHumidity, isNull);
@@ -42,15 +41,15 @@ void main() {
       const advice = WeatherAdvice(
         workType: 'painting',
         canWork: true,
-        reason: 'Good',
-        recommendations: ['Tip 1', 'Tip 2'],
+        issueKeys: ['weather.issue.temp_low'],
+        recommendationKeys: ['Tip 1', 'Tip 2'],
         minTemperature: 5.0,
         maxTemperature: 30.0,
         maxHumidity: 80.0,
         requiresDryWeather: true,
       );
 
-      expect(advice.recommendations.length, 2);
+      expect(advice.recommendationKeys.length, 2);
       expect(advice.minTemperature, 5.0);
       expect(advice.maxTemperature, 30.0);
       expect(advice.maxHumidity, 80.0);
@@ -70,7 +69,7 @@ void main() {
         final advice = WeatherAdvice.check('покраска', conditions);
 
         expect(advice.canWork, isTrue);
-        expect(advice.workType, 'покраска');
+        expect(advice.workType, WeatherWorkTypeId.paint);
       });
 
       test('rejects work in rain for painting', () {
@@ -85,7 +84,7 @@ void main() {
         final advice = WeatherAdvice.check('покраска', conditions);
 
         expect(advice.canWork, isFalse);
-        expect(advice.reason, contains('дождь'));
+        expect(advice.issueKeys, contains('weather.issue.rain'));
       });
 
       test('rejects work in low temperature for painting', () {
@@ -100,7 +99,7 @@ void main() {
         final advice = WeatherAdvice.check('покраска', conditions);
 
         expect(advice.canWork, isFalse);
-        expect(advice.reason, contains('низкая'));
+        expect(advice.issueKeys, contains('weather.issue.temp_low'));
       });
 
       test('rejects work in high temperature for painting', () {
@@ -115,7 +114,7 @@ void main() {
         final advice = WeatherAdvice.check('покраска', conditions);
 
         expect(advice.canWork, isFalse);
-        expect(advice.reason, contains('высокая'));
+        expect(advice.issueKeys, contains('weather.issue.temp_high'));
       });
 
       test('rejects work in high humidity for painting', () {
@@ -130,7 +129,7 @@ void main() {
         final advice = WeatherAdvice.check('покраска', conditions);
 
         expect(advice.canWork, isFalse);
-        expect(advice.reason, contains('Влажность'));
+        expect(advice.issueKeys, contains('weather.issue.humidity_high'));
       });
 
       test('allows work for plastering (штукатурка)', () {
@@ -159,7 +158,7 @@ void main() {
         final advice = WeatherAdvice.check('фасад', conditions);
 
         expect(
-          advice.recommendations.any((r) => r.contains('ветер')),
+          advice.recommendationKeys.any((r) => r.contains('wind_high')),
           isTrue,
         );
       });
@@ -191,12 +190,12 @@ void main() {
 
         expect(advice.canWork, isFalse);
         expect(
-          advice.recommendations.any((r) => r.contains('Отложите')),
+          advice.recommendationKeys.any((r) => r.contains('wait')),
           isTrue,
         );
       });
 
-      test('returns multiple reasons when multiple conditions fail', () {
+      test('returns multiple issues when multiple conditions fail', () {
         final conditions = WeatherConditions(
           temperature: 0.0,
           humidity: 95.0,
@@ -208,8 +207,8 @@ void main() {
         final advice = WeatherAdvice.check('покраска', conditions);
 
         expect(advice.canWork, isFalse);
-        // Should have multiple failure reasons joined with ;
-        expect(advice.reason, contains(';'));
+        // Should have multiple failure issue keys
+        expect(advice.issueKeys.length, greaterThan(1));
       });
     });
   });

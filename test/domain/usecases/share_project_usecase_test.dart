@@ -12,22 +12,36 @@ import 'package:probrab_ai/core/exceptions/export_exception.dart';
 class MockCsvExportService implements CsvExportService {
   ExportData? lastExportData;
   String? lastFilename;
+  CsvExportLabels? lastLabels;
+  CsvShareCopy? lastShareCopy;
   File? mockFile;
   Exception? throwOnExport;
   Exception? throwOnShare;
 
   @override
-  Future<File> exportToCsv(ExportData data, {String? filename}) async {
+  Future<File> exportToCsv(
+    ExportData data, {
+    required CsvExportLabels labels,
+    String? filename,
+  }) async {
     lastExportData = data;
     lastFilename = filename;
+    lastLabels = labels;
     if (throwOnExport != null) throw throwOnExport!;
     return mockFile ?? File('/test/file.csv');
   }
 
   @override
-  Future<void> exportAndShare(ExportData data, {String? filename}) async {
+  Future<void> exportAndShare(
+    ExportData data, {
+    required CsvExportLabels labels,
+    required CsvShareCopy shareCopy,
+    String? filename,
+  }) async {
     lastExportData = data;
     lastFilename = filename;
+    lastLabels = labels;
+    lastShareCopy = shareCopy;
     if (throwOnShare != null) throw throwOnShare!;
   }
 
@@ -80,6 +94,33 @@ class MockDeepLinkService implements DeepLinkService {
   void dispose() {}
 }
 
+const _testLabels = CsvExportLabels(
+  project: 'Проект',
+  description: 'Описание',
+  createdAt: 'Дата создания',
+  calculator: 'Калькулятор',
+  parameter: 'Параметр',
+  value: 'Значение',
+  unit: 'Единица',
+  materialCost: 'Стоимость материалов',
+  laborCost: 'Стоимость работ',
+  total: 'ИТОГО',
+  materials: 'Материалы',
+  labor: 'Работы',
+  grandTotal: 'ВСЕГО',
+  notes: 'Заметки',
+);
+
+const _testShareCopy = ProjectShareCopy(
+  subject: 'Test subject',
+  text: 'Test text {link}',
+);
+
+const _testCsvShareCopy = CsvShareCopy(
+  subject: 'CSV subject',
+  text: 'CSV text',
+);
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -98,7 +139,7 @@ void main() {
 
   group('ShareProjectUseCase -', () {
     group('getProjectLink', () {
-      test('возвращает compact deep link по умолчанию', () {
+      test('returns compact deep link by default', () {
         final project = _createTestProject();
         mockDeepLinkService.mockLink = 'masterokapp://s/12345678?d=encoded_data';
 
@@ -109,7 +150,7 @@ void main() {
         expect(mockDeepLinkService.lastShareableContent, isA<ShareableProject>());
       });
 
-      test('возвращает полный deep link когда compact=false', () {
+      test('returns full deep link when compact=false', () {
         final project = _createTestProject();
         mockDeepLinkService.mockLink = 'masterokapp://share/project?data=encoded_data';
 
@@ -119,7 +160,7 @@ void main() {
         expect(mockDeepLinkService.lastCompactValue, false);
       });
 
-      test('корректно конвертирует проект в ShareableProject', () {
+      test('correctly converts project to ShareableProject', () {
         final project = _createTestProject(
           name: 'Тестовый проект',
           description: 'Описание проекта',
@@ -132,7 +173,7 @@ void main() {
         expect(shareableProject.description, 'Описание проекта');
       });
 
-      test('работает с проектом без description', () {
+      test('works with project without description', () {
         final project = ProjectV2()
           ..name = 'Simple Project'
           ..status = ProjectStatus.planning
@@ -149,11 +190,14 @@ void main() {
 
     // Skip: share_plus plugin doesn't work in unit tests
     group('shareAsLink', skip: true, () {
-      test('успешно шарит проект как link', () async {
+      test('successfully shares project as link', () async {
         final project = _createTestProject();
         mockDeepLinkService.mockLink = 'masterokapp://s/hash?d=data';
 
-        final result = await useCase.shareAsLink(project);
+        final result = await useCase.shareAsLink(
+          project,
+          shareCopy: _testShareCopy,
+        );
 
         expect(result.success, true);
         expect(result.format, 'link');
@@ -161,28 +205,38 @@ void main() {
         expect(mockDeepLinkService.lastCompactValue, true);
       });
 
-      test('использует compact формат по умолчанию', () async {
+      test('uses compact format by default', () async {
         final project = _createTestProject();
 
-        await useCase.shareAsLink(project);
+        await useCase.shareAsLink(
+          project,
+          shareCopy: _testShareCopy,
+        );
 
         expect(mockDeepLinkService.lastCompactValue, true);
       });
 
-      test('использует полный формат когда compact=false', () async {
+      test('uses full format when compact=false', () async {
         final project = _createTestProject();
 
-        await useCase.shareAsLink(project, compact: false);
+        await useCase.shareAsLink(
+          project,
+          shareCopy: _testShareCopy,
+          compact: false,
+        );
 
         expect(mockDeepLinkService.lastCompactValue, false);
       });
 
-      test('корректно форматирует сообщение для шаринга с кириллицей', () async {
+      test('correctly formats share message with cyrillic', () async {
         final project = _createTestProject(
           name: 'Проект на русском',
         );
 
-        final result = await useCase.shareAsLink(project);
+        final result = await useCase.shareAsLink(
+          project,
+          shareCopy: _testShareCopy,
+        );
 
         expect(result.success, true);
         final shareableProject = mockDeepLinkService.lastShareableContent as ShareableProject;
@@ -191,10 +245,14 @@ void main() {
     });
 
     group('shareAsCsv', () {
-      test('успешно экспортирует и шарит CSV', () async {
+      test('successfully exports and shares CSV', () async {
         final project = _createTestProject();
 
-        final result = await useCase.shareAsCsv(project);
+        final result = await useCase.shareAsCsv(
+          project,
+          labels: _testLabels,
+          shareCopy: _testCsvShareCopy,
+        );
 
         expect(result.success, true);
         expect(result.format, 'csv');
@@ -202,22 +260,31 @@ void main() {
         expect(mockCsvExportService.lastExportData, isNotNull);
       });
 
-      test('передает кастомное имя файла', () async {
+      test('passes custom filename', () async {
         final project = _createTestProject();
         const customFilename = 'custom_export.csv';
 
-        await useCase.shareAsCsv(project, filename: customFilename);
+        await useCase.shareAsCsv(
+          project,
+          labels: _testLabels,
+          shareCopy: _testCsvShareCopy,
+          filename: customFilename,
+        );
 
         expect(mockCsvExportService.lastFilename, customFilename);
       });
 
-      test('корректно конвертирует проект в ExportData', () async {
+      test('correctly converts project to ExportData', () async {
         final project = _createTestProject(
           name: 'Test Project',
           description: 'Test Description',
         );
 
-        await useCase.shareAsCsv(project);
+        await useCase.shareAsCsv(
+          project,
+          labels: _testLabels,
+          shareCopy: _testCsvShareCopy,
+        );
 
         final exportData = mockCsvExportService.lastExportData!;
         expect(exportData.projectName, 'Test Project');
@@ -225,23 +292,31 @@ void main() {
         expect(exportData.createdAt, project.createdAt);
       });
 
-      test('пробрасывает ExportException без изменений', () async {
+      test('rethrows ExportException unchanged', () async {
         final project = _createTestProject();
         final exception = ExportException.permissionDenied('/path');
         mockCsvExportService.throwOnShare = exception;
 
         expect(
-          () => useCase.shareAsCsv(project),
+          () => useCase.shareAsCsv(
+            project,
+            labels: _testLabels,
+            shareCopy: _testCsvShareCopy,
+          ),
           throwsA(isA<ExportException>()),
         );
       });
 
-      test('оборачивает другие исключения в ExportException', () async {
+      test('wraps other exceptions in ExportException', () async {
         final project = _createTestProject();
         mockCsvExportService.throwOnShare = Exception('Unknown error');
 
         expect(
-          () => useCase.shareAsCsv(project),
+          () => useCase.shareAsCsv(
+            project,
+            labels: _testLabels,
+            shareCopy: _testCsvShareCopy,
+          ),
           throwsA(isA<ExportException>()),
         );
       });
@@ -249,65 +324,84 @@ void main() {
 
     // Skip: share_plus plugin doesn't work in unit tests
     group('shareAsPdf', skip: true, () {
-      test('успешно создает и шарит PDF', () async {
+      test('successfully creates and shares PDF', () async {
         final project = _createTestProject();
 
-        final result = await useCase.shareAsPdf(project);
+        final result = await useCase.shareAsPdf(
+          project,
+          shareCopy: _testShareCopy,
+        );
 
         expect(result.success, true);
         expect(result.format, 'pdf');
         expect(result.error, isNull);
       });
 
-      test('работает с проектом со спецсимволами в имени', () async {
+      test('works with project with special chars in name', () async {
         final project = _createTestProject(
           name: 'Test/Project:With*Special?Chars',
         );
 
-        final result = await useCase.shareAsPdf(project);
+        final result = await useCase.shareAsPdf(
+          project,
+          shareCopy: _testShareCopy,
+        );
 
         expect(result.success, true);
       });
 
-      test('работает с очень длинным именем проекта', () async {
+      test('works with very long project name', () async {
         final project = _createTestProject(
           name: 'A' * 200,
         );
 
-        final result = await useCase.shareAsPdf(project);
+        final result = await useCase.shareAsPdf(
+          project,
+          shareCopy: _testShareCopy,
+        );
 
         expect(result.success, true);
       });
     });
 
     group('exportToCsv', () {
-      test('успешно экспортирует проект в CSV файл', () async {
+      test('successfully exports project to CSV file', () async {
         final project = _createTestProject();
         final expectedFile = File('/path/to/export.csv');
         mockCsvExportService.mockFile = expectedFile;
 
-        final result = await useCase.exportToCsv(project);
+        final result = await useCase.exportToCsv(
+          project,
+          labels: _testLabels,
+        );
 
         expect(result, same(expectedFile));
         expect(mockCsvExportService.lastExportData, isNotNull);
       });
 
-      test('передает кастомное имя файла в сервис', () async {
+      test('passes custom filename to service', () async {
         final project = _createTestProject();
         const customFilename = 'my_export.csv';
 
-        await useCase.exportToCsv(project, filename: customFilename);
+        await useCase.exportToCsv(
+          project,
+          labels: _testLabels,
+          filename: customFilename,
+        );
 
         expect(mockCsvExportService.lastFilename, customFilename);
       });
 
       // Skip: IsarLinks don't work without database
       test(
-        'конвертирует проект с расчетами в ExportData',
+        'converts project with calculations to ExportData',
         () async {
           final project = _createComplexProject();
 
-          await useCase.exportToCsv(project);
+          await useCase.exportToCsv(
+            project,
+            labels: _testLabels,
+          );
 
           final exportData = mockCsvExportService.lastExportData!;
           expect(exportData.calculations.length, 2);
@@ -321,11 +415,14 @@ void main() {
 
       // Skip: IsarLinks don't work without database
       test(
-        'правильно суммирует стоимости',
+        'correctly sums costs',
         () async {
           final project = _createComplexProject();
 
-          await useCase.exportToCsv(project);
+          await useCase.exportToCsv(
+            project,
+            labels: _testLabels,
+          );
 
           final exportData = mockCsvExportService.lastExportData!;
           expect(exportData.totalMaterialCost, 8000.0);
@@ -335,34 +432,43 @@ void main() {
         skip: true, // IsarLinks don't work without database
       );
 
-      test('пробрасывает ExportException без изменений', () async {
+      test('rethrows ExportException unchanged', () async {
         final project = _createTestProject();
         final exception = ExportException.permissionDenied('/path');
         mockCsvExportService.throwOnExport = exception;
 
         expect(
-          () => useCase.exportToCsv(project),
+          () => useCase.exportToCsv(
+            project,
+            labels: _testLabels,
+          ),
           throwsA(isA<ExportException>()),
         );
       });
 
-      test('оборачивает другие исключения в ExportException', () async {
+      test('wraps other exceptions in ExportException', () async {
         final project = _createTestProject();
         mockCsvExportService.throwOnExport = Exception('File system error');
 
         expect(
-          () => useCase.exportToCsv(project),
+          () => useCase.exportToCsv(
+            project,
+            labels: _testLabels,
+          ),
           throwsA(isA<ExportException>()),
         );
       });
 
-      test('работает с пустым проектом без расчетов', () async {
+      test('works with empty project without calculations', () async {
         final project = ProjectV2()
           ..name = 'Empty Project'
           ..status = ProjectStatus.planning
           ..createdAt = DateTime.now();
 
-        await useCase.exportToCsv(project);
+        await useCase.exportToCsv(
+          project,
+          labels: _testLabels,
+        );
 
         final exportData = mockCsvExportService.lastExportData!;
         expect(exportData.calculations, isEmpty);
@@ -372,7 +478,7 @@ void main() {
     });
 
     group('ShareResult', () {
-      test('создает успешный результат', () {
+      test('creates success result', () {
         final result = ShareResult.success('csv');
 
         expect(result.success, true);
@@ -380,7 +486,7 @@ void main() {
         expect(result.error, isNull);
       });
 
-      test('создает результат с ошибкой', () {
+      test('creates failure result', () {
         final result = ShareResult.failure('pdf', 'Test error');
 
         expect(result.success, false);
@@ -388,7 +494,7 @@ void main() {
         expect(result.error, 'Test error');
       });
 
-      test('поддерживает различные форматы', () {
+      test('supports various formats', () {
         final linkResult = ShareResult.success('link');
         final csvResult = ShareResult.success('csv');
         final pdfResult = ShareResult.success('pdf');
@@ -398,7 +504,7 @@ void main() {
         expect(pdfResult.format, 'pdf');
       });
 
-      test('error присутствует только при failure', () {
+      test('error is present only on failure', () {
         final success = ShareResult.success('link');
         final failure = ShareResult.failure('csv', 'Error message');
 
@@ -408,11 +514,15 @@ void main() {
     });
 
     // Skip: Integration tests require real Isar database for IsarLinks
-    group('интеграционные тесты', skip: true, () {
-      test('shareAsCsv корректно обрабатывает сложный проект', () async {
+    group('integration tests', skip: true, () {
+      test('shareAsCsv correctly handles complex project', () async {
         final project = _createComplexProject();
 
-        final result = await useCase.shareAsCsv(project);
+        final result = await useCase.shareAsCsv(
+          project,
+          labels: _testLabels,
+          shareCopy: _testCsvShareCopy,
+        );
 
         expect(result.success, true);
 
@@ -424,7 +534,7 @@ void main() {
         expect(exportData.calculations.length, 2);
       });
 
-      test('shareAsLink работает со всеми типами проектов', () async {
+      test('shareAsLink works with all project types', () async {
         final projects = [
           _createTestProject(name: 'Simple'),
           _createTestProject(name: 'With Description', description: 'Desc'),
@@ -432,18 +542,31 @@ void main() {
         ];
 
         for (final project in projects) {
-          final result = await useCase.shareAsLink(project);
+          final result = await useCase.shareAsLink(
+            project,
+            shareCopy: _testShareCopy,
+          );
           expect(result.success, true);
           expect(mockDeepLinkService.lastShareableContent, isNotNull);
         }
       });
 
-      test('все форматы экспорта работают последовательно', () async {
+      test('all export formats work sequentially', () async {
         final project = _createTestProject();
 
-        final linkResult = await useCase.shareAsLink(project);
-        final csvResult = await useCase.shareAsCsv(project);
-        final pdfResult = await useCase.shareAsPdf(project);
+        final linkResult = await useCase.shareAsLink(
+          project,
+          shareCopy: _testShareCopy,
+        );
+        final csvResult = await useCase.shareAsCsv(
+          project,
+          labels: _testLabels,
+          shareCopy: _testCsvShareCopy,
+        );
+        final pdfResult = await useCase.shareAsPdf(
+          project,
+          shareCopy: _testShareCopy,
+        );
 
         expect(linkResult.success, true);
         expect(csvResult.success, true);
@@ -451,38 +574,48 @@ void main() {
       });
     });
 
-    group('обработка ошибок', () {
-      test('shareAsCsv обрабатывает ошибку доступа к файлу', () async {
+    group('error handling', () {
+      test('shareAsCsv handles file access error', () async {
         final project = _createTestProject();
         mockCsvExportService.throwOnShare =
             ExportException.permissionDenied('/protected/path');
 
         expect(
-          () => useCase.shareAsCsv(project),
+          () => useCase.shareAsCsv(
+            project,
+            labels: _testLabels,
+            shareCopy: _testCsvShareCopy,
+          ),
           throwsA(isA<ExportException>()),
         );
       });
 
-      test('exportToCsv обрабатывает ошибку записи файла', () async {
+      test('exportToCsv handles file write error', () async {
         final project = _createTestProject();
         mockCsvExportService.throwOnExport =
             const FileSystemException('Disk full');
 
         expect(
-          () => useCase.exportToCsv(project),
+          () => useCase.exportToCsv(
+            project,
+            labels: _testLabels,
+          ),
           throwsA(isA<ExportException>()),
         );
       });
 
       // Skip: share_plus plugin doesn't work in unit tests
       test(
-        'shareAsPdf обрабатывает различные ошибки',
+        'shareAsPdf handles various errors',
         () async {
           final project = _createTestProject();
 
-          // PDF generation может упасть, но это не должно крешить приложение
+          // PDF generation can fail, but it should not crash the app
           expect(
-            () => useCase.shareAsPdf(project),
+            () => useCase.shareAsPdf(
+              project,
+              shareCopy: _testShareCopy,
+            ),
             returnsNormally,
           );
         },
@@ -490,10 +623,10 @@ void main() {
       );
     });
 
-    group('граничные случаи', () {
+    group('edge cases', () {
       // Skip: share_plus plugin doesn't work in unit tests
       test(
-        'работает с проектом с кириллицей',
+        'works with project with cyrillic',
         () async {
           final project = ProjectV2()
             ..name = 'Тестовый проект на русском'
@@ -501,8 +634,15 @@ void main() {
             ..status = ProjectStatus.planning
             ..createdAt = DateTime.now();
 
-          final linkResult = await useCase.shareAsLink(project);
-          final csvResult = await useCase.shareAsCsv(project);
+          final linkResult = await useCase.shareAsLink(
+            project,
+            shareCopy: _testShareCopy,
+          );
+          final csvResult = await useCase.shareAsCsv(
+            project,
+            labels: _testLabels,
+            shareCopy: _testCsvShareCopy,
+          );
 
           expect(linkResult.success, true);
           expect(csvResult.success, true);
@@ -516,7 +656,7 @@ void main() {
 
       // Skip: IsarLinks don't work without database
       test(
-        'обрабатывает проект с нулевыми стоимостями',
+        'handles project with zero costs',
         () async {
           final calc = ProjectCalculation()
             ..calculatorId = 'test'
@@ -531,7 +671,10 @@ void main() {
 
           project.calculations.add(calc);
 
-          await useCase.exportToCsv(project);
+          await useCase.exportToCsv(
+            project,
+            labels: _testLabels,
+          );
 
           final exportData = mockCsvExportService.lastExportData!;
           expect(exportData.totalMaterialCost, 0.0);
@@ -543,7 +686,7 @@ void main() {
 
       // Skip: IsarLinks don't work without database
       test(
-        'обрабатывает расчеты с пустыми inputs/results',
+        'handles calculations with empty inputs/results',
         () async {
           final calc = ProjectCalculation()
             ..calculatorId = 'empty'
@@ -556,7 +699,10 @@ void main() {
 
           project.calculations.add(calc);
 
-          await useCase.exportToCsv(project);
+          await useCase.exportToCsv(
+            project,
+            labels: _testLabels,
+          );
 
           final exportData = mockCsvExportService.lastExportData!;
           expect(exportData.calculations.length, 1);
@@ -566,14 +712,17 @@ void main() {
         skip: true, // IsarLinks don't work without database
       );
 
-      test('обрабатывает проект с notes', () async {
+      test('handles project with notes', () async {
         final project = ProjectV2()
           ..name = 'Project with Notes'
           ..status = ProjectStatus.planning
           ..createdAt = DateTime.now()
           ..notes = 'Important project notes';
 
-        await useCase.exportToCsv(project);
+        await useCase.exportToCsv(
+          project,
+          labels: _testLabels,
+        );
 
         final exportData = mockCsvExportService.lastExportData!;
         expect(exportData.notes, 'Important project notes');
@@ -581,7 +730,7 @@ void main() {
 
       // Skip: share_plus plugin doesn't work in unit tests
       test(
-        'обрабатывает проект со всеми статусами',
+        'handles project with all statuses',
         () async {
           for (final status in ProjectStatus.values) {
             final project = ProjectV2()
@@ -589,7 +738,10 @@ void main() {
               ..status = status
               ..createdAt = DateTime.now();
 
-            final result = await useCase.shareAsLink(project);
+            final result = await useCase.shareAsLink(
+              project,
+              shareCopy: _testShareCopy,
+            );
             expect(result.success, true);
           }
         },
@@ -598,8 +750,8 @@ void main() {
     });
 
     // Skip: Conversion tests require Isar database for IsarLinks
-    group('конвертация данных', skip: true, () {
-      test('правильно конвертирует inputs и results', () async {
+    group('data conversion', skip: true, () {
+      test('correctly converts inputs and results', () async {
         final calc = ProjectCalculation()
           ..calculatorId = 'brick'
           ..name = 'Brick Calculation';
@@ -622,7 +774,10 @@ void main() {
 
         project.calculations.add(calc);
 
-        await useCase.exportToCsv(project);
+        await useCase.exportToCsv(
+          project,
+          labels: _testLabels,
+        );
 
         final exportData = mockCsvExportService.lastExportData!;
         final exportCalc = exportData.calculations[0];
@@ -634,7 +789,7 @@ void main() {
         expect(exportCalc.results['mortar'], 78.9);
       });
 
-      test('сохраняет все метаданные расчетов', () async {
+      test('preserves all calculation metadata', () async {
         final calc = ProjectCalculation()
           ..calculatorId = 'test_calc'
           ..name = 'Test Calculation'
@@ -649,7 +804,10 @@ void main() {
 
         project.calculations.add(calc);
 
-        await useCase.exportToCsv(project);
+        await useCase.exportToCsv(
+          project,
+          labels: _testLabels,
+        );
 
         final exportData = mockCsvExportService.lastExportData!;
         final exportCalc = exportData.calculations[0];
