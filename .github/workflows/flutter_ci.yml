@@ -29,9 +29,7 @@ jobs:
       - run: touch .env
       - run: flutter pub get
       - run: flutter analyze --no-fatal-infos --no-fatal-warnings
-      - name: Run tests
-        run: flutter test
-        continue-on-error: true
+      - run: flutter test
 
       - name: Decode google-services.json
         if: github.ref == 'refs/heads/main' && env.GOOGLE_SERVICES_JSON != ''
