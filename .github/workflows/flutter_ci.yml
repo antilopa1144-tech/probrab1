@@ -33,11 +33,11 @@ jobs:
         run: flutter test
         continue-on-error: true
       - name: Build APK
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && hashFiles('android/app/google-services.json') != ''
         run: flutter build apk --release
 
       - name: Upload APK
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && hashFiles('android/app/google-services.json') != ''
         uses: actions/upload-artifact@v4
         with:
           name: android-release-apk
