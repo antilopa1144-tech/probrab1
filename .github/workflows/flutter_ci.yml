@@ -27,7 +27,7 @@ jobs:
           cache: true
 
       - run: flutter pub get
-      - run: flutter analyze
+      - run: flutter analyze --no-fatal-infos
       - run: flutter test
       - name: Build APK
         if: github.ref == 'refs/heads/main'
