@@ -5,7 +5,8 @@ import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
 import 'calculator_constants.dart';
-import '../usecases/calculate_slab.dart';
+import '../usecases/canonical_bridge.dart';
+import '../usecases/foundation_slab_canonical_adapter.dart';
 
 /// Калькулятор монолитной плиты V2.
 final slabFoundationCalculatorV2 = CalculatorDefinitionV2(
@@ -98,5 +99,5 @@ final slabFoundationCalculatorV2 = CalculatorDefinitionV2(
   ],
 
   // UseCase для расчёта
-  useCase: CalculateSlab(),
+  useCase: CanonicalBridgeUseCase(calculateCanonicalFoundationSlab),
 );

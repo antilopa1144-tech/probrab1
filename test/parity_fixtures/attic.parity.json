@@ -1,0 +1,68 @@
+{
+  "calculator_id": "attic",
+  "formula_version": "attic-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.015Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for attic",
+      "inputs": {
+        "roofArea": 60,
+        "insulationThickness": 200,
+        "insulationType": 0,
+        "finishType": 0,
+        "withVapourBarrier": 1
+      },
+      "expected_totals": {
+        "roofArea": 60,
+        "insulationThickness": 200,
+        "insulationType": 0,
+        "finishType": 0,
+        "withVapourBarrier": 1,
+        "layerCount": 2,
+        "insPlates": 210,
+        "windRolls": 1,
+        "vbRolls": 1,
+        "tapeRolls": 2,
+        "panels": 234,
+        "battenPcs": 150,
+        "antisepticCans": 2,
+        "gklSheets": 0,
+        "profilePcs": 0,
+        "puttyBags": 0,
+        "minExactNeed": 195.552,
+        "recExactNeed": 222.6,
+        "maxExactNeed": 289.4136,
+        "minPurchase": 196,
+        "recPurchase": 223,
+        "maxPurchase": 290
+      },
+      "expected_materials_count": 7,
+      "expected_material_names": [
+        "Минвата плиты (200 мм, 2 сл.)",
+        "Ветрозащитная мембрана (70 м²)",
+        "Пароизоляция Стандартная (70 м²)",
+        "Скотч соединительный (25 м)",
+        "Вагонка деревянная",
+        "Обрешётка (рейки)",
+        "Антисептик (5 л)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 195.552,
+          "purchase_quantity": 196
+        },
+        "REC": {
+          "exact_need": 222.6,
+          "purchase_quantity": 223
+        },
+        "MAX": {
+          "exact_need": 289.4136,
+          "purchase_quantity": 290
+        }
+      }
+    }
+  ]
+}

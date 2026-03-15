@@ -9,11 +9,12 @@ import '../../../models/calculator_field.dart';
 import '../../../models/calculator_hint.dart';
 import '../../../models/calculator_link.dart';
 import '../../calculator_constants.dart';
-import '../../../usecases/calculate_plaster.dart';
-import '../../../usecases/calculate_primer.dart';
-import '../../../usecases/calculate_putty.dart';
-import '../../../usecases/calculate_tile_glue.dart';
-import '../../../usecases/calculate_decorative_plaster.dart';
+import '../../../usecases/canonical_bridge.dart';
+import '../../../usecases/plaster_canonical_adapter.dart';
+import '../../../usecases/primer_canonical_adapter.dart';
+import '../../../usecases/putty_canonical_adapter.dart';
+import '../../../usecases/tile_adhesive_canonical_adapter.dart';
+import '../../../usecases/decor_plaster_canonical_adapter.dart';
 // calculate_wall_paint.dart больше не используется - walls_paint заменён на paint_universal
 
 final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
@@ -132,7 +133,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           ),
         ),
       ],
-      useCase: CalculatePlaster(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalPlaster),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -238,7 +239,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.gruntovka_glubokogo_proniknoveniya_dlya'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_ravnomernym_sloem'),
       ],
-      useCase: CalculatePrimer(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalPrimer),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -329,7 +330,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_tonkimi_sloyami'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.shlifuyte_mezhdu_sloyami'),
       ],
-      useCase: CalculatePutty(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalPutty),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -426,7 +427,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_zubchatyy_shpatel'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_kley_na_osnovanie'),
       ],
-      useCase: CalculateTileGlue(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalTileAdhesive),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -534,7 +535,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.vozmite_shpateli_i_kelmy'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dlya_venetsianskoy_shtukaturki_nuzhna'),
       ],
-      useCase: CalculateDecorativePlaster(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalDecorPlaster),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,

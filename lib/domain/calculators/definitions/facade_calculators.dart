@@ -8,12 +8,13 @@ import '../../models/calculator_definition_v2.dart';
 import '../../models/calculator_field.dart';
 import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
-import '../../usecases/calculate_brick_facing.dart';
-import '../../usecases/calculate_facade_panels.dart';
-import '../../usecases/calculate_fence_v2.dart';
-import '../../usecases/calculate_stairs.dart';
-import '../../usecases/calculate_terrace.dart';
-import '../../usecases/calculate_insulation_mineral_wool.dart';
+import '../../usecases/canonical_bridge.dart';
+import '../../usecases/facade_brick_canonical_adapter.dart';
+import '../../usecases/facade_panels_canonical_adapter.dart';
+import '../../usecases/fence_canonical_adapter.dart';
+import '../../usecases/stairs_canonical_adapter.dart';
+import '../../usecases/terrace_canonical_adapter.dart';
+import '../../usecases/insulation_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> facadeCalculators = [
   CalculatorDefinitionV2(
@@ -146,7 +147,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           ),
         ),
       ],
-      useCase: CalculateBrickFacing(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalFacadeBrick),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 10,
@@ -232,7 +233,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ispolzuyte_kachestvennye_krepleniya'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ostavlyayte_zazor_dlya_temperaturnogo'),
       ],
-      useCase: CalculateFacadePanels(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalFacadePanels),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 10,
@@ -355,7 +356,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.rasstoyanie_mezhdu_stolbami_2'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.vorota_i_kalitki_dolzhny'),
       ],
-      useCase: CalculateFenceV2(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalFence),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 10,
@@ -474,7 +475,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.perila_dolzhny_byt_na'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.balyasiny_ustanavlivayutsya_s_shagom'),
       ],
-      useCase: CalculateStairs(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalStairs),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 10,
@@ -576,7 +577,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.polikarbonat_propuskaet_svet_i'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.stolby_dlya_krovli_dolzhny'),
       ],
-      useCase: CalculateTerrace(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalTerrace),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 10,
@@ -669,7 +670,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           ),
         ),
       ],
-      useCase: CalculateInsulationMineralWool(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalInsulation),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 8,

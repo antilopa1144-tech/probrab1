@@ -1,0 +1,70 @@
+{
+  "calculator_id": "ventilation",
+  "formula_version": "ventilation-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.259Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for ventilation",
+      "inputs": {
+        "totalArea": 80,
+        "ceilingHeight": 2.7,
+        "buildingType": 0,
+        "peopleCount": 3,
+        "ductType": 0
+      },
+      "expected_totals": {
+        "totalArea": 80,
+        "ceilingHeight": 2.7,
+        "buildingType": 0,
+        "peopleCount": 3,
+        "ductType": 0,
+        "volume": 216,
+        "airByVolume": 324,
+        "airByPeople": 90,
+        "requiredAirflow": 324,
+        "requiredAirflowRounded": 350,
+        "fanCapacity": 450,
+        "fanDiameter": 125,
+        "mainDuctLength": 25.715,
+        "ductSections": 9,
+        "ductCoils": 0,
+        "fittings": 5,
+        "grilles": 7,
+        "clamps": 20,
+        "silencer": 1,
+        "minExactNeed": 8.3808,
+        "recExactNeed": 9.54,
+        "maxExactNeed": 12.40344,
+        "minPurchase": 9,
+        "recPurchase": 10,
+        "maxPurchase": 13
+      },
+      "expected_materials_count": 6,
+      "expected_material_names": [
+        "Вентилятор канальный (450 м³/ч, ø125 мм)",
+        "Воздуховод Круглый ø100–160 (3 м)",
+        "Фасонные элементы (отводы, тройники)",
+        "Вентиляционные решётки",
+        "Хомуты и кронштейны",
+        "Шумоглушитель"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 8.3808,
+          "purchase_quantity": 9
+        },
+        "REC": {
+          "exact_need": 9.54,
+          "purchase_quantity": 10
+        },
+        "MAX": {
+          "exact_need": 12.40344,
+          "purchase_quantity": 13
+        }
+      }
+    }
+  ]
+}

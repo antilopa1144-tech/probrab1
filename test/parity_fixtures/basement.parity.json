@@ -1,0 +1,76 @@
+{
+  "calculator_id": "basement",
+  "formula_version": "basement-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.024Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for basement",
+      "inputs": {
+        "length": 8,
+        "width": 6,
+        "depth": 2.5,
+        "wallThickness": 200,
+        "floorThickness": 150,
+        "waterproofType": 0
+      },
+      "expected_totals": {
+        "length": 8,
+        "width": 6,
+        "depth": 2.5,
+        "wallThickness": 200,
+        "floorThickness": 150,
+        "waterproofType": 0,
+        "floorArea": 48,
+        "wallPerim": 28,
+        "wallArea": 70,
+        "floorVol": 7.2,
+        "wallVol": 14,
+        "floorConcrete": 7.6,
+        "wallConcrete": 14.5,
+        "totalConcrete": 22.1,
+        "floorRebar": 1056,
+        "wallRebar": 1260,
+        "wire": 24,
+        "formwork": 56,
+        "ventCount": 5,
+        "masticKg": 354,
+        "rollCount": 0,
+        "penKg": 0,
+        "minExactNeed": 20.57952,
+        "recExactNeed": 23.426,
+        "maxExactNeed": 30.457336,
+        "minPurchase": 21,
+        "recPurchase": 24,
+        "maxPurchase": 31
+      },
+      "expected_materials_count": 8,
+      "expected_material_names": [
+        "Бетон на пол (150 мм)",
+        "Бетон на стены (200 мм)",
+        "Арматура на пол",
+        "Арматура на стены",
+        "Вязальная проволока",
+        "Опалубка (2.88 м²/лист)",
+        "Продухи (вент. отверстия)",
+        "Обмазочная (мастика)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 20.57952,
+          "purchase_quantity": 21
+        },
+        "REC": {
+          "exact_need": 23.426,
+          "purchase_quantity": 24
+        },
+        "MAX": {
+          "exact_need": 30.457336,
+          "purchase_quantity": 31
+        }
+      }
+    }
+  ]
+}

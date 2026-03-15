@@ -1,0 +1,58 @@
+{
+  "calculator_id": "ceiling-stretch",
+  "formula_version": "ceiling-stretch-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.055Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for ceiling-stretch",
+      "inputs": {
+        "area": 20,
+        "corners": 4,
+        "fixtures": 4,
+        "type": 0
+      },
+      "expected_totals": {
+        "area": 20,
+        "type": 0,
+        "corners": 4,
+        "fixtures": 4,
+        "perim": 17.889,
+        "baguetLen": 19.677,
+        "profilePcs": 8,
+        "insertLen": 19.677,
+        "maskingTape": 1,
+        "minExactNeed": 7.4496,
+        "recExactNeed": 8.48,
+        "maxExactNeed": 11.02528,
+        "minPurchase": 8,
+        "recPurchase": 9,
+        "maxPurchase": 12
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "Багетный профиль 2.5м",
+        "Декоративная вставка",
+        "Маскировочная лента 50м",
+        "Обработка углов",
+        "Усилительные кольца для светильников"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 7.4496,
+          "purchase_quantity": 8
+        },
+        "REC": {
+          "exact_need": 8.48,
+          "purchase_quantity": 9
+        },
+        "MAX": {
+          "exact_need": 11.02528,
+          "purchase_quantity": 12
+        }
+      }
+    }
+  ]
+}

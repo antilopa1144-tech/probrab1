@@ -1,0 +1,73 @@
+{
+  "calculator_id": "wood-wall",
+  "formula_version": "wood-wall-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.285Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for wood-wall",
+      "inputs": {
+        "inputMode": 0,
+        "area": 15,
+        "length": 4,
+        "height": 2.5,
+        "boardWidth": 10,
+        "boardLength": 3
+      },
+      "expected_totals": {
+        "area": 15,
+        "inputMode": 0,
+        "boardWidth": 10,
+        "boardLength": 3,
+        "boardArea": 0.3,
+        "boards": 55,
+        "perimeter": 15.492,
+        "battensCount": 8,
+        "battensLen": 20,
+        "plinth": 15.957,
+        "corners": 4.067,
+        "ceilingPlinth": 15.957,
+        "antisepticL": 4.5,
+        "finishL": 3,
+        "primerL": 1.5,
+        "fasteners": 495,
+        "clamps": 275,
+        "minExactNeed": 51.216,
+        "recExactNeed": 58.3,
+        "maxExactNeed": 75.7988,
+        "minPurchase": 52,
+        "recPurchase": 59,
+        "maxPurchase": 76
+      },
+      "expected_materials_count": 10,
+      "expected_material_names": [
+        "Доски (вагонка)",
+        "Обрешётка (п.м.)",
+        "Плинтус напольный (п.м.)",
+        "Уголки (п.м.)",
+        "Плинтус потолочный (п.м.)",
+        "Антисептик (л)",
+        "Лак / финиш (л)",
+        "Грунтовка (л)",
+        "Крепёж (саморезы/гвозди)",
+        "Кляймеры"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 51.216,
+          "purchase_quantity": 52
+        },
+        "REC": {
+          "exact_need": 58.3,
+          "purchase_quantity": 59
+        },
+        "MAX": {
+          "exact_need": 75.7988,
+          "purchase_quantity": 76
+        }
+      }
+    }
+  ]
+}

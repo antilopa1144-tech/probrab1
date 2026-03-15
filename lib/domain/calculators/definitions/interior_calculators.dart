@@ -8,13 +8,14 @@ import '../../models/calculator_definition_v2.dart';
 import '../../models/calculator_field.dart';
 import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
-import '../../usecases/calculate_attic.dart';
-import '../../usecases/calculate_balcony.dart';
-import '../../usecases/calculate_door_installation.dart';
-import '../../usecases/calculate_slopes.dart';
-import '../../usecases/calculate_sound_insulation.dart';
-import '../../usecases/calculate_waterproofing.dart';
-import '../../usecases/calculate_window_installation.dart';
+import '../../usecases/canonical_bridge.dart';
+import '../../usecases/attic_canonical_adapter.dart';
+import '../../usecases/balcony_canonical_adapter.dart';
+import '../../usecases/doors_canonical_adapter.dart';
+import '../../usecases/slopes_canonical_adapter.dart';
+import '../../usecases/sound_insulation_canonical_adapter.dart';
+import '../../usecases/waterproofing_canonical_adapter.dart';
+import '../../usecases/windows_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> interiorCalculators = [
   CalculatorDefinitionV2(
@@ -151,7 +152,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.vagonka_sozdaet_uyutnuyu_atmosferu'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_nesuschuyu_sposobnost_perekrytiya'),
       ],
-      useCase: CalculateAttic(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalAttic),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -268,7 +269,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.dlya_pola_na_otkrytom'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.terrasnaya_doska_podhodit_dlya'),
       ],
-      useCase: CalculateBalcony(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalBalcony),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -327,7 +328,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.nanosite_material_v_dva'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_tselostnost_pokrytiya_pered'),
       ],
-      useCase: CalculateWaterproofing(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalWaterproofing),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -399,7 +400,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_montazhnuyu_penu_dlya'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ustanovite_nalichniki_dlya_zaversheniya'),
       ],
-      useCase: CalculateDoorInstallation(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalDoors),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -470,7 +471,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_materialy_s_vysokim'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.obespechte_germetichnost_stykov'),
       ],
-      useCase: CalculateSoundInsulation(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalSoundInsulation),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -556,7 +557,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.shpaklevku_nanosite_tonkim_sloem'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.kraste_v_2_sloya'),
       ],
-      useCase: CalculateSlopes(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalSlopes),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -628,7 +629,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ustanovite_otlivy_dlya_zaschity'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_vertikalnost_i_gorizontalnost'),
       ],
-      useCase: CalculateWindowInstallation(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalWindows),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,

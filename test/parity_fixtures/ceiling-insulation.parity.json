@@ -1,0 +1,54 @@
+{
+  "calculator_id": "ceiling-insulation",
+  "formula_version": "ceiling-insulation-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.047Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for ceiling-insulation",
+      "inputs": {
+        "area": 40,
+        "thickness": 100,
+        "insulationType": 0,
+        "layers": 1
+      },
+      "expected_totals": {
+        "area": 40,
+        "thickness": 100,
+        "insulationType": 0,
+        "layers": 1,
+        "primaryQty": 7,
+        "vaporRolls": 1,
+        "tapeRolls": 10,
+        "minExactNeed": 6.5184,
+        "recExactNeed": 7.42,
+        "maxExactNeed": 9.64712,
+        "minPurchase": 7,
+        "recPurchase": 8,
+        "maxPurchase": 10
+      },
+      "expected_materials_count": 3,
+      "expected_material_names": [
+        "Минераловатные плиты",
+        "Пароизоляция 50 м²",
+        "Скотч соединительный"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 6.5184,
+          "purchase_quantity": 7
+        },
+        "REC": {
+          "exact_need": 7.42,
+          "purchase_quantity": 8
+        },
+        "MAX": {
+          "exact_need": 9.64712,
+          "purchase_quantity": 10
+        }
+      }
+    }
+  ]
+}

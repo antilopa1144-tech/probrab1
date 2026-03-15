@@ -1,0 +1,77 @@
+{
+  "calculator_id": "tile",
+  "formula_version": "tile-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.250Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for tile",
+      "inputs": {
+        "inputMode": 1,
+        "length": 4,
+        "width": 3,
+        "area": 12,
+        "tileWidthCm": 30,
+        "tileHeightCm": 30,
+        "jointWidth": 3,
+        "groutDepth": 0,
+        "layoutPattern": 1,
+        "roomComplexity": 1
+      },
+      "expected_totals": {
+        "area": 12,
+        "inputMode": 1,
+        "tileWidthCm": 30,
+        "tileHeightCm": 30,
+        "averageTileSizeCm": 30,
+        "jointWidth": 3,
+        "groutDepth": 6,
+        "layoutPattern": 1,
+        "roomComplexity": 1,
+        "tileArea": 0.09,
+        "wastePercent": 10,
+        "sizeAdjustment": 0,
+        "baseExactNeedTiles": 146.666667,
+        "tilesNeeded": 147,
+        "glueRateKgPerM2": 4,
+        "glueNeededKg": 48,
+        "groutNeededKg": 2.5344,
+        "primerNeededL": 1.8,
+        "crossesNeeded": 177,
+        "svpPackages": 0,
+        "siliconeTubes": 1,
+        "minExactNeedTiles": 133.84448,
+        "recExactNeedTiles": 146.666667,
+        "maxExactNeedTiles": 193.341867,
+        "minPurchaseTiles": 134,
+        "recPurchaseTiles": 147,
+        "maxPurchaseTiles": 194
+      },
+      "expected_materials_count": 6,
+      "expected_material_names": [
+        "Плитка 300×300 мм",
+        "Плиточный клей (25 кг)",
+        "Затирка цементная (2 кг)",
+        "Грунтовка глубокого проникновения (5 л)",
+        "Крестики для плитки",
+        "Герметик силиконовый"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 133.84448,
+          "purchase_quantity": 134
+        },
+        "REC": {
+          "exact_need": 146.666667,
+          "purchase_quantity": 147
+        },
+        "MAX": {
+          "exact_need": 193.341867,
+          "purchase_quantity": 194
+        }
+      }
+    }
+  ]
+}

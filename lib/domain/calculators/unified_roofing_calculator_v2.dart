@@ -4,7 +4,8 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
-import '../usecases/calculate_unified_roofing.dart';
+import '../usecases/canonical_bridge.dart';
+import '../usecases/roofing_canonical_adapter.dart';
 import 'calculator_constants.dart';
 
 /// V2 Definition для единого калькулятора кровли
@@ -127,7 +128,7 @@ final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
       messageKey: 'hint.roofing.ispolzuyte_spetsialnye_samorezy_s',
     ),
   ],
-  useCase: CalculateUnifiedRoofing(),
+  useCase: CanonicalBridgeUseCase(calculateCanonicalRoofing),
   accentColor: kCalculatorAccentColor,
   complexity: 3,
   popularity: 15,

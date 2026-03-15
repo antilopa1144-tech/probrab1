@@ -1,0 +1,66 @@
+{
+  "calculator_id": "facade-panels",
+  "formula_version": "facade-panels-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.091Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for facade-panels",
+      "inputs": {
+        "area": 100,
+        "panelType": 0,
+        "substructure": 0,
+        "insulationThickness": 0
+      },
+      "expected_totals": {
+        "area": 100,
+        "panelType": 0,
+        "substructure": 0,
+        "insulationThickness": 0,
+        "panelArea": 3.6,
+        "panels": 31,
+        "brackets": 306,
+        "guides": 62,
+        "fasteners": 261,
+        "anchors": 643,
+        "insPlates": 0,
+        "insDowels": 0,
+        "membrane": 0,
+        "primer": 2,
+        "sealant": 4,
+        "minExactNeed": 28.8672,
+        "recExactNeed": 32.86,
+        "maxExactNeed": 42.72296,
+        "minPurchase": 29,
+        "recPurchase": 33,
+        "maxPurchase": 43
+      },
+      "expected_materials_count": 7,
+      "expected_material_names": [
+        "Фиброцементные панели (3.6 м²)",
+        "Кронштейны (Алюминиевая)",
+        "Направляющие (3 м)",
+        "Крепёж панелей",
+        "Анкеры для кронштейнов",
+        "Грунтовка (канистра 10 л)",
+        "Герметик (тубы)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 28.8672,
+          "purchase_quantity": 29
+        },
+        "REC": {
+          "exact_need": 32.86,
+          "purchase_quantity": 33
+        },
+        "MAX": {
+          "exact_need": 42.72296,
+          "purchase_quantity": 43
+        }
+      }
+    }
+  ]
+}

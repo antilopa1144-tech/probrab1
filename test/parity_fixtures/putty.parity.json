@@ -1,0 +1,61 @@
+{
+  "calculator_id": "putty",
+  "formula_version": "putty-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.192Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for putty",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "height": 2.7,
+        "area": 50,
+        "surface": 0,
+        "puttyType": 0,
+        "bagWeight": 20,
+        "qualityClass": 0,
+        "layers": 0,
+        "startLayers": 0,
+        "finishLayers": 0
+      },
+      "expected_totals": {
+        "wallArea": 48.6,
+        "puttyType": 0,
+        "bagWeight": 20,
+        "qualityClass": 0,
+        "startLayers": 0,
+        "finishLayers": 1,
+        "minExactNeedKg": 46.347,
+        "recExactNeedKg": 58.379,
+        "maxExactNeedKg": 95.563,
+        "minPurchaseKg": 60,
+        "recPurchaseKg": 60,
+        "maxPurchaseKg": 100
+      },
+      "expected_materials_count": 3,
+      "expected_material_names": [
+        "Шпаклёвка финишная (мешки 20 кг)",
+        "Грунтовка глубокого проникновения (10 л)",
+        "Наждачная бумага P180-P240"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 46.347,
+          "purchase_quantity": 60
+        },
+        "REC": {
+          "exact_need": 58.379,
+          "purchase_quantity": 60
+        },
+        "MAX": {
+          "exact_need": 95.563,
+          "purchase_quantity": 100
+        }
+      }
+    }
+  ]
+}

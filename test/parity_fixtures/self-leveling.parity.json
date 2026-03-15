@@ -1,0 +1,64 @@
+{
+  "calculator_id": "self-leveling",
+  "formula_version": "self-leveling-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.214Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for self-leveling",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "area": 20,
+        "thickness": 10,
+        "mixtureType": 0,
+        "consumptionOverride": 0,
+        "bagWeight": 25
+      },
+      "expected_totals": {
+        "area": 20,
+        "perimeter": 18,
+        "inputMode": 0,
+        "thickness": 10,
+        "mixtureType": 0,
+        "bagWeight": 25,
+        "consumptionKgPerM2Mm": 1.68,
+        "totalKg": 366.916,
+        "bagsNeeded": 15,
+        "primerNeededL": 3,
+        "primerCans": 1,
+        "damperTapeLengthM": 18,
+        "damperTapeRolls": 1,
+        "minExactNeedKg": 325.92,
+        "recExactNeedKg": 366.916,
+        "maxExactNeedKg": 472.496,
+        "minPurchaseKg": 350,
+        "recPurchaseKg": 375,
+        "maxPurchaseKg": 475
+      },
+      "expected_materials_count": 3,
+      "expected_material_names": [
+        "Выравнивающая смесь (мешки 25 кг)",
+        "Грунтовка глубокого проникновения (5 л)",
+        "Демпферная лента (рулон 25 м)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 325.92,
+          "purchase_quantity": 350
+        },
+        "REC": {
+          "exact_need": 366.916,
+          "purchase_quantity": 375
+        },
+        "MAX": {
+          "exact_need": 472.496,
+          "purchase_quantity": 475
+        }
+      }
+    }
+  ]
+}

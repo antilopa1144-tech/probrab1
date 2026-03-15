@@ -1,0 +1,77 @@
+{
+  "calculator_id": "fence",
+  "formula_version": "fence-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.098Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for fence",
+      "inputs": {
+        "fenceLength": 50,
+        "fenceHeight": 2,
+        "fenceType": 0,
+        "postStep": 2.5,
+        "gatesCount": 1,
+        "wicketsCount": 1
+      },
+      "expected_totals": {
+        "fenceLength": 50,
+        "fenceHeight": 2,
+        "fenceType": 0,
+        "postStep": 2.5,
+        "gatesCount": 1,
+        "wicketsCount": 1,
+        "netLength": 45,
+        "postsCount": 23,
+        "lagsPerSpan": 2,
+        "lagSpans": 18,
+        "lagsCount": 36,
+        "postLength": 2.9,
+        "concrete": 0.69,
+        "caps": 25,
+        "sheets": 40,
+        "screws": 280,
+        "screwPacks": 2,
+        "primerCans": 3,
+        "rolls": 0,
+        "wireLength": 0,
+        "slats": 0,
+        "antisepticCans": 0,
+        "minExactNeed": 37.248,
+        "recExactNeed": 42.4,
+        "maxExactNeed": 55.1264,
+        "minPurchase": 38,
+        "recPurchase": 43,
+        "maxPurchase": 56
+      },
+      "expected_materials_count": 7,
+      "expected_material_names": [
+        "Столбы 60×60 мм (2.9 м)",
+        "Лаги 40×20 мм",
+        "Профнастил (2 м)",
+        "Саморезы кровельные (упаковка 200 шт)",
+        "Грунт-спрей для срезов",
+        "Бетон для столбов",
+        "Заглушки для столбов"
+      ],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "При наличии ворот рекомендуются усиленные столбы 80×80 или 100×100 мм"
+      ],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 37.248,
+          "purchase_quantity": 38
+        },
+        "REC": {
+          "exact_need": 42.4,
+          "purchase_quantity": 43
+        },
+        "MAX": {
+          "exact_need": 55.1264,
+          "purchase_quantity": 56
+        }
+      }
+    }
+  ]
+}

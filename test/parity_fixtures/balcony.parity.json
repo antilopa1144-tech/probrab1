@@ -1,0 +1,64 @@
+{
+  "calculator_id": "balcony",
+  "formula_version": "balcony-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.020Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for balcony",
+      "inputs": {
+        "length": 3,
+        "width": 1.2,
+        "height": 2.5,
+        "finishType": 0,
+        "insulationType": 0
+      },
+      "expected_totals": {
+        "length": 3,
+        "width": 1.2,
+        "height": 2.5,
+        "finishType": 0,
+        "insulationType": 0,
+        "floorArea": 3.6,
+        "wallArea": 21,
+        "ceilingArea": 3.6,
+        "totalFinishArea": 24.6,
+        "panelArea": 0.288,
+        "panelCount": 94,
+        "insPlates": 0,
+        "battenRows": 62,
+        "klaymerCount": 311,
+        "minExactNeedPanels": 87.5328,
+        "recExactNeedPanels": 99.64,
+        "maxExactNeedPanels": 129.54704,
+        "minPurchasePanels": 88,
+        "recPurchasePanels": 100,
+        "maxPurchasePanels": 130
+      },
+      "expected_materials_count": 3,
+      "expected_material_names": [
+        "Вагонка",
+        "Обрешётка (брусок 20×40)",
+        "Кляймеры"
+      ],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "Без утепления — на балконе будет значительный перепад температур"
+      ],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 87.5328,
+          "purchase_quantity": 88
+        },
+        "REC": {
+          "exact_need": 99.64,
+          "purchase_quantity": 100
+        },
+        "MAX": {
+          "exact_need": 129.54704,
+          "purchase_quantity": 130
+        }
+      }
+    }
+  ]
+}

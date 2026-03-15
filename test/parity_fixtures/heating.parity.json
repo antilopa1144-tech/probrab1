@@ -1,0 +1,68 @@
+{
+  "calculator_id": "heating",
+  "formula_version": "heating-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.133Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for heating",
+      "inputs": {
+        "totalArea": 80,
+        "ceilingHeight": 2.7,
+        "climateZone": 1,
+        "buildingType": 1,
+        "radiatorType": 0,
+        "roomCount": 4
+      },
+      "expected_totals": {
+        "totalArea": 80,
+        "ceilingHeight": 2.7,
+        "climateZone": 1,
+        "buildingType": 1,
+        "radiatorType": 0,
+        "roomCount": 4,
+        "heightCoeff": 1,
+        "totalPowerW": 8000,
+        "totalPowerKW": 8,
+        "wattPerUnit": 180,
+        "totalUnits": 45,
+        "pipeSticks": 12,
+        "fittings": 27,
+        "brackets": 13,
+        "thermoHeads": 5,
+        "mayevskyValves": 5,
+        "minExactNeed": 41.904,
+        "recExactNeed": 47.7,
+        "maxExactNeed": 62.0172,
+        "minPurchase": 42,
+        "recPurchase": 48,
+        "maxPurchase": 63
+      },
+      "expected_materials_count": 6,
+      "expected_material_names": [
+        "Радиаторы (секции)",
+        "Труба ПП ø25 (палки по 4 м)",
+        "Фитинги",
+        "Кронштейны",
+        "Термоголовки",
+        "Краны Маевского"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 41.904,
+          "purchase_quantity": 42
+        },
+        "REC": {
+          "exact_need": 47.7,
+          "purchase_quantity": 48
+        },
+        "MAX": {
+          "exact_need": 62.0172,
+          "purchase_quantity": 63
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "calculator_id": "brick",
+  "formula_version": "brick-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.036Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for brick",
+      "inputs": {
+        "inputMode": 0,
+        "wallWidth": 5,
+        "wallHeight": 3,
+        "area": 15,
+        "brickType": 0,
+        "wallThickness": 1,
+        "workingConditions": 1,
+        "wasteMode": 0
+      },
+      "expected_totals": {
+        "area": 15,
+        "inputMode": 0,
+        "wallWidth": 5,
+        "wallHeight": 3,
+        "brickType": 0,
+        "wallThickness": 1,
+        "wallThicknessMm": 250,
+        "workingConditions": 1,
+        "wasteMode": 0,
+        "wasteCoeff": 1.05,
+        "bricksPerSqm": 102,
+        "mortarPerSqm": 0.023,
+        "conditionsMultiplier": 1,
+        "bricksNeeded": 1702.89,
+        "mortarVolume": 0.3864,
+        "cementKg": 154.56,
+        "cementBags": 4,
+        "sandM3": 0.464,
+        "totalRows": 40,
+        "meshInterval": 5,
+        "meshLayers": 8,
+        "meshArea": 44,
+        "plasticizerL": 0.2,
+        "flexibleTies": 0,
+        "minExactNeedBricks": 1495.9728,
+        "recExactNeedBricks": 1702.89,
+        "maxExactNeedBricks": 2214.01404,
+        "minPurchaseBricks": 1496,
+        "recPurchaseBricks": 1703,
+        "maxPurchaseBricks": 2215
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "Кирпич одинарный (65 мм)",
+        "Цемент М400 (50 кг)",
+        "Песок строительный",
+        "Кладочная сетка",
+        "Пластификатор"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 1495.9728,
+          "purchase_quantity": 1496
+        },
+        "REC": {
+          "exact_need": 1702.89,
+          "purchase_quantity": 1703
+        },
+        "MAX": {
+          "exact_need": 2214.01404,
+          "purchase_quantity": 2215
+        }
+      }
+    }
+  ]
+}

@@ -4,7 +4,8 @@ import '../../core/enums/unit_type.dart';
 import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
-import '../usecases/calculate_concrete_universal.dart';
+import '../usecases/canonical_bridge.dart';
+import '../usecases/concrete_canonical_adapter.dart';
 import 'calculator_constants.dart';
 
 final concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
@@ -15,7 +16,7 @@ final concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
   subCategoryKey: 'subcategory.concrete',
   tags: ['бетон', 'замес', 'цемент', 'песок', 'щебень', 'concrete'],
   accentColor: kCalculatorAccentColor,
-  useCase: CalculateConcreteUniversal(),
+  useCase: CanonicalBridgeUseCase(calculateCanonicalConcrete),
   fields: const [
     CalculatorField(
       key: 'concreteVolume',

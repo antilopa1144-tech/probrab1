@@ -1,0 +1,72 @@
+{
+  "calculator_id": "panels-3d",
+  "formula_version": "panels-3d-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.163Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for panels-3d",
+      "inputs": {
+        "inputMode": 0,
+        "area": 10,
+        "length": 4,
+        "height": 2.7,
+        "panelSize": 50,
+        "paintable": 0,
+        "withVarnish": 1
+      },
+      "expected_totals": {
+        "area": 10,
+        "inputMode": 0,
+        "panelSize": 50,
+        "panelArea": 0.25,
+        "paintable": 0,
+        "withVarnish": 1,
+        "panels": 44,
+        "glueKg": 50,
+        "glueBags": 10,
+        "primerL": 1.8,
+        "primerCans": 1,
+        "puttyKg": 10,
+        "puttyBags": 2,
+        "paintL": 0,
+        "paintCans": 0,
+        "varnishL": 0.8,
+        "varnishCans": 1,
+        "perimeter": 12.649,
+        "moldingM": 12.649,
+        "minExactNeed": 40.9728,
+        "recExactNeed": 46.64,
+        "maxExactNeed": 60.63904,
+        "minPurchase": 41,
+        "recPurchase": 47,
+        "maxPurchase": 61
+      },
+      "expected_materials_count": 6,
+      "expected_material_names": [
+        "3D-панели",
+        "Клей для панелей (5 кг)",
+        "Грунтовка (5 л)",
+        "Шпаклёвка (5 кг)",
+        "Молдинги (п.м.)",
+        "Лак (1 л)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 40.9728,
+          "purchase_quantity": 41
+        },
+        "REC": {
+          "exact_need": 46.64,
+          "purchase_quantity": 47
+        },
+        "MAX": {
+          "exact_need": 60.63904,
+          "purchase_quantity": 61
+        }
+      }
+    }
+  ]
+}

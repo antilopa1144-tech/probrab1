@@ -1,0 +1,66 @@
+{
+  "calculator_id": "doors",
+  "formula_version": "doors-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.069Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for doors",
+      "inputs": {
+        "doorCount": 3,
+        "doorType": 0,
+        "wallThickness": 120,
+        "withNalichnik": 1
+      },
+      "expected_totals": {
+        "doorCount": 3,
+        "doorType": 0,
+        "wallThickness": 120,
+        "withNalichnik": 1,
+        "doorW": 700,
+        "doorH": 2000,
+        "perimM": 5.4,
+        "foamPerDoor": 0.54,
+        "foamCans": 3,
+        "needDobor": 1,
+        "doborWidth": 50,
+        "doborPcs": 9,
+        "nalichnikPcs": 18,
+        "glueCarts": 2,
+        "screwPacks": 1,
+        "dubelPacks": 1,
+        "minExactNeed": 2.7936,
+        "recExactNeed": 3.18,
+        "maxExactNeed": 4.13448,
+        "minPurchase": 3,
+        "recPurchase": 4,
+        "maxPurchase": 5
+      },
+      "expected_materials_count": 6,
+      "expected_material_names": [
+        "Монтажная пена (750 мл)",
+        "Саморезы (упаковка 50 шт)",
+        "Дюбели (упаковка 20 шт)",
+        "Клей-герметик (картриджи)",
+        "Доборы (ширина 50 мм)",
+        "Наличники"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 2.7936,
+          "purchase_quantity": 3
+        },
+        "REC": {
+          "exact_need": 3.18,
+          "purchase_quantity": 4
+        },
+        "MAX": {
+          "exact_need": 4.13448,
+          "purchase_quantity": 5
+        }
+      }
+    }
+  ]
+}

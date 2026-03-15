@@ -1,0 +1,67 @@
+{
+  "calculator_id": "insulation",
+  "formula_version": "insulation-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.138Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for insulation",
+      "inputs": {
+        "area": 40,
+        "insulationType": 0,
+        "thickness": 100,
+        "plateSize": 0,
+        "reserve": 5
+      },
+      "expected_totals": {
+        "area": 40,
+        "insulationType": 0,
+        "thickness": 100,
+        "plateSize": 0,
+        "reserve": 5,
+        "areaWithReserve": 42,
+        "plateArea": 0.72,
+        "platesNeeded": 59,
+        "dowelsNeeded": 294,
+        "membraneArea": 46,
+        "aluTapeRolls": 2,
+        "glueKg": 0,
+        "glueBags": 0,
+        "primerCans": 1,
+        "ecowoolVolume": 0,
+        "ecowoolKg": 0,
+        "ecowoolBags": 0,
+        "minExactNeed": 54.9408,
+        "recExactNeed": 62.54,
+        "maxExactNeed": 81.31144,
+        "minPurchase": 55,
+        "recPurchase": 63,
+        "maxPurchase": 82
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "Минеральная вата (1200×600 мм)",
+        "Дюбели тарельчатые",
+        "Пароизоляционная мембрана",
+        "Алюминиевая лента (скотч)",
+        "Грунтовка (10 л)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 54.9408,
+          "purchase_quantity": 55
+        },
+        "REC": {
+          "exact_need": 62.54,
+          "purchase_quantity": 63
+        },
+        "MAX": {
+          "exact_need": 81.31144,
+          "purchase_quantity": 82
+        }
+      }
+    }
+  ]
+}

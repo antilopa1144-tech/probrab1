@@ -1,0 +1,60 @@
+{
+  "calculator_id": "tile-adhesive",
+  "formula_version": "tile-adhesive-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.246Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for tile-adhesive",
+      "inputs": {
+        "area": 20,
+        "tileSize": 0,
+        "laying": 0,
+        "base": 0,
+        "bagWeight": 25
+      },
+      "expected_totals": {
+        "area": 20,
+        "tileSize": 0,
+        "laying": 0,
+        "base": 0,
+        "bagWeight": 25,
+        "adjustedRate": 3,
+        "totalKg": 66,
+        "bags": 3,
+        "primer": 1,
+        "tilesPerM2": 11.111,
+        "crosses": 978,
+        "crossPacks": 5,
+        "minExactNeed": 61.4592,
+        "recExactNeed": 69.96,
+        "maxExactNeed": 90.95856,
+        "minPurchase": 75,
+        "recPurchase": 75,
+        "maxPurchase": 100
+      },
+      "expected_materials_count": 3,
+      "expected_material_names": [
+        "Плиточный клей 25кг",
+        "Грунтовка (канистра 10 л)",
+        "Крестики (упаковка 200 шт)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 61.4592,
+          "purchase_quantity": 75
+        },
+        "REC": {
+          "exact_need": 69.96,
+          "purchase_quantity": 75
+        },
+        "MAX": {
+          "exact_need": 90.95856,
+          "purchase_quantity": 100
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "calculator_id": "foundation-slab",
+  "formula_version": "foundation-slab-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.109Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for foundation-slab",
+      "inputs": {
+        "area": 60,
+        "thickness": 200,
+        "rebarDiam": 12,
+        "rebarStep": 200,
+        "insulationThickness": 0
+      },
+      "expected_totals": {
+        "area": 60,
+        "thickness": 200,
+        "rebarDiam": 12,
+        "rebarStep": 200,
+        "insulationThickness": 0,
+        "side": 7.746,
+        "perimeter": 30.984,
+        "concreteM3": 12.6,
+        "barsPerDir": 40,
+        "totalBarLen": 1239.355,
+        "rebarKg": 1100.547,
+        "wireKg": 64,
+        "formworkArea": 6.816,
+        "geotextile": 72,
+        "gravel": 9,
+        "sand": 6,
+        "eppsPlates": 0,
+        "minExactNeedM3": 11.73312,
+        "recExactNeedM3": 13.356,
+        "maxExactNeedM3": 17.364816,
+        "minPurchaseM3": 11.8,
+        "recPurchaseM3": 13.4,
+        "maxPurchaseM3": 17.4
+      },
+      "expected_materials_count": 7,
+      "expected_material_names": [
+        "Бетон М300",
+        "Арматура ∅12 мм",
+        "Проволока вязальная",
+        "Опалубка (доска)",
+        "Геотекстиль",
+        "Щебень (подушка)",
+        "Песок (подушка)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 11.73312,
+          "purchase_quantity": 11.8
+        },
+        "REC": {
+          "exact_need": 13.356,
+          "purchase_quantity": 13.4
+        },
+        "MAX": {
+          "exact_need": 17.364816,
+          "purchase_quantity": 17.4
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "calculator_id": "rebar",
+  "formula_version": "rebar-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.201Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for rebar",
+      "inputs": {
+        "structureType": 0,
+        "length": 10,
+        "width": 8,
+        "height": 0.3,
+        "mainDiameter": 12,
+        "gridStep": 200
+      },
+      "expected_totals": {
+        "structureType": 0,
+        "length": 10,
+        "width": 8,
+        "height": 0.3,
+        "mainDiameter": 12,
+        "gridStep": 200,
+        "gridStepM": 0.2,
+        "mainRebarLength": 1717.8,
+        "mainRebarKg": 1525.4,
+        "mainRods": 147,
+        "tieRebarLength": 119,
+        "tieRebarKg": 47,
+        "secondaryDiameter": 8,
+        "intersections": 4658,
+        "wireLength": 1397.4,
+        "wireKg": 8.38,
+        "fixators": 400,
+        "barsAlongLength": 41,
+        "barsAlongWidth": 51,
+        "verticalTieCount": 238,
+        "stirrupCount": 0,
+        "minExactNeedKg": 1420.45844,
+        "recExactNeedKg": 1616.930784,
+        "maxExactNeedKg": 2102.254084,
+        "minPurchaseRods": 137,
+        "recPurchaseRods": 156,
+        "maxPurchaseRods": 203
+      },
+      "expected_materials_count": 4,
+      "expected_material_names": [
+        "Арматура основная Ø12 А500С",
+        "Арматура для хомутов Ø8 А500С",
+        "Проволока вязальная Ø1.2",
+        "Фиксаторы пластиковые"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 1420.45844,
+          "purchase_quantity": 137
+        },
+        "REC": {
+          "exact_need": 1616.930784,
+          "purchase_quantity": 156
+        },
+        "MAX": {
+          "exact_need": 2102.254084,
+          "purchase_quantity": 203
+        }
+      }
+    }
+  ]
+}

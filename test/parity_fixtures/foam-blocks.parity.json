@@ -1,0 +1,74 @@
+{
+  "calculator_id": "foam-blocks",
+  "formula_version": "foam-blocks-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.103Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for foam-blocks",
+      "inputs": {
+        "inputMode": 0,
+        "wallLength": 10,
+        "wallHeight": 2.7,
+        "area": 27,
+        "openingsArea": 5,
+        "blockSize": 0,
+        "mortarType": 0
+      },
+      "expected_totals": {
+        "inputMode": 0,
+        "wallLength": 10,
+        "wallHeight": 2.7,
+        "wallArea": 27,
+        "openingsArea": 5,
+        "netArea": 22,
+        "blockSize": 0,
+        "blockL": 600,
+        "blockH": 300,
+        "blockT": 200,
+        "mortarType": 0,
+        "blockFaceArea": 0.18,
+        "blocksNet": 122.222,
+        "blocksWithReserve": 129,
+        "volume": 4.4,
+        "mortarBags": 5,
+        "rows": 10,
+        "meshArea": 0,
+        "rebarLength": 66,
+        "openingsCount": 3,
+        "uBlocks": 7,
+        "primerCans": 1,
+        "minExactNeedBlocks": 120.1248,
+        "recExactNeedBlocks": 136.74,
+        "maxExactNeedBlocks": 177.78264,
+        "minPurchaseBlocks": 121,
+        "recPurchaseBlocks": 137,
+        "maxPurchaseBlocks": 178
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "Пеноблок 600×300×200",
+        "Клей для кладки (25 кг)",
+        "Арматура Ø8",
+        "U-блоки (перемычки)",
+        "Грунтовка (10 л)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 120.1248,
+          "purchase_quantity": 121
+        },
+        "REC": {
+          "exact_need": 136.74,
+          "purchase_quantity": 137
+        },
+        "MAX": {
+          "exact_need": 177.78264,
+          "purchase_quantity": 178
+        }
+      }
+    }
+  ]
+}

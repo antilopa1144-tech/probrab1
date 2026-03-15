@@ -1,0 +1,82 @@
+{
+  "calculator_id": "brickwork",
+  "formula_version": "brickwork-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.040Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for brickwork",
+      "inputs": {
+        "inputMode": 0,
+        "wallLength": 10,
+        "wallHeight": 2.7,
+        "area": 27,
+        "openingsArea": 5,
+        "brickFormat": 0,
+        "wallThickness": 1,
+        "mortarJoint": 10
+      },
+      "expected_totals": {
+        "inputMode": 0,
+        "wallLength": 10,
+        "wallHeight": 2.7,
+        "wallArea": 27,
+        "openingsArea": 5,
+        "netArea": 22,
+        "brickFormat": 0,
+        "wallThicknessIdx": 1,
+        "wallThicknessMm": 250,
+        "mortarJoint": 10,
+        "baseBricks": 102,
+        "jointCoeff": 1,
+        "bricksPerSqm": 102,
+        "totalBricks": 2244,
+        "bricksWithReserve": 2357,
+        "wallVolume": 5.5,
+        "mortarCoeff": 0.221,
+        "mortarM3": 1.2155,
+        "mortarKg": 2066.35,
+        "mortarBags": 42,
+        "brickH": 65,
+        "rowHeight": 0.075,
+        "totalRows": 37,
+        "meshRows": 7,
+        "meshArea": 17.5,
+        "openingsCount": 3,
+        "lintelsPerOpening": 2,
+        "totalLintels": 6,
+        "pallets": 5,
+        "minExactNeedBricks": 2194.8384,
+        "recExactNeedBricks": 2498.42,
+        "maxExactNeedBricks": 3248.32312,
+        "minPurchaseBricks": 2195,
+        "recPurchaseBricks": 2499,
+        "maxPurchaseBricks": 3249
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "Кирпич одинарный (65 мм)",
+        "Поддоны кирпича",
+        "Раствор кладочный (50 кг)",
+        "Кладочная сетка",
+        "Перемычки (ЖБ)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 2194.8384,
+          "purchase_quantity": 2195
+        },
+        "REC": {
+          "exact_need": 2498.42,
+          "purchase_quantity": 2499
+        },
+        "MAX": {
+          "exact_need": 3248.32312,
+          "purchase_quantity": 3249
+        }
+      }
+    }
+  ]
+}

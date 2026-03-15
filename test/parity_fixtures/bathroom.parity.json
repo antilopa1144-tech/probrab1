@@ -1,0 +1,80 @@
+{
+  "calculator_id": "bathroom",
+  "formula_version": "bathroom-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.028Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for bathroom",
+      "inputs": {
+        "length": 2.5,
+        "width": 1.7,
+        "height": 2.5,
+        "floorTileSize": 0,
+        "wallTileSize": 0,
+        "hasWaterproofing": 1,
+        "doorWidth": 0.7
+      },
+      "expected_totals": {
+        "length": 2.5,
+        "width": 1.7,
+        "height": 2.5,
+        "floorTileSize": 0,
+        "wallTileSize": 0,
+        "hasWaterproofing": 1,
+        "doorWidth": 0.7,
+        "floorArea": 4.25,
+        "perimeter": 8.4,
+        "wallArea": 19.53,
+        "floorTileArea": 0.09,
+        "wallTileArea": 0.06,
+        "tilesFloor": 52,
+        "tilesWall": 359,
+        "totalTiles": 411,
+        "floorAdhesiveBags": 1,
+        "wallAdhesiveBags": 3,
+        "groutBags": 6,
+        "masticBuckets": 3,
+        "tapeRolls": 1,
+        "primerCans": 1,
+        "crossesPacks": 13,
+        "siliconeTubes": 3,
+        "minExactNeed": 382.7232,
+        "recExactNeed": 435.66,
+        "maxExactNeed": 566.42376,
+        "minPurchase": 383,
+        "recPurchase": 436,
+        "maxPurchase": 567
+      },
+      "expected_materials_count": 10,
+      "expected_material_names": [
+        "Плитка напольная 300×300 мм",
+        "Плитка настенная 200×300 мм",
+        "Клей для напольной плитки (25 кг)",
+        "Клей для настенной плитки (25 кг)",
+        "Затирка (2 кг)",
+        "Мастика гидроизоляционная (4 кг)",
+        "Лента гидроизоляционная (10 м)",
+        "Грунтовка (5 л)",
+        "Крестики (упаковка 100 шт)",
+        "Силиконовый герметик"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 382.7232,
+          "purchase_quantity": 383
+        },
+        "REC": {
+          "exact_need": 435.66,
+          "purchase_quantity": 436
+        },
+        "MAX": {
+          "exact_need": 566.42376,
+          "purchase_quantity": 567
+        }
+      }
+    }
+  ]
+}

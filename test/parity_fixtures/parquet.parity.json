@@ -1,0 +1,79 @@
+{
+  "calculator_id": "parquet",
+  "formula_version": "parquet-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.168Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for parquet",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "area": 20,
+        "perimeter": 0,
+        "packArea": 1.892,
+        "layoutProfileId": 1,
+        "reservePercent": 0,
+        "needUnderlayment": 1,
+        "needPlinth": 1,
+        "needGlue": 0,
+        "underlaymentRollArea": 10,
+        "doorThresholds": 1
+      },
+      "expected_totals": {
+        "area": 20,
+        "perimeter": 18,
+        "inputMode": 0,
+        "packArea": 1.892,
+        "layoutProfileId": 1,
+        "reservePercent": 0,
+        "wastePercent": 5,
+        "baseExactNeedArea": 21,
+        "packsNeeded": 12,
+        "needUnderlayment": 1,
+        "needPlinth": 1,
+        "needGlue": 0,
+        "underlayArea": 22,
+        "underlaymentRolls": 3,
+        "plinthLength": 20,
+        "plinthPieces": 8,
+        "wedgesNeeded": 36,
+        "glueNeededKg": 0,
+        "glueBuckets": 0,
+        "doorThresholds": 1,
+        "minExactNeedArea": 19.164096,
+        "recExactNeedArea": 21,
+        "maxExactNeedArea": 27.68304,
+        "minPurchaseArea": 20.812,
+        "recPurchaseArea": 22.704,
+        "maxPurchaseArea": 28.38
+      },
+      "expected_materials_count": 6,
+      "expected_material_names": [
+        "Паркетная доска (1.892 м² в упаковке)",
+        "Порожек стыковочный",
+        "Подложка (10 м²)",
+        "Скотч для подложки",
+        "Плинтус напольный (2.5 м)",
+        "Клинья распорные"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 19.164096,
+          "purchase_quantity": 20.812
+        },
+        "REC": {
+          "exact_need": 21,
+          "purchase_quantity": 22.704
+        },
+        "MAX": {
+          "exact_need": 27.68304,
+          "purchase_quantity": 28.38
+        }
+      }
+    }
+  ]
+}

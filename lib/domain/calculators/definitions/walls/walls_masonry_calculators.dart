@@ -8,9 +8,10 @@ import '../../../models/calculator_definition_v2.dart';
 import '../../../models/calculator_field.dart';
 import '../../../models/calculator_hint.dart';
 import '../../calculator_constants.dart';
-import '../../../usecases/calculate_brick_partition.dart';
-import '../../../usecases/calculate_gasblock_partition.dart';
-import '../../../usecases/calculate_decor_stone_v2.dart';
+import '../../../usecases/canonical_bridge.dart';
+import '../../../usecases/partitions_canonical_adapter.dart';
+import '../../../usecases/brickwork_canonical_adapter.dart';
+import '../../../usecases/decor_stone_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
   // 1. partitions_blocks - Перегородки из блоков
@@ -77,7 +78,7 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.pervyy_ryad_ukladyvayte_na'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proveryayte_geometriyu_urovnem'),
       ],
-      useCase: CalculateGasblockPartition(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalPartitions),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -178,7 +179,7 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
           ),
         ),
       ],
-      useCase: CalculateBrickPartition(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalBrickwork),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -254,7 +255,7 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya_3'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obrabotayte_kamen_gidrofobizatorom'),
       ],
-      useCase: CalculateDecorStoneV2(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalDecorStone),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,

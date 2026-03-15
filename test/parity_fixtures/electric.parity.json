@@ -1,0 +1,82 @@
+{
+  "calculator_id": "electric",
+  "formula_version": "electric-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.081Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for electric",
+      "inputs": {
+        "apartmentArea": 60,
+        "roomsCount": 3,
+        "ceilingHeight": 2.7,
+        "wiringType": 0,
+        "hasKitchen": 1,
+        "reserve": 15
+      },
+      "expected_totals": {
+        "apartmentArea": 60,
+        "roomsCount": 3,
+        "ceilingHeight": 2.7,
+        "wiringType": 0,
+        "hasKitchen": 1,
+        "reserve": 15,
+        "lightingGroups": 4,
+        "outletGroups": 5,
+        "acGroups": 2,
+        "breakersCount": 12,
+        "uzoCount": 5,
+        "cable15length": 88.3,
+        "cable25length": 133.7,
+        "cable6length": 17.2,
+        "conduitLength": 192,
+        "outletsCount": 42,
+        "switchesCount": 5,
+        "cable15spools": 2,
+        "cable25spools": 3,
+        "conduitPacks": 4,
+        "socketBoxes": 52,
+        "gypsumKg": 10,
+        "minExactNeed": 4.56288,
+        "recExactNeed": 5.3,
+        "maxExactNeed": 7.57988,
+        "minPurchase": 5,
+        "recPurchase": 6,
+        "maxPurchase": 8
+      },
+      "expected_materials_count": 11,
+      "expected_material_names": [
+        "Кабель ВВГнг 3×1.5",
+        "Кабель ВВГнг 3×2.5",
+        "Кабель ВВГнг 3×6",
+        "Щиток (модулей)",
+        "Автоматы",
+        "УЗО/дифавтоматы",
+        "Розетки",
+        "Выключатели",
+        "Подрозетники",
+        "Гофра/кабель-канал",
+        "Гипс/алебастр"
+      ],
+      "expected_warnings_count": 2,
+      "expected_warnings": [
+        "Кухня: кабель 3×6 мм², автомат 32А, УЗО 40А/30мА",
+        "Все розетки в ванной и кухне — через УЗО 10-30 мА"
+      ],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 4.56288,
+          "purchase_quantity": 5
+        },
+        "REC": {
+          "exact_need": 5.3,
+          "purchase_quantity": 6
+        },
+        "MAX": {
+          "exact_need": 7.57988,
+          "purchase_quantity": 8
+        }
+      }
+    }
+  ]
+}

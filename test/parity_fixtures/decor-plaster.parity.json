@@ -1,0 +1,59 @@
+{
+  "calculator_id": "decor-plaster",
+  "formula_version": "decor-plaster-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.062Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for decor-plaster",
+      "inputs": {
+        "area": 50,
+        "texture": 0,
+        "surface": 0,
+        "bagWeight": 25
+      },
+      "expected_totals": {
+        "area": 50,
+        "texture": 0,
+        "surface": 0,
+        "bagWeight": 25,
+        "consumption": 2.5,
+        "totalKg": 131.25,
+        "bags": 6,
+        "primerCans": 2,
+        "tintedPrimer": 2,
+        "pigmentBanks": 6,
+        "waxCans": 0,
+        "minExactNeed": 5.5872,
+        "recExactNeed": 6.36,
+        "maxExactNeed": 8.26896,
+        "minPurchase": 6,
+        "recPurchase": 7,
+        "maxPurchase": 9
+      },
+      "expected_materials_count": 4,
+      "expected_material_names": [
+        "Короед 2 мм (мешки 25 кг)",
+        "Грунтовка глубокого проникновения (10 л)",
+        "Тонированная грунтовка (5 л)",
+        "Пигмент / колер (банки)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 5.5872,
+          "purchase_quantity": 6
+        },
+        "REC": {
+          "exact_need": 6.36,
+          "purchase_quantity": 7
+        },
+        "MAX": {
+          "exact_need": 8.26896,
+          "purchase_quantity": 9
+        }
+      }
+    }
+  ]
+}

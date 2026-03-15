@@ -1,0 +1,72 @@
+{
+  "calculator_id": "siding",
+  "formula_version": "siding-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.221Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for siding",
+      "inputs": {
+        "facadeArea": 100,
+        "openingsArea": 10,
+        "perimeter": 40,
+        "height": 5,
+        "sidingType": 0,
+        "exteriorCorners": 4
+      },
+      "expected_totals": {
+        "facadeArea": 100,
+        "openingsArea": 10,
+        "perimeter": 40,
+        "height": 5,
+        "sidingType": 0,
+        "exteriorCorners": 4,
+        "panelArea": 0.732,
+        "netArea": 90,
+        "panels": 136,
+        "starter": 15,
+        "jProfile": 20,
+        "corners": 7,
+        "finish": 12,
+        "screws": 1134,
+        "battens": 189,
+        "membrane": 2,
+        "sealant": 3,
+        "minExactNeed": 126.6432,
+        "recExactNeed": 144.16,
+        "maxExactNeed": 187.42976,
+        "minPurchase": 127,
+        "recPurchase": 145,
+        "maxPurchase": 188
+      },
+      "expected_materials_count": 9,
+      "expected_material_names": [
+        "Виниловый сайдинг (0.732 м²)",
+        "Стартовая планка (3.66 м)",
+        "J-профиль (3.66 м)",
+        "Наружный угол (3 м)",
+        "Финишная планка (3.66 м)",
+        "Саморезы",
+        "Обрешётка (м.п.)",
+        "Мембрана (75 м²)",
+        "Герметик (тубы)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 126.6432,
+          "purchase_quantity": 127
+        },
+        "REC": {
+          "exact_need": 144.16,
+          "purchase_quantity": 145
+        },
+        "MAX": {
+          "exact_need": 187.42976,
+          "purchase_quantity": 188
+        }
+      }
+    }
+  ]
+}

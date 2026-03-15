@@ -1,0 +1,71 @@
+{
+  "calculator_id": "terrace",
+  "formula_version": "terrace-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.242Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for terrace",
+      "inputs": {
+        "length": 5,
+        "width": 3,
+        "boardType": 0,
+        "boardLength": 3000,
+        "lagStep": 400,
+        "withTreatment": 0
+      },
+      "expected_totals": {
+        "length": 5,
+        "width": 3,
+        "area": 15,
+        "boardType": 0,
+        "boardLength": 3000,
+        "lagStep": 400,
+        "withTreatment": 0,
+        "boardWidth": 150,
+        "gap": 5,
+        "boardPitch": 0.155,
+        "rowCount": 20,
+        "boardsPerRow": 2,
+        "totalBoards": 44,
+        "lagRowCount": 14,
+        "lagTotalLen": 44.1,
+        "lagPcs": 15,
+        "klaymerCount": 280,
+        "screwCount": 336,
+        "treatmentL": 0,
+        "geotextileRolls": 1,
+        "minExactNeed": 40.9728,
+        "recExactNeed": 46.64,
+        "maxExactNeed": 60.63904,
+        "minPurchase": 41,
+        "recPurchase": 47,
+        "maxPurchase": 61
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "ДПК 150 мм (3000 мм)",
+        "Лаги 50×50 мм (3 м)",
+        "Кляймеры",
+        "Саморезы",
+        "Геотекстиль (50 м²)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 40.9728,
+          "purchase_quantity": 41
+        },
+        "REC": {
+          "exact_need": 46.64,
+          "purchase_quantity": 47
+        },
+        "MAX": {
+          "exact_need": 60.63904,
+          "purchase_quantity": 61
+        }
+      }
+    }
+  ]
+}

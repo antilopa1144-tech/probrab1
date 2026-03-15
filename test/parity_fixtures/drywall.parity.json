@@ -1,0 +1,82 @@
+{
+  "calculator_id": "drywall",
+  "formula_version": "drywall-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.073Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for drywall",
+      "inputs": {
+        "workType": 0,
+        "length": 5,
+        "height": 2.7,
+        "layers": 1,
+        "sheetSize": 0,
+        "profileStep": 0.6
+      },
+      "expected_totals": {
+        "area": 13.5,
+        "workType": 0,
+        "length": 5,
+        "height": 2.7,
+        "layers": 1,
+        "sheetSize": 0,
+        "profileStep": 0.6,
+        "sides": 2,
+        "totalSheetArea": 27,
+        "gklArea": 3,
+        "sheetsNeeded": 10.6,
+        "pnPerimeter": 15.4,
+        "pnPieces": 6,
+        "ppCount": 10,
+        "ppPieces": 10,
+        "screwsTF": 851,
+        "screwsLB": 42,
+        "dowels": 26,
+        "sealingTapeRolls": 1,
+        "puttyStartBags": 1,
+        "puttyFinishBags": 2,
+        "serpyankaRolls": 1,
+        "primerCans": 1,
+        "sandpaperPacks": 1,
+        "minExactNeedSheets": 9.312,
+        "recExactNeedSheets": 10.6,
+        "maxExactNeedSheets": 13.7816,
+        "minPurchaseSheets": 10,
+        "recPurchaseSheets": 11,
+        "maxPurchaseSheets": 14
+      },
+      "expected_materials_count": 12,
+      "expected_material_names": [
+        "ГКЛ листы",
+        "Профиль ПН 27×28 3м",
+        "Профиль ПП 60×27 3м",
+        "Саморезы 3.5×25 мм",
+        "Саморезы-клопы 3.5×9.5 мм",
+        "Дюбели 6×40",
+        "Лента уплотнительная (рулон 30м)",
+        "Шпаклёвка стартовая 25кг",
+        "Шпаклёвка финишная 25кг",
+        "Серпянка 90м",
+        "Грунтовка 10л",
+        "Наждачная бумага P180"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 9.312,
+          "purchase_quantity": 10
+        },
+        "REC": {
+          "exact_need": 10.6,
+          "purchase_quantity": 11
+        },
+        "MAX": {
+          "exact_need": 13.7816,
+          "purchase_quantity": 14
+        }
+      }
+    }
+  ]
+}

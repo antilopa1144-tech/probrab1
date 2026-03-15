@@ -1,0 +1,85 @@
+{
+  "calculator_id": "laminate",
+  "formula_version": "laminate-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.143Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for laminate",
+      "inputs": {
+        "inputMode": 1,
+        "length": 5,
+        "width": 4,
+        "area": 20,
+        "perimeter": 0,
+        "packArea": 2.397,
+        "layoutProfileId": 7,
+        "reservePercent": 10,
+        "hasUnderlayment": 1,
+        "underlaymentRollArea": 10,
+        "doorThresholds": 1,
+        "underlayType": 3,
+        "laminateClass": 32,
+        "laminateThickness": 8
+      },
+      "expected_totals": {
+        "area": 20,
+        "perimeter": 17.889,
+        "inputMode": 1,
+        "packArea": 2.397,
+        "layoutProfileId": 7,
+        "reservePercent": 10,
+        "smallRoomAdjustment": 0,
+        "wastePercent": 10,
+        "baseExactNeedArea": 22,
+        "packsNeeded": 10,
+        "underlayArea": 21,
+        "underlaymentRolls": 3,
+        "plinthLength": 17.5,
+        "plinthPieces": 7,
+        "innerCorners": 4,
+        "plinthConnectors": 3,
+        "wedgesNeeded": 36,
+        "vaporBarrierArea": 22,
+        "doorThresholds": 1,
+        "underlayType": 3,
+        "laminateClass": 32,
+        "laminateThickness": 8,
+        "minExactNeedArea": 20.076672,
+        "recExactNeedArea": 22,
+        "maxExactNeedArea": 29.00128,
+        "minPurchaseArea": 21.573,
+        "recPurchaseArea": 23.97,
+        "maxPurchaseArea": 31.161
+      },
+      "expected_materials_count": 9,
+      "expected_material_names": [
+        "Ламинат (2.397 м² в упаковке)",
+        "Подложка под ламинат",
+        "Плинтус напольный (2.5 м)",
+        "Внутренние углы для плинтуса",
+        "Соединители для плинтуса",
+        "Клинья распорные",
+        "Пароизоляционная плёнка",
+        "Порожек стыковочный",
+        "Скотч для стыков подложки"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 20.076672,
+          "purchase_quantity": 21.573
+        },
+        "REC": {
+          "exact_need": 22,
+          "purchase_quantity": 23.97
+        },
+        "MAX": {
+          "exact_need": 29.00128,
+          "purchase_quantity": 31.161
+        }
+      }
+    }
+  ]
+}

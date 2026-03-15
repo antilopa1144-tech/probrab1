@@ -1,0 +1,58 @@
+{
+  "calculator_id": "sound-insulation",
+  "formula_version": "sound-insulation-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.232Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for sound-insulation",
+      "inputs": {
+        "area": 30,
+        "surfaceType": 0,
+        "system": 0
+      },
+      "expected_totals": {
+        "area": 30,
+        "surfaceType": 0,
+        "system": 0,
+        "perim": 21.909,
+        "primaryQty": 55,
+        "sealant": 3,
+        "sealTape": 2,
+        "minExactNeed": 51.216,
+        "recExactNeed": 58.3,
+        "maxExactNeed": 75.7988,
+        "minPurchase": 52,
+        "recPurchase": 59,
+        "maxPurchase": 76
+      },
+      "expected_materials_count": 8,
+      "expected_material_names": [
+        "Rockwool плиты",
+        "ГКЛ листы",
+        "Профиль ПП 3м",
+        "Виброподвесы",
+        "Вибролента",
+        "Саморезы (упаковки по 200)",
+        "Герметик",
+        "Уплотнительная лента 30м"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 51.216,
+          "purchase_quantity": 52
+        },
+        "REC": {
+          "exact_need": 58.3,
+          "purchase_quantity": 59
+        },
+        "MAX": {
+          "exact_need": 75.7988,
+          "purchase_quantity": 76
+        }
+      }
+    }
+  ]
+}

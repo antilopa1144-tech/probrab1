@@ -1,0 +1,72 @@
+{
+  "calculator_id": "warm-floor-pipes",
+  "formula_version": "warm-floor-pipes-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.274Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for warm-floor-pipes",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "area": 20,
+        "pipeStep": 200,
+        "pipeType": 0
+      },
+      "expected_totals": {
+        "inputMode": 0,
+        "area": 20,
+        "perimeter": 18,
+        "length": 5,
+        "width": 4,
+        "pipeStep": 200,
+        "pipeType": 0,
+        "usefulArea": 17,
+        "pipeStepM": 0.2,
+        "pipeLength": 88,
+        "circuits": 2,
+        "totalPipe": 92.4,
+        "coils": 1,
+        "eppsSheets": 30,
+        "damperTapeRolls": 1,
+        "anchorTotal": 324,
+        "anchorPacks": 4,
+        "screedBags": 60,
+        "minExactNeed": 86.04288,
+        "recExactNeed": 97.944,
+        "maxExactNeed": 127.341984,
+        "minPurchase": 200,
+        "recPurchase": 200,
+        "maxPurchase": 200
+      },
+      "expected_materials_count": 6,
+      "expected_material_names": [
+        "Труба PEX-a (бухты 200 м)",
+        "Утеплитель ЭППС (листы 1200×600)",
+        "Демпферная лента (рулоны)",
+        "Якорные клипсы (упаковки по 100 шт)",
+        "Коллектор (2 контуров)",
+        "Стяжка полусухая (мешки 25 кг)"
+      ],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "Длина трубы более 80 м — рекомендуется несколько контуров"
+      ],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 86.04288,
+          "purchase_quantity": 200
+        },
+        "REC": {
+          "exact_need": 97.944,
+          "purchase_quantity": 200
+        },
+        "MAX": {
+          "exact_need": 127.341984,
+          "purchase_quantity": 200
+        }
+      }
+    }
+  ]
+}

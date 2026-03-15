@@ -8,14 +8,15 @@ import '../../models/calculator_definition_v2.dart';
 import '../../models/calculator_field.dart';
 import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
-import '../../usecases/calculate_laminate.dart';
-import '../../usecases/calculate_linoleum.dart';
-import '../../usecases/calculate_parquet.dart';
+import '../../usecases/canonical_bridge.dart';
+import '../../usecases/laminate_canonical_adapter.dart';
+import '../../usecases/linoleum_canonical_adapter.dart';
+import '../../usecases/parquet_canonical_adapter.dart';
 // calculate_screed.dart - не используется, калькулятор в screed_calculator_v2.dart
-import '../../usecases/calculate_self_leveling_floor.dart';
+import '../../usecases/self_leveling_canonical_adapter.dart';
 // calculate_tile.dart - не используется, калькулятор в tile_calculator_v2.dart
-import '../../usecases/calculate_warm_floor.dart';
-import '../../usecases/calculate_tile_grout.dart';
+import '../../usecases/warm_floor_canonical_adapter.dart';
+import '../../usecases/tile_grout_canonical_adapter.dart';
 // calculate_carpet.dart - удалён (floors_carpet не востребован)
 // calculate_floor_insulation.dart - удалён (floors_insulation не востребован)
 
@@ -110,7 +111,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           ),
         ),
       ],
-      useCase: CalculateLaminate(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalLaminate),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -198,7 +199,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.obrezhte_izlishki_posle_ukladki'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_dvuhstoronniy_skotch_dlya'),
       ],
-      useCase: CalculateLinoleum(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalLinoleum),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -270,7 +271,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_podlozhku_dlya_zvukoizolyatsii'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.lak_nanosite_v_3'),
       ],
-      useCase: CalculateParquet(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalParquet),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -332,7 +333,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.raskatyvayte_smes_igolchatym_valikom'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_hodite_po_polu'),
       ],
-      useCase: CalculateSelfLevelingFloor(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalSelfLeveling),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -422,7 +423,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podklyuchenie_dolzhen_vypolnyat_kvalifitsirovannyy'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pered_ukladkoy_pokrytiya_proverte'),
       ],
-      useCase: CalculateWarmFloor(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalWarmFloor),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -645,7 +646,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         CalculatorHint(type: HintType.tip, messageKey: 'hint.floors_tile_grout.rubber_spatula'),
         CalculatorHint(type: HintType.tip, messageKey: 'hint.floors_tile_grout.clean_excess'),
       ],
-      useCase: CalculateTileGrout(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalTileGrout),
       accentColor: kCalculatorAccentColor,
       complexity: 1,
       popularity: 60,

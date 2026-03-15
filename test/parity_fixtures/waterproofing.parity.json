@@ -1,0 +1,67 @@
+{
+  "calculator_id": "waterproofing",
+  "formula_version": "waterproofing-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.277Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for waterproofing",
+      "inputs": {
+        "floorArea": 6,
+        "wallHeight": 200,
+        "roomPerimeter": 10,
+        "masticType": 0,
+        "layers": 2
+      },
+      "expected_totals": {
+        "floorArea": 6,
+        "wallHeightMm": 200,
+        "roomPerimeter": 10,
+        "masticType": 0,
+        "layers": 2,
+        "wallArea": 2,
+        "totalArea": 8,
+        "masticKg": 16,
+        "masticBuckets": 2,
+        "tapeM": 24.2,
+        "tapeRolls": 3,
+        "siliconeTubes": 3,
+        "primerKg": 1.32,
+        "primerCans": 1,
+        "bitumenL": 0,
+        "bitumenCans": 0,
+        "jointTubes": 1,
+        "minExactNeed": 1.824,
+        "recExactNeed": 2.12,
+        "maxExactNeed": 2.65788,
+        "minPurchase": 2,
+        "recPurchase": 3,
+        "maxPurchase": 3
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "Ceresit CL 51 (15 кг)",
+        "Лента гидроизоляционная (10 м)",
+        "Силиконовый герметик",
+        "Грунтовка Ceresit (2 кг)",
+        "Герметик для стыков"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 1.824,
+          "purchase_quantity": 2
+        },
+        "REC": {
+          "exact_need": 2.12,
+          "purchase_quantity": 3
+        },
+        "MAX": {
+          "exact_need": 2.65788,
+          "purchase_quantity": 3
+        }
+      }
+    }
+  ]
+}

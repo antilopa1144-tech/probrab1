@@ -6,14 +6,9 @@ import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
 import 'calculator_constants.dart';
-import '../usecases/calculate_linoleum.dart';
+import '../usecases/canonical_bridge.dart';
+import '../usecases/linoleum_canonical_adapter.dart';
 
-/// Калькулятор линолеума V2 с гибридным режимом ввода.
-///
-/// Согласно спецификации:
-/// - Поддержка двух режимов ввода (по размерам / по площади)
-/// - Расчет количества резов на основе ширины комнаты и ширины рулона
-/// - Расчет аксессуаров: холодная сварка, клей, плинтус
 final linoleumCalculatorV2 = CalculatorDefinitionV2(
   id: 'floors_linoleum',
   titleKey: calculatorTitleKey('floors_linoleum'),
@@ -25,10 +20,7 @@ final linoleumCalculatorV2 = CalculatorDefinitionV2(
   complexity: 1,
   popularity: 85,
   tags: ['линолеум', 'полы', 'напольное покрытие', 'linoleum', 'flooring'],
-
-  // Поля ввода
   fields: [
-    // --- Переключатель режима ввода ---
     const CalculatorField(
       key: 'inputMode',
       labelKey: 'input.mode',
@@ -41,8 +33,6 @@ final linoleumCalculatorV2 = CalculatorDefinitionV2(
       ],
       order: 0,
     ),
-
-    // --- Группа "По размерам" ---
     const CalculatorField(
       key: 'length',
       labelKey: 'input.length',
@@ -81,8 +71,6 @@ final linoleumCalculatorV2 = CalculatorDefinitionV2(
         value: 0,
       ),
     ),
-
-    // --- Группа "По площади" ---
     const CalculatorField(
       key: 'area',
       labelKey: 'input.area',
@@ -119,8 +107,6 @@ final linoleumCalculatorV2 = CalculatorDefinitionV2(
         value: 1,
       ),
     ),
-
-    // --- Общие поля ---
     const CalculatorField(
       key: 'rollWidth',
       labelKey: 'input.roll_width',
@@ -152,36 +138,48 @@ final linoleumCalculatorV2 = CalculatorDefinitionV2(
       defaultValue: 1,
       order: 12,
     ),
+    const CalculatorField(
+      key: 'needTape',
+      labelKey: 'input.need_tape',
+      unitType: UnitType.pieces,
+      inputType: FieldInputType.switch_,
+      defaultValue: 1,
+      order: 13,
+    ),
+    const CalculatorField(
+      key: 'hasPattern',
+      labelKey: 'input.pattern_repeat',
+      unitType: UnitType.pieces,
+      inputType: FieldInputType.switch_,
+      defaultValue: 0,
+      order: 14,
+    ),
+    const CalculatorField(
+      key: 'patternRepeatCm',
+      labelKey: 'input.pattern_repeat_step',
+      unitType: UnitType.centimeters,
+      defaultValue: 30.0,
+      minValue: 10,
+      maxValue: 100,
+      step: 5,
+      iconName: 'repeat',
+      order: 15,
+      dependency: FieldDependency(
+        condition: DependencyCondition.equals,
+        fieldKey: 'hasPattern',
+        value: 1,
+      ),
+    ),
   ],
-
-  // Подсказки перед расчётом
   beforeHints: [
-    const CalculatorHint(
-      type: HintType.info,
-      messageKey: 'hint.linoleum.before.measure',
-    ),
-    const CalculatorHint(
-      type: HintType.tip,
-      messageKey: 'hint.linoleum.before.acclimatization',
-    ),
-    const CalculatorHint(
-      type: HintType.warning,
-      messageKey: 'hint.linoleum.before.level',
-    ),
+    const CalculatorHint(type: HintType.info, messageKey: 'hint.linoleum.before.measure'),
+    const CalculatorHint(type: HintType.tip, messageKey: 'hint.linoleum.before.acclimatization'),
+    const CalculatorHint(type: HintType.warning, messageKey: 'hint.linoleum.before.level'),
   ],
-
-  // Подсказки после расчёта
   afterHints: [
-    const CalculatorHint(
-      type: HintType.tip,
-      messageKey: 'hint.linoleum.after.installation',
-    ),
-    const CalculatorHint(
-      type: HintType.important,
-      messageKey: 'hint.linoleum.after.seams',
-    ),
+    const CalculatorHint(type: HintType.tip, messageKey: 'hint.linoleum.after.installation'),
+    const CalculatorHint(type: HintType.important, messageKey: 'hint.linoleum.after.seams'),
   ],
-
-  // UseCase для расчёта
-  useCase: CalculateLinoleum(),
+  useCase: CanonicalBridgeUseCase(calculateCanonicalLinoleum),
 );
+
