@@ -418,6 +418,7 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
 
     var fullText = '';
 
+    final loc = AppLocalizations.of(context);
     final stream = service.getAdviceStream(
       calculatorName: widget.calculatorName,
       data: widget.data,

@@ -81,7 +81,8 @@ void main() {
 
       test('AiDailyLimitException stores message correctly', () {
         const e = AiDailyLimitException(
-          'Всё, начальник, смена окончена. Голова пухнет, приходи завтра!',
+          'ai.daily_limit',
+          fallbackMessage: 'Всё, начальник, смена окончена. Голова пухнет, приходи завтра!',
         );
         expect(e.message, contains('смена окончена'));
         expect(e.message, contains('приходи завтра'));
@@ -409,30 +410,30 @@ void main() {
 
     group('Exceptions', () {
       test('AiDailyLimitException toString returns message', () {
-        const exception = AiDailyLimitException('test message');
+        const exception = AiDailyLimitException('ai.daily_limit', fallbackMessage: 'test message');
         expect(exception.toString(), equals('test message'));
         expect(exception.message, equals('test message'));
       });
 
       test('AiApiException toString returns message', () {
-        const exception = AiApiException('api error');
+        const exception = AiApiException('ai.api_error', fallbackMessage: 'api error');
         expect(exception.toString(), equals('api error'));
         expect(exception.message, equals('api error'));
       });
 
       test('AiDailyLimitException is an Exception', () {
-        const exception = AiDailyLimitException('msg');
+        const exception = AiDailyLimitException('ai.daily_limit', fallbackMessage: 'msg');
         expect(exception, isA<Exception>());
       });
 
       test('AiApiException is an Exception', () {
-        const exception = AiApiException('msg');
+        const exception = AiApiException('ai.api_error', fallbackMessage: 'msg');
         expect(exception, isA<Exception>());
       });
 
       test('AiDailyLimitException supports const', () {
-        const a = AiDailyLimitException('same');
-        const b = AiDailyLimitException('same');
+        const a = AiDailyLimitException('ai.daily_limit', fallbackMessage: 'same');
+        const b = AiDailyLimitException('ai.daily_limit', fallbackMessage: 'same');
         expect(a.message, equals(b.message));
       });
     });

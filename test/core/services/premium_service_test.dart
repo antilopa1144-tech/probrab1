@@ -146,8 +146,8 @@ void main() {
           expect(product.id, isNotEmpty);
           expect(product.price, isNotEmpty);
           expect(product.priceValue, greaterThan(0));
-          expect(product.title, isNotEmpty);
-          expect(product.description, isNotEmpty);
+          expect(product.titleKey, isNotEmpty);
+          expect(product.descriptionKey, isNotEmpty);
         }
       });
     });
@@ -354,8 +354,8 @@ void main() {
         type: SubscriptionType.monthly,
         price: '399 ₽',
         priceValue: 399.0,
-        title: 'Test Product',
-        description: 'Test Description',
+        titleKey: 'Test Product',
+        descriptionKey: 'Test Description',
         discount: 10,
       );
 
@@ -363,8 +363,8 @@ void main() {
       expect(product.type, SubscriptionType.monthly);
       expect(product.price, '399 ₽');
       expect(product.priceValue, 399.0);
-      expect(product.title, 'Test Product');
-      expect(product.description, 'Test Description');
+      expect(product.titleKey, 'Test Product');
+      expect(product.descriptionKey, 'Test Description');
       expect(product.discount, 10);
     });
 
@@ -374,8 +374,8 @@ void main() {
         type: SubscriptionType.yearly,
         price: '3990 ₽',
         priceValue: 3990.0,
-        title: 'Test',
-        description: 'Test',
+        titleKey: 'Test',
+        descriptionKey: 'Test',
         discount: 17,
       );
 
@@ -388,8 +388,8 @@ void main() {
         type: SubscriptionType.monthly,
         price: '399 ₽',
         priceValue: 399.0,
-        title: 'Test',
-        description: 'Test',
+        titleKey: 'Test',
+        descriptionKey: 'Test',
       );
 
       expect(product.discountText, isNull);
@@ -401,8 +401,8 @@ void main() {
         type: SubscriptionType.yearly,
         price: '3990 ₽',
         priceValue: 3990.0,
-        title: 'Test',
-        description: 'Test',
+        titleKey: 'Test',
+        descriptionKey: 'Test',
       );
 
       expect(product.isRecommended, isTrue);
@@ -414,8 +414,8 @@ void main() {
         type: SubscriptionType.monthly,
         price: '399 ₽',
         priceValue: 399.0,
-        title: 'Test',
-        description: 'Test',
+        titleKey: 'Test',
+        descriptionKey: 'Test',
       );
 
       const lifetime = PremiumProduct(
@@ -423,8 +423,8 @@ void main() {
         type: SubscriptionType.lifetime,
         price: '7990 ₽',
         priceValue: 7990.0,
-        title: 'Test',
-        description: 'Test',
+        titleKey: 'Test',
+        descriptionKey: 'Test',
       );
 
       expect(monthly.isRecommended, isFalse);
@@ -437,8 +437,8 @@ void main() {
         type: SubscriptionType.lifetime,
         price: '7990 ₽',
         priceValue: 7990.0,
-        title: 'Test',
-        description: 'Test',
+        titleKey: 'Test',
+        descriptionKey: 'Test',
       );
 
       expect(product.isBestValue, isTrue);
@@ -450,8 +450,8 @@ void main() {
         type: SubscriptionType.monthly,
         price: '399 ₽',
         priceValue: 399.0,
-        title: 'Test',
-        description: 'Test',
+        titleKey: 'Test',
+        descriptionKey: 'Test',
       );
 
       const yearly = PremiumProduct(
@@ -459,8 +459,8 @@ void main() {
         type: SubscriptionType.yearly,
         price: '3990 ₽',
         priceValue: 3990.0,
-        title: 'Test',
-        description: 'Test',
+        titleKey: 'Test',
+        descriptionKey: 'Test',
       );
 
       expect(monthly.isBestValue, isFalse);

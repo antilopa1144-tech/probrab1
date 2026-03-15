@@ -352,6 +352,10 @@ class PremiumProduct {
   });
 
 
+  /// Текст скидки, например «Скидка 17%», или null если скидки нет
+  String? get discountText =>
+      discount != null ? 'Скидка $discount%' : null;
+
   /// Рекомендуемый продукт (годовая подписка)
   bool get isRecommended => type == SubscriptionType.yearly;
 
