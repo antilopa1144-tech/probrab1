@@ -1,0 +1,62 @@
+{
+  "calculator_id": "stairs",
+  "formula_version": "stairs-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.235Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for stairs",
+      "inputs": {
+        "floorHeight": 2.8,
+        "stepHeight": 170,
+        "stepWidth": 280,
+        "stairWidth": 1,
+        "materialType": 0
+      },
+      "expected_totals": {
+        "floorHeight": 2.8,
+        "stepHeight": 170,
+        "stepWidth": 280,
+        "stairWidth": 1,
+        "materialType": 0,
+        "stepCount": 16,
+        "realStepH": 0.175,
+        "horizLen": 4.2,
+        "stringerLen": 5.048,
+        "railingLen": 8.4,
+        "balyasiny": 57,
+        "minExactNeedSteps": 14.8992,
+        "recExactNeedSteps": 16.96,
+        "maxExactNeedSteps": 22.05056,
+        "minPurchaseSteps": 15,
+        "recPurchaseSteps": 17,
+        "maxPurchaseSteps": 23
+      },
+      "expected_materials_count": 6,
+      "expected_material_names": [
+        "Тетива/косоур (50×250)",
+        "Ступени (40×300)",
+        "Подступенки (20×170)",
+        "Саморезы",
+        "Перила (поручень)",
+        "Балясины"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 14.8992,
+          "purchase_quantity": 15
+        },
+        "REC": {
+          "exact_need": 16.96,
+          "purchase_quantity": 17
+        },
+        "MAX": {
+          "exact_need": 22.05056,
+          "purchase_quantity": 23
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "calculator_id": "concrete",
+  "formula_version": "concrete-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.059Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for concrete",
+      "inputs": {
+        "inputMode": 0,
+        "concreteVolume": 5,
+        "concreteGrade": 3,
+        "manualMix": 0,
+        "reserve": 10,
+        "area": 20,
+        "thickness": 200
+      },
+      "expected_totals": {
+        "sourceVolume": 5,
+        "totalVolume": 5.5,
+        "inputMode": 0,
+        "concreteGrade": 3,
+        "manualMix": 0,
+        "reserve": 10,
+        "gradeIndex": 3,
+        "cementKgPerM3": 290,
+        "sandM3PerM3": 0.5,
+        "gravelM3PerM3": 0.82,
+        "waterLPerM3": 190,
+        "topSurfaceArea": 27.5,
+        "perimeterEst": 20.976,
+        "waterproofArea": 4.195,
+        "masticKg": 4.825,
+        "masticBuckets": 1,
+        "filmArea": 30.25,
+        "filmRolls": 2,
+        "cementKg": 0,
+        "cementBags": 0,
+        "sandM3": 0,
+        "gravelM3": 0,
+        "waterL": 0,
+        "minExactNeedM3": 5.1216,
+        "recExactNeedM3": 5.83,
+        "maxExactNeedM3": 7.57988,
+        "minPurchaseM3": 5.2,
+        "recPurchaseM3": 5.9,
+        "maxPurchaseM3": 7.6
+      },
+      "expected_materials_count": 3,
+      "expected_material_names": [
+        "Бетон М200 (В15)",
+        "Мастика гидроизоляционная (20 кг)",
+        "Плёнка полиэтиленовая (30 м²)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 5.1216,
+          "purchase_quantity": 5.2
+        },
+        "REC": {
+          "exact_need": 5.83,
+          "purchase_quantity": 5.9
+        },
+        "MAX": {
+          "exact_need": 7.57988,
+          "purchase_quantity": 7.6
+        }
+      }
+    }
+  ]
+}

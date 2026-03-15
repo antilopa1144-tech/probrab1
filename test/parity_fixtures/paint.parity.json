@@ -1,0 +1,87 @@
+{
+  "calculator_id": "paint",
+  "formula_version": "paint-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.158Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for paint",
+      "inputs": {
+        "inputMode": 1,
+        "area": 40,
+        "wallArea": 40,
+        "ceilingArea": 20,
+        "doorsWindows": 0,
+        "roomWidth": 4,
+        "roomLength": 5,
+        "roomHeight": 2.7,
+        "length": 5,
+        "width": 4,
+        "height": 2.7,
+        "openingsArea": 0,
+        "paintType": 0,
+        "surfaceType": 0,
+        "surfacePrep": 0,
+        "colorIntensity": 0,
+        "coats": 2,
+        "coverage": 10,
+        "canSize": 0
+      },
+      "expected_totals": {
+        "area": 60,
+        "wallArea": 40,
+        "ceilingArea": 20,
+        "openingsArea": 0,
+        "openingsPerimeter": 0,
+        "inputMode": 1,
+        "paintType": 0,
+        "surfaceType": 0,
+        "surfacePrep": 0,
+        "colorIntensity": 0,
+        "coats": 2,
+        "coverage": 10,
+        "canSize": 3,
+        "lPerSqm": 0.2,
+        "estimatedPerimeter": 17.889,
+        "wallBaseExactNeedL": 8,
+        "ceilingBaseExactNeedL": 4.6,
+        "baseExactNeedL": 12.6,
+        "ceilingPremiumFactor": 1.15,
+        "primerLiters": 6.6,
+        "tapeMeters": 39.356,
+        "tapeRolls": 1,
+        "minExactNeedL": 10.923535,
+        "recExactNeedL": 13.759351,
+        "maxExactNeedL": 22.52318,
+        "minPurchaseL": 12,
+        "recPurchaseL": 15,
+        "maxPurchaseL": 24
+      },
+      "expected_materials_count": 6,
+      "expected_material_names": [
+        "Интерьерная краска (3 л)",
+        "Грунтовка под покраску гладкая шпатлёванная (10 л)",
+        "Валик малярный (микрофибра, 250 мм)",
+        "Кисть плоская (для углов, 50 мм)",
+        "Кювета для краски",
+        "Малярная лента (50 м)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 10.923535,
+          "purchase_quantity": 12
+        },
+        "REC": {
+          "exact_need": 13.759351,
+          "purchase_quantity": 15
+        },
+        "MAX": {
+          "exact_need": 22.52318,
+          "purchase_quantity": 24
+        }
+      }
+    }
+  ]
+}

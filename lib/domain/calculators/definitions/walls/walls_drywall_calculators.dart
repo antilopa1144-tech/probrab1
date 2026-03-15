@@ -9,12 +9,13 @@ import '../../../models/calculator_field.dart';
 import '../../../models/calculator_hint.dart';
 import '../../../models/calculator_link.dart';
 import '../../calculator_constants.dart';
-import '../../../usecases/calculate_gypsum_v2.dart';
-import '../../../usecases/calculate_3d_panels.dart';
-import '../../../usecases/calculate_mdf_panels.dart';
-import '../../../usecases/calculate_pvc_panels.dart';
-import '../../../usecases/calculate_wallpaper.dart';
-import '../../../usecases/calculate_wood_wall.dart';
+import '../../../usecases/canonical_bridge.dart';
+import '../../../usecases/gypsum_board_canonical_adapter.dart';
+import '../../../usecases/panels_3d_canonical_adapter.dart';
+import '../../../usecases/mdf_panels_canonical_adapter.dart';
+import '../../../usecases/pvc_panels_canonical_adapter.dart';
+import '../../../usecases/wallpaper_canonical_adapter.dart';
+import '../../../usecases/wood_wall_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
   // 1. gypsum_board - Гипсокартон (ГКЛ)
@@ -141,7 +142,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           ),
         ),
       ],
-      useCase: CalculateGypsumV2(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalGypsumBoard),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 9,
@@ -219,7 +220,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya_2'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nachinayte_montazh_ot_tsentra'),
       ],
-      useCase: Calculate3dPanels(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalPanels3d),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -280,7 +281,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obreshetka_s_shagom_40'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.krepite_na_klyaymery_ili'),
       ],
-      useCase: CalculateMdfPanels(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalMdfPanels),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -341,7 +342,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ostavlyayte_temperaturnyy_zazor_5'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_startovyy_i_finishnyy'),
       ],
-      useCase: CalculatePvcPanels(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalPvcPanels),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -504,7 +505,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           ),
         ),
       ],
-      useCase: CalculateWallpaper(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalWallpaper),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -564,7 +565,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obrabotayte_antiseptikom_pered_montazhom'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.krepite_na_klyaymery_dlya'),
       ],
-      useCase: CalculateWoodWall(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalWoodWall),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -577,3 +578,4 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
       ],
     ),
 ];
+

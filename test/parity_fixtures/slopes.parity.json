@@ -1,0 +1,71 @@
+{
+  "calculator_id": "slopes",
+  "formula_version": "slopes-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.225Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for slopes",
+      "inputs": {
+        "openingCount": 5,
+        "openingType": 0,
+        "slopeWidth": 350,
+        "finishType": 0
+      },
+      "expected_totals": {
+        "openingCount": 5,
+        "openingType": 0,
+        "slopeWidth": 350,
+        "finishType": 0,
+        "openW": 1200,
+        "openH": 1400,
+        "sides": 3,
+        "slopePerim": 4,
+        "slopeArea": 1.4,
+        "totalArea": 7,
+        "totalPerim": 20,
+        "panelCount": 3,
+        "fProfilePcs": 8,
+        "foamCans": 4,
+        "plasterBags": 0,
+        "puttyBagsPlaster": 0,
+        "cornerPcs": 0,
+        "gklSheets": 0,
+        "screwsGKL": 0,
+        "puttyBagsGKL": 0,
+        "sealantTubes": 4,
+        "primerCans": 1,
+        "minExactNeed": 2.7936,
+        "recExactNeed": 3.18,
+        "maxExactNeed": 4.13448,
+        "minPurchase": 3,
+        "recPurchase": 4,
+        "maxPurchase": 5
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "Сэндвич-панели ПВХ",
+        "F-профиль (3 м)",
+        "Монтажная пена",
+        "Герметик (тубы)",
+        "Грунтовка (канистра 10 л)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 2.7936,
+          "purchase_quantity": 3
+        },
+        "REC": {
+          "exact_need": 3.18,
+          "purchase_quantity": 4
+        },
+        "MAX": {
+          "exact_need": 4.13448,
+          "purchase_quantity": 5
+        }
+      }
+    }
+  ]
+}

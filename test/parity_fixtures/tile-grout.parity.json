@@ -1,0 +1,61 @@
+{
+  "calculator_id": "tile-grout",
+  "formula_version": "tile-grout-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.254Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for tile-grout",
+      "inputs": {
+        "area": 20,
+        "tileWidth": 300,
+        "tileHeight": 300,
+        "tileThickness": 8,
+        "jointWidth": 3,
+        "groutType": 0,
+        "bagSize": 2
+      },
+      "expected_totals": {
+        "area": 20,
+        "tileWidth": 300,
+        "tileHeight": 300,
+        "tileThickness": 8,
+        "jointWidth": 3,
+        "groutType": 0,
+        "bagSize": 2,
+        "jointLenPerM2": 6.666667,
+        "jointVolPerM2": 0.16,
+        "density": 1.6,
+        "kgPerM2": 0.256,
+        "totalKg": 5.632,
+        "bags": 3,
+        "minExactNeed": 5.244518,
+        "recExactNeed": 5.96992,
+        "maxExactNeed": 7.761797,
+        "minPurchase": 6,
+        "recPurchase": 6,
+        "maxPurchase": 8
+      },
+      "expected_materials_count": 1,
+      "expected_material_names": [
+        "Затирка цементная 2кг"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 5.244518,
+          "purchase_quantity": 6
+        },
+        "REC": {
+          "exact_need": 5.96992,
+          "purchase_quantity": 6
+        },
+        "MAX": {
+          "exact_need": 7.761797,
+          "purchase_quantity": 8
+        }
+      }
+    }
+  ]
+}

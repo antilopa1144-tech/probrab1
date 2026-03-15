@@ -1,0 +1,61 @@
+{
+  "calculator_id": "ceiling-cassette",
+  "formula_version": "ceiling-cassette-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.044Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for ceiling-cassette",
+      "inputs": {
+        "area": 30,
+        "cassetteSize": 0,
+        "roomLength": 6
+      },
+      "expected_totals": {
+        "area": 30,
+        "cassetteSize": 0,
+        "roomLength": 6,
+        "roomWidth": 5,
+        "cassPerRow": 11,
+        "rows": 9,
+        "totalCass": 109,
+        "mainRows": 6,
+        "mainProfiles": 30,
+        "crossPerRow": 10,
+        "crossProfiles": 60,
+        "hangers": 36,
+        "wallProfilePcs": 8,
+        "minExactNeed": 101.5008,
+        "recExactNeed": 115.54,
+        "maxExactNeed": 150.21944,
+        "minPurchase": 102,
+        "recPurchase": 116,
+        "maxPurchase": 151
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "Кассета 595×595 мм",
+        "Главный профиль Т-образный",
+        "Поперечный профиль",
+        "Подвес",
+        "Угловой профиль 3м"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 101.5008,
+          "purchase_quantity": 102
+        },
+        "REC": {
+          "exact_need": 115.54,
+          "purchase_quantity": 116
+        },
+        "MAX": {
+          "exact_need": 150.21944,
+          "purchase_quantity": 151
+        }
+      }
+    }
+  ]
+}

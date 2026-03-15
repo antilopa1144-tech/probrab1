@@ -1,0 +1,66 @@
+{
+  "calculator_id": "roofing",
+  "formula_version": "roofing-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.206Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for roofing",
+      "inputs": {
+        "roofingType": 0,
+        "area": 80,
+        "slope": 30,
+        "ridgeLength": 8,
+        "sheetWidth": 1.18,
+        "sheetLength": 2.5,
+        "complexity": 0
+      },
+      "expected_totals": {
+        "roofingType": 0,
+        "area": 80,
+        "slope": 30,
+        "ridgeLength": 8,
+        "sheetWidth": 1.18,
+        "sheetLength": 2.5,
+        "complexity": 0,
+        "slopeFactor": 1.154701,
+        "realArea": 92.376,
+        "perimeterEst": 35.777,
+        "complexityCoeff": 1.05,
+        "primaryQuantity": 38,
+        "minExactNeed": 35.3856,
+        "recExactNeed": 40.28,
+        "maxExactNeed": 52.37008,
+        "minPurchase": 36,
+        "recPurchase": 41,
+        "maxPurchase": 53
+      },
+      "expected_materials_count": 7,
+      "expected_material_names": [
+        "Металлочерепица (1.18×2.5 м)",
+        "Коньковые элементы (2 м)",
+        "Снегозадержатели",
+        "Кровельные саморезы",
+        "Гидроизоляция (рулон 75 м²)",
+        "Обрешётка (доска 25×100, шаг ~350 мм)",
+        "Контробрешётка (брусок 50×50)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 35.3856,
+          "purchase_quantity": 36
+        },
+        "REC": {
+          "exact_need": 40.28,
+          "purchase_quantity": 41
+        },
+        "MAX": {
+          "exact_need": 52.37008,
+          "purchase_quantity": 53
+        }
+      }
+    }
+  ]
+}

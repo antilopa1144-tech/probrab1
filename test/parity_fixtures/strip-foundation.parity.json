@@ -1,0 +1,71 @@
+{
+  "calculator_id": "strip-foundation",
+  "formula_version": "strip-foundation-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.239Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for strip-foundation",
+      "inputs": {
+        "perimeter": 40,
+        "width": 400,
+        "depth": 700,
+        "aboveGround": 300,
+        "reinforcement": 1,
+        "deliveryMethod": 0
+      },
+      "expected_totals": {
+        "perimeter": 40,
+        "width": 400,
+        "depth": 700,
+        "aboveGround": 300,
+        "reinforcement": 1,
+        "deliveryMethod": 0,
+        "totalH": 1,
+        "vol": 16,
+        "volReserve": 17.655,
+        "rebarDiam": 12,
+        "threads": 4,
+        "longLen": 179.2,
+        "longWeightKg": 159.13,
+        "clampCount": 100,
+        "clampLen": 283.5,
+        "clampWeightKg": 111.983,
+        "wireKg": 22,
+        "formwork": 32,
+        "boards": 36,
+        "minExactNeedM3": 16.440336,
+        "recExactNeedM3": 18.7143,
+        "maxExactNeedM3": 24.331415,
+        "minPurchaseM3": 16.5,
+        "recPurchaseM3": 18.8,
+        "maxPurchaseM3": 24.4
+      },
+      "expected_materials_count": 6,
+      "expected_material_names": [
+        "Бетон М300",
+        "Арматура продольная ∅12 мм",
+        "Арматура поперечная (хомуты)",
+        "Проволока вязальная",
+        "Опалубка (доска обрезная)",
+        "Доска обрезная 150×6000 мм"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 16.440336,
+          "purchase_quantity": 16.5
+        },
+        "REC": {
+          "exact_need": 18.7143,
+          "purchase_quantity": 18.8
+        },
+        "MAX": {
+          "exact_need": 24.331415,
+          "purchase_quantity": 24.4
+        }
+      }
+    }
+  ]
+}

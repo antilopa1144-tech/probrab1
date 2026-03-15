@@ -6,7 +6,8 @@ import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
 import 'calculator_constants.dart';
-import '../usecases/calculate_screed_unified.dart';
+import '../usecases/canonical_bridge.dart';
+import '../usecases/screed_canonical_adapter.dart';
 
 /// Объединённый калькулятор стяжки V2.
 ///
@@ -300,7 +301,7 @@ final screedUnifiedCalculatorV2 = CalculatorDefinitionV2(
   ],
 
   // UseCase для расчёта
-  useCase: CalculateScreedUnified(),
+  useCase: CanonicalBridgeUseCase(calculateCanonicalScreed),
 
   showToolsSection: true,
 );

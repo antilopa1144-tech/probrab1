@@ -6,7 +6,8 @@ import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
 import 'calculator_constants.dart';
-import '../usecases/calculate_wallpaper.dart';
+import '../usecases/canonical_bridge.dart';
+import '../usecases/wallpaper_canonical_adapter.dart';
 
 /// Калькулятор обоев V2 с поддержкой гибридного ввода.
 final wallpaperCalculatorV2 = CalculatorDefinitionV2(
@@ -266,5 +267,6 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
   ],
 
   // UseCase для расчёта
-  useCase: CalculateWallpaper(),
+  useCase: CanonicalBridgeUseCase(calculateCanonicalWallpaper),
 );
+

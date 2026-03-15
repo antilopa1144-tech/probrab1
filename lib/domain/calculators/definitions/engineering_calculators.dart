@@ -8,10 +8,11 @@ import '../../models/calculator_definition_v2.dart';
 import '../../models/calculator_field.dart';
 import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
-import '../../usecases/calculate_electrics.dart';
-import '../../usecases/calculate_heating.dart';
+import '../../usecases/canonical_bridge.dart';
+import '../../usecases/electric_canonical_adapter.dart';
+import '../../usecases/heating_canonical_adapter.dart';
 // calculate_plumbing.dart - удалён (engineering_plumbing не востребован)
-import '../../usecases/calculate_ventilation.dart';
+import '../../usecases/ventilation_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> engineeringCalculators = [
   CalculatorDefinitionV2(
@@ -90,7 +91,7 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanovite_uzo_dlya_zaschity'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.proverte_vse_soedineniya_pered'),
       ],
-      useCase: CalculateElectrics(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalElectric),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -164,7 +165,7 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ispolzuyte_balansirovochnye_krany'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.raboty_dolzhen_vypolnyat_kvalifitsirovannyy_2'),
       ],
-      useCase: CalculateHeating(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalHeating),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -237,7 +238,7 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanavlivayte_reshetki_vverhu_dlya'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.proverte_tyagu_pered_montazhom'),
       ],
-      useCase: CalculateVentilation(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalVentilation),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,

@@ -1,0 +1,70 @@
+{
+  "calculator_id": "soft-roofing",
+  "formula_version": "soft-roofing-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.228Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for soft-roofing",
+      "inputs": {
+        "roofArea": 80,
+        "slope": 30,
+        "ridgeLength": 8,
+        "eaveLength": 20,
+        "valleyLength": 0
+      },
+      "expected_totals": {
+        "roofArea": 80,
+        "slope": 30,
+        "ridgeLength": 8,
+        "eaveLength": 20,
+        "valleyLength": 0,
+        "packs": 29,
+        "underlaymentRolls": 3,
+        "valleyRolls": 0,
+        "masticKg": 10.8,
+        "masticBuckets": 4,
+        "nailsKg": 17,
+        "eaveStrips": 11,
+        "windStrips": 5,
+        "ridgeShingles": 17,
+        "osbSheets": 27,
+        "ventOutputs": 4,
+        "minExactNeed": 27.0048,
+        "recExactNeed": 30.74,
+        "maxExactNeed": 39.96664,
+        "minPurchase": 28,
+        "recPurchase": 31,
+        "maxPurchase": 40
+      },
+      "expected_materials_count": 9,
+      "expected_material_names": [
+        "Гибкая черепица (3 м²/уп)",
+        "Подкладочный ковёр (15 м²)",
+        "Мастика (ведро 3 кг)",
+        "Гвозди кровельные",
+        "Карнизные планки (2 м)",
+        "Ветровые планки (2 м)",
+        "Коньково-карнизная черепица",
+        "ОСП (3.125 м²)",
+        "Вентиляционные выходы"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 27.0048,
+          "purchase_quantity": 28
+        },
+        "REC": {
+          "exact_need": 30.74,
+          "purchase_quantity": 31
+        },
+        "MAX": {
+          "exact_need": 39.96664,
+          "purchase_quantity": 40
+        }
+      }
+    }
+  ]
+}

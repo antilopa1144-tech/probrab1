@@ -1,0 +1,64 @@
+{
+  "calculator_id": "facade-insulation",
+  "formula_version": "facade-insulation-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.088Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for facade-insulation",
+      "inputs": {
+        "area": 100,
+        "thickness": 100,
+        "insulationType": 0,
+        "finishType": 0
+      },
+      "expected_totals": {
+        "area": 100,
+        "thickness": 100,
+        "insulationType": 0,
+        "finishType": 0,
+        "plates": 146,
+        "glueBags": 16,
+        "dowels": 630,
+        "meshRolls": 3,
+        "armorBags": 16,
+        "primerCans": 3,
+        "decorBags": 14,
+        "starterPcs": 21,
+        "minExactNeed": 135.9552,
+        "recExactNeed": 154.76,
+        "maxExactNeed": 201.21136,
+        "minPurchase": 136,
+        "recPurchase": 155,
+        "maxPurchase": 202
+      },
+      "expected_materials_count": 8,
+      "expected_material_names": [
+        "Минеральная вата (плиты 0.72 м²)",
+        "Клей для утеплителя 25кг",
+        "Тарельчатые дюбели",
+        "Армирующая сетка (50 м²)",
+        "Армирующая шпаклёвка 25кг",
+        "Грунтовка (канистра 10 л)",
+        "Декоративная штукатурка «короед» 25кг",
+        "Стартовый профиль (2 м)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 135.9552,
+          "purchase_quantity": 136
+        },
+        "REC": {
+          "exact_need": 154.76,
+          "purchase_quantity": 155
+        },
+        "MAX": {
+          "exact_need": 201.21136,
+          "purchase_quantity": 202
+        }
+      }
+    }
+  ]
+}

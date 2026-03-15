@@ -1,0 +1,68 @@
+{
+  "calculator_id": "warm-floor",
+  "formula_version": "warm-floor-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.270Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for warm-floor",
+      "inputs": {
+        "roomArea": 10,
+        "furnitureArea": 2,
+        "heatingType": 0,
+        "powerDensity": 150
+      },
+      "expected_totals": {
+        "roomArea": 10,
+        "furnitureArea": 2,
+        "heatingArea": 8,
+        "heatingType": 0,
+        "powerDensity": 150,
+        "totalPowerW": 1200,
+        "totalPowerKW": 1.2,
+        "thermostat": 1,
+        "mats": 4,
+        "cableLength": 0,
+        "mountingTapeRolls": 0,
+        "epsSheets": 0,
+        "screedBags": 0,
+        "pipeLength": 0,
+        "circuits": 0,
+        "pipeInsulation": 0,
+        "meshArea": 0,
+        "substrateRolls": 1,
+        "adhesiveBags": 2,
+        "minExactNeed": 3.7248,
+        "recExactNeed": 4.24,
+        "maxExactNeed": 5.51264,
+        "minPurchase": 4,
+        "recPurchase": 5,
+        "maxPurchase": 6
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "Нагревательный мат",
+        "Терморегулятор",
+        "Гофротрубка для датчика",
+        "Подложка (рулоны)",
+        "Плиточный клей (мешки 25 кг)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 3.7248,
+          "purchase_quantity": 4
+        },
+        "REC": {
+          "exact_need": 4.24,
+          "purchase_quantity": 5
+        },
+        "MAX": {
+          "exact_need": 5.51264,
+          "purchase_quantity": 6
+        }
+      }
+    }
+  ]
+}

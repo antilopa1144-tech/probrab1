@@ -8,10 +8,11 @@ import '../../models/calculator_definition_v2.dart';
 import '../../models/calculator_field.dart';
 import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
-import '../../usecases/calculate_cassette_ceiling_v2.dart';
-import '../../usecases/calculate_ceiling_insulation.dart';
-import '../../usecases/calculate_rail_ceiling.dart';
-import '../../usecases/calculate_stretch_ceiling.dart';
+import '../../usecases/canonical_bridge.dart';
+import '../../usecases/ceiling_cassette_canonical_adapter.dart';
+import '../../usecases/ceiling_insulation_canonical_adapter.dart';
+import '../../usecases/ceiling_rail_canonical_adapter.dart';
+import '../../usecases/ceiling_stretch_canonical_adapter.dart';
 // calculate_ceiling_paint.dart больше не используется - ceilings_paint заменён на paint_universal
 
 final List<CalculatorDefinitionV2> ceilingCalculators = [
@@ -125,7 +126,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.obespechte_dostup_k_kommunikatsiyam'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_uroven_dlya_montazha'),
       ],
-      useCase: CalculateCassetteCeilingV2(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalCeilingCassette),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -197,7 +198,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ne_szhimayte_uteplitel_pri'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.obespechte_ventilyatsiyu_podkrovelnogo_prostranstva'),
       ],
-      useCase: CalculateCeilingInsulation(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalCeilingInsulation),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -269,7 +270,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ostavlyayte_zazor_dlya_ventilyatsii'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_uroven_dlya_kontrolya'),
       ],
-      useCase: CalculateRailCeiling(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalCeilingRail),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -341,7 +342,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.zaranee_opredelite_mesta_dlya'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.uchityvayte_vysotu_potolka_natyazhnoy'),
       ],
-      useCase: CalculateStretchCeiling(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalCeilingStretch),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,

@@ -7,7 +7,8 @@ import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
 import '../models/calculator_link.dart';
 import 'calculator_constants.dart';
-import '../usecases/calculate_paint_universal.dart';
+import '../usecases/canonical_bridge.dart';
+import '../usecases/paint_canonical_adapter.dart';
 
 /// Универсальный калькулятор покраски (стены, потолок, или всё вместе).
 /// Простой и понятный интерфейс без лишних полей.
@@ -279,7 +280,7 @@ final paintUniversalCalculatorV2 = CalculatorDefinitionV2(
     ),
   ],
 
-  useCase: CalculatePaintUniversal(),
+  useCase: CanonicalBridgeUseCase(calculateCanonicalPaint),
   showToolsSection: true,
 
   relatedLinks: [
@@ -292,3 +293,5 @@ final paintUniversalCalculatorV2 = CalculatorDefinitionV2(
     ),
   ],
 );
+
+

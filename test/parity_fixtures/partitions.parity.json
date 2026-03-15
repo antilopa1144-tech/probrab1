@@ -1,0 +1,65 @@
+{
+  "calculator_id": "partitions",
+  "formula_version": "partitions-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.175Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for partitions",
+      "inputs": {
+        "length": 5,
+        "height": 2.7,
+        "thickness": 100,
+        "blockType": 0
+      },
+      "expected_totals": {
+        "length": 5,
+        "height": 2.7,
+        "thickness": 100,
+        "blockType": 0,
+        "wallArea": 13.5,
+        "blockArea": 0.15625,
+        "blocks": 91,
+        "glueBags": 1,
+        "gypsumBags": 0,
+        "armRows": 4,
+        "meshLen": 21,
+        "meshRolls": 1,
+        "foamBottles": 3,
+        "primer": 1,
+        "sealTape": 17,
+        "minExactNeed": 84.7392,
+        "recExactNeed": 96.46,
+        "maxExactNeed": 125.41256,
+        "minPurchase": 85,
+        "recPurchase": 97,
+        "maxPurchase": 126
+      },
+      "expected_materials_count": 6,
+      "expected_material_names": [
+        "Блоки перегородочные",
+        "Клей для блоков 25кг",
+        "Армирующая сетка (рулон 50 м)",
+        "Монтажная пена 750мл",
+        "Грунтовка (канистра 10 л)",
+        "Уплотнительная лента"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 84.7392,
+          "purchase_quantity": 85
+        },
+        "REC": {
+          "exact_need": 96.46,
+          "purchase_quantity": 97
+        },
+        "MAX": {
+          "exact_need": 125.41256,
+          "purchase_quantity": 126
+        }
+      }
+    }
+  ]
+}

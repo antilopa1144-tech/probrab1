@@ -1,0 +1,76 @@
+{
+  "calculator_id": "plaster",
+  "formula_version": "plaster-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.182Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for plaster",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "height": 2.7,
+        "area": 50,
+        "openingsArea": 5,
+        "plasterType": 0,
+        "thickness": 15,
+        "bagWeight": 30,
+        "substrateType": 1,
+        "wallEvenness": 1
+      },
+      "expected_totals": {
+        "wallArea": 48.6,
+        "netArea": 43.6,
+        "thickness": 15,
+        "totalKg": 667.754,
+        "plasterType": 0,
+        "substrateType": 1,
+        "wallEvenness": 1,
+        "bagWeight": 30,
+        "primerNeed": 15,
+        "primerType": 2,
+        "meshArea": 0,
+        "beacons": 18,
+        "beaconSize": 10,
+        "ruleSize": 1.5,
+        "warningThickLayer": 0,
+        "tipObryzg": 0,
+        "minExactNeedKg": 530.13,
+        "recExactNeedKg": 667.754,
+        "maxExactNeedKg": 1093.071,
+        "minPurchaseKg": 540,
+        "recPurchaseKg": 690,
+        "maxPurchaseKg": 1110
+      },
+      "expected_materials_count": 9,
+      "expected_material_names": [
+        "Гипсовая штукатурка (мешки 30 кг)",
+        "Грунтовка бетоноконтакт (5 кг)",
+        "Маяки штукатурные (10 мм)",
+        "Правило алюминиевое (1.5 м)",
+        "Шпатель фасадный (450-600 мм)",
+        "Ведро строительное (20 л)",
+        "Миксер для дрели (насадка)",
+        "Перчатки прорезиненные",
+        "Угловой профиль перфорированный 25×25 мм (3 м)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 530.13,
+          "purchase_quantity": 540
+        },
+        "REC": {
+          "exact_need": 667.754,
+          "purchase_quantity": 690
+        },
+        "MAX": {
+          "exact_need": 1093.071,
+          "purchase_quantity": 1110
+        }
+      }
+    }
+  ]
+}

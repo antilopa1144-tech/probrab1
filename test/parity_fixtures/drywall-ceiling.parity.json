@@ -1,0 +1,84 @@
+{
+  "calculator_id": "drywall-ceiling",
+  "formula_version": "drywall-ceiling-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.077Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for drywall-ceiling",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "area": 20,
+        "layers": 1,
+        "profileStep": 600
+      },
+      "expected_totals": {
+        "area": 20,
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "layers": 1,
+        "profileStep": 600,
+        "sheets": 8,
+        "mainProfileRows": 7,
+        "mainM": 35,
+        "crossRows": 5,
+        "crossM": 20,
+        "totalProfileM": 57.75,
+        "ppPcs": 20,
+        "pnM": 18.9,
+        "pnPcs": 7,
+        "suspCount": 56,
+        "crabCount": 35,
+        "screwsGKL": 184,
+        "screwsKg": 0.2,
+        "clopCount": 252,
+        "dowelCount": 150,
+        "serpM": 27,
+        "serpRolls": 1,
+        "puttyKg": 7,
+        "puttyBags": 1,
+        "primerL": 3,
+        "primerCans": 1,
+        "minExactNeed": 7.4496,
+        "recExactNeed": 8.48,
+        "maxExactNeed": 11.02528,
+        "minPurchase": 8,
+        "recPurchase": 9,
+        "maxPurchase": 12
+      },
+      "expected_materials_count": 11,
+      "expected_material_names": [
+        "ГКЛ листы",
+        "Профиль ПП 60×27 3м",
+        "Профиль ПН 27×28 3м",
+        "Подвесы прямые",
+        "Крабы (соединители)",
+        "Саморезы 3.5×25 (кг)",
+        "Саморезы-клопы",
+        "Дюбели",
+        "Серпянка 45м",
+        "Шпаклёвка Knauf Fugen 25кг",
+        "Грунтовка 10л"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 7.4496,
+          "purchase_quantity": 8
+        },
+        "REC": {
+          "exact_need": 8.48,
+          "purchase_quantity": 9
+        },
+        "MAX": {
+          "exact_need": 11.02528,
+          "purchase_quantity": 12
+        }
+      }
+    }
+  ]
+}

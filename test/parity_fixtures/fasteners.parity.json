@@ -1,0 +1,59 @@
+{
+  "calculator_id": "fasteners",
+  "formula_version": "fasteners-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.095Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for fasteners",
+      "inputs": {
+        "materialType": 0,
+        "sheetCount": 10,
+        "fastenerStep": 200,
+        "withFrameScrews": 0,
+        "withDubels": 0
+      },
+      "expected_totals": {
+        "materialType": 0,
+        "sheetCount": 10,
+        "fastenerStep": 200,
+        "withFrameScrews": 0,
+        "withDubels": 0,
+        "stepCoeff": 1.25,
+        "screwsPerUnit": 30,
+        "totalScrews": 315,
+        "klaimers": 0,
+        "frameScrews": 0,
+        "dubels": 0,
+        "bits": 1,
+        "minExactNeed": 293.328,
+        "recExactNeed": 333.9,
+        "maxExactNeed": 434.1204,
+        "minPurchase": 294,
+        "recPurchase": 334,
+        "maxPurchase": 435
+      },
+      "expected_materials_count": 2,
+      "expected_material_names": [
+        "Саморезы 3.5×25",
+        "Биты для шуруповёрта"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 293.328,
+          "purchase_quantity": 294
+        },
+        "REC": {
+          "exact_need": 333.9,
+          "purchase_quantity": 334
+        },
+        "MAX": {
+          "exact_need": 434.1204,
+          "purchase_quantity": 435
+        }
+      }
+    }
+  ]
+}

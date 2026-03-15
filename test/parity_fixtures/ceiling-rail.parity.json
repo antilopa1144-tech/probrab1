@@ -1,0 +1,62 @@
+{
+  "calculator_id": "ceiling-rail",
+  "formula_version": "ceiling-rail-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.051Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for ceiling-rail",
+      "inputs": {
+        "area": 20,
+        "railWidth": 100,
+        "railLength": 3,
+        "roomLength": 5
+      },
+      "expected_totals": {
+        "area": 20,
+        "railWidth": 100,
+        "railLength": 3,
+        "roomLength": 5,
+        "roomWidth": 4,
+        "railRows": 40,
+        "totalRailLen": 220,
+        "railPcs": 74,
+        "guideCount": 6,
+        "guidePcs": 9,
+        "hangers": 30,
+        "screws": 268,
+        "dubels": 30,
+        "minExactNeed": 68.9088,
+        "recExactNeed": 78.44,
+        "maxExactNeed": 101.98384,
+        "minPurchase": 69,
+        "recPurchase": 79,
+        "maxPurchase": 102
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "Рейка 100 мм × 3 м",
+        "Т-профиль (стрингер) 3м",
+        "Подвес",
+        "Саморезы",
+        "Дюбели"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 68.9088,
+          "purchase_quantity": 69
+        },
+        "REC": {
+          "exact_need": 78.44,
+          "purchase_quantity": 79
+        },
+        "MAX": {
+          "exact_need": 101.98384,
+          "purchase_quantity": 102
+        }
+      }
+    }
+  ]
+}

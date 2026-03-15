@@ -8,9 +8,10 @@ import '../../models/calculator_definition_v2.dart';
 import '../../models/calculator_field.dart';
 import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
-import '../../usecases/calculate_basement.dart';
-import '../../usecases/calculate_blind_area.dart';
-import '../../usecases/calculate_slab.dart';
+import '../../usecases/canonical_bridge.dart';
+import '../../usecases/basement_canonical_adapter.dart';
+import '../../usecases/blind_area_canonical_adapter.dart';
+import '../../usecases/foundation_slab_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> foundationCalculators = [
   CalculatorDefinitionV2(
@@ -89,7 +90,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.armirovanie_sten_vertikalnymi_i'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.ventilyatsiya_obyazatelna_dlya_predotvrascheniya'),
       ],
-      useCase: CalculateBasement(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalBasement),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 10,
@@ -190,7 +191,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.peschano_graviynaya_podushka_15'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.kompensatsionnyy_shov_mezhdu_otmostkoy'),
       ],
-      useCase: CalculateBlindArea(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalBlindArea),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 10,
@@ -268,7 +269,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.armirovanie_dvumya_setkami_v'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uteplitel_epps_pod_plitoy'),
       ],
-      useCase: CalculateSlab(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalFoundationSlab),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 10,

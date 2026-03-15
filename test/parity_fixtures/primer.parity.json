@@ -1,0 +1,63 @@
+{
+  "calculator_id": "primer",
+  "formula_version": "primer-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.187Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for primer",
+      "inputs": {
+        "inputMode": 1,
+        "area": 50,
+        "roomWidth": 4,
+        "roomLength": 5,
+        "roomHeight": 2.7,
+        "surfaceType": 0,
+        "primerType": 0,
+        "coats": 1,
+        "canSize": 5
+      },
+      "expected_totals": {
+        "area": 50,
+        "inputMode": 1,
+        "surfaceType": 0,
+        "primerType": 0,
+        "coats": 1,
+        "canSize": 5,
+        "lPerSqm": 0.15,
+        "minExactNeedL": 6.502,
+        "recExactNeedL": 8.19,
+        "maxExactNeedL": 13.407,
+        "minPurchaseL": 10,
+        "recPurchaseL": 10,
+        "maxPurchaseL": 15,
+        "dryingTimeHours": 4
+      },
+      "expected_materials_count": 4,
+      "expected_material_names": [
+        "Грунтовка глубокого проникновения (5 л)",
+        "Валик малярный 250 мм",
+        "Кисть для углов и примыканий",
+        "Кювета для грунтовки"
+      ],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "Для впитывающих оснований обычно рекомендуют 2 слоя грунтовки"
+      ],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 6.502,
+          "purchase_quantity": 10
+        },
+        "REC": {
+          "exact_need": 8.19,
+          "purchase_quantity": 10
+        },
+        "MAX": {
+          "exact_need": 13.407,
+          "purchase_quantity": 15
+        }
+      }
+    }
+  ]
+}

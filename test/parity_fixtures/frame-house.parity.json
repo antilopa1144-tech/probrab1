@@ -1,0 +1,83 @@
+{
+  "calculator_id": "frame-house",
+  "formula_version": "frame-house-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.116Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for frame-house",
+      "inputs": {
+        "wallLength": 30,
+        "wallHeight": 2.7,
+        "openingsArea": 10,
+        "studStep": 600,
+        "insulationType": 0,
+        "outerSheathing": 0,
+        "innerSheathing": 0
+      },
+      "expected_totals": {
+        "wallLength": 30,
+        "wallHeight": 2.7,
+        "openingsArea": 10,
+        "studStep": 600,
+        "insulationType": 0,
+        "outerSheathing": 0,
+        "innerSheathing": 0,
+        "wallArea": 71,
+        "studs": 51,
+        "studMeters": 144.585,
+        "studBoards": 25,
+        "strappingM": 63,
+        "strappingBoards": 11,
+        "outerSheets": 25,
+        "innerSheets": 25,
+        "insulVol": 10.65,
+        "layerCount": 3,
+        "platesPerLayer": 104,
+        "totalPlates": 312,
+        "packs": 39,
+        "vaporRolls": 2,
+        "windRolls": 2,
+        "tapeRolls": 8,
+        "screwsKg": 2.5,
+        "nailsKg": 5.4,
+        "minExactNeed": 290.5344,
+        "recExactNeed": 330.72,
+        "maxExactNeed": 429.98592,
+        "minPurchase": 296,
+        "recPurchase": 336,
+        "maxPurchase": 432
+      },
+      "expected_materials_count": 11,
+      "expected_material_names": [
+        "Стойки каркаса (шаг 600 мм)",
+        "Обвязка (доски 6 м)",
+        "Наружная обшивка — OSB-9 мм",
+        "Внутренняя обшивка — OSB-9 мм",
+        "Утеплитель — Минеральная вата 150 мм",
+        "Утеплитель (упаковки по 8 шт)",
+        "Пароизоляция (рулон 75 м²)",
+        "Ветрозащита (рулон 75 м²)",
+        "Скотч для мембран",
+        "Саморезы",
+        "Гвозди"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 290.5344,
+          "purchase_quantity": 296
+        },
+        "REC": {
+          "exact_need": 330.72,
+          "purchase_quantity": 336
+        },
+        "MAX": {
+          "exact_need": 429.98592,
+          "purchase_quantity": 432
+        }
+      }
+    }
+  ]
+}

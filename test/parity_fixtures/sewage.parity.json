@@ -1,0 +1,76 @@
+{
+  "calculator_id": "sewage",
+  "formula_version": "sewage-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.217Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for sewage",
+      "inputs": {
+        "residents": 4,
+        "septikType": 0,
+        "chambersCount": 2,
+        "pipeLength": 10,
+        "groundType": 0
+      },
+      "expected_totals": {
+        "residents": 4,
+        "septikType": 0,
+        "chambersCount": 2,
+        "pipeLength": 10,
+        "groundType": 0,
+        "dailyVolumeLiters": 800,
+        "totalVolumeLiters": 2400,
+        "totalVolume": 2.4,
+        "volumePerChamber": 1.2,
+        "totalRings": 4,
+        "ringsPerChamber": 2,
+        "bottomPlates": 2,
+        "topPlates": 2,
+        "covers": 2,
+        "sealingRings": 4,
+        "septicCount": 0,
+        "sandBackfill": 0,
+        "eurocubes": 0,
+        "pipeSections": 4,
+        "elbows": 3,
+        "tees": 2,
+        "gravel": 0,
+        "geotextile": 0,
+        "minExactNeed": 3.7248,
+        "recExactNeed": 4.24,
+        "maxExactNeed": 5.51264,
+        "minPurchase": 4,
+        "recPurchase": 5,
+        "maxPurchase": 6
+      },
+      "expected_materials_count": 8,
+      "expected_material_names": [
+        "Кольца ЖБ КС 10-9",
+        "Днища ПН-10",
+        "Плиты перекрытия ПП-10",
+        "Люки чугунные",
+        "Кольца уплотнительные",
+        "Труба ПВХ ø110 (секции 3 м)",
+        "Отводы (колена)",
+        "Тройники"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 3.7248,
+          "purchase_quantity": 4
+        },
+        "REC": {
+          "exact_need": 4.24,
+          "purchase_quantity": 5
+        },
+        "MAX": {
+          "exact_need": 5.51264,
+          "purchase_quantity": 6
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "calculator_id": "wallpaper",
+  "formula_version": "wallpaper-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.266Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for wallpaper",
+      "inputs": {
+        "inputMode": 0,
+        "perimeter": 14,
+        "area": 40,
+        "roomWidth": 4,
+        "roomLength": 5,
+        "roomHeight": 2.7,
+        "length": 5,
+        "width": 4,
+        "height": 2.7,
+        "wallHeight": 2.7,
+        "openingsArea": 0,
+        "doorsCount": 0,
+        "windowsCount": 0,
+        "rollWidth": 0.53,
+        "rollLength": 10.05,
+        "rapport": 0,
+        "wallpaperType": 1,
+        "reservePercent": 0,
+        "reserveRolls": 0
+      },
+      "expected_totals": {
+        "wallArea": 37.8,
+        "netArea": 37.8,
+        "openingsArea": 0,
+        "perimeter": 14,
+        "wallHeight": 2.7,
+        "inputMode": 0,
+        "rollWidth": 0.53,
+        "rollLength": 10.05,
+        "rapport": 0,
+        "wallpaperType": 1,
+        "reservePercent": 0,
+        "reserveRolls": 0,
+        "stripLength": 2.7,
+        "stripsPerRoll": 3,
+        "stripsNeeded": 27,
+        "baseExactRolls": 9,
+        "rollsNeeded": 9,
+        "pasteNeededKg": 0.2079,
+        "pastePacks": 1,
+        "primerNeededL": 6.237,
+        "primerCans": 2,
+        "minExactNeedRolls": 7.802525,
+        "recExactNeedRolls": 9,
+        "maxExactNeedRolls": 12.813293,
+        "minPurchaseRolls": 8,
+        "recPurchaseRolls": 9,
+        "maxPurchaseRolls": 13
+      },
+      "expected_materials_count": 9,
+      "expected_material_names": [
+        "Обои",
+        "Клей обойный (бумажные обои, 0.25 кг)",
+        "Грунтовка глубокого проникновения (5 л)",
+        "Валик для клея",
+        "Пластиковый шпатель для обоев",
+        "Нож малярный",
+        "Лезвия для ножа (упаковка)",
+        "Ведро для клея",
+        "Губка для удаления клея"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 7.802525,
+          "purchase_quantity": 8
+        },
+        "REC": {
+          "exact_need": 9,
+          "purchase_quantity": 9
+        },
+        "MAX": {
+          "exact_need": 12.813293,
+          "purchase_quantity": 13
+        }
+      }
+    }
+  ]
+}

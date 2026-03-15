@@ -1,0 +1,67 @@
+{
+  "calculator_id": "wall-panels",
+  "formula_version": "wall-panels-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.262Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for wall-panels",
+      "inputs": {
+        "area": 20,
+        "panelType": 0,
+        "mountMethod": 0,
+        "height": 2.7
+      },
+      "expected_totals": {
+        "area": 20,
+        "panelType": 0,
+        "mountMethod": 0,
+        "height": 2.7,
+        "panelArea": 0.75,
+        "battenSpacing": 0.5,
+        "panels": 30,
+        "perim": 17.8885,
+        "glueBottles": 5,
+        "primer": 1,
+        "battenRows": 0,
+        "wallLength": 0,
+        "battenM": 0,
+        "battenPcs": 0,
+        "dubels": 0,
+        "klaimers": 0,
+        "molding": 7,
+        "sealant": 2,
+        "minExactNeed": 27.936,
+        "recExactNeed": 31.8,
+        "maxExactNeed": 41.3448,
+        "minPurchase": 28,
+        "recPurchase": 32,
+        "maxPurchase": 42
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "ПВХ-панели (0.75 м²)",
+        "Монтажный клей (флаконы)",
+        "Грунтовка (канистра 10 л)",
+        "Молдинги (3 м)",
+        "Герметик (тубы)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 27.936,
+          "purchase_quantity": 28
+        },
+        "REC": {
+          "exact_need": 31.8,
+          "purchase_quantity": 32
+        },
+        "MAX": {
+          "exact_need": 41.3448,
+          "purchase_quantity": 42
+        }
+      }
+    }
+  ]
+}

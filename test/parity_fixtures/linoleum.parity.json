@@ -1,0 +1,85 @@
+{
+  "calculator_id": "linoleum",
+  "formula_version": "linoleum-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.147Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for linoleum",
+      "inputs": {
+        "inputMode": 0,
+        "length": 5,
+        "width": 4,
+        "area": 20,
+        "roomWidth": 4,
+        "perimeter": 0,
+        "rollWidth": 3,
+        "hasPattern": 0,
+        "patternRepeatCm": 30,
+        "needGlue": 0,
+        "needPlinth": 1,
+        "needTape": 1
+      },
+      "expected_totals": {
+        "area": 20,
+        "inputMode": 0,
+        "roomWidth": 4,
+        "roomLength": 5,
+        "perimeter": 18,
+        "rollWidth": 3,
+        "hasPattern": 0,
+        "patternRepeatCm": 30,
+        "stripsNeeded": 2,
+        "stripLengthBase": 5.1,
+        "linearMeters": 10.2,
+        "totalCoverageArea": 30.6,
+        "wastePercent": 53,
+        "needGlue": 0,
+        "needPlinth": 1,
+        "needTape": 1,
+        "seamsLength": 5,
+        "coldWeldingTubes": 1,
+        "glueNeededKg": 0,
+        "glueBuckets": 0,
+        "primerNeededL": 3,
+        "primerCans": 1,
+        "plinthLength": 17.955,
+        "plinthPieces": 8,
+        "tapeLength": 23,
+        "minExactNeedLinearM": 9.69612,
+        "recExactNeedLinearM": 10.2,
+        "maxExactNeedLinearM": 12.5664,
+        "minPurchaseLinearM": 9.7,
+        "recPurchaseLinearM": 10.2,
+        "maxPurchaseLinearM": 12.6
+      },
+      "expected_materials_count": 5,
+      "expected_material_names": [
+        "Линолеум (3 м ширина)",
+        "Грунтовка (10 л)",
+        "Плинтус ПВХ (2.5 м)",
+        "Двусторонний скотч / клейкая фиксация",
+        "Холодная сварка для швов"
+      ],
+      "expected_warnings_count": 2,
+      "expected_warnings": [
+        "Укладка потребует 2 полосы. Попробуйте рулон шире 4 м для укладки без стыка",
+        "Отходы составят 53% — попробуйте рулон большей ширины"
+      ],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 9.69612,
+          "purchase_quantity": 9.7
+        },
+        "REC": {
+          "exact_need": 10.2,
+          "purchase_quantity": 10.2
+        },
+        "MAX": {
+          "exact_need": 12.5664,
+          "purchase_quantity": 12.6
+        }
+      }
+    }
+  ]
+}

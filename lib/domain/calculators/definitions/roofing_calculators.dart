@@ -8,7 +8,8 @@ import '../../models/calculator_definition_v2.dart';
 import '../../models/calculator_field.dart';
 import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
-import '../../usecases/calculate_gutters.dart';
+import '../../usecases/canonical_bridge.dart';
+import '../../usecases/gutters_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> roofingCalculators = [
   CalculatorDefinitionV2(
@@ -73,7 +74,7 @@ final List<CalculatorDefinitionV2> roofingCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.na_kazhdye_10_m'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.ispolzuyte_germetik_dlya_soedineniy'),
       ],
-      useCase: CalculateGutters(),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalGutters),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 10,

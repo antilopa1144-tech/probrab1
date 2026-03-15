@@ -1,0 +1,79 @@
+{
+  "calculator_id": "windows",
+  "formula_version": "windows-canonical-v1",
+  "generated_at": "2026-03-15T00:33:45.281Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for windows",
+      "inputs": {
+        "windowCount": 5,
+        "windowWidth": 1200,
+        "windowHeight": 1400,
+        "wallThickness": 500,
+        "slopeType": 0
+      },
+      "expected_totals": {
+        "windowCount": 5,
+        "windowWidth": 1200,
+        "windowHeight": 1400,
+        "wallThickness": 500,
+        "slopeType": 0,
+        "perimM": 5.2,
+        "psulRolls": 6,
+        "iflulRolls": 4,
+        "foamCans": 10,
+        "anchorsPerWindow": 8,
+        "totalAnchors": 42,
+        "screws": 89,
+        "sillWidth": 0.65,
+        "sillPcs": 5,
+        "slopeSideArea": 1.4,
+        "slopeTopArea": 0.6,
+        "totalSlopeArea": 10,
+        "sandwichPcs": 4,
+        "fProfilePcs": 8,
+        "plasterBags": 0,
+        "cornerPcs": 0,
+        "gklSheets": 0,
+        "screwsGKL": 0,
+        "puttyBags": 0,
+        "minExactNeed": 9.312,
+        "recExactNeed": 10.6,
+        "maxExactNeed": 13.7816,
+        "minPurchase": 10,
+        "recPurchase": 11,
+        "maxPurchase": 14
+      },
+      "expected_materials_count": 8,
+      "expected_material_names": [
+        "ПСУЛ (рулон 5.6 м)",
+        "Внутренняя лента (рулон 8.5 м)",
+        "Монтажная пена",
+        "Анкерные пластины",
+        "Саморезы для анкеров",
+        "Подоконник (ширина 650 мм)",
+        "Сэндвич-панели ПВХ",
+        "F-профиль (3 м)"
+      ],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "Толстые стены — проверьте глубину подоконника"
+      ],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 9.312,
+          "purchase_quantity": 10
+        },
+        "REC": {
+          "exact_need": 10.6,
+          "purchase_quantity": 11
+        },
+        "MAX": {
+          "exact_need": 13.7816,
+          "purchase_quantity": 14
+        }
+      }
+    }
+  ]
+}
