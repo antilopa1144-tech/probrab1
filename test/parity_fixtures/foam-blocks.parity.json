@@ -1,7 +1,7 @@
 {
   "calculator_id": "foam-blocks",
   "formula_version": "foam-blocks-canonical-v1",
-  "generated_at": "2026-03-15T00:33:45.103Z",
+  "generated_at": "2026-03-17T05:41:35.489Z",
   "cases": [
     {
       "id": "defaults",
@@ -50,7 +50,7 @@
         "Пеноблок 600×300×200",
         "Клей для кладки (25 кг)",
         "Арматура Ø8",
-        "U-блоки (перемычки)",
+        "У-блоки (перемычки)",
         "Грунтовка (10 л)"
       ],
       "expected_warnings_count": 0,

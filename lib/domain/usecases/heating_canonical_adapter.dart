@@ -49,7 +49,7 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       quantity: totalUnits.toDouble(),
       unit: 'шт',
       withReserve: totalUnits.toDouble(),
-      purchaseQty: totalUnits.toInt(),
+      purchaseQty: totalUnits.toDouble(),
       category: 'Отопление',
     ),
     CanonicalMaterialResult(
@@ -57,7 +57,7 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       quantity: pipeSticks.toDouble(),
       unit: 'шт',
       withReserve: pipeSticks.toDouble(),
-      purchaseQty: pipeSticks.toInt(),
+      purchaseQty: pipeSticks.toDouble(),
       category: 'Трубопровод',
     ),
     CanonicalMaterialResult(
@@ -65,7 +65,7 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       quantity: fittings.toDouble(),
       unit: 'шт',
       withReserve: fittings.toDouble(),
-      purchaseQty: fittings.toInt(),
+      purchaseQty: fittings.toDouble(),
       category: 'Трубопровод',
     ),
     CanonicalMaterialResult(
@@ -73,7 +73,7 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       quantity: brackets.toDouble(),
       unit: 'шт',
       withReserve: brackets.toDouble(),
-      purchaseQty: brackets.toInt(),
+      purchaseQty: brackets.toDouble(),
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
@@ -81,7 +81,7 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       quantity: thermoHeads.toDouble(),
       unit: 'шт',
       withReserve: thermoHeads.toDouble(),
-      purchaseQty: thermoHeads.toInt(),
+      purchaseQty: thermoHeads.toDouble(),
       category: 'Регулировка',
     ),
     CanonicalMaterialResult(
@@ -89,7 +89,7 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       quantity: mayevskyValves.toDouble(),
       unit: 'шт',
       withReserve: mayevskyValves.toDouble(),
-      purchaseQty: mayevskyValves.toInt(),
+      purchaseQty: mayevskyValves.toDouble(),
       category: 'Арматура',
     ),
   ];

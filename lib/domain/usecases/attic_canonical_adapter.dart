@@ -140,7 +140,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Утепление',
     ),
     CanonicalMaterialResult(
@@ -148,7 +148,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
       quantity: windRolls.toDouble(),
       unit: 'рулонов',
       withReserve: windRolls.toDouble(),
-      purchaseQty: windRolls.toInt(),
+      purchaseQty: windRolls.toDouble(),
       category: 'Мембраны',
     ),
   ];
@@ -159,7 +159,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
       quantity: vbRolls.toDouble(),
       unit: 'рулонов',
       withReserve: vbRolls.toDouble(),
-      purchaseQty: vbRolls.toInt(),
+      purchaseQty: vbRolls.toDouble(),
       category: 'Мембраны',
     ));
   }
@@ -169,7 +169,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
     quantity: tapeRolls.toDouble(),
     unit: 'рулонов',
     withReserve: tapeRolls.toDouble(),
-    purchaseQty: tapeRolls.toInt(),
+    purchaseQty: tapeRolls.toDouble(),
     category: 'Расходные',
   ));
 
@@ -180,7 +180,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         quantity: panels.toDouble(),
         unit: 'шт',
         withReserve: panels.toDouble(),
-        purchaseQty: panels.toInt(),
+        purchaseQty: panels.toDouble(),
         category: 'Отделка',
       ),
       CanonicalMaterialResult(
@@ -188,7 +188,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         quantity: battenPcs.toDouble(),
         unit: 'шт',
         withReserve: battenPcs.toDouble(),
-        purchaseQty: battenPcs.toInt(),
+        purchaseQty: battenPcs.toDouble(),
         category: 'Каркас',
       ),
       CanonicalMaterialResult(
@@ -196,7 +196,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         quantity: antisepticCans.toDouble(),
         unit: 'канистр',
         withReserve: antisepticCans.toDouble(),
-        purchaseQty: antisepticCans.toInt(),
+        purchaseQty: antisepticCans.toDouble(),
         category: 'Защита',
       ),
     ]);
@@ -207,7 +207,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         quantity: gklSheets.toDouble(),
         unit: 'листов',
         withReserve: gklSheets.toDouble(),
-        purchaseQty: gklSheets.toInt(),
+        purchaseQty: gklSheets.toDouble(),
         category: 'Отделка',
       ),
       CanonicalMaterialResult(
@@ -215,7 +215,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         quantity: profilePcs.toDouble(),
         unit: 'шт',
         withReserve: profilePcs.toDouble(),
-        purchaseQty: profilePcs.toInt(),
+        purchaseQty: profilePcs.toDouble(),
         category: 'Каркас',
       ),
       CanonicalMaterialResult(
@@ -223,7 +223,7 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
         quantity: puttyBags.toDouble(),
         unit: 'мешков',
         withReserve: puttyBags.toDouble(),
-        purchaseQty: puttyBags.toInt(),
+        purchaseQty: puttyBags.toDouble(),
         category: 'Отделка',
       ),
     ]);

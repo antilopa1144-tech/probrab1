@@ -145,7 +145,7 @@ CanonicalCalculatorContractResult calculateCanonicalBasement(
       quantity: floorConcrete,
       unit: 'м³',
       withReserve: floorConcrete,
-      purchaseQty: (floorConcrete * 10).ceil(),
+      purchaseQty: (floorConcrete * 10).ceil().toDouble(),
       category: 'Бетон',
     ),
     CanonicalMaterialResult(
@@ -153,7 +153,7 @@ CanonicalCalculatorContractResult calculateCanonicalBasement(
       quantity: wallConcrete,
       unit: 'м³',
       withReserve: wallConcrete,
-      purchaseQty: (wallConcrete * 10).ceil(),
+      purchaseQty: (wallConcrete * 10).ceil().toDouble(),
       category: 'Бетон',
     ),
     CanonicalMaterialResult(
@@ -161,7 +161,7 @@ CanonicalCalculatorContractResult calculateCanonicalBasement(
       quantity: floorRebar,
       unit: 'кг',
       withReserve: floorRebar,
-      purchaseQty: floorRebar.ceil(),
+      purchaseQty: floorRebar.ceil().toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -169,7 +169,7 @@ CanonicalCalculatorContractResult calculateCanonicalBasement(
       quantity: wallRebar,
       unit: 'кг',
       withReserve: wallRebar,
-      purchaseQty: wallRebar.ceil(),
+      purchaseQty: wallRebar.ceil().toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -177,7 +177,7 @@ CanonicalCalculatorContractResult calculateCanonicalBasement(
       quantity: wire.toDouble(),
       unit: 'кг',
       withReserve: wire.toDouble(),
-      purchaseQty: wire.toInt(),
+      purchaseQty: wire.toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -185,7 +185,7 @@ CanonicalCalculatorContractResult calculateCanonicalBasement(
       quantity: formwork.toDouble(),
       unit: 'листов',
       withReserve: formwork.toDouble(),
-      purchaseQty: formwork.toInt(),
+      purchaseQty: formwork.toDouble(),
       category: 'Опалубка',
     ),
     CanonicalMaterialResult(
@@ -193,7 +193,7 @@ CanonicalCalculatorContractResult calculateCanonicalBasement(
       quantity: ventCount.toDouble(),
       unit: 'шт',
       withReserve: ventCount.toDouble(),
-      purchaseQty: ventCount.toInt(),
+      purchaseQty: ventCount.toDouble(),
       category: 'Вентиляция',
     ),
   ];
@@ -205,7 +205,7 @@ CanonicalCalculatorContractResult calculateCanonicalBasement(
       quantity: masticKg,
       unit: 'кг',
       withReserve: masticKg,
-      purchaseQty: masticKg.ceil(),
+      purchaseQty: masticKg.ceil().toDouble(),
       category: 'Гидроизоляция',
     ));
   } else if (waterproofType == 1) {
@@ -214,7 +214,7 @@ CanonicalCalculatorContractResult calculateCanonicalBasement(
       quantity: rollCount.toDouble(),
       unit: 'рулонов',
       withReserve: rollCount.toDouble(),
-      purchaseQty: rollCount.toInt(),
+      purchaseQty: rollCount.toDouble(),
       category: 'Гидроизоляция',
     ));
   } else {
@@ -223,7 +223,7 @@ CanonicalCalculatorContractResult calculateCanonicalBasement(
       quantity: penKg,
       unit: 'кг',
       withReserve: penKg,
-      purchaseQty: penKg.ceil(),
+      purchaseQty: penKg.ceil().toDouble(),
       category: 'Гидроизоляция',
     ));
   }

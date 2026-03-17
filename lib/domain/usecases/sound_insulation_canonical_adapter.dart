@@ -41,12 +41,12 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
     primaryLabel = 'rockwool-plate';
 
     materials.addAll([
-      CanonicalMaterialResult(name: 'Rockwool \u043f\u043b\u0438\u0442\u044b', quantity: rockwoolPlates.toDouble(), unit: '\u0448\u0442', withReserve: rockwoolPlates.toDouble(), purchaseQty: rockwoolPlates, category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
-      CanonicalMaterialResult(name: '\u0413\u041a\u041b \u043b\u0438\u0441\u0442\u044b', quantity: gklSheets.toDouble(), unit: '\u0448\u0442', withReserve: gklSheets.toDouble(), purchaseQty: gklSheets, category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
-      CanonicalMaterialResult(name: '\u041f\u0440\u043e\u0444\u0438\u043b\u044c \u041f\u041f 3\u043c', quantity: ppPcs.toDouble(), unit: '\u0448\u0442', withReserve: ppPcs.toDouble(), purchaseQty: ppPcs, category: '\u041a\u0430\u0440\u043a\u0430\u0441'),
-      CanonicalMaterialResult(name: '\u0412\u0438\u0431\u0440\u043e\u043f\u043e\u0434\u0432\u0435\u0441\u044b', quantity: vibro.toDouble(), unit: '\u0448\u0442', withReserve: vibro.toDouble(), purchaseQty: vibro, category: '\u041a\u0440\u0435\u043f\u0451\u0436'),
-      CanonicalMaterialResult(name: '\u0412\u0438\u0431\u0440\u043e\u043b\u0435\u043d\u0442\u0430', quantity: vibroTape.toDouble(), unit: '\u0440\u0443\u043b\u043e\u043d\u043e\u0432', withReserve: vibroTape.toDouble(), purchaseQty: vibroTape, category: '\u0418\u0437\u043e\u043b\u044f\u0446\u0438\u044f'),
-      CanonicalMaterialResult(name: '\u0421\u0430\u043c\u043e\u0440\u0435\u0437\u044b (\u0443\u043f\u0430\u043a\u043e\u0432\u043a\u0438 \u043f\u043e 200)', quantity: screws.toDouble(), unit: '\u0443\u043f\u0430\u043a\u043e\u0432\u043e\u043a', withReserve: screws.toDouble(), purchaseQty: screws, category: '\u041a\u0440\u0435\u043f\u0451\u0436'),
+      CanonicalMaterialResult(name: 'Rockwool \u043f\u043b\u0438\u0442\u044b', quantity: rockwoolPlates.toDouble(), unit: '\u0448\u0442', withReserve: rockwoolPlates.toDouble(), purchaseQty: rockwoolPlates.toDouble(), category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
+      CanonicalMaterialResult(name: '\u0413\u041a\u041b \u043b\u0438\u0441\u0442\u044b', quantity: gklSheets.toDouble(), unit: '\u0448\u0442', withReserve: gklSheets.toDouble(), purchaseQty: gklSheets.toDouble(), category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
+      CanonicalMaterialResult(name: '\u041f\u0440\u043e\u0444\u0438\u043b\u044c \u041f\u041f 3\u043c', quantity: ppPcs.toDouble(), unit: '\u0448\u0442', withReserve: ppPcs.toDouble(), purchaseQty: ppPcs.toDouble(), category: '\u041a\u0430\u0440\u043a\u0430\u0441'),
+      CanonicalMaterialResult(name: '\u0412\u0438\u0431\u0440\u043e\u043f\u043e\u0434\u0432\u0435\u0441\u044b', quantity: vibro.toDouble(), unit: '\u0448\u0442', withReserve: vibro.toDouble(), purchaseQty: vibro.toDouble(), category: '\u041a\u0440\u0435\u043f\u0451\u0436'),
+      CanonicalMaterialResult(name: '\u0412\u0438\u0431\u0440\u043e\u043b\u0435\u043d\u0442\u0430', quantity: vibroTape.toDouble(), unit: '\u0440\u0443\u043b\u043e\u043d\u043e\u0432', withReserve: vibroTape.toDouble(), purchaseQty: vibroTape.toDouble(), category: '\u0418\u0437\u043e\u043b\u044f\u0446\u0438\u044f'),
+      CanonicalMaterialResult(name: '\u0421\u0430\u043c\u043e\u0440\u0435\u0437\u044b (\u0443\u043f\u0430\u043a\u043e\u0432\u043a\u0438 \u043f\u043e 200)', quantity: screws.toDouble(), unit: '\u0443\u043f\u0430\u043a\u043e\u0432\u043e\u043a', withReserve: screws.toDouble(), purchaseQty: screws.toDouble(), category: '\u041a\u0440\u0435\u043f\u0451\u0436'),
     ]);
   }
 
@@ -61,9 +61,9 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
     primaryLabel = 'zips-panel';
 
     materials.addAll([
-      CanonicalMaterialResult(name: '\u0417\u0418\u041f\u0421 \u043f\u0430\u043d\u0435\u043b\u0438', quantity: zipsPanels.toDouble(), unit: '\u0448\u0442', withReserve: zipsPanels.toDouble(), purchaseQty: zipsPanels, category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
-      CanonicalMaterialResult(name: '\u0414\u044e\u0431\u0435\u043b\u0438 \u0434\u043b\u044f \u0417\u0418\u041f\u0421', quantity: dubels.toDouble(), unit: '\u0448\u0442', withReserve: dubels.toDouble(), purchaseQty: dubels, category: '\u041a\u0440\u0435\u043f\u0451\u0436'),
-      CanonicalMaterialResult(name: '\u0413\u041a\u041b \u043e\u0431\u043b\u0438\u0446\u043e\u0432\u043a\u0430', quantity: gklOverlay.toDouble(), unit: '\u0448\u0442', withReserve: gklOverlay.toDouble(), purchaseQty: gklOverlay, category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
+      CanonicalMaterialResult(name: '\u0417\u0418\u041f\u0421 \u043f\u0430\u043d\u0435\u043b\u0438', quantity: zipsPanels.toDouble(), unit: '\u0448\u0442', withReserve: zipsPanels.toDouble(), purchaseQty: zipsPanels.toDouble(), category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
+      CanonicalMaterialResult(name: '\u0414\u044e\u0431\u0435\u043b\u0438 \u0434\u043b\u044f \u0417\u0418\u041f\u0421', quantity: dubels.toDouble(), unit: '\u0448\u0442', withReserve: dubels.toDouble(), purchaseQty: dubels.toDouble(), category: '\u041a\u0440\u0435\u043f\u0451\u0436'),
+      CanonicalMaterialResult(name: '\u0413\u041a\u041b \u043e\u0431\u043b\u0438\u0446\u043e\u0432\u043a\u0430', quantity: gklOverlay.toDouble(), unit: '\u0448\u0442', withReserve: gklOverlay.toDouble(), purchaseQty: gklOverlay.toDouble(), category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
     ]);
   }
 
@@ -78,9 +78,9 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
     primaryLabel = 'float-mat';
 
     materials.addAll([
-      CanonicalMaterialResult(name: '\u0417\u0432\u0443\u043a\u043e\u0438\u0437\u043e\u043b\u044f\u0446\u0438\u043e\u043d\u043d\u044b\u0435 \u043c\u0430\u0442\u044b', quantity: mats.toDouble(), unit: '\u0440\u0443\u043b\u043e\u043d\u043e\u0432', withReserve: mats.toDouble(), purchaseQty: mats, category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
-      CanonicalMaterialResult(name: '\u0414\u0435\u043c\u043f\u0444\u0435\u0440\u043d\u0430\u044f \u043b\u0435\u043d\u0442\u0430', quantity: dampTape.toDouble(), unit: '\u0440\u0443\u043b\u043e\u043d\u043e\u0432', withReserve: dampTape.toDouble(), purchaseQty: dampTape, category: '\u0418\u0437\u043e\u043b\u044f\u0446\u0438\u044f'),
-      CanonicalMaterialResult(name: '\u0421\u0442\u044f\u0436\u043a\u0430 50 \u043a\u0433', quantity: screedBags.toDouble(), unit: '\u043c\u0435\u0448\u043a\u043e\u0432', withReserve: screedBags.toDouble(), purchaseQty: screedBags, category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
+      CanonicalMaterialResult(name: '\u0417\u0432\u0443\u043a\u043e\u0438\u0437\u043e\u043b\u044f\u0446\u0438\u043e\u043d\u043d\u044b\u0435 \u043c\u0430\u0442\u044b', quantity: mats.toDouble(), unit: '\u0440\u0443\u043b\u043e\u043d\u043e\u0432', withReserve: mats.toDouble(), purchaseQty: mats.toDouble(), category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
+      CanonicalMaterialResult(name: '\u0414\u0435\u043c\u043f\u0444\u0435\u0440\u043d\u0430\u044f \u043b\u0435\u043d\u0442\u0430', quantity: dampTape.toDouble(), unit: '\u0440\u0443\u043b\u043e\u043d\u043e\u0432', withReserve: dampTape.toDouble(), purchaseQty: dampTape.toDouble(), category: '\u0418\u0437\u043e\u043b\u044f\u0446\u0438\u044f'),
+      CanonicalMaterialResult(name: '\u0421\u0442\u044f\u0436\u043a\u0430 50 \u043a\u0433', quantity: screedBags.toDouble(), unit: '\u043c\u0435\u0448\u043a\u043e\u0432', withReserve: screedBags.toDouble(), purchaseQty: screedBags.toDouble(), category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
     ]);
   }
 
@@ -95,9 +95,9 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
     primaryLabel = 'acoustic-ceiling';
 
     materials.addAll([
-      CanonicalMaterialResult(name: 'Rockwool \u043f\u043b\u0438\u0442\u044b', quantity: rockwoolPlates.toDouble(), unit: '\u0448\u0442', withReserve: rockwoolPlates.toDouble(), purchaseQty: rockwoolPlates, category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
-      CanonicalMaterialResult(name: '\u0413\u041a\u041b \u043b\u0438\u0441\u0442\u044b', quantity: gklSheets.toDouble(), unit: '\u0448\u0442', withReserve: gklSheets.toDouble(), purchaseQty: gklSheets, category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
-      CanonicalMaterialResult(name: '\u0412\u0438\u0431\u0440\u043e\u043f\u043e\u0434\u0432\u0435\u0441\u044b', quantity: vibro.toDouble(), unit: '\u0448\u0442', withReserve: vibro.toDouble(), purchaseQty: vibro, category: '\u041a\u0440\u0435\u043f\u0451\u0436'),
+      CanonicalMaterialResult(name: 'Rockwool \u043f\u043b\u0438\u0442\u044b', quantity: rockwoolPlates.toDouble(), unit: '\u0448\u0442', withReserve: rockwoolPlates.toDouble(), purchaseQty: rockwoolPlates.toDouble(), category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
+      CanonicalMaterialResult(name: '\u0413\u041a\u041b \u043b\u0438\u0441\u0442\u044b', quantity: gklSheets.toDouble(), unit: '\u0448\u0442', withReserve: gklSheets.toDouble(), purchaseQty: gklSheets.toDouble(), category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435'),
+      CanonicalMaterialResult(name: '\u0412\u0438\u0431\u0440\u043e\u043f\u043e\u0434\u0432\u0435\u0441\u044b', quantity: vibro.toDouble(), unit: '\u0448\u0442', withReserve: vibro.toDouble(), purchaseQty: vibro.toDouble(), category: '\u041a\u0440\u0435\u043f\u0451\u0436'),
     ]);
   }
 
@@ -106,8 +106,8 @@ CanonicalCalculatorContractResult calculateCanonicalSoundInsulation(
   final sealTape = (perim * 2 * spec.materialRule<num>('seal_tape_reserve').toDouble() / spec.materialRule<num>('seal_tape_roll').toDouble()).ceil();
 
   materials.addAll([
-    CanonicalMaterialResult(name: '\u0413\u0435\u0440\u043c\u0435\u0442\u0438\u043a', quantity: sealant.toDouble(), unit: '\u0442\u044e\u0431\u0438\u043a\u043e\u0432', withReserve: sealant.toDouble(), purchaseQty: sealant, category: '\u0413\u0435\u0440\u043c\u0435\u0442\u0438\u0437\u0430\u0446\u0438\u044f'),
-    CanonicalMaterialResult(name: '\u0423\u043f\u043b\u043e\u0442\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u0430\u044f \u043b\u0435\u043d\u0442\u0430 30\u043c', quantity: sealTape.toDouble(), unit: '\u0440\u0443\u043b\u043e\u043d\u043e\u0432', withReserve: sealTape.toDouble(), purchaseQty: sealTape, category: '\u0413\u0435\u0440\u043c\u0435\u0442\u0438\u0437\u0430\u0446\u0438\u044f'),
+    CanonicalMaterialResult(name: '\u0413\u0435\u0440\u043c\u0435\u0442\u0438\u043a', quantity: sealant.toDouble(), unit: '\u0442\u044e\u0431\u0438\u043a\u043e\u0432', withReserve: sealant.toDouble(), purchaseQty: sealant.toDouble(), category: '\u0413\u0435\u0440\u043c\u0435\u0442\u0438\u0437\u0430\u0446\u0438\u044f'),
+    CanonicalMaterialResult(name: '\u0423\u043f\u043b\u043e\u0442\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u0430\u044f \u043b\u0435\u043d\u0442\u0430 30\u043c', quantity: sealTape.toDouble(), unit: '\u0440\u0443\u043b\u043e\u043d\u043e\u0432', withReserve: sealTape.toDouble(), purchaseQty: sealTape.toDouble(), category: '\u0413\u0435\u0440\u043c\u0435\u0442\u0438\u0437\u0430\u0446\u0438\u044f'),
   ]);
 
   // Scenarios

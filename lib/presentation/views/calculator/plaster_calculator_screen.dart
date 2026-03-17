@@ -181,12 +181,12 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
   }) {
     for (final material in contract.materials) {
       if (material.category == category && material.name.toLowerCase().contains(fallbackNamePart)) {
-        return material.purchaseQty ?? 0;
+        return material.purchaseQty?.toInt() ?? 0;
       }
     }
     for (final material in contract.materials) {
       if (material.name.toLowerCase().contains(fallbackNamePart)) {
-        return material.purchaseQty ?? 0;
+        return material.purchaseQty?.toInt() ?? 0;
       }
     }
     return 0;

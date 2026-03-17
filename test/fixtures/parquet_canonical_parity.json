@@ -86,7 +86,7 @@
         "materials": {
           "packs": 11,
           "plinthPieces": 7,
-          "glueBuckets": 3,
+          "glueBuckets": 30.0,
           "thresholds": 2
         },
         "recScenario": {

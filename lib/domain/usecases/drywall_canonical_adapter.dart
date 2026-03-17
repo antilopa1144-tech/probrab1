@@ -45,9 +45,11 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
   final ppLength = ppCount * height * spec.materialRule<num>('profile_reserve').toDouble();
   final ppPieces = (ppLength / spec.materialRule<num>('profile_length_m').toDouble()).ceil();
 
-  // Screws
-  final screwsTF = (totalSheetArea * spec.materialRule<num>('screws_tf_per_m2').toDouble() * spec.materialRule<num>('profile_reserve').toDouble()).ceil();
-  final screwsLB = (ppCount * spec.materialRule<num>('screws_lb_per_profile').toDouble() * spec.materialRule<num>('profile_reserve').toDouble()).ceil();
+  // Screws (in kg)
+  final screwsTFpcs = (totalSheetArea * spec.materialRule<num>('screws_tf_per_m2').toDouble() * spec.materialRule<num>('profile_reserve').toDouble()).ceil();
+  final screwsTFkg = (screwsTFpcs / 1000 * 10).ceil() / 10; // 3.5×25 мм: 1000 шт/кг
+  final screwsLBpcs = (ppCount * spec.materialRule<num>('screws_lb_per_profile').toDouble() * spec.materialRule<num>('profile_reserve').toDouble()).ceil();
+  final screwsLBkg = (screwsLBpcs / 4000 * 10).ceil() / 10; // 3.5×9.5 мм клопы: 4000 шт/кг
 
   // Dowels
   final dowels = (pnPerimeter / spec.materialRule<num>('dowels_step_m').toDouble()).ceil();
@@ -119,7 +121,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed,
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -127,7 +129,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       quantity: pnPieces.toDouble(),
       unit: 'шт',
       withReserve: pnPieces.toDouble(),
-      purchaseQty: pnPieces.toInt(),
+      purchaseQty: pnPieces.toDouble(),
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
@@ -135,23 +137,23 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       quantity: ppPieces.toDouble(),
       unit: 'шт',
       withReserve: ppPieces.toDouble(),
-      purchaseQty: ppPieces.toInt(),
+      purchaseQty: ppPieces.toDouble(),
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
       name: 'Саморезы 3.5\u00d725 мм',
-      quantity: screwsTF.toDouble(),
-      unit: 'шт',
-      withReserve: screwsTF.toDouble(),
-      purchaseQty: screwsTF.toInt(),
+      quantity: screwsTFkg,
+      unit: 'кг',
+      withReserve: screwsTFkg,
+      purchaseQty: screwsTFkg.ceil().toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
       name: 'Саморезы-клопы 3.5\u00d79.5 мм',
-      quantity: screwsLB.toDouble(),
-      unit: 'шт',
-      withReserve: screwsLB.toDouble(),
-      purchaseQty: screwsLB.toInt(),
+      quantity: screwsLBkg,
+      unit: 'кг',
+      withReserve: screwsLBkg,
+      purchaseQty: screwsLBkg.ceil().toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -159,7 +161,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       quantity: dowels.toDouble(),
       unit: 'шт',
       withReserve: dowels.toDouble(),
-      purchaseQty: dowels.toInt(),
+      purchaseQty: dowels.toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -167,7 +169,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       quantity: sealingTapeRolls.toDouble(),
       unit: 'рулон',
       withReserve: sealingTapeRolls.toDouble(),
-      purchaseQty: sealingTapeRolls.toInt(),
+      purchaseQty: sealingTapeRolls.toDouble(),
       category: 'Изоляция',
     ),
     CanonicalMaterialResult(
@@ -175,7 +177,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       quantity: puttyStartBags.toDouble(),
       unit: 'мешков',
       withReserve: puttyStartBags.toDouble(),
-      purchaseQty: puttyStartBags.toInt(),
+      purchaseQty: puttyStartBags.toDouble(),
       category: 'Отделка',
     ),
     CanonicalMaterialResult(
@@ -183,7 +185,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       quantity: puttyFinishBags.toDouble(),
       unit: 'мешков',
       withReserve: puttyFinishBags.toDouble(),
-      purchaseQty: puttyFinishBags.toInt(),
+      purchaseQty: puttyFinishBags.toDouble(),
       category: 'Отделка',
     ),
     CanonicalMaterialResult(
@@ -191,7 +193,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       quantity: serpyankaRolls.toDouble(),
       unit: 'рулонов',
       withReserve: serpyankaRolls.toDouble(),
-      purchaseQty: serpyankaRolls.toInt(),
+      purchaseQty: serpyankaRolls.toDouble(),
       category: 'Отделка',
     ),
     CanonicalMaterialResult(
@@ -199,7 +201,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       quantity: primerCans.toDouble(),
       unit: 'канистр',
       withReserve: primerCans.toDouble(),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: primerCans.toDouble(),
       category: 'Отделка',
     ),
     CanonicalMaterialResult(
@@ -207,7 +209,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       quantity: sandpaperPacks.toDouble(),
       unit: 'упаковок',
       withReserve: sandpaperPacks.toDouble(),
-      purchaseQty: sandpaperPacks.toInt(),
+      purchaseQty: sandpaperPacks.toDouble(),
       category: 'Отделка',
     ),
   ];
@@ -232,8 +234,8 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       'pnPieces': pnPieces.toDouble(),
       'ppCount': ppCount.toDouble(),
       'ppPieces': ppPieces.toDouble(),
-      'screwsTF': screwsTF.toDouble(),
-      'screwsLB': screwsLB.toDouble(),
+      'screwsTF': screwsTFkg,
+      'screwsLB': screwsLBkg,
       'dowels': dowels.toDouble(),
       'sealingTapeRolls': sealingTapeRolls.toDouble(),
       'puttyStartBags': puttyStartBags.toDouble(),

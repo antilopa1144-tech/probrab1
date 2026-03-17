@@ -1,7 +1,7 @@
 {
   "calculator_id": "gypsum-board",
   "formula_version": "gypsum-board-canonical-v1",
-  "generated_at": "2026-03-15T00:33:45.127Z",
+  "generated_at": "2026-03-17T05:41:35.523Z",
   "cases": [
     {
       "id": "defaults",
@@ -28,7 +28,7 @@
         "ppPcs": 26,
         "guidePcs": 10,
         "guideM": 28,
-        "screws": 360,
+        "screws": 0.4,
         "dubels": 124,
         "jointsM": 66,
         "puttyBags": 1,

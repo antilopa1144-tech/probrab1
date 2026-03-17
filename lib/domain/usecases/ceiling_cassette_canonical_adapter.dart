@@ -90,7 +90,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingCassette(
       quantity: recScenario.exactNeed,
       unit: '\u0448\u0442',
       withReserve: recScenario.exactNeed,
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435',
     ),
     CanonicalMaterialResult(
@@ -98,7 +98,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingCassette(
       quantity: mainProfiles.toDouble(),
       unit: '\u0448\u0442',
       withReserve: mainProfiles.toDouble(),
-      purchaseQty: mainProfiles.toInt(),
+      purchaseQty: mainProfiles.toDouble(),
       category: '\u041a\u0430\u0440\u043a\u0430\u0441',
     ),
     CanonicalMaterialResult(
@@ -106,7 +106,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingCassette(
       quantity: crossProfiles.toDouble(),
       unit: '\u0448\u0442',
       withReserve: crossProfiles.toDouble(),
-      purchaseQty: crossProfiles.toInt(),
+      purchaseQty: crossProfiles.toDouble(),
       category: '\u041a\u0430\u0440\u043a\u0430\u0441',
     ),
     CanonicalMaterialResult(
@@ -114,7 +114,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingCassette(
       quantity: hangers.toDouble(),
       unit: '\u0448\u0442',
       withReserve: hangers.toDouble(),
-      purchaseQty: hangers.toInt(),
+      purchaseQty: hangers.toDouble(),
       category: '\u041a\u0440\u0435\u043f\u0451\u0436',
     ),
     CanonicalMaterialResult(
@@ -122,7 +122,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingCassette(
       quantity: wallProfilePcs.toDouble(),
       unit: '\u0448\u0442',
       withReserve: wallProfilePcs.toDouble(),
-      purchaseQty: wallProfilePcs.toInt(),
+      purchaseQty: wallProfilePcs.toDouble(),
       category: '\u041a\u0430\u0440\u043a\u0430\u0441',
     ),
   ];

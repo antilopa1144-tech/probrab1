@@ -227,7 +227,7 @@ class CalculatePrimer extends BaseCalculator {
     );
   }
 
-  int _findMaterialPurchaseQty(
+  double _findMaterialPurchaseQty(
     CanonicalCalculatorContractResult contract,
     String namePart,
   ) {

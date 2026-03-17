@@ -195,7 +195,8 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
       quantity: roundValue(recScenario.exactNeed, 6),
       unit: spec.packagingRule<String>('linear_meter_unit'),
       withReserve: recScenario.purchaseQuantity,
-      purchaseQty: (recScenario.purchaseQuantity / spec.packagingRule<num>('linear_meter_step_m').toDouble()).round(),
+      purchaseQty: recScenario.purchaseQuantity,
+      packageInfo: {'count': (recScenario.purchaseQuantity / spec.packagingRule<num>('linear_meter_step_m').toDouble()).round(), 'size': spec.packagingRule<num>('linear_meter_step_m').toDouble(), 'packageUnit': 'отрезов'},
       category: 'Покрытие',
     ),
     CanonicalMaterialResult(
@@ -203,7 +204,8 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
       quantity: primerLiters,
       unit: 'л',
       withReserve: primerCans * spec.packagingRule<num>('primer_can_liters').toDouble(),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: (primerCans * spec.packagingRule<num>('primer_can_liters').toDouble()).toDouble(),
+      packageInfo: {'count': primerCans, 'size': spec.packagingRule<num>('primer_can_liters').toDouble(), 'packageUnit': 'канистр'},
       category: 'Подготовка',
     ),
   ];
@@ -214,7 +216,8 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
       quantity: glueKg,
       unit: 'кг',
       withReserve: glueBuckets * spec.packagingRule<num>('glue_bucket_kg').toDouble(),
-      purchaseQty: glueBuckets.toInt(),
+      purchaseQty: (glueBuckets * spec.packagingRule<num>('glue_bucket_kg').toDouble()).toDouble(),
+      packageInfo: {'count': glueBuckets, 'size': spec.packagingRule<num>('glue_bucket_kg').toDouble(), 'packageUnit': 'вёдер'},
       category: 'Клей',
     ));
   }
@@ -224,7 +227,7 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
       quantity: roundValue(plinthLengthWithReserve / spec.packagingRule<num>('plinth_piece_length_m').toDouble(), 6),
       unit: 'шт',
       withReserve: plinthPieces.toDouble(),
-      purchaseQty: plinthPieces.toInt(),
+      purchaseQty: plinthPieces.toDouble(),
       category: 'Плинтус',
     ));
   }
@@ -234,7 +237,7 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
       quantity: tapeLength,
       unit: 'м',
       withReserve: tapeLength,
-      purchaseQty: tapeLength.ceil(),
+      purchaseQty: tapeLength.ceil().toDouble(),
       category: 'Крепление',
     ));
   }
@@ -244,7 +247,7 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
       quantity: coldWeldingTubes.toDouble(),
       unit: 'туб',
       withReserve: coldWeldingTubes.toDouble(),
-      purchaseQty: coldWeldingTubes.toInt(),
+      purchaseQty: coldWeldingTubes.toDouble(),
       category: 'Швы',
     ));
   }

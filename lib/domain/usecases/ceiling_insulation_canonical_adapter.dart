@@ -41,7 +41,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingInsulation(
       quantity: packs.toDouble(),
       unit: '\u0443\u043f\u0430\u043a\u043e\u0432\u043e\u043a',
       withReserve: packs.toDouble(),
-      purchaseQty: packs.toInt(),
+      purchaseQty: packs.toDouble(),
       category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435',
     ));
   }
@@ -58,7 +58,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingInsulation(
       quantity: rolls.toDouble(),
       unit: '\u0440\u0443\u043b\u043e\u043d\u043e\u0432',
       withReserve: rolls.toDouble(),
-      purchaseQty: rolls.toInt(),
+      purchaseQty: rolls.toDouble(),
       category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435',
     ));
   }
@@ -74,7 +74,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingInsulation(
       quantity: plates.toDouble(),
       unit: '\u0448\u0442',
       withReserve: plates.toDouble(),
-      purchaseQty: plates.toInt(),
+      purchaseQty: plates.toDouble(),
       category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435',
     ));
   }
@@ -91,7 +91,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingInsulation(
       quantity: bags.toDouble(),
       unit: '\u043c\u0435\u0448\u043a\u043e\u0432',
       withReserve: bags.toDouble(),
-      purchaseQty: bags.toInt(),
+      purchaseQty: bags.toDouble(),
       category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435',
     ));
   }
@@ -105,7 +105,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingInsulation(
       quantity: vaporRolls.toDouble(),
       unit: '\u0440\u0443\u043b\u043e\u043d\u043e\u0432',
       withReserve: vaporRolls.toDouble(),
-      purchaseQty: vaporRolls.toInt(),
+      purchaseQty: vaporRolls.toDouble(),
       category: '\u0418\u0437\u043e\u043b\u044f\u0446\u0438\u044f',
     ));
   }
@@ -117,7 +117,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingInsulation(
     quantity: tapeRolls.toDouble(),
     unit: '\u043c',
     withReserve: tapeRolls.toDouble(),
-    purchaseQty: tapeRolls.toInt(),
+    purchaseQty: tapeRolls.toDouble(),
     category: '\u0420\u0430\u0441\u0445\u043e\u0434\u043d\u044b\u0435',
   ));
 

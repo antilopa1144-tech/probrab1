@@ -18,9 +18,9 @@
         "wastePercent": 19,
         "warningsCount": 0,
         "materials": {
-          "linearMetersX10": 51,
-          "primerCans": 1,
-          "glueBuckets": 1,
+          "linearMetersX10": 5.1,
+          "primerCans": 10.0,
+          "glueBuckets": 10.0,
           "plinthPieces": 7,
           "tapeMeters": 21
         },
@@ -50,8 +50,8 @@
         "wastePercent": 5,
         "warningsCount": 2,
         "materials": {
-          "linearMetersX10": 105,
-          "primerCans": 1,
+          "linearMetersX10": 10.5,
+          "primerCans": 10.0,
           "plinthPieces": 8,
           "tapeMeters": 23,
           "coldWeldingTubes": 1
@@ -82,9 +82,9 @@
         "wastePercent": 1,
         "warningsCount": 0,
         "materials": {
-          "linearMetersX10": 101,
-          "primerCans": 1,
-          "glueBuckets": 2,
+          "linearMetersX10": 10.1,
+          "primerCans": 10.0,
+          "glueBuckets": 20.0,
           "plinthPieces": 9,
           "tapeMeters": 32
         },

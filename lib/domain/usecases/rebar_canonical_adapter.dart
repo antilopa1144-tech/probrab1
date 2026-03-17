@@ -329,23 +329,25 @@ CanonicalCalculatorContractResult calculateCanonicalRebar(
       quantity: roundValue(calc.mainRebarLength, 1),
       unit: 'м.п.',
       withReserve: roundValue(mainRebarKg, 1),
-      purchaseQty: mainRods.toInt(),
+      purchaseQty: (mainRods * _standardRodLengthM).toDouble(),
       category: 'Арматура',
+      packageInfo: {'count': mainRods, 'unitSize': _standardRodLengthM, 'packageUnit': 'прутков'},
     ),
     CanonicalMaterialResult(
       name: secondaryLabel,
       quantity: roundValue(calc.tieRebarLength, 1),
       unit: 'м.п.',
       withReserve: roundValue(tieRebarKg, 1),
-      purchaseQty: (calc.tieRebarLength / _standardRodLengthM).ceil(),
+      purchaseQty: ((calc.tieRebarLength / _standardRodLengthM).ceil() * _standardRodLengthM).toDouble(),
       category: 'Арматура',
+      packageInfo: {'count': (calc.tieRebarLength / _standardRodLengthM).ceil(), 'unitSize': _standardRodLengthM, 'packageUnit': 'прутков'},
     ),
     CanonicalMaterialResult(
       name: 'Проволока вязальная Ø1.2',
       quantity: roundValue(wireKg, 2),
       unit: 'кг',
       withReserve: roundValue(wireKg, 2),
-      purchaseQty: wireKg.ceil(),
+      purchaseQty: wireKg.ceil().toDouble(),
       category: 'Расходные материалы',
     ),
   ];
@@ -356,7 +358,7 @@ CanonicalCalculatorContractResult calculateCanonicalRebar(
       quantity: calc.fixators.toDouble(),
       unit: 'шт',
       withReserve: calc.fixators.toDouble(),
-      purchaseQty: calc.fixators,
+      purchaseQty: calc.fixators.toDouble(),
       category: 'Расходные материалы',
     ));
   }

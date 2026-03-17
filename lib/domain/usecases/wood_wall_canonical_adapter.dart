@@ -51,7 +51,8 @@ CanonicalCalculatorContractResult calculateCanonicalWoodWall(
   final primerL = area * spec.materialRule<num>('primer_l_per_m2').toDouble();
 
   // Fasteners
-  final fasteners = boards * spec.materialRule<num>('fasteners_per_board').toDouble();
+  final fastenersPcs = boards * spec.materialRule<num>('fasteners_per_board').toDouble();
+  final fastenersKg = (fastenersPcs / 600 * 10).ceil() / 10; // 3.5×35 мм: 600 шт/кг
   final clamps = boards * spec.materialRule<num>('clamps_per_board').toDouble();
 
   // Scenarios
@@ -100,7 +101,7 @@ CanonicalCalculatorContractResult calculateCanonicalWoodWall(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Облицовка',
     ),
     CanonicalMaterialResult(
@@ -108,7 +109,7 @@ CanonicalCalculatorContractResult calculateCanonicalWoodWall(
       quantity: roundValue(battensLen, 2),
       unit: 'п.м.',
       withReserve: battensLen.ceilToDouble(),
-      purchaseQty: battensLen.ceil(),
+      purchaseQty: battensLen.ceil().toDouble(),
       category: 'Подсистема',
     ),
     CanonicalMaterialResult(
@@ -116,7 +117,7 @@ CanonicalCalculatorContractResult calculateCanonicalWoodWall(
       quantity: roundValue(plinth, 2),
       unit: 'п.м.',
       withReserve: plinth.ceilToDouble(),
-      purchaseQty: plinth.ceil(),
+      purchaseQty: plinth.ceil().toDouble(),
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
@@ -124,7 +125,7 @@ CanonicalCalculatorContractResult calculateCanonicalWoodWall(
       quantity: roundValue(corners, 2),
       unit: 'п.м.',
       withReserve: corners.ceilToDouble(),
-      purchaseQty: corners.ceil(),
+      purchaseQty: corners.ceil().toDouble(),
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
@@ -132,7 +133,7 @@ CanonicalCalculatorContractResult calculateCanonicalWoodWall(
       quantity: roundValue(ceilingPlinth, 2),
       unit: 'п.м.',
       withReserve: ceilingPlinth.ceilToDouble(),
-      purchaseQty: ceilingPlinth.ceil(),
+      purchaseQty: ceilingPlinth.ceil().toDouble(),
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
@@ -140,7 +141,7 @@ CanonicalCalculatorContractResult calculateCanonicalWoodWall(
       quantity: roundValue(antisepticL, 2),
       unit: 'л',
       withReserve: antisepticL.ceilToDouble(),
-      purchaseQty: antisepticL.ceil(),
+      purchaseQty: antisepticL.ceil().toDouble(),
       category: 'Покрытие',
     ),
     CanonicalMaterialResult(
@@ -148,7 +149,7 @@ CanonicalCalculatorContractResult calculateCanonicalWoodWall(
       quantity: roundValue(finishL, 2),
       unit: 'л',
       withReserve: finishL.ceilToDouble(),
-      purchaseQty: finishL.ceil(),
+      purchaseQty: finishL.ceil().toDouble(),
       category: 'Покрытие',
     ),
     CanonicalMaterialResult(
@@ -156,15 +157,15 @@ CanonicalCalculatorContractResult calculateCanonicalWoodWall(
       quantity: roundValue(primerL, 2),
       unit: 'л',
       withReserve: primerL.ceilToDouble(),
-      purchaseQty: primerL.ceil(),
+      purchaseQty: primerL.ceil().toDouble(),
       category: 'Покрытие',
     ),
     CanonicalMaterialResult(
       name: 'Крепёж (саморезы/гвозди)',
-      quantity: fasteners.toDouble(),
-      unit: 'шт',
-      withReserve: fasteners.toDouble(),
-      purchaseQty: fasteners.toInt(),
+      quantity: fastenersKg,
+      unit: 'кг',
+      withReserve: fastenersKg,
+      purchaseQty: fastenersKg.ceil().toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -172,7 +173,7 @@ CanonicalCalculatorContractResult calculateCanonicalWoodWall(
       quantity: clamps.toDouble(),
       unit: 'шт',
       withReserve: clamps.toDouble(),
-      purchaseQty: clamps.toInt(),
+      purchaseQty: clamps.toDouble(),
       category: 'Крепёж',
     ),
   ];
@@ -197,7 +198,7 @@ CanonicalCalculatorContractResult calculateCanonicalWoodWall(
       'antisepticL': roundValue(antisepticL, 3),
       'finishL': roundValue(finishL, 3),
       'primerL': roundValue(primerL, 3),
-      'fasteners': fasteners.toDouble(),
+      'fasteners': fastenersKg,
       'clamps': clamps.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,
       'recExactNeed': recScenario.exactNeed,

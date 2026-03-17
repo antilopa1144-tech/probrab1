@@ -155,7 +155,7 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
       quantity: ductSections.toDouble(),
       unit: 'секций',
       withReserve: ductSections.toDouble(),
-      purchaseQty: ductSections.toInt(),
+      purchaseQty: ductSections.toDouble(),
       category: 'Воздуховоды',
     ));
   } else {
@@ -164,7 +164,7 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
       quantity: ductCoils.toDouble(),
       unit: 'бухт',
       withReserve: ductCoils.toDouble(),
-      purchaseQty: ductCoils.toInt(),
+      purchaseQty: ductCoils.toDouble(),
       category: 'Воздуховоды',
     ));
   }
@@ -175,7 +175,7 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
       quantity: fittings.toDouble(),
       unit: 'шт',
       withReserve: fittings.toDouble(),
-      purchaseQty: fittings.toInt(),
+      purchaseQty: fittings.toDouble(),
       category: 'Фасонные',
     ),
     CanonicalMaterialResult(
@@ -183,7 +183,7 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
       quantity: grilles.toDouble(),
       unit: 'шт',
       withReserve: grilles.toDouble(),
-      purchaseQty: grilles.toInt(),
+      purchaseQty: grilles.toDouble(),
       category: 'Распределение',
     ),
     CanonicalMaterialResult(
@@ -191,7 +191,7 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
       quantity: clamps.toDouble(),
       unit: 'шт',
       withReserve: clamps.toDouble(),
-      purchaseQty: clamps.toInt(),
+      purchaseQty: clamps.toDouble(),
       category: 'Крепёж',
     ),
   ]);
@@ -202,7 +202,7 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
       quantity: silencer.toDouble(),
       unit: 'шт',
       withReserve: silencer.toDouble(),
-      purchaseQty: silencer.toInt(),
+      purchaseQty: silencer.toDouble(),
       category: 'Оборудование',
     ));
   }

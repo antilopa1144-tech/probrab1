@@ -187,15 +187,16 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: cementKg,
         unit: 'кг',
         withReserve: (bags50Cement * 50).toDouble(),
-        purchaseQty: bags50Cement.toInt(),
+        purchaseQty: (bags50Cement * 50).toDouble(),
         category: 'Основное',
+        packageInfo: {'count': bags50Cement, 'unitSize': 50.0, 'packageUnit': 'мешков'},
       ),
       CanonicalMaterialResult(
         name: 'Песок строительный',
         quantity: sandTons,
         unit: 'т',
         withReserve: sandTons,
-        purchaseQty: sandTons.ceil(),
+        purchaseQty: sandTons.ceil().toDouble(),
         category: 'Основное',
       ),
       CanonicalMaterialResult(
@@ -203,7 +204,7 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: waterL,
         unit: 'л',
         withReserve: waterL,
-        purchaseQty: waterL.ceil(),
+        purchaseQty: waterL.ceil().toDouble(),
         category: 'Основное',
       ),
       CanonicalMaterialResult(
@@ -211,7 +212,7 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: filmArea.toDouble(),
         unit: 'м²',
         withReserve: filmArea.toDouble(),
-        purchaseQty: filmArea.toInt(),
+        purchaseQty: filmArea.toDouble(),
         category: 'Подготовка',
       ),
     ]);
@@ -221,7 +222,7 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: meshArea.toDouble(),
         unit: 'м²',
         withReserve: meshArea.toDouble(),
-        purchaseQty: meshArea.toInt(),
+        purchaseQty: meshArea.toDouble(),
         category: 'Армирование',
       ));
     }
@@ -231,7 +232,7 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: beacons.toDouble(),
         unit: 'шт',
         withReserve: beacons.toDouble(),
-        purchaseQty: beacons.toInt(),
+        purchaseQty: beacons.toDouble(),
         category: 'Разметка',
       ),
       CanonicalMaterialResult(
@@ -239,7 +240,7 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: damperTapeM.toDouble(),
         unit: 'м',
         withReserve: damperTapeM.toDouble(),
-        purchaseQty: damperTapeM.toInt(),
+        purchaseQty: damperTapeM.toDouble(),
         category: 'Подготовка',
       ),
     ]);
@@ -250,15 +251,16 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: cpsKgReady,
         unit: 'кг',
         withReserve: (bags50Ready * 50).toDouble(),
-        purchaseQty: bags50Ready.toInt(),
+        purchaseQty: (bags50Ready * 50).toDouble(),
         category: 'Основное',
+        packageInfo: {'count': bags50Ready, 'unitSize': 50.0, 'packageUnit': 'мешков'},
       ),
       CanonicalMaterialResult(
         name: 'Плёнка ПЭ',
         quantity: filmArea.toDouble(),
         unit: 'м²',
         withReserve: filmArea.toDouble(),
-        purchaseQty: filmArea.toInt(),
+        purchaseQty: filmArea.toDouble(),
         category: 'Подготовка',
       ),
     ]);
@@ -268,7 +270,7 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: meshArea.toDouble(),
         unit: 'м²',
         withReserve: meshArea.toDouble(),
-        purchaseQty: meshArea.toInt(),
+        purchaseQty: meshArea.toDouble(),
         category: 'Армирование',
       ));
     }
@@ -278,7 +280,7 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: beacons.toDouble(),
         unit: 'шт',
         withReserve: beacons.toDouble(),
-        purchaseQty: beacons.toInt(),
+        purchaseQty: beacons.toDouble(),
         category: 'Разметка',
       ),
       CanonicalMaterialResult(
@@ -286,7 +288,7 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: damperTapeM.toDouble(),
         unit: 'м',
         withReserve: damperTapeM.toDouble(),
-        purchaseQty: damperTapeM.toInt(),
+        purchaseQty: damperTapeM.toDouble(),
         category: 'Подготовка',
       ),
     ]);
@@ -298,15 +300,16 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: cpsKgSemidry,
         unit: 'кг',
         withReserve: (bags50Semidry * 50).toDouble(),
-        purchaseQty: bags50Semidry.toInt(),
+        purchaseQty: (bags50Semidry * 50).toDouble(),
         category: 'Основное',
+        packageInfo: {'count': bags50Semidry, 'unitSize': 50.0, 'packageUnit': 'мешков'},
       ),
       CanonicalMaterialResult(
         name: 'Фиброволокно ПП',
         quantity: fiberKg,
         unit: 'кг',
         withReserve: fiberKg,
-        purchaseQty: fiberKg.ceil(),
+        purchaseQty: fiberKg.ceil().toDouble(),
         category: 'Армирование',
       ),
       CanonicalMaterialResult(
@@ -314,7 +317,7 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: filmArea.toDouble(),
         unit: 'м²',
         withReserve: filmArea.toDouble(),
-        purchaseQty: filmArea.toInt(),
+        purchaseQty: filmArea.toDouble(),
         category: 'Подготовка',
       ),
       CanonicalMaterialResult(
@@ -322,7 +325,7 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
         quantity: damperTapeM.toDouble(),
         unit: 'м',
         withReserve: damperTapeM.toDouble(),
-        purchaseQty: damperTapeM.toInt(),
+        purchaseQty: damperTapeM.toDouble(),
         category: 'Подготовка',
       ),
     ]);

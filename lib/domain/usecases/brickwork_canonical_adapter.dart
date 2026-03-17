@@ -158,7 +158,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
       quantity: roundValue(totalBricks, 3),
       unit: 'шт',
       withReserve: bricksWithReserve.toDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -166,7 +166,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
       quantity: pallets.toDouble(),
       unit: 'шт',
       withReserve: pallets.toDouble(),
-      purchaseQty: pallets.toInt(),
+      purchaseQty: pallets.toDouble(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -174,7 +174,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
       quantity: mortarBags.toDouble(),
       unit: 'мешков',
       withReserve: mortarBags.toDouble(),
-      purchaseQty: mortarBags.toInt(),
+      purchaseQty: mortarBags.toDouble(),
       category: 'Раствор',
     ),
     CanonicalMaterialResult(
@@ -182,7 +182,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
       quantity: meshArea,
       unit: 'м²',
       withReserve: meshArea.ceilToDouble(),
-      purchaseQty: meshArea.ceil(),
+      purchaseQty: meshArea.ceil().toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -190,7 +190,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
       quantity: totalLintels.toDouble(),
       unit: 'шт',
       withReserve: totalLintels.toDouble(),
-      purchaseQty: totalLintels.toInt(),
+      purchaseQty: totalLintels.toDouble(),
       category: 'Проёмы',
     ),
   ];

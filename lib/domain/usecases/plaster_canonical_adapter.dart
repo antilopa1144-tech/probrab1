@@ -154,7 +154,7 @@ CanonicalCalculatorContractResult calculateCanonicalPlaster(
         quantity: roundValue(totalKg / bagWeight, 3),
         unit: 'мешков',
         withReserve: recScenario.buyPlan.packagesCount.toDouble(),
-        purchaseQty: recScenario.buyPlan.packagesCount,
+        purchaseQty: recScenario.buyPlan.packagesCount.toDouble(),
         category: 'Основное',
       ),
       CanonicalMaterialResult(
@@ -164,8 +164,9 @@ CanonicalCalculatorContractResult calculateCanonicalPlaster(
         quantity: primerNeed,
         unit: (substrate['primer_type'] as num).toInt() == 2 ? 'кг' : 'л',
         withReserve: (primerPackages * spec.materialRule<num>('primer_package_size').toDouble()),
-        purchaseQty: primerPackages.toInt(),
+        purchaseQty: (primerPackages * spec.materialRule<num>('primer_package_size').toDouble()).toDouble(),
         category: 'Подготовка',
+        packageInfo: {'count': primerPackages, 'unitSize': spec.materialRule<num>('primer_package_size').toDouble(), 'packageUnit': 'канистр'},
       ),
       if (meshArea > 0)
         CanonicalMaterialResult(
@@ -173,7 +174,7 @@ CanonicalCalculatorContractResult calculateCanonicalPlaster(
           quantity: meshArea,
           unit: 'м²',
           withReserve: meshArea.ceil().toDouble(),
-          purchaseQty: meshArea.ceil(),
+          purchaseQty: meshArea.ceil().toDouble(),
           category: 'Армирование',
         ),
       CanonicalMaterialResult(
@@ -181,7 +182,7 @@ CanonicalCalculatorContractResult calculateCanonicalPlaster(
         quantity: beacons.toDouble(),
         unit: 'шт',
         withReserve: beacons.toDouble(),
-        purchaseQty: beacons.toInt(),
+        purchaseQty: beacons.toDouble(),
         category: 'Вспомогательное',
       ),
       CanonicalMaterialResult(
@@ -189,7 +190,7 @@ CanonicalCalculatorContractResult calculateCanonicalPlaster(
         quantity: spec.materialRule<num>('rule_count').toDouble(),
         unit: 'шт',
         withReserve: spec.materialRule<num>('rule_count').toDouble(),
-        purchaseQty: spec.materialRule<num>('rule_count').toInt(),
+        purchaseQty: spec.materialRule<num>('rule_count').toDouble(),
         category: 'Инструмент',
       ),
       if (cornerProfiles > 0)
@@ -198,7 +199,7 @@ CanonicalCalculatorContractResult calculateCanonicalPlaster(
           quantity: cornerProfiles.toDouble(),
           unit: 'шт',
           withReserve: cornerProfiles.toDouble(),
-          purchaseQty: cornerProfiles.toInt(),
+          purchaseQty: cornerProfiles.toDouble(),
           category: 'Вспомогательное',
         ),
     ],

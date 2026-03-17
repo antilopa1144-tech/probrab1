@@ -49,8 +49,9 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingRail(
   // Hangers
   final hangers = ((roomWidth / spec.materialRule<num>('hanger_spacing').toDouble()) + 1).ceil() * guideCount;
 
-  // Screws & dubels
-  final screws = (hangers * spec.materialRule<num>('screws_per_hanger').toDouble() + railPcs * spec.materialRule<num>('screws_per_rail').toDouble()).round();
+  // Screws & dubels (in kg)
+  final screwsPcs = (hangers * spec.materialRule<num>('screws_per_hanger').toDouble() + railPcs * spec.materialRule<num>('screws_per_rail').toDouble()).round();
+  final screwsKg = (screwsPcs / 1000 * 10).ceil() / 10; // 3.5×25 мм: 1000 шт/кг
   final dubels = hangers;
 
   // Scenarios
@@ -99,7 +100,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingRail(
       quantity: recScenario.exactNeed,
       unit: '\u0448\u0442',
       withReserve: recScenario.exactNeed,
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435',
     ),
     CanonicalMaterialResult(
@@ -107,7 +108,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingRail(
       quantity: guidePcs.toDouble(),
       unit: '\u0448\u0442',
       withReserve: guidePcs.toDouble(),
-      purchaseQty: guidePcs.toInt(),
+      purchaseQty: guidePcs.toDouble(),
       category: '\u041a\u0430\u0440\u043a\u0430\u0441',
     ),
     CanonicalMaterialResult(
@@ -115,15 +116,15 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingRail(
       quantity: hangers.toDouble(),
       unit: '\u0448\u0442',
       withReserve: hangers.toDouble(),
-      purchaseQty: hangers.toInt(),
+      purchaseQty: hangers.toDouble(),
       category: '\u041a\u0440\u0435\u043f\u0451\u0436',
     ),
     CanonicalMaterialResult(
       name: '\u0421\u0430\u043c\u043e\u0440\u0435\u0437\u044b',
-      quantity: screws.toDouble(),
-      unit: '\u0448\u0442',
-      withReserve: screws.toDouble(),
-      purchaseQty: screws.toInt(),
+      quantity: screwsKg,
+      unit: '\u043a\u0433',
+      withReserve: screwsKg,
+      purchaseQty: screwsKg.ceil().toDouble(),
       category: '\u041a\u0440\u0435\u043f\u0451\u0436',
     ),
     CanonicalMaterialResult(
@@ -131,7 +132,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingRail(
       quantity: dubels.toDouble(),
       unit: '\u0448\u0442',
       withReserve: dubels.toDouble(),
-      purchaseQty: dubels.toInt(),
+      purchaseQty: dubels.toDouble(),
       category: '\u041a\u0440\u0435\u043f\u0451\u0436',
     ),
   ];
@@ -152,7 +153,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingRail(
       'guideCount': guideCount.toDouble(),
       'guidePcs': guidePcs.toDouble(),
       'hangers': hangers.toDouble(),
-      'screws': screws.toDouble(),
+      'screws': screwsKg,
       'dubels': dubels.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,
       'recExactNeed': recScenario.exactNeed,

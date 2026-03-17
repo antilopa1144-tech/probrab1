@@ -116,12 +116,12 @@ class _PaintScreenState extends State<PaintScreen> {
   }) {
     for (final material in contract.materials) {
       if (material.category == category && material.name.contains(fallbackNamePart)) {
-        return material.purchaseQty ?? 0;
+        return material.purchaseQty?.toInt() ?? 0;
       }
     }
     for (final material in contract.materials) {
       if (material.name.contains(fallbackNamePart)) {
-        return material.purchaseQty ?? 0;
+        return material.purchaseQty?.toInt() ?? 0;
       }
     }
     return 0;

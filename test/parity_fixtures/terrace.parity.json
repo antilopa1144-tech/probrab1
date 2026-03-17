@@ -1,7 +1,7 @@
 {
   "calculator_id": "terrace",
   "formula_version": "terrace-canonical-v1",
-  "generated_at": "2026-03-15T00:33:45.242Z",
+  "generated_at": "2026-03-17T05:41:35.719Z",
   "cases": [
     {
       "id": "defaults",
@@ -32,7 +32,7 @@
         "lagTotalLen": 44.1,
         "lagPcs": 15,
         "klaymerCount": 280,
-        "screwCount": 336,
+        "screwCount": 0.6,
         "treatmentL": 0,
         "geotextileRolls": 1,
         "minExactNeed": 40.9728,

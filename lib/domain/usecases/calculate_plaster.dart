@@ -145,7 +145,7 @@ class CalculatePlaster extends BaseCalculator {
     );
   }
 
-  int _findMaterialPurchaseQty(
+  double _findMaterialPurchaseQty(
     CanonicalCalculatorContractResult contract,
     String categoryPart, {
     String? nameFallback,

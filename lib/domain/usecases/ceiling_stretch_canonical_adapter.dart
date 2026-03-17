@@ -85,7 +85,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingStretch(
       quantity: recScenario.exactNeed,
       unit: '\u0448\u0442',
       withReserve: recScenario.exactNeed,
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: '\u041a\u0430\u0440\u043a\u0430\u0441',
     ),
     CanonicalMaterialResult(
@@ -93,7 +93,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingStretch(
       quantity: roundValue(insertLen, 3),
       unit: '\u043c',
       withReserve: insertLen.ceilToDouble(),
-      purchaseQty: insertLen.ceil(),
+      purchaseQty: insertLen.ceil().toDouble(),
       category: '\u041e\u0442\u0434\u0435\u043b\u043a\u0430',
     ),
     CanonicalMaterialResult(
@@ -101,7 +101,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingStretch(
       quantity: maskingTape.toDouble(),
       unit: '\u0440\u0443\u043b\u043e\u043d\u043e\u0432',
       withReserve: maskingTape.toDouble(),
-      purchaseQty: maskingTape.toInt(),
+      purchaseQty: maskingTape.toDouble(),
       category: '\u041e\u0442\u0434\u0435\u043b\u043a\u0430',
     ),
     CanonicalMaterialResult(
@@ -109,7 +109,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingStretch(
       quantity: corners.toDouble(),
       unit: '\u0448\u0442',
       withReserve: corners.toDouble(),
-      purchaseQty: corners.toInt(),
+      purchaseQty: corners.toDouble(),
       category: '\u041c\u043e\u043d\u0442\u0430\u0436',
     ),
     CanonicalMaterialResult(
@@ -117,7 +117,7 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingStretch(
       quantity: fixtures.toDouble(),
       unit: '\u0448\u0442',
       withReserve: fixtures.toDouble(),
-      purchaseQty: fixtures.toInt(),
+      purchaseQty: fixtures.toDouble(),
       category: '\u041c\u043e\u043d\u0442\u0430\u0436',
     ),
   ];

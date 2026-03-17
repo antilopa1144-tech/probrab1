@@ -95,7 +95,8 @@ CanonicalCalculatorContractResult calculateCanonicalTileGrout(
       quantity: recScenario.exactNeed,
       unit: 'кг',
       withReserve: recScenario.exactNeed,
-      purchaseQty: (recScenario.purchaseQuantity / bagSize).ceil(),
+      purchaseQty: (recScenario.purchaseQuantity / bagSize).ceil() * bagSize,
+      packageInfo: {'count': (recScenario.purchaseQuantity / bagSize).ceil(), 'size': bagSize, 'packageUnit': 'мешков'},
       category: 'Основное',
     ),
   ];

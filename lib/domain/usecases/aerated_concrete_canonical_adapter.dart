@@ -149,7 +149,7 @@ CanonicalCalculatorContractResult calculateCanonicalAeratedConcrete(
       quantity: roundValue(blocksNet, 3),
       unit: '\u0448\u0442',
       withReserve: blocksWithReserve.toDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435',
     ),
     CanonicalMaterialResult(
@@ -157,7 +157,7 @@ CanonicalCalculatorContractResult calculateCanonicalAeratedConcrete(
       quantity: glueBags.toDouble(),
       unit: '\u043c\u0435\u0448\u043a\u043e\u0432',
       withReserve: glueBags.toDouble(),
-      purchaseQty: glueBags.toInt(),
+      purchaseQty: glueBags.toDouble(),
       category: '\u041a\u043b\u0430\u0434\u043a\u0430',
     ),
     CanonicalMaterialResult(
@@ -165,7 +165,7 @@ CanonicalCalculatorContractResult calculateCanonicalAeratedConcrete(
       quantity: rebarLength.toDouble(),
       unit: '\u043f.\u043c',
       withReserve: rebarLength.toDouble(),
-      purchaseQty: rebarLength.toInt(),
+      purchaseQty: rebarLength.toDouble(),
       category: '\u0410\u0440\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435',
     ),
     CanonicalMaterialResult(
@@ -173,7 +173,7 @@ CanonicalCalculatorContractResult calculateCanonicalAeratedConcrete(
       quantity: primerCans.toDouble(),
       unit: '\u043a\u0430\u043d\u0438\u0441\u0442\u0440',
       withReserve: primerCans.toDouble(),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: primerCans.toDouble(),
       category: '\u041e\u0442\u0434\u0435\u043b\u043a\u0430',
     ),
     CanonicalMaterialResult(
@@ -181,7 +181,7 @@ CanonicalCalculatorContractResult calculateCanonicalAeratedConcrete(
       quantity: uBlocks.toDouble(),
       unit: '\u0448\u0442',
       withReserve: uBlocks.toDouble(),
-      purchaseQty: uBlocks.toInt(),
+      purchaseQty: uBlocks.toDouble(),
       category: '\u041f\u0440\u043e\u0451\u043c\u044b',
     ),
     CanonicalMaterialResult(
@@ -189,7 +189,7 @@ CanonicalCalculatorContractResult calculateCanonicalAeratedConcrete(
       quantity: cornerProfiles.toDouble(),
       unit: '\u0448\u0442',
       withReserve: cornerProfiles.toDouble(),
-      purchaseQty: cornerProfiles.toInt(),
+      purchaseQty: cornerProfiles.toDouble(),
       category: '\u041f\u0440\u043e\u0451\u043c\u044b',
     ),
   ];

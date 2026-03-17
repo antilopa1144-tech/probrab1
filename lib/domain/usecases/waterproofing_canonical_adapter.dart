@@ -135,7 +135,8 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
       quantity: masticKg,
       unit: 'кг',
       withReserve: (masticBuckets * bucketKg).toDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: (masticBuckets * bucketKg).toDouble(),
+      packageInfo: {'count': masticBuckets, 'size': bucketKg, 'packageUnit': 'вёдер'},
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -143,7 +144,8 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
       quantity: tapeM,
       unit: 'м',
       withReserve: (tapeRolls * 10).toDouble(),
-      purchaseQty: tapeRolls.toInt(),
+      purchaseQty: (tapeRolls * 10).toDouble(),
+      packageInfo: {'count': tapeRolls, 'size': 10, 'packageUnit': 'рулонов'},
       category: 'Лента',
     ),
     CanonicalMaterialResult(
@@ -151,7 +153,7 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
       quantity: siliconeTubes.toDouble(),
       unit: 'туб',
       withReserve: siliconeTubes.toDouble(),
-      purchaseQty: siliconeTubes.toInt(),
+      purchaseQty: siliconeTubes.toDouble(),
       category: 'Герметик',
     ),
   ];
@@ -162,7 +164,8 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
       quantity: primerKg,
       unit: 'кг',
       withReserve: (primerCans * spec.materialRule<num>('primer_can_kg').toDouble()),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: (primerCans * spec.materialRule<num>('primer_can_kg').toDouble()).toDouble(),
+      packageInfo: {'count': primerCans, 'size': spec.materialRule<num>('primer_can_kg').toDouble(), 'packageUnit': 'банок'},
       category: 'Подготовка',
     ));
   } else {
@@ -171,7 +174,8 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
       quantity: bitumenL,
       unit: 'л',
       withReserve: (bitumenCans * spec.materialRule<num>('bitumen_can_l').toDouble()),
-      purchaseQty: bitumenCans.toInt(),
+      purchaseQty: (bitumenCans * spec.materialRule<num>('bitumen_can_l').toDouble()).toDouble(),
+      packageInfo: {'count': bitumenCans, 'size': spec.materialRule<num>('bitumen_can_l').toDouble(), 'packageUnit': 'канистр'},
       category: 'Подготовка',
     ));
   }
@@ -181,7 +185,7 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
     quantity: jointTubes.toDouble(),
     unit: 'туб',
     withReserve: jointTubes.toDouble(),
-    purchaseQty: jointTubes.toInt(),
+    purchaseQty: jointTubes.toDouble(),
     category: 'Герметик',
   ));
 

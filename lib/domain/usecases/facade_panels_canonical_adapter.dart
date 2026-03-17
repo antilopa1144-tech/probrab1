@@ -125,7 +125,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadePanels(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Облицовка',
     ),
     CanonicalMaterialResult(
@@ -133,7 +133,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadePanels(
       quantity: brackets.toDouble(),
       unit: 'шт',
       withReserve: brackets.toDouble(),
-      purchaseQty: brackets.toInt(),
+      purchaseQty: brackets.toDouble(),
       category: 'Подсистема',
     ),
     CanonicalMaterialResult(
@@ -141,7 +141,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadePanels(
       quantity: guides.toDouble(),
       unit: 'шт',
       withReserve: guides.toDouble(),
-      purchaseQty: guides.toInt(),
+      purchaseQty: guides.toDouble(),
       category: 'Подсистема',
     ),
     CanonicalMaterialResult(
@@ -149,7 +149,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadePanels(
       quantity: fasteners.toDouble(),
       unit: 'шт',
       withReserve: fasteners.toDouble(),
-      purchaseQty: fasteners.toInt(),
+      purchaseQty: fasteners.toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -157,7 +157,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadePanels(
       quantity: anchors.toDouble(),
       unit: 'шт',
       withReserve: anchors.toDouble(),
-      purchaseQty: anchors.toInt(),
+      purchaseQty: anchors.toDouble(),
       category: 'Крепёж',
     ),
   ];
@@ -169,7 +169,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadePanels(
         quantity: insPlates.toDouble(),
         unit: 'шт',
         withReserve: insPlates.toDouble(),
-        purchaseQty: insPlates.toInt(),
+        purchaseQty: insPlates.toDouble(),
         category: 'Утепление',
       ),
       CanonicalMaterialResult(
@@ -177,7 +177,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadePanels(
         quantity: insDowels.toDouble(),
         unit: 'шт',
         withReserve: insDowels.toDouble(),
-        purchaseQty: insDowels.toInt(),
+        purchaseQty: insDowels.toDouble(),
         category: 'Крепёж',
       ),
       CanonicalMaterialResult(
@@ -185,7 +185,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadePanels(
         quantity: membrane.toDouble(),
         unit: 'рулонов',
         withReserve: membrane.toDouble(),
-        purchaseQty: membrane.toInt(),
+        purchaseQty: membrane.toDouble(),
         category: 'Утепление',
       ),
     ]);
@@ -197,7 +197,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadePanels(
       quantity: primer.toDouble(),
       unit: 'канистр',
       withReserve: primer.toDouble(),
-      purchaseQty: primer.toInt(),
+      purchaseQty: primer.toDouble(),
       category: 'Грунтовка',
     ),
     CanonicalMaterialResult(
@@ -205,7 +205,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadePanels(
       quantity: sealant.toDouble(),
       unit: 'шт',
       withReserve: sealant.toDouble(),
-      purchaseQty: sealant.toInt(),
+      purchaseQty: sealant.toDouble(),
       category: 'Монтаж',
     ),
   ]);

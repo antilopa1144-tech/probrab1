@@ -184,7 +184,7 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
       quantity: recScenario.exactNeed,
       unit: spec.packagingRule<String>('tile_unit'),
       withReserve: recScenario.purchaseQuantity,
-      purchaseQty: recScenario.buyPlan.packagesCount,
+      purchaseQty: recScenario.buyPlan.packagesCount.toDouble(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -192,7 +192,8 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
       quantity: glueKg,
       unit: 'кг',
       withReserve: glueBags * spec.packagingRule<num>('glue_bag_kg').toDouble(),
-      purchaseQty: glueBags.toInt(),
+      purchaseQty: (glueBags * spec.packagingRule<num>('glue_bag_kg').toDouble()).toDouble(),
+      packageInfo: {'count': glueBags, 'size': spec.packagingRule<num>('glue_bag_kg').toDouble(), 'packageUnit': 'мешков'},
       category: 'Клей',
     ),
     CanonicalMaterialResult(
@@ -200,7 +201,8 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
       quantity: groutKg,
       unit: 'кг',
       withReserve: groutBags * spec.packagingRule<num>('grout_bag_kg').toDouble(),
-      purchaseQty: groutBags.toInt(),
+      purchaseQty: (groutBags * spec.packagingRule<num>('grout_bag_kg').toDouble()).toDouble(),
+      packageInfo: {'count': groutBags, 'size': spec.packagingRule<num>('grout_bag_kg').toDouble(), 'packageUnit': 'мешков'},
       category: 'Затирка',
     ),
     CanonicalMaterialResult(
@@ -208,7 +210,8 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
       quantity: primerLiters,
       unit: 'л',
       withReserve: primerCans * spec.packagingRule<num>('primer_can_liters').toDouble(),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: (primerCans * spec.packagingRule<num>('primer_can_liters').toDouble()).toDouble(),
+      packageInfo: {'count': primerCans, 'size': spec.packagingRule<num>('primer_can_liters').toDouble(), 'packageUnit': 'канистр'},
       category: 'Подготовка',
     ),
   ];
@@ -219,7 +222,7 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
       quantity: roundValue(crossesNeeded / spec.packagingRule<num>('svp_pack_size').toDouble(), 6),
       unit: 'уп',
       withReserve: svpPackages.toDouble(),
-      purchaseQty: svpPackages.toInt(),
+      purchaseQty: svpPackages.toDouble(),
       category: 'Крепёж',
     ));
   } else {
@@ -228,7 +231,7 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
       quantity: crossesNeeded.toDouble(),
       unit: 'шт',
       withReserve: crossesNeeded.toDouble(),
-      purchaseQty: crossesNeeded.toInt(),
+      purchaseQty: crossesNeeded.toDouble(),
       category: 'Крепёж',
     ));
   }
@@ -238,7 +241,7 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
     quantity: siliconeTubes.toDouble(),
     unit: 'шт',
     withReserve: siliconeTubes.toDouble(),
-    purchaseQty: siliconeTubes.toInt(),
+    purchaseQty: siliconeTubes.toDouble(),
     category: 'Затирка',
   ));
 

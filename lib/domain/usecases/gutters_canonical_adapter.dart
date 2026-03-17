@@ -127,7 +127,7 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
       quantity: gutterPcs.toDouble(),
       unit: 'шт',
       withReserve: gutterPcs.toDouble(),
-      purchaseQty: gutterPcs.toInt(),
+      purchaseQty: gutterPcs.toDouble(),
       category: 'Желоба',
     ),
     CanonicalMaterialResult(
@@ -135,7 +135,7 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
       quantity: pipePcs.toDouble(),
       unit: 'шт',
       withReserve: pipePcs.toDouble(),
-      purchaseQty: pipePcs.toInt(),
+      purchaseQty: pipePcs.toDouble(),
       category: 'Трубы',
     ),
     CanonicalMaterialResult(
@@ -143,7 +143,7 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
       quantity: funnels.toDouble(),
       unit: 'шт',
       withReserve: funnels.toDouble(),
-      purchaseQty: funnels.toInt(),
+      purchaseQty: funnels.toDouble(),
       category: 'Воронки',
     ),
     CanonicalMaterialResult(
@@ -151,7 +151,7 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
       quantity: connectors.toDouble(),
       unit: 'шт',
       withReserve: connectors.toDouble(),
-      purchaseQty: connectors.toInt(),
+      purchaseQty: connectors.toDouble(),
       category: 'Соединители',
     ),
     CanonicalMaterialResult(
@@ -159,7 +159,7 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
       quantity: kneeElbows.toDouble(),
       unit: 'шт',
       withReserve: kneeElbows.toDouble(),
-      purchaseQty: kneeElbows.toInt(),
+      purchaseQty: kneeElbows.toDouble(),
       category: 'Фасонные',
     ),
     CanonicalMaterialResult(
@@ -167,7 +167,7 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
       quantity: endCaps.toDouble(),
       unit: 'шт',
       withReserve: endCaps.toDouble(),
-      purchaseQty: endCaps.toInt(),
+      purchaseQty: endCaps.toDouble(),
       category: 'Заглушки',
     ),
     CanonicalMaterialResult(
@@ -175,7 +175,7 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
       quantity: gutterHooks.toDouble(),
       unit: 'шт',
       withReserve: gutterHooks.toDouble(),
-      purchaseQty: gutterHooks.toInt(),
+      purchaseQty: gutterHooks.toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -183,7 +183,7 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
       quantity: pipeClamps.toDouble(),
       unit: 'шт',
       withReserve: pipeClamps.toDouble(),
-      purchaseQty: pipeClamps.toInt(),
+      purchaseQty: pipeClamps.toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -191,7 +191,7 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
       quantity: corners.toDouble(),
       unit: 'шт',
       withReserve: corners.toDouble(),
-      purchaseQty: corners.toInt(),
+      purchaseQty: corners.toDouble(),
       category: 'Фасонные',
     ),
     CanonicalMaterialResult(
@@ -199,7 +199,7 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
       quantity: sealantTubes.toDouble(),
       unit: 'тюбиков',
       withReserve: sealantTubes.toDouble(),
-      purchaseQty: sealantTubes.toInt(),
+      purchaseQty: sealantTubes.toDouble(),
       category: 'Герметизация',
     ),
   ];

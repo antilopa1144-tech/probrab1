@@ -152,7 +152,7 @@ CanonicalCalculatorContractResult calculateCanonicalBathroom(
       quantity: tilesFloor.toDouble(),
       unit: 'шт',
       withReserve: tilesFloor.toDouble(),
-      purchaseQty: tilesFloor.toInt(),
+      purchaseQty: tilesFloor.toDouble(),
       category: 'Плитка',
     ),
     CanonicalMaterialResult(
@@ -160,7 +160,7 @@ CanonicalCalculatorContractResult calculateCanonicalBathroom(
       quantity: tilesWall.toDouble(),
       unit: 'шт',
       withReserve: tilesWall.toDouble(),
-      purchaseQty: tilesWall.toInt(),
+      purchaseQty: tilesWall.toDouble(),
       category: 'Плитка',
     ),
     CanonicalMaterialResult(
@@ -168,7 +168,8 @@ CanonicalCalculatorContractResult calculateCanonicalBathroom(
       quantity: roundValue(floorArea * spec.materialRule<num>('floor_adhesive_kg_per_m2').toDouble(), 3),
       unit: 'кг',
       withReserve: (floorAdhesiveBags * spec.materialRule<num>('adhesive_bag_kg').toDouble()),
-      purchaseQty: floorAdhesiveBags.toInt(),
+      purchaseQty: (floorAdhesiveBags * spec.materialRule<num>('adhesive_bag_kg').toDouble()).toDouble(),
+      packageInfo: {'count': floorAdhesiveBags, 'size': spec.materialRule<num>('adhesive_bag_kg').toDouble(), 'packageUnit': 'мешков'},
       category: 'Клей',
     ),
     CanonicalMaterialResult(
@@ -176,7 +177,8 @@ CanonicalCalculatorContractResult calculateCanonicalBathroom(
       quantity: roundValue(wallArea * spec.materialRule<num>('wall_adhesive_kg_per_m2').toDouble(), 3),
       unit: 'кг',
       withReserve: (wallAdhesiveBags * spec.materialRule<num>('adhesive_bag_kg').toDouble()),
-      purchaseQty: wallAdhesiveBags.toInt(),
+      purchaseQty: (wallAdhesiveBags * spec.materialRule<num>('adhesive_bag_kg').toDouble()).toDouble(),
+      packageInfo: {'count': wallAdhesiveBags, 'size': spec.materialRule<num>('adhesive_bag_kg').toDouble(), 'packageUnit': 'мешков'},
       category: 'Клей',
     ),
     CanonicalMaterialResult(
@@ -184,7 +186,8 @@ CanonicalCalculatorContractResult calculateCanonicalBathroom(
       quantity: roundValue((floorArea + wallArea) * spec.materialRule<num>('grout_kg_per_m2').toDouble(), 3),
       unit: 'кг',
       withReserve: (groutBags * spec.materialRule<num>('grout_bag_kg').toDouble()),
-      purchaseQty: groutBags.toInt(),
+      purchaseQty: (groutBags * spec.materialRule<num>('grout_bag_kg').toDouble()).toDouble(),
+      packageInfo: {'count': groutBags, 'size': spec.materialRule<num>('grout_bag_kg').toDouble(), 'packageUnit': 'мешков'},
       category: 'Затирка',
     ),
   ];
@@ -196,7 +199,8 @@ CanonicalCalculatorContractResult calculateCanonicalBathroom(
         quantity: roundValue((floorArea + perimeter * spec.materialRule<num>('waterproof_wall_height').toDouble()) * spec.materialRule<num>('waterproof_mastic_kg_per_m2').toDouble(), 3),
         unit: 'кг',
         withReserve: (masticBuckets * spec.materialRule<num>('waterproof_bucket_kg').toDouble()),
-        purchaseQty: masticBuckets.toInt(),
+        purchaseQty: (masticBuckets * spec.materialRule<num>('waterproof_bucket_kg').toDouble()).toDouble(),
+        packageInfo: {'count': masticBuckets, 'size': spec.materialRule<num>('waterproof_bucket_kg').toDouble(), 'packageUnit': 'вёдер'},
         category: 'Гидроизоляция',
       ),
       CanonicalMaterialResult(
@@ -204,7 +208,8 @@ CanonicalCalculatorContractResult calculateCanonicalBathroom(
         quantity: roundValue(perimeter + 1.2, 3),
         unit: 'м',
         withReserve: (tapeRolls * 10).toDouble(),
-        purchaseQty: tapeRolls.toInt(),
+        purchaseQty: (tapeRolls * 10).toDouble(),
+        packageInfo: {'count': tapeRolls, 'size': 10, 'packageUnit': 'рулонов'},
         category: 'Гидроизоляция',
       ),
     ]);
@@ -216,7 +221,8 @@ CanonicalCalculatorContractResult calculateCanonicalBathroom(
       quantity: roundValue((floorArea + wallArea) * spec.materialRule<num>('primer_l_per_m2').toDouble(), 3),
       unit: 'л',
       withReserve: (primerCans * spec.materialRule<num>('primer_can_l').toDouble()),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: (primerCans * spec.materialRule<num>('primer_can_l').toDouble()).toDouble(),
+      packageInfo: {'count': primerCans, 'size': spec.materialRule<num>('primer_can_l').toDouble(), 'packageUnit': 'канистр'},
       category: 'Подготовка',
     ),
     CanonicalMaterialResult(
@@ -224,7 +230,8 @@ CanonicalCalculatorContractResult calculateCanonicalBathroom(
       quantity: (totalTiles * spec.materialRule<num>('crosses_per_tile').toDouble()),
       unit: 'шт',
       withReserve: (crossesPacks * spec.materialRule<num>('crosses_pack').toDouble()),
-      purchaseQty: crossesPacks.toInt(),
+      purchaseQty: (crossesPacks * spec.materialRule<num>('crosses_pack').toDouble()).toDouble(),
+      packageInfo: {'count': crossesPacks, 'size': spec.materialRule<num>('crosses_pack').toDouble(), 'packageUnit': 'упаковок'},
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -232,7 +239,7 @@ CanonicalCalculatorContractResult calculateCanonicalBathroom(
       quantity: siliconeTubes.toDouble(),
       unit: 'туб',
       withReserve: siliconeTubes.toDouble(),
-      purchaseQty: siliconeTubes.toInt(),
+      purchaseQty: siliconeTubes.toDouble(),
       category: 'Герметик',
     ),
   ]);

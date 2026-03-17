@@ -104,7 +104,7 @@ CanonicalCalculatorContractResult calculateCanonicalDecorStone(
       quantity: roundValue(recScenario.exactNeed, 3),
       unit: 'м\u00b2',
       withReserve: roundValue(recScenario.exactNeed, 3),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Облицовка',
     ),
     CanonicalMaterialResult(
@@ -112,7 +112,7 @@ CanonicalCalculatorContractResult calculateCanonicalDecorStone(
       quantity: glueBags.toDouble(),
       unit: 'мешков',
       withReserve: glueBags.toDouble(),
-      purchaseQty: glueBags.toInt(),
+      purchaseQty: glueBags.toDouble(),
       category: 'Монтаж',
     ),
   ];
@@ -123,7 +123,7 @@ CanonicalCalculatorContractResult calculateCanonicalDecorStone(
       quantity: groutBags.toDouble(),
       unit: 'мешков',
       withReserve: groutBags.toDouble(),
-      purchaseQty: groutBags.toInt(),
+      purchaseQty: groutBags.toDouble(),
       category: 'Отделка',
     ));
   }
@@ -134,7 +134,7 @@ CanonicalCalculatorContractResult calculateCanonicalDecorStone(
       quantity: primerCans.toDouble(),
       unit: 'канистр',
       withReserve: primerCans.toDouble(),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: primerCans.toDouble(),
       category: 'Грунтовка',
     ));
   }

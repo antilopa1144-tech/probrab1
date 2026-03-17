@@ -106,7 +106,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeInsulation(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed,
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Утепление',
     ),
     CanonicalMaterialResult(
@@ -114,7 +114,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeInsulation(
       quantity: glueBags.toDouble(),
       unit: 'мешков',
       withReserve: glueBags.toDouble(),
-      purchaseQty: glueBags.toInt(),
+      purchaseQty: glueBags.toDouble(),
       category: 'Клей',
     ),
     CanonicalMaterialResult(
@@ -122,7 +122,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeInsulation(
       quantity: dowels.toDouble(),
       unit: 'шт',
       withReserve: dowels.toDouble(),
-      purchaseQty: dowels.toInt(),
+      purchaseQty: dowels.toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -130,7 +130,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeInsulation(
       quantity: meshRolls.toDouble(),
       unit: 'рулонов',
       withReserve: meshRolls.toDouble(),
-      purchaseQty: meshRolls.toInt(),
+      purchaseQty: meshRolls.toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -138,7 +138,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeInsulation(
       quantity: armorBags.toDouble(),
       unit: 'мешков',
       withReserve: armorBags.toDouble(),
-      purchaseQty: armorBags.toInt(),
+      purchaseQty: armorBags.toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -146,7 +146,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeInsulation(
       quantity: primerCans.toDouble(),
       unit: 'канистр',
       withReserve: primerCans.toDouble(),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: primerCans.toDouble(),
       category: 'Грунтовка',
     ),
     CanonicalMaterialResult(
@@ -154,7 +154,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeInsulation(
       quantity: decorBags.toDouble(),
       unit: 'мешков',
       withReserve: decorBags.toDouble(),
-      purchaseQty: decorBags.toInt(),
+      purchaseQty: decorBags.toDouble(),
       category: 'Отделка',
     ),
     CanonicalMaterialResult(
@@ -162,7 +162,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeInsulation(
       quantity: starterPcs.toDouble(),
       unit: 'шт',
       withReserve: starterPcs.toDouble(),
-      purchaseQty: starterPcs.toInt(),
+      purchaseQty: starterPcs.toDouble(),
       category: 'Профиль',
     ),
   ];

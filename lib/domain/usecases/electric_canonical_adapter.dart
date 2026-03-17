@@ -58,7 +58,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: roundValue(cable15length, 1),
       unit: 'м',
       withReserve: roundValue(cable15length, 1),
-      purchaseQty: (cable15spools * spec.materialRule<num>('cable_spool_m').toDouble()).round(),
+      purchaseQty: (cable15spools * spec.materialRule<num>('cable_spool_m').toDouble()).round().toDouble(),
       category: 'Кабель',
     ),
     CanonicalMaterialResult(
@@ -66,7 +66,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: roundValue(cable25length, 1),
       unit: 'м',
       withReserve: roundValue(cable25length, 1),
-      purchaseQty: (cable25spools * spec.materialRule<num>('cable_spool_m').toDouble()).round(),
+      purchaseQty: (cable25spools * spec.materialRule<num>('cable_spool_m').toDouble()).round().toDouble(),
       category: 'Кабель',
     ),
   ];
@@ -77,7 +77,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: roundValue(cable6length, 1),
       unit: 'м',
       withReserve: roundValue(cable6length, 1),
-      purchaseQty: cable6length.ceil(),
+      purchaseQty: cable6length.ceil().toDouble(),
       category: 'Кабель',
     ));
   }
@@ -88,15 +88,16 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: (breakersCount + uzoCount + 2).toDouble(),
       unit: 'шт',
       withReserve: (breakersCount + uzoCount + 2).toDouble(),
-      purchaseQty: 1,
+      purchaseQty: (breakersCount + uzoCount + 2).toDouble(),
       category: 'Щиток',
+      packageInfo: {'count': 1, 'unitSize': (breakersCount + uzoCount + 2).toDouble(), 'packageUnit': 'щитков'},
     ),
     CanonicalMaterialResult(
       name: 'Автоматы',
       quantity: breakersCount.toDouble(),
       unit: 'шт',
       withReserve: breakersCount.toDouble(),
-      purchaseQty: breakersCount.toInt(),
+      purchaseQty: breakersCount.toDouble(),
       category: 'Защита',
     ),
     CanonicalMaterialResult(
@@ -104,7 +105,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: uzoCount.toDouble(),
       unit: 'шт',
       withReserve: uzoCount.toDouble(),
-      purchaseQty: uzoCount.toInt(),
+      purchaseQty: uzoCount.toDouble(),
       category: 'Защита',
     ),
     CanonicalMaterialResult(
@@ -112,7 +113,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: outletsCount.toDouble(),
       unit: 'шт',
       withReserve: outletsCount.toDouble(),
-      purchaseQty: outletsCount.toInt(),
+      purchaseQty: outletsCount.toDouble(),
       category: 'Установка',
     ),
     CanonicalMaterialResult(
@@ -120,7 +121,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: switchesCount.toDouble(),
       unit: 'шт',
       withReserve: switchesCount.toDouble(),
-      purchaseQty: switchesCount.toInt(),
+      purchaseQty: switchesCount.toDouble(),
       category: 'Установка',
     ),
     CanonicalMaterialResult(
@@ -128,7 +129,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: socketBoxes.toDouble(),
       unit: 'шт',
       withReserve: socketBoxes.toDouble(),
-      purchaseQty: socketBoxes.toInt(),
+      purchaseQty: socketBoxes.toDouble(),
       category: 'Установка',
     ),
     CanonicalMaterialResult(
@@ -136,7 +137,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: conduitLength.toDouble(),
       unit: 'м',
       withReserve: conduitLength.toDouble(),
-      purchaseQty: (conduitPacks * spec.materialRule<num>('cable_spool_m').toDouble()).round(),
+      purchaseQty: (conduitPacks * spec.materialRule<num>('cable_spool_m').toDouble()).round().toDouble(),
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
@@ -144,7 +145,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: gypsumKg.toDouble(),
       unit: 'кг',
       withReserve: gypsumKg.toDouble(),
-      purchaseQty: gypsumKg.toInt(),
+      purchaseQty: gypsumKg.toDouble(),
       category: 'Монтаж',
     ),
   ]);

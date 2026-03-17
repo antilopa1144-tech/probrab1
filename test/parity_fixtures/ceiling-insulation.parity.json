@@ -1,7 +1,7 @@
 {
   "calculator_id": "ceiling-insulation",
   "formula_version": "ceiling-insulation-canonical-v1",
-  "generated_at": "2026-03-15T00:33:45.047Z",
+  "generated_at": "2026-03-17T05:41:35.374Z",
   "cases": [
     {
       "id": "defaults",

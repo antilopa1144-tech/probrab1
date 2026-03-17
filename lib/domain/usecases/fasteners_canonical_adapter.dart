@@ -96,24 +96,31 @@ CanonicalCalculatorContractResult calculateCanonicalFasteners(
       ? 'Кляймеры'
       : 'Саморезы ${(spec.materialRule<Map>('screw_sizes')['$materialType'] as num?)?.toDouble()}';
 
+  // PER_KG conversion: 0=1000, 1=600, 2=250, 3=0 (klaimers stay in шт)
+  const perKgMap = {0: 1000, 1: 600, 2: 250, 3: 0};
+  final perKg = perKgMap[materialType] ?? 0;
+  final useKg = perKg > 0;
+  final screwQtyKg = useKg ? (recScenario.exactNeed / perKg * 10).ceil() / 10 : 0.0;
+
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
       name: screwLabel,
-      quantity: recScenario.exactNeed,
-      unit: 'шт',
-      withReserve: recScenario.exactNeed,
-      purchaseQty: recScenario.exactNeed.ceil(),
+      quantity: useKg ? screwQtyKg : recScenario.exactNeed,
+      unit: useKg ? 'кг' : 'шт',
+      withReserve: useKg ? screwQtyKg : recScenario.exactNeed,
+      purchaseQty: useKg ? screwQtyKg.ceil().toDouble() : recScenario.exactNeed.ceil().toDouble(),
       category: 'Крепёж',
     ),
   ];
 
   if (frameScrews > 0) {
+    final frameScrewsKg = (frameScrews / 1000 * 10).ceil() / 10;
     materials.add(CanonicalMaterialResult(
       name: 'Саморезы каркасные',
-      quantity: frameScrews.toDouble(),
-      unit: 'шт',
-      withReserve: frameScrews.toDouble(),
-      purchaseQty: frameScrews.toInt(),
+      quantity: frameScrewsKg,
+      unit: 'кг',
+      withReserve: frameScrewsKg,
+      purchaseQty: frameScrewsKg.ceil().toDouble(),
       category: 'Крепёж',
     ));
   }
@@ -124,7 +131,7 @@ CanonicalCalculatorContractResult calculateCanonicalFasteners(
       quantity: dubels.toDouble(),
       unit: 'шт',
       withReserve: dubels.toDouble(),
-      purchaseQty: dubels.toInt(),
+      purchaseQty: dubels.toDouble(),
       category: 'Крепёж',
     ));
   }
@@ -134,7 +141,7 @@ CanonicalCalculatorContractResult calculateCanonicalFasteners(
     quantity: bits.toDouble(),
     unit: 'шт',
     withReserve: bits.toDouble(),
-    purchaseQty: bits.toInt(),
+    purchaseQty: bits.toDouble(),
     category: 'Инструмент',
   ));
 

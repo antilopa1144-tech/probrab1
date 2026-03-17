@@ -55,8 +55,9 @@ class CanonicalMaterialResult {
   final double quantity;
   final String unit;
   final double? withReserve;
-  final int? purchaseQty;
+  final double? purchaseQty;
   final String? category;
+  final Map<String, dynamic>? packageInfo;
 
   const CanonicalMaterialResult({
     required this.name,
@@ -65,6 +66,7 @@ class CanonicalMaterialResult {
     this.withReserve,
     this.purchaseQty,
     this.category,
+    this.packageInfo,
   });
 
   Map<String, dynamic> toJson() {
@@ -75,6 +77,7 @@ class CanonicalMaterialResult {
       'withReserve': withReserve,
       'purchaseQty': purchaseQty,
       'category': category,
+      if (packageInfo != null) 'packageInfo': packageInfo,
     };
   }
 }

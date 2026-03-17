@@ -113,15 +113,16 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloorPipes(
       quantity: roundValue(totalPipe, 3),
       unit: 'м',
       withReserve: (coils * spec.materialRule<num>('pipe_coil_m').toDouble()),
-      purchaseQty: coils.toInt(),
+      purchaseQty: (coils * spec.materialRule<num>('pipe_coil_m').toDouble()).toDouble(),
       category: 'Основное',
+      packageInfo: {'count': coils, 'unitSize': spec.materialRule<num>('pipe_coil_m').toDouble(), 'packageUnit': 'бухт'},
     ),
     CanonicalMaterialResult(
       name: 'Утеплитель ЭППС (листы 1200×600)',
       quantity: eppsSheets.toDouble(),
       unit: 'листов',
       withReserve: eppsSheets.toDouble(),
-      purchaseQty: eppsSheets.toInt(),
+      purchaseQty: eppsSheets.toDouble(),
       category: 'Утепление',
     ),
     CanonicalMaterialResult(
@@ -129,7 +130,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloorPipes(
       quantity: damperTapeRolls.toDouble(),
       unit: 'рулонов',
       withReserve: damperTapeRolls.toDouble(),
-      purchaseQty: damperTapeRolls.toInt(),
+      purchaseQty: damperTapeRolls.toDouble(),
       category: 'Подготовка',
     ),
     CanonicalMaterialResult(
@@ -137,8 +138,9 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloorPipes(
       quantity: anchorTotal.toDouble(),
       unit: 'шт',
       withReserve: (anchorPacks * spec.materialRule<num>('anchor_pack').toDouble()),
-      purchaseQty: anchorPacks.toInt(),
+      purchaseQty: (anchorPacks * spec.materialRule<num>('anchor_pack').toDouble()).toDouble(),
       category: 'Крепёж',
+      packageInfo: {'count': anchorPacks, 'unitSize': spec.materialRule<num>('anchor_pack').toDouble(), 'packageUnit': 'упаковок'},
     ),
     CanonicalMaterialResult(
       name: 'Коллектор ($circuits контуров)',
@@ -153,8 +155,9 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloorPipes(
       quantity: roundValue(area * spec.materialRule<num>('screed_thickness_m').toDouble() * spec.materialRule<num>('screed_density').toDouble(), 3),
       unit: 'кг',
       withReserve: (screedBags * spec.materialRule<num>('screed_bag_kg').toDouble()),
-      purchaseQty: screedBags.toInt(),
+      purchaseQty: (screedBags * spec.materialRule<num>('screed_bag_kg').toDouble()).toDouble(),
       category: 'Основное',
+      packageInfo: {'count': screedBags, 'unitSize': spec.materialRule<num>('screed_bag_kg').toDouble(), 'packageUnit': 'мешков'},
     ),
   ];
 

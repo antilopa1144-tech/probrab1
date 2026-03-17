@@ -1,7 +1,7 @@
 {
   "calculator_id": "aerated-concrete",
   "formula_version": "aerated-concrete-canonical-v1",
-  "generated_at": "2026-03-15T00:33:45.010Z",
+  "generated_at": "2026-03-17T05:41:35.298Z",
   "cases": [
     {
       "id": "defaults",
@@ -54,7 +54,7 @@
         "Клей для газобетона (25 кг)",
         "Арматура Ø8",
         "Грунтовка (10 л)",
-        "U-блоки (перемычки)",
+        "У-блоки (перемычки)",
         "Угловые профили"
       ],
       "expected_warnings_count": 0,

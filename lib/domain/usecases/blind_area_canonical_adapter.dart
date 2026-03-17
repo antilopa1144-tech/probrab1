@@ -140,8 +140,9 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
       quantity: recScenario.exactNeed,
       unit: 'м³',
       withReserve: concreteM3,
-      purchaseQty: (concreteM3 * 10).ceil(),
+      purchaseQty: concreteM3.ceilToDouble(),
       category: 'Бетон',
+      packageInfo: {'count': concreteM3.ceil(), 'unitSize': 1.0, 'packageUnit': 'доставок'},
     ));
     if (meshPcs > 0) {
       materials.add(CanonicalMaterialResult(
@@ -149,7 +150,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
         quantity: meshPcs.toDouble(),
         unit: 'шт',
         withReserve: meshPcs.toDouble(),
-        purchaseQty: meshPcs.toInt(),
+        purchaseQty: meshPcs.toDouble(),
         category: 'Армирование',
       ));
     }
@@ -158,7 +159,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
       quantity: damperM,
       unit: 'м',
       withReserve: damperM,
-      purchaseQty: damperM.ceil(),
+      purchaseQty: damperM.ceil().toDouble(),
       category: 'Расходные',
     ));
   } else if (materialType == 1) {
@@ -168,7 +169,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
         quantity: recScenario.exactNeed,
         unit: 'м²',
         withReserve: tileM2.toDouble(),
-        purchaseQty: tileM2.toInt(),
+        purchaseQty: tileM2.toDouble(),
         category: 'Покрытие',
       ),
       CanonicalMaterialResult(
@@ -176,7 +177,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
         quantity: mixBags.toDouble(),
         unit: 'мешков',
         withReserve: mixBags.toDouble(),
-        purchaseQty: mixBags.toInt(),
+        purchaseQty: mixBags.toDouble(),
         category: 'Смеси',
       ),
       CanonicalMaterialResult(
@@ -184,7 +185,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
         quantity: borderPcs.toDouble(),
         unit: 'шт',
         withReserve: borderPcs.toDouble(),
-        purchaseQty: borderPcs.toInt(),
+        purchaseQty: borderPcs.toDouble(),
         category: 'Покрытие',
       ),
     ]);
@@ -195,7 +196,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
         quantity: recScenario.exactNeed,
         unit: 'м²',
         withReserve: membraneM2.toDouble(),
-        purchaseQty: membraneM2.toInt(),
+        purchaseQty: membraneM2.toDouble(),
         category: 'Покрытие',
       ),
       CanonicalMaterialResult(
@@ -203,7 +204,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
         quantity: decorGravelM3,
         unit: 'м³',
         withReserve: decorGravelM3,
-        purchaseQty: (decorGravelM3 * 10).ceil(),
+        purchaseQty: (decorGravelM3 * 10).ceil().toDouble(),
         category: 'Покрытие',
       ),
     ]);
@@ -216,7 +217,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
       quantity: gravel,
       unit: 'м³',
       withReserve: gravel,
-      purchaseQty: (gravel * 10).ceil(),
+      purchaseQty: (gravel * 10).ceil().toDouble(),
       category: 'Подготовка',
     ),
     CanonicalMaterialResult(
@@ -224,7 +225,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
       quantity: sand,
       unit: 'м³',
       withReserve: sand,
-      purchaseQty: (sand * 10).ceil(),
+      purchaseQty: (sand * 10).ceil().toDouble(),
       category: 'Подготовка',
     ),
     CanonicalMaterialResult(
@@ -232,7 +233,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
       quantity: geotextileRolls.toDouble(),
       unit: 'рулонов',
       withReserve: geotextileRolls.toDouble(),
-      purchaseQty: geotextileRolls.toInt(),
+      purchaseQty: geotextileRolls.toDouble(),
       category: 'Подготовка',
     ),
   ]);
@@ -243,7 +244,7 @@ CanonicalCalculatorContractResult calculateCanonicalBlindArea(
       quantity: eppsPlates.toDouble(),
       unit: 'шт',
       withReserve: eppsPlates.toDouble(),
-      purchaseQty: eppsPlates.toInt(),
+      purchaseQty: eppsPlates.toDouble(),
       category: 'Утепление',
     ));
   }

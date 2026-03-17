@@ -48,7 +48,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: mats.toDouble(),
         unit: 'шт',
         withReserve: mats.toDouble(),
-        purchaseQty: mats.toInt(),
+        purchaseQty: mats.toDouble(),
         category: 'Основное',
       ),
       const CanonicalMaterialResult(
@@ -56,7 +56,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: 1,
         unit: 'шт',
         withReserve: 1,
-        purchaseQty: 1,
+        purchaseQty: 1.0,
         category: 'Управление',
       ),
       CanonicalMaterialResult(
@@ -64,7 +64,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: spec.materialRule<num>('corrugated_tube_m').toDouble(),
         unit: 'м',
         withReserve: spec.materialRule<num>('corrugated_tube_m').toDouble(),
-        purchaseQty: spec.materialRule<num>('corrugated_tube_m').toDouble().ceil(),
+        purchaseQty: spec.materialRule<num>('corrugated_tube_m').toDouble().ceil().toDouble(),
         category: 'Монтаж',
       ),
       CanonicalMaterialResult(
@@ -72,7 +72,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: substrateRolls.toDouble(),
         unit: 'рулонов',
         withReserve: substrateRolls.toDouble(),
-        purchaseQty: substrateRolls.toInt(),
+        purchaseQty: substrateRolls.toDouble(),
         category: 'Подготовка',
       ),
       CanonicalMaterialResult(
@@ -80,7 +80,8 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: roundValue(heatingArea * spec.materialRule<num>('tile_adhesive_kg_per_m2').toDouble(), 3),
         unit: 'кг',
         withReserve: (adhesiveBags * spec.materialRule<num>('tile_adhesive_bag_kg').toDouble()),
-        purchaseQty: adhesiveBags.toInt(),
+        purchaseQty: (adhesiveBags * spec.materialRule<num>('tile_adhesive_bag_kg').toDouble()).toDouble(),
+        packageInfo: {'count': adhesiveBags, 'size': spec.materialRule<num>('tile_adhesive_bag_kg').toDouble(), 'packageUnit': 'мешков'},
         category: 'Основное',
       ),
     ];
@@ -98,7 +99,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: cableLength.toDouble(),
         unit: 'м',
         withReserve: cableLength.toDouble(),
-        purchaseQty: cableLength.toInt(),
+        purchaseQty: cableLength.toDouble(),
         category: 'Основное',
       ),
       const CanonicalMaterialResult(
@@ -106,7 +107,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: 1,
         unit: 'шт',
         withReserve: 1,
-        purchaseQty: 1,
+        purchaseQty: 1.0,
         category: 'Управление',
       ),
       CanonicalMaterialResult(
@@ -114,7 +115,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: mountingTapeRolls.toDouble(),
         unit: 'рулонов',
         withReserve: mountingTapeRolls.toDouble(),
-        purchaseQty: mountingTapeRolls.toInt(),
+        purchaseQty: mountingTapeRolls.toDouble(),
         category: 'Монтаж',
       ),
       CanonicalMaterialResult(
@@ -122,7 +123,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: epsSheets.toDouble(),
         unit: 'листов',
         withReserve: epsSheets.toDouble(),
-        purchaseQty: epsSheets.toInt(),
+        purchaseQty: epsSheets.toDouble(),
         category: 'Утепление',
       ),
       CanonicalMaterialResult(
@@ -130,7 +131,8 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: roundValue(heatingArea * spec.materialRule<num>('screed_thickness_m').toDouble() * spec.materialRule<num>('screed_density').toDouble(), 3),
         unit: 'кг',
         withReserve: (screedBags * spec.materialRule<num>('screed_bag_kg').toDouble()),
-        purchaseQty: screedBags.toInt(),
+        purchaseQty: (screedBags * spec.materialRule<num>('screed_bag_kg').toDouble()).toDouble(),
+        packageInfo: {'count': screedBags, 'size': spec.materialRule<num>('screed_bag_kg').toDouble(), 'packageUnit': 'мешков'},
         category: 'Основное',
       ),
     ];
@@ -148,7 +150,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: pipeLength.toDouble(),
         unit: 'м',
         withReserve: pipeLength.toDouble(),
-        purchaseQty: pipeLength.toInt(),
+        purchaseQty: pipeLength.toDouble(),
         category: 'Основное',
       ),
       const CanonicalMaterialResult(
@@ -156,7 +158,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: 1,
         unit: 'шт',
         withReserve: 1,
-        purchaseQty: 1,
+        purchaseQty: 1.0,
         category: 'Управление',
       ),
       CanonicalMaterialResult(
@@ -164,7 +166,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: pipeInsulation,
         unit: 'м',
         withReserve: pipeInsulation,
-        purchaseQty: pipeInsulation.ceil(),
+        purchaseQty: pipeInsulation.ceil().toDouble(),
         category: 'Утепление',
       ),
       CanonicalMaterialResult(
@@ -172,7 +174,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
         quantity: roundValue(meshArea, 3),
         unit: 'м²',
         withReserve: meshArea.ceil().toDouble(),
-        purchaseQty: meshArea.ceil(),
+        purchaseQty: meshArea.ceil().toDouble(),
         category: 'Армирование',
       ),
     ];

@@ -242,7 +242,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
 
     int materialPurchaseQty(String categoryPart, {String? nameFallback}) {
       final material = findMaterial(categoryPart, nameFallback: nameFallback);
-      return material?.purchaseQty ?? 0;
+      return material?.purchaseQty?.toInt() ?? 0;
     }
 
     double materialQuantity(String categoryPart, {String? nameFallback}) {

@@ -92,7 +92,8 @@ CanonicalCalculatorContractResult calculateCanonicalTileAdhesive(
       quantity: recScenario.exactNeed,
       unit: 'кг',
       withReserve: recScenario.exactNeed,
-      purchaseQty: (recScenario.purchaseQuantity / bagWeight).ceil(),
+      purchaseQty: (recScenario.purchaseQuantity / bagWeight).ceil() * bagWeight,
+      packageInfo: {'count': (recScenario.purchaseQuantity / bagWeight).ceil(), 'size': bagWeight, 'packageUnit': 'мешков'},
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -100,7 +101,7 @@ CanonicalCalculatorContractResult calculateCanonicalTileAdhesive(
       quantity: primer.toDouble(),
       unit: 'канистр',
       withReserve: primer.toDouble(),
-      purchaseQty: primer.toInt(),
+      purchaseQty: primer.toDouble(),
       category: 'Грунтовка',
     ),
     CanonicalMaterialResult(
@@ -108,7 +109,7 @@ CanonicalCalculatorContractResult calculateCanonicalTileAdhesive(
       quantity: crossPacks.toDouble(),
       unit: 'упаковок',
       withReserve: crossPacks.toDouble(),
-      purchaseQty: crossPacks.toInt(),
+      purchaseQty: crossPacks.toDouble(),
       category: 'Расходники',
     ),
   ];

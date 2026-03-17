@@ -134,7 +134,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrick(
       quantity: roundValue(recScenario.exactNeed, 6),
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceil().toDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -142,7 +142,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrick(
       quantity: cementBags.toDouble(),
       unit: 'мешков',
       withReserve: cementBags.toDouble(),
-      purchaseQty: cementBags.toInt(),
+      purchaseQty: cementBags.toDouble(),
       category: 'Раствор',
     ),
     CanonicalMaterialResult(
@@ -150,7 +150,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrick(
       quantity: roundValue(sandM3, 3),
       unit: 'м³',
       withReserve: roundValue((sandM3 * 10).ceil() / 10, 3),
-      purchaseQty: sandM3.ceil(),
+      purchaseQty: sandM3.ceil().toDouble(),
       category: 'Раствор',
     ),
     CanonicalMaterialResult(
@@ -158,7 +158,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrick(
       quantity: roundValue(meshArea, 3),
       unit: 'м²',
       withReserve: meshArea.ceil().toDouble(),
-      purchaseQty: meshArea.ceil(),
+      purchaseQty: meshArea.ceil().toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -166,7 +166,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrick(
       quantity: roundValue(plasticizerL, 3),
       unit: 'л',
       withReserve: roundValue(plasticizerL, 1),
-      purchaseQty: plasticizerL.ceil(),
+      purchaseQty: plasticizerL.ceil().toDouble(),
       category: 'Раствор',
     ),
   ];
@@ -177,7 +177,7 @@ CanonicalCalculatorContractResult calculateCanonicalBrick(
       quantity: flexibleTies.toDouble(),
       unit: 'шт',
       withReserve: flexibleTies.toDouble(),
-      purchaseQty: flexibleTies.toInt(),
+      purchaseQty: flexibleTies.toDouble(),
       category: 'Крепёж',
     ));
   }

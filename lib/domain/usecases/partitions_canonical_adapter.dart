@@ -102,7 +102,7 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed,
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Основное',
     ),
   ];
@@ -113,7 +113,7 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
       quantity: glueBags.toDouble(),
       unit: 'мешков',
       withReserve: glueBags.toDouble(),
-      purchaseQty: glueBags.toInt(),
+      purchaseQty: glueBags.toDouble(),
       category: 'Кладка',
     ));
   }
@@ -124,7 +124,7 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
       quantity: gypsumBags.toDouble(),
       unit: 'мешков',
       withReserve: gypsumBags.toDouble(),
-      purchaseQty: gypsumBags.toInt(),
+      purchaseQty: gypsumBags.toDouble(),
       category: 'Кладка',
     ));
   }
@@ -135,7 +135,7 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
       quantity: meshRolls.toDouble(),
       unit: 'рулонов',
       withReserve: meshRolls.toDouble(),
-      purchaseQty: meshRolls.toInt(),
+      purchaseQty: meshRolls.toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -143,7 +143,7 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
       quantity: foamBottles.toDouble(),
       unit: 'шт',
       withReserve: foamBottles.toDouble(),
-      purchaseQty: foamBottles.toInt(),
+      purchaseQty: foamBottles.toDouble(),
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
@@ -151,7 +151,7 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
       quantity: primer.toDouble(),
       unit: 'канистр',
       withReserve: primer.toDouble(),
-      purchaseQty: primer.toInt(),
+      purchaseQty: primer.toDouble(),
       category: 'Грунтовка',
     ),
     CanonicalMaterialResult(
@@ -159,7 +159,7 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
       quantity: sealTape.toDouble(),
       unit: 'м',
       withReserve: sealTape.toDouble(),
-      purchaseQty: sealTape.toInt(),
+      purchaseQty: sealTape.toDouble(),
       category: 'Монтаж',
     ),
   ]);

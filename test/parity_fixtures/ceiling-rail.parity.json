@@ -1,7 +1,7 @@
 {
   "calculator_id": "ceiling-rail",
   "formula_version": "ceiling-rail-canonical-v1",
-  "generated_at": "2026-03-15T00:33:45.051Z",
+  "generated_at": "2026-03-17T05:41:35.382Z",
   "cases": [
     {
       "id": "defaults",
@@ -24,7 +24,7 @@
         "guideCount": 6,
         "guidePcs": 9,
         "hangers": 30,
-        "screws": 268,
+        "screws": 0.3,
         "dubels": 30,
         "minExactNeed": 68.9088,
         "recExactNeed": 78.44,

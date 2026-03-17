@@ -141,7 +141,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeBrick(
       quantity: totalBricks,
       unit: 'шт',
       withReserve: bricksWithReserve.toDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -149,7 +149,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeBrick(
       quantity: cementBags.toDouble(),
       unit: 'мешков',
       withReserve: cementBags.toDouble(),
-      purchaseQty: cementBags.toInt(),
+      purchaseQty: cementBags.toDouble(),
       category: 'Раствор',
     ),
     CanonicalMaterialResult(
@@ -157,7 +157,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeBrick(
       quantity: sandM3,
       unit: 'м³',
       withReserve: sandM3,
-      purchaseQty: sandM3.ceil(),
+      purchaseQty: sandM3.ceil().toDouble(),
       category: 'Раствор',
     ),
   ];
@@ -168,7 +168,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeBrick(
       quantity: tiesCount.toDouble(),
       unit: 'шт',
       withReserve: tiesCount.toDouble(),
-      purchaseQty: tiesCount.toInt(),
+      purchaseQty: tiesCount.toDouble(),
       category: 'Крепёж',
     ));
   }
@@ -179,15 +179,16 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeBrick(
       quantity: hydroArea,
       unit: 'м²',
       withReserve: (hydroRolls * spec.materialRule<num>('hydro_roll_m2').toDouble()),
-      purchaseQty: hydroRolls.toInt(),
+      purchaseQty: (hydroRolls * spec.materialRule<num>('hydro_roll_m2').toDouble()).toDouble(),
       category: 'Изоляция',
+      packageInfo: {'count': hydroRolls, 'unitSize': spec.materialRule<num>('hydro_roll_m2').toDouble(), 'packageUnit': 'рулонов'},
     ),
     CanonicalMaterialResult(
       name: 'Вентиляционные коробки',
       quantity: ventBoxes.toDouble(),
       unit: 'шт',
       withReserve: ventBoxes.toDouble(),
-      purchaseQty: ventBoxes.toInt(),
+      purchaseQty: ventBoxes.toDouble(),
       category: 'Вентиляция',
     ),
     CanonicalMaterialResult(
@@ -195,7 +196,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeBrick(
       quantity: groutBags.toDouble(),
       unit: 'мешков',
       withReserve: groutBags.toDouble(),
-      purchaseQty: groutBags.toInt(),
+      purchaseQty: groutBags.toDouble(),
       category: 'Финишная',
     ),
     CanonicalMaterialResult(
@@ -203,7 +204,7 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeBrick(
       quantity: hydrophobCans.toDouble(),
       unit: 'канистр',
       withReserve: hydrophobCans.toDouble(),
-      purchaseQty: hydrophobCans.toInt(),
+      purchaseQty: hydrophobCans.toDouble(),
       category: 'Защита',
     ),
   ]);

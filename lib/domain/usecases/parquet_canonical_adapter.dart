@@ -169,7 +169,7 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
       quantity: roundValue(recScenario.exactNeed / packArea, 6),
       unit: 'упак.',
       withReserve: recScenario.buyPlan.packagesCount.toDouble(),
-      purchaseQty: recScenario.buyPlan.packagesCount,
+      purchaseQty: recScenario.buyPlan.packagesCount.toDouble(),
       category: 'Покрытие',
     ),
     CanonicalMaterialResult(
@@ -177,7 +177,7 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
       quantity: doorThresholds.toDouble(),
       unit: 'шт',
       withReserve: doorThresholds.toDouble(),
-      purchaseQty: doorThresholds.toInt(),
+      purchaseQty: doorThresholds.toDouble(),
       category: 'Доборные',
     ),
   ];
@@ -188,7 +188,7 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
       quantity: roundValue(underlaymentArea / underlaymentRollArea, 6),
       unit: 'рулонов',
       withReserve: underlaymentRolls.toDouble(),
-      purchaseQty: underlaymentRolls.toInt(),
+      purchaseQty: underlaymentRolls.toDouble(),
       category: 'Подложка',
     ));
     materials.add(const CanonicalMaterialResult(
@@ -207,7 +207,7 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
       quantity: roundValue(plinthLengthWithReserve / spec.packagingRule<num>('plinth_piece_length_m').toDouble(), 6),
       unit: 'шт',
       withReserve: plinthPieces.toDouble(),
-      purchaseQty: plinthPieces.toInt(),
+      purchaseQty: plinthPieces.toDouble(),
       category: 'Плинтус',
     ));
     materials.add(CanonicalMaterialResult(
@@ -215,7 +215,7 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
       quantity: wedges.toDouble(),
       unit: 'шт',
       withReserve: wedges.toDouble(),
-      purchaseQty: ((wedges / 10).ceil()) * 10,
+      purchaseQty: (((wedges / 10).ceil()) * 10).toDouble(),
       category: 'Монтаж',
     ));
   }
@@ -226,8 +226,9 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
       quantity: glueKg,
       unit: 'кг',
       withReserve: (glueBuckets * spec.packagingRule<num>('glue_bucket_kg').toDouble()),
-      purchaseQty: glueBuckets.toInt(),
+      purchaseQty: (glueBuckets * spec.packagingRule<num>('glue_bucket_kg').toDouble()).toDouble(),
       category: 'Клей',
+      packageInfo: {'count': glueBuckets, 'unitSize': spec.packagingRule<num>('glue_bucket_kg').toDouble(), 'packageUnit': 'вёдер'},
     ));
   }
 

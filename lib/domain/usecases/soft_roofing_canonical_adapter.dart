@@ -108,7 +108,7 @@ CanonicalCalculatorContractResult calculateCanonicalSoftRoofing(
       quantity: recScenario.exactNeed,
       unit: 'упаковок',
       withReserve: recScenario.exactNeed,
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -116,7 +116,7 @@ CanonicalCalculatorContractResult calculateCanonicalSoftRoofing(
       quantity: underlaymentRolls.toDouble(),
       unit: 'рулонов',
       withReserve: underlaymentRolls.toDouble(),
-      purchaseQty: underlaymentRolls.toInt(),
+      purchaseQty: underlaymentRolls.toDouble(),
       category: 'Подкладка',
     ),
   ];
@@ -127,7 +127,7 @@ CanonicalCalculatorContractResult calculateCanonicalSoftRoofing(
       quantity: valleyRolls.toDouble(),
       unit: 'рулонов',
       withReserve: valleyRolls.toDouble(),
-      purchaseQty: valleyRolls.toInt(),
+      purchaseQty: valleyRolls.toDouble(),
       category: 'Подкладка',
     ));
   }
@@ -138,7 +138,7 @@ CanonicalCalculatorContractResult calculateCanonicalSoftRoofing(
       quantity: masticBuckets.toDouble(),
       unit: 'вёдер',
       withReserve: masticBuckets.toDouble(),
-      purchaseQty: masticBuckets.toInt(),
+      purchaseQty: masticBuckets.toDouble(),
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
@@ -146,7 +146,7 @@ CanonicalCalculatorContractResult calculateCanonicalSoftRoofing(
       quantity: nailsKg.toDouble(),
       unit: 'кг',
       withReserve: nailsKg.toDouble(),
-      purchaseQty: nailsKg.toInt(),
+      purchaseQty: nailsKg.toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -154,7 +154,7 @@ CanonicalCalculatorContractResult calculateCanonicalSoftRoofing(
       quantity: eaveStrips.toDouble(),
       unit: 'шт',
       withReserve: eaveStrips.toDouble(),
-      purchaseQty: eaveStrips.toInt(),
+      purchaseQty: eaveStrips.toDouble(),
       category: 'Доборные',
     ),
     CanonicalMaterialResult(
@@ -162,7 +162,7 @@ CanonicalCalculatorContractResult calculateCanonicalSoftRoofing(
       quantity: windStrips.toDouble(),
       unit: 'шт',
       withReserve: windStrips.toDouble(),
-      purchaseQty: windStrips.toInt(),
+      purchaseQty: windStrips.toDouble(),
       category: 'Доборные',
     ),
     CanonicalMaterialResult(
@@ -170,7 +170,7 @@ CanonicalCalculatorContractResult calculateCanonicalSoftRoofing(
       quantity: ridgeShingles.toDouble(),
       unit: 'шт',
       withReserve: ridgeShingles.toDouble(),
-      purchaseQty: ridgeShingles.toInt(),
+      purchaseQty: ridgeShingles.toDouble(),
       category: 'Доборные',
     ),
     CanonicalMaterialResult(
@@ -178,7 +178,7 @@ CanonicalCalculatorContractResult calculateCanonicalSoftRoofing(
       quantity: osbSheets.toDouble(),
       unit: 'листов',
       withReserve: osbSheets.toDouble(),
-      purchaseQty: osbSheets.toInt(),
+      purchaseQty: osbSheets.toDouble(),
       category: 'Основание',
     ),
     CanonicalMaterialResult(
@@ -186,7 +186,7 @@ CanonicalCalculatorContractResult calculateCanonicalSoftRoofing(
       quantity: ventOutputs.toDouble(),
       unit: 'шт',
       withReserve: ventOutputs.toDouble(),
-      purchaseQty: ventOutputs.toInt(),
+      purchaseQty: ventOutputs.toDouble(),
       category: 'Вентиляция',
     ),
   ]);

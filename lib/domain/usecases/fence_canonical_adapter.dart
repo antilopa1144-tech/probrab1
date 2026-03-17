@@ -83,7 +83,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
     // Profnastil
     sheets = (netLength / spec.materialRule<num>('profnastil_useful_width').toDouble() * spec.materialRule<num>('profnastil_reserve').toDouble()).ceil();
     screws = (sheets * spec.materialRule<num>('profnastil_screws_per_sheet').toDouble()).ceil();
-    screwPacks = (screws / spec.materialRule<num>('screws_pack').toDouble()).ceil();
+    screwPacks = (screws / 250 * 10).ceil(); // кг (4.8×35: 250 шт/кг), *10 for rounding
     primerCans = (fenceLength / spec.materialRule<num>('primer_spray_m_per_can').toDouble()).ceil();
   } else if (fenceType == 1) {
     // Rabica
@@ -148,7 +148,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
       quantity: postsCount.toDouble(),
       unit: 'шт',
       withReserve: postsCount.toDouble(),
-      purchaseQty: postsCount.toInt(),
+      purchaseQty: postsCount.toDouble(),
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
@@ -156,7 +156,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
       quantity: lagsCount.toDouble(),
       unit: 'шт',
       withReserve: lagsCount.toDouble(),
-      purchaseQty: lagsCount.toInt(),
+      purchaseQty: lagsCount.toDouble(),
       category: 'Каркас',
     ),
   ];
@@ -168,15 +168,15 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
         quantity: recScenario.exactNeed,
         unit: 'шт',
         withReserve: recScenario.exactNeed.ceilToDouble(),
-        purchaseQty: recScenario.exactNeed.ceil(),
+        purchaseQty: recScenario.exactNeed.ceil().toDouble(),
         category: 'Покрытие',
       ),
       CanonicalMaterialResult(
-        name: 'Саморезы кровельные (упаковка ${spec.materialRule<num>('screws_pack').toDouble()} шт)',
-        quantity: screws.toDouble(),
-        unit: 'шт',
-        withReserve: (screwPacks * spec.materialRule<num>('screws_pack').toDouble()),
-        purchaseQty: screwPacks.toInt(),
+        name: 'Саморезы кровельные',
+        quantity: screwPacks / 10,
+        unit: 'кг',
+        withReserve: screwPacks / 10,
+        purchaseQty: (screwPacks / 10).ceil().toDouble(),
         category: 'Крепёж',
       ),
       CanonicalMaterialResult(
@@ -184,7 +184,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
         quantity: primerCans.toDouble(),
         unit: 'баллонов',
         withReserve: primerCans.toDouble(),
-        purchaseQty: primerCans.toInt(),
+        purchaseQty: primerCans.toDouble(),
         category: 'Защита',
       ),
     ]);
@@ -195,7 +195,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
         quantity: recScenario.exactNeed,
         unit: 'рулонов',
         withReserve: recScenario.exactNeed.ceilToDouble(),
-        purchaseQty: recScenario.exactNeed.ceil(),
+        purchaseQty: recScenario.exactNeed.ceil().toDouble(),
         category: 'Покрытие',
       ),
       CanonicalMaterialResult(
@@ -203,7 +203,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
         quantity: wireLength,
         unit: 'м',
         withReserve: wireLength,
-        purchaseQty: wireLength.ceil(),
+        purchaseQty: wireLength.ceil().toDouble(),
         category: 'Крепёж',
       ),
     ]);
@@ -214,7 +214,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
         quantity: recScenario.exactNeed,
         unit: 'шт',
         withReserve: recScenario.exactNeed.ceilToDouble(),
-        purchaseQty: recScenario.exactNeed.ceil(),
+        purchaseQty: recScenario.exactNeed.ceil().toDouble(),
         category: 'Покрытие',
       ),
       CanonicalMaterialResult(
@@ -222,7 +222,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
         quantity: antisepticCans.toDouble(),
         unit: 'канистр',
         withReserve: antisepticCans.toDouble(),
-        purchaseQty: antisepticCans.toInt(),
+        purchaseQty: antisepticCans.toDouble(),
         category: 'Защита',
       ),
     ]);
@@ -234,7 +234,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
       quantity: concrete,
       unit: 'м³',
       withReserve: concrete,
-      purchaseQty: (concrete * 10).ceil(),
+      purchaseQty: (concrete * 10).ceil().toDouble(),
       category: 'Бетон',
     ),
     CanonicalMaterialResult(
@@ -242,7 +242,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
       quantity: caps.toDouble(),
       unit: 'шт',
       withReserve: caps.toDouble(),
-      purchaseQty: caps.toInt(),
+      purchaseQty: caps.toDouble(),
       category: 'Каркас',
     ),
   ]);
@@ -268,7 +268,7 @@ CanonicalCalculatorContractResult calculateCanonicalFence(
       'caps': caps.toDouble(),
       'sheets': sheets.toDouble(),
       'screws': screws.toDouble(),
-      'screwPacks': screwPacks.toDouble(),
+      'screwPacks': screwPacks / 10,
       'primerCans': primerCans.toDouble(),
       'rolls': rolls.toDouble(),
       'wireLength': wireLength,

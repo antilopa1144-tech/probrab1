@@ -264,7 +264,7 @@ class CalculatePaint extends BaseCalculator {
     return (color['multiplier'] as num).toDouble();
   }
 
-  int _findMaterialPurchaseQty(
+  double _findMaterialPurchaseQty(
     CanonicalCalculatorContractResult contract, {
     required String category,
     required String fallbackNamePart,

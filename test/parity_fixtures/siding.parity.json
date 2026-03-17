@@ -1,7 +1,7 @@
 {
   "calculator_id": "siding",
   "formula_version": "siding-canonical-v1",
-  "generated_at": "2026-03-15T00:33:45.221Z",
+  "generated_at": "2026-03-17T05:41:35.671Z",
   "cases": [
     {
       "id": "defaults",
@@ -28,7 +28,7 @@
         "jProfile": 20,
         "corners": 7,
         "finish": 12,
-        "screws": 1134,
+        "screws": 1.7,
         "battens": 189,
         "membrane": 2,
         "sealant": 3,

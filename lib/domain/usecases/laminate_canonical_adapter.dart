@@ -206,7 +206,7 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       quantity: roundValue(recScenario.exactNeed / packArea, 6),
       unit: 'упак.',
       withReserve: recScenario.buyPlan.packagesCount.toDouble(),
-      purchaseQty: recScenario.buyPlan.packagesCount,
+      purchaseQty: recScenario.buyPlan.packagesCount.toDouble(),
       category: 'Напольное покрытие',
     ),
     CanonicalMaterialResult(
@@ -214,7 +214,7 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       quantity: roundValue(plinthLength / spec.packagingRule<num>('plinth_piece_length_m').toDouble(), 6),
       unit: 'шт',
       withReserve: plinthPieces.toDouble(),
-      purchaseQty: plinthPieces.toInt(),
+      purchaseQty: plinthPieces.toDouble(),
       category: 'Плинтус',
     ),
     CanonicalMaterialResult(
@@ -222,7 +222,7 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       quantity: innerCorners.toDouble(),
       unit: 'шт',
       withReserve: innerCorners.toDouble(),
-      purchaseQty: innerCorners.toInt(),
+      purchaseQty: innerCorners.toDouble(),
       category: 'Плинтус',
     ),
     CanonicalMaterialResult(
@@ -230,7 +230,7 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       quantity: plinthConnectors.toDouble(),
       unit: 'шт',
       withReserve: plinthConnectors.toDouble(),
-      purchaseQty: plinthConnectors.toInt(),
+      purchaseQty: plinthConnectors.toDouble(),
       category: 'Плинтус',
     ),
     CanonicalMaterialResult(
@@ -238,7 +238,7 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       quantity: wedges.toDouble(),
       unit: 'шт',
       withReserve: wedges.toDouble(),
-      purchaseQty: wedges.toInt(),
+      purchaseQty: wedges.toDouble(),
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
@@ -246,7 +246,7 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       quantity: vaporBarrierArea,
       unit: 'м²',
       withReserve: vaporBarrierArea,
-      purchaseQty: vaporBarrierArea.ceil(),
+      purchaseQty: vaporBarrierArea.ceil().toDouble(),
       category: 'Подготовка',
     ),
     CanonicalMaterialResult(
@@ -254,7 +254,7 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
       quantity: doorThresholds.toDouble(),
       unit: 'шт',
       withReserve: doorThresholds.toDouble(),
-      purchaseQty: doorThresholds.toInt(),
+      purchaseQty: doorThresholds.toDouble(),
       category: 'Плинтус',
     ),
   ];
@@ -267,7 +267,7 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
         quantity: roundValue(underlaymentArea / underlaymentRollArea, 6),
         unit: 'рулонов',
         withReserve: underlaymentRolls.toDouble(),
-        purchaseQty: underlaymentRolls.toInt(),
+        purchaseQty: underlaymentRolls.toDouble(),
         category: 'Подложка',
       ),
     );

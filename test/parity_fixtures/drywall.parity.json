@@ -1,7 +1,7 @@
 {
   "calculator_id": "drywall",
   "formula_version": "drywall-canonical-v1",
-  "generated_at": "2026-03-15T00:33:45.073Z",
+  "generated_at": "2026-03-17T05:41:35.426Z",
   "cases": [
     {
       "id": "defaults",
@@ -30,8 +30,8 @@
         "pnPieces": 6,
         "ppCount": 10,
         "ppPieces": 10,
-        "screwsTF": 851,
-        "screwsLB": 42,
+        "screwsTF": 0.9,
+        "screwsLB": 0.1,
         "dowels": 26,
         "sealingTapeRolls": 1,
         "puttyStartBags": 1,

@@ -100,7 +100,7 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Облицовка',
     ),
   ];
@@ -111,7 +111,7 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
       quantity: roundValue(profileLen, 2),
       unit: 'п.м.',
       withReserve: profileLen.ceilToDouble(),
-      purchaseQty: profileLen.ceil(),
+      purchaseQty: profileLen.ceil().toDouble(),
       category: 'Подсистема',
     ));
   }
@@ -122,7 +122,7 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
       quantity: cornerPcs.toDouble(),
       unit: 'шт',
       withReserve: cornerPcs.toDouble(),
-      purchaseQty: cornerPcs.toInt(),
+      purchaseQty: cornerPcs.toDouble(),
       category: 'Профиль',
     ));
   }
@@ -133,7 +133,7 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
       quantity: roundValue(startProfile, 2),
       unit: 'п.м.',
       withReserve: startProfile.ceilToDouble(),
-      purchaseQty: startProfile.ceil(),
+      purchaseQty: startProfile.ceil().toDouble(),
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
@@ -141,7 +141,7 @@ CanonicalCalculatorContractResult calculateCanonicalPvcPanels(
       quantity: roundValue(plinthLen, 2),
       unit: 'п.м.',
       withReserve: plinthLen.ceilToDouble(),
-      purchaseQty: plinthLen.ceil(),
+      purchaseQty: plinthLen.ceil().toDouble(),
       category: 'Профиль',
     ),
   ]);

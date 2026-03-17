@@ -108,7 +108,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       quantity: roundValue(concreteM3, 3),
       unit: 'м³',
       withReserve: roundValue(concreteM3, 3),
-      purchaseQty: concreteM3.ceil(),
+      purchaseQty: concreteM3.ceil().toDouble(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -116,7 +116,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       quantity: roundValue(rebarKg, 3),
       unit: 'кг',
       withReserve: rebarKg.ceil().toDouble(),
-      purchaseQty: rebarKg.ceil(),
+      purchaseQty: rebarKg.ceil().toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -124,7 +124,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       quantity: roundValue(wireKg, 3),
       unit: 'кг',
       withReserve: wireKg.ceil().toDouble(),
-      purchaseQty: wireKg.ceil(),
+      purchaseQty: wireKg.ceil().toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -132,7 +132,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       quantity: roundValue(formworkArea, 3),
       unit: 'м²',
       withReserve: formworkArea.ceil().toDouble(),
-      purchaseQty: formworkArea.ceil(),
+      purchaseQty: formworkArea.ceil().toDouble(),
       category: 'Опалубка',
     ),
     CanonicalMaterialResult(
@@ -140,7 +140,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       quantity: roundValue(geotextile, 3),
       unit: 'м²',
       withReserve: geotextile.ceil().toDouble(),
-      purchaseQty: geotextile.ceil(),
+      purchaseQty: geotextile.ceil().toDouble(),
       category: 'Подготовка',
     ),
     CanonicalMaterialResult(
@@ -148,7 +148,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       quantity: roundValue(gravel, 3),
       unit: 'м³',
       withReserve: roundValue(gravel, 3),
-      purchaseQty: gravel.ceil(),
+      purchaseQty: gravel.ceil().toDouble(),
       category: 'Подготовка',
     ),
     CanonicalMaterialResult(
@@ -156,7 +156,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       quantity: roundValue(sand, 3),
       unit: 'м³',
       withReserve: roundValue(sand, 3),
-      purchaseQty: sand.ceil(),
+      purchaseQty: sand.ceil().toDouble(),
       category: 'Подготовка',
     ),
   ];
@@ -167,7 +167,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       quantity: eppsPlates.toDouble(),
       unit: 'шт',
       withReserve: eppsPlates.toDouble(),
-      purchaseQty: eppsPlates.toInt(),
+      purchaseQty: eppsPlates.toDouble(),
       category: 'Утепление',
     ));
   }

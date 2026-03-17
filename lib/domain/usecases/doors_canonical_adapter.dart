@@ -73,8 +73,9 @@ CanonicalCalculatorContractResult calculateCanonicalDoors(
   // Glue
   final glueCarts = (doorCount * spec.materialRule<num>('glue_cartridge_per_door').toDouble()).ceil();
 
-  // Fasteners
-  final screwPacks = (doorCount * spec.materialRule<num>('screws_per_door').toDouble() / spec.materialRule<num>('screw_pack').toDouble()).ceil();
+  // Fasteners (in kg)
+  final screwsPcs = (doorCount * spec.materialRule<num>('screws_per_door').toDouble()).round();
+  final screwsKg = (screwsPcs / 600 * 10).ceil() / 10; // 4×40 мм: 600 шт/кг
   final dubelPacks = (doorCount * spec.materialRule<num>('dubels_per_door').toDouble() / spec.materialRule<num>('dubel_pack').toDouble()).ceil();
 
   // Scenarios
@@ -129,15 +130,15 @@ CanonicalCalculatorContractResult calculateCanonicalDoors(
       quantity: recScenario.exactNeed,
       unit: 'баллонов',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
-      name: 'Саморезы (упаковка ${spec.materialRule<num>('screw_pack').toDouble()} шт)',
-      quantity: (doorCount * spec.materialRule<num>('screws_per_door').toDouble()),
-      unit: 'шт',
-      withReserve: (screwPacks * spec.materialRule<num>('screw_pack').toDouble()),
-      purchaseQty: screwPacks.toInt(),
+      name: 'Саморезы монтажные',
+      quantity: screwsKg,
+      unit: 'кг',
+      withReserve: screwsKg,
+      purchaseQty: screwsKg.ceil().toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -145,15 +146,16 @@ CanonicalCalculatorContractResult calculateCanonicalDoors(
       quantity: (doorCount * spec.materialRule<num>('dubels_per_door').toDouble()),
       unit: 'шт',
       withReserve: (dubelPacks * spec.materialRule<num>('dubel_pack').toDouble()),
-      purchaseQty: dubelPacks.toInt(),
+      purchaseQty: (dubelPacks * spec.materialRule<num>('dubel_pack').toDouble()).toDouble(),
       category: 'Крепёж',
+      packageInfo: {'count': dubelPacks, 'unitSize': spec.materialRule<num>('dubel_pack').toDouble(), 'packageUnit': 'упаковок'},
     ),
     CanonicalMaterialResult(
       name: 'Клей-герметик (картриджи)',
       quantity: glueCarts.toDouble(),
       unit: 'шт',
       withReserve: glueCarts.toDouble(),
-      purchaseQty: glueCarts.toInt(),
+      purchaseQty: glueCarts.toDouble(),
       category: 'Монтаж',
     ),
   ];
@@ -164,7 +166,7 @@ CanonicalCalculatorContractResult calculateCanonicalDoors(
       quantity: doborPcs.toDouble(),
       unit: 'шт',
       withReserve: doborPcs.toDouble(),
-      purchaseQty: doborPcs.toInt(),
+      purchaseQty: doborPcs.toDouble(),
       category: 'Комплектация',
     ));
   }
@@ -175,7 +177,7 @@ CanonicalCalculatorContractResult calculateCanonicalDoors(
       quantity: nalichnikPcs.toDouble(),
       unit: 'шт',
       withReserve: nalichnikPcs.toDouble(),
-      purchaseQty: nalichnikPcs.toInt(),
+      purchaseQty: nalichnikPcs.toDouble(),
       category: 'Комплектация',
     ));
   }
@@ -199,7 +201,7 @@ CanonicalCalculatorContractResult calculateCanonicalDoors(
       'doborPcs': doborPcs.toDouble(),
       'nalichnikPcs': nalichnikPcs.toDouble(),
       'glueCarts': glueCarts.toDouble(),
-      'screwPacks': screwPacks.toDouble(),
+      'screwsKg': screwsKg,
       'dubelPacks': dubelPacks.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,
       'recExactNeed': recScenario.exactNeed,

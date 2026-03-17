@@ -51,7 +51,8 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
   final guidePcs = (guideM * 1.05 / spec.materialRule<num>('profile_length').toDouble()).ceil();
 
   // Screws & dubels
-  final screws = (totalSheets * spec.materialRule<num>('screws_gkl_per_sheet').toDouble()).round();
+  final screwsPcs = (totalSheets * spec.materialRule<num>('screws_gkl_per_sheet').toDouble()).round();
+  final screwsKg = (screwsPcs / 1000 * 10).ceil() / 10; // 3.5×25 мм: 1000 шт/кг
   final dubels = (guideM / spec.materialRule<num>('dubel_step').toDouble() * 2 * spec.materialRule<num>('dubel_reserve').toDouble()).ceil();
 
   // Serpyanka
@@ -114,7 +115,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: recScenario.exactNeed,
       unit: '\u0448\u0442',
       withReserve: recScenario.exactNeed,
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435',
     ),
     CanonicalMaterialResult(
@@ -122,7 +123,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: ppPcs.toDouble(),
       unit: '\u0448\u0442',
       withReserve: ppPcs.toDouble(),
-      purchaseQty: ppPcs.toInt(),
+      purchaseQty: ppPcs.toDouble(),
       category: '\u041a\u0430\u0440\u043a\u0430\u0441',
     ),
     CanonicalMaterialResult(
@@ -130,15 +131,15 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: guidePcs.toDouble(),
       unit: '\u0448\u0442',
       withReserve: guidePcs.toDouble(),
-      purchaseQty: guidePcs.toInt(),
+      purchaseQty: guidePcs.toDouble(),
       category: '\u041a\u0430\u0440\u043a\u0430\u0441',
     ),
     CanonicalMaterialResult(
       name: '\u0421\u0430\u043c\u043e\u0440\u0435\u0437\u044b \u0434\u043b\u044f \u0413\u041a\u041b',
-      quantity: screws.toDouble(),
-      unit: '\u0448\u0442',
-      withReserve: screws.toDouble(),
-      purchaseQty: screws.toInt(),
+      quantity: screwsKg,
+      unit: '\u043a\u0433',
+      withReserve: screwsKg,
+      purchaseQty: screwsKg.ceil().toDouble(),
       category: '\u041a\u0440\u0435\u043f\u0451\u0436',
     ),
     CanonicalMaterialResult(
@@ -146,7 +147,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: dubels.toDouble(),
       unit: '\u0448\u0442',
       withReserve: dubels.toDouble(),
-      purchaseQty: dubels.toInt(),
+      purchaseQty: dubels.toDouble(),
       category: '\u041a\u0440\u0435\u043f\u0451\u0436',
     ),
     CanonicalMaterialResult(
@@ -154,7 +155,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: jointsM.toDouble(),
       unit: '\u043c',
       withReserve: jointsM.toDouble(),
-      purchaseQty: jointsM.toInt(),
+      purchaseQty: jointsM.toDouble(),
       category: '\u041e\u0442\u0434\u0435\u043b\u043a\u0430',
     ),
     CanonicalMaterialResult(
@@ -162,7 +163,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: puttyBags.toDouble(),
       unit: '\u043c\u0435\u0448\u043a\u043e\u0432',
       withReserve: puttyBags.toDouble(),
-      purchaseQty: puttyBags.toInt(),
+      purchaseQty: puttyBags.toDouble(),
       category: '\u041e\u0442\u0434\u0435\u043b\u043a\u0430',
     ),
     CanonicalMaterialResult(
@@ -170,7 +171,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       quantity: primerCans.toDouble(),
       unit: '\u043a\u0430\u043d\u0438\u0441\u0442\u0440',
       withReserve: primerCans.toDouble(),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: primerCans.toDouble(),
       category: '\u041e\u0442\u0434\u0435\u043b\u043a\u0430',
     ),
   ];
@@ -194,7 +195,7 @@ CanonicalCalculatorContractResult calculateCanonicalGypsumBoard(
       'ppPcs': ppPcs.toDouble(),
       'guidePcs': guidePcs.toDouble(),
       'guideM': roundValue(guideM, 3),
-      'screws': screws.toDouble(),
+      'screws': screwsKg,
       'dubels': dubels.toDouble(),
       'jointsM': jointsM.toDouble(),
       'puttyBags': puttyBags.toDouble(),

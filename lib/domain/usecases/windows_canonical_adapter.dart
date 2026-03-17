@@ -65,7 +65,8 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
   // Anchors & screws
   final anchorsPerWindow = (perimM / spec.materialRule<num>('anchor_step').toDouble()).ceil();
   final totalAnchors = (anchorsPerWindow * windowCount * spec.materialRule<num>('anchor_reserve').toDouble()).ceil();
-  final screws = (totalAnchors * 2 * spec.materialRule<num>('screw_reserve').toDouble()).ceil();
+  final screwsPcs = (totalAnchors * 2 * spec.materialRule<num>('screw_reserve').toDouble()).ceil();
+  final screwsKg = (screwsPcs / 1000 * 10).ceil() / 10; // 3.5×25 мм: 1000 шт/кг
 
   // Windowsill
   final sillWidth = wallThickness / 1000 + spec.materialRule<num>('windowsill_overhang').toDouble();
@@ -94,7 +95,8 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
     cornerPcs = (perimM * 0.75 * windowCount * spec.materialRule<num>('psul_reserve').toDouble() / 3).ceil();
   } else {
     gklSheets = (totalSlopeArea * spec.materialRule<num>('slope_gkl_reserve').toDouble() / spec.materialRule<num>('gkl_sheet_m2').toDouble()).ceil();
-    screwsGKL = (gklSheets * 20 * spec.materialRule<num>('screw_reserve').toDouble()).ceil();
+    final screwsGKLpcs = (gklSheets * 20 * spec.materialRule<num>('screw_reserve').toDouble()).ceil();
+    screwsGKL = (screwsGKLpcs / 1000 * 10).ceil(); // *10 for rounding
     puttyBags = (totalSlopeArea * 1.2 / spec.materialRule<num>('plaster_bag').toDouble()).ceil();
   }
 
@@ -151,7 +153,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
       quantity: psulRolls.toDouble(),
       unit: 'рулонов',
       withReserve: psulRolls.toDouble(),
-      purchaseQty: psulRolls.toInt(),
+      purchaseQty: psulRolls.toDouble(),
       category: 'Лента',
     ),
     CanonicalMaterialResult(
@@ -159,7 +161,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
       quantity: iflulRolls.toDouble(),
       unit: 'рулонов',
       withReserve: iflulRolls.toDouble(),
-      purchaseQty: iflulRolls.toInt(),
+      purchaseQty: iflulRolls.toDouble(),
       category: 'Лента',
     ),
     CanonicalMaterialResult(
@@ -167,7 +169,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
       quantity: recScenario.exactNeed,
       unit: 'баллонов',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
@@ -175,15 +177,15 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
       quantity: totalAnchors.toDouble(),
       unit: 'шт',
       withReserve: totalAnchors.toDouble(),
-      purchaseQty: totalAnchors.toInt(),
+      purchaseQty: totalAnchors.toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
       name: 'Саморезы для анкеров',
-      quantity: screws.toDouble(),
-      unit: 'шт',
-      withReserve: screws.toDouble(),
-      purchaseQty: screws.toInt(),
+      quantity: screwsKg,
+      unit: 'кг',
+      withReserve: screwsKg,
+      purchaseQty: screwsKg.ceil().toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -191,7 +193,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
       quantity: sillPcs.toDouble(),
       unit: 'шт',
       withReserve: sillPcs.toDouble(),
-      purchaseQty: sillPcs.toInt(),
+      purchaseQty: sillPcs.toDouble(),
       category: 'Подоконники',
     ),
   ];
@@ -203,7 +205,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
         quantity: sandwichPcs.toDouble(),
         unit: 'шт',
         withReserve: sandwichPcs.toDouble(),
-        purchaseQty: sandwichPcs.toInt(),
+        purchaseQty: sandwichPcs.toDouble(),
         category: 'Откосы',
       ),
       CanonicalMaterialResult(
@@ -211,7 +213,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
         quantity: fProfilePcs.toDouble(),
         unit: 'шт',
         withReserve: fProfilePcs.toDouble(),
-        purchaseQty: fProfilePcs.toInt(),
+        purchaseQty: fProfilePcs.toDouble(),
         category: 'Откосы',
       ),
     ]);
@@ -222,7 +224,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
         quantity: plasterBags.toDouble(),
         unit: 'мешков',
         withReserve: plasterBags.toDouble(),
-        purchaseQty: plasterBags.toInt(),
+        purchaseQty: plasterBags.toDouble(),
         category: 'Откосы',
       ),
       CanonicalMaterialResult(
@@ -230,7 +232,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
         quantity: cornerPcs.toDouble(),
         unit: 'шт',
         withReserve: cornerPcs.toDouble(),
-        purchaseQty: cornerPcs.toInt(),
+        purchaseQty: cornerPcs.toDouble(),
         category: 'Откосы',
       ),
     ]);
@@ -241,15 +243,15 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
         quantity: gklSheets.toDouble(),
         unit: 'листов',
         withReserve: gklSheets.toDouble(),
-        purchaseQty: gklSheets.toInt(),
+        purchaseQty: gklSheets.toDouble(),
         category: 'Откосы',
       ),
       CanonicalMaterialResult(
         name: 'Саморезы для ГКЛ',
-        quantity: screwsGKL.toDouble(),
-        unit: 'шт',
-        withReserve: screwsGKL.toDouble(),
-        purchaseQty: screwsGKL.toInt(),
+        quantity: screwsGKL / 10,
+        unit: 'кг',
+        withReserve: screwsGKL / 10,
+        purchaseQty: (screwsGKL / 10).ceil().toDouble(),
         category: 'Крепёж',
       ),
       CanonicalMaterialResult(
@@ -257,7 +259,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
         quantity: puttyBags.toDouble(),
         unit: 'мешков',
         withReserve: puttyBags.toDouble(),
-        purchaseQty: puttyBags.toInt(),
+        purchaseQty: puttyBags.toDouble(),
         category: 'Откосы',
       ),
     ]);
@@ -279,7 +281,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
       'foamCans': foamCans.toDouble(),
       'anchorsPerWindow': anchorsPerWindow.toDouble(),
       'totalAnchors': totalAnchors.toDouble(),
-      'screws': screws.toDouble(),
+      'screws': screwsKg,
       'sillWidth': roundValue(sillWidth, 3),
       'sillPcs': sillPcs.toDouble(),
       'slopeSideArea': roundValue(slopeSideArea, 4),
@@ -290,7 +292,7 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
       'plasterBags': plasterBags.toDouble(),
       'cornerPcs': cornerPcs.toDouble(),
       'gklSheets': gklSheets.toDouble(),
-      'screwsGKL': screwsGKL.toDouble(),
+      'screwsGKL': screwsGKL / 10,
       'puttyBags': puttyBags.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,
       'recExactNeed': recScenario.exactNeed,

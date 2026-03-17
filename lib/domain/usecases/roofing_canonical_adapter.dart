@@ -80,7 +80,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: sheetsNeeded.toDouble(),
       unit: 'листов',
       withReserve: sheetsNeeded.toDouble(),
-      purchaseQty: sheetsNeeded.toInt(),
+      purchaseQty: sheetsNeeded.toDouble(),
       category: 'Основное',
     ));
     materials.add(CanonicalMaterialResult(
@@ -88,7 +88,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: ridgePieces.toDouble(),
       unit: 'шт',
       withReserve: ridgePieces.toDouble(),
-      purchaseQty: ridgePieces.toInt(),
+      purchaseQty: ridgePieces.toDouble(),
       category: 'Доборные',
     ));
     materials.add(CanonicalMaterialResult(
@@ -96,7 +96,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: snowGuards.toDouble(),
       unit: 'шт',
       withReserve: snowGuards.toDouble(),
-      purchaseQty: snowGuards.toInt(),
+      purchaseQty: snowGuards.toDouble(),
       category: 'Безопасность',
     ));
     materials.add(CanonicalMaterialResult(
@@ -104,7 +104,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: screws.toDouble(),
       unit: 'шт',
       withReserve: screws.toDouble(),
-      purchaseQty: screws.toInt(),
+      purchaseQty: screws.toDouble(),
       category: 'Крепёж',
     ));
     materials.add(CanonicalMaterialResult(
@@ -112,15 +112,16 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: waterproofingM2.toDouble(),
       unit: 'м²',
       withReserve: (waterproofingRolls * 75).toDouble(),
-      purchaseQty: waterproofingRolls.toInt(),
+      purchaseQty: (waterproofingRolls * 75).toDouble(),
       category: 'Изоляция',
+      packageInfo: {'count': waterproofingRolls, 'unitSize': 75.0, 'packageUnit': 'рулонов'},
     ));
     materials.add(CanonicalMaterialResult(
       name: 'Обрешётка (доска 25x100, шаг ~350 мм)',
       quantity: battens.toDouble(),
       unit: 'шт',
       withReserve: battens.toDouble(),
-      purchaseQty: battens.toInt(),
+      purchaseQty: battens.toDouble(),
       category: 'Каркас',
     ));
     materials.add(CanonicalMaterialResult(
@@ -128,7 +129,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: counterBattens.toDouble(),
       unit: 'шт',
       withReserve: counterBattens.toDouble(),
-      purchaseQty: counterBattens.toInt(),
+      purchaseQty: counterBattens.toDouble(),
       category: 'Каркас',
     ));
   } else if (roofingType == 1) {
@@ -160,7 +161,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: packs.toDouble(),
       unit: 'упаковок',
       withReserve: packs.toDouble(),
-      purchaseQty: packs.toInt(),
+      purchaseQty: packs.toDouble(),
       category: 'Основное',
     ));
     materials.add(CanonicalMaterialResult(
@@ -168,7 +169,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: underlaymentRolls.toDouble(),
       unit: 'рулонов',
       withReserve: underlaymentRolls.toDouble(),
-      purchaseQty: underlaymentRolls.toInt(),
+      purchaseQty: underlaymentRolls.toDouble(),
       category: 'Изоляция',
     ));
     materials.add(CanonicalMaterialResult(
@@ -176,15 +177,16 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: roundValue(masticKg, 3),
       unit: 'кг',
       withReserve: (masticBuckets * 3).toDouble(),
-      purchaseQty: masticBuckets.toInt(),
+      purchaseQty: (masticBuckets * 3).toDouble(),
       category: 'Клей',
+      packageInfo: {'count': masticBuckets, 'unitSize': 3.0, 'packageUnit': 'вёдер'},
     ));
     materials.add(CanonicalMaterialResult(
       name: 'Кровельные гвозди',
       quantity: nailsKg.toDouble(),
       unit: 'кг',
       withReserve: nailsKg.toDouble(),
-      purchaseQty: nailsKg.toInt(),
+      purchaseQty: nailsKg.toDouble(),
       category: 'Крепёж',
     ));
     materials.add(CanonicalMaterialResult(
@@ -192,7 +194,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: ridgeShingles.toDouble(),
       unit: 'шт',
       withReserve: ridgeShingles.toDouble(),
-      purchaseQty: ridgeShingles.toInt(),
+      purchaseQty: ridgeShingles.toDouble(),
       category: 'Доборные',
     ));
     materials.add(CanonicalMaterialResult(
@@ -200,7 +202,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: osbSheets.toDouble(),
       unit: 'листов',
       withReserve: osbSheets.toDouble(),
-      purchaseQty: osbSheets.toInt(),
+      purchaseQty: osbSheets.toDouble(),
       category: 'Каркас',
     ));
     materials.add(CanonicalMaterialResult(
@@ -208,7 +210,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: ventOutputs.toDouble(),
       unit: 'шт',
       withReserve: ventOutputs.toDouble(),
-      purchaseQty: ventOutputs.toInt(),
+      purchaseQty: ventOutputs.toDouble(),
       category: 'Вентиляция',
     ));
   } else {
@@ -259,7 +261,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: sheetsOrTiles.toDouble(),
       unit: tileUnit,
       withReserve: sheetsOrTiles.toDouble(),
-      purchaseQty: sheetsOrTiles.toInt(),
+      purchaseQty: sheetsOrTiles.toDouble(),
       category: 'Основное',
     ));
     materials.add(CanonicalMaterialResult(
@@ -267,7 +269,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: ridgePieces.toDouble(),
       unit: 'шт',
       withReserve: ridgePieces.toDouble(),
-      purchaseQty: ridgePieces.toInt(),
+      purchaseQty: ridgePieces.toDouble(),
       category: 'Доборные',
     ));
     materials.add(CanonicalMaterialResult(
@@ -275,7 +277,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: fastenersNeeded.toDouble(),
       unit: 'шт',
       withReserve: fastenersNeeded.toDouble(),
-      purchaseQty: fastenersNeeded.toInt(),
+      purchaseQty: fastenersNeeded.toDouble(),
       category: 'Крепёж',
     ));
     materials.add(CanonicalMaterialResult(
@@ -283,8 +285,9 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       quantity: (realArea * 1.15).ceilToDouble(),
       unit: 'м²',
       withReserve: (waterproofingRolls * 75).toDouble(),
-      purchaseQty: waterproofingRolls.toInt(),
+      purchaseQty: (waterproofingRolls * 75).toDouble(),
       category: 'Изоляция',
+      packageInfo: {'count': waterproofingRolls, 'unitSize': 75.0, 'packageUnit': 'рулонов'},
     ));
   }
 

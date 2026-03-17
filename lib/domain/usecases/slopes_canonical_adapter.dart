@@ -93,7 +93,8 @@ CanonicalCalculatorContractResult calculateCanonicalSlopes(
   } else {
     // GKL
     gklSheets = (totalArea * spec.materialRule<num>('gkl_reserve').toDouble() / spec.materialRule<num>('gkl_m2').toDouble()).ceil();
-    screwsGKL = (gklSheets * 20 * 1.05).ceil();
+    final screwsGKLpcs = (gklSheets * 20 * 1.05).ceil();
+    screwsGKL = (screwsGKLpcs / 1000 * 10).ceil(); // *10 for rounding to 0.1 кг
     puttyBagsGKL = (totalArea * spec.materialRule<num>('putty_kg_per_m2').toDouble() * spec.materialRule<num>('putty_reserve').toDouble() / 25).ceil();
   }
 
@@ -171,7 +172,7 @@ CanonicalCalculatorContractResult calculateCanonicalSlopes(
         quantity: recScenario.exactNeed,
         unit: 'шт',
         withReserve: recScenario.exactNeed.ceilToDouble(),
-        purchaseQty: recScenario.exactNeed.ceil(),
+        purchaseQty: recScenario.exactNeed.ceil().toDouble(),
         category: 'Отделка',
       ),
       CanonicalMaterialResult(
@@ -179,7 +180,7 @@ CanonicalCalculatorContractResult calculateCanonicalSlopes(
         quantity: fProfilePcs.toDouble(),
         unit: 'шт',
         withReserve: fProfilePcs.toDouble(),
-        purchaseQty: fProfilePcs.toInt(),
+        purchaseQty: fProfilePcs.toDouble(),
         category: 'Профиль',
       ),
       CanonicalMaterialResult(
@@ -187,7 +188,7 @@ CanonicalCalculatorContractResult calculateCanonicalSlopes(
         quantity: foamCans.toDouble(),
         unit: 'баллонов',
         withReserve: foamCans.toDouble(),
-        purchaseQty: foamCans.toInt(),
+        purchaseQty: foamCans.toDouble(),
         category: 'Монтаж',
       ),
     ]);
@@ -198,7 +199,7 @@ CanonicalCalculatorContractResult calculateCanonicalSlopes(
         quantity: recScenario.exactNeed,
         unit: 'мешков',
         withReserve: recScenario.exactNeed.ceilToDouble(),
-        purchaseQty: recScenario.exactNeed.ceil(),
+        purchaseQty: recScenario.exactNeed.ceil().toDouble(),
         category: 'Отделка',
       ),
       CanonicalMaterialResult(
@@ -206,7 +207,7 @@ CanonicalCalculatorContractResult calculateCanonicalSlopes(
         quantity: puttyBagsPlaster.toDouble(),
         unit: 'мешков',
         withReserve: puttyBagsPlaster.toDouble(),
-        purchaseQty: puttyBagsPlaster.toInt(),
+        purchaseQty: puttyBagsPlaster.toDouble(),
         category: 'Отделка',
       ),
       CanonicalMaterialResult(
@@ -214,7 +215,7 @@ CanonicalCalculatorContractResult calculateCanonicalSlopes(
         quantity: cornerPcs.toDouble(),
         unit: 'шт',
         withReserve: cornerPcs.toDouble(),
-        purchaseQty: cornerPcs.toInt(),
+        purchaseQty: cornerPcs.toDouble(),
         category: 'Профиль',
       ),
     ]);
@@ -225,15 +226,15 @@ CanonicalCalculatorContractResult calculateCanonicalSlopes(
         quantity: recScenario.exactNeed,
         unit: 'листов',
         withReserve: recScenario.exactNeed.ceilToDouble(),
-        purchaseQty: recScenario.exactNeed.ceil(),
+        purchaseQty: recScenario.exactNeed.ceil().toDouble(),
         category: 'Отделка',
       ),
       CanonicalMaterialResult(
         name: 'Саморезы для ГКЛ',
-        quantity: screwsGKL.toDouble(),
-        unit: 'шт',
-        withReserve: screwsGKL.toDouble(),
-        purchaseQty: screwsGKL.toInt(),
+        quantity: screwsGKL / 10,
+        unit: 'кг',
+        withReserve: screwsGKL / 10,
+        purchaseQty: (screwsGKL / 10).ceil().toDouble(),
         category: 'Крепёж',
       ),
       CanonicalMaterialResult(
@@ -241,7 +242,7 @@ CanonicalCalculatorContractResult calculateCanonicalSlopes(
         quantity: puttyBagsGKL.toDouble(),
         unit: 'мешков',
         withReserve: puttyBagsGKL.toDouble(),
-        purchaseQty: puttyBagsGKL.toInt(),
+        purchaseQty: puttyBagsGKL.toDouble(),
         category: 'Отделка',
       ),
     ]);
@@ -253,7 +254,7 @@ CanonicalCalculatorContractResult calculateCanonicalSlopes(
       quantity: sealantTubes.toDouble(),
       unit: 'шт',
       withReserve: sealantTubes.toDouble(),
-      purchaseQty: sealantTubes.toInt(),
+      purchaseQty: sealantTubes.toDouble(),
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
@@ -261,7 +262,7 @@ CanonicalCalculatorContractResult calculateCanonicalSlopes(
       quantity: primerCans.toDouble(),
       unit: 'канистр',
       withReserve: primerCans.toDouble(),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: primerCans.toDouble(),
       category: 'Грунтовка',
     ),
   ]);
@@ -289,7 +290,7 @@ CanonicalCalculatorContractResult calculateCanonicalSlopes(
       'puttyBagsPlaster': puttyBagsPlaster.toDouble(),
       'cornerPcs': cornerPcs.toDouble(),
       'gklSheets': gklSheets.toDouble(),
-      'screwsGKL': screwsGKL.toDouble(),
+      'screwsGKL': screwsGKL / 10,
       'puttyBagsGKL': puttyBagsGKL.toDouble(),
       'sealantTubes': sealantTubes.toDouble(),
       'primerCans': primerCans.toDouble(),

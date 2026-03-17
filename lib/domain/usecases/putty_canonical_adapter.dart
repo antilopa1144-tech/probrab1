@@ -201,7 +201,7 @@ CanonicalCalculatorContractResult calculateCanonicalPutty(
         quantity: roundValue(componentScenario.exactNeed / bagWeight, 3),
         unit: 'мешков',
         withReserve: (componentScenario.purchaseQuantity / bagWeight).ceilToDouble(),
-        purchaseQty: (componentScenario.purchaseQuantity / bagWeight).ceil(),
+        purchaseQty: (componentScenario.purchaseQuantity / bagWeight).ceil().toDouble(),
         category: componentScenario.component['category'] as String,
       ),
   ];
@@ -214,7 +214,7 @@ CanonicalCalculatorContractResult calculateCanonicalPutty(
         quantity: roundValue(workArea * spec.materialRule<num>('serpyanka_linear_m_per_m2').toDouble(), 3),
         unit: 'м.п.',
         withReserve: serpyankaMeters.ceilToDouble(),
-        purchaseQty: (serpyankaMeters / spec.materialRule<num>('serpyanka_roll_length_m').toDouble()).ceil(),
+        purchaseQty: (serpyankaMeters / spec.materialRule<num>('serpyanka_roll_length_m').toDouble()).ceil().toDouble(),
         category: 'Армирование',
       ),
     );
@@ -232,7 +232,7 @@ CanonicalCalculatorContractResult calculateCanonicalPutty(
       quantity: roundValue(primerLiters / 10, 3),
       unit: 'канистр',
       withReserve: (primerLiters / 10).ceilToDouble(),
-      purchaseQty: (primerLiters / 10).ceil(),
+      purchaseQty: (primerLiters / 10).ceil().toDouble(),
       category: 'Подготовка',
     ),
   );
@@ -246,7 +246,7 @@ CanonicalCalculatorContractResult calculateCanonicalPutty(
         quantity: sandpaperSheets.toDouble(),
         unit: 'листов',
         withReserve: purchaseQty.toDouble(),
-        purchaseQty: purchaseQty.toInt(),
+        purchaseQty: purchaseQty.toDouble(),
         category: 'Шлифовка',
       ),
     );

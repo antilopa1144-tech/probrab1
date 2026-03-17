@@ -115,7 +115,7 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
       quantity: roundValue(volReserve, 3),
       unit: 'м³',
       withReserve: roundValue(volReserve, 3),
-      purchaseQty: volReserve.ceil(),
+      purchaseQty: volReserve.ceil().toDouble(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -123,7 +123,7 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
       quantity: roundValue(longWeightKg, 3),
       unit: 'кг',
       withReserve: longWeightKg.ceil().toDouble(),
-      purchaseQty: longWeightKg.ceil(),
+      purchaseQty: longWeightKg.ceil().toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -131,7 +131,7 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
       quantity: roundValue(clampWeightKg, 3),
       unit: 'кг',
       withReserve: clampWeightKg.ceil().toDouble(),
-      purchaseQty: clampWeightKg.ceil(),
+      purchaseQty: clampWeightKg.ceil().toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -139,7 +139,7 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
       quantity: roundValue(wireKg, 3),
       unit: 'кг',
       withReserve: roundValue(wireKg, 3),
-      purchaseQty: wireKg.ceil(),
+      purchaseQty: wireKg.ceil().toDouble(),
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -147,7 +147,7 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
       quantity: roundValue(formwork, 3),
       unit: 'м²',
       withReserve: formwork.ceil().toDouble(),
-      purchaseQty: formwork.ceil(),
+      purchaseQty: formwork.ceil().toDouble(),
       category: 'Опалубка',
     ),
     CanonicalMaterialResult(
@@ -155,7 +155,7 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
       quantity: boards.toDouble(),
       unit: 'шт',
       withReserve: boards.toDouble(),
-      purchaseQty: boards.toInt(),
+      purchaseQty: boards.toDouble(),
       category: 'Опалубка',
     ),
   ];

@@ -187,7 +187,8 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
       quantity: recScenario.exactNeed,
       unit: 'м³',
       withReserve: recScenario.purchaseQuantity,
-      purchaseQty: recScenario.buyPlan.packagesCount,
+      purchaseQty: recScenario.purchaseQuantity,
+      packageInfo: {'count': recScenario.buyPlan.packagesCount, 'size': volumeStepM3, 'packageUnit': 'порций'},
       category: 'Основное',
     ),
   ];
@@ -199,7 +200,8 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
         quantity: roundValue(cementKg, 3),
         unit: 'кг',
         withReserve: roundValue(cementBags * cementBagKg, 3),
-        purchaseQty: cementBags.toInt(),
+        purchaseQty: (cementBags * cementBagKg).toDouble(),
+        packageInfo: {'count': cementBags, 'size': cementBagKg, 'packageUnit': 'мешков'},
         category: 'Компоненты',
       ),
       CanonicalMaterialResult(
@@ -207,7 +209,7 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
         quantity: roundValue(sandM3, 3),
         unit: 'м³',
         withReserve: roundValue(sandM3, 3),
-        purchaseQty: sandM3.ceil(),
+        purchaseQty: sandM3.ceil().toDouble(),
         category: 'Компоненты',
       ),
       CanonicalMaterialResult(
@@ -215,7 +217,7 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
         quantity: roundValue(gravelM3, 3),
         unit: 'м³',
         withReserve: roundValue(gravelM3, 3),
-        purchaseQty: gravelM3.ceil(),
+        purchaseQty: gravelM3.ceil().toDouble(),
         category: 'Компоненты',
       ),
       CanonicalMaterialResult(
@@ -223,7 +225,7 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
         quantity: roundValue(waterL, 3),
         unit: 'л',
         withReserve: roundValue(waterL, 3),
-        purchaseQty: waterL.ceil(),
+        purchaseQty: waterL.ceil().toDouble(),
         category: 'Компоненты',
       ),
     ]);
@@ -235,7 +237,8 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
       quantity: roundValue(masticKg, 3),
       unit: 'кг',
       withReserve: roundValue(masticBuckets * masticBucketKg, 3),
-      purchaseQty: masticBuckets.toInt(),
+      purchaseQty: (masticBuckets * masticBucketKg).toDouble(),
+      packageInfo: {'count': masticBuckets, 'size': masticBucketKg, 'packageUnit': 'вёдер'},
       category: 'Гидроизоляция',
     ),
     CanonicalMaterialResult(
@@ -243,7 +246,8 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
       quantity: roundValue(filmArea, 3),
       unit: 'м²',
       withReserve: roundValue(filmRolls * filmRollM2, 3),
-      purchaseQty: filmRolls.toInt(),
+      purchaseQty: (filmRolls * filmRollM2).toDouble(),
+      packageInfo: {'count': filmRolls, 'size': filmRollM2, 'packageUnit': 'рулонов'},
       category: 'Гидроизоляция',
     ),
   ]);

@@ -140,7 +140,7 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Облицовка',
     ),
   ];
@@ -152,7 +152,7 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
         quantity: glueBottles.toDouble(),
         unit: 'шт',
         withReserve: glueBottles.toDouble(),
-        purchaseQty: glueBottles.toInt(),
+        purchaseQty: glueBottles.toDouble(),
         category: 'Монтаж',
       ),
       CanonicalMaterialResult(
@@ -160,7 +160,7 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
         quantity: primer.toDouble(),
         unit: 'канистр',
         withReserve: primer.toDouble(),
-        purchaseQty: primer.toInt(),
+        purchaseQty: primer.toDouble(),
         category: 'Грунтовка',
       ),
     ]);
@@ -171,7 +171,7 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
         quantity: battenPcs.toDouble(),
         unit: 'шт',
         withReserve: battenPcs.toDouble(),
-        purchaseQty: battenPcs.toInt(),
+        purchaseQty: battenPcs.toDouble(),
         category: 'Подсистема',
       ),
       CanonicalMaterialResult(
@@ -179,7 +179,7 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
         quantity: dubels.toDouble(),
         unit: 'шт',
         withReserve: dubels.toDouble(),
-        purchaseQty: dubels.toInt(),
+        purchaseQty: dubels.toDouble(),
         category: 'Крепёж',
       ),
       CanonicalMaterialResult(
@@ -187,7 +187,7 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
         quantity: klaimers.toDouble(),
         unit: 'шт',
         withReserve: klaimers.toDouble(),
-        purchaseQty: klaimers.toInt(),
+        purchaseQty: klaimers.toDouble(),
         category: 'Крепёж',
       ),
     ]);
@@ -199,7 +199,7 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
       quantity: molding.toDouble(),
       unit: 'шт',
       withReserve: molding.toDouble(),
-      purchaseQty: molding.toInt(),
+      purchaseQty: molding.toDouble(),
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
@@ -207,7 +207,7 @@ CanonicalCalculatorContractResult calculateCanonicalWallPanels(
       quantity: sealant.toDouble(),
       unit: 'шт',
       withReserve: sealant.toDouble(),
-      purchaseQty: sealant.toInt(),
+      purchaseQty: sealant.toDouble(),
       category: 'Монтаж',
     ),
   ]);

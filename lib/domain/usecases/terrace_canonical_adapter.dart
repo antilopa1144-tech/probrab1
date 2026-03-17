@@ -78,7 +78,8 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
 
   // Fasteners
   final klaymerCount = lagRowCount * rowCount;
-  final screwCount = (lagRowCount * rowCount * (boardType == 3 ? 2.0 : 1.2)).ceil();
+  final screwPcs = (lagRowCount * rowCount * (boardType == 3 ? 2.0 : 1.2)).ceil();
+  final screwKg = (screwPcs / 600 * 10).ceil() / 10; // 3.5×35 мм: 600 шт/кг
 
   // Treatment
   final treatmentLayers = (spec.materialRule<Map>('treatment_layers')['$withTreatment'] as num?)?.toDouble() ?? 0;
@@ -139,7 +140,7 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Доска',
     ),
     CanonicalMaterialResult(
@@ -147,7 +148,7 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
       quantity: lagPcs.toDouble(),
       unit: 'шт',
       withReserve: lagPcs.toDouble(),
-      purchaseQty: lagPcs.toInt(),
+      purchaseQty: lagPcs.toDouble(),
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
@@ -155,15 +156,15 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
       quantity: klaymerCount.toDouble(),
       unit: 'шт',
       withReserve: klaymerCount.toDouble(),
-      purchaseQty: klaymerCount.toInt(),
+      purchaseQty: klaymerCount.toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
       name: 'Саморезы',
-      quantity: screwCount.toDouble(),
-      unit: 'шт',
-      withReserve: screwCount.toDouble(),
-      purchaseQty: screwCount.toInt(),
+      quantity: screwKg,
+      unit: 'кг',
+      withReserve: screwKg,
+      purchaseQty: screwKg.ceil().toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -171,7 +172,7 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
       quantity: geotextileRolls.toDouble(),
       unit: 'рулонов',
       withReserve: geotextileRolls.toDouble(),
-      purchaseQty: geotextileRolls.toInt(),
+      purchaseQty: geotextileRolls.toDouble(),
       category: 'Подготовка',
     ),
   ];
@@ -182,7 +183,7 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
       quantity: treatmentL,
       unit: 'л',
       withReserve: treatmentL,
-      purchaseQty: treatmentL.ceil(),
+      purchaseQty: treatmentL.ceil().toDouble(),
       category: 'Защита',
     ));
   }
@@ -209,7 +210,7 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
       'lagTotalLen': roundValue(lagTotalLen, 3),
       'lagPcs': lagPcs.toDouble(),
       'klaymerCount': klaymerCount.toDouble(),
-      'screwCount': screwCount.toDouble(),
+      'screwCount': screwKg,
       'treatmentL': treatmentL,
       'geotextileRolls': geotextileRolls.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,

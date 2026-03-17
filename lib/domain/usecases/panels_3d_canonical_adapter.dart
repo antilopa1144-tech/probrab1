@@ -110,7 +110,7 @@ CanonicalCalculatorContractResult calculateCanonicalPanels3d(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Облицовка',
     ),
     CanonicalMaterialResult(
@@ -118,7 +118,7 @@ CanonicalCalculatorContractResult calculateCanonicalPanels3d(
       quantity: glueBags.toDouble(),
       unit: 'мешков',
       withReserve: glueBags.toDouble(),
-      purchaseQty: glueBags.toInt(),
+      purchaseQty: glueBags.toDouble(),
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
@@ -126,7 +126,7 @@ CanonicalCalculatorContractResult calculateCanonicalPanels3d(
       quantity: primerCans.toDouble(),
       unit: 'канистр',
       withReserve: primerCans.toDouble(),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: primerCans.toDouble(),
       category: 'Грунтовка',
     ),
     CanonicalMaterialResult(
@@ -134,7 +134,7 @@ CanonicalCalculatorContractResult calculateCanonicalPanels3d(
       quantity: puttyBags.toDouble(),
       unit: 'мешков',
       withReserve: puttyBags.toDouble(),
-      purchaseQty: puttyBags.toInt(),
+      purchaseQty: puttyBags.toDouble(),
       category: 'Отделка',
     ),
   ];
@@ -145,7 +145,7 @@ CanonicalCalculatorContractResult calculateCanonicalPanels3d(
       quantity: paintCans.toDouble(),
       unit: 'банок',
       withReserve: paintCans.toDouble(),
-      purchaseQty: paintCans.toInt(),
+      purchaseQty: paintCans.toDouble(),
       category: 'Отделка',
     ));
   }
@@ -155,7 +155,7 @@ CanonicalCalculatorContractResult calculateCanonicalPanels3d(
     quantity: roundValue(moldingM, 2),
     unit: 'п.м.',
     withReserve: moldingM.ceilToDouble(),
-    purchaseQty: moldingM.ceil(),
+    purchaseQty: moldingM.ceil().toDouble(),
     category: 'Профиль',
   ));
 
@@ -165,7 +165,7 @@ CanonicalCalculatorContractResult calculateCanonicalPanels3d(
       quantity: varnishCans.toDouble(),
       unit: 'банок',
       withReserve: varnishCans.toDouble(),
-      purchaseQty: varnishCans.toInt(),
+      purchaseQty: varnishCans.toDouble(),
       category: 'Отделка',
     ));
   }

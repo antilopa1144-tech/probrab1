@@ -94,7 +94,7 @@ CanonicalCalculatorContractResult calculateCanonicalMdfPanels(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Облицовка',
     ),
     CanonicalMaterialResult(
@@ -102,7 +102,7 @@ CanonicalCalculatorContractResult calculateCanonicalMdfPanels(
       quantity: clips.toDouble(),
       unit: 'шт',
       withReserve: clips.toDouble(),
-      purchaseQty: clips.toInt(),
+      purchaseQty: clips.toDouble(),
       category: 'Крепёж',
     ),
   ];
@@ -113,7 +113,7 @@ CanonicalCalculatorContractResult calculateCanonicalMdfPanels(
       quantity: roundValue(profileLen, 2),
       unit: 'п.м.',
       withReserve: profileLen.ceilToDouble(),
-      purchaseQty: profileLen.ceil(),
+      purchaseQty: profileLen.ceil().toDouble(),
       category: 'Подсистема',
     ));
   }
@@ -124,7 +124,7 @@ CanonicalCalculatorContractResult calculateCanonicalMdfPanels(
       quantity: plinthPcs.toDouble(),
       unit: 'шт',
       withReserve: plinthPcs.toDouble(),
-      purchaseQty: plinthPcs.toInt(),
+      purchaseQty: plinthPcs.toDouble(),
       category: 'Профиль',
     ));
   }

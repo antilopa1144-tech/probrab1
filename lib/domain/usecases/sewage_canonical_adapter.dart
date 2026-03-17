@@ -57,7 +57,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: totalRings.toDouble(),
         unit: 'шт',
         withReserve: totalRings.toDouble(),
-        purchaseQty: totalRings.toInt(),
+        purchaseQty: totalRings.toDouble(),
         category: 'Ёмкость',
       ),
       CanonicalMaterialResult(
@@ -65,7 +65,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: bottomPlates.toDouble(),
         unit: 'шт',
         withReserve: bottomPlates.toDouble(),
-        purchaseQty: bottomPlates.toInt(),
+        purchaseQty: bottomPlates.toDouble(),
         category: 'Ёмкость',
       ),
       CanonicalMaterialResult(
@@ -73,7 +73,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: topPlates.toDouble(),
         unit: 'шт',
         withReserve: topPlates.toDouble(),
-        purchaseQty: topPlates.toInt(),
+        purchaseQty: topPlates.toDouble(),
         category: 'Ёмкость',
       ),
       CanonicalMaterialResult(
@@ -81,7 +81,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: covers.toDouble(),
         unit: 'шт',
         withReserve: covers.toDouble(),
-        purchaseQty: covers.toInt(),
+        purchaseQty: covers.toDouble(),
         category: 'Ёмкость',
       ),
       CanonicalMaterialResult(
@@ -89,7 +89,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: sealingRings.toDouble(),
         unit: 'шт',
         withReserve: sealingRings.toDouble(),
-        purchaseQty: sealingRings.toInt(),
+        purchaseQty: sealingRings.toDouble(),
         category: 'Герметизация',
       ),
     ]);
@@ -105,7 +105,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: septicCount.toDouble(),
         unit: 'шт',
         withReserve: septicCount.toDouble(),
-        purchaseQty: septicCount.toInt(),
+        purchaseQty: septicCount.toDouble(),
         category: 'Ёмкость',
       ),
       CanonicalMaterialResult(
@@ -113,7 +113,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         quantity: sandBackfill.toDouble(),
         unit: 'м\u00b3',
         withReserve: sandBackfill.toDouble(),
-        purchaseQty: sandBackfill.toInt(),
+        purchaseQty: sandBackfill.toDouble(),
         category: 'Обсыпка',
       ),
     ]);
@@ -127,7 +127,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       quantity: eurocubes.toDouble(),
       unit: 'шт',
       withReserve: eurocubes.toDouble(),
-      purchaseQty: eurocubes.toInt(),
+      purchaseQty: eurocubes.toDouble(),
       category: 'Ёмкость',
     ));
   }
@@ -145,7 +145,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       quantity: pipeSections.toDouble(),
       unit: 'шт',
       withReserve: pipeSections.toDouble(),
-      purchaseQty: pipeSections.toInt(),
+      purchaseQty: pipeSections.toDouble(),
       category: 'Трубопровод',
     ),
     CanonicalMaterialResult(
@@ -153,7 +153,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       quantity: elbows.toDouble(),
       unit: 'шт',
       withReserve: elbows.toDouble(),
-      purchaseQty: elbows.toInt(),
+      purchaseQty: elbows.toDouble(),
       category: 'Фасонные',
     ),
     CanonicalMaterialResult(
@@ -161,7 +161,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       quantity: tees.toDouble(),
       unit: 'шт',
       withReserve: tees.toDouble(),
-      purchaseQty: tees.toInt(),
+      purchaseQty: tees.toDouble(),
       category: 'Фасонные',
     ),
   ]);
@@ -172,7 +172,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       quantity: gravel.toDouble(),
       unit: 'м\u00b3',
       withReserve: gravel.toDouble(),
-      purchaseQty: gravel.toInt(),
+      purchaseQty: gravel.toDouble(),
       category: 'Дренаж',
     ));
   }
@@ -183,7 +183,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       quantity: geotextile.toDouble(),
       unit: 'м\u00b2',
       withReserve: geotextile.toDouble(),
-      purchaseQty: geotextile.toInt(),
+      purchaseQty: geotextile.toDouble(),
       category: 'Дренаж',
     ));
   }

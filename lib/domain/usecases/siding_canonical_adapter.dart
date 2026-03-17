@@ -65,7 +65,8 @@ CanonicalCalculatorContractResult calculateCanonicalSiding(
   final jProfile = ((math.sqrt(openingsArea) * 4 * 2 + perimeter) * spec.materialRule<num>('j_reserve').toDouble() / spec.materialRule<num>('j_profile_length').toDouble()).ceil();
   final corners = (height * exteriorCorners * spec.materialRule<num>('corner_reserve').toDouble() / spec.materialRule<num>('corner_length').toDouble()).ceil();
   final finish = (perimeter * spec.materialRule<num>('starter_reserve').toDouble() / spec.materialRule<num>('finish_length').toDouble()).ceil();
-  final screws = (netArea * spec.materialRule<num>('screws_per_m2').toDouble() * spec.materialRule<num>('screw_reserve').toDouble()).ceil();
+  final screwsPcs = (netArea * spec.materialRule<num>('screws_per_m2').toDouble() * spec.materialRule<num>('screw_reserve').toDouble()).ceil();
+  final screwsKg = (screwsPcs / 700 * 10).ceil() / 10; // 4.2×19 мм: 700 шт/кг
   final battens = (netArea / spec.materialRule<num>('batten_step').toDouble() * spec.materialRule<num>('batten_reserve').toDouble()).ceil();
   final membrane = (netArea * spec.materialRule<num>('membrane_reserve').toDouble() / spec.materialRule<num>('membrane_roll').toDouble()).ceil();
   final sealant = (math.sqrt(netArea) * 4 / spec.materialRule<num>('sealant_per_perim').toDouble()).ceil();
@@ -121,7 +122,7 @@ CanonicalCalculatorContractResult calculateCanonicalSiding(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Облицовка',
     ),
     CanonicalMaterialResult(
@@ -129,7 +130,7 @@ CanonicalCalculatorContractResult calculateCanonicalSiding(
       quantity: starter.toDouble(),
       unit: 'шт',
       withReserve: starter.toDouble(),
-      purchaseQty: starter.toInt(),
+      purchaseQty: starter.toDouble(),
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
@@ -137,7 +138,7 @@ CanonicalCalculatorContractResult calculateCanonicalSiding(
       quantity: jProfile.toDouble(),
       unit: 'шт',
       withReserve: jProfile.toDouble(),
-      purchaseQty: jProfile.toInt(),
+      purchaseQty: jProfile.toDouble(),
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
@@ -145,7 +146,7 @@ CanonicalCalculatorContractResult calculateCanonicalSiding(
       quantity: corners.toDouble(),
       unit: 'шт',
       withReserve: corners.toDouble(),
-      purchaseQty: corners.toInt(),
+      purchaseQty: corners.toDouble(),
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
@@ -153,15 +154,15 @@ CanonicalCalculatorContractResult calculateCanonicalSiding(
       quantity: finish.toDouble(),
       unit: 'шт',
       withReserve: finish.toDouble(),
-      purchaseQty: finish.toInt(),
+      purchaseQty: finish.toDouble(),
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
       name: 'Саморезы',
-      quantity: screws.toDouble(),
-      unit: 'шт',
-      withReserve: screws.toDouble(),
-      purchaseQty: screws.toInt(),
+      quantity: screwsKg,
+      unit: 'кг',
+      withReserve: screwsKg,
+      purchaseQty: screwsKg.ceil().toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -169,7 +170,7 @@ CanonicalCalculatorContractResult calculateCanonicalSiding(
       quantity: battens.toDouble(),
       unit: 'м.п.',
       withReserve: battens.toDouble(),
-      purchaseQty: battens.toInt(),
+      purchaseQty: battens.toDouble(),
       category: 'Подсистема',
     ),
     CanonicalMaterialResult(
@@ -177,7 +178,7 @@ CanonicalCalculatorContractResult calculateCanonicalSiding(
       quantity: membrane.toDouble(),
       unit: 'рулонов',
       withReserve: membrane.toDouble(),
-      purchaseQty: membrane.toInt(),
+      purchaseQty: membrane.toDouble(),
       category: 'Изоляция',
     ),
     CanonicalMaterialResult(
@@ -185,7 +186,7 @@ CanonicalCalculatorContractResult calculateCanonicalSiding(
       quantity: sealant.toDouble(),
       unit: 'шт',
       withReserve: sealant.toDouble(),
-      purchaseQty: sealant.toInt(),
+      purchaseQty: sealant.toDouble(),
       category: 'Монтаж',
     ),
   ];
@@ -208,7 +209,7 @@ CanonicalCalculatorContractResult calculateCanonicalSiding(
       'jProfile': jProfile.toDouble(),
       'corners': corners.toDouble(),
       'finish': finish.toDouble(),
-      'screws': screws.toDouble(),
+      'screws': screwsKg,
       'battens': battens.toDouble(),
       'membrane': membrane.toDouble(),
       'sealant': sealant.toDouble(),

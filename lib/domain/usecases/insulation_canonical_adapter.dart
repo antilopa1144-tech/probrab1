@@ -149,7 +149,7 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
       quantity: roundValue(recScenario.exactNeed, 6),
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceil().toDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Основное',
     ));
 
@@ -158,7 +158,7 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
       quantity: dowelsNeeded.toDouble(),
       unit: 'шт',
       withReserve: dowelsNeeded.toDouble(),
-      purchaseQty: dowelsNeeded.toInt(),
+      purchaseQty: dowelsNeeded.toDouble(),
       category: 'Крепёж',
     ));
   }
@@ -169,7 +169,7 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
       quantity: membraneArea.toDouble(),
       unit: 'м²',
       withReserve: membraneArea.toDouble(),
-      purchaseQty: membraneArea.toInt(),
+      purchaseQty: membraneArea.toDouble(),
       category: 'Изоляция',
     ));
 
@@ -178,7 +178,7 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
       quantity: aluTapeRolls.toDouble(),
       unit: 'рулонов',
       withReserve: aluTapeRolls.toDouble(),
-      purchaseQty: aluTapeRolls.toInt(),
+      purchaseQty: aluTapeRolls.toDouble(),
       category: 'Изоляция',
     ));
   }
@@ -189,8 +189,9 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
       quantity: roundValue(glueKg, 3),
       unit: 'кг',
       withReserve: (glueBags * _glueBagKg).toDouble(),
-      purchaseQty: glueBags.toInt(),
+      purchaseQty: (glueBags * _glueBagKg).toDouble(),
       category: 'Клей',
+      packageInfo: {'count': glueBags, 'unitSize': _glueBagKg, 'packageUnit': 'мешков'},
     ));
   }
 
@@ -200,8 +201,9 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
       quantity: ecowoolKg.toDouble(),
       unit: 'кг',
       withReserve: (ecowoolBags * _ecowoolBagKg).toDouble(),
-      purchaseQty: ecowoolBags.toInt(),
+      purchaseQty: (ecowoolBags * _ecowoolBagKg).toDouble(),
       category: 'Основное',
+      packageInfo: {'count': ecowoolBags, 'unitSize': _ecowoolBagKg, 'packageUnit': 'мешков'},
     ));
   }
 
@@ -210,8 +212,9 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
     quantity: roundValue(area * _primerLPerM2 * _primerReserve, 3),
     unit: 'л',
     withReserve: (primerCans * _primerCanL).toDouble(),
-    purchaseQty: primerCans.toInt(),
+    purchaseQty: (primerCans * _primerCanL).toDouble(),
     category: 'Подготовка',
+    packageInfo: {'count': primerCans, 'unitSize': _primerCanL, 'packageUnit': 'канистр'},
   ));
 
   /* ── warnings ── */

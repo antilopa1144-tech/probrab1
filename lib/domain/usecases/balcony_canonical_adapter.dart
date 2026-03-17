@@ -110,7 +110,7 @@ CanonicalCalculatorContractResult calculateCanonicalBalcony(
       quantity: panelCount.toDouble(),
       unit: 'шт',
       withReserve: panelCount.toDouble(),
-      purchaseQty: panelCount.toInt(),
+      purchaseQty: panelCount.toDouble(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -118,7 +118,7 @@ CanonicalCalculatorContractResult calculateCanonicalBalcony(
       quantity: battenRows.toDouble(),
       unit: 'шт',
       withReserve: battenRows.toDouble(),
-      purchaseQty: battenRows.toInt(),
+      purchaseQty: battenRows.toDouble(),
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
@@ -126,7 +126,7 @@ CanonicalCalculatorContractResult calculateCanonicalBalcony(
       quantity: klaymerCount.toDouble(),
       unit: 'шт',
       withReserve: klaymerCount.toDouble(),
-      purchaseQty: klaymerCount.toInt(),
+      purchaseQty: klaymerCount.toDouble(),
       category: 'Крепёж',
     ),
   ];
@@ -138,7 +138,7 @@ CanonicalCalculatorContractResult calculateCanonicalBalcony(
       quantity: insPlates.toDouble(),
       unit: 'шт',
       withReserve: insPlates.toDouble(),
-      purchaseQty: insPlates.toInt(),
+      purchaseQty: insPlates.toDouble(),
       category: 'Утепление',
     ));
   }

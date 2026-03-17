@@ -47,14 +47,15 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
   if (materialType == 0) {
     // Wood
     final stringerBoard = (stringerLen * 1.1).ceil() * spec.materialRule<num>('stringers_count').toDouble();
-    final screws = stepCount * 8;
+    final screwsPcs = stepCount * 8;
+    final screwsKg = (screwsPcs / 600 * 10).ceil() / 10; // 3.5×35 мм: 600 шт/кг
     materials.addAll([
       CanonicalMaterialResult(
         name: 'Тетива/косоур (${spec.materialRule<num>('stringer_board').toDouble()})',
         quantity: stringerBoard.toDouble(),
         unit: 'п.м',
         withReserve: stringerBoard.toDouble(),
-        purchaseQty: stringerBoard.toInt(),
+        purchaseQty: stringerBoard.toDouble(),
         category: 'Основное',
       ),
       CanonicalMaterialResult(
@@ -62,7 +63,7 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
         quantity: stepCount.toDouble(),
         unit: 'шт',
         withReserve: stepCount.toDouble(),
-        purchaseQty: stepCount.toInt(),
+        purchaseQty: stepCount.toDouble(),
         category: 'Основное',
       ),
       CanonicalMaterialResult(
@@ -70,15 +71,15 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
         quantity: stepCount.toDouble(),
         unit: 'шт',
         withReserve: stepCount.toDouble(),
-        purchaseQty: stepCount.toInt(),
+        purchaseQty: stepCount.toDouble(),
         category: 'Основное',
       ),
       CanonicalMaterialResult(
         name: 'Саморезы',
-        quantity: screws.toDouble(),
-        unit: 'шт',
-        withReserve: screws.toDouble(),
-        purchaseQty: screws.toInt(),
+        quantity: screwsKg,
+        unit: 'кг',
+        withReserve: screwsKg,
+        purchaseQty: screwsKg.ceil().toDouble(),
         category: 'Крепёж',
       ),
     ]);
@@ -92,7 +93,7 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
         quantity: roundValue(vol, 3),
         unit: 'м³',
         withReserve: roundValue(vol, 3),
-        purchaseQty: vol.ceil(),
+        purchaseQty: vol.ceil().toDouble(),
         category: 'Основное',
       ),
       CanonicalMaterialResult(
@@ -100,7 +101,7 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
         quantity: rebarKg,
         unit: 'кг',
         withReserve: rebarKg.ceil().toDouble(),
-        purchaseQty: rebarKg.ceil(),
+        purchaseQty: rebarKg.ceil().toDouble(),
         category: 'Армирование',
       ),
     ]);
@@ -114,7 +115,7 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
         quantity: channelLen,
         unit: 'п.м',
         withReserve: channelLen.ceil().toDouble(),
-        purchaseQty: channelLen.ceil(),
+        purchaseQty: channelLen.ceil().toDouble(),
         category: 'Основное',
       ),
       CanonicalMaterialResult(
@@ -122,7 +123,7 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
         quantity: bolts.toDouble(),
         unit: 'шт',
         withReserve: bolts.toDouble(),
-        purchaseQty: bolts.toInt(),
+        purchaseQty: bolts.toDouble(),
         category: 'Крепёж',
       ),
     ]);
@@ -135,7 +136,7 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
       quantity: roundValue(railingLen, 3),
       unit: 'п.м',
       withReserve: railingLen.ceil().toDouble(),
-      purchaseQty: railingLen.ceil(),
+      purchaseQty: railingLen.ceil().toDouble(),
       category: 'Ограждение',
     ),
     CanonicalMaterialResult(
@@ -143,7 +144,7 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
       quantity: balyasiny.toDouble(),
       unit: 'шт',
       withReserve: balyasiny.toDouble(),
-      purchaseQty: balyasiny.toInt(),
+      purchaseQty: balyasiny.toDouble(),
       category: 'Ограждение',
     ),
   ]);

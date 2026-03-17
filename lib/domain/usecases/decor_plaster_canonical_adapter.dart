@@ -116,7 +116,7 @@ CanonicalCalculatorContractResult calculateCanonicalDecorPlaster(
       quantity: recScenario.exactNeed,
       unit: 'мешков',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Штукатурка',
     ),
     CanonicalMaterialResult(
@@ -124,7 +124,7 @@ CanonicalCalculatorContractResult calculateCanonicalDecorPlaster(
       quantity: primerCans.toDouble(),
       unit: 'канистр',
       withReserve: primerCans.toDouble(),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: primerCans.toDouble(),
       category: 'Грунтовка',
     ),
     CanonicalMaterialResult(
@@ -132,7 +132,7 @@ CanonicalCalculatorContractResult calculateCanonicalDecorPlaster(
       quantity: tintedPrimer.toDouble(),
       unit: 'канистр',
       withReserve: tintedPrimer.toDouble(),
-      purchaseQty: tintedPrimer.toInt(),
+      purchaseQty: tintedPrimer.toDouble(),
       category: 'Грунтовка',
     ),
     CanonicalMaterialResult(
@@ -140,7 +140,7 @@ CanonicalCalculatorContractResult calculateCanonicalDecorPlaster(
       quantity: pigmentBanks.toDouble(),
       unit: 'шт',
       withReserve: pigmentBanks.toDouble(),
-      purchaseQty: pigmentBanks.toInt(),
+      purchaseQty: pigmentBanks.toDouble(),
       category: 'Отделка',
     ),
   ];
@@ -151,7 +151,7 @@ CanonicalCalculatorContractResult calculateCanonicalDecorPlaster(
       quantity: waxCans.toDouble(),
       unit: 'банок',
       withReserve: waxCans.toDouble(),
-      purchaseQty: waxCans.toInt(),
+      purchaseQty: waxCans.toDouble(),
       category: 'Отделка',
     ));
   }

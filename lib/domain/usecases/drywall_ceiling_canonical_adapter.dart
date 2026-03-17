@@ -122,7 +122,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywallCeiling(
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil(),
+      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -130,7 +130,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywallCeiling(
       quantity: ppPcs.toDouble(),
       unit: 'шт',
       withReserve: ppPcs.toDouble(),
-      purchaseQty: ppPcs.toInt(),
+      purchaseQty: ppPcs.toDouble(),
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
@@ -138,7 +138,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywallCeiling(
       quantity: pnPcs.toDouble(),
       unit: 'шт',
       withReserve: pnPcs.toDouble(),
-      purchaseQty: pnPcs.toInt(),
+      purchaseQty: pnPcs.toDouble(),
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
@@ -146,7 +146,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywallCeiling(
       quantity: suspCount.toDouble(),
       unit: 'шт',
       withReserve: suspCount.toDouble(),
-      purchaseQty: suspCount.toInt(),
+      purchaseQty: suspCount.toDouble(),
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
@@ -154,7 +154,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywallCeiling(
       quantity: crabCount.toDouble(),
       unit: 'шт',
       withReserve: crabCount.toDouble(),
-      purchaseQty: crabCount.toInt(),
+      purchaseQty: crabCount.toDouble(),
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
@@ -162,7 +162,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywallCeiling(
       quantity: screwsKg,
       unit: 'кг',
       withReserve: screwsKg,
-      purchaseQty: screwsKg.ceil(),
+      purchaseQty: screwsKg.ceil().toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -170,7 +170,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywallCeiling(
       quantity: clopCount.toDouble(),
       unit: 'шт',
       withReserve: clopCount.toDouble(),
-      purchaseQty: clopCount.toInt(),
+      purchaseQty: clopCount.toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -178,7 +178,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywallCeiling(
       quantity: dowelCount.toDouble(),
       unit: 'шт',
       withReserve: dowelCount.toDouble(),
-      purchaseQty: dowelCount.toInt(),
+      purchaseQty: dowelCount.toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
@@ -186,7 +186,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywallCeiling(
       quantity: serpRolls.toDouble(),
       unit: 'рулонов',
       withReserve: serpRolls.toDouble(),
-      purchaseQty: serpRolls.toInt(),
+      purchaseQty: serpRolls.toDouble(),
       category: 'Отделка',
     ),
     CanonicalMaterialResult(
@@ -194,7 +194,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywallCeiling(
       quantity: puttyBags.toDouble(),
       unit: 'мешков',
       withReserve: puttyBags.toDouble(),
-      purchaseQty: puttyBags.toInt(),
+      purchaseQty: puttyBags.toDouble(),
       category: 'Отделка',
     ),
     CanonicalMaterialResult(
@@ -202,7 +202,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywallCeiling(
       quantity: primerCans.toDouble(),
       unit: 'канистр',
       withReserve: primerCans.toDouble(),
-      purchaseQty: primerCans.toInt(),
+      purchaseQty: primerCans.toDouble(),
       category: 'Отделка',
     ),
   ];
