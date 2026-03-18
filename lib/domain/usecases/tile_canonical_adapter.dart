@@ -121,7 +121,7 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
   final groutKg = roundValue(area * jointsLength * (jointWidthMm / 1000) * (groutDepthMm / 1000) * spec.materialRule<num>('grout_density_kg_per_m3').toDouble() * spec.materialRule<num>('grout_loss_factor').toDouble(), 6);
   final glueRate = _resolveGlueRate(spec, averageTileSizeCm);
   final glueKg = roundValue(area * glueRate, 6);
-  final primerLiters = roundValue(area * spec.materialRule<num>('primer_liters_per_m2').toDouble(), 6);
+  final primerLiters = roundValue(area * spec.materialRule<num>('primer_l_per_m2').toDouble(), 6);
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
@@ -157,7 +157,7 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
   final recScenario = scenarios['REC']!;
   final glueBags = glueKg > 0 ? math.max(1, (glueKg / spec.packagingRule<num>('glue_bag_kg').toDouble()).ceil()) : 0;
   final groutBags = groutKg > 0 ? math.max(1, (groutKg / spec.packagingRule<num>('grout_bag_kg').toDouble()).ceil()) : 0;
-  final primerCans = primerLiters > 0 ? math.max(1, (primerLiters / spec.packagingRule<num>('primer_can_liters').toDouble()).ceil()) : 0;
+  final primerCans = primerLiters > 0 ? math.max(1, (primerLiters / spec.packagingRule<num>('primer_can_l').toDouble()).ceil()) : 0;
   final crossesNeeded = (recScenario.purchaseQuantity * spec.materialRule<num>('crosses_reserve_factor').toDouble()).ceil();
   final svpPackages = averageTileSizeCm >= spec.materialRule<num>('svp_threshold_cm').toDouble()
       ? math.max(1, (crossesNeeded / spec.packagingRule<num>('svp_pack_size').toDouble()).ceil())
@@ -206,12 +206,12 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
       category: 'Затирка',
     ),
     CanonicalMaterialResult(
-      name: 'Грунтовка глубокого проникновения (${spec.packagingRule<num>('primer_can_liters').toInt()} л)',
+      name: 'Грунтовка глубокого проникновения (${spec.packagingRule<num>('primer_can_l').toInt()} л)',
       quantity: primerLiters,
       unit: 'л',
-      withReserve: primerCans * spec.packagingRule<num>('primer_can_liters').toDouble(),
-      purchaseQty: (primerCans * spec.packagingRule<num>('primer_can_liters').toDouble()).toDouble(),
-      packageInfo: {'count': primerCans, 'size': spec.packagingRule<num>('primer_can_liters').toDouble(), 'packageUnit': 'канистр'},
+      withReserve: primerCans * spec.packagingRule<num>('primer_can_l').toDouble(),
+      purchaseQty: (primerCans * spec.packagingRule<num>('primer_can_l').toDouble()).toDouble(),
+      packageInfo: {'count': primerCans, 'size': spec.packagingRule<num>('primer_can_l').toDouble(), 'packageUnit': 'канистр'},
       category: 'Подготовка',
     ),
   ];

@@ -18,7 +18,7 @@ class ChecklistsListScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(loc.translate('checklist.title')),
+        title: Text(loc.translate('workflow.checklist.title')),
       ),
       body: checklistsAsync.when(
         loading: () => const Center(
@@ -35,7 +35,7 @@ class ChecklistsListScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                loc.translate('checklist.loading_error'),
+                loc.translate('workflow.checklist.loading_error'),
                 style: theme.textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
@@ -168,9 +168,9 @@ class _ChecklistCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           totalCount == 0
-                              ? loc.translate('checklist.no_tasks')
+                              ? loc.translate('workflow.checklist.no_tasks')
                               : loc
-                                  .translate('checklist.completed_status')
+                                  .translate('workflow.checklist.completed_status')
                                   .replaceFirst('{completed}', '$completedCount')
                                   .replaceFirst('{total}', '$totalCount'),
                           style: theme.textTheme.bodySmall?.copyWith(
@@ -262,14 +262,14 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              loc.translate('checklist.empty_list'),
+              loc.translate('workflow.checklist.empty_list'),
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              loc.translate('checklist.empty_list_hint'),
+              loc.translate('workflow.checklist.empty_list_hint'),
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
@@ -279,7 +279,7 @@ class _EmptyState extends StatelessWidget {
             FilledButton.icon(
               onPressed: onCreatePressed,
               icon: const Icon(Icons.add_rounded),
-              label: Text(loc.translate('checklist.create_checklist')),
+              label: Text(loc.translate('workflow.checklist.create_checklist')),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,

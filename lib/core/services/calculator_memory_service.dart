@@ -31,7 +31,7 @@ class CalculatorMemoryService {
 
     try {
       final map = jsonDecode(json) as Map<String, dynamic>;
-      return map.map((k, v) => MapEntry(k, (v as num).toDouble()));
+      return map.map((k, v) => MapEntry(k, (v is num) ? v.toDouble() : 0.0));
     } catch (_) {
       return null;
     }

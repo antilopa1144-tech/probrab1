@@ -23,7 +23,7 @@ class ChecklistDetailsScreen extends ConsumerWidget {
     return checklistAsync.when(
       loading: () => Scaffold(
         appBar: AppBar(
-          title: Text(loc.translate('checklist.title')),
+          title: Text(loc.translate('workflow.checklist.title')),
         ),
         body: const Center(
           child: CircularProgressIndicator(),
@@ -31,7 +31,7 @@ class ChecklistDetailsScreen extends ConsumerWidget {
       ),
       error: (error, stack) => Scaffold(
         appBar: AppBar(
-          title: Text(loc.translate('checklist.title')),
+          title: Text(loc.translate('workflow.checklist.title')),
         ),
         body: Center(
           child: Column(
@@ -44,14 +44,14 @@ class ChecklistDetailsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                loc.translate('checklist.not_found'),
+                loc.translate('workflow.checklist.not_found'),
                 style: theme.textTheme.titleMedium,
               ),
               const SizedBox(height: 24),
               FilledButton.icon(
                 onPressed: () => Navigator.of(context).pop(),
                 icon: const Icon(Icons.arrow_back),
-                label: Text(loc.translate('checklist.back')),
+                label: Text(loc.translate('workflow.checklist.back')),
               ),
             ],
           ),
@@ -61,7 +61,7 @@ class ChecklistDetailsScreen extends ConsumerWidget {
         if (checklist == null) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(loc.translate('checklist.title')),
+              title: Text(loc.translate('workflow.checklist.title')),
             ),
             body: Center(
               child: Column(
@@ -74,14 +74,14 @@ class ChecklistDetailsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    loc.translate('checklist.not_found'),
+                    loc.translate('workflow.checklist.not_found'),
                     style: theme.textTheme.titleMedium,
                   ),
                   const SizedBox(height: 24),
                   FilledButton.icon(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.arrow_back),
-                    label: Text(loc.translate('checklist.back')),
+                    label: Text(loc.translate('workflow.checklist.back')),
                   ),
                 ],
               ),
@@ -121,7 +121,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.edit_rounded),
             onPressed: () => _editChecklistName(context, ref, checklist),
-            tooltip: loc.translate('checklist.edit_name'),
+            tooltip: loc.translate('workflow.checklist.edit_name'),
           ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert_rounded),
@@ -137,7 +137,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
                   children: [
                     const Icon(Icons.delete_rounded, color: Colors.red),
                     const SizedBox(width: 8),
-                    Text(loc.translate('checklist.delete_checklist_menu'), style: const TextStyle(color: Colors.red)),
+                    Text(loc.translate('workflow.checklist.delete_checklist_menu'), style: const TextStyle(color: Colors.red)),
                   ],
                 ),
               ),
@@ -163,7 +163,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        loc.translate('checklist.progress'),
+                        loc.translate('workflow.checklist.progress'),
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -198,7 +198,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    loc.translate('checklist.completed_summary').replaceFirst('{completed}', '$completedCount').replaceFirst('{total}', '$totalCount'),
+                    loc.translate('workflow.checklist.completed_summary').replaceFirst('{completed}', '$completedCount').replaceFirst('{total}', '$totalCount'),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -224,14 +224,14 @@ class _ChecklistDetailsContent extends ConsumerWidget {
                           ),
                           const SizedBox(height: 24),
                           Text(
-                            loc.translate('checklist.empty_tasks'),
+                            loc.translate('workflow.checklist.empty_tasks'),
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            loc.translate('checklist.empty_tasks_hint'),
+                            loc.translate('workflow.checklist.empty_tasks_hint'),
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
@@ -241,7 +241,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
                           FilledButton.icon(
                             onPressed: () => _addNewTask(context, ref, checklist),
                             icon: const Icon(Icons.add_rounded),
-                            label: Text(loc.translate('checklist.add_first_task')),
+                            label: Text(loc.translate('workflow.checklist.add_first_task')),
                             style: FilledButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
@@ -270,7 +270,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _addNewTask(context, ref, checklist),
         icon: const Icon(Icons.add_rounded),
-        label: Text(loc.translate('checklist.add_task')),
+        label: Text(loc.translate('workflow.checklist.add_task')),
       ),
     );
   }
@@ -282,11 +282,11 @@ class _ChecklistDetailsContent extends ConsumerWidget {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(loc.translate('checklist.new_task')),
+        title: Text(loc.translate('workflow.checklist.new_task')),
         content: TextField(
           controller: controller,
           decoration: InputDecoration(
-            labelText: loc.translate('checklist.task_name'),
+            labelText: loc.translate('workflow.checklist.task_name'),
             border: const OutlineInputBorder(),
           ),
           autofocus: true,
@@ -309,7 +309,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
                 Navigator.of(context).pop(controller.text.trim());
               }
             },
-            child: Text(loc.translate('checklist.add')),
+            child: Text(loc.translate('workflow.checklist.add')),
           ),
         ],
       ),
@@ -324,7 +324,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(loc.translate('checklist.task_added'))),
+            SnackBar(content: Text(loc.translate('workflow.checklist.task_added'))),
           );
         }
       } catch (e) {
@@ -347,11 +347,11 @@ class _ChecklistDetailsContent extends ConsumerWidget {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(loc.translate('checklist.rename_title')),
+        title: Text(loc.translate('workflow.checklist.rename_title')),
         content: TextField(
           controller: controller,
           decoration: InputDecoration(
-            labelText: loc.translate('checklist.checklist_name'),
+            labelText: loc.translate('workflow.checklist.checklist_name'),
             border: const OutlineInputBorder(),
           ),
           autofocus: true,
@@ -381,7 +381,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(loc.translate('checklist.name_updated'))),
+            SnackBar(content: Text(loc.translate('workflow.checklist.name_updated'))),
           );
         }
       } catch (e) {
@@ -402,9 +402,9 @@ class _ChecklistDetailsContent extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(loc.translate('checklist.delete_title')),
+        title: Text(loc.translate('workflow.checklist.delete_title')),
         content: Text(
-          loc.translate('checklist.delete_message'),
+          loc.translate('workflow.checklist.delete_message'),
         ),
         actions: [
           TextButton(
@@ -429,7 +429,7 @@ class _ChecklistDetailsContent extends ConsumerWidget {
         if (context.mounted) {
           Navigator.of(context).pop();
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(loc.translate('checklist.deleted'))),
+            SnackBar(content: Text(loc.translate('workflow.checklist.deleted'))),
           );
         }
       } catch (e) {
@@ -555,8 +555,8 @@ class _ChecklistItemCard extends ConsumerWidget {
     return await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text(loc.translate('checklist.delete_task_title')),
-            content: Text(loc.translate('checklist.delete_task_message').replaceFirst('{name}', item.title)),
+            title: Text(loc.translate('workflow.checklist.delete_task_title')),
+            content: Text(loc.translate('workflow.checklist.delete_task_message').replaceFirst('{name}', item.title)),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
@@ -582,7 +582,7 @@ class _ChecklistItemCard extends ConsumerWidget {
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(loc.translate('checklist.task_deleted'))),
+            SnackBar(content: Text(loc.translate('workflow.checklist.task_deleted'))),
         );
       }
     } catch (e) {
@@ -662,7 +662,7 @@ class _ChecklistItemCard extends ConsumerWidget {
     final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(loc.translate('checklist.edit_task')),
+        title: Text(loc.translate('workflow.checklist.edit_task')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -715,7 +715,7 @@ class _ChecklistItemCard extends ConsumerWidget {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(loc.translate('checklist.task_updated'))),
+            SnackBar(content: Text(loc.translate('workflow.checklist.task_updated'))),
           );
         }
       } catch (e) {

@@ -215,12 +215,12 @@ class _ProjectFormScreenState extends ConsumerState<ProjectFormScreen> {
   }
 
   Future<void> _saveProject() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (_formKey.currentState?.validate() != true) return;
 
+    final loc = AppLocalizations.of(context);
     setState(() => _isLoading = true);
 
     try {
-      final loc = AppLocalizations.of(context);
       final budget = double.tryParse(
             _budgetController.text.replaceAll(RegExp(r'\s'), ''),
           ) ??

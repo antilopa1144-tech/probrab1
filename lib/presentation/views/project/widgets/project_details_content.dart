@@ -514,7 +514,7 @@ class _ProjectChecklistsSection extends ConsumerWidget {
                 FutureBuilder<ChecklistStats>(
                   future: repository.getProjectStats(projectId),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) return const SizedBox.shrink();
+                    if (snapshot.hasError || !snapshot.hasData) return const SizedBox.shrink();
 
                     final stats = snapshot.data!;
                     if (stats.totalItems == 0) return const SizedBox.shrink();

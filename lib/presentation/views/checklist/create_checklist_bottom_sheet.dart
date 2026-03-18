@@ -60,7 +60,7 @@ class _CreateChecklistBottomSheetState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              loc.translate('checklist.creation_error').replaceFirst('{error}', GlobalErrorHandler.getUserFriendlyMessage(context, e)),
+              loc.translate('workflow.checklist.creation_error').replaceFirst('{error}', GlobalErrorHandler.getUserFriendlyMessage(context, e)),
             ),
             backgroundColor: Colors.orange,
           ),
@@ -109,7 +109,7 @@ class _CreateChecklistBottomSheetState
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      loc.translate('checklist.create_checklist'),
+                      loc.translate('workflow.checklist.create_checklist'),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -202,7 +202,7 @@ class _CreateChecklistBottomSheetState
                                   const SizedBox(width: 4),
                                   Text(
                                     loc
-                                        .translate('checklist.tasks_count')
+                                        .translate('workflow.checklist.tasks_count')
                                         .replaceFirst('{count}', '${template.items.length}'),
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: isSelected
@@ -236,8 +236,8 @@ class _CreateChecklistBottomSheetState
                         : const Icon(Icons.add_task_rounded),
                     label: Text(
                       _isCreating
-                          ? loc.translate('checklist.creating')
-                          : loc.translate('checklist.create_checklist'),
+                          ? loc.translate('workflow.checklist.creating')
+                          : loc.translate('workflow.checklist.create_checklist'),
                     ),
                     style: FilledButton.styleFrom(
                       minimumSize: const Size(double.infinity, 56),

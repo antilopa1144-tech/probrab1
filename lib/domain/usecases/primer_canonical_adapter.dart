@@ -65,7 +65,7 @@ CanonicalCalculatorContractResult calculateCanonicalPrimer(
   final primerType = _resolvePrimerType(spec, inputs);
   final coats = (inputs['coats'] ?? defaultFor(spec, 'coats', 1)).round().clamp(1, 3);
   final canSize = _resolveCanSize(spec, inputs);
-  final lPerSqm = (primerType['baseLitersPerM2'] as num).toDouble() * (surface['multiplier'] as num).toDouble();
+  final lPerSqm = (primerType['base_l_per_m2'] as num).toDouble() * (surface['multiplier'] as num).toDouble();
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {

@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 /// Lightweight frame timing logger for profile/release runs.
 ///
@@ -23,8 +24,7 @@ class FrameTimingLogger {
     };
 
     // One-time marker so it's obvious in logs.
-    // ignore: avoid_print
-    print('[PERF] FrameTimingLogger enabled (PERF_FRAME_TIMINGS=true)');
+    debugPrint('[PERF] FrameTimingLogger enabled (PERF_FRAME_TIMINGS=true)');
   }
 
   static void _onTimings(List<FrameTiming> timings) {
@@ -51,8 +51,7 @@ class FrameTimingLogger {
     final jank16 = _totalMs.where((ms) => ms > 16.67).length;
     final jank33 = _totalMs.where((ms) => ms > 33.33).length;
 
-    // ignore: avoid_print
-    print(
+    debugPrint(
       '[PERF] frames=$_seenFrames window=${_totalMs.length} '
       'avg=${avg.toStringAsFixed(1)}ms p90=${p90.toStringAsFixed(1)}ms '
       'p99=${p99.toStringAsFixed(1)}ms jank>16ms=$jank16 jank>33ms=$jank33',

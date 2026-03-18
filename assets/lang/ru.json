@@ -5649,6 +5649,8 @@
     "cbm": "м³",
     "cbm_h": "м³/ч",
     "kg_per_sqm": "кг/м²",
+    "kg_per_sqm_mm": "кг/м²·мм",
+    "hour_short": "ч",
     "sheets": "листов",
     "packs": "упак.",
     "tons": "т",

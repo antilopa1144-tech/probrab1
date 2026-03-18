@@ -201,7 +201,7 @@ class CalculatePaint extends BaseCalculator {
     );
     final primerLiters = roundBulk(
       totalArea *
-          _paintSpec.materialRule<num>('legacy_universal_primer_liters_per_m2').toDouble() *
+          _paintSpec.materialRule<num>('legacy_universal_primer_l_per_m2').toDouble() *
           (1 + reservePercent / 100),
     );
     final tapeMeters = roundBulk(

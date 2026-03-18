@@ -323,11 +323,11 @@ CanonicalCalculatorContractResult calculateCanonicalPaint(
   }
 
   final recScenario = scenarios['REC']!;
-  final primerLiters = roundValue(area * spec.materialRule<num>('primer_liters_per_m2').toDouble(), 3);
+  final primerLiters = roundValue(area * spec.materialRule<num>('primer_l_per_m2').toDouble(), 3);
   final primerCans = primerLiters > 0
-      ? (primerLiters / spec.materialRule<num>('primer_package_size_liters').toDouble()).ceil()
+      ? (primerLiters / spec.materialRule<num>('primer_package_size_l').toDouble()).ceil()
       : 0;
-  final primerPurchase = roundValue(primerCans * spec.materialRule<num>('primer_package_size_liters').toDouble(), 3);
+  final primerPurchase = roundValue(primerCans * spec.materialRule<num>('primer_package_size_l').toDouble(), 3);
   final tapeMeters = roundValue(
     estimatedPerimeter * spec.materialRule<num>('tape_runs_per_room').toDouble() * spec.materialRule<num>('tape_reserve_factor').toDouble(),
     3,
@@ -367,13 +367,13 @@ CanonicalCalculatorContractResult calculateCanonicalPaint(
         packageInfo: {'count': recScenario.buyPlan.packagesCount, 'unitSize': recScenario.buyPlan.packageSize, 'packageUnit': 'банок'},
       ),
       CanonicalMaterialResult(
-        name: 'Грунтовка под покраску ${(surface['label'] as String).toLowerCase()} (${spec.materialRule<num>('primer_package_size_liters').toInt()} л)',
+        name: 'Грунтовка под покраску ${(surface['label'] as String).toLowerCase()} (${spec.materialRule<num>('primer_package_size_l').toInt()} л)',
         quantity: primerLiters,
         unit: 'л',
         withReserve: primerPurchase,
-        purchaseQty: (primerCans * spec.materialRule<num>('primer_package_size_liters').toDouble()).toDouble(),
+        purchaseQty: (primerCans * spec.materialRule<num>('primer_package_size_l').toDouble()).toDouble(),
         category: 'Подготовка',
-        packageInfo: {'count': primerCans, 'unitSize': spec.materialRule<num>('primer_package_size_liters').toDouble(), 'packageUnit': 'канистр'},
+        packageInfo: {'count': primerCans, 'unitSize': spec.materialRule<num>('primer_package_size_l').toDouble(), 'packageUnit': 'канистр'},
       ),
       CanonicalMaterialResult(
         name: 'Валик малярный (микрофибра, 250 мм)',

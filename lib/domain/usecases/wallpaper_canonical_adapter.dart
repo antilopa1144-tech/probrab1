@@ -205,8 +205,8 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
   final recScenario = scenarios['REC']!;
   final pasteNeeded = netArea * (wallpaperType['paste_kg_per_m2'] as num).toDouble() * spec.materialRule<num>('paste_reserve_factor').toDouble();
   final pastePacks = pasteNeeded > 0 ? math.max(1, (pasteNeeded / spec.packagingRule<num>('paste_pack_kg').toDouble()).ceil()) : 0;
-  final primerNeeded = netArea * spec.materialRule<num>('primer_liters_per_m2').toDouble() * spec.materialRule<num>('primer_reserve_factor').toDouble();
-  final primerCans = primerNeeded > 0 ? math.max(1, (primerNeeded / spec.packagingRule<num>('primer_can_liters').toDouble()).ceil()) : 0;
+  final primerNeeded = netArea * spec.materialRule<num>('primer_l_per_m2').toDouble() * spec.materialRule<num>('primer_reserve_factor').toDouble();
+  final primerCans = primerNeeded > 0 ? math.max(1, (primerNeeded / spec.packagingRule<num>('primer_can_l').toDouble()).ceil()) : 0;
 
   final warnings = <String>[];
   if (netArea <= 0) {
@@ -244,13 +244,13 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
         packageInfo: {'count': pastePacks, 'unitSize': spec.packagingRule<num>('paste_pack_kg').toDouble(), 'packageUnit': 'упаковок'},
       ),
       CanonicalMaterialResult(
-        name: 'Грунтовка глубокого проникновения (${spec.packagingRule<num>('primer_can_liters').toInt()} л)',
+        name: 'Грунтовка глубокого проникновения (${spec.packagingRule<num>('primer_can_l').toInt()} л)',
         quantity: roundValue(primerNeeded, 6),
         unit: 'л',
-        withReserve: roundValue(primerCans * spec.packagingRule<num>('primer_can_liters').toDouble(), 6),
-        purchaseQty: (primerCans * spec.packagingRule<num>('primer_can_liters').toDouble()).toDouble(),
+        withReserve: roundValue(primerCans * spec.packagingRule<num>('primer_can_l').toDouble(), 6),
+        purchaseQty: (primerCans * spec.packagingRule<num>('primer_can_l').toDouble()).toDouble(),
         category: 'Грунтовка',
-        packageInfo: {'count': primerCans, 'unitSize': spec.packagingRule<num>('primer_can_liters').toDouble(), 'packageUnit': 'канистр'},
+        packageInfo: {'count': primerCans, 'unitSize': spec.packagingRule<num>('primer_can_l').toDouble(), 'packageUnit': 'канистр'},
       ),
       CanonicalMaterialResult(
         name: 'Валик для клея',

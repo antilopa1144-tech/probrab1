@@ -30,26 +30,48 @@ class SpecReader {
   /// Get a value from `packaging_rules`.
   T packagingRule<T>(String key, [T? fallback]) {
     final rules = _data['packaging_rules'] as Map<String, dynamic>?;
-    return (rules?[key] as T?) ?? fallback as T;
+    final value = rules?[key] as T?;
+    if (value != null) return value;
+    if (fallback != null) return fallback;
+    assert(false, 'SpecReader: missing packaging_rules key "$key" and no fallback');
+    return _zeroDefault<T>();
   }
 
   /// Get a value from `material_rules`.
   T materialRule<T>(String key, [T? fallback]) {
     final rules = _data['material_rules'] as Map<String, dynamic>?;
-    return (rules?[key] as T?) ?? fallback as T;
+    final value = rules?[key] as T?;
+    if (value != null) return value;
+    if (fallback != null) return fallback;
+    assert(false, 'SpecReader: missing material_rules key "$key" and no fallback');
+    return _zeroDefault<T>();
   }
 
   /// Get a value from `warnings_rules`.
   T warningRule<T>(String key, [T? fallback]) {
     final rules = _data['warnings_rules'] as Map<String, dynamic>?;
-    return (rules?[key] as T?) ?? fallback as T;
+    final value = rules?[key] as T?;
+    if (value != null) return value;
+    if (fallback != null) return fallback;
+    assert(false, 'SpecReader: missing warnings_rules key "$key" and no fallback');
+    return _zeroDefault<T>();
   }
 
-  /// Get a typed list from `normative_formula`.
-  List<Map<String, dynamic>> normativeList(String key) =>
-      ((_data['normative_formula'] as Map<String, dynamic>?)?[key] as List?)
-          ?.cast<Map<String, dynamic>>() ??
-      [];
+  /// Safe zero-value fallback to prevent null crashes in release.
+  static T _zeroDefault<T>() {
+    if (T == num || T == double) return 0.0 as T;
+    if (T == int) return 0 as T;
+    if (T == String) return '' as T;
+    if (T == bool) return false as T;
+    return 0 as T;
+  }
+
+  /// Get a typed list from `normative_formula`, falling back to root level.
+  List<Map<String, dynamic>> normativeList(String key) {
+    final formula = _data['normative_formula'] as Map<String, dynamic>?;
+    final list = (formula?[key] as List?) ?? (_data[key] as List?);
+    return list?.cast<Map<String, dynamic>>() ?? [];
+  }
 
   /// Get a raw value from `normative_formula`.
   T? normativeValue<T>(String key) =>

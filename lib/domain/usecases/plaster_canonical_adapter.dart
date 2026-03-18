@@ -66,9 +66,9 @@ double _resolveThickness(SpecReader spec, Map<String, double> inputs) {
 }
 
 double _resolveBagWeight(SpecReader spec, Map<String, dynamic> plasterType, Map<String, double> inputs) {
-  final defaultBag = (plasterType['default_bag_kg'] as num).toDouble();
+  final defaultBag = (plasterType['default_bag_weight'] as num).toDouble();
   final requested = (inputs['bagWeight'] ?? defaultBag).toDouble();
-  final allowedBags = (plasterType['allowed_bag_kg'] as List?) ?? [defaultBag];
+  final allowedBags = (plasterType['allowed_bag_weights'] as List?) ?? [defaultBag];
   if (allowedBags.contains(requested)) return requested;
   return defaultBag;
 }
@@ -88,7 +88,7 @@ CanonicalCalculatorContractResult calculateCanonicalPlaster(
   final netArea = work['netArea']!;
   final wallArea = work['wallArea']!;
   final consumptionKgPerM2Mm =
-      ((plasterType['base_kg_per_m2_per_10_mm'] as num).toDouble() / 10) * (substrate['multiplier'] as num).toDouble() * (evenness['multiplier'] as num).toDouble() * spec.materialRule<num>('reserve_factor').toDouble();
+      ((plasterType['base_kg_per_m2_10mm'] as num).toDouble() / 10) * (substrate['multiplier'] as num).toDouble() * (evenness['multiplier'] as num).toDouble() * spec.materialRule<num>('reserve_factor').toDouble();
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
@@ -120,7 +120,7 @@ CanonicalCalculatorContractResult calculateCanonicalPlaster(
 
   final recScenario = scenarios['REC']!;
   final totalKg = roundValue(recScenario.exactNeed, 3);
-  final primerRate = (substrate['primer_type'] as num).toInt() == 2 ? spec.materialRule<num>('contact_primer_kg_per_m2').toDouble() : spec.materialRule<num>('deep_primer_liters_per_m2').toDouble();
+  final primerRate = (substrate['primer_type'] as num).toInt() == 2 ? spec.materialRule<num>('contact_primer_kg_per_m2').toDouble() : spec.materialRule<num>('deep_primer_l_per_m2').toDouble();
   final primerNeed = (netArea * primerRate * spec.materialRule<num>('reserve_factor').toDouble()).ceil().toDouble();
   final primerPackages = primerNeed > 0 ? (primerNeed / spec.materialRule<num>('primer_package_size').toDouble()).ceil() : 0;
   final meshArea = thickness > spec.warningRule<num>('mesh_threshold_mm').toDouble()

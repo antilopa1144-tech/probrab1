@@ -220,12 +220,13 @@ CanonicalCalculatorContractResult calculateCanonicalPutty(
     );
   }
 
+  final primerCoatsMap = spec.materialRule<Map>('primer_coats');
   final primerCoats = puttyType == 0
-      ? spec.materialRule<num>('finish_only_primer_coats').toDouble()
+      ? (primerCoatsMap['finish_only'] as num).toDouble()
       : puttyType == 1
-          ? spec.materialRule<num>('with_start_primer_coats').toDouble()
-          : spec.materialRule<num>('start_only_primer_coats').toDouble();
-  final primerLiters = workArea * spec.materialRule<num>('primer_liters_per_m2_per_coat').toDouble() * primerCoats;
+          ? (primerCoatsMap['with_start'] as num).toDouble()
+          : (primerCoatsMap['start_only'] as num).toDouble();
+  final primerLiters = workArea * spec.materialRule<num>('primer_l_per_m2_per_coat').toDouble() * primerCoats;
   materials.add(
     CanonicalMaterialResult(
       name: 'Грунтовка глубокого проникновения (10 л)',
