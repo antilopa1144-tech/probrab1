@@ -18,6 +18,11 @@ class CalculatorIdMigration {
     // Old engineering IDs.
     'warm_floor': 'floors_warm',
     'heating': 'engineering_heating',
+
+    // Merged/removed calculators.
+    'floors_screed': 'floors_screed_unified',
+    'dsp': 'floors_screed_unified',
+    'bathroom_tile': 'floors_tile',
   };
 
   static bool isLegacy(String id) => _legacyToCanonical.containsKey(id);

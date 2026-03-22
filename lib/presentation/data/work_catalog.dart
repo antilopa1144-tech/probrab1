@@ -304,7 +304,7 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'floors_screed',
             title: 'work.item.floors_screed.title',
             icon: Icons.horizontal_rule,
-            calculatorId: 'floors_screed',
+            calculatorId: 'floors_screed_unified',
           ),
           WorkItemDefinition(
             id: 'floors_warm',
@@ -334,7 +334,7 @@ const List<WorkAreaDefinition> _houseAreas = [
             id: 'bathroom_tile',
             title: 'work.item.bathroom_tile.title',
             icon: Icons.apps,
-            calculatorId: 'bathroom_tile',
+            calculatorId: 'floors_tile',
           ),
           WorkItemDefinition(
             id: 'bathroom_waterproof',
