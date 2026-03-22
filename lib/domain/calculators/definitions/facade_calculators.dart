@@ -14,7 +14,7 @@ import '../../usecases/facade_panels_canonical_adapter.dart';
 import '../../usecases/fence_canonical_adapter.dart';
 import '../../usecases/stairs_canonical_adapter.dart';
 import '../../usecases/terrace_canonical_adapter.dart';
-import '../../usecases/insulation_canonical_adapter.dart';
+// insulation_canonical_adapter.dart — больше не используется (insulation_mineral_wool удалён)
 
 final List<CalculatorDefinitionV2> facadeCalculators = [
   CalculatorDefinitionV2(
@@ -587,114 +587,5 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         'tag.terrasa_veranda',
       ],
     ),
-  // Утеплитель минеральная вата
-  CalculatorDefinitionV2(
-      id: 'insulation_mineral_wool',
-      titleKey: 'calculator.insulation_mineral_wool.title',
-      descriptionKey: 'calculator.insulation_mineral_wool.description',
-      category: CalculatorCategory.exterior,
-      subCategoryKey: 'subcategory.insulation',
-      fields: [
-        const CalculatorField(
-          key: 'area',
-          labelKey: 'input.area',
-          unitType: UnitType.squareMeters,
-          inputType: FieldInputType.slider,
-          defaultValue: 40.0,
-          minValue: 1.0,
-          maxValue: 500.0,
-          step: 1.0,
-          iconName: 'square_foot',
-          group: 'dimensions',
-          required: true,
-          order: 1,
-        ),
-        const CalculatorField(
-          key: 'thickness',
-          labelKey: 'input.thickness',
-          unitType: UnitType.millimeters,
-          inputType: FieldInputType.slider,
-          defaultValue: 100.0,
-          minValue: 50.0,
-          maxValue: 200.0,
-          step: 10.0,
-          iconName: 'height',
-          group: 'material',
-          required: true,
-          order: 2,
-        ),
-        const CalculatorField(
-          key: 'insulationType',
-          labelKey: 'input.insulationType',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.select,
-          defaultValue: 0.0,
-          iconName: 'layers',
-          group: 'material',
-          required: true,
-          order: 3,
-          options: [
-            FieldOption(value: 0.0, labelKey: 'input.insulationType.mineralWool'),
-            FieldOption(value: 1.0, labelKey: 'input.insulationType.xps'),
-            FieldOption(value: 2.0, labelKey: 'input.insulationType.eps'),
-            FieldOption(value: 3.0, labelKey: 'input.insulationType.ecowool'),
-          ],
-        ),
-        const CalculatorField(
-          key: 'plateSize',
-          labelKey: 'input.plateSize',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.select,
-          defaultValue: 0.0,
-          iconName: 'aspect_ratio',
-          group: 'material',
-          required: true,
-          order: 4,
-          options: [
-            FieldOption(value: 0.0, labelKey: 'input.plateSize.1200x600'),
-            FieldOption(value: 1.0, labelKey: 'input.plateSize.1000x500'),
-            FieldOption(value: 2.0, labelKey: 'input.plateSize.2000x1000'),
-          ],
-        ),
-        const CalculatorField(
-          key: 'reserve',
-          labelKey: 'input.reserve',
-          unitType: UnitType.percent,
-          inputType: FieldInputType.slider,
-          defaultValue: 5.0,
-          minValue: 0.0,
-          maxValue: 15.0,
-          step: 1.0,
-          iconName: 'add_circle_outline',
-          group: 'conditions',
-          required: true,
-          order: 5,
-        ),
-      ],
-      beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.insulation.vapor_barrier_inside'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.insulation.wind_barrier_outside'),
-      ],
-      afterHints: [
-        const CalculatorHint(
-          type: HintType.warning,
-          messageKey: 'hint.insulation.thin_exterior_warning',
-          condition: HintCondition(
-            type: HintConditionType.lessThan,
-            resultKey: 'thickness',
-            value: 100,
-          ),
-        ),
-      ],
-      useCase: CanonicalBridgeUseCase(calculateCanonicalInsulation),
-      accentColor: kCalculatorAccentColor,
-      complexity: 2,
-      popularity: 8,
-      tags: [
-        'tag.naruzhnaya_otdelka',
-        'insulation',
-        'mineral_wool',
-        'insulation_mineral_wool',
-      ],
-    ),
+  // insulation_mineral_wool удалён — UI не готов
 ];
