@@ -123,7 +123,6 @@ class CalculatorController {
       'foundation_strip',
       'foundation_slab',
       'foundation_basement',
-      'engineering_heating',
       'floors_warm',
     ];
 

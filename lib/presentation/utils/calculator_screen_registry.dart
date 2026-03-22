@@ -150,10 +150,7 @@ class CalculatorScreenRegistry {
     'ceilings_rail': (_, _) => const RailCeilingCalculatorScreen(),
 
     // Инженерия
-    'engineering_heating': (def, inputs) => UnderfloorHeatingCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+    // engineering_heating удалён — дубль floors_warm
     'engineering_electrics': (def, inputs) => ElectricalCalculatorScreen(
           definition: def,
           initialInputs: inputs,

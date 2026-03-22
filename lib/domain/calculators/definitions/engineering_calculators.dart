@@ -10,8 +10,8 @@ import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
 import '../../usecases/canonical_bridge.dart';
 import '../../usecases/electric_canonical_adapter.dart';
-import '../../usecases/heating_canonical_adapter.dart';
-// calculate_plumbing.dart - удалён (engineering_plumbing не востребован)
+// heating_canonical_adapter.dart — больше не используется (engineering_heating удалён)
+// calculate_plumbing.dart — удалён (engineering_plumbing не востребован)
 import '../../usecases/ventilation_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> engineeringCalculators = [
@@ -103,81 +103,8 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
         'electrics',
       ],
     ),
-  CalculatorDefinitionV2(
-      id: 'engineering_heating',
-      titleKey: 'calculator.engineering_heating.title',
-      descriptionKey: 'calculator.engineering_heating.description',
-      category: CalculatorCategory.interior,
-      subCategoryKey: 'subcategory.heating',
-      fields: [
-        const CalculatorField(
-          key: 'area',
-          labelKey: 'input.area',
-          unitType: UnitType.squareMeters,
-          inputType: FieldInputType.slider,
-          defaultValue: 50.0,
-          minValue: 10.0,
-          maxValue: 1000.0,
-          step: 1.0,
-          iconName: 'square_foot',
-          group: 'dimensions',
-          required: true,
-          order: 1,
-        ),
-        const CalculatorField(
-          key: 'rooms',
-          labelKey: 'input.rooms',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.slider,
-          defaultValue: 1.0,
-          minValue: 1.0,
-          maxValue: 50.0,
-          step: 1.0,
-          iconName: 'meeting_room',
-          group: 'dimensions',
-          required: true,
-          order: 2,
-        ),
-        const CalculatorField(
-          key: 'ceilingHeight',
-          labelKey: 'input.ceilingHeight',
-          unitType: UnitType.meters,
-          inputType: FieldInputType.slider,
-          defaultValue: 2.5,
-          minValue: 2.2,
-          maxValue: 5.0,
-          step: 1.0,
-          iconName: 'height',
-          group: 'dimensions',
-          required: true,
-          order: 3,
-        ),
-      ],
-      beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.raschet_moschnosti_100_vt'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanovite_termoregulyatory_dlya_ekonomii'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ispolzuyte_balansirovochnye_krany'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.raboty_dolzhen_vypolnyat_kvalifitsirovannyy_2'),
-      ],
-      afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.raschet_moschnosti_100_vt'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanovite_termoregulyatory_dlya_ekonomii'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ispolzuyte_balansirovochnye_krany'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.raboty_dolzhen_vypolnyat_kvalifitsirovannyy_2'),
-      ],
-      useCase: CanonicalBridgeUseCase(calculateCanonicalHeating),
-      accentColor: kCalculatorAccentColor,
-      complexity: 2,
-      popularity: 10,
-      tags: [
-        'heating',
-        'tag.otoplenie',
-        'engineering',
-        'engineering_heating',
-        'tag.inzhenernye_raboty',
-      ],
-    ),
-  // engineering_plumbing удалён - слишком общий, не востребован
+  // engineering_heating удалён — дубль floors_warm (тёплый пол)
+  // engineering_plumbing удалён — слишком общий, не востребован
   CalculatorDefinitionV2(
       id: 'engineering_ventilation',
       titleKey: 'calculator.engineering_ventilation.title',

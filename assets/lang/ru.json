@@ -228,121 +228,63 @@
     "theme_light": "Светлая тема"
   },
   "error": {
-
     "calculator_not_found": "Калькулятор \"{id}\" не найден",
-
     "calculation": "Ошибка расчета",
-
     "unexpected": "Непредвиденная ошибка",
-
     "qr_not_supported": "QR-коды не поддерживаются на этой платформе",
-
     "title": {
-
       "validation": "Проверьте данные",
-
       "calculation": "Ошибка расчёта",
-
       "storage": "Ошибка данных",
-
       "network": "Ошибка сети",
-
       "export": "Ошибка экспорта",
-
       "ui": "Ошибка интерфейса",
-
       "unknown": "Что-то пошло не так"
-
     },
-
     "message": {
-
       "network": "Проблема с сетью. Проверьте подключение к интернету.",
-
       "storage": "Ошибка при работе с данными. Попробуйте ещё раз.",
-
       "validation": "Проверьте введённые данные.",
-
       "calculation": "Ошибка расчёта. Проверьте исходные данные.",
-
       "export": "Не удалось выполнить экспорт. Попробуйте ещё раз.",
-
       "ui": "Произошла ошибка интерфейса. Попробуйте повторить действие.",
-
       "unknown": "Произошла ошибка. Попробуйте ещё раз.",
-
       "calculation_division_by_zero": "Ошибка расчёта. Деление на ноль: {context}",
-
       "calculation_invalid_input": "Некорректные входные данные для расчёта \"{calculatorId}\": {reason}",
-
       "calculation_overflow": "Ошибка расчёта. Слишком большое значение: {context}",
-
       "calculation_missing_data": "Не хватает данных для расчёта: {dataType}",
-
       "export_generation_error": "Не удалось создать файл формата {format}. Попробуйте ещё раз.",
-
       "export_permission_denied": "Нет прав доступа к файлам. Проверьте разрешения приложения.",
-
       "export_insufficient_space": "Недостаточно места на устройстве.",
-
       "export_invalid_data": "Некорректные данные для экспорта: {reason}",
-
       "network_no_connection": "Проверьте подключение к интернету.",
-
       "network_timeout": "Сервер не отвечает. Попробуйте позже.",
-
       "network_server_error": "Ошибка на сервере. Попробуйте позже.",
-
       "network_bad_request": "Неверный запрос. Обратитесь в поддержку.",
-
       "network_not_found": "Запрошенные данные не найдены.",
-
       "storage_not_found": "Данные не найдены.",
-
       "storage_save_error": "Не удалось сохранить данные.",
-
       "storage_delete_error": "Не удалось удалить данные.",
-
       "storage_read_error": "Не удалось прочитать данные.",
-
       "storage_database_error": "Ошибка при работе с данными.",
-
       "validation_required_field": "Поле \"{field}\" обязательно для заполнения",
-
       "validation_min_value": "Значение поля \"{field}\" должно быть не меньше {min}",
-
       "validation_max_value": "Значение поля \"{field}\" должно быть не больше {max}",
-
       "validation_invalid_format": "Неверный формат поля \"{field}\". Ожидается: {expectedFormat}",
-
       "validation_negative_value": "Значение поля \"{field}\" не может быть отрицательным",
-
       "validation_area_too_large": "Площадь {area} м² кажется слишком большой. Проверьте значение.",
-
       "validation_volume_too_large": "Объём {volume} м³ кажется слишком большим. Проверьте значение.",
-
       "validation_length_width_ratio": "Длина ({length} м) значительно больше ширины ({width} м). Возможно, вы перепутали значения?",
-
       "validation_width_length_ratio": "Ширина ({width} м) значительно больше длины ({length} м). Возможно, вы перепутали значения?",
-
       "validation_thickness_too_large": "Толщина {thickness} мм кажется слишком большой. Проверьте единицы измерения.",
-
       "validation_thickness_too_small": "Толщина {thickness} мм кажется слишком маленькой. Проверьте значение.",
-
       "validation_height_too_large": "Высота {height} м кажется слишком большой для помещения. Проверьте значение.",
-
       "validation_perimeter_too_small": "Периметр ({perimeter} м) слишком мал для указанной площади ({area} м²). Проверьте значения.",
-
       "validation_paint_consumption_too_large": "Расход краски ({consumption} л/м²) кажется слишком большим. Обычно 0.1-0.2 л/м².",
-
       "validation_primer_consumption_too_large": "Расход грунтовки ({consumption} л/м²) кажется слишком большим. Обычно 0.08-0.15 л/м².",
-
       "validation_plaster_consumption_too_large": "Расход штукатурки ({consumption} кг/м²) кажется слишком большим. Проверьте толщину слоя."
-
     }
-
   },
-
   "material": {
     "dry": "Сухой",
     "paste": "Паста"
@@ -3968,7 +3910,13 @@
     "gutterLength": "Длина желоба",
     "insulation": "Утепление",
     "insulationThickness": "Толщина утеплителя",
-    "insulationType": "Тип утеплителя",
+    "insulationType": {
+      "title": "Тип утеплителя",
+      "mineralWool": "Минеральная вата",
+      "xps": "ЭППС / пеноплекс",
+      "eps": "ЕПС / пенопласт",
+      "ecowool": "Эковата"
+    },
     "stoneType": "Тип камня",
     "stoneType.gypsum": "Гипсовый",
     "stoneType.concrete": "Бетонный",
@@ -4309,7 +4257,13 @@
     "concreteGrade.m300": "М300 — фундаменты, несущие конструкции",
     "concreteGrade.m350": "М350 — ответственные конструкции",
     "concreteGrade.m400": "М400 — бассейны, гидросооружения",
-    "applicationSurface": "Поверхность утепления",
+    "applicationSurface": {
+      "title": "Поверхность утепления",
+      "wall": "Стена",
+      "floor": "Пол",
+      "ceiling": "Потолок",
+      "roofSlope": "Скат крыши"
+    },
     "applicationSurface.hint": "Тип поверхности влияет на количество крепежа",
     "applicationSurface.wall": "Стена",
     "applicationSurface.floor": "Пол",
@@ -4325,7 +4279,13 @@
     "workingConditions.normal": "Нормальные (+5…+25 °C)",
     "workingConditions.windy": "Ветрено (+5% раствор)",
     "workingConditions.cold": "Холод < +5 °C (+10% раствор)",
-    "workingConditions.hot": "Жара > +30 °C (+8% раствор)"
+    "workingConditions.hot": "Жара > +30 °C (+8% раствор)",
+    "plateSize": {
+      "title": "Размер плиты",
+      "1200x600": "1200 × 600 мм",
+      "1000x500": "1000 × 500 мм",
+      "2000x1000": "2000 × 1000 мм"
+    }
   },
   "group": {
     "default": "Основные параметры",
@@ -8134,7 +8094,15 @@
     "welcome.home.morning": "Доброе утро. Ну что, за работу?",
     "welcome.home.day": "О, заявился. Давай, спрашивай — время не ждёт.",
     "welcome.home.evening": "Поздновато, конечно, но ладно. Чего хотел?",
-    "welcome.calculator": "Смотрю на {name}. Ну, задавай вопрос."
+    "welcome.calculator": "Смотрю на {name}. Ну, задавай вопрос.",
+    "welcome": {
+      "home": {
+        "morning": "Доброе утро, начальник. Давай, спрашивай.",
+        "day": "О, заявился. Ну, чего хотел?",
+        "evening": "Поздновато, но ладно — слушаю."
+      },
+      "calculator": "Так, {name}. Спрашивай, подскажу."
+    }
   },
   "osb": {
     "orientation": {

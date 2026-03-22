@@ -32,7 +32,23 @@ void main() {
       );
       expect(
         CalculatorIdMigration.canonicalize('heating'),
-        'engineering_heating',
+        'floors_warm',
+      );
+      expect(
+        CalculatorIdMigration.canonicalize('engineering_heating'),
+        'floors_warm',
+      );
+      expect(
+        CalculatorIdMigration.canonicalize('floors_screed'),
+        'floors_screed_unified',
+      );
+      expect(
+        CalculatorIdMigration.canonicalize('dsp'),
+        'floors_screed_unified',
+      );
+      expect(
+        CalculatorIdMigration.canonicalize('bathroom_tile'),
+        'floors_tile',
       );
     });
 

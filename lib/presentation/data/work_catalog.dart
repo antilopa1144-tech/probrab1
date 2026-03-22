@@ -697,12 +697,7 @@ const List<WorkAreaDefinition> _houseAreas = [
             calculatorId: 'engineering_electrics',
           ),
           // engineering_plumbing удалён - калькулятор не востребован
-          WorkItemDefinition(
-            id: 'engineering_heating',
-            title: 'work.item.engineering_heating.title',
-            icon: Icons.fireplace,
-            calculatorId: 'engineering_heating',
-          ),
+          // engineering_heating удалён — дубль floors_warm
           WorkItemDefinition(
             id: 'engineering_ventilation',
             title: 'work.item.engineering_ventilation.title',
