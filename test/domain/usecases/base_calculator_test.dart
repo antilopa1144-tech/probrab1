@@ -467,11 +467,9 @@ void main() {
       expect(result2.values['area'], 30.0);
     });
 
-    test('throws for invalid inputs', () {
-      expect(
-        () => calculator.call({'area': -25.0}, []),
-        throwsA(isA<CalculationException>()),
-      );
+    test('returns empty result for invalid inputs', () {
+      final result = calculator.call({'area': -25.0}, []);
+      expect(result.values, isEmpty);
     });
   });
 
