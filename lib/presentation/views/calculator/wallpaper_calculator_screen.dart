@@ -201,6 +201,12 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     };
   }
 
+  static int _safeRound(dynamic value) {
+    if (value == null) return 0;
+    if (value is num && value.isFinite) return value.round();
+    return 0;
+  }
+
   _WallpaperResult _calculate() {
     final contract = _calculator.calculateCanonical(_buildCalculationInputs());
     final totals = contract.totals;
@@ -211,8 +217,8 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
       area: totals['netArea'] ?? 0,
       wallsArea: totals['wallArea'] ?? 0,
       deductedArea: totals['openingsArea'] ?? _windowsDoors,
-      rollsNeeded: (totals['rollsNeeded'] ?? 0).round(),
-      stripsNeeded: (totals['stripsNeeded'] ?? 0).round(),
+      rollsNeeded: _safeRound(totals['rollsNeeded']),
+      stripsNeeded: _safeRound(totals['stripsNeeded']),
       rollSizeName: _resolveRollSizeName(rollWidth, rollLength),
       glueNeededKg: totals['pasteNeededKg'] ?? 0,
       primerLiters: totals['primerNeededL'] ?? 0,

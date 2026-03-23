@@ -40,18 +40,20 @@ double _resolveCanSize(SpecReader spec, Map<String, double> inputs) {
 
 Map<String, dynamic> _resolveSurface(SpecReader spec, Map<String, double> inputs) {
   final surfaceType = (inputs['surfaceType'] ?? defaultFor(spec, 'surfaceType', 0)).round().clamp(0, 3);
-  for (final surface in spec.normativeList('surface_types')) {
+  final surfaces = spec.normativeList('surface_types');
+  for (final surface in surfaces) {
     if ((surface['id'] as num).toInt() == surfaceType) return surface;
   }
-  return spec.normativeList('surface_types').first;
+  return surfaces.isNotEmpty ? surfaces.first : {'id': 0, 'key': 'default', 'consumption_ml_per_m2': 200};
 }
 
 Map<String, dynamic> _resolvePrimerType(SpecReader spec, Map<String, double> inputs) {
   final primerType = (inputs['primerType'] ?? defaultFor(spec, 'primerType', 0)).round().clamp(0, 2);
-  for (final type in spec.normativeList('primer_types')) {
+  final types = spec.normativeList('primer_types');
+  for (final type in types) {
     if ((type['id'] as num).toInt() == primerType) return type;
   }
-  return spec.normativeList('primer_types').first;
+  return types.isNotEmpty ? types.first : {'id': 0, 'key': 'default', 'consumption_ml_per_m2': 200};
 }
 
 CanonicalCalculatorContractResult calculateCanonicalPrimer(

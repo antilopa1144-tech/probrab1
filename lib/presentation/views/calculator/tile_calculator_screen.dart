@@ -139,7 +139,10 @@ class _TileConstants {
     if (constant == null) return defaultValue;
     final value = constant.values[valueKey];
     if (value == null) return defaultValue;
-    return value as T;
+    if (value is T) return value;
+    if (T == double && value is num) return value.toDouble() as T;
+    if (T == int && value is num) return value.toInt() as T;
+    return defaultValue;
   }
 
   // Glue consumption

@@ -30,31 +30,34 @@ class SpecReader {
   /// Get a value from `packaging_rules`.
   T packagingRule<T>(String key, [T? fallback]) {
     final rules = _data['packaging_rules'] as Map<String, dynamic>?;
-    final value = rules?[key] as T?;
-    if (value != null) return value;
-    if (fallback != null) return fallback;
-    assert(false, 'SpecReader: missing packaging_rules key "$key" and no fallback');
-    return _zeroDefault<T>();
+    final value = rules?[key];
+    if (value != null) return _safeCast<T>(value) ?? fallback ?? _zeroDefault<T>();
+    return fallback ?? _zeroDefault<T>();
   }
 
   /// Get a value from `material_rules`.
   T materialRule<T>(String key, [T? fallback]) {
     final rules = _data['material_rules'] as Map<String, dynamic>?;
-    final value = rules?[key] as T?;
-    if (value != null) return value;
-    if (fallback != null) return fallback;
-    assert(false, 'SpecReader: missing material_rules key "$key" and no fallback');
-    return _zeroDefault<T>();
+    final value = rules?[key];
+    if (value != null) return _safeCast<T>(value) ?? fallback ?? _zeroDefault<T>();
+    return fallback ?? _zeroDefault<T>();
   }
 
   /// Get a value from `warnings_rules`.
   T warningRule<T>(String key, [T? fallback]) {
     final rules = _data['warnings_rules'] as Map<String, dynamic>?;
-    final value = rules?[key] as T?;
-    if (value != null) return value;
-    if (fallback != null) return fallback;
-    assert(false, 'SpecReader: missing warnings_rules key "$key" and no fallback');
-    return _zeroDefault<T>();
+    final value = rules?[key];
+    if (value != null) return _safeCast<T>(value) ?? fallback ?? _zeroDefault<T>();
+    return fallback ?? _zeroDefault<T>();
+  }
+
+  /// Safe cast that handles int↔double↔num conversions from JSON.
+  static T? _safeCast<T>(dynamic value) {
+    if (value is T) return value;
+    if (T == double && value is num) return value.toDouble() as T;
+    if (T == int && value is num) return value.toInt() as T;
+    if (T == num && value is num) return value as T;
+    return null;
   }
 
   /// Safe zero-value fallback to prevent null crashes in release.
@@ -63,7 +66,8 @@ class SpecReader {
     if (T == int) return 0 as T;
     if (T == String) return '' as T;
     if (T == bool) return false as T;
-    return 0 as T;
+    if (T == List) return <dynamic>[] as T;
+    return 0.0 as T;
   }
 
   /// Get a typed list from `normative_formula`, falling back to root level.

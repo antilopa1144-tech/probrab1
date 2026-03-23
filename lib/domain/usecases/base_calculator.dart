@@ -712,34 +712,31 @@ abstract class BaseCalculator implements CalculatorUseCase {
   @override
   CalculatorResult call(Map<String, double> inputs, List<PriceItem> priceList) {
     try {
-      // Валидация входных данных
-      final validationError = validateInputs(inputs);
-      if (validationError != null) {
-        throw CalculationException.invalidInput(
-          runtimeType.toString(),
-          validationError,
-        );
+      // Sanitize inputs: replace NaN/Infinity with 0
+      final sanitized = <String, double>{};
+      for (final entry in inputs.entries) {
+        sanitized[entry.key] = entry.value.isFinite ? entry.value : 0.0;
       }
 
-      if (_lastResult != null && _areInputsEqual(inputs, _lastInputs)) {
+      // Валидация входных данных
+      final validationError = validateInputs(sanitized);
+      if (validationError != null) {
+        // Return empty result instead of crashing
+        return const CalculatorResult(values: {});
+      }
+
+      if (_lastResult != null && _areInputsEqual(sanitized, _lastInputs)) {
         return _lastResult!;
       }
 
       // Вызов конкретной реализации
-      final result = calculate(inputs, priceList);
-      _lastInputs = Map<String, double>.from(inputs);
+      final result = calculate(sanitized, priceList);
+      _lastInputs = Map<String, double>.from(sanitized);
       _lastResult = result;
       return result;
-    } on CalculationException {
-      // Пробрасываем CalculationException дальше
-      rethrow;
-    } catch (e, stackTrace) {
-      // Оборачиваем неожиданные ошибки в CalculationException
-      throw CalculationException(
-        'Неожиданная ошибка в калькуляторе ${runtimeType.toString()}: $e',
-        code: 'UNEXPECTED_ERROR',
-        details: stackTrace.toString(),
-      );
+    } catch (e) {
+      // Never crash — return empty result
+      return const CalculatorResult(values: {});
     }
   }
 

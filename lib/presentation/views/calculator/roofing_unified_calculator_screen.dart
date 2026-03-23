@@ -109,15 +109,21 @@ class _RoofingUnifiedCalculatorScreenState
     };
   }
 
+  static int _safeRound(dynamic value) {
+    if (value == null) return 0;
+    if (value is num && value.isFinite) return value.round();
+    return 0;
+  }
+
   _RoofingResult _calculate() {
     final values = _calculator(_buildCalculationInputs(), <PriceItem>[]).values;
     return _RoofingResult(
       area: values['area'] ?? 0,
       realArea: values['realArea'] ?? 0,
       ridgeLength: values['ridgeLength'] ?? 0,
-      sheetsNeeded: (values['sheetsNeeded'] ?? 0).round(),
-      packsNeeded: (values['packsNeeded'] ?? 0).round(),
-      tilesNeeded: (values['tilesNeeded'] ?? 0).round(),
+      sheetsNeeded: _safeRound(values['sheetsNeeded']),
+      packsNeeded: _safeRound(values['packsNeeded']),
+      tilesNeeded: _safeRound(values['tilesNeeded']),
       waterproofingArea: values['waterproofingArea'] ?? values['underlaymentArea'] ?? 0,
       battensLength: values['battensLength'] ?? 0,
     );

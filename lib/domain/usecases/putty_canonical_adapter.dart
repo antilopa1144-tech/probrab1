@@ -63,19 +63,21 @@ double _resolveWorkArea(SpecReader spec, Map<String, double> inputs) {
 }
 
 double _resolveBagWeight(SpecReader spec, Map<String, double> inputs) {
-  final bagWeight = (inputs['bagWeight'] ?? spec.packagingRule<num>('default_package_size').toDouble());
-  if ((spec.packagingRule<List>('allowed_package_sizes') ?? []).contains(bagWeight)) {
-    return bagWeight;
-  }
-  return spec.packagingRule<num>('default_package_size').toDouble();
+  final defaultSize = spec.packagingRule<num>('default_package_size', 25).toDouble();
+  final bagWeight = inputs['bagWeight'] ?? defaultSize;
+  if (bagWeight <= 0) return defaultSize > 0 ? defaultSize : 25.0;
+  final allowed = spec.packagingRule<List>('allowed_package_sizes', []);
+  if (allowed.contains(bagWeight)) return bagWeight;
+  return defaultSize > 0 ? defaultSize : 25.0;
 }
 
 Map<String, dynamic> _resolveQualityProfile(SpecReader spec, Map<String, double> inputs) {
   final qualityClass = (inputs['qualityClass'] ?? defaultFor(spec, 'qualityClass', 0)).round().clamp(0, 3);
-  for (final profile in spec.normativeList('quality_profiles')) {
+  final profiles = spec.normativeList('quality_profiles');
+  for (final profile in profiles) {
     if ((profile['id'] as num).toInt() == qualityClass) return profile;
   }
-  return spec.normativeList('quality_profiles').first;
+  return profiles.isNotEmpty ? profiles.first : {'id': 0, 'key': 'default', 'components': <String, dynamic>{}};
 }
 
 int _resolveComponentLayers(
