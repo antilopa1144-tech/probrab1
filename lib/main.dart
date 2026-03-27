@@ -29,11 +29,27 @@ import 'core/platform/crashlytics_native.dart'
 import 'core/services/tracker_service_web.dart'
     if (dart.library.io) 'core/services/tracker_service.dart';
 
+Future<void> _initFirebase() async {
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    }
+  } catch (e) {
+    debugPrint('Firebase already initialized: $e');
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Загрузка переменных окружения (.env) — API-ключи и секреты
-  await dotenv.load();
+  // Параллельная инициализация для ускорения старта
+  final initFutures = await Future.wait([
+    dotenv.load().then((_) => null),
+    SharedPreferences.getInstance(),
+    _initFirebase(),
+  ]);
+
+  final prefs = initFutures[1] as SharedPreferences;
 
   // Предзагрузка AI-сервиса (Михалыч) — модель будет готова к первому запросу
   unawaited(AiService.preload());
@@ -43,21 +59,10 @@ void main() async {
     FrameTimingLogger.maybeInit();
   }
 
-  // Инициализация Firebase (с обработкой дублирования)
-  try {
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    }
-  } catch (e) {
-    // Firebase уже инициализирован нативно через google-services.json
-    debugPrint('Firebase already initialized: $e');
-  }
   // Инициализация MyTracker аналитики
   if (!kIsWeb) {
     unawaited(TrackerService.initialize(dotenv.env['MYTRACKER_SDK_KEY'] ?? ''));
   }
-
-  final prefs = await SharedPreferences.getInstance();
 
   // Передача Flutter ошибок в Crashlytics (только на нативных платформах)
   FlutterError.onError = (details) {
