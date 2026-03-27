@@ -1,7 +1,7 @@
 {
   "calculator_id": "gypsum-board",
   "formula_version": "gypsum-board-canonical-v1",
-  "generated_at": "2026-03-17T05:41:35.523Z",
+  "generated_at": "2026-03-27T06:59:34.756Z",
   "cases": [
     {
       "id": "defaults",
@@ -49,7 +49,7 @@
         "Дюбели",
         "Серпянка",
         "Шпаклёвка 25 кг",
-        "Грунтовка 10 л"
+        "Грунтовка глубокого проникновения (10 л)"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

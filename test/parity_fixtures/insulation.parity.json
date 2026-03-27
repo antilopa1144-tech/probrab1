@@ -1,7 +1,7 @@
 {
   "calculator_id": "insulation",
   "formula_version": "insulation-canonical-v1",
-  "generated_at": "2026-03-17T05:41:35.536Z",
+  "generated_at": "2026-03-27T06:59:34.763Z",
   "cases": [
     {
       "id": "defaults",
@@ -44,7 +44,7 @@
         "Дюбели тарельчатые",
         "Пароизоляционная мембрана",
         "Алюминиевая лента (скотч)",
-        "Грунтовка (10 л)"
+        "Грунтовка глубокого проникновения (10 л)"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

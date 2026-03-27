@@ -1,7 +1,7 @@
 {
   "calculator_id": "foam-blocks",
   "formula_version": "foam-blocks-canonical-v1",
-  "generated_at": "2026-03-17T05:41:35.489Z",
+  "generated_at": "2026-03-27T06:59:34.741Z",
   "cases": [
     {
       "id": "defaults",
@@ -51,7 +51,7 @@
         "Клей для кладки (25 кг)",
         "Арматура Ø8",
         "У-блоки (перемычки)",
-        "Грунтовка (10 л)"
+        "Грунтовка глубокого проникновения (5 л)"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

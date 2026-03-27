@@ -1,7 +1,7 @@
 {
   "calculator_id": "drywall-ceiling",
   "formula_version": "drywall-ceiling-canonical-v1",
-  "generated_at": "2026-03-17T05:41:35.434Z",
+  "generated_at": "2026-03-27T06:59:34.715Z",
   "cases": [
     {
       "id": "defaults",
@@ -61,7 +61,7 @@
         "Дюбели",
         "Серпянка 45м",
         "Шпаклёвка Knauf Fugen 25кг",
-        "Грунтовка 10л"
+        "Грунтовка глубокого проникновения (5 л)"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

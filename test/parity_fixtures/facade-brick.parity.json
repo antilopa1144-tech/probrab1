@@ -1,7 +1,7 @@
 {
   "calculator_id": "facade-brick",
   "formula_version": "facade-brick-canonical-v1",
-  "generated_at": "2026-03-17T05:41:35.450Z",
+  "generated_at": "2026-03-27T06:59:34.722Z",
   "cases": [
     {
       "id": "defaults",

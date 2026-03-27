@@ -1,7 +1,7 @@
 {
   "calculator_id": "tile",
   "formula_version": "tile-canonical-v1",
-  "generated_at": "2026-03-17T05:41:35.733Z",
+  "generated_at": "2026-03-27T06:59:34.857Z",
   "cases": [
     {
       "id": "defaults",

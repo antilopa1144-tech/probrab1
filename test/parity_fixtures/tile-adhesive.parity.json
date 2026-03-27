@@ -1,7 +1,7 @@
 {
   "calculator_id": "tile-adhesive",
   "formula_version": "tile-adhesive-canonical-v1",
-  "generated_at": "2026-03-17T05:41:35.725Z",
+  "generated_at": "2026-03-27T06:59:34.853Z",
   "cases": [
     {
       "id": "defaults",
@@ -36,7 +36,7 @@
       "expected_materials_count": 3,
       "expected_material_names": [
         "Плиточный клей 25кг",
-        "Грунтовка (канистра 10 л)",
+        "Грунтовка глубокого проникновения (5 л)",
         "Крестики (упаковка 200 шт)"
       ],
       "expected_warnings_count": 0,

@@ -1,6 +1,6 @@
 // GENERATED FILE — DO NOT EDIT MANUALLY
 // Source: configs/calculators/*-canonical.v1.json
-// Generated: 2026-03-17
+// Generated: 2026-03-27
 // Run: npx tsx scripts/sync-specs-to-dart.ts
 
 // ignore_for_file: prefer_single_quotes, lines_longer_than_80_chars

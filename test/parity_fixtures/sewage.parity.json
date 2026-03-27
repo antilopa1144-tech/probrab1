@@ -1,7 +1,7 @@
 {
   "calculator_id": "sewage",
   "formula_version": "sewage-canonical-v1",
-  "generated_at": "2026-03-17T05:41:35.664Z",
+  "generated_at": "2026-03-27T06:59:34.825Z",
   "cases": [
     {
       "id": "defaults",

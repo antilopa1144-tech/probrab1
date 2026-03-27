@@ -1,7 +1,7 @@
 {
   "calculator_id": "slopes",
   "formula_version": "slopes-canonical-v1",
-  "generated_at": "2026-03-17T05:41:35.682Z",
+  "generated_at": "2026-03-27T06:59:34.832Z",
   "cases": [
     {
       "id": "defaults",
@@ -48,7 +48,7 @@
         "F-профиль (3 м)",
         "Монтажная пена",
         "Герметик (тубы)",
-        "Грунтовка (канистра 10 л)"
+        "Грунтовка глубокого проникновения (5 л)"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

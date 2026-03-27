@@ -1,7 +1,7 @@
 {
   "calculator_id": "panels-3d",
   "formula_version": "panels-3d-canonical-v1",
-  "generated_at": "2026-03-17T05:41:35.578Z",
+  "generated_at": "2026-03-27T06:59:34.782Z",
   "cases": [
     {
       "id": "defaults",
@@ -46,7 +46,7 @@
       "expected_material_names": [
         "3D-панели",
         "Клей для панелей (5 кг)",
-        "Грунтовка (5 л)",
+        "Грунтовка глубокого проникновения (5 л)",
         "Шпаклёвка (5 кг)",
         "Молдинги (п.м.)",
         "Лак (1 л)"

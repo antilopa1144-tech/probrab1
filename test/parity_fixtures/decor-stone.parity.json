@@ -1,7 +1,7 @@
 {
   "calculator_id": "decor-stone",
   "formula_version": "decor-stone-canonical-v1",
-  "generated_at": "2026-03-17T05:41:35.409Z",
+  "generated_at": "2026-03-27T06:59:34.704Z",
   "cases": [
     {
       "id": "defaults",
@@ -44,7 +44,7 @@
         "Декоративный камень",
         "Клей (25 кг)",
         "Затирка (5 кг)",
-        "Грунтовка (10 л)"
+        "Грунтовка глубокого проникновения (5 л)"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],
