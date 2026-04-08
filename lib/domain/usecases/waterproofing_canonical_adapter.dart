@@ -7,11 +7,6 @@ import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
 
-const Map<String, Map<String, double>> _factorTable = {
-  'surface_quality': {'MIN': 0.95, 'REC': 1.0, 'MAX': 1.10},
-  'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
-  'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
-};
 
 const Map<int, String> _masticTypeLabels = {
   0: 'Ceresit CL 51',
@@ -90,7 +85,7 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
     final exactNeed = roundValue(masticBuckets * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
@@ -105,7 +100,7 @@ CanonicalCalculatorContractResult calculateCanonicalWaterproofing(
         'packaging:mastic-bucket-${bucketKg.round()}kg',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(

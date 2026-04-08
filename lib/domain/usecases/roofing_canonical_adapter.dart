@@ -21,11 +21,6 @@ const Map<int, String> _roofingTypeLabels = {
 
 /* --- Factor table --- */
 
-const Map<String, Map<String, double>> _factorTable = {
-  'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
-  'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
-  'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
-};
 
 /* --- Helpers --- */
 
@@ -295,7 +290,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
     final exactNeed = roundValue(primaryQuantity * multiplier, 6);
     final packages = exactNeed > 0 ? (exactNeed / 1.0).ceil() : 0;
     final purchaseQuantity = roundValue(packages * 1.0, 6);
@@ -312,7 +307,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
         'packaging:$primaryLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(

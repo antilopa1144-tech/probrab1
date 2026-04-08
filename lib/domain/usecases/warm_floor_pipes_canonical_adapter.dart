@@ -5,11 +5,6 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-const Map<String, Map<String, double>> _factorTable = {
-  'geometry_complexity': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
-  'worker_skill': {'MIN': 0.95, 'REC': 1.0, 'MAX': 1.1},
-  'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
-};
 
 const Map<int, String> _pipeTypeLabels = {
   0: 'PEX-a',
@@ -74,7 +69,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloorPipes(
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
     final exactNeed = roundValue(basePrimary * multiplier, 6);
     final packageSize = spec.materialRule<num>('pipe_coil_m').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
@@ -91,7 +86,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloorPipes(
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(

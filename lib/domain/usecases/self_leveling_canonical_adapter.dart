@@ -5,12 +5,6 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-const Map<String, Map<String, double>> _factorTable = {
-  'geometry_complexity': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
-  'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
-  'logistics_buffer': {'MIN': 1.0, 'REC': 1.0, 'MAX': 1.03},
-  'packaging_rounding': {'MIN': 1.0, 'REC': 1.0, 'MAX': 1.02},
-};
 
 bool hasCanonicalSelfLevelingInputs(Map<String, double> inputs) {
   return (inputs.containsKey('mixtureType') || inputs.containsKey('consumptionOverride')) && !inputs.containsKey('consumption');
@@ -91,7 +85,7 @@ CanonicalCalculatorContractResult calculateCanonicalSelfLeveling(
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
     final exactNeed = roundValue(baseExactNeed * multiplier, 6);
     final bags = exactNeed > 0 ? (exactNeed / bagWeight).ceil() : 0;
     final purchaseQuantity = roundValue(bags * bagWeight, 6);
@@ -106,7 +100,7 @@ CanonicalCalculatorContractResult calculateCanonicalSelfLeveling(
         'packaging:self-leveling-bag-${bagWeight.toInt()}${spec.packagingRule<String>('unit')}',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(

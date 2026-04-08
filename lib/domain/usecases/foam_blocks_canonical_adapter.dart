@@ -5,11 +5,6 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-const Map<String, Map<String, double>> _factorTable = {
-  'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
-  'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
-  'waste_factor': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
-};
 
 Map<String, double> _resolveArea(SpecReader spec, Map<String, double> inputs) {
   final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
@@ -120,7 +115,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoamBlocks(
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
     final exactNeed = roundValue(blocksWithReserve * multiplier, 6);
     final packageSize = spec.packagingRule<num>('package_size').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
@@ -137,7 +132,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoamBlocks(
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
