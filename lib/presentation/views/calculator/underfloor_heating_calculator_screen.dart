@@ -5,6 +5,7 @@ import '../../../core/localization/app_localizations.dart';
 import '../../../data/models/price_item.dart';
 import '../../../domain/usecases/calculate_underfloor_heating.dart';
 import '../../mixins/exportable_mixin.dart';
+import '../../mixins/accuracy_mode_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
@@ -202,7 +203,7 @@ class UnderfloorHeatingCalculatorScreen extends StatefulWidget {
 }
 
 class _UnderfloorHeatingCalculatorScreenState
-    extends State<UnderfloorHeatingCalculatorScreen> with ExportableMixin {
+    extends State<UnderfloorHeatingCalculatorScreen> with ExportableMixin, AccuracyModeMixin {
   @override
   AppLocalizations get loc => _loc;
 
@@ -270,6 +271,7 @@ class _UnderfloorHeatingCalculatorScreenState
       'usefulAreaPercent': _usefulAreaPercent,
       'addInsulation': _addInsulation ? 1.0 : 0.0,
       'filmWidth': _filmWidthIndex.toDouble(),
+      ...accuracyModeInput,
     };
   }
 

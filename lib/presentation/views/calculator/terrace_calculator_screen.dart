@@ -5,6 +5,7 @@ import '../../../core/localization/app_localizations.dart';
 import '../../../data/models/price_item.dart';
 import '../../../domain/usecases/calculate_terrace.dart';
 import '../../mixins/exportable_mixin.dart';
+import '../../mixins/accuracy_mode_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -76,7 +77,7 @@ class TerraceCalculatorScreen extends StatefulWidget {
 }
 
 class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
-    with ExportableMixin {
+    with ExportableMixin, AccuracyModeMixin {
   bool _isDark = false;
 
   @override
@@ -140,6 +141,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
       'railing': _hasRailing ? 1.0 : 0.0,
       'roof': _hasRoof ? 1.0 : 0.0,
       'roofType': (_roofType.index + 1).toDouble(),
+          ...accuracyModeInput,
     };
   }
 

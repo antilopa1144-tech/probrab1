@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_window_installation.dart';
 import '../../mixins/exportable_mixin.dart';
+import '../../mixins/accuracy_mode_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип окна
@@ -43,7 +44,7 @@ class WindowsInstallCalculatorScreen extends StatefulWidget {
 }
 
 class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculatorScreen>
-    with ExportableMixin {
+    with ExportableMixin, AccuracyModeMixin {
   @override
   AppLocalizations get loc => _loc;
 
@@ -70,6 +71,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
       'windowHeight': _windowHeight,
       'needSill': _needSill ? 1.0 : 0.0,
       'needSlopes': _needSlopes ? 1.0 : 0.0,
+          ...accuracyModeInput,
     };
   }
 

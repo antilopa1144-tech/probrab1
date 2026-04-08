@@ -5,6 +5,7 @@ import '../../../core/localization/app_localizations.dart';
 import '../../../data/models/price_item.dart';
 import '../../../domain/usecases/calculate_3d_panels.dart';
 import '../../mixins/exportable_mixin.dart';
+import '../../mixins/accuracy_mode_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -53,7 +54,7 @@ class ThreeDPanelsCalculatorScreen extends StatefulWidget {
 
 class _ThreeDPanelsCalculatorScreenState
     extends State<ThreeDPanelsCalculatorScreen>
-    with ExportableMixin {
+    with ExportableMixin, AccuracyModeMixin {
   @override
   AppLocalizations get loc => _loc;
 
@@ -113,6 +114,7 @@ class _ThreeDPanelsCalculatorScreenState
       'panelSize': _panelSize,
       'paintable': _paintable ? 1.0 : 0.0,
       'withVarnish': _withVarnish ? 1.0 : 0.0,
+          ...accuracyModeInput,
     };
   }
 

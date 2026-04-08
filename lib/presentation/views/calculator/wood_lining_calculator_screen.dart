@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
+import '../../mixins/accuracy_mode_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_wood_lining.dart';
 import '../../../domain/models/calculator_constant.dart';
@@ -201,7 +202,7 @@ class WoodLiningCalculatorScreen extends StatefulWidget {
 }
 
 class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
-    with ExportableMixin {
+    with ExportableMixin, AccuracyModeMixin {
   @override
   AppLocalizations get loc => _loc;
 
@@ -271,6 +272,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
       'useAntiseptic': _useAntiseptic ? 1.0 : 0.0,
       'useFinish': _useFinish ? 1.0 : 0.0,
       'finishType': _finishType.index.toDouble(),
+          ...accuracyModeInput,
     };
   }
 

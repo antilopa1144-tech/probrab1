@@ -1,3 +1,4 @@
+import '../../mixins/accuracy_mode_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -85,7 +86,7 @@ class PrimerCalculatorScreen extends ConsumerStatefulWidget {
 }
 
 class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
-    with ExportableConsumerMixin {
+    with ExportableConsumerMixin, AccuracyModeMixin {
   // ExportableConsumerMixin
   @override
   AppLocalizations get loc => _loc;
@@ -138,6 +139,7 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
       inputs['roomHeight'] = _roomHeight;
     }
 
+    inputs.addAll(accuracyModeInput);
     return inputs;
   }
 

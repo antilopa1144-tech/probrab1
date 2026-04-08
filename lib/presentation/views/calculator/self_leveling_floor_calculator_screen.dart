@@ -5,6 +5,7 @@ import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/usecases/calculate_self_leveling_floor.dart';
 import '../../mixins/exportable_mixin.dart';
+import '../../mixins/accuracy_mode_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Вспомогательный класс для работы с константами калькулятора наливного пола
@@ -114,7 +115,7 @@ class SelfLevelingFloorCalculatorScreen extends StatefulWidget {
 
 class _SelfLevelingFloorCalculatorScreenState
     extends State<SelfLevelingFloorCalculatorScreen>
-    with ExportableMixin {
+    with ExportableMixin, AccuracyModeMixin {
   final CalculateSelfLevelingFloor _calculator = CalculateSelfLevelingFloor();
 
   @override
@@ -204,6 +205,7 @@ class _SelfLevelingFloorCalculatorScreenState
       'thickness': _thickness,
       'consumption': _mixtureBrand.consumption,
       'bagWeight': _selectedBagWeight.toDouble(),
+          ...accuracyModeInput,
     };
   }
 

@@ -4,6 +4,7 @@ import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_wallpaper.dart';
 import '../../mixins/exportable_mixin.dart';
+import '../../mixins/accuracy_mode_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 enum InputMode { byArea, byRoom }
@@ -60,7 +61,7 @@ class WallpaperCalculatorScreen extends StatefulWidget {
 }
 
 class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
-    with ExportableMixin {
+    with ExportableMixin, AccuracyModeMixin {
   final CalculateWallpaper _calculator = CalculateWallpaper();
 
   @override
@@ -198,6 +199,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
       'rollWidth': roll['rollWidth']!,
       'rollLength': roll['rollLength']!,
       'reserveRolls': 0,
+          ...accuracyModeInput,
     };
   }
 

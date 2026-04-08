@@ -5,6 +5,7 @@ import '../../../data/models/price_item.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_unified_roofing.dart';
 import '../../mixins/exportable_mixin.dart';
+import '../../mixins/accuracy_mode_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Единый калькулятор кровли
@@ -32,7 +33,7 @@ class RoofingUnifiedCalculatorScreen extends StatefulWidget {
 }
 
 class _RoofingUnifiedCalculatorScreenState
-    extends State<RoofingUnifiedCalculatorScreen> with ExportableMixin {
+    extends State<RoofingUnifiedCalculatorScreen> with ExportableMixin, AccuracyModeMixin {
   bool _isDark = false;
   final CalculateUnifiedRoofing _calculator = CalculateUnifiedRoofing();
 
@@ -106,6 +107,7 @@ class _RoofingUnifiedCalculatorScreenState
       'sheetWidth': _sheetWidth,
       'sheetLength': _sheetLength,
       'roofingType': _roofingType.index.toDouble(),
+          ...accuracyModeInput,
     };
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
+import '../../mixins/accuracy_mode_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_tile_glue.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
@@ -131,7 +132,7 @@ class TileAdhesiveCalculatorScreen extends StatefulWidget {
 }
 
 class _TileAdhesiveCalculatorScreenState
-    extends State<TileAdhesiveCalculatorScreen> with ExportableMixin {
+    extends State<TileAdhesiveCalculatorScreen> with ExportableMixin, AccuracyModeMixin {
   @override
   AppLocalizations get loc => _loc;
 
@@ -220,6 +221,7 @@ class _TileAdhesiveCalculatorScreenState
       'useSVP': _useSVP ? 1.0 : 0.0,
       'calculateGrout': _calculateGrout ? 1.0 : 0.0,
       'useWaterproofing': _useWaterproofing ? 1.0 : 0.0,
+          ...accuracyModeInput,
     };
   }
 

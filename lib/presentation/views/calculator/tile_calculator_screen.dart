@@ -1,3 +1,4 @@
+import '../../mixins/accuracy_mode_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/localization/app_localizations.dart';
@@ -298,7 +299,7 @@ class TileCalculatorScreen extends ConsumerStatefulWidget {
 }
 
 class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
-    with ExportableConsumerMixin {
+    with ExportableConsumerMixin, AccuracyModeMixin {
   final CalculateTile _calculator = CalculateTile();
   @override
   AppLocalizations get loc => _loc;
@@ -414,6 +415,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       'useSVP': _useSVP ? 1.0 : 0.0,
       'useWaterproofing': _useWaterproofing ? 1.0 : 0.0,
       'useUnderlay': _useUnderlay ? 1.0 : 0.0,
+          ...accuracyModeInput,
     };
   }
 

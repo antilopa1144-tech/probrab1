@@ -4,6 +4,7 @@ import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/canonical_calculator_contract.dart';
 import '../../../domain/usecases/calculate_plaster.dart';
 import '../../mixins/exportable_mixin.dart';
+import '../../mixins/accuracy_mode_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 const _plasterMaterialCategoryBase = 'Основное';
@@ -72,7 +73,7 @@ class PlasterCalculatorScreen extends StatefulWidget {
 }
 
 class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
-    with ExportableMixin {
+    with ExportableMixin, AccuracyModeMixin {
   final CalculatePlaster _calculator = CalculatePlaster();
   double _roomWidth = 4.0;
   double _roomLength = 5.0;
@@ -171,6 +172,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
       'bagWeight': _bagWeight.toDouble(),
       'substrateType': (_substrateType.index + 1).toDouble(),
       'wallEvenness': (_wallEvenness.index + 1).toDouble(),
+          ...accuracyModeInput,
     };
   }
 

@@ -1,3 +1,4 @@
+import '../../mixins/accuracy_mode_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -61,7 +62,7 @@ class SoundInsulationCalculatorScreen extends ConsumerStatefulWidget {
 }
 
 class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulationCalculatorScreen>
-    with ExportableConsumerMixin {
+    with ExportableConsumerMixin, AccuracyModeMixin {
   bool _isDark = false;
 
   // ExportableConsumerMixin
@@ -107,6 +108,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
       'surfaceType': _surfaceType.index.toDouble(),
       'needGypsum': _needGypsum ? 1.0 : 0.0,
       'needProfile': _needProfile ? 1.0 : 0.0,
+      ...accuracyModeInput,
     };
   }
 

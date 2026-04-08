@@ -1,3 +1,4 @@
+import '../../mixins/accuracy_mode_mixin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -72,7 +73,7 @@ class StripFoundationCalculatorScreen extends ConsumerStatefulWidget {
 
 class _StripFoundationCalculatorScreenState
     extends ConsumerState<StripFoundationCalculatorScreen>
-    with ExportableConsumerMixin {
+    with ExportableConsumerMixin, AccuracyModeMixin {
   @override
   AppLocalizations get loc => _loc;
 
@@ -110,6 +111,7 @@ class _StripFoundationCalculatorScreenState
       'needInsulation': _needInsulation ? 1.0 : 0.0,
       'hasInternalWalls': _hasInternalWalls ? 1.0 : 0.0,
       'internalWallsLength': _internalWallsLength,
+          ...accuracyModeInput,
     };
   }
 
