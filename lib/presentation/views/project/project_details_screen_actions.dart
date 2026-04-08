@@ -114,6 +114,9 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
         }
       }
     }
+
+    nameController.dispose();
+    descriptionController.dispose();
   }
 
   void _changeStatus(ProjectV2 project) async {

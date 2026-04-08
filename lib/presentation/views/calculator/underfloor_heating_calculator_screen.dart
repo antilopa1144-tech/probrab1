@@ -338,26 +338,26 @@ class _UnderfloorHeatingCalculatorScreenState
 
     switch (_result.systemType) {
       case HeatingSystemType.electricMat:
-        buffer.writeln('• ${_loc.translate('warmfloor.export.heating_mat')}: ${_result.matArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')} (${_result.totalPower} ${_loc.translate('common.watt')})');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.heating_mat')}: ${(_result.matArea ?? 0).toStringAsFixed(1)} ${_loc.translate('common.sqm')} (${_result.totalPower} ${_loc.translate('common.watt')})');
         break;
       case HeatingSystemType.electricCable:
-        buffer.writeln('• ${_loc.translate('warmfloor.export.heating_cable')}: ${_result.cableLength!.toStringAsFixed(1)} ${_loc.translate('common.meters')} (${_result.totalPower} ${_loc.translate('common.watt')})');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.heating_cable')}: ${(_result.cableLength ?? 0).toStringAsFixed(1)} ${_loc.translate('common.meters')} (${_result.totalPower} ${_loc.translate('common.watt')})');
         buffer.writeln('• ${_loc.translate('warmfloor.export.mounting_tape')}: ${(_result.heatingArea * _constants.montageTapeMultiplier).toStringAsFixed(0)} ${_loc.translate('common.meters')}');
         break;
       case HeatingSystemType.infraredFilm:
-        buffer.writeln('• ${_loc.translate('warmfloor.export.ir_film')}: ${_result.filmLinearMeters!.toStringAsFixed(1)} ${_loc.translate('common.meters')} (${_loc.translate('warmfloor.film_width.label')}: ${_result.filmWidthCm} ${_loc.translate('common.cm')})');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.ir_film')}: ${(_result.filmLinearMeters ?? 0).toStringAsFixed(1)} ${_loc.translate('common.meters')} (${_loc.translate('warmfloor.film_width.label')}: ${_result.filmWidthCm} ${_loc.translate('common.cm')})');
         buffer.writeln('• ${_loc.translate('warmfloor.export.contact_clips')}: ${_result.contactClips} ${_loc.translate('common.pcs')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.contact_insulation')}: ${_result.contactClips} ${_loc.translate('common.pcs')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.reflective_substrate')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
         break;
       case HeatingSystemType.waterBased:
-        buffer.writeln('• ${_loc.translate('warmfloor.export.pipe_pert')}: ${_result.pipeLength!.toStringAsFixed(0)} ${_loc.translate('common.meters')}');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.pipe_pert')}: ${(_result.pipeLength ?? 0).toStringAsFixed(0)} ${_loc.translate('common.meters')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.collector')}: ${_result.collectorOutputs} ${_loc.translate('warmfloor.materials.outputs')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.loops')}: ${_result.loopCount}');
-        buffer.writeln('• ${_loc.translate('warmfloor.export.insulation_psb')}: ${_result.insulationArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.insulation_psb')}: ${(_result.insulationArea ?? 0).toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.damper_tape')}: ${(_result.perimeter * 1.1).toStringAsFixed(0)} ${_loc.translate('common.meters')}');
         buffer.writeln('• ${_loc.translate('warmfloor.export.brackets')}: ${(_result.heatingArea * _constants.bracketsPerM2).toStringAsFixed(0)} ${_loc.translate('common.pcs')}');
-        buffer.writeln('• ${_loc.translate('warmfloor.export.screed')}: ${_result.screedVolume!.toStringAsFixed(2)} ${_loc.translate('unit.cubicMeters')}');
+        buffer.writeln('• ${_loc.translate('warmfloor.export.screed')}: ${(_result.screedVolume ?? 0).toStringAsFixed(2)} ${_loc.translate('unit.cubicMeters')}');
         break;
     }
 

@@ -132,7 +132,10 @@ class RemindersScreen extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ).then((_) {
+      titleController.dispose();
+      descController.dispose();
+    });
   }
 
   String _formatDate(DateTime date) {

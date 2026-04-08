@@ -312,6 +312,7 @@ class _CalculatorQrShareScreenState extends State<CalculatorQrShareScreen> {
       RegExp(r'([A-Z])'),
       (match) => ' ${match.group(1)!.toLowerCase()}',
     );
+    if (formatted.isEmpty) return key;
     return formatted[0].toUpperCase() + formatted.substring(1);
   }
 
