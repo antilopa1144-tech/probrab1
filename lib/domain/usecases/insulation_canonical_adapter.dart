@@ -103,9 +103,10 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
 
   final scenarios = <String, CanonicalScenarioResult>{};
 
+final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('insulation', accuracyMode);
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(basePrimary * multiplier, 6);
+    final exactNeed = roundValue(basePrimary * accuracyMult * multiplier, 6);
     final packages = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
     final purchaseQuantity = roundValue(packages * packageSize, 6);
 

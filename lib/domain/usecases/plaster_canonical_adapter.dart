@@ -82,9 +82,10 @@ CanonicalCalculatorContractResult calculateCanonicalPlaster(
       ((plasterType['base_kg_per_m2_10mm'] as num).toDouble() / 10) * (substrate['multiplier'] as num).toDouble() * (evenness['multiplier'] as num).toDouble() * spec.materialRule<num>('reserve_factor').toDouble();
   final scenarios = <String, CanonicalScenarioResult>{};
 
+final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('plaster', accuracyMode);
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(netArea * thickness * consumptionKgPerM2Mm * multiplier, 6);
+    final exactNeed = roundValue(netArea * thickness * consumptionKgPerM2Mm * accuracyMult * multiplier, 6);
     final packagesCount = exactNeed > 0 ? (exactNeed / bagWeight).ceil() : 0;
     final purchaseQuantity = roundValue(packagesCount * bagWeight, 6);
     scenarios[scenarioName] = CanonicalScenarioResult(

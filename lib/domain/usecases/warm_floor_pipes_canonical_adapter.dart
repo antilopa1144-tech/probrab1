@@ -68,9 +68,10 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloorPipes(
   final basePrimary = totalPipe;
   final scenarios = <String, CanonicalScenarioResult>{};
 
+final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(basePrimary * multiplier, 6);
+    final exactNeed = roundValue(basePrimary * accuracyMult * multiplier, 6);
     final packageSize = spec.materialRule<num>('pipe_coil_m').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * packageSize, 6);

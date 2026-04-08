@@ -121,9 +121,10 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
   final baseExactNeed = area * thickness * effectiveConsumptionKgPerM2Mm;
   final scenarios = <String, CanonicalScenarioResult>{};
 
+final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('concrete', accuracyMode);
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(baseExactNeed * multiplier, 6);
+    final exactNeed = roundValue(baseExactNeed * accuracyMult * multiplier, 6);
     final bags = exactNeed > 0 ? (exactNeed / bagWeight).ceil() : 0;
     final purchaseQuantity = roundValue(bags * bagWeight, 6);
 

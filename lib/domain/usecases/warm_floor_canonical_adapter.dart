@@ -184,9 +184,10 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
           : 'warm-floor-pipe-m';
   final packageUnit = heatingType == 0 ? 'шт' : 'м';
 
+final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(basePrimary * multiplier, 6);
+    final exactNeed = roundValue(basePrimary * accuracyMult * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
     final purchaseQuantity = roundValue(packageCount.toDouble(), 6);
     scenarios[scenarioName] = CanonicalScenarioResult(

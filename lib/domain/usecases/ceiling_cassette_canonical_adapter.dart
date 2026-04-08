@@ -41,9 +41,10 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingCassette(
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
 
+final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(totalCass * multiplier, 6);
+    final exactNeed = roundValue(totalCass * accuracyMult * multiplier, 6);
     final packageSize = spec.packagingRule<num>('package_size').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * packageSize, 6);

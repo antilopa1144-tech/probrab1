@@ -31,9 +31,11 @@ void runCanonicalParitySuite({
   group(groupName, () {
     for (final fixtureCase in cases) {
       test(fixtureCase['id'] as String, () {
-        final inputs = (fixtureCase['inputs'] as Map<String, dynamic>).map(
+        final rawInputs = (fixtureCase['inputs'] as Map<String, dynamic>).map(
           (key, value) => MapEntry(key, (value as num).toDouble()),
         );
+        // Use basic accuracy mode for parity tests (matches web PARITY_ACCURACY_INPUTS)
+        final inputs = {...rawInputs, 'accuracyMode': 0.0};
         final expected = fixtureCase['expected'] as Map<String, dynamic>;
         final result = calculate(inputs);
         assertCase(result, expected, inputs);

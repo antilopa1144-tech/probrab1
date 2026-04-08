@@ -37,9 +37,10 @@ CanonicalCalculatorContractResult calculateCanonicalTileGrout(
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
 
+final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('grout', accuracyMode);
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(totalKg * multiplier, 6);
+    final exactNeed = roundValue(totalKg * accuracyMult * multiplier, 6);
     final packageCount = exactNeed > 0 ? (exactNeed / bagSize).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * bagSize, 6);
     final packageLabel = 'grout-bag-${bagSize.toInt()}kg';

@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import '../accuracy/accuracy_mode.dart';
+import '../accuracy/accuracy_service.dart';
 import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 
@@ -60,6 +62,26 @@ double _pickFactor(Map<String, double> range, String scenario) {
 
 /// Standard scenario names.
 const List<String> scenarioNames = ['MIN', 'REC', 'MAX'];
+
+// ── Accuracy Mode helpers ───────────────────────────────────────────────────
+
+/// Parse accuracy mode from inputs map. Defaults to [defaultAccuracyMode].
+AccuracyMode parseAccuracyMode(Map<String, double> inputs) {
+  final modeIndex = inputs['accuracyMode']?.round() ?? 1; // 0=basic, 1=realistic, 2=professional
+  return AccuracyMode.values[modeIndex.clamp(0, AccuracyMode.values.length - 1)];
+}
+
+/// Get primary multiplier for a material category and accuracy mode.
+/// Use before scenario factors for the main material.
+double accuracyPrimaryMultiplier(String materialCategory, AccuracyMode mode) {
+  return AccuracyService.getPrimaryMultiplier(materialCategory, mode);
+}
+
+/// Get accessories multiplier for a material category and accuracy mode.
+/// Use for consumables (crosses, tape, primer, etc.).
+double accuracyAccessoriesMultiplier(String materialCategory, AccuracyMode mode) {
+  return AccuracyService.getAccessoriesMultiplier(materialCategory, mode);
+}
 
 /// Resolve area from inputMode (0=by dims, 1=by area).
 Map<String, double> resolveArea(

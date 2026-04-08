@@ -89,9 +89,10 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
   const packageUnit = 'шт';
 
   final scenarios = <String, CanonicalScenarioResult>{};
+final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(basePrimary * multiplier, 6);
+    final exactNeed = roundValue(basePrimary * accuracyMult * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(

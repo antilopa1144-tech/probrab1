@@ -289,9 +289,10 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
   /* -- scenarios -- */
   final scenarios = <String, CanonicalScenarioResult>{};
 
+final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(primaryQuantity * multiplier, 6);
+    final exactNeed = roundValue(primaryQuantity * accuracyMult * multiplier, 6);
     final packages = exactNeed > 0 ? (exactNeed / 1.0).ceil() : 0;
     final purchaseQuantity = roundValue(packages * 1.0, 6);
 

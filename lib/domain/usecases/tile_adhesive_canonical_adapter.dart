@@ -40,9 +40,10 @@ CanonicalCalculatorContractResult calculateCanonicalTileAdhesive(
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
 
+final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('tile_adhesive', accuracyMode);
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(totalKg * multiplier, 6);
+    final exactNeed = roundValue(totalKg * accuracyMult * multiplier, 6);
     final packageCount = exactNeed > 0 ? (exactNeed / bagWeight).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * bagWeight, 6);
     final packageLabel = 'adhesive-bag-${bagWeight.toInt()}kg';

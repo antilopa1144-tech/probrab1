@@ -137,11 +137,13 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
   // Scenarios
   final volumeStepM3 = spec.packagingRule<num>('volume_step_m3', 0.1).toDouble();
   final unit = spec.packagingRule<String>('unit', 'м³');
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('concrete', accuracyMode);
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(totalVolume * multiplier, 6);
+    final exactNeed = roundValue(totalVolume * accuracyMult * multiplier, 6);
     final package = _pickPackage(exactNeed, volumeStepM3, unit);
 
     scenarios[scenarioName] = CanonicalScenarioResult(
