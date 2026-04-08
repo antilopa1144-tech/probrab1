@@ -21,8 +21,22 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
   final wallArea = length * height;
 
   // Block dimensions
-  final dimsMap = spec.materialRule<Map>('block_dims')['$blockType'] as Map? ?? spec.materialRule<Map>('block_dims')['0'] as Map? ?? {'lengthMm': 625, 'heightMm': 250};
-  final blockArea = (((dimsMap['lengthMm'] as num?)?.toDouble() ?? 625) / 1000) * (((dimsMap['heightMm'] as num?)?.toDouble() ?? 250) / 1000);
+  // block_dims values are [lengthMm, heightMm] arrays in spec
+  final blockDims = spec.materialRule<Map>('block_dims');
+  final dimEntry = blockDims['$blockType'] ?? blockDims['0'];
+  final double blockLengthMm;
+  final double blockHeightMm;
+  if (dimEntry is List && dimEntry.length >= 2) {
+    blockLengthMm = (dimEntry[0] as num).toDouble();
+    blockHeightMm = (dimEntry[1] as num).toDouble();
+  } else if (dimEntry is Map) {
+    blockLengthMm = (dimEntry['lengthMm'] as num?)?.toDouble() ?? 625;
+    blockHeightMm = (dimEntry['heightMm'] as num?)?.toDouble() ?? 250;
+  } else {
+    blockLengthMm = 625;
+    blockHeightMm = 250;
+  }
+  final blockArea = (blockLengthMm / 1000) * (blockHeightMm / 1000);
   final blocks = (wallArea / blockArea * spec.materialRule<num>('block_reserve').toDouble()).ceil();
 
   // Glue / gypsum

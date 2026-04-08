@@ -90,7 +90,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
 
   final screwLabel = materialType == 3
       ? 'Кляймеры'
-      : 'Саморезы ${(spec.materialRule<Map>('screw_sizes')['$materialType'] as num?)?.toDouble()}';
+      : 'Саморезы ${spec.materialRule<Map>('screw_sizes')['$materialType'] ?? ''}';
 
   // PER_KG conversion: 0=1000, 1=600, 2=250, 3=0 (klaimers stay in шт)
   const perKgMap = {0: 1000, 1: 600, 2: 250, 3: 0};

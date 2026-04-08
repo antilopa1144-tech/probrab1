@@ -67,9 +67,7 @@ typedef CalcFn = CanonicalCalculatorContractResult Function(Map<String, double>)
 
 // These adapters have spec_reader issues with nested material_rules Maps
 // and crash on empty/zero inputs. Tracked as known bugs.
-const _knownBrokenAdapters = {
-  'decor_stone', 'doors', 'fasteners', 'partitions', 'pvc_panels', 'ventilation',
-};
+const _knownBrokenAdapters = <String>{};
 
 final Map<String, CalcFn> _adapters = {
   'aerated_concrete': calculateCanonicalAeratedConcrete,

@@ -67,7 +67,13 @@ class SpecReader {
     if (T == String) return '' as T;
     if (T == bool) return false as T;
     if (T == List) return <dynamic>[] as T;
-    return 0.0 as T;
+    // Fallback for complex types
+    try {
+      if ('$T'.startsWith('Map')) return <String, dynamic>{} as T;
+      return 0.0 as T;
+    } catch (_) {
+      throw StateError('SpecReader._zeroDefault: unsupported type $T');
+    }
   }
 
   /// Get a typed list from `normative_formula`, falling back to root level.

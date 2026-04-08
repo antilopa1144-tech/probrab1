@@ -40,9 +40,21 @@ CanonicalCalculatorContractResult calculateCanonicalDoors(
   final withNalichnik = (normalized['withNalichnik'] ?? defaultFor(spec, 'withNalichnik', 1)).round().clamp(0, 1);
 
   // Door dimensions
-  final dimsMap = spec.materialRule<Map>('door_dims')['$doorType'] as Map? ?? {'w': 700, 'h': 2000};
-  final doorW = (dimsMap['w'] as num?)?.toDouble() ?? 700;
-  final doorH = (dimsMap['h'] as num?)?.toDouble() ?? 2000;
+  // door_dims values are [width, height] arrays in spec
+  final doorDims = spec.materialRule<Map>('door_dims');
+  final dimEntry = doorDims['$doorType'];
+  final double doorW;
+  final double doorH;
+  if (dimEntry is List && dimEntry.length >= 2) {
+    doorW = (dimEntry[0] as num).toDouble();
+    doorH = (dimEntry[1] as num).toDouble();
+  } else if (dimEntry is Map) {
+    doorW = (dimEntry['w'] as num?)?.toDouble() ?? 700;
+    doorH = (dimEntry['h'] as num?)?.toDouble() ?? 2000;
+  } else {
+    doorW = 700;
+    doorH = 2000;
+  }
   final perimM = 2 * (doorW + doorH) / 1000;
 
   // Foam
