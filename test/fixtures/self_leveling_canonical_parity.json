@@ -16,14 +16,14 @@
         "perimeter": 18,
         "warningsCount": 0,
         "materials": {
-          "bags": 14,
+          "bags": 15,
           "primerCans": 5.0,
           "tapeRolls": 1
         },
         "recScenario": {
           "packageSize": 25,
-          "exactNeed": 336,
-          "purchaseQuantity": 350
+          "exactNeed": 366.916032,
+          "purchaseQuantity": 375
         }
       }
     },
@@ -42,14 +42,14 @@
         "perimeter": 17.889,
         "warningsCount": 1,
         "materials": {
-          "bags": 42,
+          "bags": 45,
           "primerCans": 5.0,
           "tapeRolls": 1
         },
         "recScenario": {
           "packageSize": 25,
-          "exactNeed": 1029,
-          "purchaseQuantity": 1050
+          "exactNeed": 1123.680348,
+          "purchaseQuantity": 1125
         }
       }
     },
@@ -68,14 +68,14 @@
         "perimeter": 25.298,
         "warningsCount": 1,
         "materials": {
-          "bags": 31,
+          "bags": 34,
           "primerCans": 10.0,
           "tapeRolls": 2
         },
         "recScenario": {
           "packageSize": 20,
-          "exactNeed": 604.8,
-          "purchaseQuantity": 620
+          "exactNeed": 660.448858,
+          "purchaseQuantity": 680
         }
       }
     }
