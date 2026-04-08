@@ -1,7 +1,7 @@
 {
   "calculator_id": "tile-grout",
   "formula_version": "tile-grout-canonical-v1",
-  "generated_at": "2026-03-27T06:59:34.860Z",
+  "generated_at": "2026-04-08T06:09:15.666Z",
   "cases": [
     {
       "id": "defaults",
@@ -20,21 +20,22 @@
         "tileWidth": 300,
         "tileHeight": 300,
         "tileThickness": 8,
+        "groutDepth": 6,
         "jointWidth": 3,
         "groutType": 0,
         "bagSize": 2,
         "jointLenPerM2": 6.666667,
-        "jointVolPerM2": 0.16,
+        "jointVolPerM2": 0.12,
         "density": 1.6,
-        "kgPerM2": 0.256,
-        "totalKg": 5.632,
+        "kgPerM2": 0.192,
+        "totalKg": 4.224,
         "bags": 3,
-        "minExactNeed": 5.244518,
-        "recExactNeed": 5.96992,
-        "maxExactNeed": 7.761797,
-        "minPurchase": 6,
+        "minExactNeed": 3.933389,
+        "recExactNeed": 4.47744,
+        "maxExactNeed": 5.821348,
+        "minPurchase": 4,
         "recPurchase": 6,
-        "maxPurchase": 8
+        "maxPurchase": 6
       },
       "expected_materials_count": 1,
       "expected_material_names": [
@@ -44,16 +45,16 @@
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 5.244518,
-          "purchase_quantity": 6
+          "exact_need": 3.933389,
+          "purchase_quantity": 4
         },
         "REC": {
-          "exact_need": 5.96992,
+          "exact_need": 4.47744,
           "purchase_quantity": 6
         },
         "MAX": {
-          "exact_need": 7.761797,
-          "purchase_quantity": 8
+          "exact_need": 5.821348,
+          "purchase_quantity": 6
         }
       }
     }

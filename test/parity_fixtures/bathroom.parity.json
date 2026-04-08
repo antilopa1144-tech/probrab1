@@ -1,7 +1,7 @@
 {
   "calculator_id": "bathroom",
   "formula_version": "bathroom-canonical-v1",
-  "generated_at": "2026-03-27T06:59:34.664Z",
+  "generated_at": "2026-04-08T06:09:15.334Z",
   "cases": [
     {
       "id": "defaults",

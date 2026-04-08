@@ -1,7 +1,7 @@
 {
   "calculator_id": "parquet",
   "formula_version": "parquet-canonical-v1",
-  "generated_at": "2026-03-27T06:59:34.786Z",
+  "generated_at": "2026-04-08T06:09:15.573Z",
   "cases": [
     {
       "id": "defaults",

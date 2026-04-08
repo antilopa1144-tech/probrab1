@@ -1,7 +1,7 @@
 {
   "calculator_id": "paint",
   "formula_version": "paint-canonical-v1",
-  "generated_at": "2026-03-27T06:59:34.777Z",
+  "generated_at": "2026-04-08T06:09:15.565Z",
   "cases": [
     {
       "id": "defaults",
