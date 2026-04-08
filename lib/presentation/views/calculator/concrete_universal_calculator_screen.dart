@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_concrete_universal.dart';
+import '../../mixins/accuracy_mode_mixin.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -36,7 +37,7 @@ class ConcreteUniversalCalculatorScreen extends StatefulWidget {
 }
 
 class _ConcreteUniversalCalculatorScreenState
-    extends State<ConcreteUniversalCalculatorScreen> with ExportableMixin {
+    extends State<ConcreteUniversalCalculatorScreen> with ExportableMixin, AccuracyModeMixin {
   bool _isDark = false;
   final CalculateConcreteUniversal _calculator = CalculateConcreteUniversal();
 
@@ -91,6 +92,7 @@ class _ConcreteUniversalCalculatorScreenState
       'reserve': _reserve,
       'concreteGrade': _toConcreteGradeId(_grade),
       'mixerVolume': _mixerVolume,
+      ...accuracyModeInput,
     };
   }
 
@@ -237,6 +239,10 @@ class _ConcreteUniversalCalculatorScreenState
         ],
       ),
       children: [
+        // Режим точности расчёта
+        buildAccuracySelector(onChanged: _update),
+        const SizedBox(height: 16),
+
         // Карточка выбора режима ввода
         _buildInputModeCard(accentColor),
         const SizedBox(height: 16),
