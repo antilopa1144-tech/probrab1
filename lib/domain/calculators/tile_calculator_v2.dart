@@ -21,7 +21,7 @@ final tileCalculatorV2 = CalculatorDefinitionV2(
   accentColor: kCalculatorAccentColor,
   complexity: 2,
   popularity: 95,
-  tags: ['плитка', 'полы', 'кафель', 'tile', 'flooring', 'ceramic'],
+  tags: ['плитка', 'полы', 'стены', 'кафель', 'tile', 'flooring', 'walls', 'ceramic'],
 
   // Поля ввода
   fields: [

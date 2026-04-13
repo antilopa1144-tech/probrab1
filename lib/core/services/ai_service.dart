@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'remote_config_service.dart';
 import 'tracker_service_web.dart'
     if (dart.library.io) 'tracker_service.dart';
 
@@ -84,7 +85,18 @@ class AiService {
     }
   }
 
-  static const String _modelName = 'google/gemini-3-flash-preview';
+  /// Модель по умолчанию. Может быть переопределена через Remote Config
+  /// ключ 'ai_model_name'.
+  static const String _defaultModelName = 'google/gemini-3-flash-preview';
+
+  static String get _modelName {
+    try {
+      final rc = RemoteConfigService.getStringSync('ai_model_name');
+      return rc.isNotEmpty ? rc : _defaultModelName;
+    } catch (_) {
+      return _defaultModelName;
+    }
+  }
 
   /// OpenRouter API endpoint
   static const String _apiUrl =

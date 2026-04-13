@@ -50,7 +50,7 @@ class WebProjectRepository implements IProjectRepository {
       ..name = json['name'] as String
       ..description = json['description'] as String?
       ..address = json['address'] as String?
-      ..status = ProjectStatus.values[json['status'] as int]
+      ..status = ProjectStatus.values[(json['status'] as int).clamp(0, ProjectStatus.values.length - 1)]
       ..isFavorite = json['isFavorite'] as bool? ?? false
       ..createdAt = DateTime.parse(json['createdAt'] as String)
       ..updatedAt = DateTime.parse(json['updatedAt'] as String);

@@ -61,7 +61,7 @@ class CalculateWallpaper extends BaseCalculator {
     final contract = calculateCanonical(inputs);
     final usefulArea = contract.totals['netArea'] ?? 0;
     if (usefulArea <= 0) {
-      return createResult(values: {'error': 1.0});
+      throw CalculationException.invalidInput('wallpaper', 'Площадь должна быть > 0');
     }
 
     final wallpaperPrice = findPrice(priceList, [

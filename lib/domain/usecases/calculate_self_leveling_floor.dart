@@ -52,7 +52,7 @@ class CalculateSelfLevelingFloor extends BaseCalculator {
     final contract = calculateCanonical(inputs);
     final area = contract.totals['area'] ?? 0;
     if (area <= 0) {
-      return createResult(values: {'error': 1.0});
+      throw CalculationException.invalidInput('self_leveling_floor', 'Площадь должна быть > 0');
     }
 
     final mixNeededKg = contract.totals['totalKg'] ?? 0;

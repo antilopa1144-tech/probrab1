@@ -135,7 +135,7 @@ class CalculateTile extends BaseCalculator {
     final contract = calculateCanonical(inputs);
     final area = contract.totals['area'] ?? 0;
     if (area <= 0) {
-      return createResult(values: {'error': 1.0});
+      throw CalculationException.invalidInput('tile', 'Площадь должна быть > 0');
     }
 
     final tilePrice = findPrice(priceList, [

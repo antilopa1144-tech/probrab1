@@ -233,10 +233,10 @@ int _resolveCoats(SpecReader spec, Map<String, double> inputs) {
 
 List<double> _resolvePackageSizes(SpecReader spec, Map<String, double> inputs) {
   final requested = (inputs['canSize'] ?? defaultFor(spec, 'canSize', 0)).toDouble();
-  if (requested > 0 && (spec.packagingRule<List>('allowed_package_sizes') ?? []).contains(requested)) {
+  if (requested > 0 && spec.packagingRule<List>('allowed_package_sizes').contains(requested)) {
     return [requested];
   }
-  return (spec.packagingRule<List>('optimal_package_sizes') ?? [5, 10]).cast<num>().map((e) => e.toDouble()).toList();
+  return spec.packagingRule<List>('optimal_package_sizes').cast<num>().map((e) => e.toDouble()).toList();
 }
 
 Map<String, dynamic> _pickPackage(double exactNeed, List<double> packageSizes, String unit) {
@@ -343,13 +343,13 @@ CanonicalCalculatorContractResult calculateCanonicalPaint(
   if (area <= 0) {
     warnings.add('Площадь окраски должна быть больше нуля');
   }
-  if ((spec.warningRule<List>('primer_required_surface_ids') ?? []).contains((surface['id'] as num).toInt())) {
+  if (spec.warningRule<List>('primer_required_surface_ids').contains((surface['id'] as num).toInt())) {
     warnings.add('Для выбранной поверхности рекомендуется предварительное грунтование');
   }
   if (coats <= spec.warningRule<num>('one_coat_warning_threshold').toInt()) {
     warnings.add('Один слой редко даёт равномерное укрытие. Обычно рекомендуют 2 слоя');
   }
-  if ((spec.warningRule<List>('rough_surface_warning_ids') ?? []).contains((surface['id'] as num).toInt())) {
+  if (spec.warningRule<List>('rough_surface_warning_ids').contains((surface['id'] as num).toInt())) {
     warnings.add('Для рельефных поверхностей и фасадной фактуры расход краски может быть заметно выше среднего');
   }
 

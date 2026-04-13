@@ -156,10 +156,10 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
   if (geometry['area']! < spec.warningRule<num>('small_area_warning_threshold_m2').toDouble()) {
     warnings.add('Маленькая площадь — отходы будут выше расчётного процента');
   }
-  if ((spec.warningRule<List>('diagonal_warning_profile_ids') ?? []).contains((layout['id'] as num).toInt())) {
+  if (spec.warningRule<List>('diagonal_warning_profile_ids').contains((layout['id'] as num).toInt())) {
     warnings.add('Диагональная укладка требует точной раскладки и увеличивает отходы');
   }
-  if ((spec.warningRule<List>('herringbone_warning_profile_ids') ?? []).contains((layout['id'] as num).toInt())) {
+  if (spec.warningRule<List>('herringbone_warning_profile_ids').contains((layout['id'] as num).toInt())) {
     warnings.add('Укладка ёлочкой требует профессионального инструмента и опыта');
   }
 

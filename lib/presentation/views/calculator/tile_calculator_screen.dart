@@ -11,6 +11,17 @@ import '../../widgets/calculator/calculator_widgets.dart';
 
 enum InputMode { byArea, byDimensions }
 
+/// Тип поверхности для укладки плитки
+enum SurfaceType {
+  floor('tile.surface.floor', Icons.grid_on),
+  walls('tile.surface.walls', Icons.grid_view),
+  floorAndWalls('tile.surface.floor_and_walls', Icons.dashboard);
+
+  final String nameKey;
+  final IconData icon;
+  const SurfaceType(this.nameKey, this.icon);
+}
+
 enum TileMaterial {
   ceramic(
     'tile.material.ceramic',
@@ -222,6 +233,9 @@ class _TileConstants {
 
 class _TileResult {
   final double area;
+  final double floorArea; // площадь пола
+  final double wallArea; // площадь стен
+  final SurfaceType surfaceType;
   final TileMaterial material;
   final LayoutPattern layout;
   final RoomType roomType;
@@ -235,7 +249,9 @@ class _TileResult {
   final int boxesNeeded;
 
   // Клей
-  final double glueWeight; // кг
+  final double glueWeight; // кг (базовый расчёт)
+  final double wallGlueExtra; // кг (доп. клей на стены: +20% для крупноформата)
+  final double totalGlueWeight; // кг (итого)
   final int glueBags; // мешков по 25 кг
 
   // Затирка
@@ -260,6 +276,9 @@ class _TileResult {
 
   const _TileResult({
     required this.area,
+    this.floorArea = 0,
+    this.wallArea = 0,
+    required this.surfaceType,
     required this.material,
     required this.layout,
     required this.roomType,
@@ -270,6 +289,8 @@ class _TileResult {
     required this.tilesArea,
     required this.boxesNeeded,
     required this.glueWeight,
+    this.wallGlueExtra = 0,
+    this.totalGlueWeight = 0,
     required this.glueBags,
     required this.groutWeight,
     required this.primerLiters,
@@ -308,6 +329,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
   String get exportSubject => _loc.translate('tile.export.subject');
   bool _isDark = false;
   InputMode _inputMode = InputMode.byArea;
+  SurfaceType _surfaceType = SurfaceType.floor;
   double _area = 20.0;
   double _length = 5.0;
   double _width = 4.0;
@@ -321,6 +343,18 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
   double _tileWidth = 30.0; // см
   double _tileHeight = 30.0; // см
   double _jointWidth = 3.0; // мм
+
+  // Параметры стен
+  double _wallHeight = 2.7; // м (высота потолка)
+  double _tileUpToHeight = 2.7; // м (высота облицовки — может быть меньше потолка)
+  bool _tileFullHeight = true; // облицовка до потолка
+  double _wallPerimeter = 14.0; // м (периметр стен)
+  int _doorCount = 1;
+  int _windowCount = 1;
+  double _doorWidth = 0.9; // м
+  double _doorHeight = 2.1; // м
+  double _windowWidth = 1.2; // м
+  double _windowHeight = 1.4; // м
 
   // Опции
   bool _useSVP = false;
@@ -397,12 +431,69 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     if (initial['useSVP'] != null) _useSVP = initial['useSVP']! > 0;
     if (initial['useWaterproofing'] != null) _useWaterproofing = initial['useWaterproofing']! > 0;
     if (initial['useUnderlay'] != null) _useUnderlay = initial['useUnderlay']! > 0;
+
+    // Параметры стен
+    if (initial['surfaceType'] != null) {
+      final st = initial['surfaceType']!.toInt();
+      if (st >= 0 && st < SurfaceType.values.length) {
+        _surfaceType = SurfaceType.values[st];
+      }
+    }
+    if (initial['wallHeight'] != null) _wallHeight = initial['wallHeight']!.clamp(1.0, 6.0);
+    if (initial['tileUpToHeight'] != null) _tileUpToHeight = initial['tileUpToHeight']!.clamp(0.5, 6.0);
+    if (initial['tileFullHeight'] != null) _tileFullHeight = initial['tileFullHeight']! > 0;
+    if (initial['wallPerimeter'] != null) _wallPerimeter = initial['wallPerimeter']!.clamp(2.0, 100.0);
+    if (initial['doorCount'] != null) _doorCount = initial['doorCount']!.toInt().clamp(0, 10);
+    if (initial['windowCount'] != null) _windowCount = initial['windowCount']!.toInt().clamp(0, 10);
+    if (initial['doorWidth'] != null) _doorWidth = initial['doorWidth']!.clamp(0.5, 2.0);
+    if (initial['doorHeight'] != null) _doorHeight = initial['doorHeight']!.clamp(1.5, 2.5);
+    if (initial['windowWidth'] != null) _windowWidth = initial['windowWidth']!.clamp(0.3, 3.0);
+    if (initial['windowHeight'] != null) _windowHeight = initial['windowHeight']!.clamp(0.3, 2.5);
+  }
+
+  /// Высота облицовки: если не до потолка — используем _tileUpToHeight
+  double get _effectiveTileHeight => _tileFullHeight ? _wallHeight : _tileUpToHeight;
+
+  /// Площадь стен = периметр × высота облицовки − вычеты (двери + окна)
+  double _calculateWallArea() {
+    final tileH = _effectiveTileHeight;
+    final grossArea = _wallPerimeter * tileH;
+    // Вычеты: дверь вычитается полностью, если её высота <= высоте облицовки
+    final effectiveDoorH = _doorHeight.clamp(0.0, tileH);
+    final doorDeduction = _doorCount * _doorWidth * effectiveDoorH;
+    // Окно вычитается, если подоконник попадает в зону облицовки
+    final effectiveWindowH = _windowHeight.clamp(0.0, tileH);
+    final windowDeduction = _windowCount * _windowWidth * effectiveWindowH;
+    final netArea = grossArea - doorDeduction - windowDeduction;
+    return netArea > 0 ? netArea : 0;
+  }
+
+  /// Площадь пола по текущему режиму ввода
+  double _calculateFloorArea() {
+    if (_inputMode == InputMode.byDimensions) {
+      return _length * _width;
+    }
+    return _area;
+  }
+
+  /// Итоговая площадь с учётом выбранного типа поверхности
+  double _calculateTotalArea() {
+    switch (_surfaceType) {
+      case SurfaceType.floor:
+        return _calculateFloorArea();
+      case SurfaceType.walls:
+        return _calculateWallArea();
+      case SurfaceType.floorAndWalls:
+        return _calculateFloorArea() + _calculateWallArea();
+    }
   }
 
   Map<String, double> _buildCalculationInputs() {
+    final totalArea = _calculateTotalArea();
     return {
-      'inputMode': _inputMode == InputMode.byDimensions ? 0 : 1,
-      'area': _area,
+      // Всегда передаём как area (inputMode=1), т.к. мы сами вычислили площадь
+      'inputMode': 1,
+      'area': totalArea,
       'length': _length,
       'width': _width,
       'tileWidthCm': _tileWidth,
@@ -425,19 +516,52 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     final calculatedArea = totals['area'] ?? 0;
     final tileWidthCm = totals['tileWidthCm'] ?? _tileWidth;
     final tileHeightCm = totals['tileHeightCm'] ?? _tileHeight;
+    final avgTileSizeCm = (tileWidthCm + tileHeightCm) / 2;
     final tilesNeeded = (totals['tilesNeeded'] ?? 0).round();
     final tilesArea = totals['tilesArea'] ?? 0;
-    final glueWeight = totals['glueNeededKg'] ?? 0;
+    final baseGlueWeight = totals['glueNeededKg'] ?? 0;
     final groutWeight = totals['groutNeededKg'] ?? 0;
     final primerLiters = totals['primerNeededL'] ?? 0;
     final crossesNeeded = (totals['crossesNeeded'] ?? 0).round();
     final svpCount = (totals['svpCount'] ?? 0).round();
-    final waterproofingWeight = totals['waterproofingWeight'] ?? 0;
-    final underlayArea = totals['underlayArea'] ?? 0;
     final effectiveWaterproofing = (totals['effectiveWaterproofing'] ?? 0) > 0;
+
+    final floorArea = _surfaceType != SurfaceType.walls ? _calculateFloorArea() : 0.0;
+    final wallArea = _surfaceType != SurfaceType.floor ? _calculateWallArea() : 0.0;
+
+    // --- Корректировка клея для стен ---
+    // На стены расход клея выше: +20% базовый (гравитация, двойное нанесение)
+    // Для крупноформата >40 см — +30% (обязательно двойное нанесение на стену И плитку)
+    double wallGlueExtra = 0;
+    if (wallArea > 0 && calculatedArea > 0) {
+      final wallFraction = wallArea / calculatedArea;
+      final wallGlueBase = baseGlueWeight * wallFraction;
+      final extraPercent = avgTileSizeCm > 40 ? 0.30 : 0.20;
+      wallGlueExtra = wallGlueBase * extraPercent;
+    }
+    final totalGlue = baseGlueWeight + wallGlueExtra;
+    final glueBags = totalGlue > 0
+        ? (totalGlue / _constants.getGlueBagSize()).ceil()
+        : 0;
+
+    // --- Корректировка гидроизоляции ---
+    // Пол: 2 слоя × 1.5 кг/м² × запас 10%
+    // Стены: 1 слой × 1.5 кг/м² × запас 10% (выше уровня ванной — необязательно)
+    double waterproofingWeight = 0;
+    if (effectiveWaterproofing) {
+      final floorWp = floorArea * 1.5 * 2 * 1.1; // 2 слоя
+      final wallWp = wallArea * 1.5 * 1 * 1.1; // 1 слой
+      waterproofingWeight = floorWp + wallWp;
+    }
+
+    // --- Подложка только для пола ---
+    final underlayArea = _useUnderlay ? floorArea * 1.1 : 0.0;
 
     return _TileResult(
       area: calculatedArea,
+      floorArea: floorArea,
+      wallArea: wallArea,
+      surfaceType: _surfaceType,
       material: _material,
       layout: _layout,
       roomType: _roomType,
@@ -447,8 +571,10 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       tilesNeeded: tilesNeeded,
       tilesArea: tilesArea,
       boxesNeeded: (totals['boxesNeeded'] ?? 0).round(),
-      glueWeight: glueWeight,
-      glueBags: (totals['glueBags'] ?? 0).round(),
+      glueWeight: baseGlueWeight,
+      wallGlueExtra: wallGlueExtra,
+      totalGlueWeight: totalGlue,
+      glueBags: glueBags,
       groutWeight: groutWeight,
       primerLiters: primerLiters,
       crossesNeeded: crossesNeeded,
@@ -456,7 +582,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       svpCount: svpCount > 0 ? svpCount : null,
       useWaterproofing: effectiveWaterproofing,
       waterproofingWeight: waterproofingWeight > 0 ? waterproofingWeight : null,
-      useUnderlay: _useUnderlay,
+      useUnderlay: _useUnderlay && floorArea > 0,
       underlayArea: underlayArea > 0 ? underlayArea : null,
       wastePercent: totals['wastePercent'] ?? (_constants.getLayoutMargin(_layout) + _roomComplexity.bonusPercent).toDouble(),
     );
@@ -471,6 +597,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
   Map<String, dynamic>? getCurrentInputs() {
     return {
       'inputMode': (_inputMode == InputMode.byArea ? 0 : 1).toDouble(),
+      'surfaceType': _surfaceType.index.toDouble(),
       'area': _area,
       'length': _length,
       'width': _width,
@@ -483,6 +610,16 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       'useSVP': _useSVP ? 1.0 : 0.0,
       'useWaterproofing': _useWaterproofing ? 1.0 : 0.0,
       'useUnderlay': _useUnderlay ? 1.0 : 0.0,
+      'wallHeight': _wallHeight,
+      'tileUpToHeight': _tileUpToHeight,
+      'tileFullHeight': _tileFullHeight ? 1.0 : 0.0,
+      'wallPerimeter': _wallPerimeter,
+      'doorCount': _doorCount.toDouble(),
+      'windowCount': _windowCount.toDouble(),
+      'doorWidth': _doorWidth,
+      'doorHeight': _doorHeight,
+      'windowWidth': _windowWidth,
+      'windowHeight': _windowHeight,
     };
   }
 
@@ -493,7 +630,12 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     buffer.writeln('═' * 40);
     buffer.writeln();
 
+    buffer.writeln('${_loc.translate('tile.export.surface')}: ${_loc.translate(_result.surfaceType.nameKey)}');
     buffer.writeln('${_loc.translate('tile.export.area')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+    if (_result.surfaceType == SurfaceType.floorAndWalls) {
+      buffer.writeln('  ${_loc.translate('tile.export.floor_area')}: ${_result.floorArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+      buffer.writeln('  ${_loc.translate('tile.export.wall_area')}: ${_result.wallArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+    }
     buffer.writeln('${_loc.translate('tile.export.material')}: ${_loc.translate(_result.material.nameKey)}');
     buffer.writeln('${_loc.translate('tile.export.tile_size')}: ${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} ${_loc.translate('common.cm')}');
     buffer.writeln('${_loc.translate('tile.export.layout')}: ${_loc.translate(_result.layout.nameKey)} (${_loc.translate('tile.export.reserve')} ${_constants.getLayoutMargin(_result.layout)}${_loc.translate('common.percent')})');
@@ -538,11 +680,14 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       title: _loc.translate('tile.title'),
       accentColor: accentColor,
       actions: exportActions,
+      mikhalychDataCollector: () => getCurrentInputs() ?? {},
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,
         results: [
           ResultItem(
-            label: _loc.translate('tile.header.area'),
+            label: _result.surfaceType == SurfaceType.floorAndWalls
+                ? _loc.translate('tile.header.total_area')
+                : _loc.translate('tile.header.area'),
             value: '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
@@ -559,12 +704,24 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
         ],
       ),
       children: [
-        _buildInputModeSelector(),
+        _buildSurfaceTypeSelector(),
         const SizedBox(height: 16),
-        _inputMode == InputMode.byArea
-            ? _buildAreaCard()
-            : _buildDimensionsCard(),
-        const SizedBox(height: 16),
+        if (_surfaceType != SurfaceType.walls) ...[
+          _buildInputModeSelector(),
+          const SizedBox(height: 16),
+          _inputMode == InputMode.byArea
+              ? _buildAreaCard()
+              : _buildDimensionsCard(),
+          const SizedBox(height: 16),
+        ],
+        if (_surfaceType != SurfaceType.floor) ...[
+          _buildWallInputCard(),
+          const SizedBox(height: 16),
+        ],
+        if (_surfaceType != SurfaceType.floor)
+          _buildTotalAreaInfo(),
+        if (_surfaceType != SurfaceType.floor)
+          const SizedBox(height: 16),
         _buildRoomTypeSelector(),
         const SizedBox(height: 16),
         _buildRoomComplexitySelector(),
@@ -587,6 +744,423 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
         const SizedBox(height: 24),
         _buildTipsCard(),
         const SizedBox(height: 20),
+      ],
+    );
+  }
+
+  Widget _buildSurfaceTypeSelector() {
+    const accentColor = CalculatorColors.interior;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('tile.surface.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...SurfaceType.values.asMap().entries.map((entry) {
+            final index = entry.key;
+            final type = entry.value;
+            final isSelected = _surfaceType == type;
+
+            return Padding(
+              padding: EdgeInsets.only(bottom: index < SurfaceType.values.length - 1 ? 8.0 : 0),
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _surfaceType = type;
+                    _update();
+                  });
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? accentColor.withValues(alpha: 0.1)
+                        : Colors.transparent,
+                    border: Border.all(
+                      color: isSelected
+                          ? accentColor
+                          : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        type.icon,
+                        color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
+                        size: 28,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          _loc.translate(type.nameKey),
+                          style: CalculatorDesignSystem.titleSmall.copyWith(
+                            color: isSelected
+                                ? accentColor
+                                : CalculatorColors.getTextPrimary(_isDark),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      if (isSelected)
+                        const Icon(Icons.check_circle, color: accentColor, size: 24),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWallInputCard() {
+    const accentColor = CalculatorColors.interior;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('tile.walls.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Высота потолка
+          CalculatorSliderField(
+            label: _loc.translate('tile.walls.height'),
+            value: _wallHeight,
+            min: 1.0,
+            max: 5.0,
+            divisions: 40,
+            suffix: _loc.translate('common.meters'),
+            accentColor: accentColor,
+            onChanged: (v) {
+              setState(() {
+                _wallHeight = v;
+                if (_tileFullHeight) _tileUpToHeight = v;
+                _update();
+              });
+            },
+            decimalPlaces: 1,
+          ),
+          const SizedBox(height: 12),
+
+          // Высота облицовки
+          _buildToggle(
+            title: _loc.translate('tile.walls.full_height'),
+            subtitle: _loc.translate('tile.walls.full_height_hint'),
+            value: _tileFullHeight,
+            onChanged: (v) {
+              setState(() {
+                _tileFullHeight = v;
+                if (v) _tileUpToHeight = _wallHeight;
+                _update();
+              });
+            },
+            accentColor: accentColor,
+          ),
+          if (!_tileFullHeight) ...[
+            const SizedBox(height: 12),
+            CalculatorSliderField(
+              label: _loc.translate('tile.walls.tile_height'),
+              value: _tileUpToHeight,
+              min: 0.5,
+              max: _wallHeight,
+              divisions: ((_wallHeight - 0.5) * 10).toInt().clamp(1, 100),
+              suffix: _loc.translate('common.meters'),
+              accentColor: accentColor,
+              onChanged: (v) {
+                setState(() {
+                  _tileUpToHeight = v;
+                  _update();
+                });
+              },
+              decimalPlaces: 1,
+            ),
+          ],
+          const SizedBox(height: 16),
+
+          // Периметр стен
+          CalculatorSliderField(
+            label: _loc.translate('tile.walls.perimeter'),
+            value: _wallPerimeter,
+            min: 2.0,
+            max: 60.0,
+            suffix: _loc.translate('common.meters'),
+            accentColor: accentColor,
+            onChanged: (v) {
+              setState(() {
+                _wallPerimeter = v;
+                _update();
+              });
+            },
+            decimalPlaces: 1,
+          ),
+          const SizedBox(height: 16),
+
+          // Вычеты — двери
+          Text(
+            _loc.translate('tile.walls.deductions'),
+            style: CalculatorDesignSystem.titleSmall.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _loc.translate('tile.walls.deductions_hint'),
+            style: CalculatorDesignSystem.bodySmall.copyWith(
+              color: CalculatorColors.getTextSecondary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // --- Двери ---
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  _loc.translate('tile.walls.doors'),
+                  style: CalculatorDesignSystem.bodyMedium.copyWith(
+                    color: CalculatorColors.getTextPrimary(_isDark),
+                  ),
+                ),
+              ),
+              _buildCounterButton(
+                value: _doorCount,
+                onDecrement: () {
+                  if (_doorCount > 0) setState(() { _doorCount--; _update(); });
+                },
+                onIncrement: () {
+                  if (_doorCount < 10) setState(() { _doorCount++; _update(); });
+                },
+                accentColor: accentColor,
+              ),
+            ],
+          ),
+          if (_doorCount > 0) ...[
+            const SizedBox(height: 8),
+            CalculatorSliderField(
+              label: _loc.translate('tile.walls.door_width'),
+              value: _doorWidth,
+              min: 0.5,
+              max: 2.0,
+              divisions: 15,
+              suffix: _loc.translate('common.meters'),
+              accentColor: accentColor,
+              onChanged: (v) {
+                setState(() { _doorWidth = v; _update(); });
+              },
+              decimalPlaces: 1,
+            ),
+            const SizedBox(height: 4),
+            CalculatorSliderField(
+              label: _loc.translate('tile.walls.door_height'),
+              value: _doorHeight,
+              min: 1.5,
+              max: 2.5,
+              divisions: 10,
+              suffix: _loc.translate('common.meters'),
+              accentColor: accentColor,
+              onChanged: (v) {
+                setState(() { _doorHeight = v; _update(); });
+              },
+              decimalPlaces: 1,
+            ),
+          ],
+          const SizedBox(height: 12),
+
+          // --- Окна ---
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  _loc.translate('tile.walls.windows'),
+                  style: CalculatorDesignSystem.bodyMedium.copyWith(
+                    color: CalculatorColors.getTextPrimary(_isDark),
+                  ),
+                ),
+              ),
+              _buildCounterButton(
+                value: _windowCount,
+                onDecrement: () {
+                  if (_windowCount > 0) setState(() { _windowCount--; _update(); });
+                },
+                onIncrement: () {
+                  if (_windowCount < 10) setState(() { _windowCount++; _update(); });
+                },
+                accentColor: accentColor,
+              ),
+            ],
+          ),
+          if (_windowCount > 0) ...[
+            const SizedBox(height: 8),
+            CalculatorSliderField(
+              label: _loc.translate('tile.walls.window_width'),
+              value: _windowWidth,
+              min: 0.3,
+              max: 3.0,
+              divisions: 27,
+              suffix: _loc.translate('common.meters'),
+              accentColor: accentColor,
+              onChanged: (v) {
+                setState(() { _windowWidth = v; _update(); });
+              },
+              decimalPlaces: 1,
+            ),
+            const SizedBox(height: 4),
+            CalculatorSliderField(
+              label: _loc.translate('tile.walls.window_height'),
+              value: _windowHeight,
+              min: 0.3,
+              max: 2.5,
+              divisions: 22,
+              suffix: _loc.translate('common.meters'),
+              accentColor: accentColor,
+              onChanged: (v) {
+                setState(() { _windowHeight = v; _update(); });
+              },
+              decimalPlaces: 1,
+            ),
+          ],
+
+          // Показать рассчитанную площадь стен
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _loc.translate('tile.walls.net_area'),
+                    style: CalculatorDesignSystem.bodyMedium.copyWith(
+                      color: CalculatorColors.getTextSecondary(_isDark),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${_calculateWallArea().toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+                  style: CalculatorDesignSystem.headlineMedium.copyWith(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCounterButton({
+    required int value,
+    required VoidCallback onDecrement,
+    required VoidCallback onIncrement,
+    required Color accentColor,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          onPressed: onDecrement,
+          icon: const Icon(Icons.remove_circle_outline),
+          color: accentColor,
+          iconSize: 28,
+        ),
+        SizedBox(
+          width: 32,
+          child: Text(
+            '$value',
+            textAlign: TextAlign.center,
+            style: CalculatorDesignSystem.headlineMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        IconButton(
+          onPressed: onIncrement,
+          icon: const Icon(Icons.add_circle_outline),
+          color: accentColor,
+          iconSize: 28,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTotalAreaInfo() {
+    if (_surfaceType != SurfaceType.floorAndWalls) return const SizedBox.shrink();
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('tile.total_area.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+          _buildAreaRow(
+            label: _loc.translate('tile.total_area.floor'),
+            value: _calculateFloorArea(),
+          ),
+          const SizedBox(height: 4),
+          _buildAreaRow(
+            label: _loc.translate('tile.total_area.walls'),
+            value: _calculateWallArea(),
+          ),
+          const Divider(height: 16),
+          _buildAreaRow(
+            label: _loc.translate('tile.total_area.total'),
+            value: _calculateTotalArea(),
+            isBold: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAreaRow({
+    required String label,
+    required double value,
+    bool isBold = false,
+  }) {
+    const accentColor = CalculatorColors.interior;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: CalculatorDesignSystem.bodyMedium.copyWith(
+            color: CalculatorColors.getTextSecondary(_isDark),
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        Text(
+          '${value.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          style: CalculatorDesignSystem.bodyMedium.copyWith(
+            color: isBold ? accentColor : CalculatorColors.getTextPrimary(_isDark),
+            fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
+          ),
+        ),
       ],
     );
   }
@@ -1334,7 +1908,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       MaterialItem(
         name: _loc.translate('tile.materials.glue'),
         value: '${_result.glueBags} ${_loc.translate('tile.materials.glue_bags')}',
-        subtitle: _loc.translate('tile.materials.glue_per_bag').replaceFirst('{weight}', _result.glueWeight.toStringAsFixed(0)),
+        subtitle: _result.wallGlueExtra > 0
+            ? '${_result.totalGlueWeight.toStringAsFixed(0)} ${_loc.translate('common.kg')} (${_loc.translate('tile.materials.glue_wall_extra')})'
+            : _loc.translate('tile.materials.glue_per_bag').replaceFirst('{weight}', _result.totalGlueWeight.toStringAsFixed(0)),
         icon: Icons.shopping_bag,
       ),
       MaterialItem(
@@ -1364,10 +1940,15 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     }
 
     if (_result.useWaterproofing && _result.waterproofingWeight != null) {
+      final wpSubtitle = _result.surfaceType == SurfaceType.floor
+          ? _loc.translate('tile.materials.waterproofing_layers')
+          : _result.surfaceType == SurfaceType.walls
+              ? _loc.translate('tile.materials.waterproofing_walls')
+              : _loc.translate('tile.materials.waterproofing_mixed');
       items.add(MaterialItem(
         name: _loc.translate('tile.materials.waterproofing'),
         value: '${_result.waterproofingWeight!.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
-        subtitle: _loc.translate('tile.materials.waterproofing_layers'),
+        subtitle: wpSubtitle,
         icon: Icons.water,
       ));
     }

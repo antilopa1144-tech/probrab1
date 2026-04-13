@@ -240,7 +240,7 @@ CanonicalCalculatorContractResult calculateCanonicalPutty(
     ),
   );
 
-  if ((spec.materialRule<List>('sandpaper_enabled_for_putty_types') ?? []).contains(puttyType)) {
+  if (spec.materialRule<List>('sandpaper_enabled_for_putty_types').contains(puttyType)) {
     final sandpaperSheets = (workArea / spec.materialRule<num>('sandpaper_m2_per_sheet').toDouble()).ceil();
     final purchaseQty = (sandpaperSheets * spec.materialRule<num>('sandpaper_reserve_factor').toDouble()).ceil();
     materials.add(

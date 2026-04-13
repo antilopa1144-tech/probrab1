@@ -154,7 +154,7 @@ class CalculatePaintUniversal extends BaseCalculator {
     final double totalArea = usefulWallArea + usefulCeilingArea;
 
     if (totalArea <= 0) {
-      return createResult(values: {'error': 1.0});
+      throw CalculationException.invalidInput('paint_universal', 'Площадь должна быть > 0');
     }
 
     // Расчёт краски

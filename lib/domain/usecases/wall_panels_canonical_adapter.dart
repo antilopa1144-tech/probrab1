@@ -125,7 +125,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   if (area > spec.warningRule<num>('large_area_threshold_m2').toDouble()) {
     warnings.add('Большая площадь — рассмотрите оптовую закупку панелей');
   }
-  if ((spec.warningRule<List>('flat_surface_warning_panel_types') ?? []).contains(panelType) && mountMethod == 0) {
+  if (spec.warningRule<List>('flat_surface_warning_panel_types').contains(panelType) && mountMethod == 0) {
     warnings.add('3D-панели на клей — убедитесь в ровности основания');
   }
 

@@ -79,6 +79,8 @@ dependencies:
   timezone: ^0.10.0
   # HTTP-клиент для OpenRouter API (Михалыч AI-прораб)
   http: ^1.1.0
+  # Markdown-рендер для ответов Михалыча
+  flutter_markdown: ^0.7.6
   # Безопасное хранение API-ключей через .env файл
   flutter_dotenv: ^5.2.1
   # Оценки и отзывы через RuStore

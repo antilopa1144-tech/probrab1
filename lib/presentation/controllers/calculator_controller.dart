@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/exceptions/calculation_exception.dart';
 import '../../core/validation/field_validator.dart';
 import '../../core/validation/input_sanitizer.dart';
 import '../../core/isolate/calculation_isolate.dart';

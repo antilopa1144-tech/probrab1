@@ -211,7 +211,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'beaconSize': beaconSize.toDouble(),
       'ruleSize': spec.materialRule<num>('rule_size_m').toDouble(),
       'warningThickLayer': thickness > spec.warningRule<num>('thick_layer_warning_threshold_mm').toDouble() ? 1.0 : 0.0,
-      'tipObryzg': (spec.warningRule<List>('obryzg_tip_substrate_ids') ?? []).contains((substrate['id'] as num).toInt()) && (spec.warningRule<List>('obryzg_tip_evenness_ids') ?? []).contains((evenness['id'] as num).toInt()) ? 1.0 : 0.0,
+      'tipObryzg': spec.warningRule<List>('obryzg_tip_substrate_ids').contains((substrate['id'] as num).toInt()) && spec.warningRule<List>('obryzg_tip_evenness_ids').contains((evenness['id'] as num).toInt()) ? 1.0 : 0.0,
       'minExactNeedKg': scenarios['MIN']!.exactNeed,
       'recExactNeedKg': recScenario.exactNeed,
       'maxExactNeedKg': scenarios['MAX']!.exactNeed,

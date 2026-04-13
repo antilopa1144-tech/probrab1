@@ -52,7 +52,7 @@ class CalculateLaminate extends BaseCalculator {
     final contract = calculateCanonical(inputs);
     final area = contract.totals['area'] ?? 0;
     if (area <= 0) {
-      return createResult(values: {'error': 1.0});
+      throw CalculationException.invalidInput('laminate', 'Площадь должна быть > 0');
     }
 
     final laminatePrice = findPrice(priceList, ['laminate', 'laminate_pack']);

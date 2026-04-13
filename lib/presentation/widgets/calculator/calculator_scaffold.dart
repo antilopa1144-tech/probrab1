@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
+import 'mikhalych_button.dart';
 
 /// Базовый Scaffold для калькуляторов с эталонным дизайном
 ///
@@ -58,6 +59,10 @@ class CalculatorScaffold extends StatelessWidget {
   /// Bottom Navigation Bar
   final Widget? bottomNavigationBar;
 
+  /// Callback для сбора данных расчёта (для Михалыча).
+  /// Если указан — в конце экрана показывается кнопка "Спросить Михалыча".
+  final Map<String, dynamic> Function()? mikhalychDataCollector;
+
   const CalculatorScaffold({
     super.key,
     required this.title,
@@ -69,6 +74,7 @@ class CalculatorScaffold extends StatelessWidget {
     this.bodyPadding,
     this.floatingActionButton,
     this.bottomNavigationBar,
+    this.mikhalychDataCollector,
   });
 
   @override
@@ -89,7 +95,18 @@ class CalculatorScaffold extends StatelessWidget {
             padding: bodyPadding ?? CalculatorDesignSystem.screenPadding,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: children,
+              children: [
+                ...children,
+                if (mikhalychDataCollector != null) ...[
+                  const SizedBox(height: 16),
+                  MikhalychButton(
+                    calculatorName: title,
+                    dataCollector: mikhalychDataCollector!,
+                    accentColor: accentColor,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ],
             ),
           ),
         ),

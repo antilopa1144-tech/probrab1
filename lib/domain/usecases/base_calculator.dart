@@ -4,6 +4,7 @@ import '../../data/models/price_item.dart';
 import '../models/calculator_constant.dart';
 import './calculator_usecase.dart';
 import '../../core/exceptions/calculation_exception.dart';
+export '../../core/exceptions/calculation_exception.dart';
 
 /// Базовый класс для всех калькуляторов с общими утилитами.
 ///

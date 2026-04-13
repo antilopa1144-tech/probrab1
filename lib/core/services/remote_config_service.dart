@@ -107,6 +107,11 @@ class RemoteConfigService {
     // A/B тест: новый онбординг
     'enable_new_onboarding': false,
     'onboarding_step_count': 3,
+
+    // Михалыч AI — модель и лимиты
+    'ai_model_name': 'google/gemini-3-flash-preview',
+    'ai_max_daily_requests': 20,
+    'ai_max_hourly_requests': 10,
   };
 
   /// Обновить конфигурацию из Firebase
@@ -280,6 +285,20 @@ class RemoteConfigService {
   static Future<int> get onboardingStepCount async {
     final config = await instance;
     return config.getInt('onboarding_step_count');
+  }
+
+  // ============================================================================
+  // Синхронные методы (используют уже инициализированный инстанс)
+  // ============================================================================
+
+  /// Синхронное получение строки — для горячих путей (AI model name и т.п.)
+  /// Возвращает defaultValue если Remote Config ещё не инициализирован.
+  static String getStringSync(String key, {String defaultValue = ''}) {
+    try {
+      return _remoteConfig?.getString(key) ?? defaultValue;
+    } catch (_) {
+      return defaultValue;
+    }
   }
 
   // ============================================================================

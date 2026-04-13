@@ -47,7 +47,7 @@ class CalculateLinoleum extends BaseCalculator {
     final contract = calculateCanonical(inputs);
     final area = contract.totals['area'] ?? 0;
     if (area <= 0) {
-      return createResult(values: {'error': 1.0});
+      throw CalculationException.invalidInput('linoleum', 'Площадь должна быть > 0');
     }
 
     final linoleumAreaNeeded = contract.totals['totalCoverageArea'] ?? 0;

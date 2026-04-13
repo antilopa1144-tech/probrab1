@@ -190,13 +190,13 @@ CanonicalCalculatorContractResult calculateCanonicalLaminate(
   if (geometry['area']! < spec.warningRule<num>('small_area_warning_threshold_m2').toDouble()) {
     warnings.add('Маленькая площадь: процент отходов может быть выше из-за коротких обрезков');
   }
-  if ((spec.warningRule<List>('diagonal_warning_profile_ids') ?? []).contains((layoutProfile['id'] as num).toInt())) {
+  if (spec.warningRule<List>('diagonal_warning_profile_ids').contains((layoutProfile['id'] as num).toInt())) {
     warnings.add('Диагональная укладка требует более высокого запаса и аккуратной раскладки');
   }
-  if ((spec.warningRule<List>('herringbone_warning_profile_ids') ?? []).contains((layoutProfile['id'] as num).toInt())) {
+  if (spec.warningRule<List>('herringbone_warning_profile_ids').contains((layoutProfile['id'] as num).toInt())) {
     warnings.add('Укладка ёлочкой требует идеально ровного основания и высокой квалификации');
   }
-  if ((spec.warningRule<List>('half_shift_warning_profile_ids') ?? []).contains((layoutProfile['id'] as num).toInt())) {
+  if (spec.warningRule<List>('half_shift_warning_profile_ids').contains((layoutProfile['id'] as num).toInt())) {
     warnings.add('Смещение досок на 1/2 увеличивает количество коротких обрезков');
   }
 

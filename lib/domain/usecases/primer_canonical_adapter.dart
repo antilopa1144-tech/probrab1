@@ -32,7 +32,7 @@ double _resolveWorkArea(SpecReader spec, Map<String, double> inputs) {
 
 double _resolveCanSize(SpecReader spec, Map<String, double> inputs) {
   final canSize = (inputs['canSize'] ?? spec.packagingRule<num>('default_package_size').toDouble());
-  if ((spec.packagingRule<List>('allowed_package_sizes') ?? []).contains(canSize)) {
+  if (spec.packagingRule<List>('allowed_package_sizes').contains(canSize)) {
     return canSize;
   }
   return spec.packagingRule<num>('default_package_size').toDouble();
@@ -98,13 +98,13 @@ CanonicalCalculatorContractResult calculateCanonicalPrimer(
 
   final recScenario = scenarios['REC']!;
   final warnings = <String>[];
-  if ((spec.warningRule<List>('absorbent_surface_ids') ?? []).contains((surface['id'] as num).toInt()) && (primerType['id'] as num).toInt() != 0) {
+  if (spec.warningRule<List>('absorbent_surface_ids').contains((surface['id'] as num).toInt()) && (primerType['id'] as num).toInt() != 0) {
     warnings.add('Для сильно впитывающих поверхностей рекомендуется грунтовка глубокого проникновения');
   }
-  if ((spec.warningRule<List>('absorbent_surface_ids') ?? []).contains((surface['id'] as num).toInt()) && (primerType['id'] as num).toInt() == 1) {
+  if (spec.warningRule<List>('absorbent_surface_ids').contains((surface['id'] as num).toInt()) && (primerType['id'] as num).toInt() == 1) {
     warnings.add('Бетон-контакт применяют в основном по гладким невпитывающим основаниям');
   }
-  if ((spec.warningRule<List>('recommended_double_coat_surface_ids') ?? []).contains((surface['id'] as num).toInt()) && coats == 1) {
+  if (spec.warningRule<List>('recommended_double_coat_surface_ids').contains((surface['id'] as num).toInt()) && coats == 1) {
     warnings.add('Для впитывающих оснований обычно рекомендуют 2 слоя грунтовки');
   }
 

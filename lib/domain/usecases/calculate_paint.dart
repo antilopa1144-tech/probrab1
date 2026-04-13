@@ -152,7 +152,7 @@ class CalculatePaint extends BaseCalculator {
     final contract = calculateCanonicalPaint(normalized);
     final totalArea = contract.totals['area'] ?? 0;
     if (totalArea <= 0) {
-      return createResult(values: {'error': 1.0});
+      throw CalculationException.invalidInput('paint', 'Площадь должна быть > 0');
     }
 
     final surfacePrepLegacy = (originalInputs['surfacePrep'] ?? 1)

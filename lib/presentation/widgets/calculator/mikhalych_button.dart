@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/calculator_colors.dart';
@@ -129,28 +130,35 @@ class _ChatMessage {
   final bool isUser;
   final bool isStreaming;
 
+  /// Обратная связь: null = не оценено, true = полезно, false = не полезно
+  final bool? feedback;
+
   const _ChatMessage({
     required this.text,
     required this.isUser,
     this.isStreaming = false,
+    this.feedback,
   });
 
-  _ChatMessage copyWith({String? text, bool? isStreaming}) {
+  _ChatMessage copyWith({String? text, bool? isStreaming, bool? feedback}) {
     return _ChatMessage(
       text: text ?? this.text,
       isUser: isUser,
       isStreaming: isStreaming ?? this.isStreaming,
+      feedback: feedback ?? this.feedback,
     );
   }
 
   Map<String, dynamic> toJson() => {
         'text': text,
         'isUser': isUser,
+        if (feedback != null) 'feedback': feedback,
       };
 
   factory _ChatMessage.fromJson(Map<String, dynamic> json) => _ChatMessage(
         text: json['text'] as String? ?? '',
         isUser: json['isUser'] as bool? ?? false,
+        feedback: json['feedback'] as bool?,
       );
 }
 
@@ -199,6 +207,12 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
   /// Флаг: показываем Welcome-экран (до первого вопроса)
   bool _showWelcome = true;
 
+  /// Флаг: Privacy Notice принят
+  bool _privacyAccepted = false;
+
+  /// Последний вопрос для retry
+  String? _lastQuestion;
+
   /// Кэшированный сервис — без повторного await на каждое сообщение
   AiService? _service;
 
@@ -209,7 +223,8 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
   Timer? _safetyTimer;
 
   static const _historyPrefsKey = 'mikhalych_chat_history';
-  static const _maxSavedMessages = 20;
+  static const _privacyAcceptedKey = 'mikhalych_privacy_accepted';
+  static const _maxSavedMessages = 50;
 
   @override
   void initState() {
@@ -237,6 +252,14 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
       // Ошибка инициализации — _askStream обработает null _service
     }
 
+    // Проверяем, принят ли Privacy Notice
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _privacyAccepted = prefs.getBool(_privacyAcceptedKey) ?? false;
+    } catch (_) {
+      _privacyAccepted = false;
+    }
+
     // Загружаем историю диалога из памяти
     await _loadHistory();
 
@@ -246,6 +269,18 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
         _showWelcome = false;
       });
       _scrollToBottom();
+    }
+  }
+
+  Future<void> _acceptPrivacy() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_privacyAcceptedKey, true);
+    } catch (e) {
+      debugPrint('Mikhalych: failed to save privacy acceptance: $e');
+    }
+    if (mounted) {
+      setState(() => _privacyAccepted = true);
     }
   }
 
@@ -275,14 +310,18 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
           : _messages;
       final json = jsonEncode(toSave.map((m) => m.toJson()).toList());
       await prefs.setString(_historyPrefsKey, json);
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('Mikhalych: failed to save history: $e');
+    }
   }
 
   Future<void> _clearHistory() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_historyPrefsKey);
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('Mikhalych: failed to clear history: $e');
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -372,8 +411,21 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
     _askStream(text);
   }
 
+  void _retryLastQuestion() {
+    final q = _lastQuestion;
+    if (q == null || _isLoading) return;
+    setState(() {
+      _error = null;
+      _messages.add(_ChatMessage(text: q, isUser: true));
+    });
+    _scrollToBottom();
+    _askStream(q);
+  }
+
   /// Отправляет вопрос и слушает стрим через StreamSubscription.
   void _askStream(String question) {
+    _lastQuestion = question;
+
     // Отменяем предыдущий стрим и safety-таймер
     _safetyTimer?.cancel();
     _streamSub?.cancel();
@@ -608,9 +660,11 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
                 isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.06),
           ),
 
-          // Контент: Welcome или чат
+          // Контент: Privacy → Welcome → чат
           Flexible(
-            child: _showWelcome
+            child: _showWelcome && !_privacyAccepted
+                ? _buildPrivacyNotice(isDark, loc)
+                : _showWelcome
                 ? _buildWelcomeScreen(isDark, loc)
                 : ListView.builder(
                     controller: _scrollController,
@@ -709,6 +763,83 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
   // ---------------------------------------------------------------------------
   // Welcome-экран
   // ---------------------------------------------------------------------------
+
+  Widget _buildPrivacyNotice(bool isDark, AppLocalizations loc) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.blue.withValues(alpha: 0.1)
+                  : Colors.blue.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.blue.withValues(alpha: 0.2),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.privacy_tip_outlined,
+                        color: Colors.blue[600], size: 24),
+                    const SizedBox(width: 8),
+                    Text(
+                      loc.translate('ai.privacy.title'),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  loc.translate('ai.privacy.description'),
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1.5,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  loc.translate('ai.privacy.data_info'),
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.5,
+                    color: isDark ? Colors.white54 : Colors.black54,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _acceptPrivacy,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: widget.accentColor,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(loc.translate('ai.privacy.accept')),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildWelcomeScreen(bool isDark, AppLocalizations loc) {
     final questions = _getQuickQuestions();
@@ -876,14 +1007,39 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
             ),
             child: message.text.isEmpty && message.isStreaming
                 ? _buildTypingIndicator()
-                : Text(
-                    message.text,
-                    style: TextStyle(
-                      fontSize: 15,
-                      height: 1.5,
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.87)
-                          : Colors.black87,
+                : MarkdownBody(
+                    data: message.text,
+                    selectable: true,
+                    styleSheet: MarkdownStyleSheet(
+                      p: TextStyle(
+                        fontSize: 15,
+                        height: 1.5,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.87)
+                            : Colors.black87,
+                      ),
+                      strong: TextStyle(
+                        fontSize: 15,
+                        height: 1.5,
+                        fontWeight: FontWeight.w700,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.87)
+                            : Colors.black87,
+                      ),
+                      listBullet: TextStyle(
+                        fontSize: 15,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.87)
+                            : Colors.black87,
+                      ),
+                      code: TextStyle(
+                        fontSize: 13,
+                        backgroundColor: isDark
+                            ? Colors.white.withValues(alpha: 0.1)
+                            : Colors.black.withValues(alpha: 0.05),
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                      blockSpacing: 8,
                     ),
                   ),
           ),
@@ -906,12 +1062,38 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
                     isDark: isDark,
                     onTap: () => _shareText(message.text),
                   ),
+                  const SizedBox(width: 12),
+                  // Thumbs up/down
+                  _FeedbackChip(
+                    isPositive: true,
+                    isSelected: message.feedback == true,
+                    isDark: isDark,
+                    onTap: () => _setFeedback(message, true),
+                  ),
+                  const SizedBox(width: 4),
+                  _FeedbackChip(
+                    isPositive: false,
+                    isSelected: message.feedback == false,
+                    isDark: isDark,
+                    onTap: () => _setFeedback(message, false),
+                  ),
                 ],
               ),
             ),
         ],
       ),
     );
+  }
+
+  void _setFeedback(_ChatMessage message, bool isPositive) {
+    final index = _messages.indexOf(message);
+    if (index < 0) return;
+    // Toggle: если уже выбрано то же — снимаем
+    final newFeedback = message.feedback == isPositive ? null : isPositive;
+    setState(() {
+      _messages[index] = message.copyWith(feedback: newFeedback);
+    });
+    _saveHistory();
   }
 
   void _copyText(String text) {
@@ -940,6 +1122,7 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
   }
 
   Widget _buildErrorBubble(bool isDark) {
+    final loc = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -947,21 +1130,41 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
         color: Colors.orange.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.warning_amber_rounded,
-              color: Colors.orange[700], size: 20),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              _error!,
-              style: TextStyle(
-                fontSize: 14,
-                height: 1.4,
-                color: isDark ? Colors.white70 : Colors.black87,
+          Row(
+            children: [
+              Icon(Icons.warning_amber_rounded,
+                  color: Colors.orange[700], size: 20),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  _error!,
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1.4,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (_lastQuestion != null) ...[
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                onPressed: _isLoading ? null : _retryLastQuestion,
+                icon: const Icon(Icons.refresh, size: 16),
+                label: Text(loc.translate('ai.retry')),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.orange[700],
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -1050,6 +1253,42 @@ class _AnimatedTypingIndicatorState extends State<_AnimatedTypingIndicator> {
 // =============================================================================
 // Action chip
 // =============================================================================
+
+class _FeedbackChip extends StatelessWidget {
+  final bool isPositive;
+  final bool isSelected;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _FeedbackChip({
+    required this.isPositive,
+    required this.isSelected,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final icon = isPositive ? Icons.thumb_up_outlined : Icons.thumb_down_outlined;
+    final selectedIcon = isPositive ? Icons.thumb_up : Icons.thumb_down;
+    final color = isSelected
+        ? (isPositive ? Colors.green : Colors.red)
+        : (isDark ? Colors.white38 : Colors.black38);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: Icon(
+          isSelected ? selectedIcon : icon,
+          size: 16,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
 
 class _ActionChip extends StatelessWidget {
   final IconData icon;

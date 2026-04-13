@@ -52,7 +52,7 @@ class WebChecklistRepository implements IChecklistRepository {
       ..id = json['id'] as int
       ..name = json['name'] as String
       ..description = json['description'] as String?
-      ..category = ChecklistCategory.values[json['category'] as int]
+      ..category = ChecklistCategory.values[(json['category'] as int).clamp(0, ChecklistCategory.values.length - 1)]
       ..projectId = json['projectId'] as int?
       ..createdAt = DateTime.parse(json['createdAt'] as String)
       ..updatedAt = DateTime.parse(json['updatedAt'] as String);
@@ -80,7 +80,7 @@ class WebChecklistRepository implements IChecklistRepository {
       ..title = json['title'] as String
       ..description = json['description'] as String?
       ..isCompleted = json['isCompleted'] as bool? ?? false
-      ..priority = ChecklistPriority.values[json['priority'] as int? ?? 1]
+      ..priority = ChecklistPriority.values[(json['priority'] as int? ?? 1).clamp(0, ChecklistPriority.values.length - 1)]
       ..order = json['order'] as int? ?? 0
       ..createdAt = DateTime.parse(json['createdAt'] as String)
       ..updatedAt = DateTime.parse(json['updatedAt'] as String);
