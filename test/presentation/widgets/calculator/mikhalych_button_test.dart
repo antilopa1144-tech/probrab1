@@ -215,13 +215,13 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Now shows welcome screen instead of auto-requesting API on open.
-      // Welcome screen shows quick question chips.
+      // Now shows privacy notice (first use), welcome screen, or error state.
       final hasWelcome =
           find.text('Быстрые вопросы:').evaluate().isNotEmpty;
       final hasError = find.byIcon(Icons.warning_amber_rounded).evaluate().isNotEmpty;
-      expect(hasWelcome || hasError, isTrue,
-          reason: 'Should show welcome screen or error state');
+      final hasPrivacy = find.byIcon(Icons.privacy_tip_outlined).evaluate().isNotEmpty;
+      expect(hasWelcome || hasError || hasPrivacy, isTrue,
+          reason: 'Should show welcome screen or error state or privacy notice');
     });
 
     testWidgets('has close button', (tester) async {
@@ -277,14 +277,15 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('Михалыч'), findsOneWidget);
-      // Now shows welcome screen instead of auto-requesting API on open
-      // Quick questions chips should be visible
+      // Now shows privacy notice (first use), welcome screen, or error state
       final hasWelcome =
           find.text('Быстрые вопросы:').evaluate().isNotEmpty;
       final hasError =
           find.byIcon(Icons.warning_amber_rounded).evaluate().isNotEmpty;
-      expect(hasWelcome || hasError, isTrue,
-          reason: 'Should show welcome screen or error');
+      final hasPrivacy =
+          find.byIcon(Icons.privacy_tip_outlined).evaluate().isNotEmpty;
+      expect(hasWelcome || hasError || hasPrivacy, isTrue,
+          reason: 'Should show welcome screen or error or privacy notice');
     });
 
     testWidgets('renders in light theme', (tester) async {
