@@ -20,6 +20,7 @@ import 'presentation/views/onboarding/onboarding_screen.dart';
 import 'core/performance/frame_timing_logger.dart';
 import 'core/utils/keyboard_dismiss_observer.dart';
 import 'core/services/ai_service.dart';
+import 'core/services/update_service.dart';
 
 // Условный импорт для Crashlytics (не используется на вебе)
 import 'core/platform/crashlytics_native.dart'
@@ -149,6 +150,13 @@ class _HomeSelectorState extends ConsumerState<_HomeSelector> {
       _showOnboarding = shouldShow;
       _isLoading = false;
     });
+
+    // Проверяем обновления после отрисовки первого кадра
+    if (!shouldShow && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) UpdateService.checkForUpdate(context);
+      });
+    }
   }
 
   @override
