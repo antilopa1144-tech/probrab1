@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -30,6 +29,11 @@ import 'core/platform/crashlytics_native.dart'
 import 'core/services/tracker_service_web.dart'
     if (dart.library.io) 'core/services/tracker_service.dart';
 
+/// SDK-ключ MyTracker. По дизайну встраивается в мобильное приложение
+/// и публикуется вместе с APK — ротация не требуется.
+const String _myTrackerSdkKey =
+    'u3MkhLtGqRemIBPLKF3n1qrn7J3eY7U4XkA9pLP0PMlBO8zXqjzvq32k9Cd1sFkfHA28N479RrGtBJB6GAhveBpy4DY27bqh0pDsCn2m1Kwsce9D28McmK33VDXnU6gn4iykYFEsHfKpfskfaWQyI6lt2IiXC5UXTspoda9Sd9HGTf6uUT4FWiHBBOWbslFeRuYUrP7z5EEE79UsewyheE7Xs1IXfskBKxKtgUtBjTjp0McT3xgE0DN';
+
 Future<void> _initFirebase() async {
   try {
     if (Firebase.apps.isEmpty) {
@@ -45,12 +49,11 @@ void main() async {
 
   // Параллельная инициализация для ускорения старта
   final initFutures = await Future.wait([
-    dotenv.load().then((_) => null),
     SharedPreferences.getInstance(),
     _initFirebase(),
   ]);
 
-  final prefs = initFutures[1] as SharedPreferences;
+  final prefs = initFutures[0] as SharedPreferences;
 
   // Предзагрузка AI-сервиса (Михалыч) — модель будет готова к первому запросу
   unawaited(AiService.preload());
@@ -62,7 +65,7 @@ void main() async {
 
   // Инициализация MyTracker аналитики
   if (!kIsWeb) {
-    unawaited(TrackerService.initialize(dotenv.env['MYTRACKER_SDK_KEY'] ?? ''));
+    unawaited(TrackerService.initialize(_myTrackerSdkKey));
   }
 
   // Передача Flutter ошибок в Crashlytics (только на нативных платформах)

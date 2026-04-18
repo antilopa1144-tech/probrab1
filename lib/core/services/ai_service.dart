@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -77,14 +76,6 @@ class AiService {
   // Константы
   // ---------------------------------------------------------------------------
 
-  static String get _apiKey {
-    try {
-      return dotenv.env['OPENROUTER_API_KEY'] ?? '';
-    } catch (_) {
-      return '';
-    }
-  }
-
   /// Модель по умолчанию. Может быть переопределена через Remote Config
   /// ключ 'ai_model_name'.
   static const String _defaultModelName = 'google/gemini-3-flash-preview';
@@ -98,9 +89,9 @@ class AiService {
     }
   }
 
-  /// OpenRouter API endpoint
-  static const String _apiUrl =
-      'https://openrouter.ai/api/v1/chat/completions';
+  /// Серверный прокси на getmasterok.ru проксирует запросы в OpenRouter.
+  /// API-ключ лежит только на сервере и не попадает в APK.
+  static const String _apiUrl = 'https://getmasterok.ru/api/mikhalych';
 
   /// Максимум запросов в сутки (защита от злоупотреблений)
   static const int _maxDailyRequests = 20;
@@ -190,11 +181,6 @@ class AiService {
 
   Future<void> _initialize() async {
     _prefs = await SharedPreferences.getInstance();
-    if (_apiKey.isEmpty) {
-      if (kDebugMode) {
-        debugPrint('⚠️ OPENROUTER_API_KEY не найден — Михалыч недоступен');
-      }
-    }
   }
 
   /// Инициализирует чат с системным промптом. Сбрасывает историю.
@@ -325,12 +311,10 @@ $contextBlock
     };
   }
 
-  /// Заголовки для OpenRouter API
+  /// Заголовки для запроса к серверному прокси. Bearer не нужен — ключ на сервере.
   Map<String, String> get _headers => {
-        'Authorization': 'Bearer $_apiKey',
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://masterok-app.ru',
-        'X-Title': 'Masterok',
+        'X-Client': 'probrab-android',
       };
 
   // ---------------------------------------------------------------------------
@@ -614,13 +598,6 @@ $contextBlock
     String? calculationHistory,
     bool isHomeScreen = false,
   }) async {
-    if (_apiKey.isEmpty) {
-      throw const AiApiException(
-        'ai.error_not_configured',
-        fallbackMessage: 'Михалыч пока не подключён. API-ключ не настроен.',
-      );
-    }
-
     await checkDailyLimit();
     await _checkHourlyLimit();
     // Записываем запрос ДО вызова API — гарантирует учёт даже при обрыве
@@ -737,16 +714,6 @@ $contextBlock
     String? calculationHistory,
     bool isHomeScreen,
   ) async {
-    // Проверки до начала стрима
-    if (_apiKey.isEmpty) {
-      controller.addError(const AiApiException(
-        'ai.error_not_configured',
-        fallbackMessage: 'Михалыч пока не подключён. API-ключ не настроен.',
-      ));
-      unawaited(controller.close());
-      return;
-    }
-
     try {
       await checkDailyLimit();
       await _checkHourlyLimit();

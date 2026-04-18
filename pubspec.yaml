@@ -8,7 +8,7 @@ description: |
 # Публикация в Pub.dev отключена, потому что это внутренний проект
 publish_to: "none"
 
-version: 1.6.0+7
+version: 1.6.1+8
 
 environment:
   sdk: ">=3.10.0 <4.0.0"
@@ -81,8 +81,6 @@ dependencies:
   http: ^1.1.0
   # Markdown-рендер для ответов Михалыча
   flutter_markdown: ^0.7.6
-  # Безопасное хранение API-ключей через .env файл
-  flutter_dotenv: ^5.2.1
   # Оценки и отзывы через RuStore
   flutter_rustore_review: ^10.0.0
   # Обновления приложения через RuStore In-App Updates
@@ -118,7 +116,6 @@ flutter:
   # Локализационные ресурсы
   generate: true
   assets:
-    - .env
     - assets/icons/
     - assets/videos/
     - assets/json/
