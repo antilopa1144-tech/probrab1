@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/calculator_colors.dart';
@@ -133,11 +134,15 @@ class _ChatMessage {
   /// Обратная связь: null = не оценено, true = полезно, false = не полезно
   final bool? feedback;
 
+  /// Прикреплённое фото (только в памяти, не сохраняется в prefs)
+  final Uint8List? imageBytes;
+
   const _ChatMessage({
     required this.text,
     required this.isUser,
     this.isStreaming = false,
     this.feedback,
+    this.imageBytes,
   });
 
   _ChatMessage copyWith({String? text, bool? isStreaming, bool? feedback}) {
@@ -146,6 +151,7 @@ class _ChatMessage {
       isUser: isUser,
       isStreaming: isStreaming ?? this.isStreaming,
       feedback: feedback ?? this.feedback,
+      imageBytes: imageBytes,
     );
   }
 
@@ -153,6 +159,7 @@ class _ChatMessage {
         'text': text,
         'isUser': isUser,
         if (feedback != null) 'feedback': feedback,
+        // imageBytes не сериализуем — изображения не персистируем
       };
 
   factory _ChatMessage.fromJson(Map<String, dynamic> json) => _ChatMessage(
@@ -221,6 +228,10 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
 
   /// Safety-таймер: если _isLoading висит > 90 сек — принудительный сброс
   Timer? _safetyTimer;
+
+  /// Выбранное фото для отправки (null = ничего не выбрано)
+  Uint8List? _selectedImageBytes;
+  String _selectedImageMimeType = 'image/jpeg';
 
   static const _historyPrefsKey = 'mikhalych_chat_history';
   static const _privacyAcceptedKey = 'mikhalych_privacy_accepted';
@@ -393,22 +404,73 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
   }
 
   // ---------------------------------------------------------------------------
+  // Выбор фото
+  // ---------------------------------------------------------------------------
+
+  void _showImageSourceDialog() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: const Text('Камера'),
+              onTap: () { Navigator.pop(ctx); _pickImage(ImageSource.camera); },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Галерея'),
+              onTap: () { Navigator.pop(ctx); _pickImage(ImageSource.gallery); },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final file = await ImagePicker().pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 80,
+      );
+      if (file == null || !mounted) return;
+      final bytes = await file.readAsBytes();
+      final mime = file.path.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
+      setState(() {
+        _selectedImageBytes = bytes;
+        _selectedImageMimeType = mime;
+      });
+    } catch (e) {
+      debugPrint('Image picker error: $e');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Отправка сообщения и стриминг ответа
   // ---------------------------------------------------------------------------
 
   void _sendMessage() {
     final text = _textController.text.trim();
-    if (text.isEmpty || _isLoading) return;
+    final imageBytes = _selectedImageBytes;
+    final imageMime = _selectedImageMimeType;
+    if ((text.isEmpty && imageBytes == null) || _isLoading) return;
 
     setState(() {
       _showWelcome = false;
-      _messages.add(_ChatMessage(text: text, isUser: true));
+      _messages.add(_ChatMessage(text: text, isUser: true, imageBytes: imageBytes));
       _error = null;
+      _selectedImageBytes = null;
+      _selectedImageMimeType = 'image/jpeg';
     });
     _textController.clear();
     _scrollToBottom();
 
-    _askStream(text);
+    _askStream(text, imageBytes: imageBytes, imageMimeType: imageMime);
   }
 
   void _retryLastQuestion() {
@@ -422,9 +484,9 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
     _askStream(q);
   }
 
-  /// Отправляет вопрос и слушает стрим через StreamSubscription.
-  void _askStream(String question) {
-    _lastQuestion = question;
+  /// Отправляет вопрос (опционально с фото) и слушает стрим.
+  void _askStream(String question, {Uint8List? imageBytes, String imageMimeType = 'image/jpeg'}) {
+    _lastQuestion = question.isNotEmpty ? question : '📷 фото';
 
     // Отменяем предыдущий стрим и safety-таймер
     _safetyTimer?.cancel();
@@ -471,12 +533,17 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
     var fullText = '';
 
     final loc = AppLocalizations.of(context);
+    final effectiveQuestion = question.isEmpty && imageBytes != null
+        ? 'Посмотри на это фото и скажи, что видишь. Дай строительный совет если уместно.'
+        : question;
     final stream = service.getAdviceStream(
       calculatorName: widget.calculatorName,
       data: widget.data,
-      userQuestion: question,
+      userQuestion: effectiveQuestion,
       calculationHistory: widget.calculationHistory,
       isHomeScreen: _isHomeScreenContext(loc),
+      imageBytes: imageBytes,
+      imageMimeType: imageMimeType,
     );
 
     _streamSub = stream.listen(
@@ -685,11 +752,64 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
                 isDark ? Colors.white12 : Colors.black.withValues(alpha: 0.06),
           ),
 
+          // Превью выбранного фото
+          if (_selectedImageBytes != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+              child: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.memory(
+                      _selectedImageBytes!,
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => setState(() { _selectedImageBytes = null; }),
+                    child: Container(
+                      width: 22,
+                      height: 22,
+                      decoration: const BoxDecoration(
+                        color: Colors.black54,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.close, color: Colors.white, size: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
           // Поле ввода
           Padding(
             padding: EdgeInsets.fromLTRB(12, 8, 8, 8 + bottomPadding),
             child: Row(
               children: [
+                // Кнопка прикрепить фото
+                Material(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(24),
+                  child: InkWell(
+                    onTap: _isLoading ? null : _showImageSourceDialog,
+                    borderRadius: BorderRadius.circular(24),
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: Icon(
+                        Icons.add_photo_alternate_outlined,
+                        color: _selectedImageBytes != null
+                            ? widget.accentColor
+                            : (isDark ? Colors.white38 : Colors.black38),
+                        size: 22,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
                 Expanded(
                   child: TextField(
                     controller: _textController,
@@ -971,13 +1091,32 @@ class _MikhalychBottomSheetState extends State<MikhalychBottomSheet> {
               bottomRight: Radius.circular(4),
             ),
           ),
-          child: Text(
-            message.text,
-            style: const TextStyle(
-              fontSize: 15,
-              height: 1.4,
-              color: Colors.white,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (message.imageBytes != null)
+                Padding(
+                  padding: EdgeInsets.only(bottom: message.text.isNotEmpty ? 8 : 0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.memory(
+                      message.imageBytes!,
+                      width: 200,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              if (message.text.isNotEmpty)
+                Text(
+                  message.text,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    height: 1.4,
+                    color: Colors.white,
+                  ),
+                ),
+            ],
           ),
         ),
       );

@@ -143,8 +143,8 @@ class AiService {
   /// Системный промпт текущего чата
   String? _systemPrompt;
 
-  /// История чата в формате OpenAI
-  final List<Map<String, String>> _history = [];
+  /// История чата в формате OpenAI (content может быть String или List для multimodal)
+  final List<Map<String, dynamic>> _history = [];
 
   AiService._();
 
@@ -279,7 +279,7 @@ $contextBlock
   // ---------------------------------------------------------------------------
 
   /// Собирает массив messages для OpenRouter (system + history)
-  List<Map<String, String>> _buildMessages() {
+  List<Map<String, dynamic>> _buildMessages() {
     return [
       {'role': 'system', 'content': _systemPrompt ?? ''},
       ..._history,
@@ -548,8 +548,8 @@ $contextBlock
     for (var i = 0; i < _history.length - 2; i++) {
       final msg = _history[i];
       if (msg['role'] != 'assistant') continue;
-      final content = msg['content'] ?? '';
-      if (content.length > _maxOldResponseLength) {
+      final content = msg['content'];
+      if (content is String && content.length > _maxOldResponseLength) {
         _history[i] = {
           'role': 'assistant',
           'content': '${content.substring(0, _maxOldResponseLength)}...',
@@ -680,6 +680,8 @@ $contextBlock
     String userQuestion = 'Проверь расчет и дай совет',
     String? calculationHistory,
     bool isHomeScreen = false,
+    Uint8List? imageBytes,
+    String imageMimeType = 'image/jpeg',
   }) {
     final controller = StreamController<String>();
     _processStream(
@@ -689,6 +691,8 @@ $contextBlock
       userQuestion,
       calculationHistory,
       isHomeScreen,
+      imageBytes: imageBytes,
+      imageMimeType: imageMimeType,
     );
     return controller.stream;
   }
@@ -699,8 +703,10 @@ $contextBlock
     Map<String, dynamic> data,
     String userQuestion,
     String? calculationHistory,
-    bool isHomeScreen,
-  ) async {
+    bool isHomeScreen, {
+    Uint8List? imageBytes,
+    String imageMimeType = 'image/jpeg',
+  }) async {
     try {
       await checkDailyLimit();
       await _checkHourlyLimit();
@@ -722,11 +728,18 @@ $contextBlock
       );
     }
 
-    // Добавляем вопрос в историю
-    _history.add({
-      'role': 'user',
-      'content': _truncateQuestion(userQuestion),
-    });
+    // Добавляем вопрос в историю (text или multimodal с фото)
+    if (imageBytes != null) {
+      final b64 = base64Encode(imageBytes);
+      final parts = <Map<String, dynamic>>[
+        {'type': 'image_url', 'image_url': {'url': 'data:$imageMimeType;base64,$b64'}},
+        if (userQuestion.isNotEmpty)
+          {'type': 'text', 'text': _truncateQuestion(userQuestion)},
+      ];
+      _history.add({'role': 'user', 'content': parts});
+    } else {
+      _history.add({'role': 'user', 'content': _truncateQuestion(userQuestion)});
+    }
     _trimHistory();
 
     final buffer = StringBuffer();
