@@ -187,6 +187,7 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate('primer_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.mixes_primer',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

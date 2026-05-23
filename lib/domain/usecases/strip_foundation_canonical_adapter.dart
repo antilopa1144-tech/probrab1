@@ -16,7 +16,11 @@ const Map<String, Map<String, double>> _factorTable = {
 
 // ─── Helpers ───
 
-Map<String, dynamic> _pickPackage(double exactNeed, double stepSize, String unit) {
+Map<String, dynamic> _pickPackage(
+  double exactNeed,
+  double stepSize,
+  String unit,
+) {
   final count = exactNeed > 0 ? (exactNeed / stepSize).ceil() : 0;
   final purchase = roundValue(count * stepSize, 6);
   final leftover = roundValue(purchase - exactNeed, 6);
@@ -37,31 +41,77 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
 }) {
   final spec = specOverride ?? const SpecReader(stripFoundationSpecData);
 
-  final perimeter = math.max(10, inputs['perimeter'] ?? defaultFor(spec, 'perimeter', 40)).toDouble().clamp(10, 200).toDouble();
-  final width = (inputs['width'] ?? defaultFor(spec, 'width', 400)).clamp(200, 600).toDouble();
-  final depth = (inputs['depth'] ?? defaultFor(spec, 'depth', 700)).clamp(300, 2000).toDouble();
-  final aboveGround = (inputs['aboveGround'] ?? defaultFor(spec, 'aboveGround', 300)).clamp(0, 600).toDouble();
-  final reinforcement = (inputs['reinforcement'] ?? defaultFor(spec, 'reinforcement', 1)).round().clamp(0, 3);
-  final deliveryMethod = (inputs['deliveryMethod'] ?? defaultFor(spec, 'deliveryMethod', 0)).round().clamp(0, 2);
+  final perimeter = math
+      .max(10, inputs['perimeter'] ?? defaultFor(spec, 'perimeter', 40))
+      .toDouble()
+      .clamp(10, 200)
+      .toDouble();
+  final width = (inputs['width'] ?? defaultFor(spec, 'width', 400))
+      .clamp(200, 600)
+      .toDouble();
+  final depth = (inputs['depth'] ?? defaultFor(spec, 'depth', 700))
+      .clamp(300, 2000)
+      .toDouble();
+  final aboveGround =
+      (inputs['aboveGround'] ?? defaultFor(spec, 'aboveGround', 300))
+          .clamp(0, 600)
+          .toDouble();
+  final reinforcement =
+      (inputs['reinforcement'] ?? defaultFor(spec, 'reinforcement', 1))
+          .round()
+          .clamp(0, 3);
+  final deliveryMethod =
+      (inputs['deliveryMethod'] ?? defaultFor(spec, 'deliveryMethod', 0))
+          .round()
+          .clamp(0, 2);
 
-  final rebarDiam = (spec.materialRule<Map>('rebar_diameters')['$reinforcement'] as num?)?.toDouble() ?? 12;
-  final threads = (spec.materialRule<Map>('rebar_threads')['$reinforcement'] as num?)?.toDouble() ?? 4;
-  final weightPerM = (spec.materialRule<Map>('weight_per_m')['$rebarDiam'] as num?)?.toDouble() ?? 0.888;
+  final rebarDiamRaw =
+      (spec.materialRule<Map>('rebar_diameters')['$reinforcement'] as num?)
+          ?.toDouble() ??
+      12;
+  final rebarDiam = rebarDiamRaw == rebarDiamRaw.roundToDouble()
+      ? rebarDiamRaw.toInt().toString()
+      : rebarDiamRaw.toString();
+  final rebarDiamValue = rebarDiamRaw;
+  final threads =
+      (spec.materialRule<Map>('rebar_threads')['$reinforcement'] as num?)
+          ?.toDouble() ??
+      4;
+  final weightPerM =
+      (spec.materialRule<Map>('weight_per_m')['$rebarDiamValue'] as num?)
+          ?.toDouble() ??
+      0.888;
 
   final totalH = (depth + aboveGround) / 1000;
   final vol = perimeter * (width / 1000) * totalH;
-  final techLoss = (spec.materialRule<Map>('tech_loss')['$deliveryMethod'] as num?)?.toDouble() ?? 0;
-  final volReserve = roundValue((vol + techLoss) * spec.materialRule<num>('concrete_reserve').toDouble(), 6);
+  final techLoss =
+      (spec.materialRule<Map>('tech_loss')['$deliveryMethod'] as num?)
+          ?.toDouble() ??
+      0;
+  final volReserve = roundValue(
+    (vol + techLoss) * spec.materialRule<num>('concrete_reserve').toDouble(),
+    6,
+  );
 
-  final longLen = roundValue(perimeter * threads * spec.materialRule<num>('overlap').toDouble(), 6);
+  final longLen = roundValue(
+    perimeter * threads * spec.materialRule<num>('overlap').toDouble(),
+    6,
+  );
   final longWeightKg = roundValue(longLen * weightPerM, 6);
 
-  final clampCount = (perimeter / spec.materialRule<num>('clamp_step').toDouble()).ceil();
+  final clampCount =
+      (perimeter / spec.materialRule<num>('clamp_step').toDouble()).ceil();
   final clampPerim = 2 * ((width / 1000) - 0.1 + totalH - 0.1) + 0.3;
   final clampLen = roundValue(clampCount * math.max(0.8, clampPerim) * 1.05, 6);
-  final clampWeightKg = roundValue(clampLen * spec.materialRule<num>('clamp_weight').toDouble(), 6);
+  final clampWeightKg = roundValue(
+    clampLen * spec.materialRule<num>('clamp_weight').toDouble(),
+    6,
+  );
 
-  final wireKg = roundValue((clampCount * threads * 0.05 * 1.1 * 10).ceil() / 10, 6);
+  final wireKg = roundValue(
+    (clampCount * threads * 0.05 * 1.1 * 10).ceil() / 10,
+    6,
+  );
 
   final formwork = roundValue(2 * perimeter * (aboveGround / 1000 + 0.1), 6);
   final boards = (formwork / (0.15 * 6)).ceil();
@@ -70,9 +120,17 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      _factorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(volReserve * multiplier, 6);
-    final package = _pickPackage(exactNeed, spec.packagingRule<num>('volume_step_m3').toDouble(), spec.packagingRule<String>('unit'));
+    final package = _pickPackage(
+      exactNeed,
+      spec.packagingRule<num>('volume_step_m3').toDouble(),
+      spec.packagingRule<String>('unit'),
+    );
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
@@ -102,10 +160,15 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
   // Warnings
   final warnings = <String>[];
   if (depth <= spec.warningRule<num>('shallow_depth_threshold_mm').toDouble()) {
-    warnings.add('Мелкое заглубление — убедитесь, что глубина ниже уровня промерзания грунта');
+    warnings.add(
+      'Мелкое заглубление — убедитесь, что глубина ниже уровня промерзания грунта',
+    );
   }
-  if (perimeter > spec.warningRule<num>('large_perimeter_threshold_m').toDouble()) {
-    warnings.add('Большой периметр — рекомендуется разделить на секции с деформационными швами');
+  if (perimeter >
+      spec.warningRule<num>('large_perimeter_threshold_m').toDouble()) {
+    warnings.add(
+      'Большой периметр — рекомендуется разделить на секции с деформационными швами',
+    );
   }
 
   // Materials
@@ -174,7 +237,7 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
       'totalH': roundValue(totalH, 3),
       'vol': roundValue(vol, 3),
       'volReserve': roundValue(volReserve, 3),
-      'rebarDiam': rebarDiam.toDouble(),
+      'rebarDiam': rebarDiamValue.toDouble(),
       'threads': threads.toDouble(),
       'longLen': roundValue(longLen, 3),
       'longWeightKg': roundValue(longWeightKg, 3),

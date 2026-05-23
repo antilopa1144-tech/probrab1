@@ -50,7 +50,11 @@ CanonicalCalculatorContractResult calculateCanonicalVentilation(
 
   // Airflow calculation
   final volume = totalArea * ceilingHeight;
-  final airByVolume = volume * ((spec.materialRule<Map>('exchange_rates')['$buildingType'] as num?)?.toDouble() ?? 1.0);
+  final exchangeRates = spec.materialRule<List<dynamic>>('exchange_rates');
+  final exchangeRate = buildingType >= 0 && buildingType < exchangeRates.length
+      ? (exchangeRates[buildingType] as num).toDouble()
+      : 1.0;
+  final airByVolume = volume * exchangeRate;
   final airByPeople = peopleCount * spec.materialRule<num>('air_per_person').toDouble();
   final requiredAirflow = math.max(airByVolume, airByPeople);
   final requiredAirflowRounded = (requiredAirflow / spec.materialRule<num>('airflow_rounding').toDouble()).ceil() * spec.materialRule<num>('airflow_rounding').toDouble();

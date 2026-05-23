@@ -206,6 +206,7 @@ class _PaintScreenState extends State<PaintScreen> {
     return CalculatorScaffold(
       title: _loc.translate('paint.title'),
       accentColor: accentColor,
+      faqPrefix: 'faq.paint_universal',
       actions: [
         IconButton(
           icon: const Icon(Icons.copy),

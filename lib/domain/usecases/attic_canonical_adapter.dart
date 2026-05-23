@@ -60,7 +60,10 @@ CanonicalCalculatorContractResult calculateCanonicalAttic(
   final layerCount = (insulationThickness / plateThickness).ceil();
   final insPlates = (roofArea * spec.materialRule<num>('plate_reserve').toDouble() / plateArea).ceil() * layerCount;
   final windRolls = (roofArea * spec.materialRule<num>('membrane_reserve').toDouble() / spec.materialRule<num>('wind_membrane_roll').toDouble()).ceil();
-  final vbRolls = withVapourBarrier > 0 ? (roofArea * spec.materialRule<num>('membrane_reserve').toDouble() / spec.materialRule<num>('vapor_roll').toDouble()).ceil() : 0;
+  final isXps = insulationType == 2;
+  final vbRolls = (!isXps && withVapourBarrier > 0)
+      ? (roofArea * spec.materialRule<num>('membrane_reserve').toDouble() / spec.materialRule<num>('vapor_roll').toDouble()).ceil()
+      : 0;
   final tapeRolls = (roofArea / spec.materialRule<num>('tape_area_coeff').toDouble()).ceil();
 
   // Finish: wood
@@ -125,7 +128,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   if (insulationThickness < spec.warningRule<num>('thin_insulation_threshold_mm').toDouble()) {
     warnings.add('Толщина утеплителя менее 200 мм — рекомендуется увеличить для средней полосы России');
   }
-  if (withVapourBarrier == 0) {
+  if (!isXps && withVapourBarrier == 0) {
     warnings.add('Без пароизоляции утеплитель подвержен намоканию и потере свойств');
   }
 

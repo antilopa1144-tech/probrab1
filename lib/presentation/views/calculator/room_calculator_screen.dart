@@ -239,6 +239,7 @@ class RoomCalculatorScreen extends ConsumerWidget {
     return CalculatorScaffold(
       title: loc.translate('calculator.room.title'),
       accentColor: accentColor,
+      faqPrefix: 'faq.room',
       children: [
         // ---- Секция: Размеры комнаты ----
         _SectionCard(

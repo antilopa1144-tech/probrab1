@@ -342,6 +342,7 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
     return CalculatorScaffold(
       title: _loc.translate('putty.title'),
       accentColor: accentColor,
+      faqPrefix: 'faq.mixes_putty',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,

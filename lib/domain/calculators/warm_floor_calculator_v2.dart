@@ -6,8 +6,7 @@ import '../models/calculator_definition_v2.dart';
 import '../models/calculator_field.dart';
 import '../models/calculator_hint.dart';
 import 'calculator_constants.dart';
-import '../usecases/canonical_bridge.dart';
-import '../usecases/warm_floor_canonical_adapter.dart';
+import '../usecases/warm_floor_unified_usecase.dart';
 
 /// Калькулятор тёплого пола V2.
 final warmFloorCalculatorV2 = CalculatorDefinitionV2(
@@ -227,5 +226,5 @@ final warmFloorCalculatorV2 = CalculatorDefinitionV2(
   ],
 
   // UseCase для расчёта
-  useCase: CanonicalBridgeUseCase(calculateCanonicalWarmFloor),
+  useCase: WarmFloorUnifiedUseCase(),
 );

@@ -49,6 +49,9 @@ export 'result_card.dart';
 // Включает: TipsCard, TipsSection
 export 'tips_card.dart';
 
+// FAQ
+export 'calculator_faq_section.dart';
+
 // Кнопка добавления в проект
 // На вебе используется заглушка без Isar-зависимостей
 // dart.library.io существует на нативных платформах (Android, iOS, desktop)

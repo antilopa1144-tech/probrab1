@@ -137,10 +137,10 @@ class CalculateGypsum extends BaseCalculator {
       ppMeters = area * 3.3; // ПП 60×27 (несущий + основной)
       pnPieces = (pnMeters / profileLength).ceil();
       ppPieces = (ppMeters / profileLength).ceil();
-      suspensions = (area * 0.7).ceil();
+      suspensions = area.ceil(); // ~1.0 шт/м² по СП 163 / Knauf P113
       connectors = (area * 1.7).ceil(); // крабы
       dowels = (suspensions * 2); // анкер-клины по 2 на подвес
-      screwsTN25 = (area * 23).ceil();
+      screwsTN25 = (area * 29).ceil();
       screwsLN = (area * 7).ceil();
     }
 

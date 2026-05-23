@@ -149,6 +149,7 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
     return CalculatorScaffold(
       title: _loc.translate('basement_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.foundation_basement',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

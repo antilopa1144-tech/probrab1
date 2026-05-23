@@ -6,8 +6,8 @@ import '../../core/localization/app_localizations.dart';
 import '../../core/errors/global_error_handler.dart';
 import '../../domain/models/calculator_result_payload.dart';
 import '../../domain/models/shareable_content.dart';
-import '../services/pdf_export_service.dart';
-import '../services/pdf_file_handler.dart';
+import '../../../domain/services/pdf_export_service.dart';
+import '../../../domain/services/pdf_file_handler.dart';
 import '../views/calculator/calculator_qr_share_screen.dart';
 import '../../core/services/tracker_service_web.dart'
     if (dart.library.io) '../../core/services/tracker_service.dart';

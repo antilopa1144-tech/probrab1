@@ -45,9 +45,13 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
 
   final weightPerMeter = (spec.materialRule<Map>('weight_per_meter')['$rebarDiam'] as num?)?.toDouble() ?? 0.888;
   final side = math.sqrt(area);
+  final length = roundValue(side, 3);
+  final width = roundValue(side, 3);
   final perimeter = side * 4;
   final concreteM3 = roundValue(area * (thickness / 1000) * spec.materialRule<num>('concrete_reserve').toDouble(), 6);
   final barsPerDir = (side / (rebarStep / 1000)).ceil() + 1;
+  final barsAlongLength = barsPerDir;
+  final barsAlongWidth = barsPerDir;
   final totalBarLen = barsPerDir * side * 2 * 2;
   final rebarKg = roundValue(totalBarLen * weightPerMeter, 6);
   final wireKg = roundValue(barsPerDir * barsPerDir * 2 * spec.materialRule<num>('wire_per_joint').toDouble(), 6);
@@ -108,7 +112,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       quantity: roundValue(concreteM3, 3),
       unit: 'м³',
       withReserve: roundValue(concreteM3, 3),
-      purchaseQty: concreteM3.ceil().toDouble(),
+      purchaseQty: ((concreteM3 * 10).ceil() / 10).toDouble(),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -178,6 +182,8 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
     materials: materials,
     totals: {
       'area': roundValue(area, 3),
+      'length': length,
+      'width': width,
       'thickness': roundValue(thickness, 3),
       'rebarDiam': rebarDiam.toDouble(),
       'rebarStep': roundValue(rebarStep, 3),
@@ -186,6 +192,8 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       'perimeter': roundValue(perimeter, 3),
       'concreteM3': roundValue(concreteM3, 3),
       'barsPerDir': barsPerDir.toDouble(),
+      'barsAlongLength': barsAlongLength.toDouble(),
+      'barsAlongWidth': barsAlongWidth.toDouble(),
       'totalBarLen': roundValue(totalBarLen, 3),
       'rebarKg': roundValue(rebarKg, 3),
       'wireKg': roundValue(wireKg, 3),

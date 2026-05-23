@@ -156,6 +156,7 @@ class _CassetteCeilingCalculatorScreenState extends ConsumerState<CassetteCeilin
     return CalculatorScaffold(
       title: _loc.translate('cassette_ceiling_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.ceilings_cassette',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

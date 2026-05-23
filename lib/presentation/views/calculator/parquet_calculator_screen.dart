@@ -189,6 +189,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
     return CalculatorScaffold(
       title: _loc.translate('parquet_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.floors_parquet',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

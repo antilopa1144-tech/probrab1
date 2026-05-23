@@ -11,7 +11,8 @@ const Map<String, Map<String, double>> _factorTable = {
 };
 
 bool hasCanonicalLinoleumInputs(Map<String, double> inputs) {
-  final hasLegacyAliases = inputs.containsKey('roomLength') ||
+  final hasLegacyAliases =
+      inputs.containsKey('roomLength') ||
       inputs.containsKey('withGlue') ||
       inputs.containsKey('withPlinth') ||
       inputs.containsKey('patternRepeat');
@@ -25,8 +26,12 @@ bool hasCanonicalLinoleumInputs(Map<String, double> inputs) {
 
 Map<String, double> normalizeLegacyLinoleumInputs(Map<String, double> inputs) {
   final normalized = Map<String, double>.from(inputs);
-  final hasRoomDimensions = (inputs['roomLength'] ?? 0) > 0 && (inputs['roomWidth'] ?? 0) > 0;
-  final hasLegacyV2Signals = inputs.containsKey('marginCm') || inputs.containsKey('rollLength') || inputs.containsKey('needTape');
+  final hasRoomDimensions =
+      (inputs['roomLength'] ?? 0) > 0 && (inputs['roomWidth'] ?? 0) > 0;
+  final hasLegacyV2Signals =
+      inputs.containsKey('marginCm') ||
+      inputs.containsKey('rollLength') ||
+      inputs.containsKey('needTape');
 
   if (!normalized.containsKey('length') && (inputs['roomLength'] ?? 0) > 0) {
     normalized['length'] = (inputs['roomLength'] ?? 0).toDouble();
@@ -36,14 +41,16 @@ Map<String, double> normalizeLegacyLinoleumInputs(Map<String, double> inputs) {
   }
 
   if (!normalized.containsKey('inputMode')) {
-    if (hasRoomDimensions || ((inputs['length'] ?? 0) > 0 && (inputs['width'] ?? 0) > 0)) {
+    if (hasRoomDimensions ||
+        ((inputs['length'] ?? 0) > 0 && (inputs['width'] ?? 0) > 0)) {
       normalized['inputMode'] = 0.0;
     } else if ((inputs['area'] ?? 0) > 0) {
       normalized['inputMode'] = 1.0;
     }
   }
 
-  if ((normalized['inputMode'] ?? 0).round() == 1 && (normalized['roomWidth'] ?? 0) <= 0) {
+  if ((normalized['inputMode'] ?? 0).round() == 1 &&
+      (normalized['roomWidth'] ?? 0) <= 0) {
     final area = inputs['area'] ?? 0;
     if (area > 0) {
       normalized['roomWidth'] = math.sqrt(area);
@@ -51,11 +58,18 @@ Map<String, double> normalizeLegacyLinoleumInputs(Map<String, double> inputs) {
   }
 
   normalized['rollWidth'] = (inputs['rollWidth'] ?? 3.0).toDouble();
-  normalized['hasPattern'] = ((inputs['hasPattern'] ?? 0) > 0 ? 1 : 0).toDouble();
-  normalized['patternRepeatCm'] = (inputs['patternRepeatCm'] ?? inputs['patternRepeat'] ?? 30).toDouble();
-  normalized['needGlue'] = ((inputs['needGlue'] ?? inputs['withGlue'] ?? 0) > 0 ? 1 : 0).toDouble();
-  normalized['needPlinth'] = ((inputs['needPlinth'] ?? inputs['withPlinth'] ?? 1) > 0 ? 1 : 0).toDouble();
-  normalized['needTape'] = ((inputs['needTape'] ?? (hasLegacyV2Signals ? 1 : 0)) > 0 ? 1 : 0).toDouble();
+  normalized['hasPattern'] = ((inputs['hasPattern'] ?? 0) > 0 ? 1 : 0)
+      .toDouble();
+  normalized['patternRepeatCm'] =
+      (inputs['patternRepeatCm'] ?? inputs['patternRepeat'] ?? 30).toDouble();
+  normalized['needGlue'] =
+      ((inputs['needGlue'] ?? inputs['withGlue'] ?? 0) > 0 ? 1 : 0).toDouble();
+  normalized['needPlinth'] =
+      ((inputs['needPlinth'] ?? inputs['withPlinth'] ?? 1) > 0 ? 1 : 0)
+          .toDouble();
+  normalized['needTape'] =
+      ((inputs['needTape'] ?? (hasLegacyV2Signals ? 1 : 0)) > 0 ? 1 : 0)
+          .toDouble();
 
   return normalized;
 }
@@ -65,11 +79,19 @@ double _estimatePerimeter(double area) {
   return 4 * math.sqrt(area);
 }
 
-Map<String, double> _resolveGeometry(SpecReader spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
+Map<String, double> _resolveGeometry(
+  SpecReader spec,
+  Map<String, double> inputs,
+) {
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0))
+      .round();
   if (inputMode == 0) {
-    final length = math.max(1, inputs['length'] ?? defaultFor(spec, 'length', 5)).toDouble();
-    final width = math.max(1, inputs['width'] ?? defaultFor(spec, 'width', 4)).toDouble();
+    final length = math
+        .max(1, inputs['length'] ?? defaultFor(spec, 'length', 5))
+        .toDouble();
+    final width = math
+        .max(1, inputs['width'] ?? defaultFor(spec, 'width', 4))
+        .toDouble();
     return {
       'inputMode': 0.0,
       'area': roundValue(length * width, 3),
@@ -79,8 +101,12 @@ Map<String, double> _resolveGeometry(SpecReader spec, Map<String, double> inputs
     };
   }
 
-  final area = math.max(1, inputs['area'] ?? defaultFor(spec, 'area', 20)).toDouble();
-  final roomWidth = math.max(1, inputs['roomWidth'] ?? defaultFor(spec, 'roomWidth', 4)).toDouble();
+  final area = math
+      .max(1, inputs['area'] ?? defaultFor(spec, 'area', 20))
+      .toDouble();
+  final roomWidth = math
+      .max(1, inputs['roomWidth'] ?? defaultFor(spec, 'roomWidth', 4))
+      .toDouble();
   final roomLength = area / roomWidth;
   final explicitPerimeter = math.max(0, inputs['perimeter'] ?? 0).toDouble();
   return {
@@ -88,7 +114,10 @@ Map<String, double> _resolveGeometry(SpecReader spec, Map<String, double> inputs
     'area': roundValue(area, 3),
     'roomLength': roundValue(roomLength, 3),
     'roomWidth': roundValue(roomWidth, 3),
-    'perimeter': roundValue(explicitPerimeter > 0 ? explicitPerimeter : _estimatePerimeter(area), 3),
+    'perimeter': roundValue(
+      explicitPerimeter > 0 ? explicitPerimeter : _estimatePerimeter(area),
+      3,
+    ),
   };
 }
 
@@ -107,33 +136,64 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
       ? Map<String, double>.from(inputs)
       : normalizeLegacyLinoleumInputs(inputs);
   final geometry = _resolveGeometry(spec, normalized);
-  final rollWidth = (normalized['rollWidth'] ?? defaultFor(spec, 'rollWidth', 3))
-      .clamp(1.5, spec.warningRule<num>('max_single_roll_width_m').toDouble())
-      .toDouble();
-  final hasPattern = (normalized['hasPattern'] ?? defaultFor(spec, 'hasPattern', 0)) > 0;
-  final patternRepeatM = math.max(0, normalized['patternRepeatCm'] ?? defaultFor(spec, 'patternRepeatCm', 30)).toDouble() / 100;
-  final needGlue = (normalized['needGlue'] ?? defaultFor(spec, 'needGlue', 0)) > 0;
-  final needPlinth = (normalized['needPlinth'] ?? defaultFor(spec, 'needPlinth', 1)) > 0;
-  final needTape = (normalized['needTape'] ?? defaultFor(spec, 'needTape', 1)) > 0;
+  final rollWidth =
+      (normalized['rollWidth'] ?? defaultFor(spec, 'rollWidth', 3))
+          .clamp(
+            1.5,
+            spec.warningRule<num>('max_single_roll_width_m').toDouble(),
+          )
+          .toDouble();
+  final hasPattern =
+      (normalized['hasPattern'] ?? defaultFor(spec, 'hasPattern', 0)) > 0;
+  final patternRepeatM =
+      math
+          .max(
+            0,
+            normalized['patternRepeatCm'] ??
+                defaultFor(spec, 'patternRepeatCm', 30),
+          )
+          .toDouble() /
+      100;
+  final needGlue =
+      (normalized['needGlue'] ?? defaultFor(spec, 'needGlue', 0)) > 0;
+  final needPlinth =
+      (normalized['needPlinth'] ?? defaultFor(spec, 'needPlinth', 1)) > 0;
+  final needTape =
+      (normalized['needTape'] ?? defaultFor(spec, 'needTape', 1)) > 0;
 
   final longerSide = math.max(geometry['roomLength']!, geometry['roomWidth']!);
   final shorterSide = math.min(geometry['roomLength']!, geometry['roomWidth']!);
   final stripsNeeded = math.max(1, (shorterSide / rollWidth).ceil());
-  final stripLengthBase = longerSide + spec.materialRule<num>('trim_allowance_m').toDouble();
+  final stripLengthBase =
+      longerSide + spec.materialRule<num>('trim_allowance_m').toDouble();
   final totalLinearM = hasPattern && stripsNeeded > 1
-      ? stripLengthBase + (stripLengthBase + patternRepeatM) * (stripsNeeded - 1)
+      ? stripLengthBase +
+            (stripLengthBase + patternRepeatM) * (stripsNeeded - 1)
       : stripLengthBase * stripsNeeded;
-  final linearMetersRounded = _roundLinearMeters(totalLinearM, spec.packagingRule<num>('linear_meter_step_m').toDouble());
+  final linearMetersRounded = _roundLinearMeters(
+    totalLinearM,
+    spec.packagingRule<num>('linear_meter_step_m').toDouble(),
+  );
   final totalCoverageArea = roundValue(linearMetersRounded * rollWidth, 6);
   final wastePercent = geometry['area']! > 0
-      ? roundValue(((totalCoverageArea - geometry['area']!) / geometry['area']!) * 100, 3)
+      ? roundValue(
+          ((totalCoverageArea - geometry['area']!) / geometry['area']!) * 100,
+          0,
+        )
       : 0.0;
 
   final scenarios = <String, CanonicalScenarioResult>{};
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      _factorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(totalLinearM * multiplier, 6);
-    final purchaseQuantity = _roundLinearMeters(exactNeed, spec.packagingRule<num>('linear_meter_step_m').toDouble());
+    final purchaseQuantity = _roundLinearMeters(
+      exactNeed,
+      spec.packagingRule<num>('linear_meter_step_m').toDouble(),
+    );
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: roundValue(purchaseQuantity, 6),
@@ -148,41 +208,101 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
-        packageLabel: 'linoleum-linear-${spec.packagingRule<num>('linear_meter_step_m').toDouble()}',
+        packageLabel:
+            'linoleum-linear-${spec.packagingRule<num>('linear_meter_step_m').toDouble()}',
         packageSize: spec.packagingRule<num>('linear_meter_step_m').toDouble(),
-        packagesCount: (purchaseQuantity / spec.packagingRule<num>('linear_meter_step_m').toDouble()).round(),
+        packagesCount:
+            (purchaseQuantity /
+                    spec.packagingRule<num>('linear_meter_step_m').toDouble())
+                .round(),
         unit: spec.packagingRule<String>('linear_meter_unit'),
       ),
     );
   }
 
-  final seamsLength = stripsNeeded > 1 ? roundValue((stripsNeeded - 1) * longerSide, 6) : 0.0;
+  final seamsLength = stripsNeeded > 1
+      ? roundValue((stripsNeeded - 1) * longerSide, 6)
+      : 0.0;
   final coldWeldingTubes = seamsLength > 0
-      ? math.max(1, (seamsLength / spec.packagingRule<num>('cold_welding_tube_linear_m').toDouble()).ceil())
+      ? math.max(
+          1,
+          (seamsLength /
+                  spec
+                      .packagingRule<num>('cold_welding_tube_linear_m')
+                      .toDouble())
+              .ceil(),
+        )
       : 0;
-  final glueKg = needGlue ? roundValue(geometry['area']! * spec.materialRule<num>('glue_kg_per_m2').toDouble(), 6) : 0.0;
-  final glueBuckets = needGlue ? math.max(1, (glueKg / spec.packagingRule<num>('glue_bucket_kg').toDouble()).ceil()) : 0;
-  final primerLiters = roundValue(geometry['area']! * spec.materialRule<num>('primer_liters_per_m2').toDouble(), 6);
-  final primerCans = math.max(1, (primerLiters / spec.packagingRule<num>('primer_can_liters').toDouble()).ceil());
+  final glueKg = needGlue
+      ? roundValue(
+          geometry['area']! *
+              spec.materialRule<num>('glue_kg_per_m2').toDouble(),
+          6,
+        )
+      : 0.0;
+  final glueBuckets = needGlue
+      ? math.max(
+          1,
+          (glueKg / spec.packagingRule<num>('glue_bucket_kg').toDouble())
+              .ceil(),
+        )
+      : 0;
+  final primerLiters = roundValue(
+    geometry['area']! *
+        spec.materialRule<num>('primer_liters_per_m2').toDouble(),
+    6,
+  );
+  final primerCans = math.max(
+    1,
+    (primerLiters / spec.packagingRule<num>('primer_can_liters').toDouble())
+        .ceil(),
+  );
   final plinthLengthRaw = needPlinth
-      ? math.max(0.0, geometry['perimeter']! - spec.materialRule<num>('default_door_opening_width_m').toDouble())
+      ? math.max(
+          0.0,
+          geometry['perimeter']! -
+              spec.materialRule<num>('default_door_opening_width_m').toDouble(),
+        )
       : 0.0;
   final plinthLengthWithReserve = needPlinth
-      ? roundValue(plinthLengthRaw * (1 + spec.materialRule<num>('plinth_reserve_percent').toDouble() / 100), 6)
+      ? roundValue(
+          plinthLengthRaw *
+              (1 +
+                  spec.materialRule<num>('plinth_reserve_percent').toDouble() /
+                      100),
+          6,
+        )
       : 0.0;
   final plinthPieces = needPlinth
-      ? (plinthLengthWithReserve / spec.packagingRule<num>('plinth_piece_length_m').toDouble()).ceil()
+      ? (plinthLengthWithReserve /
+                spec.packagingRule<num>('plinth_piece_length_m').toDouble())
+            .ceil()
       : 0;
   final tapeLength = needTape
-      ? roundValue(geometry['perimeter']! + longerSide * spec.materialRule<num>('tape_extra_perimeter_run').toDouble(), 6)
+      ? roundValue(
+          geometry['perimeter']! +
+              longerSide *
+                  spec.materialRule<num>('tape_extra_perimeter_run').toDouble(),
+          6,
+        )
       : 0.0;
 
   final warnings = <String>[];
   if (stripsNeeded > 1) {
-    warnings.add('Укладка потребует $stripsNeeded полосы. Попробуйте рулон шире ${roundValue(shorterSide, 1)} м для укладки без стыка');
+    final shorterSideRounded = roundValue(shorterSide, 1);
+    final shorterSideLabel =
+        shorterSideRounded == shorterSideRounded.roundToDouble()
+        ? shorterSideRounded.toStringAsFixed(0)
+        : shorterSideRounded.toStringAsFixed(1);
+    warnings.add(
+      'Укладка потребует $stripsNeeded полосы. Попробуйте рулон шире $shorterSideLabel м для укладки без стыка',
+    );
   }
-  if (wastePercent > spec.warningRule<num>('high_waste_percent_threshold').toDouble()) {
-    warnings.add('Отходы составят ${roundValue(wastePercent, 1)}% — попробуйте рулон большей ширины');
+  if (wastePercent >
+      spec.warningRule<num>('high_waste_percent_threshold').toDouble()) {
+    warnings.add(
+      'Отходы составят ${wastePercent.toStringAsFixed(0)}% — попробуйте рулон большей ширины',
+    );
   }
   if (hasPattern && patternRepeatM > 0) {
     warnings.add('Раппорт рисунка увеличивает расход на подгонку полотен');
@@ -196,60 +316,96 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
       unit: spec.packagingRule<String>('linear_meter_unit'),
       withReserve: recScenario.purchaseQuantity,
       purchaseQty: recScenario.purchaseQuantity,
-      packageInfo: {'count': (recScenario.purchaseQuantity / spec.packagingRule<num>('linear_meter_step_m').toDouble()).round(), 'size': spec.packagingRule<num>('linear_meter_step_m').toDouble(), 'packageUnit': 'отрезов'},
+      packageInfo: {
+        'count':
+            (recScenario.purchaseQuantity /
+                    spec.packagingRule<num>('linear_meter_step_m').toDouble())
+                .round(),
+        'size': spec.packagingRule<num>('linear_meter_step_m').toDouble(),
+        'packageUnit': 'отрезов',
+      },
       category: 'Покрытие',
     ),
     CanonicalMaterialResult(
-      name: 'Грунтовка (${spec.packagingRule<num>('primer_can_liters').toInt()} л)',
+      name:
+          'Грунтовка глубокого проникновения (${spec.packagingRule<num>('primer_can_liters').toInt()} л)',
       quantity: primerLiters,
       unit: 'л',
-      withReserve: primerCans * spec.packagingRule<num>('primer_can_liters').toDouble(),
-      purchaseQty: (primerCans * spec.packagingRule<num>('primer_can_liters').toDouble()).toDouble(),
-      packageInfo: {'count': primerCans, 'size': spec.packagingRule<num>('primer_can_liters').toDouble(), 'packageUnit': 'канистр'},
+      withReserve:
+          primerCans * spec.packagingRule<num>('primer_can_liters').toDouble(),
+      purchaseQty:
+          (primerCans * spec.packagingRule<num>('primer_can_liters').toDouble())
+              .toDouble(),
+      packageInfo: {
+        'count': primerCans,
+        'size': spec.packagingRule<num>('primer_can_liters').toDouble(),
+        'packageUnit': 'канистр',
+      },
       category: 'Подготовка',
     ),
   ];
 
   if (needGlue) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Клей для линолеума (${spec.packagingRule<num>('glue_bucket_kg').toInt()} кг)',
-      quantity: glueKg,
-      unit: 'кг',
-      withReserve: glueBuckets * spec.packagingRule<num>('glue_bucket_kg').toDouble(),
-      purchaseQty: (glueBuckets * spec.packagingRule<num>('glue_bucket_kg').toDouble()).toDouble(),
-      packageInfo: {'count': glueBuckets, 'size': spec.packagingRule<num>('glue_bucket_kg').toDouble(), 'packageUnit': 'вёдер'},
-      category: 'Клей',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Клей для линолеума (${spec.packagingRule<num>('glue_bucket_kg').toInt()} кг)',
+        quantity: glueKg,
+        unit: 'кг',
+        withReserve:
+            glueBuckets * spec.packagingRule<num>('glue_bucket_kg').toDouble(),
+        purchaseQty:
+            (glueBuckets * spec.packagingRule<num>('glue_bucket_kg').toDouble())
+                .toDouble(),
+        packageInfo: {
+          'count': glueBuckets,
+          'size': spec.packagingRule<num>('glue_bucket_kg').toDouble(),
+          'packageUnit': 'вёдер',
+        },
+        category: 'Клей',
+      ),
+    );
   }
   if (needPlinth) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Плинтус ПВХ (${spec.packagingRule<num>('plinth_piece_length_m').toDouble()} м)',
-      quantity: roundValue(plinthLengthWithReserve / spec.packagingRule<num>('plinth_piece_length_m').toDouble(), 6),
-      unit: 'шт',
-      withReserve: plinthPieces.toDouble(),
-      purchaseQty: plinthPieces.toDouble(),
-      category: 'Плинтус',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Плинтус ПВХ (${spec.packagingRule<num>('plinth_piece_length_m').toDouble()} м)',
+        quantity: roundValue(
+          plinthLengthWithReserve /
+              spec.packagingRule<num>('plinth_piece_length_m').toDouble(),
+          6,
+        ),
+        unit: 'шт',
+        withReserve: plinthPieces.toDouble(),
+        purchaseQty: plinthPieces.toDouble(),
+        category: 'Плинтус',
+      ),
+    );
   }
   if (needTape) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Двусторонний скотч / клейкая фиксация',
-      quantity: tapeLength,
-      unit: 'м',
-      withReserve: tapeLength,
-      purchaseQty: tapeLength.ceil().toDouble(),
-      category: 'Крепление',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Двусторонний скотч / клейкая фиксация',
+        quantity: tapeLength,
+        unit: 'м',
+        withReserve: tapeLength,
+        purchaseQty: tapeLength.ceil().toDouble(),
+        category: 'Крепление',
+      ),
+    );
   }
   if (coldWeldingTubes > 0) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Холодная сварка для швов',
-      quantity: coldWeldingTubes.toDouble(),
-      unit: 'туб',
-      withReserve: coldWeldingTubes.toDouble(),
-      purchaseQty: coldWeldingTubes.toDouble(),
-      category: 'Швы',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Холодная сварка для швов',
+        quantity: coldWeldingTubes.toDouble(),
+        unit: 'туб',
+        withReserve: coldWeldingTubes.toDouble(),
+        purchaseQty: coldWeldingTubes.toDouble(),
+        category: 'Швы',
+      ),
+    );
   }
 
   return CanonicalCalculatorContractResult(
@@ -279,6 +435,7 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
       'glueBuckets': glueBuckets.toDouble(),
       'primerNeededL': primerLiters,
       'primerCans': primerCans.toDouble(),
+      'plinthLength': plinthLengthWithReserve,
       'plinthLengthRaw': roundValue(plinthLengthRaw, 6),
       'plinthLengthWithReserve': plinthLengthWithReserve,
       'plinthPieces': plinthPieces.toDouble(),
@@ -294,4 +451,3 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
     scenarios: scenarios,
   );
 }
-

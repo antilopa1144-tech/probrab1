@@ -151,6 +151,7 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
     return CalculatorScaffold(
       title: _loc.translate('pvc_panels_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.walls_pvc_panels',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

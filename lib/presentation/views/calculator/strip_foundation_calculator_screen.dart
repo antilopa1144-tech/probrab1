@@ -209,6 +209,7 @@ class _StripFoundationCalculatorScreenState
     return CalculatorScaffold(
       title: _loc.translate('strip_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.foundation_strip',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

@@ -343,6 +343,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate('gypsum.brand'),
       accentColor: accentColor,
+      faqPrefix: 'faq.gypsum_board',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,

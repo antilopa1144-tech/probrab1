@@ -1,6 +1,6 @@
 // GENERATED FILE — DO NOT EDIT MANUALLY
 // Source: configs/calculators/*-canonical.v1.json
-// Generated: 2026-03-27
+// Generated: 2026-05-14
 // Run: npx tsx scripts/sync-specs-to-dart.ts
 
 // ignore_for_file: prefer_single_quotes, lines_longer_than_80_chars
@@ -692,6 +692,12 @@ const Map<String, dynamic> brickSpecData = {
       'min': 0,
       'max': 2,
     },
+    {
+      'key': 'mortarAdditive',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
   ],
   'field_factors': {
     'enabled': [
@@ -786,6 +792,133 @@ const Map<String, dynamic> brickSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'companion_materials': [
+    {
+      'key': 'lime',
+      'label': 'Известь гашёная (тесто)',
+      'category': 'Раствор',
+      'unit': 'кг',
+      'rationale': 'Традиционная пластифицирующая добавка в кладочный раствор. Улучшает удержание воды и пластичность.',
+      'alternative_group': 'mortar_additive',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'mortarAdditive',
+        'value': 0,
+      },
+      'formula': {
+        'type': 'volume_consumption',
+        'totals_key': 'mortarVolume',
+        'consumption_per_m3': 150,
+        'reserve_factor': 1.1,
+      },
+      'package': {
+        'size': 25,
+        'unit': 'мешков',
+      },
+    },
+    {
+      'key': 'plasticizer',
+      'label': 'Пластификатор для кладочного раствора',
+      'category': 'Раствор',
+      'unit': 'л',
+      'rationale': 'Современная альтернатива извести. Применяется при mortarAdditive=1.',
+      'alternative_group': 'mortar_additive',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'mortarAdditive',
+        'value': 1,
+      },
+      'formula': {
+        'type': 'volume_consumption',
+        'totals_key': 'mortarVolume',
+        'consumption_per_m3': 0.5,
+        'reserve_factor': 1.1,
+      },
+    },
+    {
+      'key': 'trowel',
+      'label': 'Кельма каменщика',
+      'category': 'Инструмент',
+      'unit': 'шт',
+      'rationale': 'Основной инструмент каменщика.',
+      'formula': {
+        'type': 'fixed',
+        'value': 1,
+      },
+    },
+    {
+      'key': 'hammer_pick',
+      'label': 'Молоток-кирочка для подколки',
+      'category': 'Инструмент',
+      'unit': 'шт',
+      'rationale': 'Для подколки кирпича в местах подгонки.',
+      'formula': {
+        'type': 'fixed',
+        'value': 1,
+      },
+    },
+    {
+      'key': 'level',
+      'label': 'Уровень строительный 600 мм',
+      'category': 'Инструмент',
+      'unit': 'шт',
+      'rationale': 'Контроль ровности кладки.',
+      'formula': {
+        'type': 'fixed',
+        'value': 1,
+      },
+    },
+    {
+      'key': 'twine',
+      'label': 'Шнур-причалка строительный',
+      'category': 'Инструмент',
+      'unit': 'м',
+      'rationale': 'Натягивается между углами для контроля ровности рядов. Расход = периметр × 1.5 (с запасом).',
+      'formula': {
+        'type': 'per_total',
+        'totals_key': 'perimeter',
+        'per_unit': 1.5,
+      },
+    },
+    {
+      'key': 'jointer',
+      'label': 'Расшивка для швов',
+      'category': 'Инструмент',
+      'unit': 'шт',
+      'rationale': 'Инструмент для оформления швов кладки.',
+      'formula': {
+        'type': 'fixed',
+        'value': 1,
+      },
+    },
+    {
+      'key': 'mortar_tub',
+      'label': 'Ёмкость для замеса раствора (60 л)',
+      'category': 'Инструмент',
+      'unit': 'шт',
+      'rationale': 'Корыто или ведро для замеса раствора. 1 шт на объект.',
+      'formula': {
+        'type': 'fixed',
+        'value': 1,
+      },
+    },
+    {
+      'key': 'waterproofing_under',
+      'label': 'Рубероид (гидроизоляция между фундаментом и стеной)',
+      'category': 'Гидроизоляция',
+      'unit': 'м²',
+      'rationale': 'Обязательный слой между фундаментом и первым рядом кладки по СП 15.13330.',
+      'formula': {
+        'type': 'linear_overlap',
+        'totals_key': 'footprintArea',
+        'overlap_factor': 1.1,
+      },
+      'package': {
+        'size': 15,
+        'unit': 'рулонов',
+      },
+    },
+  ],
 };
 
 /// Generated from brickwork-canonical.v1.json
@@ -1211,6 +1344,19 @@ const Map<String, dynamic> ceilingStretchSpecData = {
       'min': 0,
       'max': 2,
     },
+    {
+      'key': 'nichesCount',
+      'default_value': 0,
+      'min': 0,
+      'max': 10,
+    },
+    {
+      'key': 'boxPerimeterM',
+      'unit': 'm',
+      'default_value': 0,
+      'min': 0,
+      'max': 50,
+    },
   ],
   'field_factors': {
     'enabled': [
@@ -1235,6 +1381,8 @@ const Map<String, dynamic> ceilingStretchSpecData = {
     'baguet_length': 2.5,
     'insert_reserve': 1.1,
     'masking_tape_roll': 50,
+    'niche_perimeter_m_each': 4,
+    'niche_corner_count_each': 4,
   },
   'warnings_rules': {
     'large_area_threshold_m2': 50,
@@ -1295,6 +1443,12 @@ const Map<String, dynamic> concreteSpecData = {
       'default_value': 200,
       'min': 50,
       'max': 1000,
+    },
+    {
+      'key': 'application',
+      'default_value': 0,
+      'min': 0,
+      'max': 2,
     },
   ],
   'field_factors': {
@@ -1386,6 +1540,212 @@ const Map<String, dynamic> concreteSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'companion_materials': [
+    {
+      'key': 'rebar_slab',
+      'label': 'Арматура AIII Ø12 мм (70 кг/м³ для плиты)',
+      'category': 'Армирование',
+      'unit': 'кг',
+      'rationale': 'Армирование плиты/фундамента на грунте по СП 63.13330. Расход 60-80 кг/м³, среднее 70.',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'application',
+        'value': 0,
+      },
+      'formula': {
+        'type': 'volume_consumption',
+        'totals_key': 'totalVolume',
+        'consumption_per_m3': 70,
+        'reserve_factor': 1.05,
+      },
+    },
+    {
+      'key': 'rebar_screed',
+      'label': 'Сетка кладочная 100×100×5 мм для стяжки',
+      'category': 'Армирование',
+      'unit': 'кг',
+      'rationale': 'Армирование стяжки сеткой 100×100×5. Эквивалентный расход ~25 кг/м³.',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'application',
+        'value': 1,
+      },
+      'formula': {
+        'type': 'volume_consumption',
+        'totals_key': 'totalVolume',
+        'consumption_per_m3': 25,
+        'reserve_factor': 1.05,
+      },
+    },
+    {
+      'key': 'rebar_structure',
+      'label': 'Арматура AIII Ø12-16 мм (120 кг/м³ для конструктива)',
+      'category': 'Армирование',
+      'unit': 'кг',
+      'rationale': 'Для колонн, балок, перекрытий расход 100-150 кг/м³.',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'application',
+        'value': 2,
+      },
+      'formula': {
+        'type': 'volume_consumption',
+        'totals_key': 'totalVolume',
+        'consumption_per_m3': 120,
+        'reserve_factor': 1.05,
+      },
+    },
+    {
+      'key': 'binding_wire',
+      'label': 'Проволока вязальная 1.2 мм',
+      'category': 'Армирование',
+      'unit': 'кг',
+      'rationale': 'Для вязки арматурных каркасов. Не нужна для стяжки с готовой сеткой.',
+      'only_when': {
+        'type': 'or',
+        'any': [
+          {
+            'type': 'input_eq',
+            'input_key': 'application',
+            'value': 0,
+          },
+          {
+            'type': 'input_eq',
+            'input_key': 'application',
+            'value': 2,
+          },
+        ],
+      },
+      'formula': {
+        'type': 'volume_consumption',
+        'totals_key': 'totalVolume',
+        'consumption_per_m3': 0.5,
+        'reserve_factor': 1.1,
+      },
+    },
+    {
+      'key': 'rebar_chairs',
+      'label': 'Стульчики защитного слоя 30 мм',
+      'category': 'Армирование',
+      'unit': 'шт',
+      'rationale': 'Поддерживают защитный слой арматуры от опалубки/основания. 4 шт/м².',
+      'only_when': {
+        'type': 'or',
+        'any': [
+          {
+            'type': 'input_eq',
+            'input_key': 'application',
+            'value': 0,
+          },
+          {
+            'type': 'input_eq',
+            'input_key': 'application',
+            'value': 2,
+          },
+        ],
+      },
+      'formula': {
+        'type': 'area_consumption',
+        'totals_key': 'topSurfaceArea',
+        'consumption_per_m2': 4,
+        'reserve_factor': 1,
+      },
+    },
+    {
+      'key': 'formwork_panel',
+      'label': 'Опалубочная фанера 18 мм',
+      'category': 'Опалубка',
+      'unit': 'м²',
+      'rationale': 'Боковая опалубка по периметру. Расход = периметр × высота × 1.1 (подрезка).',
+      'only_when': {
+        'type': 'or',
+        'any': [
+          {
+            'type': 'input_eq',
+            'input_key': 'application',
+            'value': 0,
+          },
+          {
+            'type': 'input_eq',
+            'input_key': 'application',
+            'value': 2,
+          },
+        ],
+      },
+      'formula': {
+        'type': 'area_consumption',
+        'totals_key': 'formworkArea',
+        'consumption_per_m2': 1,
+        'reserve_factor': 1.1,
+      },
+    },
+    {
+      'key': 'formwork_nails',
+      'label': 'Гвозди строительные 100 мм',
+      'category': 'Опалубка',
+      'unit': 'кг',
+      'rationale': 'Сборка опалубки из досок/фанеры. ~0.3 кг на м² опалубки.',
+      'only_when': {
+        'type': 'or',
+        'any': [
+          {
+            'type': 'input_eq',
+            'input_key': 'application',
+            'value': 0,
+          },
+          {
+            'type': 'input_eq',
+            'input_key': 'application',
+            'value': 2,
+          },
+        ],
+      },
+      'formula': {
+        'type': 'area_consumption',
+        'totals_key': 'formworkArea',
+        'consumption_per_m2': 0.3,
+        'reserve_factor': 1.1,
+      },
+    },
+    {
+      'key': 'waterproof_mastic',
+      'label': 'Мастика гидроизоляционная битумная (20 кг)',
+      'category': 'Гидроизоляция',
+      'unit': 'кг',
+      'rationale': 'Обмазочная гидроизоляция боковин фундамента. Только для подземных конструкций.',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'application',
+        'value': 0,
+      },
+      'formula': {
+        'type': 'area_consumption',
+        'totals_key': 'waterproofArea',
+        'consumption_per_m2': 1,
+        'reserve_factor': 1.15,
+      },
+      'package': {
+        'size': 20,
+        'unit': 'вёдер',
+      },
+    },
+    {
+      'key': 'curing_film',
+      'label': 'Плёнка полиэтиленовая для укрытия (30 м²)',
+      'category': 'Уход за бетоном',
+      'unit': 'м²',
+      'rationale': 'Укрытие поверхности после заливки — предотвращает потерю влаги и трещины при твердении.',
+      'formula': {
+        'type': 'linear_overlap',
+        'totals_key': 'topSurfaceArea',
+        'overlap_factor': 1.1,
+      },
+      'package': {
+        'size': 30,
+        'unit': 'рулонов',
+      },
+    },
+  ],
 };
 
 /// Generated from decor-plaster-canonical.v1.json
@@ -1668,6 +2028,137 @@ const Map<String, dynamic> doorsSpecData = {
   },
 };
 
+/// Generated from drainage-canonical.v1.json
+const Map<String, dynamic> drainageSpecData = {
+  'calculator_id': 'drainage',
+  'formula_version': 'drainage-canonical-v1',
+  'input_schema': [
+    {
+      'key': 'length',
+      'unit': 'm',
+      'default_value': 40,
+      'min': 5,
+      'max': 500,
+    },
+    {
+      'key': 'pipeDiameter',
+      'unit': 'mm',
+      'default_value': 110,
+      'min': 110,
+      'max': 160,
+    },
+    {
+      'key': 'drainageType',
+      'default_value': 1,
+      'min': 0,
+      'max': 2,
+    },
+    {
+      'key': 'groundwaterRisk',
+      'default_value': 1,
+      'min': 0,
+      'max': 2,
+    },
+    {
+      'key': 'withCollector',
+      'default_value': 1,
+      'min': 0,
+      'max': 1,
+    },
+  ],
+  'field_factors': {
+    'enabled': [
+      'geometry_complexity',
+      'worker_skill',
+      'waste_factor',
+    ],
+  },
+  'normative_formula': {
+    'drainage_types': [
+      0,
+      1,
+      2,
+    ],
+    'pipe_diameters': [
+      110,
+      160,
+    ],
+    'groundwater_risks': [
+      0,
+      1,
+      2,
+    ],
+  },
+  'packaging_rules': {
+    'unit': 'м',
+    'package_size': 1,
+  },
+  'material_rules': {
+    'pipe_reserve': 1.05,
+    'pipe_coil_length_m': 50,
+    'trench_width_m': 0.3,
+    'sand_bedding_thickness_m': 0.1,
+    'gravel_top_thickness_m': 0.3,
+    'gravel_side_thickness_m': 0.1,
+    'compaction_factor_sand': 1.2,
+    'compaction_factor_gravel': 1.25,
+    'geotextile_perimeter_factor': 1.61,
+    'geotextile_reserve': 1.15,
+    'geotextile_roll_m2': 50,
+    'well_step_m': 50,
+    'well_diameter_mm': 340,
+    'collector_well_diameter_mm': 600,
+    'tee_count_per_branch_type1': 4,
+    'elbow_count_type0': 4,
+    'elbow_count_type1': 2,
+    'elbow_count_type2': 2,
+    'min_slope_d110': 0.005,
+    'min_slope_d160': 0.003,
+    'extra_geotextile_high_groundwater': 1.3,
+  },
+  'warnings_rules': {
+    'min_length_for_collector': 20,
+    'max_length_d110_m': 80,
+    'high_groundwater_threshold': 2,
+    'min_well_count': 1,
+  },
+  'scenario_policy': {
+    'contract': 'min-rec-max-v1',
+  },
+  'normative_sources': [
+    {
+      'code': 'СП 104.13330.2016',
+      'title': 'Инженерная защита территории от затопления и подтопления',
+      'section': 'Раздел 7 — горизонтальный закрытый дренаж: глубина, обсыпка, шаг колодцев',
+    },
+    {
+      'code': 'СП 32.13330.2018',
+      'title': 'Канализация. Наружные сети и сооружения',
+      'section': 'Раздел 6 — минимальные уклоны самотёчных трубопроводов 0.005 для Ø110, 0.003 для Ø160',
+    },
+    {
+      'code': 'ГОСТ Р 54475-2011',
+      'title': 'Трубы полимерные со структурированной стенкой и фасонные части к ним для систем наружной канализации',
+      'section': 'Технические условия — гофрированные дренажные трубы класса SN8',
+    },
+    {
+      'code': 'ГОСТ 8267-93',
+      'title': 'Щебень и гравий из плотных горных пород для строительных работ',
+      'section': 'Фракции 5-20 и 20-40 мм для дренажа',
+    },
+  ],
+  'assumption_notes': [
+    'Длина траншеи равна длине дренажной трубы; стандартная ширина траншеи 0.30 м (СП 104.13330.2016).',
+    'Под трубой укладывается выравнивающий слой песка 100 мм с компенсацией уплотнения 1.20.',
+    'Обсыпка щебнем фр. 5-20 или 20-40 мм: 100 мм с боков + 300 мм сверху над трубой, коэф. уплотнения 1.25. На высокий уровень грунтовых вод (groundwaterRisk=2) добавляется доп. слой и расширенная обмотка геотекстилем (×1.30).',
+    'Геотекстиль (Дорнит 200 г/м²) обёртывает щебневую обсыпку по периметру траншеи: коэф. 1.61 м² на метр трассы при ширине 0.30 м и высоте обсыпки 0.40 м, +15% запас на нахлёст (стандарт нахлёст 15-20 см).',
+    'Смотровые колодцы Ø340 устанавливаются по СП 104.13330.2016: на каждом повороте + каждые 50 м прямого участка. Минимум 1 колодец независимо от длины. Для типа 1 (ёлочка) количество поворотов больше — учтено в формуле.',
+    'Приёмный (накопительный) колодец Ø600 — конечная точка системы, опция withCollector=1. На длинах < 20 м обычно не нужен — выводят в кювет/канаву.',
+    'Минимальный уклон: 0.005 (5 мм/м) для Ø110, 0.003 (3 мм/м) для Ø160 по СП 32.13330.2018. На длине 80 м и больше для Ø110 предупреждение — нужен Ø160 или промежуточный сброс.',
+    'Дренажная труба продаётся бухтами (50 м гофры с фильтром) или отрезками (3-6 м жёсткой). В расчёте — погонные метры, упаковка через optimizePackaging.',
+  ],
+};
+
 /// Generated from drywall-canonical.v1.json
 const Map<String, dynamic> drywallSpecData = {
   'calculator_id': 'drywall',
@@ -1766,6 +2257,8 @@ const Map<String, dynamic> drywallSpecData = {
     'sandpaper_pack': 10,
     'profile_length_m': 3,
     'sealing_tape_roll_m': 30,
+    'screws_tf_per_kg': 1000,
+    'screws_lb_per_kg': 4000,
   },
   'warnings_rules': {
     'wide_profile_height_threshold': 3.5,
@@ -1939,6 +2432,8 @@ const Map<String, dynamic> electricSpecData = {
     'cable_25_rate': 1.6,
     'cable_6_kitchen_factor': 1.5,
     'cable_6_reserve': 1.2,
+    'cable_open_wiring_multiplier': 1.5,
+    'cable_hidden_wiring_multiplier': 1,
     'conduit_ratio': 0.8,
     'outlets_per_m2': 0.6,
     'outlets_per_room': 2,
@@ -1985,6 +2480,19 @@ const Map<String, dynamic> facadeBrickSpecData = {
       'default_value': 0,
       'min': 0,
       'max': 2,
+    },
+    {
+      'key': 'windowCount',
+      'default_value': 0,
+      'min': 0,
+      'max': 50,
+    },
+    {
+      'key': 'avgWindowWidth',
+      'unit': 'm',
+      'default_value': 1.5,
+      'min': 0.5,
+      'max': 5,
     },
   ],
   'field_factors': {
@@ -2054,6 +2562,8 @@ const Map<String, dynamic> facadeBrickSpecData = {
     'hydrophob_l_per_m2': 0.2,
     'hydrophob_reserve': 1.1,
     'hydrophob_can_l': 5,
+    'lintel_band_height_m': 0.3,
+    'lintel_band_side_extension_m': 0.3,
   },
   'warnings_rules': {
     'clinker_max_joint_mm': 10,
@@ -2062,6 +2572,31 @@ const Map<String, dynamic> facadeBrickSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'normative_sources': [
+    {
+      'code': 'СП 15.13330.2020',
+      'title': 'Каменные и армокаменные конструкции',
+      'section': 'Раздел 9 — гидроизоляция и водоотвод; раздел 10 — вентиляция облицовочной кладки',
+    },
+    {
+      'code': 'ГОСТ 530-2012',
+      'title': 'Кирпич и камень керамические',
+      'section': 'Технические условия',
+    },
+    {
+      'code': 'ГОСТ 31108-2020',
+      'title': 'Цементы общестроительные',
+      'section': 'Технические условия (для марки М400)',
+    },
+  ],
+  'assumption_notes': [
+    'Базовая полоса гидроизоляции (hydro_coeff = 0.3 м) укладывается по периметру здания у цоколя — отсечка от капиллярной влаги из грунта.',
+    'Над каждым оконным проёмом по СП 15.13330.2020 требуется отдельная горизонтальная полоса гидроизоляции поверх перемычки. Без неё дождь по швам кладки попадает в проём — ремонт откосов через 1-2 сезона.',
+    'Размеры полосы над окном: высота lintel_band_height_m = 0.3 м, ширина = avgWindowWidth + 2 × lintel_band_side_extension_m (по 0.3 м запаса с каждой стороны проёма).',
+    'Если windowCount = 0 (не задано пользователем) — поведение идентично прежней версии (только цокольная полоса). Backward-compat 100%.',
+    'Толщина кладки masonry_thickness = 0.12 м — половина кирпича (типовая облицовка). Для двухслойной облицовки (полный кирпич = 0.25 м) пользователь должен ввести скорректированную площадь или ждать обновления формулы.',
+    'Вентиляционный зазор 20-40 мм между облицовкой и несущей стеной обязателен по СП 15.13330.2020 — без него влага разрушает утеплитель.',
+  ],
 };
 
 /// Generated from facade-insulation-canonical.v1.json
@@ -2195,6 +2730,12 @@ const Map<String, dynamic> facadePanelsSpecData = {
       'min': 0,
       'max': 100,
     },
+    {
+      'key': 'withHorizontalRails',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
   ],
   'field_factors': {
     'enabled': [
@@ -2238,6 +2779,7 @@ const Map<String, dynamic> facadePanelsSpecData = {
     'guide_spacing': 0.6,
     'guide_length': 3,
     'guide_reserve': 1.1,
+    'horizontal_rail_step_m': 0.6,
     'fasteners_per_panel': 8,
     'fastener_reserve': 1.05,
     'anchor_per_bracket': 2,
@@ -2591,6 +3133,20 @@ const Map<String, dynamic> foundationSlabSpecData = {
       'max': 500,
     },
     {
+      'key': 'length',
+      'unit': 'm',
+      'default_value': 0,
+      'min': 0,
+      'max': 50,
+    },
+    {
+      'key': 'width',
+      'unit': 'm',
+      'default_value': 0,
+      'min': 0,
+      'max': 50,
+    },
+    {
       'key': 'thickness',
       'unit': 'mm',
       'default_value': 200,
@@ -2654,6 +3210,28 @@ const Map<String, dynamic> foundationSlabSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'normative_sources': [
+    {
+      'code': 'СП 22.13330.2016',
+      'title': 'Основания зданий и сооружений',
+      'section': 'Раздел 6 — Расчёт оснований по деформациям',
+    },
+    {
+      'code': 'СП 63.13330.2018',
+      'title': 'Бетонные и железобетонные конструкции. Основные положения',
+      'section': 'пп. 8.3, 10.3 — армирование плит',
+    },
+    {
+      'code': 'ГОСТ 5781-82',
+      'title': 'Сталь горячекатаная для армирования железобетонных конструкций',
+      'section': 'Технические условия',
+    },
+  ],
+  'assumption_notes': [
+    'Если поля length и width оба заполнены и > 0 — расчёт использует реальные размеры прямоугольной плиты (для арматуры, опалубки, периметра). Это даёт корректные значения для асимметричных плит (типа 4×15 или 3×20). Если хотя бы одно из полей = 0 — fallback на side = sqrt(area), что эквивалентно квадратной плите. Старое поведение сохранено для обратной совместимости.',
+    'Расчёт армирования предполагает двухсетевую схему (верхняя и нижняя сетки) с шагом 150-250 мм. Для тяжёлых нагрузок (двух- и более этажные кирпичные дома) может потребоваться шаг 100-150 мм и расчёт инженером-конструктором.',
+    'Минимальная толщина плиты в калькуляторе 150 мм — для лёгких каркасных конструкций. Для тяжёлых домов рекомендуемая толщина 250-300 мм. Несущая способность зависит от грунта и нагрузки — индивидуальный расчёт обязателен.',
+  ],
 };
 
 /// Generated from frame-house-canonical.v1.json
@@ -2769,6 +3347,176 @@ const Map<String, dynamic> frameHouseSpecData = {
   },
 };
 
+/// Generated from greenhouse-canonical.v1.json
+const Map<String, dynamic> greenhouseSpecData = {
+  'calculator_id': 'greenhouse',
+  'formula_version': 'greenhouse-canonical-v1',
+  'input_schema': [
+    {
+      'key': 'length',
+      'unit': 'm',
+      'default_value': 6,
+      'min': 2,
+      'max': 12,
+    },
+    {
+      'key': 'width',
+      'unit': 'm',
+      'default_value': 3,
+      'min': 2,
+      'max': 6,
+    },
+    {
+      'key': 'height',
+      'unit': 'm',
+      'default_value': 2.1,
+      'min': 1.8,
+      'max': 3,
+    },
+    {
+      'key': 'roofType',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
+    {
+      'key': 'polycarbonateThickness',
+      'unit': 'mm',
+      'default_value': 6,
+      'min': 4,
+      'max': 10,
+    },
+    {
+      'key': 'archStep',
+      'unit': 'm',
+      'default_value': 0.65,
+      'min': 0.5,
+      'max': 1.05,
+    },
+    {
+      'key': 'doorCount',
+      'default_value': 2,
+      'min': 1,
+      'max': 2,
+    },
+    {
+      'key': 'ventCount',
+      'default_value': 2,
+      'min': 0,
+      'max': 6,
+    },
+    {
+      'key': 'foundationType',
+      'default_value': 1,
+      'min': 0,
+      'max': 3,
+    },
+  ],
+  'field_factors': {
+    'enabled': [
+      'geometry_complexity',
+      'worker_skill',
+      'waste_factor',
+    ],
+  },
+  'normative_formula': {
+    'roof_types': [
+      0,
+      1,
+    ],
+    'polycarbonate_thicknesses': [
+      4,
+      6,
+      8,
+      10,
+    ],
+    'foundation_types': [
+      0,
+      1,
+      2,
+      3,
+    ],
+  },
+  'packaging_rules': {
+    'unit': 'лист',
+    'package_size': 1,
+  },
+  'material_rules': {
+    'polycarbonate_sheet_width_m': 2.1,
+    'polycarbonate_sheet_length_m': 6,
+    'polycarbonate_reserve': 1.15,
+    'thermal_washers_per_m2': 6,
+    'thermal_washer_pack': 100,
+    'h_profile_length_m': 6,
+    'up_profile_length_m': 2.1,
+    'frame_profile_section_label': '20×20×1.2 мм',
+    'frame_profile_pack_m': 6,
+    'frame_profile_reserve': 1.1,
+    'longitudinal_purlins_count': 5,
+    'wood_beam_section_label': 'Брус 100×100 мм',
+    'wood_beam_pack_m': 6,
+    'wood_beam_reserve': 1.05,
+    'wood_beam_crossbeam_step_m': 1.5,
+    'screw_pile_step_m': 1.5,
+    'screw_pile_corners_min': 4,
+    'concrete_strip_width_m': 0.3,
+    'concrete_strip_depth_m': 0.4,
+    'concrete_reserve': 1.05,
+    'anchor_step_m': 1,
+    'door_width_m': 0.9,
+    'door_height_m': 1.85,
+    'vent_width_m': 0.6,
+    'vent_height_m': 0.9,
+    'sealing_tape_per_seam_factor': 2,
+    'self_tapping_screws_per_m2': 4,
+  },
+  'warnings_rules': {
+    'thin_polycarbonate_for_winter_mm': 6,
+    'wide_step_for_winter_m': 1,
+    'low_height_threshold_m': 2,
+    'no_foundation_max_length_m': 4,
+  },
+  'scenario_policy': {
+    'contract': 'min-rec-max-v1',
+  },
+  'normative_sources': [
+    {
+      'code': 'ГОСТ 56826-2015',
+      'title': 'Сотовый поликарбонат для применения в строительстве',
+      'section': 'Технические условия — толщины 4/6/8/10/16 мм, размер листа 2100×6000 / 2100×12000',
+    },
+    {
+      'code': 'ГОСТ 14918-2020',
+      'title': 'Прокат стальной тонколистовой оцинкованный',
+      'section': 'Технические условия для каркасов теплиц',
+    },
+    {
+      'code': 'СП 20.13330.2016',
+      'title': 'Нагрузки и воздействия',
+      'section': 'Раздел 10 — снеговые нагрузки на теплицы; шаг арок ≤ 0.65 м для III снегового района и тяжелее',
+    },
+    {
+      'code': 'СП 107.13330.2012',
+      'title': 'Теплицы и парники',
+      'section': 'Конструктивные требования, расход поликарбоната, типоразмеры',
+    },
+  ],
+  'assumption_notes': [
+    'Стандартный лист сотового поликарбоната 2.10 × 6.0 м (12.6 м²) — наиболее распространённый формат. Запас на раскрой 15% по ГОСТ 56826-2015.',
+    'Для арочной теплицы (roofType=0) общая площадь поликарбоната = боковая поверхность полуцилиндра (π × W × L / 2) + 2 торца (полукруг π × W² / 8 каждый).',
+    'Для двускатной теплицы (roofType=1) площадь = 2 ската + 2 торца. Высота стен принята фиксированной 1.5 м, остальная высота уходит на конёк.',
+    'Шаг арок/стропил по СП 20.13330.2016: 0.65 м обязателен для зимней эксплуатации в III и тяжелее снеговом районе РФ; 1.0 м допустим для летних теплиц или южных регионов.',
+    'Профиль каркаса 20×20×1.2 мм — лёгкий стандарт; для зимней теплицы рекомендуется 25×25×1.5 мм или 40×20×1.5 мм (пользователь корректирует через выбор за пределами spec).',
+    'Термошайбы для поликарбоната: 6 шт/м² с шагом 30-40 см по СП 107.13330.2012. Без них поликарбонат деформируется при нагреве/охлаждении.',
+    'H-соединительный профиль (поликарбонатный) — между листами по длине; UP-торцевой профиль — по верху и низу листа для герметичности.',
+    'Фундамент типа 0 (без) — установка на грунт с анкерами; допустим только для теплиц длиной ≤ 4 м, иначе перекос конструкции.',
+    'Брус 100×100 мм (foundationType=1) — наиболее частый вариант для дачи. Поперечные перемычки каждые 1.5 м для устойчивости.',
+    'Винтовые сваи (foundationType=2) — шаг 1.5 м по периметру, минимум 4 угловых, не требуют земляных работ.',
+    'Ленточный фундамент (foundationType=3) — мелкозаглублённый 0.30 × 0.40 м для зимних теплиц с оборудованием отопления.',
+    'Двери стандартного размера 0.9 × 1.85 м, форточки 0.6 × 0.9 м — типовые размеры серийных теплиц.',
+  ],
+};
+
 /// Generated from gutters-canonical.v1.json
 const Map<String, dynamic> guttersSpecData = {
   'calculator_id': 'gutters',
@@ -2808,6 +3556,18 @@ const Map<String, dynamic> guttersSpecData = {
       'min': 3,
       'max': 4,
     },
+    {
+      'key': 'bendCount45',
+      'default_value': 0,
+      'min': 0,
+      'max': 20,
+    },
+    {
+      'key': 'bendCount90',
+      'default_value': 0,
+      'min': 0,
+      'max': 20,
+    },
   ],
   'field_factors': {
     'enabled': [
@@ -2842,6 +3602,7 @@ const Map<String, dynamic> guttersSpecData = {
     'connector_reserve': 1.05,
     'sealant_connections_per_tube': 20,
     'sealant_tube_ml': 310,
+    'sealant_per_joint_ml': 15,
     'recommended_funnel_interval_m': 11,
   },
   'warnings_rules': {
@@ -3149,6 +3910,12 @@ const Map<String, dynamic> insulationSpecData = {
       'min': 0,
       'max': 15,
     },
+    {
+      'key': 'mountSystem',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
   ],
   'field_factors': {
     'enabled': [
@@ -3232,6 +3999,239 @@ const Map<String, dynamic> insulationSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'companion_materials': [
+    {
+      'key': 'vapor_barrier_membrane',
+      'label': 'Пароизоляционная мембрана (изнутри помещения)',
+      'category': 'Изоляция',
+      'unit': 'м²',
+      'rationale': 'Для минваты в каркасной системе: защищает утеплитель от водяного пара изнутри.',
+      'only_when': {
+        'type': 'and',
+        'all': [
+          {
+            'type': 'input_eq',
+            'input_key': 'insulationType',
+            'value': 0,
+          },
+          {
+            'type': 'input_eq',
+            'input_key': 'mountSystem',
+            'value': 1,
+          },
+        ],
+      },
+      'formula': {
+        'type': 'linear_overlap',
+        'totals_key': 'area',
+        'overlap_factor': 1.15,
+      },
+      'package': {
+        'size': 30,
+        'unit': 'рулонов',
+      },
+    },
+    {
+      'key': 'wind_barrier_membrane',
+      'label': 'Гидроветрозащитная мембрана (снаружи)',
+      'category': 'Изоляция',
+      'unit': 'м²',
+      'rationale': 'Защищает минвату от выдувания и атмосферной влаги. Обязательна для наружного утепления минватой.',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'insulationType',
+        'value': 0,
+      },
+      'formula': {
+        'type': 'linear_overlap',
+        'totals_key': 'area',
+        'overlap_factor': 1.15,
+      },
+      'package': {
+        'size': 30,
+        'unit': 'рулонов',
+      },
+    },
+    {
+      'key': 'alu_tape',
+      'label': 'Скотч соединительный для пароизоляции',
+      'category': 'Изоляция',
+      'unit': 'рулонов',
+      'rationale': 'Проклейка стыков пароизоляционной мембраны.',
+      'only_when': {
+        'type': 'and',
+        'all': [
+          {
+            'type': 'input_eq',
+            'input_key': 'insulationType',
+            'value': 0,
+          },
+          {
+            'type': 'input_eq',
+            'input_key': 'mountSystem',
+            'value': 1,
+          },
+        ],
+      },
+      'formula': {
+        'type': 'per_count_step',
+        'totals_key': 'area',
+        'fixed': 1,
+        'step': 50,
+      },
+    },
+    {
+      'key': 'facade_glue',
+      'label': 'Клей фасадный для плит (25 кг)',
+      'category': 'Клей',
+      'unit': 'кг',
+      'rationale': 'Приклеивание плит к основанию в системе мокрого штукатурного фасада.',
+      'only_when': {
+        'type': 'and',
+        'all': [
+          {
+            'type': 'input_in',
+            'input_key': 'insulationType',
+            'values': [
+              0,
+              1,
+              2,
+            ],
+          },
+          {
+            'type': 'input_eq',
+            'input_key': 'mountSystem',
+            'value': 0,
+          },
+        ],
+      },
+      'formula': {
+        'type': 'area_consumption',
+        'totals_key': 'area',
+        'consumption_per_m2': 5,
+        'reserve_factor': 1,
+      },
+      'package': {
+        'size': 25,
+        'unit': 'мешков',
+      },
+    },
+    {
+      'key': 'fiber_mesh',
+      'label': 'Стеклосетка фасадная (армирующая)',
+      'category': 'Армирование',
+      'unit': 'м²',
+      'rationale': 'Армирующий слой в базовой штукатурке системы мокрого фасада.',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'mountSystem',
+        'value': 0,
+      },
+      'formula': {
+        'type': 'linear_overlap',
+        'totals_key': 'area',
+        'overlap_factor': 1.1,
+      },
+      'package': {
+        'size': 50,
+        'unit': 'рулонов',
+      },
+    },
+    {
+      'key': 'base_plaster',
+      'label': 'Базовая штукатурка армирующего слоя (25 кг)',
+      'category': 'Штукатурка',
+      'unit': 'кг',
+      'rationale': 'Базовый армирующий слой 3-4 мм поверх сетки в системе мокрого фасада.',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'mountSystem',
+        'value': 0,
+      },
+      'formula': {
+        'type': 'area_consumption',
+        'totals_key': 'area',
+        'consumption_per_m2': 5,
+        'reserve_factor': 1,
+      },
+      'package': {
+        'size': 25,
+        'unit': 'мешков',
+      },
+    },
+    {
+      'key': 'primer',
+      'label': 'Грунтовка фасадная (10 л)',
+      'category': 'Подготовка',
+      'unit': 'л',
+      'rationale': 'Грунтование основания перед оштукатуриванием. Не нужна для эковаты и каркасных систем.',
+      'skip_when': {
+        'type': 'or',
+        'any': [
+          {
+            'type': 'input_eq',
+            'input_key': 'insulationType',
+            'value': 3,
+          },
+          {
+            'type': 'input_eq',
+            'input_key': 'mountSystem',
+            'value': 1,
+          },
+        ],
+      },
+      'formula': {
+        'type': 'area_consumption',
+        'totals_key': 'area',
+        'consumption_per_m2': 0.15,
+        'reserve_factor': 1.15,
+      },
+      'package': {
+        'size': 10,
+        'unit': 'канистр',
+      },
+    },
+    {
+      'key': 'frame_lumber',
+      'label': 'Брус 50×50 мм для каркаса',
+      'category': 'Каркас',
+      'unit': 'пог.м',
+      'rationale': 'Несущий каркас для плит/эковаты. Расход ~2.2 пог.м на м² при шаге 600 мм.',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'mountSystem',
+        'value': 1,
+      },
+      'formula': {
+        'type': 'area_consumption',
+        'totals_key': 'area',
+        'consumption_per_m2': 2.2,
+        'reserve_factor': 1.05,
+      },
+    },
+    {
+      'key': 'frame_screws',
+      'label': 'Саморезы по дереву 4.2×75 мм',
+      'category': 'Каркас',
+      'unit': 'шт',
+      'rationale': 'Крепёж бруса каркаса к основанию.',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'mountSystem',
+        'value': 1,
+      },
+      'formula': {
+        'type': 'area_consumption',
+        'totals_key': 'area',
+        'consumption_per_m2': 6,
+        'reserve_factor': 1.1,
+      },
+      'package': {
+        'size': 200,
+        'unit': 'упаковок',
+      },
+    },
+  ],
 };
 
 /// Generated from laminate-canonical.v1.json
@@ -3329,6 +4329,18 @@ const Map<String, dynamic> laminateSpecData = {
       'min': 6,
       'max': 14,
     },
+    {
+      'key': 'floorBase',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
+    {
+      'key': 'outerCorners',
+      'default_value': 0,
+      'min': 0,
+      'max': 20,
+    },
   ],
   'field_factors': {
     'enabled': [
@@ -3403,6 +4415,8 @@ const Map<String, dynamic> laminateSpecData = {
     'wedge_spacing_m': 0.5,
     'default_door_opening_width_m': 0.9,
     'rectangle_inner_corners': 4,
+    'expansion_joint_threshold_m2': 50,
+    'expansion_joint_piece_length_m': 1,
   },
   'warnings_rules': {
     'small_area_warning_threshold_m2': 5,
@@ -3420,6 +4434,219 @@ const Map<String, dynamic> laminateSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'companion_materials': [
+    {
+      'key': 'outer_corners',
+      'label': 'Внешние углы для плинтуса',
+      'category': 'Плинтус',
+      'unit': 'шт',
+      'rationale': 'Внешние углы у дверных откосов, выступов и колонн. По числу выступающих углов комнаты.',
+      'only_when': {
+        'type': 'input_gte',
+        'input_key': 'outerCorners',
+        'value': 1,
+      },
+      'formula': {
+        'type': 'per_input',
+        'input_key': 'outerCorners',
+        'per_unit': 1,
+      },
+    },
+    {
+      'key': 'plinth_end_caps',
+      'label': 'Заглушки для плинтуса (пара: левая+правая)',
+      'category': 'Плинтус',
+      'unit': 'шт',
+      'rationale': 'Концы плинтуса у дверных проёмов. 2 заглушки на каждый дверной проём.',
+      'formula': {
+        'type': 'per_input',
+        'input_key': 'doorThresholds',
+        'per_unit': 2,
+      },
+    },
+    {
+      'key': 'vapor_barrier_concrete',
+      'label': 'Пароизоляционная плёнка',
+      'category': 'Подготовка',
+      'unit': 'м²',
+      'rationale': 'Защита ламината от остаточной влаги бетонной стяжки. Не нужна для сухого деревянного основания (может вызвать конденсат).',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'floorBase',
+        'value': 0,
+      },
+      'formula': {
+        'type': 'linear_overlap',
+        'totals_key': 'area',
+        'overlap_factor': 1.1,
+      },
+    },
+    {
+      'key': 'underlay_tape',
+      'label': 'Скотч для стыков подложки',
+      'category': 'Подложка',
+      'unit': 'рулон',
+      'rationale': 'Проклейка стыков рулонной подложки. Не нужна для подложки-гармошки (EPS) — там самоклеящиеся стыки.',
+      'only_when': {
+        'type': 'and',
+        'all': [
+          {
+            'type': 'input_eq',
+            'input_key': 'hasUnderlayment',
+            'value': 1,
+          },
+          {
+            'type': 'input_lte',
+            'input_key': 'underlayType',
+            'value': 3,
+          },
+        ],
+      },
+      'formula': {
+        'type': 'per_count_step',
+        'totals_key': 'area',
+        'fixed': 1,
+        'step': 40,
+        'max': 4,
+      },
+    },
+  ],
+};
+
+/// Generated from lawn-canonical.v1.json
+const Map<String, dynamic> lawnSpecData = {
+  'calculator_id': 'lawn',
+  'formula_version': 'lawn-canonical-v1',
+  'input_schema': [
+    {
+      'key': 'area',
+      'unit': 'm2',
+      'default_value': 50,
+      'min': 5,
+      'max': 2000,
+    },
+    {
+      'key': 'lawnType',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
+    {
+      'key': 'soilThickness',
+      'unit': 'cm',
+      'default_value': 12,
+      'min': 8,
+      'max': 25,
+    },
+    {
+      'key': 'groundType',
+      'default_value': 1,
+      'min': 0,
+      'max': 2,
+    },
+    {
+      'key': 'usageIntensity',
+      'default_value': 1,
+      'min': 0,
+      'max': 2,
+    },
+    {
+      'key': 'withDrainage',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
+    {
+      'key': 'withGeotextile',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
+  ],
+  'field_factors': {
+    'enabled': [
+      'geometry_complexity',
+      'worker_skill',
+      'waste_factor',
+    ],
+  },
+  'normative_formula': {
+    'lawn_types': [
+      0,
+      1,
+    ],
+    'ground_types': [
+      0,
+      1,
+      2,
+    ],
+    'usage_intensities': [
+      0,
+      1,
+      2,
+    ],
+  },
+  'packaging_rules': {
+    'unit': 'м²',
+    'package_size': 1,
+  },
+  'material_rules': {
+    'seed_rate_g_per_m2_decor': 30,
+    'seed_rate_g_per_m2_normal': 40,
+    'seed_rate_g_per_m2_sport': 50,
+    'seed_pack_kg': 1,
+    'seed_reserve': 1.1,
+    'roll_size_m2': 0.8,
+    'roll_reserve': 1.07,
+    'fertilizer_starter_g_per_m2': 40,
+    'fertilizer_pack_kg': 5,
+    'fertilizer_reserve': 1.05,
+    'rooting_stimulator_ml_per_m2': 25,
+    'rooting_stimulator_can_l': 5,
+    'topsoil_compaction_factor': 1.2,
+    'drainage_sand_layer_m': 0.1,
+    'drainage_sand_compaction': 1.2,
+    'geotextile_reserve': 1.1,
+    'geotextile_roll_m2': 50,
+    'lawn_roller_min_pieces': 1,
+  },
+  'warnings_rules': {
+    'min_topsoil_thickness_cm': 10,
+    'thin_topsoil_for_sport_cm': 15,
+    'clay_ground_needs_drainage': 2,
+    'large_area_needs_irrigation_m2': 200,
+  },
+  'scenario_policy': {
+    'contract': 'min-rec-max-v1',
+  },
+  'normative_sources': [
+    {
+      'code': 'СП 82.13330.2016',
+      'title': 'Благоустройство территорий',
+      'section': 'Раздел 7 — газоны: толщина растительного слоя, нормы посева, рулонная одерновка',
+    },
+    {
+      'code': 'СНиП III-10-75',
+      'title': 'Благоустройство территорий',
+      'section': 'Раздел 4 — устройство газонов: подготовка основания, нормы посева 30-50 г/м², рулонный газон',
+    },
+    {
+      'code': 'ГОСТ Р 56825-2015',
+      'title': 'Земли. Состав и количественные нормы оценки качества почвы для гумусового слоя',
+      'section': 'Технические условия для растительного грунта',
+    },
+  ],
+  'assumption_notes': [
+    'Норма посева семян по СНиП III-10-75: декоративный (партерный) 30 г/м², обычный (садовый) 40 г/м², спортивный (с интенсивной нагрузкой) 50 г/м². Запас 10% на прорастание и потери при посеве.',
+    'Стандартный рулон газона 2.0 × 0.40 м = 0.80 м². Запас 7% на подрезку и стыки. Каждый рулон весит 18-25 кг — учитывать при доставке.',
+    'Толщина плодородного грунта: 10 см минимум для декоративного, 15 см для спортивного. По СП 82.13330.2016 типовая толщина 12-15 см. Коэффициент уплотнения 1.20 (грунт после уплотнения теряет ~17% объёма).',
+    'Дренажный песчаный слой 100 мм (withDrainage=1) рекомендуется для глинистых и суглинистых грунтов с плохой фильтрацией. На песчаных и супесчаных грунтах не нужен — естественный дренаж справляется.',
+    'Геотекстиль (Дорнит 150 г/м² или аналог) разделяет дренажный слой и плодородный грунт, предотвращая смешивание. Опциональный элемент для премиум-газонов и склонов.',
+    'Стартовое удобрение комплексное NPK (азот-фосфор-калий) 40 г/м² — закладывается при подготовке основания и стимулирует развитие корневой системы. Мешки 5 кг — типовая фасовка для частного применения.',
+    'Стимулятор укоренения для рулонного газона (Корневин, HB-101) — 25 мл/м² в первые 2 недели после укладки. Канистры по 5 л.',
+    'Каток для прикатывания семян / уплотнения рулона — обязательный инструмент. На малых площадях (< 30 м²) можно арендовать.',
+    'Норма расхода учитывает фактор всхожести семян 70-80% для качественной смеси. Для дешёвых смесей всхожесть ниже, расход семян нужно увеличить в 1.3-1.5 раза.',
+  ],
 };
 
 /// Generated from linoleum-canonical.v1.json
@@ -3942,6 +5169,9 @@ const Map<String, dynamic> paintSpecData = {
     'ceiling_premium_factor': 1.15,
     'default_roller_absorption_l': 0.3,
     'legacy_first_coat_multiplier': 1.2,
+    'avg_opening_area_m2': 2,
+    'avg_opening_perimeter_m': 6,
+    'tape_sides_per_opening': 2,
   },
   'warnings_rules': {
     'primer_required_surface_ids': [
@@ -3960,6 +5190,172 @@ const Map<String, dynamic> paintSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'companion_materials': [
+    {
+      'key': 'primer',
+      'label': 'Грунтовка глубокого проникновения (10 л)',
+      'category': 'Подготовка',
+      'unit': 'л',
+      'rationale': 'Грунтование основания перед окраской. Не нужна для ранее окрашенных поверхностей.',
+      'skip_when': {
+        'type': 'input_eq',
+        'input_key': 'surfacePrep',
+        'value': 2,
+      },
+      'formula': {
+        'type': 'area_consumption',
+        'totals_key': 'area',
+        'consumption_per_m2': 0.11,
+        'reserve_factor': 1,
+      },
+      'package': {
+        'size': 10,
+        'unit': 'канистр',
+      },
+    },
+    {
+      'key': 'sandpaper',
+      'label': 'Шкурка наждачная P240 (для шлифовки между слоями)',
+      'category': 'Подготовка',
+      'unit': 'м²',
+      'rationale': 'Шлифовка поверхности между слоями краски для лучшей адгезии. Расход ~0.05 м² шкурки на м² окраски.',
+      'only_when': {
+        'type': 'input_gte',
+        'input_key': 'coats',
+        'value': 2,
+      },
+      'formula': {
+        'type': 'area_consumption',
+        'totals_key': 'area',
+        'consumption_per_m2': 0.05,
+        'reserve_factor': 1,
+      },
+    },
+    {
+      'key': 'roller_interior',
+      'label': 'Валик малярный микрофибра 250 мм',
+      'category': 'Инструмент',
+      'unit': 'шт',
+      'rationale': 'Для интерьерной краски: микрофибра не оставляет ворса. По 1 валику на 50 м².',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'paintType',
+        'value': 0,
+      },
+      'formula': {
+        'type': 'per_count_step',
+        'totals_key': 'area',
+        'fixed': 1,
+        'step': 50,
+        'max': 6,
+      },
+    },
+    {
+      'key': 'roller_facade',
+      'label': 'Валик малярный велюровый 250 мм (для фасада)',
+      'category': 'Инструмент',
+      'unit': 'шт',
+      'rationale': 'Для фасадной краски: велюровый валик лучше переносит густую фасадную краску.',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'paintType',
+        'value': 1,
+      },
+      'formula': {
+        'type': 'per_count_step',
+        'totals_key': 'area',
+        'fixed': 1,
+        'step': 50,
+        'max': 6,
+      },
+    },
+    {
+      'key': 'brush_corner',
+      'label': 'Кисть плоская 50 мм (для углов и откосов)',
+      'category': 'Инструмент',
+      'unit': 'шт',
+      'rationale': 'Для прокрашивания углов и труднодоступных мест. +1 шт за каждые 80 м².',
+      'formula': {
+        'type': 'per_count_step',
+        'totals_key': 'area',
+        'fixed': 1,
+        'step': 80,
+        'max': 4,
+      },
+    },
+    {
+      'key': 'brush_narrow',
+      'label': 'Кисть узкая 25 мм (для радиаторов и труб)',
+      'category': 'Инструмент',
+      'unit': 'шт',
+      'rationale': 'Узкая кисть для радиаторов, труб и мелких элементов.',
+      'only_when': {
+        'type': 'input_eq',
+        'input_key': 'paintType',
+        'value': 0,
+      },
+      'formula': {
+        'type': 'fixed',
+        'value': 1,
+      },
+    },
+    {
+      'key': 'tray',
+      'label': 'Кювета малярная',
+      'category': 'Инструмент',
+      'unit': 'шт',
+      'rationale': 'Лоток для краски. По 1 шт на каждые 100 м² (можно использовать вкладыши).',
+      'formula': {
+        'type': 'per_count_step',
+        'totals_key': 'area',
+        'fixed': 1,
+        'step': 100,
+        'max': 3,
+      },
+    },
+    {
+      'key': 'tape',
+      'label': 'Малярная лента 50 м',
+      'category': 'Расходники',
+      'unit': 'рулонов',
+      'rationale': 'Защита стыков и окантовка проёмов.',
+      'formula': {
+        'type': 'per_count_step',
+        'totals_key': 'estimatedPerimeter',
+        'fixed': 1,
+        'step': 25,
+        'max': 5,
+      },
+    },
+    {
+      'key': 'protective_film',
+      'label': 'Защитная плёнка укрывная (4×5 м)',
+      'category': 'Расходники',
+      'unit': 'шт',
+      'rationale': 'Защита пола и мебели от брызг краски.',
+      'formula': {
+        'type': 'per_count_step',
+        'totals_key': 'area',
+        'fixed': 1,
+        'step': 30,
+        'max': 4,
+      },
+    },
+    {
+      'key': 'gloves',
+      'label': 'Перчатки нитриловые (пара)',
+      'category': 'Расходники',
+      'unit': 'пар',
+      'rationale': 'Защита рук. ~1 пара на день работы; работа = ~30 м² в день.',
+      'formula': {
+        'type': 'per_count_step',
+        'totals_key': 'area',
+        'fixed': 2,
+        'step': 30,
+        'max': 10,
+      },
+    },
+  ],
 };
 
 /// Generated from panels-3d-canonical.v1.json
@@ -4179,6 +5575,8 @@ const Map<String, dynamic> parquetSpecData = {
     'default_door_opening_width_m': 0.9,
     'glue_kg_per_m2': 1.5,
     'plinth_reserve_percent': 5,
+    'expansion_joint_threshold_m2': 50,
+    'expansion_joint_piece_length_m': 1,
   },
   'warnings_rules': {
     'small_area_warning_threshold_m2': 5,
@@ -4291,6 +5689,132 @@ const Map<String, dynamic> partitionsSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+};
+
+/// Generated from paving-tiles-canonical.v1.json
+const Map<String, dynamic> pavingTilesSpecData = {
+  'calculator_id': 'paving-tiles',
+  'formula_version': 'paving-tiles-canonical-v1',
+  'input_schema': [
+    {
+      'key': 'area',
+      'unit': 'm2',
+      'default_value': 50,
+      'min': 5,
+      'max': 2000,
+    },
+    {
+      'key': 'perimeter',
+      'unit': 'm',
+      'default_value': 30,
+      'min': 4,
+      'max': 500,
+    },
+    {
+      'key': 'foundationType',
+      'default_value': 1,
+      'min': 0,
+      'max': 2,
+    },
+    {
+      'key': 'tileThickness',
+      'unit': 'mm',
+      'default_value': 60,
+      'min': 30,
+      'max': 80,
+    },
+    {
+      'key': 'borderEnabled',
+      'default_value': 1,
+      'min': 0,
+      'max': 1,
+    },
+  ],
+  'field_factors': {
+    'enabled': [
+      'geometry_complexity',
+      'worker_skill',
+      'waste_factor',
+    ],
+  },
+  'normative_formula': {
+    'foundation_types': [
+      0,
+      1,
+      2,
+    ],
+    'tile_thicknesses': [
+      30,
+      40,
+      60,
+      80,
+    ],
+  },
+  'packaging_rules': {
+    'unit': 'м²',
+    'package_size': 1,
+  },
+  'material_rules': {
+    'tile_reserve': 1.07,
+    'sand_bedding_layer_m': 0.05,
+    'sand_bedding_layer_m_auto': 0.1,
+    'gravel_layer_m': 0.15,
+    'cement_sand_mix_layer_m': 0.03,
+    'cement_sand_mix_kg_per_m3': 1800,
+    'cement_bag_kg': 50,
+    'concrete_layer_m': 0.1,
+    'concrete_reserve': 1.05,
+    'joint_sand_kg_per_m2': 5,
+    'joint_sand_bag_kg': 25,
+    'joint_sand_reserve': 1.1,
+    'border_length_m': 1,
+    'border_reserve': 1.05,
+    'border_concrete_m_per_m': 0.03,
+    'geotextile_roll_m2': 50,
+    'geotextile_reserve': 1.15,
+    'compaction_factor_sand': 1.2,
+    'compaction_factor_gravel': 1.25,
+    'compaction_factor_cement_sand': 1.1,
+  },
+  'warnings_rules': {
+    'thin_tile_for_vehicle_mm': 60,
+    'min_tile_for_vehicle_mm': 60,
+    'min_perimeter_to_area_ratio': 0.1,
+  },
+  'scenario_policy': {
+    'contract': 'min-rec-max-v1',
+  },
+  'normative_sources': [
+    {
+      'code': 'СП 78.13330.2012',
+      'title': 'Автомобильные дороги',
+      'section': 'Раздел 13 — основания и покрытия из штучных элементов',
+    },
+    {
+      'code': 'СП 82.13330.2016',
+      'title': 'Благоустройство территорий',
+      'section': 'Раздел 5 — покрытия проездов и пешеходных зон, конструкции дорожных одежд',
+    },
+    {
+      'code': 'ГОСТ 17608-2017',
+      'title': 'Плиты бетонные тротуарные',
+      'section': 'Технические условия — толщины 30/40/60/80 мм, классы по нагрузке',
+    },
+    {
+      'code': 'ГОСТ 6665-91',
+      'title': 'Камни бетонные и железобетонные бортовые',
+      'section': 'Технические условия — БР100.30.18, БР100.20.8',
+    },
+  ],
+  'assumption_notes': [
+    'Песчаная подушка (foundationType=0) подходит только для пешеходных нагрузок (двор, садовые дорожки) и плитки толщиной 30-40 мм. Толщина подсыпки увеличена до 100 мм по сравнению с цементно-песчаной (50 мм), чтобы компенсировать отсутствие связующего.',
+    'Цементно-песчаная подушка (foundationType=1, по умолчанию) — универсальный вариант СП 82.13330.2016 для пешеходных зон и лёгкого автотранспорта. Слой ЦПС 30 мм поверх щебня 150 мм.',
+    'Бетонное основание (foundationType=2) обязательно для автомобильных проездов и парковок. Бетонная плита 100 мм (М200) поверх щебня 150 мм. По СП 78.13330.2012 минимальная толщина плитки на проезжей части — 60 мм, оптимально 80 мм.',
+    'Коэффициенты уплотнения: песок 1.20, щебень 1.25, ЦПС 1.10 — учтены в расчёте насыпных материалов (объём «по факту до уплотнения» больше проектной толщины).',
+    'Кварцевый песок для заполнения швов: 5 кг/м² по СП 82.13330.2016 (швы 3-5 мм). Для широких швов (декоративная укладка) расход может быть выше — пользователь вводит вручную.',
+    'Бордюр БР100.30.18 длиной 1.0 м укладывается на цементно-песчаное основание ~30 мм по периметру. Если borderEnabled=0, бордюр и его основание не считаются (например, плитка примыкает к существующей конструкции).',
+    'Геотекстиль (например, Геотекс 200 г/м²) укладывается под щебневую/песчаную подушку для предотвращения смешения с грунтом. Рулон 50 м² — типовая упаковка для частного применения.',
+  ],
 };
 
 /// Generated from plaster-canonical.v1.json
@@ -5263,6 +6787,8 @@ const Map<String, dynamic> roofingSpecData = {
     'metal_tile_batten_reserve': 1.1,
     'metal_tile_counter_batten_step_m': 1,
     'metal_tile_counter_batten_reserve': 1.1,
+    'solid_sheathing_slope_threshold_deg': 15,
+    'solid_sheathing_step_m': 0.1,
     'soft_pack_area_m2': 3,
     'soft_underlayment_roll_m2': 15,
     'soft_underlayment_reserve': 1.15,
@@ -5289,6 +6815,29 @@ const Map<String, dynamic> roofingSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'normative_sources': [
+    {
+      'code': 'СП 17.13330.2017',
+      'title': 'Кровли. Актуализированная редакция СНиП II-26-76',
+      'section': 'пп. 5.5.1, 5.5.5 — конструкция обрешётки в зависимости от уклона',
+    },
+    {
+      'code': 'ГОСТ Р 58153-2018',
+      'title': 'Профили стальные листовые гнутые с трапециевидными гофрами',
+      'section': 'Технические условия',
+    },
+    {
+      'code': 'ГОСТ 30340-2012',
+      'title': 'Листы хризотилцементные волнистые',
+      'section': 'Технические условия (для шифера)',
+    },
+  ],
+  'assumption_notes': [
+    'Реальная площадь скатов = площадь горизонтальной проекции / cos(уклон). Это верно для прямой двухскатной кровли. Для сложных форм (вальмовая, шатровая, мансардная) пользователь увеличивает результат через поле \'complexity\' (1.05/1.15/1.25).',
+    'Шаг обрешётки под металлочерепицу зависит от уклона: при slope ≥ 15° — стандартный шаг 350 мм по СП 17.13330.2017. При slope < 15° обрешётка должна быть сплошной (доска впритык, ~100 мм шаг) — иначе листы прогнутся под снеговой нагрузкой.',
+    'Обрешётка для профнастила, ондулина, шифера и керамической черепицы пока не входит в расчёт (только основной материал, конёк, крепёж, гидроизоляция). Будет добавлена в Фазе 2 аудита.',
+    'Снегозадержатели рассчитываются как 1 элемент / 3 м периметра — это базовая норма. Для регионов с высокой снеговой нагрузкой (СП 20.13330.2016) шаг должен быть меньше (1.5-2 м). Региональная корректировка — в Фазе 4.',
+  ],
 };
 
 /// Generated from screed-canonical.v1.json
@@ -5351,18 +6900,21 @@ const Map<String, dynamic> screedSpecData = {
         'key': 'cps_1_3',
         'label': 'ЦПС 1:3 (ручной замес)',
         'density_kg_per_m3': 0,
+        'volume_multiplier': 1.15,
       },
       {
         'id': 1,
         'key': 'ready_cps_m150',
         'label': 'Готовая ЦПС М150',
         'density_kg_per_m3': 2000,
+        'volume_multiplier': 1.1,
       },
       {
         'id': 2,
         'key': 'semi_dry',
         'label': 'Полусухая стяжка',
         'density_kg_per_m3': 1800,
+        'volume_multiplier': 1.07,
       },
     ],
   },
@@ -5374,7 +6926,7 @@ const Map<String, dynamic> screedSpecData = {
     ],
   },
   'material_rules': {
-    'volume_multiplier': 1.08,
+    'volume_multiplier': 1.15,
     'cement_density': 1300,
     'cement_fraction': 0.25,
     'sand_fraction': 0.75,
@@ -5399,6 +6951,28 @@ const Map<String, dynamic> screedSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'normative_sources': [
+    {
+      'code': 'СП 29.13330.2011',
+      'title': 'Полы. Актуализированная редакция СНиП 2.03.13-88',
+      'section': 'пп. 8.1, 8.5 — толщина стяжки и расход материалов',
+    },
+    {
+      'code': 'СНиП 3.04.01-87',
+      'title': 'Изоляционные и отделочные покрытия',
+      'section': 'Раздел 4 — устройство стяжек и оснований',
+    },
+    {
+      'code': 'ГОСТ 31358-2019',
+      'title': 'Смеси сухие строительные напольные на цементном вяжущем',
+      'section': 'Технические условия',
+    },
+  ],
+  'assumption_notes': [
+    'Усадочные множители (volume_multiplier) per-type подобраны по реальной практике: ручной замес ЦПС 1:3 даёт 12-15% усадки из-за избытка воды и потерь при замесе; готовая ЦПС М150 — 8-10% (заводской контроль); полусухая стяжка — 5-8% (минимум воды). Прежний единый множитель 1.08 систематически занижал расход для ручного замеса.',
+    'Минимальная толщина 30 мм — для жилых нагрузок без подогрева. Для стяжки над тёплым полом норма 40 мм по СП 29.13330.2011 п. 8.5; калькулятор пока не различает эти сценарии — будет добавлено в Фазе 3.',
+    'Цементная фракция 0.25 и песчаная 0.75 — массовые доли для марки М150 (ЦПС 1:3 по массе). Соответствует тех. листам Knauf UBO.',
+  ],
 };
 
 /// Generated from self-leveling-canonical.v1.json
@@ -5509,6 +7083,166 @@ const Map<String, dynamic> selfLevelingSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+};
+
+/// Generated from septic-rings-canonical.v1.json
+const Map<String, dynamic> septicRingsSpecData = {
+  'calculator_id': 'septic-rings',
+  'formula_version': 'septic-rings-canonical-v1',
+  'input_schema': [
+    {
+      'key': 'residents',
+      'default_value': 4,
+      'min': 1,
+      'max': 20,
+    },
+    {
+      'key': 'chambersCount',
+      'default_value': 3,
+      'min': 1,
+      'max': 3,
+    },
+    {
+      'key': 'ringDiameter',
+      'unit': 'mm',
+      'default_value': 1000,
+      'min': 1000,
+      'max': 2000,
+    },
+    {
+      'key': 'groundType',
+      'default_value': 1,
+      'min': 0,
+      'max': 2,
+    },
+    {
+      'key': 'withFilterWell',
+      'default_value': 1,
+      'min': 0,
+      'max': 1,
+    },
+    {
+      'key': 'pipeLengthFromHouse',
+      'unit': 'm',
+      'default_value': 8,
+      'min': 2,
+      'max': 50,
+    },
+  ],
+  'field_factors': {
+    'enabled': [
+      'geometry_complexity',
+      'worker_skill',
+      'waste_factor',
+    ],
+  },
+  'normative_formula': {
+    'ring_diameters_mm': [
+      1000,
+      1500,
+      2000,
+    ],
+    'chambers_counts': [
+      1,
+      2,
+      3,
+    ],
+    'ground_types': [
+      0,
+      1,
+      2,
+    ],
+  },
+  'packaging_rules': {
+    'unit': 'шт',
+    'package_size': 1,
+  },
+  'material_rules': {
+    'liters_per_person_per_day': 200,
+    'reserve_days_small_family': 3,
+    'reserve_days_large_family': 2.5,
+    'large_family_threshold': 5,
+    'ring_height_m': 0.9,
+    'ring_volumes_m3': {
+      '1000': 0.71,
+      '1500': 1.59,
+      '2000': 2.83,
+    },
+    'neck_ring_label': 'КС-7-9 (горловина Ø700 мм)',
+    'neck_rings_per_chamber': 1,
+    'seal_rings_factor': 1,
+    'mastic_kg_per_m2': 0.7,
+    'mastic_layers': 2,
+    'mastic_can_kg': 20,
+    'bitumen_sheet_m_per_joint': 0.3,
+    'bitumen_sheet_roll_m': 10,
+    'filter_gravel_layer_m': 0.6,
+    'filter_sand_layer_m': 0.1,
+    'filter_gravel_compaction': 1.25,
+    'filter_sand_compaction': 1.2,
+    'pipe_diameter_mm': 110,
+    'pipe_section_m': 3,
+    'pipe_reserve': 1.05,
+    'pipe_elbow_count': 2,
+    'well_floor_plates': {
+      '1000': 'ПН-10',
+      '1500': 'ПН-15',
+      '2000': 'ПН-20',
+    },
+    'well_top_plates': {
+      '1000': 'ПП-10',
+      '1500': 'ПП-15',
+      '2000': 'ПП-20',
+    },
+    'manhole_label': 'Люк чугунный ГТС-Б',
+  },
+  'warnings_rules': {
+    'biotreatment_recommended_residents': 10,
+    'single_chamber_max_residents': 3,
+    'clay_ground_filter_well_problematic': 2,
+    'max_pipe_length_without_intermediate_well': 25,
+  },
+  'scenario_policy': {
+    'contract': 'min-rec-max-v1',
+  },
+  'normative_sources': [
+    {
+      'code': 'СНиП 2.04.03-85',
+      'title': 'Канализация. Наружные сети и сооружения',
+      'section': 'Раздел 6 — местные очистные сооружения, септики и фильтрационные колодцы',
+    },
+    {
+      'code': 'СП 32.13330.2018',
+      'title': 'Канализация. Наружные сети и сооружения',
+      'section': 'Раздел 5 — расход бытовых сточных вод; раздел 9 — местная очистка',
+    },
+    {
+      'code': 'СП 30.13330.2020',
+      'title': 'Внутренний водопровод и канализация зданий',
+      'section': 'Раздел 5 — нормы водопотребления (200 л/чел/сут с ВС и К)',
+    },
+    {
+      'code': 'ГОСТ 8020-2016',
+      'title': 'Конструкции бетонные и железобетонные для колодцев канализационных, водопроводных и газопроводных сетей',
+      'section': 'Типоразмеры колец КС-10/15/20, плит ПН/ПП, размеры стыков',
+    },
+    {
+      'code': 'СП 31-106-2002',
+      'title': 'Проектирование и строительство инженерных систем одноквартирных жилых домов',
+      'section': 'Раздел 6 — автономные системы канализации',
+    },
+  ],
+  'assumption_notes': [
+    'Расход воды по СП 30.13330.2020: 200 л/чел/сут (квартира с ВС и К). Запас по СНиП 2.04.03-85: 3-кратный суточный сток для семьи ≤ 5 чел и 2.5-кратный для большей семьи.',
+    'Объёмы колец КС-10-9 (Ø1000) = 0.71 м³, КС-15-9 (Ø1500) = 1.59 м³, КС-20-9 (Ø2000) = 2.83 м³ при высоте кольца 0.90 м (стандарт ГОСТ 8020-2016).',
+    'Распределение объёма: при 3 камерах 50/30/20% (приёмная / промежуточная / фильтрационный колодец); в формуле — равные части для упрощения, на практике первую камеру делают на 1 кольцо больше.',
+    'Фильтрационный колодец (withFilterWell=1) — последняя камера без днища, со щебневой засыпкой 600 мм фр. 20-40 в основании. Не подходит для глинистых грунтов (groundType=2) — нужно поле фильтрации или биостанция.',
+    'Гидроизоляция: битумная мастика 0.7 кг/м² × 2 слоя по внешней поверхности герметичных камер. Стыки колец дополнительно усилены полосой Гидростеклоизол шириной 300 мм (0.3 м/стык).',
+    'Уплотнительные кольца — по одному на каждый горизонтальный стык колец (резиновые манжеты или жгут+мастика).',
+    'Горловина — кольцо КС-7-9 (Ø700) с люком ГТС-Б — одна на каждую камеру для доступа к ассенизатору.',
+    'Труба от дома Ø110 мм с уклоном 0.02 м/м (СП 32.13330.2018). На длине > 25 м обычно ставят промежуточный смотровой колодец.',
+    'Для чугунного люка ГТС-Б указан условный артикул; пользователь может заменить на полимерный лёгкий тип А15 для частной канализации без транспортной нагрузки.',
+  ],
 };
 
 /// Generated from sewage-canonical.v1.json
@@ -5667,6 +7401,12 @@ const Map<String, dynamic> sidingSpecData = {
       'default_value': 4,
       'min': 0,
       'max': 20,
+    },
+    {
+      'key': 'jProfileStrategy',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
     },
   ],
   'field_factors': {
@@ -5879,6 +7619,9 @@ const Map<String, dynamic> softRoofingSpecData = {
     'underlayment_full_reserve': 1.15,
     'slope_threshold': 18,
     'critical_zone_width': 1,
+    'eave_band_width_m': 1,
+    'valley_band_width_m': 1.5,
+    'ridge_band_width_m': 1,
     'valley_roll': 10,
     'valley_reserve': 1.15,
     'mastic_linear_rate': 0.1,
@@ -5903,6 +7646,33 @@ const Map<String, dynamic> softRoofingSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'normative_sources': [
+    {
+      'code': 'СП 17.13330.2017',
+      'title': 'Кровли. Актуализированная редакция СНиП II-26-76',
+      'section': 'пп. 5.5.2, 5.5.3 — конструкция мягкой кровли, подкладочный ковёр',
+    },
+    {
+      'code': 'ГОСТ 32805-2014',
+      'title': 'Материалы кровельные битумно-полимерные с минеральной посыпкой',
+      'section': 'Технические условия',
+    },
+    {
+      'code': 'СП 20.13330.2016',
+      'title': 'Нагрузки и воздействия',
+      'section': 'Раздел 10 — снеговые нагрузки (для расчёта вентиляции и крепежа)',
+    },
+  ],
+  'assumption_notes': [
+    'При уклоне < 18° (slope_threshold) подкладочный ковёр укладывается СПЛОШНЫМ слоем по всей площади кровли — это требование СП 17.13330.2017 п. 5.5.2.',
+    'При уклоне ≥ 18° подкладка укладывается полосами вдоль критических зон с разной шириной по нормативу:',
+    '  · карниз (eave_band_width_m = 1.0 м) — полоса шириной 1 м от карниза вверх по скату;',
+    '  · ендова (valley_band_width_m = 1.5 м) — по 0.75 м с каждой стороны оси ендовы;',
+    '  · конёк (ridge_band_width_m = 1.0 м) — по 0.5 м с каждой стороны конька.',
+    'Прежняя формула использовала единую ширину 1.0 м для всех зон, что занижало расход подкладки на крышах с ендовами на ~30-50% локально (полоса ендовы должна быть в 1.5 раза шире).',
+    'Для дефолтного кейса (двускатная без ендов: valleyLength=0) числовой результат идентичен прежней формуле — backward-compat 100%.',
+    'Тип подкладочного ковра — рулонный битумно-полимерный (ГОСТ 32805-2014). Для районов с экстремальными снеговыми нагрузками (СП 20.13330.2016 V-VIII районы) рекомендуется усиленный ковёр и/или сплошная укладка независимо от уклона — пользователь может задать нужное вручную.',
+  ],
 };
 
 /// Generated from sound-insulation-canonical.v1.json
@@ -6102,6 +7872,17 @@ const Map<String, dynamic> stripFoundationSpecData = {
       'min': 0,
       'max': 2,
     },
+    {
+      'key': 'regionId',
+      'default_value': '',
+      'is_optional': true,
+    },
+    {
+      'key': 'soilType',
+      'default_value': 0,
+      'min': 0,
+      'max': 3,
+    },
   ],
   'field_factors': {
     'enabled': [
@@ -6149,6 +7930,34 @@ const Map<String, dynamic> stripFoundationSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'normative_sources': [
+    {
+      'code': 'СНиП 2.02.01-83*',
+      'title': 'Основания зданий и сооружений',
+      'section': 'Приложение 1 — нормативная глубина промерзания, п. 2.27 — коэффициент kh',
+    },
+    {
+      'code': 'СП 22.13330.2016',
+      'title': 'Основания зданий и сооружений (актуализированная редакция)',
+      'section': 'п. 5.5.3 — расчётная глубина промерзания',
+    },
+    {
+      'code': 'СП 63.13330.2018',
+      'title': 'Бетонные и железобетонные конструкции',
+      'section': 'Раздел 8 — армирование',
+    },
+    {
+      'code': 'ГОСТ 5781-82',
+      'title': 'Сталь горячекатаная для армирования железобетонных конструкций',
+    },
+  ],
+  'assumption_notes': [
+    'Если задан regionId — калькулятор сверяет depth с нормативной глубиной промерзания для этого региона по СНиП 2.02.01-83* (для суглинков и глин). Если depth меньше — выдаётся конкретный warning с указанием нормы. Расчёт продолжается без блокировки: на непучинистых грунтах мелкозаглублённый фундамент допустим.',
+    'Поле soilType (0=суглинки/глины, 1=супеси, 2=мелкий песок, 3=крупный песок и гравий) корректирует нормативную глубину промерзания коэффициентами 1.0/1.22/1.27/1.30 по Приложению 1 СНиП 2.02.01-83*.',
+    'Для отапливаемых зданий с тепловым контактом фундамента с грунтом (тёплый цокольный этаж) расчётная глубина может быть снижена коэффициентом kh = 0.7-0.9. Калькулятор НЕ применяет это снижение по умолчанию — для безопасности типового пользователя строящего «по уму» без точных теплотехнических расчётов.',
+    'Регионы вечной мерзлоты (Якутия, Чукотка, Магадан, северные районы Сибири) не входят в список — там требуется индивидуальный геотехнический расчёт.',
+    'Список регионов в configs/regional/frost-depth-rf.json. Регионы можно расширять отдельным PR без правки кода engine.',
+  ],
 };
 
 /// Generated from terrace-canonical.v1.json
@@ -6277,7 +8086,7 @@ const Map<String, dynamic> tileAdhesiveSpecData = {
       'key': 'tileSize',
       'default_value': 0,
       'min': 0,
-      'max': 2,
+      'max': 3,
     },
     {
       'key': 'laying',
@@ -6311,6 +8120,7 @@ const Map<String, dynamic> tileAdhesiveSpecData = {
       0,
       1,
       2,
+      3,
     ],
     'laying_types': [
       0,
@@ -6336,6 +8146,7 @@ const Map<String, dynamic> tileAdhesiveSpecData = {
       '0': 3,
       '1': 5,
       '2': 7.5,
+      '3': 7.5,
     },
     'wall_factor': 0.85,
     'street_factor': 1.3,
@@ -6348,10 +8159,13 @@ const Map<String, dynamic> tileAdhesiveSpecData = {
       '0': 0.3,
       '1': 0.45,
       '2': 0.6,
+      '3': 0.9,
     },
     'crosses_per_tile': 4,
     'cross_reserve': 1.1,
     'cross_pack': 200,
+    'double_application_multiplier': 1.7,
+    'double_application_min_size_class': 3,
   },
   'warnings_rules': {
     'large_tile_warning': true,
@@ -6360,6 +8174,31 @@ const Map<String, dynamic> tileAdhesiveSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'normative_sources': [
+    {
+      'code': 'СП 71.13330.2017',
+      'title': 'Изоляционные и отделочные покрытия',
+      'section': 'Раздел 9 — облицовочные работы; п. 9.6 — крупноформатная плитка',
+    },
+    {
+      'code': 'ГОСТ 31376-2008',
+      'title': 'Смеси сухие строительные на цементном вяжущем',
+      'section': 'Технические условия — классификация клеёв C0, C1, C2, S1, S2',
+    },
+    {
+      'code': 'EN 12004',
+      'title': 'Adhesives for ceramic tiles',
+      'section': 'Классы клея для плитки: C — клеящая способность, S — деформативность',
+    },
+  ],
+  'assumption_notes': [
+    'Класс формата tileSize: 0=мелкая (≤30 см), 1=средняя (~45 см), 2=крупная (~60 см), 3=крупноформат (>60 см: 60×120, 80×80, 120×120 и т.п.).',
+    'Базовый расход в кг/м² для слоя клея гребёнкой одного слоя: 3.0 / 5.0 / 7.5 / 7.5.',
+    'Двойное нанесение (на основание + на тыл плитки) обязательно по СП 71.13330.2017 п. 9.6 для крупноформата (≥60 см сторона) и для всех плиток на улице. Расход возрастает в 1.5-1.8 раза. Default множитель 1.7.',
+    'Автоматическое двойное нанесение включается при tileSize ≥ double_application_min_size_class (default 3). Можно принудительно включить через doubleApplicationRequired для класса 2 (60 см) при сложных условиях (фасад, бассейн, открытая терраса).',
+    'Backward-compat: при tileSize 0/1/2 и default doubleApplicationRequired=undefined расчёт идентичен прежней версии.',
+    'Для крупноформата требуется клей класса C2S1 минимум (например Ceresit CM 17 / Bergauf Granit) — на классе C0/C1 плитка отвалится через год. Калькулятор пока не различает класс клея — поле для будущего расширения.',
+  ],
 };
 
 /// Generated from tile-canonical.v1.json
@@ -7175,6 +9014,18 @@ const Map<String, dynamic> warmFloorPipesSpecData = {
       'min': 0,
       'max': 3,
     },
+    {
+      'key': 'zonedLayoutEnabled',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
+    {
+      'key': 'windowZoneFraction',
+      'default_value': 0.2,
+      'min': 0,
+      'max': 0.5,
+    },
   ],
   'field_factors': {
     'enabled': [
@@ -7234,6 +9085,9 @@ const Map<String, dynamic> warmFloorPipesSpecData = {
     'screed_thickness_m': 0.05,
     'screed_density': 1500,
     'screed_bag_kg': 25,
+    'window_zone_step_mm': 120,
+    'central_zone_step_mm': 200,
+    'window_zone_fraction': 0.2,
   },
   'warnings_rules': {
     'multiple_circuits_pipe_threshold_m': 80,
@@ -7242,6 +9096,31 @@ const Map<String, dynamic> warmFloorPipesSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'normative_sources': [
+    {
+      'code': 'СП 60.13330.2020',
+      'title': 'Отопление, вентиляция и кондиционирование воздуха',
+      'section': 'Раздел 6 — лучистое отопление; п. 6.5.4 — раскладка греющих контуров',
+    },
+    {
+      'code': 'СП 41-102-98',
+      'title': 'Проектирование и монтаж трубопроводов систем водяного отопления',
+      'section': 'Раздел 7 — тёплые полы',
+    },
+    {
+      'code': 'ГОСТ 32415-2013',
+      'title': 'Трубы напорные из термопластов и соединительные детали к ним',
+      'section': 'Технические условия (PEX, PE-RT, металлопластик)',
+    },
+  ],
+  'assumption_notes': [
+    'Базовый режим (zonedLayoutEnabled=false) — единый шаг трубы pipeStep по всей полезной площади (после вычета 15% на мебель). Это упрощённый расчёт для типового пользователя.',
+    'Зональный режим (zonedLayoutEnabled=true) — раздельный шаг для двух зон по СП 60.13330.2020 п. 6.5.4: у окна 100-150 мм для тепловой завесы (default 120 мм), в центре 200-250 мм (default 200 мм). Без зональной раскладки пол у окна заметно холоднее в зимние морозы.',
+    'Доля площади у окна (windowZoneFraction) по умолчанию 0.20 — типовая комната 4×5 м с одним окном на длинной стене даёт полосу шириной 1 м × 5 м = 5 м² ≈ 25%. Можно скорректировать вручную для угловых комнат (две стены с окнами → 0.30-0.40) или комнат без окон (0).',
+    'Вычет 15% на мебель (furniture_reduction = 0.85) — усреднённое значение. Для спален и гостиных реально 30-50% (под кроватью, шкафами, диванами), для кухни 60-70% (под гарнитуром). Если пользователь знает свою расстановку точно — это поле можно сделать настраиваемым в будущем.',
+    'Длина одного контура ограничена 80 м (max_circuit_m) для надёжной работы стандартного коллекторного насоса. На больших площадях формула автоматически разбивает на N контуров.',
+    'Стяжка над тёплым полом — минимум 50 мм (screed_thickness_m). По СП 29.13330.2011 для жилых полов с тёплым полом норма именно 50 мм, не 30 мм как для обычной стяжки.',
+  ],
 };
 
 /// Generated from waterproofing-canonical.v1.json
@@ -7281,6 +9160,24 @@ const Map<String, dynamic> waterproofingSpecData = {
       'default_value': 2,
       'min': 1,
       'max': 3,
+    },
+    {
+      'key': 'pipePenetrations',
+      'default_value': 0,
+      'min': 0,
+      'max': 20,
+    },
+    {
+      'key': 'insetCount',
+      'default_value': 0,
+      'min': 0,
+      'max': 10,
+    },
+    {
+      'key': 'floorCurvatureClass',
+      'default_value': 0,
+      'min': 0,
+      'max': 2,
     },
   ],
   'field_factors': {
@@ -7326,6 +9223,13 @@ const Map<String, dynamic> waterproofingSpecData = {
     'bitumen_l_per_m2': 0.3,
     'bitumen_can_l': 20,
     'joint_sealant_m_per_tube': 10,
+    'mastic_per_pipe_penetration_kg': 1,
+    'mastic_per_inset_kg': 1.5,
+    'floor_curvature_multipliers': {
+      '0': 1,
+      '1': 1.1,
+      '2': 1.2,
+    },
   },
   'warnings_rules': {
     'min_layers_residential': 2,
@@ -7334,6 +9238,31 @@ const Map<String, dynamic> waterproofingSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'normative_sources': [
+    {
+      'code': 'СП 71.13330.2017',
+      'title': 'Изоляционные и отделочные покрытия',
+      'section': 'Раздел 7 — гидроизоляционные работы; п. 7.5 — обработка примыканий и проёмов',
+    },
+    {
+      'code': 'СП 29.13330.2011',
+      'title': 'Полы',
+      'section': 'пп. 4.5, 8.6 — гидроизоляция пола в мокрых зонах',
+    },
+    {
+      'code': 'СНиП 2.04.01-85*',
+      'title': 'Внутренний водопровод и канализация зданий',
+      'section': 'Требования к гидроизоляции вокруг трубопроводов',
+    },
+  ],
+  'assumption_notes': [
+    'Базовый расход мастики = площадь пола + площадь стен (по wallHeight) × расход на слой × количество слоёв.',
+    'Если floorCurvatureClass > 0 — основной расход умножается на коэффициент кривизны (1.0 / 1.10 / 1.20). Это компенсирует локальные утолщения слоя в кавернах и просадках старого основания. По СП 71.13330.2017 при сильной кривизне (класс 2) сначала рекомендуется наливной пол.',
+    'При pipePenetrations > 0 на каждое примыкание трубы (стояк, подвод воды, слив, душ-стойка) добавляется ~1.0 кг мастики локально (радиус ~150 мм вокруг трубы) и ~0.5 м гидроизоляционной ленты-манжеты.',
+    'При insetCount > 0 на каждую инсталляцию (подвесной унитаз, душевой бокс, встроенный шкаф) добавляется ~1.5 кг мастики и ~2 м ленты по периметру узла.',
+    'Если pipePenetrations и insetCount не заданы при floorArea > 3 м² — выдаётся warning о недостаче 15-25%. Типовой санузел имеет 3-5 примыканий + 1 инсталляция.',
+    'Лента гидроизоляционная: периметр пола + вертикальные примыкания к стенам (если wallHeight > 0) + манжеты по примыканиям + периметр инсталляций. Запас 10%.',
+  ],
 };
 
 /// Generated from windows-canonical.v1.json
@@ -7534,6 +9463,7 @@ const Map<String, Map<String, dynamic>> allCanonicalSpecs = {
   'decor-plaster': decorPlasterSpecData,
   'decor-stone': decorStoneSpecData,
   'doors': doorsSpecData,
+  'drainage': drainageSpecData,
   'drywall': drywallSpecData,
   'drywall-ceiling': drywallCeilingSpecData,
   'electric': electricSpecData,
@@ -7545,17 +9475,20 @@ const Map<String, Map<String, dynamic>> allCanonicalSpecs = {
   'foam-blocks': foamBlocksSpecData,
   'foundation-slab': foundationSlabSpecData,
   'frame-house': frameHouseSpecData,
+  'greenhouse': greenhouseSpecData,
   'gutters': guttersSpecData,
   'gypsum-board': gypsumBoardSpecData,
   'heating': heatingSpecData,
   'insulation': insulationSpecData,
   'laminate': laminateSpecData,
+  'lawn': lawnSpecData,
   'linoleum': linoleumSpecData,
   'mdf-panels': mdfPanelsSpecData,
   'paint': paintSpecData,
   'panels-3d': panels3dSpecData,
   'parquet': parquetSpecData,
   'partitions': partitionsSpecData,
+  'paving-tiles': pavingTilesSpecData,
   'plaster': plasterSpecData,
   'primer': primerSpecData,
   'putty': puttySpecData,
@@ -7564,6 +9497,7 @@ const Map<String, Map<String, dynamic>> allCanonicalSpecs = {
   'roofing': roofingSpecData,
   'screed': screedSpecData,
   'self-leveling': selfLevelingSpecData,
+  'septic-rings': septicRingsSpecData,
   'sewage': sewageSpecData,
   'siding': sidingSpecData,
   'slopes': slopesSpecData,

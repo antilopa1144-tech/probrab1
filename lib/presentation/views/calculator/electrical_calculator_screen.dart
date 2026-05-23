@@ -332,6 +332,7 @@ class _ElectricalCalculatorScreenState
     return CalculatorScaffold(
       title: _loc.translate('calculator.engineering_electrics.title'),
       accentColor: accentColor,
+      faqPrefix: 'faq.engineering_electrics',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,

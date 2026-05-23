@@ -82,10 +82,10 @@ class CalculateGypsumV2 extends BaseCalculator {
   // Ceiling constants (потолки)
   static const double ceilingPnMeters = 0.4;
   static const double ceilingPpMeters = 3.3;
-  static const double ceilingSuspensions = 0.7;
+  static const double ceilingSuspensions = 1.0;
   static const double ceilingConnectors = 2.4;
   static const int ceilingDowelsPerSuspension = 2;
-  static const int ceilingScrewsTN25 = 23;
+  static const int ceilingScrewsTN25 = 29;
   static const int ceilingScrewsLN = 7;
 
   // Second layer constants

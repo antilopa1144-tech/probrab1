@@ -194,7 +194,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Отделка',
     ),
     CanonicalMaterialResult(
-      name: 'Грунтовка 10л',
+      name: 'Грунтовка глубокого проникновения (5 л)',
       quantity: primerCans.toDouble(),
       unit: 'канистр',
       withReserve: primerCans.toDouble(),

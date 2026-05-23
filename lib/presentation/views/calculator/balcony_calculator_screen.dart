@@ -143,6 +143,7 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
     return CalculatorScaffold(
       title: _loc.translate('balcony_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.balcony',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

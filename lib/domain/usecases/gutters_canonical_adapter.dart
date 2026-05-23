@@ -6,9 +6,6 @@ import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
-
-
-
 bool hasCanonicalGuttersInputs(Map<String, double> inputs) {
   return inputs.containsKey('roofPerimeter') ||
       inputs.containsKey('funnels') ||
@@ -25,7 +22,6 @@ Map<String, double> normalizeLegacyGuttersInputs(Map<String, double> inputs) {
   return normalized;
 }
 
-
 CanonicalCalculatorContractResult calculateCanonicalGutters(
   Map<String, double> inputs, {
   SpecReader? specOverride,
@@ -36,14 +32,48 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
       ? Map<String, double>.from(inputs)
       : normalizeLegacyGuttersInputs(inputs);
 
-  final roofPerimeter = math.max(5.0, math.min(200.0, (normalized['roofPerimeter'] ?? defaultFor(spec, 'roofPerimeter', 40)).toDouble()));
-  final roofHeight = math.max(2.0, math.min(15.0, (normalized['roofHeight'] ?? defaultFor(spec, 'roofHeight', 5)).toDouble()));
-  final funnels = (normalized['funnels'] ?? defaultFor(spec, 'funnels', 4)).round().clamp(1, 20);
-  final gutterDia = (normalized['gutterDia'] ?? defaultFor(spec, 'gutterDia', 90)).round().clamp(75, 125);
-  final gutterLength = (normalized['gutterLength'] ?? defaultFor(spec, 'gutterLength', 3)).round().clamp(3, 4);
+  final roofPerimeter = math.max(
+    5.0,
+    math.min(
+      200.0,
+      (normalized['roofPerimeter'] ?? defaultFor(spec, 'roofPerimeter', 40))
+          .toDouble(),
+    ),
+  );
+  final roofHeight = math.max(
+    2.0,
+    math.min(
+      15.0,
+      (normalized['roofHeight'] ?? defaultFor(spec, 'roofHeight', 5))
+          .toDouble(),
+    ),
+  );
+  final funnels = (normalized['funnels'] ?? defaultFor(spec, 'funnels', 4))
+      .round()
+      .clamp(1, 20);
+  final gutterDia =
+      (normalized['gutterDia'] ?? defaultFor(spec, 'gutterDia', 90))
+          .round()
+          .clamp(75, 125);
+  final gutterLength =
+      (normalized['gutterLength'] ?? defaultFor(spec, 'gutterLength', 3))
+          .round()
+          .clamp(3, 4);
+  final bendCount45 =
+      (normalized['bendCount45'] ?? defaultFor(spec, 'bendCount45', 0))
+          .round()
+          .clamp(0, 20);
+  final bendCount90 =
+      (normalized['bendCount90'] ?? defaultFor(spec, 'bendCount90', 0))
+          .round()
+          .clamp(0, 20);
 
   // Gutters
-  final gutterPcs = (roofPerimeter / gutterLength * spec.materialRule<num>('gutter_reserve').toDouble()).ceil();
+  final gutterPcs =
+      (roofPerimeter /
+              gutterLength *
+              spec.materialRule<num>('gutter_reserve').toDouble())
+          .ceil();
 
   // Pipes
   final pipePerFunnel = (roofHeight / gutterLength).ceil() + 1;
@@ -53,10 +83,19 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
   final gutterJoints = (roofPerimeter / gutterLength).ceil() - 1;
 
   // Hooks
-  final gutterHooks = (roofPerimeter / spec.materialRule<num>('hook_step_m').toDouble() * spec.materialRule<num>('hook_reserve').toDouble()).ceil();
+  final gutterHooks =
+      (roofPerimeter /
+              spec.materialRule<num>('hook_step_m').toDouble() *
+              spec.materialRule<num>('hook_reserve').toDouble())
+          .ceil();
 
   // Pipe clamps
-  final pipeClamps = (roofHeight / spec.materialRule<num>('pipe_clamp_step_m').toDouble() * funnels * spec.materialRule<num>('pipe_clamp_reserve').toDouble()).ceil();
+  final pipeClamps =
+      (roofHeight /
+              spec.materialRule<num>('pipe_clamp_step_m').toDouble() *
+              funnels *
+              spec.materialRule<num>('pipe_clamp_reserve').toDouble())
+          .ceil();
 
   // Corners
   final corners = spec.materialRule<num>('building_corners').toDouble();
@@ -64,14 +103,23 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
   // Knee elbows
   final kneeElbows = funnels;
 
+  // Extra elbows from bends (user input)
+  final elbows45 = bendCount45;
+  final elbows90 = bendCount90;
+
   // End caps
   final endCaps = funnels;
 
   // Connectors
-  final connectors = (gutterJoints * spec.materialRule<num>('connector_reserve').toDouble()).ceil();
+  final connectors =
+      (gutterJoints * spec.materialRule<num>('connector_reserve').toDouble())
+          .ceil();
 
   // Sealant
-  final sealantTubes = ((gutterJoints + funnels * 2) / spec.materialRule<num>('sealant_connections_per_tube').toDouble()).ceil();
+  final sealantTubes =
+      ((gutterJoints + funnels * 2) /
+              spec.materialRule<num>('sealant_connections_per_tube').toDouble())
+          .ceil();
 
   // Primary quantity for scenarios
   final primaryQuantity = gutterPcs;
@@ -80,10 +128,18 @@ CanonicalCalculatorContractResult calculateCanonicalGutters(
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(primaryQuantity * accuracyMult * multiplier, 6);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
+    final exactNeed = roundValue(
+      primaryQuantity * accuracyMult * multiplier,
+      6,
+    );
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
@@ -97,7 +153,11 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:$primaryLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -111,9 +171,14 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
 
   // Warnings
   final warnings = <String>[];
-  final recommendedFunnels = (roofPerimeter / spec.warningRule<num>('recommended_funnel_interval_m').toDouble()).ceil();
+  final recommendedFunnels =
+      (roofPerimeter /
+              spec.warningRule<num>('recommended_funnel_interval_m').toDouble())
+          .ceil();
   if (funnels < recommendedFunnels) {
-    warnings.add('Недостаточно воронок: рекомендуется минимум $recommendedFunnels шт. (1 на каждые ${spec.warningRule<num>('recommended_funnel_interval_m').toDouble().round()} м периметра) для достаточного водоотведения');
+    warnings.add(
+      'Недостаточно воронок: рекомендуется минимум $recommendedFunnels шт. (1 на каждые ${spec.warningRule<num>('recommended_funnel_interval_m').toDouble().round()} м периметра) для достаточного водоотведения',
+    );
   }
 
   // Materials
@@ -191,7 +256,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Фасонные',
     ),
     CanonicalMaterialResult(
-      name: 'Герметик (${spec.materialRule<num>('sealant_tube_ml').toDouble()} мл)',
+      name:
+          'Герметик (${spec.materialRule<num>('sealant_tube_ml').toDouble()} мл)',
       quantity: sealantTubes.toDouble(),
       unit: 'тюбиков',
       withReserve: sealantTubes.toDouble(),
@@ -217,6 +283,10 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'gutterHooks': gutterHooks.toDouble(),
       'pipeClamps': pipeClamps.toDouble(),
       'corners': corners.toDouble(),
+      'elbows45': elbows45.toDouble(),
+      'elbows90': elbows90.toDouble(),
+      'bendCount45': bendCount45.toDouble(),
+      'bendCount90': bendCount90.toDouble(),
       'kneeElbows': kneeElbows.toDouble(),
       'endCaps': endCaps.toDouble(),
       'connectors': connectors.toDouble(),

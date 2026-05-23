@@ -112,7 +112,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       packageInfo: {'count': waterproofingRolls, 'unitSize': 75.0, 'packageUnit': 'рулонов'},
     ));
     materials.add(CanonicalMaterialResult(
-      name: 'Обрешётка (доска 25x100, шаг ~350 мм)',
+      name: 'Обрешётка (доска 25×100, шаг ~350 мм)',
       quantity: battens.toDouble(),
       unit: 'шт',
       withReserve: battens.toDouble(),
@@ -120,7 +120,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
       category: 'Каркас',
     ));
     materials.add(CanonicalMaterialResult(
-      name: 'Контробрешётка (брусок 50x50)',
+      name: 'Контробрешётка (брусок 50×50)',
       quantity: counterBattens.toDouble(),
       unit: 'шт',
       withReserve: counterBattens.toDouble(),

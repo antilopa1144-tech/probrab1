@@ -287,6 +287,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
+      faqPrefix: 'faq.terrace',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,

@@ -204,7 +204,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   }
 
   materials.add(CanonicalMaterialResult(
-    name: 'Грунтовка (${_primerCanL.toInt()} л)',
+    name: 'Грунтовка глубокого проникновения (${_primerCanL.toInt()} л)',
     quantity: roundValue(area * _primerLPerM2 * _primerReserve, 3),
     unit: 'л',
     withReserve: (primerCans * _primerCanL).toDouble(),

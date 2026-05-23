@@ -156,6 +156,7 @@ class _RailCeilingCalculatorScreenState extends ConsumerState<RailCeilingCalcula
     return CalculatorScaffold(
       title: _loc.translate('rail_ceiling_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.ceilings_rail',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

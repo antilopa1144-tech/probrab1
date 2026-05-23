@@ -141,3 +141,48 @@ CanonicalScenarioResult buildScenarioResult({
     ),
   );
 }
+
+/// Maps ProCalculator / legacy warm-floor field names to canonical keys.
+Map<String, double> normalizeLegacyWarmFloorInputs(
+  Map<String, double> inputs, [
+  SpecReader? spec,
+]) {
+  final normalized = Map<String, double>.from(inputs);
+
+  if (!normalized.containsKey('roomArea')) {
+    if (normalized.containsKey('area') && normalized['area']! > 0) {
+      normalized['roomArea'] = normalized['area']!;
+    } else {
+      final length = normalized['length'];
+      final width = normalized['width'];
+      if (length != null && width != null && length > 0 && width > 0) {
+        normalized['roomArea'] = length * width;
+      }
+    }
+  }
+
+  if (!normalized.containsKey('powerDensity') && normalized.containsKey('power')) {
+    normalized['powerDensity'] = normalized['power']!;
+  }
+
+  if (!normalized.containsKey('heatingType') && normalized.containsKey('type')) {
+    final type = normalized['type']!.round();
+    // Legacy / ProCalculator: 1=cable, 2=mat → canonical: 0=mat, 1=cable
+    normalized['heatingType'] = switch (type) {
+      1 => 1.0,
+      2 => 0.0,
+      _ => type.toDouble(),
+    };
+  }
+
+  if (!normalized.containsKey('furnitureArea') &&
+      normalized.containsKey('usefulAreaPercent')) {
+    final roomArea = normalized['roomArea'] ??
+        normalized['area'] ??
+        (spec != null ? defaultFor(spec, 'roomArea', 10) : 10);
+    final usefulPercent = normalized['usefulAreaPercent']!;
+    normalized['furnitureArea'] = roomArea * (1 - usefulPercent / 100);
+  }
+
+  return normalized;
+}

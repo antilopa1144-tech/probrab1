@@ -137,6 +137,7 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate('fence_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.fence',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

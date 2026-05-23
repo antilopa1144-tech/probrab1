@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/errors/global_error_handler.dart';
-import '../services/pdf_export_service.dart';
-import '../services/pdf_file_handler.dart';
+import '../../../domain/services/pdf_export_service.dart';
+import '../../../domain/services/pdf_file_handler.dart';
 
 /// Миксин для добавления функциональности экспорта (share/copy) в калькуляторы.
 ///

@@ -194,6 +194,7 @@ class _PrimerScreenState extends State<PrimerScreen> {
     return CalculatorScaffold(
       title: _loc.translate('primer.title'),
       accentColor: accentColor,
+      faqPrefix: 'faq.mixes_primer',
       actions: [
         IconButton(
           icon: const Icon(Icons.copy),

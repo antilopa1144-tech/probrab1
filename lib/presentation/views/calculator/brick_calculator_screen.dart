@@ -242,6 +242,7 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate('brick_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.exterior_brick',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

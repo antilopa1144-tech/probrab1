@@ -154,6 +154,7 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
     return CalculatorScaffold(
       title: _loc.translate('facade_panels_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.exterior_facade_panels',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

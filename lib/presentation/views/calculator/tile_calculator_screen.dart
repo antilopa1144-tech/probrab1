@@ -679,6 +679,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate('tile.title'),
       accentColor: accentColor,
+      faqPrefix: 'faq.floors_tile',
       actions: exportActions,
       mikhalychDataCollector: () => getCurrentInputs() ?? {},
       resultHeader: CalculatorResultHeader(

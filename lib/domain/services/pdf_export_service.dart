@@ -5,11 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import '../../core/localization/app_localizations.dart';
-import '../../domain/calculators/calculator_registry.dart';
-import '../../domain/models/calculator_definition_v2.dart';
-import '../../domain/models/project_v2.dart';
+import '../calculators/calculator_registry.dart';
+import '../models/calculator_definition_v2.dart';
+import '../models/project_v2.dart';
 import '../../data/models/calculation.dart';
-import '../utils/calculation_display.dart';
 import 'pdf_file_handler.dart';
 
 /// Сервис для экспорта расчётов в PDF.
@@ -55,6 +54,7 @@ class PdfExportService {
     Calculation calculation,
     CalculatorDefinitionV2? definition, {
     BuildContext? buildContext,
+    String? categoryLabel,
   }) async {
     final theme = await _buildTheme();
     final resolvedDefinition =
@@ -74,10 +74,7 @@ class PdfExportService {
             return translated;
           }();
 
-    final categoryLabel = buildContext == null
-        ? calculation.category
-        // ignore: use_build_context_synchronously
-        : CalculationDisplay.historyCategoryLabel(buildContext, calculation);
+    final resolvedCategoryLabel = categoryLabel ?? calculation.category;
     final pdf = pw.Document(
       theme: theme,
     );
@@ -114,7 +111,7 @@ class PdfExportService {
                     ),
                     pw.SizedBox(height: 4),
                     pw.Text(
-                      'Категория: $categoryLabel',
+                      'Категория: $resolvedCategoryLabel',
                       style: const pw.TextStyle(fontSize: 12),
                     ),
                     pw.SizedBox(height: 4),

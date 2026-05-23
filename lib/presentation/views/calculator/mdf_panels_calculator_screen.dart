@@ -149,6 +149,7 @@ class _MdfPanelsCalculatorScreenState extends ConsumerState<MdfPanelsCalculatorS
     return CalculatorScaffold(
       title: _loc.translate('mdf_panels_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.walls_mdf_panels',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

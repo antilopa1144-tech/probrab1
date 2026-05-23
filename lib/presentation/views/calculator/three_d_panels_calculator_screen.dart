@@ -168,6 +168,7 @@ class _ThreeDPanelsCalculatorScreenState
     return CalculatorScaffold(
       title: _loc.translate('three_d_panels.title'),
       accentColor: accentColor,
+      faqPrefix: 'faq.walls_3d_panels',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,

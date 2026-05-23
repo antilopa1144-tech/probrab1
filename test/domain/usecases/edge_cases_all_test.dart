@@ -24,6 +24,7 @@ import 'package:probrab_ai/domain/usecases/concrete_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/decor_plaster_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/decor_stone_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/doors_canonical_adapter.dart';
+import 'package:probrab_ai/domain/usecases/drainage_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/drywall_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/drywall_ceiling_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/facade_brick_canonical_adapter.dart';
@@ -33,16 +34,20 @@ import 'package:probrab_ai/domain/usecases/fasteners_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/fence_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/foam_blocks_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/frame_house_canonical_adapter.dart';
+import 'package:probrab_ai/domain/usecases/greenhouse_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/gutters_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/gypsum_board_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/insulation_canonical_adapter.dart';
+import 'package:probrab_ai/domain/usecases/lawn_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/mdf_panels_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/panels_3d_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/partitions_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/plaster_canonical_adapter.dart';
+import 'package:probrab_ai/domain/usecases/paving_tiles_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/pvc_panels_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/roofing_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/screed_canonical_adapter.dart';
+import 'package:probrab_ai/domain/usecases/septic_rings_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/self_leveling_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/siding_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/slopes_canonical_adapter.dart';
@@ -86,6 +91,7 @@ final Map<String, CalcFn> _adapters = {
   'decor_plaster': calculateCanonicalDecorPlaster,
   'decor_stone': calculateCanonicalDecorStone,
   'doors': calculateCanonicalDoors,
+  'drainage': calculateCanonicalDrainage,
   'drywall': calculateCanonicalDrywall,
   'drywall_ceiling': calculateCanonicalDrywallCeiling,
   'facade_brick': calculateCanonicalFacadeBrick,
@@ -95,16 +101,20 @@ final Map<String, CalcFn> _adapters = {
   'fence': calculateCanonicalFence,
   'foam_blocks': calculateCanonicalFoamBlocks,
   'frame_house': calculateCanonicalFrameHouse,
+  'greenhouse': calculateCanonicalGreenhouse,
   'gutters': calculateCanonicalGutters,
   'gypsum_board': calculateCanonicalGypsumBoard,
   'insulation': calculateCanonicalInsulation,
+  'lawn': calculateCanonicalLawn,
   'mdf_panels': calculateCanonicalMdfPanels,
   'panels_3d': calculateCanonicalPanels3d,
   'partitions': calculateCanonicalPartitions,
   'plaster': calculateCanonicalPlaster,
+  'paving_tiles': calculateCanonicalPavingTiles,
   'pvc_panels': calculateCanonicalPvcPanels,
   'roofing': calculateCanonicalRoofing,
   'screed': calculateCanonicalScreed,
+  'septic_rings': calculateCanonicalSepticRings,
   'self_leveling': calculateCanonicalSelfLeveling,
   'siding': calculateCanonicalSiding,
   'slopes': calculateCanonicalSlopes,

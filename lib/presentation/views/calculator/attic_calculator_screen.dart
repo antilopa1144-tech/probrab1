@@ -166,6 +166,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate('attic_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.attic',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

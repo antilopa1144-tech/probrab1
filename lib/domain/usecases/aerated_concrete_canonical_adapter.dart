@@ -85,7 +85,7 @@ CanonicalCalculatorContractResult calculateCanonicalAeratedConcrete(
 
   final perimeter = inputMode == 0
       ? wallWidth
-      : math.sqrt(netArea) * 2;
+      : math.sqrt(netArea) * 4;
   final rebarLength = (perimeter * rebarRows * spec.materialRule<num>('rebar_reserve').toDouble()).ceil();
 
   final primerCans = (netArea * spec.materialRule<num>('primer_l_per_m2').toDouble() * spec.materialRule<num>('primer_reserve').toDouble() / spec.materialRule<num>('primer_can_l').toDouble()).ceil();

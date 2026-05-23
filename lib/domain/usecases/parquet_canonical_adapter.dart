@@ -33,7 +33,14 @@ int _mapLegacyLayoutProfile(Map<String, double> inputs) {
 
 Map<String, double> normalizeLegacyParquetInputs(Map<String, double> inputs) {
   final normalized = Map<String, double>.from(inputs);
-  final isV2 = inputs.containsKey('pattern') || inputs.containsKey('needUnderlay') || inputs.containsKey('needPlinth') || inputs.containsKey('needGlue') || inputs.containsKey('roomWidth') || inputs.containsKey('roomLength') || inputs.containsKey('packArea');
+  final isV2 =
+      inputs.containsKey('pattern') ||
+      inputs.containsKey('needUnderlay') ||
+      inputs.containsKey('needPlinth') ||
+      inputs.containsKey('needGlue') ||
+      inputs.containsKey('roomWidth') ||
+      inputs.containsKey('roomLength') ||
+      inputs.containsKey('packArea');
 
   if (!normalized.containsKey('length') && inputs.containsKey('roomLength')) {
     normalized['length'] = (inputs['roomLength'] ?? 0).toDouble();
@@ -42,11 +49,20 @@ Map<String, double> normalizeLegacyParquetInputs(Map<String, double> inputs) {
     normalized['width'] = (inputs['roomWidth'] ?? 0).toDouble();
   }
   normalized['layoutProfileId'] = _mapLegacyLayoutProfile(inputs).toDouble();
-  normalized['reservePercent'] = ((inputs['reservePercent'] ?? inputs['reserve'] ?? (isV2 ? 0 : 7)).toDouble()).clamp(0, 20).toDouble();
-  normalized['needUnderlayment'] = ((inputs['needUnderlayment'] ?? inputs['needUnderlay'] ?? 1) > 0 ? 1 : 0).toDouble();
-  normalized['needPlinth'] = ((inputs['needPlinth'] ?? 1) > 0 ? 1 : 0).toDouble();
-  normalized['needGlue'] = ((inputs['needGlue'] ?? (isV2 ? 0 : 1)) > 0 ? 1 : 0).toDouble();
-  normalized['underlaymentRollArea'] = (inputs['underlaymentRollArea'] ?? 10).toDouble();
+  normalized['reservePercent'] =
+      ((inputs['reservePercent'] ?? inputs['reserve'] ?? (isV2 ? 0 : 7))
+              .toDouble())
+          .clamp(0, 20)
+          .toDouble();
+  normalized['needUnderlayment'] =
+      ((inputs['needUnderlayment'] ?? inputs['needUnderlay'] ?? 1) > 0 ? 1 : 0)
+          .toDouble();
+  normalized['needPlinth'] = ((inputs['needPlinth'] ?? 1) > 0 ? 1 : 0)
+      .toDouble();
+  normalized['needGlue'] = ((inputs['needGlue'] ?? (isV2 ? 0 : 1)) > 0 ? 1 : 0)
+      .toDouble();
+  normalized['underlaymentRollArea'] = (inputs['underlaymentRollArea'] ?? 10)
+      .toDouble();
   normalized['doorThresholds'] = (inputs['doorThresholds'] ?? 1).toDouble();
   normalized['packArea'] = (inputs['packArea'] ?? 2.0).toDouble();
   return normalized;
@@ -57,11 +73,19 @@ double _estimatePerimeter(double area) {
   return 4 * math.sqrt(area);
 }
 
-Map<String, double> _resolveGeometry(SpecReader spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
+Map<String, double> _resolveGeometry(
+  SpecReader spec,
+  Map<String, double> inputs,
+) {
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0))
+      .round();
   if (inputMode == 0) {
-    final length = math.max(1, inputs['length'] ?? defaultFor(spec, 'length', 5)).toDouble();
-    final width = math.max(1, inputs['width'] ?? defaultFor(spec, 'width', 4)).toDouble();
+    final length = math
+        .max(1, inputs['length'] ?? defaultFor(spec, 'length', 5))
+        .toDouble();
+    final width = math
+        .max(1, inputs['width'] ?? defaultFor(spec, 'width', 4))
+        .toDouble();
     return {
       'inputMode': 0.0,
       'area': roundValue(length * width, 3),
@@ -71,24 +95,37 @@ Map<String, double> _resolveGeometry(SpecReader spec, Map<String, double> inputs
     };
   }
 
-  final area = math.max(1, inputs['area'] ?? defaultFor(spec, 'area', 20)).toDouble();
+  final area = math
+      .max(1, inputs['area'] ?? defaultFor(spec, 'area', 20))
+      .toDouble();
   final side = math.sqrt(area);
   final explicitPerimeter = math.max(0, inputs['perimeter'] ?? 0).toDouble();
   return {
     'inputMode': 1.0,
     'area': roundValue(area, 3),
-    'perimeter': roundValue(explicitPerimeter > 0 ? explicitPerimeter : _estimatePerimeter(area), 3),
+    'perimeter': roundValue(
+      explicitPerimeter > 0 ? explicitPerimeter : _estimatePerimeter(area),
+      3,
+    ),
     'length': roundValue(side, 3),
     'width': roundValue(side, 3),
   };
 }
 
-Map<String, dynamic> _resolveLayout(SpecReader spec, Map<String, double> inputs) {
-  final profileId = (inputs['layoutProfileId'] ?? defaultFor(spec, 'layoutProfileId', 1)).round().clamp(1, 3);
-  return spec.normativeList('layout_profiles').firstWhere(
-    (layout) => (layout['id'] as num).toInt() == profileId,
-    orElse: () => spec.normativeList('layout_profiles').first,
-  );
+Map<String, dynamic> _resolveLayout(
+  SpecReader spec,
+  Map<String, double> inputs,
+) {
+  final profileId =
+      (inputs['layoutProfileId'] ?? defaultFor(spec, 'layoutProfileId', 1))
+          .round()
+          .clamp(1, 3);
+  return spec
+      .normativeList('layout_profiles')
+      .firstWhere(
+        (layout) => (layout['id'] as num).toInt() == profileId,
+        orElse: () => spec.normativeList('layout_profiles').first,
+      );
 }
 
 CanonicalCalculatorContractResult calculateCanonicalParquet(
@@ -101,15 +138,36 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
       ? Map<String, double>.from(inputs)
       : normalizeLegacyParquetInputs(inputs);
   final geometry = _resolveGeometry(spec, normalized);
-  final packArea = (normalized['packArea'] ?? defaultFor(spec, 'packArea', 1.892)).clamp(0.5, 4).toDouble();
+  final packArea =
+      (normalized['packArea'] ?? defaultFor(spec, 'packArea', 1.892))
+          .clamp(0.5, 4)
+          .toDouble();
   final layout = _resolveLayout(spec, normalized);
-  final reservePercent = (normalized['reservePercent'] ?? defaultFor(spec, 'reservePercent', spec.materialRule<num>('reserve_percent_default').toDouble())).clamp(0, 20).toDouble();
-  final wastePercent = math.max((layout['waste_percent'] as num).toDouble(), reservePercent);
-  final baseExactNeedArea = roundValue(geometry['area']! * (1 + wastePercent / 100), 6);
+  final reservePercent =
+      (normalized['reservePercent'] ??
+              defaultFor(
+                spec,
+                'reservePercent',
+                spec.materialRule<num>('reserve_percent_default').toDouble(),
+              ))
+          .clamp(0, 20)
+          .toDouble();
+  final wastePercent = math.max(
+    (layout['waste_percent'] as num).toDouble(),
+    reservePercent,
+  );
+  final baseExactNeedArea = roundValue(
+    geometry['area']! * (1 + wastePercent / 100),
+    6,
+  );
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      _factorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(baseExactNeedArea * multiplier, 6);
     final packageCount = exactNeed > 0 ? (exactNeed / packArea).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * packArea, 6);
@@ -137,30 +195,97 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
     );
   }
 
-  final needUnderlayment = (normalized['needUnderlayment'] ?? defaultFor(spec, 'needUnderlayment', 1)) > 0;
-  final needPlinth = (normalized['needPlinth'] ?? defaultFor(spec, 'needPlinth', 1)) > 0;
-  final needGlue = (normalized['needGlue'] ?? defaultFor(spec, 'needGlue', 0)) > 0;
-  final underlaymentRollArea = (normalized['underlaymentRollArea'] ?? defaultFor(spec, 'underlaymentRollArea', 10)).clamp(5, 20).toDouble();
-  final underlaymentArea = needUnderlayment ? roundValue(geometry['area']! * (1 + spec.materialRule<num>('underlayment_overlap_percent').toDouble() / 100), 6) : 0.0;
-  final underlaymentRolls = needUnderlayment ? (underlaymentArea / underlaymentRollArea).ceil() : 0;
-  final doorThresholds = math.max(0, (normalized['doorThresholds'] ?? defaultFor(spec, 'doorThresholds', 1)).round());
-  final plinthLengthRaw = needPlinth ? math.max(0.0, geometry['perimeter']! - doorThresholds * spec.materialRule<num>('default_door_opening_width_m').toDouble()) : 0.0;
-  final plinthLengthWithReserve = needPlinth ? roundValue(plinthLengthRaw * (1 + spec.materialRule<num>('plinth_reserve_percent').toDouble() / 100), 6) : 0.0;
-  final plinthPieces = needPlinth ? (plinthLengthWithReserve / spec.packagingRule<num>('plinth_piece_length_m').toDouble()).ceil() : 0;
-  final wedges = needPlinth ? (geometry['perimeter']! / spec.materialRule<num>('wedge_spacing_m').toDouble()).ceil() : 0;
-  final glueKg = needGlue ? roundValue(geometry['area']! * spec.materialRule<num>('glue_kg_per_m2').toDouble(), 6) : 0.0;
-  final glueBuckets = needGlue ? (glueKg / spec.packagingRule<num>('glue_bucket_kg').toDouble()).ceil() : 0;
+  final needUnderlayment =
+      (normalized['needUnderlayment'] ??
+          defaultFor(spec, 'needUnderlayment', 1)) >
+      0;
+  final needPlinth =
+      (normalized['needPlinth'] ?? defaultFor(spec, 'needPlinth', 1)) > 0;
+  final needGlue =
+      (normalized['needGlue'] ?? defaultFor(spec, 'needGlue', 0)) > 0;
+  final underlaymentRollArea =
+      (normalized['underlaymentRollArea'] ??
+              defaultFor(spec, 'underlaymentRollArea', 10))
+          .clamp(5, 20)
+          .toDouble();
+  final underlaymentArea = needUnderlayment
+      ? roundValue(
+          geometry['area']! *
+              (1 +
+                  spec
+                          .materialRule<num>('underlayment_overlap_percent')
+                          .toDouble() /
+                      100),
+          6,
+        )
+      : 0.0;
+  final underlaymentRolls = needUnderlayment
+      ? (underlaymentArea / underlaymentRollArea).ceil()
+      : 0;
+  final doorThresholds = math.max(
+    0,
+    (normalized['doorThresholds'] ?? defaultFor(spec, 'doorThresholds', 1))
+        .round(),
+  );
+  final plinthLengthRaw = needPlinth
+      ? math.max(
+          0.0,
+          geometry['perimeter']! -
+              doorThresholds *
+                  spec
+                      .materialRule<num>('default_door_opening_width_m')
+                      .toDouble(),
+        )
+      : 0.0;
+  final plinthLengthWithReserve = needPlinth
+      ? roundValue(
+          plinthLengthRaw *
+              (1 +
+                  spec.materialRule<num>('plinth_reserve_percent').toDouble() /
+                      100),
+          6,
+        )
+      : 0.0;
+  final plinthPieces = needPlinth
+      ? (plinthLengthWithReserve /
+                spec.packagingRule<num>('plinth_piece_length_m').toDouble())
+            .ceil()
+      : 0;
+  final wedges = needPlinth
+      ? (geometry['perimeter']! /
+                spec.materialRule<num>('wedge_spacing_m').toDouble())
+            .ceil()
+      : 0;
+  final glueKg = needGlue
+      ? roundValue(
+          geometry['area']! *
+              spec.materialRule<num>('glue_kg_per_m2').toDouble(),
+          6,
+        )
+      : 0.0;
+  final glueBuckets = needGlue
+      ? (glueKg / spec.packagingRule<num>('glue_bucket_kg').toDouble()).ceil()
+      : 0;
   final recScenario = scenarios['REC']!;
 
   final warnings = <String>[];
-  if (geometry['area']! < spec.warningRule<num>('small_area_warning_threshold_m2').toDouble()) {
+  if (geometry['area']! <
+      spec.warningRule<num>('small_area_warning_threshold_m2').toDouble()) {
     warnings.add('Маленькая площадь — отходы будут выше расчётного процента');
   }
-  if (spec.warningRule<List>('diagonal_warning_profile_ids').contains((layout['id'] as num).toInt())) {
-    warnings.add('Диагональная укладка требует точной раскладки и увеличивает отходы');
+  if (spec
+      .warningRule<List>('diagonal_warning_profile_ids')
+      .contains((layout['id'] as num).toInt())) {
+    warnings.add(
+      'Диагональная укладка требует точной раскладки и увеличивает отходы',
+    );
   }
-  if (spec.warningRule<List>('herringbone_warning_profile_ids').contains((layout['id'] as num).toInt())) {
-    warnings.add('Укладка ёлочкой требует профессионального инструмента и опыта');
+  if (spec
+      .warningRule<List>('herringbone_warning_profile_ids')
+      .contains((layout['id'] as num).toInt())) {
+    warnings.add(
+      'Укладка ёлочкой требует профессионального инструмента и опыта',
+    );
   }
 
   final materials = <CanonicalMaterialResult>[
@@ -183,53 +308,77 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
   ];
 
   if (needUnderlayment) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Подложка (${roundValue(underlaymentRollArea, 1)} м²)',
-      quantity: roundValue(underlaymentArea / underlaymentRollArea, 6),
-      unit: 'рулонов',
-      withReserve: underlaymentRolls.toDouble(),
-      purchaseQty: underlaymentRolls.toDouble(),
-      category: 'Подложка',
-    ));
-    materials.add(const CanonicalMaterialResult(
-      name: 'Скотч для подложки',
-      quantity: 1,
-      unit: 'рулон',
-      withReserve: 1,
-      purchaseQty: 1,
-      category: 'Подложка',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Подложка (${roundValue(underlaymentRollArea, 1)} м²)',
+        quantity: roundValue(underlaymentArea / underlaymentRollArea, 6),
+        unit: 'рулонов',
+        withReserve: underlaymentRolls.toDouble(),
+        purchaseQty: underlaymentRolls.toDouble(),
+        category: 'Подложка',
+      ),
+    );
+    materials.add(
+      const CanonicalMaterialResult(
+        name: 'Скотч для подложки',
+        quantity: 1,
+        unit: 'рулон',
+        withReserve: 1,
+        purchaseQty: 1,
+        category: 'Подложка',
+      ),
+    );
   }
 
   if (needPlinth) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Плинтус напольный (${spec.packagingRule<num>('plinth_piece_length_m').toDouble()} м)',
-      quantity: roundValue(plinthLengthWithReserve / spec.packagingRule<num>('plinth_piece_length_m').toDouble(), 6),
-      unit: 'шт',
-      withReserve: plinthPieces.toDouble(),
-      purchaseQty: plinthPieces.toDouble(),
-      category: 'Плинтус',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Клинья распорные',
-      quantity: wedges.toDouble(),
-      unit: 'шт',
-      withReserve: wedges.toDouble(),
-      purchaseQty: (((wedges / 10).ceil()) * 10).toDouble(),
-      category: 'Монтаж',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Плинтус напольный (${spec.packagingRule<num>('plinth_piece_length_m').toDouble()} м)',
+        quantity: roundValue(
+          plinthLengthWithReserve /
+              spec.packagingRule<num>('plinth_piece_length_m').toDouble(),
+          6,
+        ),
+        unit: 'шт',
+        withReserve: plinthPieces.toDouble(),
+        purchaseQty: plinthPieces.toDouble(),
+        category: 'Плинтус',
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Клинья распорные',
+        quantity: wedges.toDouble(),
+        unit: 'шт',
+        withReserve: wedges.toDouble(),
+        purchaseQty: (((wedges / 10).ceil()) * 10).toDouble(),
+        category: 'Монтаж',
+      ),
+    );
   }
 
   if (needGlue) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Клей для паркета (${spec.packagingRule<num>('glue_bucket_kg').toInt()} кг)',
-      quantity: glueKg,
-      unit: 'кг',
-      withReserve: (glueBuckets * spec.packagingRule<num>('glue_bucket_kg').toDouble()),
-      purchaseQty: (glueBuckets * spec.packagingRule<num>('glue_bucket_kg').toDouble()).toDouble(),
-      category: 'Клей',
-      packageInfo: {'count': glueBuckets, 'unitSize': spec.packagingRule<num>('glue_bucket_kg').toDouble(), 'packageUnit': 'вёдер'},
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Клей для паркета (${spec.packagingRule<num>('glue_bucket_kg').toInt()} кг)',
+        quantity: glueKg,
+        unit: 'кг',
+        withReserve:
+            (glueBuckets *
+            spec.packagingRule<num>('glue_bucket_kg').toDouble()),
+        purchaseQty:
+            (glueBuckets * spec.packagingRule<num>('glue_bucket_kg').toDouble())
+                .toDouble(),
+        category: 'Клей',
+        packageInfo: {
+          'count': glueBuckets,
+          'unitSize': spec.packagingRule<num>('glue_bucket_kg').toDouble(),
+          'packageUnit': 'вёдер',
+        },
+      ),
+    );
   }
 
   return CanonicalCalculatorContractResult(
@@ -253,6 +402,9 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
       'needGlue': needGlue ? 1.0 : 0.0,
       'underlayArea': underlaymentArea,
       'underlaymentRolls': underlaymentRolls.toDouble(),
+      'plinthLength':
+          plinthPieces *
+          spec.packagingRule<num>('plinth_piece_length_m').toDouble(),
       'plinthLengthRaw': roundValue(plinthLengthRaw, 6),
       'plinthLengthWithReserve': plinthLengthWithReserve,
       'plinthPieces': plinthPieces.toDouble(),
@@ -271,4 +423,3 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
     scenarios: scenarios,
   );
 }
-

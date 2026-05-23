@@ -136,6 +136,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
     return CalculatorScaffold(
       title: _loc.translate('windows_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.windows_install',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

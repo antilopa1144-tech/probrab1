@@ -163,6 +163,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
     return CalculatorScaffold(
       title: _loc.translate('sound_insulation_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.insulation',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

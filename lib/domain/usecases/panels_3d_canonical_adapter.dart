@@ -118,7 +118,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
-      name: 'Грунтовка (${spec.materialRule<num>('primer_can').toDouble().round()} л)',
+      name: 'Грунтовка глубокого проникновения (${spec.materialRule<num>('primer_can').toDouble().round()} л)',
       quantity: primerCans.toDouble(),
       unit: 'канистр',
       withReserve: primerCans.toDouble(),

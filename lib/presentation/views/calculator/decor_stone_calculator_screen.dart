@@ -149,6 +149,7 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
     return CalculatorScaffold(
       title: _loc.translate('decor_stone_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.walls_decor_stone',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

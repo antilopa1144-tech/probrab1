@@ -76,6 +76,7 @@ class _WoodScreenState extends State<WoodScreen> {
     return CalculatorScaffold(
       title: _loc.translate('wood.title'),
       accentColor: accentColor,
+      faqPrefix: 'faq.wood',
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,
         results: [

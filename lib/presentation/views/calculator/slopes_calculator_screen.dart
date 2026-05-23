@@ -140,6 +140,7 @@ class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate('slopes_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.slopes',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

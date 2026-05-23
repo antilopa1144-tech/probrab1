@@ -15,7 +15,7 @@ import '../../usecases/parquet_canonical_adapter.dart';
 // calculate_screed.dart - не используется, калькулятор в screed_calculator_v2.dart
 import '../../usecases/self_leveling_canonical_adapter.dart';
 // calculate_tile.dart - не используется, калькулятор в tile_calculator_v2.dart
-import '../../usecases/warm_floor_canonical_adapter.dart';
+import '../../usecases/warm_floor_unified_usecase.dart';
 import '../../usecases/tile_grout_canonical_adapter.dart';
 // calculate_carpet.dart - удалён (floors_carpet не востребован)
 // calculate_floor_insulation.dart - удалён (floors_insulation не востребован)
@@ -423,7 +423,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podklyuchenie_dolzhen_vypolnyat_kvalifitsirovannyy'),
         const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pered_ukladkoy_pokrytiya_proverte'),
       ],
-      useCase: CanonicalBridgeUseCase(calculateCanonicalWarmFloor),
+      useCase: const WarmFloorUnifiedUseCase(),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,

@@ -311,6 +311,7 @@ class _TileAdhesiveCalculatorScreenState
     return CalculatorScaffold(
       title: _loc.translate('tile_adhesive.title'),
       accentColor: accentColor,
+      faqPrefix: 'faq.mixes_tile_glue',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,

@@ -280,6 +280,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate('wallpaper.title'),
       accentColor: accentColor,
+      faqPrefix: 'faq.walls_wallpaper',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,

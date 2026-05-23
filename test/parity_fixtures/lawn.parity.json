@@ -1,0 +1,69 @@
+{
+  "calculator_id": "lawn",
+  "formula_version": "lawn-canonical-v1",
+  "generated_at": "2026-05-16T08:06:51.515Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for lawn",
+      "inputs": {
+        "area": 50,
+        "lawnType": 0,
+        "soilThickness": 12,
+        "groundType": 1,
+        "usageIntensity": 1,
+        "withDrainage": 0,
+        "withGeotextile": 0
+      },
+      "expected_totals": {
+        "area": 50,
+        "lawnType": 0,
+        "soilThickness": 12,
+        "groundType": 1,
+        "usageIntensity": 1,
+        "withDrainage": 0,
+        "withGeotextile": 0,
+        "seedRatePerM2": 40,
+        "seedKg": 2.2,
+        "seedPacks": 3,
+        "rollsCount": 0,
+        "topsoilM3": 7.2,
+        "drainageSandM3": 0,
+        "geotextileRolls": 0,
+        "fertilizerKg": 2.1,
+        "fertilizerPacks": 1,
+        "stimulatorMl": 0,
+        "stimulatorCans": 0,
+        "minExactNeed": 46.56,
+        "recExactNeed": 53,
+        "maxExactNeed": 68.908,
+        "minPurchase": 47,
+        "recPurchase": 53,
+        "maxPurchase": 69
+      },
+      "expected_materials_count": 4,
+      "expected_material_names": [
+        "Семена газона (40 г/м², пачка 1 кг)",
+        "Плодородный грунт (растительная земля)",
+        "Удобрение стартовое NPK (5 кг)",
+        "Каток для прикатывания газона (50-75 кг)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 46.56,
+          "purchase_quantity": 47
+        },
+        "REC": {
+          "exact_need": 53,
+          "purchase_quantity": 53
+        },
+        "MAX": {
+          "exact_need": 68.908,
+          "purchase_quantity": 69
+        }
+      }
+    }
+  ]
+}

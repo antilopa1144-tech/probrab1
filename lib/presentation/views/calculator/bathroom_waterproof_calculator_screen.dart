@@ -145,6 +145,7 @@ class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWat
     return CalculatorScaffold(
       title: _loc.translate('waterproof_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.bathroom_waterproof',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

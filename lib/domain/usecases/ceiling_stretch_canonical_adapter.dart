@@ -16,9 +16,18 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingStretch(
   final corners = (inputs['corners'] ?? defaultFor(spec, 'corners', 4)).round().clamp(3, 20);
   final fixtures = (inputs['fixtures'] ?? defaultFor(spec, 'fixtures', 4)).round().clamp(0, 50);
   final type = (inputs['type'] ?? defaultFor(spec, 'type', 0)).round().clamp(0, 2);
+  final nichesCount = (inputs['nichesCount'] ?? defaultFor(spec, 'nichesCount', 0)).round().clamp(0, 10);
+  final boxPerimeterM = math.max(
+    0.0,
+    math.min(50.0, (inputs['boxPerimeterM'] ?? defaultFor(spec, 'boxPerimeterM', 0)).toDouble()),
+  );
 
   // Perimeter from area (square approximation)
-  final perim = math.sqrt(area) * 4;
+  final basePerim = math.sqrt(area) * 4;
+  final extraPerim =
+      nichesCount * spec.materialRule<num>('niche_perimeter_m_each').toDouble() +
+      boxPerimeterM;
+  final perim = basePerim + extraPerim;
 
   // Baguette profiles
   final baguetLen = perim * spec.materialRule<num>('baguet_reserve').toDouble();
@@ -102,10 +111,10 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
     ),
     CanonicalMaterialResult(
       name: '\u041e\u0431\u0440\u0430\u0431\u043e\u0442\u043a\u0430 \u0443\u0433\u043b\u043e\u0432',
-      quantity: corners.toDouble(),
+      quantity: (corners + nichesCount * spec.materialRule<num>('niche_corner_count_each').toDouble()).toDouble(),
       unit: '\u0448\u0442',
-      withReserve: corners.toDouble(),
-      purchaseQty: corners.toDouble(),
+      withReserve: (corners + nichesCount * spec.materialRule<num>('niche_corner_count_each').toDouble()).toDouble(),
+      purchaseQty: (corners + nichesCount * spec.materialRule<num>('niche_corner_count_each').toDouble()).toDouble(),
       category: '\u041c\u043e\u043d\u0442\u0430\u0436',
     ),
     CanonicalMaterialResult(
@@ -127,6 +136,10 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'type': type.toDouble(),
       'corners': corners.toDouble(),
       'fixtures': fixtures.toDouble(),
+      'nichesCount': nichesCount.toDouble(),
+      'boxPerimeterM': roundValue(boxPerimeterM, 3),
+      'basePerim': roundValue(basePerim, 3),
+      'extraPerim': roundValue(extraPerim, 3),
       'perim': roundValue(perim, 3),
       'baguetLen': roundValue(baguetLen, 3),
       'profilePcs': profilePcs.toDouble(),

@@ -138,7 +138,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
     warnings.add('При площади менее ${spec.warningRule<num>('small_floor_area_threshold_m2').toDouble().round()} м² повышенный расход на подрезку плитки');
   }
   if (hasWaterproofing == 0) {
-    warnings.add('Гидроизоляция обязательна согласно ${spec.warningRule<num>('waterproofing_mandatory_code').toDouble()}');
+    final code = spec.warningRule<String>('waterproofing_mandatory_code');
+    warnings.add('Гидроизоляция обязательна согласно $code');
   }
 
   // Materials

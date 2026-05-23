@@ -4,9 +4,9 @@ import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
 const Map<String, Map<String, double>> _factorTable = {
-  'geometry_complexity': {'MIN': 0.95, 'REC': 1.0, 'MAX': 1.1},
-  'worker_skill': {'MIN': 0.95, 'REC': 1.0, 'MAX': 1.1},
-  'waste_factor': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.05},
+  'geometry_complexity': {'MIN': 1.0, 'REC': 1.0, 'MAX': 1.15},
+  'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
+  'waste_factor': {'MIN': 0.97, 'REC': 1.06, 'MAX': 1.12},
 };
 
 CanonicalCalculatorContractResult calculateCanonicalHeating(
@@ -15,34 +15,74 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
 }) {
   final spec = specOverride ?? const SpecReader(heatingSpecData);
 
-  final totalArea = (inputs['totalArea'] ?? defaultFor(spec, 'totalArea', 80)).clamp(10.0, 500.0);
-  final ceilingHeight = (inputs['ceilingHeight'] ?? defaultFor(spec, 'ceilingHeight', 2.7)).clamp(2.5, 3.5);
-  final climateZone = (inputs['climateZone'] ?? defaultFor(spec, 'climateZone', 1)).round().clamp(0, 3);
-  final buildingType = (inputs['buildingType'] ?? defaultFor(spec, 'buildingType', 1)).round().clamp(0, 3);
-  final radiatorType = (inputs['radiatorType'] ?? defaultFor(spec, 'radiatorType', 0)).round().clamp(0, 3);
-  final roomCount = (inputs['roomCount'] ?? defaultFor(spec, 'roomCount', 4)).round().clamp(1, 20);
+  final totalArea = (inputs['totalArea'] ?? defaultFor(spec, 'totalArea', 80))
+      .clamp(10.0, 500.0);
+  final ceilingHeight =
+      (inputs['ceilingHeight'] ?? defaultFor(spec, 'ceilingHeight', 2.7)).clamp(
+        2.5,
+        3.5,
+      );
+  final climateZone =
+      (inputs['climateZone'] ?? defaultFor(spec, 'climateZone', 1))
+          .round()
+          .clamp(0, 3);
+  final buildingType =
+      (inputs['buildingType'] ?? defaultFor(spec, 'buildingType', 1))
+          .round()
+          .clamp(0, 3);
+  final radiatorType =
+      (inputs['radiatorType'] ?? defaultFor(spec, 'radiatorType', 0))
+          .round()
+          .clamp(0, 3);
+  final roomCount = (inputs['roomCount'] ?? defaultFor(spec, 'roomCount', 4))
+      .round()
+      .clamp(1, 20);
 
   /* ─── power calculation ─── */
   final heightM = ceilingHeight;
   final heightCoeff = heightM / 2.7;
-  final powerPerM2 = (spec.materialRule<Map>('power_per_m2_base')['$climateZone'] as num?)?.toDouble() ?? 100;
-  final buildingCoeff = (spec.materialRule<Map>('building_coeff')['$buildingType'] as num?)?.toDouble() ?? 1.0;
+  final powerPerM2Base = spec.materialRule('power_per_m2_base');
+  final powerPerM2 = powerPerM2Base is List
+      ? (powerPerM2Base[climateZone] as num?)?.toDouble() ?? 100
+      : (powerPerM2Base['$climateZone'] as num?)?.toDouble() ?? 100;
+  final buildingCoeffBase = spec.materialRule('building_coeff');
+  final buildingCoeff = buildingCoeffBase is List
+      ? (buildingCoeffBase[buildingType] as num?)?.toDouble() ?? 1.0
+      : (buildingCoeffBase['$buildingType'] as num?)?.toDouble() ?? 1.0;
   final totalPowerW = totalArea * powerPerM2 * buildingCoeff * heightCoeff;
   final totalPowerKW = (totalPowerW / 100).round() / 10;
 
   /* ─── radiator calculation ─── */
-  final wattPerUnit = (spec.materialRule<Map>('radiator_power')['$radiatorType'] as num?)?.toDouble() ?? 150;
+  final radiatorPowerBase = spec.materialRule('radiator_power');
+  final wattPerUnit = radiatorPowerBase is List
+      ? (radiatorPowerBase[radiatorType] as num?)?.toDouble() ?? 150
+      : (radiatorPowerBase['$radiatorType'] as num?)?.toDouble() ?? 150;
   final totalUnits = (totalPowerW / wattPerUnit).ceil();
 
   /* ─── piping ─── */
-  final pipeSticks = (roomCount * spec.materialRule<num>('pipe_rate').toDouble() * spec.materialRule<num>('pipe_reserve').toDouble() / spec.materialRule<num>('pp_pipe_stick_m').toDouble()).ceil();
-  final fittings = (roomCount * spec.materialRule<num>('fittings_per_room').toDouble() * spec.materialRule<num>('fittings_reserve').toDouble()).ceil();
-  final brackets = (roomCount * spec.materialRule<num>('brackets_per_room').toDouble() * spec.materialRule<num>('brackets_reserve').toDouble()).ceil();
+  final pipeSticks =
+      (roomCount *
+              spec.materialRule<num>('pipe_rate').toDouble() *
+              spec.materialRule<num>('pipe_reserve').toDouble() /
+              spec.materialRule<num>('pp_pipe_stick_m').toDouble())
+          .ceil();
+  final fittings =
+      (roomCount *
+              spec.materialRule<num>('fittings_per_room').toDouble() *
+              spec.materialRule<num>('fittings_reserve').toDouble())
+          .ceil();
+  final brackets =
+      (roomCount *
+              spec.materialRule<num>('brackets_per_room').toDouble() *
+              spec.materialRule<num>('brackets_reserve').toDouble())
+          .ceil();
   final thermoHeads = (roomCount * 1.05).ceil();
   final mayevskyValves = (roomCount * 1.1).ceil();
 
   /* ─── materials ─── */
-  final radiatorLabel = radiatorType <= 1 ? 'Радиаторы (секции)' : 'Радиаторы (панели/приборы)';
+  final radiatorLabel = radiatorType <= 1
+      ? 'Радиаторы (секции)'
+      : 'Радиаторы (панели/приборы)';
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
       name: radiatorLabel,
@@ -99,7 +139,11 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      _factorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(basePrimary * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
     final purchaseQuantity = roundValue(packageCount.toDouble(), 6);
@@ -131,11 +175,14 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
 
   /* ─── warnings ─── */
   final warnings = <String>[];
-  if (totalPowerKW > spec.warningRule<num>('gas_boiler_power_threshold_kw').toDouble()) {
+  if (totalPowerKW >
+      spec.warningRule<num>('gas_boiler_power_threshold_kw').toDouble()) {
     warnings.add('Мощность более 20 кВт \u2014 газовый котёл с запасом 15-20%');
   }
   if (buildingType >= 2 && climateZone >= 2) {
-    warnings.add('Слабая изоляция + холодная зона \u2014 рекомендуется профессиональный теплотехнический расчёт');
+    warnings.add(
+      'Слабая изоляция + холодная зона \u2014 рекомендуется профессиональный теплотехнический расчёт',
+    );
   }
 
   return CanonicalCalculatorContractResult(

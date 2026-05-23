@@ -150,6 +150,7 @@ class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate('slab_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.foundation_slab',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

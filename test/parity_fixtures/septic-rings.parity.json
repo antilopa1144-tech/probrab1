@@ -1,0 +1,85 @@
+{
+  "calculator_id": "septic-rings",
+  "formula_version": "septic-rings-canonical-v1",
+  "generated_at": "2026-05-16T08:06:51.615Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for septic-rings",
+      "inputs": {
+        "residents": 4,
+        "chambersCount": 3,
+        "ringDiameter": 1000,
+        "groundType": 1,
+        "withFilterWell": 1,
+        "pipeLengthFromHouse": 8
+      },
+      "expected_totals": {
+        "residents": 4,
+        "chambersCount": 3,
+        "ringDiameter": 1000,
+        "groundType": 1,
+        "withFilterWell": 1,
+        "pipeLengthFromHouse": 8,
+        "dailyVolumeLiters": 800,
+        "totalVolumeLiters": 2400,
+        "totalVolume": 2.4,
+        "volumePerChamber": 0.8,
+        "ringsPerChamber": 2,
+        "totalRings": 6,
+        "bottomPlates": 2,
+        "topPlates": 3,
+        "covers": 3,
+        "neckRings": 3,
+        "sealRings": 8,
+        "sealedChambers": 2,
+        "sealedSurfaceM2": 11.31,
+        "masticKg": 15.83,
+        "masticCans": 1,
+        "bitumenSheetRolls": 1,
+        "filterGravelM3": 0.589,
+        "filterSandM3": 0.094,
+        "pipeWithReserveM": 8.4,
+        "pipeSections": 3,
+        "pipeElbows": 2,
+        "minExactNeed": 5.5872,
+        "recExactNeed": 6.36,
+        "maxExactNeed": 8.26896,
+        "minPurchase": 6,
+        "recPurchase": 7,
+        "maxPurchase": 9
+      },
+      "expected_materials_count": 12,
+      "expected_material_names": [
+        "КС-10-9 (Ø1000 мм, h=900)",
+        "Днище ПН-10 (Ø1000 мм)",
+        "Плита перекрытия ПП-10 (Ø1000 мм)",
+        "КС-7-9 (горловина Ø700 мм)",
+        "Люк чугунный ГТС-Б",
+        "Уплотнительные кольца / резиновые манжеты",
+        "Битумная мастика (20 кг)",
+        "Гидростеклоизол (полоса 300 мм, 10 м рулон)",
+        "Щебень фр. 20-40 мм (фильтрующий слой)",
+        "Песок (подложка фильтра)",
+        "Труба ПВХ Ø110 (секции 3 м)",
+        "Отводы Ø110"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 5.5872,
+          "purchase_quantity": 6
+        },
+        "REC": {
+          "exact_need": 6.36,
+          "purchase_quantity": 7
+        },
+        "MAX": {
+          "exact_need": 8.26896,
+          "purchase_quantity": 9
+        }
+      }
+    }
+  ]
+}

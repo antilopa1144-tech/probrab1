@@ -146,6 +146,7 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
     return CalculatorScaffold(
       title: _loc.translate('ceiling_insulation_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.ceilings_insulation',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

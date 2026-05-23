@@ -276,6 +276,7 @@ class _SelfLevelingFloorCalculatorScreenState
     return CalculatorScaffold(
       title: _loc.translate('self_leveling.title'),
       accentColor: accentColor,
+      faqPrefix: 'faq.floors_self_leveling',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,

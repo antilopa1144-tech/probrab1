@@ -141,7 +141,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       quantity: floorConcrete,
       unit: 'м³',
       withReserve: floorConcrete,
-      purchaseQty: (floorConcrete * 10).ceil().toDouble(),
+      purchaseQty: floorConcrete,
       category: 'Бетон',
     ),
     CanonicalMaterialResult(
@@ -149,7 +149,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       quantity: wallConcrete,
       unit: 'м³',
       withReserve: wallConcrete,
-      purchaseQty: (wallConcrete * 10).ceil().toDouble(),
+      purchaseQty: wallConcrete,
       category: 'Бетон',
     ),
     CanonicalMaterialResult(

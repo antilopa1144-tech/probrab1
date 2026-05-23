@@ -211,6 +211,7 @@ class _RoofingUnifiedCalculatorScreenState
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
+      faqPrefix: 'faq.roofing',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,

@@ -163,7 +163,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: '\u041e\u0442\u0434\u0435\u043b\u043a\u0430',
     ),
     CanonicalMaterialResult(
-      name: '\u0413\u0440\u0443\u043d\u0442\u043e\u0432\u043a\u0430 10 \u043b',
+      name: '\u0413\u0440\u0443\u043d\u0442\u043e\u0432\u043a\u0430 \u0433\u043b\u0443\u0431\u043e\u043a\u043e\u0433\u043e \u043f\u0440\u043e\u043d\u0438\u043a\u043d\u043e\u0432\u0435\u043d\u0438\u044f (10 \u043b)',
       quantity: primerCans.toDouble(),
       unit: '\u043a\u0430\u043d\u0438\u0441\u0442\u0440',
       withReserve: primerCans.toDouble(),

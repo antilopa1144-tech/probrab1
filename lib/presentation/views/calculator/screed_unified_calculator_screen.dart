@@ -269,6 +269,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
     return CalculatorScaffold(
       title: _loc.translate('screed_unified.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.floors_screed_unified',
       actions: exportActions,
       resultHeader: _buildResultHeader(),
       children: [

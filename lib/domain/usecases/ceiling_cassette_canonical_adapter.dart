@@ -33,7 +33,9 @@ CanonicalCalculatorContractResult calculateCanonicalCeilingCassette(
   final crossProfiles = mainRows * crossPerRow;
 
   // Hangers
-  final hangers = ((roomLength / spec.materialRule<num>('hanger_spacing').toDouble()) + 1).ceil() * mainRows;
+  // По практике монтажа кассетных потолков подвесы считаем от площади (примерно 2.5 шт/м²).
+  // Это даёт реалистичный результат и устраняет известную проблему "подвесы не растут с площадью".
+  final hangers = (area * 2.5).ceil();
 
   // Wall angle profiles
   final wallProfilePcs = ((roomLength + roomWidth) * 2 * spec.materialRule<num>('wall_profile_reserve').toDouble() / spec.materialRule<num>('wall_profile_length').toDouble()).ceil();

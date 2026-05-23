@@ -136,6 +136,7 @@ class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalcula
     return CalculatorScaffold(
       title: _loc.translate('ventilation_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.engineering_ventilation',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

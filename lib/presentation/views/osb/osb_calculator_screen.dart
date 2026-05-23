@@ -494,6 +494,7 @@ class _OsbCalculatorScreenState extends State<OsbCalculatorScreen> {
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
+      faqPrefix: 'faq.sheeting_osb_plywood',
       actions: [
         IconButton(
           icon: const Icon(Icons.copy_rounded),

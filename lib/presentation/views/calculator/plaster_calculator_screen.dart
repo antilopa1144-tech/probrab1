@@ -268,6 +268,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate('plaster_pro.brand'),
       accentColor: accentColor,
+      faqPrefix: 'faq.mixes_plaster',
       actions: exportActions,
 
       // Header с ключевыми результатами вверху

@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
+import '../../../core/localization/app_localizations.dart';
+import 'calculator_faq_section.dart';
 import 'mikhalych_button.dart';
 
 /// Базовый Scaffold для калькуляторов с эталонным дизайном
@@ -63,6 +65,10 @@ class CalculatorScaffold extends StatelessWidget {
   /// Если указан — в конце экрана показывается кнопка "Спросить Михалыча".
   final Map<String, dynamic> Function()? mikhalychDataCollector;
 
+  /// Префикс ключей локализации FAQ (например, `faq.floors_linoleum`).
+  /// Если контент отсутствует — секция не отображается.
+  final String? faqPrefix;
+
   const CalculatorScaffold({
     super.key,
     required this.title,
@@ -75,6 +81,7 @@ class CalculatorScaffold extends StatelessWidget {
     this.floatingActionButton,
     this.bottomNavigationBar,
     this.mikhalychDataCollector,
+    this.faqPrefix,
   });
 
   @override
@@ -83,6 +90,14 @@ class CalculatorScaffold extends StatelessWidget {
     final isWideScreen = kIsWeb && screenWidth >= CalculatorDesignSystem.breakpointTablet;
     final maxWidth = CalculatorDesignSystem.getMaxContentWidth(screenWidth);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final loc = AppLocalizations.of(context);
+
+    final faqItems = faqPrefix == null
+        ? const <CalculatorFaqItem>[]
+        : CalculatorFaqSection.fromLocalization(
+            loc: loc,
+            prefix: faqPrefix!,
+          );
 
     Widget bodyContent = Column(
       children: [
@@ -97,6 +112,13 @@ class CalculatorScaffold extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ...children,
+                if (faqItems.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  CalculatorFaqSection(
+                    items: faqItems,
+                    accentColor: accentColor,
+                  ),
+                ],
                 if (mikhalychDataCollector != null) ...[
                   const SizedBox(height: 16),
                   MikhalychButton(
@@ -147,6 +169,7 @@ class CalculatorScaffoldSimple extends StatelessWidget {
   final List<Widget> children;
   final List<Widget>? actions;
   final EdgeInsets? bodyPadding;
+  final String? faqPrefix;
 
   const CalculatorScaffoldSimple({
     super.key,
@@ -155,6 +178,7 @@ class CalculatorScaffoldSimple extends StatelessWidget {
     required this.children,
     this.actions,
     this.bodyPadding,
+    this.faqPrefix,
   });
 
   @override
@@ -164,6 +188,7 @@ class CalculatorScaffoldSimple extends StatelessWidget {
       accentColor: accentColor,
       actions: actions,
       bodyPadding: bodyPadding,
+      faqPrefix: faqPrefix,
       children: children,
     );
   }

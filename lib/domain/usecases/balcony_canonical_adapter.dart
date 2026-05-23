@@ -98,7 +98,7 @@ CanonicalCalculatorContractResult calculateCanonicalBalcony(
   if (floorArea > spec.warningRule<num>('large_balcony_area_threshold_m2').toDouble()) {
     warnings.add('Большая площадь балкона — рекомендуется профессиональный расчёт нагрузки на плиту');
   }
-  if (insulationType == spec.warningRule<num>('uninsulated_warning_threshold').toDouble()) {
+  if (insulationType == 0) {
     warnings.add('Без утепления — на балконе будет значительный перепад температур');
   }
 

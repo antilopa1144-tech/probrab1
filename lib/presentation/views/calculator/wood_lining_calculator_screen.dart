@@ -338,6 +338,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
+      faqPrefix: 'faq.walls_wood',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,

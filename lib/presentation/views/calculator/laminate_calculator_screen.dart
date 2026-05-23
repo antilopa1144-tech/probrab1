@@ -271,6 +271,7 @@ class _LaminateCalculatorScreenState extends ConsumerState<LaminateCalculatorScr
     return CalculatorScaffold(
       title: _loc.translate('laminate_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.floors_laminate',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

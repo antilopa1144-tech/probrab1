@@ -49,6 +49,7 @@ CanonicalCalculatorContractResult calculateCanonicalSiding(
   final height = (normalized['height'] ?? defaultFor(spec, 'height', 5)).round().clamp(2, 15);
   final sidingType = (normalized['sidingType'] ?? defaultFor(spec, 'sidingType', 0)).round().clamp(0, 2);
   final exteriorCorners = (normalized['exteriorCorners'] ?? defaultFor(spec, 'exteriorCorners', 4)).round().clamp(0, 20);
+  final jProfileStrategy = (normalized['jProfileStrategy'] ?? defaultFor(spec, 'jProfileStrategy', 0)).round().clamp(0, 1);
 
   // Panel area
   final panelArea = (spec.materialRule<Map>('panel_areas')['$sidingType'] as num?)?.toDouble() ?? 0.732;
@@ -198,6 +199,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'height': height.toDouble(),
       'sidingType': sidingType.toDouble(),
       'exteriorCorners': exteriorCorners.toDouble(),
+      'jProfileStrategy': jProfileStrategy.toDouble(),
       'panelArea': panelArea,
       'netArea': netArea.toDouble(),
       'panels': panels.toDouble(),

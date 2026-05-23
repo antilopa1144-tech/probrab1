@@ -136,6 +136,7 @@ class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingC
     return CalculatorScaffold(
       title: _loc.translate('stretch_ceiling_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.ceilings_stretch',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

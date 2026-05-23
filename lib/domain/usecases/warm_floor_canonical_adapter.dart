@@ -11,11 +11,12 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
   SpecReader? specOverride,
 }) {
   final spec = specOverride ?? const SpecReader(warmFloorSpecData);
+  final normalized = normalizeLegacyWarmFloorInputs(inputs, spec);
 
-  final roomArea = (inputs['roomArea'] ?? defaultFor(spec, 'roomArea', 10)).clamp(1.0, 100.0);
-  final furnitureArea = (inputs['furnitureArea'] ?? defaultFor(spec, 'furnitureArea', 2)).clamp(0.0, 50.0);
-  final heatingType = (inputs['heatingType'] ?? defaultFor(spec, 'heatingType', 0)).round().clamp(0, 2);
-  final powerDensity = (inputs['powerDensity'] ?? defaultFor(spec, 'powerDensity', 150)).clamp(100.0, 200.0);
+  final roomArea = (normalized['roomArea'] ?? defaultFor(spec, 'roomArea', 10)).clamp(1.0, 100.0);
+  final furnitureArea = (normalized['furnitureArea'] ?? defaultFor(spec, 'furnitureArea', 2)).clamp(0.0, 50.0);
+  final heatingType = (normalized['heatingType'] ?? defaultFor(spec, 'heatingType', 0)).round().clamp(0, 2);
+  final powerDensity = (normalized['powerDensity'] ?? defaultFor(spec, 'powerDensity', 150)).clamp(100.0, 200.0);
 
   final heatingArea = math.max(0.0, roomArea - furnitureArea);
   final totalPowerW = heatingArea * powerDensity;
@@ -184,7 +185,7 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloor(
           : 'warm-floor-pipe-m';
   final packageUnit = heatingType == 0 ? 'шт' : 'м';
 
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
+final accuracyMode = parseAccuracyMode(normalized);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
     final exactNeed = roundValue(basePrimary * accuracyMult * multiplier, 6);

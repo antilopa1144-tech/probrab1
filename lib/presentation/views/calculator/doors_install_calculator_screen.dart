@@ -149,6 +149,7 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
     return CalculatorScaffold(
       title: _loc.translate('doors_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.doors_install',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

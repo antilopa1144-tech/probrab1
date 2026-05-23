@@ -147,6 +147,7 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
     return CalculatorScaffold(
       title: _loc.translate('stairs_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.stairs',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

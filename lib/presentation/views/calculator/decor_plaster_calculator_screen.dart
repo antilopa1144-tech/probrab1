@@ -146,6 +146,7 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
     return CalculatorScaffold(
       title: _loc.translate('decor_plaster_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.walls_decor_plaster',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

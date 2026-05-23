@@ -157,6 +157,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
     return CalculatorScaffold(
       title: _loc.translate('linoleum_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.floors_linoleum',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

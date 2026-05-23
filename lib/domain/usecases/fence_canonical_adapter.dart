@@ -230,7 +230,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       quantity: concrete,
       unit: 'м³',
       withReserve: concrete,
-      purchaseQty: (concrete * 10).ceil().toDouble(),
+      purchaseQty: ((concrete * 10).ceil() / 10).toDouble(),
       category: 'Бетон',
     ),
     CanonicalMaterialResult(

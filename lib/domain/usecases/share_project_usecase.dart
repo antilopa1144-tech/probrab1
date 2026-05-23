@@ -5,10 +5,9 @@ import '../models/project_v2.dart';
 import '../models/shareable_content.dart';
 import '../models/export_data.dart';
 import '../services/csv_export_service.dart';
+import '../services/pdf_export_service.dart';
 import '../../core/services/deep_link_service.dart';
 import '../../core/exceptions/export_exception.dart';
-// ignore: implementation_imports
-import '../../presentation/services/pdf_export_service.dart';
 
 /// Use case для шаринга проектов в различных форматах
 class ShareProjectUseCase {

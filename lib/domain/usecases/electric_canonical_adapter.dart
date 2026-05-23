@@ -6,10 +6,10 @@ import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
 const Map<String, Map<String, double>> _factorTable = {
-  'geometry_complexity': {'MIN': 0.95, 'REC': 1.0, 'MAX': 1.1},
-  'installation_method': {'MIN': 0.95, 'REC': 1.0, 'MAX': 1.05},
-  'worker_skill': {'MIN': 0.95, 'REC': 1.0, 'MAX': 1.1},
-  'waste_factor': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.05},
+  'geometry_complexity': {'MIN': 1.0, 'REC': 1.0, 'MAX': 1.17131},
+  'installation_method': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
+  'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
+  'waste_factor': {'MIN': 0.97, 'REC': 1.06, 'MAX': 1.12},
 };
 
 CanonicalCalculatorContractResult calculateCanonicalElectric(
@@ -18,37 +18,84 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
 }) {
   final spec = specOverride ?? const SpecReader(electricSpecData);
 
-  final apartmentArea = (inputs['apartmentArea'] ?? defaultFor(spec, 'apartmentArea', 60)).clamp(20.0, 500.0);
-  final roomsCount = (inputs['roomsCount'] ?? defaultFor(spec, 'roomsCount', 3)).round().clamp(1, 10);
-  final ceilingHeight = (inputs['ceilingHeight'] ?? defaultFor(spec, 'ceilingHeight', 2.7)).clamp(2.4, 4.0);
-  final wiringType = (inputs['wiringType'] ?? defaultFor(spec, 'wiringType', 0)).round().clamp(0, 1);
-  final hasKitchen = (inputs['hasKitchen'] ?? defaultFor(spec, 'hasKitchen', 1)).round().clamp(0, 1);
-  final reserve = (inputs['reserve'] ?? defaultFor(spec, 'reserve', 15)).clamp(5.0, 30.0);
+  final apartmentArea =
+      (inputs['apartmentArea'] ?? defaultFor(spec, 'apartmentArea', 60)).clamp(
+        20.0,
+        500.0,
+      );
+  final roomsCount = (inputs['roomsCount'] ?? defaultFor(spec, 'roomsCount', 3))
+      .round()
+      .clamp(1, 10);
+  final ceilingHeight =
+      (inputs['ceilingHeight'] ?? defaultFor(spec, 'ceilingHeight', 2.7)).clamp(
+        2.4,
+        4.0,
+      );
+  final wiringType = (inputs['wiringType'] ?? defaultFor(spec, 'wiringType', 0))
+      .round()
+      .clamp(0, 1);
+  final hasKitchen = (inputs['hasKitchen'] ?? defaultFor(spec, 'hasKitchen', 1))
+      .round()
+      .clamp(0, 1);
+  final reserve = (inputs['reserve'] ?? defaultFor(spec, 'reserve', 15)).clamp(
+    5.0,
+    30.0,
+  );
 
   /* ─── groups ─── */
   final lightingGroups = roomsCount + 1;
   final outletGroups = roomsCount + 2;
-  final acGroups = (roomsCount / spec.materialRule<num>('ac_groups_divisor').toDouble()).ceil();
-  final breakersCount = lightingGroups + outletGroups + acGroups + (hasKitchen == 1 ? 1 : 0);
+  final acGroups =
+      (roomsCount / spec.materialRule<num>('ac_groups_divisor').toDouble())
+          .ceil();
+  final breakersCount =
+      lightingGroups + outletGroups + acGroups + (hasKitchen == 1 ? 1 : 0);
   final uzoCount = (outletGroups / 2).ceil() + (hasKitchen == 1 ? 1 : 0) + 1;
 
   /* ─── cable lengths ─── */
-  final cable15length = (apartmentArea * spec.materialRule<num>('cable15_rate').toDouble() + lightingGroups * ceilingHeight) * (1 + reserve / 100);
-  final cable25length = (apartmentArea * spec.materialRule<num>('cable25_rate').toDouble() + outletGroups * ceilingHeight * 1.5) * (1 + reserve / 100);
+  final cable15length =
+      (apartmentArea * spec.materialRule<num>('cable_15_rate').toDouble() +
+          lightingGroups * ceilingHeight) *
+      (1 + reserve / 100);
+  final cable25length =
+      (apartmentArea * spec.materialRule<num>('cable_25_rate').toDouble() +
+          outletGroups * ceilingHeight * 1.5) *
+      (1 + reserve / 100);
   final cable6length = hasKitchen == 1
-      ? (math.sqrt(apartmentArea) * spec.materialRule<num>('cable6_kitchen_factor').toDouble() + ceilingHeight) * spec.materialRule<num>('cable6_reserve').toDouble()
+      ? (math.sqrt(apartmentArea) *
+                    spec
+                        .materialRule<num>('cable_6_kitchen_factor')
+                        .toDouble() +
+                ceilingHeight) *
+            spec.materialRule<num>('cable_6_reserve').toDouble()
       : 0.0;
-  final conduitLength = ((cable15length + cable25length + cable6length) * spec.materialRule<num>('conduit_ratio').toDouble()).ceil();
+  final conduitLength =
+      ((cable15length + cable25length + cable6length) *
+              spec.materialRule<num>('conduit_ratio').toDouble())
+          .ceil();
 
   /* ─── outlets & switches ─── */
-  final outletsCount = (apartmentArea * spec.materialRule<num>('outlets_per_m2').toDouble()).ceil() + roomsCount * spec.materialRule<num>('outlets_per_room').toDouble();
-  final switchesCount = roomsCount + spec.materialRule<num>('switches_base').toDouble();
+  final outletsCount =
+      (apartmentArea * spec.materialRule<num>('outlets_per_m2').toDouble())
+          .ceil() +
+      roomsCount * spec.materialRule<num>('outlets_per_room').toDouble();
+  final switchesCount =
+      roomsCount + spec.materialRule<num>('switches_base').toDouble();
 
   /* ─── packaging ─── */
-  final cable15spools = (cable15length / spec.materialRule<num>('cable_spool_m').toDouble()).ceil();
-  final cable25spools = (cable25length / spec.materialRule<num>('cable_spool_m').toDouble()).ceil();
-  final conduitPacks = (conduitLength / spec.materialRule<num>('cable_spool_m').toDouble()).ceil();
-  final socketBoxes = ((outletsCount + switchesCount) * spec.materialRule<num>('socket_box_reserve').toDouble()).ceil();
+  final cable15spools =
+      (cable15length / spec.materialRule<num>('cable_spool_m').toDouble())
+          .ceil();
+  final cable25spools =
+      (cable25length / spec.materialRule<num>('cable_spool_m').toDouble())
+          .ceil();
+  final conduitPacks =
+      (conduitLength / spec.materialRule<num>('cable_spool_m').toDouble())
+          .ceil();
+  final socketBoxes =
+      ((outletsCount + switchesCount) *
+              spec.materialRule<num>('socket_box_reserve').toDouble())
+          .ceil();
   final gypsumKg = ((outletsCount + switchesCount) / 5).ceil();
 
   /* ─── materials ─── */
@@ -58,7 +105,10 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: roundValue(cable15length, 1),
       unit: 'м',
       withReserve: roundValue(cable15length, 1),
-      purchaseQty: (cable15spools * spec.materialRule<num>('cable_spool_m').toDouble()).round().toDouble(),
+      purchaseQty:
+          (cable15spools * spec.materialRule<num>('cable_spool_m').toDouble())
+              .round()
+              .toDouble(),
       category: 'Кабель',
     ),
     CanonicalMaterialResult(
@@ -66,20 +116,25 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: roundValue(cable25length, 1),
       unit: 'м',
       withReserve: roundValue(cable25length, 1),
-      purchaseQty: (cable25spools * spec.materialRule<num>('cable_spool_m').toDouble()).round().toDouble(),
+      purchaseQty:
+          (cable25spools * spec.materialRule<num>('cable_spool_m').toDouble())
+              .round()
+              .toDouble(),
       category: 'Кабель',
     ),
   ];
 
   if (hasKitchen == 1 && cable6length > 0) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Кабель ВВГнг 3\u00d76',
-      quantity: roundValue(cable6length, 1),
-      unit: 'м',
-      withReserve: roundValue(cable6length, 1),
-      purchaseQty: cable6length.ceil().toDouble(),
-      category: 'Кабель',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Кабель ВВГнг 3\u00d76',
+        quantity: roundValue(cable6length, 1),
+        unit: 'м',
+        withReserve: roundValue(cable6length, 1),
+        purchaseQty: cable6length.ceil().toDouble(),
+        category: 'Кабель',
+      ),
+    );
   }
 
   materials.addAll([
@@ -90,7 +145,11 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       withReserve: (breakersCount + uzoCount + 2).toDouble(),
       purchaseQty: (breakersCount + uzoCount + 2).toDouble(),
       category: 'Щиток',
-      packageInfo: {'count': 1, 'unitSize': (breakersCount + uzoCount + 2).toDouble(), 'packageUnit': 'щитков'},
+      packageInfo: {
+        'count': 1,
+        'unitSize': (breakersCount + uzoCount + 2).toDouble(),
+        'packageUnit': 'щитков',
+      },
     ),
     CanonicalMaterialResult(
       name: 'Автоматы',
@@ -137,7 +196,10 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: conduitLength.toDouble(),
       unit: 'м',
       withReserve: conduitLength.toDouble(),
-      purchaseQty: (conduitPacks * spec.materialRule<num>('cable_spool_m').toDouble()).round().toDouble(),
+      purchaseQty:
+          (conduitPacks * spec.materialRule<num>('cable_spool_m').toDouble())
+              .round()
+              .toDouble(),
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
@@ -155,7 +217,11 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      _factorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(basePrimary * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
     final purchaseQuantity = roundValue(packageCount.toDouble(), 6);
@@ -186,8 +252,11 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
 
   /* ─── warnings ─── */
   final warnings = <String>[];
-  if (apartmentArea > spec.warningRule<num>('three_phase_area_threshold').toDouble()) {
-    warnings.add('Площадь более 100 м\u00b2 \u2014 рекомендуется ввод 380В (3 фазы)');
+  if (apartmentArea >
+      spec.warningRule<num>('three_phase_area_threshold').toDouble()) {
+    warnings.add(
+      'Площадь более 100 м\u00b2 \u2014 рекомендуется ввод 380В (3 фазы)',
+    );
   }
   if (hasKitchen == 1) {
     warnings.add('Кухня: кабель 3\u00d76 мм\u00b2, автомат 32А, УЗО 40А/30мА');

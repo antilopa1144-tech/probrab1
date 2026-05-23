@@ -170,6 +170,7 @@ class _TileGroutCalculatorScreenState extends ConsumerState<TileGroutCalculatorS
     return CalculatorScaffold(
       title: _loc.translate('calculator.floors_tile_grout.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.floors_tile_grout',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

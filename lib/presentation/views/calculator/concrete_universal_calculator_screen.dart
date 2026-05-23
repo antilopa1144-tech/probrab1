@@ -214,6 +214,7 @@ class _ConcreteUniversalCalculatorScreenState
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
+      faqPrefix: 'faq.concrete_universal',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,

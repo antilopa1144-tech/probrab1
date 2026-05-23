@@ -387,6 +387,7 @@ class _UnderfloorHeatingCalculatorScreenState
     return CalculatorScaffold(
       title: _loc.translate('warmfloor.title'),
       accentColor: accentColor,
+      faqPrefix: 'faq.floors_warm',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,
@@ -743,7 +744,7 @@ class _UnderfloorHeatingCalculatorScreenState
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${_loc.translate(type.descriptionKey)} • ${_constants.getRoomPower(type.key)} ${_loc.translate('watt_per_sqm')}',
+                              '${_loc.translate(type.descriptionKey)} • ${_constants.getRoomPower(type.key)} ${_loc.translate('common.watt_per_sqm')}',
                               style: CalculatorDesignSystem.bodySmall.copyWith(
                                 color: CalculatorColors.getTextSecondary(_isDark),
                               ),

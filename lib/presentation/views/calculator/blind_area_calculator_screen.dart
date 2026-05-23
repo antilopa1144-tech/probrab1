@@ -154,6 +154,7 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
     return CalculatorScaffold(
       title: _loc.translate('blind_area_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.foundation_blind_area',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,

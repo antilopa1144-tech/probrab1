@@ -1,0 +1,95 @@
+{
+  "calculator_id": "greenhouse",
+  "formula_version": "greenhouse-canonical-v1",
+  "generated_at": "2026-05-16T08:06:51.479Z",
+  "cases": [
+    {
+      "id": "defaults",
+      "description": "Default inputs for greenhouse",
+      "inputs": {
+        "length": 6,
+        "width": 3,
+        "height": 2.1,
+        "roofType": 0,
+        "polycarbonateThickness": 6,
+        "archStep": 0.65,
+        "doorCount": 2,
+        "ventCount": 2,
+        "foundationType": 1
+      },
+      "expected_totals": {
+        "length": 6,
+        "width": 3,
+        "height": 2.1,
+        "roofType": 0,
+        "polycarbonateThickness": 6,
+        "archStep": 0.65,
+        "doorCount": 2,
+        "ventCount": 2,
+        "foundationType": 1,
+        "polyArea": 35.343,
+        "polyAreaWithReserve": 40.644,
+        "polySheets": 4,
+        "archCount": 11,
+        "archLengthM": 4.712,
+        "totalFrameLengthM": 97.261,
+        "frameProfilePieces": 18,
+        "thermalWashersTotal": 213,
+        "thermalWasherPacks": 3,
+        "hSeamCount": 2,
+        "hProfilePieces": 2,
+        "upProfilePieces": 8,
+        "doorAreaTotal": 3.33,
+        "doorFrameTotalM": 15.115,
+        "ventFrameTotalM": 6,
+        "ventHinges": 4,
+        "ventLatches": 2,
+        "perimeter": 18,
+        "woodBeamLengthM": 28.35,
+        "woodBeamPieces": 5,
+        "screwPileCount": 0,
+        "concreteM3": 0,
+        "anchorCount": 0,
+        "screwsTotal": 142,
+        "sealingTapeRolls": 3,
+        "minExactNeed": 3.7248,
+        "recExactNeed": 4.24,
+        "maxExactNeed": 5.51264,
+        "minPurchase": 4,
+        "recPurchase": 5,
+        "maxPurchase": 6
+      },
+      "expected_materials_count": 12,
+      "expected_material_names": [
+        "Поликарбонат сотовый 6 мм (универсальный), лист 2.1 × 6 м",
+        "Профиль каркаса 20×20×1.2 мм (6 м)",
+        "Термошайбы для поликарбоната",
+        "Саморезы для оцинковки",
+        "H-профиль соединительный (6 м)",
+        "UP-профиль торцевой (2.1 м)",
+        "Уплотнительная лента (25 м рулон)",
+        "Дверь распашная 90×185 см (комплект петли + ручка)",
+        "Форточка 60×90 см (рамка)",
+        "Петли для форточек",
+        "Шпингалет / автомат для форточки",
+        "Брус 100×100 мм антисептированный (6 м)"
+      ],
+      "expected_warnings_count": 0,
+      "expected_warnings": [],
+      "expected_scenarios": {
+        "MIN": {
+          "exact_need": 3.7248,
+          "purchase_quantity": 4
+        },
+        "REC": {
+          "exact_need": 4.24,
+          "purchase_quantity": 5
+        },
+        "MAX": {
+          "exact_need": 5.51264,
+          "purchase_quantity": 6
+        }
+      }
+    }
+  ]
+}

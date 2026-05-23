@@ -424,6 +424,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
+      faqPrefix: 'faq.partitions',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: accentColor,

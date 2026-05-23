@@ -146,6 +146,7 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
     return CalculatorScaffold(
       title: _loc.translate('gutters_calc.title'),
       accentColor: _accentColor,
+      faqPrefix: 'faq.roofing_gutters',
       actions: exportActions,
       resultHeader: CalculatorResultHeader(
         accentColor: _accentColor,
