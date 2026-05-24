@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:flutter/widgets.dart';
 import 'package:share_plus/share_plus.dart';
 import '../models/project_v2.dart';
+import '../models/pdf_project_export_labels.dart';
 import '../models/shareable_content.dart';
 import '../models/export_data.dart';
 import '../services/csv_export_service.dart';
@@ -73,13 +73,13 @@ class ShareProjectUseCase {
   Future<ShareResult> shareAsPdf(
     ProjectV2 project, {
     required ProjectShareCopy shareCopy,
-    BuildContext? context,
+    required PdfProjectExportLabels labels,
   }) async {
     try {
-      if (context == null) {
-        throw ExportException.generationError('pdf', 'context_missing');
-      }
-      final filePath = await PdfExportService.exportProject(project, context);
+      final filePath = await PdfExportService.exportProject(
+        project,
+        labels: labels,
+      );
 
       await SharePlus.instance.share(
         ShareParams(

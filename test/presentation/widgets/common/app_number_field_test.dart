@@ -331,5 +331,31 @@ void main() {
 
       expect(find.text('10'), findsOneWidget);
     });
+
+    testWidgets('позволяет набрать 15 при min=3 без сброса на каждой цифре', (tester) async {
+      setTestViewportSize(tester);
+      var value = 3.0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AppNumberField(
+              value: value,
+              min: 3,
+              max: 100,
+              onChanged: (v) => value = v,
+            ),
+          ),
+        ),
+      );
+
+      await tester.enterText(find.byType(TextField), '1');
+      await tester.pump();
+      expect(value, 1.0);
+
+      await tester.enterText(find.byType(TextField), '15');
+      await tester.pump();
+      expect(value, 15.0);
+    });
   });
 }

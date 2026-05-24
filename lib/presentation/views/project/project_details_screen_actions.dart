@@ -580,7 +580,11 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
 
   void _exportProjectToPdf(ProjectV2 project) async {
     try {
-      final filePath = await PdfExportService.exportProject(project, context);
+      final labels = buildPdfProjectExportLabels(AppLocalizations.of(context));
+      final filePath = await PdfExportService.exportProject(
+        project,
+        labels: labels,
+      );
       await openPdfFile(filePath);
     } catch (e, stack) {
       if (mounted) {
@@ -597,7 +601,11 @@ mixin ProjectDetailsActions on ConsumerState<ProjectDetailsScreen> {
   void _downloadProjectToPdf(ProjectV2 project) async {
     try {
       final loc = AppLocalizations.of(context);
-      final filePath = await PdfExportService.exportProject(project, context);
+      final labels = buildPdfProjectExportLabels(loc);
+      final filePath = await PdfExportService.exportProject(
+        project,
+        labels: labels,
+      );
       await openPdfFile(filePath);
 
       if (mounted) {

@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:meta/meta.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import '../../core/localization/app_localizations.dart';
 import '../calculators/calculator_registry.dart';
 import '../models/calculator_definition_v2.dart';
+import '../models/pdf_project_export_labels.dart';
 import '../models/project_v2.dart';
 import '../../data/models/calculation.dart';
 import 'pdf_file_handler.dart';
@@ -53,26 +53,16 @@ class PdfExportService {
   static Future<String> exportCalculation(
     Calculation calculation,
     CalculatorDefinitionV2? definition, {
-    BuildContext? buildContext,
+    String? calculatorDisplayName,
     String? categoryLabel,
   }) async {
     final theme = await _buildTheme();
     final resolvedDefinition =
         definition ?? CalculatorRegistry.getById(calculation.calculatorId);
 
-    final loc =
-        // ignore: use_build_context_synchronously
-        buildContext == null ? null : AppLocalizations.of(buildContext);
-    final calculatorName = (loc == null || resolvedDefinition == null)
-        ? calculation.calculatorName
-        : () {
-            final translated = loc.translate(resolvedDefinition.titleKey).trim();
-            if (translated.isEmpty ||
-                translated == resolvedDefinition.titleKey) {
-              return calculation.calculatorName;
-            }
-            return translated;
-          }();
+    final calculatorName = calculatorDisplayName ??
+        (resolvedDefinition != null ? resolvedDefinition.titleKey : null) ??
+        calculation.calculatorName;
 
     final resolvedCategoryLabel = categoryLabel ?? calculation.category;
     final pdf = pw.Document(
@@ -311,12 +301,10 @@ class PdfExportService {
   ///
   /// Сохраняет PDF локально и возвращает путь к файлу.
   static Future<String> exportProject(
-    ProjectV2 project,
-    BuildContext context,
-  ) async {
+    ProjectV2 project, {
+    required PdfProjectExportLabels labels,
+  }) async {
     final theme = await _buildTheme();
-    // ignore: use_build_context_synchronously
-    final loc = AppLocalizations.of(context);
     final dateFormat = DateFormat('dd.MM.yyyy');
     final pdf = pw.Document(
       theme: theme,
@@ -355,31 +343,31 @@ class PdfExportService {
             pw.SizedBox(height: 20),
 
             // Информация о проекте
-            _buildProjectInfoSection(project, loc, dateFormat),
+            _buildProjectInfoSection(project, labels, dateFormat),
             pw.SizedBox(height: 20),
 
             // Статус и прогресс
-            _buildStatusSection(project, loc),
+            _buildStatusSection(project, labels),
             pw.SizedBox(height: 20),
 
             // Бюджет
             if (project.budgetTotal > 0)
-              _buildBudgetSection(project, loc),
+              _buildBudgetSection(project, labels),
             pw.SizedBox(height: 20),
 
             // Расчёты
             if (project.calculations.isNotEmpty)
-              _buildCalculationsSection(project, loc),
+              _buildCalculationsSection(project, labels),
             pw.SizedBox(height: 20),
 
             // Материалы
             if (project.allMaterials.isNotEmpty)
-              _buildMaterialsSection(project, loc),
+              _buildMaterialsSection(project, labels),
 
             // Заметки
             if (project.notes != null && project.notes!.isNotEmpty) ...[
               pw.SizedBox(height: 20),
-              pw.Header(level: 1, child: pw.Text(loc.translate('project.notes'))),
+              pw.Header(level: 1, child: pw.Text(labels.notes)),
               pw.SizedBox(height: 10),
               pw.Text(
                 project.notes!,
@@ -393,7 +381,7 @@ class PdfExportService {
             alignment: pw.Alignment.centerRight,
             margin: const pw.EdgeInsets.only(top: 10),
             child: pw.Text(
-              '${loc.translate('app.name')} • ${dateFormat.format(DateTime.now())}',
+              '${labels.appName} • ${dateFormat.format(DateTime.now())}',
               style: const pw.TextStyle(
                 fontSize: 10,
                 color: PdfColors.grey600,
@@ -413,7 +401,7 @@ class PdfExportService {
 
   static pw.Widget _buildProjectInfoSection(
     ProjectV2 project,
-    AppLocalizations loc,
+    PdfProjectExportLabels labels,
     DateFormat dateFormat,
   ) {
     return pw.Container(
@@ -429,11 +417,11 @@ class PdfExportService {
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text(
-                '${loc.translate('project.created')}: ${dateFormat.format(project.createdAt)}',
+                '${labels.created}: ${dateFormat.format(project.createdAt)}',
                 style: const pw.TextStyle(fontSize: 11),
               ),
               pw.Text(
-                '${loc.translate('project.updated')}: ${dateFormat.format(project.updatedAt)}',
+                '${labels.updated}: ${dateFormat.format(project.updatedAt)}',
                 style: const pw.TextStyle(fontSize: 11),
               ),
             ],
@@ -441,7 +429,7 @@ class PdfExportService {
           if (project.deadline != null) ...[
             pw.SizedBox(height: 8),
             pw.Text(
-              '${loc.translate('project.dashboard.deadline')}: ${dateFormat.format(project.deadline!)}',
+              '${labels.deadline}: ${dateFormat.format(project.deadline!)}',
               style: pw.TextStyle(
                 fontSize: 11,
                 fontWeight: pw.FontWeight.bold,
@@ -461,8 +449,8 @@ class PdfExportService {
     );
   }
 
-  static pw.Widget _buildStatusSection(ProjectV2 project, AppLocalizations loc) {
-    final statusLabel = _getStatusLabel(project.status, loc);
+  static pw.Widget _buildStatusSection(ProjectV2 project, PdfProjectExportLabels labels) {
+    final statusLabel = labels.statusLabel(project.status);
     final statusColor = _getStatusPdfColor(project.status);
 
     return pw.Row(
@@ -488,7 +476,7 @@ class PdfExportService {
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text(
-                '${loc.translate('project.dashboard.progress')}: ${project.progressPercent}%',
+                '${labels.progress}: ${project.progressPercent}%',
                 style: const pw.TextStyle(fontSize: 11),
               ),
               pw.SizedBox(height: 4),
@@ -500,7 +488,7 @@ class PdfExportService {
               if (project.tasksTotal > 0) ...[
                 pw.SizedBox(height: 4),
                 pw.Text(
-                  '${loc.translate('project.dashboard.tasks')}: ${project.tasksCompleted}/${project.tasksTotal}',
+                  '${labels.tasks}: ${project.tasksCompleted}/${project.tasksTotal}',
                   style: const pw.TextStyle(fontSize: 10),
                 ),
               ],
@@ -511,7 +499,7 @@ class PdfExportService {
     );
   }
 
-  static pw.Widget _buildBudgetSection(ProjectV2 project, AppLocalizations loc) {
+  static pw.Widget _buildBudgetSection(ProjectV2 project, PdfProjectExportLabels labels) {
     return pw.Container(
       padding: const pw.EdgeInsets.all(12),
       decoration: pw.BoxDecoration(
@@ -522,7 +510,7 @@ class PdfExportService {
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Text(
-            loc.translate('project.dashboard.budget'),
+            labels.budget,
             style: pw.TextStyle(
               fontSize: 14,
               fontWeight: pw.FontWeight.bold,
@@ -536,7 +524,7 @@ class PdfExportService {
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Text(
-                    loc.translate('project.dashboard.spent'),
+                    labels.spent,
                     style: const pw.TextStyle(fontSize: 10),
                   ),
                   pw.Text(
@@ -553,7 +541,7 @@ class PdfExportService {
                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                 children: [
                   pw.Text(
-                    loc.translate('project.dashboard.remaining'),
+                    labels.remaining,
                     style: const pw.TextStyle(fontSize: 10),
                   ),
                   pw.Text(
@@ -576,7 +564,7 @@ class PdfExportService {
           ),
           pw.SizedBox(height: 4),
           pw.Text(
-            '${loc.translate('project.total')}: ${formatMoney(project.budgetTotal)}',
+            '${labels.total}: ${formatMoney(project.budgetTotal)}',
             style: const pw.TextStyle(fontSize: 10),
           ),
         ],
@@ -584,11 +572,11 @@ class PdfExportService {
     );
   }
 
-  static pw.Widget _buildCalculationsSection(ProjectV2 project, AppLocalizations loc) {
+  static pw.Widget _buildCalculationsSection(ProjectV2 project, PdfProjectExportLabels labels) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Header(level: 1, child: pw.Text(loc.translate('project.calculations'))),
+        pw.Header(level: 1, child: pw.Text(labels.calculations)),
         pw.SizedBox(height: 10),
         pw.Table(
           border: pw.TableBorder.all(color: PdfColors.grey300),
@@ -599,21 +587,21 @@ class PdfExportService {
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(8),
                   child: pw.Text(
-                    'Расчёт',
+                    labels.calculationColumn,
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                   ),
                 ),
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(8),
                   child: pw.Text(
-                    'Стоимость материалов',
+                    labels.materialCostColumn,
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                   ),
                 ),
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(8),
                   child: pw.Text(
-                    'Стоимость работ',
+                    labels.laborCostColumn,
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                   ),
                 ),
@@ -643,7 +631,7 @@ class PdfExportService {
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(8),
                   child: pw.Text(
-                    loc.translate('project.total'),
+                    labels.total,
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                   ),
                 ),
@@ -669,13 +657,13 @@ class PdfExportService {
     );
   }
 
-  static pw.Widget _buildMaterialsSection(ProjectV2 project, AppLocalizations loc) {
+  static pw.Widget _buildMaterialsSection(ProjectV2 project, PdfProjectExportLabels labels) {
     final materials = project.allMaterials;
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Header(level: 1, child: pw.Text(loc.translate('project.materials'))),
+        pw.Header(level: 1, child: pw.Text(labels.materials)),
         pw.SizedBox(height: 10),
         pw.Table(
           border: pw.TableBorder.all(color: PdfColors.grey300),
@@ -692,28 +680,28 @@ class PdfExportService {
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(6),
                   child: pw.Text(
-                    'Материал',
+                    labels.materialNameColumn,
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
                   ),
                 ),
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(6),
                   child: pw.Text(
-                    'Кол-во',
+                    labels.quantityColumn,
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
                   ),
                 ),
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(6),
                   child: pw.Text(
-                    'Цена',
+                    labels.priceColumn,
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
                   ),
                 ),
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(6),
                   child: pw.Text(
-                    'Сумма',
+                    labels.sumColumn,
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
                   ),
                 ),
@@ -754,23 +742,6 @@ class PdfExportService {
         ),
       ],
     );
-  }
-
-  static String _getStatusLabel(ProjectStatus status, AppLocalizations loc) {
-    switch (status) {
-      case ProjectStatus.planning:
-        return loc.translate('project.status.planning');
-      case ProjectStatus.inProgress:
-        return loc.translate('project.status.in_progress');
-      case ProjectStatus.onHold:
-        return loc.translate('project.status.on_hold');
-      case ProjectStatus.completed:
-        return loc.translate('project.status.completed');
-      case ProjectStatus.cancelled:
-        return loc.translate('project.status.cancelled');
-      case ProjectStatus.problem:
-        return loc.translate('project.status.problem');
-    }
   }
 
   static PdfColor _getStatusPdfColor(ProjectStatus status) {

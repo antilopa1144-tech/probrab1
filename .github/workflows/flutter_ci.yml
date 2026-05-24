@@ -29,6 +29,7 @@ jobs:
       - run: touch .env
       - run: flutter pub get
       - run: flutter analyze --no-fatal-infos --no-fatal-warnings
+      - run: flutter test test/domain/usecases/canonical_web_parity_test.dart test/presentation/widgets/calculator/calculator_text_field_test.dart test/presentation/widgets/common/app_number_field_test.dart test/domain/usecases/calculate_wallpaper_test.dart test/domain/usecases/calculate_self_leveling_floor_canonical_parity_test.dart --reporter expanded
       - run: flutter test
 
       - name: Setup signing

@@ -150,7 +150,7 @@ class CalculatorScaffold extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
         backgroundColor: accentColor,
-        foregroundColor: Colors.white,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         elevation: 0,
         automaticallyImplyLeading: showBackButton,
         actions: actions,

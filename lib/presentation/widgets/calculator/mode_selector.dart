@@ -47,7 +47,9 @@ class ModeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final accent = accentColor ?? Theme.of(context).primaryColor;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final containerBg = isDark ? CalculatorColors.inputBackgroundDark : Colors.grey[200];
+    final containerBg = isDark
+        ? CalculatorColors.inputBackgroundDark
+        : CalculatorColors.getInputBackground(false);
 
     return Container(
       height: height,
@@ -81,8 +83,8 @@ class ModeSelector extends StatelessWidget {
     VoidCallback onTap,
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final selectedBg = isDark ? CalculatorColors.cardBackgroundDark : Colors.white;
-    final unselectedTextColor = isDark ? CalculatorColors.textSecondaryDark : Colors.grey[600];
+    final selectedBg = isDark ? CalculatorColors.cardBackgroundDark : CalculatorColors.getCardBackground(false);
+    final unselectedTextColor = isDark ? CalculatorColors.textSecondaryDark : CalculatorColors.getTextSecondary(false);
 
     return GestureDetector(
       onTap: onTap,
@@ -133,7 +135,9 @@ class ModeSelectorWithIcons extends StatelessWidget {
   Widget build(BuildContext context) {
     final accent = accentColor ?? Theme.of(context).primaryColor;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final containerBg = isDark ? CalculatorColors.inputBackgroundDark : Colors.grey[200];
+    final containerBg = isDark
+        ? CalculatorColors.inputBackgroundDark
+        : CalculatorColors.getInputBackground(false);
 
     return Container(
       height: height,
@@ -269,9 +273,9 @@ class ModeSelectorVertical extends StatelessWidget {
     VoidCallback onTap,
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final unselectedBg = isDark ? CalculatorColors.cardBackgroundDark : Colors.white;
-    final unselectedBorder = isDark ? CalculatorColors.borderDefaultDark : Colors.grey[300]!;
-    final unselectedTextColor = isDark ? CalculatorColors.textSecondaryDark : Colors.grey[700];
+    final unselectedBg = isDark ? CalculatorColors.cardBackgroundDark : CalculatorColors.getCardBackground(false);
+    final unselectedBorder = isDark ? CalculatorColors.borderDefaultDark : CalculatorColors.getBorderDefault(false);
+    final unselectedTextColor = isDark ? CalculatorColors.textSecondaryDark : CalculatorColors.getTextSecondary(false);
 
     return GestureDetector(
       onTap: onTap,
