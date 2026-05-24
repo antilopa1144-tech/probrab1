@@ -95,7 +95,7 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
   String get exportSubject => _loc.translate('primer_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculatePrimer();
+  final CalculatePrimer _calculator = CalculatePrimer();
 
   // Состояние
   double _area = 30.0;

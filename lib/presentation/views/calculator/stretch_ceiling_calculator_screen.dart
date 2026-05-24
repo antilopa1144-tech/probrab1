@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_stretch_ceiling_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -64,8 +65,6 @@ class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingC
   String get exportSubject => _loc.translate('stretch_ceiling_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateStretchCeilingV2();
-
   bool _isDark = false;
   double _area = 16.0;
   double _roomWidth = 4.0;
@@ -97,7 +96,7 @@ class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingC
       'inputMode': _inputMode.index.toDouble(),
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('ceilings_stretch', inputs);
     return _StretchCeilingResult.fromCalculatorResult(result.values);
   }
 

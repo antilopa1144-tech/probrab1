@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_decor_plaster_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -63,8 +64,6 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
   String get exportSubject => _loc.translate('decor_plaster_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateDecorPlasterV2();
-
   double _area = 30.0;
   double _wallWidth = 5.0;
   double _wallHeight = 2.7;
@@ -101,7 +100,7 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
       'needWax': _needWax ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('walls_decor_plaster', inputs);
     return _DecorPlasterResult.fromCalculatorResult(result.values);
   }
 

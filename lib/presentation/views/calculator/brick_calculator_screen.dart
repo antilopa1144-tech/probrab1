@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_brick.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -98,8 +99,6 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
   String get exportSubject => _loc.translate('brick_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateBrick();
-
   // Состояние
   double _area = 20.0;
   double _wallWidth = 5.0;
@@ -168,7 +167,7 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
       inputs['wallHeight'] = _wallHeight;
     }
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('partitions_brick', inputs);
     final base = _BrickResult.fromCalculatorResult(result.values);
 
     // Применяем множитель условий работы ТОЛЬКО к раствору

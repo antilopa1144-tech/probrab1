@@ -7,6 +7,7 @@ import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_electrical_v2.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../widgets/calculator/calculator_result_header.dart';
 import '../../widgets/calculator/calculator_scaffold.dart';
 import '../../widgets/calculator/mode_selector.dart';
@@ -120,8 +121,6 @@ class _ElectricalCalculatorScreenState
   String get exportSubject => _loc.translate('electrical.export.subject');
 
   // Domain layer calculator
-  final _calculator = CalculateElectricalV2();
-
   // Режим ввода
   InputMode _inputMode = InputMode.byArea;
 
@@ -233,7 +232,7 @@ class _ElectricalCalculatorScreenState
       'withGrounding': _withGrounding ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('engineering_electrics', inputs);
     return _ElectricalResult.fromCalculatorResult(result.values);
   }
 

@@ -7,6 +7,7 @@ import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_gasblock_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../providers/constants_provider.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
@@ -237,8 +238,6 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
   String get exportSubject => _loc.translate('gasblock.export.subject');
 
   // Domain layer calculator
-  final _calculator = CalculateGasblockV2();
-
   InputMode _inputMode = InputMode.byDimensions;
   double _area = 15.0;
   double _length = 6.0;
@@ -358,7 +357,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
       'lintelsCount': _lintelsCount.toDouble(),
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('partitions_blocks', inputs);
     return _GasblockResult.fromCalculatorResult(result.values);
   }
 

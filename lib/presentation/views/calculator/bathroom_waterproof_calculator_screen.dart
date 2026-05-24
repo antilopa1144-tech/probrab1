@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_bathroom_waterproof_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -64,8 +65,6 @@ class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWat
   String get exportSubject => _loc.translate('waterproof_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateBathroomWaterproofV2();
-
   double _length = 2.5;
   double _width = 1.8;
   double _wallHeight = 0.2; // высота захода на стены
@@ -100,7 +99,7 @@ class _BathroomWaterproofCalculatorScreenState extends ConsumerState<BathroomWat
       'needTape': _needTape ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('bathroom_waterproof', inputs);
     return _WaterproofResult.fromCalculatorResult(result.values);
   }
 

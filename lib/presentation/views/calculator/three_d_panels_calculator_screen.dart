@@ -7,6 +7,7 @@ import '../../../domain/usecases/calculate_3d_panels.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../mixins/accuracy_mode_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 enum PanelsInputMode { byArea, byDimensions }
@@ -72,9 +73,6 @@ class _ThreeDPanelsCalculatorScreenState
 
   late _PanelsResult _result;
   late AppLocalizations _loc;
-
-  final Calculate3dPanels _calculator = Calculate3dPanels();
-
   @override
   void initState() {
     super.initState();
@@ -119,7 +117,7 @@ class _ThreeDPanelsCalculatorScreenState
   }
 
   _PanelsResult _calculate() {
-    final result = _calculator(_buildCalculationInputs(), <PriceItem>[]).values;
+    final result = CalculatorEngine.calculate('walls_3d_panels', _buildCalculationInputs()).values;
     return _PanelsResult(
       area: result['area'] ?? 0,
       panelsCount: (result['panelsCount'] ?? result['panelsNeeded'] ?? 0).round(),

@@ -4,6 +4,7 @@ import '../../../core/localization/app_localizations.dart';
 import '../../../data/models/price_item.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_unified_roofing.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../mixins/accuracy_mode_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
@@ -35,8 +36,6 @@ class RoofingUnifiedCalculatorScreen extends StatefulWidget {
 class _RoofingUnifiedCalculatorScreenState
     extends State<RoofingUnifiedCalculatorScreen> with ExportableMixin, AccuracyModeMixin {
   bool _isDark = false;
-  final CalculateUnifiedRoofing _calculator = CalculateUnifiedRoofing();
-
   @override
   AppLocalizations get loc => _loc;
 
@@ -118,7 +117,7 @@ class _RoofingUnifiedCalculatorScreenState
   }
 
   _RoofingResult _calculate() {
-    final values = _calculator(_buildCalculationInputs(), <PriceItem>[]).values;
+    final values = CalculatorEngine.calculate('roofing_unified', _buildCalculationInputs()).values;
     return _RoofingResult(
       area: values['area'] ?? 0,
       realArea: values['realArea'] ?? 0,

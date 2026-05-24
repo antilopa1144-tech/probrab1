@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_balcony_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -64,8 +65,6 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
   String get exportSubject => _loc.translate('balcony_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateBalconyV2();
-
   double _length = 3.0;
   double _width = 1.2;
   double _height = 2.5;
@@ -100,7 +99,7 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
       'needWallFinishing': _needWallFinishing ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('balcony', inputs);
     return _BalconyResult.fromCalculatorResult(result.values);
   }
 

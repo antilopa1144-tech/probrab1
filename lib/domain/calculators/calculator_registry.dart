@@ -1,4 +1,5 @@
 import '../models/calculator_definition_v2.dart';
+import '../services/calculator_engine.dart';
 import 'paint_universal_calculator_v2.dart';
 import 'laminate_calculator_v2.dart';
 import 'screed_unified_calculator_v2.dart';
@@ -240,7 +241,13 @@ class CalculatorRegistry {
       ...migrated,
     ];
 
-    return all;
+    return all
+        .map(
+          (def) => def.copyWith(
+            useCase: CalculatorEngine.alignUseCase(def.id, def.useCase),
+          ),
+        )
+        .toList();
   }
 
   /// Строим кэш для быстрого доступа по ID.

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_blind_area_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -73,8 +74,6 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
   String get exportSubject => _loc.translate('blind_area_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateBlindAreaV2();
-
   double _houseLength = 10.0;
   double _houseWidth = 8.0;
   double _blindAreaWidth = 1.0;
@@ -109,7 +108,7 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
       'needDrainage': _needDrainage ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('foundation_blind_area', inputs);
     return _BlindAreaResult.fromCalculatorResult(result.values);
   }
 

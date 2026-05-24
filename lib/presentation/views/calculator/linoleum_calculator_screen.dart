@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_linoleum_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -72,8 +73,6 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
   String get exportSubject => _loc.translate('linoleum_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateLinoleumV2();
-
   // Размеры комнаты
   double _roomWidth = 4.0;
   double _roomLength = 5.0;
@@ -110,7 +109,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
       'needPlinth': _needPlinth ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('floors_linoleum', inputs);
     return _LinoleumResult.fromCalculatorResult(result.values);
   }
 

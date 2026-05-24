@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_tile_grout.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -89,9 +90,6 @@ class _TileGroutCalculatorScreenState extends ConsumerState<TileGroutCalculatorS
 
   @override
   String get exportSubject => _loc.translate('calculator.floors_tile_grout.title');
-
-  final _calculator = CalculateTileGrout();
-
   // --- Inputs ---
   double _area = 20.0;
   GroutType _groutType = GroutType.cement;
@@ -130,7 +128,7 @@ class _TileGroutCalculatorScreenState extends ConsumerState<TileGroutCalculatorS
       'groutType': _groutType.index.toDouble(),
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('floors_tile_grout', inputs);
     return _GroutResult.fromCalculatorResult(result.values);
   }
 

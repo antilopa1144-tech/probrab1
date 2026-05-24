@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../../domain/usecases/calculate_attic_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -75,8 +75,6 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
   String get exportSubject => _loc.translate('attic_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateAtticV2();
-
   double _floorLength = 8.0;
   double _floorWidth = 6.0;
   double _roofHeight = 2.5;
@@ -115,7 +113,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
       'needGypsum': _needGypsum ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('attic', inputs);
     return _AtticResult.fromCalculatorResult(result.values);
   }
 

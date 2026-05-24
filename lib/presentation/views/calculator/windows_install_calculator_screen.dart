@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_window_installation.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../mixins/accuracy_mode_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
@@ -52,7 +53,6 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
   String get exportSubject => _loc.translate('windows_calc.title');
 
   bool _isDark = false;
-  final CalculateWindowInstallation _calculator = CalculateWindowInstallation();
   int _windowsCount = 5;
   double _windowWidth = 1.4;
   double _windowHeight = 1.5;
@@ -76,7 +76,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
   }
 
   _WindowsResult _calculate() {
-    final values = _calculator(_buildCalculationInputs(), const []).values;
+    final values = CalculatorEngine.calculate('windows_install', _buildCalculationInputs()).values;
     return _WindowsResult(
       windowsCount: (values['windowsCount'] ?? values['windows'] ?? 0).round(),
       totalArea: values['totalArea'] ?? 0,

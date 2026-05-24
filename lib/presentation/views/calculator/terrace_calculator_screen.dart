@@ -7,6 +7,7 @@ import '../../../domain/usecases/calculate_terrace.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../mixins/accuracy_mode_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 enum TerraceFloorType {
@@ -100,9 +101,6 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
 
   late _TerraceResult _result;
   late AppLocalizations _loc;
-
-  final CalculateTerrace _calculator = CalculateTerrace();
-
   @override
   void initState() {
     super.initState();
@@ -146,7 +144,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
   }
 
   _TerraceResult _calculate() {
-    final values = _calculator(_buildCalculationInputs(), <PriceItem>[]).values;
+    final values = CalculatorEngine.calculate('terrace', _buildCalculationInputs()).values;
     return _TerraceResult(
       area: values['area'] ?? 0,
       deckingArea: values['deckingArea'] ?? 0,

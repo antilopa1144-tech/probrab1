@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_doors_install_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -67,8 +68,6 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
   String get exportSubject => _loc.translate('doors_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateDoorsInstallV2();
-
   int _doorsCount = 3;
   double _doorHeight = 2.0;
   double _doorWidth = 0.8;
@@ -101,7 +100,7 @@ class _DoorsInstallCalculatorScreenState extends ConsumerState<DoorsInstallCalcu
       'needThreshold': _needThreshold ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('doors_install', inputs);
     return _DoorsResult.fromCalculatorResult(result.values);
   }
 

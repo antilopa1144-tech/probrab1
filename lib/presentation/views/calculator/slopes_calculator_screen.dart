@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_slopes_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -61,8 +62,6 @@ class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
   String get exportSubject => _loc.translate('slopes_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateSlopesV2();
-
   int _windowsCount = 3;
   double _windowWidth = 1.4;
   double _windowHeight = 1.5;
@@ -97,7 +96,7 @@ class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
       'needPrimer': _needPrimer ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('slopes_finishing', inputs);
     return _SlopesResult.fromCalculatorResult(result.values);
   }
 

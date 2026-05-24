@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_ventilation_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -64,8 +65,6 @@ class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalcula
   String get exportSubject => _loc.translate('ventilation_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateVentilationV2();
-
   bool _isDark = false;
   double _roomArea = 50.0;
   double _ceilingHeight = 2.7;
@@ -95,7 +94,7 @@ class _VentilationCalculatorScreenState extends ConsumerState<VentilationCalcula
       'needRecovery': _needRecovery ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('engineering_ventilation', inputs);
     return _VentilationResult.fromCalculatorResult(result.values);
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_fence_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -64,8 +65,6 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
   String get exportSubject => _loc.translate('fence_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateFenceV2();
-
   double _fenceLength = 50.0;
   double _fenceHeight = 2.0;
   double _postSpacing = 2.5;
@@ -94,7 +93,7 @@ class _FenceCalculatorScreenState extends ConsumerState<FenceCalculatorScreen>
       'fenceType': _fenceType.index.toDouble(),
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('fence', inputs);
     return _FenceResult.fromCalculatorResult(result.values);
   }
 

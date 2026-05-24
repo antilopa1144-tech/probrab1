@@ -63,8 +63,8 @@ class _PuttyCalculatorScreenV2State extends State<PuttyCalculatorScreenV2>
 
   late _CalculationResult _result;
   late AppLocalizations _loc;
-  final _calculator = CalculatePutty();
 
+  final CalculatePutty _calculator = CalculatePutty();
   @override
   void initState() {
     super.initState();

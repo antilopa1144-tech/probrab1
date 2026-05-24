@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_gutters_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -70,8 +71,6 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
   String get exportSubject => _loc.translate('gutters_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateGuttersV2();
-
   double _roofLength = 10.0;
   double _roofWidth = 8.0;
   double _wallHeight = 3.0;
@@ -103,7 +102,7 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
       'needHeating': _needHeating ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('roofing_gutters', inputs);
     return _GuttersResult.fromCalculatorResult(result.values);
   }
 

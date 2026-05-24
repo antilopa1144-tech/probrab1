@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_rail_ceiling_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -77,8 +78,6 @@ class _RailCeilingCalculatorScreenState extends ConsumerState<RailCeilingCalcula
   String get exportSubject => _loc.translate('rail_ceiling_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateRailCeilingV2();
-
   double _area = 12.0;
   double _roomWidth = 3.0;
   double _roomLength = 4.0;
@@ -111,7 +110,7 @@ class _RailCeilingCalculatorScreenState extends ConsumerState<RailCeilingCalcula
       'inputMode': _inputMode.index.toDouble(),
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('ceilings_rail', inputs);
     return _RailCeilingResult.fromCalculatorResult(result.values);
   }
 

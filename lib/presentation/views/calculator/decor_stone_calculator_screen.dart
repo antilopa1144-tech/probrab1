@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_decor_stone_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -66,8 +67,6 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
   String get exportSubject => _loc.translate('decor_stone_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateDecorStoneV2();
-
   double _area = 15.0;
   double _wallWidth = 4.0;
   double _wallHeight = 2.7;
@@ -104,7 +103,7 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
       'needPrimer': _needPrimer ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('walls_decor_stone', inputs);
     return _DecorStoneResult.fromCalculatorResult(result.values);
   }
 

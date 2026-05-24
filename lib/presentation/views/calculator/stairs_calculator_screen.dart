@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_stairs_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -67,8 +68,6 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
   String get exportSubject => _loc.translate('stairs_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateStairsV2();
-
   bool _isDark = false;
   double _floorHeight = 2.8;
   double _openingLength = 4.0;
@@ -99,7 +98,7 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
       'needBothSides': _needBothSides ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('stairs', inputs);
     return _StairsResult.fromCalculatorResult(result.values);
   }
 

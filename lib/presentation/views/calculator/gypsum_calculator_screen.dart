@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_gypsum_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 import '../../utils/screw_formatter.dart';
@@ -128,8 +129,6 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
   String get exportSubject => _loc.translate('gypsum.export.subject');
 
   // Domain layer calculator
-  final _calculator = CalculateGypsumV2();
-
   double _area = 20.0;
   int _layers = 1;
   bool _useInsulation = false;
@@ -183,7 +182,7 @@ class _GypsumCalculatorScreenState extends ConsumerState<GypsumCalculatorScreen>
       'wallShape': _wallShape.index.toDouble(),
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('gypsum_board', inputs);
     final gypsumResult = _GypsumResult.fromCalculatorResult(result.values, _sheetSize);
 
     // Применяем множитель формы стены к профилю

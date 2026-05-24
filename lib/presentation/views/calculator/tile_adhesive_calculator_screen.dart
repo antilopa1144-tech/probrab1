@@ -5,6 +5,7 @@ import '../../mixins/exportable_mixin.dart';
 import '../../mixins/accuracy_mode_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_tile_glue.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 enum InputMode { byDimensions, byArea }
@@ -152,9 +153,6 @@ class _TileAdhesiveCalculatorScreenState
   bool _useWaterproofing = false;
   late _TileAdhesiveResult _result;
   late AppLocalizations _loc;
-  final CalculateTileGlue _calculator = CalculateTileGlue();
-
-
   @override
   void initState() {
     super.initState();
@@ -226,7 +224,7 @@ class _TileAdhesiveCalculatorScreenState
   }
 
   _TileAdhesiveResult _calculate() {
-    final values = _calculator(_buildCalculationInputs(), const []).values;
+    final values = CalculatorEngine.calculate('mixes_tile_glue', _buildCalculationInputs()).values;
     final bagWeightKg = (values['bagWeight'] ?? (_bagWeight == BagWeight.kg20 ? 20 : 25)).round();
 
     return _TileAdhesiveResult(

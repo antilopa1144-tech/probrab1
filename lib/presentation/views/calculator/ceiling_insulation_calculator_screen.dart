@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_ceiling_insulation_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -65,8 +66,6 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
   String get exportSubject => _loc.translate('ceiling_insulation_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateCeilingInsulationV2();
-
   double _area = 20.0;
   double _roomWidth = 4.0;
   double _roomLength = 5.0;
@@ -101,7 +100,7 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
       'needMembrane': _needMembrane ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('ceilings_insulation', inputs);
     return _CeilingInsulationResult.fromCalculatorResult(result.values);
   }
 

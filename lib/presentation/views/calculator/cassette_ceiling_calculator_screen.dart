@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_cassette_ceiling_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -77,8 +78,6 @@ class _CassetteCeilingCalculatorScreenState extends ConsumerState<CassetteCeilin
   String get exportSubject => _loc.translate('cassette_ceiling_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateCassetteCeilingV2();
-
   double _area = 20.0;
   double _roomWidth = 4.0;
   double _roomLength = 5.0;
@@ -111,7 +110,7 @@ class _CassetteCeilingCalculatorScreenState extends ConsumerState<CassetteCeilin
       'inputMode': _inputMode.index.toDouble(),
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('ceilings_cassette', inputs);
     return _CassetteCeilingResult.fromCalculatorResult(result.values);
   }
 

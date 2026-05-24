@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_slab_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -67,8 +68,6 @@ class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
   String get exportSubject => _loc.translate('slab_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateSlabV2();
-
   double _length = 10.0;
   double _width = 8.0;
   double _thickness = 0.3;
@@ -101,7 +100,7 @@ class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
       'needInsulation': _needInsulation ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('foundation_slab', inputs);
     return _SlabResult.fromCalculatorResult(result.values);
   }
 

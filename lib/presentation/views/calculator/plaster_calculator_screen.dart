@@ -74,7 +74,6 @@ class PlasterCalculatorScreen extends StatefulWidget {
 
 class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
     with ExportableMixin, AccuracyModeMixin {
-  final CalculatePlaster _calculator = CalculatePlaster();
   double _roomWidth = 4.0;
   double _roomLength = 5.0;
   double _roomHeight = 2.7;
@@ -94,6 +93,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
   late AppLocalizations _loc;
   bool _isDark = false;
 
+  final CalculatePlaster _calculator = CalculatePlaster();
 
   @override
   void initState() {

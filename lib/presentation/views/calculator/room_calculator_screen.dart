@@ -6,6 +6,7 @@ import '../../../core/localization/app_localizations.dart';
 import '../../../data/models/price_item.dart';
 import '../../../domain/calculators/room_calculator_v2.dart';
 import '../../../domain/usecases/calculate_room.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../providers/price_provider.dart';
 import '../../widgets/calculator/calculator_scaffold.dart';
 import '../../widgets/calculator/calculator_slider_field.dart';
@@ -147,8 +148,6 @@ class _RoomNotifier extends StateNotifier<_RoomState> {
   }
 
   final List<PriceItem> _priceList;
-  final _useCase = CalculateRoom();
-
   void update(_RoomState newState) {
     state = newState;
     _calculate();
@@ -199,7 +198,7 @@ class _RoomNotifier extends StateNotifier<_RoomState> {
 
   void _calculate() {
     try {
-      final result = _useCase.call(state.toInputs(), _priceList);
+      final result = CalculatorEngine.calculate('room', state.toInputs(), priceList: _priceList);
       state = state.copyWith(results: result.values);
     } catch (_) {
       // Игнорируем ошибки расчёта — оставляем предыдущие результаты

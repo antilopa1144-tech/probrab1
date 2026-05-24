@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_basement_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -66,8 +67,6 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
   String get exportSubject => _loc.translate('basement_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateBasementV2();
-
   double _length = 10.0;
   double _width = 8.0;
   double _depth = 2.5;
@@ -102,7 +101,7 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
       'needDrainage': _needDrainage ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('foundation_basement', inputs);
     return _BasementResult.fromCalculatorResult(result.values);
   }
 

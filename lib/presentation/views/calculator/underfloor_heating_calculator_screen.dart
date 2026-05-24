@@ -8,6 +8,7 @@ import '../../mixins/exportable_mixin.dart';
 import '../../mixins/accuracy_mode_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_constant.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Вспомогательный класс для работы с константами калькулятора тёплого пола
@@ -234,9 +235,6 @@ class _UnderfloorHeatingCalculatorScreenState
     _applyInitialInputs();
     _result = _calculate();
   }
-
-  final CalculateUnderfloorHeating _calculator = CalculateUnderfloorHeating();
-
   T _enumFromStoredIndex<T>(List<T> values, double? rawValue, T fallback, {bool oneBased = false}) {
     if (rawValue == null) return fallback;
     final rawIndex = rawValue.round() - (oneBased ? 1 : 0);
@@ -315,7 +313,7 @@ class _UnderfloorHeatingCalculatorScreenState
   }
 
   _HeatingResult _calculate() {
-    final result = _calculator(_buildCalculationInputs(), <PriceItem>[]);
+    final result = CalculatorEngine.calculate('floors_warm', _buildCalculationInputs());
     return _mapCalculationResult(result.values);
   }
 

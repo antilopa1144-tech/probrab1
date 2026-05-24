@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_concrete_universal.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/accuracy_mode_mixin.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
@@ -39,8 +40,6 @@ class ConcreteUniversalCalculatorScreen extends StatefulWidget {
 class _ConcreteUniversalCalculatorScreenState
     extends State<ConcreteUniversalCalculatorScreen> with ExportableMixin, AccuracyModeMixin {
   bool _isDark = false;
-  final CalculateConcreteUniversal _calculator = CalculateConcreteUniversal();
-
   @override
   AppLocalizations get loc => _loc;
 
@@ -97,7 +96,7 @@ class _ConcreteUniversalCalculatorScreenState
   }
 
   _ConcreteResult _calculate() {
-    final values = _calculator(_buildCalculationInputs(), const []).values;
+    final values = CalculatorEngine.calculate('concrete_universal', _buildCalculationInputs()).values;
     return _ConcreteResult(
       baseVolume: values['baseConcreteVolume'] ?? 0,
       concreteVolume: values['concreteVolumeExact'] ?? values['concreteVolume'] ?? 0,

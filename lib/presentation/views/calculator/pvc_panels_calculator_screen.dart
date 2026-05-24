@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_pvc_panels_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -66,8 +67,6 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
   String get exportSubject => _loc.translate('pvc_panels_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculatePvcPanelsV2();
-
   double _area = 15.0;
   double _wallWidth = 3.0;
   double _wallHeight = 2.5;
@@ -104,7 +103,7 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
       'needCorners': _needCorners ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('walls_pvc_panels', inputs);
     return _PvcPanelsResult.fromCalculatorResult(result.values);
   }
 

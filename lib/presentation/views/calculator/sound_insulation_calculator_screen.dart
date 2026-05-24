@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_sound_insulation_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -73,8 +74,6 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
   String get exportSubject => _loc.translate('sound_insulation_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateSoundInsulationV2();
-
   SoundInsulationInputMode _inputMode = SoundInsulationInputMode.manual;
   double _area = 20.0;
   double _length = 5.0; // м
@@ -114,7 +113,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
 
   /// Использует domain layer для расчёта
   _SoundInsulationResult _calculate() {
-    final result = _calculator(_buildCalculationInputs(), []);
+    final result = CalculatorEngine.calculate('insulation_sound', _buildCalculationInputs());
     return _SoundInsulationResult.fromCalculatorResult(result.values);
   }
 

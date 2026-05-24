@@ -7,6 +7,7 @@ import '../../mixins/accuracy_mode_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/usecases/calculate_wood_lining.dart';
 import '../../../domain/models/calculator_constant.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Вспомогательный класс для работы с константами калькулятора вагонки
@@ -233,8 +234,6 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
 
   // Константы калькулятора (null = используются hardcoded defaults)
   late final _WoodLiningConstants _constants;
-  final CalculateWoodLining _calculator = CalculateWoodLining();
-
   @override
   void initState() {
     super.initState();
@@ -277,7 +276,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
   }
 
   _WoodLiningResult _calculate() {
-    final values = _calculator(_buildCalculationInputs(), const []).values;
+    final values = CalculatorEngine.calculate('walls_wood', _buildCalculationInputs()).values;
     return _WoodLiningResult(
       area: values['area'] ?? 0,
       liningArea: values['liningArea'] ?? 0,
@@ -910,7 +909,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
       items.add(MaterialItem(
         name: _loc.translate(_finishType.nameKey),
         value: '${_result.finish.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
-        subtitle: _loc.translate('woodlining.material.consumption').replaceFirst('{value}', ((_calculator(_buildCalculationInputs(), const []).values['finishConsumption'] ?? _constants.getFinishConsumption(_finishType.key))).toString()),
+        subtitle: _loc.translate('woodlining.material.consumption').replaceFirst('{value}', ((CalculatorEngine.calculate('walls_wood', _buildCalculationInputs()).values['finishConsumption'] ?? _constants.getFinishConsumption(_finishType.key))).toString()),
         icon: Icons.format_paint,
       ));
     }

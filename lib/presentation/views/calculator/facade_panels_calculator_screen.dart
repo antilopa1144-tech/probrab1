@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_facade_panels_v2.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -70,8 +71,6 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
   String get exportSubject => _loc.translate('facade_panels_calc.title');
 
   // Domain layer calculator
-  final _calculator = CalculateFacadePanelsV2();
-
   double _houseLength = 10.0; // длина дома
   double _houseWidth = 10.0;  // ширина дома
   double _wallHeight = 3.0;
@@ -107,7 +106,7 @@ class _FacadePanelsCalculatorScreenState extends ConsumerState<FacadePanelsCalcu
       'needProfile': _needProfile ? 1.0 : 0.0,
     };
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('exterior_facade_panels', inputs);
     return _FacadePanelsResult.fromCalculatorResult(result.values);
   }
 

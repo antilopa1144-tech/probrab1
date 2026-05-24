@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/usecases/calculate_screed_unified.dart';
+import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
@@ -137,8 +138,6 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
   String get exportSubject => _loc.translate('screed_unified.title');
 
   // Domain layer calculator
-  final _calculator = CalculateScreedUnified();
-
   // Параметры
   double _area = 20.0;
   double _roomWidth = 4.0;
@@ -190,7 +189,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
       inputs['roomLength'] = _roomLength;
     }
 
-    final result = _calculator(inputs, []);
+    final result = CalculatorEngine.calculate('floors_screed_unified', inputs);
     return _ScreedResult.fromCalculatorResult(result.values);
   }
 

@@ -228,4 +228,7 @@ class CalculatorScreenRegistry {
 
   /// Проверить, есть ли специализированный экран для калькулятора.
   static bool hasCustomScreen(String id) => _builders.containsKey(id);
+
+  /// ID калькуляторов с кастомным экраном.
+  static Iterable<String> get registeredIds => _builders.keys;
 }
