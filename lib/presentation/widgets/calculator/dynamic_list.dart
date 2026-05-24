@@ -334,30 +334,27 @@ class OpeningsList extends StatelessWidget {
         return Row(
           children: [
             Expanded(
-              child: _buildField(
-                context,
-                AppLocalizations.of(context).translate('input.width'),
-                opening.width,
-                (v) => onWidthChanged(index, v),
+              child: _OpeningNumericField(
+                label: AppLocalizations.of(context).translate('input.width'),
+                value: opening.width,
+                onChanged: (v) => onWidthChanged(index, v),
               ),
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: _buildField(
-                context,
-                AppLocalizations.of(context).translate('input.height'),
-                opening.height,
-                (v) => onHeightChanged(index, v),
+              child: _OpeningNumericField(
+                label: AppLocalizations.of(context).translate('input.height'),
+                value: opening.height,
+                onChanged: (v) => onHeightChanged(index, v),
               ),
             ),
             const SizedBox(width: 8),
             SizedBox(
               width: 70,
-              child: _buildField(
-                context,
-                AppLocalizations.of(context).translate('common.count_label'),
-                opening.count.toDouble(),
-                (v) => onCountChanged(index, v.toInt()),
+              child: _OpeningNumericField(
+                label: AppLocalizations.of(context).translate('common.count_label'),
+                value: opening.count.toDouble(),
+                onChanged: (v) => onCountChanged(index, v.toInt()),
                 isInt: true,
               ),
             ),
@@ -366,23 +363,80 @@ class OpeningsList extends StatelessWidget {
       },
     );
   }
+}
 
-  Widget _buildField(
-    BuildContext context,
-    String label,
-    double value,
-    ValueChanged<double> onChanged, {
-    bool isInt = false,
-  }) {
+class _OpeningNumericField extends StatefulWidget {
+  final String label;
+  final double value;
+  final ValueChanged<double> onChanged;
+  final bool isInt;
+
+  const _OpeningNumericField({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    this.isInt = false,
+  });
+
+  @override
+  State<_OpeningNumericField> createState() => _OpeningNumericFieldState();
+}
+
+class _OpeningNumericFieldState extends State<_OpeningNumericField> {
+  late TextEditingController _controller;
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    _controller = TextEditingController(text: _format(widget.value));
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) _commit();
+    });
+  }
+
+  @override
+  void didUpdateWidget(_OpeningNumericField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value && !_focusNode.hasFocus) {
+      _controller.text = _format(widget.value);
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  String _format(double value) =>
+      widget.isInt ? value.toInt().toString() : value.toStringAsFixed(1);
+
+  void _commit() {
+    final parsed = double.tryParse(_controller.text.replaceAll(',', '.'));
+    if (parsed == null) {
+      _controller.text = _format(widget.value);
+      return;
+    }
+    widget.onChanged(parsed);
+    _controller.text = _format(parsed);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final fillColor = isDark ? CalculatorColors.cardBackgroundDark : Colors.white;
     final textColor = CalculatorColors.getTextPrimary(isDark);
     final labelColor = CalculatorColors.getTextSecondary(isDark);
 
     return TextField(
+      controller: _controller,
+      focusNode: _focusNode,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
-        labelText: label,
+        labelText: widget.label,
         labelStyle: TextStyle(fontSize: 11, color: labelColor),
         filled: true,
         fillColor: fillColor,
@@ -393,13 +447,13 @@ class OpeningsList extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       ),
       style: TextStyle(fontSize: 13, color: textColor),
-      controller: TextEditingController(
-        text: isInt ? value.toInt().toString() : value.toStringAsFixed(1),
-      ),
       onChanged: (text) {
-        final parsed = double.tryParse(text);
-        if (parsed != null) onChanged(parsed);
+        if (text.isEmpty || text.endsWith('.')) return;
+        final parsed = double.tryParse(text.replaceAll(',', '.'));
+        if (parsed != null) widget.onChanged(parsed);
       },
+      onEditingComplete: _commit,
+      onTapOutside: (_) => _commit(),
     );
   }
 }

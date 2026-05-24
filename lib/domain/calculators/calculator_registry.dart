@@ -232,6 +232,7 @@ class CalculatorRegistry {
       ...facadeCalculators,
       ...engineeringCalculators,
       ...interiorCalculators,
+      ...landscapeCalculators,
     ].where((c) => !skipIds.contains(c.id)).toList();
 
     final all = <CalculatorDefinitionV2>[

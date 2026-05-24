@@ -9,7 +9,7 @@ import '../../../core/constants/calculator_design_system.dart';
 /// Автоматически настраивает:
 /// - Числовую клавиатуру для чисел
 /// - Правильный стиль и отступы
-/// - Валидацию (опционально)
+/// - Валидацию диапазона при потере фокуса (не при каждой цифре)
 /// - Форматирование (опционально)
 ///
 /// Пример использования:
@@ -90,6 +90,7 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
     super.initState();
     _focusNode = FocusNode();
     _controller = TextEditingController(text: _formatValue(widget.value));
+    _focusNode.addListener(_handleFocusChange);
   }
 
   @override
@@ -102,39 +103,56 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
 
   @override
   void dispose() {
+    _focusNode.removeListener(_handleFocusChange);
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();
   }
 
-  String _formatValue(double value) {
-    if (widget.isInteger) {
-      return value.toInt().toString();
-    } else {
-      return value.toStringAsFixed(widget.decimalPlaces);
+  void _handleFocusChange() {
+    if (!_focusNode.hasFocus) {
+      _commitValue();
     }
   }
 
-  void _handleChange(String text) {
-    if (text.isEmpty) {
-      widget.onChanged(0.0);
+  String _formatValue(double value) {
+    if (widget.isInteger) {
+      return value.toInt().toString();
+    }
+    return value.toStringAsFixed(widget.decimalPlaces);
+  }
+
+  double _clampValue(double value) {
+    var result = value;
+    if (widget.minValue != null && result < widget.minValue!) {
+      result = widget.minValue!;
+    }
+    if (widget.maxValue != null && result > widget.maxValue!) {
+      result = widget.maxValue!;
+    }
+    return result;
+  }
+
+  void _commitValue() {
+    final text = _controller.text.trim();
+    if (text.isEmpty || text == '-' || text == '.' || text == '-.') {
+      final fallback = _clampValue(widget.value);
+      _applyValue(fallback, updateController: true);
       return;
     }
 
     final normalized = text.replaceAll(',', '.');
     final parsed = double.tryParse(normalized);
-    if (parsed == null) return;
-
-    // Валидация диапазона
-    double value = parsed;
-    if (widget.minValue != null && value < widget.minValue!) {
-      value = widget.minValue!;
-    }
-    if (widget.maxValue != null && value > widget.maxValue!) {
-      value = widget.maxValue!;
+    if (parsed == null) {
+      _applyValue(_clampValue(widget.value), updateController: true);
+      return;
     }
 
-    if (value != parsed) {
+    _applyValue(_clampValue(parsed), updateController: true);
+  }
+
+  void _applyValue(double value, {required bool updateController}) {
+    if (updateController) {
       final formatted = _formatValue(value);
       if (_controller.text != formatted) {
         _controller.value = TextEditingValue(
@@ -143,8 +161,28 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
         );
       }
     }
-
     widget.onChanged(value);
+  }
+
+  void _handleChange(String text) {
+    if (text.isEmpty || text == '-' || text == '.' || text == '-.') {
+      return;
+    }
+
+    final normalized = text.replaceAll(',', '.');
+    if (normalized.endsWith('.')) {
+      final withoutDot = normalized.substring(0, normalized.length - 1);
+      if (withoutDot.isEmpty || withoutDot == '-') {
+        return;
+      }
+    }
+
+    final parsed = double.tryParse(normalized);
+    if (parsed == null) return;
+
+    // Во время набора не ограничиваем min/max — иначе «15» превращается в «3»
+    // при minValue=3 после ввода первой цифры «1».
+    widget.onChanged(parsed);
   }
 
   @override
@@ -221,6 +259,8 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
         color: CalculatorColors.getTextPrimary(isDark),
       ),
       onChanged: _handleChange,
+      onEditingComplete: _commitValue,
+      onTapOutside: (_) => _commitValue(),
     );
   }
 }
@@ -368,4 +408,3 @@ class CalculatorTextFieldWithPresets extends StatelessWidget {
     );
   }
 }
-

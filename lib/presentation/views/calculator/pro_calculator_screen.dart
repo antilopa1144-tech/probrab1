@@ -329,14 +329,10 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     final beforeTips = beforeHints.map((h) => h.message ?? _loc.translate(h.messageKey ?? '')).toList();
     final afterTips = afterHints.map((h) => h.message ?? _loc.translate(h.messageKey ?? '')).toList();
 
-    final faqItems = CalculatorFaqSection.fromLocalization(
-      loc: _loc,
-      prefix: 'faq.${widget.definition.id}',
-    );
-
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
+      faqPrefix: 'faq.${widget.definition.id}',
       actions: exportActions,
       resultHeader: calcState.results != null ? _buildResultHeader(calcState.results, accentColor) : null,
       children: [
@@ -361,11 +357,6 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
           tips: afterTips,
           accentColor: accentColor,
           title: _loc.translate('common.tips'),
-        ),
-        if (faqItems.isNotEmpty) const SizedBox(height: 16),
-        if (faqItems.isNotEmpty) CalculatorFaqSection(
-          items: faqItems,
-          accentColor: accentColor,
         ),
         const SizedBox(height: 20),
       ],

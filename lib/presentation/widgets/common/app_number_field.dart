@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class AppNumberField extends StatelessWidget {
+class AppNumberField extends StatefulWidget {
   final String? label;
   final double value;
   final double? min;
@@ -29,9 +29,56 @@ class AppNumberField extends StatelessWidget {
     this.controller,
   });
 
+  @override
+  State<AppNumberField> createState() => _AppNumberFieldState();
+}
+
+class _AppNumberFieldState extends State<AppNumberField> {
+  late TextEditingController _controller;
+  late FocusNode _focusNode;
+  bool _usesExternalController = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    _usesExternalController = widget.controller != null;
+    _controller = widget.controller ?? TextEditingController(text: _formatValue(widget.value));
+    _focusNode.addListener(_handleFocusChange);
+  }
+
+  @override
+  void didUpdateWidget(AppNumberField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      _usesExternalController = widget.controller != null;
+    }
+    if (!_usesExternalController &&
+        oldWidget.value != widget.value &&
+        !_focusNode.hasFocus) {
+      _controller.text = _formatValue(widget.value);
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_handleFocusChange);
+    _focusNode.dispose();
+    if (!_usesExternalController) {
+      _controller.dispose();
+    }
+    super.dispose();
+  }
+
+  void _handleFocusChange() {
+    if (!_focusNode.hasFocus) {
+      _commitValue();
+    }
+  }
+
   double _clampValue(double next) {
-    final minValue = min ?? double.negativeInfinity;
-    final maxValue = max ?? double.infinity;
+    final minValue = widget.min ?? double.negativeInfinity;
+    final maxValue = widget.max ?? double.infinity;
     return next.clamp(minValue, maxValue);
   }
 
@@ -42,8 +89,36 @@ class AppNumberField extends StatelessWidget {
     return value.toStringAsFixed(1);
   }
 
-  void _updateValue(double next) {
-    onChanged(_clampValue(next));
+  void _updateValue(double next, {bool clampNow = true}) {
+    widget.onChanged(clampNow ? _clampValue(next) : next);
+  }
+
+  void _commitValue() {
+    final text = _controller.text.trim();
+    if (text.isEmpty || text == '-' || text == '.') {
+      _updateValue(widget.value);
+      _controller.text = _formatValue(_clampValue(widget.value));
+      return;
+    }
+    final parsed = double.tryParse(text.replaceAll(',', '.'));
+    if (parsed == null) {
+      _updateValue(widget.value);
+      _controller.text = _formatValue(_clampValue(widget.value));
+      return;
+    }
+    final clamped = _clampValue(parsed);
+    _controller.text = _formatValue(clamped);
+    _updateValue(clamped);
+  }
+
+  void _handleTextChange(String text) {
+    if (text.isEmpty || text == '-' || text == '.' || text.endsWith('.')) {
+      return;
+    }
+    final parsed = double.tryParse(text.replaceAll(',', '.'));
+    if (parsed != null) {
+      _updateValue(parsed, clampNow: false);
+    }
   }
 
   @override
@@ -53,16 +128,16 @@ class AppNumberField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (label != null) ...[
+        if (widget.label != null) ...[
           Row(
             children: [
               Text(
-                label!,
+                widget.label!,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
-              if (required) ...[
+              if (widget.required) ...[
                 const SizedBox(width: 4),
                 Text(
                   '*',
@@ -77,8 +152,8 @@ class AppNumberField extends StatelessWidget {
           children: [
             _StepButton(
               icon: Icons.remove,
-              onPressed: enabled
-                  ? () => _updateValue(value - step)
+              onPressed: widget.enabled
+                  ? () => _updateValue(widget.value - widget.step)
                   : null,
             ),
             const SizedBox(width: 8),
@@ -86,37 +161,37 @@ class AppNumberField extends StatelessWidget {
             const SizedBox(width: 8),
             _StepButton(
               icon: Icons.add,
-              onPressed: enabled
-                  ? () => _updateValue(value + step)
+              onPressed: widget.enabled
+                  ? () => _updateValue(widget.value + widget.step)
                   : null,
             ),
           ],
         ),
-        if (helperText != null) ...[
+        if (widget.helperText != null) ...[
           const SizedBox(height: 4),
           Text(
-            helperText!,
+            widget.helperText!,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ),
-        ] else if (min != null || max != null) ...[
+        ] else if (widget.min != null || widget.max != null) ...[
           const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (min != null)
+              if (widget.min != null)
                 Text(
-                  _formatValue(min!),
+                  _formatValue(widget.min!),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 )
               else
                 const SizedBox.shrink(),
-              if (max != null)
+              if (widget.max != null)
                 Text(
-                  _formatValue(max!),
+                  _formatValue(widget.max!),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
@@ -132,7 +207,7 @@ class AppNumberField extends StatelessWidget {
 
   Widget _buildField(ThemeData theme) {
     final decoration = InputDecoration(
-      suffixText: unit,
+      suffixText: widget.unit,
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
     );
 
@@ -140,30 +215,10 @@ class AppNumberField extends StatelessWidget {
       FilteringTextInputFormatter.allow(RegExp(r'[\d.,-]')),
     ];
 
-    if (controller != null) {
-      return TextField(
-        controller: controller,
-        enabled: enabled,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        textAlign: TextAlign.center,
-        style: theme.textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.bold,
-        ),
-        decoration: decoration,
-        inputFormatters: formatters,
-        onChanged: (text) {
-          final parsed = double.tryParse(text.replaceAll(',', '.'));
-          if (parsed != null) {
-            _updateValue(parsed);
-          }
-        },
-      );
-    }
-
-    return TextFormField(
-      key: ValueKey(value),
-      initialValue: _formatValue(value),
-      enabled: enabled,
+    return TextField(
+      controller: _controller,
+      focusNode: _focusNode,
+      enabled: widget.enabled,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       textAlign: TextAlign.center,
       style: theme.textTheme.titleLarge?.copyWith(
@@ -171,12 +226,9 @@ class AppNumberField extends StatelessWidget {
       ),
       decoration: decoration,
       inputFormatters: formatters,
-      onChanged: (text) {
-        final parsed = double.tryParse(text.replaceAll(',', '.'));
-        if (parsed != null) {
-          _updateValue(parsed);
-        }
-      },
+      onChanged: _handleTextChange,
+      onEditingComplete: _commitValue,
+      onTapOutside: (_) => _commitValue(),
     );
   }
 }

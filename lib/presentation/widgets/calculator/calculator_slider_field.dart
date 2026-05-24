@@ -105,7 +105,7 @@ class CalculatorSliderField extends StatelessWidget {
           ],
         ),
         Slider(
-          value: value,
+          value: value.clamp(min, max),
           min: min,
           max: max,
           divisions: divisions,
@@ -164,7 +164,7 @@ class CalculatorSliderFieldCompact extends StatelessWidget {
           ),
         ),
         Slider(
-          value: value,
+          value: value.clamp(min, max),
           min: min,
           max: max,
           divisions: divisions,

@@ -585,6 +585,50 @@ const List<WorkAreaDefinition> _houseAreas = [
         ],
       ),
       WorkSectionDefinition(
+        id: 'landscape',
+        title: 'work.section.exterior.landscape.title',
+        icon: Icons.grass_rounded,
+        items: [
+          WorkItemDefinition(
+            id: 'lawn',
+            title: 'work.item.lawn.title',
+            icon: Icons.grass,
+            calculatorId: 'lawn',
+          ),
+          WorkItemDefinition(
+            id: 'drainage',
+            title: 'work.item.drainage.title',
+            icon: Icons.water_damage_outlined,
+            calculatorId: 'drainage',
+          ),
+          WorkItemDefinition(
+            id: 'greenhouse',
+            title: 'work.item.greenhouse.title',
+            icon: Icons.house_siding_outlined,
+            calculatorId: 'greenhouse',
+          ),
+          WorkItemDefinition(
+            id: 'paving_tiles',
+            title: 'work.item.paving_tiles.title',
+            icon: Icons.grid_4x4_rounded,
+            calculatorId: 'paving_tiles',
+          ),
+        ],
+      ),
+      WorkSectionDefinition(
+        id: 'sewage',
+        title: 'work.section.exterior.sewage.title',
+        icon: Icons.plumbing,
+        items: [
+          WorkItemDefinition(
+            id: 'septic_rings',
+            title: 'work.item.septic_rings.title',
+            icon: Icons.water,
+            calculatorId: 'septic_rings',
+          ),
+        ],
+      ),
+      WorkSectionDefinition(
         id: 'facade_systems',
         title: 'work.section.exterior.facade_systems.title',
         icon: Icons.other_houses,
