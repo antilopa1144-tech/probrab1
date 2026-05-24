@@ -319,7 +319,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
               max: 100,
               suffix: _loc.translate('common.sqm'),
               accentColor: _accentColor,
-              onChanged: (v) { setState(() { _area = v; _update(); }); },
+              onChanged: (v) { _area = v; _update(); },
             )
           else
             Column(
@@ -330,12 +330,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
                       child: CalculatorTextField(
                         label: _loc.translate('sound_insulation_calc.label.length'),
                         value: _length,
-                        onChanged: (v) {
-                          setState(() {
-                            _length = v;
-                            _update();
-                          });
-                        },
+                        onChanged: (v) { _length = v; _update(); },
                         suffix: _loc.translate('common.meters'),
                         accentColor: _accentColor,
                         minValue: 1,
@@ -347,12 +342,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
                       child: CalculatorTextField(
                         label: _loc.translate('sound_insulation_calc.label.height'),
                         value: _height,
-                        onChanged: (v) {
-                          setState(() {
-                            _height = v;
-                            _update();
-                          });
-                        },
+                        onChanged: (v) { _height = v; _update(); },
                         suffix: _loc.translate('common.meters'),
                         accentColor: _accentColor,
                         minValue: 2,
@@ -402,7 +392,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
         divisions: 8,
         suffix: _loc.translate('common.mm'),
         accentColor: _accentColor,
-        onChanged: (v) { setState(() { _thickness = v; _update(); }); },
+        onChanged: (v) { _thickness = v; _update(); },
       ),
     );
   }
@@ -417,7 +407,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
             subtitle: Text(_loc.translate('sound_insulation_calc.option.gypsum_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needGypsum,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needGypsum = v; _update(); }); },
+            onChanged: (v) { _needGypsum = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -425,7 +415,7 @@ class _SoundInsulationCalculatorScreenState extends ConsumerState<SoundInsulatio
             subtitle: Text(_loc.translate('sound_insulation_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needProfile,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needProfile = v; _update(); }); },
+            onChanged: (v) { _needProfile = v; _update(); },
           ),
         ],
       ),

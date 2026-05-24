@@ -532,12 +532,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               suffix: _loc.translate('common.sqm'),
               divisions: 200,
               accentColor: accentColor,
-              onChanged: (v) {
-                setState(() {
-                  _area = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _area = v; _update(); },
             ),
           ] else ...[
             _buildSliderField(
@@ -548,12 +543,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               suffix: _loc.translate('common.meters'),
               divisions: 200,
               accentColor: accentColor,
-              onChanged: (v) {
-                setState(() {
-                  _length = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _length = v; _update(); },
             ),
           ],
           const SizedBox(height: 16),
@@ -565,12 +555,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             suffix: _loc.translate('common.meters'),
             divisions: 40,
             accentColor: accentColor,
-            onChanged: (v) {
-              setState(() {
-                _height = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _height = v; _update(); },
           ),
           if (_inputMode == InputMode.byDimensions) ...[
             const SizedBox(height: 12),
@@ -628,12 +613,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             suffix: _loc.translate('common.sqm'),
             divisions: 100,
             accentColor: accentColor,
-            onChanged: (v) {
-              setState(() {
-                _openingsArea = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _openingsArea = v; _update(); },
           ),
           Container(
             padding: const EdgeInsets.all(12),
@@ -836,12 +816,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             divisions: 40,
             decimalPlaces: 1,
             accentColor: accentColor,
-            onChanged: (v) {
-              setState(() {
-                _blockLength = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _blockLength = v; _update(); },
           ),
           const SizedBox(height: 16),
           _buildSliderField(
@@ -853,12 +828,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
             divisions: 30,
             decimalPlaces: 1,
             accentColor: accentColor,
-            onChanged: (v) {
-              setState(() {
-                _blockHeight = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _blockHeight = v; _update(); },
           ),
         ],
       ),
@@ -963,12 +933,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
         suffix: _loc.translate('common.percent'),
         divisions: 15,
         accentColor: accentColor,
-        onChanged: (v) {
-          setState(() {
-            _reserve = v;
-            _update();
-          });
-        },
+        onChanged: (v) { _reserve = v; _update(); },
       ),
     );
   }
@@ -1009,12 +974,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               ),
             ),
             value: _useReinforcement,
-            onChanged: (v) {
-              setState(() {
-                _useReinforcement = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _useReinforcement = v; _update(); },
           ),
           const Divider(),
           SwitchListTile.adaptive(
@@ -1040,12 +1000,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               ),
             ),
             value: _usePrimer,
-            onChanged: (v) {
-              setState(() {
-                _usePrimer = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _usePrimer = v; _update(); },
           ),
           const Divider(),
           SwitchListTile.adaptive(
@@ -1071,12 +1026,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               ),
             ),
             value: _usePlaster,
-            onChanged: (v) {
-              setState(() {
-                _usePlaster = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _usePlaster = v; _update(); },
           ),
           const Divider(),
           SwitchListTile.adaptive(
@@ -1102,12 +1052,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               ),
             ),
             value: _useMesh,
-            onChanged: (v) {
-              setState(() {
-                _useMesh = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _useMesh = v; _update(); },
           ),
           const Divider(),
           SwitchListTile.adaptive(
@@ -1133,12 +1078,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               ),
             ),
             value: _useLintels,
-            onChanged: (v) {
-              setState(() {
-                _useLintels = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _useLintels = v; _update(); },
           ),
           if (_useLintels) ...[
             const SizedBox(height: 8),
@@ -1149,12 +1089,7 @@ class _GasblockCalculatorScreenState extends ConsumerState<GasblockCalculatorScr
               max: 20,
               suffix: _loc.translate('common.pcs'),
               accentColor: accentColor,
-              onChanged: (v) {
-                setState(() {
-                  _lintelsCount = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _lintelsCount = v; _update(); },
             ),
           ],
         ],

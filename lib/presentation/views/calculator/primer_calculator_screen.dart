@@ -308,7 +308,7 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
       max: 500,
       suffix: _loc.translate('common.sqm'),
       accentColor: _accentColor,
-      onChanged: (v) { setState(() { _area = v; _update(); }); },
+      onChanged: (v) { _area = v; _update(); },
     );
   }
 
@@ -317,13 +317,13 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
       children: [
         Row(
           children: [
-            Expanded(child: CalculatorTextField(label: _loc.translate('primer_calc.label.width'), value: _roomWidth, onChanged: (v) { setState(() { _roomWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('primer_calc.label.width'), value: _roomWidth, onChanged: (v) { _roomWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
             const SizedBox(width: 12),
-            Expanded(child: CalculatorTextField(label: _loc.translate('primer_calc.label.length'), value: _roomLength, onChanged: (v) { setState(() { _roomLength = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('primer_calc.label.length'), value: _roomLength, onChanged: (v) { _roomLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
           ],
         ),
         const SizedBox(height: 12),
-        CalculatorTextField(label: _loc.translate('primer_calc.label.height'), value: _roomHeight, onChanged: (v) { setState(() { _roomHeight = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 2, maxValue: 5),
+        CalculatorTextField(label: _loc.translate('primer_calc.label.height'), value: _roomHeight, onChanged: (v) { _roomHeight = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 2, maxValue: 5),
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(12),
@@ -352,7 +352,7 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
             divisions: 2,
             suffix: '',
             accentColor: _accentColor,
-            onChanged: (v) { setState(() { _layers = v.toInt(); _update(); }); },
+            onChanged: (v) { _layers = v.toInt(); _update(); },
           ),
           const SizedBox(height: 16),
           CalculatorSliderField(
@@ -363,7 +363,7 @@ class _PrimerCalculatorScreenState extends ConsumerState<PrimerCalculatorScreen>
             divisions: 3,
             suffix: _loc.translate('common.liters'),
             accentColor: _accentColor,
-            onChanged: (v) { setState(() { _canSize = v; _update(); }); },
+            onChanged: (v) { _canSize = v; _update(); },
           ),
         ],
       ),

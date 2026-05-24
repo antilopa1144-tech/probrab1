@@ -344,7 +344,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
       max: 200,
       suffix: _loc.translate('common.sqm'),
       accentColor: _accentColor,
-      onChanged: (v) { setState(() { _area = v; _update(); }); },
+      onChanged: (v) { _area = v; _update(); },
     );
   }
 
@@ -353,9 +353,9 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
       children: [
         Row(
           children: [
-            Expanded(child: CalculatorTextField(label: _loc.translate('parquet_calc.label.width'), value: _roomWidth, onChanged: (v) { setState(() { _roomWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('parquet_calc.label.width'), value: _roomWidth, onChanged: (v) { _roomWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
             const SizedBox(width: 12),
-            Expanded(child: CalculatorTextField(label: _loc.translate('parquet_calc.label.length'), value: _roomLength, onChanged: (v) { setState(() { _roomLength = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('parquet_calc.label.length'), value: _roomLength, onChanged: (v) { _roomLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
           ],
         ),
         const SizedBox(height: 12),
@@ -387,7 +387,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
             suffix: _loc.translate('common.sqm'),
             accentColor: _accentColor,
             decimalPlaces: 1,
-            onChanged: (v) { setState(() { _packArea = v; _update(); }); },
+            onChanged: (v) { _packArea = v; _update(); },
           ),
           const SizedBox(height: 8),
           SwitchListTile(
@@ -396,7 +396,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
             subtitle: Text(_loc.translate('parquet_calc.option.underlay_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needUnderlay,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needUnderlay = v; _update(); }); },
+            onChanged: (v) { _needUnderlay = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -404,7 +404,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
             subtitle: Text(_loc.translate('parquet_calc.option.plinth_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needPlinth,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needPlinth = v; _update(); }); },
+            onChanged: (v) { _needPlinth = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -412,7 +412,7 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
             subtitle: Text(_loc.translate('parquet_calc.option.glue_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needGlue,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needGlue = v; _update(); }); },
+            onChanged: (v) { _needGlue = v; _update(); },
           ),
         ],
       ),

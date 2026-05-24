@@ -415,12 +415,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               max: 500.0,
               suffix: _loc.translate('common.sqm'),
               accentColor: accentColor,
-              onChanged: (v) {
-                setState(() {
-                  _area = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _area = v; _update(); },
             ),
           ] else ...[
             _buildSliderField(
@@ -430,12 +425,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               max: 50.0,
               suffix: _loc.translate('common.meters'),
               accentColor: accentColor,
-              onChanged: (v) {
-                setState(() {
-                  _length = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _length = v; _update(); },
             ),
             const SizedBox(height: 16),
             _buildSliderField(
@@ -445,12 +435,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               max: 50.0,
               suffix: _loc.translate('common.meters'),
               accentColor: accentColor,
-              onChanged: (v) {
-                setState(() {
-                  _width = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _width = v; _update(); },
             ),
           ],
           const SizedBox(height: 16),
@@ -461,12 +446,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
             max: 5.0,
             suffix: _loc.translate('common.meters'),
             accentColor: accentColor,
-            onChanged: (v) {
-              setState(() {
-                _height = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _height = v; _update(); },
           ),
         ],
       ),
@@ -689,12 +669,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               ),
             ),
             value: _useFinish,
-            onChanged: (v) {
-              setState(() {
-                _useFinish = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _useFinish = v; _update(); },
           ),
           if (_useFinish) ...[
             const SizedBox(height: 8),
@@ -734,12 +709,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
         max: 20.0,
         suffix: _loc.translate('common.percent'),
         accentColor: accentColor,
-        onChanged: (v) {
-          setState(() {
-            _reserve = v;
-            _update();
-          });
-        },
+        onChanged: (v) { _reserve = v; _update(); },
       ),
     );
   }
@@ -782,12 +752,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               ),
             ),
             value: _useInsulation,
-            onChanged: (v) {
-              setState(() {
-                _useInsulation = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _useInsulation = v; _update(); },
           ),
           if (_useInsulation) ...[
             const SizedBox(height: 8),
@@ -799,12 +764,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               suffix: _loc.translate('common.mm'),
               divisions: 3,
               accentColor: accentColor,
-              onChanged: (v) {
-                setState(() {
-                  _insulationThickness = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _insulationThickness = v; _update(); },
             ),
           ],
           const Divider(),
@@ -830,12 +790,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               ),
             ),
             value: _useVaporBarrier,
-            onChanged: (v) {
-              setState(() {
-                _useVaporBarrier = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _useVaporBarrier = v; _update(); },
           ),
           const Divider(),
           SwitchListTile.adaptive(
@@ -860,12 +815,7 @@ class _WoodLiningCalculatorScreenState extends State<WoodLiningCalculatorScreen>
               ),
             ),
             value: _useAntiseptic,
-            onChanged: (v) {
-              setState(() {
-                _useAntiseptic = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _useAntiseptic = v; _update(); },
           ),
         ],
       ),

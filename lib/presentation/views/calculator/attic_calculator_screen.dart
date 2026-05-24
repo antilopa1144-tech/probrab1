@@ -262,13 +262,13 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
         children: [
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('attic_calc.label.length'), value: _floorLength, onChanged: (v) { setState(() { _floorLength = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('attic_calc.label.length'), value: _floorLength, onChanged: (v) { _floorLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('attic_calc.label.width'), value: _floorWidth, onChanged: (v) { setState(() { _floorWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 15)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('attic_calc.label.width'), value: _floorWidth, onChanged: (v) { _floorWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 15)),
             ],
           ),
           const SizedBox(height: 12),
-          CalculatorTextField(label: _loc.translate('attic_calc.label.roof_height'), value: _roofHeight, onChanged: (v) { setState(() { _roofHeight = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1.5, maxValue: 5),
+          CalculatorTextField(label: _loc.translate('attic_calc.label.roof_height'), value: _roofHeight, onChanged: (v) { _roofHeight = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1.5, maxValue: 5),
         ],
       ),
     );
@@ -303,7 +303,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
             divisions: 10,
             suffix: _loc.translate('common.mm'),
             accentColor: _accentColor,
-            onChanged: (v) { setState(() { _insulationThickness = v; _update(); }); },
+            onChanged: (v) { _insulationThickness = v; _update(); },
             decimalPlaces: 0,
           ),
           // Подсказка для ЭППС
@@ -339,7 +339,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
               subtitle: Text(_loc.translate('attic_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
               value: _needVaporBarrier,
               activeTrackColor: _accentColor,
-              onChanged: (v) { setState(() { _needVaporBarrier = v; _update(); }); },
+              onChanged: (v) { _needVaporBarrier = v; _update(); },
             ),
           ],
           SwitchListTile(
@@ -348,7 +348,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
             subtitle: Text(_loc.translate('attic_calc.option.membrane_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needMembrane,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needMembrane = v; _update(); }); },
+            onChanged: (v) { _needMembrane = v; _update(); },
           ),
           if (_atticType == AtticType.living)
             SwitchListTile(
@@ -357,7 +357,7 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
               subtitle: Text(_loc.translate('attic_calc.option.gypsum_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
               value: _needGypsum,
               activeTrackColor: _accentColor,
-              onChanged: (v) { setState(() { _needGypsum = v; _update(); }); },
+              onChanged: (v) { _needGypsum = v; _update(); },
             ),
         ],
       ),

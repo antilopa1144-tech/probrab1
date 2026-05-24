@@ -237,17 +237,17 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
         children: [
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.length'), value: _length, onChanged: (v) { setState(() { _length = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.length'), value: _length, onChanged: (v) { _length = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.width'), value: _width, onChanged: (v) { setState(() { _width = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.width'), value: _width, onChanged: (v) { _width = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.depth'), value: _depth, onChanged: (v) { setState(() { _depth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1.5, maxValue: 4)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.depth'), value: _depth, onChanged: (v) { _depth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1.5, maxValue: 4)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.wall_thickness'), value: _wallThickness * 100, onChanged: (v) { setState(() { _wallThickness = v / 100; _update(); }); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 15, maxValue: 60, hint: _getWallThicknessHint())),
+              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.wall_thickness'), value: _wallThickness * 100, onChanged: (v) { _wallThickness = v / 100; _update(); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 15, maxValue: 60, hint: _getWallThicknessHint())),
             ],
           ),
         ],
@@ -265,7 +265,7 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
             subtitle: Text(_loc.translate('basement_calc.option.waterproof_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needWaterproof,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needWaterproof = v; _update(); }); },
+            onChanged: (v) { _needWaterproof = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -273,7 +273,7 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
             subtitle: Text(_loc.translate('basement_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needInsulation,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needInsulation = v; _update(); }); },
+            onChanged: (v) { _needInsulation = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -281,7 +281,7 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
             subtitle: Text(_loc.translate('basement_calc.option.drainage_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needDrainage,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needDrainage = v; _update(); }); },
+            onChanged: (v) { _needDrainage = v; _update(); },
           ),
         ],
       ),

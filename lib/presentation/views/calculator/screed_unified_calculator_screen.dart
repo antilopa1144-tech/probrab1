@@ -547,7 +547,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
       max: 200,
       suffix: _loc.translate('common.sqm'),
       accentColor: _accentColor,
-      onChanged: (v) { setState(() { _area = v; _update(); }); },
+      onChanged: (v) { _area = v; _update(); },
     );
   }
 
@@ -560,7 +560,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
               child: CalculatorTextField(
                 label: _loc.translate('screed_unified.label.width'),
                 value: _roomWidth,
-                onChanged: (v) { setState(() { _roomWidth = v; _update(); }); },
+                onChanged: (v) { _roomWidth = v; _update(); },
                 suffix: _loc.translate('common.meters'),
                 accentColor: _accentColor,
                 minValue: 0.5,
@@ -572,7 +572,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
               child: CalculatorTextField(
                 label: _loc.translate('screed_unified.label.length'),
                 value: _roomLength,
-                onChanged: (v) { setState(() { _roomLength = v; _update(); }); },
+                onChanged: (v) { _roomLength = v; _update(); },
                 suffix: _loc.translate('common.meters'),
                 accentColor: _accentColor,
                 minValue: 0.5,
@@ -621,7 +621,7 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
             divisions: 28,
             suffix: _loc.translate('common.mm'),
             accentColor: _accentColor,
-            onChanged: (v) { setState(() { _thickness = v; _update(); }); },
+            onChanged: (v) { _thickness = v; _update(); },
           ),
           const SizedBox(height: 8),
           Row(
@@ -682,25 +682,25 @@ class _ScreedUnifiedCalculatorScreenState extends ConsumerState<ScreedUnifiedCal
             title: _loc.translate('screed_unified.option.mesh'),
             subtitle: _loc.translate('screed_unified.option.mesh_desc'),
             value: _needMesh,
-            onChanged: (v) { setState(() { _needMesh = v; _update(); }); },
+            onChanged: (v) { _needMesh = v; _update(); },
           ),
           _buildOptionSwitch(
             title: _loc.translate('screed_unified.option.film'),
             subtitle: _loc.translate('screed_unified.option.film_desc'),
             value: _needFilm,
-            onChanged: (v) { setState(() { _needFilm = v; _update(); }); },
+            onChanged: (v) { _needFilm = v; _update(); },
           ),
           _buildOptionSwitch(
             title: _loc.translate('screed_unified.option.tape'),
             subtitle: _loc.translate('screed_unified.option.tape_desc'),
             value: _needTape,
-            onChanged: (v) { setState(() { _needTape = v; _update(); }); },
+            onChanged: (v) { _needTape = v; _update(); },
           ),
           _buildOptionSwitch(
             title: _loc.translate('screed_unified.option.beacons'),
             subtitle: _loc.translate('screed_unified.option.beacons_desc'),
             value: _needBeacons,
-            onChanged: (v) { setState(() { _needBeacons = v; _update(); }); },
+            onChanged: (v) { _needBeacons = v; _update(); },
           ),
         ],
       ),

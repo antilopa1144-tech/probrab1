@@ -262,12 +262,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
                 child: CalculatorTextField(
                   label: _loc.translate('linoleum_calc.label.width'),
                   value: _roomWidth,
-                  onChanged: (v) {
-                    setState(() {
-                      _roomWidth = v;
-                      _update();
-                    });
-                  },
+                  onChanged: (v) { _roomWidth = v; _update(); },
                   suffix: _loc.translate('common.meters'),
                   accentColor: _accentColor,
                   minValue: 1,
@@ -279,12 +274,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
                 child: CalculatorTextField(
                   label: _loc.translate('linoleum_calc.label.length'),
                   value: _roomLength,
-                  onChanged: (v) {
-                    setState(() {
-                      _roomLength = v;
-                      _update();
-                    });
-                  },
+                  onChanged: (v) { _roomLength = v; _update(); },
                   suffix: _loc.translate('common.meters'),
                   accentColor: _accentColor,
                   minValue: 1,
@@ -346,12 +336,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
             suffix: _loc.translate('common.meters'),
             accentColor: _accentColor,
             decimalPlaces: 1,
-            onChanged: (v) {
-              setState(() {
-                _rollWidth = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _rollWidth = v; _update(); },
           ),
           const SizedBox(height: 16),
           SwitchListTile(
@@ -370,12 +355,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
             ),
             value: _hasPattern,
             activeTrackColor: _accentColor,
-            onChanged: (v) {
-              setState(() {
-                _hasPattern = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _hasPattern = v; _update(); },
           ),
           if (_hasPattern) ...[
             const SizedBox(height: 12),
@@ -388,12 +368,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
               suffix: _loc.translate('common.cm'),
               accentColor: _accentColor,
               decimalPlaces: 0,
-              onChanged: (v) {
-                setState(() {
-                  _patternRepeatCm = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _patternRepeatCm = v; _update(); },
             ),
             const SizedBox(height: 8),
             Container(
@@ -427,12 +402,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
             ),
             value: _needTape,
             activeTrackColor: _accentColor,
-            onChanged: (v) {
-              setState(() {
-                _needTape = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _needTape = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -450,12 +420,7 @@ class _LinoleumCalculatorScreenState extends ConsumerState<LinoleumCalculatorScr
             ),
             value: _needPlinth,
             activeTrackColor: _accentColor,
-            onChanged: (v) {
-              setState(() {
-                _needPlinth = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _needPlinth = v; _update(); },
           ),
         ],
       ),

@@ -52,6 +52,9 @@ export 'tips_card.dart';
 // FAQ
 export 'calculator_faq_section.dart';
 
+// Canonical materials list
+export 'canonical_materials_card.dart';
+
 // Кнопка добавления в проект
 // На вебе используется заглушка без Isar-зависимостей
 // dart.library.io существует на нативных платформах (Android, iOS, desktop)

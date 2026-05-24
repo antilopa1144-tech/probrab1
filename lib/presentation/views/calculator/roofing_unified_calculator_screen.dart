@@ -340,12 +340,7 @@ class _RoofingUnifiedCalculatorScreenState
               max: _maxArea,
               suffix: _loc.translate('common.sqm'),
               accentColor: accentColor,
-              onChanged: (v) {
-                setState(() {
-                  _area = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _area = v; _update(); },
             )
           else
             Column(
@@ -356,12 +351,7 @@ class _RoofingUnifiedCalculatorScreenState
                       child: CalculatorTextField(
                         label: _loc.translate('roofing_calc.label.length'),
                         value: _length,
-                        onChanged: (v) {
-                          setState(() {
-                            _length = v;
-                            _update();
-                          });
-                        },
+                        onChanged: (v) { _length = v; _update(); },
                         suffix: _loc.translate('common.meters'),
                         accentColor: accentColor,
                         minValue: 1,
@@ -373,12 +363,7 @@ class _RoofingUnifiedCalculatorScreenState
                       child: CalculatorTextField(
                         label: _loc.translate('roofing_calc.label.width'),
                         value: _width,
-                        onChanged: (v) {
-                          setState(() {
-                            _width = v;
-                            _update();
-                          });
-                        },
+                        onChanged: (v) { _width = v; _update(); },
                         suffix: _loc.translate('common.meters'),
                         accentColor: accentColor,
                         minValue: 1,
@@ -456,24 +441,14 @@ class _RoofingUnifiedCalculatorScreenState
               min: _minSlope,
               max: _maxSlope,
               divisions: (_maxSlope - _minSlope).round(),
-              onChanged: (v) {
-                setState(() {
-                  _slope = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _slope = v; _update(); },
             ),
           ),
           const SizedBox(height: 12),
           CalculatorTextField(
             label: _loc.translate('roofing_calc.label.slope'),
             value: _slope,
-            onChanged: (v) {
-              setState(() {
-                _slope = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _slope = v; _update(); },
             suffix: '°',
             accentColor: accentColor,
             minValue: _minSlope,

@@ -214,17 +214,17 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
         children: [
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.house_length'), value: _houseLength, onChanged: (v) { setState(() { _houseLength = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.house_length'), value: _houseLength, onChanged: (v) { _houseLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.house_width'), value: _houseWidth, onChanged: (v) { setState(() { _houseWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.house_width'), value: _houseWidth, onChanged: (v) { _houseWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.blind_width'), value: _blindAreaWidth, onChanged: (v) { setState(() { _blindAreaWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 0.6, maxValue: 2.0)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.blind_width'), value: _blindAreaWidth, onChanged: (v) { _blindAreaWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 0.6, maxValue: 3.0)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.thickness'), value: _thickness * 100, onChanged: (v) { setState(() { _thickness = v / 100; _update(); }); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 5, maxValue: 20)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.thickness'), value: _thickness * 100, onChanged: (v) { _thickness = v / 100; _update(); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 5, maxValue: 20)),
             ],
           ),
         ],
@@ -242,7 +242,7 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
             subtitle: Text(_loc.translate('blind_area_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needInsulation,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needInsulation = v; _update(); }); },
+            onChanged: (v) { _needInsulation = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -250,7 +250,7 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
             subtitle: Text(_loc.translate('blind_area_calc.option.drainage_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needDrainage,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needDrainage = v; _update(); }); },
+            onChanged: (v) { _needDrainage = v; _update(); },
           ),
         ],
       ),

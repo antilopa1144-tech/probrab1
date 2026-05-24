@@ -206,7 +206,7 @@ class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
         divisions: 14,
         suffix: _loc.translate('common.pcs'),
         accentColor: _accentColor,
-        onChanged: (v) { setState(() { _windowsCount = v.toInt(); _update(); }); },
+        onChanged: (v) { _windowsCount = v.toInt(); _update(); },
         decimalPlaces: 0,
       ),
     );
@@ -224,9 +224,9 @@ class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('slopes_calc.label.width'), value: _windowWidth * 100, onChanged: (v) { setState(() { _windowWidth = v / 100; _update(); }); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 40, maxValue: 300)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('slopes_calc.label.width'), value: _windowWidth * 100, onChanged: (v) { _windowWidth = v / 100; _update(); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 40, maxValue: 300)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('slopes_calc.label.height'), value: _windowHeight * 100, onChanged: (v) { setState(() { _windowHeight = v / 100; _update(); }); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 40, maxValue: 250)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('slopes_calc.label.height'), value: _windowHeight * 100, onChanged: (v) { _windowHeight = v / 100; _update(); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 40, maxValue: 250)),
             ],
           ),
           const SizedBox(height: 12),
@@ -238,7 +238,7 @@ class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
             divisions: 8,
             suffix: _loc.translate('common.cm'),
             accentColor: _accentColor,
-            onChanged: (v) { setState(() { _slopeDepth = v / 100; _update(); }); },
+            onChanged: (v) { _slopeDepth = v / 100; _update(); },
             decimalPlaces: 0,
           ),
         ],
@@ -256,7 +256,7 @@ class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
             subtitle: Text(_loc.translate('slopes_calc.option.corners_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needCorners,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needCorners = v; _update(); }); },
+            onChanged: (v) { _needCorners = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -264,7 +264,7 @@ class _SlopesCalculatorScreenState extends ConsumerState<SlopesCalculatorScreen>
             subtitle: Text(_loc.translate('slopes_calc.option.primer_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needPrimer,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needPrimer = v; _update(); }); },
+            onChanged: (v) { _needPrimer = v; _update(); },
           ),
         ],
       ),

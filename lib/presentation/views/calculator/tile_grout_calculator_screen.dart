@@ -275,7 +275,7 @@ class _TileGroutCalculatorScreenState extends ConsumerState<TileGroutCalculatorS
                   child: CalculatorTextField(
                     label: _loc.translate('grout_calc.label.tile_width'),
                     value: _tileWidth,
-                    onChanged: (v) { setState(() { _tileWidth = v; _update(); }); },
+                    onChanged: (v) { _tileWidth = v; _update(); },
                     suffix: _loc.translate('common.cm'),
                     accentColor: _accentColor,
                     minValue: 1,
@@ -287,7 +287,7 @@ class _TileGroutCalculatorScreenState extends ConsumerState<TileGroutCalculatorS
                   child: CalculatorTextField(
                     label: _loc.translate('grout_calc.label.tile_height'),
                     value: _tileHeight,
-                    onChanged: (v) { setState(() { _tileHeight = v; _update(); }); },
+                    onChanged: (v) { _tileHeight = v; _update(); },
                     suffix: _loc.translate('common.cm'),
                     accentColor: _accentColor,
                     minValue: 1,
@@ -321,7 +321,7 @@ class _TileGroutCalculatorScreenState extends ConsumerState<TileGroutCalculatorS
                 child: CalculatorTextField(
                   label: _loc.translate('grout_calc.label.joint_width'),
                   value: _jointWidth,
-                  onChanged: (v) { setState(() { _jointWidth = v; _update(); }); },
+                  onChanged: (v) { _jointWidth = v; _update(); },
                   suffix: _loc.translate('common.mm'),
                   accentColor: _accentColor,
                   minValue: 1,
@@ -334,7 +334,7 @@ class _TileGroutCalculatorScreenState extends ConsumerState<TileGroutCalculatorS
                 child: CalculatorTextField(
                   label: _loc.translate('grout_calc.label.joint_depth'),
                   value: _jointDepth,
-                  onChanged: (v) { setState(() { _jointDepth = v; _update(); }); },
+                  onChanged: (v) { _jointDepth = v; _update(); },
                   suffix: _loc.translate('common.mm'),
                   accentColor: _accentColor,
                   minValue: 1,
@@ -356,7 +356,7 @@ class _TileGroutCalculatorScreenState extends ConsumerState<TileGroutCalculatorS
           CalculatorTextField(
             label: _loc.translate('grout_calc.label.area'),
             value: _area,
-            onChanged: (v) { setState(() { _area = v; _update(); }); },
+            onChanged: (v) { _area = v; _update(); },
             suffix: _loc.translate('common.sqm'),
             accentColor: _accentColor,
             minValue: 0.1,

@@ -544,6 +544,11 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
         ? (totalGlue / _constants.getGlueBagSize()).ceil()
         : 0;
 
+    final boxArea = _constants.getBoxArea(_material);
+    final boxesNeeded = tilesArea > 0 && boxArea > 0
+        ? (tilesArea / boxArea).ceil()
+        : 0;
+
     // --- Корректировка гидроизоляции ---
     // Пол: 2 слоя × 1.5 кг/м² × запас 10%
     // Стены: 1 слой × 1.5 кг/м² × запас 10% (выше уровня ванной — необязательно)
@@ -570,7 +575,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       jointWidth: totals['jointWidth'] ?? _jointWidth,
       tilesNeeded: tilesNeeded,
       tilesArea: tilesArea,
-      boxesNeeded: (totals['boxesNeeded'] ?? 0).round(),
+      boxesNeeded: boxesNeeded,
       glueWeight: baseGlueWeight,
       wallGlueExtra: wallGlueExtra,
       totalGlueWeight: totalGlue,
@@ -693,14 +698,19 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
             icon: Icons.straighten,
           ),
           ResultItem(
-            label: _loc.translate('tile.header.boxes'),
-            value: '${_result.boxesNeeded}',
-            icon: Icons.inventory_2,
+            label: _loc.translate('tile.header.tiles'),
+            value: '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
+            icon: Icons.grid_on,
           ),
           ResultItem(
             label: _loc.translate('tile.header.glue'),
             value: '${_result.glueBags}',
             icon: Icons.shopping_bag,
+          ),
+          ResultItem(
+            label: _loc.translate('tile.size.title'),
+            value: '${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} ${_loc.translate('common.cm')}',
+            icon: Icons.aspect_ratio,
           ),
         ],
       ),
@@ -1638,6 +1648,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
             onChanged: (v) {
               setState(() {
                 _tileWidth = v;
+                _tileSizePreset = 0;
                 _update();
               });
             },
@@ -1655,6 +1666,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
             onChanged: (v) {
               setState(() {
                 _tileHeight = v;
+                _tileSizePreset = 0;
                 _update();
               });
             },

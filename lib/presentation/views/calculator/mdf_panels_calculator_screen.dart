@@ -271,7 +271,7 @@ class _MdfPanelsCalculatorScreenState extends ConsumerState<MdfPanelsCalculatorS
       max: 100,
       suffix: _loc.translate('common.sqm'),
       accentColor: _accentColor,
-      onChanged: (v) { setState(() { _area = v; _update(); }); },
+      onChanged: (v) { _area = v; _update(); },
     );
   }
 
@@ -280,9 +280,9 @@ class _MdfPanelsCalculatorScreenState extends ConsumerState<MdfPanelsCalculatorS
       children: [
         Row(
           children: [
-            Expanded(child: CalculatorTextField(label: _loc.translate('mdf_panels_calc.label.width'), value: _wallWidth, onChanged: (v) { setState(() { _wallWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('mdf_panels_calc.label.width'), value: _wallWidth, onChanged: (v) { _wallWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
             const SizedBox(width: 12),
-            Expanded(child: CalculatorTextField(label: _loc.translate('mdf_panels_calc.label.height'), value: _wallHeight, onChanged: (v) { setState(() { _wallHeight = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 5)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('mdf_panels_calc.label.height'), value: _wallHeight, onChanged: (v) { _wallHeight = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 5)),
           ],
         ),
         const SizedBox(height: 12),
@@ -311,7 +311,7 @@ class _MdfPanelsCalculatorScreenState extends ConsumerState<MdfPanelsCalculatorS
         divisions: 6,
         suffix: _loc.translate('common.mm'),
         accentColor: _accentColor,
-        onChanged: (v) { setState(() { _panelWidth = v / 1000; _update(); }); },
+        onChanged: (v) { _panelWidth = v / 1000; _update(); },
       ),
     );
   }
@@ -326,7 +326,7 @@ class _MdfPanelsCalculatorScreenState extends ConsumerState<MdfPanelsCalculatorS
             subtitle: Text(_loc.translate('mdf_panels_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needProfile,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needProfile = v; _update(); }); },
+            onChanged: (v) { _needProfile = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -334,7 +334,7 @@ class _MdfPanelsCalculatorScreenState extends ConsumerState<MdfPanelsCalculatorS
             subtitle: Text(_loc.translate('mdf_panels_calc.option.plinth_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needPlinth,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needPlinth = v; _update(); }); },
+            onChanged: (v) { _needPlinth = v; _update(); },
           ),
         ],
       ),

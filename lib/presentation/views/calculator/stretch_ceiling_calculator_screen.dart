@@ -262,7 +262,7 @@ class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingC
       max: 100,
       suffix: _loc.translate('common.sqm'),
       accentColor: _accentColor,
-      onChanged: (v) { setState(() { _area = v; _update(); }); },
+      onChanged: (v) { _area = v; _update(); },
     );
   }
 
@@ -271,9 +271,9 @@ class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingC
       children: [
         Row(
           children: [
-            Expanded(child: CalculatorTextField(label: _loc.translate('stretch_ceiling_calc.label.width'), value: _roomWidth, onChanged: (v) { setState(() { _roomWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 15)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('stretch_ceiling_calc.label.width'), value: _roomWidth, onChanged: (v) { _roomWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 15)),
             const SizedBox(width: 12),
-            Expanded(child: CalculatorTextField(label: _loc.translate('stretch_ceiling_calc.label.length'), value: _roomLength, onChanged: (v) { setState(() { _roomLength = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 15)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('stretch_ceiling_calc.label.length'), value: _roomLength, onChanged: (v) { _roomLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 15)),
           ],
         ),
         const SizedBox(height: 12),
@@ -304,7 +304,7 @@ class _StretchCeilingCalculatorScreenState extends ConsumerState<StretchCeilingC
             divisions: 20,
             suffix: _loc.translate('common.pcs'),
             accentColor: _accentColor,
-            onChanged: (v) { setState(() { _lightsCount = v.toInt(); _update(); }); },
+            onChanged: (v) { _lightsCount = v.toInt(); _update(); },
           ),
           const SizedBox(height: 8),
           Text(

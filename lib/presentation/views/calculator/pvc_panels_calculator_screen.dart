@@ -273,7 +273,7 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
       max: 100,
       suffix: _loc.translate('common.sqm'),
       accentColor: _accentColor,
-      onChanged: (v) { setState(() { _area = v; _update(); }); },
+      onChanged: (v) { _area = v; _update(); },
     );
   }
 
@@ -282,9 +282,9 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
       children: [
         Row(
           children: [
-            Expanded(child: CalculatorTextField(label: _loc.translate('pvc_panels_calc.label.width'), value: _wallWidth, onChanged: (v) { setState(() { _wallWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 0.5, maxValue: 15)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('pvc_panels_calc.label.width'), value: _wallWidth, onChanged: (v) { _wallWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 0.5, maxValue: 15)),
             const SizedBox(width: 12),
-            Expanded(child: CalculatorTextField(label: _loc.translate('pvc_panels_calc.label.height'), value: _wallHeight, onChanged: (v) { setState(() { _wallHeight = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 0.5, maxValue: 5)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('pvc_panels_calc.label.height'), value: _wallHeight, onChanged: (v) { _wallHeight = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 0.5, maxValue: 5)),
           ],
         ),
         const SizedBox(height: 12),
@@ -313,7 +313,7 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
         divisions: 8,
         suffix: _loc.translate('common.mm'),
         accentColor: _accentColor,
-        onChanged: (v) { setState(() { _panelWidth = v / 1000; _update(); }); },
+        onChanged: (v) { _panelWidth = v / 1000; _update(); },
       ),
     );
   }
@@ -328,7 +328,7 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
             subtitle: Text(_loc.translate('pvc_panels_calc.option.profile_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needProfile,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needProfile = v; _update(); }); },
+            onChanged: (v) { _needProfile = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -336,7 +336,7 @@ class _PvcPanelsCalculatorScreenState extends ConsumerState<PvcPanelsCalculatorS
             subtitle: Text(_loc.translate('pvc_panels_calc.option.corners_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needCorners,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needCorners = v; _update(); }); },
+            onChanged: (v) { _needCorners = v; _update(); },
           ),
         ],
       ),

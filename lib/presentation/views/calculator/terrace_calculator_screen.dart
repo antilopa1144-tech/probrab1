@@ -355,12 +355,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
               max: _maxArea,
               suffix: _loc.translate('common.sqm'),
               accentColor: accentColor,
-              onChanged: (v) {
-                setState(() {
-                  _area = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _area = v; _update(); },
             )
           else
             Column(
@@ -371,12 +366,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
                       child: CalculatorTextField(
                         label: _loc.translate('terrace_calc.label.length'),
                         value: _length,
-                        onChanged: (v) {
-                          setState(() {
-                            _length = v;
-                            _update();
-                          });
-                        },
+                        onChanged: (v) { _length = v; _update(); },
                         suffix: _loc.translate('common.meters'),
                         accentColor: accentColor,
                         minValue: 1,
@@ -388,12 +378,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
                       child: CalculatorTextField(
                         label: _loc.translate('terrace_calc.label.width'),
                         value: _width,
-                        onChanged: (v) {
-                          setState(() {
-                            _width = v;
-                            _update();
-                          });
-                        },
+                        onChanged: (v) { _width = v; _update(); },
                         suffix: _loc.translate('common.meters'),
                         accentColor: accentColor,
                         minValue: 1,

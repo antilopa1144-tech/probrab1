@@ -227,13 +227,13 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
         children: [
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('gutters_calc.label.roof_length'), value: _roofLength, onChanged: (v) { setState(() { _roofLength = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('gutters_calc.label.roof_length'), value: _roofLength, onChanged: (v) { _roofLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('gutters_calc.label.roof_width'), value: _roofWidth, onChanged: (v) { setState(() { _roofWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('gutters_calc.label.roof_width'), value: _roofWidth, onChanged: (v) { _roofWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
             ],
           ),
           const SizedBox(height: 12),
-          CalculatorTextField(label: _loc.translate('gutters_calc.label.wall_height'), value: _wallHeight, onChanged: (v) { setState(() { _wallHeight = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 2, maxValue: 15),
+          CalculatorTextField(label: _loc.translate('gutters_calc.label.wall_height'), value: _wallHeight, onChanged: (v) { _wallHeight = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 2, maxValue: 15),
           const SizedBox(height: 16),
           CalculatorSliderField(
             label: _loc.translate('gutters_calc.label.downpipes_count'),
@@ -243,7 +243,7 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
             divisions: 8,
             suffix: _loc.translate('common.pcs'),
             accentColor: _accentColor,
-            onChanged: (v) { setState(() { _downpipesCount = v.toInt(); _update(); }); },
+            onChanged: (v) { _downpipesCount = v.toInt(); _update(); },
             decimalPlaces: 0,
           ),
           Text(
@@ -263,7 +263,7 @@ class _GuttersCalculatorScreenState extends ConsumerState<GuttersCalculatorScree
         subtitle: Text(_loc.translate('gutters_calc.option.heating_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
         value: _needHeating,
         activeTrackColor: _accentColor,
-        onChanged: (v) { setState(() { _needHeating = v; _update(); }); },
+        onChanged: (v) { _needHeating = v; _update(); },
       ),
     );
   }

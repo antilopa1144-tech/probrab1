@@ -356,12 +356,7 @@ class _TemplateCalculatorScreenState extends State<TemplateCalculatorScreen> {
           min: 1,
           max: 500,
           activeColor: _accentColor,
-          onChanged: (v) {
-            setState(() {
-              _area = v;
-              _update();
-            });
-          },
+          onChanged: (v) { _area = v; _update(); },
         ),
       ],
     );

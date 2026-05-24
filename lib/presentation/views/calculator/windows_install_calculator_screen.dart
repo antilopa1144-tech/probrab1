@@ -236,7 +236,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
         divisions: 19,
         suffix: _loc.translate('common.pcs'),
         accentColor: _accentColor,
-        onChanged: (v) { setState(() { _windowsCount = v.toInt(); _update(); }); },
+        onChanged: (v) { _windowsCount = v.toInt(); _update(); },
         decimalPlaces: 0,
       ),
     );
@@ -254,9 +254,9 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('windows_calc.label.width'), value: _windowWidth * 100, onChanged: (v) { setState(() { _windowWidth = v / 100; _update(); }); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 40, maxValue: 300)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('windows_calc.label.width'), value: _windowWidth * 100, onChanged: (v) { _windowWidth = v / 100; _update(); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 40, maxValue: 300)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('windows_calc.label.height'), value: _windowHeight * 100, onChanged: (v) { setState(() { _windowHeight = v / 100; _update(); }); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 40, maxValue: 250)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('windows_calc.label.height'), value: _windowHeight * 100, onChanged: (v) { _windowHeight = v / 100; _update(); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 40, maxValue: 250)),
             ],
           ),
           const SizedBox(height: 12),
@@ -286,7 +286,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
             subtitle: Text(_loc.translate('windows_calc.option.sill_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needSill,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needSill = v; _update(); }); },
+            onChanged: (v) { _needSill = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -294,7 +294,7 @@ class _WindowsInstallCalculatorScreenState extends State<WindowsInstallCalculato
             subtitle: Text(_loc.translate('windows_calc.option.slopes_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needSlopes,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needSlopes = v; _update(); }); },
+            onChanged: (v) { _needSlopes = v; _update(); },
           ),
         ],
       ),

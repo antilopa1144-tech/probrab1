@@ -495,12 +495,7 @@ class _ElectricalCalculatorScreenState
             max: 300,
             divisions: 29,
             suffix: _loc.translate('common.sqm'),
-            onChanged: (v) {
-              setState(() {
-                _area = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _area = v; _update(); },
             accentColor: accentColor,
           ),
           const SizedBox(height: 20),
@@ -513,12 +508,7 @@ class _ElectricalCalculatorScreenState
             divisions: 9,
             suffix: '',
             isInteger: true,
-            onChanged: (v) {
-              setState(() {
-                _rooms = v.round();
-                _update();
-              });
-            },
+            onChanged: (v) { _rooms = v.round(); _update(); },
             accentColor: accentColor,
           ),
           const SizedBox(height: 8),
@@ -554,12 +544,7 @@ class _ElectricalCalculatorScreenState
             divisions: 19,
             suffix: _loc.translate('common.pcs'),
             isInteger: true,
-            onChanged: (v) {
-              setState(() {
-                _manualSockets = v.round();
-                _update();
-              });
-            },
+            onChanged: (v) { _manualSockets = v.round(); _update(); },
             accentColor: accentColor,
           ),
           const SizedBox(height: 16),
@@ -571,12 +556,7 @@ class _ElectricalCalculatorScreenState
             divisions: 14,
             suffix: _loc.translate('common.pcs'),
             isInteger: true,
-            onChanged: (v) {
-              setState(() {
-                _manualSwitches = v.round();
-                _update();
-              });
-            },
+            onChanged: (v) { _manualSwitches = v.round(); _update(); },
             accentColor: accentColor,
           ),
           const SizedBox(height: 16),
@@ -588,12 +568,7 @@ class _ElectricalCalculatorScreenState
             divisions: 24,
             suffix: _loc.translate('common.pcs'),
             isInteger: true,
-            onChanged: (v) {
-              setState(() {
-                _manualLights = v.round();
-                _update();
-              });
-            },
+            onChanged: (v) { _manualLights = v.round(); _update(); },
             accentColor: accentColor,
           ),
         ],
@@ -736,84 +711,49 @@ class _ElectricalCalculatorScreenState
             label: _loc.translate('electrical.consumers.electric_stove'),
             subtitle: _loc.translate('electrical.consumers.electric_stove_desc'),
             value: _hasElectricStove,
-            onChanged: (v) {
-              setState(() {
-                _hasElectricStove = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _hasElectricStove = v; _update(); },
             accentColor: accentColor,
           ),
           _buildConsumerChip(
             label: _loc.translate('electrical.consumers.oven'),
             subtitle: _loc.translate('electrical.consumers.oven_desc'),
             value: _hasOven,
-            onChanged: (v) {
-              setState(() {
-                _hasOven = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _hasOven = v; _update(); },
             accentColor: accentColor,
           ),
           _buildConsumerChip(
             label: _loc.translate('electrical.consumers.boiler'),
             subtitle: _loc.translate('electrical.consumers.boiler_desc'),
             value: _hasBoiler,
-            onChanged: (v) {
-              setState(() {
-                _hasBoiler = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _hasBoiler = v; _update(); },
             accentColor: accentColor,
           ),
           _buildConsumerChip(
             label: _loc.translate('electrical.consumers.washing_machine'),
             subtitle: _loc.translate('electrical.consumers.washing_machine_desc'),
             value: _hasWashingMachine,
-            onChanged: (v) {
-              setState(() {
-                _hasWashingMachine = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _hasWashingMachine = v; _update(); },
             accentColor: accentColor,
           ),
           _buildConsumerChip(
             label: _loc.translate('electrical.consumers.dishwasher'),
             subtitle: _loc.translate('electrical.consumers.dishwasher_desc'),
             value: _hasDishwasher,
-            onChanged: (v) {
-              setState(() {
-                _hasDishwasher = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _hasDishwasher = v; _update(); },
             accentColor: accentColor,
           ),
           _buildConsumerChip(
             label: _loc.translate('electrical.consumers.conditioner'),
             subtitle: _loc.translate('electrical.consumers.conditioner_desc'),
             value: _hasConditioner,
-            onChanged: (v) {
-              setState(() {
-                _hasConditioner = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _hasConditioner = v; _update(); },
             accentColor: accentColor,
           ),
           _buildConsumerChip(
             label: _loc.translate('electrical.consumers.warm_floor'),
             subtitle: _loc.translate('electrical.consumers.warm_floor_desc'),
             value: _hasWarmFloor,
-            onChanged: (v) {
-              setState(() {
-                _hasWarmFloor = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _hasWarmFloor = v; _update(); },
             accentColor: accentColor,
           ),
         ],

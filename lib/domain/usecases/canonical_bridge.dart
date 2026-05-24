@@ -88,6 +88,8 @@ class CanonicalBridgeUseCase implements CalculatorUseCase {
 
     return CalculatorResult(
       values: values,
+      primaryTotals: canonical.totals,
+      materials: canonical.materials,
       totalPrice: null,
       norms: canonical.warnings,
     );

@@ -8,6 +8,7 @@ import '../../../core/services/calculator_memory_service.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/models/calculator_hint.dart';
 import '../../../domain/models/calculator_field.dart';
+import '../../../domain/models/canonical_calculator_contract.dart';
 import '../../../data/models/price_item.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../providers/price_provider.dart';
@@ -18,23 +19,27 @@ import '../../widgets/calculator/calculator_widgets.dart';
 class ProCalculatorState {
   final Map<String, double> inputs;
   final Map<String, double>? results;
+  final List<CanonicalMaterialResult>? materials;
   final bool hasError;
 
   const ProCalculatorState({
     required this.inputs,
     this.results,
+    this.materials,
     this.hasError = false,
   });
 
   ProCalculatorState copyWith({
     Map<String, double>? inputs,
     Map<String, double>? results,
+    List<CanonicalMaterialResult>? materials,
     bool? hasError,
     bool clearResults = false,
   }) {
     return ProCalculatorState(
       inputs: inputs ?? this.inputs,
       results: clearResults ? null : (results ?? this.results),
+      materials: clearResults ? null : (materials ?? this.materials),
       hasError: hasError ?? this.hasError,
     );
   }
@@ -139,7 +144,12 @@ class ProCalculatorNotifier extends StateNotifier<ProCalculatorState> {
     );
     try {
       final result = definition.calculate(state.inputs, priceList);
-      state = state.copyWith(results: result.values, hasError: false);
+      final displayResults = result.primaryTotals ?? result.values;
+      state = state.copyWith(
+        results: displayResults,
+        materials: result.materials,
+        hasError: false,
+      );
     } on CalculationException {
       state = state.copyWith(clearResults: true, hasError: true);
     }
@@ -290,7 +300,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
       final value = calcState.inputs[field.key];
       if (value != null) {
         final label = _loc.translate(field.labelKey);
-        final unit = _loc.translate('unit.${field.unitType.name}');
+        final unit = _loc.translate(field.unitType.translationKey);
         buffer.writeln('$label: ${value.toStringAsFixed(1)} $unit');
       }
     }
@@ -333,6 +343,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
       title: _loc.translate(widget.definition.titleKey),
       accentColor: accentColor,
       faqPrefix: 'faq.${widget.definition.id}',
+      mikhalychDataCollector: () => calcState.inputs,
       actions: exportActions,
       resultHeader: calcState.results != null ? _buildResultHeader(calcState.results, accentColor) : null,
       children: [
@@ -345,7 +356,15 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
         if (beforeTips.isNotEmpty) const SizedBox(height: 16),
         ..._buildInputFields(calcState.inputs),
         const SizedBox(height: 16),
-        if (calcState.results != null) _buildDetailsCard(calcState.results),
+        if (calcState.materials != null && calcState.materials!.isNotEmpty) ...[
+          CanonicalMaterialsCard(
+            materials: calcState.materials!,
+            accentColor: accentColor,
+            loc: _loc,
+          ),
+          const SizedBox(height: 16),
+        ],
+        if (calcState.results != null) _buildDetailsCard(calcState.results, calcState.materials),
         if (calcState.results != null && widget.definition.relatedLinks.isNotEmpty)
           RelatedCalculatorsSection(
             links: widget.definition.relatedLinks,
@@ -427,7 +446,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     final min = field.minValue ?? 0;
     final max = field.maxValue ?? 100;
     final step = field.step ?? 1;
-    final unitLabel = _loc.translate('unit.${field.unitType.name}');
+    final unitLabel = _loc.translate(field.unitType.translationKey);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final range = max - min;
     int? divisions;
@@ -545,7 +564,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
       label: _loc.translate(field.labelKey),
       value: value,
       onChanged: (v) => _updateValue(field.key, v),
-      suffix: _loc.translate('unit.${field.unitType.name}'),
+      suffix: _loc.translate(field.unitType.translationKey),
       hint: field.hintKey != null ? _loc.translate(field.hintKey!) : null,
       accentColor: accentColor,
       minValue: field.minValue ?? 0,
@@ -758,8 +777,9 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
   Widget _buildResultHeader(Map<String, double>? results, Color accentColor) {
     if (results == null || results.isEmpty) return const SizedBox.shrink();
 
-    // Берём до 3 первых результатов для header
-    final resultKeys = results.keys.take(3).toList();
+    final resultKeys = _selectHeaderKeys(results);
+    if (resultKeys.isEmpty) return const SizedBox.shrink();
+
     final headerResults = <ResultItem>[];
 
     for (final key in resultKeys) {
@@ -768,7 +788,7 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
       headerResults.add(
         ResultItem(
           label: label.toUpperCase(),
-          value: value.toStringAsFixed(value % 1 == 0 ? 0 : 1),
+          value: _formatResultValue(value),
           icon: _getIconForResult(key),
         ),
       );
@@ -778,6 +798,60 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
       accentColor: accentColor,
       results: headerResults,
     );
+  }
+
+  List<String> _selectHeaderKeys(Map<String, double> results) {
+    final excluded = RegExp(
+      r'^(min|max|rec)_|ExactNeed|Purchase$|_withReserve$|_purchaseQty$',
+      caseSensitive: false,
+    );
+    const inputEchoKeys = {
+      'lawnType',
+      'soilThickness',
+      'groundType',
+      'usageIntensity',
+      'withDrainage',
+      'withGeotextile',
+      'drainageType',
+      'groundwaterRisk',
+      'withCollector',
+      'pipeDiameter',
+      'inputMode',
+      'layoutPattern',
+      'roomComplexity',
+      'tileWidthCm',
+      'tileHeightCm',
+      'averageTileSizeCm',
+      'jointWidth',
+      'groutDepth',
+      'sizeAdjustment',
+      'wastePercent',
+      'glueRateKgPerM2',
+    };
+
+    final candidates = results.entries
+        .where((entry) => entry.value > 0)
+        .where((entry) => !excluded.hasMatch(entry.key))
+        .where((entry) => !inputEchoKeys.contains(entry.key))
+        .map((entry) => entry.key)
+        .toList();
+
+    final translated = candidates.where((key) {
+      final translatedLabel = _loc.translate('result.$key');
+      return translatedLabel != 'result.$key';
+    }).toList();
+
+    final ordered = translated.isNotEmpty ? translated : candidates;
+    return ordered.take(3).toList();
+  }
+
+  String _formatResultValue(double value) {
+    if (value == value.roundToDouble()) {
+      return value.round().toString();
+    }
+    if (value.abs() >= 100) return value.toStringAsFixed(0);
+    if (value.abs() >= 10) return value.toStringAsFixed(1);
+    return value.toStringAsFixed(2);
   }
 
   String _translateResultLabel(String key) {
@@ -793,8 +867,12 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
 
   IconData _getIconForResult(String key) => _CalculatorIconMatcher.result(key);
 
-  Widget _buildDetailsCard(Map<String, double>? results) {
+  Widget _buildDetailsCard(
+    Map<String, double>? results,
+    List<CanonicalMaterialResult>? materials,
+  ) {
     if (results == null || results.length <= 1) return const SizedBox();
+    if (materials != null && materials.isNotEmpty) return const SizedBox();
     return GroupedResultsCard(
       results: results,
       loc: _loc,

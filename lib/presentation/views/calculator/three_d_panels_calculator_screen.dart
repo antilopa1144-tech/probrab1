@@ -277,12 +277,7 @@ class _ThreeDPanelsCalculatorScreenState
               min: 3,
               max: 150,
               divisions: ((150 - 3) * 10).round(),
-              onChanged: (v) {
-                setState(() {
-                  _area = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _area = v; _update(); },
             ),
           ),
           const SizedBox(height: 12),
@@ -324,12 +319,7 @@ class _ThreeDPanelsCalculatorScreenState
             value: _length,
             min: 1.0,
             max: 12.0,
-            onChanged: (v) {
-              setState(() {
-                _length = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _length = v; _update(); },
             accentColor: accentColor,
           ),
           const SizedBox(height: 16),
@@ -338,12 +328,7 @@ class _ThreeDPanelsCalculatorScreenState
             value: _height,
             min: 2.0,
             max: 4.0,
-            onChanged: (v) {
-              setState(() {
-                _height = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _height = v; _update(); },
             accentColor: accentColor,
           ),
           const SizedBox(height: 12),
@@ -494,12 +479,7 @@ class _ThreeDPanelsCalculatorScreenState
               min: 30,
               max: 100,
               divisions: 70,
-              onChanged: (v) {
-                setState(() {
-                  _panelSize = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _panelSize = v; _update(); },
             ),
           ),
           const SizedBox(height: 12),

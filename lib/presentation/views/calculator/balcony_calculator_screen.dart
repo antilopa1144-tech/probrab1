@@ -236,13 +236,13 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
         children: [
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('balcony_calc.label.length'), value: _length, onChanged: (v) { setState(() { _length = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 10)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('balcony_calc.label.length'), value: _length, onChanged: (v) { _length = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 10)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('balcony_calc.label.width'), value: _width, onChanged: (v) { setState(() { _width = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 0.5, maxValue: 3)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('balcony_calc.label.width'), value: _width, onChanged: (v) { _width = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 0.5, maxValue: 3)),
             ],
           ),
           const SizedBox(height: 12),
-          CalculatorTextField(label: _loc.translate('balcony_calc.label.height'), value: _height, onChanged: (v) { setState(() { _height = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 2, maxValue: 3.5),
+          CalculatorTextField(label: _loc.translate('balcony_calc.label.height'), value: _height, onChanged: (v) { _height = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 2, maxValue: 3.5),
         ],
       ),
     );
@@ -259,7 +259,7 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
               subtitle: Text(_loc.translate('balcony_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
               value: _needInsulation,
               activeTrackColor: _accentColor,
-              onChanged: (v) { setState(() { _needInsulation = v; _update(); }); },
+              onChanged: (v) { _needInsulation = v; _update(); },
             ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -267,7 +267,7 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
             subtitle: Text(_loc.translate('balcony_calc.option.floor_finishing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needFloorFinishing,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needFloorFinishing = v; _update(); }); },
+            onChanged: (v) { _needFloorFinishing = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -275,7 +275,7 @@ class _BalconyCalculatorScreenState extends ConsumerState<BalconyCalculatorScree
             subtitle: Text(_loc.translate('balcony_calc.option.wall_finishing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needWallFinishing,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needWallFinishing = v; _update(); }); },
+            onChanged: (v) { _needWallFinishing = v; _update(); },
           ),
         ],
       ),

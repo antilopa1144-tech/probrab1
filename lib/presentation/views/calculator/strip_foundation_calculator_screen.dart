@@ -310,12 +310,7 @@ class _StripFoundationCalculatorScreenState
                 child: CalculatorTextField(
                   label: _loc.translate('strip_calc.house_length'),
                   value: _houseLength,
-                  onChanged: (v) {
-                    setState(() {
-                      _houseLength = v;
-                      _update();
-                    });
-                  },
+                  onChanged: (v) { _houseLength = v; _update(); },
                   suffix: _loc.translate('common.meters'),
                   accentColor: _accentColor,
                   minValue: 4,
@@ -327,12 +322,7 @@ class _StripFoundationCalculatorScreenState
                 child: CalculatorTextField(
                   label: _loc.translate('strip_calc.house_width'),
                   value: _houseWidth,
-                  onChanged: (v) {
-                    setState(() {
-                      _houseWidth = v;
-                      _update();
-                    });
-                  },
+                  onChanged: (v) { _houseWidth = v; _update(); },
                   suffix: _loc.translate('common.meters'),
                   accentColor: _accentColor,
                   minValue: 4,
@@ -388,12 +378,7 @@ class _StripFoundationCalculatorScreenState
             suffix: _loc.translate('common.cm'),
             accentColor: _accentColor,
             decimalPlaces: 0,
-            onChanged: (v) {
-              setState(() {
-                _stripWidth = v / 100;
-                _update();
-              });
-            },
+            onChanged: (v) { _stripWidth = v / 100; _update(); },
           ),
           const SizedBox(height: 8),
           // Высота ленты
@@ -406,12 +391,7 @@ class _StripFoundationCalculatorScreenState
             suffix: _loc.translate('common.cm'),
             accentColor: _accentColor,
             decimalPlaces: 0,
-            onChanged: (v) {
-              setState(() {
-                _stripHeight = v / 100;
-                _update();
-              });
-            },
+            onChanged: (v) { _stripHeight = v / 100; _update(); },
           ),
           const SizedBox(height: 8),
           Text(
@@ -445,24 +425,14 @@ class _StripFoundationCalculatorScreenState
             ),
             value: _hasInternalWalls,
             activeTrackColor: _accentColor,
-            onChanged: (v) {
-              setState(() {
-                _hasInternalWalls = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _hasInternalWalls = v; _update(); },
           ),
           if (_hasInternalWalls) ...[
             const SizedBox(height: 12),
             CalculatorTextField(
               label: _loc.translate('strip_calc.internal_walls_length'),
               value: _internalWallsLength,
-              onChanged: (v) {
-                setState(() {
-                  _internalWallsLength = v;
-                  _update();
-                });
-              },
+              onChanged: (v) { _internalWallsLength = v; _update(); },
               suffix: _loc.translate('common.meters'),
               accentColor: _accentColor,
               minValue: 0,
@@ -494,12 +464,7 @@ class _StripFoundationCalculatorScreenState
             ),
             value: _needWaterproof,
             activeTrackColor: _accentColor,
-            onChanged: (v) {
-              setState(() {
-                _needWaterproof = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _needWaterproof = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -517,12 +482,7 @@ class _StripFoundationCalculatorScreenState
             ),
             value: _needInsulation,
             activeTrackColor: _accentColor,
-            onChanged: (v) {
-              setState(() {
-                _needInsulation = v;
-                _update();
-              });
-            },
+            onChanged: (v) { _needInsulation = v; _update(); },
           ),
         ],
       ),

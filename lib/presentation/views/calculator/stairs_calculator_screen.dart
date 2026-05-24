@@ -240,13 +240,13 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
     return _card(
       child: Column(
         children: [
-          CalculatorTextField(label: _loc.translate('stairs_calc.label.floor_height'), value: _floorHeight, onChanged: (v) { setState(() { _floorHeight = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 2.0, maxValue: 5.0),
+          CalculatorTextField(label: _loc.translate('stairs_calc.label.floor_height'), value: _floorHeight, onChanged: (v) { _floorHeight = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 2.0, maxValue: 5.0),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('stairs_calc.label.opening_length'), value: _openingLength, onChanged: (v) { setState(() { _openingLength = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 2, maxValue: 8)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('stairs_calc.label.opening_length'), value: _openingLength, onChanged: (v) { _openingLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 2, maxValue: 8)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('stairs_calc.label.width'), value: _stairsWidth, onChanged: (v) { setState(() { _stairsWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 0.7, maxValue: 1.5)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('stairs_calc.label.width'), value: _stairsWidth, onChanged: (v) { _stairsWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 0.7, maxValue: 1.5)),
             ],
           ),
         ],
@@ -264,7 +264,7 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
             subtitle: Text(_loc.translate('stairs_calc.option.railing_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needRailing,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needRailing = v; _update(); }); },
+            onChanged: (v) { _needRailing = v; _update(); },
           ),
           if (_needRailing)
             SwitchListTile(
@@ -273,7 +273,7 @@ class _StairsCalculatorScreenState extends ConsumerState<StairsCalculatorScreen>
               subtitle: Text(_loc.translate('stairs_calc.option.both_sides_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
               value: _needBothSides,
               activeTrackColor: _accentColor,
-              onChanged: (v) { setState(() { _needBothSides = v; _update(); }); },
+              onChanged: (v) { _needBothSides = v; _update(); },
             ),
         ],
       ),

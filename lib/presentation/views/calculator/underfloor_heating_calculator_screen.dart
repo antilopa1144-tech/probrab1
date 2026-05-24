@@ -742,7 +742,7 @@ class _UnderfloorHeatingCalculatorScreenState
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${_loc.translate(type.descriptionKey)} • ${_constants.getRoomPower(type.key)} ${_loc.translate('common.watt_per_sqm')}',
+                              '${_loc.translate(type.descriptionKey)} • ${_constants.getRoomPower(type.key)} ${_loc.translate('unit.watt_per_sqm')}',
                               style: CalculatorDesignSystem.bodySmall.copyWith(
                                 color: CalculatorColors.getTextSecondary(_isDark),
                               ),

@@ -268,7 +268,7 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
       max: 200,
       suffix: _loc.translate('common.sqm'),
       accentColor: _accentColor,
-      onChanged: (v) { setState(() { _area = v; _update(); }); },
+      onChanged: (v) { _area = v; _update(); },
     );
   }
 
@@ -277,9 +277,9 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
       children: [
         Row(
           children: [
-            Expanded(child: CalculatorTextField(label: _loc.translate('ceiling_insulation_calc.label.width'), value: _roomWidth, onChanged: (v) { setState(() { _roomWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('ceiling_insulation_calc.label.width'), value: _roomWidth, onChanged: (v) { _roomWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
             const SizedBox(width: 12),
-            Expanded(child: CalculatorTextField(label: _loc.translate('ceiling_insulation_calc.label.length'), value: _roomLength, onChanged: (v) { setState(() { _roomLength = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('ceiling_insulation_calc.label.length'), value: _roomLength, onChanged: (v) { _roomLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
           ],
         ),
         const SizedBox(height: 12),
@@ -308,7 +308,7 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
         divisions: 6,
         suffix: _loc.translate('common.mm'),
         accentColor: _accentColor,
-        onChanged: (v) { setState(() { _thickness = v; _update(); }); },
+        onChanged: (v) { _thickness = v; _update(); },
       ),
     );
   }
@@ -328,7 +328,7 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
               subtitle: Text(_loc.translate('ceiling_insulation_calc.option.vapor_barrier_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
               value: _needVaporBarrier,
               activeTrackColor: _accentColor,
-              onChanged: (v) { setState(() { _needVaporBarrier = v; _update(); }); },
+              onChanged: (v) { _needVaporBarrier = v; _update(); },
             ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -336,7 +336,7 @@ class _CeilingInsulationCalculatorScreenState extends ConsumerState<CeilingInsul
             subtitle: Text(_loc.translate('ceiling_insulation_calc.option.membrane_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needMembrane,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needMembrane = v; _update(); }); },
+            onChanged: (v) { _needMembrane = v; _update(); },
           ),
         ],
       ),

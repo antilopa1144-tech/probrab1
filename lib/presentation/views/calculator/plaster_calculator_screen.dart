@@ -468,7 +468,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
       divisions: 4990,
       suffix: _loc.translate('common.sqm'),
       accentColor: accentColor,
-      onChanged: (v) { setState(() { _manualArea = v; _update(); }); },
+      onChanged: (v) { _manualArea = v; _update(); },
       decimalPlaces: 1,
     );
   }
@@ -541,7 +541,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
             divisions: 950,
             suffix: _loc.translate('common.mm'),
             accentColor: accentColor,
-            onChanged: (v) { setState(() { _thickness = v; _update(); }); },
+            onChanged: (v) { _thickness = v; _update(); },
             decimalPlaces: 1,
           ),
           const SizedBox(height: 8),

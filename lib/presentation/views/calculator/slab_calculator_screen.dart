@@ -210,9 +210,9 @@ class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
         children: [
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('slab_calc.label.length'), value: _length, onChanged: (v) { setState(() { _length = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('slab_calc.label.length'), value: _length, onChanged: (v) { _length = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('slab_calc.label.width'), value: _width, onChanged: (v) { setState(() { _width = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('slab_calc.label.width'), value: _width, onChanged: (v) { _width = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
             ],
           ),
           const SizedBox(height: 16),
@@ -224,7 +224,7 @@ class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
             divisions: 6,
             suffix: _loc.translate('common.cm'),
             accentColor: _accentColor,
-            onChanged: (v) { setState(() { _thickness = v / 100; _update(); }); },
+            onChanged: (v) { _thickness = v / 100; _update(); },
             decimalPlaces: 0,
           ),
           Text(
@@ -246,7 +246,7 @@ class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
             subtitle: Text(_loc.translate('slab_calc.option.waterproof_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needWaterproof,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needWaterproof = v; _update(); }); },
+            onChanged: (v) { _needWaterproof = v; _update(); },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -254,7 +254,7 @@ class _SlabCalculatorScreenState extends ConsumerState<SlabCalculatorScreen>
             subtitle: Text(_loc.translate('slab_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
             value: _needInsulation,
             activeTrackColor: _accentColor,
-            onChanged: (v) { setState(() { _needInsulation = v; _update(); }); },
+            onChanged: (v) { _needInsulation = v; _update(); },
           ),
         ],
       ),

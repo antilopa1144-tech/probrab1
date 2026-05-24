@@ -165,24 +165,8 @@ class _CalculatorTextFieldState extends State<CalculatorTextField> {
   }
 
   void _handleChange(String text) {
-    if (text.isEmpty || text == '-' || text == '.' || text == '-.') {
-      return;
-    }
-
-    final normalized = text.replaceAll(',', '.');
-    if (normalized.endsWith('.')) {
-      final withoutDot = normalized.substring(0, normalized.length - 1);
-      if (withoutDot.isEmpty || withoutDot == '-') {
-        return;
-      }
-    }
-
-    final parsed = double.tryParse(normalized);
-    if (parsed == null) return;
-
-    // Во время набора не ограничиваем min/max — иначе «15» превращается в «3»
-    // при minValue=3 после ввода первой цифры «1».
-    widget.onChanged(parsed);
+    // Только локальный ввод; родителя уведомляем в _commitValue.
+    // Иначе setState в onChanged сбрасывает текст при наборе (особенно на Android).
   }
 
   @override

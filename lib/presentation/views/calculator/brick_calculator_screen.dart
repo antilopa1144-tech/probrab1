@@ -363,12 +363,7 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
       max: 200,
       suffix: _loc.translate('common.sqm'),
       accentColor: _accentColor,
-      onChanged: (v) {
-        setState(() {
-          _area = v;
-          _update();
-        });
-      },
+      onChanged: (v) { _area = v; _update(); },
     );
   }
 
@@ -377,9 +372,9 @@ class _BrickCalculatorScreenState extends ConsumerState<BrickCalculatorScreen>
       children: [
         Row(
           children: [
-            Expanded(child: CalculatorTextField(label: _loc.translate('brick_calc.label.wall_width'), value: _wallWidth, onChanged: (v) { setState(() { _wallWidth = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 50)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('brick_calc.label.wall_width'), value: _wallWidth, onChanged: (v) { _wallWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 50)),
             const SizedBox(width: 12),
-            Expanded(child: CalculatorTextField(label: _loc.translate('brick_calc.label.wall_height'), value: _wallHeight, onChanged: (v) { setState(() { _wallHeight = v; _update(); }); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 10)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('brick_calc.label.wall_height'), value: _wallHeight, onChanged: (v) { _wallHeight = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 10)),
           ],
         ),
         const SizedBox(height: 12),
