@@ -9,8 +9,8 @@ void main() {
     testWidgets('renders with title', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        const MaterialApp(
-          home: CalculatorScaffold(
+        createTestApp(
+          child: CalculatorScaffold(
             title: 'Test Calculator',
             accentColor: Colors.blue,
             children: [
@@ -27,8 +27,8 @@ void main() {
     testWidgets('has AppBar with accent color', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        const MaterialApp(
-          home: CalculatorScaffold(
+        createTestApp(
+          child: CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.green,
             children: [],
@@ -43,8 +43,8 @@ void main() {
     testWidgets('shows back button by default', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        const MaterialApp(
-          home: CalculatorScaffold(
+        createTestApp(
+          child: CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             children: [],
@@ -59,8 +59,8 @@ void main() {
     testWidgets('hides back button when showBackButton is false', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        const MaterialApp(
-          home: CalculatorScaffold(
+        createTestApp(
+          child: CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             showBackButton: false,
@@ -76,8 +76,8 @@ void main() {
     testWidgets('renders with result header', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        MaterialApp(
-          home: CalculatorScaffold(
+        createTestApp(
+          child: CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             resultHeader: Container(
@@ -96,8 +96,8 @@ void main() {
     testWidgets('renders children in scrollable area', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        const MaterialApp(
-          home: CalculatorScaffold(
+        createTestApp(
+          child: CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             children: [
@@ -118,8 +118,8 @@ void main() {
     testWidgets('renders actions in AppBar', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        MaterialApp(
-          home: CalculatorScaffold(
+        createTestApp(
+          child: CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             actions: [
@@ -139,8 +139,8 @@ void main() {
     testWidgets('renders floating action button', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        MaterialApp(
-          home: CalculatorScaffold(
+        createTestApp(
+          child: CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             floatingActionButton: FloatingActionButton(
@@ -159,8 +159,8 @@ void main() {
     testWidgets('renders bottom navigation bar', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        const MaterialApp(
-          home: CalculatorScaffold(
+        createTestApp(
+          child: CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             bottomNavigationBar: BottomAppBar(
@@ -178,8 +178,8 @@ void main() {
     testWidgets('accepts custom body padding', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        const MaterialApp(
-          home: CalculatorScaffold(
+        createTestApp(
+          child: CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             bodyPadding: EdgeInsets.all(32),
@@ -198,8 +198,8 @@ void main() {
     testWidgets('renders correctly', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        const MaterialApp(
-          home: CalculatorScaffoldSimple(
+        createTestApp(
+          child: CalculatorScaffoldSimple(
             title: 'Simple Calculator',
             accentColor: Colors.orange,
             children: [
@@ -216,8 +216,8 @@ void main() {
     testWidgets('renders actions', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        MaterialApp(
-          home: CalculatorScaffoldSimple(
+        createTestApp(
+          child: CalculatorScaffoldSimple(
             title: 'Title',
             accentColor: Colors.purple,
             actions: [
@@ -237,8 +237,8 @@ void main() {
     testWidgets('accepts custom body padding', (tester) async {
       setTestViewportSize(tester);
       await tester.pumpWidget(
-        const MaterialApp(
-          home: CalculatorScaffoldSimple(
+        createTestApp(
+          child: CalculatorScaffoldSimple(
             title: 'Title',
             accentColor: Colors.teal,
             bodyPadding: EdgeInsets.symmetric(horizontal: 24),

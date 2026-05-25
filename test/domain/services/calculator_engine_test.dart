@@ -13,7 +13,14 @@ void main() {
             id == 'paint' ||
             id == 'wood' ||
             id == 'floors_screed' ||
-            id == 'dsp') {
+            id == 'dsp' ||
+            // Landscape-калькуляторы используют CanonicalBridgeUseCase
+            // напрямую из definition (Pro-only path), screen-engine не нужен.
+            id == 'lawn' ||
+            id == 'drainage' ||
+            id == 'greenhouse' ||
+            id == 'paving_tiles' ||
+            id == 'septic_rings') {
           continue;
         }
         if (!CalculatorEngine.screenEngines.containsKey(id)) {
