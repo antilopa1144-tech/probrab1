@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/usecases/calculate_concrete_universal.dart';
 import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/accuracy_mode_mixin.dart';
 import '../../mixins/exportable_mixin.dart';

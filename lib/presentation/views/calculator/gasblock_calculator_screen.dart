@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/calculator_constant.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/usecases/calculate_gasblock_v2.dart';
 import '../../../domain/services/calculator_engine.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../providers/constants_provider.dart';

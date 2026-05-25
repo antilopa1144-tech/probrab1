@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/calculator_colors.dart';
 import '../../../core/constants/calculator_design_system.dart';
 import '../../../core/localization/app_localizations.dart';
-import '../../../domain/usecases/calculate_electrical_v2.dart';
 import '../../mixins/exportable_consumer_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
 import '../../../domain/services/calculator_engine.dart';

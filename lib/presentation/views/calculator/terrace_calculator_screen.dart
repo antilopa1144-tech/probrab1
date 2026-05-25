@@ -2,8 +2,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
-import '../../../data/models/price_item.dart';
-import '../../../domain/usecases/calculate_terrace.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../mixins/accuracy_mode_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';

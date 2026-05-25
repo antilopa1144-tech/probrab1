@@ -4,7 +4,6 @@ import '../../../core/localization/app_localizations.dart';
 import '../../mixins/exportable_mixin.dart';
 import '../../mixins/accuracy_mode_mixin.dart';
 import '../../../domain/models/calculator_definition_v2.dart';
-import '../../../domain/usecases/calculate_tile_glue.dart';
 import '../../../domain/services/calculator_engine.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
