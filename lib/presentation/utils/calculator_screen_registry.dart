@@ -48,7 +48,12 @@ import '../views/calculator/strip_foundation_calculator_screen.dart';
 import '../views/calculator/gutters_calculator_screen.dart';
 import '../views/calculator/roofing_unified_calculator_screen.dart';
 import '../views/calculator/concrete_universal_calculator_screen.dart';
+import '../views/calculator/drainage_calculator_screen.dart';
+import '../views/calculator/greenhouse_calculator_screen.dart';
+import '../views/calculator/lawn_calculator_screen.dart';
+import '../views/calculator/paving_tiles_calculator_screen.dart';
 import '../views/calculator/room_calculator_screen.dart';
+import '../views/calculator/septic_rings_calculator_screen.dart';
 import '../views/paint/paint_screen.dart';
 import '../views/wood/wood_screen.dart';
 // dsp_screen.dart удалён - объединён с screed_unified_calculator_screen.dart
@@ -201,6 +206,13 @@ class CalculatorScreenRegistry {
           definition: def,
           initialInputs: inputs,
         ),
+
+    // Участок и наружные системы
+    'lawn': (_, _) => const LawnCalculatorScreen(),
+    'drainage': (_, _) => const DrainageCalculatorScreen(),
+    'greenhouse': (_, _) => const GreenhouseCalculatorScreen(),
+    'paving_tiles': (_, _) => const PavingTilesCalculatorScreen(),
+    'septic_rings': (_, _) => const SepticRingsCalculatorScreen(),
   };
 
   /// Получить экран калькулятора по ID.
