@@ -4,6 +4,7 @@ import 'package:probrab_ai/domain/usecases/share_project_usecase.dart';
 import 'package:probrab_ai/domain/models/project_v2.dart';
 import 'package:probrab_ai/domain/models/shareable_content.dart';
 import 'package:probrab_ai/domain/models/export_data.dart';
+import 'package:probrab_ai/domain/models/pdf_project_export_labels.dart';
 import 'package:probrab_ai/domain/services/csv_export_service.dart';
 import 'package:probrab_ai/core/services/deep_link_service.dart';
 import 'package:probrab_ai/core/exceptions/export_exception.dart';
@@ -114,6 +115,35 @@ const _testLabels = CsvExportLabels(
 const _testShareCopy = ProjectShareCopy(
   subject: 'Test subject',
   text: 'Test text {link}',
+);
+
+const _testPdfLabels = PdfProjectExportLabels(
+  appName: 'Test',
+  created: 'Создан',
+  updated: 'Обновлён',
+  deadline: 'Срок',
+  progress: 'Прогресс',
+  tasks: 'Задачи',
+  budget: 'Бюджет',
+  spent: 'Потрачено',
+  remaining: 'Остаток',
+  total: 'Итого',
+  calculations: 'Расчёты',
+  materials: 'Материалы',
+  notes: 'Заметки',
+  calculationColumn: 'Расчёт',
+  materialCostColumn: 'Стоимость материалов',
+  laborCostColumn: 'Работа',
+  materialNameColumn: 'Материал',
+  quantityColumn: 'Кол-во',
+  priceColumn: 'Цена',
+  sumColumn: 'Сумма',
+  statusPlanning: 'Планирование',
+  statusInProgress: 'В работе',
+  statusOnHold: 'На паузе',
+  statusCompleted: 'Завершён',
+  statusCancelled: 'Отменён',
+  statusProblem: 'Проблема',
 );
 
 const _testCsvShareCopy = CsvShareCopy(
@@ -330,6 +360,7 @@ void main() {
         final result = await useCase.shareAsPdf(
           project,
           shareCopy: _testShareCopy,
+          labels: _testPdfLabels,
         );
 
         expect(result.success, true);
@@ -345,6 +376,7 @@ void main() {
         final result = await useCase.shareAsPdf(
           project,
           shareCopy: _testShareCopy,
+          labels: _testPdfLabels,
         );
 
         expect(result.success, true);
@@ -358,6 +390,7 @@ void main() {
         final result = await useCase.shareAsPdf(
           project,
           shareCopy: _testShareCopy,
+          labels: _testPdfLabels,
         );
 
         expect(result.success, true);
@@ -566,6 +599,7 @@ void main() {
         final pdfResult = await useCase.shareAsPdf(
           project,
           shareCopy: _testShareCopy,
+          labels: _testPdfLabels,
         );
 
         expect(linkResult.success, true);
@@ -615,6 +649,7 @@ void main() {
             () => useCase.shareAsPdf(
               project,
               shareCopy: _testShareCopy,
+              labels: _testPdfLabels,
             ),
             returnsNormally,
           );
