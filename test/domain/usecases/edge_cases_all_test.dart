@@ -6,6 +6,7 @@
 /// 3. Very large inputs — no crash
 /// 4. MIN <= REC <= MAX
 /// 5. Accuracy mode: basic <= realistic <= professional
+library;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/aerated_concrete_canonical_adapter.dart';

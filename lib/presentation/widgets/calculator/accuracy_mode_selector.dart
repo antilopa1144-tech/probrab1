@@ -65,7 +65,7 @@ class AccuracyModeSelector extends StatelessWidget {
           onSelectionChanged: (modes) {
             onChanged(modes.first);
           },
-          style: ButtonStyle(
+          style: const ButtonStyle(
             visualDensity: VisualDensity.compact,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),

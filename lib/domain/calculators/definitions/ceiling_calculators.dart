@@ -16,14 +16,14 @@ import '../../usecases/ceiling_stretch_canonical_adapter.dart';
 // calculate_ceiling_paint.dart больше не используется - ceilings_paint заменён на paint_universal
 
 final List<CalculatorDefinitionV2> ceilingCalculators = [
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'ceilings_cassette',
       titleKey: 'calculator.ceilings_cassette.title',
       descriptionKey: 'calculator.ceilings_cassette.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.ceilings',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'inputMode',
           labelKey: 'input.inputMode',
           unitType: UnitType.pieces,
@@ -36,7 +36,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
             FieldOption(value: 1, labelKey: 'input.mode.by_area'),
           ],
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'roomWidth',
           labelKey: 'input.roomWidth',
           unitType: UnitType.meters,
@@ -55,7 +55,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
             value: 0,
           ),
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'roomLength',
           labelKey: 'input.roomLength',
           unitType: UnitType.meters,
@@ -74,7 +74,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
             value: 0,
           ),
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -93,7 +93,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
             value: 1,
           ),
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'cassetteSize',
           labelKey: 'input.cassetteSize',
           unitType: UnitType.pieces,
@@ -104,7 +104,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
           required: true,
           order: 5,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'ceilingType',
           labelKey: 'input.ceilingType',
           unitType: UnitType.pieces,
@@ -117,14 +117,14 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.kassety_legko_zamenyayutsya_pri'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.obespechte_dostup_k_kommunikatsiyam'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_uroven_dlya_montazha'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.kassety_legko_zamenyayutsya_pri'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.obespechte_dostup_k_kommunikatsiyam'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_uroven_dlya_montazha'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.kassety_legko_zamenyayutsya_pri'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.obespechte_dostup_k_kommunikatsiyam'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_uroven_dlya_montazha'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.kassety_legko_zamenyayutsya_pri'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.obespechte_dostup_k_kommunikatsiyam'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_uroven_dlya_montazha'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalCeilingCassette),
       accentColor: kCalculatorAccentColor,
@@ -138,14 +138,14 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         'ceilings_cassette',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'ceilings_insulation',
       titleKey: 'calculator.ceilings_insulation.title',
       descriptionKey: 'calculator.ceilings_insulation.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.ceilings',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -159,7 +159,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'insulationThickness',
           labelKey: 'input.insulationThickness',
           hintKey: 'input.insulation_thickness.hint',
@@ -174,7 +174,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'insulationType',
           labelKey: 'input.insulationType',
           unitType: UnitType.pieces,
@@ -189,14 +189,14 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_paroizolyatsiyu_s_vnutrenney'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ne_szhimayte_uteplitel_pri'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.obespechte_ventilyatsiyu_podkrovelnogo_prostranstva'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_paroizolyatsiyu_s_vnutrenney'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ne_szhimayte_uteplitel_pri'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.obespechte_ventilyatsiyu_podkrovelnogo_prostranstva'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_paroizolyatsiyu_s_vnutrenney'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ne_szhimayte_uteplitel_pri'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.obespechte_ventilyatsiyu_podkrovelnogo_prostranstva'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_paroizolyatsiyu_s_vnutrenney'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ne_szhimayte_uteplitel_pri'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.obespechte_ventilyatsiyu_podkrovelnogo_prostranstva'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalCeilingInsulation),
       accentColor: kCalculatorAccentColor,
@@ -210,14 +210,14 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         'ceilings_insulation',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'ceilings_rail',
       titleKey: 'calculator.ceilings_rail.title',
       descriptionKey: 'calculator.ceilings_rail.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.ceilings',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -231,7 +231,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'railWidth',
           labelKey: 'input.railWidth',
           unitType: UnitType.centimeters,
@@ -245,7 +245,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'railLength',
           labelKey: 'input.railLength',
           unitType: UnitType.meters,
@@ -261,14 +261,14 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.montiruyte_reyki_perpendikulyarno_napravlyayuschim'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ostavlyayte_zazor_dlya_ventilyatsii'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_uroven_dlya_kontrolya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.montiruyte_reyki_perpendikulyarno_napravlyayuschim'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ostavlyayte_zazor_dlya_ventilyatsii'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_uroven_dlya_kontrolya'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.montiruyte_reyki_perpendikulyarno_napravlyayuschim'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ostavlyayte_zazor_dlya_ventilyatsii'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_uroven_dlya_kontrolya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.montiruyte_reyki_perpendikulyarno_napravlyayuschim'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ostavlyayte_zazor_dlya_ventilyatsii'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.ispolzuyte_uroven_dlya_kontrolya'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalCeilingRail),
       accentColor: kCalculatorAccentColor,
@@ -282,14 +282,14 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         'ceilings_rail',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'ceilings_stretch',
       titleKey: 'calculator.ceilings_stretch.title',
       descriptionKey: 'calculator.ceilings_stretch.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.ceilings',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -303,7 +303,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'corners',
           labelKey: 'input.corners',
           unitType: UnitType.pieces,
@@ -317,7 +317,7 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'fixtures',
           labelKey: 'input.fixtures',
           unitType: UnitType.pieces,
@@ -333,14 +333,14 @@ final List<CalculatorDefinitionV2> ceilingCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.montazh_vypolnyayut_spetsialisty_s'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.zaranee_opredelite_mesta_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.uchityvayte_vysotu_potolka_natyazhnoy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.montazh_vypolnyayut_spetsialisty_s'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.zaranee_opredelite_mesta_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.uchityvayte_vysotu_potolka_natyazhnoy'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.montazh_vypolnyayut_spetsialisty_s'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.zaranee_opredelite_mesta_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.uchityvayte_vysotu_potolka_natyazhnoy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.montazh_vypolnyayut_spetsialisty_s'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.zaranee_opredelite_mesta_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.ceiling.uchityvayte_vysotu_potolka_natyazhnoy'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalCeilingStretch),
       accentColor: kCalculatorAccentColor,

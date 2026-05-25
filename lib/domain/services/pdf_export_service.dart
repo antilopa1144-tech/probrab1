@@ -61,7 +61,7 @@ class PdfExportService {
         definition ?? CalculatorRegistry.getById(calculation.calculatorId);
 
     final calculatorName = calculatorDisplayName ??
-        (resolvedDefinition != null ? resolvedDefinition.titleKey : null) ??
+        (resolvedDefinition?.titleKey) ??
         calculation.calculatorName;
 
     final resolvedCategoryLabel = categoryLabel ?? calculation.category;

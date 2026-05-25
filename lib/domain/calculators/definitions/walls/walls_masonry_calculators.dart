@@ -15,14 +15,14 @@ import '../../../usecases/decor_stone_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
   // 1. partitions_blocks - Перегородки из блоков
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'partitions_blocks',
       titleKey: 'calculator.partitions_blocks.title',
       descriptionKey: 'calculator.partitions_blocks.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.partitions',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'length',
           labelKey: 'input.length',
           unitType: UnitType.meters,
@@ -36,7 +36,7 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'height',
           labelKey: 'input.height',
           unitType: UnitType.meters,
@@ -50,7 +50,7 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'thickness',
           labelKey: 'input.thickness',
           hintKey: 'input.block_thickness.hint',
@@ -67,16 +67,16 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.armiruyte_kazhdyy_3_4'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.pervyy_ryad_ukladyvayte_na'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proveryayte_geometriyu_urovnem'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.armiruyte_kazhdyy_3_4'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.pervyy_ryad_ukladyvayte_na'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proveryayte_geometriyu_urovnem'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.armiruyte_kazhdyy_3_4'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.pervyy_ryad_ukladyvayte_na'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proveryayte_geometriyu_urovnem'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.armiruyte_kazhdyy_3_4'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.pervyy_ryad_ukladyvayte_na'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proveryayte_geometriyu_urovnem'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalPartitions),
       accentColor: kCalculatorAccentColor,
@@ -92,14 +92,14 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
     ),
 
   // 2. partitions_brick - Перегородки из кирпича
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'partitions_brick',
       titleKey: 'calculator.partitions_brick.title',
       descriptionKey: 'calculator.partitions_brick.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.partitions',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'length',
           labelKey: 'input.length',
           unitType: UnitType.meters,
@@ -113,7 +113,7 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'height',
           labelKey: 'input.height',
           unitType: UnitType.meters,
@@ -127,7 +127,7 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'brickType',
           labelKey: 'input.type',
           unitType: UnitType.pieces,
@@ -140,7 +140,7 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'workingConditions',
           labelKey: 'input.workingConditions',
           unitType: UnitType.pieces,
@@ -159,17 +159,17 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.kladku_v_polkirpicha_armiruyte'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_tsementno_peschanyy_rastvor'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proveryayte_vertikalnost_otvesom'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.svyazyvayte_s_nesuschimi_stenami'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.kladku_v_polkirpicha_armiruyte'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_tsementno_peschanyy_rastvor'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proveryayte_vertikalnost_otvesom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.svyazyvayte_s_nesuschimi_stenami'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.kladku_v_polkirpicha_armiruyte'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_tsementno_peschanyy_rastvor'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proveryayte_vertikalnost_otvesom'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.svyazyvayte_s_nesuschimi_stenami'),
-        const CalculatorHint(
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.kladku_v_polkirpicha_armiruyte'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_tsementno_peschanyy_rastvor'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proveryayte_vertikalnost_otvesom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.svyazyvayte_s_nesuschimi_stenami'),
+        CalculatorHint(
           type: HintType.warning,
           messageKey: 'hint.brick.cold_weather_warning',
           condition: HintCondition(
@@ -193,14 +193,14 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
     ),
 
   // 3. walls_decor_stone - Декоративный камень
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'walls_decor_stone',
       titleKey: 'calculator.walls_decor_stone.title',
       descriptionKey: 'calculator.walls_decor_stone.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.walls',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.wallArea',
           unitType: UnitType.squareMeters,
@@ -214,7 +214,7 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'stoneType',
           labelKey: 'input.stoneType',
           unitType: UnitType.pieces,
@@ -230,7 +230,7 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
             FieldOption(value: 2.0, labelKey: 'input.stoneType.natural'),
           ],
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'jointWidth',
           labelKey: 'input.jointWidth',
           unitType: UnitType.millimeters,
@@ -246,14 +246,14 @@ final List<CalculatorDefinitionV2> wallsMasonryCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dobavte_10_zapas_na'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya_3'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obrabotayte_kamen_gidrofobizatorom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dobavte_10_zapas_na'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya_3'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obrabotayte_kamen_gidrofobizatorom'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dobavte_10_zapas_na'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya_3'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obrabotayte_kamen_gidrofobizatorom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dobavte_10_zapas_na'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya_3'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obrabotayte_kamen_gidrofobizatorom'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalDecorStone),
       accentColor: kCalculatorAccentColor,

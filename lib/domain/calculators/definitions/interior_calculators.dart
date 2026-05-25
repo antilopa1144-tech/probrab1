@@ -18,14 +18,14 @@ import '../../usecases/waterproofing_canonical_adapter.dart';
 import '../../usecases/windows_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> interiorCalculators = [
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'attic',
       titleKey: 'calculator.attic.title',
       descriptionKey: 'calculator.attic.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.attic',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -39,7 +39,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'roofArea',
           labelKey: 'input.roofArea',
           unitType: UnitType.squareMeters,
@@ -53,7 +53,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'wallArea',
           labelKey: 'input.wallArea',
           unitType: UnitType.squareMeters,
@@ -67,7 +67,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'floorArea',
           labelKey: 'input.floorArea',
           unitType: UnitType.squareMeters,
@@ -81,7 +81,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: false,
           order: 4,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'windows',
           labelKey: 'input.windows',
           unitType: UnitType.pieces,
@@ -95,7 +95,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: false,
           order: 5,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'insulation',
           labelKey: 'input.insulation',
           unitType: UnitType.meters,
@@ -109,7 +109,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: false,
           order: 6,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'wallFinish',
           labelKey: 'input.wallFinish',
           unitType: UnitType.meters,
@@ -122,7 +122,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 7,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'floorType',
           labelKey: 'input.floorType',
           unitType: UnitType.pieces,
@@ -137,20 +137,20 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.uteplenie_mansardy_obyazatelno_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.tolschina_uteplitelya_dolzhna_byt'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.paroizolyatsiya_zaschischaet_uteplitel_ot'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.mansardnye_okna_obespechivayut_estestvennoe'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.vagonka_sozdaet_uyutnuyu_atmosferu'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_nesuschuyu_sposobnost_perekrytiya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.uteplenie_mansardy_obyazatelno_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.tolschina_uteplitelya_dolzhna_byt'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.paroizolyatsiya_zaschischaet_uteplitel_ot'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.mansardnye_okna_obespechivayut_estestvennoe'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.vagonka_sozdaet_uyutnuyu_atmosferu'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_nesuschuyu_sposobnost_perekrytiya'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.uteplenie_mansardy_obyazatelno_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.tolschina_uteplitelya_dolzhna_byt'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.paroizolyatsiya_zaschischaet_uteplitel_ot'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.mansardnye_okna_obespechivayut_estestvennoe'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.vagonka_sozdaet_uyutnuyu_atmosferu'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_nesuschuyu_sposobnost_perekrytiya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.uteplenie_mansardy_obyazatelno_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.tolschina_uteplitelya_dolzhna_byt'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.paroizolyatsiya_zaschischaet_uteplitel_ot'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.mansardnye_okna_obespechivayut_estestvennoe'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.vagonka_sozdaet_uyutnuyu_atmosferu'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_nesuschuyu_sposobnost_perekrytiya'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalAttic),
       accentColor: kCalculatorAccentColor,
@@ -162,14 +162,14 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         'tag.mansarda',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'balcony',
       titleKey: 'calculator.balcony.title',
       descriptionKey: 'calculator.balcony.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.balcony',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -183,7 +183,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'height',
           labelKey: 'input.height',
           unitType: UnitType.meters,
@@ -197,7 +197,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'glazing',
           labelKey: 'input.glazing',
           unitType: UnitType.meters,
@@ -211,7 +211,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: false,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'insulation',
           labelKey: 'input.insulation',
           unitType: UnitType.meters,
@@ -225,7 +225,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: false,
           order: 4,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'floorType',
           labelKey: 'input.floorType',
           unitType: UnitType.pieces,
@@ -238,7 +238,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 5,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'wallFinish',
           labelKey: 'input.wallFinish',
           unitType: UnitType.meters,
@@ -254,20 +254,20 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.osteklenie_balkona_znachitelno_uvelichivaet'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.teploe_osteklenie_pozvolyaet_ispolzovat'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.uteplenie_obyazatelno_dlya_teplogo'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.paroizolyatsiya_zaschischaet_uteplitel_ot_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.dlya_pola_na_otkrytom'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.terrasnaya_doska_podhodit_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.osteklenie_balkona_znachitelno_uvelichivaet'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.teploe_osteklenie_pozvolyaet_ispolzovat'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.uteplenie_obyazatelno_dlya_teplogo'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.paroizolyatsiya_zaschischaet_uteplitel_ot_2'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.dlya_pola_na_otkrytom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.terrasnaya_doska_podhodit_dlya'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.osteklenie_balkona_znachitelno_uvelichivaet'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.teploe_osteklenie_pozvolyaet_ispolzovat'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.uteplenie_obyazatelno_dlya_teplogo'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.paroizolyatsiya_zaschischaet_uteplitel_ot_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.dlya_pola_na_otkrytom'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.terrasnaya_doska_podhodit_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.osteklenie_balkona_znachitelno_uvelichivaet'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.teploe_osteklenie_pozvolyaet_ispolzovat'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.uteplenie_obyazatelno_dlya_teplogo'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.paroizolyatsiya_zaschischaet_uteplitel_ot_2'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.dlya_pola_na_otkrytom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.terrasnaya_doska_podhodit_dlya'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalBalcony),
       accentColor: kCalculatorAccentColor,
@@ -279,14 +279,14 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         'tag.balkon_lodzhiya',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'bathroom_waterproof',
       titleKey: 'calculator.bathroom_waterproof.title',
       descriptionKey: 'calculator.bathroom_waterproof.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.bathroom',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'floorArea',
           labelKey: 'input.floorArea',
           unitType: UnitType.squareMeters,
@@ -300,7 +300,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'wallHeight',
           labelKey: 'input.wallHeight',
           unitType: UnitType.meters,
@@ -317,16 +317,16 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.gidroizolyatsiya_obyazatelna_dlya_pola_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_armiruyuschuyu_lentu_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.nanosite_material_v_dva'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_tselostnost_pokrytiya_pered'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.gidroizolyatsiya_obyazatelna_dlya_pola_2'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_armiruyuschuyu_lentu_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.nanosite_material_v_dva'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_tselostnost_pokrytiya_pered'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.gidroizolyatsiya_obyazatelna_dlya_pola_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_armiruyuschuyu_lentu_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.nanosite_material_v_dva'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_tselostnost_pokrytiya_pered'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.gidroizolyatsiya_obyazatelna_dlya_pola_2'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_armiruyuschuyu_lentu_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.nanosite_material_v_dva'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_tselostnost_pokrytiya_pered'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalWaterproofing),
       accentColor: kCalculatorAccentColor,
@@ -340,14 +340,14 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         'tag.vannaya_tualet',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'doors_install',
       titleKey: 'calculator.doors_install.title',
       descriptionKey: 'calculator.doors_install.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.windows_doors',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'doors',
           labelKey: 'input.doors',
           unitType: UnitType.pieces,
@@ -361,7 +361,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'doorWidth',
           labelKey: 'input.doorWidth',
           unitType: UnitType.meters,
@@ -375,7 +375,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'doorHeight',
           labelKey: 'input.doorHeight',
           unitType: UnitType.meters,
@@ -391,14 +391,14 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_vertikalnost_dvernoy_korobki'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_montazhnuyu_penu_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ustanovite_nalichniki_dlya_zaversheniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_vertikalnost_dvernoy_korobki'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_montazhnuyu_penu_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ustanovite_nalichniki_dlya_zaversheniya'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_vertikalnost_dvernoy_korobki'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_montazhnuyu_penu_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ustanovite_nalichniki_dlya_zaversheniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_vertikalnost_dvernoy_korobki'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_montazhnuyu_penu_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ustanovite_nalichniki_dlya_zaversheniya'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalDoors),
       accentColor: kCalculatorAccentColor,
@@ -412,14 +412,14 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         'tag.okna_dveri',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'insulation_sound',
       titleKey: 'calculator.insulation_sound.title',
       descriptionKey: 'calculator.insulation_sound.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.soundproofing',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -433,7 +433,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'thickness',
           labelKey: 'input.thickness',
           unitType: UnitType.millimeters,
@@ -447,7 +447,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'insulationType',
           labelKey: 'input.insulationType',
           unitType: UnitType.pieces,
@@ -462,14 +462,14 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.shumoizolyatsiya_osobenno_vazhna_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_materialy_s_vysokim'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.obespechte_germetichnost_stykov'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.shumoizolyatsiya_osobenno_vazhna_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_materialy_s_vysokim'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.obespechte_germetichnost_stykov'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.shumoizolyatsiya_osobenno_vazhna_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_materialy_s_vysokim'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.obespechte_germetichnost_stykov'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.shumoizolyatsiya_osobenno_vazhna_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_materialy_s_vysokim'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.obespechte_germetichnost_stykov'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalSoundInsulation),
       accentColor: kCalculatorAccentColor,
@@ -483,14 +483,14 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         'insulation_sound',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'slopes_finishing',
       titleKey: 'calculator.slopes_finishing.title',
       descriptionKey: 'calculator.slopes_finishing.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.windows_doors',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'windows',
           labelKey: 'input.windows',
           unitType: UnitType.pieces,
@@ -504,7 +504,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'windowWidth',
           labelKey: 'input.windowWidth',
           unitType: UnitType.meters,
@@ -518,7 +518,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'windowHeight',
           labelKey: 'input.windowHeight',
           unitType: UnitType.meters,
@@ -532,7 +532,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'slopeWidth',
           labelKey: 'input.slopeWidth',
           unitType: UnitType.meters,
@@ -548,14 +548,14 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_ugolki_dlya_rovnyh'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.shpaklevku_nanosite_tonkim_sloem'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.kraste_v_2_sloya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_ugolki_dlya_rovnyh'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.shpaklevku_nanosite_tonkim_sloem'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.kraste_v_2_sloya'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_ugolki_dlya_rovnyh'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.shpaklevku_nanosite_tonkim_sloem'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.kraste_v_2_sloya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_ugolki_dlya_rovnyh'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.shpaklevku_nanosite_tonkim_sloem'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.kraste_v_2_sloya'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalSlopes),
       accentColor: kCalculatorAccentColor,
@@ -569,14 +569,14 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         'finishing',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'windows_install',
       titleKey: 'calculator.windows_install.title',
       descriptionKey: 'calculator.windows_install.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.windows_doors',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'windows',
           labelKey: 'input.windows',
           unitType: UnitType.pieces,
@@ -590,7 +590,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'windowWidth',
           labelKey: 'input.windowWidth',
           unitType: UnitType.meters,
@@ -604,7 +604,7 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'windowHeight',
           labelKey: 'input.windowHeight',
           unitType: UnitType.meters,
@@ -620,14 +620,14 @@ final List<CalculatorDefinitionV2> interiorCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_montazhnuyu_penu_dlya_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ustanovite_otlivy_dlya_zaschity'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_vertikalnost_i_gorizontalnost'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_montazhnuyu_penu_dlya_2'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ustanovite_otlivy_dlya_zaschity'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_vertikalnost_i_gorizontalnost'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_montazhnuyu_penu_dlya_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ustanovite_otlivy_dlya_zaschity'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_vertikalnost_i_gorizontalnost'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ispolzuyte_montazhnuyu_penu_dlya_2'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.ustanovite_otlivy_dlya_zaschity'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.interior.proverte_vertikalnost_i_gorizontalnost'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalWindows),
       accentColor: kCalculatorAccentColor,

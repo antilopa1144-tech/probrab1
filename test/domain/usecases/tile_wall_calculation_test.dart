@@ -5,6 +5,7 @@
 /// - Расчёт комбинированной площади (пол + стены)
 /// - Граничные условия
 /// - Canonical adapter работает с площадью стен
+library;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/usecases/tile_canonical_adapter.dart';
@@ -117,7 +118,7 @@ void main() {
       });
 
       test('расчёт плитки на комбинированную площадь (пол 12 м² + стены 20 м²)', () {
-        final totalArea = 12.0 + 20.0; // 32 м²
+        const totalArea = 12.0 + 20.0; // 32 м²
         final result = calculateCanonicalTile({
           'inputMode': 1.0,
           'area': totalArea,
@@ -237,8 +238,8 @@ void main() {
         const floorArea = 10.0;
         const wallArea = 0.0;
         // Пол: 10 × 1.5 × 2 × 1.1 = 33.0 кг
-        final floorWp = floorArea * 1.5 * 2 * 1.1;
-        final wallWp = wallArea * 1.5 * 1 * 1.1;
+        const floorWp = floorArea * 1.5 * 2 * 1.1;
+        const wallWp = wallArea * 1.5 * 1 * 1.1;
         expect(floorWp + wallWp, closeTo(33.0, 0.01));
       });
 
@@ -246,8 +247,8 @@ void main() {
         const floorArea = 0.0;
         const wallArea = 20.0;
         // Стены: 20 × 1.5 × 1 × 1.1 = 33.0 кг
-        final floorWp = floorArea * 1.5 * 2 * 1.1;
-        final wallWp = wallArea * 1.5 * 1 * 1.1;
+        const floorWp = floorArea * 1.5 * 2 * 1.1;
+        const wallWp = wallArea * 1.5 * 1 * 1.1;
         expect(floorWp + wallWp, closeTo(33.0, 0.01));
       });
 
@@ -257,13 +258,13 @@ void main() {
         // Пол: 5 × 1.5 × 2 × 1.1 = 16.5
         // Стены: 15 × 1.5 × 1 × 1.1 = 24.75
         // Итого: 41.25
-        final floorWp = floorArea * 1.5 * 2 * 1.1;
-        final wallWp = wallArea * 1.5 * 1 * 1.1;
-        final total = floorWp + wallWp;
+        const floorWp = floorArea * 1.5 * 2 * 1.1;
+        const wallWp = wallArea * 1.5 * 1 * 1.1;
+        const total = floorWp + wallWp;
         expect(total, closeTo(41.25, 0.01));
 
         // Сравнение: если бы считали 2 слоя на всё
-        final wrongTotal = (floorArea + wallArea) * 1.5 * 2 * 1.1;
+        const wrongTotal = (floorArea + wallArea) * 1.5 * 2 * 1.1;
         expect(total, lessThan(wrongTotal));
       });
     });
@@ -275,10 +276,10 @@ void main() {
         const wallArea = 20.0;
         const avgTileSizeCm = 30.0;
 
-        final wallFraction = wallArea / totalArea;
-        final wallGlue = totalGlue * wallFraction;
-        final extraPercent = avgTileSizeCm > 40 ? 0.30 : 0.20;
-        final extra = wallGlue * extraPercent;
+        const wallFraction = wallArea / totalArea;
+        const wallGlue = totalGlue * wallFraction;
+        const extraPercent = avgTileSizeCm > 40 ? 0.30 : 0.20;
+        const extra = wallGlue * extraPercent;
 
         // wallFraction = 20/30 = 0.667
         // wallGlue = 100 × 0.667 = 66.7
@@ -293,10 +294,10 @@ void main() {
         const wallArea = 20.0;
         const avgTileSizeCm = 50.0;
 
-        final wallFraction = wallArea / totalArea;
-        final wallGlue = totalGlue * wallFraction;
-        final extraPercent = avgTileSizeCm > 40 ? 0.30 : 0.20;
-        final extra = wallGlue * extraPercent;
+        const wallFraction = wallArea / totalArea;
+        const wallGlue = totalGlue * wallFraction;
+        const extraPercent = avgTileSizeCm > 40 ? 0.30 : 0.20;
+        const extra = wallGlue * extraPercent;
 
         // extra = 66.7 × 0.30 = 20.0
         expect(extra, closeTo(20.0, 0.1));
@@ -310,8 +311,8 @@ void main() {
 
         double extra = 0;
         if (wallArea > 0 && totalArea > 0) {
-          final wallFraction = wallArea / totalArea;
-          final wallGlue = totalGlue * wallFraction;
+          const wallFraction = wallArea / totalArea;
+          const wallGlue = totalGlue * wallFraction;
           extra = wallGlue * 0.20;
         }
 

@@ -12,14 +12,14 @@ import '../../usecases/canonical_bridge.dart';
 import '../../usecases/gutters_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> roofingCalculators = [
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'roofing_gutters',
       titleKey: 'calculator.roofing_gutters.title',
       descriptionKey: 'calculator.roofing_gutters.description',
       category: CalculatorCategory.exterior,
       subCategoryKey: 'subcategory.roofing',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'roofLength',
           labelKey: 'input.roofLength',
           unitType: UnitType.meters,
@@ -33,7 +33,7 @@ final List<CalculatorDefinitionV2> roofingCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'roofArea',
           labelKey: 'input.roofArea',
           unitType: UnitType.squareMeters,
@@ -47,7 +47,7 @@ final List<CalculatorDefinitionV2> roofingCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'gutterLength',
           labelKey: 'input.gutterLength',
           unitType: UnitType.meters,
@@ -63,16 +63,16 @@ final List<CalculatorDefinitionV2> roofingCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.ustanavlivayte_zheloba_s_uklonom'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.kronshteyny_montiruyutsya_cherez_kazhdye'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.na_kazhdye_10_m'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.ispolzuyte_germetik_dlya_soedineniy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.ustanavlivayte_zheloba_s_uklonom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.kronshteyny_montiruyutsya_cherez_kazhdye'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.na_kazhdye_10_m'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.ispolzuyte_germetik_dlya_soedineniy'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.ustanavlivayte_zheloba_s_uklonom'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.kronshteyny_montiruyutsya_cherez_kazhdye'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.na_kazhdye_10_m'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.ispolzuyte_germetik_dlya_soedineniy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.ustanavlivayte_zheloba_s_uklonom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.kronshteyny_montiruyutsya_cherez_kazhdye'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.na_kazhdye_10_m'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.roofing.ispolzuyte_germetik_dlya_soedineniy'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalGutters),
       accentColor: kCalculatorAccentColor,

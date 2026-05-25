@@ -8,7 +8,7 @@ import '../usecases/canonical_bridge.dart';
 import '../usecases/concrete_canonical_adapter.dart';
 import 'calculator_constants.dart';
 
-final concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
+const concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
   id: 'concrete_universal',
   titleKey: 'calculator.concrete_universal.title',
   descriptionKey: 'calculator.concrete_universal.description',
@@ -17,7 +17,7 @@ final concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
   tags: ['бетон', 'замес', 'цемент', 'песок', 'щебень', 'concrete'],
   accentColor: kCalculatorAccentColor,
   useCase: CanonicalBridgeUseCase(calculateCanonicalConcrete),
-  fields: const [
+  fields: [
     CalculatorField(
       key: 'concreteVolume',
       labelKey: 'input.concreteVolume',
@@ -63,7 +63,7 @@ final concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
       required: false,
     ),
   ],
-  beforeHints: const [
+  beforeHints: [
     CalculatorHint(
       type: HintType.tip,
       messageKey: 'hint.concrete.before.reserve',
@@ -73,7 +73,7 @@ final concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
       messageKey: 'hint.concrete.before.grade',
     ),
   ],
-  afterHints: const [
+  afterHints: [
     CalculatorHint(
       type: HintType.important,
       messageKey: 'hint.concrete.after.curing',

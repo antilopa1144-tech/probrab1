@@ -10,7 +10,7 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: CalculatorScaffold(
+          child: const CalculatorScaffold(
             title: 'Test Calculator',
             accentColor: Colors.blue,
             children: [
@@ -28,7 +28,7 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: CalculatorScaffold(
+          child: const CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.green,
             children: [],
@@ -44,7 +44,7 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: CalculatorScaffold(
+          child: const CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             children: [],
@@ -60,7 +60,7 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: CalculatorScaffold(
+          child: const CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             showBackButton: false,
@@ -97,7 +97,7 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: CalculatorScaffold(
+          child: const CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             children: [
@@ -160,7 +160,7 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: CalculatorScaffold(
+          child: const CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             bottomNavigationBar: BottomAppBar(
@@ -179,7 +179,7 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: CalculatorScaffold(
+          child: const CalculatorScaffold(
             title: 'Title',
             accentColor: Colors.blue,
             bodyPadding: EdgeInsets.all(32),
@@ -199,7 +199,7 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: CalculatorScaffoldSimple(
+          child: const CalculatorScaffoldSimple(
             title: 'Simple Calculator',
             accentColor: Colors.orange,
             children: [
@@ -238,7 +238,7 @@ void main() {
       setTestViewportSize(tester);
       await tester.pumpWidget(
         createTestApp(
-          child: CalculatorScaffoldSimple(
+          child: const CalculatorScaffoldSimple(
             title: 'Title',
             accentColor: Colors.teal,
             bodyPadding: EdgeInsets.symmetric(horizontal: 24),

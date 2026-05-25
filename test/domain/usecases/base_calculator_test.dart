@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:probrab_ai/core/exceptions/calculation_exception.dart';
 import 'package:probrab_ai/data/models/price_item.dart';
 import 'package:probrab_ai/domain/models/calculator_constant.dart';
 import 'package:probrab_ai/domain/usecases/base_calculator.dart';

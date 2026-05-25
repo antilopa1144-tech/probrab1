@@ -17,14 +17,14 @@ import 'calculator_constants.dart';
 /// - Ондулин
 /// - Шифер
 /// - Керамическая черепица
-final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
+const unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
   id: 'roofing_unified',
   titleKey: 'calculator.roofing_unified.title',
   descriptionKey: 'calculator.roofing_unified.description',
   category: CalculatorCategory.exterior,
   subCategoryKey: 'subcategory.roofing',
   fields: [
-    const CalculatorField(
+    CalculatorField(
       key: 'roofingType',
       labelKey: 'input.roofingType',
       unitType: UnitType.pieces,
@@ -41,7 +41,7 @@ final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
         FieldOption(value: 5, labelKey: 'input.roofingType.ceramicTile'),
       ],
     ),
-    const CalculatorField(
+    CalculatorField(
       key: 'area',
       labelKey: 'input.area',
       unitType: UnitType.squareMeters,
@@ -52,7 +52,7 @@ final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
       required: true,
       order: 2,
     ),
-    const CalculatorField(
+    CalculatorField(
       key: 'slope',
       labelKey: 'input.slope',
       unitType: UnitType.degrees,
@@ -63,7 +63,7 @@ final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
       required: true,
       order: 3,
     ),
-    const CalculatorField(
+    CalculatorField(
       key: 'ridgeLength',
       labelKey: 'input.ridgeLength',
       unitType: UnitType.meters,
@@ -74,7 +74,7 @@ final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
       required: false,
       order: 4,
     ),
-    const CalculatorField(
+    CalculatorField(
       key: 'valleyLength',
       labelKey: 'input.valleyLength',
       unitType: UnitType.meters,
@@ -85,7 +85,7 @@ final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
       required: false,
       order: 5,
     ),
-    const CalculatorField(
+    CalculatorField(
       key: 'sheetWidth',
       labelKey: 'input.sheetWidth',
       unitType: UnitType.meters,
@@ -96,7 +96,7 @@ final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
       required: false,
       order: 6,
     ),
-    const CalculatorField(
+    CalculatorField(
       key: 'sheetLength',
       labelKey: 'input.sheetLength',
       unitType: UnitType.meters,
@@ -109,21 +109,21 @@ final unifiedRoofingCalculatorV2 = CalculatorDefinitionV2(
     ),
   ],
   beforeHints: [
-    const CalculatorHint(
+    CalculatorHint(
       type: HintType.tip,
       messageKey: 'hint.roofing.uchityvayte_uklon_kryshi_pri',
     ),
-    const CalculatorHint(
+    CalculatorHint(
       type: HintType.tip,
       messageKey: 'hint.roofing.ne_zabudte_pro_gidroizolyatsiyu',
     ),
-    const CalculatorHint(
+    CalculatorHint(
       type: HintType.tip,
       messageKey: 'hint.roofing.ukladyvayte_listy_s_nahlestom',
     ),
   ],
   afterHints: [
-    const CalculatorHint(
+    CalculatorHint(
       type: HintType.tip,
       messageKey: 'hint.roofing.ispolzuyte_spetsialnye_samorezy_s',
     ),

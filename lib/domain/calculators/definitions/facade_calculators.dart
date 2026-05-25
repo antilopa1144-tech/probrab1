@@ -17,14 +17,14 @@ import '../../usecases/terrace_canonical_adapter.dart';
 // insulation_canonical_adapter.dart — больше не используется (insulation_mineral_wool удалён)
 
 final List<CalculatorDefinitionV2> facadeCalculators = [
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'exterior_brick',
       titleKey: 'calculator.exterior_brick.title',
       descriptionKey: 'calculator.exterior_brick.description',
       category: CalculatorCategory.exterior,
       subCategoryKey: 'subcategory.brick_facing',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -38,7 +38,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'thickness',
           labelKey: 'input.thickness',
           unitType: UnitType.meters,
@@ -52,7 +52,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'windowsArea',
           labelKey: 'input.windowsArea',
           unitType: UnitType.squareMeters,
@@ -66,7 +66,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: false,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'doorsArea',
           labelKey: 'input.doorsArea',
           unitType: UnitType.squareMeters,
@@ -80,7 +80,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: false,
           order: 4,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'perimeter',
           labelKey: 'input.perimeter',
           unitType: UnitType.meters,
@@ -94,7 +94,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 5,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'wallHeight',
           labelKey: 'input.wallHeight',
           unitType: UnitType.meters,
@@ -108,7 +108,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 6,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'workingConditions',
           labelKey: 'input.workingConditions',
           unitType: UnitType.pieces,
@@ -127,17 +127,17 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ispolzuyte_oblitsovochnyy_kirpich_s'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.armiruyte_cherez_kazhdye_5'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.proveryayte_vertikalnost_kazhdogo_ryada'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.zaschitite_kladku_ot_dozhdya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ispolzuyte_oblitsovochnyy_kirpich_s'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.armiruyte_cherez_kazhdye_5'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.proveryayte_vertikalnost_kazhdogo_ryada'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.zaschitite_kladku_ot_dozhdya'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ispolzuyte_oblitsovochnyy_kirpich_s'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.armiruyte_cherez_kazhdye_5'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.proveryayte_vertikalnost_kazhdogo_ryada'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.zaschitite_kladku_ot_dozhdya'),
-        const CalculatorHint(
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ispolzuyte_oblitsovochnyy_kirpich_s'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.armiruyte_cherez_kazhdye_5'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.proveryayte_vertikalnost_kazhdogo_ryada'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.zaschitite_kladku_ot_dozhdya'),
+        CalculatorHint(
           type: HintType.warning,
           messageKey: 'hint.brick.cold_weather_warning',
           condition: HintCondition(
@@ -159,14 +159,14 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         'brick',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'exterior_facade_panels',
       titleKey: 'calculator.exterior_facade_panels.title',
       descriptionKey: 'calculator.exterior_facade_panels.description',
       category: CalculatorCategory.exterior,
       subCategoryKey: 'subcategory.facade_panels',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -180,7 +180,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'panelWidth',
           labelKey: 'input.panelWidth',
           unitType: UnitType.centimeters,
@@ -194,7 +194,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'panelHeight',
           labelKey: 'input.panelHeight',
           unitType: UnitType.centimeters,
@@ -208,7 +208,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'perimeter',
           labelKey: 'input.perimeter',
           unitType: UnitType.meters,
@@ -224,14 +224,14 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.fasadnye_paneli_dolgovechny_i'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ispolzuyte_kachestvennye_krepleniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ostavlyayte_zazor_dlya_temperaturnogo'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.fasadnye_paneli_dolgovechny_i'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ispolzuyte_kachestvennye_krepleniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ostavlyayte_zazor_dlya_temperaturnogo'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.fasadnye_paneli_dolgovechny_i'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ispolzuyte_kachestvennye_krepleniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ostavlyayte_zazor_dlya_temperaturnogo'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.fasadnye_paneli_dolgovechny_i'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ispolzuyte_kachestvennye_krepleniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ostavlyayte_zazor_dlya_temperaturnogo'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalFacadePanels),
       accentColor: kCalculatorAccentColor,
@@ -246,14 +246,14 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         'tag.naruzhnaya_otdelka',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'fence',
       titleKey: 'calculator.fence.title',
       descriptionKey: 'calculator.fence.description',
       category: CalculatorCategory.exterior,
       subCategoryKey: 'subcategory.fences',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'fenceLength',
           labelKey: 'input.length',
           unitType: UnitType.meters,
@@ -267,7 +267,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'fenceHeight',
           labelKey: 'input.height',
           unitType: UnitType.meters,
@@ -281,7 +281,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'postSpacing',
           labelKey: 'input.postSpacing',
           unitType: UnitType.meters,
@@ -295,7 +295,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: false,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'fenceType',
           labelKey: 'input.fenceType',
           unitType: UnitType.pieces,
@@ -311,7 +311,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
             FieldOption(value: 2.0, labelKey: 'input.fenceType.chainlink'),
           ],
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'gates',
           labelKey: 'input.gates',
           unitType: UnitType.pieces,
@@ -325,7 +325,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: false,
           order: 4,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'wickets',
           labelKey: 'input.wickets',
           unitType: UnitType.pieces,
@@ -341,20 +341,20 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.stolby_ustanavlivayutsya_na_glubinu'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.dlya_proflista_ispolzuyte_otsinkovannye'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.derevyannyy_zabor_trebuet_obrabotki'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.kirpichnyy_zabor_nuzhdaetsya_v'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.rasstoyanie_mezhdu_stolbami_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.vorota_i_kalitki_dolzhny'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.stolby_ustanavlivayutsya_na_glubinu'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.dlya_proflista_ispolzuyte_otsinkovannye'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.derevyannyy_zabor_trebuet_obrabotki'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.kirpichnyy_zabor_nuzhdaetsya_v'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.rasstoyanie_mezhdu_stolbami_2'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.vorota_i_kalitki_dolzhny'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.stolby_ustanavlivayutsya_na_glubinu'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.dlya_proflista_ispolzuyte_otsinkovannye'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.derevyannyy_zabor_trebuet_obrabotki'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.kirpichnyy_zabor_nuzhdaetsya_v'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.rasstoyanie_mezhdu_stolbami_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.vorota_i_kalitki_dolzhny'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.stolby_ustanavlivayutsya_na_glubinu'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.dlya_proflista_ispolzuyte_otsinkovannye'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.derevyannyy_zabor_trebuet_obrabotki'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.kirpichnyy_zabor_nuzhdaetsya_v'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.rasstoyanie_mezhdu_stolbami_2'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.vorota_i_kalitki_dolzhny'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalFence),
       accentColor: kCalculatorAccentColor,
@@ -366,14 +366,14 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         'fence',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'stairs',
       titleKey: 'calculator.stairs.title',
       descriptionKey: 'calculator.stairs.description',
       category: CalculatorCategory.exterior,
       subCategoryKey: 'subcategory.stairs',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'floorHeight',
           labelKey: 'input.floorHeight',
           unitType: UnitType.meters,
@@ -387,7 +387,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'stepHeight',
           labelKey: 'input.stepHeight',
           unitType: UnitType.meters,
@@ -401,7 +401,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'stepWidth',
           labelKey: 'input.stepWidth',
           unitType: UnitType.meters,
@@ -415,7 +415,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'stepCount',
           labelKey: 'input.stepCount',
           unitType: UnitType.pieces,
@@ -429,7 +429,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: false,
           order: 4,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'width',
           labelKey: 'input.width',
           unitType: UnitType.meters,
@@ -443,7 +443,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 5,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'materialType',
           labelKey: 'input.type',
           unitType: UnitType.pieces,
@@ -458,22 +458,22 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.vysota_stupeni_dolzhna_byt'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.shirina_prostupi_stupeni_dolzhna'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.shirina_lestnitsy_dlya_zhilyh'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.dlya_derevyannoy_lestnitsy_ispolzuyte'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.betonnaya_lestnitsa_trebuet_armirovaniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.perila_dolzhny_byt_na'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.balyasiny_ustanavlivayutsya_s_shagom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.vysota_stupeni_dolzhna_byt'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.shirina_prostupi_stupeni_dolzhna'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.shirina_lestnitsy_dlya_zhilyh'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.dlya_derevyannoy_lestnitsy_ispolzuyte'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.betonnaya_lestnitsa_trebuet_armirovaniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.perila_dolzhny_byt_na'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.balyasiny_ustanavlivayutsya_s_shagom'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.vysota_stupeni_dolzhna_byt'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.shirina_prostupi_stupeni_dolzhna'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.shirina_lestnitsy_dlya_zhilyh'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.dlya_derevyannoy_lestnitsy_ispolzuyte'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.betonnaya_lestnitsa_trebuet_armirovaniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.perila_dolzhny_byt_na'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.balyasiny_ustanavlivayutsya_s_shagom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.vysota_stupeni_dolzhna_byt'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.shirina_prostupi_stupeni_dolzhna'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.shirina_lestnitsy_dlya_zhilyh'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.dlya_derevyannoy_lestnitsy_ispolzuyte'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.betonnaya_lestnitsa_trebuet_armirovaniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.perila_dolzhny_byt_na'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.balyasiny_ustanavlivayutsya_s_shagom'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalStairs),
       accentColor: kCalculatorAccentColor,
@@ -485,14 +485,14 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         'tag.lestnitsy',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'terrace',
       titleKey: 'calculator.terrace.title',
       descriptionKey: 'calculator.terrace.description',
       category: CalculatorCategory.exterior,
       subCategoryKey: 'subcategory.terrace_veranda',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -506,7 +506,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'floorType',
           labelKey: 'input.floorType',
           unitType: UnitType.pieces,
@@ -519,7 +519,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'railing',
           labelKey: 'input.railing',
           unitType: UnitType.meters,
@@ -533,7 +533,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: false,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'roof',
           labelKey: 'input.roof',
           unitType: UnitType.meters,
@@ -547,7 +547,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
           required: false,
           order: 4,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'roofType',
           labelKey: 'input.roofType',
           unitType: UnitType.pieces,
@@ -562,20 +562,20 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.terrasnaya_doska_deking_ustoychiva'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.plitka_dlya_terrasy_dolzhna'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ograzhdenie_obespechivaet_bezopasnost_osobenno'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.krovlya_zaschischaet_ot_dozhdya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.polikarbonat_propuskaet_svet_i'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.stolby_dlya_krovli_dolzhny'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.terrasnaya_doska_deking_ustoychiva'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.plitka_dlya_terrasy_dolzhna'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ograzhdenie_obespechivaet_bezopasnost_osobenno'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.krovlya_zaschischaet_ot_dozhdya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.polikarbonat_propuskaet_svet_i'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.stolby_dlya_krovli_dolzhny'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.terrasnaya_doska_deking_ustoychiva'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.plitka_dlya_terrasy_dolzhna'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ograzhdenie_obespechivaet_bezopasnost_osobenno'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.krovlya_zaschischaet_ot_dozhdya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.polikarbonat_propuskaet_svet_i'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.stolby_dlya_krovli_dolzhny'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.terrasnaya_doska_deking_ustoychiva'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.plitka_dlya_terrasy_dolzhna'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ograzhdenie_obespechivaet_bezopasnost_osobenno'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.krovlya_zaschischaet_ot_dozhdya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.polikarbonat_propuskaet_svet_i'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.stolby_dlya_krovli_dolzhny'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalTerrace),
       accentColor: kCalculatorAccentColor,

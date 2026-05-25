@@ -305,7 +305,7 @@ CanonicalCalculatorContractResult calculateCanonicalPlaster(
         purchaseQty: spec.materialRule<num>('rule_count').toDouble(),
         category: 'Инструмент',
       ),
-      CanonicalMaterialResult(
+      const CanonicalMaterialResult(
         name: 'Шпатель фасадный (450-600 мм)',
         quantity: 1,
         unit: 'шт',

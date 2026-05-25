@@ -14,14 +14,14 @@ import '../../usecases/blind_area_canonical_adapter.dart';
 import '../../usecases/foundation_slab_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> foundationCalculators = [
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'foundation_basement',
       titleKey: 'calculator.foundation_basement.title',
       descriptionKey: 'calculator.foundation_basement.description',
       category: CalculatorCategory.exterior,
       subCategoryKey: 'subcategory.basement',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -35,7 +35,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'height',
           labelKey: 'input.height',
           unitType: UnitType.meters,
@@ -49,7 +49,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'wallThickness',
           labelKey: 'input.wallThickness',
           unitType: UnitType.meters,
@@ -63,7 +63,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'floorThickness',
           labelKey: 'input.floorThickness',
           unitType: UnitType.meters,
@@ -79,16 +79,16 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.gidroizolyatsiya_po_vsey_ploschadi'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uteplenie_naruzhnoe_epps_minimum'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.armirovanie_sten_vertikalnymi_i'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.ventilyatsiya_obyazatelna_dlya_predotvrascheniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.gidroizolyatsiya_po_vsey_ploschadi'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uteplenie_naruzhnoe_epps_minimum'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.armirovanie_sten_vertikalnymi_i'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.ventilyatsiya_obyazatelna_dlya_predotvrascheniya'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.gidroizolyatsiya_po_vsey_ploschadi'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uteplenie_naruzhnoe_epps_minimum'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.armirovanie_sten_vertikalnymi_i'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.ventilyatsiya_obyazatelna_dlya_predotvrascheniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.gidroizolyatsiya_po_vsey_ploschadi'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uteplenie_naruzhnoe_epps_minimum'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.armirovanie_sten_vertikalnymi_i'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.ventilyatsiya_obyazatelna_dlya_predotvrascheniya'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalBasement),
       accentColor: kCalculatorAccentColor,
@@ -102,14 +102,14 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
         'foundation_basement',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'foundation_blind_area',
       titleKey: 'calculator.foundation_blind_area.title',
       descriptionKey: 'calculator.foundation_blind_area.description',
       category: CalculatorCategory.exterior,
       subCategoryKey: 'subcategory.blind_area',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -123,7 +123,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'width',
           labelKey: 'input.width',
           unitType: UnitType.meters,
@@ -138,7 +138,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'thickness',
           labelKey: 'input.thickness',
           unitType: UnitType.millimeters,
@@ -152,7 +152,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'materialType',
           labelKey: 'input.materialType',
           unitType: UnitType.pieces,
@@ -165,7 +165,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
           required: false,
           order: 4,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'insulation',
           labelKey: 'input.insulation',
           unitType: UnitType.meters,
@@ -180,16 +180,16 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.minimalnaya_shirina_60_sm'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uklon_ot_doma_1'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.peschano_graviynaya_podushka_15'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.kompensatsionnyy_shov_mezhdu_otmostkoy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.minimalnaya_shirina_60_sm'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uklon_ot_doma_1'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.peschano_graviynaya_podushka_15'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.kompensatsionnyy_shov_mezhdu_otmostkoy'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.minimalnaya_shirina_60_sm'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uklon_ot_doma_1'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.peschano_graviynaya_podushka_15'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.kompensatsionnyy_shov_mezhdu_otmostkoy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.minimalnaya_shirina_60_sm'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uklon_ot_doma_1'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.peschano_graviynaya_podushka_15'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.kompensatsionnyy_shov_mezhdu_otmostkoy'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalBlindArea),
       accentColor: kCalculatorAccentColor,
@@ -204,14 +204,14 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
         'tag.otmostka',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'foundation_slab',
       titleKey: 'calculator.foundation_slab.title',
       descriptionKey: 'calculator.foundation_slab.description',
       category: CalculatorCategory.exterior,
       subCategoryKey: 'subcategory.slab',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -225,7 +225,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'thickness',
           labelKey: 'input.thickness',
           unitType: UnitType.meters,
@@ -240,7 +240,7 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'insulation',
           labelKey: 'input.insulationThickness',
           unitType: UnitType.meters,
@@ -256,18 +256,18 @@ final List<CalculatorDefinitionV2> foundationCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.plita_tolschinoy_minimum_200'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.obyazatelna_peschano_graviynaya_podgotovka'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.gidroizolyatsiya_snizu_i_po'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.armirovanie_dvumya_setkami_v'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uteplitel_epps_pod_plitoy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.plita_tolschinoy_minimum_200'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.obyazatelna_peschano_graviynaya_podgotovka'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.gidroizolyatsiya_snizu_i_po'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.armirovanie_dvumya_setkami_v'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uteplitel_epps_pod_plitoy'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.plita_tolschinoy_minimum_200'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.obyazatelna_peschano_graviynaya_podgotovka'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.gidroizolyatsiya_snizu_i_po'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.armirovanie_dvumya_setkami_v'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uteplitel_epps_pod_plitoy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.plita_tolschinoy_minimum_200'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.obyazatelna_peschano_graviynaya_podgotovka'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.gidroizolyatsiya_snizu_i_po'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.armirovanie_dvumya_setkami_v'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.foundation.uteplitel_epps_pod_plitoy'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalFoundationSlab),
       accentColor: kCalculatorAccentColor,

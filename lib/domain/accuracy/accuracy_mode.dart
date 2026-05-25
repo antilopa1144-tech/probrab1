@@ -4,6 +4,7 @@
 ///  - basic:        normative estimate, minimal practical adjustments
 ///  - realistic:    default mode, accounts for typical renovation conditions
 ///  - professional: cautious mode for complex conditions and reliable procurement
+library;
 
 /// Supported accuracy modes
 enum AccuracyMode { basic, realistic, professional }

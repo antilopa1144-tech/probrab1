@@ -19,14 +19,14 @@ import '../../../usecases/wood_wall_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
   // 1. gypsum_board - Гипсокартон (ГКЛ)
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'gypsum_board',
       titleKey: 'calculator.gypsum_board.title',
       descriptionKey: 'calculator.gypsum_board.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.walls',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -40,7 +40,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'constructionType',
           labelKey: 'input.construction_type',
           unitType: UnitType.pieces,
@@ -56,7 +56,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
             FieldOption(value: 2.0, labelKey: 'input.construction_type.ceiling'),
           ],
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'layers',
           labelKey: 'input.layers',
           unitType: UnitType.pieces,
@@ -70,7 +70,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'gklType',
           labelKey: 'input.gkl_type',
           unitType: UnitType.pieces,
@@ -86,7 +86,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
             FieldOption(value: 2.0, labelKey: 'input.gkl_type.fire'),
           ],
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'useInsulation',
           labelKey: 'input.use_insulation',
           unitType: UnitType.pieces,
@@ -97,7 +97,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: false,
           order: 5,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'wallShape',
           labelKey: 'input.wallShape',
           unitType: UnitType.pieces,
@@ -115,15 +115,15 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.choose_gklv_for_wet'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.step_profiles_60cm'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.use_sealing_tape'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.choose_gklv_for_wet'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.step_profiles_60cm'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.use_sealing_tape'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.screw_depth_1mm'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.joints_offset'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.gap_from_floor'),
-        const CalculatorHint(
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.screw_depth_1mm'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.joints_offset'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.gypsum.gap_from_floor'),
+        CalculatorHint(
           type: HintType.tip,
           messageKey: 'hint.gypsum.tall_wall_use_tn45',
           condition: HintCondition(
@@ -132,7 +132,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
             value: 0,
           ),
         ),
-        const CalculatorHint(
+        CalculatorHint(
           type: HintType.tip,
           messageKey: 'hint.gypsum.partition_add_insulation',
           condition: HintCondition(
@@ -156,14 +156,14 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         'gypsum_board',
       ],
       relatedLinks: [
-        const CalculatorLink(
+        CalculatorLink(
           targetId: 'mixes_putty',
           labelKey: 'link.calculate_putty',
           iconName: 'layers',
           inputMapping: {'totalArea': 'area'},
           showIfResultKey: 'totalArea',
         ),
-        const CalculatorLink(
+        CalculatorLink(
           targetId: 'mixes_primer',
           labelKey: 'link.calculate_primer',
           iconName: 'format_paint',
@@ -174,14 +174,14 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
     ),
 
   // 2. walls_3d_panels - 3D панели
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'walls_3d_panels',
       titleKey: 'calculator.walls_3d_panels.title',
       descriptionKey: 'calculator.walls_3d_panels.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.walls',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.wallArea',
           unitType: UnitType.squareMeters,
@@ -195,7 +195,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'panelSize',
           labelKey: 'input.packArea',
           unitType: UnitType.meters,
@@ -211,14 +211,14 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proverte_rovnost_sten_pered'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nachinayte_montazh_ot_tsentra'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proverte_rovnost_sten_pered'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya_2'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nachinayte_montazh_ot_tsentra'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proverte_rovnost_sten_pered'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nachinayte_montazh_ot_tsentra'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.proverte_rovnost_sten_pered'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_spetsialnyy_kley_dlya_2'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nachinayte_montazh_ot_tsentra'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalPanels3d),
       accentColor: kCalculatorAccentColor,
@@ -235,14 +235,14 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
     ),
 
   // 3. walls_mdf_panels - MDF панели
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'walls_mdf_panels',
       titleKey: 'calculator.walls_mdf_panels.title',
       descriptionKey: 'calculator.walls_mdf_panels.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.walls',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.wallArea',
           unitType: UnitType.squareMeters,
@@ -256,7 +256,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'panelWidth',
           labelKey: 'input.panelWidth',
           unitType: UnitType.meters,
@@ -272,14 +272,14 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.mdf_ne_dlya_vlazhnyh'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obreshetka_s_shagom_40'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.krepite_na_klyaymery_ili'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.mdf_ne_dlya_vlazhnyh'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obreshetka_s_shagom_40'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.krepite_na_klyaymery_ili'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.mdf_ne_dlya_vlazhnyh'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obreshetka_s_shagom_40'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.krepite_na_klyaymery_ili'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.mdf_ne_dlya_vlazhnyh'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obreshetka_s_shagom_40'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.krepite_na_klyaymery_ili'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalMdfPanels),
       accentColor: kCalculatorAccentColor,
@@ -296,14 +296,14 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
     ),
 
   // 4. walls_pvc_panels - PVC панели
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'walls_pvc_panels',
       titleKey: 'calculator.walls_pvc_panels.title',
       descriptionKey: 'calculator.walls_pvc_panels.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.walls',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.wallArea',
           unitType: UnitType.squareMeters,
@@ -317,7 +317,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'panelWidth',
           labelKey: 'input.panelWidth',
           unitType: UnitType.meters,
@@ -333,14 +333,14 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.paneli_ukladyvayte_ot_ugla'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ostavlyayte_temperaturnyy_zazor_5'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_startovyy_i_finishnyy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.paneli_ukladyvayte_ot_ugla'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ostavlyayte_temperaturnyy_zazor_5'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_startovyy_i_finishnyy'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.paneli_ukladyvayte_ot_ugla'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ostavlyayte_temperaturnyy_zazor_5'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_startovyy_i_finishnyy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.paneli_ukladyvayte_ot_ugla'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ostavlyayte_temperaturnyy_zazor_5'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_startovyy_i_finishnyy'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalPvcPanels),
       accentColor: kCalculatorAccentColor,
@@ -357,14 +357,14 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
     ),
 
   // 5. walls_wallpaper - Обои
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'walls_wallpaper',
       titleKey: 'calculator.walls_wallpaper.title',
       descriptionKey: 'calculator.walls_wallpaper.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.walls',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -378,7 +378,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'rollWidth',
           labelKey: 'input.rollWidth',
           unitType: UnitType.meters,
@@ -392,7 +392,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'rollLength',
           labelKey: 'input.rollLength',
           unitType: UnitType.meters,
@@ -406,7 +406,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'rapport',
           labelKey: 'input.rapport',
           hintKey: 'input.rapport.hint',
@@ -421,7 +421,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: false,
           order: 4,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'wallHeight',
           labelKey: 'input.wallHeight',
           unitType: UnitType.meters,
@@ -435,7 +435,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: true,
           order: 5,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'windowsArea',
           labelKey: 'input.windowsArea',
           unitType: UnitType.squareMeters,
@@ -449,7 +449,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: false,
           order: 6,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'doorsArea',
           labelKey: 'input.doorsArea',
           unitType: UnitType.squareMeters,
@@ -463,7 +463,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: false,
           order: 7,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'wallpaperType',
           labelKey: 'input.wallpaperType',
           unitType: UnitType.pieces,
@@ -481,12 +481,12 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.wallpaper.check_batch_number'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.wallpaper.start_from_window'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.wallpaper.check_batch_number'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.wallpaper.start_from_window'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.wallpaper.temperature_humidity'),
-        const CalculatorHint(
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.wallpaper.temperature_humidity'),
+        CalculatorHint(
           type: HintType.tip,
           messageKey: 'hint.wallpaper.vinyl_apply_to_wall',
           condition: HintCondition(
@@ -495,7 +495,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
             value: 2.0,
           ),
         ),
-        const CalculatorHint(
+        CalculatorHint(
           type: HintType.tip,
           messageKey: 'hint.wallpaper.fleece_moisture_ok',
           condition: HintCondition(
@@ -519,14 +519,14 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
     ),
 
   // 6. walls_wood - Деревянная отделка (вагонка)
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'walls_wood',
       titleKey: 'calculator.walls_wood.title',
       descriptionKey: 'calculator.walls_wood.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.walls',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.wallArea',
           unitType: UnitType.squareMeters,
@@ -540,7 +540,7 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'boardWidth',
           labelKey: 'input.boardWidth',
           unitType: UnitType.meters,
@@ -556,14 +556,14 @@ final List<CalculatorDefinitionV2> wallsDrywallCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dayte_vagonke_akklimatizirovatsya_48'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obrabotayte_antiseptikom_pered_montazhom'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.krepite_na_klyaymery_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dayte_vagonke_akklimatizirovatsya_48'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obrabotayte_antiseptikom_pered_montazhom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.krepite_na_klyaymery_dlya'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dayte_vagonke_akklimatizirovatsya_48'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obrabotayte_antiseptikom_pered_montazhom'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.krepite_na_klyaymery_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dayte_vagonke_akklimatizirovatsya_48'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.obrabotayte_antiseptikom_pered_montazhom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.krepite_na_klyaymery_dlya'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalWoodWall),
       accentColor: kCalculatorAccentColor,

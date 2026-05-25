@@ -19,14 +19,14 @@ import '../../../usecases/decor_plaster_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
   // 1. mixes_plaster - Штукатурка
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'mixes_plaster',
       titleKey: 'calculator.mixes_plaster.title',
       descriptionKey: 'calculator.mixes_plaster.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.leveling_mix',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.wallArea',
           hintKey: 'input.wallArea.hint',
@@ -41,7 +41,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'thickness',
           labelKey: 'input.plaster_thickness',
           hintKey: 'input.plaster_thickness.hint',
@@ -56,7 +56,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'type',
           labelKey: 'input.plaster_type',
           unitType: UnitType.pieces,
@@ -71,7 +71,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
             FieldOption(value: 2.0, labelKey: 'input.plaster_type.cement'),
           ],
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'substrateType',
           labelKey: 'input.substrateType',
           hintKey: 'input.substrateType.hint',
@@ -90,7 +90,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
             FieldOption(value: 5.0, labelKey: 'input.substrateType.foam_concrete'),
           ],
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'wallEvenness',
           labelKey: 'input.wallEvenness',
           hintKey: 'input.wallEvenness.hint',
@@ -109,12 +109,12 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.plaster.measure_walls'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.plaster.gypsum_for_interior'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.plaster.cement_for_wet'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.plaster.measure_walls'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.plaster.gypsum_for_interior'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.plaster.cement_for_wet'),
       ],
       afterHints: [
-        const CalculatorHint(
+        CalculatorHint(
           type: HintType.warning,
           messageKey: 'hint.plaster.thick_layer',
           condition: HintCondition(
@@ -123,7 +123,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
             value: 1,
           ),
         ),
-        const CalculatorHint(
+        CalculatorHint(
           type: HintType.tip,
           messageKey: 'hint.plaster.obryzg_recommended',
           condition: HintCondition(
@@ -146,13 +146,13 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         'mixes_plaster',
       ],
       relatedLinks: [
-        const CalculatorLink(
+        CalculatorLink(
           targetId: 'mixes_putty',
           labelKey: 'link.calculate_putty',
           iconName: 'layers',
           inputMapping: {'area': 'area'},
         ),
-        const CalculatorLink(
+        CalculatorLink(
           targetId: 'mixes_primer',
           labelKey: 'link.calculate_primer',
           iconName: 'format_paint',
@@ -162,14 +162,14 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
     ),
 
   // 2. mixes_primer - Грунтовка
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'mixes_primer',
       titleKey: 'calculator.mixes_primer.title',
       descriptionKey: 'calculator.mixes_primer.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.leveling_mix',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -183,7 +183,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'layers',
           labelKey: 'input.layers',
           unitType: UnitType.pieces,
@@ -197,7 +197,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'type',
           labelKey: 'input.type',
           unitType: UnitType.pieces,
@@ -210,7 +210,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'canSize',
           labelKey: 'input.canSize',
           hintKey: 'input.canSize.hint',
@@ -230,14 +230,14 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.gruntovka_uluchshaet_adgeziyu_materialov'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.gruntovka_glubokogo_proniknoveniya_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_ravnomernym_sloem'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.gruntovka_uluchshaet_adgeziyu_materialov'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.gruntovka_glubokogo_proniknoveniya_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_ravnomernym_sloem'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.gruntovka_uluchshaet_adgeziyu_materialov'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.gruntovka_glubokogo_proniknoveniya_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_ravnomernym_sloem'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.gruntovka_uluchshaet_adgeziyu_materialov'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.gruntovka_glubokogo_proniknoveniya_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_ravnomernym_sloem'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalPrimer),
       accentColor: kCalculatorAccentColor,
@@ -253,14 +253,14 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
     ),
 
   // 3. mixes_putty - Шпатлёвка
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'mixes_putty',
       titleKey: 'calculator.mixes_putty.title',
       descriptionKey: 'calculator.mixes_putty.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.leveling_mix',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -274,7 +274,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'type',
           labelKey: 'input.putty_type',
           unitType: UnitType.pieces,
@@ -289,7 +289,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
             FieldOption(value: 2.0, labelKey: 'input.putty_type.finish'),
           ],
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'qualityClass',
           labelKey: 'input.qualityClass',
           unitType: UnitType.pieces,
@@ -305,7 +305,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
             FieldOption(value: 3.0, labelKey: 'input.qualityClass.premium'),
           ],
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'layers',
           labelKey: 'input.layers',
           unitType: UnitType.pieces,
@@ -321,14 +321,14 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.startovaya_shpaklevka_dlya_vyravnivaniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_tonkimi_sloyami'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.shlifuyte_mezhdu_sloyami'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.startovaya_shpaklevka_dlya_vyravnivaniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_tonkimi_sloyami'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.shlifuyte_mezhdu_sloyami'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.startovaya_shpaklevka_dlya_vyravnivaniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_tonkimi_sloyami'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.shlifuyte_mezhdu_sloyami'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.startovaya_shpaklevka_dlya_vyravnivaniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_tonkimi_sloyami'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.shlifuyte_mezhdu_sloyami'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalPutty),
       accentColor: kCalculatorAccentColor,
@@ -342,21 +342,21 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         'mixes_putty',
       ],
       relatedLinks: [
-        const CalculatorLink(
+        CalculatorLink(
           targetId: 'paint_universal',
           labelKey: 'link.calculate_paint',
           iconName: 'brush',
           inputMapping: {'area': 'wallArea'},
           staticInputs: {'paintType': 0, 'inputMode': 0},
         ),
-        const CalculatorLink(
+        CalculatorLink(
           targetId: 'walls_wallpaper',
           labelKey: 'link.calculate_wallpaper',
           iconName: 'wallpaper',
           inputMapping: {'area': 'area'},
           staticInputs: {'inputMode': 1},
         ),
-        const CalculatorLink(
+        CalculatorLink(
           targetId: 'mixes_primer',
           labelKey: 'link.calculate_primer',
           iconName: 'format_paint',
@@ -366,14 +366,14 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
     ),
 
   // 4. mixes_tile_glue - Плиточный клей
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'mixes_tile_glue',
       titleKey: 'calculator.mixes_tile_glue.title',
       descriptionKey: 'calculator.mixes_tile_glue.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.leveling_mix',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -387,7 +387,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'tileSize',
           labelKey: 'input.tileSize',
           unitType: UnitType.meters,
@@ -401,7 +401,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'layerThickness',
           labelKey: 'input.layerThickness',
           hintKey: 'input.glue_thickness.hint',
@@ -418,14 +418,14 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.rashod_zavisit_ot_razmera'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_zubchatyy_shpatel'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_kley_na_osnovanie'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.rashod_zavisit_ot_razmera'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_zubchatyy_shpatel'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_kley_na_osnovanie'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.rashod_zavisit_ot_razmera'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_zubchatyy_shpatel'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_kley_na_osnovanie'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.rashod_zavisit_ot_razmera'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_zubchatyy_shpatel'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.nanosite_kley_na_osnovanie'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalTileAdhesive),
       accentColor: kCalculatorAccentColor,
@@ -442,14 +442,14 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
     ),
 
   // 5. walls_decor_plaster - Декоративная штукатурка
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'walls_decor_plaster',
       titleKey: 'calculator.walls_decor_plaster.title',
       descriptionKey: 'calculator.walls_decor_plaster.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.walls',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -463,7 +463,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'thickness',
           labelKey: 'input.thickness',
           unitType: UnitType.millimeters,
@@ -477,7 +477,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'windowsArea',
           labelKey: 'input.windowsArea',
           unitType: UnitType.squareMeters,
@@ -491,7 +491,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: false,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'doorsArea',
           labelKey: 'input.doorsArea',
           unitType: UnitType.squareMeters,
@@ -505,7 +505,7 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
           required: false,
           order: 4,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'plasterType',
           labelKey: 'input.plasterType',
           unitType: UnitType.pieces,
@@ -526,14 +526,14 @@ final List<CalculatorDefinitionV2> wallsPlasterCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_gruntovku_glubokogo_proniknoveniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.vozmite_shpateli_i_kelmy'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dlya_venetsianskoy_shtukaturki_nuzhna'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_gruntovku_glubokogo_proniknoveniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.vozmite_shpateli_i_kelmy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dlya_venetsianskoy_shtukaturki_nuzhna'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_gruntovku_glubokogo_proniknoveniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.vozmite_shpateli_i_kelmy'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dlya_venetsianskoy_shtukaturki_nuzhna'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.ispolzuyte_gruntovku_glubokogo_proniknoveniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.vozmite_shpateli_i_kelmy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.walls.dlya_venetsianskoy_shtukaturki_nuzhna'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalDecorPlaster),
       accentColor: kCalculatorAccentColor,

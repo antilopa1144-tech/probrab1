@@ -15,14 +15,14 @@ import '../../usecases/electric_canonical_adapter.dart';
 import '../../usecases/ventilation_canonical_adapter.dart';
 
 final List<CalculatorDefinitionV2> engineeringCalculators = [
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'engineering_electrics',
       titleKey: 'calculator.engineering_electrics.title',
       descriptionKey: 'calculator.engineering_electrics.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.electrics',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -36,7 +36,7 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'rooms',
           labelKey: 'input.rooms',
           unitType: UnitType.pieces,
@@ -50,7 +50,7 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'sockets',
           labelKey: 'input.sockets',
           unitType: UnitType.pieces,
@@ -64,7 +64,7 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
           required: false,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'switches',
           labelKey: 'input.switches',
           unitType: UnitType.pieces,
@@ -80,16 +80,16 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.raboty_dolzhen_vypolnyat_kvalifitsirovannyy'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ispolzuyte_kabel_secheniem_ne'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanovite_uzo_dlya_zaschity'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.proverte_vse_soedineniya_pered'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.raboty_dolzhen_vypolnyat_kvalifitsirovannyy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ispolzuyte_kabel_secheniem_ne'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanovite_uzo_dlya_zaschity'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.proverte_vse_soedineniya_pered'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.raboty_dolzhen_vypolnyat_kvalifitsirovannyy'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ispolzuyte_kabel_secheniem_ne'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanovite_uzo_dlya_zaschity'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.proverte_vse_soedineniya_pered'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.raboty_dolzhen_vypolnyat_kvalifitsirovannyy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ispolzuyte_kabel_secheniem_ne'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanovite_uzo_dlya_zaschity'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.proverte_vse_soedineniya_pered'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalElectric),
       accentColor: kCalculatorAccentColor,
@@ -105,14 +105,14 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
     ),
   // engineering_heating удалён — дубль floors_warm (тёплый пол)
   // engineering_plumbing удалён — слишком общий, не востребован
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'engineering_ventilation',
       titleKey: 'calculator.engineering_ventilation.title',
       descriptionKey: 'calculator.engineering_ventilation.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.ventilation',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -126,7 +126,7 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'rooms',
           labelKey: 'input.rooms',
           unitType: UnitType.pieces,
@@ -140,7 +140,7 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'ceilingHeight',
           labelKey: 'input.ceilingHeight',
           unitType: UnitType.meters,
@@ -156,14 +156,14 @@ final List<CalculatorDefinitionV2> engineeringCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.vozduhoobmen_minimum_3_m'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanavlivayte_reshetki_vverhu_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.proverte_tyagu_pered_montazhom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.vozduhoobmen_minimum_3_m'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanavlivayte_reshetki_vverhu_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.proverte_tyagu_pered_montazhom'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.vozduhoobmen_minimum_3_m'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanavlivayte_reshetki_vverhu_dlya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.proverte_tyagu_pered_montazhom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.vozduhoobmen_minimum_3_m'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.ustanavlivayte_reshetki_vverhu_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.engineering.proverte_tyagu_pered_montazhom'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalVentilation),
       accentColor: kCalculatorAccentColor,

@@ -21,14 +21,14 @@ import '../../usecases/tile_grout_canonical_adapter.dart';
 // calculate_floor_insulation.dart - удалён (floors_insulation не востребован)
 
 final List<CalculatorDefinitionV2> flooringCalculators = [
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'floors_laminate',
       titleKey: 'calculator.floors_laminate.title',
       descriptionKey: 'calculator.floors_laminate.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.floors',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -42,7 +42,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'packArea',
           labelKey: 'input.packArea',
           hintKey: 'input.packArea.hint',
@@ -57,7 +57,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'underlayThickness',
           labelKey: 'input.underlayThickness',
           hintKey: 'input.underlayThickness.hint',
@@ -72,7 +72,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'layoutPattern',
           labelKey: 'input.layoutPattern',
           unitType: UnitType.pieces,
@@ -91,17 +91,17 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.vozmite_klinya_dlya_kompensatsionnogo'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podlozhku_vybirayte_tolschinoy_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.krestiki_ne_nuzhny_no'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.proverte_rovnost_osnovaniya_perepad'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.vozmite_klinya_dlya_kompensatsionnogo'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podlozhku_vybirayte_tolschinoy_2'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.krestiki_ne_nuzhny_no'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.proverte_rovnost_osnovaniya_perepad'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.vozmite_klinya_dlya_kompensatsionnogo'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podlozhku_vybirayte_tolschinoy_2'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.krestiki_ne_nuzhny_no'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.proverte_rovnost_osnovaniya_perepad'),
-        const CalculatorHint(
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.vozmite_klinya_dlya_kompensatsionnogo'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podlozhku_vybirayte_tolschinoy_2'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.krestiki_ne_nuzhny_no'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.proverte_rovnost_osnovaniya_perepad'),
+        CalculatorHint(
           type: HintType.warning,
           messageKey: 'hint.laminate.diagonal_high_waste',
           condition: HintCondition(
@@ -123,14 +123,14 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         'floors_laminate',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'floors_linoleum',
       titleKey: 'calculator.floors_linoleum.title',
       descriptionKey: 'calculator.floors_linoleum.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.floors',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -144,7 +144,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'rollWidth',
           labelKey: 'input.rollWidth',
           hintKey: 'input.rollWidth.hint',
@@ -159,7 +159,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'rollLength',
           labelKey: 'input.rollLength',
           unitType: UnitType.meters,
@@ -173,7 +173,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'overlap',
           labelKey: 'input.overlap',
           hintKey: 'input.overlap.hint',
@@ -190,14 +190,14 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.raskatayte_linoleum_i_dayte'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.obrezhte_izlishki_posle_ukladki'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_dvuhstoronniy_skotch_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.raskatayte_linoleum_i_dayte'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.obrezhte_izlishki_posle_ukladki'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_dvuhstoronniy_skotch_dlya'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.raskatayte_linoleum_i_dayte'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.obrezhte_izlishki_posle_ukladki'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_dvuhstoronniy_skotch_dlya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.raskatayte_linoleum_i_dayte'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.obrezhte_izlishki_posle_ukladki'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_dvuhstoronniy_skotch_dlya'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalLinoleum),
       accentColor: kCalculatorAccentColor,
@@ -211,14 +211,14 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         'linoleum',
       ],
     ),
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'floors_parquet',
       titleKey: 'calculator.floors_parquet.title',
       descriptionKey: 'calculator.floors_parquet.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.floors',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -232,7 +232,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'plankWidth',
           labelKey: 'input.plankWidth',
           unitType: UnitType.centimeters,
@@ -246,7 +246,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'plankLength',
           labelKey: 'input.plankLength',
           unitType: UnitType.meters,
@@ -262,14 +262,14 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.parket_trebuet_akklimatizatsii_48'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_podlozhku_dlya_zvukoizolyatsii'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.lak_nanosite_v_3'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.parket_trebuet_akklimatizatsii_48'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_podlozhku_dlya_zvukoizolyatsii'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.lak_nanosite_v_3'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.parket_trebuet_akklimatizatsii_48'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_podlozhku_dlya_zvukoizolyatsii'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.lak_nanosite_v_3'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.parket_trebuet_akklimatizatsii_48'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_podlozhku_dlya_zvukoizolyatsii'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.lak_nanosite_v_3'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalParquet),
       accentColor: kCalculatorAccentColor,
@@ -284,14 +284,14 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
       ],
     ),
   // Дубликат floors_screed удалён - используется screed_calculator_v2.dart
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'floors_self_leveling',
       titleKey: 'calculator.floors_self_leveling.title',
       descriptionKey: 'calculator.floors_self_leveling.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.floors',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -305,7 +305,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'thickness',
           labelKey: 'input.thickness',
           hintKey: 'input.selfleveling_thickness.hint',
@@ -322,16 +322,16 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.osnovanie_dolzhno_byt_chistym'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_gruntovku_dlya_uluchsheniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.raskatyvayte_smes_igolchatym_valikom'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_hodite_po_polu'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.osnovanie_dolzhno_byt_chistym'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_gruntovku_dlya_uluchsheniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.raskatyvayte_smes_igolchatym_valikom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_hodite_po_polu'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.osnovanie_dolzhno_byt_chistym'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_gruntovku_dlya_uluchsheniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.raskatyvayte_smes_igolchatym_valikom'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_hodite_po_polu'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.osnovanie_dolzhno_byt_chistym'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_gruntovku_dlya_uluchsheniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.raskatyvayte_smes_igolchatym_valikom'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_hodite_po_polu'),
       ],
       useCase: CanonicalBridgeUseCase(calculateCanonicalSelfLeveling),
       accentColor: kCalculatorAccentColor,
@@ -347,14 +347,14 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
       ],
     ),
   // Дубликат floors_tile удалён - используется tile_calculator_v2.dart
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'floors_warm',
       titleKey: 'calculator.floors_warm.title',
       descriptionKey: 'calculator.floors_warm.description',
       category: CalculatorCategory.interior,
       subCategoryKey: 'subcategory.floors',
       fields: [
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -368,7 +368,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           required: true,
           order: 1,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'power',
           labelKey: 'input.power',
           hintKey: 'input.warmfloor_power.hint',
@@ -383,7 +383,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           required: true,
           order: 2,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'type',
           labelKey: 'input.type',
           unitType: UnitType.pieces,
@@ -396,7 +396,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           required: true,
           order: 3,
         ),
-        const CalculatorField(
+        CalculatorField(
           key: 'thermostats',
           labelKey: 'input.thermostats',
           unitType: UnitType.pieces,
@@ -412,18 +412,18 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
         ),
       ],
       beforeHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_ukladyvayte_pod_mebelyu'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_teploizolyatsiyu_dlya_povysheniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podklyuchenie_dolzhen_vypolnyat_kvalifitsirovannyy'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pered_ukladkoy_pokrytiya_proverte'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_ukladyvayte_pod_mebelyu'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_teploizolyatsiyu_dlya_povysheniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podklyuchenie_dolzhen_vypolnyat_kvalifitsirovannyy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pered_ukladkoy_pokrytiya_proverte'),
       ],
       afterHints: [
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_ukladyvayte_pod_mebelyu'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_teploizolyatsiyu_dlya_povysheniya'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podklyuchenie_dolzhen_vypolnyat_kvalifitsirovannyy'),
-        const CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pered_ukladkoy_pokrytiya_proverte'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_ukladyvayte_pod_mebelyu'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_teploizolyatsiyu_dlya_povysheniya'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podklyuchenie_dolzhen_vypolnyat_kvalifitsirovannyy'),
+        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pered_ukladkoy_pokrytiya_proverte'),
       ],
-      useCase: const WarmFloorUnifiedUseCase(),
+      useCase: WarmFloorUnifiedUseCase(),
       accentColor: kCalculatorAccentColor,
       complexity: 2,
       popularity: 10,
@@ -439,7 +439,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
   // floors_insulation удалён - пенопласт/минвата не востребованы
 
   // Затирка для кафеля
-  CalculatorDefinitionV2(
+  const CalculatorDefinitionV2(
       id: 'floors_tile_grout',
       titleKey: 'calculator.floors_tile_grout.title',
       descriptionKey: 'calculator.floors_tile_grout.description',
@@ -447,7 +447,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
       subCategoryKey: 'subcategory.floors',
       fields: [
         // Режим ввода: по размерам или по площади
-        const CalculatorField(
+        CalculatorField(
           key: 'inputMode',
           labelKey: 'input.mode',
           unitType: UnitType.pieces,
@@ -460,7 +460,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           ],
         ),
         // Длина помещения (видна при inputMode=0)
-        const CalculatorField(
+        CalculatorField(
           key: 'length',
           labelKey: 'input.length',
           unitType: UnitType.meters,
@@ -480,7 +480,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           ),
         ),
         // Ширина помещения (видна при inputMode=0)
-        const CalculatorField(
+        CalculatorField(
           key: 'width',
           labelKey: 'input.width',
           unitType: UnitType.meters,
@@ -500,7 +500,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           ),
         ),
         // Площадь (видна при inputMode=1)
-        const CalculatorField(
+        CalculatorField(
           key: 'area',
           labelKey: 'input.area',
           unitType: UnitType.squareMeters,
@@ -520,7 +520,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           ),
         ),
         // Размер плитки (выбор из стандартных)
-        const CalculatorField(
+        CalculatorField(
           key: 'tileSize',
           labelKey: 'input.tileSize',
           hintKey: 'input.tileSize.hint',
@@ -542,7 +542,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           ],
         ),
         // Ширина плитки (видна при tileSize=0 — свой размер)
-        const CalculatorField(
+        CalculatorField(
           key: 'tileWidth',
           labelKey: 'input.tileWidth',
           hintKey: 'input.tileWidth.hint',
@@ -563,7 +563,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           ),
         ),
         // Высота плитки (видна при tileSize=0 — свой размер)
-        const CalculatorField(
+        CalculatorField(
           key: 'tileHeight',
           labelKey: 'input.tileHeight',
           hintKey: 'input.tileHeight.hint',
@@ -584,7 +584,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           ),
         ),
         // Ширина шва (мм)
-        const CalculatorField(
+        CalculatorField(
           key: 'jointWidth',
           labelKey: 'input.jointWidth',
           hintKey: 'input.jointWidth.hint',
@@ -600,7 +600,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           order: 20,
         ),
         // Глубина шва (мм)
-        const CalculatorField(
+        CalculatorField(
           key: 'jointDepth',
           labelKey: 'input.jointDepth',
           hintKey: 'input.jointDepth.hint',
@@ -616,7 +616,7 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           order: 21,
         ),
         // Тип затирки
-        const CalculatorField(
+        CalculatorField(
           key: 'groutType',
           labelKey: 'input.groutType',
           unitType: UnitType.pieces,
@@ -633,12 +633,12 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
           ],
         ),
       ],
-      beforeHints: const [
+      beforeHints: [
         CalculatorHint(type: HintType.tip, messageKey: 'hint.floors_tile_grout.before.clean_joints'),
         CalculatorHint(type: HintType.tip, messageKey: 'hint.floors_tile_grout.before.moisten_joints'),
         CalculatorHint(type: HintType.tip, messageKey: 'hint.floors_tile_grout.before.prepare_tools'),
       ],
-      afterHints: const [
+      afterHints: [
         CalculatorHint(type: HintType.tip, messageKey: 'hint.floors_tile_grout.after.wait_drying'),
         CalculatorHint(type: HintType.tip, messageKey: 'hint.floors_tile_grout.after.wipe_surface'),
         CalculatorHint(type: HintType.tip, messageKey: 'hint.floors_tile_grout.after.seal_if_needed'),
