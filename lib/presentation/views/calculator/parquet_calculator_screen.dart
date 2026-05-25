@@ -353,9 +353,9 @@ class _ParquetCalculatorScreenState extends ConsumerState<ParquetCalculatorScree
       children: [
         Row(
           children: [
-            Expanded(child: CalculatorTextField(label: _loc.translate('parquet_calc.label.width'), value: _roomWidth, onChanged: (v) { _roomWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('parquet_calc.label.width'), value: _roomWidth, onChanged: (v) { _roomWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 30)),
             const SizedBox(width: 12),
-            Expanded(child: CalculatorTextField(label: _loc.translate('parquet_calc.label.length'), value: _roomLength, onChanged: (v) { _roomLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('parquet_calc.label.length'), value: _roomLength, onChanged: (v) { _roomLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 30)),
           ],
         ),
         const SizedBox(height: 12),

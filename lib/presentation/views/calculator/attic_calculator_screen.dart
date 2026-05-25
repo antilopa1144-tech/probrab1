@@ -262,9 +262,9 @@ class _AtticCalculatorScreenState extends ConsumerState<AtticCalculatorScreen>
         children: [
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('attic_calc.label.length'), value: _floorLength, onChanged: (v) { _floorLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('attic_calc.label.length'), value: _floorLength, onChanged: (v) { _floorLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('attic_calc.label.width'), value: _floorWidth, onChanged: (v) { _floorWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 15)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('attic_calc.label.width'), value: _floorWidth, onChanged: (v) { _floorWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
             ],
           ),
           const SizedBox(height: 12),

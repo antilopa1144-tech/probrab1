@@ -368,7 +368,7 @@ class _TerraceCalculatorScreenState extends State<TerraceCalculatorScreen>
                         suffix: _loc.translate('common.meters'),
                         accentColor: accentColor,
                         minValue: 1,
-                        maxValue: 20,
+                        maxValue: 30,
                       ),
                     ),
                     const SizedBox(width: 12),

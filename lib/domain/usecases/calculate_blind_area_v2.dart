@@ -40,9 +40,9 @@ class CalculateBlindAreaV2 extends BaseCalculator {
   ) {
     // Входные параметры
     final houseLength = getInput(inputs, 'houseLength',
-        defaultValue: 10.0, minValue: 3.0, maxValue: 30.0);
+        defaultValue: 10.0, minValue: 3.0, maxValue: 50.0);
     final houseWidth = getInput(inputs, 'houseWidth',
-        defaultValue: 8.0, minValue: 3.0, maxValue: 20.0);
+        defaultValue: 8.0, minValue: 3.0, maxValue: 30.0);
     final blindAreaWidth = getInput(inputs, 'blindAreaWidth',
         defaultValue: 1.0, minValue: 0.6, maxValue: 2.0);
     final thickness = getInput(inputs, 'thickness',

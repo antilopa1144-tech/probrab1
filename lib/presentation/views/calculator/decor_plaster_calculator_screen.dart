@@ -243,7 +243,7 @@ class _DecorPlasterCalculatorScreenState extends ConsumerState<DecorPlasterCalcu
       children: [
         Row(
           children: [
-            Expanded(child: CalculatorTextField(label: _loc.translate('decor_plaster_calc.label.width'), value: _wallWidth, onChanged: (v) { _wallWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 20)),
+            Expanded(child: CalculatorTextField(label: _loc.translate('decor_plaster_calc.label.width'), value: _wallWidth, onChanged: (v) { _wallWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 30)),
             const SizedBox(width: 12),
             Expanded(child: CalculatorTextField(label: _loc.translate('decor_plaster_calc.label.height'), value: _wallHeight, onChanged: (v) { _wallHeight = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 1, maxValue: 5)),
           ],

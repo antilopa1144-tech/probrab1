@@ -236,9 +236,9 @@ class _BasementCalculatorScreenState extends ConsumerState<BasementCalculatorScr
         children: [
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.length'), value: _length, onChanged: (v) { _length = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.length'), value: _length, onChanged: (v) { _length = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 50)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.width'), value: _width, onChanged: (v) { _width = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('basement_calc.label.width'), value: _width, onChanged: (v) { _width = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
             ],
           ),
           const SizedBox(height: 12),

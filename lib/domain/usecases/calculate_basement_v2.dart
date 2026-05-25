@@ -45,14 +45,14 @@ class CalculateBasementV2 extends BaseCalculator {
       'length',
       defaultValue: 10.0,
       minValue: 3,
-      maxValue: 30,
+      maxValue: 50,
     );
     final width = getInput(
       inputs,
       'width',
       defaultValue: 8.0,
       minValue: 3,
-      maxValue: 20,
+      maxValue: 30,
     );
     final depth = getInput(
       inputs,

@@ -213,9 +213,9 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
         children: [
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.house_length'), value: _houseLength, onChanged: (v) { _houseLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.house_length'), value: _houseLength, onChanged: (v) { _houseLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 50)),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.house_width'), value: _houseWidth, onChanged: (v) { _houseWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 20)),
+              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.house_width'), value: _houseWidth, onChanged: (v) { _houseWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
             ],
           ),
           const SizedBox(height: 12),
