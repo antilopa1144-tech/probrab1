@@ -3,6 +3,7 @@ import 'dart:math';
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
+import './strip_foundation_canonical_adapter.dart';
 
 /// Калькулятор ленточного фундамента.
 ///
@@ -118,14 +119,31 @@ class CalculateStripFoundation extends BaseCalculator {
     double rebarWeight = 0.0;
     double formworkArea = 0.0;
     int fbsBlocksCount = 0;
+    var longitudinalBars = 0;
+    var longitudinalLength = 0.0;
 
     if (foundationType == 1) {
       const fbsVolume = 2.4 * 0.6 * 0.58;
       fbsBlocksCount = (stripVolume / fbsVolume).ceil();
       concreteVolume = fbsBlocksCount * 0.02;
     } else {
-      rebarWeight = stripVolume * 80;
-      formworkArea = perimeter * height * 2;
+      final canonical = calculateCanonicalStripFoundation({
+        'perimeter': perimeter,
+        'width': width * 1000,
+        'depth': height * 1000,
+        'aboveGround': 0,
+        'formworkHeight': height * 1000,
+        'reinforcement': 1,
+        'deliveryMethod': 0,
+        'accuracyMode': inputs['accuracyMode'] ?? 1,
+      });
+      concreteVolume = canonical.totals['recPurchaseM3']!;
+      rebarWeight =
+          canonical.totals['longWeightKg']! +
+          canonical.totals['clampWeightKg']!;
+      formworkArea = canonical.totals['formwork']!;
+      longitudinalBars = canonical.totals['threads']!.round();
+      longitudinalLength = canonical.totals['longLen']!;
     }
 
     final waterproofingArea = needWaterproof
@@ -137,9 +155,6 @@ class CalculateStripFoundation extends BaseCalculator {
     final sandVolume = cushionArea * 0.15;
     final gravelVolume = cushionArea * 0.10;
     final cementBags = (stripVolume * 6.6).ceil();
-    final longitudinalBars = foundationType == 1 ? 0 : 6;
-    final longitudinalLength = perimeter * longitudinalBars;
-
     final concretePrice = findPrice(priceList, [
       'concrete_m300',
       'concrete_m250',

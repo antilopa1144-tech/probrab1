@@ -1,7 +1,7 @@
 {
   "calculator_id": "strip-foundation",
-  "formula_version": "strip-foundation-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.646Z",
+  "formula_version": "strip-foundation-canonical-v2",
+  "generated_at": "2026-08-02T04:41:19.712Z",
   "cases": [
     {
       "id": "defaults",
@@ -21,9 +21,10 @@
         "aboveGround": 300,
         "reinforcement": 1,
         "deliveryMethod": 0,
+        "deliveryLossM3": 0,
         "totalH": 1,
         "vol": 16,
-        "volReserve": 17.655,
+        "volReserve": 16,
         "rebarDiam": 12,
         "threads": 4,
         "longLen": 179.2,
@@ -31,39 +32,44 @@
         "clampCount": 100,
         "clampLen": 283.5,
         "clampWeightKg": 111.983,
-        "wireKg": 22,
-        "formwork": 32,
-        "boards": 36,
-        "minExactNeedM3": 16.440336,
-        "recExactNeedM3": 18.7143,
-        "maxExactNeedM3": 24.331415,
-        "minPurchaseM3": 16.5,
-        "recPurchaseM3": 18.8,
-        "maxPurchaseM3": 24.4
+        "tieCount": 400,
+        "wireLengthM": 120,
+        "wireKg": 0.72,
+        "formworkHeightMm": 300,
+        "formwork": 24,
+        "boards": 30,
+        "minExactNeedM3": 16,
+        "recExactNeedM3": 16,
+        "maxExactNeedM3": 17.92,
+        "minPurchaseM3": 16,
+        "recPurchaseM3": 16,
+        "maxPurchaseM3": 18
       },
       "expected_materials_count": 6,
       "expected_material_names": [
-        "Бетон М300",
-        "Арматура продольная ∅12 мм",
-        "Арматура поперечная (хомуты)",
-        "Проволока вязальная",
-        "Опалубка (доска обрезная)",
-        "Доска обрезная 150×6000 мм"
+        "Товарный бетон — класс по проекту",
+        "Рифлёная продольная арматура ∅12 мм",
+        "Хомуты ∅8 мм",
+        "Проволока вязальная отожжённая ∅1,2 мм",
+        "Опалубка — щиты из обрезной доски",
+        "Доска обрезная не менее 25×150×6000 мм"
       ],
-      "expected_warnings_count": 0,
-      "expected_warnings": [],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "Калькулятор считает материалы по заданным размерам. Ширину, глубину, класс бетона и схему армирования определяют по нагрузкам и инженерно-геологическим данным участка."
+      ],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 16.440336,
-          "purchase_quantity": 16.5
+          "exact_need": 16,
+          "purchase_quantity": 16
         },
         "REC": {
-          "exact_need": 18.7143,
-          "purchase_quantity": 18.8
+          "exact_need": 16,
+          "purchase_quantity": 16
         },
         "MAX": {
-          "exact_need": 24.331415,
-          "purchase_quantity": 24.4
+          "exact_need": 17.92,
+          "purchase_quantity": 18
         }
       }
     }

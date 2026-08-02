@@ -24,11 +24,7 @@ enum StripFoundationType {
     'strip_calc.type.shallow_desc',
     Icons.layers,
   ),
-  deep(
-    'strip_calc.type.deep',
-    'strip_calc.type.deep_desc',
-    Icons.foundation,
-  );
+  deep('strip_calc.type.deep', 'strip_calc.type.deep_desc', Icons.foundation);
 
   final String nameKey;
   final String descKey;
@@ -110,12 +106,15 @@ class _StripFoundationCalculatorScreenState
       'needInsulation': _needInsulation ? 1.0 : 0.0,
       'hasInternalWalls': _hasInternalWalls ? 1.0 : 0.0,
       'internalWallsLength': _internalWallsLength,
-          ...accuracyModeInput,
+      ...accuracyModeInput,
     };
   }
 
   _StripResult _calculate() {
-    final values = CalculatorEngine.calculate('foundation_strip', _buildCalculationInputs()).values;
+    final values = CalculatorEngine.calculate(
+      'foundation_strip',
+      _buildCalculationInputs(),
+    ).values;
     return _StripResult(
       perimeter: values['perimeter'] ?? 0,
       stripVolume: values['stripVolume'] ?? 0,
@@ -146,52 +145,77 @@ class _StripFoundationCalculatorScreenState
     buffer.writeln(_loc.translate('strip_calc.export.title'));
     buffer.writeln('═' * 40);
     buffer.writeln();
-    buffer.writeln(_loc
-        .translate('strip_calc.export.type')
-        .replaceFirst('{value}', _loc.translate(_foundationType.nameKey)));
-    buffer.writeln(_loc
-        .translate('strip_calc.export.perimeter')
-        .replaceFirst('{value}', _result.perimeter.toStringAsFixed(1)));
-    buffer.writeln(_loc
-        .translate('strip_calc.export.dimensions')
-        .replaceFirst('{width}', (_stripWidth * 100).toStringAsFixed(0))
-        .replaceFirst('{height}', (_stripHeight * 100).toStringAsFixed(0)));
+    buffer.writeln(
+      _loc
+          .translate('strip_calc.export.type')
+          .replaceFirst('{value}', _loc.translate(_foundationType.nameKey)),
+    );
+    buffer.writeln(
+      _loc
+          .translate('strip_calc.export.perimeter')
+          .replaceFirst('{value}', _result.perimeter.toStringAsFixed(1)),
+    );
+    buffer.writeln(
+      _loc
+          .translate('strip_calc.export.dimensions')
+          .replaceFirst('{width}', (_stripWidth * 100).toStringAsFixed(0))
+          .replaceFirst('{height}', (_stripHeight * 100).toStringAsFixed(0)),
+    );
     buffer.writeln();
     buffer.writeln(_loc.translate('strip_calc.export.materials'));
     buffer.writeln('─' * 40);
 
     if (_foundationType == StripFoundationType.prefab) {
-      buffer.writeln(_loc
-          .translate('strip_calc.export.fbs')
-          .replaceFirst('{value}', _result.fbsBlocksCount.toString()));
+      buffer.writeln(
+        _loc
+            .translate('strip_calc.export.fbs')
+            .replaceFirst('{value}', _result.fbsBlocksCount.toString()),
+      );
     } else {
-      buffer.writeln(_loc
-          .translate('strip_calc.export.concrete')
-          .replaceFirst('{value}', _result.concreteVolume.toStringAsFixed(1)));
-      buffer.writeln(_loc
-          .translate('strip_calc.export.rebar')
-          .replaceFirst('{value}', _result.rebarWeight.toStringAsFixed(0)));
-      buffer.writeln(_loc
-          .translate('strip_calc.export.formwork')
-          .replaceFirst('{value}', _result.formworkArea.toStringAsFixed(1)));
+      buffer.writeln(
+        _loc
+            .translate('strip_calc.export.concrete')
+            .replaceFirst('{value}', _result.concreteVolume.toStringAsFixed(1)),
+      );
+      buffer.writeln(
+        _loc
+            .translate('strip_calc.export.rebar')
+            .replaceFirst('{value}', _result.rebarWeight.toStringAsFixed(0)),
+      );
+      buffer.writeln(
+        _loc
+            .translate('strip_calc.export.formwork')
+            .replaceFirst('{value}', _result.formworkArea.toStringAsFixed(1)),
+      );
     }
 
-    buffer.writeln(_loc
-        .translate('strip_calc.export.sand')
-        .replaceFirst('{value}', _result.sandVolume.toStringAsFixed(1)));
-    buffer.writeln(_loc
-        .translate('strip_calc.export.gravel')
-        .replaceFirst('{value}', _result.gravelVolume.toStringAsFixed(1)));
+    buffer.writeln(
+      _loc
+          .translate('strip_calc.export.sand')
+          .replaceFirst('{value}', _result.sandVolume.toStringAsFixed(1)),
+    );
+    buffer.writeln(
+      _loc
+          .translate('strip_calc.export.gravel')
+          .replaceFirst('{value}', _result.gravelVolume.toStringAsFixed(1)),
+    );
 
     if (_needWaterproof) {
-      buffer.writeln(_loc
-          .translate('strip_calc.export.waterproof')
-          .replaceFirst('{value}', _result.waterproofingArea.toStringAsFixed(1)));
+      buffer.writeln(
+        _loc
+            .translate('strip_calc.export.waterproof')
+            .replaceFirst(
+              '{value}',
+              _result.waterproofingArea.toStringAsFixed(1),
+            ),
+      );
     }
     if (_needInsulation) {
-      buffer.writeln(_loc
-          .translate('strip_calc.export.insulation')
-          .replaceFirst('{value}', _result.insulationArea.toStringAsFixed(1)));
+      buffer.writeln(
+        _loc
+            .translate('strip_calc.export.insulation')
+            .replaceFirst('{value}', _result.insulationArea.toStringAsFixed(1)),
+      );
     }
 
     buffer.writeln();
@@ -245,6 +269,8 @@ class _StripFoundationCalculatorScreenState
       children: [
         _buildTypeSelector(),
         const SizedBox(height: 16),
+        buildAccuracySelector(onChanged: _update),
+        const SizedBox(height: 8),
         _buildHouseDimensionsCard(),
         const SizedBox(height: 16),
         _buildStripDimensionsCard(),
@@ -264,11 +290,13 @@ class _StripFoundationCalculatorScreenState
   Widget _buildTypeSelector() {
     return TypeSelectorGroup(
       options: StripFoundationType.values
-          .map((type) => TypeSelectorOption(
-                icon: type.icon,
-                title: _loc.translate(type.nameKey),
-                subtitle: _loc.translate(type.descKey),
-              ))
+          .map(
+            (type) => TypeSelectorOption(
+              icon: type.icon,
+              title: _loc.translate(type.nameKey),
+              subtitle: _loc.translate(type.descKey),
+            ),
+          )
           .toList(),
       selectedIndex: _foundationType.index,
       onSelect: (index) {
@@ -309,7 +337,10 @@ class _StripFoundationCalculatorScreenState
                 child: CalculatorTextField(
                   label: _loc.translate('strip_calc.house_length'),
                   value: _houseLength,
-                  onChanged: (v) { _houseLength = v; _update(); },
+                  onChanged: (v) {
+                    _houseLength = v;
+                    _update();
+                  },
                   suffix: _loc.translate('common.meters'),
                   accentColor: _accentColor,
                   minValue: 4,
@@ -321,7 +352,10 @@ class _StripFoundationCalculatorScreenState
                 child: CalculatorTextField(
                   label: _loc.translate('strip_calc.house_width'),
                   value: _houseWidth,
-                  onChanged: (v) { _houseWidth = v; _update(); },
+                  onChanged: (v) {
+                    _houseWidth = v;
+                    _update();
+                  },
                   suffix: _loc.translate('common.meters'),
                   accentColor: _accentColor,
                   minValue: 4,
@@ -377,7 +411,10 @@ class _StripFoundationCalculatorScreenState
             suffix: _loc.translate('common.cm'),
             accentColor: _accentColor,
             decimalPlaces: 0,
-            onChanged: (v) { _stripWidth = v / 100; _update(); },
+            onChanged: (v) {
+              _stripWidth = v / 100;
+              _update();
+            },
           ),
           const SizedBox(height: 8),
           // Высота ленты
@@ -390,7 +427,10 @@ class _StripFoundationCalculatorScreenState
             suffix: _loc.translate('common.cm'),
             accentColor: _accentColor,
             decimalPlaces: 0,
-            onChanged: (v) { _stripHeight = v / 100; _update(); },
+            onChanged: (v) {
+              _stripHeight = v / 100;
+              _update();
+            },
           ),
           const SizedBox(height: 8),
           Text(
@@ -424,14 +464,20 @@ class _StripFoundationCalculatorScreenState
             ),
             value: _hasInternalWalls,
             activeTrackColor: _accentColor,
-            onChanged: (v) { _hasInternalWalls = v; _update(); },
+            onChanged: (v) {
+              _hasInternalWalls = v;
+              _update();
+            },
           ),
           if (_hasInternalWalls) ...[
             const SizedBox(height: 12),
             CalculatorTextField(
               label: _loc.translate('strip_calc.internal_walls_length'),
               value: _internalWallsLength,
-              onChanged: (v) { _internalWallsLength = v; _update(); },
+              onChanged: (v) {
+                _internalWallsLength = v;
+                _update();
+              },
               suffix: _loc.translate('common.meters'),
               accentColor: _accentColor,
               minValue: 0,
@@ -463,7 +509,10 @@ class _StripFoundationCalculatorScreenState
             ),
             value: _needWaterproof,
             activeTrackColor: _accentColor,
-            onChanged: (v) { _needWaterproof = v; _update(); },
+            onChanged: (v) {
+              _needWaterproof = v;
+              _update();
+            },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -481,7 +530,10 @@ class _StripFoundationCalculatorScreenState
             ),
             value: _needInsulation,
             activeTrackColor: _accentColor,
-            onChanged: (v) { _needInsulation = v; _update(); },
+            onChanged: (v) {
+              _needInsulation = v;
+              _update();
+            },
           ),
         ],
       ),
@@ -492,77 +544,95 @@ class _StripFoundationCalculatorScreenState
     final items = <MaterialItem>[];
 
     if (_foundationType == StripFoundationType.prefab) {
-      items.add(MaterialItem(
-        name: _loc.translate('strip_calc.materials.fbs'),
-        value: '${_result.fbsBlocksCount} ${_loc.translate('common.pcs')}',
-        subtitle: _loc.translate('strip_calc.materials.fbs_desc'),
-        icon: Icons.view_agenda,
-      ));
-      items.add(MaterialItem(
-        name: _loc.translate('strip_calc.materials.mortar'),
-        value:
-            '${_result.concreteVolume.toStringAsFixed(2)} ${_loc.translate('common.cbm')}',
-        subtitle: _loc.translate('strip_calc.materials.mortar_desc'),
-        icon: Icons.opacity,
-      ));
+      items.add(
+        MaterialItem(
+          name: _loc.translate('strip_calc.materials.fbs'),
+          value: '${_result.fbsBlocksCount} ${_loc.translate('common.pcs')}',
+          subtitle: _loc.translate('strip_calc.materials.fbs_desc'),
+          icon: Icons.view_agenda,
+        ),
+      );
+      items.add(
+        MaterialItem(
+          name: _loc.translate('strip_calc.materials.mortar'),
+          value:
+              '${_result.concreteVolume.toStringAsFixed(2)} ${_loc.translate('common.cbm')}',
+          subtitle: _loc.translate('strip_calc.materials.mortar_desc'),
+          icon: Icons.opacity,
+        ),
+      );
     } else {
-      items.add(MaterialItem(
-        name: _loc.translate('strip_calc.materials.concrete'),
-        value:
-            '${_result.concreteVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
-        subtitle: _loc.translate('strip_calc.materials.concrete_desc'),
-        icon: Icons.view_in_ar,
-      ));
-      items.add(MaterialItem(
-        name: _loc.translate('strip_calc.materials.rebar'),
-        value:
-            '${_result.rebarWeight.toStringAsFixed(0)} ${_loc.translate('common.kg')}',
-        subtitle: _loc.translate('strip_calc.materials.rebar_desc'),
-        icon: Icons.grid_4x4,
-      ));
-      items.add(MaterialItem(
-        name: _loc.translate('strip_calc.materials.formwork'),
-        value:
-            '${_result.formworkArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-        subtitle: _loc.translate('strip_calc.materials.formwork_desc'),
-        icon: Icons.view_sidebar,
-      ));
+      items.add(
+        MaterialItem(
+          name: _loc.translate('strip_calc.materials.concrete'),
+          value:
+              '${_result.concreteVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
+          subtitle: _loc.translate('strip_calc.materials.concrete_desc'),
+          icon: Icons.view_in_ar,
+        ),
+      );
+      items.add(
+        MaterialItem(
+          name: _loc.translate('strip_calc.materials.rebar'),
+          value:
+              '${_result.rebarWeight.toStringAsFixed(0)} ${_loc.translate('common.kg')}',
+          subtitle: _loc.translate('strip_calc.materials.rebar_desc'),
+          icon: Icons.grid_4x4,
+        ),
+      );
+      items.add(
+        MaterialItem(
+          name: _loc.translate('strip_calc.materials.formwork'),
+          value:
+              '${_result.formworkArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          subtitle: _loc.translate('strip_calc.materials.formwork_desc'),
+          icon: Icons.view_sidebar,
+        ),
+      );
     }
 
-    items.add(MaterialItem(
-      name: _loc.translate('strip_calc.materials.sand'),
-      value:
-          '${_result.sandVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
-      subtitle: _loc.translate('strip_calc.materials.sand_desc'),
-      icon: Icons.grain,
-    ));
+    items.add(
+      MaterialItem(
+        name: _loc.translate('strip_calc.materials.sand'),
+        value:
+            '${_result.sandVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
+        subtitle: _loc.translate('strip_calc.materials.sand_desc'),
+        icon: Icons.grain,
+      ),
+    );
 
-    items.add(MaterialItem(
-      name: _loc.translate('strip_calc.materials.gravel'),
-      value:
-          '${_result.gravelVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
-      subtitle: _loc.translate('strip_calc.materials.gravel_desc'),
-      icon: Icons.circle,
-    ));
+    items.add(
+      MaterialItem(
+        name: _loc.translate('strip_calc.materials.gravel'),
+        value:
+            '${_result.gravelVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
+        subtitle: _loc.translate('strip_calc.materials.gravel_desc'),
+        icon: Icons.circle,
+      ),
+    );
 
     if (_needWaterproof && _result.waterproofingArea > 0) {
-      items.add(MaterialItem(
-        name: _loc.translate('strip_calc.materials.waterproof'),
-        value:
-            '${_result.waterproofingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-        subtitle: _loc.translate('strip_calc.materials.waterproof_desc'),
-        icon: Icons.water_drop,
-      ));
+      items.add(
+        MaterialItem(
+          name: _loc.translate('strip_calc.materials.waterproof'),
+          value:
+              '${_result.waterproofingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          subtitle: _loc.translate('strip_calc.materials.waterproof_desc'),
+          icon: Icons.water_drop,
+        ),
+      );
     }
 
     if (_needInsulation && _result.insulationArea > 0) {
-      items.add(MaterialItem(
-        name: _loc.translate('strip_calc.materials.insulation'),
-        value:
-            '${_result.insulationArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-        subtitle: _loc.translate('strip_calc.materials.insulation_desc'),
-        icon: Icons.layers,
-      ));
+      items.add(
+        MaterialItem(
+          name: _loc.translate('strip_calc.materials.insulation'),
+          value:
+              '${_result.insulationArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          subtitle: _loc.translate('strip_calc.materials.insulation_desc'),
+          icon: Icons.layers,
+        ),
+      );
     }
 
     return MaterialsCardModern(
