@@ -133,23 +133,25 @@ class _InputGroupState extends State<InputGroup> {
           : CalculatorDesignSystem.cardDecorationFlat(
               color: widget.backgroundColor ?? defaultBg,
             ),
-      child: Theme(
-        data: Theme.of(context).copyWith(
-          dividerColor: Colors.transparent,
-        ),
-        child: ExpansionTile(
-          title: _buildHeader(),
-          initiallyExpanded: _isExpanded,
-          onExpansionChanged: (expanded) {
-            setState(() => _isExpanded = expanded);
-          },
-          tilePadding: widget.padding ?? CalculatorDesignSystem.cardPadding,
-          childrenPadding: EdgeInsets.only(
-            left: (widget.padding?.left ?? CalculatorDesignSystem.spacingM),
-            right: (widget.padding?.right ?? CalculatorDesignSystem.spacingM),
-            bottom: (widget.padding?.bottom ?? CalculatorDesignSystem.spacingM),
+      child: Material(
+        type: MaterialType.transparency,
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            title: _buildHeader(),
+            initiallyExpanded: _isExpanded,
+            onExpansionChanged: (expanded) {
+              setState(() => _isExpanded = expanded);
+            },
+            tilePadding: widget.padding ?? CalculatorDesignSystem.cardPadding,
+            childrenPadding: EdgeInsets.only(
+              left: (widget.padding?.left ?? CalculatorDesignSystem.spacingM),
+              right: (widget.padding?.right ?? CalculatorDesignSystem.spacingM),
+              bottom:
+                  (widget.padding?.bottom ?? CalculatorDesignSystem.spacingM),
+            ),
+            children: _buildChildrenWithSpacing(),
           ),
-          children: _buildChildrenWithSpacing(),
         ),
       ),
     );
