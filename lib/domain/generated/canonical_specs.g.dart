@@ -3520,14 +3520,21 @@ const Map<String, dynamic> greenhouseSpecData = {
 /// Generated from gutters-canonical.v1.json
 const Map<String, dynamic> guttersSpecData = {
   'calculator_id': 'gutters',
-  'formula_version': 'gutters-canonical-v1',
+  'formula_version': 'gutters-canonical-v2',
   'input_schema': [
     {
       'key': 'roofPerimeter',
       'unit': 'm',
-      'default_value': 40,
+      'default_value': 20,
       'min': 5,
       'max': 200,
+    },
+    {
+      'key': 'roofArea',
+      'unit': 'm²',
+      'default_value': 100,
+      'min': 10,
+      'max': 1000,
     },
     {
       'key': 'roofHeight',
@@ -3538,23 +3545,46 @@ const Map<String, dynamic> guttersSpecData = {
     },
     {
       'key': 'funnels',
-      'default_value': 4,
+      'default_value': 2,
       'min': 1,
       'max': 20,
     },
     {
-      'key': 'gutterDia',
-      'unit': 'mm',
-      'default_value': 90,
-      'min': 75,
-      'max': 125,
+      'key': 'systemType',
+      'default_value': 1,
+      'min': 0,
+      'max': 3,
     },
     {
       'key': 'gutterLength',
       'unit': 'm',
       'default_value': 3,
-      'min': 3,
-      'max': 4,
+      'min': 1.5,
+      'max': 3,
+    },
+    {
+      'key': 'gutterSections',
+      'default_value': 2,
+      'min': 1,
+      'max': 20,
+    },
+    {
+      'key': 'gutterCornerCount',
+      'default_value': 0,
+      'min': 0,
+      'max': 20,
+    },
+    {
+      'key': 'endCapCount',
+      'default_value': 4,
+      'min': 0,
+      'max': 40,
+    },
+    {
+      'key': 'hasEaveOffset',
+      'default_value': 1,
+      'min': 0,
+      'max': 1,
     },
     {
       'key': 'bendCount45',
@@ -3577,15 +3607,9 @@ const Map<String, dynamic> guttersSpecData = {
     ],
   },
   'normative_formula': {
-    'gutter_diameters': [
-      75,
-      90,
-      110,
-      125,
-    ],
     'gutter_lengths': [
+      1.5,
       3,
-      4,
     ],
   },
   'packaging_rules': {
@@ -3593,21 +3617,61 @@ const Map<String, dynamic> guttersSpecData = {
     'package_size': 1,
   },
   'material_rules': {
-    'gutter_reserve': 1.05,
-    'hook_step_m': 0.6,
-    'hook_reserve': 1.05,
+    'systems': {
+      '0': {
+        'label': 'ТЕХНОНИКОЛЬ ОПТИМА 120/80',
+        'gutter_diameter_mm': 120,
+        'pipe_diameter_mm': 80,
+        'capacity_edge_m2': 73,
+        'hook_step_m': 0.6,
+      },
+      '1': {
+        'label': 'ТЕХНОНИКОЛЬ ПВХ 125/82',
+        'gutter_diameter_mm': 125,
+        'pipe_diameter_mm': 82,
+        'capacity_edge_m2': 88,
+        'hook_step_m': 0.6,
+      },
+      '2': {
+        'label': 'ТЕХНОНИКОЛЬ металл 125/90',
+        'gutter_diameter_mm': 125,
+        'pipe_diameter_mm': 90,
+        'capacity_edge_m2': 88,
+        'hook_step_m': 0.65,
+      },
+      '3': {
+        'label': 'ТЕХНОНИКОЛЬ МАКСИ 152/100',
+        'gutter_diameter_mm': 152,
+        'pipe_diameter_mm': 100,
+        'capacity_edge_m2': 100,
+        'hook_step_m': 0.75,
+      },
+    },
+    'special_element_offset_m': 0.15,
     'pipe_clamp_step_m': 1.5,
-    'pipe_clamp_reserve': 1.05,
-    'building_corners': 8,
-    'connector_reserve': 1.05,
-    'sealant_connections_per_tube': 20,
-    'sealant_tube_ml': 310,
-    'sealant_per_joint_ml': 15,
-    'recommended_funnel_interval_m': 11,
+    'max_gutter_run_per_funnel_m': 10,
   },
   'warnings_rules': {
-    'recommended_funnel_interval_m': 11,
+    'max_gutter_run_per_funnel_m': 10,
   },
+  'normative_sources': [
+    {
+      'code': 'ТЕХНОНИКОЛЬ, руководство по монтажу водосточных систем',
+      'title': 'Расчёт количества элементов пластиковых и металлических водосточных систем',
+      'section': 'Формулы желобов, воронок, труб, кронштейнов, хомутов, муфт, колен и сливов; таблица обслуживаемой площади',
+    },
+    {
+      'code': 'Döcke, инструкция по монтажу ПВХ-водостоков',
+      'title': 'Пропускная способность, максимальная длина желоба и правила соединений',
+      'section': 'Разделы 8–14; герметизирующие составы в штатных соединениях ПВХ запрещены',
+    },
+  ],
+  'assumption_notes': [
+    'Площадь одной воронки принята для установки с края карниза — это консервативный вариант. При центральной установке пропускная способность системы ТЕХНОНИКОЛЬ примерно вдвое выше.',
+    'Длина прямых участков считается равномерно распределённой между указанным количеством участков. Для сильно отличающихся карнизов каждый участок следует проверить отдельно.',
+    'Два универсальных колена на стояк учитываются только при наличии карнизного вылета. Дополнительные обходы фасада задаются отдельно.',
+    'Герметик не включается в базовый комплект: штатные ПВХ-соединения используют уплотнители и температурные зазоры; для регулируемых углов и конкретной металлической системы требования проверяют по инструкции производителя.',
+  ],
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },

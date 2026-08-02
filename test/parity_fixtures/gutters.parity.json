@@ -1,70 +1,94 @@
 {
   "calculator_id": "gutters",
-  "formula_version": "gutters-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.533Z",
+  "formula_version": "gutters-canonical-v2",
+  "generated_at": "2026-08-02T01:10:29.291Z",
   "cases": [
     {
       "id": "defaults",
       "description": "Default inputs for gutters",
       "inputs": {
-        "roofPerimeter": 40,
+        "roofPerimeter": 20,
+        "roofArea": 100,
         "roofHeight": 5,
-        "funnels": 4,
-        "gutterDia": 90,
-        "gutterLength": 3
+        "funnels": 2,
+        "systemType": 1,
+        "gutterLength": 3,
+        "gutterSections": 2,
+        "gutterCornerCount": 0,
+        "endCapCount": 4,
+        "hasEaveOffset": 1,
+        "bendCount45": 0,
+        "bendCount90": 0
       },
       "expected_totals": {
-        "roofPerimeter": 40,
+        "roofPerimeter": 20,
+        "roofArea": 100,
         "roofHeight": 5,
-        "funnels": 4,
-        "gutterDia": 90,
+        "funnels": 2,
+        "systemType": 1,
+        "gutterDia": 125,
+        "pipeDia": 82,
         "gutterLength": 3,
-        "gutterPcs": 15,
-        "pipePcs": 12,
-        "pipePerFunnel": 3,
-        "gutterJoints": 13,
-        "gutterHooks": 71,
-        "pipeClamps": 15,
-        "corners": 8,
+        "gutterSections": 2,
+        "gutterSectionLength": 10,
+        "gutterCornerCount": 0,
+        "endCapCount": 4,
+        "hasEaveOffset": 1,
+        "gutterExactPcs": 6.667,
+        "gutterPcs": 8,
+        "pipeExactPcs": 3.333,
+        "pipePcs": 4,
+        "pipePerFunnel": 2,
+        "pipeCouplings": 2,
+        "gutterJoints": 6,
+        "gutterHooks": 46,
+        "pipeClamps": 9,
+        "corners": 0,
+        "elbows45": 0,
+        "elbows90": 0,
+        "bendCount45": 0,
+        "bendCount90": 0,
         "kneeElbows": 4,
+        "drainOutlets": 2,
         "endCaps": 4,
-        "connectors": 14,
-        "sealantTubes": 2,
-        "recommendedFunnels": 4,
-        "minExactNeed": 13.968,
-        "recExactNeed": 15.9,
-        "maxExactNeed": 20.6724,
-        "minPurchase": 14,
-        "recPurchase": 16,
-        "maxPurchase": 21
+        "connectors": 6,
+        "recommendedFunnelsByArea": 2,
+        "recommendedFunnelsByLength": 2,
+        "recommendedFunnels": 2,
+        "minExactNeed": 6.5184,
+        "recExactNeed": 7.42,
+        "maxExactNeed": 9.64712,
+        "minPurchase": 7,
+        "recPurchase": 8,
+        "maxPurchase": 10
       },
       "expected_materials_count": 10,
       "expected_material_names": [
-        "Желоб водосточный (ø90 мм, 3 м)",
-        "Труба водосточная (ø90 мм, 3 м)",
+        "Желоб водосточный (ø125 мм, 3 м)",
+        "Труба водосточная (ø82 мм, 3 м)",
         "Воронки водосборные",
         "Соединители желобов",
-        "Колена водосточные",
-        "Заглушки желоба (пары)",
+        "Муфты соединительные для труб",
+        "Колена универсальные для обхода карниза",
+        "Водосточные сливы (наконечники)",
+        "Заглушки желоба",
         "Кронштейны желоба",
-        "Хомуты трубы",
-        "Угловые элементы",
-        "Герметик (310 мл)"
+        "Хомуты трубы"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 13.968,
-          "purchase_quantity": 14
+          "exact_need": 6.5184,
+          "purchase_quantity": 7
         },
         "REC": {
-          "exact_need": 15.9,
-          "purchase_quantity": 16
+          "exact_need": 7.42,
+          "purchase_quantity": 8
         },
         "MAX": {
-          "exact_need": 20.6724,
-          "purchase_quantity": 21
+          "exact_need": 9.64712,
+          "purchase_quantity": 10
         }
       }
     }
