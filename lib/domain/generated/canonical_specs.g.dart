@@ -546,7 +546,7 @@ const Map<String, dynamic> bathroomSpecData = {
 /// Generated from blind-area-canonical.v1.json
 const Map<String, dynamic> blindAreaSpecData = {
   'calculator_id': 'blind-area',
-  'formula_version': 'blind-area-canonical-v1',
+  'formula_version': 'blind-area-canonical-v2',
   'input_schema': [
     {
       'key': 'perimeter',
@@ -586,8 +586,6 @@ const Map<String, dynamic> blindAreaSpecData = {
   'field_factors': {
     'enabled': [
       'geometry_complexity',
-      'worker_skill',
-      'waste_factor',
     ],
   },
   'normative_formula': {
@@ -610,21 +608,28 @@ const Map<String, dynamic> blindAreaSpecData = {
     ],
   },
   'packaging_rules': {
-    'unit': 'м²',
-    'package_size': 1,
+    'concrete_step_m3': 0.1,
+    'surface_step_m2': 1,
   },
   'material_rules': {
-    'concrete_reserve': 1.05,
     'mesh_reserve': 1.1,
     'damper_reserve': 1.05,
-    'gravel_layer': 0.15,
-    'sand_layer': 0.1,
-    'tile_reserve': 1.08,
-    'tile_mix_kg_per_m2': 6,
-    'border_length': 0.5,
-    'membrane_reserve': 1.15,
-    'geotextile_roll': 50,
-    'epps_plate': 0.72,
+    'gravel_layer_by_type': {
+      '0': 0.15,
+      '1': 0.15,
+      '2': 0,
+    },
+    'sand_layer_by_type': {
+      '0': 0.1,
+      '1': 0.1,
+      '2': 0.1,
+    },
+    'border_piece_length_m': 0.5,
+    'membrane_overlap_factor': 1.15,
+    'decorative_gravel_layer_m': 0.1,
+    'geotextile_reserve': 1.15,
+    'geotextile_roll_m2': 50,
+    'epps_plate_m2': 0.72,
     'epps_reserve': 1.05,
   },
   'warnings_rules': {

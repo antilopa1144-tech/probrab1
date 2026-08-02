@@ -8,9 +8,21 @@ import '../../widgets/calculator/calculator_widgets.dart';
 
 /// Тип отмостки
 enum BlindAreaType {
-  concrete('blind_area_calc.type.concrete', 'blind_area_calc.type.concrete_desc', Icons.view_agenda),
-  paving('blind_area_calc.type.paving', 'blind_area_calc.type.paving_desc', Icons.grid_on),
-  soft('blind_area_calc.type.soft', 'blind_area_calc.type.soft_desc', Icons.grass);
+  concrete(
+    'blind_area_calc.type.concrete',
+    'blind_area_calc.type.concrete_desc',
+    Icons.view_agenda,
+  ),
+  paving(
+    'blind_area_calc.type.paving',
+    'blind_area_calc.type.paving_desc',
+    Icons.grid_on,
+  ),
+  soft(
+    'blind_area_calc.type.soft',
+    'blind_area_calc.type.soft_desc',
+    Icons.grass,
+  );
 
   final String nameKey;
   final String descKey;
@@ -60,10 +72,12 @@ class BlindAreaCalculatorScreen extends ConsumerStatefulWidget {
   const BlindAreaCalculatorScreen({super.key});
 
   @override
-  ConsumerState<BlindAreaCalculatorScreen> createState() => _BlindAreaCalculatorScreenState();
+  ConsumerState<BlindAreaCalculatorScreen> createState() =>
+      _BlindAreaCalculatorScreenState();
 }
 
-class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorScreen>
+class _BlindAreaCalculatorScreenState
+    extends ConsumerState<BlindAreaCalculatorScreen>
     with ExportableConsumerMixin {
   // ExportableConsumerMixin
   @override
@@ -119,25 +133,46 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
     buffer.writeln(_loc.translate('blind_area_calc.export.title'));
     buffer.writeln('═' * 40);
     buffer.writeln();
-    buffer.writeln(_loc.translate('blind_area_calc.export.perimeter')
-        .replaceFirst('{value}', _result.perimeter.toStringAsFixed(1)));
-    buffer.writeln(_loc.translate('blind_area_calc.export.area')
-        .replaceFirst('{value}', _result.totalArea.toStringAsFixed(1)));
-    buffer.writeln(_loc.translate('blind_area_calc.export.type')
-        .replaceFirst('{value}', _loc.translate(_blindAreaType.nameKey)));
+    buffer.writeln(
+      _loc
+          .translate('blind_area_calc.export.perimeter')
+          .replaceFirst('{value}', _result.perimeter.toStringAsFixed(1)),
+    );
+    buffer.writeln(
+      _loc
+          .translate('blind_area_calc.export.area')
+          .replaceFirst('{value}', _result.totalArea.toStringAsFixed(1)),
+    );
+    buffer.writeln(
+      _loc
+          .translate('blind_area_calc.export.type')
+          .replaceFirst('{value}', _loc.translate(_blindAreaType.nameKey)),
+    );
     buffer.writeln();
     buffer.writeln(_loc.translate('blind_area_calc.export.materials_title'));
     buffer.writeln('─' * 40);
     if (_blindAreaType == BlindAreaType.concrete) {
-      buffer.writeln(_loc.translate('blind_area_calc.export.concrete')
-          .replaceFirst('{value}', _result.concreteVolume.toStringAsFixed(1)));
+      buffer.writeln(
+        _loc
+            .translate('blind_area_calc.export.concrete')
+            .replaceFirst('{value}', _result.concreteVolume.toStringAsFixed(1)),
+      );
     }
-    buffer.writeln(_loc.translate('blind_area_calc.export.sand')
-        .replaceFirst('{value}', _result.sandVolume.toStringAsFixed(1)));
-    buffer.writeln(_loc.translate('blind_area_calc.export.gravel')
-        .replaceFirst('{value}', _result.gravelVolume.toStringAsFixed(1)));
-    buffer.writeln(_loc.translate('blind_area_calc.export.membrane')
-        .replaceFirst('{value}', _result.membranArea.toStringAsFixed(1)));
+    buffer.writeln(
+      _loc
+          .translate('blind_area_calc.export.sand')
+          .replaceFirst('{value}', _result.sandVolume.toStringAsFixed(1)),
+    );
+    buffer.writeln(
+      _loc
+          .translate('blind_area_calc.export.gravel')
+          .replaceFirst('{value}', _result.gravelVolume.toStringAsFixed(1)),
+    );
+    buffer.writeln(
+      _loc
+          .translate('blind_area_calc.export.membrane')
+          .replaceFirst('{value}', _result.membranArea.toStringAsFixed(1)),
+    );
     buffer.writeln();
     buffer.writeln('═' * 40);
     buffer.writeln(_loc.translate('blind_area_calc.export.footer'));
@@ -158,20 +193,28 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
         accentColor: _accentColor,
         results: [
           ResultItem(
-            label: _loc.translate('blind_area_calc.result.perimeter').toUpperCase(),
-            value: '${_result.perimeter.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
+            label: _loc
+                .translate('blind_area_calc.result.perimeter')
+                .toUpperCase(),
+            value:
+                '${_result.perimeter.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
             icon: Icons.crop_square,
           ),
           ResultItem(
             label: _loc.translate('blind_area_calc.result.area').toUpperCase(),
-            value: '${_result.totalArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+            value:
+                '${_result.totalArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
             icon: Icons.square_foot,
           ),
-          ResultItem(
-            label: _loc.translate('blind_area_calc.result.concrete').toUpperCase(),
-            value: '${_result.concreteVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
-            icon: Icons.view_in_ar,
-          ),
+          if (_blindAreaType == BlindAreaType.concrete)
+            ResultItem(
+              label: _loc
+                  .translate('blind_area_calc.result.concrete')
+                  .toUpperCase(),
+              value:
+                  '${_result.concreteVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
+              icon: Icons.view_in_ar,
+            ),
         ],
       ),
       children: [
@@ -191,17 +234,19 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
 
   Widget _buildTypeSelector() {
     return TypeSelectorGroup(
-      options: BlindAreaType.values.map((type) => TypeSelectorOption(
-        icon: type.icon,
-        title: _loc.translate(type.nameKey),
-        subtitle: _loc.translate(type.descKey),
-      )).toList(),
+      options: BlindAreaType.values
+          .map(
+            (type) => TypeSelectorOption(
+              icon: type.icon,
+              title: _loc.translate(type.nameKey),
+              subtitle: _loc.translate(type.descKey),
+            ),
+          )
+          .toList(),
       selectedIndex: _blindAreaType.index,
       onSelect: (index) {
-        setState(() {
-          _blindAreaType = BlindAreaType.values[index];
-          _update();
-        });
+        _blindAreaType = BlindAreaType.values[index];
+        _update();
       },
       accentColor: _accentColor,
     );
@@ -213,17 +258,71 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
         children: [
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.house_length'), value: _houseLength, onChanged: (v) { _houseLength = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 50)),
+              Expanded(
+                child: CalculatorTextField(
+                  label: _loc.translate('blind_area_calc.label.house_length'),
+                  value: _houseLength,
+                  onChanged: (v) {
+                    _houseLength = v;
+                    _update();
+                  },
+                  suffix: _loc.translate('common.meters'),
+                  accentColor: _accentColor,
+                  minValue: 3,
+                  maxValue: 50,
+                ),
+              ),
               const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.house_width'), value: _houseWidth, onChanged: (v) { _houseWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 3, maxValue: 30)),
+              Expanded(
+                child: CalculatorTextField(
+                  label: _loc.translate('blind_area_calc.label.house_width'),
+                  value: _houseWidth,
+                  onChanged: (v) {
+                    _houseWidth = v;
+                    _update();
+                  },
+                  suffix: _loc.translate('common.meters'),
+                  accentColor: _accentColor,
+                  minValue: 3,
+                  maxValue: 30,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.blind_width'), value: _blindAreaWidth, onChanged: (v) { _blindAreaWidth = v; _update(); }, suffix: _loc.translate('common.meters'), accentColor: _accentColor, minValue: 0.6, maxValue: 3.0)),
-              const SizedBox(width: 12),
-              Expanded(child: CalculatorTextField(label: _loc.translate('blind_area_calc.label.thickness'), value: _thickness * 100, onChanged: (v) { _thickness = v / 100; _update(); }, suffix: _loc.translate('common.cm'), accentColor: _accentColor, minValue: 5, maxValue: 20)),
+              Expanded(
+                child: CalculatorTextField(
+                  label: _loc.translate('blind_area_calc.label.blind_width'),
+                  value: _blindAreaWidth,
+                  onChanged: (v) {
+                    _blindAreaWidth = v;
+                    _update();
+                  },
+                  suffix: _loc.translate('common.meters'),
+                  accentColor: _accentColor,
+                  minValue: 0.6,
+                  maxValue: 1.5,
+                ),
+              ),
+              if (_blindAreaType == BlindAreaType.concrete) ...[
+                const SizedBox(width: 12),
+                Expanded(
+                  child: CalculatorTextField(
+                    label: _loc.translate('blind_area_calc.label.thickness'),
+                    value: _thickness * 100,
+                    onChanged: (v) {
+                      _thickness = v / 100;
+                      _update();
+                    },
+                    suffix: _loc.translate('common.cm'),
+                    accentColor: _accentColor,
+                    minValue: 7,
+                    maxValue: 15,
+                  ),
+                ),
+              ],
             ],
           ),
         ],
@@ -237,19 +336,47 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
         children: [
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('blind_area_calc.option.insulation'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('blind_area_calc.option.insulation_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
+            title: Text(
+              _loc.translate('blind_area_calc.option.insulation'),
+              style: CalculatorDesignSystem.bodyMedium.copyWith(
+                color: CalculatorColors.getTextPrimary(_isDark),
+              ),
+            ),
+            subtitle: Text(
+              _loc.translate('blind_area_calc.option.insulation_desc'),
+              style: CalculatorDesignSystem.bodySmall.copyWith(
+                color: CalculatorColors.getTextPrimary(_isDark),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             value: _needInsulation,
             activeTrackColor: _accentColor,
-            onChanged: (v) { _needInsulation = v; _update(); },
+            onChanged: (v) {
+              _needInsulation = v;
+              _update();
+            },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text(_loc.translate('blind_area_calc.option.drainage'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
-            subtitle: Text(_loc.translate('blind_area_calc.option.drainage_desc'), style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500)),
+            title: Text(
+              _loc.translate('blind_area_calc.option.drainage'),
+              style: CalculatorDesignSystem.bodyMedium.copyWith(
+                color: CalculatorColors.getTextPrimary(_isDark),
+              ),
+            ),
+            subtitle: Text(
+              _loc.translate('blind_area_calc.option.drainage_desc'),
+              style: CalculatorDesignSystem.bodySmall.copyWith(
+                color: CalculatorColors.getTextPrimary(_isDark),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             value: _needDrainage,
             activeTrackColor: _accentColor,
-            onChanged: (v) { _needDrainage = v; _update(); },
+            onChanged: (v) {
+              _needDrainage = v;
+              _update();
+            },
           ),
         ],
       ),
@@ -259,61 +386,89 @@ class _BlindAreaCalculatorScreenState extends ConsumerState<BlindAreaCalculatorS
   Widget _buildMaterialsCard() {
     final items = <MaterialItem>[];
 
-    if (_blindAreaType == BlindAreaType.concrete && _result.concreteVolume > 0) {
-      items.add(MaterialItem(
-        name: _loc.translate('blind_area_calc.materials.concrete'),
-        value: '${_result.concreteVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
-        subtitle: _loc.translate('blind_area_calc.materials.concrete_desc'),
-        icon: Icons.view_in_ar,
-      ));
+    if (_blindAreaType == BlindAreaType.concrete &&
+        _result.concreteVolume > 0) {
+      items.add(
+        MaterialItem(
+          name: _loc.translate('blind_area_calc.materials.concrete'),
+          value:
+              '${_result.concreteVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
+          subtitle: _loc.translate('blind_area_calc.materials.concrete_desc'),
+          icon: Icons.view_in_ar,
+        ),
+      );
     }
 
     if (_blindAreaType == BlindAreaType.paving) {
-      items.add(MaterialItem(
-        name: _loc.translate('blind_area_calc.materials.paving'),
-        value: '${_result.totalArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-        subtitle: _loc.translate('blind_area_calc.materials.paving_desc'),
-        icon: Icons.grid_on,
-      ));
+      items.add(
+        MaterialItem(
+          name: _loc.translate('blind_area_calc.materials.paving'),
+          value:
+              '${_result.pavingArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          subtitle: _loc.translate('blind_area_calc.materials.paving_desc'),
+          icon: Icons.grid_on,
+        ),
+      );
     }
 
-    items.add(MaterialItem(
-      name: _loc.translate('blind_area_calc.materials.sand'),
-      value: '${_result.sandVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
-      subtitle: _loc.translate('blind_area_calc.materials.sand_desc'),
-      icon: Icons.grain,
-    ));
+    if (_result.sandVolume > 0) {
+      items.add(
+        MaterialItem(
+          name: _loc.translate('blind_area_calc.materials.sand'),
+          value:
+              '${_result.sandVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
+          subtitle: _loc.translate('blind_area_calc.materials.sand_desc'),
+          icon: Icons.grain,
+        ),
+      );
+    }
 
-    items.add(MaterialItem(
-      name: _loc.translate('blind_area_calc.materials.gravel'),
-      value: '${_result.gravelVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
-      subtitle: _loc.translate('blind_area_calc.materials.gravel_desc'),
-      icon: Icons.circle,
-    ));
+    if (_result.gravelVolume > 0) {
+      items.add(
+        MaterialItem(
+          name: _loc.translate('blind_area_calc.materials.gravel'),
+          value:
+              '${_result.gravelVolume.toStringAsFixed(1)} ${_loc.translate('common.cbm')}',
+          subtitle: _loc.translate('blind_area_calc.materials.gravel_desc'),
+          icon: Icons.circle,
+        ),
+      );
+    }
 
-    items.add(MaterialItem(
-      name: _loc.translate('blind_area_calc.materials.membrane'),
-      value: '${_result.membranArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-      subtitle: _loc.translate('blind_area_calc.materials.membrane_desc'),
-      icon: Icons.layers,
-    ));
+    if (_result.membranArea > 0) {
+      items.add(
+        MaterialItem(
+          name: _loc.translate('blind_area_calc.materials.membrane'),
+          value:
+              '${_result.membranArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          subtitle: _loc.translate('blind_area_calc.materials.membrane_desc'),
+          icon: Icons.layers,
+        ),
+      );
+    }
 
     if (_needInsulation) {
-      items.add(MaterialItem(
-        name: _loc.translate('blind_area_calc.materials.insulation'),
-        value: '${_result.totalArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-        subtitle: _loc.translate('blind_area_calc.materials.insulation_desc'),
-        icon: Icons.view_module,
-      ));
+      items.add(
+        MaterialItem(
+          name: _loc.translate('blind_area_calc.materials.insulation'),
+          value:
+              '${_result.insulationArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          subtitle: _loc.translate('blind_area_calc.materials.insulation_desc'),
+          icon: Icons.view_module,
+        ),
+      );
     }
 
     if (_needDrainage) {
-      items.add(MaterialItem(
-        name: _loc.translate('blind_area_calc.materials.drainage'),
-        value: '${_result.perimeter.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
-        subtitle: _loc.translate('blind_area_calc.materials.drainage_desc'),
-        icon: Icons.water,
-      ));
+      items.add(
+        MaterialItem(
+          name: _loc.translate('blind_area_calc.materials.drainage'),
+          value:
+              '${_result.perimeter.toStringAsFixed(0)} ${_loc.translate('common.meters')}',
+          subtitle: _loc.translate('blind_area_calc.materials.drainage_desc'),
+          icon: Icons.water,
+        ),
+      );
     }
 
     return MaterialsCardModern(

@@ -4,10 +4,6 @@ import '../generated/canonical_specs.g.dart';
 import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
-/* ─── spec types ─── */
-
-
-
 
 bool hasCanonicalBlindAreaInputs(Map<String, double> inputs) {
   return inputs.containsKey('perimeter') ||
@@ -25,91 +21,184 @@ Map<String, double> normalizeLegacyBlindAreaInputs(Map<String, double> inputs) {
   return normalized;
 }
 
-
 CanonicalCalculatorContractResult calculateCanonicalBlindArea(
   Map<String, double> inputs, {
   SpecReader? specOverride,
 }) {
   final spec = specOverride ?? const SpecReader(blindAreaSpecData);
-
   final normalized = hasCanonicalBlindAreaInputs(inputs)
       ? Map<String, double>.from(inputs)
       : normalizeLegacyBlindAreaInputs(inputs);
 
-  final perimeter = math.max(10.0, math.min(200.0, (normalized['perimeter'] ?? defaultFor(spec, 'perimeter', 40)).toDouble()));
-  final width = math.max(0.6, math.min(1.5, (normalized['width'] ?? defaultFor(spec, 'width', 1.0)).toDouble()));
-  final thickness = math.max(70.0, math.min(150.0, (normalized['thickness'] ?? defaultFor(spec, 'thickness', 100)).toDouble()));
-  final materialType = (normalized['materialType'] ?? defaultFor(spec, 'materialType', 0)).round().clamp(0, 2);
-  final withInsulation = math.max(0.0, math.min(100.0, (normalized['withInsulation'] ?? defaultFor(spec, 'withInsulation', 0)).toDouble()));
+  final perimeter = math
+      .max(
+        10.0,
+        math.min(
+          200.0,
+          normalized['perimeter'] ?? defaultFor(spec, 'perimeter', 40),
+        ),
+      )
+      .toDouble();
+  final width = math
+      .max(
+        0.6,
+        math.min(1.5, normalized['width'] ?? defaultFor(spec, 'width', 1.0)),
+      )
+      .toDouble();
+  final thickness = math
+      .max(
+        70.0,
+        math.min(
+          150.0,
+          normalized['thickness'] ?? defaultFor(spec, 'thickness', 100),
+        ),
+      )
+      .toDouble();
+  final materialType =
+      (normalized['materialType'] ?? defaultFor(spec, 'materialType', 0))
+          .round()
+          .clamp(0, 2);
+  final withInsulation = math
+      .max(
+        0.0,
+        math.min(
+          100.0,
+          normalized['withInsulation'] ?? defaultFor(spec, 'withInsulation', 0),
+        ),
+      )
+      .toDouble();
 
-  // Base geometry
-  final area = perimeter * width;
+  final materialRules =
+      spec.raw['material_rules'] as Map<String, dynamic>? ?? const {};
+  final gravelLayers =
+      materialRules['gravel_layer_by_type'] as Map<String, dynamic>? ??
+      const {};
+  final sandLayers =
+      materialRules['sand_layer_by_type'] as Map<String, dynamic>? ?? const {};
 
-  // Type-specific
+  // Closed rectilinear contour: straight runs plus the net four corner areas.
+  final straightStripArea = perimeter * width;
+  final cornerAllowanceArea = 4 * width * width;
+  final area = straightStripArea + cornerAllowanceArea;
+  final outerEdgeLength = perimeter + 8 * width;
+
   var concreteM3 = 0.0;
-  var meshPcs = 0;
+  var meshAreaM2 = 0.0;
   var damperM = 0.0;
-  var tileM2 = 0;
-  var mixBags = 0;
+  var tileM2 = 0.0;
   var borderPcs = 0;
-  var membraneM2 = 0;
+  var membraneM2 = 0.0;
+  var membraneWithOverlapM2 = 0.0;
   var decorGravelM3 = 0.0;
 
   if (materialType == 0) {
-    // Concrete
-    concreteM3 = (area * (thickness / 1000.0) * spec.materialRule<num>('concrete_reserve').toDouble() * 10).ceil() / 10.0;
-    meshPcs = thickness >= 100 ? (area * spec.materialRule<num>('mesh_reserve').toDouble()).ceil() : 0;
-    damperM = roundValue(perimeter * spec.materialRule<num>('damper_reserve').toDouble(), 2);
+    concreteM3 = roundValue(area * (thickness / 1000.0), 6);
+    meshAreaM2 = thickness >= 100 ? roundValue(area, 6) : 0;
+    damperM = roundValue(perimeter, 6);
   } else if (materialType == 1) {
-    // Tile
-    tileM2 = (area * spec.materialRule<num>('tile_reserve').toDouble()).ceil();
-    mixBags = (area * spec.materialRule<num>('tile_mix_kg_per_m2').toDouble() / 50).ceil();
-    borderPcs = (perimeter / spec.materialRule<num>('border_length').toDouble()).ceil();
+    tileM2 = roundValue(area, 6);
+    final borderPieceLength = spec
+        .materialRule<num>('border_piece_length_m')
+        .toDouble();
+    borderPcs = (outerEdgeLength / borderPieceLength).ceil();
   } else {
-    // Soft membrane
-    membraneM2 = (area * spec.materialRule<num>('membrane_reserve').toDouble()).ceil();
-    decorGravelM3 = roundValue(area * 0.1, 3);
+    membraneM2 = roundValue(area, 6);
+    membraneWithOverlapM2 = roundValue(
+      area * spec.materialRule<num>('membrane_overlap_factor').toDouble(),
+      6,
+    );
+    decorGravelM3 = roundValue(
+      area * spec.materialRule<num>('decorative_gravel_layer_m').toDouble(),
+      3,
+    );
   }
 
-  // Common layers
-  final gravel = roundValue(area * spec.materialRule<num>('gravel_layer').toDouble(), 3);
-  final sand = roundValue(area * spec.materialRule<num>('sand_layer').toDouble(), 3);
-  final geotextileRolls = (area * 1.15 / spec.materialRule<num>('geotextile_roll').toDouble()).ceil();
-  final eppsPlates = withInsulation > 0 ? (area * spec.materialRule<num>('epps_reserve').toDouble() / spec.materialRule<num>('epps_plate').toDouble()).ceil() : 0;
+  final gravelLayer = (gravelLayers['$materialType'] as num?)?.toDouble() ?? 0;
+  final sandLayer = (sandLayers['$materialType'] as num?)?.toDouble() ?? 0;
+  final gravel = roundValue(area * gravelLayer, 3);
+  final sand = roundValue(area * sandLayer, 3);
+  final geotextileRolls = materialType == 2
+      ? 0
+      : (area *
+                spec.materialRule<num>('geotextile_reserve').toDouble() /
+                spec.materialRule<num>('geotextile_roll_m2').toDouble())
+            .ceil();
+  final eppsPlates = withInsulation > 0
+      ? (area *
+                spec.materialRule<num>('epps_reserve').toDouble() /
+                spec.materialRule<num>('epps_plate_m2').toDouble())
+            .ceil()
+      : 0;
 
-  // Scenarios
-  final basePrimary = materialType == 0 ? concreteM3 : materialType == 1 ? tileM2.toDouble() : membraneM2.toDouble();
+  final basePrimaryRaw = materialType == 0
+      ? concreteM3
+      : materialType == 1
+      ? tileM2
+      : membraneWithOverlapM2;
+  final accuracyBaseRaw = materialType == 2 ? membraneM2 : basePrimaryRaw;
+  final materialCategory = materialType == 0
+      ? 'concrete'
+      : materialType == 1
+      ? 'tile'
+      : 'waterproofing';
+  final accuracyMode = parseAccuracyMode(normalized);
+  final accuracyMultiplier = accuracyPrimaryMultiplier(
+    materialCategory,
+    accuracyMode,
+  );
   final packageLabel = materialType == 0
       ? 'concrete-m3'
       : materialType == 1
-          ? 'tile-m2'
-          : 'membrane-m2';
+      ? 'tile-m2'
+      : 'membrane-m2';
   final packageUnit = materialType == 0 ? 'м³' : 'м²';
+  final packageSize = materialType == 0
+      ? spec.packagingRule<num>('concrete_step_m3').toDouble()
+      : spec.packagingRule<num>('surface_step_m2').toDouble();
 
   final scenarios = <String, CanonicalScenarioResult>{};
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(basePrimary * accuracyMult * multiplier, 6);
-    final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
+    final exactNeed = roundValue(
+      math
+          .max(
+            basePrimaryRaw,
+            accuracyBaseRaw * accuracyMultiplier * multiplier,
+          )
+          .toDouble(),
+      6,
+    );
+    final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
+    final purchaseQuantity = roundValue(packageCount * packageSize, 6);
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
-      purchaseQuantity: packageCount.toDouble(),
-      leftover: roundValue(packageCount - exactNeed, 6),
+      purchaseQuantity: purchaseQuantity,
+      leftover: roundValue(purchaseQuantity - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'materialType:$materialType',
         'thickness:${thickness.round()}',
+        'geometry:closed-orthogonal-contour',
+        if (materialType == 2)
+          'membrane_overlap_factor:${spec.materialRule<num>('membrane_overlap_factor')}',
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
-        packageSize: 1,
+        packageSize: packageSize,
         packagesCount: packageCount,
         unit: packageUnit,
       ),
@@ -117,68 +206,93 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   }
 
   final recScenario = scenarios['REC']!;
-
-  // Warnings
   final warnings = <String>[];
   if (width < spec.warningRule<num>('narrow_width_threshold_m').toDouble()) {
-    warnings.add('Ширина отмостки менее 0.8 м — может не обеспечить достаточной защиты фундамента');
+    warnings.add(
+      'Ширина менее 0,8 м — узкий вариант: проверьте свес кровли, грунт и схему водоотвода по проекту',
+    );
   }
-  if (materialType == 0 && thickness < spec.warningRule<num>('thin_concrete_threshold_mm').toDouble()) {
-    warnings.add('Толщина бетона менее 100 мм — рекомендуется армосетка при увеличении толщины');
+  if (materialType == 0 &&
+      thickness <
+          spec.warningRule<num>('thin_concrete_threshold_mm').toDouble()) {
+    warnings.add(
+      'Слой бетона 70 мм требует проверки основания, класса бетона и армирования по проекту; сетка автоматически не добавлена',
+    );
+  }
+  if (materialType == 1) {
+    warnings.add(
+      'Укладочный слой и швы плитки не рассчитаны: их расход зависит от выбранной системы, толщины слоя и паспорта смеси',
+    );
+  }
+  if (materialType == 2) {
+    warnings.add(
+      'Для мягкой системы рассчитана профилированная мембрана с прикреплённым геотекстилем; отдельный рулон геотекстиля не добавлен',
+    );
   }
 
-  // Materials
   final materials = <CanonicalMaterialResult>[];
-
   if (materialType == 0) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Бетон (${thickness.round()} мм)',
-      quantity: recScenario.exactNeed,
-      unit: 'м³',
-      withReserve: concreteM3,
-      purchaseQty: concreteM3.ceilToDouble(),
-      category: 'Бетон',
-      packageInfo: {'count': concreteM3.ceil(), 'unitSize': 1.0, 'packageUnit': 'доставок'},
-    ));
-    if (meshPcs > 0) {
-      materials.add(CanonicalMaterialResult(
-        name: 'Армосетка',
-        quantity: meshPcs.toDouble(),
-        unit: 'шт',
-        withReserve: meshPcs.toDouble(),
-        purchaseQty: meshPcs.toDouble(),
-        category: 'Армирование',
-      ));
+    final meshWithOverlap = roundValue(
+      meshAreaM2 * spec.materialRule<num>('mesh_reserve').toDouble(),
+      6,
+    );
+    final damperWithReserve = roundValue(
+      damperM * spec.materialRule<num>('damper_reserve').toDouble(),
+      6,
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Бетон В15 (М200), слой ${thickness.round()} мм',
+        quantity: concreteM3,
+        unit: 'м³',
+        withReserve: recScenario.exactNeed,
+        purchaseQty: recScenario.purchaseQuantity,
+        packageInfo: {
+          'count': recScenario.buyPlan.packagesCount,
+          'size': recScenario.buyPlan.packageSize,
+          'packageUnit': 'шагов заказа',
+        },
+        category: 'Бетон',
+      ),
+    );
+    if (meshAreaM2 > 0) {
+      materials.add(
+        CanonicalMaterialResult(
+          name: 'Арматурная сетка 100×100×4 мм',
+          quantity: meshAreaM2,
+          unit: 'м²',
+          withReserve: meshWithOverlap,
+          purchaseQty: meshWithOverlap.ceilToDouble(),
+          category: 'Армирование',
+        ),
+      );
     }
-    materials.add(CanonicalMaterialResult(
-      name: 'Демпферная лента',
-      quantity: damperM,
-      unit: 'м',
-      withReserve: damperM,
-      purchaseQty: damperM.ceil().toDouble(),
-      category: 'Расходные',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Демпферная разделительная лента для примыкания к цоколю',
+        quantity: damperM,
+        unit: 'м',
+        withReserve: damperWithReserve,
+        purchaseQty: damperWithReserve.ceilToDouble(),
+        category: 'Расходные',
+      ),
+    );
   } else if (materialType == 1) {
+    final borderPieceLength = spec
+        .materialRule<num>('border_piece_length_m')
+        .toDouble();
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'Тротуарная плитка',
-        quantity: recScenario.exactNeed,
+        name: 'Тротуарная плитка для наружных работ',
+        quantity: tileM2,
         unit: 'м²',
-        withReserve: tileM2.toDouble(),
-        purchaseQty: tileM2.toDouble(),
+        withReserve: recScenario.exactNeed,
+        purchaseQty: recScenario.purchaseQuantity,
         category: 'Покрытие',
       ),
       CanonicalMaterialResult(
-        name: 'Смесь для укладки (50 кг)',
-        quantity: mixBags.toDouble(),
-        unit: 'мешков',
-        withReserve: mixBags.toDouble(),
-        purchaseQty: mixBags.toDouble(),
-        category: 'Смеси',
-      ),
-      CanonicalMaterialResult(
-        name: 'Бордюр (0.5 м)',
-        quantity: borderPcs.toDouble(),
+        name: 'Бордюр тротуарный, длина $borderPieceLength м',
+        quantity: roundValue(outerEdgeLength / borderPieceLength, 6),
         unit: 'шт',
         withReserve: borderPcs.toDouble(),
         purchaseQty: borderPcs.toDouble(),
@@ -188,61 +302,73 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   } else {
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'Профилированная мембрана',
-        quantity: recScenario.exactNeed,
+        name: 'Профилированная дренажная мембрана',
+        quantity: membraneM2,
         unit: 'м²',
-        withReserve: membraneM2.toDouble(),
-        purchaseQty: membraneM2.toDouble(),
+        withReserve: recScenario.exactNeed,
+        purchaseQty: recScenario.purchaseQuantity,
         category: 'Покрытие',
       ),
       CanonicalMaterialResult(
-        name: 'Декоративный щебень',
+        name: 'Декоративный щебень фракции 20–40 мм',
         quantity: decorGravelM3,
         unit: 'м³',
         withReserve: decorGravelM3,
-        purchaseQty: (decorGravelM3 * 10).ceil().toDouble(),
+        purchaseQty: (decorGravelM3 * 10).ceil() / 10.0,
         category: 'Покрытие',
       ),
     ]);
   }
 
-  // Common materials
-  materials.addAll([
-    CanonicalMaterialResult(
-      name: 'Щебень (подушка)',
-      quantity: gravel,
-      unit: 'м³',
-      withReserve: gravel,
-      purchaseQty: (gravel * 10).ceil().toDouble(),
-      category: 'Подготовка',
-    ),
-    CanonicalMaterialResult(
-      name: 'Песок (подушка)',
-      quantity: sand,
-      unit: 'м³',
-      withReserve: sand,
-      purchaseQty: (sand * 10).ceil().toDouble(),
-      category: 'Подготовка',
-    ),
-    CanonicalMaterialResult(
-      name: 'Геотекстиль (${spec.materialRule<num>('geotextile_roll').toDouble().round()} м²)',
-      quantity: geotextileRolls.toDouble(),
-      unit: 'рулонов',
-      withReserve: geotextileRolls.toDouble(),
-      purchaseQty: geotextileRolls.toDouble(),
-      category: 'Подготовка',
-    ),
-  ]);
-
+  if (gravel > 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Щебень фракции 20–40 мм для подушки',
+        quantity: gravel,
+        unit: 'м³',
+        withReserve: gravel,
+        purchaseQty: (gravel * 10).ceil() / 10.0,
+        category: 'Подготовка',
+      ),
+    );
+  }
+  if (sand > 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Песок строительный средней крупности для подушки',
+        quantity: sand,
+        unit: 'м³',
+        withReserve: sand,
+        purchaseQty: (sand * 10).ceil() / 10.0,
+        category: 'Подготовка',
+      ),
+    );
+  }
+  if (geotextileRolls > 0) {
+    final rollArea = spec.materialRule<num>('geotextile_roll_m2').toDouble();
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Геотекстиль 200 г/м², рулон ${rollArea.round()} м²',
+        quantity: geotextileRolls.toDouble(),
+        unit: 'рулонов',
+        withReserve: geotextileRolls.toDouble(),
+        purchaseQty: geotextileRolls.toDouble(),
+        category: 'Подготовка',
+      ),
+    );
+  }
   if (eppsPlates > 0) {
-    materials.add(CanonicalMaterialResult(
-      name: 'ЭППС утеплитель (${withInsulation.round()} мм)',
-      quantity: eppsPlates.toDouble(),
-      unit: 'шт',
-      withReserve: eppsPlates.toDouble(),
-      purchaseQty: eppsPlates.toDouble(),
-      category: 'Утепление',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Экструдированный пенополистирол (ЭППС) ${withInsulation.round()} мм, плита 1200×600 мм',
+        quantity: eppsPlates.toDouble(),
+        unit: 'шт',
+        withReserve: eppsPlates.toDouble(),
+        purchaseQty: eppsPlates.toDouble(),
+        category: 'Утепление',
+      ),
+    );
   }
 
   return CanonicalCalculatorContractResult(
@@ -253,16 +379,21 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'perimeter': roundValue(perimeter, 3),
       'width': roundValue(width, 3),
       'area': roundValue(area, 3),
+      'straightStripArea': roundValue(straightStripArea, 3),
+      'cornerAllowanceArea': roundValue(cornerAllowanceArea, 3),
+      'outerEdgeLength': roundValue(outerEdgeLength, 3),
       'thickness': thickness,
       'materialType': materialType.toDouble(),
       'withInsulation': withInsulation,
       'concreteM3': concreteM3,
-      'meshPcs': meshPcs.toDouble(),
+      'meshPcs': meshAreaM2,
+      'meshAreaM2': meshAreaM2,
       'damperM': damperM,
-      'tileM2': tileM2.toDouble(),
-      'mixBags': mixBags.toDouble(),
+      'tileM2': tileM2,
+      'mixBags': 0,
       'borderPcs': borderPcs.toDouble(),
-      'membraneM2': membraneM2.toDouble(),
+      'membraneM2': membraneM2,
+      'membraneWithOverlapM2': membraneWithOverlapM2,
       'decorGravelM3': decorGravelM3,
       'gravel': gravel,
       'sand': sand,

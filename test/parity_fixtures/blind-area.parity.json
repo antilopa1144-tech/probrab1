@@ -1,7 +1,7 @@
 {
   "calculator_id": "blind-area",
-  "formula_version": "blind-area-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.338Z",
+  "formula_version": "blind-area-canonical-v2",
+  "generated_at": "2026-08-02T04:05:39.864Z",
   "cases": [
     {
       "id": "defaults",
@@ -16,52 +16,57 @@
       "expected_totals": {
         "perimeter": 40,
         "width": 1,
-        "area": 40,
+        "area": 44,
+        "straightStripArea": 40,
+        "cornerAllowanceArea": 4,
+        "outerEdgeLength": 48,
         "thickness": 100,
         "materialType": 0,
         "withInsulation": 0,
-        "concreteM3": 4.2,
+        "concreteM3": 4.4,
         "meshPcs": 44,
-        "damperM": 42,
+        "meshAreaM2": 44,
+        "damperM": 40,
         "tileM2": 0,
         "mixBags": 0,
         "borderPcs": 0,
         "membraneM2": 0,
+        "membraneWithOverlapM2": 0,
         "decorGravelM3": 0,
-        "gravel": 6,
-        "sand": 4,
-        "geotextileRolls": 1,
+        "gravel": 6.6,
+        "sand": 4.4,
+        "geotextileRolls": 2,
         "eppsPlates": 0,
-        "minExactNeed": 3.91104,
-        "recExactNeed": 4.452,
-        "maxExactNeed": 5.788272,
-        "minPurchase": 4,
-        "recPurchase": 5,
-        "maxPurchase": 6
+        "minExactNeed": 4.4,
+        "recExactNeed": 4.4,
+        "maxExactNeed": 4.928,
+        "minPurchase": 4.4,
+        "recPurchase": 4.4,
+        "maxPurchase": 5
       },
       "expected_materials_count": 6,
       "expected_material_names": [
-        "Бетон (100 мм)",
-        "Армосетка",
-        "Демпферная лента",
-        "Щебень (подушка)",
-        "Песок (подушка)",
-        "Геотекстиль (50 м²)"
+        "Бетон В15 (М200), слой 100 мм",
+        "Арматурная сетка 100×100×4 мм",
+        "Демпферная разделительная лента для примыкания к цоколю",
+        "Щебень фракции 20–40 мм для подушки",
+        "Песок строительный средней крупности для подушки",
+        "Геотекстиль 200 г/м², рулон 50 м²"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 3.91104,
-          "purchase_quantity": 4
+          "exact_need": 4.4,
+          "purchase_quantity": 4.4
         },
         "REC": {
-          "exact_need": 4.452,
-          "purchase_quantity": 5
+          "exact_need": 4.4,
+          "purchase_quantity": 4.4
         },
         "MAX": {
-          "exact_need": 5.788272,
-          "purchase_quantity": 6
+          "exact_need": 4.928,
+          "purchase_quantity": 5
         }
       }
     }

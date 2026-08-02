@@ -1,6 +1,7 @@
 import '../../data/models/price_item.dart';
 import './calculator_usecase.dart';
 import './base_calculator.dart';
+import 'blind_area_canonical_adapter.dart';
 
 /// Калькулятор отмостки V2.
 ///
@@ -24,68 +25,85 @@ import './base_calculator.dart';
 /// - drainageLength: длина дренажа (м, если включено)
 /// - pavingArea: площадь плитки (м², только для плиточной)
 class CalculateBlindAreaV2 extends BaseCalculator {
-  // Константы
-  static const double concreteWastePercent = 5.0;
-  static const double sandThickness = 0.10; // 10 см подушка
-  static const double sandWastePercent = 10.0;
-  static const double gravelThickness = 0.15; // 15 см подушка
-  static const double gravelWastePercent = 10.0;
-  static const double membraneOverlapPercent = 15.0;
-  static const double insulationWastePercent = 10.0;
-
   @override
   CalculatorResult calculate(
     Map<String, double> inputs,
     List<PriceItem> priceList,
   ) {
     // Входные параметры
-    final houseLength = getInput(inputs, 'houseLength',
-        defaultValue: 10.0, minValue: 3.0, maxValue: 50.0);
-    final houseWidth = getInput(inputs, 'houseWidth',
-        defaultValue: 8.0, minValue: 3.0, maxValue: 30.0);
-    final blindAreaWidth = getInput(inputs, 'blindAreaWidth',
-        defaultValue: 1.0, minValue: 0.6, maxValue: 2.0);
-    final thickness = getInput(inputs, 'thickness',
-        defaultValue: 0.1, minValue: 0.05, maxValue: 0.20);
-    final blindAreaType = getIntInput(inputs, 'blindAreaType',
-        defaultValue: 0, minValue: 0, maxValue: 2);
-    final needInsulation = getIntInput(inputs, 'needInsulation',
-        defaultValue: 0, minValue: 0, maxValue: 1);
-    final needDrainage = getIntInput(inputs, 'needDrainage',
-        defaultValue: 1, minValue: 0, maxValue: 1);
+    final houseLength = getInput(
+      inputs,
+      'houseLength',
+      defaultValue: 10.0,
+      minValue: 3.0,
+      maxValue: 50.0,
+    );
+    final houseWidth = getInput(
+      inputs,
+      'houseWidth',
+      defaultValue: 8.0,
+      minValue: 3.0,
+      maxValue: 30.0,
+    );
+    final blindAreaWidth = getInput(
+      inputs,
+      'blindAreaWidth',
+      defaultValue: 1.0,
+      minValue: 0.6,
+      maxValue: 2.0,
+    );
+    final thickness = getInput(
+      inputs,
+      'thickness',
+      defaultValue: 0.1,
+      minValue: 0.05,
+      maxValue: 0.20,
+    );
+    final blindAreaType = getIntInput(
+      inputs,
+      'blindAreaType',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 2,
+    );
+    final needInsulation = getIntInput(
+      inputs,
+      'needInsulation',
+      defaultValue: 0,
+      minValue: 0,
+      maxValue: 1,
+    );
+    final needDrainage = getIntInput(
+      inputs,
+      'needDrainage',
+      defaultValue: 1,
+      minValue: 0,
+      maxValue: 1,
+    );
 
     // Периметр дома
     final perimeter = 2 * (houseLength + houseWidth);
 
-    // Площадь отмостки
-    final totalArea = perimeter * blindAreaWidth;
-
-    // Бетон (только для бетонной отмостки, тип 0)
-    double concreteVolume = 0;
-    if (blindAreaType == 0) {
-      concreteVolume = totalArea * thickness * (1 + concreteWastePercent / 100);
-    }
-
-    // Площадь плитки (для плиточной отмостки, тип 1)
-    double pavingArea = 0;
-    if (blindAreaType == 1) {
-      pavingArea = totalArea * 1.1; // +10% запас на подрезку
-    }
-
-    // Песчаная подушка
-    final sandVolume =
-        totalArea * sandThickness * (1 + sandWastePercent / 100);
-
-    // Щебёночная подушка
-    final gravelVolume =
-        totalArea * gravelThickness * (1 + gravelWastePercent / 100);
-
-    // Геомембрана
-    final membranArea = totalArea * (1 + membraneOverlapPercent / 100);
-
-    // Утепление
+    // Единый canonical-расчёт с web. Экран использует рекомендованное
+    // количество к покупке, а чистая геометрия остаётся в totalArea.
+    final canonical = calculateCanonicalBlindArea({
+      'perimeter': perimeter,
+      'width': blindAreaWidth,
+      'thickness': thickness * 1000,
+      'materialType': blindAreaType.toDouble(),
+      'withInsulation': needInsulation == 1 ? 50 : 0,
+      'accuracyMode': 1,
+    });
+    final totals = canonical.totals;
+    final totalArea = totals['area'] ?? 0;
+    final recommendedPurchase = totals['recPurchase'] ?? 0;
+    final concreteVolume = blindAreaType == 0 ? recommendedPurchase : 0.0;
+    final pavingArea = blindAreaType == 1 ? recommendedPurchase : 0.0;
+    final sandVolume = totals['sand'] ?? 0;
+    final gravelVolume = totals['gravel'] ?? 0;
+    final membranArea = blindAreaType == 2 ? recommendedPurchase : 0.0;
     final insulationArea = needInsulation == 1
-        ? totalArea * (1 + insulationWastePercent / 100)
+        ? (totals['eppsPlates'] ?? 0) * 0.72
         : 0.0;
 
     // Дренаж
