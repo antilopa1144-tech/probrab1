@@ -9,6 +9,7 @@ import 'canonical_adapter_utils.dart';
 /* --- Constants (must match TS engine exactly) --- */
 
 const List<double> _complexityCoeffs = [1.05, 1.15, 1.25];
+const int _roofingScrewPackSize = 250;
 
 const Map<int, String> _roofingTypeLabels = {
   0: 'Металлочерепица',
@@ -21,7 +22,6 @@ const Map<int, String> _roofingTypeLabels = {
 
 /* --- Factor table --- */
 
-
 /* --- Helpers --- */
 
 /* --- Main calculator --- */
@@ -32,13 +32,31 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
 }) {
   final spec = specOverride ?? const SpecReader(roofingSpecData);
 
-  final roofingType = (inputs['roofingType'] ?? defaultFor(spec, 'roofingType', 0)).round().clamp(0, 5);
-  final area = (inputs['area'] ?? defaultFor(spec, 'area', 80)).clamp(10, 500).toDouble();
-  final slope = (inputs['slope'] ?? defaultFor(spec, 'slope', 30)).clamp(5, 60).toDouble();
-  final ridgeLength = (inputs['ridgeLength'] ?? defaultFor(spec, 'ridgeLength', 8)).clamp(1, 30).toDouble();
-  final sheetWidth = (inputs['sheetWidth'] ?? defaultFor(spec, 'sheetWidth', 1.18)).clamp(0.8, 1.5).toDouble();
-  final sheetLength = (inputs['sheetLength'] ?? defaultFor(spec, 'sheetLength', 2.5)).clamp(1, 8).toDouble();
-  final complexity = (inputs['complexity'] ?? defaultFor(spec, 'complexity', 0)).round().clamp(0, 2);
+  final roofingType =
+      (inputs['roofingType'] ?? defaultFor(spec, 'roofingType', 0))
+          .round()
+          .clamp(0, 5);
+  final area = (inputs['area'] ?? defaultFor(spec, 'area', 80))
+      .clamp(10, 500)
+      .toDouble();
+  final slope = (inputs['slope'] ?? defaultFor(spec, 'slope', 30))
+      .clamp(5, 60)
+      .toDouble();
+  final ridgeLength =
+      (inputs['ridgeLength'] ?? defaultFor(spec, 'ridgeLength', 8))
+          .clamp(1, 30)
+          .toDouble();
+  final sheetWidth =
+      (inputs['sheetWidth'] ?? defaultFor(spec, 'sheetWidth', 1.18))
+          .clamp(0.8, 1.5)
+          .toDouble();
+  final sheetLength =
+      (inputs['sheetLength'] ?? defaultFor(spec, 'sheetLength', 2.5))
+          .clamp(1, 8)
+          .toDouble();
+  final complexity = (inputs['complexity'] ?? defaultFor(spec, 'complexity', 0))
+      .round()
+      .clamp(0, 2);
 
   final complexityCoeff = _complexityCoeffs[complexity];
   final slopeFactor = 1 / math.cos(slope * math.pi / 180);
@@ -61,6 +79,7 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
     final ridgePieces = (ridgeLength / 2 * 1.05).ceil();
     final snowGuards = (perimeterEst / 3).ceil();
     final screws = (realArea * 9).ceil();
+    final screwPacks = (screws / _roofingScrewPackSize).ceil();
     final waterproofingM2 = (realArea * 1.15).ceil();
     final waterproofingRolls = (waterproofingM2 / 75).ceil();
     final battens = (realArea / 0.35 * 1.1).ceil();
@@ -70,63 +89,88 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
     primaryUnit = 'листов';
     primaryLabel = 'metal-tile-sheet';
 
-    materials.add(CanonicalMaterialResult(
-      name: '${_roofingTypeLabels[0]} (${sheetWidth}x$sheetLength м)',
-      quantity: sheetsNeeded.toDouble(),
-      unit: 'листов',
-      withReserve: sheetsNeeded.toDouble(),
-      purchaseQty: sheetsNeeded.toDouble(),
-      category: 'Основное',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Коньковые элементы (2 м)',
-      quantity: ridgePieces.toDouble(),
-      unit: 'шт',
-      withReserve: ridgePieces.toDouble(),
-      purchaseQty: ridgePieces.toDouble(),
-      category: 'Доборные',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Снегозадержатели',
-      quantity: snowGuards.toDouble(),
-      unit: 'шт',
-      withReserve: snowGuards.toDouble(),
-      purchaseQty: snowGuards.toDouble(),
-      category: 'Безопасность',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Кровельные саморезы',
-      quantity: screws.toDouble(),
-      unit: 'шт',
-      withReserve: screws.toDouble(),
-      purchaseQty: screws.toDouble(),
-      category: 'Крепёж',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Гидроизоляция (рулон 75 м²)',
-      quantity: waterproofingM2.toDouble(),
-      unit: 'м²',
-      withReserve: (waterproofingRolls * 75).toDouble(),
-      purchaseQty: (waterproofingRolls * 75).toDouble(),
-      category: 'Изоляция',
-      packageInfo: {'count': waterproofingRolls, 'unitSize': 75.0, 'packageUnit': 'рулонов'},
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Обрешётка (доска 25×100, шаг ~350 мм)',
-      quantity: battens.toDouble(),
-      unit: 'шт',
-      withReserve: battens.toDouble(),
-      purchaseQty: battens.toDouble(),
-      category: 'Каркас',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Контробрешётка (брусок 50×50)',
-      quantity: counterBattens.toDouble(),
-      unit: 'шт',
-      withReserve: counterBattens.toDouble(),
-      purchaseQty: counterBattens.toDouble(),
-      category: 'Каркас',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: '${_roofingTypeLabels[0]} (${sheetWidth}x$sheetLength м)',
+        quantity: sheetsNeeded.toDouble(),
+        unit: 'листов',
+        withReserve: sheetsNeeded.toDouble(),
+        purchaseQty: sheetsNeeded.toDouble(),
+        category: 'Основное',
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Коньковая планка для металлочерепицы, длина 2 м',
+        quantity: ridgePieces.toDouble(),
+        unit: 'шт',
+        withReserve: ridgePieces.toDouble(),
+        purchaseQty: ridgePieces.toDouble(),
+        category: 'Доборные',
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Снегозадержатели трубчатые, секции 3 м',
+        quantity: snowGuards.toDouble(),
+        unit: 'шт',
+        withReserve: snowGuards.toDouble(),
+        purchaseQty: snowGuards.toDouble(),
+        category: 'Безопасность',
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Кровельные саморезы 4,8×35 мм с уплотнительной шайбой из EPDM-резины',
+        quantity: screws.toDouble(),
+        unit: 'шт',
+        withReserve: screws.toDouble(),
+        purchaseQty: (screwPacks * _roofingScrewPackSize).toDouble(),
+        category: 'Крепёж',
+        packageInfo: {
+          'count': screwPacks,
+          'unitSize': _roofingScrewPackSize.toDouble(),
+          'packageUnit': 'упаковок',
+        },
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Гидроизоляция кровельная — гидроветрозащитная мембрана, рулон 75 м²',
+        quantity: waterproofingM2.toDouble(),
+        unit: 'м²',
+        withReserve: (waterproofingRolls * 75).toDouble(),
+        purchaseQty: (waterproofingRolls * 75).toDouble(),
+        category: 'Изоляция',
+        packageInfo: {
+          'count': waterproofingRolls,
+          'unitSize': 75.0,
+          'packageUnit': 'рулонов',
+        },
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Обрешётка — доска 25×100 мм, шаг 350 мм',
+        quantity: battens.toDouble(),
+        unit: 'пог. м',
+        withReserve: battens.toDouble(),
+        purchaseQty: battens.toDouble(),
+        category: 'Каркас',
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Контробрешётка — брусок 50×50 мм',
+        quantity: counterBattens.toDouble(),
+        unit: 'пог. м',
+        withReserve: counterBattens.toDouble(),
+        purchaseQty: counterBattens.toDouble(),
+        category: 'Каркас',
+      ),
+    );
   } else if (roofingType == 1) {
     /* -- SOFT ROOFING -- */
     final packs = (realArea / 3.0 * complexityCoeff).ceil();
@@ -142,7 +186,16 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
 
     final masticKg = (perimeterEst + ridgeLength) * 0.1 + realArea * 0.1;
     final masticBuckets = (masticKg / 3).ceil();
-    final nailsKg = (realArea * 80 / 400 * 1.05).ceil();
+    final nailRateKgPerM2 =
+        slope <=
+            spec.materialRule<num>('soft_nails_high_slope_threshold').toDouble()
+        ? spec.materialRule<num>('soft_nails_kg_per_m2_low_slope').toDouble()
+        : spec.materialRule<num>('soft_nails_kg_per_m2_high_slope').toDouble();
+    final nailsExactKg = realArea * nailRateKgPerM2;
+    final nailsWithReserveKg =
+        nailsExactKg * spec.materialRule<num>('soft_nails_reserve').toDouble();
+    final nailBoxKg = spec.materialRule<num>('soft_nail_box_kg').toDouble();
+    final nailBoxes = (nailsWithReserveKg / nailBoxKg).ceil();
     final ridgeShingles = (ridgeLength / 0.5 * 1.05).ceil();
     final osbSheets = (realArea / 3.125 * 1.05).ceil();
     final ventOutputs = (realArea / 25).ceil();
@@ -151,63 +204,87 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
     primaryUnit = 'упаковок';
     primaryLabel = 'soft-roofing-pack-3m2';
 
-    materials.add(CanonicalMaterialResult(
-      name: '${_roofingTypeLabels[1]} (упаковка 3 м²)',
-      quantity: packs.toDouble(),
-      unit: 'упаковок',
-      withReserve: packs.toDouble(),
-      purchaseQty: packs.toDouble(),
-      category: 'Основное',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Подкладочный ковёр (рулон 15 м²)',
-      quantity: underlaymentRolls.toDouble(),
-      unit: 'рулонов',
-      withReserve: underlaymentRolls.toDouble(),
-      purchaseQty: underlaymentRolls.toDouble(),
-      category: 'Изоляция',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Мастика битумная (ведро 3 кг)',
-      quantity: roundValue(masticKg, 3),
-      unit: 'кг',
-      withReserve: (masticBuckets * 3).toDouble(),
-      purchaseQty: (masticBuckets * 3).toDouble(),
-      category: 'Клей',
-      packageInfo: {'count': masticBuckets, 'unitSize': 3.0, 'packageUnit': 'вёдер'},
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Кровельные гвозди',
-      quantity: nailsKg.toDouble(),
-      unit: 'кг',
-      withReserve: nailsKg.toDouble(),
-      purchaseQty: nailsKg.toDouble(),
-      category: 'Крепёж',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Коньково-карнизная черепица',
-      quantity: ridgeShingles.toDouble(),
-      unit: 'шт',
-      withReserve: ridgeShingles.toDouble(),
-      purchaseQty: ridgeShingles.toDouble(),
-      category: 'Доборные',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Плиты OSB (1250x2500=3.125 м²)',
-      quantity: osbSheets.toDouble(),
-      unit: 'листов',
-      withReserve: osbSheets.toDouble(),
-      purchaseQty: osbSheets.toDouble(),
-      category: 'Каркас',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Вентиляционные выходы',
-      quantity: ventOutputs.toDouble(),
-      unit: 'шт',
-      withReserve: ventOutputs.toDouble(),
-      purchaseQty: ventOutputs.toDouble(),
-      category: 'Вентиляция',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: '${_roofingTypeLabels[1]} (упаковка 3 м²)',
+        quantity: packs.toDouble(),
+        unit: 'упаковок',
+        withReserve: packs.toDouble(),
+        purchaseQty: packs.toDouble(),
+        category: 'Основное',
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Подкладочный ковёр (рулон 15 м²)',
+        quantity: underlaymentRolls.toDouble(),
+        unit: 'рулонов',
+        withReserve: underlaymentRolls.toDouble(),
+        purchaseQty: underlaymentRolls.toDouble(),
+        category: 'Изоляция',
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Мастика битумно-полимерная для гибкой черепицы (ведро 3 кг)',
+        quantity: roundValue(masticKg, 3),
+        unit: 'кг',
+        withReserve: (masticBuckets * 3).toDouble(),
+        purchaseQty: (masticBuckets * 3).toDouble(),
+        category: 'Клей',
+        packageInfo: {
+          'count': masticBuckets,
+          'unitSize': 3.0,
+          'packageUnit': 'вёдер',
+        },
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Гвозди ершёные оцинкованные 3,2×30 мм',
+        quantity: roundValue(nailsExactKg, 3),
+        unit: 'кг',
+        withReserve: roundValue(nailsWithReserveKg, 3),
+        purchaseQty: nailBoxes * nailBoxKg,
+        category: 'Крепёж',
+        packageInfo: {
+          'count': nailBoxes,
+          'unitSize': nailBoxKg,
+          'packageUnit': 'коробок',
+        },
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Коньково-карнизная черепица — гонты',
+        quantity: ridgeShingles.toDouble(),
+        unit: 'шт',
+        withReserve: ridgeShingles.toDouble(),
+        purchaseQty: ridgeShingles.toDouble(),
+        category: 'Доборные',
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Влагостойкая ориентированно-стружечная плита ОСП-3, 1250×2500×12 мм',
+        quantity: osbSheets.toDouble(),
+        unit: 'листов',
+        withReserve: osbSheets.toDouble(),
+        purchaseQty: osbSheets.toDouble(),
+        category: 'Каркас',
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Вентиляционные выходы — точечные кровельные аэраторы',
+        quantity: ventOutputs.toDouble(),
+        unit: 'шт',
+        withReserve: ventOutputs.toDouble(),
+        purchaseQty: ventOutputs.toDouble(),
+        category: 'Вентиляция',
+      ),
+    );
   } else {
     /* -- GENERIC: profnastil (2), ondulin (3), shale (4), ceramic (5) -- */
     final typeIdx = roofingType - 2; // 0..3
@@ -239,7 +316,19 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
     }
 
     final sheetsOrTiles = (realArea / unitSheetArea * complexityCoeff).ceil();
-    final ridgePieces = (ridgeLength / 0.33 * 1.05).ceil();
+    final ridgeUsefulLength = switch (roofingType) {
+      2 => 2.0,
+      3 => 0.85,
+      4 => 2.0,
+      _ => 0.4,
+    };
+    final ridgeName = switch (roofingType) {
+      2 => 'Коньковая планка для профнастила, длина 2 м',
+      3 => 'Коньковый элемент для ондулина, полезная длина около 0,85 м',
+      4 => 'Оцинкованная коньковая планка для шифера, длина 2 м',
+      _ => 'Коньковая керамическая черепица',
+    };
+    final ridgePieces = (ridgeLength / ridgeUsefulLength * 1.05).ceil();
 
     const fastenerRates = [10, 20, 4, 4];
     final fastenersNeeded = (realArea * fastenerRates[typeIdx]).ceil();
@@ -251,48 +340,88 @@ CanonicalCalculatorContractResult calculateCanonicalRoofing(
     primaryUnit = tileUnit;
     primaryLabel = unitLabel;
 
-    materials.add(CanonicalMaterialResult(
-      name: unitName,
-      quantity: sheetsOrTiles.toDouble(),
-      unit: tileUnit,
-      withReserve: sheetsOrTiles.toDouble(),
-      purchaseQty: sheetsOrTiles.toDouble(),
-      category: 'Основное',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Коньковые элементы (0.33 м)',
-      quantity: ridgePieces.toDouble(),
-      unit: 'шт',
-      withReserve: ridgePieces.toDouble(),
-      purchaseQty: ridgePieces.toDouble(),
-      category: 'Доборные',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: roofingType == 3 ? 'Гвозди кровельные' : 'Крепёж кровельный',
-      quantity: fastenersNeeded.toDouble(),
-      unit: 'шт',
-      withReserve: fastenersNeeded.toDouble(),
-      purchaseQty: fastenersNeeded.toDouble(),
-      category: 'Крепёж',
-    ));
-    materials.add(CanonicalMaterialResult(
-      name: 'Гидроизоляция (рулон 75 м²)',
-      quantity: (realArea * 1.15).ceilToDouble(),
-      unit: 'м²',
-      withReserve: (waterproofingRolls * 75).toDouble(),
-      purchaseQty: (waterproofingRolls * 75).toDouble(),
-      category: 'Изоляция',
-      packageInfo: {'count': waterproofingRolls, 'unitSize': 75.0, 'packageUnit': 'рулонов'},
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: unitName,
+        quantity: sheetsOrTiles.toDouble(),
+        unit: tileUnit,
+        withReserve: sheetsOrTiles.toDouble(),
+        purchaseQty: sheetsOrTiles.toDouble(),
+        category: 'Основное',
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: ridgeName,
+        quantity: ridgePieces.toDouble(),
+        unit: 'шт',
+        withReserve: ridgePieces.toDouble(),
+        purchaseQty: ridgePieces.toDouble(),
+        category: 'Доборные',
+      ),
+    );
+    final fastenerName = switch (roofingType) {
+      2 =>
+        'Кровельные саморезы 4,8×35 мм с уплотнительной шайбой из EPDM-резины',
+      3 => 'Гвозди для ондулина с герметизирующей шляпкой',
+      4 => 'Шиферные гвозди 4,5×120 мм',
+      _ => 'Противоветровые кляймеры для керамической черепицы',
+    };
+    final fastenerPacks = roofingType == 2
+        ? (fastenersNeeded / _roofingScrewPackSize).ceil()
+        : 0;
+    materials.add(
+      CanonicalMaterialResult(
+        name: fastenerName,
+        quantity: fastenersNeeded.toDouble(),
+        unit: 'шт',
+        withReserve: fastenersNeeded.toDouble(),
+        purchaseQty: roofingType == 2
+            ? (fastenerPacks * _roofingScrewPackSize).toDouble()
+            : fastenersNeeded.toDouble(),
+        category: 'Крепёж',
+        packageInfo: roofingType == 2
+            ? {
+                'count': fastenerPacks,
+                'unitSize': _roofingScrewPackSize.toDouble(),
+                'packageUnit': 'упаковок',
+              }
+            : null,
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Гидроизоляция кровельная — гидроветрозащитная мембрана, рулон 75 м²',
+        quantity: (realArea * 1.15).ceilToDouble(),
+        unit: 'м²',
+        withReserve: (waterproofingRolls * 75).toDouble(),
+        purchaseQty: (waterproofingRolls * 75).toDouble(),
+        category: 'Изоляция',
+        packageInfo: {
+          'count': waterproofingRolls,
+          'unitSize': 75.0,
+          'packageUnit': 'рулонов',
+        },
+      ),
+    );
   }
 
   /* -- scenarios -- */
   final scenarios = <String, CanonicalScenarioResult>{};
 
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(primaryQuantity * accuracyMult * multiplier, 6);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
+    final exactNeed = roundValue(
+      primaryQuantity * accuracyMult * multiplier,
+      6,
+    );
     final packages = exactNeed > 0 ? (exactNeed / 1.0).ceil() : 0;
     final purchaseQuantity = roundValue(packages * 1.0, 6);
 
@@ -308,7 +437,11 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:$primaryLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -323,16 +456,25 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   final recScenario = scenarios['REC']!;
 
   /* -- warnings -- */
-  if (slope < spec.warningRule<num>('metal_tile_min_slope').toDouble() && roofingType == 0) {
-    warnings.add('Уклон менее 14\u00b0 \u2014 слишком пологий для металлочерепицы');
+  if (slope < spec.warningRule<num>('metal_tile_min_slope').toDouble() &&
+      roofingType == 0) {
+    warnings.add(
+      'Уклон менее 14\u00b0 \u2014 слишком пологий для металлочерепицы',
+    );
   }
-  if (slope < spec.warningRule<num>('soft_roofing_min_slope').toDouble() && roofingType == 1) {
-    warnings.add('Уклон менее 12\u00b0 \u2014 слишком пологий для мягкой кровли');
+  if (slope < spec.warningRule<num>('soft_roofing_min_slope').toDouble() &&
+      roofingType == 1) {
+    warnings.add(
+      'Уклон менее 12\u00b0 \u2014 слишком пологий для мягкой кровли',
+    );
   }
   if (complexity == 2) {
-    warnings.add('Сложная геометрия крыши \u2014 рекомендуется профессиональный монтаж');
+    warnings.add(
+      'Сложная геометрия крыши \u2014 рекомендуется профессиональный монтаж',
+    );
   }
-  if (realArea > spec.warningRule<num>('large_roof_area_threshold').toDouble()) {
+  if (realArea >
+      spec.warningRule<num>('large_roof_area_threshold').toDouble()) {
     warnings.add('Большая площадь крыши \u2014 рекомендуется доставка краном');
   }
 
