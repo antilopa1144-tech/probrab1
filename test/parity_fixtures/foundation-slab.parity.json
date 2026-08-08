@@ -1,67 +1,77 @@
 {
   "calculator_id": "foundation-slab",
-  "formula_version": "foundation-slab-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.525Z",
+  "formula_version": "foundation-slab-canonical-v2",
+  "generated_at": "2026-08-08T08:53:35.806Z",
   "cases": [
     {
       "id": "defaults",
       "description": "Default inputs for foundation-slab",
       "inputs": {
         "area": 60,
+        "length": 0,
+        "width": 0,
         "thickness": 200,
         "rebarDiam": 12,
         "rebarStep": 200,
+        "sandLayerMm": 100,
+        "gravelLayerMm": 150,
         "insulationThickness": 0
       },
       "expected_totals": {
         "area": 60,
+        "length": 7.746,
+        "width": 7.746,
         "thickness": 200,
         "rebarDiam": 12,
         "rebarStep": 200,
+        "sandLayerMm": 100,
+        "gravelLayerMm": 150,
         "insulationThickness": 0,
         "side": 7.746,
         "perimeter": 30.984,
-        "concreteM3": 12.6,
+        "concreteM3": 12,
         "barsPerDir": 40,
+        "barsAlongLength": 40,
+        "barsAlongWidth": 40,
         "totalBarLen": 1239.355,
         "rebarKg": 1100.547,
-        "wireKg": 64,
+        "wireKg": 8.544,
         "formworkArea": 6.816,
         "geotextile": 72,
         "gravel": 9,
         "sand": 6,
         "eppsPlates": 0,
-        "minExactNeedM3": 11.73312,
-        "recExactNeedM3": 13.356,
-        "maxExactNeedM3": 17.364816,
-        "minPurchaseM3": 11.8,
-        "recPurchaseM3": 13.4,
-        "maxPurchaseM3": 17.4
+        "minExactNeedM3": 11.1744,
+        "recExactNeedM3": 12.72,
+        "maxExactNeedM3": 16.53792,
+        "minPurchaseM3": 11.2,
+        "recPurchaseM3": 12.8,
+        "maxPurchaseM3": 16.6
       },
       "expected_materials_count": 7,
       "expected_material_names": [
-        "Бетон М300",
-        "Арматура ∅12 мм",
-        "Проволока вязальная",
-        "Опалубка (доска)",
-        "Геотекстиль",
-        "Щебень (подушка)",
-        "Песок (подушка)"
+        "Товарный бетон — класс по проекту",
+        "Арматура рифлёная ∅12 мм для двух сеток",
+        "Проволока вязальная отожжённая ∅1,2 мм",
+        "Опалубка — материал для щитов",
+        "Геотекстиль нетканый иглопробивной, 200–300 г/м²",
+        "Щебень для подушки, фракция 20–40 мм",
+        "Песок для подушки, средней или крупной фракции"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 11.73312,
-          "purchase_quantity": 11.8
+          "exact_need": 11.1744,
+          "purchase_quantity": 11.2
         },
         "REC": {
-          "exact_need": 13.356,
-          "purchase_quantity": 13.4
+          "exact_need": 12.72,
+          "purchase_quantity": 12.8
         },
         "MAX": {
-          "exact_need": 17.364816,
-          "purchase_quantity": 17.4
+          "exact_need": 16.53792,
+          "purchase_quantity": 16.6
         }
       }
     }

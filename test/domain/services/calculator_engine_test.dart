@@ -34,24 +34,27 @@ void main() {
       );
     });
 
-    test('catalog useCase matches screen engine for registered calculators', () {
-      final mismatched = <String>[];
-      for (final entry in CalculatorEngine.screenEngines.entries) {
-        final definition = CalculatorRegistry.getById(entry.key);
-        if (definition == null) {
-          mismatched.add('${entry.key}: no definition');
-          continue;
+    test(
+      'catalog useCase matches screen engine for registered calculators',
+      () {
+        final mismatched = <String>[];
+        for (final entry in CalculatorEngine.screenEngines.entries) {
+          final definition = CalculatorRegistry.getById(entry.key);
+          if (definition == null) {
+            mismatched.add('${entry.key}: no definition');
+            continue;
+          }
+          if (!identical(definition.useCase, entry.value)) {
+            mismatched.add('${entry.key}: ${definition.useCase.runtimeType}');
+          }
         }
-        if (!identical(definition.useCase, entry.value)) {
-          mismatched.add('${entry.key}: ${definition.useCase.runtimeType}');
-        }
-      }
-      expect(
-        mismatched,
-        isEmpty,
-        reason: 'Registry not aligned: ${mismatched.join('; ')}',
-      );
-    });
+        expect(
+          mismatched,
+          isEmpty,
+          reason: 'Registry not aligned: ${mismatched.join('; ')}',
+        );
+      },
+    );
 
     test('resolve returns definition useCase for Pro-only calculators', () {
       final lawn = CalculatorRegistry.getById('lawn');
@@ -59,6 +62,19 @@ void main() {
       expect(
         identical(CalculatorEngine.resolve('lawn'), lawn!.useCase),
         isTrue,
+      );
+    });
+
+    test('foundation slab resolves to the canonical catalog useCase', () {
+      final slab = CalculatorRegistry.getById('foundation_slab');
+      expect(slab, isNotNull);
+      expect(
+        identical(CalculatorEngine.resolve('foundation_slab'), slab!.useCase),
+        isTrue,
+      );
+      expect(
+        CalculatorEngine.screenEngines,
+        isNot(contains('foundation_slab')),
       );
     });
 

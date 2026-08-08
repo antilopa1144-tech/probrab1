@@ -33,7 +33,6 @@ import '../usecases/calculate_rail_ceiling_v2.dart';
 import '../usecases/calculate_room.dart';
 import '../usecases/calculate_screed_unified.dart';
 import '../usecases/calculate_self_leveling_floor.dart';
-import '../usecases/calculate_slab_v2.dart';
 import '../usecases/calculate_slopes_v2.dart';
 import '../usecases/calculate_stairs_v2.dart';
 import '../usecases/calculate_stretch_ceiling_v2.dart';
@@ -95,7 +94,6 @@ class CalculatorEngine {
       'floors_warm': const WarmFloorUnifiedUseCase(),
       'foundation_basement': CalculateBasementV2(),
       'foundation_blind_area': CalculateBlindAreaV2(),
-      'foundation_slab': CalculateSlabV2(),
       'foundation_strip': CalculateStripFoundation(),
       'gypsum_board': CalculateGypsumV2(),
       'mixes_plaster': CalculatePlaster(),

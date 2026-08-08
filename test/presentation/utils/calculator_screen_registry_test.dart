@@ -475,7 +475,6 @@ void main() {
         'stairs',
         'foundation_basement',
         'foundation_blind_area',
-        'foundation_slab',
         'roofing_gutters',
       ];
 
@@ -762,7 +761,6 @@ void main() {
       final foundationCalculators = [
         'foundation_basement',
         'foundation_blind_area',
-        'foundation_slab',
       ];
 
       for (final id in foundationCalculators) {
@@ -772,6 +770,13 @@ void main() {
           reason: 'Калькулятор $id должен быть зарегистрирован',
         );
       }
+    });
+
+    test('плитный фундамент использует общий canonical-экран', () {
+      expect(
+        CalculatorScreenRegistry.hasCustomScreen('foundation_slab'),
+        isFalse,
+      );
     });
 
     test('звукоизоляция использует общий canonical-экран', () {

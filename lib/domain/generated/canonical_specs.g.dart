@@ -3128,7 +3128,7 @@ const Map<String, dynamic> foamBlocksSpecData = {
 /// Generated from foundation-slab-canonical.v1.json
 const Map<String, dynamic> foundationSlabSpecData = {
   'calculator_id': 'foundation-slab',
-  'formula_version': 'foundation-slab-canonical-v1',
+  'formula_version': 'foundation-slab-canonical-v2',
   'input_schema': [
     {
       'key': 'area',
@@ -3173,6 +3173,20 @@ const Map<String, dynamic> foundationSlabSpecData = {
       'max': 250,
     },
     {
+      'key': 'sandLayerMm',
+      'unit': 'mm',
+      'default_value': 100,
+      'min': 0,
+      'max': 500,
+    },
+    {
+      'key': 'gravelLayerMm',
+      'unit': 'mm',
+      'default_value': 150,
+      'min': 0,
+      'max': 500,
+    },
+    {
       'key': 'insulationThickness',
       'unit': 'mm',
       'default_value': 0,
@@ -3199,13 +3213,11 @@ const Map<String, dynamic> foundationSlabSpecData = {
       '14': 1.208,
       '16': 1.578,
     },
-    'wire_per_joint': 0.02,
+    'wire_length_per_joint_m': 0.3,
+    'wire_mass_per_meter_kg': 0.0089,
     'epps_plate_m2': 0.72,
     'geotextile_reserve': 1.2,
     'formwork_reserve': 1.1,
-    'concrete_reserve': 1.05,
-    'gravel_layer': 0.15,
-    'sand_layer': 0.1,
     'insulation_reserve': 1.05,
   },
   'warnings_rules': {
@@ -3234,8 +3246,8 @@ const Map<String, dynamic> foundationSlabSpecData = {
   ],
   'assumption_notes': [
     'Если поля length и width оба заполнены и > 0 — расчёт использует реальные размеры прямоугольной плиты (для арматуры, опалубки, периметра). Это даёт корректные значения для асимметричных плит (типа 4×15 или 3×20). Если хотя бы одно из полей = 0 — fallback на side = sqrt(area), что эквивалентно квадратной плите. Старое поведение сохранено для обратной совместимости.',
-    'Расчёт армирования предполагает двухсетевую схему (верхняя и нижняя сетки) с шагом 150-250 мм. Для тяжёлых нагрузок (двух- и более этажные кирпичные дома) может потребоваться шаг 100-150 мм и расчёт инженером-конструктором.',
-    'Минимальная толщина плиты в калькуляторе 150 мм — для лёгких каркасных конструкций. Для тяжёлых домов рекомендуемая толщина 250-300 мм. Несущая способность зависит от грунта и нагрузки — индивидуальный расчёт обязателен.',
+    'Расчёт материалов предполагает две ортогональные арматурные сетки — верхнюю и нижнюю. Диаметр, шаг, защитный слой, нахлёсты и усиления в калькуляторе не проектируются и должны быть взяты из конструктивного проекта.',
+    'Толщина плиты и слоёв подготовки вводится пользователем по проекту. Калькулятор оценивает количество материалов, но не проверяет несущую способность основания и конструкции.',
   ],
 };
 
