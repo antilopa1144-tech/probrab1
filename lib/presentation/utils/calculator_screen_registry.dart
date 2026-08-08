@@ -32,7 +32,6 @@ import '../views/calculator/attic_calculator_screen.dart';
 import '../views/calculator/balcony_calculator_screen.dart';
 import '../views/calculator/bathroom_waterproof_calculator_screen.dart';
 import '../views/calculator/doors_install_calculator_screen.dart';
-import '../views/calculator/sound_insulation_calculator_screen.dart';
 import '../views/calculator/slopes_calculator_screen.dart';
 import '../views/calculator/windows_install_calculator_screen.dart';
 import '../views/calculator/facade_panels_calculator_screen.dart';
@@ -60,10 +59,11 @@ import '../views/wood/wood_screen.dart';
 import '../views/osb/osb_calculator_screen.dart';
 
 /// Функция-билдер для создания экрана калькулятора.
-typedef CalculatorScreenBuilder = Widget Function(
-  CalculatorDefinitionV2 definition,
-  Map<String, double>? initialInputs,
-);
+typedef CalculatorScreenBuilder =
+    Widget Function(
+      CalculatorDefinitionV2 definition,
+      Map<String, double>? initialInputs,
+    );
 
 /// Реестр экранов калькуляторов.
 /// Заменяет 49 if-блоков на Map-based подход.
@@ -73,27 +73,19 @@ class CalculatorScreenRegistry {
   /// Маппинг ID калькулятора -> билдер экрана.
   static final Map<String, CalculatorScreenBuilder> _builders = {
     // Смеси
-    'mixes_plaster': (def, inputs) => PlasterCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+    'mixes_plaster': (def, inputs) =>
+        PlasterCalculatorScreen(definition: def, initialInputs: inputs),
     'mixes_putty': (_, _) => const PuttyCalculatorScreenV2(),
     'mixes_primer': (_, _) => const PrimerCalculatorScreen(),
-    'mixes_tile_glue': (def, inputs) => TileAdhesiveCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+    'mixes_tile_glue': (def, inputs) =>
+        TileAdhesiveCalculatorScreen(definition: def, initialInputs: inputs),
 
     // Листовые материалы
     // 'dsp' перемещён в секцию "Полы" и объединён с floors_screed_unified
-    'sheeting_osb_plywood': (def, inputs) => OsbCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
-    'gypsum_board': (def, inputs) => GypsumCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+    'sheeting_osb_plywood': (def, inputs) =>
+        OsbCalculatorScreen(definition: def, initialInputs: inputs),
+    'gypsum_board': (def, inputs) =>
+        GypsumCalculatorScreen(definition: def, initialInputs: inputs),
 
     // Краска и дерево (из HTML)
     'paint_universal': (_, _) => const PaintScreen(),
@@ -101,40 +93,30 @@ class CalculatorScreenRegistry {
     'wood': (_, _) => const WoodScreen(),
 
     // Стены
-    'walls_wallpaper': (def, inputs) => WallpaperCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
-    'walls_3d_panels': (def, inputs) => ThreeDPanelsCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
-    'walls_wood': (def, inputs) => WoodLiningCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+    'walls_wallpaper': (def, inputs) =>
+        WallpaperCalculatorScreen(definition: def, initialInputs: inputs),
+    'walls_3d_panels': (def, inputs) =>
+        ThreeDPanelsCalculatorScreen(definition: def, initialInputs: inputs),
+    'walls_wood': (def, inputs) =>
+        WoodLiningCalculatorScreen(definition: def, initialInputs: inputs),
     'walls_decor_plaster': (_, _) => const DecorPlasterCalculatorScreen(),
     'walls_decor_stone': (_, _) => const DecorStoneCalculatorScreen(),
     'walls_mdf_panels': (_, _) => const MdfPanelsCalculatorScreen(),
     'walls_pvc_panels': (_, _) => const PvcPanelsCalculatorScreen(),
 
     // Перегородки
-    'partitions_blocks': (def, inputs) => GasblockCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+    'partitions_blocks': (def, inputs) =>
+        GasblockCalculatorScreen(definition: def, initialInputs: inputs),
     'partitions_brick': (_, _) => const BrickCalculatorScreen(),
     'exterior_brick': (_, _) => const BrickCalculatorScreen(),
 
     // Полы
-    'floors_tile': (def, inputs) => TileCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+    'floors_tile': (def, inputs) =>
+        TileCalculatorScreen(definition: def, initialInputs: inputs),
     'floors_self_leveling': (def, inputs) => SelfLevelingFloorCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+      definition: def,
+      initialInputs: inputs,
+    ),
     'floors_laminate': (_, _) => const LaminateCalculatorScreen(),
     'floors_linoleum': (_, _) => const LinoleumCalculatorScreen(),
     'floors_parquet': (_, _) => const ParquetCalculatorScreen(),
@@ -144,9 +126,9 @@ class CalculatorScreenRegistry {
     'dsp': (_, _) => const ScreedUnifiedCalculatorScreen(),
     'floors_tile_grout': (_, _) => const TileGroutCalculatorScreen(),
     'floors_warm': (def, inputs) => UnderfloorHeatingCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+      definition: def,
+      initialInputs: inputs,
+    ),
 
     // Потолки
     'ceilings_stretch': (_, _) => const StretchCeilingCalculatorScreen(),
@@ -156,18 +138,14 @@ class CalculatorScreenRegistry {
 
     // Инженерия
     // engineering_heating удалён — дубль floors_warm
-    'engineering_electrics': (def, inputs) => ElectricalCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+    'engineering_electrics': (def, inputs) =>
+        ElectricalCalculatorScreen(definition: def, initialInputs: inputs),
     // engineering_plumbing удалён
     'engineering_ventilation': (_, _) => const VentilationCalculatorScreen(),
 
     // Специальные помещения
-    'terrace': (def, inputs) => TerraceCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+    'terrace': (def, inputs) =>
+        TerraceCalculatorScreen(definition: def, initialInputs: inputs),
     'attic': (_, _) => const AtticCalculatorScreen(),
     'balcony': (_, _) => const BalconyCalculatorScreen(),
     'bathroom_waterproof': (_, _) => const BathroomWaterproofCalculatorScreen(),
@@ -176,9 +154,6 @@ class CalculatorScreenRegistry {
     'doors_install': (_, _) => const DoorsInstallCalculatorScreen(),
     'windows_install': (_, _) => const WindowsInstallCalculatorScreen(),
     'slopes_finishing': (_, _) => const SlopesCalculatorScreen(),
-
-    // Изоляция
-    'insulation_sound': (_, _) => const SoundInsulationCalculatorScreen(),
 
     // Экстерьер
     'exterior_facade_panels': (_, _) => const FacadePanelsCalculatorScreen(),
@@ -193,19 +168,17 @@ class CalculatorScreenRegistry {
 
     // Бетон
     'concrete_universal': (def, inputs) => ConcreteUniversalCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+      definition: def,
+      initialInputs: inputs,
+    ),
 
     // Комплексные
     'room': (_, inputs) => RoomCalculatorScreen(initialInputs: inputs),
 
     // Кровля
     'roofing_gutters': (_, _) => const GuttersCalculatorScreen(),
-    'roofing_unified': (def, inputs) => RoofingUnifiedCalculatorScreen(
-          definition: def,
-          initialInputs: inputs,
-        ),
+    'roofing_unified': (def, inputs) =>
+        RoofingUnifiedCalculatorScreen(definition: def, initialInputs: inputs),
 
     // Участок и наружные системы
     'lawn': (_, _) => const LawnCalculatorScreen(),

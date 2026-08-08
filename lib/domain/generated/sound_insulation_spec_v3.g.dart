@@ -1,0 +1,60 @@
+// GENERATED SNAPSHOT — source: masterok-web/configs/calculators/
+// sound-insulation-canonical.v1.json (formula v3).
+// Kept isolated so syncing this calculator does not stage unrelated specs.
+const Map<String, dynamic> soundInsulationSpecV3Data = {
+  'calculator_id': 'sound-insulation',
+  'formula_version': 'sound-insulation-canonical-v3',
+  'input_schema': [
+    {'key': 'area', 'unit': 'm²', 'default_value': 30, 'min': 1, 'max': 500},
+    {'key': 'surfaceType', 'default_value': 0, 'min': 0, 'max': 2},
+    {'key': 'system', 'default_value': 0, 'min': 0, 'max': 3},
+    {
+      'key': 'perimeter',
+      'unit': 'm',
+      'default_value': 0,
+      'min': 0,
+      'max': 2000,
+    },
+    {
+      'key': 'screedThicknessMm',
+      'unit': 'mm',
+      'default_value': 50,
+      'min': 30,
+      'max': 100,
+    },
+    {
+      'key': 'acousticPlatesPerPack',
+      'unit': 'шт',
+      'default_value': 6,
+      'min': 1,
+      'max': 50,
+    },
+  ],
+  'field_factors': {
+    'enabled': ['waste_factor'],
+  },
+  'packaging_rules': {'unit': 'шт', 'package_size': 6},
+  'material_rules': {
+    'rockwool_plate': 0.6,
+    'rockwool_reserve': 1.1,
+    'gkl_sheet': 3,
+    'gkl_reserve_2layers': 2,
+    'pp_spacing': 0.6,
+    'pp_length': 3,
+    'vibro_per_m2': 2,
+    'vibro_reserve': 1.05,
+    'vibro_tape_roll': 30,
+    'zips_plate': 0.72,
+    'zips_reserve': 1.1,
+    'float_mat_roll': 20,
+    'float_reserve': 1.1,
+    'damp_tape_roll': 25,
+    'screed_density': 1800,
+    'screed_bag': 50,
+    'sealant_per_perim': 20,
+    'seal_tape_roll': 30,
+    'seal_tape_reserve': 1.1,
+  },
+  'warnings_rules': {'large_area_threshold_m2': 200},
+  'scenario_policy': {'contract': 'min-rec-max-v1'},
+};

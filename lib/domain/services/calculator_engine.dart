@@ -35,7 +35,6 @@ import '../usecases/calculate_screed_unified.dart';
 import '../usecases/calculate_self_leveling_floor.dart';
 import '../usecases/calculate_slab_v2.dart';
 import '../usecases/calculate_slopes_v2.dart';
-import '../usecases/calculate_sound_insulation_v2.dart';
 import '../usecases/calculate_stairs_v2.dart';
 import '../usecases/calculate_stretch_ceiling_v2.dart';
 import '../usecases/calculate_strip_foundation.dart';
@@ -99,7 +98,6 @@ class CalculatorEngine {
       'foundation_slab': CalculateSlabV2(),
       'foundation_strip': CalculateStripFoundation(),
       'gypsum_board': CalculateGypsumV2(),
-      'insulation_sound': CalculateSoundInsulationV2(),
       'mixes_plaster': CalculatePlaster(),
       'mixes_primer': CalculatePrimer(),
       'mixes_putty': CalculatePutty(),

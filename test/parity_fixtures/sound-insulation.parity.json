@@ -1,56 +1,62 @@
 {
   "calculator_id": "sound-insulation",
-  "formula_version": "sound-insulation-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.639Z",
+  "formula_version": "sound-insulation-canonical-v3",
+  "generated_at": "2026-08-02T05:23:06.968Z",
   "cases": [
     {
       "id": "defaults",
       "description": "Default inputs for sound-insulation",
       "inputs": {
         "area": 30,
-        "surfaceType": 0,
-        "system": 0
+        "system": 0,
+        "perimeter": 0,
+        "screedThicknessMm": 50,
+        "acousticPlatesPerPack": 6
       },
       "expected_totals": {
         "area": 30,
         "surfaceType": 0,
         "system": 0,
         "perim": 21.909,
-        "primaryQty": 55,
+        "perimeterEstimated": 1,
+        "screedThicknessMm": 0,
+        "primaryQty": 50,
+        "acousticPlatesPerPack": 6,
+        "packagesNeeded": 9,
         "sealant": 3,
         "sealTape": 2,
-        "minExactNeed": 51.216,
-        "recExactNeed": 58.3,
-        "maxExactNeed": 75.7988,
-        "minPurchase": 52,
-        "recPurchase": 59,
-        "maxPurchase": 76
+        "minExactNeed": 50,
+        "recExactNeed": 53,
+        "maxExactNeed": 57.5,
+        "minPurchase": 54,
+        "recPurchase": 54,
+        "maxPurchase": 60
       },
       "expected_materials_count": 8,
       "expected_material_names": [
-        "Минераловатные плиты",
-        "ГКЛ листы",
-        "Профиль ПП 3м",
-        "Виброподвесы",
-        "Вибролента",
-        "Саморезы (упаковки по 200)",
-        "Герметик",
-        "Уплотнительная лента 30м"
+        "Акустическая минеральная плита 600×1000×50 мм",
+        "Гипсокартонные листы (ГКЛ) 1200×2500×12,5 мм, два слоя",
+        "Потолочный профиль ПП 60×27×3000 мм",
+        "Виброподвес для профиля 60×27 мм",
+        "Вибролента 50 мм (30 м)",
+        "Чёрные саморезы для гипсокартона по металлу 3,5×25 и 3,5×35 мм (по 200 шт)",
+        "Невысыхающий акустический герметик, 280–310 мл",
+        "Уплотнительная виброизоляционная лента (30 м)"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 51.216,
-          "purchase_quantity": 52
+          "exact_need": 50,
+          "purchase_quantity": 54
         },
         "REC": {
-          "exact_need": 58.3,
-          "purchase_quantity": 59
+          "exact_need": 53,
+          "purchase_quantity": 54
         },
         "MAX": {
-          "exact_need": 75.7988,
-          "purchase_quantity": 76
+          "exact_need": 57.5,
+          "purchase_quantity": 60.0
         }
       }
     }
