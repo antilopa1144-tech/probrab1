@@ -276,7 +276,7 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
         accentColor: accentColor,
         results: [
           ResultItem(
-            label: _loc.translate('plaster_pro.label.wall_area').toUpperCase(),
+            label: _loc.translate('plaster_pro.summary.area').toUpperCase(),
             value: '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
@@ -460,16 +460,22 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
 
   Widget _buildManualInputs() {
     const accentColor = CalculatorColors.walls;
-    return CalculatorSliderField(
-      label: _loc.translate('plaster_pro.label.wall_area'),
-      value: _manualArea,
-      min: 1,
-      max: 500,
-      divisions: 4990,
-      suffix: _loc.translate('common.sqm'),
-      accentColor: accentColor,
-      onChanged: (v) { _manualArea = v; _update(); },
-      decimalPlaces: 1,
+    return Column(
+      children: [
+        CalculatorSliderField(
+          label: _loc.translate('plaster_pro.label.wall_area'),
+          value: _manualArea,
+          min: 1,
+          max: 500,
+          divisions: 4990,
+          suffix: _loc.translate('common.sqm'),
+          accentColor: accentColor,
+          onChanged: (v) { _manualArea = v; _update(); },
+          decimalPlaces: 1,
+        ),
+        const SizedBox(height: 12),
+        _buildOpeningsInput(),
+      ],
     );
   }
 
@@ -515,16 +521,24 @@ class _PlasterCalculatorScreenState extends State<PlasterCalculatorScreen>
           maxValue: 10,
         ),
         const SizedBox(height: 12),
-        CalculatorTextField(
-          label: _loc.translate('plaster_pro.label.openings_hint'),
-          value: _openingsArea,
-          onChanged: (v) => setState(() { _openingsArea = v; _update(); }),
-          suffix: _loc.translate('common.sqm'),
-          accentColor: accentColor,
-          minValue: 0,
-          maxValue: 100,
-        ),
+        _buildOpeningsInput(),
       ],
+    );
+  }
+
+  Widget _buildOpeningsInput() {
+    const accentColor = CalculatorColors.walls;
+    return CalculatorTextField(
+      label: _loc.translate('plaster_pro.label.openings_title'),
+      value: _openingsArea,
+      onChanged: (v) {
+        _openingsArea = v;
+        _update();
+      },
+      suffix: _loc.translate('common.sqm'),
+      accentColor: accentColor,
+      minValue: 0,
+      maxValue: 100,
     );
   }
 

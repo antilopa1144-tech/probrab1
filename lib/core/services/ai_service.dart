@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'mikhalych_sse_parser.dart';
 import 'remote_config_service.dart';
 import 'tracker_service_web.dart'
     if (dart.library.io) 'tracker_service.dart';
@@ -62,12 +63,12 @@ class AiAdviceResult {
 
 /// Сервис «Михалыч» — AI-прораб с характером.
 ///
-/// Использует Google Gemini через OpenRouter для генерации
+/// Использует серверный прокси getmasterok.ru для генерации
 /// персонализированных советов по строительству и ремонту.
 ///
 /// **Архитектура:**
 /// - Singleton с предзагрузкой в main()
-/// - OpenRouter REST API (OpenAI-совместимый формат)
+/// - Agent SSE и legacy OpenAI-совместимый формат ответа
 /// - StreamController для стриминга SSE-ответов
 /// - Таймаут 120 сек на каждый запрос
 /// - Автоматическая обрезка истории до 8 пар + компактификация старых ответов
@@ -842,28 +843,15 @@ $contextBlock
           lineBuf = lines.removeLast();
 
           for (final line in lines) {
-            final trimmed = line.trim();
-            if (trimmed.isEmpty) continue;
-            if (trimmed == 'data: [DONE]') continue;
-            if (!trimmed.startsWith('data: ')) continue;
-
-            try {
-              final json =
-                  jsonDecode(trimmed.substring(6)) as Map<String, dynamic>;
-              final choices = json['choices'] as List<dynamic>?;
-              if (choices == null || choices.isEmpty) continue;
-              final delta =
-                  (choices[0] as Map<String, dynamic>)['delta']
-                      as Map<String, dynamic>?;
-              final content = delta?['content'] as String?;
-              if (content != null && content.isNotEmpty) {
-                buffer.write(content);
-                if (!controller.isClosed) {
-                  controller.add(content);
-                }
+            final content = parseMikhalychSseText(
+              line,
+              hasBufferedText: buffer.isNotEmpty,
+            );
+            if (content != null) {
+              buffer.write(content);
+              if (!controller.isClosed) {
+                controller.add(content);
               }
-            } catch (_) {
-              // Невалидный JSON-чанк — пропускаем
             }
           }
         },

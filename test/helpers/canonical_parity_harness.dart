@@ -16,7 +16,9 @@ const double kParityNumericTolerance = 0.02;
 CanonicalMaterialResult? findCanonicalMaterial(Iterable<CanonicalMaterialResult> materials, String namePart) {
   final needle = _normalizeMaterialLabel(namePart);
   for (final material in materials) {
-    if (_normalizeMaterialLabel(material.name).contains(needle)) return material;
+    if (_normalizeMaterialLabel(material.name).contains(needle)) {
+      return material;
+    }
   }
   return null;
 }

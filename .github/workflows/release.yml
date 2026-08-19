@@ -1,5 +1,8 @@
 name: Release
 
+permissions:
+  contents: write
+
 on:
   push:
     tags:
@@ -36,6 +39,15 @@ jobs:
             echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
           fi
 
+      - name: ✅ Verify app version
+        run: |
+          APP_VERSION=$(sed -nE 's/^version: ([0-9]+\.[0-9]+\.[0-9]+)\+[0-9]+$/\1/p' pubspec.yaml)
+          RELEASE_VERSION="${{ steps.get_version.outputs.version }}"
+          if [ -z "$APP_VERSION" ] || [ "$APP_VERSION" != "$RELEASE_VERSION" ]; then
+            echo "pubspec version '$APP_VERSION' does not match release '$RELEASE_VERSION'"
+            exit 1
+          fi
+
       - name: 📝 Generate changelog
         id: changelog
         run: |
@@ -53,7 +65,7 @@ jobs:
           tag_name: v${{ steps.get_version.outputs.version }}
           release_name: Release v${{ steps.get_version.outputs.version }}
           body_path: RELEASE_NOTES.md
-          draft: false
+          draft: true
           prerelease: false
 
   build-android-release:
@@ -80,6 +92,33 @@ jobs:
 
       - name: 📦 Get dependencies
         run: flutter pub get
+
+      - name: 🔍 Analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: 🧪 Test
+        run: flutter test
+
+      - name: 🔐 Setup signing
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        run: |
+          if [ -z "$GOOGLE_SERVICES_JSON" ] || [ -z "$ANDROID_KEYSTORE" ] || [ -z "$KEYSTORE_PASSWORD" ] || [ -z "$KEY_PASSWORD" ] || [ -z "$KEY_ALIAS" ]; then
+            echo "Release signing or Firebase secrets are not configured"
+            exit 1
+          fi
+          printf '%s' "$GOOGLE_SERVICES_JSON" | base64 --decode > android/app/google-services.json
+          printf '%s' "$ANDROID_KEYSTORE" | base64 --decode > android/masterok-release.jks
+          cat > android/key.properties << EOL
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=../masterok-release.jks
+          EOL
 
       - name: 🏗️ Build APK
         run: flutter build apk --release
@@ -116,7 +155,11 @@ jobs:
     steps:
       - name: ✅ Release Success
         if: ${{ needs.build-android-release.result == 'success' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
+          gh release edit "v${{ needs.create-release.outputs.version }}" --draft=false
           echo "🎉 Release v${{ needs.create-release.outputs.version }} created successfully!"
           echo "📦 Android artifacts uploaded"
 
