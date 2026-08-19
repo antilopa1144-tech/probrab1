@@ -80,13 +80,13 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
     warnings.add('Большая площадь — рассмотрите оптовую закупку панелей');
   }
   if (panelType == 0) {
-    warnings.add('Стандартные МДФ-панели не рекомендуются для влажных помещений');
+    warnings.add('Стандартные древесноволокнистые панели (МДФ) не рекомендуются для влажных помещений');
   }
 
   // Materials
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: 'МДФ-панели',
+      name: 'Древесноволокнистые панели средней плотности (МДФ)',
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),

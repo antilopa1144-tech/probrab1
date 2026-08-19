@@ -26,32 +26,56 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
 }) {
   final spec = specOverride ?? const SpecReader(stairsSpecData);
 
-  final floorHeight = (inputs['floorHeight'] ?? defaultFor(spec, 'floorHeight', 2.8)).clamp(2.0, 6.0).toDouble();
-  final stepHeight = (inputs['stepHeight'] ?? defaultFor(spec, 'stepHeight', 170)).clamp(150, 200).toDouble();
-  final stepWidth = (inputs['stepWidth'] ?? defaultFor(spec, 'stepWidth', 280)).clamp(250, 320).toDouble();
-  final stairWidth = (inputs['stairWidth'] ?? defaultFor(spec, 'stairWidth', 1.0)).clamp(0.6, 2.0).toDouble();
-  final materialType = (inputs['materialType'] ?? defaultFor(spec, 'materialType', 0)).round().clamp(0, 2);
+  final floorHeight =
+      (inputs['floorHeight'] ?? defaultFor(spec, 'floorHeight', 2.8))
+          .clamp(2.0, 6.0)
+          .toDouble();
+  final stepHeight =
+      (inputs['stepHeight'] ?? defaultFor(spec, 'stepHeight', 170))
+          .clamp(150, 200)
+          .toDouble();
+  final stepWidth = (inputs['stepWidth'] ?? defaultFor(spec, 'stepWidth', 280))
+      .clamp(250, 320)
+      .toDouble();
+  final stairWidth =
+      (inputs['stairWidth'] ?? defaultFor(spec, 'stairWidth', 1.0))
+          .clamp(0.6, 2.0)
+          .toDouble();
+  final materialType =
+      (inputs['materialType'] ?? defaultFor(spec, 'materialType', 0))
+          .round()
+          .clamp(0, 2);
 
   final stepCount = (floorHeight / (stepHeight / 1000)).round();
   final realStepH = roundValue(floorHeight / stepCount, 6);
   final horizLen = roundValue((stepCount - 1) * (stepWidth / 1000), 6);
-  final stringerLen = roundValue(math.sqrt(floorHeight * floorHeight + horizLen * horizLen), 6);
+  final stringerLen = roundValue(
+    math.sqrt(floorHeight * floorHeight + horizLen * horizLen),
+    6,
+  );
   final railingLen = roundValue(horizLen * 2, 6);
-  final balyasiny = (railingLen / spec.materialRule<num>('railing_spacing').toDouble()).ceil();
+  final balyasiny =
+      (railingLen / spec.materialRule<num>('railing_spacing').toDouble())
+          .ceil();
 
-  final materialKey = materialType < _materialLabels.length ? _materialLabels[materialType] : 'wood';
+  final materialKey = materialType < _materialLabels.length
+      ? _materialLabels[materialType]
+      : 'wood';
 
   // Build materials based on material type
   final materials = <CanonicalMaterialResult>[];
 
   if (materialType == 0) {
     // Wood
-    final stringerBoard = (stringerLen * 1.1).ceil() * spec.materialRule<num>('stringers_count').toDouble();
+    final stringerBoard =
+        (stringerLen * 1.1).ceil() *
+        spec.materialRule<num>('stringers_count').toDouble();
     final screwsPcs = stepCount * 8;
     final screwsKg = (screwsPcs / 600 * 10).ceil() / 10; // 3.5×35 мм: 600 шт/кг
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'Тетива/косоур (${spec.materialRule<num>('stringer_board').toDouble()})',
+        name:
+            'Тетива/косоур (${spec.materialRule<num>('stringer_board').toDouble()})',
         quantity: stringerBoard.toDouble(),
         unit: 'п.м',
         withReserve: stringerBoard.toDouble(),
@@ -67,7 +91,8 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
         category: 'Основное',
       ),
       CanonicalMaterialResult(
-        name: 'Подступенки (${spec.materialRule<num>('riser_board').toDouble()})',
+        name:
+            'Подступенки (${spec.materialRule<num>('riser_board').toDouble()})',
         quantity: stepCount.toDouble(),
         unit: 'шт',
         withReserve: stepCount.toDouble(),
@@ -85,8 +110,16 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
     ]);
   } else if (materialType == 1) {
     // Concrete
-    final vol = roundValue(stairWidth * (stepWidth / 1000) * (stepHeight / 1000) / 2 * stepCount, 6);
-    final rebarKg = roundValue(stepCount * stairWidth * spec.materialRule<num>('rebar_kg_per_step_width').toDouble(), 3);
+    final vol = roundValue(
+      stairWidth * (stepWidth / 1000) * (stepHeight / 1000) / 2 * stepCount,
+      6,
+    );
+    final rebarKg = roundValue(
+      stepCount *
+          stairWidth *
+          spec.materialRule<num>('rebar_kg_per_step_width').toDouble(),
+      3,
+    );
     materials.addAll([
       CanonicalMaterialResult(
         name: 'Бетон М300',
@@ -152,14 +185,22 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
   // Scenarios
   final baseExactNeed = stepCount;
   final scenarios = <String, CanonicalScenarioResult>{};
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
+  final adjustedBaseExactNeed = (baseExactNeed * accuracyMult).ceilToDouble();
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
-    final exactNeed = roundValue(baseExactNeed * multiplier, 6);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      _factorTable,
+      scenarioName,
+    );
+    final exactNeed = roundValue(adjustedBaseExactNeed * multiplier, 6);
     final packageSize = spec.packagingRule<num>('package_size').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * packageSize, 6);
-    final packageLabel = 'stairs-step-${packageSize == packageSize.roundToDouble() ? packageSize.toInt() : packageSize}';
+    final packageLabel =
+        'stairs-step-${packageSize == packageSize.roundToDouble() ? packageSize.toInt() : packageSize}';
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
@@ -187,11 +228,16 @@ CanonicalCalculatorContractResult calculateCanonicalStairs(
 
   // Warnings
   final warnings = <String>[];
-  if (stepHeight > spec.warningRule<num>('steep_step_threshold_mm').toDouble()) {
-    warnings.add('Высота ступени выше нормы — лестница может быть некомфортной');
+  if (stepHeight >
+      spec.warningRule<num>('steep_step_threshold_mm').toDouble()) {
+    warnings.add(
+      'Высота ступени выше нормы — лестница может быть некомфортной',
+    );
   }
   if (stepCount > spec.warningRule<num>('max_steps_per_flight').toDouble()) {
-    warnings.add('Большое количество ступеней — рекомендуется устройство промежуточной площадки');
+    warnings.add(
+      'Большое количество ступеней — рекомендуется устройство промежуточной площадки',
+    );
   }
 
   return CanonicalCalculatorContractResult(

@@ -20,7 +20,8 @@ const Map<int, String> _gradeLabels = {
 // ─── Detection & normalization ───
 
 bool hasCanonicalConcreteInputs(Map<String, double> inputs) {
-  final hasVolume = inputs.containsKey('concreteVolume') ||
+  final hasVolume =
+      inputs.containsKey('concreteVolume') ||
       (inputs.containsKey('area') && inputs.containsKey('thickness'));
   if (!hasVolume) return false;
   const canonicalKeys = ['concreteGrade', 'manualMix', 'reserve'];
@@ -31,7 +32,10 @@ Map<String, double> normalizeLegacyConcreteInputs(Map<String, double> inputs) {
   return {
     'inputMode': (inputs['inputMode'] ?? 0).round().clamp(0, 1).toDouble(),
     'concreteVolume': math.max(0.1, inputs['concreteVolume'] ?? 5).toDouble(),
-    'concreteGrade': (inputs['concreteGrade'] ?? 3).round().clamp(1, 7).toDouble(),
+    'concreteGrade': (inputs['concreteGrade'] ?? 3)
+        .round()
+        .clamp(1, 7)
+        .toDouble(),
     'manualMix': (inputs['manualMix'] ?? 0).round().clamp(0, 1).toDouble(),
     'reserve': (inputs['reserve'] ?? 10).clamp(0, 50).toDouble(),
     'area': math.max(0.1, inputs['area'] ?? 20).toDouble(),
@@ -41,17 +45,30 @@ Map<String, double> normalizeLegacyConcreteInputs(Map<String, double> inputs) {
 
 // ─── Helpers ───
 
-Map<String, double> _resolveVolume(SpecReader spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
+Map<String, double> _resolveVolume(
+  SpecReader spec,
+  Map<String, double> inputs,
+) {
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0))
+      .round();
   if (inputMode == 1) {
     final area = math.max(0.1, inputs['area'] ?? defaultFor(spec, 'area', 20));
-    final thickness = (inputs['thickness'] ?? defaultFor(spec, 'thickness', 200)).clamp(50.0, 1000.0).toDouble();
-    return {'inputMode': 1, 'sourceVolume': roundValue(area * (thickness / 1000), 6)};
+    final thickness =
+        (inputs['thickness'] ?? defaultFor(spec, 'thickness', 200))
+            .clamp(50.0, 1000.0)
+            .toDouble();
+    return {
+      'inputMode': 1,
+      'sourceVolume': roundValue(area * (thickness / 1000), 6),
+    };
   }
   return {
     'inputMode': 0,
     'sourceVolume': roundValue(
-      math.max(0.1, inputs['concreteVolume'] ?? defaultFor(spec, 'concreteVolume', 5)),
+      math.max(
+        0.1,
+        inputs['concreteVolume'] ?? defaultFor(spec, 'concreteVolume', 5),
+      ),
       6,
     ),
   };
@@ -65,7 +82,11 @@ Map<String, dynamic> _resolveProportions(SpecReader spec, int grade) {
   return proportions.length > 2 ? proportions[2] : proportions.first;
 }
 
-Map<String, dynamic> _pickPackage(double exactNeed, double stepSize, String unit) {
+Map<String, dynamic> _pickPackage(
+  double exactNeed,
+  double stepSize,
+  String unit,
+) {
   final count = exactNeed > 0 ? (exactNeed / stepSize).ceil() : 0;
   final purchase = roundValue(count * stepSize, 6);
   return {
@@ -88,9 +109,21 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
   final volume = _resolveVolume(spec, inputs);
   final sourceVolume = volume['sourceVolume']!;
   final inputMode = volume['inputMode']!;
-  final concreteGrade = (inputs['concreteGrade'] ?? defaultFor(spec, 'concreteGrade', 3)).round().clamp(1, 7);
-  final manualMix = (inputs['manualMix'] ?? defaultFor(spec, 'manualMix', 0)).round() == 1 ? 1 : 0;
-  final reserve = (inputs['reserve'] ?? defaultFor(spec, 'reserve', 10)).clamp(0.0, 50.0).toDouble();
+  final concreteGrade =
+      (inputs['concreteGrade'] ?? defaultFor(spec, 'concreteGrade', 3))
+          .round()
+          .clamp(1, 7);
+  final manualMix =
+      (inputs['manualMix'] ?? defaultFor(spec, 'manualMix', 0)).round() == 1
+      ? 1
+      : 0;
+  final application =
+      (inputs['application'] ?? defaultFor(spec, 'application', 0))
+          .round()
+          .clamp(0, 2);
+  final reserve = (inputs['reserve'] ?? defaultFor(spec, 'reserve', 10))
+      .clamp(0.0, 50.0)
+      .toDouble();
   final proportions = _resolveProportions(spec, concreteGrade);
   final gradeLabel = _gradeLabels[concreteGrade] ?? _gradeLabels[3]!;
 
@@ -102,18 +135,31 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
   final totalVolume = roundValue(sourceVolume * (1 + reserve / 100), 6);
 
   // Waterproofing
-  final estimatedThickness = spec.materialRule<num>('estimated_slab_thickness_m', 0.2).toDouble();
+  final estimatedThickness = spec
+      .materialRule<num>('estimated_slab_thickness_m', 0.2)
+      .toDouble();
   final topSurfaceArea = roundValue(totalVolume / estimatedThickness, 6);
   final perimeterEst = roundValue(math.sqrt(topSurfaceArea) * 4, 6);
   final waterproofArea = roundValue(perimeterEst * estimatedThickness, 6);
-  final masticKgPerM2 = spec.materialRule<num>('waterproof_mastic_kg_per_m2', 1.0).toDouble();
-  final waterproofReserve = spec.materialRule<num>('waterproof_reserve_factor', 1.15).toDouble();
-  final masticKg = roundValue(waterproofArea * masticKgPerM2 * waterproofReserve, 6);
-  final masticBucketKg = spec.packagingRule<num>('mastic_bucket_kg', 20).toDouble();
+  final masticKgPerM2 = spec
+      .materialRule<num>('waterproof_mastic_kg_per_m2', 1.0)
+      .toDouble();
+  final waterproofReserve = spec
+      .materialRule<num>('waterproof_reserve_factor', 1.15)
+      .toDouble();
+  final masticKg = roundValue(
+    waterproofArea * masticKgPerM2 * waterproofReserve,
+    6,
+  );
+  final masticBucketKg = spec
+      .packagingRule<num>('mastic_bucket_kg', 20)
+      .toDouble();
   final masticBuckets = (masticKg / masticBucketKg).ceil();
 
   // Film
-  final filmReserve = spec.materialRule<num>('film_reserve_factor', 1.1).toDouble();
+  final filmReserve = spec
+      .materialRule<num>('film_reserve_factor', 1.1)
+      .toDouble();
   final filmArea = roundValue(topSurfaceArea * filmReserve, 6);
   final filmRollM2 = spec.packagingRule<num>('film_roll_m2', 30).toDouble();
   final filmRolls = (filmArea / filmRollM2).ceil();
@@ -129,20 +175,36 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
   if (manualMix == 1) {
     cementKg = roundValue(totalVolume * cementKgPerM3, 6);
     cementBags = (cementKg / cementBagKg).ceil();
-    sandM3 = roundValue(totalVolume * sandM3PerM3 * spec.materialRule<num>('sand_reserve_factor', 1.05).toDouble(), 6);
-    gravelM3 = roundValue(totalVolume * gravelM3PerM3 * spec.materialRule<num>('gravel_reserve_factor', 1.05).toDouble(), 6);
+    sandM3 = roundValue(
+      totalVolume *
+          sandM3PerM3 *
+          spec.materialRule<num>('sand_reserve_factor', 1.05).toDouble(),
+      6,
+    );
+    gravelM3 = roundValue(
+      totalVolume *
+          gravelM3PerM3 *
+          spec.materialRule<num>('gravel_reserve_factor', 1.05).toDouble(),
+      6,
+    );
     waterL = roundValue(totalVolume * waterLPerM3, 6);
   }
 
   // Scenarios
-  final volumeStepM3 = spec.packagingRule<num>('volume_step_m3', 0.1).toDouble();
+  final volumeStepM3 = spec
+      .packagingRule<num>('volume_step_m3', 0.1)
+      .toDouble();
   final unit = spec.packagingRule<String>('unit', 'м³');
   final accuracyMode = parseAccuracyMode(inputs);
   final accuracyMult = accuracyPrimaryMultiplier('concrete', accuracyMode);
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(totalVolume * accuracyMult * multiplier, 6);
     final package = _pickPackage(exactNeed, volumeStepM3, unit);
 
@@ -157,7 +219,11 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
         'packaging:${package['label']}',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -173,13 +239,21 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
 
   // Warnings
   final warnings = <String>[];
-  final smallVolumeThreshold = spec.warningRule<num>('small_volume_threshold_m3', 0.5).toDouble();
-  final manualMixMaxGrade = spec.warningRule<num>('manual_mix_max_grade', 5).toInt();
+  final smallVolumeThreshold = spec
+      .warningRule<num>('small_volume_threshold_m3', 0.5)
+      .toDouble();
+  final manualMixMaxGrade = spec
+      .warningRule<num>('manual_mix_max_grade', 5)
+      .toInt();
   if (sourceVolume < smallVolumeThreshold) {
-    warnings.add('Малый объём бетона — перерасход на замес и доставку может быть значительным');
+    warnings.add(
+      'Малый объём бетона — перерасход на замес и доставку может быть значительным',
+    );
   }
   if (concreteGrade >= manualMixMaxGrade && manualMix == 1) {
-    warnings.add('Бетон высоких марок сложно замешивать вручную — рекомендуется заводской бетон');
+    warnings.add(
+      'Бетон высоких марок сложно замешивать вручную — рекомендуется заводской бетон',
+    );
   }
 
   // Materials
@@ -190,10 +264,101 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
       unit: 'м³',
       withReserve: recScenario.purchaseQuantity,
       purchaseQty: recScenario.purchaseQuantity,
-      packageInfo: {'count': recScenario.buyPlan.packagesCount, 'size': volumeStepM3, 'packageUnit': 'порций'},
+      packageInfo: {
+        'count': recScenario.buyPlan.packagesCount,
+        'size': volumeStepM3,
+        'packageUnit': 'порций',
+      },
       category: 'Основное',
     ),
   ];
+
+  final reinforcementKgPerM3 = application == 0
+      ? 70.0
+      : application == 1
+      ? 25.0
+      : 120.0;
+  final reinforcementName = application == 0
+      ? 'Арматура AIII Ø12 мм (70 кг/м³ для плиты)'
+      : application == 1
+      ? 'Сетка кладочная 100×100×5 мм для стяжки'
+      : 'Арматура AIII Ø12-16 мм (120 кг/м³ для конструктива)';
+  final reinforcementKg = roundValue(
+    totalVolume * reinforcementKgPerM3 * 1.05,
+    3,
+  );
+  materials.add(
+    CanonicalMaterialResult(
+      name: reinforcementName,
+      quantity: reinforcementKg,
+      unit: 'кг',
+      withReserve: reinforcementKg,
+      purchaseQty: reinforcementKg.ceil().toDouble(),
+      category: 'Армирование',
+    ),
+  );
+  if (application != 1) {
+    final wireKg = roundValue(totalVolume * 0.5 * 1.1, 3);
+    final chairs = (topSurfaceArea * 4).ceil();
+    final formworkM2 = roundValue(waterproofArea * 1.1, 3);
+    final nailsKg = roundValue(waterproofArea * 0.3 * 1.1, 3);
+    materials.addAll([
+      CanonicalMaterialResult(
+        name: 'Проволока вязальная 1.2 мм',
+        quantity: wireKg,
+        unit: 'кг',
+        withReserve: wireKg,
+        purchaseQty: wireKg.ceil().toDouble(),
+        category: 'Армирование',
+      ),
+      CanonicalMaterialResult(
+        name: 'Стульчики защитного слоя 30 мм',
+        quantity: chairs.toDouble(),
+        unit: 'шт',
+        withReserve: chairs.toDouble(),
+        purchaseQty: chairs.toDouble(),
+        category: 'Армирование',
+      ),
+      CanonicalMaterialResult(
+        name: 'Опалубочная фанера 18 мм',
+        quantity: formworkM2,
+        unit: 'м²',
+        withReserve: formworkM2,
+        purchaseQty: formworkM2.ceil().toDouble(),
+        category: 'Опалубка',
+      ),
+      CanonicalMaterialResult(
+        name: 'Гвозди строительные 100 мм',
+        quantity: nailsKg,
+        unit: 'кг',
+        withReserve: nailsKg,
+        purchaseQty: nailsKg.ceil().toDouble(),
+        category: 'Опалубка',
+      ),
+    ]);
+  }
+  if (application == 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Мастика гидроизоляционная битумная (20 кг)',
+        quantity: masticKg,
+        unit: 'кг',
+        withReserve: (masticBuckets * masticBucketKg).toDouble(),
+        purchaseQty: (masticBuckets * masticBucketKg).toDouble(),
+        category: 'Гидроизоляция',
+      ),
+    );
+  }
+  materials.add(
+    CanonicalMaterialResult(
+      name: 'Плёнка полиэтиленовая для укрытия (30 м²)',
+      quantity: filmArea,
+      unit: 'м²',
+      withReserve: (filmRolls * filmRollM2).toDouble(),
+      purchaseQty: (filmRolls * filmRollM2).toDouble(),
+      category: 'Уход за бетоном',
+    ),
+  );
 
   if (manualMix == 1) {
     materials.addAll([
@@ -203,7 +368,11 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
         unit: 'кг',
         withReserve: roundValue(cementBags * cementBagKg, 3),
         purchaseQty: (cementBags * cementBagKg).toDouble(),
-        packageInfo: {'count': cementBags, 'size': cementBagKg, 'packageUnit': 'мешков'},
+        packageInfo: {
+          'count': cementBags,
+          'size': cementBagKg,
+          'packageUnit': 'мешков',
+        },
         category: 'Компоненты',
       ),
       CanonicalMaterialResult(
@@ -233,27 +402,6 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
     ]);
   }
 
-  materials.addAll([
-    CanonicalMaterialResult(
-      name: 'Мастика гидроизоляционная (${masticBucketKg.toInt()} кг)',
-      quantity: roundValue(masticKg, 3),
-      unit: 'кг',
-      withReserve: roundValue(masticBuckets * masticBucketKg, 3),
-      purchaseQty: (masticBuckets * masticBucketKg).toDouble(),
-      packageInfo: {'count': masticBuckets, 'size': masticBucketKg, 'packageUnit': 'вёдер'},
-      category: 'Гидроизоляция',
-    ),
-    CanonicalMaterialResult(
-      name: 'Плёнка полиэтиленовая (${filmRollM2.toInt()} м²)',
-      quantity: roundValue(filmArea, 3),
-      unit: 'м²',
-      withReserve: roundValue(filmRolls * filmRollM2, 3),
-      purchaseQty: (filmRolls * filmRollM2).toDouble(),
-      packageInfo: {'count': filmRolls, 'size': filmRollM2, 'packageUnit': 'рулонов'},
-      category: 'Гидроизоляция',
-    ),
-  ]);
-
   return CanonicalCalculatorContractResult(
     canonicalSpecId: spec.calculatorId,
     formulaVersion: spec.formulaVersion,
@@ -264,6 +412,7 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
       'inputMode': inputMode,
       'concreteGrade': concreteGrade.toDouble(),
       'manualMix': manualMix.toDouble(),
+      'application': application.toDouble(),
       'reserve': roundValue(reserve, 3),
       'gradeIndex': concreteGrade.toDouble(),
       'cementKgPerM3': cementKgPerM3,
@@ -272,6 +421,7 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
       'waterLPerM3': waterLPerM3,
       'topSurfaceArea': roundValue(topSurfaceArea, 3),
       'perimeterEst': roundValue(perimeterEst, 3),
+      'formworkArea': roundValue(waterproofArea, 3),
       'waterproofArea': roundValue(waterproofArea, 3),
       'masticKg': roundValue(masticKg, 3),
       'masticBuckets': masticBuckets.toDouble(),

@@ -1,6 +1,6 @@
 // GENERATED FILE — DO NOT EDIT MANUALLY
 // Source: configs/calculators/*-canonical.v1.json
-// Generated: 2026-05-14
+// Generated: 2026-08-19
 // Run: npx tsx scripts/sync-specs-to-dart.ts
 
 // ignore_for_file: prefer_single_quotes, lines_longer_than_80_chars
@@ -8,7 +8,7 @@
 /// Generated from aerated-concrete-canonical.v1.json
 const Map<String, dynamic> aeratedConcreteSpecData = {
   'calculator_id': 'aerated-concrete',
-  'formula_version': 'aerated-concrete-canonical-v1',
+  'formula_version': 'aerated-concrete-canonical-v2',
   'input_schema': [
     {
       'key': 'inputMode',
@@ -644,7 +644,7 @@ const Map<String, dynamic> blindAreaSpecData = {
 /// Generated from brick-canonical.v1.json
 const Map<String, dynamic> brickSpecData = {
   'calculator_id': 'brick',
-  'formula_version': 'brick-canonical-v1',
+  'formula_version': 'brick-canonical-v2',
   'input_schema': [
     {
       'key': 'inputMode',
@@ -1098,7 +1098,7 @@ const Map<String, dynamic> brickworkSpecData = {
 /// Generated from ceiling-cassette-canonical.v1.json
 const Map<String, dynamic> ceilingCassetteSpecData = {
   'calculator_id': 'ceiling-cassette',
-  'formula_version': 'ceiling-cassette-canonical-v1',
+  'formula_version': 'ceiling-cassette-canonical-v2',
   'input_schema': [
     {
       'key': 'area',
@@ -1120,6 +1120,13 @@ const Map<String, dynamic> ceilingCassetteSpecData = {
       'min': 2,
       'max': 50,
     },
+    {
+      'key': 'cassettesPerPack',
+      'unit': 'шт',
+      'default_value': 12,
+      'min': 1,
+      'max': 100,
+    },
   ],
   'field_factors': {
     'enabled': [
@@ -1137,7 +1144,7 @@ const Map<String, dynamic> ceilingCassetteSpecData = {
   },
   'packaging_rules': {
     'unit': 'шт',
-    'package_size': 1,
+    'package_size': 12,
   },
   'material_rules': {
     'cassette_areas': {
@@ -2167,13 +2174,25 @@ const Map<String, dynamic> drainageSpecData = {
 /// Generated from drywall-canonical.v1.json
 const Map<String, dynamic> drywallSpecData = {
   'calculator_id': 'drywall',
-  'formula_version': 'drywall-canonical-v1',
+  'formula_version': 'drywall-canonical-v3',
   'input_schema': [
     {
       'key': 'workType',
       'default_value': 0,
       'min': 0,
       'max': 2,
+    },
+    {
+      'key': 'inputMode',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
+    {
+      'key': 'wallScope',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
     },
     {
       'key': 'length',
@@ -2183,11 +2202,39 @@ const Map<String, dynamic> drywallSpecData = {
       'max': 30,
     },
     {
+      'key': 'roomLength',
+      'unit': 'm',
+      'default_value': 5,
+      'min': 0.5,
+      'max': 30,
+    },
+    {
+      'key': 'roomWidth',
+      'unit': 'm',
+      'default_value': 4,
+      'min': 0.5,
+      'max': 30,
+    },
+    {
       'key': 'height',
       'unit': 'm',
       'default_value': 2.7,
       'min': 1.5,
       'max': 5,
+    },
+    {
+      'key': 'area',
+      'unit': 'm2',
+      'default_value': 20,
+      'min': 0.1,
+      'max': 1000,
+    },
+    {
+      'key': 'openingsArea',
+      'unit': 'm2',
+      'default_value': 0,
+      'min': 0,
+      'max': 100,
     },
     {
       'key': 'layers',
@@ -2262,8 +2309,8 @@ const Map<String, dynamic> drywallSpecData = {
     'sandpaper_pack': 10,
     'profile_length_m': 3,
     'sealing_tape_roll_m': 30,
-    'screws_tf_per_kg': 1000,
-    'screws_lb_per_kg': 4000,
+    'screws_tf_package_pcs': 200,
+    'screws_lb_package_pcs': 100,
   },
   'warnings_rules': {
     'wide_profile_height_threshold': 3.5,
@@ -2607,7 +2654,7 @@ const Map<String, dynamic> facadeBrickSpecData = {
 /// Generated from facade-insulation-canonical.v1.json
 const Map<String, dynamic> facadeInsulationSpecData = {
   'calculator_id': 'facade-insulation',
-  'formula_version': 'facade-insulation-canonical-v1',
+  'formula_version': 'facade-insulation-canonical-v2',
   'input_schema': [
     {
       'key': 'area',
@@ -2634,6 +2681,13 @@ const Map<String, dynamic> facadeInsulationSpecData = {
       'default_value': 0,
       'min': 0,
       'max': 2,
+    },
+    {
+      'key': 'platesPerPack',
+      'unit': 'шт',
+      'default_value': 4,
+      'min': 1,
+      'max': 50,
     },
   ],
   'field_factors': {
@@ -2664,7 +2718,7 @@ const Map<String, dynamic> facadeInsulationSpecData = {
   },
   'packaging_rules': {
     'unit': 'шт',
-    'package_size': 1,
+    'package_size': 4,
   },
   'material_rules': {
     'plate_m2': 0.72,
@@ -2707,7 +2761,7 @@ const Map<String, dynamic> facadeInsulationSpecData = {
 /// Generated from facade-panels-canonical.v1.json
 const Map<String, dynamic> facadePanelsSpecData = {
   'calculator_id': 'facade-panels',
-  'formula_version': 'facade-panels-canonical-v1',
+  'formula_version': 'facade-panels-canonical-v2',
   'input_schema': [
     {
       'key': 'area',
@@ -2776,7 +2830,7 @@ const Map<String, dynamic> facadePanelsSpecData = {
       '0': 3.6,
       '1': 0.72,
       '2': 2.928,
-      '3': 0.23,
+      '3': 0.69,
     },
     'panel_reserve': 1.1,
     'bracket_spacing_m2': 0.36,
@@ -3786,7 +3840,7 @@ const Map<String, dynamic> gypsumBoardSpecData = {
 /// Generated from heating-canonical.v1.json
 const Map<String, dynamic> heatingSpecData = {
   'calculator_id': 'heating',
-  'formula_version': 'heating-canonical-v1',
+  'formula_version': 'heating-canonical-v2',
   'input_schema': [
     {
       'key': 'totalArea',
@@ -3961,7 +4015,7 @@ const Map<String, dynamic> insulationSpecData = {
     {
       'key': 'area',
       'unit': 'm2',
-      'default_value': 40,
+      'default_value': 50,
       'min': 1,
       'max': 500,
     },
@@ -3976,13 +4030,13 @@ const Map<String, dynamic> insulationSpecData = {
       'unit': 'mm',
       'default_value': 100,
       'min': 50,
-      'max': 200,
+      'max': 300,
     },
     {
       'key': 'plateSize',
       'default_value': 0,
       'min': 0,
-      'max': 2,
+      'max': 3,
     },
     {
       'key': 'reserve',
@@ -3996,6 +4050,37 @@ const Map<String, dynamic> insulationSpecData = {
       'default_value': 0,
       'min': 0,
       'max': 1,
+    },
+    {
+      'key': 'piecesPerPack',
+      'default_value': 0,
+      'min': 0,
+      'max': 24,
+    },
+    {
+      'key': 'climateZone',
+      'default_value': 1,
+      'min': 0,
+      'max': 4,
+    },
+    {
+      'key': 'layerScheme',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
+    {
+      'key': 'density',
+      'unit': 'kg_m3',
+      'default_value': 80,
+      'min': 0,
+      'max': 200,
+    },
+    {
+      'key': 'application',
+      'default_value': 0,
+      'min': 0,
+      'max': 4,
     },
   ],
   'field_factors': {
@@ -4012,24 +4097,32 @@ const Map<String, dynamic> insulationSpecData = {
         'key': 'mineral_wool',
         'label': 'Минеральная вата',
         'dowels_per_sqm': 7,
+        'pack_height_mm': 600,
+        'cost_estimate_per_m2_at_100mm_rub': 400,
       },
       {
         'id': 1,
         'key': 'epps',
         'label': 'ЭППС / пеноплекс',
         'dowels_per_sqm': 5,
+        'pack_height_mm': 400,
+        'cost_estimate_per_m2_at_100mm_rub': 850,
       },
       {
         'id': 2,
         'key': 'eps',
-        'label': 'ЕПС / пенопласт',
+        'label': 'Пенопласт (пенополистирол, ППС)',
         'dowels_per_sqm': 6,
+        'pack_height_mm': 500,
+        'cost_estimate_per_m2_at_100mm_rub': 220,
       },
       {
         'id': 3,
         'key': 'ecowool',
         'label': 'Эковата',
         'dowels_per_sqm': 0,
+        'pack_height_mm': 0,
+        'cost_estimate_per_m2_at_100mm_rub': 350,
       },
     ],
     'plate_sizes': [
@@ -4051,6 +4144,94 @@ const Map<String, dynamic> insulationSpecData = {
         'label': '2000×1000',
         'area_m2': 2,
       },
+      {
+        'id': 3,
+        'key': '1185x585',
+        'label': '1185×585',
+        'area_m2': 0.693,
+      },
+    ],
+    'climate_zones': [
+      {
+        'id': 0,
+        'key': 'south',
+        'label': 'Юг России (Краснодар, Сочи, Крым, Ростов)',
+        'min_thickness_walls_mm': 80,
+        'rec_thickness_walls_mm': 100,
+      },
+      {
+        'id': 1,
+        'key': 'center',
+        'label': 'Центральная Россия (Москва, СПб, Поволжье)',
+        'min_thickness_walls_mm': 100,
+        'rec_thickness_walls_mm': 150,
+      },
+      {
+        'id': 2,
+        'key': 'ural',
+        'label': 'Урал, Северо-Запад',
+        'min_thickness_walls_mm': 150,
+        'rec_thickness_walls_mm': 150,
+      },
+      {
+        'id': 3,
+        'key': 'siberia',
+        'label': 'Сибирь (Новосибирск, Иркутск, Красноярск)',
+        'min_thickness_walls_mm': 150,
+        'rec_thickness_walls_mm': 200,
+      },
+      {
+        'id': 4,
+        'key': 'north',
+        'label': 'Крайний Север (Якутск, Норильск, Мурманск)',
+        'min_thickness_walls_mm': 200,
+        'rec_thickness_walls_mm': 250,
+      },
+    ],
+    'density_presets': [
+      {
+        'value': 35,
+        'label': '35 кг/м³ — лёгкая (каркас, кровля)',
+        'cost_multiplier': 0.65,
+        'applications': [
+          1,
+          2,
+        ],
+      },
+      {
+        'value': 45,
+        'label': '45 кг/м³ — звукоизоляция, перегородки (каркас)',
+        'cost_multiplier': 1,
+        'applications': [
+          1,
+        ],
+      },
+      {
+        'value': 80,
+        'label': '80 кг/м³ — мокрый штукатурный фасад (СФТК)',
+        'cost_multiplier': 1.35,
+        'applications': [
+          0,
+        ],
+      },
+      {
+        'value': 100,
+        'label': '100 кг/м³ — вентфасад под облицовку',
+        'cost_multiplier': 1.5,
+        'applications': [
+          0,
+          2,
+        ],
+      },
+      {
+        'value': 150,
+        'label': '150 кг/м³ — пол под стяжку, нагруженная кровля',
+        'cost_multiplier': 1.8,
+        'applications': [
+          3,
+          2,
+        ],
+      },
     ],
   },
   'packaging_rules': {
@@ -4063,7 +4244,7 @@ const Map<String, dynamic> insulationSpecData = {
     'membrane_reserve': 1.15,
     'alu_tape_m2_per_m2': 2,
     'alu_tape_roll_m': 50,
-    'glue_kg_per_m2': 2.5,
+    'glue_kg_per_m2': 5,
     'glue_bag_kg': 25,
     'primer_l_per_m2': 0.15,
     'primer_reserve': 1.15,
@@ -4100,6 +4281,15 @@ const Map<String, dynamic> insulationSpecData = {
             'input_key': 'mountSystem',
             'value': 1,
           },
+          {
+            'type': 'input_in',
+            'input_key': 'application',
+            'values': [
+              1,
+              2,
+              3,
+            ],
+          },
         ],
       },
       'formula': {
@@ -4109,7 +4299,7 @@ const Map<String, dynamic> insulationSpecData = {
       },
       'package': {
         'size': 30,
-        'unit': 'рулонов',
+        'unit': 'рулон',
       },
     },
     {
@@ -4117,11 +4307,39 @@ const Map<String, dynamic> insulationSpecData = {
       'label': 'Гидроветрозащитная мембрана (снаружи)',
       'category': 'Изоляция',
       'unit': 'м²',
-      'rationale': 'Защищает минвату от выдувания и атмосферной влаги. Обязательна для наружного утепления минватой.',
+      'rationale': 'Защищает волокнистый утеплитель (минвата, эковата) от выдувания и атмосферной влаги. Только для каркасных/вентилируемых систем — под штукатуркой не нужна.',
       'only_when': {
-        'type': 'input_eq',
-        'input_key': 'insulationType',
-        'value': 0,
+        'type': 'and',
+        'all': [
+          {
+            'type': 'or',
+            'any': [
+              {
+                'type': 'input_eq',
+                'input_key': 'insulationType',
+                'value': 0,
+              },
+              {
+                'type': 'input_eq',
+                'input_key': 'insulationType',
+                'value': 3,
+              },
+            ],
+          },
+          {
+            'type': 'input_eq',
+            'input_key': 'mountSystem',
+            'value': 1,
+          },
+          {
+            'type': 'input_in',
+            'input_key': 'application',
+            'values': [
+              0,
+              2,
+            ],
+          },
+        ],
       },
       'formula': {
         'type': 'linear_overlap',
@@ -4130,7 +4348,7 @@ const Map<String, dynamic> insulationSpecData = {
       },
       'package': {
         'size': 30,
-        'unit': 'рулонов',
+        'unit': 'рулон',
       },
     },
     {
@@ -4152,13 +4370,22 @@ const Map<String, dynamic> insulationSpecData = {
             'input_key': 'mountSystem',
             'value': 1,
           },
+          {
+            'type': 'input_in',
+            'input_key': 'application',
+            'values': [
+              1,
+              2,
+              3,
+            ],
+          },
         ],
       },
       'formula': {
         'type': 'per_count_step',
         'totals_key': 'area',
         'fixed': 1,
-        'step': 50,
+        'step': 25,
       },
     },
     {
@@ -4184,6 +4411,19 @@ const Map<String, dynamic> insulationSpecData = {
             'input_key': 'mountSystem',
             'value': 0,
           },
+          {
+            'type': 'input_eq',
+            'input_key': 'productForm',
+            'value': 0,
+          },
+          {
+            'type': 'input_in',
+            'input_key': 'application',
+            'values': [
+              0,
+              4,
+            ],
+          },
         ],
       },
       'formula': {
@@ -4204,9 +4444,27 @@ const Map<String, dynamic> insulationSpecData = {
       'unit': 'м²',
       'rationale': 'Армирующий слой в базовой штукатурке системы мокрого фасада.',
       'only_when': {
-        'type': 'input_eq',
-        'input_key': 'mountSystem',
-        'value': 0,
+        'type': 'and',
+        'all': [
+          {
+            'type': 'input_eq',
+            'input_key': 'mountSystem',
+            'value': 0,
+          },
+          {
+            'type': 'input_eq',
+            'input_key': 'productForm',
+            'value': 0,
+          },
+          {
+            'type': 'input_in',
+            'input_key': 'application',
+            'values': [
+              0,
+              4,
+            ],
+          },
+        ],
       },
       'formula': {
         'type': 'linear_overlap',
@@ -4225,9 +4483,27 @@ const Map<String, dynamic> insulationSpecData = {
       'unit': 'кг',
       'rationale': 'Базовый армирующий слой 3-4 мм поверх сетки в системе мокрого фасада.',
       'only_when': {
-        'type': 'input_eq',
-        'input_key': 'mountSystem',
-        'value': 0,
+        'type': 'and',
+        'all': [
+          {
+            'type': 'input_eq',
+            'input_key': 'mountSystem',
+            'value': 0,
+          },
+          {
+            'type': 'input_eq',
+            'input_key': 'productForm',
+            'value': 0,
+          },
+          {
+            'type': 'input_in',
+            'input_key': 'application',
+            'values': [
+              0,
+              4,
+            ],
+          },
+        ],
       },
       'formula': {
         'type': 'area_consumption',
@@ -4259,6 +4535,23 @@ const Map<String, dynamic> insulationSpecData = {
             'input_key': 'mountSystem',
             'value': 1,
           },
+          {
+            'type': 'input_in',
+            'input_key': 'productForm',
+            'values': [
+              1,
+              2,
+            ],
+          },
+          {
+            'type': 'input_in',
+            'input_key': 'application',
+            'values': [
+              1,
+              2,
+              3,
+            ],
+          },
         ],
       },
       'formula': {
@@ -4279,9 +4572,22 @@ const Map<String, dynamic> insulationSpecData = {
       'unit': 'пог.м',
       'rationale': 'Несущий каркас для плит/эковаты. Расход ~2.2 пог.м на м² при шаге 600 мм.',
       'only_when': {
-        'type': 'input_eq',
-        'input_key': 'mountSystem',
-        'value': 1,
+        'type': 'and',
+        'all': [
+          {
+            'type': 'input_eq',
+            'input_key': 'mountSystem',
+            'value': 1,
+          },
+          {
+            'type': 'input_in',
+            'input_key': 'application',
+            'values': [
+              1,
+              2,
+            ],
+          },
+        ],
       },
       'formula': {
         'type': 'area_consumption',
@@ -4297,9 +4603,22 @@ const Map<String, dynamic> insulationSpecData = {
       'unit': 'шт',
       'rationale': 'Крепёж бруса каркаса к основанию.',
       'only_when': {
-        'type': 'input_eq',
-        'input_key': 'mountSystem',
-        'value': 1,
+        'type': 'and',
+        'all': [
+          {
+            'type': 'input_eq',
+            'input_key': 'mountSystem',
+            'value': 1,
+          },
+          {
+            'type': 'input_in',
+            'input_key': 'application',
+            'values': [
+              1,
+              2,
+            ],
+          },
+        ],
       },
       'formula': {
         'type': 'area_consumption',
@@ -5676,7 +5995,7 @@ const Map<String, dynamic> parquetSpecData = {
 /// Generated from partitions-canonical.v1.json
 const Map<String, dynamic> partitionsSpecData = {
   'calculator_id': 'partitions',
-  'formula_version': 'partitions-canonical-v1',
+  'formula_version': 'partitions-canonical-v2',
   'input_schema': [
     {
       'key': 'length',
@@ -7023,7 +7342,8 @@ const Map<String, dynamic> screedSpecData = {
     'water_per_m3': 200,
     'cps_density_ready': 2000,
     'cps_density_semidry': 1800,
-    'fiber_kg_per_m2': 0.6,
+    'fiber_kg_per_m3': 0.9,
+    'fiber_package_kg': 0.6,
     'mesh_margin': 1.15,
     'film_margin': 1.1,
     'damper_tape_reserve': 1.05,
@@ -7651,7 +7971,7 @@ const Map<String, dynamic> slopesSpecData = {
 /// Generated from soft-roofing-canonical.v1.json
 const Map<String, dynamic> softRoofingSpecData = {
   'calculator_id': 'soft-roofing',
-  'formula_version': 'soft-roofing-canonical-v1',
+  'formula_version': 'soft-roofing-canonical-v2',
   'input_schema': [
     {
       'key': 'roofArea',
@@ -7716,9 +8036,11 @@ const Map<String, dynamic> softRoofingSpecData = {
     'mastic_linear_rate': 0.1,
     'mastic_area_rate': 0.1,
     'mastic_bucket': 3,
-    'nails_per_m2': 80,
-    'nails_per_kg': 400,
+    'nails_kg_per_m2_low_slope': 0.1,
+    'nails_kg_per_m2_high_slope': 0.15,
+    'nails_high_slope_threshold': 45,
     'nail_reserve': 1.05,
+    'nail_box_kg': 5,
     'eave_strip_length': 2,
     'eave_reserve': 1.05,
     'wind_strip_ratio': 0.4,
@@ -7751,6 +8073,11 @@ const Map<String, dynamic> softRoofingSpecData = {
       'title': 'Нагрузки и воздействия',
       'section': 'Раздел 10 — снеговые нагрузки (для расчёта вентиляции и крепежа)',
     },
+    {
+      'code': 'ТЕХНОНИКОЛЬ SHINGLAS, инструкция 03/2025',
+      'title': 'Инструкция по монтажу гибкой черепицы',
+      'section': 'Таблица расхода специальных кровельных гвоздей по форме нарезки и уклону',
+    },
   ],
   'assumption_notes': [
     'При уклоне < 18° (slope_threshold) подкладочный ковёр укладывается СПЛОШНЫМ слоем по всей площади кровли — это требование СП 17.13330.2017 п. 5.5.2.',
@@ -7761,13 +8088,14 @@ const Map<String, dynamic> softRoofingSpecData = {
     'Прежняя формула использовала единую ширину 1.0 м для всех зон, что занижало расход подкладки на крышах с ендовами на ~30-50% локально (полоса ендовы должна быть в 1.5 раза шире).',
     'Для дефолтного кейса (двускатная без ендов: valleyLength=0) числовой результат идентичен прежней формуле — backward-compat 100%.',
     'Тип подкладочного ковра — рулонный битумно-полимерный (ГОСТ 32805-2014). Для районов с экстремальными снеговыми нагрузками (СП 20.13330.2016 V-VIII районы) рекомендуется усиленный ковёр и/или сплошная укладка независимо от уклона — пользователь может задать нужное вручную.',
+    'Расход кровельных гвоздей принят для распространённой нарезки Sonata/Accord по инструкции ТЕХНОНИКОЛЬ SHINGLAS: 0.10 кг/м² при уклоне 12–45° и 0.15 кг/м² при уклоне более 45°. Значения включают крепление подкладочных ковров и металлических планок; для другой коллекции нужно свериться с инструкцией производителя.',
   ],
 };
 
 /// Generated from sound-insulation-canonical.v1.json
 const Map<String, dynamic> soundInsulationSpecData = {
   'calculator_id': 'sound-insulation',
-  'formula_version': 'sound-insulation-canonical-v1',
+  'formula_version': 'sound-insulation-canonical-v3',
   'input_schema': [
     {
       'key': 'area',
@@ -7788,11 +8116,30 @@ const Map<String, dynamic> soundInsulationSpecData = {
       'min': 0,
       'max': 3,
     },
+    {
+      'key': 'perimeter',
+      'unit': 'm',
+      'default_value': 0,
+      'min': 0,
+      'max': 2000,
+    },
+    {
+      'key': 'screedThicknessMm',
+      'unit': 'mm',
+      'default_value': 50,
+      'min': 30,
+      'max': 100,
+    },
+    {
+      'key': 'acousticPlatesPerPack',
+      'unit': 'шт',
+      'default_value': 6,
+      'min': 1,
+      'max': 50,
+    },
   ],
   'field_factors': {
     'enabled': [
-      'geometry_complexity',
-      'worker_skill',
       'waste_factor',
     ],
   },
@@ -7811,7 +8158,7 @@ const Map<String, dynamic> soundInsulationSpecData = {
   },
   'packaging_rules': {
     'unit': 'шт',
-    'package_size': 1,
+    'package_size': 6,
   },
   'material_rules': {
     'rockwool_plate': 0.6,
@@ -7825,12 +8172,9 @@ const Map<String, dynamic> soundInsulationSpecData = {
     'vibro_tape_roll': 30,
     'zips_plate': 0.72,
     'zips_reserve': 1.1,
-    'zips_dubels_per_panel': 6,
-    'zips_dubel_reserve': 1.05,
     'float_mat_roll': 20,
     'float_reserve': 1.1,
     'damp_tape_roll': 25,
-    'screed_thickness': 0.05,
     'screed_density': 1800,
     'screed_bag': 50,
     'sealant_per_perim': 20,
@@ -7844,6 +8188,11 @@ const Map<String, dynamic> soundInsulationSpecData = {
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
   },
+  'source_notes': [
+    'Площадь панели ЗИПС принята 0,72 м² по рабочему размеру 1200×600 мм. Крепёж считается комплектом панели, а не отдельными дюбелями.',
+    'Периметр используется для лент и герметизации. Если он не введён, применяется явно обозначенная оценка для квадратной поверхности.',
+    'Толщина стяжки для плавающего пола задаётся пользователем; допустимую конструкцию и нагрузку проверяют по проекту и паспорту выбранной системы.',
+  ],
 };
 
 /// Generated from stairs-canonical.v1.json
@@ -8279,7 +8628,7 @@ const Map<String, dynamic> tileAdhesiveSpecData = {
 /// Generated from tile-canonical.v1.json
 const Map<String, dynamic> tileSpecData = {
   'calculator_id': 'tile',
-  'formula_version': 'tile-canonical-v1',
+  'formula_version': 'tile-canonical-v2',
   'input_schema': [
     {
       'key': 'inputMode',
@@ -8321,6 +8670,13 @@ const Map<String, dynamic> tileSpecData = {
       'default_value': 30,
       'min': 5,
       'max': 200,
+    },
+    {
+      'key': 'packArea',
+      'unit': 'm2',
+      'default_value': 1.44,
+      'min': 0.1,
+      'max': 20,
     },
     {
       'key': 'jointWidth',
@@ -8406,7 +8762,7 @@ const Map<String, dynamic> tileSpecData = {
   },
   'packaging_rules': {
     'tile_unit': 'шт',
-    'tile_package_size': 1,
+    'tile_package_area_m2': 1.44,
     'glue_bag_kg': 25,
     'grout_bag_kg': 2,
     'primer_can_l': 5,
@@ -8758,7 +9114,7 @@ const Map<String, dynamic> wallPanelsSpecData = {
 /// Generated from wallpaper-canonical.v1.json
 const Map<String, dynamic> wallpaperSpecData = {
   'calculator_id': 'wallpaper',
-  'formula_version': 'wallpaper-canonical-v1',
+  'formula_version': 'wallpaper-canonical-v2',
   'input_schema': [
     {
       'key': 'inputMode',
@@ -8929,7 +9285,7 @@ const Map<String, dynamic> wallpaperSpecData = {
     'primer_can_l': 5,
   },
   'material_rules': {
-    'trim_allowance_m': 0.05,
+    'trim_allowance_m': 0.1,
     'primer_l_per_m2': 0.15,
     'primer_reserve_factor': 1.1,
     'paste_reserve_factor': 1.1,
@@ -8953,7 +9309,7 @@ const Map<String, dynamic> wallpaperSpecData = {
 /// Generated from warm-floor-canonical.v1.json
 const Map<String, dynamic> warmFloorSpecData = {
   'calculator_id': 'warm-floor',
-  'formula_version': 'warm-floor-canonical-v1',
+  'formula_version': 'warm-floor-canonical-v2',
   'input_schema': [
     {
       'key': 'roomArea',
@@ -9016,7 +9372,7 @@ const Map<String, dynamic> warmFloorSpecData = {
   },
   'material_rules': {
     'mat_area': 2,
-    'cable_step_m': 0.15,
+    'cable_linear_power_w_per_m': 18,
     'cable_reserve': 1.05,
     'pipe_step_m': 0.15,
     'pipe_reserve': 1.05,
@@ -9194,7 +9550,7 @@ const Map<String, dynamic> warmFloorPipesSpecData = {
     'Доля площади у окна (windowZoneFraction) по умолчанию 0.20 — типовая комната 4×5 м с одним окном на длинной стене даёт полосу шириной 1 м × 5 м = 5 м² ≈ 25%. Можно скорректировать вручную для угловых комнат (две стены с окнами → 0.30-0.40) или комнат без окон (0).',
     'Вычет 15% на мебель (furniture_reduction = 0.85) — усреднённое значение. Для спален и гостиных реально 30-50% (под кроватью, шкафами, диванами), для кухни 60-70% (под гарнитуром). Если пользователь знает свою расстановку точно — это поле можно сделать настраиваемым в будущем.',
     'Длина одного контура ограничена 80 м (max_circuit_m) для надёжной работы стандартного коллекторного насоса. На больших площадях формула автоматически разбивает на N контуров.',
-    'Стяжка над тёплым полом — минимум 50 мм (screed_thickness_m). По СП 29.13330.2011 для жилых полов с тёплым полом норма именно 50 мм, не 30 мм как для обычной стяжки.',
+    'Для предварительной сметы принят фиксированный общий слой стяжки 50 мм (screed_thickness_m). Это расчётное допущение, а не нормативный минимум над трубой; проектную полную толщину и защитный слой назначают отдельно.',
   ],
 };
 

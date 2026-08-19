@@ -1,7 +1,7 @@
 {
   "calculator_id": "warm-floor-pipes",
   "formula_version": "warm-floor-pipes-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.686Z",
+  "generated_at": "2026-08-19T07:37:48.181Z",
   "cases": [
     {
       "id": "defaults",
@@ -12,7 +12,9 @@
         "width": 4,
         "area": 20,
         "pipeStep": 200,
-        "pipeType": 0
+        "pipeType": 0,
+        "zonedLayoutEnabled": 0,
+        "windowZoneFraction": 0.2
       },
       "expected_totals": {
         "inputMode": 0,
@@ -22,6 +24,10 @@
         "width": 4,
         "pipeStep": 200,
         "pipeType": 0,
+        "zonedLayoutEnabled": 0,
+        "windowZoneStepMm": 0,
+        "centralZoneStepMm": 0,
+        "windowZoneFraction": 0.2,
         "usefulArea": 17,
         "pipeStepM": 0.2,
         "pipeLength": 88,
@@ -42,16 +48,17 @@
       },
       "expected_materials_count": 6,
       "expected_material_names": [
-        "Труба PEX-a (бухты 200 м)",
-        "Утеплитель ЭППС (листы 1200×600)",
+        "Труба из сшитый полиэтилен PEX-a (бухты 200 м)",
+        "Экструдированный пенополистирол (ЭППС), листы 1200×600 мм",
         "Демпферная лента (рулоны)",
         "Якорные клипсы (упаковки по 100 шт)",
         "Коллектор (2 контуров)",
         "Стяжка полусухая (мешки 25 кг)"
       ],
-      "expected_warnings_count": 1,
+      "expected_warnings_count": 2,
       "expected_warnings": [
-        "Длина трубы более 80 м — рекомендуется несколько контуров"
+        "Длина трубы более 80 м — рекомендуется несколько контуров",
+        "Раскладка трубы единым шагом — у окон будет холоднее, чем в центре. Включите zonedLayoutEnabled для тепловой завесы у окна (СП 60.13330.2020)."
       ],
       "expected_scenarios": {
         "MIN": {

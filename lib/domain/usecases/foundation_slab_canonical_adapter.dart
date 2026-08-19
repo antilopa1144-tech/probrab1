@@ -117,6 +117,8 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
 
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(
@@ -124,7 +126,7 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       _factorTable,
       scenarioName,
     );
-    final exactNeed = roundValue(concreteM3 * multiplier, 6);
+    final exactNeed = roundValue(concreteM3 * accuracyMult * multiplier, 6);
     final package = _pickPackage(
       exactNeed,
       spec.packagingRule<num>('volume_step_m3').toDouble(),

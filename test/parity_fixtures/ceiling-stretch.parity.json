@@ -1,7 +1,7 @@
 {
   "calculator_id": "ceiling-stretch",
   "formula_version": "ceiling-stretch-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.362Z",
+  "generated_at": "2026-08-19T07:37:47.720Z",
   "cases": [
     {
       "id": "defaults",
@@ -10,13 +10,19 @@
         "area": 20,
         "corners": 4,
         "fixtures": 4,
-        "type": 0
+        "type": 0,
+        "nichesCount": 0,
+        "boxPerimeterM": 0
       },
       "expected_totals": {
         "area": 20,
         "type": 0,
         "corners": 4,
         "fixtures": 4,
+        "nichesCount": 0,
+        "boxPerimeterM": 0,
+        "basePerim": 17.889,
+        "extraPerim": 0,
         "perim": 17.889,
         "baguetLen": 19.677,
         "profilePcs": 8,

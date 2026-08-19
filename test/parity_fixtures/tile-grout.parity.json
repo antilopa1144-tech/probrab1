@@ -1,7 +1,7 @@
 {
   "calculator_id": "tile-grout",
   "formula_version": "tile-grout-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.666Z",
+  "generated_at": "2026-08-19T07:37:48.140Z",
   "cases": [
     {
       "id": "defaults",

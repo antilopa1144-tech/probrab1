@@ -1,7 +1,7 @@
 {
   "calculator_id": "screed",
   "formula_version": "screed-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.613Z",
+  "generated_at": "2026-08-19T07:37:48.037Z",
   "cases": [
     {
       "id": "defaults",
@@ -20,11 +20,11 @@
         "inputMode": 0,
         "thickness": 50,
         "screedType": 0,
-        "volume": 1.08,
-        "cementKg": 351,
+        "volume": 1.15,
+        "cementKg": 373.75,
         "bags50Cement": 8,
-        "sandTons": 1.3,
-        "waterL": 216,
+        "sandTons": 1.4,
+        "waterL": 230,
         "cpsKg": 0,
         "bags50": 0,
         "bags40": 0,
@@ -33,37 +33,37 @@
         "filmArea": 22,
         "beacons": 10,
         "damperTapeM": 19,
-        "minExactNeedKg": 326.851,
-        "recExactNeedKg": 372.06,
-        "maxExactNeedKg": 483.734,
+        "minExactNeedKg": 348.036,
+        "recExactNeedKg": 396.175,
+        "maxExactNeedKg": 515.087,
         "minPurchaseKg": 350,
         "recPurchaseKg": 400,
-        "maxPurchaseKg": 500
+        "maxPurchaseKg": 550
       },
       "expected_materials_count": 7,
       "expected_material_names": [
         "Цемент М400 (мешки 50 кг)",
-        "Песок строительный",
-        "Вода",
-        "Плёнка ПЭ",
-        "Сетка армирующая",
-        "Маячковый профиль",
-        "Демпферная лента"
+        "Песок строительный мытый, средней или крупной фракции",
+        "Чистая вода для затворения раствора",
+        "Полиэтиленовая плёнка толщиной 200 мкм",
+        "Сетка армирующая сварная 100×100×4 мм",
+        "Маячковый профиль 10 мм, длина 3 м",
+        "Демпферная лента 8–10×100 мм"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 326.851,
+          "exact_need": 348.036,
           "purchase_quantity": 350
         },
         "REC": {
-          "exact_need": 372.06,
+          "exact_need": 396.175,
           "purchase_quantity": 400
         },
         "MAX": {
-          "exact_need": 483.734,
-          "purchase_quantity": 500
+          "exact_need": 515.087,
+          "purchase_quantity": 550
         }
       }
     }

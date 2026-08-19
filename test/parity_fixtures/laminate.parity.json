@@ -1,7 +1,7 @@
 {
   "calculator_id": "laminate",
   "formula_version": "laminate-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.553Z",
+  "generated_at": "2026-08-19T07:37:47.903Z",
   "cases": [
     {
       "id": "defaults",
@@ -20,7 +20,9 @@
         "doorThresholds": 1,
         "underlayType": 3,
         "laminateClass": 32,
-        "laminateThickness": 8
+        "laminateThickness": 8,
+        "floorBase": 0,
+        "outerCorners": 0
       },
       "expected_totals": {
         "area": 20,
@@ -42,6 +44,8 @@
         "wedgesNeeded": 36,
         "vaporBarrierArea": 22,
         "doorThresholds": 1,
+        "expansionJointPieces": 0,
+        "expansionJointLengthM": 0,
         "underlayType": 3,
         "laminateClass": 32,
         "laminateThickness": 8,
@@ -52,7 +56,7 @@
         "recPurchaseArea": 23.97,
         "maxPurchaseArea": 31.161
       },
-      "expected_materials_count": 9,
+      "expected_materials_count": 10,
       "expected_material_names": [
         "Ламинат (2.397 м² в упаковке)",
         "Подложка под ламинат",
@@ -60,8 +64,9 @@
         "Внутренние углы для плинтуса",
         "Соединители для плинтуса",
         "Клинья распорные",
-        "Пароизоляционная плёнка",
         "Порожек стыковочный",
+        "Заглушки для плинтуса (пара: левая+правая)",
+        "Пароизоляционная плёнка",
         "Скотч для стыков подложки"
       ],
       "expected_warnings_count": 0,

@@ -12,6 +12,11 @@ const Map<String, Map<String, double>> _factorTable = {
   'waste_factor': {'MIN': 0.97, 'REC': 1.06, 'MAX': 1.12},
 };
 
+const double _cableChannelPieceM = 2;
+const int _rcdModules = 2;
+const int _panelSpareModules = 2;
+const double _gypsumBagKg = 5;
+
 CanonicalCalculatorContractResult calculateCanonicalElectric(
   Map<String, double> inputs, {
   SpecReader? specOverride,
@@ -51,23 +56,31 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
   final breakersCount =
       lightingGroups + outletGroups + acGroups + (hasKitchen == 1 ? 1 : 0);
   final uzoCount = (outletGroups / 2).ceil() + (hasKitchen == 1 ? 1 : 0) + 1;
+  final panelModules =
+      breakersCount + uzoCount * _rcdModules + _panelSpareModules;
 
   /* ─── cable lengths ─── */
+  final wiringMultiplier = wiringType == 1
+      ? spec.materialRule<num>('cable_open_wiring_multiplier').toDouble()
+      : spec.materialRule<num>('cable_hidden_wiring_multiplier').toDouble();
   final cable15length =
       (apartmentArea * spec.materialRule<num>('cable_15_rate').toDouble() +
           lightingGroups * ceilingHeight) *
-      (1 + reserve / 100);
+      (1 + reserve / 100) *
+      wiringMultiplier;
   final cable25length =
       (apartmentArea * spec.materialRule<num>('cable_25_rate').toDouble() +
           outletGroups * ceilingHeight * 1.5) *
-      (1 + reserve / 100);
+      (1 + reserve / 100) *
+      wiringMultiplier;
   final cable6length = hasKitchen == 1
       ? (math.sqrt(apartmentArea) *
                     spec
                         .materialRule<num>('cable_6_kitchen_factor')
                         .toDouble() +
                 ceilingHeight) *
-            spec.materialRule<num>('cable_6_reserve').toDouble()
+            spec.materialRule<num>('cable_6_reserve').toDouble() *
+            wiringMultiplier
       : 0.0;
   final conduitLength =
       ((cable15length + cable25length + cable6length) *
@@ -89,19 +102,21 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
   final cable25spools =
       (cable25length / spec.materialRule<num>('cable_spool_m').toDouble())
           .ceil();
-  final conduitPacks =
-      (conduitLength / spec.materialRule<num>('cable_spool_m').toDouble())
-          .ceil();
+  final conduitPackageSize = wiringType == 1
+      ? _cableChannelPieceM
+      : spec.materialRule<num>('cable_spool_m').toDouble();
+  final conduitPacks = (conduitLength / conduitPackageSize).ceil();
   final socketBoxes =
       ((outletsCount + switchesCount) *
               spec.materialRule<num>('socket_box_reserve').toDouble())
           .ceil();
   final gypsumKg = ((outletsCount + switchesCount) / 5).ceil();
+  final gypsumBags = (gypsumKg / _gypsumBagKg).ceil();
 
   /* ─── materials ─── */
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: 'Кабель ВВГнг 3\u00d71.5',
+      name: 'Медный кабель ВВГнг(А)-LS 3×1,5 мм²',
       quantity: roundValue(cable15length, 1),
       unit: 'м',
       withReserve: roundValue(cable15length, 1),
@@ -110,9 +125,14 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
               .round()
               .toDouble(),
       category: 'Кабель',
+      packageInfo: {
+        'count': cable15spools,
+        'unitSize': spec.materialRule<num>('cable_spool_m').toDouble(),
+        'packageUnit': 'бухт',
+      },
     ),
     CanonicalMaterialResult(
-      name: 'Кабель ВВГнг 3\u00d72.5',
+      name: 'Медный кабель ВВГнг(А)-LS 3×2,5 мм²',
       quantity: roundValue(cable25length, 1),
       unit: 'м',
       withReserve: roundValue(cable25length, 1),
@@ -121,13 +141,18 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
               .round()
               .toDouble(),
       category: 'Кабель',
+      packageInfo: {
+        'count': cable25spools,
+        'unitSize': spec.materialRule<num>('cable_spool_m').toDouble(),
+        'packageUnit': 'бухт',
+      },
     ),
   ];
 
   if (hasKitchen == 1 && cable6length > 0) {
     materials.add(
       CanonicalMaterialResult(
-        name: 'Кабель ВВГнг 3\u00d76',
+        name: 'Медный кабель ВВГнг(А)-LS 3×6 мм²',
         quantity: roundValue(cable6length, 1),
         unit: 'м',
         withReserve: roundValue(cable6length, 1),
@@ -139,28 +164,57 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
 
   materials.addAll([
     CanonicalMaterialResult(
-      name: 'Щиток (модулей)',
-      quantity: (breakersCount + uzoCount + 2).toDouble(),
+      name: 'Распределительный щит не менее чем на $panelModules модулей',
+      quantity: 1,
       unit: 'шт',
-      withReserve: (breakersCount + uzoCount + 2).toDouble(),
-      purchaseQty: (breakersCount + uzoCount + 2).toDouble(),
+      withReserve: 1,
+      purchaseQty: 1,
       category: 'Щиток',
-      packageInfo: {
-        'count': 1,
-        'unitSize': (breakersCount + uzoCount + 2).toDouble(),
-        'packageUnit': 'щитков',
-      },
     ),
     CanonicalMaterialResult(
-      name: 'Автоматы',
-      quantity: breakersCount.toDouble(),
+      name: 'Автоматический выключатель 1P, характеристика C, 10 А — освещение',
+      quantity: lightingGroups.toDouble(),
       unit: 'шт',
-      withReserve: breakersCount.toDouble(),
-      purchaseQty: breakersCount.toDouble(),
+      withReserve: lightingGroups.toDouble(),
+      purchaseQty: lightingGroups.toDouble(),
       category: 'Защита',
     ),
     CanonicalMaterialResult(
-      name: 'УЗО/дифавтоматы',
+      name: 'Автоматический выключатель 1P, характеристика C, 16 А — розетки',
+      quantity: outletGroups.toDouble(),
+      unit: 'шт',
+      withReserve: outletGroups.toDouble(),
+      purchaseQty: outletGroups.toDouble(),
+      category: 'Защита',
+    ),
+    CanonicalMaterialResult(
+      name:
+          'Автоматические выключатели для кондиционеров и отдельных потребителей',
+      quantity: acGroups.toDouble(),
+      unit: 'шт',
+      withReserve: acGroups.toDouble(),
+      purchaseQty: acGroups.toDouble(),
+      category: 'Защита',
+    ),
+  ]);
+
+  if (hasKitchen == 1) {
+    materials.add(
+      const CanonicalMaterialResult(
+        name:
+            'Автоматический выключатель 1P, характеристика C, 32 А — электроплита',
+        quantity: 1,
+        unit: 'шт',
+        withReserve: 1,
+        purchaseQty: 1,
+        category: 'Защита',
+      ),
+    );
+  }
+
+  materials.addAll([
+    CanonicalMaterialResult(
+      name: 'Устройство защитного отключения (УЗО), 2P, тип A, 30 мА',
       quantity: uzoCount.toDouble(),
       unit: 'шт',
       withReserve: uzoCount.toDouble(),
@@ -168,7 +222,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       category: 'Защита',
     ),
     CanonicalMaterialResult(
-      name: 'Розетки',
+      name: 'Розетки с заземляющим контактом, 16 А',
       quantity: outletsCount.toDouble(),
       unit: 'шт',
       withReserve: outletsCount.toDouble(),
@@ -176,7 +230,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       category: 'Установка',
     ),
     CanonicalMaterialResult(
-      name: 'Выключатели',
+      name: 'Выключатели освещения, 10 А',
       quantity: switchesCount.toDouble(),
       unit: 'шт',
       withReserve: switchesCount.toDouble(),
@@ -184,7 +238,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       category: 'Установка',
     ),
     CanonicalMaterialResult(
-      name: 'Подрозетники',
+      name: 'Подрозетники ∅68 мм, глубина 45–60 мм',
       quantity: socketBoxes.toDouble(),
       unit: 'шт',
       withReserve: socketBoxes.toDouble(),
@@ -192,28 +246,40 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       category: 'Установка',
     ),
     CanonicalMaterialResult(
-      name: 'Гофра/кабель-канал',
+      name: wiringType == 1
+          ? 'Кабель-канал ПВХ с крышкой'
+          : 'Гофрированная ПВХ-труба для кабеля с протяжкой, ∅16–20 мм',
       quantity: conduitLength.toDouble(),
       unit: 'м',
       withReserve: conduitLength.toDouble(),
-      purchaseQty:
-          (conduitPacks * spec.materialRule<num>('cable_spool_m').toDouble())
-              .round()
-              .toDouble(),
+      purchaseQty: conduitPacks * conduitPackageSize,
       category: 'Монтаж',
+      packageInfo: {
+        'count': conduitPacks,
+        'unitSize': conduitPackageSize,
+        'packageUnit': wiringType == 1 ? 'отрезков' : 'бухт',
+      },
     ),
     CanonicalMaterialResult(
-      name: 'Гипс/алебастр',
+      name: 'Гипс монтажный (алебастр), мешок 5 кг',
       quantity: gypsumKg.toDouble(),
       unit: 'кг',
       withReserve: gypsumKg.toDouble(),
-      purchaseQty: gypsumKg.toDouble(),
+      purchaseQty: gypsumBags * _gypsumBagKg,
       category: 'Монтаж',
+      packageInfo: {
+        'count': gypsumBags,
+        'unitSize': _gypsumBagKg,
+        'packageUnit': 'мешков',
+      },
     ),
   ]);
 
   /* ─── scenarios ─── */
-  final basePrimary = (cable15spools + cable25spools).toDouble();
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
+  final basePrimary = ((cable15spools + cable25spools) * accuracyMult)
+      .ceilToDouble();
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
@@ -255,13 +321,20 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
   if (apartmentArea >
       spec.warningRule<num>('three_phase_area_threshold').toDouble()) {
     warnings.add(
-      'Площадь более 100 м\u00b2 \u2014 рекомендуется ввод 380В (3 фазы)',
+      'Площадь более 100 м² — рассмотрите трёхфазный ввод 380 В; решение принимает проектировщик по выделенной мощности',
     );
   }
   if (hasKitchen == 1) {
-    warnings.add('Кухня: кабель 3\u00d76 мм\u00b2, автомат 32А, УЗО 40А/30мА');
+    warnings.add(
+      'Электроплита: кабель 3×6 мм² и автомат 32 А — ориентир для однофазной линии; проверьте мощность по паспорту плиты',
+    );
   }
-  warnings.add('Все розетки в ванной и кухне \u2014 через УЗО 10-30 мА');
+  warnings.add(
+    'Все розетки в ванной и кухне — через устройство защитного отключения (УЗО) на 10–30 мА',
+  );
+  warnings.add(
+    'Это предварительная ведомость. Сечения кабелей, номиналы защиты и схему щита должен проверить электропроектировщик',
+  );
 
   return CanonicalCalculatorContractResult(
     canonicalSpecId: spec.calculatorId,
@@ -279,6 +352,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       'acGroups': acGroups.toDouble(),
       'breakersCount': breakersCount.toDouble(),
       'uzoCount': uzoCount.toDouble(),
+      'panelModules': panelModules.toDouble(),
       'cable15length': roundValue(cable15length, 1),
       'cable25length': roundValue(cable25length, 1),
       'cable6length': roundValue(cable6length, 1),
@@ -290,6 +364,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       'conduitPacks': conduitPacks.toDouble(),
       'socketBoxes': socketBoxes.toDouble(),
       'gypsumKg': gypsumKg.toDouble(),
+      'gypsumBags': gypsumBags.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,
       'recExactNeed': recScenario.exactNeed,
       'maxExactNeed': scenarios['MAX']!.exactNeed,

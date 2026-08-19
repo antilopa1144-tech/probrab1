@@ -1,7 +1,7 @@
 {
   "calculator_id": "mdf-panels",
   "formula_version": "mdf-panels-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.561Z",
+  "generated_at": "2026-08-19T07:37:47.929Z",
   "cases": [
     {
       "id": "defaults",
@@ -41,14 +41,14 @@
       },
       "expected_materials_count": 4,
       "expected_material_names": [
-        "МДФ-панели",
+        "Древесноволокнистые панели средней плотности (МДФ)",
         "Кляймеры (клипсы)",
         "Профиль обрешётки (п.м.)",
         "Плинтус"
       ],
       "expected_warnings_count": 1,
       "expected_warnings": [
-        "Стандартные МДФ-панели не рекомендуются для влажных помещений"
+        "Стандартные древесноволокнистые панели (МДФ) не рекомендуются для влажных помещений"
       ],
       "expected_scenarios": {
         "MIN": {

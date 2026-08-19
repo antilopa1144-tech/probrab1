@@ -8,7 +8,7 @@ import 'canonical_adapter_utils.dart';
 
 
 const Map<int, String> _finishTypeLabels = {
-  0: 'Сэндвич-панели ПВХ',
+  0: 'Пластиковые сэндвич-панели (ПВХ)',
   1: 'ПВХ-панели',
   2: 'Штукатурка',
   3: 'ГКЛ',
@@ -172,7 +172,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         category: 'Отделка',
       ),
       CanonicalMaterialResult(
-        name: 'F-профиль (${spec.materialRule<num>('f_profile_m').toDouble().round()} м)',
+        name: 'F-образный финишный профиль (${spec.materialRule<num>('f_profile_m').toDouble().round()} м)',
         quantity: fProfilePcs.toDouble(),
         unit: 'шт',
         withReserve: fProfilePcs.toDouble(),

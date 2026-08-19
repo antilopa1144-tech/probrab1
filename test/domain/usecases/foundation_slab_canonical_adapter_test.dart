@@ -29,6 +29,7 @@ void main() {
       final result = calculateCanonicalFoundationSlab({
         'area': 60,
         'thickness': 200,
+        'accuracyMode': 0,
       });
 
       expect(result.totals['concreteM3'], 12);

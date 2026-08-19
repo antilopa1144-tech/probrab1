@@ -232,7 +232,7 @@ CanonicalCalculatorContractResult calculateCanonicalGreenhouse(
       category: 'Профили',
     ),
     CanonicalMaterialResult(
-      name: 'UP-профиль торцевой (2.1 м)',
+      name: 'Торцевой U-образный профиль для поликарбоната (2.1 м)',
       quantity: upProfilePieces.toDouble(),
       unit: 'шт',
       withReserve: upProfilePieces.toDouble(),

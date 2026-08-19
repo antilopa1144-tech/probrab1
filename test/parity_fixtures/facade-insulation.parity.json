@@ -1,7 +1,7 @@
 {
   "calculator_id": "facade-insulation",
-  "formula_version": "facade-insulation-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.506Z",
+  "formula_version": "facade-insulation-canonical-v2",
+  "generated_at": "2026-08-19T07:37:47.803Z",
   "cases": [
     {
       "id": "defaults",
@@ -10,7 +10,8 @@
         "area": 100,
         "thickness": 100,
         "insulationType": 0,
-        "finishType": 0
+        "finishType": 0,
+        "platesPerPack": 4
       },
       "expected_totals": {
         "area": 100,
@@ -18,6 +19,8 @@
         "insulationType": 0,
         "finishType": 0,
         "plates": 146,
+        "platesPerPack": 4,
+        "packagesNeeded": 39,
         "glueBags": 16,
         "dowels": 630,
         "meshRolls": 3,
@@ -29,8 +32,8 @@
         "recExactNeed": 154.76,
         "maxExactNeed": 201.21136,
         "minPurchase": 136,
-        "recPurchase": 155,
-        "maxPurchase": 202
+        "recPurchase": 156,
+        "maxPurchase": 204
       },
       "expected_materials_count": 8,
       "expected_material_names": [
@@ -52,11 +55,11 @@
         },
         "REC": {
           "exact_need": 154.76,
-          "purchase_quantity": 155
+          "purchase_quantity": 156
         },
         "MAX": {
           "exact_need": 201.21136,
-          "purchase_quantity": 202
+          "purchase_quantity": 204
         }
       }
     }

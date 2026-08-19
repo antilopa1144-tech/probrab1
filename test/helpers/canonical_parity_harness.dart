@@ -4,16 +4,21 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:probrab_ai/domain/models/canonical_calculator_contract.dart';
 
-typedef CanonicalCalculatorFn = CanonicalCalculatorContractResult Function(Map<String, double> inputs);
-typedef CanonicalParityAssertion = void Function(
-  CanonicalCalculatorContractResult result,
-  Map<String, dynamic> expected,
-  Map<String, double> inputs,
-);
+typedef CanonicalCalculatorFn =
+    CanonicalCalculatorContractResult Function(Map<String, double> inputs);
+typedef CanonicalParityAssertion =
+    void Function(
+      CanonicalCalculatorContractResult result,
+      Map<String, dynamic> expected,
+      Map<String, double> inputs,
+    );
 
 const double kParityNumericTolerance = 0.02;
 
-CanonicalMaterialResult? findCanonicalMaterial(Iterable<CanonicalMaterialResult> materials, String namePart) {
+CanonicalMaterialResult? findCanonicalMaterial(
+  Iterable<CanonicalMaterialResult> materials,
+  String namePart,
+) {
   final needle = _normalizeMaterialLabel(namePart);
   for (final material in materials) {
     if (_normalizeMaterialLabel(material.name).contains(needle)) {
@@ -24,10 +29,7 @@ CanonicalMaterialResult? findCanonicalMaterial(Iterable<CanonicalMaterialResult>
 }
 
 String _normalizeMaterialLabel(String value) {
-  return value
-      .replaceAll('U-', 'У-')
-      .replaceAll('u-', 'у-')
-      .toLowerCase();
+  return value.replaceAll('U-', 'У-').replaceAll('u-', 'у-').toLowerCase();
 }
 
 bool materialLabelMatches(String actual, String expected) {
@@ -49,8 +51,11 @@ void assertWebParityTotals(
     if (expected is int) {
       expect(actual!.round(), expected, reason: 'total "${entry.key}"');
     } else if (expected is num) {
-      expect(actual, closeTo(expected.toDouble(), kParityNumericTolerance),
-          reason: 'total "${entry.key}"');
+      expect(
+        actual,
+        closeTo(expected.toDouble(), kParityNumericTolerance),
+        reason: 'total "${entry.key}"',
+      );
     }
   }
 }
@@ -59,7 +64,8 @@ void assertWebParityCase(
   CanonicalCalculatorContractResult result,
   Map<String, dynamic> fixtureCase,
 ) {
-  final expectedTotals = fixtureCase['expected_totals'] as Map<String, dynamic>?;
+  final expectedTotals =
+      fixtureCase['expected_totals'] as Map<String, dynamic>?;
   if (expectedTotals != null) {
     assertWebParityTotals(result, expectedTotals);
   }
@@ -70,11 +76,14 @@ void assertWebParityCase(
   }
 
   final expectedMaterialNames =
-      (fixtureCase['expected_material_names'] as List<dynamic>?)?.cast<String>();
+      (fixtureCase['expected_material_names'] as List<dynamic>?)
+          ?.cast<String>();
   if (expectedMaterialNames != null) {
     for (final name in expectedMaterialNames) {
       expect(
-        result.materials.any((material) => materialLabelMatches(material.name, name)),
+        result.materials.any(
+          (material) => materialLabelMatches(material.name, name),
+        ),
         isTrue,
         reason: 'material "$name"',
       );
@@ -96,14 +105,20 @@ void assertWebParityCase(
       if (expected['exact_need'] is num) {
         expect(
           scenario!.exactNeed,
-          closeTo((expected['exact_need'] as num).toDouble(), kParityNumericTolerance),
+          closeTo(
+            (expected['exact_need'] as num).toDouble(),
+            kParityNumericTolerance,
+          ),
           reason: '${entry.key}.exact_need',
         );
       }
       if (expected['purchase_quantity'] is num) {
         expect(
           scenario!.purchaseQuantity,
-          closeTo((expected['purchase_quantity'] as num).toDouble(), kParityNumericTolerance),
+          closeTo(
+            (expected['purchase_quantity'] as num).toDouble(),
+            kParityNumericTolerance,
+          ),
           reason: '${entry.key}.purchase_quantity',
         );
       }
@@ -113,8 +128,7 @@ void assertWebParityCase(
 
 /// Cases where Flutter totals still diverge from the web parity baseline.
 /// Remove entries after adapter/spec sync.
-const Map<String, Set<String>> knownParityDriftByCalculator = {
-};
+const Map<String, Set<String>> knownParityDriftByCalculator = {};
 
 void runWebParityFixtureFile({
   required String fixturePath,
@@ -122,21 +136,29 @@ void runWebParityFixtureFile({
   Set<String> skipCaseIds = const {},
 }) {
   final fixtureFile = File(fixturePath);
-  final fixture = jsonDecode(fixtureFile.readAsStringSync()) as Map<String, dynamic>;
+  final fixture =
+      jsonDecode(fixtureFile.readAsStringSync()) as Map<String, dynamic>;
   final calculatorId = fixture['calculator_id'] as String? ?? fixturePath;
-  final cases = (fixture['cases'] as List<dynamic>).cast<Map<String, dynamic>>();
+  final cases = (fixture['cases'] as List<dynamic>)
+      .cast<Map<String, dynamic>>();
 
   group('web parity: $calculatorId', () {
     for (final fixtureCase in cases) {
       final caseId = fixtureCase['id'] as String;
       if (skipCaseIds.contains(caseId)) {
-        test('$caseId (known drift)', () {}, skip: 'pending sync with web parity baseline');
+        test(
+          '$caseId (known drift)',
+          () {},
+          skip: 'pending sync with web parity baseline',
+        );
         continue;
       }
       test(caseId, () {
-        final rawInputs = (fixtureCase['inputs'] as Map<String, dynamic>).map(
-          (key, value) => MapEntry(key, (value as num).toDouble()),
-        );
+        final rawInputs = <String, double>{
+          for (final entry
+              in (fixtureCase['inputs'] as Map<String, dynamic>).entries)
+            if (entry.value is num) entry.key: (entry.value as num).toDouble(),
+        };
         final inputs = {...rawInputs, 'accuracyMode': 0.0};
         final result = calculate(inputs);
         assertWebParityCase(result, fixtureCase);
@@ -152,8 +174,10 @@ void runCanonicalParitySuite({
   required CanonicalParityAssertion assertCase,
 }) {
   final fixtureFile = File(fixturePath);
-  final fixture = jsonDecode(fixtureFile.readAsStringSync()) as Map<String, dynamic>;
-  final cases = (fixture['cases'] as List<dynamic>).cast<Map<String, dynamic>>();
+  final fixture =
+      jsonDecode(fixtureFile.readAsStringSync()) as Map<String, dynamic>;
+  final cases = (fixture['cases'] as List<dynamic>)
+      .cast<Map<String, dynamic>>();
 
   group(groupName, () {
     for (final fixtureCase in cases) {

@@ -16,7 +16,8 @@ const Map<String, Map<String, double>> _factorTable = {
 };
 
 bool hasCanonicalPaintInputs(Map<String, double> inputs) {
-  final hasCanonicalAreaShape = inputs.containsKey('area') ||
+  final hasCanonicalAreaShape =
+      inputs.containsKey('area') ||
       inputs.containsKey('roomWidth') ||
       inputs.containsKey('roomLength') ||
       inputs.containsKey('roomHeight') ||
@@ -56,7 +57,9 @@ bool hasLegacyUniversalPaintInputs(Map<String, double> inputs) {
           (colorIntensity != null && colorIntensity >= 1));
 }
 
-Map<String, double> normalizeLegacyUniversalPaintInputs(Map<String, double> inputs) {
+Map<String, double> normalizeLegacyUniversalPaintInputs(
+  Map<String, double> inputs,
+) {
   final paintMode = (inputs['paintType'] ?? 0).round().clamp(0, 2);
   final inputMode = (inputs['inputMode'] ?? 0).round().clamp(0, 1);
   final openingsArea = math.max(0, inputs['doorsWindows'] ?? 0);
@@ -77,7 +80,10 @@ Map<String, double> normalizeLegacyUniversalPaintInputs(Map<String, double> inpu
   final wallArea = paintMode == 1 ? 0.0 : grossWallArea;
   final ceilingArea = paintMode == 0 ? 0.0 : grossCeilingArea;
   final legacySurfacePrep = (inputs['surfacePrep'] ?? 1).round().clamp(1, 3);
-  final legacyColorIntensity = (inputs['colorIntensity'] ?? 1).round().clamp(1, 3);
+  final legacyColorIntensity = (inputs['colorIntensity'] ?? 1).round().clamp(
+    1,
+    3,
+  );
   final legacyConsumption = math.max(0.01, inputs['consumption'] ?? 0.11);
   final coverage = 1 / legacyConsumption;
 
@@ -102,29 +108,44 @@ double _estimatePerimeter(double area) {
 }
 
 Map<String, double> _resolveWork(SpecReader spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 1)).round();
-  final openingsArea = (inputs['openingsArea'] ?? inputs['doorsWindows'] ?? defaultFor(spec, 'openingsArea', 0))
-      .clamp(0, 200)
-      .toDouble();
-  final openingsPerimeter = openingsArea > 0 ? _estimatePerimeter(openingsArea) * 2 : 0.0;
-  final hasSplitAreas = inputs.containsKey('wallArea') || inputs.containsKey('ceilingArea');
-  final hasCanonicalRoomDimensions = inputs.containsKey('roomWidth') &&
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 1))
+      .round();
+  final openingsArea =
+      (inputs['openingsArea'] ??
+              inputs['doorsWindows'] ??
+              defaultFor(spec, 'openingsArea', 0))
+          .clamp(0, 200)
+          .toDouble();
+  final openingsPerimeter = openingsArea > 0
+      ? _estimatePerimeter(openingsArea) * 2
+      : 0.0;
+  final hasSplitAreas =
+      inputs.containsKey('wallArea') || inputs.containsKey('ceilingArea');
+  final hasCanonicalRoomDimensions =
+      inputs.containsKey('roomWidth') &&
       inputs.containsKey('roomLength') &&
       inputs.containsKey('roomHeight');
-  final hasLegacyRoomDimensions = inputs.containsKey('length') &&
+  final hasLegacyRoomDimensions =
+      inputs.containsKey('length') &&
       inputs.containsKey('width') &&
       inputs.containsKey('height');
 
   if (hasSplitAreas) {
     final grossWallArea = (inputs['wallArea'] ?? 0).clamp(0, 1000).toDouble();
     final ceilingArea = (inputs['ceilingArea'] ?? 0).clamp(0, 1000).toDouble();
-    final wallArea = (grossWallArea - openingsArea).clamp(0, double.infinity).toDouble();
-    final defaultRoomHeight = defaultFor(spec, 'roomHeight', 2.7).clamp(2, 5).toDouble();
+    final wallArea = (grossWallArea - openingsArea)
+        .clamp(0, double.infinity)
+        .toDouble();
+    final defaultRoomHeight = defaultFor(
+      spec,
+      'roomHeight',
+      2.7,
+    ).clamp(2, 5).toDouble();
     final estimatedPerimeter = ceilingArea > 0
         ? _estimatePerimeter(ceilingArea)
         : wallArea > 0
-            ? wallArea / defaultRoomHeight
-            : 0.0;
+        ? wallArea / defaultRoomHeight
+        : 0.0;
     return {
       'area': roundValue(wallArea + ceilingArea, 3),
       'wallArea': roundValue(wallArea, 3),
@@ -136,12 +157,24 @@ Map<String, double> _resolveWork(SpecReader spec, Map<String, double> inputs) {
     };
   }
 
-  if ((inputMode == 0 || (!inputs.containsKey('inputMode') && hasCanonicalRoomDimensions)) && hasCanonicalRoomDimensions) {
-    final roomWidth = (inputs['roomWidth'] ?? defaultFor(spec, 'roomWidth', 4)).clamp(0.5, 20).toDouble();
-    final roomLength = (inputs['roomLength'] ?? defaultFor(spec, 'roomLength', 5)).clamp(0.5, 20).toDouble();
-    final roomHeight = (inputs['roomHeight'] ?? defaultFor(spec, 'roomHeight', 2.7)).clamp(2, 5).toDouble();
+  if ((inputMode == 0 ||
+          (!inputs.containsKey('inputMode') && hasCanonicalRoomDimensions)) &&
+      hasCanonicalRoomDimensions) {
+    final roomWidth = (inputs['roomWidth'] ?? defaultFor(spec, 'roomWidth', 4))
+        .clamp(0.5, 20)
+        .toDouble();
+    final roomLength =
+        (inputs['roomLength'] ?? defaultFor(spec, 'roomLength', 5))
+            .clamp(0.5, 20)
+            .toDouble();
+    final roomHeight =
+        (inputs['roomHeight'] ?? defaultFor(spec, 'roomHeight', 2.7))
+            .clamp(2, 5)
+            .toDouble();
     final perimeter = 2 * (roomWidth + roomLength);
-    final wallArea = (perimeter * roomHeight - openingsArea).clamp(0, double.infinity).toDouble();
+    final wallArea = (perimeter * roomHeight - openingsArea)
+        .clamp(0, double.infinity)
+        .toDouble();
     final ceilingArea = roomWidth * roomLength;
     return {
       'area': roundValue(wallArea + ceilingArea, 3),
@@ -155,11 +188,19 @@ Map<String, double> _resolveWork(SpecReader spec, Map<String, double> inputs) {
   }
 
   if (hasLegacyRoomDimensions) {
-    final length = (inputs['length'] ?? defaultFor(spec, 'length', 5)).clamp(1, 20).toDouble();
-    final width = (inputs['width'] ?? defaultFor(spec, 'width', 4)).clamp(1, 20).toDouble();
-    final height = (inputs['height'] ?? defaultFor(spec, 'height', 2.7)).clamp(2, 5).toDouble();
+    final length = (inputs['length'] ?? defaultFor(spec, 'length', 5))
+        .clamp(1, 20)
+        .toDouble();
+    final width = (inputs['width'] ?? defaultFor(spec, 'width', 4))
+        .clamp(1, 20)
+        .toDouble();
+    final height = (inputs['height'] ?? defaultFor(spec, 'height', 2.7))
+        .clamp(2, 5)
+        .toDouble();
     final perimeter = 2 * (length + width);
-    final wallArea = (perimeter * height - openingsArea).clamp(0, double.infinity).toDouble();
+    final wallArea = (perimeter * height - openingsArea)
+        .clamp(0, double.infinity)
+        .toDouble();
     final ceilingArea = length * width;
     return {
       'area': roundValue(wallArea + ceilingArea, 3),
@@ -172,7 +213,9 @@ Map<String, double> _resolveWork(SpecReader spec, Map<String, double> inputs) {
     };
   }
 
-  final area = (inputs['area'] ?? defaultFor(spec, 'area', 40)).clamp(0, 1000).toDouble();
+  final area = (inputs['area'] ?? defaultFor(spec, 'area', 40))
+      .clamp(0, 1000)
+      .toDouble();
   final perimeter = area > 0 ? _estimatePerimeter(area) : 0.0;
   return {
     'area': roundValue(area, 3),
@@ -185,46 +228,88 @@ Map<String, double> _resolveWork(SpecReader spec, Map<String, double> inputs) {
   };
 }
 
-Map<String, dynamic> _resolvePaintType(SpecReader spec, Map<String, double> inputs) {
-  final paintType = (inputs['paintType'] ?? defaultFor(spec, 'paintType', 0)).round().clamp(0, 1);
-  return spec.normativeList('paint_types').firstWhere(
-    (type) => (type['id'] as num).toInt() == paintType,
-    orElse: () => spec.normativeList('paint_types').first,
-  );
+Map<String, dynamic> _resolvePaintType(
+  SpecReader spec,
+  Map<String, double> inputs,
+) {
+  final paintType = (inputs['paintType'] ?? defaultFor(spec, 'paintType', 0))
+      .round()
+      .clamp(0, 1);
+  return spec
+      .normativeList('paint_types')
+      .firstWhere(
+        (type) => (type['id'] as num).toInt() == paintType,
+        orElse: () => spec.normativeList('paint_types').first,
+      );
 }
 
-Map<String, dynamic> _resolveSurface(SpecReader spec, Map<String, double> inputs, Map<String, dynamic> paintType) {
-  final surfaceType = (inputs['surfaceType'] ?? defaultFor(spec, 'surfaceType', 0)).round().clamp(0, 8);
+Map<String, dynamic> _resolveSurface(
+  SpecReader spec,
+  Map<String, double> inputs,
+  Map<String, dynamic> paintType,
+) {
+  final surfaceType =
+      (inputs['surfaceType'] ?? defaultFor(spec, 'surfaceType', 0))
+          .round()
+          .clamp(0, 8);
   for (final surface in spec.normativeList('surface_types')) {
-    if ((surface['id'] as num).toInt() == surfaceType && (surface['scope_ids'] as List).contains((paintType['id'] as num).toInt())) {
+    if ((surface['id'] as num).toInt() == surfaceType &&
+        (surface['scope_ids'] as List).contains(
+          (paintType['id'] as num).toInt(),
+        )) {
       return surface;
     }
   }
-  return spec.normativeList('surface_types').firstWhere(
-    (surface) => (surface['scope_ids'] as List).contains((paintType['id'] as num).toInt()),
-    orElse: () => spec.normativeList('surface_types').first,
-  );
+  return spec
+      .normativeList('surface_types')
+      .firstWhere(
+        (surface) => (surface['scope_ids'] as List).contains(
+          (paintType['id'] as num).toInt(),
+        ),
+        orElse: () => spec.normativeList('surface_types').first,
+      );
 }
 
-Map<String, dynamic> _resolvePreparation(SpecReader spec, Map<String, double> inputs) {
-  final prepId = (inputs['surfacePrep'] ?? defaultFor(spec, 'surfacePrep', 0)).round().clamp(0, 2);
-  return spec.normativeList('surface_preparations').firstWhere(
-    (prep) => (prep['id'] as num).toInt() == prepId,
-    orElse: () => spec.normativeList('surface_preparations').first,
-  );
+Map<String, dynamic> _resolvePreparation(
+  SpecReader spec,
+  Map<String, double> inputs,
+) {
+  final prepId = (inputs['surfacePrep'] ?? defaultFor(spec, 'surfacePrep', 0))
+      .round()
+      .clamp(0, 2);
+  return spec
+      .normativeList('surface_preparations')
+      .firstWhere(
+        (prep) => (prep['id'] as num).toInt() == prepId,
+        orElse: () => spec.normativeList('surface_preparations').first,
+      );
 }
 
-Map<String, dynamic> _resolveColor(SpecReader spec, Map<String, double> inputs) {
-  final colorId = (inputs['colorIntensity'] ?? defaultFor(spec, 'colorIntensity', 0)).round().clamp(0, 2);
-  return spec.normativeList('color_intensities').firstWhere(
-    (color) => (color['id'] as num).toInt() == colorId,
-    orElse: () => spec.normativeList('color_intensities').first,
-  );
+Map<String, dynamic> _resolveColor(
+  SpecReader spec,
+  Map<String, double> inputs,
+) {
+  final colorId =
+      (inputs['colorIntensity'] ?? defaultFor(spec, 'colorIntensity', 0))
+          .round()
+          .clamp(0, 2);
+  return spec
+      .normativeList('color_intensities')
+      .firstWhere(
+        (color) => (color['id'] as num).toInt() == colorId,
+        orElse: () => spec.normativeList('color_intensities').first,
+      );
 }
 
-double _resolveCoverage(SpecReader spec, Map<String, double> inputs, Map<String, dynamic> paintType) {
+double _resolveCoverage(
+  SpecReader spec,
+  Map<String, double> inputs,
+  Map<String, dynamic> paintType,
+) {
   final fallback = (paintType['id'] as num).toInt() == 1 ? 7.0 : 10.0;
-  return (inputs['coverage'] ?? defaultFor(spec, 'coverage', fallback)).clamp(4, 15).toDouble();
+  return (inputs['coverage'] ?? defaultFor(spec, 'coverage', fallback))
+      .clamp(4, 15)
+      .toDouble();
 }
 
 int _resolveCoats(SpecReader spec, Map<String, double> inputs) {
@@ -232,14 +317,24 @@ int _resolveCoats(SpecReader spec, Map<String, double> inputs) {
 }
 
 List<double> _resolvePackageSizes(SpecReader spec, Map<String, double> inputs) {
-  final requested = (inputs['canSize'] ?? defaultFor(spec, 'canSize', 0)).toDouble();
-  if (requested > 0 && spec.packagingRule<List>('allowed_package_sizes').contains(requested)) {
+  final requested = (inputs['canSize'] ?? defaultFor(spec, 'canSize', 0))
+      .toDouble();
+  if (requested > 0 &&
+      spec.packagingRule<List>('allowed_package_sizes').contains(requested)) {
     return [requested];
   }
-  return spec.packagingRule<List>('optimal_package_sizes').cast<num>().map((e) => e.toDouble()).toList();
+  return spec
+      .packagingRule<List>('optimal_package_sizes')
+      .cast<num>()
+      .map((e) => e.toDouble())
+      .toList();
 }
 
-Map<String, dynamic> _pickPackage(double exactNeed, List<double> packageSizes, String unit) {
+Map<String, dynamic> _pickPackage(
+  double exactNeed,
+  List<double> packageSizes,
+  String unit,
+) {
   var bestSize = packageSizes.first;
   var bestCount = exactNeed > 0 ? (exactNeed / bestSize).ceil() : 0;
   var bestPurchase = bestCount * bestSize;
@@ -249,7 +344,8 @@ Map<String, dynamic> _pickPackage(double exactNeed, List<double> packageSizes, S
     final count = exactNeed > 0 ? (exactNeed / size).ceil() : 0;
     final purchase = count * size;
     final leftover = purchase - exactNeed;
-    if (leftover < bestLeftover || (leftover == bestLeftover && purchase < bestPurchase)) {
+    if (leftover < bestLeftover ||
+        (leftover == bestLeftover && purchase < bestPurchase)) {
       bestSize = size;
       bestCount = count;
       bestPurchase = purchase;
@@ -266,6 +362,92 @@ Map<String, dynamic> _pickPackage(double exactNeed, List<double> packageSizes, S
   };
 }
 
+List<CanonicalMaterialResult> _buildPaintCompanionMaterials({
+  required SpecReader spec,
+  required Map<String, double> inputs,
+  required Map<String, double> totals,
+}) {
+  final companions = (spec.raw['companion_materials'] as List? ?? const [])
+      .cast<Map<String, dynamic>>();
+  final materials = <CanonicalMaterialResult>[];
+
+  bool conditionMatches(Map<String, dynamic>? condition) {
+    if (condition == null) return false;
+    final input = inputs[condition['input_key'] as String? ?? ''];
+    final value = (condition['value'] as num?)?.toDouble();
+    switch (condition['type']) {
+      case 'input_eq':
+        return input != null && input == value;
+      case 'input_gte':
+        return input != null && value != null && input >= value;
+      default:
+        return false;
+    }
+  }
+
+  for (final companion in companions) {
+    if (conditionMatches(companion['skip_when'] as Map<String, dynamic>?)) {
+      continue;
+    }
+    final onlyWhen = companion['only_when'] as Map<String, dynamic>?;
+    if (onlyWhen != null && !conditionMatches(onlyWhen)) continue;
+
+    final formula = companion['formula'] as Map<String, dynamic>;
+    final totalsKey = formula['totals_key'] as String?;
+    final base = totalsKey == null ? 0.0 : totals[totalsKey] ?? 0.0;
+    double exactNeed;
+    switch (formula['type']) {
+      case 'area_consumption':
+        exactNeed =
+            base *
+            (formula['consumption_per_m2'] as num).toDouble() *
+            ((formula['reserve_factor'] as num?)?.toDouble() ?? 1.0);
+        break;
+      case 'per_count_step':
+        if (base <= 0) continue;
+        final fixed = (formula['fixed'] as num).toDouble();
+        final step = (formula['step'] as num).toDouble();
+        exactNeed = fixed + math.max(0, (base / step).ceil() - 1);
+        final max = (formula['max'] as num?)?.toDouble();
+        if (max != null) exactNeed = math.min(exactNeed, max);
+        break;
+      case 'fixed':
+        exactNeed = (formula['value'] as num).toDouble();
+        break;
+      default:
+        continue;
+    }
+    if (exactNeed <= 0) continue;
+
+    final package = companion['package'] as Map<String, dynamic>?;
+    final packageSize = (package?['size'] as num?)?.toDouble();
+    final packagesCount = packageSize != null && packageSize > 0
+        ? (exactNeed / packageSize).ceil()
+        : 0;
+    final purchase = packageSize != null && packageSize > 0
+        ? packagesCount * packageSize
+        : exactNeed.ceilToDouble();
+    materials.add(
+      CanonicalMaterialResult(
+        name: companion['label'] as String,
+        quantity: roundValue(exactNeed, 3),
+        unit: companion['unit'] as String,
+        withReserve: roundValue(purchase, 3),
+        purchaseQty: purchase,
+        category: companion['category'] as String?,
+        packageInfo: packagesCount > 0
+            ? {
+                'count': packagesCount,
+                'size': packageSize,
+                'packageUnit': package?['unit'] ?? '',
+              }
+            : null,
+      ),
+    );
+  }
+  return materials;
+}
+
 CanonicalCalculatorContractResult calculateCanonicalPaint(
   Map<String, double> inputs, {
   SpecReader? specOverride,
@@ -280,24 +462,44 @@ CanonicalCalculatorContractResult calculateCanonicalPaint(
   final estimatedPerimeter = work['estimatedPerimeter']!;
   final paintType = _resolvePaintType(spec, inputs);
   final wallArea = rawWallArea;
-  final ceilingArea = (paintType['id'] as num).toInt() == 1 ? 0.0 : rawCeilingArea;
+  final ceilingArea = (paintType['id'] as num).toInt() == 1
+      ? 0.0
+      : rawCeilingArea;
   final area = wallArea + ceilingArea;
   final surface = _resolveSurface(spec, inputs, paintType);
   final preparation = _resolvePreparation(spec, inputs);
   final color = _resolveColor(spec, inputs);
   final coverage = _resolveCoverage(spec, inputs, paintType);
   final coats = _resolveCoats(spec, inputs);
-  final lPerSqm = (coats * (surface['multiplier'] as num).toDouble() * (preparation['multiplier'] as num).toDouble() * (color['multiplier'] as num).toDouble()) / coverage;
+  final lPerSqm =
+      (coats *
+          (surface['multiplier'] as num).toDouble() *
+          (preparation['multiplier'] as num).toDouble() *
+          (color['multiplier'] as num).toDouble()) /
+      coverage;
   final wallBaseExactNeed = wallArea * lPerSqm;
-  final ceilingBaseExactNeed = ceilingArea * lPerSqm * spec.materialRule<num>('ceiling_premium_factor').toDouble();
+  final ceilingBaseExactNeed =
+      ceilingArea *
+      lPerSqm *
+      spec.materialRule<num>('ceiling_premium_factor').toDouble();
   final baseExactNeed = wallBaseExactNeed + ceilingBaseExactNeed;
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('paint', accuracyMode);
   final packageSizes = _resolvePackageSizes(spec, inputs);
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
-    final exactNeed = roundValue(baseExactNeed * multiplier, 6);
-    final package = _pickPackage(exactNeed, packageSizes, spec.packagingRule<String>('unit'));
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      _factorTable,
+      scenarioName,
+    );
+    final exactNeed = roundValue(baseExactNeed * accuracyMult * multiplier, 6);
+    final package = _pickPackage(
+      exactNeed,
+      packageSizes,
+      spec.packagingRule<String>('unit'),
+    );
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
@@ -323,34 +525,43 @@ CanonicalCalculatorContractResult calculateCanonicalPaint(
   }
 
   final recScenario = scenarios['REC']!;
-  final primerLiters = roundValue(area * spec.materialRule<num>('primer_l_per_m2').toDouble(), 3);
-  final primerCans = primerLiters > 0
-      ? (primerLiters / spec.materialRule<num>('primer_package_size_l').toDouble()).ceil()
-      : 0;
-  final primerPurchase = roundValue(primerCans * spec.materialRule<num>('primer_package_size_l').toDouble(), 3);
+  final primerLiters = roundValue(
+    area * spec.materialRule<num>('primer_l_per_m2').toDouble(),
+    3,
+  );
   final tapeMeters = roundValue(
-    estimatedPerimeter * spec.materialRule<num>('tape_runs_per_room').toDouble() * spec.materialRule<num>('tape_reserve_factor').toDouble(),
+    estimatedPerimeter *
+        spec.materialRule<num>('tape_runs_per_room').toDouble() *
+        spec.materialRule<num>('tape_reserve_factor').toDouble(),
     3,
   );
   final tapeRolls = tapeMeters > 0
-      ? (tapeMeters / spec.materialRule<num>('tape_roll_length_m').toDouble()).ceil()
+      ? (tapeMeters / spec.materialRule<num>('tape_roll_length_m').toDouble())
+            .ceil()
       : 0;
-  final rollers = area > 0 ? (area / spec.materialRule<num>('roller_area_m2_per_piece').toDouble()).ceil() : 0;
-  final brushes = area > 0 ? spec.materialRule<num>('brushes_count').toDouble() : 0;
-  final trays = area > 0 ? spec.materialRule<num>('trays_count').toDouble() : 0;
 
   final warnings = <String>[];
   if (area <= 0) {
     warnings.add('Площадь окраски должна быть больше нуля');
   }
-  if (spec.warningRule<List>('primer_required_surface_ids').contains((surface['id'] as num).toInt())) {
-    warnings.add('Для выбранной поверхности рекомендуется предварительное грунтование');
+  if (spec
+      .warningRule<List>('primer_required_surface_ids')
+      .contains((surface['id'] as num).toInt())) {
+    warnings.add(
+      'Для выбранной поверхности рекомендуется предварительное грунтование',
+    );
   }
   if (coats <= spec.warningRule<num>('one_coat_warning_threshold').toInt()) {
-    warnings.add('Один слой редко даёт равномерное укрытие. Обычно рекомендуют 2 слоя');
+    warnings.add(
+      'Один слой редко даёт равномерное укрытие. Обычно рекомендуют 2 слоя',
+    );
   }
-  if (spec.warningRule<List>('rough_surface_warning_ids').contains((surface['id'] as num).toInt())) {
-    warnings.add('Для рельефных поверхностей и фасадной фактуры расход краски может быть заметно выше среднего');
+  if (spec
+      .warningRule<List>('rough_surface_warning_ids')
+      .contains((surface['id'] as num).toInt())) {
+    warnings.add(
+      'Для рельефных поверхностей и фасадной фактуры расход краски может быть заметно выше среднего',
+    );
   }
 
   return CanonicalCalculatorContractResult(
@@ -358,54 +569,36 @@ CanonicalCalculatorContractResult calculateCanonicalPaint(
     formulaVersion: spec.formulaVersion,
     materials: [
       CanonicalMaterialResult(
-        name: '${paintType['label'] as String} (${recScenario.buyPlan.packageSize.toInt()} л)',
+        name:
+            '${paintType['label'] as String} (${recScenario.buyPlan.packageSize.toInt()} л)',
         quantity: recScenario.exactNeed,
         unit: 'л',
         withReserve: recScenario.purchaseQuantity,
-        purchaseQty: (recScenario.buyPlan.packagesCount * recScenario.buyPlan.packageSize).toDouble(),
+        purchaseQty:
+            (recScenario.buyPlan.packagesCount *
+                    recScenario.buyPlan.packageSize)
+                .toDouble(),
         category: 'Основное',
-        packageInfo: {'count': recScenario.buyPlan.packagesCount, 'unitSize': recScenario.buyPlan.packageSize, 'packageUnit': 'банок'},
+        packageInfo: {
+          'count': recScenario.buyPlan.packagesCount,
+          'unitSize': recScenario.buyPlan.packageSize,
+          'packageUnit': 'банок',
+        },
       ),
-      CanonicalMaterialResult(
-        name: 'Грунтовка под покраску ${(surface['label'] as String).toLowerCase()} (${spec.materialRule<num>('primer_package_size_l').toInt()} л)',
-        quantity: primerLiters,
-        unit: 'л',
-        withReserve: primerPurchase,
-        purchaseQty: (primerCans * spec.materialRule<num>('primer_package_size_l').toDouble()).toDouble(),
-        category: 'Подготовка',
-        packageInfo: {'count': primerCans, 'unitSize': spec.materialRule<num>('primer_package_size_l').toDouble(), 'packageUnit': 'канистр'},
-      ),
-      CanonicalMaterialResult(
-        name: 'Валик малярный (микрофибра, 250 мм)',
-        quantity: rollers.toDouble(),
-        unit: 'шт',
-        withReserve: rollers.toDouble(),
-        purchaseQty: rollers.toDouble(),
-        category: 'Инструмент',
-      ),
-      CanonicalMaterialResult(
-        name: 'Кисть плоская (для углов, 50 мм)',
-        quantity: brushes.toDouble(),
-        unit: 'шт',
-        withReserve: brushes.toDouble(),
-        purchaseQty: brushes.toDouble(),
-        category: 'Инструмент',
-      ),
-      CanonicalMaterialResult(
-        name: 'Кювета для краски',
-        quantity: trays.toDouble(),
-        unit: 'шт',
-        withReserve: trays.toDouble(),
-        purchaseQty: trays.toDouble(),
-        category: 'Инструмент',
-      ),
-      CanonicalMaterialResult(
-        name: 'Малярная лента (${spec.materialRule<num>('tape_roll_length_m').toInt()} м)',
-        quantity: roundValue(tapeMeters / spec.materialRule<num>('tape_roll_length_m').toDouble(), 3),
-        unit: 'рулон',
-        withReserve: tapeRolls.toDouble(),
-        purchaseQty: tapeRolls.toDouble(),
-        category: 'Расходники',
+      ..._buildPaintCompanionMaterials(
+        spec: spec,
+        inputs: {
+          'paintType': (paintType['id'] as num).toDouble(),
+          'surfaceType': (surface['id'] as num).toDouble(),
+          'surfacePrep': (preparation['id'] as num).toDouble(),
+          'coats': coats.toDouble(),
+        },
+        totals: {
+          'area': area,
+          'wallArea': wallArea,
+          'ceilingArea': ceilingArea,
+          'estimatedPerimeter': estimatedPerimeter,
+        },
       ),
     ],
     totals: {
@@ -427,7 +620,10 @@ CanonicalCalculatorContractResult calculateCanonicalPaint(
       'wallBaseExactNeedL': roundValue(wallBaseExactNeed, 6),
       'ceilingBaseExactNeedL': roundValue(ceilingBaseExactNeed, 6),
       'baseExactNeedL': roundValue(baseExactNeed, 6),
-      'ceilingPremiumFactor': roundValue(spec.materialRule<num>('ceiling_premium_factor').toDouble(), 3),
+      'ceilingPremiumFactor': roundValue(
+        spec.materialRule<num>('ceiling_premium_factor').toDouble(),
+        3,
+      ),
       'primerLiters': primerLiters,
       'tapeMeters': tapeMeters,
       'tapeRolls': tapeRolls.toDouble(),

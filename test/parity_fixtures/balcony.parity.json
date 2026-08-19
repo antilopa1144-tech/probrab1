@@ -1,7 +1,7 @@
 {
   "calculator_id": "balcony",
   "formula_version": "balcony-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.325Z",
+  "generated_at": "2026-08-19T07:37:47.642Z",
   "cases": [
     {
       "id": "defaults",

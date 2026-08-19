@@ -228,7 +228,7 @@ CanonicalCalculatorContractResult calculateCanonicalSepticRings(
         ),
       CanonicalMaterialResult(
         name:
-            'Труба ПВХ Ø${spec.materialRule<num>('pipe_diameter_mm').round()} (секции 3 м)',
+            'Пластиковая канализационная труба (ПВХ) Ø${spec.materialRule<num>('pipe_diameter_mm').round()} мм, отрезки 3 м',
         quantity: pipeSections.toDouble(),
         unit: 'шт',
         withReserve: pipeSections.toDouble(),

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import '../generated/canonical_specs.g.dart';
 import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
@@ -8,7 +10,11 @@ import 'canonical_adapter_utils.dart';
 /* ─── Constants (must match TS engine exactly) ─── */
 
 const Map<int, double> _plateAreas = {0: 0.72, 1: 0.50, 2: 2.00};
-const Map<int, String> _plateLabels = {0: '1200×600', 1: '1000×500', 2: '2000×1000'};
+const Map<int, String> _plateLabels = {
+  0: '1200×600',
+  1: '1000×500',
+  2: '2000×1000',
+};
 const Map<int, int> _dowelsPerSqm = {0: 7, 1: 5, 2: 6, 3: 0};
 const double _dowelReserve = 1.05;
 
@@ -29,7 +35,6 @@ const double _ecowoolBagKg = 15;
 
 /* ─── Factor table ─── */
 
-
 const Map<int, String> _insulationTypeLabels = {
   0: 'Минеральная вата',
   1: 'ЭППС / пеноплекс',
@@ -47,17 +52,58 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
 }) {
   final spec = specOverride ?? const SpecReader(insulationSpecData);
 
-  final area = (inputs['area'] ?? defaultFor(spec, 'area', 40)).clamp(1, 500).toDouble();
-  final insulationType = (inputs['insulationType'] ?? defaultFor(spec, 'insulationType', 0)).round().clamp(0, 3);
-  final thickness = (inputs['thickness'] ?? defaultFor(spec, 'thickness', 100)).clamp(50, 200).toDouble();
-  final plateSize = (inputs['plateSize'] ?? defaultFor(spec, 'plateSize', 0)).round().clamp(0, 2);
-  final reserve = (inputs['reserve'] ?? defaultFor(spec, 'reserve', 5)).clamp(0, 15).toDouble();
+  final area = (inputs['area'] ?? defaultFor(spec, 'area', 40))
+      .clamp(1, 500)
+      .toDouble();
+  final insulationType =
+      (inputs['insulationType'] ?? defaultFor(spec, 'insulationType', 0))
+          .round()
+          .clamp(0, 3);
+  final thickness = (inputs['thickness'] ?? defaultFor(spec, 'thickness', 100))
+      .clamp(50, 200)
+      .toDouble();
+  final plateSize = (inputs['plateSize'] ?? defaultFor(spec, 'plateSize', 0))
+      .round()
+      .clamp(0, 2);
+  final reserve = (inputs['reserve'] ?? defaultFor(spec, 'reserve', 5))
+      .clamp(0, 15)
+      .toDouble();
+  final mountSystem =
+      (inputs['mountSystem'] ?? defaultFor(spec, 'mountSystem', 0))
+          .round()
+          .clamp(0, 1);
+  final application =
+      (inputs['application'] ?? defaultFor(spec, 'application', 0))
+          .round()
+          .clamp(0, 4);
+  final climateZone =
+      (inputs['climateZone'] ?? defaultFor(spec, 'climateZone', 1))
+          .round()
+          .clamp(0, 4);
+  final productForm = (inputs['productForm'] ?? (insulationType == 3 ? 2 : 0))
+      .round()
+      .clamp(0, 2);
+  final rollArea = productForm == 1
+      ? math.max(0, inputs['rollAreaM2'] ?? 0).toDouble()
+      : 0.0;
+  final packHeightByType = <int, double>{0: 600, 1: 400, 2: 500};
+  final requestedPiecesPerPack = (inputs['piecesPerPack'] ?? 0).round().clamp(
+    0,
+    24,
+  );
+  final piecesPerPack = productForm == 2 || insulationType == 3
+      ? 0
+      : (requestedPiecesPerPack > 0
+            ? requestedPiecesPerPack
+            : math.max(
+                1,
+                ((packHeightByType[insulationType] ?? 0) / thickness).floor(),
+              ));
 
   final areaWithReserve = area * (1 + reserve / 100);
   final plateArea = _plateAreas[plateSize] ?? 0.72;
 
   /* ── plate-based types (0, 1, 2) ── */
-  var platesNeeded = 0;
   var dowelsNeeded = 0;
   var membraneArea = 0;
   var aluTapeRolls = 0;
@@ -65,8 +111,8 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
   var glueBags = 0;
 
   if (insulationType <= 2) {
-    platesNeeded = (areaWithReserve / plateArea).ceil();
-    dowelsNeeded = (area * (_dowelsPerSqm[insulationType] ?? 0) * _dowelReserve).ceil();
+    dowelsNeeded = (area * (_dowelsPerSqm[insulationType] ?? 0) * _dowelReserve)
+        .ceil();
   }
 
   if (insulationType == 0) {
@@ -80,7 +126,8 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
   }
 
   /* ── primer (all types) ── */
-  final primerCans = (area * _primerLPerM2 * _primerReserve / _primerCanL).ceil();
+  final primerCans = (area * _primerLPerM2 * _primerReserve / _primerCanL)
+      .ceil();
 
   /* ── ecowool (type 3) ── */
   var ecowoolVolume = 0.0;
@@ -94,8 +141,10 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
   }
 
   /* ── scenarios ── */
-  final basePrimary = insulationType <= 2 ? platesNeeded.toDouble() : ecowoolBags.toDouble();
-  const packageSize = 1.0;
+  final basePrimary = insulationType <= 2
+      ? areaWithReserve / plateArea
+      : ecowoolBags.toDouble();
+  final packageSize = insulationType <= 2 ? piecesPerPack.toDouble() : 1.0;
   final packageUnit = insulationType <= 2 ? 'шт' : 'мешков';
   final packageLabel = insulationType <= 2
       ? 'insulation-plate-${_plateLabels[plateSize]}'
@@ -103,9 +152,14 @@ CanonicalCalculatorContractResult calculateCanonicalInsulation(
 
   final scenarios = <String, CanonicalScenarioResult>{};
 
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('insulation', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('insulation', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(basePrimary * accuracyMult * multiplier, 6);
     final packages = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
     final purchaseQuantity = roundValue(packages * packageSize, 6);
@@ -122,7 +176,11 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -140,89 +198,148 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   final materials = <CanonicalMaterialResult>[];
 
   if (insulationType <= 2) {
-    materials.add(CanonicalMaterialResult(
-      name: '${_insulationTypeLabels[insulationType]} (${_plateLabels[plateSize]} мм)',
-      quantity: roundValue(recScenario.exactNeed, 6),
-      unit: 'шт',
-      withReserve: recScenario.exactNeed.ceil().toDouble(),
-      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
-      category: 'Основное',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            '${_insulationTypeLabels[insulationType]} (${_plateLabels[plateSize]} мм)',
+        quantity: roundValue(recScenario.exactNeed, 6),
+        unit: 'шт',
+        withReserve: recScenario.exactNeed.ceil().toDouble(),
+        purchaseQty: recScenario.exactNeed.ceil().toDouble(),
+        category: 'Основное',
+      ),
+    );
 
-    materials.add(CanonicalMaterialResult(
-      name: 'Дюбели тарельчатые',
-      quantity: dowelsNeeded.toDouble(),
-      unit: 'шт',
-      withReserve: dowelsNeeded.toDouble(),
-      purchaseQty: dowelsNeeded.toDouble(),
-      category: 'Крепёж',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Дюбели тарельчатые',
+        quantity: dowelsNeeded.toDouble(),
+        unit: 'шт',
+        withReserve: dowelsNeeded.toDouble(),
+        purchaseQty: dowelsNeeded.toDouble(),
+        category: 'Крепёж',
+      ),
+    );
   }
 
   if (insulationType == 0) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Пароизоляционная мембрана',
-      quantity: membraneArea.toDouble(),
-      unit: 'м²',
-      withReserve: membraneArea.toDouble(),
-      purchaseQty: membraneArea.toDouble(),
-      category: 'Изоляция',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Клей фасадный для плит (25 кг)',
+        quantity: membraneArea.toDouble(),
+        unit: 'м²',
+        withReserve: membraneArea.toDouble(),
+        purchaseQty: membraneArea.toDouble(),
+        category: 'Изоляция',
+      ),
+    );
 
-    materials.add(CanonicalMaterialResult(
-      name: 'Алюминиевая лента (скотч)',
-      quantity: aluTapeRolls.toDouble(),
-      unit: 'рулонов',
-      withReserve: aluTapeRolls.toDouble(),
-      purchaseQty: aluTapeRolls.toDouble(),
-      category: 'Изоляция',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Стеклосетка фасадная (армирующая)',
+        quantity: aluTapeRolls.toDouble(),
+        unit: 'рулонов',
+        withReserve: aluTapeRolls.toDouble(),
+        purchaseQty: aluTapeRolls.toDouble(),
+        category: 'Изоляция',
+      ),
+    );
+  }
+
+  if (insulationType == 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Базовая штукатурка армирующего слоя (25 кг)',
+        quantity: area,
+        unit: 'м²',
+        withReserve: area,
+        purchaseQty: area,
+        category: 'Отделка',
+      ),
+    );
   }
 
   if (insulationType == 1 || insulationType == 2) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Клей для ${insulationType == 1 ? "ЭППС" : "ЕПС"} (${_glueBagKg.toInt()} кг)',
-      quantity: roundValue(glueKg, 3),
-      unit: 'кг',
-      withReserve: (glueBags * _glueBagKg).toDouble(),
-      purchaseQty: (glueBags * _glueBagKg).toDouble(),
-      category: 'Клей',
-      packageInfo: {'count': glueBags, 'unitSize': _glueBagKg, 'packageUnit': 'мешков'},
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Клей для ${insulationType == 1 ? "ЭППС" : "ЕПС"} (${_glueBagKg.toInt()} кг)',
+        quantity: roundValue(glueKg, 3),
+        unit: 'кг',
+        withReserve: (glueBags * _glueBagKg).toDouble(),
+        purchaseQty: (glueBags * _glueBagKg).toDouble(),
+        category: 'Клей',
+        packageInfo: {
+          'count': glueBags,
+          'unitSize': _glueBagKg,
+          'packageUnit': 'мешков',
+        },
+      ),
+    );
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Базовая штукатурка армирующего слоя (25 кг)',
+        quantity: area,
+        unit: 'м²',
+        withReserve: area,
+        purchaseQty: area,
+        category: 'Отделка',
+      ),
+    );
   }
 
   if (insulationType == 3) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Эковата (${_ecowoolBagKg.toInt()} кг)',
-      quantity: ecowoolKg.toDouble(),
-      unit: 'кг',
-      withReserve: (ecowoolBags * _ecowoolBagKg).toDouble(),
-      purchaseQty: (ecowoolBags * _ecowoolBagKg).toDouble(),
-      category: 'Основное',
-      packageInfo: {'count': ecowoolBags, 'unitSize': _ecowoolBagKg, 'packageUnit': 'мешков'},
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Эковата (${_ecowoolBagKg.toInt()} кг)',
+        quantity: ecowoolKg.toDouble(),
+        unit: 'кг',
+        withReserve: (ecowoolBags * _ecowoolBagKg).toDouble(),
+        purchaseQty: (ecowoolBags * _ecowoolBagKg).toDouble(),
+        category: 'Основное',
+        packageInfo: {
+          'count': ecowoolBags,
+          'unitSize': _ecowoolBagKg,
+          'packageUnit': 'мешков',
+        },
+      ),
+    );
   }
 
-  materials.add(CanonicalMaterialResult(
-    name: 'Грунтовка глубокого проникновения (${_primerCanL.toInt()} л)',
-    quantity: roundValue(area * _primerLPerM2 * _primerReserve, 3),
-    unit: 'л',
-    withReserve: (primerCans * _primerCanL).toDouble(),
-    purchaseQty: (primerCans * _primerCanL).toDouble(),
-    category: 'Подготовка',
-    packageInfo: {'count': primerCans, 'unitSize': _primerCanL, 'packageUnit': 'канистр'},
-  ));
+  materials.add(
+    CanonicalMaterialResult(
+      name: 'Грунтовка фасадная (${_primerCanL.toInt()} л)',
+      quantity: roundValue(area * _primerLPerM2 * _primerReserve, 3),
+      unit: 'л',
+      withReserve: (primerCans * _primerCanL).toDouble(),
+      purchaseQty: (primerCans * _primerCanL).toDouble(),
+      category: 'Подготовка',
+      packageInfo: {
+        'count': primerCans,
+        'unitSize': _primerCanL,
+        'packageUnit': 'канистр',
+      },
+    ),
+  );
 
   /* ── warnings ── */
   final warnings = <String>[];
-  if (thickness < spec.warningRule<num>('thin_thickness_threshold_mm').toDouble()) {
+  if (thickness <
+      spec.warningRule<num>('thin_thickness_threshold_mm').toDouble()) {
     warnings.add('Толщина менее 50 мм — недостаточно для наружных стен');
   }
-  if (insulationType == 3 && thickness > spec.warningRule<num>('ecowool_settle_threshold_mm').toDouble()) {
-    warnings.add('Эковата при толщине более 150 мм оседает — рекомендуется укладка в 2 слоя');
+  if (insulationType == 3 &&
+      thickness >
+          spec.warningRule<num>('ecowool_settle_threshold_mm').toDouble()) {
+    warnings.add(
+      'Эковата при толщине более 150 мм оседает — рекомендуется укладка в 2 слоя',
+    );
   }
-  if (area > spec.warningRule<num>('professional_area_threshold_m2').toDouble()) {
-    warnings.add('При площади более 100 м² рекомендуется профессиональный монтаж');
+  if (area >
+      spec.warningRule<num>('professional_area_threshold_m2').toDouble()) {
+    warnings.add(
+      'При площади более 100 м² рекомендуется профессиональный монтаж',
+    );
   }
 
   return CanonicalCalculatorContractResult(
@@ -235,14 +352,30 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'thickness': roundValue(thickness, 3),
       'plateSize': plateSize.toDouble(),
       'reserve': reserve,
+      'mountSystem': mountSystem.toDouble(),
+      'application': application.toDouble(),
+      'climateZone': climateZone.toDouble(),
       'areaWithReserve': roundValue(areaWithReserve, 3),
       'plateArea': plateArea,
-      'platesNeeded': insulationType <= 2 ? platesNeeded.toDouble() : 0,
+      'productForm': productForm.toDouble(),
+      'rollArea': rollArea,
+      'rollsNeeded': productForm == 1 && rollArea > 0
+          ? (areaWithReserve / rollArea).ceil().toDouble()
+          : 0,
+      'piecesPerPack': piecesPerPack.toDouble(),
+      'packsNeeded': productForm == 0 && insulationType <= 2
+          ? (recScenario.purchaseQuantity / piecesPerPack).ceil().toDouble()
+          : 0,
+      'platesNeeded': insulationType <= 2 ? recScenario.purchaseQuantity : 0,
       'dowelsNeeded': insulationType <= 2 ? dowelsNeeded.toDouble() : 0,
       'membraneArea': insulationType == 0 ? membraneArea.toDouble() : 0,
       'aluTapeRolls': insulationType == 0 ? aluTapeRolls.toDouble() : 0,
-      'glueKg': insulationType == 1 || insulationType == 2 ? roundValue(glueKg, 3) : 0,
-      'glueBags': insulationType == 1 || insulationType == 2 ? glueBags.toDouble() : 0,
+      'glueKg': insulationType == 1 || insulationType == 2
+          ? roundValue(glueKg, 3)
+          : 0,
+      'glueBags': insulationType == 1 || insulationType == 2
+          ? glueBags.toDouble()
+          : 0,
       'primerCans': primerCans.toDouble(),
       'ecowoolVolume': insulationType == 3 ? roundValue(ecowoolVolume, 6) : 0,
       'ecowoolKg': insulationType == 3 ? ecowoolKg.toDouble() : 0,

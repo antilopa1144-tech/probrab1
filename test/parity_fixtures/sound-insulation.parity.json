@@ -1,13 +1,14 @@
 {
   "calculator_id": "sound-insulation",
   "formula_version": "sound-insulation-canonical-v3",
-  "generated_at": "2026-08-02T05:23:06.968Z",
+  "generated_at": "2026-08-19T07:37:48.095Z",
   "cases": [
     {
       "id": "defaults",
       "description": "Default inputs for sound-insulation",
       "inputs": {
         "area": 30,
+        "surfaceType": 0,
         "system": 0,
         "perimeter": 0,
         "screedThicknessMm": 50,
@@ -56,7 +57,7 @@
         },
         "MAX": {
           "exact_need": 57.5,
-          "purchase_quantity": 60.0
+          "purchase_quantity": 60
         }
       }
     }

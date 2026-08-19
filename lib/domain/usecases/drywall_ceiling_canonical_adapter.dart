@@ -5,74 +5,130 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-
-
-
 CanonicalCalculatorContractResult calculateCanonicalDrywallCeiling(
   Map<String, double> inputs, {
   SpecReader? specOverride,
 }) {
   final spec = specOverride ?? const SpecReader(drywallCeilingSpecData);
 
-  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round().clamp(0, 1);
-  final length = (inputs['length'] ?? defaultFor(spec, 'length', 5)).clamp(1.0, 20.0);
-  final width = (inputs['width'] ?? defaultFor(spec, 'width', 4)).clamp(1.0, 20.0);
-  final areaInput = (inputs['area'] ?? defaultFor(spec, 'area', 20)).clamp(1.0, 200.0);
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0))
+      .round()
+      .clamp(0, 1);
+  final length = (inputs['length'] ?? defaultFor(spec, 'length', 5)).clamp(
+    1.0,
+    20.0,
+  );
+  final width = (inputs['width'] ?? defaultFor(spec, 'width', 4)).clamp(
+    1.0,
+    20.0,
+  );
+  final areaInput = (inputs['area'] ?? defaultFor(spec, 'area', 20)).clamp(
+    1.0,
+    200.0,
+  );
   final layersRaw = (inputs['layers'] ?? defaultFor(spec, 'layers', 1)).round();
   final layers = layersRaw == 2 ? 2 : 1;
-  final profileStepRaw = inputs['profileStep'] ?? defaultFor(spec, 'profileStep', 600);
+  final profileStepRaw =
+      inputs['profileStep'] ?? defaultFor(spec, 'profileStep', 600);
   final profileStep = profileStepRaw <= 400 ? 400.0 : 600.0;
 
   // Area
   final area = inputMode == 0 ? roundValue(length * width, 3) : areaInput;
 
   // Sheets
-  final sheets = (area * layers / spec.materialRule<num>('sheet_area').toDouble() * spec.materialRule<num>('sheet_reserve').toDouble()).ceil();
+  final sheets =
+      (area *
+              layers /
+              spec.materialRule<num>('sheet_area').toDouble() *
+              spec.materialRule<num>('sheet_reserve').toDouble())
+          .ceil();
 
   // Profiles
   final mainProfileRows = (width / (profileStep / 1000)).ceil();
   final mainM = mainProfileRows * length;
-  final crossRows = (length / spec.materialRule<num>('cross_step').toDouble()).ceil();
+  final crossRows = (length / spec.materialRule<num>('cross_step').toDouble())
+      .ceil();
   final crossM = crossRows * width;
-  final totalProfileM = (mainM + crossM) * spec.materialRule<num>('profile_reserve').toDouble();
-  final ppPcs = (totalProfileM / spec.materialRule<num>('profile_length').toDouble()).ceil();
+  final totalProfileM =
+      (mainM + crossM) * spec.materialRule<num>('profile_reserve').toDouble();
+  final ppPcs =
+      (totalProfileM / spec.materialRule<num>('profile_length').toDouble())
+          .ceil();
 
   final effectiveLength = inputMode == 0 ? length : math.sqrt(area);
   final effectiveWidth = inputMode == 0 ? width : math.sqrt(area);
-  final pnM = 2 * (effectiveLength + effectiveWidth) * spec.materialRule<num>('profile_reserve').toDouble();
-  final pnPcs = (pnM / spec.materialRule<num>('profile_length').toDouble()).ceil();
+  final pnM =
+      2 *
+      (effectiveLength + effectiveWidth) *
+      spec.materialRule<num>('profile_reserve').toDouble();
+  final pnPcs = (pnM / spec.materialRule<num>('profile_length').toDouble())
+      .ceil();
 
   // Suspensions & crabs
-  final suspCount = mainProfileRows * (length / spec.materialRule<num>('suspension_step').toDouble()).ceil();
+  final suspCount =
+      mainProfileRows *
+      (length / spec.materialRule<num>('suspension_step').toDouble()).ceil();
   final crabCount = mainProfileRows * crossRows;
 
   // Screws
-  final screwsGKL = sheets * spec.materialRule<num>('screws_per_sheet').toDouble();
-  final screwsKg = (screwsGKL * spec.materialRule<num>('screw_reserve').toDouble() / spec.materialRule<num>('screws_per_kg').toDouble() * 10).ceil() / 10;
+  final screwsGKL =
+      sheets * spec.materialRule<num>('screws_per_sheet').toDouble();
+  final firstLayerScrews = (screwsGKL / layers).ceil();
+  final secondLayerScrews = layers == 2
+      ? math.max(0, screwsGKL.ceil() - firstLayerScrews)
+      : 0;
+  final screwsKg =
+      (screwsGKL *
+              spec.materialRule<num>('screw_reserve').toDouble() /
+              spec.materialRule<num>('screws_per_kg').toDouble() *
+              10)
+          .ceil() /
+      10;
 
   // Clop screws
-  final clopCount = suspCount * spec.materialRule<num>('clop_per_susp').toDouble() + crabCount * spec.materialRule<num>('clop_per_crab').toDouble();
+  final clopCount =
+      suspCount * spec.materialRule<num>('clop_per_susp').toDouble() +
+      crabCount * spec.materialRule<num>('clop_per_crab').toDouble();
 
   // Dowels
-  final dowelCount = suspCount * 2 + (pnM / spec.materialRule<num>('dowel_step').toDouble()).ceil();
+  final ceilingAnchors = suspCount * 2;
+  final perimeterDowels =
+      (pnM / spec.materialRule<num>('dowel_step').toDouble()).ceil();
+  final dowelCount = ceilingAnchors + perimeterDowels;
 
   // Serpyanka
-  final serpM = (area * spec.materialRule<num>('serpyanka_coeff').toDouble() * spec.materialRule<num>('serpyanka_reserve').toDouble()).ceil();
-  final serpRolls = (serpM / spec.materialRule<num>('serpyanka_roll').toDouble()).ceil();
+  final serpM =
+      (area *
+              spec.materialRule<num>('serpyanka_coeff').toDouble() *
+              spec.materialRule<num>('serpyanka_reserve').toDouble())
+          .ceil();
+  final serpRolls =
+      (serpM / spec.materialRule<num>('serpyanka_roll').toDouble()).ceil();
 
   // Putty
-  final puttyKg = (serpM * spec.materialRule<num>('putty_kg_per_m').toDouble()).ceil();
-  final puttyBags = (puttyKg / spec.materialRule<num>('putty_bag').toDouble()).ceil();
+  final puttyKg = (serpM * spec.materialRule<num>('putty_kg_per_m').toDouble())
+      .ceil();
+  final puttyBags = (puttyKg / spec.materialRule<num>('putty_bag').toDouble())
+      .ceil();
 
   // Primer
   final primerL = area * spec.materialRule<num>('primer_l_per_m2').toDouble();
-  final primerCans = (primerL * spec.materialRule<num>('primer_reserve').toDouble() / spec.materialRule<num>('primer_can').toDouble()).ceil();
+  final primerCans =
+      (primerL *
+              spec.materialRule<num>('primer_reserve').toDouble() /
+              spec.materialRule<num>('primer_can').toDouble())
+          .ceil();
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('drywall', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('drywall', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(sheets * accuracyMult * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
@@ -88,11 +144,16 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:gkl-ceiling-${spec.packagingRule<num>('package_size').toDouble()}',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
-        packageLabel: 'gkl-ceiling-${spec.packagingRule<num>('package_size').toDouble()}',
+        packageLabel:
+            'gkl-ceiling-${spec.packagingRule<num>('package_size').toDouble()}',
         packageSize: spec.packagingRule<num>('package_size').toDouble(),
         packagesCount: packageCount,
         unit: spec.packagingRule<String>('unit'),
@@ -107,14 +168,15 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   if (layers == 2) {
     warnings.add('Второй слой ГКЛ монтируется со смещением 400 мм');
   }
-  if (area > spec.warningRule<num>('deformation_joint_area_threshold_m2').toDouble()) {
+  if (area >
+      spec.warningRule<num>('deformation_joint_area_threshold_m2').toDouble()) {
     warnings.add('Площадь более 50 м\u00b2 — предусмотрите деформационные швы');
   }
 
   // Materials
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: 'ГКЛ листы',
+      name: 'Гипсокартонные листы (ГКЛ) 1200×2500 мм для потолка',
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),
@@ -122,7 +184,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Основное',
     ),
     CanonicalMaterialResult(
-      name: 'Профиль ПП 60\u00d727 3м',
+      name: 'Потолочный профиль ПП 60×27×3000 мм',
       quantity: ppPcs.toDouble(),
       unit: 'шт',
       withReserve: ppPcs.toDouble(),
@@ -130,7 +192,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
-      name: 'Профиль ПН 27\u00d728 3м',
+      name: 'Направляющий профиль ПН 27×28×3000 мм',
       quantity: pnPcs.toDouble(),
       unit: 'шт',
       withReserve: pnPcs.toDouble(),
@@ -138,7 +200,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
-      name: 'Подвесы прямые',
+      name: 'Подвес прямой для профиля 60×27 мм',
       quantity: suspCount.toDouble(),
       unit: 'шт',
       withReserve: suspCount.toDouble(),
@@ -146,7 +208,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
-      name: 'Крабы (соединители)',
+      name:
+          'Одноуровневый соединитель («краб») для потолочного профиля 60×27 мм',
       quantity: crabCount.toDouble(),
       unit: 'шт',
       withReserve: crabCount.toDouble(),
@@ -154,7 +217,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
-      name: 'Саморезы 3.5\u00d725 (кг)',
+      name: 'Чёрные саморезы для гипсокартона по металлу 3,5×25 мм',
       quantity: screwsKg,
       unit: 'кг',
       withReserve: screwsKg,
@@ -162,7 +225,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
-      name: 'Саморезы-клопы',
+      name: 'Саморезы-клопы по металлу 3,5×9,5 мм',
       quantity: clopCount.toDouble(),
       unit: 'шт',
       withReserve: clopCount.toDouble(),
@@ -170,7 +233,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
-      name: 'Дюбели',
+      name: 'Крепёж к основанию: анкер-клин 6×40 + дюбель-гвоздь 6×40 мм',
       quantity: dowelCount.toDouble(),
       unit: 'шт',
       withReserve: dowelCount.toDouble(),
@@ -178,7 +241,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
-      name: 'Серпянка 45м',
+      name: 'Армирующая лента для швов гипсокартона (45 м)',
       quantity: serpRolls.toDouble(),
       unit: 'рулонов',
       withReserve: serpRolls.toDouble(),
@@ -186,7 +249,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Отделка',
     ),
     CanonicalMaterialResult(
-      name: 'Шпаклёвка Knauf Fugen 25кг',
+      name: 'Шпаклёвка для стыков гипсокартона (25 кг)',
       quantity: puttyBags.toDouble(),
       unit: 'мешков',
       withReserve: puttyBags.toDouble(),
@@ -226,9 +289,13 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'suspCount': suspCount.toDouble(),
       'crabCount': crabCount.toDouble(),
       'screwsGKL': screwsGKL.toDouble(),
+      'firstLayerScrews': firstLayerScrews.toDouble(),
+      'secondLayerScrews': secondLayerScrews.toDouble(),
       'screwsKg': screwsKg,
       'clopCount': clopCount.toDouble(),
       'dowelCount': dowelCount.toDouble(),
+      'ceilingAnchors': ceilingAnchors.toDouble(),
+      'perimeterDowels': perimeterDowels.toDouble(),
       'serpM': serpM.toDouble(),
       'serpRolls': serpRolls.toDouble(),
       'puttyKg': puttyKg.toDouble(),

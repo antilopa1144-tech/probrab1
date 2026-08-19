@@ -1,7 +1,7 @@
 {
   "calculator_id": "facade-panels",
-  "formula_version": "facade-panels-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.510Z",
+  "formula_version": "facade-panels-canonical-v2",
+  "generated_at": "2026-08-19T07:37:47.811Z",
   "cases": [
     {
       "id": "defaults",
@@ -10,7 +10,8 @@
         "area": 100,
         "panelType": 0,
         "substructure": 0,
-        "insulationThickness": 0
+        "insulationThickness": 0,
+        "withHorizontalRails": 0
       },
       "expected_totals": {
         "area": 100,
@@ -21,6 +22,8 @@
         "panels": 31,
         "brackets": 306,
         "guides": 62,
+        "horizontalGuides": 0,
+        "withHorizontalRails": 0,
         "fasteners": 261,
         "anchors": 643,
         "insPlates": 0,
@@ -37,13 +40,13 @@
       },
       "expected_materials_count": 7,
       "expected_material_names": [
-        "Фиброцементные панели (3.6 м²)",
+        "Фиброцементные панели 1200×3000 мм (3,6 м²)",
         "Кронштейны (Алюминиевая)",
-        "Направляющие (3 м)",
-        "Крепёж панелей",
-        "Анкеры для кронштейнов",
+        "Направляющие вертикальные (3 м)",
+        "Фасадные заклёпки для фиброцементных панелей",
+        "Фасадные анкеры для кронштейнов",
         "Грунтовка глубокого проникновения (2 × 10 л)",
-        "Герметик (тубы)"
+        "Герметик фасадный атмосферостойкий"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

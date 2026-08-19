@@ -1,7 +1,7 @@
 {
   "calculator_id": "wall-panels",
   "formula_version": "wall-panels-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.674Z",
+  "generated_at": "2026-08-19T07:37:48.156Z",
   "cases": [
     {
       "id": "defaults",
@@ -40,11 +40,11 @@
       },
       "expected_materials_count": 5,
       "expected_material_names": [
-        "ПВХ-панели (0.75 м²)",
-        "Монтажный клей (флаконы)",
+        "Пластиковые панели (ПВХ, 0,75 м²)",
+        "Монтажный клей без растворителей для пластиковых панелей",
         "Грунтовка глубокого проникновения (5 л)",
         "Молдинги (3 м)",
-        "Герметик (тубы)"
+        "Герметик санитарный или интерьерный"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

@@ -1,7 +1,7 @@
 {
   "calculator_id": "fasteners",
   "formula_version": "fasteners-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.514Z",
+  "generated_at": "2026-08-19T07:37:47.819Z",
   "cases": [
     {
       "id": "defaults",
@@ -35,8 +35,8 @@
       },
       "expected_materials_count": 2,
       "expected_material_names": [
-        "Саморезы 3.5×25",
-        "Биты для шуруповёрта"
+        "Чёрные саморезы для гипсокартона по металлу 3,5×25 мм, под крестовую биту PH2",
+        "Крестовая бита PH2 для шуруповёрта"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

@@ -37,36 +37,70 @@ CanonicalCalculatorContractResult calculateCanonicalBalcony(
 }) {
   final spec = specOverride ?? const SpecReader(balconySpecData);
 
-  final length = (inputs['length'] ?? defaultFor(spec, 'length', 3)).clamp(1, 10).toDouble();
-  final width = (inputs['width'] ?? defaultFor(spec, 'width', 1.2)).clamp(0.6, 3).toDouble();
-  final height = (inputs['height'] ?? defaultFor(spec, 'height', 2.5)).clamp(2, 3).toDouble();
-  final finishType = (inputs['finishType'] ?? defaultFor(spec, 'finishType', 0)).round().clamp(0, 3);
-  final insulationType = (inputs['insulationType'] ?? defaultFor(spec, 'insulationType', 0)).round().clamp(0, 3);
+  final length = (inputs['length'] ?? defaultFor(spec, 'length', 3))
+      .clamp(1, 10)
+      .toDouble();
+  final width = (inputs['width'] ?? defaultFor(spec, 'width', 1.2))
+      .clamp(0.6, 3)
+      .toDouble();
+  final height = (inputs['height'] ?? defaultFor(spec, 'height', 2.5))
+      .clamp(2, 3)
+      .toDouble();
+  final finishType = (inputs['finishType'] ?? defaultFor(spec, 'finishType', 0))
+      .round()
+      .clamp(0, 3);
+  final insulationType =
+      (inputs['insulationType'] ?? defaultFor(spec, 'insulationType', 0))
+          .round()
+          .clamp(0, 3);
 
-  final panelArea = (spec.materialRule<Map>('panel_areas')['$finishType'] as num?)?.toDouble() ?? 0.288;
+  final panelArea =
+      (spec.materialRule<Map>('panel_areas')['$finishType'] as num?)
+          ?.toDouble() ??
+      0.288;
   final floorArea = roundValue(length * width, 6);
   final wallArea = roundValue((2 * width + 2 * length) * height, 6);
   final ceilingArea = roundValue(length * width, 6);
   final totalFinishArea = roundValue(wallArea + ceilingArea, 6);
 
   final insPlates = insulationType > 0
-      ? (totalFinishArea * spec.materialRule<num>('insulation_reserve').toDouble() / spec.materialRule<num>('insulation_plate').toDouble()).ceil()
+      ? (totalFinishArea *
+                spec.materialRule<num>('insulation_reserve').toDouble() /
+                spec.materialRule<num>('insulation_plate').toDouble())
+            .ceil()
       : 0;
-  final panelCount = (totalFinishArea * spec.materialRule<num>('finish_reserve').toDouble() / panelArea).ceil();
-  final battenRows = (totalFinishArea / spec.materialRule<num>('batten_pitch').toDouble()).ceil();
-  final klaymerCount = (panelCount * spec.materialRule<num>('klaymer_per_panel').toDouble() * spec.materialRule<num>('klaymer_reserve').toDouble()).ceil();
+  final panelCount =
+      (totalFinishArea *
+              spec.materialRule<num>('finish_reserve').toDouble() /
+              panelArea)
+          .ceil();
+  final battenRows =
+      (totalFinishArea / spec.materialRule<num>('batten_pitch').toDouble())
+          .ceil();
+  final klaymerCount =
+      (panelCount *
+              spec.materialRule<num>('klaymer_per_panel').toDouble() *
+              spec.materialRule<num>('klaymer_reserve').toDouble())
+          .ceil();
 
   // Scenarios
   final baseExactNeed = panelCount;
   final scenarios = <String, CanonicalScenarioResult>{};
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
-    final exactNeed = roundValue(baseExactNeed * multiplier, 6);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      _factorTable,
+      scenarioName,
+    );
+    final exactNeed = roundValue(baseExactNeed * accuracyMult * multiplier, 6);
     final packageSize = spec.packagingRule<num>('package_size').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * packageSize, 6);
-    final packageLabel = 'balcony-panel-${packageSize == packageSize.roundToDouble() ? packageSize.toInt() : packageSize}';
+    final packageLabel =
+        'balcony-panel-${packageSize == packageSize.roundToDouble() ? packageSize.toInt() : packageSize}';
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
@@ -95,11 +129,16 @@ CanonicalCalculatorContractResult calculateCanonicalBalcony(
 
   // Warnings
   final warnings = <String>[];
-  if (floorArea > spec.warningRule<num>('large_balcony_area_threshold_m2').toDouble()) {
-    warnings.add('Большая площадь балкона — рекомендуется профессиональный расчёт нагрузки на плиту');
+  if (floorArea >
+      spec.warningRule<num>('large_balcony_area_threshold_m2').toDouble()) {
+    warnings.add(
+      'Большая площадь балкона — рекомендуется профессиональный расчёт нагрузки на плиту',
+    );
   }
   if (insulationType == 0) {
-    warnings.add('Без утепления — на балконе будет значительный перепад температур');
+    warnings.add(
+      'Без утепления — на балконе будет значительный перепад температур',
+    );
   }
 
   // Materials
@@ -133,14 +172,16 @@ CanonicalCalculatorContractResult calculateCanonicalBalcony(
 
   if (insulationType > 0) {
     final insulationLabel = _insulationLabels[insulationType] ?? 'Утеплитель';
-    materials.add(CanonicalMaterialResult(
-      name: insulationLabel,
-      quantity: insPlates.toDouble(),
-      unit: 'шт',
-      withReserve: insPlates.toDouble(),
-      purchaseQty: insPlates.toDouble(),
-      category: 'Утепление',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: insulationLabel,
+        quantity: insPlates.toDouble(),
+        unit: 'шт',
+        withReserve: insPlates.toDouble(),
+        purchaseQty: insPlates.toDouble(),
+        category: 'Утепление',
+      ),
+    );
   }
 
   return CanonicalCalculatorContractResult(

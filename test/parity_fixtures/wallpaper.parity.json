@@ -1,7 +1,7 @@
 {
   "calculator_id": "wallpaper",
-  "formula_version": "wallpaper-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.678Z",
+  "formula_version": "wallpaper-canonical-v2",
+  "generated_at": "2026-08-19T07:37:48.164Z",
   "cases": [
     {
       "id": "defaults",
@@ -40,7 +40,7 @@
         "wallpaperType": 1,
         "reservePercent": 0,
         "reserveRolls": 0,
-        "stripLength": 2.7,
+        "stripLength": 2.8,
         "stripsPerRoll": 3,
         "stripsNeeded": 27,
         "baseExactRolls": 9,
@@ -58,7 +58,7 @@
       },
       "expected_materials_count": 9,
       "expected_material_names": [
-        "Обои",
+        "Обои — бумажные обои, рулон 0.53×10.05 м, без подгонки рисунка",
         "Клей обойный (бумажные обои, 0.25 кг)",
         "Грунтовка глубокого проникновения (10 л)",
         "Валик для клея",

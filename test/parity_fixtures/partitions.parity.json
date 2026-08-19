@@ -1,7 +1,7 @@
 {
   "calculator_id": "partitions",
-  "formula_version": "partitions-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.577Z",
+  "formula_version": "partitions-canonical-v2",
+  "generated_at": "2026-08-19T07:37:47.962Z",
   "cases": [
     {
       "id": "defaults",
@@ -16,6 +16,7 @@
         "length": 5,
         "height": 2.7,
         "thickness": 100,
+        "requestedThickness": 100,
         "blockType": 0,
         "wallArea": 13.5,
         "blockArea": 0.15625,
@@ -37,15 +38,17 @@
       },
       "expected_materials_count": 6,
       "expected_material_names": [
-        "Блоки перегородочные",
-        "Клей для блоков 25кг",
-        "Армирующая сетка (рулон 50 м)",
-        "Монтажная пена 750мл",
+        "Газобетонные перегородочные блоки D500 625×250×100 мм",
+        "Клей для тонкошовной кладки ячеистых блоков, мешок 25 кг",
+        "Армирующая лента для кладки ячеистых блоков, рулон 50 м",
+        "Профессиональная полиуретановая монтажная пена, баллон 750 мл",
         "Грунтовка глубокого проникновения (5 л)",
-        "Уплотнительная лента"
+        "Упругая лента для примыкания перегородки"
       ],
-      "expected_warnings_count": 0,
-      "expected_warnings": [],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "Калькулятор предназначен только для ненесущих межкомнатных перегородок"
+      ],
       "expected_scenarios": {
         "MIN": {
           "exact_need": 84.7392,

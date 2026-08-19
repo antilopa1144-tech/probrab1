@@ -9,7 +9,7 @@ import 'canonical_adapter_utils.dart';
 
 
 const Map<int, String> _panelTypeLabels = {
-  0: 'ПВХ-панели (0.75 м\u00b2)',
+  0: 'Пластиковые панели (ПВХ, 0,75 м\u00b2)',
   1: 'МДФ-панели (0.494 м\u00b2)',
   2: '3D-панели (0.25 м\u00b2)',
   3: 'Деревянные панели (0.3 м\u00b2)',
@@ -144,7 +144,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   if (mountMethod == 0) {
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'Монтажный клей (флаконы)',
+        name: 'Монтажный клей без растворителей для пластиковых панелей',
         quantity: glueBottles.toDouble(),
         unit: 'шт',
         withReserve: glueBottles.toDouble(),
@@ -152,7 +152,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         category: 'Монтаж',
       ),
       CanonicalMaterialResult(
-        name: 'Грунтовка (канистра ${spec.materialRule<num>('primer_can').toDouble().round()} л)',
+        name: 'Грунтовка глубокого проникновения (${spec.materialRule<num>('primer_can').toDouble().round()} л)',
         quantity: primer.toDouble(),
         unit: 'канистр',
         withReserve: primer.toDouble(),
@@ -199,7 +199,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
-      name: 'Герметик (тубы)',
+      name: 'Герметик санитарный или интерьерный',
       quantity: sealant.toDouble(),
       unit: 'шт',
       withReserve: sealant.toDouble(),

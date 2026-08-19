@@ -117,6 +117,32 @@ void main() {
         expect(tileCount, greaterThan(200));
       });
 
+      test('закупка плитки округляется до полных коробок', () {
+        final result = calculateCanonicalTile({
+          'inputMode': 1.0,
+          'area': 12.0,
+          'tileWidthCm': 30.0,
+          'tileHeightCm': 30.0,
+          'packArea': 1.44,
+          'accuracyMode': 0.0,
+          'jointWidth': 3.0,
+          'layoutPattern': 1.0,
+          'roomComplexity': 1.0,
+        });
+
+        final rec = result.scenarios['REC']!;
+        expect(rec.exactNeed, closeTo(146.666667, 0.00001));
+        expect(rec.buyPlan.packageSize, equals(16));
+        expect(rec.buyPlan.packagesCount, equals(10));
+        expect(rec.purchaseQuantity, equals(160));
+        expect(result.totals['packagesNeeded'], equals(10));
+        expect(result.materials.first.packageInfo, {
+          'count': 10,
+          'size': 16.0,
+          'packageUnit': 'упаковок',
+        });
+      });
+
       test('расчёт плитки на комбинированную площадь (пол 12 м² + стены 20 м²)', () {
         const totalArea = 12.0 + 20.0; // 32 м²
         final result = calculateCanonicalTile({

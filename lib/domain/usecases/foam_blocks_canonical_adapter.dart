@@ -5,12 +5,16 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-
 Map<String, double> _resolveArea(SpecReader spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0))
+      .round();
   if (inputMode == 0) {
-    final wallLength = math.max(1, inputs['wallLength'] ?? defaultFor(spec, 'wallLength', 10)).toDouble();
-    final wallHeight = math.max(1, inputs['wallHeight'] ?? defaultFor(spec, 'wallHeight', 2.7)).toDouble();
+    final wallLength = math
+        .max(1, inputs['wallLength'] ?? defaultFor(spec, 'wallLength', 10))
+        .toDouble();
+    final wallHeight = math
+        .max(1, inputs['wallHeight'] ?? defaultFor(spec, 'wallHeight', 2.7))
+        .toDouble();
     return {
       'inputMode': 0.0,
       'wallArea': roundValue(wallLength * wallHeight, 3),
@@ -18,9 +22,13 @@ Map<String, double> _resolveArea(SpecReader spec, Map<String, double> inputs) {
       'wallHeight': wallHeight,
     };
   }
-  final area = math.max(1, inputs['area'] ?? defaultFor(spec, 'area', 27)).toDouble();
-  final wallLength = (inputs['wallLength'] ?? defaultFor(spec, 'wallLength', 10)).toDouble();
-  final wallHeight = (inputs['wallHeight'] ?? defaultFor(spec, 'wallHeight', 2.7)).toDouble();
+  final area = math
+      .max(1, inputs['area'] ?? defaultFor(spec, 'area', 27))
+      .toDouble();
+  final wallLength =
+      (inputs['wallLength'] ?? defaultFor(spec, 'wallLength', 10)).toDouble();
+  final wallHeight =
+      (inputs['wallHeight'] ?? defaultFor(spec, 'wallHeight', 2.7)).toDouble();
   return {
     'inputMode': 1.0,
     'wallArea': roundValue(area, 3),
@@ -40,12 +48,19 @@ CanonicalCalculatorContractResult calculateCanonicalFoamBlocks(
   final wallLength = areaInfo['wallLength']!;
   final wallHeight = areaInfo['wallHeight']!;
 
-  final openingsArea = math.max(0, inputs['openingsArea'] ?? defaultFor(spec, 'openingsArea', 5)).toDouble();
-  final blockSize = (inputs['blockSize'] ?? defaultFor(spec, 'blockSize', 0)).round().clamp(0, 3);
-  final mortarType = (inputs['mortarType'] ?? defaultFor(spec, 'mortarType', 0)).round().clamp(0, 1);
+  final openingsArea = math
+      .max(0, inputs['openingsArea'] ?? defaultFor(spec, 'openingsArea', 5))
+      .toDouble();
+  final blockSize = (inputs['blockSize'] ?? defaultFor(spec, 'blockSize', 0))
+      .round()
+      .clamp(0, 3);
+  final mortarType = (inputs['mortarType'] ?? defaultFor(spec, 'mortarType', 0))
+      .round()
+      .clamp(0, 1);
 
   final blockSizes = spec.normativeValue<Map>('block_sizes') ?? {};
-  final blockDef = (blockSizes['$blockSize'] ?? blockSizes['0']) as Map<String, dynamic>;
+  final blockDef =
+      (blockSizes['$blockSize'] ?? blockSizes['0']) as Map<String, dynamic>;
   final l = (blockDef['l'] as num).toDouble();
   final h = (blockDef['h'] as num).toDouble();
   final t = (blockDef['t'] as num).toDouble();
@@ -57,7 +72,8 @@ CanonicalCalculatorContractResult calculateCanonicalFoamBlocks(
 
   final blockFaceArea = (l / 1000) * (h / 1000);
   final blocksNet = netArea / blockFaceArea;
-  final blocksWithReserve = (blocksNet * spec.materialRule<num>('block_reserve').toDouble()).ceil();
+  final blocksWithReserve =
+      (blocksNet * spec.materialRule<num>('block_reserve').toDouble()).ceil();
 
   final volume = roundValue(netArea * (t / 1000), 6);
 
@@ -65,15 +81,28 @@ CanonicalCalculatorContractResult calculateCanonicalFoamBlocks(
   String mortarLabel;
   String mortarUnit;
   if (mortarType == 0) {
-    final glueKg = roundValue(volume * spec.materialRule<num>('glue_kg_per_m3').toDouble(), 3);
-    mortarBags = (glueKg / spec.materialRule<num>('glue_bag_kg').toDouble()).ceil();
-    mortarLabel = '\u041a\u043b\u0435\u0439 \u0434\u043b\u044f \u043a\u043b\u0430\u0434\u043a\u0438 (${spec.materialRule<num>('glue_bag_kg').toInt()} \u043a\u0433)';
+    final glueKg = roundValue(
+      volume * spec.materialRule<num>('glue_kg_per_m3').toDouble(),
+      3,
+    );
+    mortarBags = (glueKg / spec.materialRule<num>('glue_bag_kg').toDouble())
+        .ceil();
+    mortarLabel =
+        '\u041a\u043b\u0435\u0439 \u0434\u043b\u044f \u043a\u043b\u0430\u0434\u043a\u0438 (${spec.materialRule<num>('glue_bag_kg').toInt()} \u043a\u0433)';
     mortarUnit = '\u043c\u0435\u0448\u043a\u043e\u0432';
   } else {
-    final cpsM3 = roundValue(volume * spec.materialRule<num>('cps_volume_per_m3').toDouble(), 6);
-    final cpsKg = roundValue(cpsM3 * spec.materialRule<num>('cps_kg_per_m3').toDouble(), 3);
-    mortarBags = (cpsKg / spec.materialRule<num>('cps_bag_kg').toDouble()).ceil();
-    mortarLabel = '\u0426\u041f\u0421 (${spec.materialRule<num>('cps_bag_kg').toInt()} \u043a\u0433)';
+    final cpsM3 = roundValue(
+      volume * spec.materialRule<num>('cps_volume_per_m3').toDouble(),
+      6,
+    );
+    final cpsKg = roundValue(
+      cpsM3 * spec.materialRule<num>('cps_kg_per_m3').toDouble(),
+      3,
+    );
+    mortarBags = (cpsKg / spec.materialRule<num>('cps_bag_kg').toDouble())
+        .ceil();
+    mortarLabel =
+        '\u0426\u041f\u0421 (${spec.materialRule<num>('cps_bag_kg').toInt()} \u043a\u0433)';
     mortarUnit = '\u043c\u0435\u0448\u043a\u043e\u0432';
   }
 
@@ -84,44 +113,70 @@ CanonicalCalculatorContractResult calculateCanonicalFoamBlocks(
   CanonicalMaterialResult reinforcementMaterial;
 
   if (isKeramzit) {
-    final meshRows = (rows / spec.materialRule<num>('mesh_interval').toDouble()).ceil();
+    final meshRows = (rows / spec.materialRule<num>('mesh_interval').toDouble())
+        .ceil();
     meshArea = roundValue(wallLength * (t / 1000) * meshRows, 3);
     reinforcementMaterial = CanonicalMaterialResult(
-      name: '\u041a\u043b\u0430\u0434\u043e\u0447\u043d\u0430\u044f \u0441\u0435\u0442\u043a\u0430',
+      name:
+          '\u041a\u043b\u0430\u0434\u043e\u0447\u043d\u0430\u044f \u0441\u0435\u0442\u043a\u0430',
       quantity: roundValue(meshArea, 3),
       unit: '\u043c\u00b2',
       withReserve: meshArea.ceil().toDouble(),
       purchaseQty: meshArea.ceil().toDouble(),
-      category: '\u0410\u0440\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435',
+      category:
+          '\u0410\u0440\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435',
     );
   } else {
-    final rebarRows = (rows / spec.materialRule<num>('rebar_interval').toDouble()).ceil();
-    rebarLength = (wallLength * rebarRows * 2 * spec.materialRule<num>('rebar_reserve').toDouble()).ceil();
+    final rebarRows =
+        (rows / spec.materialRule<num>('rebar_interval').toDouble()).ceil();
+    rebarLength =
+        (wallLength *
+                rebarRows *
+                2 *
+                spec.materialRule<num>('rebar_reserve').toDouble())
+            .ceil();
     reinforcementMaterial = CanonicalMaterialResult(
       name: '\u0410\u0440\u043c\u0430\u0442\u0443\u0440\u0430 \u00d88',
       quantity: rebarLength.toDouble(),
       unit: '\u043f.\u043c',
       withReserve: rebarLength.toDouble(),
       purchaseQty: rebarLength.toDouble(),
-      category: '\u0410\u0440\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435',
+      category:
+          '\u0410\u0440\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435',
     );
   }
 
   final openingsCount = (openingsArea / 2).ceil();
-  final uBlocks = (openingsCount * 2 * spec.materialRule<num>('rebar_reserve').toDouble()).ceil();
+  final uBlocks =
+      (openingsCount * 2 * spec.materialRule<num>('rebar_reserve').toDouble())
+          .ceil();
 
-  final primerCans = (netArea * spec.materialRule<num>('primer_l_per_m2').toDouble() * spec.materialRule<num>('primer_reserve').toDouble() / spec.materialRule<num>('primer_can_l').toDouble()).ceil();
+  final primerCans =
+      (netArea *
+              spec.materialRule<num>('primer_l_per_m2').toDouble() *
+              spec.materialRule<num>('primer_reserve').toDouble() /
+              spec.materialRule<num>('primer_can_l').toDouble())
+          .ceil();
 
   final scenarios = <String, CanonicalScenarioResult>{};
 
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('concrete', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(blocksWithReserve * accuracyMult * multiplier, 6);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
+    final exactNeed = roundValue(
+      blocksWithReserve * accuracyMult * multiplier,
+      6,
+    );
     final packageSize = spec.packagingRule<num>('package_size').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * packageSize, 6);
-    final packageLabel = 'block-piece-${packageSize == packageSize.roundToDouble() ? packageSize.toInt() : packageSize}';
+    final packageLabel =
+        'block-piece-${packageSize == packageSize.roundToDouble() ? packageSize.toInt() : packageSize}';
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: purchaseQuantity,
@@ -133,7 +188,11 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -149,13 +208,19 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
 
   final warnings = <String>[];
   if (t <= spec.warningRule<num>('non_load_bearing_thickness_mm').toDouble()) {
-    warnings.add('\u0422\u043e\u043b\u0449\u0438\u043d\u0430 \u0431\u043b\u043e\u043a\u0430 \u2264100 \u043c\u043c \u2014 \u0442\u043e\u043b\u044c\u043a\u043e \u0434\u043b\u044f \u043d\u0435\u043d\u0435\u0441\u0443\u0449\u0438\u0445 \u043f\u0435\u0440\u0435\u0433\u043e\u0440\u043e\u0434\u043e\u043a');
+    warnings.add(
+      '\u0422\u043e\u043b\u0449\u0438\u043d\u0430 \u0431\u043b\u043e\u043a\u0430 \u2264100 \u043c\u043c \u2014 \u0442\u043e\u043b\u044c\u043a\u043e \u0434\u043b\u044f \u043d\u0435\u043d\u0435\u0441\u0443\u0449\u0438\u0445 \u043f\u0435\u0440\u0435\u0433\u043e\u0440\u043e\u0434\u043e\u043a',
+    );
   }
   if (isKeramzit) {
-    warnings.add('\u041a\u0435\u0440\u0430\u043c\u0437\u0438\u0442\u043e\u0431\u043b\u043e\u043a \u043f\u0440\u0438 \u043d\u0430\u0440\u0443\u0436\u043d\u043e\u0439 \u043a\u043b\u0430\u0434\u043a\u0435 \u2014 \u0442\u0440\u0435\u0431\u0443\u0435\u0442\u0441\u044f \u0443\u0442\u0435\u043f\u043b\u0435\u043d\u0438\u0435 \u043e\u0442 100 \u043c\u043c');
+    warnings.add(
+      '\u041a\u0435\u0440\u0430\u043c\u0437\u0438\u0442\u043e\u0431\u043b\u043e\u043a \u043f\u0440\u0438 \u043d\u0430\u0440\u0443\u0436\u043d\u043e\u0439 \u043a\u043b\u0430\u0434\u043a\u0435 \u2014 \u0442\u0440\u0435\u0431\u0443\u0435\u0442\u0441\u044f \u0443\u0442\u0435\u043f\u043b\u0435\u043d\u0438\u0435 \u043e\u0442 100 \u043c\u043c',
+    );
   }
   if (mortarType == 1 && !isKeramzit) {
-    warnings.add('\u0414\u043b\u044f \u043f\u0435\u043d\u043e\u0431\u043b\u043e\u043a\u043e\u0432 \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0443\u0435\u0442\u0441\u044f \u043a\u043b\u0435\u0435\u0432\u043e\u0439 \u0440\u0430\u0441\u0442\u0432\u043e\u0440 \u0432\u043c\u0435\u0441\u0442\u043e \u0426\u041f\u0421 \u2014 \u0431\u043e\u043b\u0435\u0435 \u0442\u043e\u043d\u043a\u0438\u0439 \u0448\u043e\u0432, \u043b\u0443\u0447\u0448\u0430\u044f \u0442\u0435\u043f\u043b\u043e\u0438\u0437\u043e\u043b\u044f\u0446\u0438\u044f');
+    warnings.add(
+      '\u0414\u043b\u044f \u043f\u0435\u043d\u043e\u0431\u043b\u043e\u043a\u043e\u0432 \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0443\u0435\u0442\u0441\u044f \u043a\u043b\u0435\u0435\u0432\u043e\u0439 \u0440\u0430\u0441\u0442\u0432\u043e\u0440 \u0432\u043c\u0435\u0441\u0442\u043e \u0426\u041f\u0421 \u2014 \u0431\u043e\u043b\u0435\u0435 \u0442\u043e\u043d\u043a\u0438\u0439 \u0448\u043e\u0432, \u043b\u0443\u0447\u0448\u0430\u044f \u0442\u0435\u043f\u043b\u043e\u0438\u0437\u043e\u043b\u044f\u0446\u0438\u044f',
+    );
   }
 
   final materials = <CanonicalMaterialResult>[
@@ -177,7 +242,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
     ),
     reinforcementMaterial,
     CanonicalMaterialResult(
-      name: 'U-\u0431\u043b\u043e\u043a\u0438 (\u043f\u0435\u0440\u0435\u043c\u044b\u0447\u043a\u0438)',
+      name:
+          'U-\u0431\u043b\u043e\u043a\u0438 (\u043f\u0435\u0440\u0435\u043c\u044b\u0447\u043a\u0438)',
       quantity: uBlocks.toDouble(),
       unit: '\u0448\u0442',
       withReserve: uBlocks.toDouble(),
@@ -185,7 +251,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: '\u041f\u0440\u043e\u0451\u043c\u044b',
     ),
     CanonicalMaterialResult(
-      name: '\u0413\u0440\u0443\u043d\u0442\u043e\u0432\u043a\u0430 (${spec.materialRule<num>('primer_can_l').toInt()} \u043b)',
+      name:
+          '\u0413\u0440\u0443\u043d\u0442\u043e\u0432\u043a\u0430 (${spec.materialRule<num>('primer_can_l').toInt()} \u043b)',
       quantity: primerCans.toDouble(),
       unit: '\u043a\u0430\u043d\u0438\u0441\u0442\u0440',
       withReserve: primerCans.toDouble(),

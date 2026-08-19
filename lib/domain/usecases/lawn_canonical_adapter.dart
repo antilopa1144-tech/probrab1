@@ -174,7 +174,7 @@ CanonicalCalculatorContractResult calculateCanonicalLawn(
         category: 'Дренаж',
       ),
     CanonicalMaterialResult(
-      name: 'Удобрение стартовое NPK (5 кг)',
+      name: 'Удобрение стартовое комплексное: азот–фосфор–калий (NPK, 5 кг)',
       quantity: roundValue(fertilizerKg, 3),
       unit: 'кг',
       withReserve: roundValue(fertilizerKg, 3),

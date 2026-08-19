@@ -14,46 +14,87 @@ const Map<String, Map<String, double>> _factorTable = {
 };
 
 bool hasCanonicalPrimerInputs(Map<String, double> inputs) {
-  const canonicalKeys = ['inputMode', 'surfaceType', 'primerType', 'coats', 'roomWidth', 'roomLength', 'roomHeight'];
+  const canonicalKeys = [
+    'inputMode',
+    'surfaceType',
+    'primerType',
+    'coats',
+    'roomWidth',
+    'roomLength',
+    'roomHeight',
+  ];
   return canonicalKeys.any(inputs.containsKey);
 }
 
 double _resolveWorkArea(SpecReader spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 1)).round();
-  final hasRoomDimensions = inputs.containsKey('roomWidth') && inputs.containsKey('roomLength') && inputs.containsKey('roomHeight');
-  if ((inputMode == 0 || (!inputs.containsKey('inputMode') && hasRoomDimensions)) && hasRoomDimensions) {
-    final roomWidth = (inputs['roomWidth'] ?? defaultFor(spec, 'roomWidth', 4)).clamp(0.5, 20).toDouble();
-    final roomLength = (inputs['roomLength'] ?? defaultFor(spec, 'roomLength', 5)).clamp(0.5, 20).toDouble();
-    final roomHeight = (inputs['roomHeight'] ?? defaultFor(spec, 'roomHeight', 2.7)).clamp(2, 5).toDouble();
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 1))
+      .round();
+  final hasRoomDimensions =
+      inputs.containsKey('roomWidth') &&
+      inputs.containsKey('roomLength') &&
+      inputs.containsKey('roomHeight');
+  if ((inputMode == 0 ||
+          (!inputs.containsKey('inputMode') && hasRoomDimensions)) &&
+      hasRoomDimensions) {
+    final roomWidth = (inputs['roomWidth'] ?? defaultFor(spec, 'roomWidth', 4))
+        .clamp(0.5, 20)
+        .toDouble();
+    final roomLength =
+        (inputs['roomLength'] ?? defaultFor(spec, 'roomLength', 5))
+            .clamp(0.5, 20)
+            .toDouble();
+    final roomHeight =
+        (inputs['roomHeight'] ?? defaultFor(spec, 'roomHeight', 2.7))
+            .clamp(2, 5)
+            .toDouble();
     return 2 * (roomWidth + roomLength) * roomHeight;
   }
-  return (inputs['area'] ?? defaultFor(spec, 'area', 50)).clamp(1, 500).toDouble();
+  return (inputs['area'] ?? defaultFor(spec, 'area', 50))
+      .clamp(1, 500)
+      .toDouble();
 }
 
 double _resolveCanSize(SpecReader spec, Map<String, double> inputs) {
-  final canSize = (inputs['canSize'] ?? spec.packagingRule<num>('default_package_size').toDouble());
+  final canSize =
+      (inputs['canSize'] ??
+      spec.packagingRule<num>('default_package_size').toDouble());
   if (spec.packagingRule<List>('allowed_package_sizes').contains(canSize)) {
     return canSize;
   }
   return spec.packagingRule<num>('default_package_size').toDouble();
 }
 
-Map<String, dynamic> _resolveSurface(SpecReader spec, Map<String, double> inputs) {
-  final surfaceType = (inputs['surfaceType'] ?? defaultFor(spec, 'surfaceType', 0)).round().clamp(0, 3);
+Map<String, dynamic> _resolveSurface(
+  SpecReader spec,
+  Map<String, double> inputs,
+) {
+  final surfaceType =
+      (inputs['surfaceType'] ?? defaultFor(spec, 'surfaceType', 0))
+          .round()
+          .clamp(0, 3);
   final surfaces = spec.normativeList('surface_types');
   for (final surface in surfaces) {
     if ((surface['id'] as num).toInt() == surfaceType) return surface;
   }
-  return surfaces.isNotEmpty ? surfaces.first : {'id': 0, 'key': 'default', 'consumption_ml_per_m2': 200};
+  return surfaces.isNotEmpty
+      ? surfaces.first
+      : {'id': 0, 'key': 'default', 'consumption_ml_per_m2': 200};
 }
 
-Map<String, dynamic> _resolvePrimerType(SpecReader spec, Map<String, double> inputs) {
-  final primerType = (inputs['primerType'] ?? defaultFor(spec, 'primerType', 0)).round().clamp(0, 2);
+Map<String, dynamic> _resolvePrimerType(
+  SpecReader spec,
+  Map<String, double> inputs,
+) {
+  final primerType = (inputs['primerType'] ?? defaultFor(spec, 'primerType', 0))
+      .round()
+      .clamp(0, 2);
   final types = spec.normativeList('primer_types');
   for (final type in types) {
     if ((type['id'] as num).toInt() == primerType) return type;
   }
-  return types.isNotEmpty ? types.first : {'id': 0, 'key': 'default', 'consumption_ml_per_m2': 200};
+  return types.isNotEmpty
+      ? types.first
+      : {'id': 0, 'key': 'default', 'consumption_ml_per_m2': 200};
 }
 
 CanonicalCalculatorContractResult calculateCanonicalPrimer(
@@ -65,14 +106,36 @@ CanonicalCalculatorContractResult calculateCanonicalPrimer(
   final workArea = _resolveWorkArea(spec, inputs);
   final surface = _resolveSurface(spec, inputs);
   final primerType = _resolvePrimerType(spec, inputs);
-  final coats = (inputs['coats'] ?? defaultFor(spec, 'coats', 1)).round().clamp(1, 3);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final userCoats = (inputs['coats'] ?? defaultFor(spec, 'coats', 1))
+      .round()
+      .clamp(1, 3);
+  final absorbent = spec
+      .warningRule<List>('absorbent_surface_ids')
+      .contains((surface['id'] as num).toInt());
+  final coats =
+      (userCoats + (accuracyMode.name == 'professional' && absorbent ? 1 : 0))
+          .clamp(1, 4);
   final canSize = _resolveCanSize(spec, inputs);
-  final lPerSqm = (primerType['base_l_per_m2'] as num).toDouble() * (surface['multiplier'] as num).toDouble();
+  final lPerSqm =
+      (primerType['base_l_per_m2'] as num).toDouble() *
+      (surface['multiplier'] as num).toDouble();
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
-    final exactNeed = roundValue(workArea * lPerSqm * coats * multiplier, 6);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      _factorTable,
+      scenarioName,
+    );
+    final exactNeed = roundValue(
+      workArea *
+          lPerSqm *
+          coats *
+          accuracyPrimaryMultiplier('primer', accuracyMode) *
+          multiplier,
+      6,
+    );
     final packagesCount = (exactNeed / canSize).ceil();
     final purchaseQuantity = roundValue(packagesCount * canSize, 6);
     final leftover = roundValue(purchaseQuantity - exactNeed, 6);
@@ -86,7 +149,11 @@ CanonicalCalculatorContractResult calculateCanonicalPrimer(
         'surface:${surface['key'] as String}',
         'primer:${primerType['key'] as String}',
       ],
-      keyFactors: buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
+      keyFactors: buildKeyFactors(
+        spec.enabledFactors,
+        _factorTable,
+        scenarioName,
+      ),
       buyPlan: CanonicalBuyPlan(
         packageLabel: 'primer-can-${canSize.toInt()}l',
         packageSize: canSize,
@@ -98,14 +165,29 @@ CanonicalCalculatorContractResult calculateCanonicalPrimer(
 
   final recScenario = scenarios['REC']!;
   final warnings = <String>[];
-  if (spec.warningRule<List>('absorbent_surface_ids').contains((surface['id'] as num).toInt()) && (primerType['id'] as num).toInt() != 0) {
-    warnings.add('Для сильно впитывающих поверхностей рекомендуется грунтовка глубокого проникновения');
+  if (spec
+          .warningRule<List>('absorbent_surface_ids')
+          .contains((surface['id'] as num).toInt()) &&
+      (primerType['id'] as num).toInt() != 0) {
+    warnings.add(
+      'Для сильно впитывающих поверхностей рекомендуется грунтовка глубокого проникновения',
+    );
   }
-  if (spec.warningRule<List>('absorbent_surface_ids').contains((surface['id'] as num).toInt()) && (primerType['id'] as num).toInt() == 1) {
-    warnings.add('Бетон-контакт применяют в основном по гладким невпитывающим основаниям');
+  if (spec
+          .warningRule<List>('absorbent_surface_ids')
+          .contains((surface['id'] as num).toInt()) &&
+      (primerType['id'] as num).toInt() == 1) {
+    warnings.add(
+      'Бетон-контакт применяют в основном по гладким невпитывающим основаниям',
+    );
   }
-  if (spec.warningRule<List>('recommended_double_coat_surface_ids').contains((surface['id'] as num).toInt()) && coats == 1) {
-    warnings.add('Для впитывающих оснований обычно рекомендуют 2 слоя грунтовки');
+  if (spec
+          .warningRule<List>('recommended_double_coat_surface_ids')
+          .contains((surface['id'] as num).toInt()) &&
+      coats == 1) {
+    warnings.add(
+      'Для впитывающих оснований обычно рекомендуют 2 слоя грунтовки',
+    );
   }
 
   return CanonicalCalculatorContractResult(
@@ -119,14 +201,37 @@ CanonicalCalculatorContractResult calculateCanonicalPrimer(
         withReserve: recScenario.purchaseQuantity,
         purchaseQty: (recScenario.buyPlan.packagesCount * canSize).toDouble(),
         category: 'Основное',
-        packageInfo: {'count': recScenario.buyPlan.packagesCount, 'unitSize': canSize, 'packageUnit': 'канистр'},
+        packageInfo: {
+          'count': recScenario.buyPlan.packagesCount,
+          'unitSize': canSize,
+          'packageUnit': 'канистр',
+        },
       ),
       CanonicalMaterialResult(
         name: 'Валик малярный 250 мм',
-        quantity: (workArea / spec.materialRule<num>('roller_area_m2_per_piece').toDouble()).ceilToDouble(),
+        quantity:
+            ((workArea /
+                        spec
+                            .materialRule<num>('roller_area_m2_per_piece')
+                            .toDouble()) *
+                    accuracyAccessoriesMultiplier('primer', accuracyMode))
+                .ceilToDouble(),
         unit: 'шт',
-        withReserve: (workArea / spec.materialRule<num>('roller_area_m2_per_piece').toDouble()).ceilToDouble(),
-        purchaseQty: (workArea / spec.materialRule<num>('roller_area_m2_per_piece').toDouble()).ceil().toDouble(),
+        withReserve:
+            ((workArea /
+                        spec
+                            .materialRule<num>('roller_area_m2_per_piece')
+                            .toDouble()) *
+                    accuracyAccessoriesMultiplier('primer', accuracyMode))
+                .ceilToDouble(),
+        purchaseQty:
+            ((workArea /
+                        spec
+                            .materialRule<num>('roller_area_m2_per_piece')
+                            .toDouble()) *
+                    accuracyAccessoriesMultiplier('primer', accuracyMode))
+                .ceil()
+                .toDouble(),
         category: 'Инструмент',
       ),
       CanonicalMaterialResult(
@@ -148,7 +253,9 @@ CanonicalCalculatorContractResult calculateCanonicalPrimer(
     ],
     totals: {
       'area': roundValue(workArea, 3),
-      'inputMode': (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 1)).round().toDouble(),
+      'inputMode': (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 1))
+          .round()
+          .toDouble(),
       'surfaceType': (surface['id'] as num).toInt().toDouble(),
       'primerType': (primerType['id'] as num).toInt().toDouble(),
       'coats': coats.toDouble(),
@@ -160,7 +267,13 @@ CanonicalCalculatorContractResult calculateCanonicalPrimer(
       'minPurchaseL': scenarios['MIN']!.purchaseQuantity,
       'recPurchaseL': recScenario.purchaseQuantity,
       'maxPurchaseL': scenarios['MAX']!.purchaseQuantity,
-      'dryingTimeHours': (spec.materialRule<Map>('drying_time_hours_by_type')['${(primerType['id'] as num).toInt()}'] as num?)?.toDouble() ?? 4,
+      'dryingTimeHours':
+          (spec.materialRule<Map>(
+                    'drying_time_hours_by_type',
+                  )['${(primerType['id'] as num).toInt()}']
+                  as num?)
+              ?.toDouble() ??
+          4,
     },
     warnings: warnings,
     scenarios: scenarios,

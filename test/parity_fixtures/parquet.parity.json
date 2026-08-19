@@ -1,7 +1,7 @@
 {
   "calculator_id": "parquet",
   "formula_version": "parquet-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.573Z",
+  "generated_at": "2026-08-19T07:37:47.954Z",
   "cases": [
     {
       "id": "defaults",
@@ -34,6 +34,8 @@
         "needUnderlayment": 1,
         "needPlinth": 1,
         "needGlue": 0,
+        "expansionJointPieces": 0,
+        "expansionJointLengthM": 0,
         "underlayArea": 22,
         "underlaymentRolls": 3,
         "plinthLength": 20,

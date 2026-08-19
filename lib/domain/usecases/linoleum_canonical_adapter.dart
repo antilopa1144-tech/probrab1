@@ -183,13 +183,15 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
       : 0.0;
 
   final scenarios = <String, CanonicalScenarioResult>{};
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('flooring', accuracyMode);
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(
       spec.enabledFactors,
       _factorTable,
       scenarioName,
     );
-    final exactNeed = roundValue(totalLinearM * multiplier, 6);
+    final exactNeed = roundValue(totalLinearM * accuracyMult * multiplier, 6);
     final purchaseQuantity = _roundLinearMeters(
       exactNeed,
       spec.packagingRule<num>('linear_meter_step_m').toDouble(),
@@ -370,7 +372,7 @@ CanonicalCalculatorContractResult calculateCanonicalLinoleum(
     materials.add(
       CanonicalMaterialResult(
         name:
-            'Плинтус ПВХ (${spec.packagingRule<num>('plinth_piece_length_m').toDouble()} м)',
+            'Плинтус пластиковый (ПВХ, ${spec.packagingRule<num>('plinth_piece_length_m').toDouble()} м)',
         quantity: roundValue(
           plinthLengthWithReserve /
               spec.packagingRule<num>('plinth_piece_length_m').toDouble(),

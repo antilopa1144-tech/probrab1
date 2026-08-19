@@ -17,11 +17,11 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
 
   final totalArea = (inputs['totalArea'] ?? defaultFor(spec, 'totalArea', 80))
       .clamp(10.0, 500.0);
+  final ceilingHeightInput =
+      inputs['ceilingHeight'] ?? defaultFor(spec, 'ceilingHeight', 2.7);
   final ceilingHeight =
-      (inputs['ceilingHeight'] ?? defaultFor(spec, 'ceilingHeight', 2.7)).clamp(
-        2.5,
-        3.5,
-      );
+      (ceilingHeightInput > 10 ? ceilingHeightInput / 100 : ceilingHeightInput)
+          .clamp(2.5, 3.5);
   final climateZone =
       (inputs['climateZone'] ?? defaultFor(spec, 'climateZone', 1))
           .round()
@@ -44,11 +44,15 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
   final powerPerM2Base = spec.materialRule('power_per_m2_base');
   final powerPerM2 = powerPerM2Base is List
       ? (powerPerM2Base[climateZone] as num?)?.toDouble() ?? 100
-      : (powerPerM2Base['$climateZone'] as num?)?.toDouble() ?? 100;
+      : powerPerM2Base is Map
+      ? (powerPerM2Base['$climateZone'] as num?)?.toDouble() ?? 100
+      : 100.0;
   final buildingCoeffBase = spec.materialRule('building_coeff');
   final buildingCoeff = buildingCoeffBase is List
       ? (buildingCoeffBase[buildingType] as num?)?.toDouble() ?? 1.0
-      : (buildingCoeffBase['$buildingType'] as num?)?.toDouble() ?? 1.0;
+      : buildingCoeffBase is Map
+      ? (buildingCoeffBase['$buildingType'] as num?)?.toDouble() ?? 1.0
+      : 1.0;
   final totalPowerW = totalArea * powerPerM2 * buildingCoeff * heightCoeff;
   final totalPowerKW = (totalPowerW / 100).round() / 10;
 
@@ -56,18 +60,21 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
   final radiatorPowerBase = spec.materialRule('radiator_power');
   final wattPerUnit = radiatorPowerBase is List
       ? (radiatorPowerBase[radiatorType] as num?)?.toDouble() ?? 150
-      : (radiatorPowerBase['$radiatorType'] as num?)?.toDouble() ?? 150;
+      : radiatorPowerBase is Map
+      ? (radiatorPowerBase['$radiatorType'] as num?)?.toDouble() ?? 150
+      : 150.0;
   final totalUnits = (totalPowerW / wattPerUnit).ceil();
+  final radiatorCount = radiatorType <= 1 ? roomCount : totalUnits;
 
   /* ─── piping ─── */
   final pipeSticks =
-      (roomCount *
+      (radiatorCount *
               spec.materialRule<num>('pipe_rate').toDouble() *
               spec.materialRule<num>('pipe_reserve').toDouble() /
               spec.materialRule<num>('pp_pipe_stick_m').toDouble())
           .ceil();
   final fittings =
-      (roomCount *
+      (radiatorCount *
               spec.materialRule<num>('fittings_per_room').toDouble() *
               spec.materialRule<num>('fittings_reserve').toDouble())
           .ceil();
@@ -76,24 +83,28 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
               spec.materialRule<num>('brackets_per_room').toDouble() *
               spec.materialRule<num>('brackets_reserve').toDouble())
           .ceil();
-  final thermoHeads = (roomCount * 1.05).ceil();
-  final mayevskyValves = (roomCount * 1.1).ceil();
+  final thermoHeads = radiatorCount;
+  final mayevskyValves = radiatorCount;
 
   /* ─── materials ─── */
-  final radiatorLabel = radiatorType <= 1
-      ? 'Радиаторы (секции)'
-      : 'Радиаторы (панели/приборы)';
+  const radiatorLabels = {
+    0: 'Биметаллический радиатор, секция 180 Вт',
+    1: 'Алюминиевый радиатор, секция 200 Вт',
+    2: 'Чугунный радиатор, 7 секций, 700 Вт',
+    3: 'Стальной панельный радиатор тип 22, 700 Вт',
+  };
+  final radiatorLabel = radiatorLabels[radiatorType] ?? 'Отопительный прибор';
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
       name: radiatorLabel,
       quantity: totalUnits.toDouble(),
-      unit: 'шт',
+      unit: radiatorType <= 1 ? 'секций' : 'шт',
       withReserve: totalUnits.toDouble(),
       purchaseQty: totalUnits.toDouble(),
       category: 'Отопление',
     ),
     CanonicalMaterialResult(
-      name: 'Труба ПП \u00f825 (палки по 4 м)',
+      name: 'Армированная труба PP-R Ø25 мм, отрезок 4 м',
       quantity: pipeSticks.toDouble(),
       unit: 'шт',
       withReserve: pipeSticks.toDouble(),
@@ -101,7 +112,7 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       category: 'Трубопровод',
     ),
     CanonicalMaterialResult(
-      name: 'Фитинги',
+      name: 'Фитинги PP-R Ø25 мм для обвязки радиаторов',
       quantity: fittings.toDouble(),
       unit: 'шт',
       withReserve: fittings.toDouble(),
@@ -109,7 +120,9 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       category: 'Трубопровод',
     ),
     CanonicalMaterialResult(
-      name: 'Кронштейны',
+      name: radiatorType <= 1
+          ? 'Кронштейны для секционного радиатора'
+          : 'Кронштейны для выбранного отопительного прибора',
       quantity: brackets.toDouble(),
       unit: 'шт',
       withReserve: brackets.toDouble(),
@@ -117,7 +130,7 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
-      name: 'Термоголовки',
+      name: 'Термостатический радиаторный клапан с термоголовкой',
       quantity: thermoHeads.toDouble(),
       unit: 'шт',
       withReserve: thermoHeads.toDouble(),
@@ -125,7 +138,7 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       category: 'Регулировка',
     ),
     CanonicalMaterialResult(
-      name: 'Краны Маевского',
+      name: 'Ручной воздухоотводчик (кран Маевского) 1/2″',
       quantity: mayevskyValves.toDouble(),
       unit: 'шт',
       withReserve: mayevskyValves.toDouble(),
@@ -135,7 +148,9 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
   ];
 
   /* ─── scenarios ─── */
-  final basePrimary = totalUnits.toDouble();
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
+  final basePrimary = (totalUnits * accuracyMult).ceilToDouble();
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
@@ -177,9 +192,11 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
   final warnings = <String>[];
   if (totalPowerKW >
       spec.warningRule<num>('gas_boiler_power_threshold_kw').toDouble()) {
-    warnings.add('Мощность более 20 кВт \u2014 газовый котёл с запасом 15-20%');
+    warnings.add(
+      'Расчётная мощность выше 20 кВт. Тип и мощность источника тепла подбирают по расчёту теплопотерь и нагрузке горячего водоснабжения',
+    );
   }
-  if (buildingType >= 2 && climateZone >= 2) {
+  if (buildingType == 3 && climateZone >= 2) {
     warnings.add(
       'Слабая изоляция + холодная зона \u2014 рекомендуется профессиональный теплотехнический расчёт',
     );
@@ -201,6 +218,7 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       'totalPowerKW': totalPowerKW,
       'wattPerUnit': wattPerUnit.toDouble(),
       'totalUnits': totalUnits.toDouble(),
+      'radiatorCount': radiatorCount.toDouble(),
       'pipeSticks': pipeSticks.toDouble(),
       'fittings': fittings.toDouble(),
       'brackets': brackets.toDouble(),

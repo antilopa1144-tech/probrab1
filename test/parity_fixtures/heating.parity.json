@@ -1,7 +1,7 @@
 {
   "calculator_id": "heating",
-  "formula_version": "heating-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.540Z",
+  "formula_version": "heating-canonical-v2",
+  "generated_at": "2026-08-19T07:37:47.887Z",
   "cases": [
     {
       "id": "defaults",
@@ -26,11 +26,12 @@
         "totalPowerKW": 8,
         "wattPerUnit": 180,
         "totalUnits": 45,
+        "radiatorCount": 4,
         "pipeSticks": 12,
         "fittings": 27,
         "brackets": 13,
-        "thermoHeads": 5,
-        "mayevskyValves": 5,
+        "thermoHeads": 4,
+        "mayevskyValves": 4,
         "minExactNeed": 41.904,
         "recExactNeed": 47.7,
         "maxExactNeed": 62.0172,
@@ -40,12 +41,12 @@
       },
       "expected_materials_count": 6,
       "expected_material_names": [
-        "Радиаторы (секции)",
-        "Труба ПП ø25 (палки по 4 м)",
-        "Фитинги",
-        "Кронштейны",
-        "Термоголовки",
-        "Краны Маевского"
+        "Биметаллический радиатор, секция 180 Вт",
+        "Армированная труба PP-R Ø25 мм, отрезок 4 м",
+        "Фитинги PP-R Ø25 мм для обвязки радиаторов",
+        "Кронштейны для секционного радиатора",
+        "Термостатический радиаторный клапан с термоголовкой",
+        "Ручной воздухоотводчик (кран Маевского) 1/2″"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

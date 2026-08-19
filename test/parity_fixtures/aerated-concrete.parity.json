@@ -1,7 +1,7 @@
 {
   "calculator_id": "aerated-concrete",
-  "formula_version": "aerated-concrete-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.316Z",
+  "formula_version": "aerated-concrete-canonical-v2",
+  "generated_at": "2026-08-19T07:37:47.625Z",
   "cases": [
     {
       "id": "defaults",
@@ -36,11 +36,9 @@
         "rows": 14,
         "rebarRows": 4,
         "perimeter": 10,
+        "estimatedWallLength": 10,
         "rebarLength": 44,
-        "primerCans": 1,
-        "openingsCount": 3,
-        "uBlocks": 7,
-        "cornerProfiles": 8,
+        "lintelsCalculated": 0,
         "minExactNeedBlocks": 179.7216,
         "recExactNeedBlocks": 204.58,
         "maxExactNeedBlocks": 265.98488,
@@ -48,17 +46,16 @@
         "recPurchaseBlocks": 205,
         "maxPurchaseBlocks": 266
       },
-      "expected_materials_count": 6,
+      "expected_materials_count": 3,
       "expected_material_names": [
-        "Газоблок 600×200×200 мм",
-        "Клей для газобетона (25 кг)",
-        "Арматура Ø8",
-        "Грунтовка глубокого проникновения (5 л)",
-        "У-блоки (перемычки)",
-        "Угловые профили"
+        "Автоклавный газобетонный блок 600×200×200 мм",
+        "Клей для тонкошовной кладки газобетона, мешок 25 кг",
+        "Арматура класса А500С Ø8 мм для штроб"
       ],
-      "expected_warnings_count": 0,
-      "expected_warnings": [],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "Площадь проёмов вычтена из блоков, но перемычки и U-блоки не посчитаны: нужны количество и ширина каждого проёма, опирание и проектная схема"
+      ],
       "expected_scenarios": {
         "MIN": {
           "exact_need": 179.7216,

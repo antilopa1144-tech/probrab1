@@ -13,13 +13,13 @@ const Map<int, String> _insulationTypeLabels = {
 };
 
 const Map<int, String> _outerSheathingLabels = {
-  0: 'ОСП-9 мм',
+  0: 'Ориентированно-стружечная плита (ОСП), 9 мм',
   1: 'ОСП-12 мм',
   2: 'ЦСП-12 мм',
 };
 
 const Map<int, String> _innerSheathingLabels = {
-  0: 'ОСП-9 мм',
+  0: 'Ориентированно-стружечная плита (ОСП), 9 мм',
   1: 'ГКЛ',
   2: 'Вагонка',
 };
@@ -163,6 +163,16 @@ CanonicalCalculatorContractResult calculateCanonicalFrameHouse(
               10)
           .ceil() /
       10;
+  final outerScrewsPcs =
+      (outerSheets *
+              spec.materialRule<num>('screws_per_sheet').toDouble() *
+              spec.materialRule<num>('stud_reserve').toDouble())
+          .ceil();
+  final innerScrewsPcs =
+      (innerSheets *
+              spec.materialRule<num>('screws_per_sheet').toDouble() *
+              spec.materialRule<num>('stud_reserve').toDouble())
+          .ceil();
   final nailsKg =
       (studs *
               spec.materialRule<num>('nails_per_stud').toDouble() *
@@ -171,6 +181,11 @@ CanonicalCalculatorContractResult calculateCanonicalFrameHouse(
               10)
           .ceil() /
       10;
+  final nailsPcs =
+      (studs *
+              spec.materialRule<num>('nails_per_stud').toDouble() *
+              spec.materialRule<num>('stud_reserve').toDouble())
+          .ceil();
 
   // Scenarios
   final basePrimary = totalPlates;
@@ -238,7 +253,7 @@ CanonicalCalculatorContractResult calculateCanonicalFrameHouse(
   // Materials
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: 'Стойки каркаса (шаг $studStep мм)',
+      name: 'Стойки каркаса — конструкционная доска (шаг $studStep мм)',
       quantity: studs.toDouble(),
       unit: 'шт',
       withReserve: studBoards.toDouble(),
@@ -251,7 +266,7 @@ CanonicalCalculatorContractResult calculateCanonicalFrameHouse(
       },
     ),
     CanonicalMaterialResult(
-      name: 'Обвязка (доски 6 м)',
+      name: 'Обвязка — конструкционная доска (6 м)',
       quantity: roundValue(strappingM, 2),
       unit: 'м',
       withReserve: strappingBoards.toDouble(),
@@ -304,7 +319,7 @@ CanonicalCalculatorContractResult calculateCanonicalFrameHouse(
     ),
     CanonicalMaterialResult(
       name:
-          'Пароизоляция (рулон ${spec.materialRule<num>('vapor_roll').toDouble().round()} м²)',
+          'Пароизоляция — мембрана (рулон ${spec.materialRule<num>('vapor_roll').toDouble().round()} м²)',
       quantity: vaporRolls.toDouble(),
       unit: 'рулонов',
       withReserve: vaporRolls.toDouble(),
@@ -313,7 +328,7 @@ CanonicalCalculatorContractResult calculateCanonicalFrameHouse(
     ),
     CanonicalMaterialResult(
       name:
-          'Ветрозащита (рулон ${spec.materialRule<num>('wind_roll').toDouble().round()} м²)',
+          'Ветрозащита — диффузионная мембрана (рулон ${spec.materialRule<num>('wind_roll').toDouble().round()} м²)',
       quantity: windRolls.toDouble(),
       unit: 'рулонов',
       withReserve: windRolls.toDouble(),
@@ -321,7 +336,7 @@ CanonicalCalculatorContractResult calculateCanonicalFrameHouse(
       category: 'Мембраны',
     ),
     CanonicalMaterialResult(
-      name: 'Скотч для мембран',
+      name: 'Скотч для мембран — системная соединительная лента',
       quantity: tapeRolls.toDouble(),
       unit: 'рулонов',
       withReserve: tapeRolls.toDouble(),
@@ -329,7 +344,8 @@ CanonicalCalculatorContractResult calculateCanonicalFrameHouse(
       category: 'Мембраны',
     ),
     CanonicalMaterialResult(
-      name: 'Саморезы',
+      name:
+          'Крепёж обшивки — ${_outerSheathingLabels[outerSheathing]}, саморезы 3,5×35 мм + ${_innerSheathingLabels[innerSheathing]}, саморезы 3,5×35 мм',
       quantity: screwsKg,
       unit: 'кг',
       withReserve: screwsKg,
@@ -337,7 +353,7 @@ CanonicalCalculatorContractResult calculateCanonicalFrameHouse(
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
-      name: 'Гвозди',
+      name: 'Гвозди ершёные оцинкованные для сборки каркаса',
       quantity: nailsKg,
       unit: 'кг',
       withReserve: nailsKg,
@@ -375,7 +391,10 @@ CanonicalCalculatorContractResult calculateCanonicalFrameHouse(
       'windRolls': windRolls.toDouble(),
       'tapeRolls': tapeRolls.toDouble(),
       'screwsKg': screwsKg,
+      'outerScrewsPcs': outerScrewsPcs.toDouble(),
+      'innerScrewsPcs': innerScrewsPcs.toDouble(),
       'nailsKg': nailsKg,
+      'nailsPcs': nailsPcs.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,
       'recExactNeed': recScenario.exactNeed,
       'maxExactNeed': scenarios['MAX']!.exactNeed,

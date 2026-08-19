@@ -141,7 +141,7 @@ CanonicalCalculatorContractResult calculateCanonicalPavingTiles(
       ),
       if (cementSandMixM3 > 0)
         CanonicalMaterialResult(
-          name: 'ЦПС (цементно-песчаная смесь)',
+          name: 'Цементно-песчаная смесь (ЦПС)',
           quantity: roundValue(cementSandMixM3, 3),
           unit: 'м³',
           withReserve: roundValue(cementSandMixM3, 3),
@@ -176,7 +176,7 @@ CanonicalCalculatorContractResult calculateCanonicalPavingTiles(
       ),
       if (borderEnabled == 1)
         CanonicalMaterialResult(
-          name: 'Бордюрный камень БР100.30.18 (1.0 м)',
+          name: 'Бордюрный камень 1000×300×180 мм, маркировка БР100.30.18',
           quantity: borderPcs.toDouble(),
           unit: 'шт',
           withReserve: borderPcs.toDouble(),

@@ -160,6 +160,8 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
     geometry['area']! * (1 + wastePercent / 100),
     6,
   );
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('flooring', accuracyMode);
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
@@ -168,7 +170,10 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
       _factorTable,
       scenarioName,
     );
-    final exactNeed = roundValue(baseExactNeedArea * multiplier, 6);
+    final exactNeed = roundValue(
+      baseExactNeedArea * accuracyMult * multiplier,
+      6,
+    );
     final packageCount = exactNeed > 0 ? (exactNeed / packArea).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * packArea, 6);
 
@@ -267,6 +272,17 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
       ? (glueKg / spec.packagingRule<num>('glue_bucket_kg').toDouble()).ceil()
       : 0;
   final recScenario = scenarios['REC']!;
+  final expansionJointThresholdM2 = spec
+      .materialRule<num>('expansion_joint_threshold_m2', 50)
+      .toDouble();
+  final expansionJointPieceLengthM = spec
+      .materialRule<num>('expansion_joint_piece_length_m', 1)
+      .toDouble();
+  final expansionJointLengthM = geometry['area']! > expansionJointThresholdM2
+      ? math.sqrt(geometry['area']!)
+      : 0.0;
+  final expansionJointPieces =
+      (expansionJointLengthM / expansionJointPieceLengthM).ceil();
 
   final warnings = <String>[];
   if (geometry['area']! <
@@ -412,6 +428,8 @@ CanonicalCalculatorContractResult calculateCanonicalParquet(
       'glueNeededKg': glueKg,
       'glueBuckets': glueBuckets.toDouble(),
       'doorThresholds': doorThresholds.toDouble(),
+      'expansionJointPieces': expansionJointPieces.toDouble(),
+      'expansionJointLengthM': roundValue(expansionJointLengthM, 6),
       'minExactNeedArea': scenarios['MIN']!.exactNeed,
       'recExactNeedArea': recScenario.exactNeed,
       'maxExactNeedArea': scenarios['MAX']!.exactNeed,

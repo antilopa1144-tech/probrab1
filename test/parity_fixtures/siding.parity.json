@@ -1,7 +1,7 @@
 {
   "calculator_id": "siding",
   "formula_version": "siding-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.626Z",
+  "generated_at": "2026-08-19T07:37:48.070Z",
   "cases": [
     {
       "id": "defaults",
@@ -12,7 +12,8 @@
         "perimeter": 40,
         "height": 5,
         "sidingType": 0,
-        "exteriorCorners": 4
+        "exteriorCorners": 4,
+        "jProfileStrategy": 0
       },
       "expected_totals": {
         "facadeArea": 100,
@@ -21,6 +22,7 @@
         "height": 5,
         "sidingType": 0,
         "exteriorCorners": 4,
+        "jProfileStrategy": 0,
         "panelArea": 0.732,
         "netArea": 90,
         "panels": 136,
@@ -43,13 +45,13 @@
       "expected_material_names": [
         "Виниловый сайдинг (0.732 м²)",
         "Стартовая планка (3.66 м)",
-        "J-профиль (3.66 м)",
+        "J-образный профиль для проёмов (3.66 м)",
         "Наружный угол (3 м)",
         "Финишная планка (3.66 м)",
-        "Саморезы",
-        "Обрешётка (м.п.)",
-        "Мембрана (75 м²)",
-        "Герметик (тубы)"
+        "Саморезы оцинкованные 4,2×19 мм с прессшайбой",
+        "Обрешётка — брусок 40×50 мм",
+        "Ветрозащитная диффузионная мембрана (75 м²)",
+        "Герметик фасадный атмосферостойкий"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

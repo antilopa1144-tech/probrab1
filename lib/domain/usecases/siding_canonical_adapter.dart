@@ -131,7 +131,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
-      name: 'J-профиль (${spec.materialRule<num>('j_profile_length').toDouble()} м)',
+      name: 'J-образный профиль для проёмов (${spec.materialRule<num>('j_profile_length').toDouble()} м)',
       quantity: jProfile.toDouble(),
       unit: 'шт',
       withReserve: jProfile.toDouble(),
@@ -155,7 +155,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Профиль',
     ),
     CanonicalMaterialResult(
-      name: 'Саморезы',
+      name: 'Саморезы оцинкованные 4,2×19 мм с прессшайбой',
       quantity: screwsKg,
       unit: 'кг',
       withReserve: screwsKg,
@@ -163,7 +163,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
-      name: 'Обрешётка (м.п.)',
+      name: 'Обрешётка — брусок 40×50 мм',
       quantity: battens.toDouble(),
       unit: 'м.п.',
       withReserve: battens.toDouble(),
@@ -171,7 +171,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Подсистема',
     ),
     CanonicalMaterialResult(
-      name: 'Мембрана (${spec.materialRule<num>('membrane_roll').toDouble().round()} м\u00b2)',
+      name: 'Ветрозащитная диффузионная мембрана (${spec.materialRule<num>('membrane_roll').toDouble().round()} м\u00b2)',
       quantity: membrane.toDouble(),
       unit: 'рулонов',
       withReserve: membrane.toDouble(),
@@ -179,7 +179,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Изоляция',
     ),
     CanonicalMaterialResult(
-      name: 'Герметик (тубы)',
+      name: 'Герметик фасадный атмосферостойкий',
       quantity: sealant.toDouble(),
       unit: 'шт',
       withReserve: sealant.toDouble(),

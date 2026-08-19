@@ -71,7 +71,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
 
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'Кольца ЖБ КС 10-9',
+        name: 'Железобетонные колодезные кольца, типоразмер КС 10-9',
         quantity: totalRings.toDouble(),
         unit: 'шт',
         withReserve: totalRings.toDouble(),
@@ -79,7 +79,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         category: 'Ёмкость',
       ),
       CanonicalMaterialResult(
-        name: 'Днища ПН-10',
+        name: 'Плиты днища колодца, заводская маркировка ПН-10',
         quantity: bottomPlates.toDouble(),
         unit: 'шт',
         withReserve: bottomPlates.toDouble(),
@@ -87,7 +87,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
         category: 'Ёмкость',
       ),
       CanonicalMaterialResult(
-        name: 'Плиты перекрытия ПП-10',
+        name: 'Плиты перекрытия колодца, заводская маркировка ПП-10',
         quantity: topPlates.toDouble(),
         unit: 'шт',
         withReserve: topPlates.toDouble(),
@@ -177,7 +177,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
 
   materials.addAll([
     CanonicalMaterialResult(
-      name: 'Труба ПВХ \u00f8110 (секции 3 м)',
+      name: 'Пластиковая канализационная труба (ПВХ) Ø110 мм, отрезки по 3 м',
       quantity: pipeSections.toDouble(),
       unit: 'шт',
       withReserve: pipeSections.toDouble(),
@@ -230,6 +230,9 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
 
   /* ─── scenarios ─── */
   final scenarios = <String, CanonicalScenarioResult>{};
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
+  final adjustedPrimary = (basePrimary * accuracyMult).ceilToDouble();
 
   for (final scenarioName in scenarioNames) {
     final multiplier = scenarioMultiplier(
@@ -237,7 +240,7 @@ CanonicalCalculatorContractResult calculateCanonicalSewage(
       _factorTable,
       scenarioName,
     );
-    final exactNeed = roundValue(basePrimary * multiplier, 6);
+    final exactNeed = roundValue(adjustedPrimary * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
     final purchaseQuantity = roundValue(packageCount.toDouble(), 6);
     scenarios[scenarioName] = CanonicalScenarioResult(

@@ -1,7 +1,7 @@
 {
   "calculator_id": "waterproofing",
   "formula_version": "waterproofing-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.690Z",
+  "generated_at": "2026-08-19T07:37:48.188Z",
   "cases": [
     {
       "id": "defaults",
@@ -11,7 +11,10 @@
         "wallHeight": 200,
         "roomPerimeter": 10,
         "masticType": 0,
-        "layers": 2
+        "layers": 2,
+        "pipePenetrations": 0,
+        "insetCount": 0,
+        "floorCurvatureClass": 0
       },
       "expected_totals": {
         "floorArea": 6,
@@ -19,6 +22,12 @@
         "roomPerimeter": 10,
         "masticType": 0,
         "layers": 2,
+        "pipePenetrations": 0,
+        "insetCount": 0,
+        "floorCurvatureClass": 0,
+        "curvatureMult": 1,
+        "extraMasticKg": 0,
+        "penetrationTapeM": 0,
         "wallArea": 2,
         "totalArea": 8,
         "masticKg": 16,
@@ -40,14 +49,16 @@
       },
       "expected_materials_count": 5,
       "expected_material_names": [
-        "Ceresit CL 51 (15 кг)",
-        "Лента гидроизоляционная (10 м)",
-        "Силиконовый герметик",
-        "Грунтовка Ceresit (2 кг)",
-        "Герметик для стыков"
+        "Готовая полимерная гидроизоляция типа CL 51 (15 кг)",
+        "Системная эластичная гидроизоляционная лента (10 м)",
+        "Санитарный нейтральный силиконовый герметик, 280–310 мл",
+        "Грунтовка под полимерную гидроизоляцию (2 кг)",
+        "Эластичный герметик для примыканий, 280–310 мл"
       ],
-      "expected_warnings_count": 0,
-      "expected_warnings": [],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "Не указаны примыкания труб и инсталляций. В реальном санузле обычно 3-5 примыканий (стояк, подвод воды, слив, душ) — без них расчёт занижен на 15-25%. Укажите pipePenetrations."
+      ],
       "expected_scenarios": {
         "MIN": {
           "exact_need": 1.824,

@@ -92,7 +92,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   // Materials
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: 'ПВХ-панели',
+      name: 'Пластиковые панели (ПВХ)',
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed.ceilToDouble(),

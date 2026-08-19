@@ -5,17 +5,34 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-
 CanonicalCalculatorContractResult calculateCanonicalPartitions(
   Map<String, double> inputs, {
   SpecReader? specOverride,
 }) {
   final spec = specOverride ?? const SpecReader(partitionsSpecData);
 
-  final length = math.max(1.0, math.min(50.0, inputs['length'] ?? defaultFor(spec, 'length', 5)));
-  final height = math.max(2.0, math.min(4.0, inputs['height'] ?? defaultFor(spec, 'height', 2.7)));
-  final thickness = math.max(75.0, math.min(200.0, (inputs['thickness'] ?? defaultFor(spec, 'thickness', 100)).roundToDouble()));
-  final blockType = (inputs['blockType'] ?? defaultFor(spec, 'blockType', 0)).round().clamp(0, 2);
+  final length = math.max(
+    1.0,
+    math.min(50.0, inputs['length'] ?? defaultFor(spec, 'length', 5)),
+  );
+  final height = math.max(
+    2.0,
+    math.min(4.0, inputs['height'] ?? defaultFor(spec, 'height', 2.7)),
+  );
+  final blockType = (inputs['blockType'] ?? defaultFor(spec, 'blockType', 0))
+      .round()
+      .clamp(0, 2);
+  final requestedThickness = math.max(
+    75.0,
+    math.min(
+      200.0,
+      (inputs['thickness'] ?? defaultFor(spec, 'thickness', 100))
+          .roundToDouble(),
+    ),
+  );
+  final thickness = blockType == 2 && requestedThickness == 75
+      ? 80.0
+      : requestedThickness;
 
   // Wall area
   final wallArea = length * height;
@@ -37,37 +54,70 @@ CanonicalCalculatorContractResult calculateCanonicalPartitions(
     blockHeightMm = 250;
   }
   final blockArea = (blockLengthMm / 1000) * (blockHeightMm / 1000);
-  final blocks = (wallArea / blockArea * spec.materialRule<num>('block_reserve').toDouble()).ceil();
+  final blocks =
+      (wallArea /
+              blockArea *
+              spec.materialRule<num>('block_reserve').toDouble())
+          .ceil();
 
   // Glue / gypsum
-  final glueRate = (spec.materialRule<Map>('glue_rate')['$blockType'] as num?)?.toDouble() ?? 0;
+  final glueRate =
+      (spec.materialRule<Map>('glue_rate')['$blockType'] as num?)?.toDouble() ??
+      0;
   final glueBags = blockType != 2
-      ? (wallArea * glueRate / spec.materialRule<num>('glue_bag').toDouble()).ceil()
+      ? (wallArea * glueRate / spec.materialRule<num>('glue_bag').toDouble())
+            .ceil()
       : 0;
   final gypsumBags = blockType == 2
-      ? (wallArea * spec.materialRule<num>('gypsum_milk_rate').toDouble() / spec.materialRule<num>('gypsum_bag').toDouble()).ceil()
+      ? (wallArea *
+                spec.materialRule<num>('gypsum_milk_rate').toDouble() /
+                spec.materialRule<num>('gypsum_bag').toDouble())
+            .ceil()
       : 0;
 
   // Reinforcing mesh
-  final armRows = (height / spec.materialRule<num>('mesh_interval').toDouble()).ceil();
-  final meshLen = length * armRows * spec.materialRule<num>('mesh_reserve').toDouble();
-  final meshRolls = (meshLen / spec.materialRule<num>('mesh_roll').toDouble()).ceil();
+  final armRows = blockType == 2
+      ? 0
+      : (height / spec.materialRule<num>('mesh_interval').toDouble()).ceil();
+  final meshLen = blockType == 2
+      ? 0.0
+      : length * armRows * spec.materialRule<num>('mesh_reserve').toDouble();
+  final meshRolls = blockType == 2
+      ? 0
+      : (meshLen / spec.materialRule<num>('mesh_roll').toDouble()).ceil();
 
   // Foam
-  final foamBottles = ((length + height * 2) / spec.materialRule<num>('foam_per_perim').toDouble()).ceil();
+  final foamBottles =
+      ((length + height * 2) /
+              spec.materialRule<num>('foam_per_perim').toDouble())
+          .ceil();
 
   // Primer (both sides)
-  final primer = (wallArea * 2 * spec.materialRule<num>('primer_l_per_m2').toDouble() * spec.materialRule<num>('primer_reserve').toDouble() / spec.materialRule<num>('primer_can').toDouble()).ceil();
+  final primer =
+      (wallArea *
+              2 *
+              spec.materialRule<num>('primer_l_per_m2').toDouble() *
+              spec.materialRule<num>('primer_reserve').toDouble() /
+              spec.materialRule<num>('primer_can').toDouble())
+          .ceil();
 
   // Sealing tape
-  final sealTape = ((length * 2 + height * 2) * spec.materialRule<num>('seal_tape_reserve').toDouble()).ceil();
+  final sealTape =
+      ((length * 2 + height * 2) *
+              spec.materialRule<num>('seal_tape_reserve').toDouble())
+          .ceil();
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
 
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(blocks * accuracyMult * multiplier, 6);
     final packageSize = spec.packagingRule<num>('package_size').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
@@ -84,7 +134,11 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -100,15 +154,31 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
 
   final warnings = <String>[];
   if (height > spec.warningRule<num>('high_wall_threshold_m').toDouble()) {
-    warnings.add('Высота перегородки более 3.5 м — рекомендуется усиленное армирование');
+    warnings.add(
+      'Высота перегородки превышает типовой диапазон — размеры, связи и армирование должен проверить конструктор',
+    );
   }
-  if (blockType == 2 && thickness > 100) {
-    warnings.add('Гипсовые ПГП толще 100 мм — проверьте наличие нужного размера');
+  if (blockType == 2 && thickness != 80 && thickness != 100) {
+    warnings.add(
+      'Для гипсовых пазогребневых плит типовые толщины — 80 и 100 мм; выберите фактически доступный формат',
+    );
   }
+  warnings.add(
+    'Калькулятор предназначен только для ненесущих межкомнатных перегородок',
+  );
+
+  final blockName = switch (blockType) {
+    0 =>
+      'Газобетонные перегородочные блоки D500 ${blockLengthMm.round()}×${blockHeightMm.round()}×${thickness.round()} мм',
+    1 =>
+      'Пенобетонные перегородочные блоки D600 ${blockLengthMm.round()}×${blockHeightMm.round()}×${thickness.round()} мм',
+    _ =>
+      'Гипсовые пазогребневые плиты ${blockLengthMm.round()}×${blockHeightMm.round()}×${thickness.round()} мм',
+  };
 
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: 'Блоки перегородочные',
+      name: blockName,
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed,
@@ -118,38 +188,51 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   ];
 
   if (glueBags > 0) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Клей для блоков 25кг',
-      quantity: glueBags.toDouble(),
-      unit: 'мешков',
-      withReserve: glueBags.toDouble(),
-      purchaseQty: glueBags.toDouble(),
-      category: 'Кладка',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Клей для тонкошовной кладки ячеистых блоков, мешок ${spec.materialRule<num>('glue_bag').toInt()} кг',
+        quantity: glueBags.toDouble(),
+        unit: 'мешков',
+        withReserve: glueBags.toDouble(),
+        purchaseQty: glueBags.toDouble(),
+        category: 'Кладка',
+      ),
+    );
   }
 
   if (gypsumBags > 0) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Гипсовое молочко 20кг',
-      quantity: gypsumBags.toDouble(),
-      unit: 'мешков',
-      withReserve: gypsumBags.toDouble(),
-      purchaseQty: gypsumBags.toDouble(),
-      category: 'Кладка',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Гипсовый монтажный клей для пазогребневых плит, мешок ${spec.materialRule<num>('gypsum_bag').toInt()} кг',
+        quantity: gypsumBags.toDouble(),
+        unit: 'мешков',
+        withReserve: gypsumBags.toDouble(),
+        purchaseQty: gypsumBags.toDouble(),
+        category: 'Кладка',
+      ),
+    );
+  }
+
+  if (meshRolls > 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name:
+            'Армирующая лента для кладки ячеистых блоков, рулон ${spec.materialRule<num>('mesh_roll').toInt()} м',
+        quantity: meshRolls.toDouble(),
+        unit: 'рулонов',
+        withReserve: meshRolls.toDouble(),
+        purchaseQty: meshRolls.toDouble(),
+        category: 'Армирование',
+      ),
+    );
   }
 
   materials.addAll([
     CanonicalMaterialResult(
-      name: 'Армирующая сетка (рулон ${spec.materialRule<num>('mesh_roll').toInt()} м)',
-      quantity: meshRolls.toDouble(),
-      unit: 'рулонов',
-      withReserve: meshRolls.toDouble(),
-      purchaseQty: meshRolls.toDouble(),
-      category: 'Армирование',
-    ),
-    CanonicalMaterialResult(
-      name: 'Монтажная пена 750мл',
+      name:
+          'Профессиональная полиуретановая монтажная пена, баллон ${spec.materialRule<num>('foam_can').toInt()} мл',
       quantity: foamBottles.toDouble(),
       unit: 'шт',
       withReserve: foamBottles.toDouble(),
@@ -157,7 +240,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Монтаж',
     ),
     CanonicalMaterialResult(
-      name: 'Грунтовка глубокого проникновения (${spec.materialRule<num>('primer_can').toInt()} л)',
+      name: 'Грунтовка глубокого проникновения (5 л)',
       quantity: primer.toDouble(),
       unit: 'канистр',
       withReserve: primer.toDouble(),
@@ -165,7 +248,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Грунтовка',
     ),
     CanonicalMaterialResult(
-      name: 'Уплотнительная лента',
+      name: 'Упругая лента для примыкания перегородки',
       quantity: sealTape.toDouble(),
       unit: 'м',
       withReserve: sealTape.toDouble(),
@@ -182,6 +265,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'length': roundValue(length, 3),
       'height': roundValue(height, 3),
       'thickness': thickness,
+      'requestedThickness': requestedThickness,
       'blockType': blockType.toDouble(),
       'wallArea': roundValue(wallArea, 3),
       'blockArea': roundValue(blockArea, 6),

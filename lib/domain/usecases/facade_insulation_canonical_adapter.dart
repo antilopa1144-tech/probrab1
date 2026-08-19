@@ -5,53 +5,112 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-
 CanonicalCalculatorContractResult calculateCanonicalFacadeInsulation(
   Map<String, double> inputs, {
   SpecReader? specOverride,
 }) {
   final spec = specOverride ?? const SpecReader(facadeInsulationSpecData);
 
-  final area = math.max(10.0, math.min(2000.0, inputs['area'] ?? defaultFor(spec, 'area', 100)));
-  final thickness = math.max(50.0, math.min(200.0, (inputs['thickness'] ?? defaultFor(spec, 'thickness', 100)).roundToDouble()));
-  final insulationType = (inputs['insulationType'] ?? defaultFor(spec, 'insulationType', 0)).round().clamp(0, 1);
-  final finishType = (inputs['finishType'] ?? defaultFor(spec, 'finishType', 0)).round().clamp(0, 2);
+  final area = math.max(
+    10.0,
+    math.min(2000.0, inputs['area'] ?? defaultFor(spec, 'area', 100)),
+  );
+  final thickness = math.max(
+    50.0,
+    math.min(
+      200.0,
+      (inputs['thickness'] ?? defaultFor(spec, 'thickness', 100))
+          .roundToDouble(),
+    ),
+  );
+  final insulationType =
+      (inputs['insulationType'] ?? defaultFor(spec, 'insulationType', 0))
+          .round()
+          .clamp(0, 1);
+  final finishType = (inputs['finishType'] ?? defaultFor(spec, 'finishType', 0))
+      .round()
+      .clamp(0, 2);
 
   // Plates
-  final plates = (area * spec.materialRule<num>('plate_reserve').toDouble() / spec.materialRule<num>('plate_m2').toDouble()).ceil();
+  final plates =
+      (area *
+              spec.materialRule<num>('plate_reserve').toDouble() /
+              spec.materialRule<num>('plate_m2').toDouble())
+          .ceil();
 
   // Glue
-  final glueRate = (spec.materialRule<Map>('glue_kg_per_m2')['$insulationType'] as num?)?.toDouble() ?? (spec.materialRule<Map>('glue_kg_per_m2')['0'] as num?)?.toDouble() ?? 0.0;
-  final glueBags = (area * glueRate / spec.materialRule<num>('glue_bag').toDouble()).ceil();
+  final glueRate =
+      (spec.materialRule<Map>('glue_kg_per_m2')['$insulationType'] as num?)
+          ?.toDouble() ??
+      (spec.materialRule<Map>('glue_kg_per_m2')['0'] as num?)?.toDouble() ??
+      0.0;
+  final glueBags =
+      (area * glueRate / spec.materialRule<num>('glue_bag').toDouble()).ceil();
 
   // Dowels
-  final dowelsPerM2 = (spec.materialRule<Map>('dowels_per_m2')['$insulationType'] as num?)?.toDouble() ?? (spec.materialRule<Map>('dowels_per_m2')['0'] as num?)?.toDouble() ?? 0.0;
-  final dowels = (area * dowelsPerM2 * spec.materialRule<num>('dowel_reserve').toDouble()).ceil();
+  final dowelsPerM2 =
+      (spec.materialRule<Map>('dowels_per_m2')['$insulationType'] as num?)
+          ?.toDouble() ??
+      (spec.materialRule<Map>('dowels_per_m2')['0'] as num?)?.toDouble() ??
+      0.0;
+  final dowels =
+      (area * dowelsPerM2 * spec.materialRule<num>('dowel_reserve').toDouble())
+          .ceil();
 
   // Mesh
-  final meshRolls = (area * spec.materialRule<num>('mesh_reserve').toDouble() / spec.materialRule<num>('mesh_roll').toDouble()).ceil();
+  final meshRolls =
+      (area *
+              spec.materialRule<num>('mesh_reserve').toDouble() /
+              spec.materialRule<num>('mesh_roll').toDouble())
+          .ceil();
 
   // Armor
-  final armorBags = (area * spec.materialRule<num>('armor_kg_per_m2').toDouble() / spec.materialRule<num>('armor_bag').toDouble()).ceil();
+  final armorBags =
+      (area *
+              spec.materialRule<num>('armor_kg_per_m2').toDouble() /
+              spec.materialRule<num>('armor_bag').toDouble())
+          .ceil();
 
   // Primer
-  final primerCans = (area * spec.materialRule<num>('primer_l_per_m2').toDouble() * spec.materialRule<num>('primer_reserve').toDouble() / spec.materialRule<num>('primer_can_l').toDouble()).ceil();
+  final primerCans =
+      (area *
+              spec.materialRule<num>('primer_l_per_m2').toDouble() *
+              spec.materialRule<num>('primer_reserve').toDouble() /
+              spec.materialRule<num>('primer_can_l').toDouble())
+          .ceil();
 
   // Decorative finish
-  final decorConsumption = (spec.materialRule<Map>('decor_consumption')['$finishType'] as num?)?.toDouble() ?? (spec.materialRule<Map>('decor_consumption')['0'] as num?)?.toDouble() ?? 0.0;
-  final decorBags = (area * decorConsumption / spec.materialRule<num>('decor_bag').toDouble()).ceil();
+  final decorConsumption =
+      (spec.materialRule<Map>('decor_consumption')['$finishType'] as num?)
+          ?.toDouble() ??
+      (spec.materialRule<Map>('decor_consumption')['0'] as num?)?.toDouble() ??
+      0.0;
+  final decorBags =
+      (area * decorConsumption / spec.materialRule<num>('decor_bag').toDouble())
+          .ceil();
 
   // Starter profile
-  final starterPcs = (math.sqrt(area) * 4 * spec.materialRule<num>('starter_reserve').toDouble() / spec.materialRule<num>('starter_length').toDouble()).ceil();
+  final starterPcs =
+      (math.sqrt(area) *
+              4 *
+              spec.materialRule<num>('starter_reserve').toDouble() /
+              spec.materialRule<num>('starter_length').toDouble())
+          .ceil();
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
+  final platesPerPack = spec.packagingRule<num>('package_size').toDouble();
 
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('insulation', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('insulation', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(plates * accuracyMult * multiplier, 6);
-    final packageSize = spec.packagingRule<num>('package_size').toDouble();
+    final packageSize = platesPerPack;
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * packageSize, 6);
     const packageLabel = 'insulation-plate';
@@ -67,7 +126,11 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -89,16 +152,20 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   };
 
   final warnings = <String>[];
-  if (thickness >= spec.warningRule<num>('thick_insulation_threshold_mm').toDouble()) {
+  if (thickness >=
+      spec.warningRule<num>('thick_insulation_threshold_mm').toDouble()) {
     warnings.add('Толстый утеплитель — рекомендуется двухслойная укладка');
   }
   if (insulationType == 1 && finishType != 2) {
-    warnings.add('ЭППС — обязательна обработка поверхности для адгезии штукатурки');
+    warnings.add(
+      'ЭППС — обязательна обработка поверхности для адгезии штукатурки',
+    );
   }
 
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: '$insulationLabel (плиты ${spec.materialRule<num>('plate_m2').toDouble()} м\u00b2)',
+      name:
+          '$insulationLabel (плиты ${spec.materialRule<num>('plate_m2').toDouble()} м\u00b2)',
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed,
@@ -122,7 +189,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
-      name: 'Армирующая сетка (${spec.materialRule<num>('mesh_roll').toInt()} м\u00b2)',
+      name:
+          'Армирующая сетка (${spec.materialRule<num>('mesh_roll').toInt()} м\u00b2)',
       quantity: meshRolls.toDouble(),
       unit: 'рулонов',
       withReserve: meshRolls.toDouble(),
@@ -138,7 +206,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
-      name: 'Грунтовка (канистра ${spec.materialRule<num>('primer_can_l').toInt()} л)',
+      name:
+          'Грунтовка (канистра ${spec.materialRule<num>('primer_can_l').toInt()} л)',
       quantity: primerCans.toDouble(),
       unit: 'канистр',
       withReserve: primerCans.toDouble(),
@@ -154,7 +223,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Отделка',
     ),
     CanonicalMaterialResult(
-      name: 'Стартовый профиль (${spec.materialRule<num>('starter_length').toInt()} м)',
+      name:
+          'Стартовый профиль (${spec.materialRule<num>('starter_length').toInt()} м)',
       quantity: starterPcs.toDouble(),
       unit: 'шт',
       withReserve: starterPcs.toDouble(),
@@ -173,6 +243,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'insulationType': insulationType.toDouble(),
       'finishType': finishType.toDouble(),
       'plates': plates.toDouble(),
+      'platesPerPack': platesPerPack,
+      'packagesNeeded': recScenario.buyPlan.packagesCount.toDouble(),
       'glueBags': glueBags.toDouble(),
       'dowels': dowels.toDouble(),
       'meshRolls': meshRolls.toDouble(),

@@ -728,7 +728,7 @@ class TileRoomComplexitySpec {
 
 class TilePackagingRules {
   final String tileUnit;
-  final double tilePackageSize;
+  final double tilePackageAreaM2;
   final double glueBagKg;
   final double groutBagKg;
   final double primerCanLiters;
@@ -736,7 +736,7 @@ class TilePackagingRules {
 
   const TilePackagingRules({
     required this.tileUnit,
-    required this.tilePackageSize,
+    required this.tilePackageAreaM2,
     required this.glueBagKg,
     required this.groutBagKg,
     required this.primerCanLiters,

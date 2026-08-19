@@ -1,7 +1,7 @@
 {
   "calculator_id": "stairs",
   "formula_version": "stairs-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.642Z",
+  "generated_at": "2026-08-19T07:37:48.102Z",
   "cases": [
     {
       "id": "defaults",

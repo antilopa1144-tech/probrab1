@@ -1,65 +1,75 @@
 {
   "calculator_id": "insulation",
   "formula_version": "insulation-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.549Z",
+  "generated_at": "2026-08-19T07:37:47.895Z",
   "cases": [
     {
       "id": "defaults",
       "description": "Default inputs for insulation",
       "inputs": {
-        "area": 40,
-        "insulationType": 0,
-        "thickness": 100,
-        "plateSize": 0,
-        "reserve": 5
-      },
-      "expected_totals": {
-        "area": 40,
+        "area": 50,
         "insulationType": 0,
         "thickness": 100,
         "plateSize": 0,
         "reserve": 5,
-        "areaWithReserve": 42,
+        "mountSystem": 0,
+        "piecesPerPack": 0,
+        "climateZone": 1,
+        "layerScheme": 0,
+        "density": 80,
+        "application": 0
+      },
+      "expected_totals": {
+        "area": 50,
+        "insulationType": 0,
+        "thickness": 100,
+        "plateSize": 0,
+        "reserve": 5,
+        "mountSystem": 0,
+        "application": 0,
+        "climateZone": 1,
+        "areaWithReserve": 52.5,
         "plateArea": 0.72,
-        "platesNeeded": 59,
-        "dowelsNeeded": 294,
-        "membraneArea": 46,
-        "aluTapeRolls": 2,
-        "glueKg": 0,
-        "glueBags": 0,
-        "primerCans": 1,
+        "productForm": 0,
+        "rollArea": 0,
+        "rollsNeeded": 0,
+        "platesNeeded": 78,
+        "piecesPerPack": 6,
+        "packsNeeded": 13,
+        "dowelsNeeded": 368,
         "ecowoolVolume": 0,
         "ecowoolKg": 0,
         "ecowoolBags": 0,
-        "minExactNeed": 54.9408,
-        "recExactNeed": 62.54,
-        "maxExactNeed": 81.31144,
-        "minPurchase": 55,
-        "recPurchase": 63,
-        "maxPurchase": 82
+        "minExactNeed": 67.9,
+        "recExactNeed": 77.291667,
+        "maxExactNeed": 100.490833,
+        "minPurchase": 72,
+        "recPurchase": 78,
+        "maxPurchase": 102
       },
-      "expected_materials_count": 5,
+      "expected_materials_count": 6,
       "expected_material_names": [
-        "Минеральная вата (1200×600 мм)",
-        "Дюбели тарельчатые",
-        "Пароизоляционная мембрана",
-        "Алюминиевая лента (скотч)",
-        "Грунтовка глубокого проникновения (10 л)"
+        "Минеральная вата 1200×600 × 100 мм",
+        "Дюбели тарельчатые 10×150 мм",
+        "Клей фасадный для плит (25 кг)",
+        "Стеклосетка фасадная (армирующая)",
+        "Базовая штукатурка армирующего слоя (25 кг)",
+        "Грунтовка фасадная (10 л)"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 54.9408,
-          "purchase_quantity": 55
+          "exact_need": 67.9,
+          "purchase_quantity": 72
         },
         "REC": {
-          "exact_need": 62.54,
-          "purchase_quantity": 63
+          "exact_need": 77.291667,
+          "purchase_quantity": 78
         },
         "MAX": {
-          "exact_need": 81.31144,
-          "purchase_quantity": 82
+          "exact_need": 100.490833,
+          "purchase_quantity": 102
         }
       }
     }

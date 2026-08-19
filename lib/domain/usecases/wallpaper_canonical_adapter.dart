@@ -30,7 +30,8 @@ bool hasCanonicalWallpaperInputs(Map<String, double> inputs) {
 Map<String, double> normalizeLegacyWallpaperInputs(Map<String, double> inputs) {
   final normalized = Map<String, double>.from(inputs);
   final rollSize = (inputs['rollSize'] ?? 1).round();
-  if (!normalized.containsKey('rollWidth') || !normalized.containsKey('rollLength')) {
+  if (!normalized.containsKey('rollWidth') ||
+      !normalized.containsKey('rollLength')) {
     switch (rollSize) {
       case 2:
         normalized['rollWidth'] = 1.06;
@@ -52,25 +53,47 @@ Map<String, double> normalizeLegacyWallpaperInputs(Map<String, double> inputs) {
       math.max(0, inputs['doorsArea'] ?? 0).toDouble();
   normalized['reservePercent'] = math.max(0, inputs['reserve'] ?? 0).toDouble();
   normalized['reserveRolls'] = (inputs['reserveRolls'] ?? 0).toDouble();
-  normalized['wallHeight'] = (inputs['wallHeight'] ?? inputs['height'] ?? 2.5).toDouble();
-  normalized['wallpaperType'] = (inputs['wallpaperType'] ?? 1).round().clamp(1, 3).toDouble();
+  normalized['wallHeight'] = (inputs['wallHeight'] ?? inputs['height'] ?? 2.5)
+      .toDouble();
+  normalized['wallpaperType'] = (inputs['wallpaperType'] ?? 1)
+      .round()
+      .clamp(1, 3)
+      .toDouble();
   return normalized;
 }
 
-Map<String, double> _resolveGeometry(SpecReader spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
-  final wallHeight = (inputs['wallHeight'] ?? inputs['height'] ?? inputs['roomHeight'] ?? defaultFor(spec, 'wallHeight', 2.7))
-      .clamp(2, 5)
-      .toDouble();
+Map<String, double> _resolveGeometry(
+  SpecReader spec,
+  Map<String, double> inputs,
+) {
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0))
+      .round();
+  final wallHeight =
+      (inputs['wallHeight'] ??
+              inputs['height'] ??
+              inputs['roomHeight'] ??
+              defaultFor(spec, 'wallHeight', 2.7))
+          .clamp(2, 5)
+          .toDouble();
   final exactOpeningsArea = math.max(0, inputs['openingsArea'] ?? 0).toDouble();
-  final doorsCount = math.max(0, (inputs['doorsCount'] ?? inputs['doors'] ?? 0).round());
-  final windowsCount = math.max(0, (inputs['windowsCount'] ?? inputs['windows'] ?? 0).round());
+  final doorsCount = math.max(
+    0,
+    (inputs['doorsCount'] ?? inputs['doors'] ?? 0).round(),
+  );
+  final windowsCount = math.max(
+    0,
+    (inputs['windowsCount'] ?? inputs['windows'] ?? 0).round(),
+  );
   final defaultOpeningsArea =
       doorsCount * spec.materialRule<num>('door_area_m2').toDouble() +
       windowsCount * spec.materialRule<num>('window_area_m2').toDouble();
-  final openingsArea = (exactOpeningsArea > 0 ? exactOpeningsArea : defaultOpeningsArea).toDouble();
+  final openingsArea =
+      (exactOpeningsArea > 0 ? exactOpeningsArea : defaultOpeningsArea)
+          .toDouble();
 
-  if ((inputMode == 0 || (!inputs.containsKey('inputMode') && inputs.containsKey('perimeter'))) &&
+  if ((inputMode == 0 ||
+          (!inputs.containsKey('inputMode') &&
+              inputs.containsKey('perimeter'))) &&
       inputs.containsKey('perimeter')) {
     final perimeter = math.max(1, inputs['perimeter'] ?? 0).toDouble();
     final wallArea = perimeter * wallHeight;
@@ -84,7 +107,10 @@ Map<String, double> _resolveGeometry(SpecReader spec, Map<String, double> inputs
     };
   }
 
-  if ((inputMode == 0 || (!inputs.containsKey('inputMode') && inputs.containsKey('roomWidth') && inputs.containsKey('roomLength'))) &&
+  if ((inputMode == 0 ||
+          (!inputs.containsKey('inputMode') &&
+              inputs.containsKey('roomWidth') &&
+              inputs.containsKey('roomLength'))) &&
       inputs.containsKey('roomWidth') &&
       inputs.containsKey('roomLength')) {
     final roomWidth = math.max(1, inputs['roomWidth'] ?? 0).toDouble();
@@ -116,7 +142,9 @@ Map<String, double> _resolveGeometry(SpecReader spec, Map<String, double> inputs
     };
   }
 
-  final wallArea = math.max(0, inputs['area'] ?? defaultFor(spec, 'area', 40)).toDouble();
+  final wallArea = math
+      .max(0, inputs['area'] ?? defaultFor(spec, 'area', 40))
+      .toDouble();
   final perimeter = wallHeight > 0 ? wallArea / wallHeight : 0.0;
   return {
     'inputMode': 1.0,
@@ -128,24 +156,39 @@ Map<String, double> _resolveGeometry(SpecReader spec, Map<String, double> inputs
   };
 }
 
-Map<String, dynamic> _resolveWallpaperType(SpecReader spec, Map<String, double> inputs) {
-  final wallpaperType = (inputs['wallpaperType'] ?? defaultFor(spec, 'wallpaperType', 1)).round().clamp(1, 3);
-  return spec.normativeList('wallpaper_types').firstWhere(
-    (type) => (type['id'] as num).toInt() == wallpaperType,
-    orElse: () => spec.normativeList('wallpaper_types').first,
-  );
+Map<String, dynamic> _resolveWallpaperType(
+  SpecReader spec,
+  Map<String, double> inputs,
+) {
+  final wallpaperType =
+      (inputs['wallpaperType'] ?? defaultFor(spec, 'wallpaperType', 1))
+          .round()
+          .clamp(1, 3);
+  return spec
+      .normativeList('wallpaper_types')
+      .firstWhere(
+        (type) => (type['id'] as num).toInt() == wallpaperType,
+        orElse: () => spec.normativeList('wallpaper_types').first,
+      );
 }
 
 double _resolveRollWidth(SpecReader spec, Map<String, double> inputs) {
-  return (inputs['rollWidth'] ?? defaultFor(spec, 'rollWidth', 0.53)).clamp(0.5, 1.2).toDouble();
+  return (inputs['rollWidth'] ?? defaultFor(spec, 'rollWidth', 0.53))
+      .clamp(0.5, 1.2)
+      .toDouble();
 }
 
 double _resolveRollLength(SpecReader spec, Map<String, double> inputs) {
-  return (inputs['rollLength'] ?? defaultFor(spec, 'rollLength', 10.05)).clamp(5, 50).toDouble();
+  return (inputs['rollLength'] ?? defaultFor(spec, 'rollLength', 10.05))
+      .clamp(5, 50)
+      .toDouble();
 }
 
 double _resolveRapportMeters(SpecReader spec, Map<String, double> inputs) {
-  return math.max(0, inputs['rapport'] ?? defaultFor(spec, 'rapport', 0)).toDouble() / 100;
+  return math
+          .max(0, inputs['rapport'] ?? defaultFor(spec, 'rapport', 0))
+          .toDouble() /
+      100;
 }
 
 CanonicalCalculatorContractResult calculateCanonicalWallpaper(
@@ -159,24 +202,47 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
   final rollWidth = _resolveRollWidth(spec, inputs);
   final rollLength = _resolveRollLength(spec, inputs);
   final rapport = _resolveRapportMeters(spec, inputs);
-  final reservePercent = math.max(0, inputs['reservePercent'] ?? defaultFor(spec, 'reservePercent', 0)).toDouble();
-  final reserveRolls = math.max(0, (inputs['reserveRolls'] ?? defaultFor(spec, 'reserveRolls', 0)).round());
+  final reservePercent = math
+      .max(0, inputs['reservePercent'] ?? defaultFor(spec, 'reservePercent', 0))
+      .toDouble();
+  final reserveRolls = math.max(
+    0,
+    (inputs['reserveRolls'] ?? defaultFor(spec, 'reserveRolls', 0)).round(),
+  );
   final wallHeight = geometry['wallHeight']!;
+  final stripLengthWithTrim =
+      wallHeight + spec.materialRule<num>('trim_allowance_m').toDouble();
   final stripLength = rapport > 0
-      ? (wallHeight / rapport).ceil() * rapport + spec.materialRule<num>('trim_allowance_m').toDouble()
-      : wallHeight;
-  final stripsPerRoll = stripLength > 0 ? math.max(0, (rollLength / stripLength).floor()) : 0;
+      ? (stripLengthWithTrim / rapport).ceil() * rapport
+      : stripLengthWithTrim;
+  final stripsPerRoll = stripLength > 0
+      ? math.max(0, (rollLength / stripLength).floor())
+      : 0;
   final netArea = geometry['netArea']!;
   final stripsNeeded = wallHeight > 0 && rollWidth > 0
       ? (netArea / (rollWidth * wallHeight)).ceil()
       : 0;
-  final baseExactRolls = stripsPerRoll > 0 ? stripsNeeded / stripsPerRoll : 0.0;
+  final accuracyMode = parseAccuracyMode(inputs);
+  final wallpaperPrimaryMult = accuracyPrimaryMultiplier(
+    'wallpaper',
+    accuracyMode,
+  );
+  final baseExactRolls = stripsPerRoll > 0
+      ? (stripsNeeded / stripsPerRoll) * wallpaperPrimaryMult
+      : 0.0;
   final reserveMultiplier = 1 + reservePercent / 100;
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
-    final exactNeed = roundValue(baseExactRolls * multiplier * reserveMultiplier + reserveRolls, 6);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      _factorTable,
+      scenarioName,
+    );
+    final exactNeed = roundValue(
+      baseExactRolls * multiplier * reserveMultiplier + reserveRolls,
+      6,
+    );
     final purchaseQuantity = exactNeed > 0 ? exactNeed.ceilToDouble() : 0.0;
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
@@ -203,23 +269,60 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
   }
 
   final recScenario = scenarios['REC']!;
-  final pasteNeeded = netArea * (wallpaperType['paste_kg_per_m2'] as num).toDouble() * spec.materialRule<num>('paste_reserve_factor').toDouble();
-  final pastePacks = pasteNeeded > 0 ? math.max(1, (pasteNeeded / spec.packagingRule<num>('paste_pack_kg').toDouble()).ceil()) : 0;
-  final primerNeeded = netArea * spec.materialRule<num>('primer_l_per_m2').toDouble() * spec.materialRule<num>('primer_reserve_factor').toDouble();
-  final primerCans = primerNeeded > 0 ? math.max(1, (primerNeeded / spec.packagingRule<num>('primer_can_l').toDouble()).ceil()) : 0;
+  final accessoriesMult = accuracyAccessoriesMultiplier(
+    'wallpaper',
+    accuracyMode,
+  );
+  final pasteNeeded =
+      netArea *
+      (wallpaperType['paste_kg_per_m2'] as num).toDouble() *
+      spec.materialRule<num>('paste_reserve_factor').toDouble() *
+      accessoriesMult;
+  final pastePacks = pasteNeeded > 0
+      ? math.max(
+          1,
+          (pasteNeeded / spec.packagingRule<num>('paste_pack_kg').toDouble())
+              .ceil(),
+        )
+      : 0;
+  final primerNeeded =
+      netArea *
+      spec.materialRule<num>('primer_l_per_m2').toDouble() *
+      spec.materialRule<num>('primer_reserve_factor').toDouble() *
+      accuracyPrimaryMultiplier('primer', accuracyMode);
+  final primerCans = primerNeeded > 0
+      ? math.max(
+          1,
+          (primerNeeded / spec.packagingRule<num>('primer_can_l').toDouble())
+              .ceil(),
+        )
+      : 0;
+  final rollLabel =
+      '${roundValue(rollWidth, 3)}×${roundValue(rollLength, 3)} м';
+  final rapportLabel = rapport > 0
+      ? ', раппорт ${roundValue(rapport * 100, 1)} см'
+      : ', без подгонки рисунка';
 
   final warnings = <String>[];
   if (netArea <= 0) {
     warnings.add('Полезная площадь оклейки должна быть больше нуля');
   }
   if (rapport > spec.warningRule<num>('large_rapport_threshold_m').toDouble()) {
-    warnings.add('Большой раппорт узора увеличивает отходы. Проверьте запас по рулонам перед покупкой');
+    warnings.add(
+      'Большой раппорт узора увеличивает отходы. Проверьте запас по рулонам перед покупкой',
+    );
   }
   if (rollWidth > spec.warningRule<num>('wide_roll_threshold_m').toDouble()) {
-    warnings.add('Широкие обои сложнее клеить одному. Для метровых рулонов лучше работать вдвоём');
+    warnings.add(
+      'Широкие обои сложнее клеить одному. Для метровых рулонов лучше работать вдвоём',
+    );
   }
-  if (stripsPerRoll <= spec.warningRule<num>('low_strips_per_roll_threshold').toDouble() && netArea > 0) {
-    warnings.add('Из одного рулона получается мало полос. Проверьте высоту стены, длину рулона и раппорт');
+  if (stripsPerRoll <=
+          spec.warningRule<num>('low_strips_per_roll_threshold').toDouble() &&
+      netArea > 0) {
+    warnings.add(
+      'Из одного рулона получается мало полос. Проверьте высоту стены, длину рулона и раппорт',
+    );
   }
 
   return CanonicalCalculatorContractResult(
@@ -227,7 +330,8 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
     formulaVersion: spec.formulaVersion,
     materials: [
       CanonicalMaterialResult(
-        name: 'Обои',
+        name:
+            'Обои — ${(wallpaperType['label'] as String).toLowerCase()}, рулон $rollLabel$rapportLabel',
         quantity: recScenario.exactNeed,
         unit: spec.packagingRule<String>('roll_unit'),
         withReserve: recScenario.purchaseQuantity,
@@ -235,22 +339,42 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
         category: 'Основное',
       ),
       CanonicalMaterialResult(
-        name: 'Клей обойный (${(wallpaperType['label'] as String).toLowerCase()}, ${spec.packagingRule<num>('paste_pack_kg').toDouble()} кг)',
+        name:
+            'Клей обойный (${(wallpaperType['label'] as String).toLowerCase()}, ${spec.packagingRule<num>('paste_pack_kg').toDouble()} кг)',
         quantity: roundValue(pasteNeeded, 6),
         unit: 'кг',
-        withReserve: roundValue(pastePacks * spec.packagingRule<num>('paste_pack_kg').toDouble(), 6),
-        purchaseQty: (pastePacks * spec.packagingRule<num>('paste_pack_kg').toDouble()).toDouble(),
+        withReserve: roundValue(
+          pastePacks * spec.packagingRule<num>('paste_pack_kg').toDouble(),
+          6,
+        ),
+        purchaseQty:
+            (pastePacks * spec.packagingRule<num>('paste_pack_kg').toDouble())
+                .toDouble(),
         category: 'Клей',
-        packageInfo: {'count': pastePacks, 'unitSize': spec.packagingRule<num>('paste_pack_kg').toDouble(), 'packageUnit': 'упаковок'},
+        packageInfo: {
+          'count': pastePacks,
+          'unitSize': spec.packagingRule<num>('paste_pack_kg').toDouble(),
+          'packageUnit': 'упаковок',
+        },
       ),
       CanonicalMaterialResult(
-        name: 'Грунтовка глубокого проникновения (${spec.packagingRule<num>('primer_can_l').toInt()} л)',
+        name:
+            'Грунтовка глубокого проникновения (${spec.packagingRule<num>('primer_can_l').toInt()} л)',
         quantity: roundValue(primerNeeded, 6),
         unit: 'л',
-        withReserve: roundValue(primerCans * spec.packagingRule<num>('primer_can_l').toDouble(), 6),
-        purchaseQty: (primerCans * spec.packagingRule<num>('primer_can_l').toDouble()).toDouble(),
+        withReserve: roundValue(
+          primerCans * spec.packagingRule<num>('primer_can_l').toDouble(),
+          6,
+        ),
+        purchaseQty:
+            (primerCans * spec.packagingRule<num>('primer_can_l').toDouble())
+                .toDouble(),
         category: 'Грунтовка',
-        packageInfo: {'count': primerCans, 'unitSize': spec.packagingRule<num>('primer_can_l').toDouble(), 'packageUnit': 'канистр'},
+        packageInfo: {
+          'count': primerCans,
+          'unitSize': spec.packagingRule<num>('primer_can_l').toDouble(),
+          'packageUnit': 'канистр',
+        },
       ),
       CanonicalMaterialResult(
         name: 'Валик для клея',
@@ -264,8 +388,12 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
         name: 'Пластиковый шпатель для обоев',
         quantity: spec.materialRule<num>('wallpaper_spatula_count').toDouble(),
         unit: 'шт',
-        withReserve: spec.materialRule<num>('wallpaper_spatula_count').toDouble(),
-        purchaseQty: spec.materialRule<num>('wallpaper_spatula_count').toDouble(),
+        withReserve: spec
+            .materialRule<num>('wallpaper_spatula_count')
+            .toDouble(),
+        purchaseQty: spec
+            .materialRule<num>('wallpaper_spatula_count')
+            .toDouble(),
         category: 'Инструмент',
       ),
       CanonicalMaterialResult(

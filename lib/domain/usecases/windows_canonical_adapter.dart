@@ -5,14 +5,11 @@ import 'canonical_adapter_utils.dart';
 
 /* ─── spec types ─── */
 
-
-
 const Map<int, String> _slopeTypeLabels = {
-  0: 'Сэндвич-панели ПВХ',
+  0: 'Пластиковые сэндвич-панели (ПВХ)',
   1: 'Штукатурка',
-  2: 'ГКЛ',
+  2: 'Гипсокартон (ГКЛ)',
 };
-
 
 bool hasCanonicalWindowsInputs(Map<String, double> inputs) {
   return inputs.containsKey('windowCount') ||
@@ -30,7 +27,6 @@ Map<String, double> normalizeLegacyWindowsInputs(Map<String, double> inputs) {
   return normalized;
 }
 
-
 CanonicalCalculatorContractResult calculateCanonicalWindows(
   Map<String, double> inputs, {
   SpecReader? specOverride,
@@ -41,30 +37,69 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
       ? Map<String, double>.from(inputs)
       : normalizeLegacyWindowsInputs(inputs);
 
-  final windowCount = (normalized['windowCount'] ?? defaultFor(spec, 'windowCount', 5)).round().clamp(1, 20);
-  final windowWidth = (normalized['windowWidth'] ?? defaultFor(spec, 'windowWidth', 1200)).round().clamp(600, 2100);
-  final windowHeight = (normalized['windowHeight'] ?? defaultFor(spec, 'windowHeight', 1400)).round().clamp(900, 2000);
-  final wallThickness = (normalized['wallThickness'] ?? defaultFor(spec, 'wallThickness', 500)).round().clamp(200, 600);
-  final slopeType = (normalized['slopeType'] ?? defaultFor(spec, 'slopeType', 0)).round().clamp(0, 2);
+  final windowCount =
+      (normalized['windowCount'] ?? defaultFor(spec, 'windowCount', 5))
+          .round()
+          .clamp(1, 20);
+  final windowWidth =
+      (normalized['windowWidth'] ?? defaultFor(spec, 'windowWidth', 1200))
+          .round()
+          .clamp(600, 2100);
+  final windowHeight =
+      (normalized['windowHeight'] ?? defaultFor(spec, 'windowHeight', 1400))
+          .round()
+          .clamp(900, 2000);
+  final wallThickness =
+      (normalized['wallThickness'] ?? defaultFor(spec, 'wallThickness', 500))
+          .round()
+          .clamp(200, 600);
+  final slopeType =
+      (normalized['slopeType'] ?? defaultFor(spec, 'slopeType', 0))
+          .round()
+          .clamp(0, 2);
 
   // Geometry
   final perimM = 2 * (windowWidth + windowHeight) / 1000;
 
   // PSUL / IFLUL
-  final psulRolls = (perimM * windowCount * spec.materialRule<num>('psul_reserve').toDouble() / spec.materialRule<num>('psul_roll_m').toDouble()).ceil();
-  final iflulRolls = (perimM * windowCount * spec.materialRule<num>('psul_reserve').toDouble() / spec.materialRule<num>('iflul_roll_m').toDouble()).ceil();
+  final psulRolls =
+      (perimM *
+              windowCount *
+              spec.materialRule<num>('psul_reserve').toDouble() /
+              spec.materialRule<num>('psul_roll_m').toDouble())
+          .ceil();
+  final iflulRolls =
+      (perimM *
+              windowCount *
+              spec.materialRule<num>('psul_reserve').toDouble() /
+              spec.materialRule<num>('iflul_roll_m').toDouble())
+          .ceil();
 
   // Foam
-  final foamCans = (perimM / 3 * windowCount * spec.materialRule<num>('foam_reserve').toDouble()).ceil();
+  final foamCans =
+      (perimM /
+              3 *
+              windowCount *
+              spec.materialRule<num>('foam_reserve').toDouble())
+          .ceil();
 
   // Anchors & screws
-  final anchorsPerWindow = (perimM / spec.materialRule<num>('anchor_step').toDouble()).ceil();
-  final totalAnchors = (anchorsPerWindow * windowCount * spec.materialRule<num>('anchor_reserve').toDouble()).ceil();
-  final screwsPcs = (totalAnchors * 2 * spec.materialRule<num>('screw_reserve').toDouble()).ceil();
+  final anchorsPerWindow =
+      (perimM / spec.materialRule<num>('anchor_step').toDouble()).ceil();
+  final totalAnchors =
+      (anchorsPerWindow *
+              windowCount *
+              spec.materialRule<num>('anchor_reserve').toDouble())
+          .ceil();
+  final screwsPcs =
+      (totalAnchors * 2 * spec.materialRule<num>('screw_reserve').toDouble())
+          .ceil();
   final screwsKg = (screwsPcs / 1000 * 10).ceil() / 10; // 3.5×25 мм: 1000 шт/кг
 
   // Windowsill
-  final sillWidth = wallThickness / 1000 + spec.materialRule<num>('windowsill_overhang').toDouble();
+  final sillWidth =
+      wallThickness / 1000 +
+      spec.materialRule<num>('windowsill_overhang').toDouble();
   final sillPcs = windowCount;
 
   // Slopes
@@ -78,21 +113,52 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
   var plasterBags = 0;
   var cornerPcs = 0;
   var gklSheets = 0;
+  var screwsGKLpcs = 0;
   var screwsGKL = 0;
   var puttyBags = 0;
 
   if (slopeType == 0) {
-    sandwichPcs = (totalSlopeArea * spec.materialRule<num>('slope_sandwich_reserve').toDouble() / spec.materialRule<num>('sandwich_panel_m2').toDouble()).ceil();
-    final fProfileLen = perimM * 0.75 * windowCount * spec.materialRule<num>('psul_reserve').toDouble();
-    fProfilePcs = (fProfileLen / spec.materialRule<num>('f_profile_length').toDouble()).ceil();
+    sandwichPcs =
+        (totalSlopeArea *
+                spec.materialRule<num>('slope_sandwich_reserve').toDouble() /
+                spec.materialRule<num>('sandwich_panel_m2').toDouble())
+            .ceil();
+    final fProfileLen =
+        perimM *
+        0.75 *
+        windowCount *
+        spec.materialRule<num>('psul_reserve').toDouble();
+    fProfilePcs =
+        (fProfileLen / spec.materialRule<num>('f_profile_length').toDouble())
+            .ceil();
   } else if (slopeType == 1) {
-    plasterBags = (totalSlopeArea * spec.materialRule<num>('plaster_kg_per_m2').toDouble() / spec.materialRule<num>('plaster_bag').toDouble()).ceil();
-    cornerPcs = (perimM * 0.75 * windowCount * spec.materialRule<num>('psul_reserve').toDouble() / 3).ceil();
+    plasterBags =
+        (totalSlopeArea *
+                spec.materialRule<num>('plaster_kg_per_m2').toDouble() /
+                spec.materialRule<num>('plaster_bag').toDouble())
+            .ceil();
+    cornerPcs =
+        (perimM *
+                0.75 *
+                windowCount *
+                spec.materialRule<num>('psul_reserve').toDouble() /
+                3)
+            .ceil();
   } else {
-    gklSheets = (totalSlopeArea * spec.materialRule<num>('slope_gkl_reserve').toDouble() / spec.materialRule<num>('gkl_sheet_m2').toDouble()).ceil();
-    final screwsGKLpcs = (gklSheets * 20 * spec.materialRule<num>('screw_reserve').toDouble()).ceil();
+    gklSheets =
+        (totalSlopeArea *
+                spec.materialRule<num>('slope_gkl_reserve').toDouble() /
+                spec.materialRule<num>('gkl_sheet_m2').toDouble())
+            .ceil();
+    screwsGKLpcs =
+        (gklSheets * 20 * spec.materialRule<num>('screw_reserve').toDouble())
+            .ceil();
     screwsGKL = (screwsGKLpcs / 1000 * 10).ceil(); // *10 for rounding
-    puttyBags = (totalSlopeArea * 1.2 / spec.materialRule<num>('plaster_bag').toDouble()).ceil();
+    puttyBags =
+        (totalSlopeArea *
+                1.2 /
+                spec.materialRule<num>('plaster_bag').toDouble())
+            .ceil();
   }
 
   // Scenarios
@@ -101,9 +167,14 @@ CanonicalCalculatorContractResult calculateCanonicalWindows(
   const packageUnit = 'баллонов';
 
   final scenarios = <String, CanonicalScenarioResult>{};
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(basePrimary * accuracyMult * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
@@ -119,7 +190,11 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -135,17 +210,20 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
 
   // Warnings
   final warnings = <String>[];
-  if (windowWidth >= spec.warningRule<num>('wide_window_threshold_mm').toDouble()) {
+  if (windowWidth >=
+      spec.warningRule<num>('wide_window_threshold_mm').toDouble()) {
     warnings.add('Для широких окон рекомендуется усиленный монтаж');
   }
-  if (wallThickness >= spec.warningRule<num>('thick_wall_threshold_mm').toDouble()) {
+  if (wallThickness >=
+      spec.warningRule<num>('thick_wall_threshold_mm').toDouble()) {
     warnings.add('Толстые стены — проверьте глубину подоконника');
   }
 
   // Materials
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: 'ПСУЛ (рулон ${spec.materialRule<num>('psul_roll_m').toDouble()} м)',
+      name:
+          'ПСУЛ (рулон ${spec.materialRule<num>('psul_roll_m').toDouble()} м)',
       quantity: psulRolls.toDouble(),
       unit: 'рулонов',
       withReserve: psulRolls.toDouble(),
@@ -153,7 +231,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Лента',
     ),
     CanonicalMaterialResult(
-      name: 'Внутренняя лента (рулон ${spec.materialRule<num>('iflul_roll_m').toDouble()} м)',
+      name:
+          'Внутренняя лента (рулон ${spec.materialRule<num>('iflul_roll_m').toDouble()} м)',
       quantity: iflulRolls.toDouble(),
       unit: 'рулонов',
       withReserve: iflulRolls.toDouble(),
@@ -177,7 +256,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
-      name: 'Саморезы для анкеров',
+      name: 'Саморезы по металлу для анкерных пластин',
       quantity: screwsKg,
       unit: 'кг',
       withReserve: screwsKg,
@@ -205,7 +284,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         category: 'Откосы',
       ),
       CanonicalMaterialResult(
-        name: 'F-профиль (${spec.materialRule<num>('f_profile_length').toDouble().round()} м)',
+        name:
+            'F-образный финишный профиль (${spec.materialRule<num>('f_profile_length').toDouble().round()} м)',
         quantity: fProfilePcs.toDouble(),
         unit: 'шт',
         withReserve: fProfilePcs.toDouble(),
@@ -216,7 +296,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   } else if (slopeType == 1) {
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'Штукатурка (мешки ${spec.materialRule<num>('plaster_bag').toDouble().round()} кг)',
+        name:
+            'Штукатурка (мешки ${spec.materialRule<num>('plaster_bag').toDouble().round()} кг)',
         quantity: plasterBags.toDouble(),
         unit: 'мешков',
         withReserve: plasterBags.toDouble(),
@@ -251,7 +332,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         category: 'Крепёж',
       ),
       CanonicalMaterialResult(
-        name: 'Шпаклёвка (мешки ${spec.materialRule<num>('plaster_bag').toDouble().round()} кг)',
+        name:
+            'Шпаклёвка (мешки ${spec.materialRule<num>('plaster_bag').toDouble().round()} кг)',
         quantity: puttyBags.toDouble(),
         unit: 'мешков',
         withReserve: puttyBags.toDouble(),
@@ -278,6 +360,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'anchorsPerWindow': anchorsPerWindow.toDouble(),
       'totalAnchors': totalAnchors.toDouble(),
       'screws': screwsKg,
+      'screwsPcs': screwsPcs.toDouble(),
       'sillWidth': roundValue(sillWidth, 3),
       'sillPcs': sillPcs.toDouble(),
       'slopeSideArea': roundValue(slopeSideArea, 4),
@@ -289,6 +372,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'cornerPcs': cornerPcs.toDouble(),
       'gklSheets': gklSheets.toDouble(),
       'screwsGKL': screwsGKL / 10,
+      'screwsGKLpcs': screwsGKLpcs.toDouble(),
       'puttyBags': puttyBags.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,
       'recExactNeed': recScenario.exactNeed,

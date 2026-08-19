@@ -1,7 +1,7 @@
 {
   "calculator_id": "facade-brick",
   "formula_version": "facade-brick-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.502Z",
+  "generated_at": "2026-08-19T07:37:47.795Z",
   "cases": [
     {
       "id": "defaults",
@@ -10,7 +10,9 @@
         "area": 80,
         "brickType": 0,
         "jointThickness": 10,
-        "withTie": 0
+        "withTie": 0,
+        "windowCount": 0,
+        "avgWindowWidth": 1.5
       },
       "expected_totals": {
         "area": 80,
@@ -28,6 +30,9 @@
         "sandM3": 3.1,
         "tiesCount": 0,
         "perimeterEst": 35.777,
+        "windowCount": 0,
+        "avgWindowWidth": 1.5,
+        "windowHydroArea": 0,
         "hydroArea": 12.343,
         "hydroRolls": 2,
         "ventBoxes": 18,
@@ -50,9 +55,10 @@
         "Затирка для швов (25 кг)",
         "Гидрофобизатор (5 л)"
       ],
-      "expected_warnings_count": 2,
+      "expected_warnings_count": 3,
       "expected_warnings": [
         "Облицовочная кладка должна иметь конструктивное крепление к основной стене (гибкие связи)",
+        "На фасадах с окнами над каждой перемычкой нужна гидроизоляция (СП 15.13330.2020). Укажите windowCount, чтобы расчёт учёл дополнительную полосу.",
         "Необходим вентиляционный зазор 20–40 мм между облицовкой и несущей стеной (СП 15.13330)"
       ],
       "expected_scenarios": {

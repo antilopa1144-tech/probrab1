@@ -12,7 +12,6 @@ const _tileSpec = SpecReader(tileSpecData);
 class CalculateTile extends BaseCalculator {
   static const int _bathroomRoomType = 0;
   static const int _balconyRoomType = 4;
-  static const int _mosaicMaterial = 2;
 
   Map<String, double> _normalizeInputs(Map<String, double> inputs) {
     if (hasCanonicalTileInputs(inputs)) {
@@ -27,10 +26,6 @@ class CalculateTile extends BaseCalculator {
 
   bool _roomNeedsWaterproofing(int roomTypeId) {
     return roomTypeId == _bathroomRoomType || roomTypeId == _balconyRoomType;
-  }
-
-  double _resolveBoxArea(int materialId) {
-    return materialId == _mosaicMaterial ? 0.5 : 1.44;
   }
 
   int _resolveSvpClipsPerTile(double averageTileSizeCm) {
@@ -58,8 +53,8 @@ class CalculateTile extends BaseCalculator {
     final tilesNeeded = (totals['tilesNeeded'] ?? 0).round();
     final tileArea = totals['tileArea'] ?? 0;
     final tilesArea = tileArea * tilesNeeded;
-    final boxArea = _resolveBoxArea(materialId);
-    final boxesNeeded = tilesArea > 0 ? (tilesArea / boxArea).ceil() : 0;
+    final boxArea = totals['packArea'] ?? 0;
+    final boxesNeeded = (totals['packagesNeeded'] ?? 0).round();
     final glueWeight = totals['glueNeededKg'] ?? 0;
     final glueBags = glueWeight > 0
         ? (glueWeight / _tileSpec.packagingRule<num>('glue_bag_kg').toDouble()).ceil()

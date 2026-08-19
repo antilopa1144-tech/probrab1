@@ -1,7 +1,7 @@
 {
   "calculator_id": "pvc-panels",
   "formula_version": "pvc-panels-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.595Z",
+  "generated_at": "2026-08-19T07:37:48.009Z",
   "cases": [
     {
       "id": "defaults",
@@ -42,7 +42,7 @@
       },
       "expected_materials_count": 5,
       "expected_material_names": [
-        "ПВХ-панели",
+        "Пластиковые панели (ПВХ)",
         "Профиль обрешётки (п.м.)",
         "Угловой профиль",
         "Стартовый профиль (п.м.)",

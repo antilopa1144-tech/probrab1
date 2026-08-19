@@ -8,30 +8,30 @@ import 'canonical_adapter_utils.dart';
 
 /* ─── Factor table ─── */
 
-
 /* ─── Constants (must match TS engine exactly) ─── */
 
-const double _volumeMultiplier = 1.08;
+const double _defaultVolumeMultiplier = 1.15;
 
 // Type 0 — ЦПС 1:3
-const double _cementDensity = 1300;    // kg/m³
-const double _cementFraction = 0.25;   // 1/4 volume
-const double _sandFraction = 0.75;     // 3/4 volume
-const double _sandDensity = 1.6;       // t/m³
-const double _waterPerM3 = 200;        // L/m³
+const double _cementDensity = 1300; // kg/m³
+const double _cementFraction = 0.25; // 1/4 volume
+const double _sandFraction = 0.75; // 3/4 volume
+const double _sandDensity = 1.6; // t/m³
+const double _waterPerM3 = 200; // L/m³
 
 // Type 1 — Ready CPS M150
-const double _cpsDensityReady = 2000;  // kg/m³
+const double _cpsDensityReady = 2000; // kg/m³
 
 // Type 2 — Semi-dry
 const double _cpsDensitySemidry = 1800; // kg/m³
-const double _fiberKgPerM2 = 0.6;
+const double _fiberKgPerM3 = 0.9;
+const double _fiberPackageKg = 0.6;
 
 // Ancillary
-const double _meshMargin = 1.15;       // 15%
-const double _filmMargin = 1.1;        // 10%
+const double _meshMargin = 1.15; // 15%
+const double _filmMargin = 1.1; // 10%
 const double _damperTapeReserve = 1.05;
-const double _beaconsAreaPerPiece = 2;  // 1 beacon per 2 m²
+const double _beaconsAreaPerPiece = 2; // 1 beacon per 2 m²
 
 /* ─── Helpers ─── */
 
@@ -41,7 +41,8 @@ bool hasCanonicalScreedInputs(Map<String, double> inputs) {
 
 Map<String, double> normalizeLegacyScreedInputs(Map<String, double> inputs) {
   final normalized = Map<String, double>.from(inputs);
-  final hasDimensions = (inputs['length'] ?? 0) > 0 && (inputs['width'] ?? 0) > 0;
+  final hasDimensions =
+      (inputs['length'] ?? 0) > 0 && (inputs['width'] ?? 0) > 0;
   if (!normalized.containsKey('inputMode')) {
     normalized['inputMode'] = hasDimensions ? 0.0 : 1.0;
   }
@@ -55,10 +56,15 @@ double _estimatePerimeter(double area) {
 }
 
 Map<String, double> _resolveArea(SpecReader spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0))
+      .round();
   if (inputMode == 0) {
-    final length = math.max(0.1, inputs['length'] ?? defaultFor(spec, 'length', 5)).toDouble();
-    final width = math.max(0.1, inputs['width'] ?? defaultFor(spec, 'width', 4)).toDouble();
+    final length = math
+        .max(0.1, inputs['length'] ?? defaultFor(spec, 'length', 5))
+        .toDouble();
+    final width = math
+        .max(0.1, inputs['width'] ?? defaultFor(spec, 'width', 4))
+        .toDouble();
     return {
       'inputMode': 0.0,
       'area': roundValue(length * width, 3),
@@ -66,7 +72,9 @@ Map<String, double> _resolveArea(SpecReader spec, Map<String, double> inputs) {
     };
   }
 
-  final area = math.max(0.1, inputs['area'] ?? defaultFor(spec, 'area', 20)).toDouble();
+  final area = math
+      .max(0.1, inputs['area'] ?? defaultFor(spec, 'area', 20))
+      .toDouble();
   return {
     'inputMode': 1.0,
     'area': roundValue(area, 3),
@@ -74,12 +82,19 @@ Map<String, double> _resolveArea(SpecReader spec, Map<String, double> inputs) {
   };
 }
 
-Map<String, dynamic> _resolveScreedType(SpecReader spec, Map<String, double> inputs) {
-  final screedType = (inputs['screedType'] ?? defaultFor(spec, 'screedType', 0)).round().clamp(0, 2);
-  return spec.normativeList('screed_types').firstWhere(
-    (item) => (item['id'] as num).toInt() == screedType,
-    orElse: () => spec.normativeList('screed_types').first,
-  );
+Map<String, dynamic> _resolveScreedType(
+  SpecReader spec,
+  Map<String, double> inputs,
+) {
+  final screedType = (inputs['screedType'] ?? defaultFor(spec, 'screedType', 0))
+      .round()
+      .clamp(0, 2);
+  return spec
+      .normativeList('screed_types')
+      .firstWhere(
+        (item) => (item['id'] as num).toInt() == screedType,
+        orElse: () => spec.normativeList('screed_types').first,
+      );
 }
 
 /* ─── Main calculator ─── */
@@ -95,24 +110,40 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
       : normalizeLegacyScreedInputs(inputs);
 
   final work = _resolveArea(spec, normalized);
-  final thickness = (normalized['thickness'] ?? defaultFor(spec, 'thickness', 50))
-      .clamp(spec.materialRule<num>('min_thickness_mm').toDouble(), spec.materialRule<num>('max_thickness_mm').toDouble())
-      .toDouble();
+  final thickness =
+      (normalized['thickness'] ?? defaultFor(spec, 'thickness', 50))
+          .clamp(
+            spec.materialRule<num>('min_thickness_mm').toDouble(),
+            spec.materialRule<num>('max_thickness_mm').toDouble(),
+          )
+          .toDouble();
   final screedType = _resolveScreedType(spec, normalized);
 
   final area = work['area']!;
   final perimeter = work['perimeter']!;
-  final volume = roundValue(area * (thickness / 1000) * _volumeMultiplier, 6);
+  final volumeMultiplier =
+      (screedType['volume_multiplier'] as num?)?.toDouble() ??
+      spec.materialRule<num>('volume_multiplier').toDouble();
+  final effectiveVolumeMultiplier = volumeMultiplier > 0
+      ? volumeMultiplier
+      : _defaultVolumeMultiplier;
+  final volume = roundValue(
+    area * (thickness / 1000) * effectiveVolumeMultiplier,
+    6,
+  );
 
   // Determine effective consumption for scenarios
   double effectiveConsumptionKgPerM2Mm;
 
   if ((screedType['id'] as num).toInt() == 0) {
-    effectiveConsumptionKgPerM2Mm = (_cementFraction * _cementDensity * _volumeMultiplier) / 1000;
+    effectiveConsumptionKgPerM2Mm =
+        (_cementFraction * _cementDensity * effectiveVolumeMultiplier) / 1000;
   } else if ((screedType['id'] as num).toInt() == 1) {
-    effectiveConsumptionKgPerM2Mm = (_cpsDensityReady * _volumeMultiplier) / 1000;
+    effectiveConsumptionKgPerM2Mm =
+        (_cpsDensityReady * effectiveVolumeMultiplier) / 1000;
   } else {
-    effectiveConsumptionKgPerM2Mm = (_cpsDensitySemidry * _volumeMultiplier) / 1000;
+    effectiveConsumptionKgPerM2Mm =
+        (_cpsDensitySemidry * effectiveVolumeMultiplier) / 1000;
   }
 
   const bagWeight = 50.0;
@@ -121,9 +152,14 @@ CanonicalCalculatorContractResult calculateCanonicalScreed(
   final baseExactNeed = area * thickness * effectiveConsumptionKgPerM2Mm;
   final scenarios = <String, CanonicalScenarioResult>{};
 
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('concrete', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('concrete', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(baseExactNeed * accuracyMult * multiplier, 6);
     final bags = exactNeed > 0 ? (exactNeed / bagWeight).ceil() : 0;
     final purchaseQuantity = roundValue(bags * bagWeight, 6);
@@ -138,11 +174,16 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:screed-bag-${bagWeight.toInt()}${spec.packagingRule<String>('unit')}',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
-        packageLabel: 'screed-bag-${bagWeight.toInt()}${spec.packagingRule<String>('unit')}',
+        packageLabel:
+            'screed-bag-${bagWeight.toInt()}${spec.packagingRule<String>('unit')}',
         packageSize: bagWeight,
         packagesCount: bags,
         unit: spec.packagingRule<String>('unit'),
@@ -155,7 +196,10 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   // Ancillary quantities
   final cementKg = roundValue(volume * _cementFraction * _cementDensity, 3);
   final bags50Cement = (cementKg / 50).ceil();
-  final sandTons = roundValue((volume * _sandFraction * _sandDensity * 10).ceil() / 10, 3);
+  final sandTons = roundValue(
+    (volume * _sandFraction * _sandDensity * 10).ceil() / 10,
+    3,
+  );
   final waterL = roundValue(volume * _waterPerM3, 3);
 
   final cpsKgReady = roundValue(volume * _cpsDensityReady, 3);
@@ -164,9 +208,12 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
 
   final cpsKgSemidry = roundValue(volume * _cpsDensitySemidry, 3);
   final bags50Semidry = (cpsKgSemidry / 50).ceil();
-  final fiberKg = roundValue(area * _fiberKgPerM2, 3);
+  final fiberKg = roundValue(volume * _fiberKgPerM3, 3);
+  final fiberPackages = (fiberKg / _fiberPackageKg).ceil();
 
-  final meshArea = thickness >= spec.materialRule<num>('mesh_thickness_threshold_mm').toDouble()
+  final meshArea =
+      thickness >=
+          spec.materialRule<num>('mesh_thickness_threshold_mm').toDouble()
       ? (area * _meshMargin).ceil()
       : 0;
   final filmArea = (area * _filmMargin).ceil();
@@ -185,10 +232,14 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         withReserve: (bags50Cement * 50).toDouble(),
         purchaseQty: (bags50Cement * 50).toDouble(),
         category: 'Основное',
-        packageInfo: {'count': bags50Cement, 'unitSize': 50.0, 'packageUnit': 'мешков'},
+        packageInfo: {
+          'count': bags50Cement,
+          'unitSize': 50.0,
+          'packageUnit': 'мешков',
+        },
       ),
       CanonicalMaterialResult(
-        name: 'Песок строительный',
+        name: 'Песок строительный мытый, средней или крупной фракции',
         quantity: sandTons,
         unit: 'т',
         withReserve: sandTons,
@@ -196,7 +247,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         category: 'Основное',
       ),
       CanonicalMaterialResult(
-        name: 'Вода',
+        name: 'Чистая вода для затворения раствора',
         quantity: waterL,
         unit: 'л',
         withReserve: waterL,
@@ -204,7 +255,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         category: 'Основное',
       ),
       CanonicalMaterialResult(
-        name: 'Плёнка ПЭ',
+        name: 'Полиэтиленовая плёнка толщиной 200 мкм',
         quantity: filmArea.toDouble(),
         unit: 'м²',
         withReserve: filmArea.toDouble(),
@@ -213,18 +264,20 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       ),
     ]);
     if (meshArea > 0) {
-      materials.add(CanonicalMaterialResult(
-        name: 'Сетка армирующая',
-        quantity: meshArea.toDouble(),
-        unit: 'м²',
-        withReserve: meshArea.toDouble(),
-        purchaseQty: meshArea.toDouble(),
-        category: 'Армирование',
-      ));
+      materials.add(
+        CanonicalMaterialResult(
+          name: 'Сетка армирующая сварная 100×100×4 мм',
+          quantity: meshArea.toDouble(),
+          unit: 'м²',
+          withReserve: meshArea.toDouble(),
+          purchaseQty: meshArea.toDouble(),
+          category: 'Армирование',
+        ),
+      );
     }
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'Маячковый профиль',
+        name: 'Маячковый профиль 10 мм, длина 3 м',
         quantity: beacons.toDouble(),
         unit: 'шт',
         withReserve: beacons.toDouble(),
@@ -232,7 +285,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         category: 'Разметка',
       ),
       CanonicalMaterialResult(
-        name: 'Демпферная лента',
+        name: 'Демпферная лента 8–10×100 мм',
         quantity: damperTapeM.toDouble(),
         unit: 'м',
         withReserve: damperTapeM.toDouble(),
@@ -243,16 +296,20 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   } else if ((screedType['id'] as num).toInt() == 1) {
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'Готовая ЦПС М150 (мешки 50 кг)',
+        name: 'Готовая цементно-песчаная смесь М150 (мешки 50 кг)',
         quantity: cpsKgReady,
         unit: 'кг',
         withReserve: (bags50Ready * 50).toDouble(),
         purchaseQty: (bags50Ready * 50).toDouble(),
         category: 'Основное',
-        packageInfo: {'count': bags50Ready, 'unitSize': 50.0, 'packageUnit': 'мешков'},
+        packageInfo: {
+          'count': bags50Ready,
+          'unitSize': 50.0,
+          'packageUnit': 'мешков',
+        },
       ),
       CanonicalMaterialResult(
-        name: 'Плёнка ПЭ',
+        name: 'Полиэтиленовая плёнка толщиной 200 мкм',
         quantity: filmArea.toDouble(),
         unit: 'м²',
         withReserve: filmArea.toDouble(),
@@ -261,18 +318,20 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       ),
     ]);
     if (meshArea > 0) {
-      materials.add(CanonicalMaterialResult(
-        name: 'Сетка армирующая',
-        quantity: meshArea.toDouble(),
-        unit: 'м²',
-        withReserve: meshArea.toDouble(),
-        purchaseQty: meshArea.toDouble(),
-        category: 'Армирование',
-      ));
+      materials.add(
+        CanonicalMaterialResult(
+          name: 'Сетка армирующая сварная 100×100×4 мм',
+          quantity: meshArea.toDouble(),
+          unit: 'м²',
+          withReserve: meshArea.toDouble(),
+          purchaseQty: meshArea.toDouble(),
+          category: 'Армирование',
+        ),
+      );
     }
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'Маячковый профиль',
+        name: 'Маячковый профиль 10 мм, длина 3 м',
         quantity: beacons.toDouble(),
         unit: 'шт',
         withReserve: beacons.toDouble(),
@@ -280,7 +339,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         category: 'Разметка',
       ),
       CanonicalMaterialResult(
-        name: 'Демпферная лента',
+        name: 'Демпферная лента 8–10×100 мм',
         quantity: damperTapeM.toDouble(),
         unit: 'м',
         withReserve: damperTapeM.toDouble(),
@@ -292,24 +351,33 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
     // Type 2 — Semi-dry
     materials.addAll([
       CanonicalMaterialResult(
-        name: 'ЦПС полусухая (мешки 50 кг)',
+        name: 'Цементно-песчаная смесь для полусухой стяжки (мешки 50 кг)',
         quantity: cpsKgSemidry,
         unit: 'кг',
         withReserve: (bags50Semidry * 50).toDouble(),
         purchaseQty: (bags50Semidry * 50).toDouble(),
         category: 'Основное',
-        packageInfo: {'count': bags50Semidry, 'unitSize': 50.0, 'packageUnit': 'мешков'},
+        packageInfo: {
+          'count': bags50Semidry,
+          'unitSize': 50.0,
+          'packageUnit': 'мешков',
+        },
       ),
       CanonicalMaterialResult(
-        name: 'Фиброволокно ПП',
+        name: 'Фиброволокно полипропиленовое, 12 мм (пакеты 0.6 кг)',
         quantity: fiberKg,
         unit: 'кг',
-        withReserve: fiberKg,
-        purchaseQty: fiberKg.ceil().toDouble(),
+        withReserve: roundValue(fiberPackages * _fiberPackageKg, 3),
+        purchaseQty: roundValue(fiberPackages * _fiberPackageKg, 3),
+        packageInfo: {
+          'count': fiberPackages,
+          'unitSize': _fiberPackageKg,
+          'packageUnit': 'пакетов',
+        },
         category: 'Армирование',
       ),
       CanonicalMaterialResult(
-        name: 'Плёнка ПЭ',
+        name: 'Полиэтиленовая плёнка толщиной 200 мкм',
         quantity: filmArea.toDouble(),
         unit: 'м²',
         withReserve: filmArea.toDouble(),
@@ -317,7 +385,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         category: 'Подготовка',
       ),
       CanonicalMaterialResult(
-        name: 'Демпферная лента',
+        name: 'Демпферная лента 8–10×100 мм',
         quantity: damperTapeM.toDouble(),
         unit: 'м',
         withReserve: damperTapeM.toDouble(),
@@ -333,10 +401,15 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
     warnings.add('Толщина менее 30 мм — слишком тонкая для выравнивания пола');
   }
   if (thickness > spec.warningRule<num>('thick_threshold_mm').toDouble()) {
-    warnings.add('При толщине более 100 мм рекомендуется разделить заливку на слои');
+    warnings.add(
+      'При толщине более 100 мм рекомендуется разделить заливку на слои',
+    );
   }
-  if ((screedType['id'] as num).toInt() == 0 && area > spec.warningRule<num>('large_area_cps_threshold_m2').toDouble()) {
-    warnings.add('При площади более 50 м² рекомендуется использовать готовую ЦПС');
+  if ((screedType['id'] as num).toInt() == 0 &&
+      area > spec.warningRule<num>('large_area_cps_threshold_m2').toDouble()) {
+    warnings.add(
+      'При площади более 50 м² рекомендуется использовать готовую ЦПС',
+    );
   }
 
   return CanonicalCalculatorContractResult(
@@ -351,12 +424,24 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'screedType': (screedType['id'] as num).toInt().toDouble(),
       'volume': roundValue(volume, 6),
       'cementKg': (screedType['id'] as num).toInt() == 0 ? cementKg : 0,
-      'bags50Cement': (screedType['id'] as num).toInt() == 0 ? bags50Cement.toDouble() : 0,
+      'bags50Cement': (screedType['id'] as num).toInt() == 0
+          ? bags50Cement.toDouble()
+          : 0,
       'sandTons': (screedType['id'] as num).toInt() == 0 ? sandTons : 0,
       'waterL': (screedType['id'] as num).toInt() == 0 ? waterL : 0,
-      'cpsKg': (screedType['id'] as num).toInt() == 1 ? cpsKgReady : (screedType['id'] as num).toInt() == 2 ? cpsKgSemidry : 0,
-      'bags50': (screedType['id'] as num).toInt() == 1 ? bags50Ready.toDouble() : (screedType['id'] as num).toInt() == 2 ? bags50Semidry.toDouble() : 0,
-      'bags40': (screedType['id'] as num).toInt() == 1 ? bags40Ready.toDouble() : 0,
+      'cpsKg': (screedType['id'] as num).toInt() == 1
+          ? cpsKgReady
+          : (screedType['id'] as num).toInt() == 2
+          ? cpsKgSemidry
+          : 0,
+      'bags50': (screedType['id'] as num).toInt() == 1
+          ? bags50Ready.toDouble()
+          : (screedType['id'] as num).toInt() == 2
+          ? bags50Semidry.toDouble()
+          : 0,
+      'bags40': (screedType['id'] as num).toInt() == 1
+          ? bags40Ready.toDouble()
+          : 0,
       'fiberKg': (screedType['id'] as num).toInt() == 2 ? fiberKg : 0,
       'meshArea': meshArea.toDouble(),
       'filmArea': filmArea.toDouble(),

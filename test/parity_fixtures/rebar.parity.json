@@ -1,7 +1,7 @@
 {
   "calculator_id": "rebar",
   "formula_version": "rebar-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.599Z",
+  "generated_at": "2026-08-19T07:37:48.018Z",
   "cases": [
     {
       "id": "defaults",
@@ -36,12 +36,18 @@
         "barsAlongWidth": 51,
         "verticalTieCount": 238,
         "stirrupCount": 0,
-        "minExactNeedKg": 1420.45844,
-        "recExactNeedKg": 1616.930784,
-        "maxExactNeedKg": 2102.254084,
+        "minExactNeedM": 1599.61536,
+        "recExactNeedM": 1820.868,
+        "maxExactNeedM": 2367.403248,
+        "minPurchaseM": 1602.9,
+        "recPurchaseM": 1825.2,
+        "maxPurchaseM": 2375.1,
         "minPurchaseRods": 137,
         "recPurchaseRods": 156,
-        "maxPurchaseRods": 203
+        "maxPurchaseRods": 203,
+        "minExactNeedKg": 1420.458,
+        "recExactNeedKg": 1616.931,
+        "maxExactNeedKg": 2102.254
       },
       "expected_materials_count": 4,
       "expected_material_names": [
@@ -54,16 +60,16 @@
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 1420.45844,
-          "purchase_quantity": 137
+          "exact_need": 1599.61536,
+          "purchase_quantity": 1602.9
         },
         "REC": {
-          "exact_need": 1616.930784,
-          "purchase_quantity": 156
+          "exact_need": 1820.868,
+          "purchase_quantity": 1825.2
         },
         "MAX": {
-          "exact_need": 2102.254084,
-          "purchase_quantity": 203
+          "exact_need": 2367.403248,
+          "purchase_quantity": 2375.1
         }
       }
     }

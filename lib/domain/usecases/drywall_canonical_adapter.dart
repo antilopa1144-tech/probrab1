@@ -14,7 +14,16 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
   final workType = (inputs['workType'] ?? defaultFor(spec, 'workType', 0))
       .round()
       .clamp(0, 2);
-  final length = math.max(
+  final inputMode =
+      (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round() == 1
+      ? 1
+      : 0;
+  final wallScope =
+      workType == 1 &&
+          (inputs['wallScope'] ?? defaultFor(spec, 'wallScope', 0)).round() == 1
+      ? 1
+      : 0;
+  final sourceLength = math.max(
     0.5,
     math.min(30.0, inputs['length'] ?? defaultFor(spec, 'length', 5)),
   );
@@ -22,6 +31,34 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
     1.5,
     math.min(5.0, inputs['height'] ?? defaultFor(spec, 'height', 2.7)),
   );
+  final roomLength = math.max(
+    0.5,
+    math.min(30.0, inputs['roomLength'] ?? defaultFor(spec, 'roomLength', 5)),
+  );
+  final roomWidth = math.max(
+    0.5,
+    math.min(30.0, inputs['roomWidth'] ?? defaultFor(spec, 'roomWidth', 4)),
+  );
+  final requestedArea = math.max(
+    0.1,
+    math.min(1000.0, inputs['area'] ?? defaultFor(spec, 'area', 20)),
+  );
+  final segments = inputMode == 1
+      ? <double>[requestedArea / height]
+      : wallScope == 1
+      ? <double>[roomLength, roomWidth, roomLength, roomWidth]
+      : <double>[sourceLength];
+  final wallRun = segments.fold<double>(0, (sum, segment) => sum + segment);
+  final grossArea = inputMode == 1 ? requestedArea : wallRun * height;
+  final requestedOpenings = math.max(
+    0.0,
+    inputs['openingsArea'] ?? defaultFor(spec, 'openingsArea', 0),
+  );
+  final openingsArea = inputMode == 1
+      ? 0.0
+      : math.min(requestedOpenings, math.max(0.0, grossArea - 0.1));
+  final area = roundValue(math.max(0.1, grossArea - openingsArea), 3);
+  final length = inputMode == 1 ? requestedArea / height : sourceLength;
   final layersRaw = (inputs['layers'] ?? defaultFor(spec, 'layers', 1)).round();
   final layers = layersRaw == 2 ? 2 : 1;
   final sheetSize = (inputs['sheetSize'] ?? defaultFor(spec, 'sheetSize', 0))
@@ -31,7 +68,6 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       inputs['profileStep'] ?? defaultFor(spec, 'profileStep', 0.6);
   final profileStep = profileStepRaw <= 0.4 ? 0.4 : 0.6;
 
-  final area = roundValue(length * height, 3);
   final sides = workType == 0 ? 2 : 1;
   final totalSheetArea = area * sides * layers;
 
@@ -45,8 +81,14 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
               spec.materialRule<num>('sheet_reserve').toDouble())
           .ceil();
 
-  // Profile PN (perimeter)
-  final pnPerimeter = 2 * (length + height);
+  // Для перегородки направляющий профиль идёт по полу и потолку.
+  // У облицовки каждая выбранная стена считается отдельной рамой.
+  final pnPerimeter = workType == 0
+      ? 2 * wallRun
+      : segments.fold<double>(
+          0,
+          (sum, segment) => sum + 2 * (segment + height),
+        );
   final pnLength =
       (pnPerimeter *
               spec.materialRule<num>('profile_reserve').toDouble() /
@@ -57,28 +99,34 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       (pnLength / spec.materialRule<num>('profile_length_m').toDouble())
           .round();
 
-  // Profile PP (studs)
-  final ppCount = (length / profileStep).ceil() + 1;
+  final ppCount = segments.fold<int>(
+    0,
+    (sum, segment) => sum + (segment / profileStep).ceil() + 1,
+  );
   final ppLength =
       ppCount * height * spec.materialRule<num>('profile_reserve').toDouble();
   final ppPieces =
       (ppLength / spec.materialRule<num>('profile_length_m').toDouble()).ceil();
 
-  // Screws (in kg)
-  final screwsTFpcs =
-      (totalSheetArea *
+  // Саморезы считаются поштучно; второй слой крепится более длинными.
+  final layerSheetArea = area * sides;
+  final screws25Pcs =
+      (layerSheetArea *
               spec.materialRule<num>('screws_tf_per_m2').toDouble() *
               spec.materialRule<num>('profile_reserve').toDouble())
           .ceil();
-  final screwsTFkg =
-      (screwsTFpcs / 1000 * 10).ceil() / 10; // 3.5×25 мм: 1000 шт/кг
+  final screws35Pcs = layers == 2
+      ? (layerSheetArea *
+                spec.materialRule<num>('screws_tf_per_m2').toDouble() *
+                spec.materialRule<num>('profile_reserve').toDouble())
+            .ceil()
+      : 0;
+  final screwsTFpcs = screws25Pcs + screws35Pcs;
   final screwsLBpcs =
       (ppCount *
               spec.materialRule<num>('screws_lb_per_profile').toDouble() *
               spec.materialRule<num>('profile_reserve').toDouble())
           .ceil();
-  final screwsLBkg =
-      (screwsLBpcs / 4000 * 10).ceil() / 10; // 3.5×9.5 мм клопы: 4000 шт/кг
 
   // Dowels
   final dowels =
@@ -156,6 +204,8 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'workType:$workType',
+        'inputMode:$inputMode',
+        'wallScope:$wallScope',
         'sheetSize:$sheetSize',
         'layers:$layers',
         'profileStep:$profileStep',
@@ -179,6 +229,21 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
   }
 
   final recScenario = scenarios['REC']!;
+  final sheetWidth = ((sheetDef['w'] as num).toDouble() * 1000).round();
+  final sheetHeight = ((sheetDef['h'] as num).toDouble() * 1000).round();
+  final isPartition = workType == 0;
+  final guideProfileName = isPartition
+      ? 'Направляющий профиль ПН 50×40 мм, длина 3 м'
+      : 'Направляющий профиль ПН 27×28 мм, длина 3 м';
+  final mainProfileName = isPartition
+      ? 'Стоечный профиль ПС 50×50 мм, длина 3 м'
+      : 'Потолочный профиль ПП 60×27 мм, длина 3 м';
+  final screwsTfPackage = spec
+      .materialRule<num>('screws_tf_package_pcs')
+      .toInt();
+  final screwsLbPackage = spec
+      .materialRule<num>('screws_lb_package_pcs')
+      .toInt();
 
   final warnings = <String>[];
   if (height >
@@ -191,7 +256,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
 
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: 'ГКЛ листы',
+      name: 'Гипсокартонный лист (ГКЛ) 12,5×$sheetWidth×$sheetHeight мм',
       quantity: recScenario.exactNeed,
       unit: 'шт',
       withReserve: recScenario.exactNeed,
@@ -199,7 +264,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       category: 'Основное',
     ),
     CanonicalMaterialResult(
-      name: 'Профиль ПН 27\u00d728 3м',
+      name: guideProfileName,
       quantity: pnPieces.toDouble(),
       unit: 'шт',
       withReserve: pnPieces.toDouble(),
@@ -207,7 +272,7 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
-      name: 'Профиль ПП 60\u00d727 3м',
+      name: mainProfileName,
       quantity: ppPieces.toDouble(),
       unit: 'шт',
       withReserve: ppPieces.toDouble(),
@@ -215,23 +280,35 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
-      name: 'Саморезы 3.5\u00d725 мм',
-      quantity: screwsTFkg,
-      unit: 'кг',
-      withReserve: screwsTFkg,
-      purchaseQty: screwsTFkg.ceil().toDouble(),
+      name: 'Саморезы по металлу для гипсокартона 3,5×25 мм',
+      quantity: screws25Pcs.toDouble(),
+      unit: 'шт',
+      withReserve: screws25Pcs.toDouble(),
+      purchaseQty:
+          (screws25Pcs / screwsTfPackage).ceil() * screwsTfPackage.toDouble(),
+      category: 'Крепёж',
+    ),
+    if (screws35Pcs > 0)
+      CanonicalMaterialResult(
+        name: 'Саморезы по металлу для гипсокартона 3,5×35 мм',
+        quantity: screws35Pcs.toDouble(),
+        unit: 'шт',
+        withReserve: screws35Pcs.toDouble(),
+        purchaseQty:
+            (screws35Pcs / screwsTfPackage).ceil() * screwsTfPackage.toDouble(),
+        category: 'Крепёж',
+      ),
+    CanonicalMaterialResult(
+      name: 'Саморезы с прессшайбой 3,5×9,5 мм для сборки каркаса',
+      quantity: screwsLBpcs.toDouble(),
+      unit: 'шт',
+      withReserve: screwsLBpcs.toDouble(),
+      purchaseQty:
+          (screwsLBpcs / screwsLbPackage).ceil() * screwsLbPackage.toDouble(),
       category: 'Крепёж',
     ),
     CanonicalMaterialResult(
-      name: 'Саморезы-клопы 3.5\u00d79.5 мм',
-      quantity: screwsLBkg,
-      unit: 'кг',
-      withReserve: screwsLBkg,
-      purchaseQty: screwsLBkg.ceil().toDouble(),
-      category: 'Крепёж',
-    ),
-    CanonicalMaterialResult(
-      name: 'Дюбели 6\u00d740',
+      name: 'Дюбель-гвозди 6×40 мм',
       quantity: dowels.toDouble(),
       unit: 'шт',
       withReserve: dowels.toDouble(),
@@ -294,8 +371,15 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
     materials: materials,
     totals: {
       'area': area,
+      'grossArea': roundValue(grossArea, 3),
+      'openingsArea': roundValue(openingsArea, 3),
+      'inputMode': inputMode.toDouble(),
+      'wallScope': wallScope.toDouble(),
       'workType': workType.toDouble(),
       'length': roundValue(length, 3),
+      'roomLength': roundValue(roomLength, 3),
+      'roomWidth': roundValue(roomWidth, 3),
+      'wallRun': roundValue(wallRun, 3),
       'height': roundValue(height, 3),
       'layers': layers.toDouble(),
       'sheetSize': sheetSize.toDouble(),
@@ -308,8 +392,10 @@ CanonicalCalculatorContractResult calculateCanonicalDrywall(
       'pnPieces': pnPieces.toDouble(),
       'ppCount': ppCount.toDouble(),
       'ppPieces': ppPieces.toDouble(),
-      'screwsTF': screwsTFkg,
-      'screwsLB': screwsLBkg,
+      'screwsTF': screwsTFpcs.toDouble(),
+      'screwsLB': screwsLBpcs.toDouble(),
+      'screws25Pcs': screws25Pcs.toDouble(),
+      'screws35Pcs': screws35Pcs.toDouble(),
       'dowels': dowels.toDouble(),
       'sealingTapeRolls': sealingTapeRolls.toDouble(),
       'puttyStartBags': puttyStartBags.toDouble(),

@@ -5,19 +5,25 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-
 const Map<int, String> _pipeTypeLabels = {
-  0: 'PEX-a',
-  1: 'PEX-b',
-  2: 'PE-RT',
+  0: 'сшитый полиэтилен PEX-a',
+  1: 'сшитый полиэтилен PEX-b',
+  2: 'термостойкий полиэтилен PE-RT',
   3: 'Металлопластик',
 };
 
 Map<String, double> _resolveArea(SpecReader spec, Map<String, double> inputs) {
-  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
+  final inputMode = (inputs['inputMode'] ?? defaultFor(spec, 'inputMode', 0))
+      .round();
   if (inputMode == 0) {
-    final length = (inputs['length'] ?? defaultFor(spec, 'length', 5)).clamp(1.0, 30.0);
-    final width = (inputs['width'] ?? defaultFor(spec, 'width', 4)).clamp(1.0, 30.0);
+    final length = (inputs['length'] ?? defaultFor(spec, 'length', 5)).clamp(
+      1.0,
+      30.0,
+    );
+    final width = (inputs['width'] ?? defaultFor(spec, 'width', 4)).clamp(
+      1.0,
+      30.0,
+    );
     return {
       'inputMode': 0.0,
       'area': roundValue(length * width, 3),
@@ -26,7 +32,10 @@ Map<String, double> _resolveArea(SpecReader spec, Map<String, double> inputs) {
       'width': width,
     };
   }
-  final area = (inputs['area'] ?? defaultFor(spec, 'area', 20)).clamp(1.0, 300.0);
+  final area = (inputs['area'] ?? defaultFor(spec, 'area', 20)).clamp(
+    1.0,
+    300.0,
+  );
   return {
     'inputMode': 1.0,
     'area': roundValue(area, 3),
@@ -46,31 +55,104 @@ CanonicalCalculatorContractResult calculateCanonicalWarmFloorPipes(
   final area = areaInfo['area']!;
   final perimeter = areaInfo['perimeter']!;
 
-  final pipeStep = (inputs['pipeStep'] ?? defaultFor(spec, 'pipeStep', 200)).clamp(100.0, 300.0);
-  final pipeType = (inputs['pipeType'] ?? defaultFor(spec, 'pipeType', 0)).round().clamp(0, 3);
+  final pipeStep = (inputs['pipeStep'] ?? defaultFor(spec, 'pipeStep', 200))
+      .clamp(100.0, 300.0);
+  final pipeType = (inputs['pipeType'] ?? defaultFor(spec, 'pipeType', 0))
+      .round()
+      .clamp(0, 3);
+  final zonedLayoutEnabled = (inputs['zonedLayoutEnabled'] ?? 0).round() == 1;
+  final windowZoneStepMm = spec
+      .materialRule<num>('window_zone_step_mm', 120)
+      .toDouble();
+  final centralZoneStepMm = spec
+      .materialRule<num>('central_zone_step_mm', 200)
+      .toDouble();
+  final windowZoneFraction =
+      (inputs['windowZoneFraction'] ??
+              spec.materialRule<num>('window_zone_fraction', 0.2))
+          .clamp(0.0, 0.5)
+          .toDouble();
 
   /* ─── core formulas ─── */
-  final usefulArea = roundValue(area * spec.materialRule<num>('furniture_reduction').toDouble(), 3);
-  final pipeStepM = pipeStep / 1000;
-  final pipeLength = roundValue(usefulArea / pipeStepM + spec.materialRule<num>('collector_addition_m').toDouble(), 3);
-  final circuits = math.max(1, (pipeLength / spec.materialRule<num>('max_circuit_m').toDouble()).ceil());
-  final totalPipe = roundValue(pipeLength * spec.materialRule<num>('pipe_reserve').toDouble(), 3);
-  final coils = (totalPipe / spec.materialRule<num>('pipe_coil_m').toDouble()).ceil();
+  final usefulArea = roundValue(
+    area * spec.materialRule<num>('furniture_reduction').toDouble(),
+    3,
+  );
+  final pipeStepM = zonedLayoutEnabled
+      ? roundValue(
+          usefulArea /
+              math.max(
+                1e-9,
+                usefulArea * windowZoneFraction / (windowZoneStepMm / 1000) +
+                    usefulArea *
+                        (1 - windowZoneFraction) /
+                        (centralZoneStepMm / 1000),
+              ),
+          4,
+        )
+      : pipeStep / 1000;
+  final pipeLength = zonedLayoutEnabled
+      ? roundValue(
+          usefulArea * windowZoneFraction / (windowZoneStepMm / 1000) +
+              usefulArea *
+                  (1 - windowZoneFraction) /
+                  (centralZoneStepMm / 1000) +
+              spec.materialRule<num>('collector_addition_m').toDouble(),
+          3,
+        )
+      : roundValue(
+          usefulArea / pipeStepM +
+              spec.materialRule<num>('collector_addition_m').toDouble(),
+          3,
+        );
+  final circuits = math.max(
+    1,
+    (pipeLength / spec.materialRule<num>('max_circuit_m').toDouble()).ceil(),
+  );
+  final totalPipe = roundValue(
+    pipeLength * spec.materialRule<num>('pipe_reserve').toDouble(),
+    3,
+  );
+  final coils = (totalPipe / spec.materialRule<num>('pipe_coil_m').toDouble())
+      .ceil();
 
   /* ─── ancillary materials ─── */
-  final eppsSheets = (area * spec.materialRule<num>('epps_reserve').toDouble() / spec.materialRule<num>('epps_sheet_m2').toDouble()).ceil();
-  final damperTapeRolls = (perimeter * spec.materialRule<num>('damper_reserve').toDouble() / spec.materialRule<num>('damper_tape_roll_m').toDouble()).ceil();
-  final anchorTotal = (totalPipe / spec.materialRule<num>('anchor_step_m').toDouble() * spec.materialRule<num>('anchor_reserve').toDouble()).ceil();
-  final anchorPacks = (anchorTotal / spec.materialRule<num>('anchor_pack').toDouble()).ceil();
-  final screedBags = (area * spec.materialRule<num>('screed_thickness_m').toDouble() * spec.materialRule<num>('screed_density').toDouble() / spec.materialRule<num>('screed_bag_kg').toDouble()).ceil();
+  final eppsSheets =
+      (area *
+              spec.materialRule<num>('epps_reserve').toDouble() /
+              spec.materialRule<num>('epps_sheet_m2').toDouble())
+          .ceil();
+  final damperTapeRolls =
+      (perimeter *
+              spec.materialRule<num>('damper_reserve').toDouble() /
+              spec.materialRule<num>('damper_tape_roll_m').toDouble())
+          .ceil();
+  final anchorTotal =
+      (totalPipe /
+              spec.materialRule<num>('anchor_step_m').toDouble() *
+              spec.materialRule<num>('anchor_reserve').toDouble())
+          .ceil();
+  final anchorPacks =
+      (anchorTotal / spec.materialRule<num>('anchor_pack').toDouble()).ceil();
+  final screedBags =
+      (area *
+              spec.materialRule<num>('screed_thickness_m').toDouble() *
+              spec.materialRule<num>('screed_density').toDouble() /
+              spec.materialRule<num>('screed_bag_kg').toDouble())
+          .ceil();
 
   /* ─── scenarios ─── */
   final basePrimary = totalPipe;
   final scenarios = <String, CanonicalScenarioResult>{};
 
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(basePrimary * accuracyMult * multiplier, 6);
     final packageSize = spec.materialRule<num>('pipe_coil_m').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
@@ -87,7 +169,11 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -102,19 +188,26 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   final recScenario = scenarios['REC']!;
 
   /* ─── materials list ─── */
-  final pipeTypeLabel = _pipeTypeLabels[pipeType] ?? 'PEX-a';
+  final pipeTypeLabel =
+      _pipeTypeLabels[pipeType] ?? 'сшитого полиэтилена PEX-a';
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: 'Труба $pipeTypeLabel (бухты ${spec.materialRule<num>('pipe_coil_m').toInt()} м)',
+      name:
+          'Труба из $pipeTypeLabel (бухты ${spec.materialRule<num>('pipe_coil_m').toInt()} м)',
       quantity: roundValue(totalPipe, 3),
       unit: 'м',
       withReserve: (coils * spec.materialRule<num>('pipe_coil_m').toDouble()),
-      purchaseQty: (coils * spec.materialRule<num>('pipe_coil_m').toDouble()).toDouble(),
+      purchaseQty: (coils * spec.materialRule<num>('pipe_coil_m').toDouble())
+          .toDouble(),
       category: 'Основное',
-      packageInfo: {'count': coils, 'unitSize': spec.materialRule<num>('pipe_coil_m').toDouble(), 'packageUnit': 'бухт'},
+      packageInfo: {
+        'count': coils,
+        'unitSize': spec.materialRule<num>('pipe_coil_m').toDouble(),
+        'packageUnit': 'бухт',
+      },
     ),
     CanonicalMaterialResult(
-      name: 'Утеплитель ЭППС (листы 1200×600)',
+      name: 'Экструдированный пенополистирол (ЭППС), листы 1200×600 мм',
       quantity: eppsSheets.toDouble(),
       unit: 'листов',
       withReserve: eppsSheets.toDouble(),
@@ -133,10 +226,17 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       name: 'Якорные клипсы (упаковки по 100 шт)',
       quantity: anchorTotal.toDouble(),
       unit: 'шт',
-      withReserve: (anchorPacks * spec.materialRule<num>('anchor_pack').toDouble()),
-      purchaseQty: (anchorPacks * spec.materialRule<num>('anchor_pack').toDouble()).toDouble(),
+      withReserve:
+          (anchorPacks * spec.materialRule<num>('anchor_pack').toDouble()),
+      purchaseQty:
+          (anchorPacks * spec.materialRule<num>('anchor_pack').toDouble())
+              .toDouble(),
       category: 'Крепёж',
-      packageInfo: {'count': anchorPacks, 'unitSize': spec.materialRule<num>('anchor_pack').toDouble(), 'packageUnit': 'упаковок'},
+      packageInfo: {
+        'count': anchorPacks,
+        'unitSize': spec.materialRule<num>('anchor_pack').toDouble(),
+        'packageUnit': 'упаковок',
+      },
     ),
     CanonicalMaterialResult(
       name: 'Коллектор ($circuits контуров)',
@@ -148,22 +248,45 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
     ),
     CanonicalMaterialResult(
       name: 'Стяжка полусухая (мешки 25 кг)',
-      quantity: roundValue(area * spec.materialRule<num>('screed_thickness_m').toDouble() * spec.materialRule<num>('screed_density').toDouble(), 3),
+      quantity: roundValue(
+        area *
+            spec.materialRule<num>('screed_thickness_m').toDouble() *
+            spec.materialRule<num>('screed_density').toDouble(),
+        3,
+      ),
       unit: 'кг',
-      withReserve: (screedBags * spec.materialRule<num>('screed_bag_kg').toDouble()),
-      purchaseQty: (screedBags * spec.materialRule<num>('screed_bag_kg').toDouble()).toDouble(),
+      withReserve:
+          (screedBags * spec.materialRule<num>('screed_bag_kg').toDouble()),
+      purchaseQty:
+          (screedBags * spec.materialRule<num>('screed_bag_kg').toDouble())
+              .toDouble(),
       category: 'Основное',
-      packageInfo: {'count': screedBags, 'unitSize': spec.materialRule<num>('screed_bag_kg').toDouble(), 'packageUnit': 'мешков'},
+      packageInfo: {
+        'count': screedBags,
+        'unitSize': spec.materialRule<num>('screed_bag_kg').toDouble(),
+        'packageUnit': 'мешков',
+      },
     ),
   ];
 
   /* ─── warnings ─── */
   final warnings = <String>[];
-  if (pipeLength > spec.warningRule<num>('multiple_circuits_pipe_threshold_m').toDouble()) {
+  if (pipeLength >
+      spec.warningRule<num>('multiple_circuits_pipe_threshold_m').toDouble()) {
     warnings.add('Длина трубы более 80 м — рекомендуется несколько контуров');
   }
-  if (area > spec.warningRule<num>('professional_heat_loss_area_threshold_m2').toDouble()) {
-    warnings.add('Площадь более 40 м² — рекомендуется профессиональный расчёт теплопотерь');
+  if (area >
+      spec
+          .warningRule<num>('professional_heat_loss_area_threshold_m2')
+          .toDouble()) {
+    warnings.add(
+      'Площадь более 40 м² — рекомендуется профессиональный расчёт теплопотерь',
+    );
+  }
+  if (!zonedLayoutEnabled) {
+    warnings.add(
+      'Раскладка трубы единым шагом — у окон будет холоднее, чем в центре. Включите zonedLayoutEnabled для тепловой завесы у окна (СП 60.13330.2020).',
+    );
   }
 
   return CanonicalCalculatorContractResult(
@@ -178,6 +301,10 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'width': areaInfo['width']!,
       'pipeStep': pipeStep,
       'pipeType': pipeType.toDouble(),
+      'zonedLayoutEnabled': zonedLayoutEnabled ? 1.0 : 0.0,
+      'windowZoneStepMm': zonedLayoutEnabled ? windowZoneStepMm : 0.0,
+      'centralZoneStepMm': zonedLayoutEnabled ? centralZoneStepMm : 0.0,
+      'windowZoneFraction': roundValue(windowZoneFraction, 3),
       'usefulArea': usefulArea,
       'pipeStepM': roundValue(pipeStepM, 4),
       'pipeLength': roundValue(pipeLength, 3),

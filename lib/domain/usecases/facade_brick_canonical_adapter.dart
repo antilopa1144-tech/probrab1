@@ -6,8 +6,6 @@ import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
-
-
 const Map<int, String> _brickTypeLabels = {
   0: 'Кирпич облицовочный одинарный (65 мм)',
   1: 'Кирпич облицовочный полуторный (88 мм)',
@@ -20,14 +18,15 @@ const Map<int, String> _tieTypeLabels = {
   2: 'Связи нержавеющие',
 };
 
-
 bool hasCanonicalFacadeBrickInputs(Map<String, double> inputs) {
   return inputs.containsKey('brickType') ||
       inputs.containsKey('jointThickness') ||
       inputs.containsKey('withTie');
 }
 
-Map<String, double> normalizeLegacyFacadeBrickInputs(Map<String, double> inputs) {
+Map<String, double> normalizeLegacyFacadeBrickInputs(
+  Map<String, double> inputs,
+) {
   final normalized = Map<String, double>.from(inputs);
   normalized['area'] = (inputs['area'] ?? 80).toDouble();
   normalized['brickType'] = (inputs['brickType'] ?? 0).toDouble();
@@ -35,7 +34,6 @@ Map<String, double> normalizeLegacyFacadeBrickInputs(Map<String, double> inputs)
   normalized['withTie'] = (inputs['withTie'] ?? 0).toDouble();
   return normalized;
 }
-
 
 CanonicalCalculatorContractResult calculateCanonicalFacadeBrick(
   Map<String, double> inputs, {
@@ -47,51 +45,130 @@ CanonicalCalculatorContractResult calculateCanonicalFacadeBrick(
       ? Map<String, double>.from(inputs)
       : normalizeLegacyFacadeBrickInputs(inputs);
 
-  final area = math.max(5.0, math.min(1000.0, (normalized['area'] ?? defaultFor(spec, 'area', 80)).toDouble()));
-  final brickType = (normalized['brickType'] ?? defaultFor(spec, 'brickType', 0)).round().clamp(0, 3);
-  final jointThickness = math.max(8.0, math.min(12.0, (normalized['jointThickness'] ?? defaultFor(spec, 'jointThickness', 10)).toDouble()));
-  final withTie = (normalized['withTie'] ?? defaultFor(spec, 'withTie', 0)).round().clamp(0, 2);
+  final area = math.max(
+    5.0,
+    math.min(
+      1000.0,
+      (normalized['area'] ?? defaultFor(spec, 'area', 80)).toDouble(),
+    ),
+  );
+  final brickType =
+      (normalized['brickType'] ?? defaultFor(spec, 'brickType', 0))
+          .round()
+          .clamp(0, 3);
+  final jointThickness = math.max(
+    8.0,
+    math.min(
+      12.0,
+      (normalized['jointThickness'] ?? defaultFor(spec, 'jointThickness', 10))
+          .toDouble(),
+    ),
+  );
+  final withTie = (normalized['withTie'] ?? defaultFor(spec, 'withTie', 0))
+      .round()
+      .clamp(0, 2);
+  final windowCount =
+      (normalized['windowCount'] ?? defaultFor(spec, 'windowCount', 0))
+          .round()
+          .clamp(0, 50);
+  final avgWindowWidth =
+      (normalized['avgWindowWidth'] ?? defaultFor(spec, 'avgWindowWidth', 1.5))
+          .clamp(0.5, 4.0)
+          .toDouble();
 
   // Bricks
-  final dimMap = spec.materialRule<Map>('brick_dims')['$brickType'] as Map? ?? spec.materialRule<Map>('brick_dims')['0'] as Map? ?? {'l': 250, 'h': 65};
+  final dimMap =
+      spec.materialRule<Map>('brick_dims')['$brickType'] as Map? ??
+      spec.materialRule<Map>('brick_dims')['0'] as Map? ??
+      {'l': 250, 'h': 65};
   final jointMm = jointThickness;
   final l = (((dimMap['l'] as num?)?.toDouble() ?? 250) + jointMm) / 1000;
   final h = (((dimMap['h'] as num?)?.toDouble() ?? 65) + jointMm) / 1000;
   final bricksPerM2 = roundValue(1 / (l * h), 3);
   final totalBricks = roundValue(area * bricksPerM2, 3);
-  final bricksWithReserve = (totalBricks * spec.materialRule<num>('brick_reserve').toDouble()).ceil();
+  final bricksWithReserve =
+      (totalBricks * spec.materialRule<num>('brick_reserve').toDouble()).ceil();
 
   // Mortar / cement / sand
-  final masonryVolume = roundValue(area * spec.materialRule<num>('masonry_thickness').toDouble(), 6);
-  final mortarVolume = roundValue(masonryVolume * spec.materialRule<num>('mortar_volume_coeff').toDouble(), 6);
-  final cementBags = (mortarVolume * spec.materialRule<num>('cement_kg_per_m3_mortar').toDouble() / spec.materialRule<num>('cement_bag_kg').toDouble()).ceil();
-  final sandM3 = roundValue((mortarVolume * spec.materialRule<num>('sand_coeff').toDouble() * 10).ceil() / 10, 1);
+  final masonryVolume = roundValue(
+    area * spec.materialRule<num>('masonry_thickness').toDouble(),
+    6,
+  );
+  final mortarVolume = roundValue(
+    masonryVolume * spec.materialRule<num>('mortar_volume_coeff').toDouble(),
+    6,
+  );
+  final cementBags =
+      (mortarVolume *
+              spec.materialRule<num>('cement_kg_per_m3_mortar').toDouble() /
+              spec.materialRule<num>('cement_bag_kg').toDouble())
+          .ceil();
+  final sandM3 = roundValue(
+    (mortarVolume * spec.materialRule<num>('sand_coeff').toDouble() * 10)
+            .ceil() /
+        10,
+    1,
+  );
 
   // Ties
   final tiesCount = withTie > 0
-      ? (area * spec.materialRule<num>('ties_per_sqm').toDouble() * spec.materialRule<num>('ties_reserve').toDouble()).ceil()
+      ? (area *
+                spec.materialRule<num>('ties_per_sqm').toDouble() *
+                spec.materialRule<num>('ties_reserve').toDouble())
+            .ceil()
       : 0;
 
   // Hydro isolation
   final perimeterEst = roundValue(math.sqrt(area) * 4, 3);
-  final hydroArea = roundValue(perimeterEst * spec.materialRule<num>('hydro_coeff').toDouble() * spec.materialRule<num>('hydro_reserve').toDouble(), 3);
-  final hydroRolls = (hydroArea / spec.materialRule<num>('hydro_roll_m2').toDouble()).ceil();
+  final hydroArea = roundValue(
+    perimeterEst *
+        spec.materialRule<num>('hydro_coeff').toDouble() *
+        spec.materialRule<num>('hydro_reserve').toDouble(),
+    3,
+  );
+  final windowHydroArea = roundValue(
+    windowCount *
+        avgWindowWidth *
+        spec.materialRule<num>('hydro_coeff').toDouble(),
+    3,
+  );
+  final hydroRolls =
+      (hydroArea / spec.materialRule<num>('hydro_roll_m2').toDouble()).ceil();
 
   // Vent boxes
-  final ventBoxes = (perimeterEst / spec.materialRule<num>('vent_box_step_m').toDouble()).ceil();
+  final ventBoxes =
+      (perimeterEst / spec.materialRule<num>('vent_box_step_m').toDouble())
+          .ceil();
 
   // Grout
-  final groutBags = (area * spec.materialRule<num>('grout_kg_per_m2').toDouble() / spec.materialRule<num>('grout_bag_kg').toDouble()).ceil();
+  final groutBags =
+      (area *
+              spec.materialRule<num>('grout_kg_per_m2').toDouble() /
+              spec.materialRule<num>('grout_bag_kg').toDouble())
+          .ceil();
 
   // Hydrophobizer
-  final hydrophobCans = (area * spec.materialRule<num>('hydrophob_l_per_m2').toDouble() * spec.materialRule<num>('hydrophob_reserve').toDouble() / spec.materialRule<num>('hydrophob_can_l').toDouble()).ceil();
+  final hydrophobCans =
+      (area *
+              spec.materialRule<num>('hydrophob_l_per_m2').toDouble() *
+              spec.materialRule<num>('hydrophob_reserve').toDouble() /
+              spec.materialRule<num>('hydrophob_can_l').toDouble())
+          .ceil();
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('concrete', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(bricksWithReserve * accuracyMult * multiplier, 6);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
+    final exactNeed = roundValue(
+      bricksWithReserve * accuracyMult * multiplier,
+      6,
+    );
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
@@ -106,7 +183,11 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:facade-brick-piece',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -122,13 +203,24 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
 
   // Warnings
   final warnings = <String>[];
-  if (brickType == 3 && jointThickness > spec.warningRule<num>('clinker_max_joint_mm').toDouble()) {
+  if (brickType == 3 &&
+      jointThickness >
+          spec.warningRule<num>('clinker_max_joint_mm').toDouble()) {
     warnings.add('Клинкерный кирпич обычно кладётся с швом 8–10 мм');
   }
   if (withTie == 0) {
-    warnings.add('Облицовочная кладка должна иметь конструктивное крепление к основной стене (гибкие связи)');
+    warnings.add(
+      'Облицовочная кладка должна иметь конструктивное крепление к основной стене (гибкие связи)',
+    );
   }
-  warnings.add('Необходим вентиляционный зазор 20–40 мм между облицовкой и несущей стеной (СП 15.13330)');
+  if (windowCount == 0 && area > 30) {
+    warnings.add(
+      'На фасадах с окнами над каждой перемычкой нужна гидроизоляция (СП 15.13330.2020). Укажите windowCount, чтобы расчёт учёл дополнительную полосу.',
+    );
+  }
+  warnings.add(
+    'Необходим вентиляционный зазор 20–40 мм между облицовкой и несущей стеной (СП 15.13330)',
+  );
 
   // Materials
   final materials = <CanonicalMaterialResult>[
@@ -141,7 +233,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Основное',
     ),
     CanonicalMaterialResult(
-      name: 'Цемент М400 (${spec.materialRule<num>('cement_bag_kg').toDouble().round()} кг)',
+      name:
+          'Цемент М400 (${spec.materialRule<num>('cement_bag_kg').toDouble().round()} кг)',
       quantity: cementBags.toDouble(),
       unit: 'мешков',
       withReserve: cementBags.toDouble(),
@@ -159,14 +252,16 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   ];
 
   if (withTie > 0) {
-    materials.add(CanonicalMaterialResult(
-      name: _tieTypeLabels[withTie] ?? 'Связи гибкие',
-      quantity: tiesCount.toDouble(),
-      unit: 'шт',
-      withReserve: tiesCount.toDouble(),
-      purchaseQty: tiesCount.toDouble(),
-      category: 'Крепёж',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: _tieTypeLabels[withTie] ?? 'Связи гибкие',
+        quantity: tiesCount.toDouble(),
+        unit: 'шт',
+        withReserve: tiesCount.toDouble(),
+        purchaseQty: tiesCount.toDouble(),
+        category: 'Крепёж',
+      ),
+    );
   }
 
   materials.addAll([
@@ -174,10 +269,17 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       name: 'Гидроизоляция рулонная',
       quantity: hydroArea,
       unit: 'м²',
-      withReserve: (hydroRolls * spec.materialRule<num>('hydro_roll_m2').toDouble()),
-      purchaseQty: (hydroRolls * spec.materialRule<num>('hydro_roll_m2').toDouble()).toDouble(),
+      withReserve:
+          (hydroRolls * spec.materialRule<num>('hydro_roll_m2').toDouble()),
+      purchaseQty:
+          (hydroRolls * spec.materialRule<num>('hydro_roll_m2').toDouble())
+              .toDouble(),
       category: 'Изоляция',
-      packageInfo: {'count': hydroRolls, 'unitSize': spec.materialRule<num>('hydro_roll_m2').toDouble(), 'packageUnit': 'рулонов'},
+      packageInfo: {
+        'count': hydroRolls,
+        'unitSize': spec.materialRule<num>('hydro_roll_m2').toDouble(),
+        'packageUnit': 'рулонов',
+      },
     ),
     CanonicalMaterialResult(
       name: 'Вентиляционные коробки',
@@ -188,7 +290,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Вентиляция',
     ),
     CanonicalMaterialResult(
-      name: 'Затирка для швов (${spec.materialRule<num>('grout_bag_kg').toDouble().round()} кг)',
+      name:
+          'Затирка для швов (${spec.materialRule<num>('grout_bag_kg').toDouble().round()} кг)',
       quantity: groutBags.toDouble(),
       unit: 'мешков',
       withReserve: groutBags.toDouble(),
@@ -196,7 +299,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Финишная',
     ),
     CanonicalMaterialResult(
-      name: 'Гидрофобизатор (${spec.materialRule<num>('hydrophob_can_l').toDouble().round()} л)',
+      name:
+          'Гидрофобизатор (${spec.materialRule<num>('hydrophob_can_l').toDouble().round()} л)',
       quantity: hydrophobCans.toDouble(),
       unit: 'канистр',
       withReserve: hydrophobCans.toDouble(),
@@ -225,6 +329,9 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'sandM3': sandM3,
       'tiesCount': tiesCount.toDouble(),
       'perimeterEst': perimeterEst,
+      'windowCount': windowCount.toDouble(),
+      'avgWindowWidth': avgWindowWidth,
+      'windowHydroArea': windowHydroArea,
       'hydroArea': hydroArea,
       'hydroRolls': hydroRolls.toDouble(),
       'ventBoxes': ventBoxes.toDouble(),

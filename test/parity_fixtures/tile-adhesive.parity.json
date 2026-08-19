@@ -1,7 +1,7 @@
 {
   "calculator_id": "tile-adhesive",
   "formula_version": "tile-adhesive-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.658Z",
+  "generated_at": "2026-08-19T07:37:48.125Z",
   "cases": [
     {
       "id": "defaults",
@@ -19,6 +19,7 @@
         "laying": 0,
         "base": 0,
         "bagWeight": 25,
+        "doubleApplication": 0,
         "adjustedRate": 3,
         "totalKg": 66,
         "bags": 3,

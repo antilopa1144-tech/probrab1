@@ -5,49 +5,88 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-
 CanonicalCalculatorContractResult calculateCanonicalCeilingCassette(
   Map<String, double> inputs, {
   SpecReader? specOverride,
 }) {
   final spec = specOverride ?? const SpecReader(ceilingCassetteSpecData);
 
-  final area = math.max(1.0, math.min(500.0, inputs['area'] ?? defaultFor(spec, 'area', 30)));
-  final cassetteSize = (inputs['cassetteSize'] ?? defaultFor(spec, 'cassetteSize', 0)).round().clamp(0, 2);
-  final roomLength = math.max(2.0, math.min(50.0, inputs['roomLength'] ?? defaultFor(spec, 'roomLength', 6)));
+  final area = math.max(
+    1.0,
+    math.min(500.0, inputs['area'] ?? defaultFor(spec, 'area', 30)),
+  );
+  final cassetteSize =
+      (inputs['cassetteSize'] ?? defaultFor(spec, 'cassetteSize', 0))
+          .round()
+          .clamp(0, 2);
+  final roomLength = math.max(
+    2.0,
+    math.min(50.0, inputs['roomLength'] ?? defaultFor(spec, 'roomLength', 6)),
+  );
 
   final roomWidth = area / roomLength;
-  final cassetteDim = (spec.materialRule<Map>('cassette_sizes')['$cassetteSize'] as num?)?.toDouble() ?? 0.595;
+  final cassetteDim =
+      (spec.materialRule<Map>('cassette_sizes')['$cassetteSize'] as num?)
+          ?.toDouble() ??
+      0.595;
 
   // Cassettes
   final cassPerRow = (roomLength / cassetteDim).ceil();
   final rows = (roomWidth / cassetteDim).ceil();
-  final totalCass = (rows * cassPerRow * spec.materialRule<num>('cassette_reserve').toDouble()).ceil();
+  final totalCass =
+      (rows *
+              cassPerRow *
+              spec.materialRule<num>('cassette_reserve').toDouble())
+          .ceil();
 
   // Main profiles
-  final mainRows = (roomWidth / spec.materialRule<num>('main_profile_spacing').toDouble()).ceil() + 1;
-  final mainProfiles = (mainRows * roomLength / spec.materialRule<num>('main_profile_spacing').toDouble()).ceil();
+  final mainRows =
+      (roomWidth / spec.materialRule<num>('main_profile_spacing').toDouble())
+          .ceil() +
+      1;
+  final mainProfiles =
+      (mainRows *
+              roomLength /
+              spec.materialRule<num>('main_profile_spacing').toDouble())
+          .ceil();
 
   // Cross profiles
-  final crossPerRow = (roomLength / spec.materialRule<num>('cross_profile_spacing').toDouble()).ceil();
+  final crossPerRow =
+      (roomLength / spec.materialRule<num>('cross_profile_spacing').toDouble())
+          .ceil();
   final crossProfiles = mainRows * crossPerRow;
 
-  // Hangers
-  // По практике монтажа кассетных потолков подвесы считаем от площади (примерно 2.5 шт/м²).
-  // Это даёт реалистичный результат и устраняет известную проблему "подвесы не растут с площадью".
-  final hangers = (area * 2.5).ceil();
+  // Hangers: one row per main profile, including an end hanger.
+  final hangers =
+      ((roomLength / spec.materialRule<num>('hanger_spacing').toDouble())
+              .ceil() +
+          1) *
+      mainRows;
 
   // Wall angle profiles
-  final wallProfilePcs = ((roomLength + roomWidth) * 2 * spec.materialRule<num>('wall_profile_reserve').toDouble() / spec.materialRule<num>('wall_profile_length').toDouble()).ceil();
+  final wallProfilePcs =
+      ((roomLength + roomWidth) *
+              2 *
+              spec.materialRule<num>('wall_profile_reserve').toDouble() /
+              spec.materialRule<num>('wall_profile_length').toDouble())
+          .ceil();
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
+  final cassettePackageSize = spec
+      .packagingRule<num>('package_size')
+      .toDouble();
 
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(totalCass * accuracyMult * multiplier, 6);
-    final packageSize = spec.packagingRule<num>('package_size').toDouble();
+    final packageSize = cassettePackageSize;
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * packageSize, 6);
     final packageLabel = 'cassette-$cassetteSize';
@@ -61,7 +100,11 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -75,16 +118,23 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
 
   final recScenario = scenarios['REC']!;
 
-  final cassetteLabels = {0: '595\u00d7595 \u043c\u043c', 1: '600\u00d7600 \u043c\u043c', 2: '300\u00d7300 \u043c\u043c'};
+  final cassetteLabels = {
+    0: '595\u00d7595 \u043c\u043c',
+    1: '600\u00d7600 \u043c\u043c',
+    2: '300\u00d7300 \u043c\u043c',
+  };
 
   final warnings = <String>[];
   if (area > spec.warningRule<num>('large_area_threshold_m2').toDouble()) {
-    warnings.add('\u0411\u043e\u043b\u044c\u0448\u0430\u044f \u043f\u043b\u043e\u0449\u0430\u0434\u044c \u2014 \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0443\u0435\u0442\u0441\u044f \u043f\u0440\u043e\u0444\u0435\u0441\u0441\u0438\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0439 \u043c\u043e\u043d\u0442\u0430\u0436');
+    warnings.add(
+      '\u0411\u043e\u043b\u044c\u0448\u0430\u044f \u043f\u043b\u043e\u0449\u0430\u0434\u044c \u2014 \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0443\u0435\u0442\u0441\u044f \u043f\u0440\u043e\u0444\u0435\u0441\u0441\u0438\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0439 \u043c\u043e\u043d\u0442\u0430\u0436',
+    );
   }
 
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: '\u041a\u0430\u0441\u0441\u0435\u0442\u0430 ${cassetteLabels[cassetteSize] ?? "595\u00d7595 \u043c\u043c"}',
+      name:
+          '\u041a\u0430\u0441\u0441\u0435\u0442\u0430 ${cassetteLabels[cassetteSize] ?? "595\u00d7595 \u043c\u043c"}',
       quantity: recScenario.exactNeed,
       unit: '\u0448\u0442',
       withReserve: recScenario.exactNeed,
@@ -92,7 +142,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0435',
     ),
     CanonicalMaterialResult(
-      name: '\u0413\u043b\u0430\u0432\u043d\u044b\u0439 \u043f\u0440\u043e\u0444\u0438\u043b\u044c \u0422-\u043e\u0431\u0440\u0430\u0437\u043d\u044b\u0439',
+      name:
+          '\u0413\u043b\u0430\u0432\u043d\u044b\u0439 \u043f\u0440\u043e\u0444\u0438\u043b\u044c \u0422-\u043e\u0431\u0440\u0430\u0437\u043d\u044b\u0439',
       quantity: mainProfiles.toDouble(),
       unit: '\u0448\u0442',
       withReserve: mainProfiles.toDouble(),
@@ -100,7 +151,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: '\u041a\u0430\u0440\u043a\u0430\u0441',
     ),
     CanonicalMaterialResult(
-      name: '\u041f\u043e\u043f\u0435\u0440\u0435\u0447\u043d\u044b\u0439 \u043f\u0440\u043e\u0444\u0438\u043b\u044c',
+      name:
+          '\u041f\u043e\u043f\u0435\u0440\u0435\u0447\u043d\u044b\u0439 \u043f\u0440\u043e\u0444\u0438\u043b\u044c',
       quantity: crossProfiles.toDouble(),
       unit: '\u0448\u0442',
       withReserve: crossProfiles.toDouble(),
@@ -116,7 +168,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: '\u041a\u0440\u0435\u043f\u0451\u0436',
     ),
     CanonicalMaterialResult(
-      name: '\u0423\u0433\u043b\u043e\u0432\u043e\u0439 \u043f\u0440\u043e\u0444\u0438\u043b\u044c 3\u043c',
+      name:
+          '\u0423\u0433\u043b\u043e\u0432\u043e\u0439 \u043f\u0440\u043e\u0444\u0438\u043b\u044c 3\u043c',
       quantity: wallProfilePcs.toDouble(),
       unit: '\u0448\u0442',
       withReserve: wallProfilePcs.toDouble(),
@@ -137,6 +190,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'cassPerRow': cassPerRow.toDouble(),
       'rows': rows.toDouble(),
       'totalCass': totalCass.toDouble(),
+      'cassettesPerPack': cassettePackageSize,
+      'packagesNeeded': recScenario.buyPlan.packagesCount.toDouble(),
       'mainRows': mainRows.toDouble(),
       'mainProfiles': mainProfiles.toDouble(),
       'crossPerRow': crossPerRow.toDouble(),

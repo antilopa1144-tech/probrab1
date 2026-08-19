@@ -40,12 +40,7 @@ bool hasCanonicalRebarInputs(Map<String, double> inputs) {
   final hasWidth = inputs.containsKey('width');
   if (!hasLength || !hasWidth) return false;
 
-  const canonicalKeys = [
-    'structureType',
-    'mainDiameter',
-    'gridStep',
-    'height',
-  ];
+  const canonicalKeys = ['structureType', 'mainDiameter', 'gridStep', 'height'];
   return canonicalKeys.any(inputs.containsKey);
 }
 
@@ -54,8 +49,16 @@ Map<String, double> normalizeLegacyRebarInputs(Map<String, double> inputs) {
   final length = math.max(1.0, inputs['length'] ?? 10);
   final width = math.max(1.0, inputs['width'] ?? 8);
   final height = (inputs['height'] ?? 0.3).clamp(0.1, 1.5);
-  final mainDiameter = _clampToNearest((inputs['mainDiameter'] ?? 12).round(), _allowedDiameters, 12);
-  final gridStep = _clampToNearest((inputs['gridStep'] ?? 200).round(), _allowedGridSteps, 200);
+  final mainDiameter = _clampToNearest(
+    (inputs['mainDiameter'] ?? 12).round(),
+    _allowedDiameters,
+    12,
+  );
+  final gridStep = _clampToNearest(
+    (inputs['gridStep'] ?? 200).round(),
+    _allowedGridSteps,
+    200,
+  );
 
   return {
     'structureType': structureType.toDouble(),
@@ -120,11 +123,13 @@ _RebarCalcResult _computeSlabRebar(
 ) {
   final barsAlongLength = (width / gridStepM).ceil() + 1;
   final barsAlongWidth = (length / gridStepM).ceil() + 1;
-  final mainRebarLength = 2 * (barsAlongLength * length + barsAlongWidth * width) * 1.05;
+  final mainRebarLength =
+      2 * (barsAlongLength * length + barsAlongWidth * width) * 1.05;
   final verticalTieCount = (length / 0.6).ceil() * (width / 0.6).ceil();
   final verticalTieLength = (height + 0.2) * verticalTieCount;
   final secondaryDiameter = math.max(6, mainDiameter - 4);
-  final intersections = barsAlongLength * barsAlongWidth * 2 + verticalTieCount * 2;
+  final intersections =
+      barsAlongLength * barsAlongWidth * 2 + verticalTieCount * 2;
   final fixators = (length * width * 5).ceil();
 
   return _RebarCalcResult(
@@ -149,7 +154,8 @@ _RebarCalcResult _computeStripFoundationRebar(
   final mainRebarLength = perimeter * 4 * _rebarOverlapFactor;
   final stirrupCount = (perimeter / 0.4).ceil();
   final sectionPerimeter = 2.0 * (0.3 + height - 0.1);
-  final tieRebarLength = (stirrupCount * math.max(0.8, sectionPerimeter)).toDouble();
+  final tieRebarLength = (stirrupCount * math.max(0.8, sectionPerimeter))
+      .toDouble();
   const stirrupDiameter = 8;
   final intersections = stirrupCount * 4;
 
@@ -166,10 +172,7 @@ _RebarCalcResult _computeStripFoundationRebar(
   );
 }
 
-_RebarCalcResult _computeArmorBeltRebar(
-  double length,
-  double width,
-) {
+_RebarCalcResult _computeArmorBeltRebar(double length, double width) {
   final perimeter = 2 * (length + width);
   final mainRebarLength = perimeter * 4 * _rebarOverlapFactor;
   const beltHeight = 0.25;
@@ -198,7 +201,8 @@ _RebarCalcResult _computeFloorSlabRebar(
 ) {
   final barsAlongLength = (width / gridStepM).ceil() + 1;
   final barsAlongWidth = (length / gridStepM).ceil() + 1;
-  final mainRebarLength = (barsAlongLength * length + barsAlongWidth * width) * 1.05;
+  final mainRebarLength =
+      (barsAlongLength * length + barsAlongWidth * width) * 1.05;
   final secondaryStep = gridStepM * 2;
   final secBarsL = (width / secondaryStep).ceil() + 1;
   final secBarsW = (length / secondaryStep).ceil() + 1;
@@ -226,10 +230,21 @@ CanonicalCalculatorContractResult calculateCanonicalRebar(
 }) {
   final spec = specOverride ?? const SpecReader(rebarSpecData);
 
-  final structureType = (inputs['structureType'] ?? defaultFor(spec, 'structureType', 0)).round().clamp(0, 3);
-  final length = math.max(1.0, math.min(50.0, inputs['length'] ?? defaultFor(spec, 'length', 10)));
-  final width = math.max(1.0, math.min(50.0, inputs['width'] ?? defaultFor(spec, 'width', 8)));
-  final height = (inputs['height'] ?? defaultFor(spec, 'height', 0.3)).clamp(0.1, 1.5).toDouble();
+  final structureType =
+      (inputs['structureType'] ?? defaultFor(spec, 'structureType', 0))
+          .round()
+          .clamp(0, 3);
+  final length = math.max(
+    1.0,
+    math.min(50.0, inputs['length'] ?? defaultFor(spec, 'length', 10)),
+  );
+  final width = math.max(
+    1.0,
+    math.min(50.0, inputs['width'] ?? defaultFor(spec, 'width', 8)),
+  );
+  final height = (inputs['height'] ?? defaultFor(spec, 'height', 0.3))
+      .clamp(0.1, 1.5)
+      .toDouble();
   final mainDiameter = _clampToNearest(
     (inputs['mainDiameter'] ?? defaultFor(spec, 'mainDiameter', 12)).round(),
     _allowedDiameters,
@@ -265,24 +280,36 @@ CanonicalCalculatorContractResult calculateCanonicalRebar(
   final wireLength = calc.intersections * _wireLengthPerIntersectionM;
   final wireKg = wireLength * _wireKgPerM;
   final mainWeightPerM = _weightPerMeter[mainDiameter] ?? _weightPerMeter[12]!;
-  final mainRebarKg = calc.mainRebarLength * mainWeightPerM;
-  final mainRods = (calc.mainRebarLength / _standardRodLengthM).ceil();
-  final tieWeightPerM = _weightPerMeter[calc.secondaryDiameter] ?? _weightPerMeter[6]!;
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
+  final mainRebarLengthAdjusted = roundValue(
+    calc.mainRebarLength * accuracyMult,
+    6,
+  );
+  final mainRebarKg = mainRebarLengthAdjusted * mainWeightPerM;
+  final mainRods = (mainRebarLengthAdjusted / _standardRodLengthM).ceil();
+  final tieWeightPerM =
+      _weightPerMeter[calc.secondaryDiameter] ?? _weightPerMeter[6]!;
   final tieRebarKg = calc.tieRebarLength * tieWeightPerM;
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, _factorTable, scenarioName);
-    final exactNeed = roundValue(mainRebarKg * multiplier, 6);
-    final rodCount = (mainRods * multiplier).ceil();
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      _factorTable,
+      scenarioName,
+    );
+    final exactNeed = roundValue(mainRebarLengthAdjusted * multiplier, 6);
+    final rodCount = (exactNeed / _standardRodLengthM).ceil();
+    final purchaseQuantity = roundValue(rodCount * _standardRodLengthM, 6);
     const packageLabel = 'rebar-rod-${_standardRodLengthM}m';
 
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
-      purchaseQuantity: rodCount.toDouble(),
-      leftover: roundValue(rodCount.toDouble() - (mainRods * multiplier), 6),
+      purchaseQuantity: purchaseQuantity,
+      leftover: roundValue(purchaseQuantity - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'structureType:$structureType',
@@ -296,9 +323,9 @@ CanonicalCalculatorContractResult calculateCanonicalRebar(
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
-        packageSize: 1,
+        packageSize: _standardRodLengthM,
         packagesCount: rodCount,
-        unit: 'шт',
+        unit: 'м.п.',
       ),
     );
   }
@@ -308,13 +335,19 @@ CanonicalCalculatorContractResult calculateCanonicalRebar(
   // Warnings
   final warnings = <String>[];
   if (structureType == 0 && height < 0.15) {
-    warnings.add('Толщина плиты менее 150 мм — слишком тонкая для двойной сетки армирования');
+    warnings.add(
+      'Толщина плиты менее 150 мм — слишком тонкая для двойной сетки армирования',
+    );
   }
   if (mainDiameter < 10 && structureType <= 1) {
-    warnings.add('Для фундаментов рекомендуется арматура диаметром не менее 10 мм');
+    warnings.add(
+      'Для фундаментов рекомендуется арматура диаметром не менее 10 мм',
+    );
   }
   if (gridStep > 250) {
-    warnings.add('Шаг сетки более 250 мм снижает несущую способность конструкции');
+    warnings.add(
+      'Шаг сетки более 250 мм снижает несущую способность конструкции',
+    );
   }
 
   // Secondary label
@@ -326,21 +359,37 @@ CanonicalCalculatorContractResult calculateCanonicalRebar(
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
       name: 'Арматура основная Ø$mainDiameter А500С',
-      quantity: roundValue(calc.mainRebarLength, 1),
+      quantity: roundValue(mainRebarLengthAdjusted, 1),
       unit: 'м.п.',
-      withReserve: roundValue(mainRebarKg, 1),
+      withReserve: roundValue(mainRods * _standardRodLengthM, 1),
       purchaseQty: (mainRods * _standardRodLengthM).toDouble(),
       category: 'Арматура',
-      packageInfo: {'count': mainRods, 'unitSize': _standardRodLengthM, 'packageUnit': 'прутков'},
+      packageInfo: {
+        'count': mainRods,
+        'unitSize': _standardRodLengthM,
+        'packageUnit': 'прутков',
+      },
     ),
     CanonicalMaterialResult(
       name: secondaryLabel,
       quantity: roundValue(calc.tieRebarLength, 1),
       unit: 'м.п.',
-      withReserve: roundValue(tieRebarKg, 1),
-      purchaseQty: ((calc.tieRebarLength / _standardRodLengthM).ceil() * _standardRodLengthM).toDouble(),
+      withReserve: roundValue(
+        (calc.tieRebarLength / _standardRodLengthM).ceil() *
+            _standardRodLengthM,
+        1,
+      ),
+      purchaseQty: roundValue(
+        (calc.tieRebarLength / _standardRodLengthM).ceil() *
+            _standardRodLengthM,
+        1,
+      ),
       category: 'Арматура',
-      packageInfo: {'count': (calc.tieRebarLength / _standardRodLengthM).ceil(), 'unitSize': _standardRodLengthM, 'packageUnit': 'прутков'},
+      packageInfo: {
+        'count': (calc.tieRebarLength / _standardRodLengthM).ceil(),
+        'unitSize': _standardRodLengthM,
+        'packageUnit': 'прутков',
+      },
     ),
     CanonicalMaterialResult(
       name: 'Проволока вязальная Ø1.2',
@@ -353,14 +402,16 @@ CanonicalCalculatorContractResult calculateCanonicalRebar(
   ];
 
   if (calc.fixators > 0) {
-    materials.add(CanonicalMaterialResult(
-      name: 'Фиксаторы пластиковые',
-      quantity: calc.fixators.toDouble(),
-      unit: 'шт',
-      withReserve: calc.fixators.toDouble(),
-      purchaseQty: calc.fixators.toDouble(),
-      category: 'Расходные материалы',
-    ));
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Фиксаторы пластиковые',
+        quantity: calc.fixators.toDouble(),
+        unit: 'шт',
+        withReserve: calc.fixators.toDouble(),
+        purchaseQty: calc.fixators.toDouble(),
+        category: 'Расходные материалы',
+      ),
+    );
   }
 
   return CanonicalCalculatorContractResult(
@@ -375,7 +426,7 @@ CanonicalCalculatorContractResult calculateCanonicalRebar(
       'mainDiameter': mainDiameter.toDouble(),
       'gridStep': gridStep.toDouble(),
       'gridStepM': roundValue(gridStepM, 4),
-      'mainRebarLength': roundValue(calc.mainRebarLength, 1),
+      'mainRebarLength': roundValue(mainRebarLengthAdjusted, 1),
       'mainRebarKg': roundValue(mainRebarKg, 1),
       'mainRods': mainRods.toDouble(),
       'tieRebarLength': roundValue(calc.tieRebarLength, 1),
@@ -389,12 +440,35 @@ CanonicalCalculatorContractResult calculateCanonicalRebar(
       'barsAlongWidth': calc.barsAlongWidth.toDouble(),
       'verticalTieCount': calc.verticalTieCount.toDouble(),
       'stirrupCount': calc.stirrupCount.toDouble(),
-      'minExactNeedKg': scenarios['MIN']!.exactNeed,
-      'recExactNeedKg': recScenario.exactNeed,
-      'maxExactNeedKg': scenarios['MAX']!.exactNeed,
-      'minPurchaseRods': scenarios['MIN']!.purchaseQuantity,
-      'recPurchaseRods': recScenario.purchaseQuantity,
-      'maxPurchaseRods': scenarios['MAX']!.purchaseQuantity,
+      'minExactNeedM': scenarios['MIN']!.exactNeed,
+      'recExactNeedM': recScenario.exactNeed,
+      'maxExactNeedM': scenarios['MAX']!.exactNeed,
+      'minPurchaseM': scenarios['MIN']!.purchaseQuantity,
+      'recPurchaseM': recScenario.purchaseQuantity,
+      'maxPurchaseM': scenarios['MAX']!.purchaseQuantity,
+      'minExactNeedKg': roundValue(
+        mainRebarKg *
+            scenarioMultiplier(spec.enabledFactors, _factorTable, 'MIN'),
+        6,
+      ),
+      'recExactNeedKg': roundValue(
+        mainRebarKg *
+            scenarioMultiplier(spec.enabledFactors, _factorTable, 'REC'),
+        6,
+      ),
+      'maxExactNeedKg': roundValue(
+        mainRebarKg *
+            scenarioMultiplier(spec.enabledFactors, _factorTable, 'MAX'),
+        6,
+      ),
+      'minPurchaseRods':
+          (scenarios['MIN']!.purchaseQuantity / _standardRodLengthM)
+              .roundToDouble(),
+      'recPurchaseRods': (recScenario.purchaseQuantity / _standardRodLengthM)
+          .roundToDouble(),
+      'maxPurchaseRods':
+          (scenarios['MAX']!.purchaseQuantity / _standardRodLengthM)
+              .roundToDouble(),
     },
     warnings: warnings,
     scenarios: scenarios,

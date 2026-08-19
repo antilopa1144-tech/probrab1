@@ -6,14 +6,11 @@ import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
-
-
 const Map<int, String> _brickFormatLabels = {
   0: 'Кирпич одинарный (65 мм)',
   1: 'Кирпич полуторный (88 мм)',
   2: 'Кирпич двойной (138 мм)',
 };
-
 
 bool hasCanonicalBrickworkInputs(Map<String, double> inputs) {
   return inputs.containsKey('brickFormat') ||
@@ -23,17 +20,18 @@ bool hasCanonicalBrickworkInputs(Map<String, double> inputs) {
 
 Map<String, double> normalizeLegacyBrickworkInputs(Map<String, double> inputs) {
   final normalized = Map<String, double>.from(inputs);
-  final hasDimensions = (inputs['wallLength'] ?? 0) > 0 && (inputs['wallHeight'] ?? 0) > 0;
+  final hasDimensions =
+      (inputs['wallLength'] ?? 0) > 0 && (inputs['wallHeight'] ?? 0) > 0;
   if (!normalized.containsKey('inputMode')) {
     normalized['inputMode'] = hasDimensions ? 0.0 : 1.0;
   }
-  normalized['brickFormat'] = (inputs['brickFormat'] ?? inputs['brickType'] ?? 0).toDouble();
+  normalized['brickFormat'] =
+      (inputs['brickFormat'] ?? inputs['brickType'] ?? 0).toDouble();
   normalized['wallThickness'] = (inputs['wallThickness'] ?? 1).toDouble();
   normalized['mortarJoint'] = (inputs['mortarJoint'] ?? 10).toDouble();
   normalized['openingsArea'] = (inputs['openingsArea'] ?? 5).toDouble();
   return normalized;
 }
-
 
 CanonicalCalculatorContractResult calculateCanonicalBrickwork(
   Map<String, double> inputs, {
@@ -45,51 +43,116 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
       ? Map<String, double>.from(inputs)
       : normalizeLegacyBrickworkInputs(inputs);
 
-  final inputMode = (normalized['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
+  final inputMode =
+      (normalized['inputMode'] ?? defaultFor(spec, 'inputMode', 0)).round();
   double wallLength;
   double wallHeight;
   double wallArea;
 
   if (inputMode == 0) {
-    wallLength = math.max(1, math.min(100, (normalized['wallLength'] ?? defaultFor(spec, 'wallLength', 10)).toDouble()));
-    wallHeight = math.max(1, math.min(5, (normalized['wallHeight'] ?? defaultFor(spec, 'wallHeight', 2.7)).toDouble()));
+    wallLength = math.max(
+      1,
+      math.min(
+        100,
+        (normalized['wallLength'] ?? defaultFor(spec, 'wallLength', 10))
+            .toDouble(),
+      ),
+    );
+    wallHeight = math.max(
+      1,
+      math.min(
+        5,
+        (normalized['wallHeight'] ?? defaultFor(spec, 'wallHeight', 2.7))
+            .toDouble(),
+      ),
+    );
     wallArea = roundValue(wallLength * wallHeight, 3);
   } else {
-    wallArea = math.max(1, math.min(500, (normalized['area'] ?? defaultFor(spec, 'area', 27)).toDouble()));
-    wallLength = (normalized['wallLength'] ?? defaultFor(spec, 'wallLength', 10)).toDouble();
-    wallHeight = (normalized['wallHeight'] ?? defaultFor(spec, 'wallHeight', 2.7)).toDouble();
+    wallArea = math.max(
+      1,
+      math.min(
+        500,
+        (normalized['area'] ?? defaultFor(spec, 'area', 27)).toDouble(),
+      ),
+    );
+    wallLength =
+        (normalized['wallLength'] ?? defaultFor(spec, 'wallLength', 10))
+            .toDouble();
+    wallHeight =
+        (normalized['wallHeight'] ?? defaultFor(spec, 'wallHeight', 2.7))
+            .toDouble();
   }
 
-  final openingsArea = math.max(0.0, math.min(50.0, (normalized['openingsArea'] ?? defaultFor(spec, 'openingsArea', 5)).toDouble()));
-  final brickFormat = (normalized['brickFormat'] ?? defaultFor(spec, 'brickFormat', 0)).round().clamp(0, 2);
-  final wallThicknessIdx = (normalized['wallThickness'] ?? defaultFor(spec, 'wallThickness', 1)).round().clamp(0, 3);
-  final mortarJoint = math.max(8.0, math.min(15.0, (normalized['mortarJoint'] ?? defaultFor(spec, 'mortarJoint', 10)).toDouble()));
+  final openingsArea = math.max(
+    0.0,
+    math.min(
+      50.0,
+      (normalized['openingsArea'] ?? defaultFor(spec, 'openingsArea', 5))
+          .toDouble(),
+    ),
+  );
+  final brickFormat =
+      (normalized['brickFormat'] ?? defaultFor(spec, 'brickFormat', 0))
+          .round()
+          .clamp(0, 2);
+  final wallThicknessIdx =
+      (normalized['wallThickness'] ?? defaultFor(spec, 'wallThickness', 1))
+          .round()
+          .clamp(0, 3);
+  final mortarJoint = math.max(
+    8.0,
+    math.min(
+      15.0,
+      (normalized['mortarJoint'] ?? defaultFor(spec, 'mortarJoint', 10))
+          .toDouble(),
+    ),
+  );
 
   // Area
   final netArea = math.max(0.0, wallArea - openingsArea);
 
   // Bricks
   final bricksMap = spec.materialRule<Map>('bricks_per_sqm');
-  final baseBricks = ((bricksMap['$brickFormat'] as Map?)?['$wallThicknessIdx'] as num?)?.toDouble() ?? 102.0;
+  final baseBricks =
+      ((bricksMap['$brickFormat'] as Map?)?['$wallThicknessIdx'] as num?)
+          ?.toDouble() ??
+      102.0;
   final jointCoeff = mortarJoint == 10 ? 1.0 : (10 / mortarJoint) * 0.97 + 0.03;
   final bricksPerSqm = baseBricks * jointCoeff;
   final totalBricks = netArea * bricksPerSqm;
-  final bricksWithReserve = (totalBricks * spec.materialRule<num>('block_reserve').toDouble()).ceil();
+  final bricksWithReserve =
+      (totalBricks * spec.materialRule<num>('block_reserve').toDouble()).ceil();
 
   // Mortar
-  final wallThicknessMm = (spec.materialRule<Map>('wall_thickness_mm')['$wallThicknessIdx'] as num?)?.toDouble() ?? 250.0;
+  final wallThicknessMm =
+      (spec.materialRule<Map>('wall_thickness_mm')['$wallThicknessIdx'] as num?)
+          ?.toDouble() ??
+      250.0;
   final wallVolume = roundValue(netArea * (wallThicknessMm / 1000), 6);
-  final mortarCoeff = (spec.materialRule<Map>('mortar_per_m3')['$brickFormat'] as num?)?.toDouble() ?? 0.221;
+  final mortarCoeff =
+      (spec.materialRule<Map>('mortar_per_m3')['$brickFormat'] as num?)
+          ?.toDouble() ??
+      0.221;
   final mortarM3 = roundValue(wallVolume * mortarCoeff, 6);
-  final mortarKg = roundValue(mortarM3 * spec.materialRule<num>('mortar_density').toDouble(), 3);
-  final mortarBags = (mortarKg / spec.materialRule<num>('mortar_bag_kg').toDouble()).ceil();
+  final mortarKg = roundValue(
+    mortarM3 * spec.materialRule<num>('mortar_density').toDouble(),
+    3,
+  );
+  final mortarBags =
+      (mortarKg / spec.materialRule<num>('mortar_bag_kg').toDouble()).ceil();
 
   // Mesh
-  final brickH = (spec.materialRule<Map>('brick_heights')['$brickFormat'] as num?)?.toDouble() ?? 65.0;
+  final brickH =
+      (spec.materialRule<Map>('brick_heights')['$brickFormat'] as num?)
+          ?.toDouble() ??
+      65.0;
   final rowHeight = (brickH + mortarJoint) / 1000;
   final totalRows = (wallHeight / rowHeight).ceil();
   final meshRows = (totalRows / 5).floor();
-  final meshArea = roundValue(wallLength * (wallThicknessMm / 1000) * meshRows, 3);
+  final meshArea = roundValue(
+    wallLength * (wallThicknessMm / 1000) * meshRows,
+    3,
+  );
 
   // Lintels
   final openingsCount = (openingsArea / 2).ceil();
@@ -97,15 +160,26 @@ CanonicalCalculatorContractResult calculateCanonicalBrickwork(
   final totalLintels = openingsCount * lintelsPerOpening;
 
   // Pallets
-  final bricksPerPallet = (spec.materialRule<Map>('bricks_per_pallet')['$brickFormat'] as num?)?.toDouble() ?? 480;
+  final bricksPerPallet =
+      (spec.materialRule<Map>('bricks_per_pallet')['$brickFormat'] as num?)
+          ?.toDouble() ??
+      480;
   final pallets = (bricksWithReserve / bricksPerPallet).ceil();
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('concrete', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(bricksWithReserve * accuracyMult * multiplier, 6);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
+    final exactNeed = roundValue(
+      bricksWithReserve * accuracyMult * multiplier,
+      6,
+    );
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
@@ -120,7 +194,11 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:brickwork-piece',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -136,15 +214,26 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
 
   // Warnings
   final warnings = <String>[];
-  if (wallThicknessIdx == spec.warningRule<num>('non_load_bearing_wall_thickness').toDouble()) {
-    warnings.add('Толщина стены в 0.5 кирпича (120 мм) — только для ненесущих перегородок');
+  if (wallThicknessIdx ==
+      spec.warningRule<num>('non_load_bearing_wall_thickness').toDouble()) {
+    warnings.add(
+      'Толщина стены в 0.5 кирпича (120 мм) — только для ненесущих перегородок',
+    );
   }
-  if (wallThicknessIdx >= spec.warningRule<num>('armor_belt_wall_thickness_threshold').toDouble() &&
-      wallHeight > spec.warningRule<num>('armor_belt_height_threshold').toDouble()) {
-    warnings.add('При толщине стены 1.5+ кирпича и высоте более 3 м необходим армопояс');
+  if (wallThicknessIdx >=
+          spec
+              .warningRule<num>('armor_belt_wall_thickness_threshold')
+              .toDouble() &&
+      wallHeight >
+          spec.warningRule<num>('armor_belt_height_threshold').toDouble()) {
+    warnings.add(
+      'При толщине стены 1.5+ кирпича и высоте более 3 м необходим армопояс',
+    );
   }
   if (brickFormat == 2 && wallThicknessIdx == 0) {
-    warnings.add('Двойной кирпич в полкирпича (120 мм) — нестандартное решение, проверьте проект');
+    warnings.add(
+      'Двойной кирпич в полкирпича (120 мм) — нестандартное решение, проверьте проект',
+    );
   }
 
   // Materials
@@ -166,7 +255,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Основное',
     ),
     CanonicalMaterialResult(
-      name: 'Раствор кладочный (${spec.materialRule<num>('mortar_bag_kg').toDouble().round()} кг)',
+      name:
+          'Раствор кладочный (${spec.materialRule<num>('mortar_bag_kg').toDouble().round()} кг)',
       quantity: mortarBags.toDouble(),
       unit: 'мешков',
       withReserve: mortarBags.toDouble(),

@@ -1,7 +1,7 @@
 {
   "calculator_id": "brickwork",
   "formula_version": "brickwork-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.346Z",
+  "generated_at": "2026-08-19T07:37:47.690Z",
   "cases": [
     {
       "id": "defaults",
@@ -59,7 +59,7 @@
         "Поддоны кирпича",
         "Раствор кладочный (50 кг)",
         "Кладочная сетка",
-        "Перемычки (ЖБ)"
+        "Железобетонные перемычки"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

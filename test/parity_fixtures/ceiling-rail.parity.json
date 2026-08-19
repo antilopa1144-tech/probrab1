@@ -1,7 +1,7 @@
 {
   "calculator_id": "ceiling-rail",
   "formula_version": "ceiling-rail-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.358Z",
+  "generated_at": "2026-08-19T07:37:47.713Z",
   "cases": [
     {
       "id": "defaults",
@@ -36,10 +36,10 @@
       "expected_materials_count": 5,
       "expected_material_names": [
         "Рейка 100 мм × 3 м",
-        "Т-профиль (стрингер) 3м",
-        "Подвес",
-        "Саморезы",
-        "Дюбели"
+        "Т-профиль — несущая шина (стрингер) 3 м",
+        "Подвесы регулируемые для реечного потолка",
+        "Саморезы по металлу 3,5×25 мм",
+        "Анкер-клинья 6×40 мм для потолочных подвесов"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

@@ -1,7 +1,7 @@
 {
   "calculator_id": "warm-floor",
-  "formula_version": "warm-floor-canonical-v1",
-  "generated_at": "2026-04-08T06:09:15.682Z",
+  "formula_version": "warm-floor-canonical-v2",
+  "generated_at": "2026-08-19T07:37:48.172Z",
   "cases": [
     {
       "id": "defaults",
@@ -28,7 +28,7 @@
         "screedBags": 0,
         "pipeLength": 0,
         "circuits": 0,
-        "pipeInsulation": 0,
+        "cableStepMm": 0,
         "meshArea": 0,
         "substrateRolls": 1,
         "adhesiveBags": 2,
@@ -41,11 +41,11 @@
       },
       "expected_materials_count": 5,
       "expected_material_names": [
-        "Нагревательный мат",
-        "Терморегулятор",
-        "Гофротрубка для датчика",
-        "Подложка (рулоны)",
-        "Плиточный клей (мешки 25 кг)"
+        "Нагревательный мат 150 Вт/м², комплект на 2 м²",
+        "Терморегулятор с выносным датчиком температуры пола",
+        "Гофротрубка Ø16 мм с заглушкой для датчика пола",
+        "Теплоизоляционная подложка, рулон 25 м²",
+        "Эластичный плиточный клей для тёплого пола, мешок 25 кг"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

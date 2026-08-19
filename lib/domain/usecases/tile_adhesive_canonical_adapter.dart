@@ -5,44 +5,104 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-
 CanonicalCalculatorContractResult calculateCanonicalTileAdhesive(
   Map<String, double> inputs, {
   SpecReader? specOverride,
 }) {
   final spec = specOverride ?? const SpecReader(tileAdhesiveSpecData);
 
-  final area = math.max(1.0, math.min(500.0, inputs['area'] ?? defaultFor(spec, 'area', 20)));
-  final tileSize = (inputs['tileSize'] ?? defaultFor(spec, 'tileSize', 0)).round().clamp(0, 2);
-  final laying = (inputs['laying'] ?? defaultFor(spec, 'laying', 0)).round().clamp(0, 2);
-  final base = (inputs['base'] ?? defaultFor(spec, 'base', 0)).round().clamp(0, 2);
+  final area = math.max(
+    1.0,
+    math.min(500.0, inputs['area'] ?? defaultFor(spec, 'area', 20)),
+  );
+  final tileSize = (inputs['tileSize'] ?? defaultFor(spec, 'tileSize', 0))
+      .round()
+      .clamp(0, 3);
+  final laying = (inputs['laying'] ?? defaultFor(spec, 'laying', 0))
+      .round()
+      .clamp(0, 2);
+  final base = (inputs['base'] ?? defaultFor(spec, 'base', 0)).round().clamp(
+    0,
+    2,
+  );
   final bagWeightRaw = inputs['bagWeight'] ?? defaultFor(spec, 'bagWeight', 25);
   final bagWeight = bagWeightRaw == 5 ? 5.0 : 25.0;
+  final doubleApplication =
+      (inputs['doubleApplicationRequired'] ??
+              (tileSize >=
+                      spec
+                          .materialRule<num>(
+                            'double_application_min_size_class',
+                          )
+                          .toDouble()
+                  ? 1
+                  : 0))
+          .round() ==
+      1;
 
   // Adjusted rate
-  var adjustedRate = (spec.materialRule<Map>('base_consumption')['$tileSize'] as num?)?.toDouble() ?? (spec.materialRule<Map>('base_consumption')['0'] as num?)?.toDouble() ?? 3.0;
-  if (laying == 1) adjustedRate *= spec.materialRule<num>('wall_factor').toDouble();
-  if (laying == 2) adjustedRate *= spec.materialRule<num>('street_factor').toDouble();
-  if (base == 2) adjustedRate *= spec.materialRule<num>('old_tile_factor').toDouble();
+  var adjustedRate =
+      (spec.materialRule<Map>('base_consumption')['$tileSize'] as num?)
+          ?.toDouble() ??
+      (spec.materialRule<Map>('base_consumption')['0'] as num?)?.toDouble() ??
+      3.0;
+  if (laying == 1) {
+    adjustedRate *= spec.materialRule<num>('wall_factor').toDouble();
+  }
+  if (laying == 2) {
+    adjustedRate *= spec.materialRule<num>('street_factor').toDouble();
+  }
+  if (base == 2) {
+    adjustedRate *= spec.materialRule<num>('old_tile_factor').toDouble();
+  }
+  if (doubleApplication) {
+    adjustedRate *= spec
+        .materialRule<num>('double_application_multiplier')
+        .toDouble();
+  }
 
-  final totalKg = area * adjustedRate * spec.materialRule<num>('adhesive_reserve').toDouble();
+  final totalKg =
+      area *
+      adjustedRate *
+      spec.materialRule<num>('adhesive_reserve').toDouble();
   final bags = (totalKg / bagWeight).ceil();
 
   // Primer
-  final primer = (area * spec.materialRule<num>('primer_l_per_m2').toDouble() * spec.materialRule<num>('primer_reserve').toDouble() / spec.materialRule<num>('primer_can').toDouble()).ceil();
+  final primer =
+      (area *
+              spec.materialRule<num>('primer_l_per_m2').toDouble() *
+              spec.materialRule<num>('primer_reserve').toDouble() /
+              spec.materialRule<num>('primer_can').toDouble())
+          .ceil();
 
   // Crosses
-  final tileSideM = (spec.materialRule<Map>('tile_sizes_for_cross')['$tileSize'] as num?)?.toDouble() ?? (spec.materialRule<Map>('tile_sizes_for_cross')['0'] as num?)?.toDouble() ?? 0.3;
+  final tileSideM =
+      (spec.materialRule<Map>('tile_sizes_for_cross')['$tileSize'] as num?)
+          ?.toDouble() ??
+      (spec.materialRule<Map>('tile_sizes_for_cross')['0'] as num?)
+          ?.toDouble() ??
+      0.3;
   final tilesPerM2 = 1 / (tileSideM * tileSideM);
-  final crosses = (area * tilesPerM2 * spec.materialRule<num>('crosses_per_tile').toDouble() * spec.materialRule<num>('cross_reserve').toDouble()).ceil();
-  final crossPacks = (crosses / spec.materialRule<num>('cross_pack').toDouble()).ceil();
+  final crosses =
+      (area *
+              tilesPerM2 *
+              spec.materialRule<num>('crosses_per_tile').toDouble() *
+              spec.materialRule<num>('cross_reserve').toDouble())
+          .ceil();
+  final crossPacks = (crosses / spec.materialRule<num>('cross_pack').toDouble())
+      .ceil();
 
   // Scenarios
   final scenarios = <String, CanonicalScenarioResult>{};
 
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('tile_adhesive', accuracyMode);
+  final accuracyMode = parseAccuracyMode(inputs);
+  final accuracyMult = accuracyPrimaryMultiplier('tile_adhesive', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
+    final multiplier = scenarioMultiplier(
+      spec.enabledFactors,
+      defaultFactorTable,
+      scenarioName,
+    );
     final exactNeed = roundValue(totalKg * accuracyMult * multiplier, 6);
     final packageCount = exactNeed > 0 ? (exactNeed / bagWeight).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * bagWeight, 6);
@@ -60,7 +120,11 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
+        ...buildKeyFactors(
+          spec.enabledFactors,
+          defaultFactorTable,
+          scenarioName,
+        ),
         'field_multiplier': roundValue(multiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
@@ -88,12 +152,18 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       quantity: recScenario.exactNeed,
       unit: 'кг',
       withReserve: recScenario.exactNeed,
-      purchaseQty: (recScenario.purchaseQuantity / bagWeight).ceil() * bagWeight,
-      packageInfo: {'count': (recScenario.purchaseQuantity / bagWeight).ceil(), 'size': bagWeight, 'packageUnit': 'мешков'},
+      purchaseQty:
+          (recScenario.purchaseQuantity / bagWeight).ceil() * bagWeight,
+      packageInfo: {
+        'count': (recScenario.purchaseQuantity / bagWeight).ceil(),
+        'size': bagWeight,
+        'packageUnit': 'мешков',
+      },
       category: 'Основное',
     ),
     CanonicalMaterialResult(
-      name: 'Грунтовка (канистра ${spec.materialRule<num>('primer_can').toInt()} л)',
+      name:
+          'Грунтовка (канистра ${spec.materialRule<num>('primer_can').toInt()} л)',
       quantity: primer.toDouble(),
       unit: 'канистр',
       withReserve: primer.toDouble(),
@@ -101,7 +171,8 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Грунтовка',
     ),
     CanonicalMaterialResult(
-      name: 'Крестики (упаковка ${spec.materialRule<num>('cross_pack').toDouble()} шт)',
+      name:
+          'Крестики (упаковка ${spec.materialRule<num>('cross_pack').toDouble()} шт)',
       quantity: crossPacks.toDouble(),
       unit: 'упаковок',
       withReserve: crossPacks.toDouble(),
@@ -120,6 +191,7 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'laying': laying.toDouble(),
       'base': base.toDouble(),
       'bagWeight': bagWeight,
+      'doubleApplication': doubleApplication ? 1.0 : 0.0,
       'adjustedRate': roundValue(adjustedRate, 3),
       'totalKg': roundValue(totalKg, 3),
       'bags': bags.toDouble(),
