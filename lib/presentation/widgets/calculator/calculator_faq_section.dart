@@ -78,32 +78,37 @@ class CalculatorFaqSection extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Theme(
-                data: Theme.of(context).copyWith(
-                  dividerColor: Colors.transparent,
-                ),
-                child: ExpansionTile(
-                  tilePadding: EdgeInsets.zero,
-                  childrenPadding: const EdgeInsets.only(bottom: 8),
-                  collapsedIconColor: CalculatorColors.getTextSecondary(isDark),
-                  iconColor: accentColor,
-                  title: Text(
-                    item.question,
-                    style: CalculatorDesignSystem.bodyMedium.copyWith(
-                      color: CalculatorColors.getTextPrimary(isDark),
-                      fontWeight: FontWeight.w600,
+                data: Theme.of(
+                  context,
+                ).copyWith(dividerColor: Colors.transparent),
+                child: Material(
+                  color: Colors.transparent,
+                  child: ExpansionTile(
+                    tilePadding: EdgeInsets.zero,
+                    childrenPadding: const EdgeInsets.only(bottom: 8),
+                    collapsedIconColor: CalculatorColors.getTextSecondary(
+                      isDark,
                     ),
-                  ),
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        item.answer,
-                        style: CalculatorDesignSystem.bodyMedium.copyWith(
-                          color: CalculatorColors.getTextSecondary(isDark),
-                        ),
+                    iconColor: accentColor,
+                    title: Text(
+                      item.question,
+                      style: CalculatorDesignSystem.bodyMedium.copyWith(
+                        color: CalculatorColors.getTextPrimary(isDark),
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ],
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          item.answer,
+                          style: CalculatorDesignSystem.bodyMedium.copyWith(
+                            color: CalculatorColors.getTextSecondary(isDark),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -113,4 +118,3 @@ class CalculatorFaqSection extends StatelessWidget {
     );
   }
 }
-
