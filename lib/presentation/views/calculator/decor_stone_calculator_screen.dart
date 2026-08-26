@@ -23,28 +23,37 @@ enum DecorStoneInputMode { manual, wall }
 class _DecorStoneResult {
   final double area;
   final double stoneArea;
+  final int stonePackages;
   final double glueKg;
   final int glueBags;
   final double groutKg;
+  final int groutBags;
   final double primerLiters;
+  final int primerCans;
 
   const _DecorStoneResult({
     required this.area,
     required this.stoneArea,
+    required this.stonePackages,
     required this.glueKg,
     required this.glueBags,
     required this.groutKg,
+    required this.groutBags,
     required this.primerLiters,
+    required this.primerCans,
   });
 
   factory _DecorStoneResult.fromCalculatorResult(Map<String, double> values) {
     return _DecorStoneResult(
       area: values['area'] ?? 0,
       stoneArea: values['stoneArea'] ?? 0,
+      stonePackages: (values['stonePackages'] ?? 0).toInt(),
       glueKg: values['glueKg'] ?? 0,
       glueBags: (values['glueBags'] ?? 0).toInt(),
       groutKg: values['groutKg'] ?? 0,
+      groutBags: (values['groutBags'] ?? 0).toInt(),
       primerLiters: values['primerLiters'] ?? 0,
+      primerCans: (values['primerCans'] ?? 0).toInt(),
     );
   }
 }
@@ -69,7 +78,16 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
   double _area = 15.0;
   double _wallWidth = 4.0;
   double _wallHeight = 2.7;
-  double _jointWidth = 10.0; // мм
+  double _openingsArea = 0.0;
+  double _reservePercent = 10.0;
+  double _packArea = 1.0;
+  double _glueRate = 5.0;
+  double _glueBag = 25.0;
+  double _groutRate = 0.4;
+  double _groutBag = 5.0;
+  double _primerRate = 0.15;
+  double _primerLayers = 1.0;
+  double _primerCan = 10.0;
 
   DecorStoneType _stoneType = DecorStoneType.gypsum;
   DecorStoneInputMode _inputMode = DecorStoneInputMode.manual;
@@ -96,8 +114,17 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
       'wallWidth': _wallWidth,
       'wallHeight': _wallHeight,
       'stoneType': _stoneType.index.toDouble(),
-      'jointWidth': _jointWidth,
-      'inputMode': _inputMode.index.toDouble(),
+      'openingsArea': _openingsArea,
+      'reservePercent': _reservePercent,
+      'packArea': _packArea,
+      'glueRate': _glueRate,
+      'glueBag': _glueBag,
+      'groutRate': _groutRate,
+      'groutBag': _groutBag,
+      'primerRate': _primerRate,
+      'primerLayers': _primerLayers,
+      'primerCan': _primerCan,
+      'inputMode': _inputMode == DecorStoneInputMode.wall ? 0.0 : 1.0,
       'needGrout': _needGrout ? 1.0 : 0.0,
       'needPrimer': _needPrimer ? 1.0 : 0.0,
     };
@@ -174,7 +201,7 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
         const SizedBox(height: 16),
         _buildAreaCard(),
         const SizedBox(height: 16),
-        _buildJointCard(),
+        _buildPurchaseSettingsCard(),
         const SizedBox(height: 16),
         _buildOptionsCard(),
         const SizedBox(height: 16),
@@ -252,6 +279,16 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
           ],
         ),
         const SizedBox(height: 12),
+        CalculatorTextField(
+          label: _loc.translate('decor_stone_calc.label.openings_area'),
+          value: _openingsArea,
+          onChanged: (v) { _openingsArea = v; _update(); },
+          suffix: _loc.translate('common.sqm'),
+          accentColor: _accentColor,
+          minValue: 0,
+          maxValue: 200,
+        ),
+        const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(color: _accentColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
@@ -267,23 +304,71 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
     );
   }
 
-  Widget _buildJointCard() {
+  Widget _buildPurchaseSettingsCard() {
     return _card(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            _loc.translate('decor_stone_calc.section.purchase_settings'),
+            style: CalculatorDesignSystem.bodyMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
           CalculatorSliderField(
-            label: _loc.translate('decor_stone_calc.label.joint_width'),
-            value: _jointWidth,
+            label: _loc.translate('decor_stone_calc.label.reserve'),
+            value: _reservePercent,
             min: 0,
-            max: 20,
-            divisions: 20,
-            suffix: _loc.translate('common.mm'),
+            max: 30,
+            divisions: 30,
+            suffix: '%',
             accentColor: _accentColor,
-            onChanged: (v) { _jointWidth = v; _update(); },
+            onChanged: (v) { _reservePercent = v; _update(); },
+          ),
+          const SizedBox(height: 12),
+          CalculatorTextField(
+            label: _loc.translate('decor_stone_calc.label.pack_area'),
+            value: _packArea,
+            onChanged: (v) { _packArea = v; _update(); },
+            suffix: _loc.translate('common.sqm'),
+            accentColor: _accentColor,
+            minValue: 0.1,
+            maxValue: 20,
+            decimalPlaces: 2,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: CalculatorTextField(
+                  label: _loc.translate('decor_stone_calc.label.glue_rate'),
+                  value: _glueRate,
+                  onChanged: (v) { _glueRate = v; _update(); },
+                  suffix: _loc.translate('decor_stone_calc.unit.kg_m2'),
+                  accentColor: _accentColor,
+                  minValue: 0.1,
+                  maxValue: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: CalculatorTextField(
+                  label: _loc.translate('decor_stone_calc.label.glue_bag'),
+                  value: _glueBag,
+                  onChanged: (v) { _glueBag = v; _update(); },
+                  suffix: _loc.translate('common.kg'),
+                  accentColor: _accentColor,
+                  minValue: 1,
+                  maxValue: 50,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Text(
-            _loc.translate('decor_stone_calc.joint_hint'),
+            _loc.translate('decor_stone_calc.purchase_hint'),
             style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextPrimary(_isDark), fontWeight: FontWeight.w500),
           ),
         ],
@@ -303,6 +388,37 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
             activeTrackColor: _accentColor,
             onChanged: (v) { _needGrout = v; _update(); },
           ),
+          if (_needGrout) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: CalculatorTextField(
+                    label: _loc.translate('decor_stone_calc.label.grout_rate'),
+                    value: _groutRate,
+                    onChanged: (v) { _groutRate = v; _update(); },
+                    suffix: _loc.translate('decor_stone_calc.unit.kg_m2'),
+                    accentColor: _accentColor,
+                    minValue: 0.01,
+                    maxValue: 5,
+                    decimalPlaces: 2,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: CalculatorTextField(
+                    label: _loc.translate('decor_stone_calc.label.grout_bag'),
+                    value: _groutBag,
+                    onChanged: (v) { _groutBag = v; _update(); },
+                    suffix: _loc.translate('common.kg'),
+                    accentColor: _accentColor,
+                    minValue: 0.5,
+                    maxValue: 25,
+                  ),
+                ),
+              ],
+            ),
+          ],
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(_loc.translate('decor_stone_calc.option.primer'), style: CalculatorDesignSystem.bodyMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
@@ -311,6 +427,47 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
             activeTrackColor: _accentColor,
             onChanged: (v) { _needPrimer = v; _update(); },
           ),
+          if (_needPrimer) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: CalculatorTextField(
+                    label: _loc.translate('decor_stone_calc.label.primer_rate'),
+                    value: _primerRate,
+                    onChanged: (v) { _primerRate = v; _update(); },
+                    suffix: _loc.translate('decor_stone_calc.unit.l_m2'),
+                    accentColor: _accentColor,
+                    minValue: 0.01,
+                    maxValue: 1,
+                    decimalPlaces: 2,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: CalculatorTextField(
+                    label: _loc.translate('decor_stone_calc.label.primer_layers'),
+                    value: _primerLayers,
+                    onChanged: (v) { _primerLayers = v; _update(); },
+                    accentColor: _accentColor,
+                    minValue: 1,
+                    maxValue: 3,
+                    isInteger: true,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            CalculatorTextField(
+              label: _loc.translate('decor_stone_calc.label.primer_can'),
+              value: _primerCan,
+              onChanged: (v) { _primerCan = v; _update(); },
+              suffix: _loc.translate('common.liters'),
+              accentColor: _accentColor,
+              minValue: 0.5,
+              maxValue: 20,
+            ),
+          ],
         ],
       ),
     );
@@ -320,8 +477,8 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
     final items = <MaterialItem>[
       MaterialItem(
         name: _loc.translate('decor_stone_calc.materials.stone'),
-        value: '${_result.stoneArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-        subtitle: _loc.translate(_stoneType.nameKey),
+        value: '${_result.stonePackages} ${_loc.translate('decor_stone_calc.unit.packs')}',
+        subtitle: '${_result.stoneArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')} • ${_loc.translate(_stoneType.nameKey)}',
         icon: Icons.view_module,
       ),
       MaterialItem(
@@ -335,8 +492,8 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
     if (_needGrout && _result.groutKg > 0) {
       items.add(MaterialItem(
         name: _loc.translate('decor_stone_calc.materials.grout'),
-        value: '${_result.groutKg.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
-        subtitle: _loc.translate('decor_stone_calc.materials.grout_desc'),
+        value: '${_result.groutBags} ${_loc.translate('decor_stone_calc.unit.packs')}',
+        subtitle: '${_result.groutKg.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
         icon: Icons.format_color_fill,
       ));
     }
@@ -344,8 +501,8 @@ class _DecorStoneCalculatorScreenState extends ConsumerState<DecorStoneCalculato
     if (_needPrimer && _result.primerLiters > 0) {
       items.add(MaterialItem(
         name: _loc.translate('decor_stone_calc.materials.primer'),
-        value: '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
-        subtitle: _loc.translate('decor_stone_calc.materials.primer_desc'),
+        value: '${_result.primerCans} ${_loc.translate('decor_stone_calc.unit.cans')}',
+        subtitle: '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
         icon: Icons.format_paint,
       ));
     }

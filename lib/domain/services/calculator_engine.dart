@@ -12,7 +12,6 @@ import '../usecases/calculate_cassette_ceiling_v2.dart';
 import '../usecases/calculate_ceiling_insulation_v2.dart';
 import '../usecases/calculate_concrete_universal.dart';
 import '../usecases/calculate_decor_plaster_v2.dart';
-import '../usecases/calculate_decor_stone_v2.dart';
 import '../usecases/calculate_doors_install_v2.dart';
 import '../usecases/calculate_electrical_v2.dart';
 import '../usecases/calculate_facade_panels_v2.dart';
@@ -48,6 +47,8 @@ import '../usecases/calculate_wallpaper.dart';
 import '../usecases/calculate_window_installation.dart';
 import '../usecases/calculate_wood_lining.dart';
 import '../usecases/calculator_usecase.dart';
+import '../usecases/canonical_bridge.dart';
+import '../usecases/decor_stone_canonical_adapter.dart';
 
 /// Единая точка расчёта для кастомных экранов и V2-каталога.
 ///
@@ -111,7 +112,7 @@ class CalculatorEngine {
       'terrace': CalculateTerrace(),
       'walls_3d_panels': Calculate3dPanels(),
       'walls_decor_plaster': CalculateDecorPlasterV2(),
-      'walls_decor_stone': CalculateDecorStoneV2(),
+      'walls_decor_stone': const CanonicalBridgeUseCase(calculateCanonicalDecorStone),
       'walls_mdf_panels': CalculateMdfPanelsV2(),
       'walls_pvc_panels': CalculatePvcPanelsV2(),
       'walls_wallpaper': CalculateWallpaper(),

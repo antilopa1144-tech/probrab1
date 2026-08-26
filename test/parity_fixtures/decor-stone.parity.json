@@ -1,65 +1,87 @@
 {
   "calculator_id": "decor-stone",
-  "formula_version": "decor-stone-canonical-v1",
-  "generated_at": "2026-08-19T07:37:47.744Z",
+  "formula_version": "decor-stone-canonical-v2",
+  "generated_at": "2026-08-26T22:34:29.856Z",
   "cases": [
     {
       "id": "defaults",
       "description": "Default inputs for decor-stone",
       "inputs": {
-        "inputMode": 0,
+        "inputMode": 1,
         "area": 15,
         "wallWidth": 4,
         "wallHeight": 2.7,
+        "openingsArea": 0,
         "stoneType": 0,
-        "jointWidth": 10,
+        "reservePercent": 10,
+        "packArea": 1,
+        "glueRate": 5,
+        "glueBag": 25,
         "needGrout": 1,
-        "needPrimer": 1
+        "groutRate": 0.4,
+        "groutBag": 5,
+        "needPrimer": 1,
+        "primerRate": 0.15,
+        "primerLayers": 1,
+        "primerCan": 10
       },
       "expected_totals": {
         "area": 15,
-        "inputMode": 0,
+        "grossArea": 15,
+        "openingsArea": 0,
+        "inputMode": 1,
         "wallWidth": 4,
         "wallHeight": 2.7,
         "stoneType": 0,
-        "jointWidth": 10,
-        "needGrout": 1,
-        "needPrimer": 1,
+        "reservePercent": 10,
+        "packArea": 1,
         "stoneM2": 16.5,
-        "glueKg": 49.5,
-        "glueBags": 2,
-        "groutKg": 6.6,
+        "stoneArea": 16.5,
+        "stonePackages": 17,
+        "glueRate": 5,
+        "glueBag": 25,
+        "glueKg": 75,
+        "glueBags": 3,
+        "needGrout": 1,
+        "groutRate": 0.4,
+        "groutBag": 5,
+        "groutKg": 6,
         "groutBags": 2,
-        "primerL": 2.475,
+        "needPrimer": 1,
+        "primerRate": 0.15,
+        "primerLayers": 1,
+        "primerCan": 10,
+        "primerL": 2.25,
+        "primerLiters": 2.25,
         "primerCans": 1,
-        "minExactNeed": 15.3648,
-        "recExactNeed": 17.49,
-        "maxExactNeed": 22.73964,
-        "minPurchase": 16,
-        "recPurchase": 18,
-        "maxPurchase": 23
+        "minExactNeed": 15,
+        "recExactNeed": 16.5,
+        "maxExactNeed": 17.25,
+        "minPurchase": 15,
+        "recPurchase": 17,
+        "maxPurchase": 18
       },
       "expected_materials_count": 4,
       "expected_material_names": [
-        "Декоративный камень",
+        "Декоративный камень (1 м²/уп.)",
         "Клей (25 кг)",
         "Затирка (5 кг)",
-        "Грунтовка глубокого проникновения (5 л)"
+        "Грунтовка (10 л)"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 15.3648,
-          "purchase_quantity": 16
+          "exact_need": 15,
+          "purchase_quantity": 15
         },
         "REC": {
-          "exact_need": 17.49,
-          "purchase_quantity": 18
+          "exact_need": 16.5,
+          "purchase_quantity": 17
         },
         "MAX": {
-          "exact_need": 22.73964,
-          "purchase_quantity": 23
+          "exact_need": 17.25,
+          "purchase_quantity": 18
         }
       }
     }
