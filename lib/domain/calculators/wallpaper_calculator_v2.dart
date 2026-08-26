@@ -206,6 +206,20 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
       group: 'advanced',
       order: 20,
     ),
+    const CalculatorField(
+      key: 'reserveRolls',
+      labelKey: 'wallpaper.reserve.title',
+      hintKey: 'wallpaper.reserve.subtitle',
+      unitType: UnitType.pieces,
+      defaultValue: 0.0,
+      minValue: 0.0,
+      maxValue: 5.0,
+      required: false,
+      step: 1.0,
+      iconName: 'add_box',
+      group: 'advanced',
+      order: 21,
+    ),
     // --- Группа "Проёмы" (дополнительно) ---
     const CalculatorField(
       key: 'windowsArea',
@@ -219,7 +233,7 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
       step: 0.1,
       iconName: 'window',
       group: 'openings',
-      order: 20,
+      order: 30,
     ),
     const CalculatorField(
       key: 'doorsArea',
@@ -233,7 +247,7 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
       step: 0.1,
       iconName: 'door_front',
       group: 'openings',
-      order: 21,
+      order: 31,
     ),
   ],
 
@@ -269,4 +283,3 @@ final wallpaperCalculatorV2 = CalculatorDefinitionV2(
   // UseCase для расчёта
   useCase: CanonicalBridgeUseCase(calculateCanonicalWallpaper),
 );
-

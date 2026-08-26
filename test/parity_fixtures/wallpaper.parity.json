@@ -1,7 +1,7 @@
 {
   "calculator_id": "wallpaper",
-  "formula_version": "wallpaper-canonical-v2",
-  "generated_at": "2026-08-19T07:37:48.164Z",
+  "formula_version": "wallpaper-canonical-v3",
+  "generated_at": "2026-08-26T12:00:02.840Z",
   "cases": [
     {
       "id": "defaults",
@@ -45,22 +45,26 @@
         "stripsNeeded": 27,
         "baseExactRolls": 9,
         "rollsNeeded": 9,
+        "pasteBaseNeededKg": 0.189,
         "pasteNeededKg": 0.2079,
+        "pastePurchaseKg": 0.25,
         "pastePacks": 1,
+        "primerBaseNeededL": 5.67,
         "primerNeededL": 6.237,
+        "primerPurchaseL": 10,
         "primerCans": 2,
-        "minExactNeedRolls": 7.802525,
+        "minExactNeedRolls": 9,
         "recExactNeedRolls": 9,
-        "maxExactNeedRolls": 12.813293,
-        "minPurchaseRolls": 8,
+        "maxExactNeedRolls": 10,
+        "minPurchaseRolls": 9,
         "recPurchaseRolls": 9,
-        "maxPurchaseRolls": 13
+        "maxPurchaseRolls": 10
       },
       "expected_materials_count": 9,
       "expected_material_names": [
         "Обои — бумажные обои, рулон 0.53×10.05 м, без подгонки рисунка",
         "Клей обойный (бумажные обои, 0.25 кг)",
-        "Грунтовка глубокого проникновения (10 л)",
+        "Грунтовка глубокого проникновения (5 л)",
         "Валик для клея",
         "Пластиковый шпатель для обоев",
         "Нож малярный",
@@ -72,16 +76,16 @@
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 7.802525,
-          "purchase_quantity": 8
+          "exact_need": 9,
+          "purchase_quantity": 9
         },
         "REC": {
           "exact_need": 9,
           "purchase_quantity": 9
         },
         "MAX": {
-          "exact_need": 12.813293,
-          "purchase_quantity": 13
+          "exact_need": 10,
+          "purchase_quantity": 10
         }
       }
     }

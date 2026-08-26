@@ -84,6 +84,11 @@ void main() {
       expect(wallpaper!.id, 'walls_wallpaper');
       expect(wallpaper.titleKey, isNotEmpty);
       expect(wallpaper.useCase, isNotNull);
+      final reserveField = wallpaper.fields.firstWhere(
+        (field) => field.key == 'reserveRolls',
+      );
+      expect(reserveField.defaultValue, 0);
+      expect(reserveField.maxValue, 5);
     });
 
     test('tile calculator has correct structure', () {

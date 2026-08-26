@@ -74,34 +74,37 @@ void main() {
       },
     );
 
-    test('wallpaper primer uses its own primary accuracy profile', () {
-      final basic = calculateCanonicalWallpaper({
-        'perimeter': 14,
-        'accuracyMode': 0,
-      });
-      final realistic = calculateCanonicalWallpaper({
-        'perimeter': 14,
-        'accuracyMode': 1,
-      });
-      final professional = calculateCanonicalWallpaper({
-        'perimeter': 14,
-        'accuracyMode': 2,
-      });
+    test(
+      'wallpaper keeps explicit reserves independent from accuracy mode',
+      () {
+        final basic = calculateCanonicalWallpaper({
+          'perimeter': 14,
+          'accuracyMode': 0,
+        });
+        final realistic = calculateCanonicalWallpaper({
+          'perimeter': 14,
+          'accuracyMode': 1,
+        });
+        final professional = calculateCanonicalWallpaper({
+          'perimeter': 14,
+          'accuracyMode': 2,
+        });
 
-      expect(basic.scenarios['REC']!.exactNeed, 9);
-      expect(basic.scenarios['REC']!.purchaseQuantity, 9);
-      expect(realistic.scenarios['REC']!.exactNeed, 9.837398);
-      expect(realistic.scenarios['REC']!.purchaseQuantity, 10);
-      expect(professional.scenarios['REC']!.exactNeed, 10.424616);
-      expect(professional.scenarios['REC']!.purchaseQuantity, 11);
-      final basicPrimer = basic.materials
-          .firstWhere((material) => material.category == 'Грунтовка')
-          .quantity;
-      final professionalPrimer = professional.materials
-          .firstWhere((material) => material.category == 'Грунтовка')
-          .quantity;
-      expect(professionalPrimer, greaterThan(basicPrimer));
-    });
+        expect(basic.scenarios['REC']!.exactNeed, 9);
+        expect(basic.scenarios['REC']!.purchaseQuantity, 9);
+        expect(realistic.scenarios['REC']!.exactNeed, 9);
+        expect(realistic.scenarios['REC']!.purchaseQuantity, 9);
+        expect(professional.scenarios['REC']!.exactNeed, 9);
+        expect(professional.scenarios['REC']!.purchaseQuantity, 9);
+        final basicPrimer = basic.materials
+            .firstWhere((material) => material.category == 'Грунтовка')
+            .quantity;
+        final professionalPrimer = professional.materials
+            .firstWhere((material) => material.category == 'Грунтовка')
+            .quantity;
+        expect(professionalPrimer, basicPrimer);
+      },
+    );
 
     test('electric applies accuracy before the spool rounding stage', () {
       final basic = calculateCanonicalElectric({'accuracyMode': 0});

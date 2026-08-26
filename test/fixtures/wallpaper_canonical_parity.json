@@ -1,5 +1,5 @@
 {
-  "formulaVersion": "wallpaper-canonical-v1",
+  "formulaVersion": "wallpaper-canonical-v3",
   "cases": [
     {
       "id": "perimeter_counts_with_manual_reserve",
@@ -18,11 +18,11 @@
       "expected": {
         "wallArea": 37.8,
         "netArea": 34.41,
-        "formulaVersion": "wallpaper-canonical-v1",
+        "formulaVersion": "wallpaper-canonical-v3",
         "materials": {
           "rolls": 10,
-          "pastePacks": 1,
-          "primerCans": 2
+          "pastePacks": 0.25,
+          "primerCans": 10
         },
         "warningsCount": 0,
         "recScenario": {
@@ -50,11 +50,11 @@
       "expected": {
         "wallArea": 45,
         "netArea": 40.2,
-        "formulaVersion": "wallpaper-canonical-v1",
+        "formulaVersion": "wallpaper-canonical-v3",
         "materials": {
           "rolls": 6,
-          "pastePacks": 2,
-          "primerCans": 2
+          "pastePacks": 0.5,
+          "primerCans": 10
         },
         "warningsCount": 2,
         "recScenario": {
@@ -81,17 +81,17 @@
       "expected": {
         "wallArea": 50,
         "netArea": 42,
-        "formulaVersion": "wallpaper-canonical-v1",
+        "formulaVersion": "wallpaper-canonical-v3",
         "materials": {
-          "rolls": 10,
-          "pastePacks": 2,
-          "primerCans": 2
+          "rolls": 13,
+          "pastePacks": 0.5,
+          "primerCans": 10
         },
         "warningsCount": 0,
         "recScenario": {
           "packageSize": 1,
-          "exactNeed": 9.2,
-          "purchaseQuantity": 10
+          "exactNeed": 12.266667,
+          "purchaseQuantity": 13
         }
       }
     }

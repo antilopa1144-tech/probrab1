@@ -35,5 +35,52 @@ void main() {
       });
       expect(error, isNotNull);
     });
+
+    test('MIN не ниже чистой потребности, запас применяется один раз', () {
+      final result = calculateCanonicalWallpaper({
+        'perimeter': 14,
+        'wallHeight': 2.7,
+        'rollLength': 10.05,
+        'rollWidth': 0.53,
+        'rapport': 0,
+        'reservePercent': 15,
+        'reserveRolls': 0,
+        'accuracyMode': 0,
+      });
+
+      expect(result.totals['baseExactRolls'], 9);
+      expect(result.scenarios['MIN']!.exactNeed, 9);
+      expect(result.scenarios['REC']!.exactNeed, 10.35);
+      expect(result.scenarios['REC']!.purchaseQuantity, 11);
+      expect(result.scenarios['MAX']!.exactNeed, 11.35);
+      expect(result.scenarios['MAX']!.purchaseQuantity, 12);
+    });
+
+    test('разделяет точный расход, запас и покупаемую упаковку', () {
+      final result = calculateCanonicalWallpaper({
+        'perimeter': 14,
+        'wallHeight': 2.7,
+        'rollLength': 10.05,
+        'rollWidth': 0.53,
+        'rapport': 0,
+        'reservePercent': 0,
+        'reserveRolls': 0,
+        'accuracyMode': 0,
+      });
+
+      final wallpaper = result.materials.first;
+      final paste = result.materials[1];
+      final primer = result.materials[2];
+
+      expect(wallpaper.quantity, 9);
+      expect(wallpaper.withReserve, 9);
+      expect(wallpaper.purchaseQty, 9);
+      expect(paste.quantity, closeTo(0.189, 0.000001));
+      expect(paste.withReserve, closeTo(0.2079, 0.000001));
+      expect(paste.purchaseQty, 0.25);
+      expect(primer.quantity, closeTo(5.67, 0.000001));
+      expect(primer.withReserve, closeTo(6.237, 0.000001));
+      expect(primer.purchaseQty, 10);
+    });
   });
 }

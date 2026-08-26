@@ -9110,7 +9110,7 @@ const Map<String, dynamic> wallPanelsSpecData = {
 /// Generated from wallpaper-canonical.v1.json
 const Map<String, dynamic> wallpaperSpecData = {
   'calculator_id': 'wallpaper',
-  'formula_version': 'wallpaper-canonical-v2',
+  'formula_version': 'wallpaper-canonical-v3',
   'input_schema': [
     {
       'key': 'inputMode',
@@ -9241,12 +9241,7 @@ const Map<String, dynamic> wallpaperSpecData = {
     },
   ],
   'field_factors': {
-    'enabled': [
-      'surface_quality',
-      'geometry_complexity',
-      'installation_method',
-      'worker_skill',
-    ],
+    'enabled': [],
   },
   'normative_formula': {
     'wallpaper_types': [
@@ -9299,9 +9294,12 @@ const Map<String, dynamic> wallpaperSpecData = {
   },
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
+    'recommended_spare_rolls': 1,
+    'MIN': 'Чистая потребность по полосам и раппорту, без запаса',
+    'REC': 'Выбранный пользователем процент и запасные рулоны применяются один раз',
+    'MAX': 'Выбранный запас плюс минимум один целый рулон на ремонт',
   },
 };
-
 /// Generated from warm-floor-canonical.v1.json
 const Map<String, dynamic> warmFloorSpecData = {
   'calculator_id': 'warm-floor',

@@ -8,6 +8,7 @@ import '../../mixins/accuracy_mode_mixin.dart';
 import '../../widgets/calculator/calculator_widgets.dart';
 
 enum InputMode { byArea, byRoom }
+
 enum WallpaperRollSize { s053x10, s106x10, s106x25, custom }
 
 /// Тип обоев — влияет на расход клея (сухая смесь, кг/м²)
@@ -28,7 +29,9 @@ class _WallpaperResult {
   final int stripsNeeded;
   final String rollSizeName;
   final double glueNeededKg;
+  final int pastePacks;
   final double primerLiters;
+  final int primerCans;
   final double rollWidth;
   final double rollLength;
 
@@ -40,7 +43,9 @@ class _WallpaperResult {
     required this.stripsNeeded,
     required this.rollSizeName,
     required this.glueNeededKg,
+    required this.pastePacks,
     required this.primerLiters,
+    required this.primerCans,
     required this.rollWidth,
     required this.rollLength,
   });
@@ -57,7 +62,8 @@ class WallpaperCalculatorScreen extends StatefulWidget {
   });
 
   @override
-  State<WallpaperCalculatorScreen> createState() => _WallpaperCalculatorScreenState();
+  State<WallpaperCalculatorScreen> createState() =>
+      _WallpaperCalculatorScreenState();
 }
 
 class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
@@ -78,6 +84,7 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
   double _height = 2.7;
   double _windowsDoors = 3.0;
   int _rapport = 0;
+  int _reserveRolls = 0;
   WallpaperRollSize _rollSize = WallpaperRollSize.s053x10;
   WallpaperType _wallpaperType = WallpaperType.vinyl;
   double _customWidth = 1.06;
@@ -101,11 +108,19 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
           ? InputMode.byArea
           : InputMode.byRoom;
     }
-    if (initial['area'] != null) _area = initial['area']!.clamp(1.0, 1000.0);
-    if (initial['length'] != null) _length = initial['length']!.clamp(1.0, 20.0);
-    if (initial['width'] != null) _width = initial['width']!.clamp(1.0, 20.0);
+    if (initial['area'] != null) {
+      _area = initial['area']!.clamp(1.0, 1000.0);
+    }
+    if (initial['length'] != null) {
+      _length = initial['length']!.clamp(1.0, 20.0);
+    }
+    if (initial['width'] != null) {
+      _width = initial['width']!.clamp(1.0, 20.0);
+    }
     final wallHeight = initial['wallHeight'] ?? initial['height'];
-    if (wallHeight != null) _height = wallHeight.clamp(2.0, 5.0);
+    if (wallHeight != null) {
+      _height = wallHeight.clamp(2.0, 5.0);
+    }
     if (initial['openingsArea'] != null) {
       _windowsDoors = initial['openingsArea']!.clamp(0.0, 50.0);
     } else {
@@ -115,6 +130,9 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     }
     if (initial['rapport'] != null) {
       _rapport = initial['rapport']!.round().clamp(0, 100);
+    }
+    if (initial['reserveRolls'] != null) {
+      _reserveRolls = initial['reserveRolls']!.round().clamp(0, 5);
     }
     if (initial['wallpaperType'] != null) {
       _wallpaperType = _resolveWallpaperType(initial['wallpaperType']!);
@@ -135,7 +153,10 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     if (rounded >= 1 && rounded <= WallpaperType.values.length) {
       return WallpaperType.values[rounded - 1];
     }
-    return WallpaperType.values[rounded.clamp(0, WallpaperType.values.length - 1)];
+    return WallpaperType.values[rounded.clamp(
+      0,
+      WallpaperType.values.length - 1,
+    )];
   }
 
   WallpaperRollSize _resolveRollSize(int rawValue) {
@@ -198,8 +219,8 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
       'rollSize': roll['rollSize']!,
       'rollWidth': roll['rollWidth']!,
       'rollLength': roll['rollLength']!,
-      'reserveRolls': 0,
-          ...accuracyModeInput,
+      'reserveRolls': _reserveRolls.toDouble(),
+      ...accuracyModeInput,
     };
   }
 
@@ -212,8 +233,10 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
   _WallpaperResult _calculate() {
     final contract = _calculator.calculateCanonical(_buildCalculationInputs());
     final totals = contract.totals;
-    final rollWidth = totals['rollWidth'] ?? _selectedRollDimensions()['rollWidth']!;
-    final rollLength = totals['rollLength'] ?? _selectedRollDimensions()['rollLength']!;
+    final rollWidth =
+        totals['rollWidth'] ?? _selectedRollDimensions()['rollWidth']!;
+    final rollLength =
+        totals['rollLength'] ?? _selectedRollDimensions()['rollLength']!;
 
     return _WallpaperResult(
       area: totals['netArea'] ?? 0,
@@ -223,7 +246,9 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
       stripsNeeded: _safeRound(totals['stripsNeeded']),
       rollSizeName: _resolveRollSizeName(rollWidth, rollLength),
       glueNeededKg: totals['pasteNeededKg'] ?? 0,
+      pastePacks: _safeRound(totals['pastePacks']),
       primerLiters: totals['primerNeededL'] ?? 0,
+      primerCans: _safeRound(totals['primerCans']),
       rollWidth: rollWidth,
       rollLength: rollLength,
     );
@@ -238,31 +263,57 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     buffer.writeln('═' * 40);
     buffer.writeln();
 
-    buffer.writeln(_loc.translate('wallpaper.export.walls_area')
-        .replaceFirst('{value}', _result.wallsArea.toStringAsFixed(1)));
+    buffer.writeln(
+      _loc
+          .translate('wallpaper.export.walls_area')
+          .replaceFirst('{value}', _result.wallsArea.toStringAsFixed(1)),
+    );
     if (_result.deductedArea > 0) {
-      buffer.writeln(_loc.translate('wallpaper.export.deduction')
-          .replaceFirst('{value}', _result.deductedArea.toStringAsFixed(1)));
-      buffer.writeln(_loc.translate('wallpaper.export.gluing_area')
-          .replaceFirst('{value}', _result.area.toStringAsFixed(1)));
+      buffer.writeln(
+        _loc
+            .translate('wallpaper.export.deduction')
+            .replaceFirst('{value}', _result.deductedArea.toStringAsFixed(1)),
+      );
+      buffer.writeln(
+        _loc
+            .translate('wallpaper.export.gluing_area')
+            .replaceFirst('{value}', _result.area.toStringAsFixed(1)),
+      );
     }
     if (_rapport > 0) {
-      buffer.writeln(_loc.translate('wallpaper.export.rapport')
-          .replaceFirst('{value}', _rapport.toString()));
+      buffer.writeln(
+        _loc
+            .translate('wallpaper.export.rapport')
+            .replaceFirst('{value}', _rapport.toString()),
+      );
     }
     buffer.writeln();
 
     buffer.writeln(_loc.translate('wallpaper.export.materials_title'));
     buffer.writeln('─' * 40);
-    buffer.writeln(_loc.translate('wallpaper.export.rolls_line')
-        .replaceFirst('{size}', _result.rollSizeName)
-        .replaceFirst('{value}', _result.rollsNeeded.toString()));
-    buffer.writeln(_loc.translate('wallpaper.export.strips_line')
-        .replaceFirst('{value}', _result.stripsNeeded.toString()));
-    buffer.writeln(_loc.translate('wallpaper.export.glue_line')
-        .replaceFirst('{value}', _result.glueNeededKg.toStringAsFixed(1)));
-    buffer.writeln(_loc.translate('wallpaper.export.primer_line')
-        .replaceFirst('{value}', _result.primerLiters.toStringAsFixed(1)));
+    buffer.writeln(
+      _loc
+          .translate('wallpaper.export.rolls_line')
+          .replaceFirst('{size}', _result.rollSizeName)
+          .replaceFirst('{value}', _result.rollsNeeded.toString()),
+    );
+    buffer.writeln(
+      _loc
+          .translate('wallpaper.export.strips_line')
+          .replaceFirst('{value}', _result.stripsNeeded.toString()),
+    );
+    buffer.writeln(
+      _loc
+          .translate('wallpaper.export.glue_line')
+          .replaceFirst('{value}', _result.glueNeededKg.toStringAsFixed(1))
+          .replaceFirst('{packs}', _result.pastePacks.toString()),
+    );
+    buffer.writeln(
+      _loc
+          .translate('wallpaper.export.primer_line')
+          .replaceFirst('{value}', _result.primerLiters.toStringAsFixed(1))
+          .replaceFirst('{cans}', _result.primerCans.toString()),
+    );
     buffer.writeln();
 
     buffer.writeln('═' * 40);
@@ -287,7 +338,8 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
         results: [
           ResultItem(
             label: _loc.translate('wallpaper.label.area').toUpperCase(),
-            value: '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
+            value:
+                '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -307,7 +359,9 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
         const SizedBox(height: 16),
         _buildInputModeSelector(),
         const SizedBox(height: 16),
-        _inputMode == InputMode.byArea ? _buildAreaCard() : _buildRoomDimensionsCard(),
+        _inputMode == InputMode.byArea
+            ? _buildAreaCard()
+            : _buildRoomDimensionsCard(),
         const SizedBox(height: 16),
         _buildRollSizeSelector(),
         if (_rollSize == WallpaperRollSize.custom) ...[
@@ -640,6 +694,39 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
             },
             decimalPlaces: 0,
           ),
+          const SizedBox(height: 16),
+          Divider(color: CalculatorColors.getDivider(_isDark)),
+          const SizedBox(height: 12),
+          Text(
+            _loc.translate('wallpaper.reserve.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _loc.translate('wallpaper.reserve.subtitle'),
+            style: CalculatorDesignSystem.bodySmall.copyWith(
+              color: CalculatorColors.getTextSecondary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 8),
+          CalculatorSliderField(
+            label: _loc.translate('wallpaper.reserve.title'),
+            value: _reserveRolls.toDouble(),
+            min: 0,
+            max: 5,
+            divisions: 5,
+            suffix: _loc.translate('wallpaper.materials.rolls_unit'),
+            accentColor: accentColor,
+            onChanged: (value) {
+              setState(() {
+                _reserveRolls = value.round();
+                _update();
+              });
+            },
+            decimalPlaces: 0,
+          ),
         ],
       ),
     );
@@ -692,13 +779,15 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     final items = <MaterialItem>[
       MaterialItem(
         name: _loc.translate('wallpaper.materials.rolls'),
-        value: '${_result.rollsNeeded} ${_loc.translate('wallpaper.materials.rolls_unit')}',
+        value:
+            '${_result.rollsNeeded} ${_loc.translate('wallpaper.materials.rolls_unit')}',
         subtitle: _result.rollSizeName,
         icon: Icons.ballot,
       ),
       MaterialItem(
         name: _loc.translate('wallpaper.materials.strips'),
-        value: '${_result.stripsNeeded} ${_loc.translate('wallpaper.materials.strips_unit')}',
+        value:
+            '${_result.stripsNeeded} ${_loc.translate('wallpaper.materials.strips_unit')}',
         icon: Icons.view_week,
       ),
       MaterialItem(
@@ -706,11 +795,16 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
         value: _result.glueNeededKg < 1
             ? '${(_result.glueNeededKg * 1000).toStringAsFixed(0)} ${_loc.translate('common.gram_short')}'
             : '${_result.glueNeededKg.toStringAsFixed(1)} ${_loc.translate('wallpaper.materials.kg')}',
+        subtitle:
+            '${_result.pastePacks} ${_loc.translate('wallpaper.materials.packs_unit')}',
         icon: Icons.colorize,
       ),
       MaterialItem(
         name: _loc.translate('wallpaper.materials.primer'),
-        value: '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('wallpaper.materials.liters')}',
+        value:
+            '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('wallpaper.materials.liters')}',
+        subtitle:
+            '${_result.primerCans} ${_loc.translate('wallpaper.materials.canisters_unit')}',
         icon: Icons.water_drop,
       ),
     ];
@@ -764,4 +858,3 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     );
   }
 }
-
