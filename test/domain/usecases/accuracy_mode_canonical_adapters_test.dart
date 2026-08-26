@@ -106,17 +106,19 @@ void main() {
       },
     );
 
-    test('electric applies accuracy before the spool rounding stage', () {
+    test('electric keeps the explicit reserve independent from accuracy mode', () {
       final basic = calculateCanonicalElectric({'accuracyMode': 0});
       final realistic = calculateCanonicalElectric({'accuracyMode': 1});
       final professional = calculateCanonicalElectric({'accuracyMode': 2});
 
-      expect(basic.scenarios['REC']!.exactNeed, 5.3);
-      expect(basic.scenarios['REC']!.purchaseQuantity, 6);
-      expect(realistic.scenarios['REC']!.exactNeed, 6.36);
-      expect(realistic.scenarios['REC']!.purchaseQuantity, 7);
-      expect(professional.scenarios['REC']!.exactNeed, 7.42);
-      expect(professional.scenarios['REC']!.purchaseQuantity, 8);
+      for (final result in [basic, realistic, professional]) {
+        expect(result.scenarios['REC']!.exactNeed, 239.19024);
+        expect(result.scenarios['REC']!.purchaseQuantity, 268);
+        expect(
+          result.scenarios['REC']!.keyFactors['input_reserve_multiplier'],
+          1.15,
+        );
+      }
     });
 
     test('fastener bits use the accessories multiplier', () {
