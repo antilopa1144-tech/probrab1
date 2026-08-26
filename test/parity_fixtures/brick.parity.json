@@ -1,7 +1,7 @@
 {
   "calculator_id": "brick",
-  "formula_version": "brick-canonical-v2",
-  "generated_at": "2026-08-19T07:37:47.682Z",
+  "formula_version": "brick-canonical-v3",
+  "generated_at": "2026-08-26T11:09:52.070Z",
   "cases": [
     {
       "id": "defaults",
@@ -31,7 +31,9 @@
         "bricksPerSqm": 102,
         "mortarPerSqm": 0.023,
         "conditionsMultiplier": 1,
-        "bricksNeeded": 1702.89,
+        "bricksNet": 1530,
+        "bricksWithWaste": 1606.5,
+        "bricksNeeded": 1606.5,
         "mortarVolume": 0.3864,
         "cementKg": 154.56,
         "cementBags": 4,
@@ -46,12 +48,12 @@
         "flexibleTies": 0,
         "footprintArea": 1.25,
         "perimeter": 10.5,
-        "minExactNeedBricks": 1495.9728,
-        "recExactNeedBricks": 1702.89,
-        "maxExactNeedBricks": 2214.01404,
-        "minPurchaseBricks": 1496,
-        "recPurchaseBricks": 1703,
-        "maxPurchaseBricks": 2215
+        "minExactNeedBricks": 1530,
+        "recExactNeedBricks": 1606.5,
+        "maxExactNeedBricks": 1683,
+        "minPurchaseBricks": 1530,
+        "recPurchaseBricks": 1607,
+        "maxPurchaseBricks": 1683
       },
       "expected_materials_count": 12,
       "expected_material_names": [
@@ -72,16 +74,16 @@
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 1495.9728,
-          "purchase_quantity": 1496
+          "exact_need": 1530,
+          "purchase_quantity": 1530
         },
         "REC": {
-          "exact_need": 1702.89,
-          "purchase_quantity": 1703
+          "exact_need": 1606.5,
+          "purchase_quantity": 1607
         },
         "MAX": {
-          "exact_need": 2214.01404,
-          "purchase_quantity": 2215
+          "exact_need": 1683,
+          "purchase_quantity": 1683
         }
       }
     }

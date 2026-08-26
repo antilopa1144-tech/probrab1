@@ -644,7 +644,7 @@ const Map<String, dynamic> blindAreaSpecData = {
 /// Generated from brick-canonical.v1.json
 const Map<String, dynamic> brickSpecData = {
   'calculator_id': 'brick',
-  'formula_version': 'brick-canonical-v2',
+  'formula_version': 'brick-canonical-v3',
   'input_schema': [
     {
       'key': 'inputMode',
@@ -705,11 +705,7 @@ const Map<String, dynamic> brickSpecData = {
     },
   ],
   'field_factors': {
-    'enabled': [
-      'geometry_complexity',
-      'worker_skill',
-      'waste_factor',
-    ],
+    'enabled': [],
   },
   'normative_formula': {
     'bricks_per_sqm': {
@@ -795,7 +791,11 @@ const Map<String, dynamic> brickSpecData = {
     'manual_mix_grade_threshold': 5,
   },
   'scenario_policy': {
-    'contract': 'min-rec-max-v1',
+    'contract': 'explicit-brick-waste-v1',
+    'MIN': 'Чистая геометрическая потребность без запаса',
+    'REC': 'Чистая потребность с выбранным пользователем запасом на бой и подрезку',
+    'MAX': 'Чистая потребность с максимальным доступным в форме запасом 10%',
+    'purchase_quantity': 'Округление каждого сценария вверх до целого кирпича',
   },
   'companion_materials': [
     {
@@ -925,7 +925,6 @@ const Map<String, dynamic> brickSpecData = {
     },
   ],
 };
-
 /// Generated from brickwork-canonical.v1.json
 const Map<String, dynamic> brickworkSpecData = {
   'calculator_id': 'brickwork',

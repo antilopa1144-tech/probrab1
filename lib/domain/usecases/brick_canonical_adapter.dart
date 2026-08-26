@@ -31,10 +31,14 @@ Map<String, double> _resolveArea(SpecReader spec, Map<String, double> inputs) {
   final area = math
       .max(1, inputs['area'] ?? defaultFor(spec, 'area', 15))
       .toDouble();
-  final wallWidth = (inputs['wallWidth'] ?? defaultFor(spec, 'wallWidth', 5))
-      .toDouble();
   final wallHeight = (inputs['wallHeight'] ?? defaultFor(spec, 'wallHeight', 3))
       .toDouble();
+  final wallWidth =
+      (inputs['wallWidth'] ??
+              (wallHeight > 0
+                  ? area / wallHeight
+                  : defaultFor(spec, 'wallWidth', 5)))
+          .toDouble();
   return {
     'inputMode': 1.0,
     'area': roundValue(area, 3),
@@ -92,8 +96,12 @@ CanonicalCalculatorContractResult calculateCanonicalBrick(
       (conditionsMultiplierMap['$workingConditions'] as num? ?? 1.0).toDouble();
   final wasteCoeffsMap = spec.normativeValue<Map>('waste_coeffs') ?? {};
   final wasteCoeff = (wasteCoeffsMap['$wasteMode'] as num? ?? 1.05).toDouble();
+  final maxWasteCoeff = wasteCoeffsMap.values.whereType<num>().fold<double>(
+    wasteCoeff,
+    (current, value) => math.max(current, value.toDouble()),
+  );
 
-  final baseBricksNeeded = area * bricksPerSqm * wasteCoeff;
+  final bricksNet = area * bricksPerSqm;
 
   final mortarVolume = roundValue(
     area *
@@ -151,18 +159,13 @@ CanonicalCalculatorContractResult calculateCanonicalBrick(
 
   final scenarios = <String, CanonicalScenarioResult>{};
 
-  final accuracyMode = parseAccuracyMode(inputs);
-  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(
-      spec.enabledFactors,
-      defaultFactorTable,
-      scenarioName,
-    );
-    final exactNeed = roundValue(
-      baseBricksNeeded * accuracyMult * multiplier,
-      6,
-    );
+    final scenarioWasteCoeff = scenarioName == 'MIN'
+        ? 1.0
+        : scenarioName == 'MAX'
+        ? math.max(wasteCoeff, maxWasteCoeff)
+        : wasteCoeff;
+    final exactNeed = roundValue(bricksNet * scenarioWasteCoeff, 6);
     final packageSize = spec.packagingRule<num>('package_size').toDouble();
     final packageCount = exactNeed > 0 ? (exactNeed / packageSize).ceil() : 0;
     final purchaseQuantity = roundValue(packageCount * packageSize, 6);
@@ -177,15 +180,13 @@ CanonicalCalculatorContractResult calculateCanonicalBrick(
         'brickType:$brickType',
         'wallThickness:$wallThickness',
         'wasteMode:$wasteMode',
+        'wasteMultiplier:$scenarioWasteCoeff',
+        'scenario_policy:explicit_brick_waste',
         'packaging:$packageLabel',
       ],
       keyFactors: {
-        ...buildKeyFactors(
-          spec.enabledFactors,
-          defaultFactorTable,
-          scenarioName,
-        ),
-        'field_multiplier': roundValue(multiplier, 6),
+        'waste_multiplier': roundValue(scenarioWasteCoeff, 6),
+        'field_multiplier': roundValue(scenarioWasteCoeff, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
@@ -223,10 +224,10 @@ CanonicalCalculatorContractResult calculateCanonicalBrick(
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
       name: _brickTypeLabels[brickType] ?? 'Кирпич',
-      quantity: roundValue(recScenario.exactNeed, 6),
+      quantity: roundValue(bricksNet, 6),
       unit: 'шт',
-      withReserve: recScenario.exactNeed.ceil().toDouble(),
-      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
+      withReserve: recScenario.exactNeed,
+      purchaseQty: recScenario.purchaseQuantity,
       category: 'Основное',
     ),
     CanonicalMaterialResult(
@@ -362,6 +363,8 @@ CanonicalCalculatorContractResult calculateCanonicalBrick(
       'bricksPerSqm': bricksPerSqm,
       'mortarPerSqm': mortarPerSqm,
       'conditionsMultiplier': conditionsMultiplier,
+      'bricksNet': roundValue(bricksNet, 3),
+      'bricksWithWaste': roundValue(recScenario.exactNeed, 3),
       'bricksNeeded': roundValue(recScenario.exactNeed, 3),
       'mortarVolume': mortarVolume,
       'cementKg': cementKg,
