@@ -8624,7 +8624,7 @@ const Map<String, dynamic> tileAdhesiveSpecData = {
 /// Generated from tile-canonical.v1.json
 const Map<String, dynamic> tileSpecData = {
   'calculator_id': 'tile',
-  'formula_version': 'tile-canonical-v2',
+  'formula_version': 'tile-canonical-v3',
   'input_schema': [
     {
       'key': 'inputMode',
@@ -8668,11 +8668,24 @@ const Map<String, dynamic> tileSpecData = {
       'max': 200,
     },
     {
+      'key': 'packagingMode',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
+    {
       'key': 'packArea',
       'unit': 'm2',
       'default_value': 1.44,
       'min': 0.1,
       'max': 20,
+    },
+    {
+      'key': 'tilesPerPackage',
+      'unit': 'pieces',
+      'default_value': 16,
+      'min': 1,
+      'max': 500,
     },
     {
       'key': 'jointWidth',
@@ -8787,7 +8800,6 @@ const Map<String, dynamic> tileSpecData = {
     'contract': 'min-rec-max-v1',
   },
 };
-
 /// Generated from tile-grout-canonical.v1.json
 const Map<String, dynamic> tileGroutSpecData = {
   'calculator_id': 'tile-grout',

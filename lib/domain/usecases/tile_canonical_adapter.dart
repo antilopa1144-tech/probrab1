@@ -177,6 +177,9 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
     3,
   );
   final tileAreaM2 = roundValue((tileWidthCm / 100) * (tileHeightCm / 100), 6);
+  final packagingMode =
+      (normalized['packagingMode'] ?? defaultFor(spec, 'packagingMode', 0))
+          .round();
   final requestedPackAreaM2 =
       (normalized['packArea'] ??
               defaultFor(
@@ -186,10 +189,25 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
               ))
           .clamp(0.1, 20)
           .toDouble();
-  final tilesPerPackage = math.max(
-    1,
-    (requestedPackAreaM2 / tileAreaM2).round(),
-  );
+  final packagingSource = packagingMode == 1 ? 'label' : 'estimated';
+  final requestedTilesPerPackage =
+      (normalized['tilesPerPackage'] ?? defaultFor(spec, 'tilesPerPackage', 16))
+          .toDouble();
+  if (packagingSource == 'label' &&
+      (requestedTilesPerPackage != requestedTilesPerPackage.roundToDouble() ||
+          requestedTilesPerPackage < 1 ||
+          requestedTilesPerPackage > 500)) {
+    throw RangeError.range(
+      requestedTilesPerPackage,
+      1,
+      500,
+      'tilesPerPackage',
+      'Количество плиток в коробке должно быть целым числом от 1 до 500',
+    );
+  }
+  final tilesPerPackage = packagingSource == 'label'
+      ? requestedTilesPerPackage.round()
+      : math.max(1, (requestedPackAreaM2 / tileAreaM2).round());
   final packAreaM2 = roundValue(tilesPerPackage * tileAreaM2, 6);
   final accuracyMode = parseAccuracyMode(normalized);
   final tilePrimaryMult = accuracyPrimaryMultiplier('tile', accuracyMode);
@@ -248,6 +266,7 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
         'formula_version:${spec.formulaVersion}',
         'layout:${layout['key'] as String}',
         'room:${roomComplexity['key'] as String}',
+        'packaging_source:$packagingSource',
         'pack_area_m2:$packAreaM2',
         'packaging:$packageLabel',
       ],
@@ -304,6 +323,11 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
   );
 
   final warnings = <String>[];
+  if (packagingSource == 'estimated') {
+    warnings.add(
+      'Количество плиток в коробке является предварительной оценкой по площади упаковки — перед покупкой подтвердите фасовку на этикетке коллекции',
+    );
+  }
   if (baseExactNeed <
       spec.warningRule<num>('low_tile_count_threshold').toDouble()) {
     warnings.add(
@@ -451,6 +475,7 @@ CanonicalCalculatorContractResult calculateCanonicalTile(
       'tileArea': tileAreaM2,
       'packArea': packAreaM2,
       'tilesPerPackage': tilesPerPackage.toDouble(),
+      'packagingSource': packagingSource == 'label' ? 1 : 0,
       'packagesNeeded': recScenario.buyPlan.packagesCount.toDouble(),
       'wastePercent': wastePercent,
       'sizeAdjustment': roundValue(sizeAdjustment, 3),

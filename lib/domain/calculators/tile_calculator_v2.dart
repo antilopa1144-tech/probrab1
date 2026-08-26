@@ -21,7 +21,16 @@ final tileCalculatorV2 = CalculatorDefinitionV2(
   accentColor: kCalculatorAccentColor,
   complexity: 2,
   popularity: 95,
-  tags: ['плитка', 'полы', 'стены', 'кафель', 'tile', 'flooring', 'walls', 'ceramic'],
+  tags: [
+    'плитка',
+    'полы',
+    'стены',
+    'кафель',
+    'tile',
+    'flooring',
+    'walls',
+    'ceramic',
+  ],
 
   // Поля ввода
   fields: [
@@ -157,6 +166,53 @@ final tileCalculatorV2 = CalculatorDefinitionV2(
         value: 0,
       ),
     ),
+    const CalculatorField(
+      key: 'packagingMode',
+      labelKey: 'tile.packaging.title',
+      hintKey: 'tile.packaging.hint',
+      unitType: UnitType.pieces,
+      inputType: FieldInputType.radio,
+      defaultValue: 0,
+      group: 'tile',
+      order: 13,
+      options: [
+        FieldOption(value: 0, labelKey: 'tile.packaging.by_area'),
+        FieldOption(value: 1, labelKey: 'tile.packaging.by_label'),
+      ],
+    ),
+    const CalculatorField(
+      key: 'packArea',
+      labelKey: 'tile.packaging.pack_area',
+      hintKey: 'tile.packaging.estimate_warning',
+      unitType: UnitType.squareMeters,
+      defaultValue: 1.44,
+      minValue: 0.1,
+      maxValue: 20,
+      step: 0.1,
+      group: 'tile',
+      order: 14,
+      dependency: FieldDependency(
+        condition: DependencyCondition.equals,
+        fieldKey: 'packagingMode',
+        value: 0,
+      ),
+    ),
+    const CalculatorField(
+      key: 'tilesPerPackage',
+      labelKey: 'tile.packaging.tiles_per_box',
+      unitType: UnitType.pieces,
+      defaultValue: 16,
+      minValue: 1,
+      maxValue: 500,
+      step: 1,
+      group: 'tile',
+      order: 15,
+      dependency: FieldDependency(
+        condition: DependencyCondition.equals,
+        fieldKey: 'packagingMode',
+        value: 1,
+      ),
+    ),
 
     // --- Группа "Дополнительно" ---
     const CalculatorField(
@@ -236,8 +292,14 @@ final tileCalculatorV2 = CalculatorDefinitionV2(
   // Подсказки после расчёта
   afterHints: [
     CalculatorHint(type: HintType.tip, messageKey: 'hint.tile.after.grout'),
-    CalculatorHint(type: HintType.important, messageKey: 'hint.tile.after.adhesive'),
-    CalculatorHint(type: HintType.tip, messageKey: 'hint.tile.after.installation'),
+    CalculatorHint(
+      type: HintType.important,
+      messageKey: 'hint.tile.after.adhesive',
+    ),
+    CalculatorHint(
+      type: HintType.tip,
+      messageKey: 'hint.tile.after.installation',
+    ),
     CalculatorHint(
       type: HintType.warning,
       messageKey: 'hint.tile.large_tile_deformation_joints',

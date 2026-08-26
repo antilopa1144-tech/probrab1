@@ -1,7 +1,7 @@
 {
   "calculator_id": "tile",
-  "formula_version": "tile-canonical-v2",
-  "generated_at": "2026-08-19T07:37:48.133Z",
+  "formula_version": "tile-canonical-v3",
+  "generated_at": "2026-08-22T23:13:06.598Z",
   "cases": [
     {
       "id": "defaults",
@@ -13,7 +13,9 @@
         "area": 12,
         "tileWidthCm": 30,
         "tileHeightCm": 30,
+        "packagingMode": 0,
         "packArea": 1.44,
+        "tilesPerPackage": 16,
         "jointWidth": 3,
         "groutDepth": 0,
         "layoutPattern": 1,
@@ -32,6 +34,7 @@
         "tileArea": 0.09,
         "packArea": 1.44,
         "tilesPerPackage": 16,
+        "packagingSource": 0,
         "packagesNeeded": 10,
         "wastePercent": 10,
         "sizeAdjustment": 0,
@@ -60,8 +63,10 @@
         "Крестики для плитки 3 мм",
         "Эластичный силиконовый герметик, 280–310 мл"
       ],
-      "expected_warnings_count": 0,
-      "expected_warnings": [],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "Количество плиток в коробке является предварительной оценкой по площади упаковки — перед покупкой подтвердите фасовку на этикетке коллекции"
+      ],
       "expected_scenarios": {
         "MIN": {
           "exact_need": 133.84448,

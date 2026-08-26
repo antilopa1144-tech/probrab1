@@ -73,18 +73,12 @@ void main() {
       });
 
       test('без вычетов — чистая площадь стен', () {
-        final area = calculateWallArea(
-          wallHeight: 2.7,
-          wallPerimeter: 10.0,
-        );
+        final area = calculateWallArea(wallHeight: 2.7, wallPerimeter: 10.0);
         expect(area, closeTo(27.0, 0.01));
       });
 
       test('минимальная стена — не падает', () {
-        final area = calculateWallArea(
-          wallHeight: 1.0,
-          wallPerimeter: 2.0,
-        );
+        final area = calculateWallArea(wallHeight: 1.0, wallPerimeter: 2.0);
         expect(area, equals(2.0));
       });
 
@@ -141,25 +135,86 @@ void main() {
           'size': 16.0,
           'packageUnit': 'упаковок',
         });
+        expect(result.totals['packagingSource'], equals(0));
+        expect(
+          result.scenarios['REC']!.assumptions,
+          contains('packaging_source:estimated'),
+        );
+        expect(
+          result.warnings.any(
+            (warning) => warning.contains('предварительной оценкой'),
+          ),
+          isTrue,
+        );
       });
 
-      test('расчёт плитки на комбинированную площадь (пол 12 м² + стены 20 м²)', () {
-        const totalArea = 12.0 + 20.0; // 32 м²
+      test('количество плиток с этикетки определяет реальную коробку', () {
         final result = calculateCanonicalTile({
           'inputMode': 1.0,
-          'area': totalArea,
-          'tileWidthCm': 30.0,
+          'area': 10.0,
+          'tileWidthCm': 60.0,
           'tileHeightCm': 30.0,
+          'packagingMode': 1.0,
+          'tilesPerPackage': 10.0,
+          'packArea': 1.44,
+          'accuracyMode': 0.0,
           'jointWidth': 3.0,
           'layoutPattern': 1.0,
           'roomComplexity': 1.0,
         });
 
-        expect(result.totals['area'], equals(32.0));
-        final tileCount = result.totals['tilesNeeded'] ?? 0;
-        // 32 м² / 0.09 м² = 355.6 + запас → >355
-        expect(tileCount, greaterThan(350));
+        final rec = result.scenarios['REC']!;
+        expect(rec.buyPlan.packageSize, equals(10));
+        expect(rec.buyPlan.packagesCount, equals(7));
+        expect(rec.purchaseQuantity, equals(70));
+        expect(result.totals['packArea'], equals(1.8));
+        expect(result.totals['packagingSource'], equals(1));
+        expect(rec.assumptions, contains('packaging_source:label'));
+        expect(
+          result.warnings.any(
+            (warning) => warning.contains('предварительной оценкой'),
+          ),
+          isFalse,
+        );
       });
+
+      test('дробное количество плиток в коробке отклоняется', () {
+        expect(
+          () => calculateCanonicalTile({
+            'inputMode': 1.0,
+            'area': 10.0,
+            'tileWidthCm': 60.0,
+            'tileHeightCm': 30.0,
+            'packagingMode': 1.0,
+            'tilesPerPackage': 10.5,
+            'jointWidth': 3.0,
+            'layoutPattern': 1.0,
+            'roomComplexity': 1.0,
+          }),
+          throwsRangeError,
+        );
+      });
+
+      test(
+        'расчёт плитки на комбинированную площадь (пол 12 м² + стены 20 м²)',
+        () {
+          const totalArea = 12.0 + 20.0; // 32 м²
+          final result = calculateCanonicalTile({
+            'inputMode': 1.0,
+            'area': totalArea,
+            'tileWidthCm': 30.0,
+            'tileHeightCm': 30.0,
+            'jointWidth': 3.0,
+            'layoutPattern': 1.0,
+            'roomComplexity': 1.0,
+          });
+
+          expect(result.totals['area'], equals(32.0));
+          final tileCount = result.totals['tilesNeeded'] ?? 0;
+          // 32 м² / 0.09 м² = 355.6 + запас → >355
+          expect(tileCount, greaterThan(350));
+        },
+      );
 
       test('только стены — малая ванная 5 м²', () {
         final result = calculateCanonicalTile({
@@ -182,10 +237,7 @@ void main() {
 
     group('Граничные условия стен', () {
       test('нулевая площадь стен при нулевом периметре', () {
-        final area = calculateWallArea(
-          wallHeight: 2.7,
-          wallPerimeter: 0,
-        );
+        final area = calculateWallArea(wallHeight: 2.7, wallPerimeter: 0);
         expect(area, equals(0.0));
       });
 

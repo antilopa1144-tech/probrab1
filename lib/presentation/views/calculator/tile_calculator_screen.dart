@@ -61,21 +61,13 @@ enum TileMaterial {
 }
 
 enum LayoutPattern {
-  straight(
-    'tile.layout.straight',
-    'tile.layout.straight_desc',
-    Icons.grid_3x3,
-  ),
+  straight('tile.layout.straight', 'tile.layout.straight_desc', Icons.grid_3x3),
   diagonal(
     'tile.layout.diagonal',
     'tile.layout.diagonal_desc',
     Icons.rotate_right,
   ),
-  offset(
-    'tile.layout.offset',
-    'tile.layout.offset_desc',
-    Icons.view_week,
-  ),
+  offset('tile.layout.offset', 'tile.layout.offset_desc', Icons.view_week),
   herringbone(
     'tile.layout.herringbone',
     'tile.layout.herringbone_desc',
@@ -95,24 +87,14 @@ enum RoomType {
     'tile.room.bathroom_desc',
     true, // нужна гидроизоляция
   ),
-  kitchen(
-    'tile.room.kitchen',
-    Icons.kitchen,
-    'tile.room.kitchen_desc',
-    false,
-  ),
+  kitchen('tile.room.kitchen', Icons.kitchen, 'tile.room.kitchen_desc', false),
   hallway(
     'tile.room.hallway',
     Icons.meeting_room,
     'tile.room.hallway_desc',
     false,
   ),
-  living(
-    'tile.room.living',
-    Icons.weekend,
-    'tile.room.living_desc',
-    false,
-  ),
+  living('tile.room.living', Icons.weekend, 'tile.room.living_desc', false),
   balcony(
     'tile.room.balcony',
     Icons.balcony,
@@ -124,7 +106,12 @@ enum RoomType {
   final IconData icon;
   final String descKey;
   final bool needsWaterproofing;
-  const RoomType(this.nameKey, this.icon, this.descKey, this.needsWaterproofing);
+  const RoomType(
+    this.nameKey,
+    this.icon,
+    this.descKey,
+    this.needsWaterproofing,
+  );
 }
 
 /// Сложность помещения (дополнительный % отходов, аддитивный)
@@ -134,6 +121,7 @@ enum RoomComplexity {
   complex('tile.complexity.complex', 10);
 
   final String nameKey;
+
   /// Дополнительный процент отходов за сложность помещения
   final int bonusPercent;
   const RoomComplexity(this.nameKey, this.bonusPercent);
@@ -165,7 +153,11 @@ class _TileConstants {
       'mosaic': 3.5,
       'large_format': 6.0,
     };
-    return _get('glue_consumption', material.name, defaults[material.name] ?? 4.0);
+    return _get(
+      'glue_consumption',
+      material.name,
+      defaults[material.name] ?? 4.0,
+    );
   }
 
   // Layout margins
@@ -176,7 +168,11 @@ class _TileConstants {
       'offset': 10,
       'herringbone': 20,
     };
-    return _get<int>('layout_margins', pattern.name, defaults[pattern.name] ?? 10);
+    return _get<int>(
+      'layout_margins',
+      pattern.name,
+      defaults[pattern.name] ?? 10,
+    );
   }
 
   // Box sizes
@@ -194,27 +190,48 @@ class _TileConstants {
   /// малая <15см → 4мм, стандартная 15-40см → 6мм,
   /// крупная 40-60см → 8мм, крупноформат >60см → 10мм
   double getGroutJointDepth(double avgTileSizeCm) {
-    if (avgTileSizeCm < 15) return _get('grout_calculation', 'joint_depth_small', 4.0);
-    if (avgTileSizeCm < 40) return _get('grout_calculation', 'joint_depth_standard', 6.0);
-    if (avgTileSizeCm <= 60) return _get('grout_calculation', 'joint_depth_large', 8.0);
+    if (avgTileSizeCm < 15) {
+      return _get('grout_calculation', 'joint_depth_small', 4.0);
+    }
+    if (avgTileSizeCm < 40) {
+      return _get('grout_calculation', 'joint_depth_standard', 6.0);
+    }
+    if (avgTileSizeCm <= 60) {
+      return _get('grout_calculation', 'joint_depth_large', 8.0);
+    }
     return _get('grout_calculation', 'joint_depth_xlarge', 10.0);
   }
+
   double getGroutDensity() => _get('grout_calculation', 'grout_density', 1.6);
-  double getGroutMarginFactor() => _get('grout_calculation', 'margin_factor', 1.1);
+  double getGroutMarginFactor() =>
+      _get('grout_calculation', 'margin_factor', 1.1);
 
   // Primer consumption
   double getPrimerBase() => _get('primer_consumption', 'base', 0.15);
-  double getPrimerMarginFactor() => _get('primer_consumption', 'margin_factor', 1.1);
+  double getPrimerMarginFactor() =>
+      _get('primer_consumption', 'margin_factor', 1.1);
 
   // Множитель крестиков на плитку (~1 на пересечение + запас)
   double getCrossesMultiplier() => _get('crosses_per_tile', 'multiplier', 1.2);
 
   // SVP calculation
   int getSvpClipsPerTile(double avgTileSize) {
-    final smallThreshold = _get('svp_calculation', 'small_size_threshold', 20.0);
-    final mediumThreshold = _get('svp_calculation', 'medium_size_threshold', 40.0);
+    final smallThreshold = _get(
+      'svp_calculation',
+      'small_size_threshold',
+      20.0,
+    );
+    final mediumThreshold = _get(
+      'svp_calculation',
+      'medium_size_threshold',
+      40.0,
+    );
     final smallClips = _get<int>('svp_calculation', 'small_clips_per_tile', 4);
-    final mediumClips = _get<int>('svp_calculation', 'medium_clips_per_tile', 3);
+    final mediumClips = _get<int>(
+      'svp_calculation',
+      'medium_clips_per_tile',
+      3,
+    );
     final largeClips = _get<int>('svp_calculation', 'large_clips_per_tile', 2);
 
     if (avgTileSize < smallThreshold) return smallClips;
@@ -225,10 +242,12 @@ class _TileConstants {
   // Waterproofing
   double getWaterproofingPerLayer() => _get('waterproofing', 'per_layer', 1.5);
   int getWaterproofingLayers() => _get<int>('waterproofing', 'layers', 2);
-  double getWaterproofingMarginFactor() => _get('waterproofing', 'margin_factor', 1.1);
+  double getWaterproofingMarginFactor() =>
+      _get('waterproofing', 'margin_factor', 1.1);
 
   // Underlay margin
-  double getUnderlayMarginFactor() => _get('underlay_margin', 'margin_factor', 1.1);
+  double getUnderlayMarginFactor() =>
+      _get('underlay_margin', 'margin_factor', 1.1);
 }
 
 class _TileResult {
@@ -247,6 +266,9 @@ class _TileResult {
   final int tilesNeeded;
   final double tilesArea; // м²
   final int boxesNeeded;
+  final int tilesPerPackage;
+  final double packArea;
+  final bool packagingFromLabel;
 
   // Клей
   final double glueWeight; // кг (базовый расчёт)
@@ -288,6 +310,9 @@ class _TileResult {
     required this.tilesNeeded,
     required this.tilesArea,
     required this.boxesNeeded,
+    required this.tilesPerPackage,
+    required this.packArea,
+    required this.packagingFromLabel,
     required this.glueWeight,
     this.wallGlueExtra = 0,
     this.totalGlueWeight = 0,
@@ -316,7 +341,8 @@ class TileCalculatorScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<TileCalculatorScreen> createState() => _TileCalculatorScreenState();
+  ConsumerState<TileCalculatorScreen> createState() =>
+      _TileCalculatorScreenState();
 }
 
 class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
@@ -343,10 +369,14 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
   double _tileWidth = 30.0; // см
   double _tileHeight = 30.0; // см
   double _jointWidth = 3.0; // мм
+  bool _packagingFromLabel = false;
+  double _packArea = 1.44; // м², только для предварительной оценки
+  int _tilesPerPackage = 16; // точное значение с этикетки
 
   // Параметры стен
   double _wallHeight = 2.7; // м (высота потолка)
-  double _tileUpToHeight = 2.7; // м (высота облицовки — может быть меньше потолка)
+  double _tileUpToHeight =
+      2.7; // м (высота облицовки — может быть меньше потолка)
   bool _tileFullHeight = true; // облицовка до потолка
   double _wallPerimeter = 14.0; // м (периметр стен)
   int _doorCount = 1;
@@ -380,13 +410,26 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     if (initial == null) return;
 
     if (initial['area'] != null) _area = initial['area']!.clamp(1.0, 1000.0);
-    if (initial['length'] != null) _length = initial['length']!.clamp(0.1, 100.0);
+    if (initial['length'] != null) {
+      _length = initial['length']!.clamp(0.1, 100.0);
+    }
     if (initial['width'] != null) _width = initial['width']!.clamp(0.1, 100.0);
     final tileWidth = initial['tileWidthCm'] ?? initial['tileWidth'];
     final tileHeight = initial['tileHeightCm'] ?? initial['tileHeight'];
     if (tileWidth != null) _tileWidth = tileWidth.clamp(5.0, 200.0);
     if (tileHeight != null) _tileHeight = tileHeight.clamp(5.0, 200.0);
-    if (initial['jointWidth'] != null) _jointWidth = initial['jointWidth']!.clamp(1.0, 10.0);
+    if (initial['jointWidth'] != null) {
+      _jointWidth = initial['jointWidth']!.clamp(1.0, 10.0);
+    }
+    if (initial['packagingMode'] != null) {
+      _packagingFromLabel = initial['packagingMode']!.round() == 1;
+    }
+    if (initial['packArea'] != null) {
+      _packArea = initial['packArea']!.clamp(0.1, 20.0);
+    }
+    if (initial['tilesPerPackage'] != null) {
+      _tilesPerPackage = initial['tilesPerPackage']!.round().clamp(1, 500);
+    }
 
     if (initial['inputMode'] != null) {
       final mode = initial['inputMode']!.round();
@@ -428,9 +471,15 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       _tileSizePreset = tileSize;
     }
 
-    if (initial['useSVP'] != null) _useSVP = initial['useSVP']! > 0;
-    if (initial['useWaterproofing'] != null) _useWaterproofing = initial['useWaterproofing']! > 0;
-    if (initial['useUnderlay'] != null) _useUnderlay = initial['useUnderlay']! > 0;
+    if (initial['useSVP'] != null) {
+      _useSVP = initial['useSVP']! > 0;
+    }
+    if (initial['useWaterproofing'] != null) {
+      _useWaterproofing = initial['useWaterproofing']! > 0;
+    }
+    if (initial['useUnderlay'] != null) {
+      _useUnderlay = initial['useUnderlay']! > 0;
+    }
 
     // Параметры стен
     if (initial['surfaceType'] != null) {
@@ -439,20 +488,41 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
         _surfaceType = SurfaceType.values[st];
       }
     }
-    if (initial['wallHeight'] != null) _wallHeight = initial['wallHeight']!.clamp(1.0, 6.0);
-    if (initial['tileUpToHeight'] != null) _tileUpToHeight = initial['tileUpToHeight']!.clamp(0.5, 6.0);
-    if (initial['tileFullHeight'] != null) _tileFullHeight = initial['tileFullHeight']! > 0;
-    if (initial['wallPerimeter'] != null) _wallPerimeter = initial['wallPerimeter']!.clamp(2.0, 100.0);
-    if (initial['doorCount'] != null) _doorCount = initial['doorCount']!.toInt().clamp(0, 10);
-    if (initial['windowCount'] != null) _windowCount = initial['windowCount']!.toInt().clamp(0, 10);
-    if (initial['doorWidth'] != null) _doorWidth = initial['doorWidth']!.clamp(0.5, 2.0);
-    if (initial['doorHeight'] != null) _doorHeight = initial['doorHeight']!.clamp(1.5, 2.5);
-    if (initial['windowWidth'] != null) _windowWidth = initial['windowWidth']!.clamp(0.3, 3.0);
-    if (initial['windowHeight'] != null) _windowHeight = initial['windowHeight']!.clamp(0.3, 2.5);
+    if (initial['wallHeight'] != null) {
+      _wallHeight = initial['wallHeight']!.clamp(1.0, 6.0);
+    }
+    if (initial['tileUpToHeight'] != null) {
+      _tileUpToHeight = initial['tileUpToHeight']!.clamp(0.5, 6.0);
+    }
+    if (initial['tileFullHeight'] != null) {
+      _tileFullHeight = initial['tileFullHeight']! > 0;
+    }
+    if (initial['wallPerimeter'] != null) {
+      _wallPerimeter = initial['wallPerimeter']!.clamp(2.0, 100.0);
+    }
+    if (initial['doorCount'] != null) {
+      _doorCount = initial['doorCount']!.toInt().clamp(0, 10);
+    }
+    if (initial['windowCount'] != null) {
+      _windowCount = initial['windowCount']!.toInt().clamp(0, 10);
+    }
+    if (initial['doorWidth'] != null) {
+      _doorWidth = initial['doorWidth']!.clamp(0.5, 2.0);
+    }
+    if (initial['doorHeight'] != null) {
+      _doorHeight = initial['doorHeight']!.clamp(1.5, 2.5);
+    }
+    if (initial['windowWidth'] != null) {
+      _windowWidth = initial['windowWidth']!.clamp(0.3, 3.0);
+    }
+    if (initial['windowHeight'] != null) {
+      _windowHeight = initial['windowHeight']!.clamp(0.3, 2.5);
+    }
   }
 
   /// Высота облицовки: если не до потолка — используем _tileUpToHeight
-  double get _effectiveTileHeight => _tileFullHeight ? _wallHeight : _tileUpToHeight;
+  double get _effectiveTileHeight =>
+      _tileFullHeight ? _wallHeight : _tileUpToHeight;
 
   /// Площадь стен = периметр × высота облицовки − вычеты (двери + окна)
   double _calculateWallArea() {
@@ -499,6 +569,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       'tileWidthCm': _tileWidth,
       'tileHeightCm': _tileHeight,
       'jointWidth': _jointWidth,
+      'packagingMode': _packagingFromLabel ? 1.0 : 0.0,
+      'packArea': _packArea,
+      'tilesPerPackage': _tilesPerPackage.toDouble(),
       'layoutPattern': (_layout.index + 1).toDouble(),
       'roomComplexity': (_roomComplexity.index + 1).toDouble(),
       'material': _material.index.toDouble(),
@@ -506,7 +579,7 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       'useSVP': _useSVP ? 1.0 : 0.0,
       'useWaterproofing': _useWaterproofing ? 1.0 : 0.0,
       'useUnderlay': _useUnderlay ? 1.0 : 0.0,
-          ...accuracyModeInput,
+      ...accuracyModeInput,
     };
   }
 
@@ -526,8 +599,12 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     final svpCount = (totals['svpCount'] ?? 0).round();
     final effectiveWaterproofing = (totals['effectiveWaterproofing'] ?? 0) > 0;
 
-    final floorArea = _surfaceType != SurfaceType.walls ? _calculateFloorArea() : 0.0;
-    final wallArea = _surfaceType != SurfaceType.floor ? _calculateWallArea() : 0.0;
+    final floorArea = _surfaceType != SurfaceType.walls
+        ? _calculateFloorArea()
+        : 0.0;
+    final wallArea = _surfaceType != SurfaceType.floor
+        ? _calculateWallArea()
+        : 0.0;
 
     // --- Корректировка клея для стен ---
     // На стены расход клея выше: +20% базовый (гравитация, двойное нанесение)
@@ -544,10 +621,10 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
         ? (totalGlue / _constants.getGlueBagSize()).ceil()
         : 0;
 
-    final boxArea = _constants.getBoxArea(_material);
-    final boxesNeeded = tilesArea > 0 && boxArea > 0
-        ? (tilesArea / boxArea).ceil()
-        : 0;
+    final boxesNeeded = (totals['packagesNeeded'] ?? 0).round();
+    final tilesPerPackage = (totals['tilesPerPackage'] ?? 1).round();
+    final packArea = totals['packArea'] ?? 0;
+    final packagingFromLabel = (totals['packagingSource'] ?? 0) == 1;
 
     // --- Корректировка гидроизоляции ---
     // Пол: 2 слоя × 1.5 кг/м² × запас 10%
@@ -576,6 +653,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       tilesNeeded: tilesNeeded,
       tilesArea: tilesArea,
       boxesNeeded: boxesNeeded,
+      tilesPerPackage: tilesPerPackage,
+      packArea: packArea,
+      packagingFromLabel: packagingFromLabel,
       glueWeight: baseGlueWeight,
       wallGlueExtra: wallGlueExtra,
       totalGlueWeight: totalGlue,
@@ -589,7 +669,10 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       waterproofingWeight: waterproofingWeight > 0 ? waterproofingWeight : null,
       useUnderlay: _useUnderlay && floorArea > 0,
       underlayArea: underlayArea > 0 ? underlayArea : null,
-      wastePercent: totals['wastePercent'] ?? (_constants.getLayoutMargin(_layout) + _roomComplexity.bonusPercent).toDouble(),
+      wastePercent:
+          totals['wastePercent'] ??
+          (_constants.getLayoutMargin(_layout) + _roomComplexity.bonusPercent)
+              .toDouble(),
     );
   }
 
@@ -601,16 +684,23 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
   @override
   Map<String, dynamic>? getCurrentInputs() {
     return {
-      'inputMode': (_inputMode == InputMode.byArea ? 0 : 1).toDouble(),
+      'inputMode': (_inputMode == InputMode.byArea ? 1 : 0).toDouble(),
       'surfaceType': _surfaceType.index.toDouble(),
       'area': _area,
       'length': _length,
       'width': _width,
       'tileWidth': _tileWidth,
       'tileHeight': _tileHeight,
+      'tileWidthCm': _tileWidth,
+      'tileHeightCm': _tileHeight,
       'jointWidth': _jointWidth,
+      'packagingMode': _packagingFromLabel ? 1.0 : 0.0,
+      'packArea': _packArea,
+      'tilesPerPackage': _tilesPerPackage.toDouble(),
       'material': _material.index.toDouble(),
       'layout': _layout.index.toDouble(),
+      'layoutPattern': (_layout.index + 1).toDouble(),
+      'roomComplexity': (_roomComplexity.index + 1).toDouble(),
       'roomType': _roomType.index.toDouble(),
       'useSVP': _useSVP ? 1.0 : 0.0,
       'useWaterproofing': _useWaterproofing ? 1.0 : 0.0,
@@ -635,37 +725,75 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     buffer.writeln('═' * 40);
     buffer.writeln();
 
-    buffer.writeln('${_loc.translate('tile.export.surface')}: ${_loc.translate(_result.surfaceType.nameKey)}');
-    buffer.writeln('${_loc.translate('tile.export.area')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+    buffer.writeln(
+      '${_loc.translate('tile.export.surface')}: ${_loc.translate(_result.surfaceType.nameKey)}',
+    );
+    buffer.writeln(
+      '${_loc.translate('tile.export.area')}: ${_result.area.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+    );
     if (_result.surfaceType == SurfaceType.floorAndWalls) {
-      buffer.writeln('  ${_loc.translate('tile.export.floor_area')}: ${_result.floorArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
-      buffer.writeln('  ${_loc.translate('tile.export.wall_area')}: ${_result.wallArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+      buffer.writeln(
+        '  ${_loc.translate('tile.export.floor_area')}: ${_result.floorArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+      );
+      buffer.writeln(
+        '  ${_loc.translate('tile.export.wall_area')}: ${_result.wallArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+      );
     }
-    buffer.writeln('${_loc.translate('tile.export.material')}: ${_loc.translate(_result.material.nameKey)}');
-    buffer.writeln('${_loc.translate('tile.export.tile_size')}: ${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} ${_loc.translate('common.cm')}');
-    buffer.writeln('${_loc.translate('tile.export.layout')}: ${_loc.translate(_result.layout.nameKey)} (${_loc.translate('tile.export.reserve')} ${_constants.getLayoutMargin(_result.layout)}${_loc.translate('common.percent')})');
-    buffer.writeln('${_loc.translate('tile.export.room')}: ${_loc.translate(_result.roomType.nameKey)}');
+    buffer.writeln(
+      '${_loc.translate('tile.export.material')}: ${_loc.translate(_result.material.nameKey)}',
+    );
+    buffer.writeln(
+      '${_loc.translate('tile.export.tile_size')}: ${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} ${_loc.translate('common.cm')}',
+    );
+    buffer.writeln(
+      '${_loc.translate('tile.export.layout')}: ${_loc.translate(_result.layout.nameKey)} (${_loc.translate('tile.export.reserve')} ${_constants.getLayoutMargin(_result.layout)}${_loc.translate('common.percent')})',
+    );
+    buffer.writeln(
+      '${_loc.translate('tile.export.room')}: ${_loc.translate(_result.roomType.nameKey)}',
+    );
     buffer.writeln();
 
     buffer.writeln(_loc.translate('tile.export.materials_title'));
     buffer.writeln('─' * 40);
-    buffer.writeln('• ${_loc.translate('tile.export.tiles')}: ${_result.tilesNeeded} ${_loc.translate('common.pcs')} (${_result.tilesArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')})');
-    buffer.writeln('• ${_loc.translate('tile.export.boxes')}: ${_result.boxesNeeded} ${_loc.translate('tile.export.boxes_unit')}');
-    buffer.writeln('• ${_loc.translate('tile.export.glue')}: ${_result.glueBags} ${_loc.translate('tile.export.glue_bags')} (${_result.glueWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')})');
-    buffer.writeln('• ${_loc.translate('tile.export.grout')}: ${_result.groutWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')}');
-    buffer.writeln('• ${_loc.translate('tile.export.primer')}: ${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}');
-    buffer.writeln('• ${_loc.translate('tile.export.crosses')}: ${_result.crossesNeeded} ${_loc.translate('common.pcs')}');
+    buffer.writeln(
+      '• ${_loc.translate('tile.export.tiles')}: ${_result.tilesNeeded} ${_loc.translate('common.pcs')} (${_result.tilesArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')})',
+    );
+    buffer.writeln(
+      '• ${_loc.translate('tile.export.boxes')}: ${_result.boxesNeeded} ${_loc.translate('tile.export.boxes_unit')}',
+    );
+    buffer.writeln(
+      '  ${_result.packagingFromLabel ? _loc.translate('tile.packaging.source_label') : _loc.translate('tile.packaging.source_estimate')}: '
+      '${_result.tilesPerPackage} ${_loc.translate('common.pcs')} / ${_result.packArea.toStringAsFixed(2)} ${_loc.translate('common.sqm')}',
+    );
+    buffer.writeln(
+      '• ${_loc.translate('tile.export.glue')}: ${_result.glueBags} ${_loc.translate('tile.export.glue_bags')} (${_result.glueWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')})',
+    );
+    buffer.writeln(
+      '• ${_loc.translate('tile.export.grout')}: ${_result.groutWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
+    );
+    buffer.writeln(
+      '• ${_loc.translate('tile.export.primer')}: ${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
+    );
+    buffer.writeln(
+      '• ${_loc.translate('tile.export.crosses')}: ${_result.crossesNeeded} ${_loc.translate('common.pcs')}',
+    );
 
     if (_result.useSVP && _result.svpCount != null) {
-      buffer.writeln('• ${_loc.translate('tile.export.svp')}: ${_result.svpCount} ${_loc.translate('tile.export.svp_unit')}');
+      buffer.writeln(
+        '• ${_loc.translate('tile.export.svp')}: ${_result.svpCount} ${_loc.translate('tile.export.svp_unit')}',
+      );
     }
 
     if (_result.useWaterproofing && _result.waterproofingWeight != null) {
-      buffer.writeln('• ${_loc.translate('tile.export.waterproofing')}: ${_result.waterproofingWeight!.toStringAsFixed(1)} ${_loc.translate('common.kg')}');
+      buffer.writeln(
+        '• ${_loc.translate('tile.export.waterproofing')}: ${_result.waterproofingWeight!.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
+      );
     }
 
     if (_result.useUnderlay && _result.underlayArea != null) {
-      buffer.writeln('• ${_loc.translate('tile.export.underlay')}: ${_result.underlayArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+      buffer.writeln(
+        '• ${_loc.translate('tile.export.underlay')}: ${_result.underlayArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+      );
     }
 
     buffer.writeln();
@@ -694,7 +822,8 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
             label: _result.surfaceType == SurfaceType.floorAndWalls
                 ? _loc.translate('tile.header.total_area')
                 : _loc.translate('tile.header.area'),
-            value: '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
+            value:
+                '${_result.area.toStringAsFixed(0)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -709,7 +838,8 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           ),
           ResultItem(
             label: _loc.translate('tile.size.title'),
-            value: '${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} ${_loc.translate('common.cm')}',
+            value:
+                '${_result.tileWidth.toStringAsFixed(0)}×${_result.tileHeight.toStringAsFixed(0)} ${_loc.translate('common.cm')}',
             icon: Icons.aspect_ratio,
           ),
         ],
@@ -729,10 +859,8 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           _buildWallInputCard(),
           const SizedBox(height: 16),
         ],
-        if (_surfaceType != SurfaceType.floor)
-          _buildTotalAreaInfo(),
-        if (_surfaceType != SurfaceType.floor)
-          const SizedBox(height: 16),
+        if (_surfaceType != SurfaceType.floor) _buildTotalAreaInfo(),
+        if (_surfaceType != SurfaceType.floor) const SizedBox(height: 16),
         _buildRoomTypeSelector(),
         const SizedBox(height: 16),
         _buildRoomComplexitySelector(),
@@ -744,6 +872,8 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           const SizedBox(height: 16),
           _buildCustomTileSize(),
         ],
+        const SizedBox(height: 16),
+        _buildPackagingCard(),
         const SizedBox(height: 16),
         _buildLayoutPatternSelector(),
         const SizedBox(height: 16),
@@ -778,7 +908,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
             final isSelected = _surfaceType == type;
 
             return Padding(
-              padding: EdgeInsets.only(bottom: index < SurfaceType.values.length - 1 ? 8.0 : 0),
+              padding: EdgeInsets.only(
+                bottom: index < SurfaceType.values.length - 1 ? 8.0 : 0,
+              ),
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -788,7 +920,10 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                 },
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? accentColor.withValues(alpha: 0.1)
@@ -796,7 +931,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                     border: Border.all(
                       color: isSelected
                           ? accentColor
-                          : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
+                          : CalculatorColors.getTextSecondary(
+                              _isDark,
+                            ).withValues(alpha: 0.2),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -805,7 +942,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                     children: [
                       Icon(
                         type.icon,
-                        color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
+                        color: isSelected
+                            ? accentColor
+                            : CalculatorColors.getTextSecondary(_isDark),
                         size: 28,
                       ),
                       const SizedBox(width: 12),
@@ -821,7 +960,11 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                         ),
                       ),
                       if (isSelected)
-                        const Icon(Icons.check_circle, color: accentColor, size: 24),
+                        const Icon(
+                          Icons.check_circle,
+                          color: accentColor,
+                          size: 24,
+                        ),
                     ],
                   ),
                 ),
@@ -951,10 +1094,20 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
               _buildCounterButton(
                 value: _doorCount,
                 onDecrement: () {
-                  if (_doorCount > 0) setState(() { _doorCount--; _update(); });
+                  if (_doorCount > 0) {
+                    setState(() {
+                      _doorCount--;
+                      _update();
+                    });
+                  }
                 },
                 onIncrement: () {
-                  if (_doorCount < 10) setState(() { _doorCount++; _update(); });
+                  if (_doorCount < 10) {
+                    setState(() {
+                      _doorCount++;
+                      _update();
+                    });
+                  }
                 },
                 accentColor: accentColor,
               ),
@@ -971,7 +1124,10 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
               suffix: _loc.translate('common.meters'),
               accentColor: accentColor,
               onChanged: (v) {
-                setState(() { _doorWidth = v; _update(); });
+                setState(() {
+                  _doorWidth = v;
+                  _update();
+                });
               },
               decimalPlaces: 1,
             ),
@@ -985,7 +1141,10 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
               suffix: _loc.translate('common.meters'),
               accentColor: accentColor,
               onChanged: (v) {
-                setState(() { _doorHeight = v; _update(); });
+                setState(() {
+                  _doorHeight = v;
+                  _update();
+                });
               },
               decimalPlaces: 1,
             ),
@@ -1006,10 +1165,20 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
               _buildCounterButton(
                 value: _windowCount,
                 onDecrement: () {
-                  if (_windowCount > 0) setState(() { _windowCount--; _update(); });
+                  if (_windowCount > 0) {
+                    setState(() {
+                      _windowCount--;
+                      _update();
+                    });
+                  }
                 },
                 onIncrement: () {
-                  if (_windowCount < 10) setState(() { _windowCount++; _update(); });
+                  if (_windowCount < 10) {
+                    setState(() {
+                      _windowCount++;
+                      _update();
+                    });
+                  }
                 },
                 accentColor: accentColor,
               ),
@@ -1026,7 +1195,10 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
               suffix: _loc.translate('common.meters'),
               accentColor: accentColor,
               onChanged: (v) {
-                setState(() { _windowWidth = v; _update(); });
+                setState(() {
+                  _windowWidth = v;
+                  _update();
+                });
               },
               decimalPlaces: 1,
             ),
@@ -1040,7 +1212,10 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
               suffix: _loc.translate('common.meters'),
               accentColor: accentColor,
               onChanged: (v) {
-                setState(() { _windowHeight = v; _update(); });
+                setState(() {
+                  _windowHeight = v;
+                  _update();
+                });
               },
               decimalPlaces: 1,
             ),
@@ -1117,7 +1292,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
   }
 
   Widget _buildTotalAreaInfo() {
-    if (_surfaceType != SurfaceType.floorAndWalls) return const SizedBox.shrink();
+    if (_surfaceType != SurfaceType.floorAndWalls) {
+      return const SizedBox.shrink();
+    }
     return _card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1168,7 +1345,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
         Text(
           '${value.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
           style: CalculatorDesignSystem.bodyMedium.copyWith(
-            color: isBold ? accentColor : CalculatorColors.getTextPrimary(_isDark),
+            color: isBold
+                ? accentColor
+                : CalculatorColors.getTextPrimary(_isDark),
             fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
           ),
         ),
@@ -1342,7 +1521,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
             final isSelected = _roomType == type;
 
             return Padding(
-              padding: EdgeInsets.only(bottom: index < RoomType.values.length - 1 ? 8.0 : 0),
+              padding: EdgeInsets.only(
+                bottom: index < RoomType.values.length - 1 ? 8.0 : 0,
+              ),
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -1360,7 +1541,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                     border: Border.all(
                       color: isSelected
                           ? accentColor
-                          : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
+                          : CalculatorColors.getTextSecondary(
+                              _isDark,
+                            ).withValues(alpha: 0.2),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -1373,12 +1556,16 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                         decoration: BoxDecoration(
                           color: isSelected
                               ? accentColor.withValues(alpha: 0.15)
-                              : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.1),
+                              : CalculatorColors.getTextSecondary(
+                                  _isDark,
+                                ).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           type.icon,
-                          color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
+                          color: isSelected
+                              ? accentColor
+                              : CalculatorColors.getTextSecondary(_isDark),
                           size: 24,
                         ),
                       ),
@@ -1400,14 +1587,20 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                             Text(
                               _loc.translate(type.descKey),
                               style: CalculatorDesignSystem.bodySmall.copyWith(
-                                color: CalculatorColors.getTextSecondary(_isDark),
+                                color: CalculatorColors.getTextSecondary(
+                                  _isDark,
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
                       if (isSelected)
-                        const Icon(Icons.check_circle, color: accentColor, size: 24),
+                        const Icon(
+                          Icons.check_circle,
+                          color: accentColor,
+                          size: 24,
+                        ),
                     ],
                   ),
                 ),
@@ -1433,7 +1626,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           ),
           const SizedBox(height: 12),
           ModeSelector(
-            options: RoomComplexity.values.map((c) => _loc.translate(c.nameKey)).toList(),
+            options: RoomComplexity.values
+                .map((c) => _loc.translate(c.nameKey))
+                .toList(),
             selectedIndex: _roomComplexity.index,
             onSelect: (index) {
               setState(() {
@@ -1467,7 +1662,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
             final isSelected = _material == type;
 
             return Padding(
-              padding: EdgeInsets.only(bottom: index < TileMaterial.values.length - 1 ? 8.0 : 0),
+              padding: EdgeInsets.only(
+                bottom: index < TileMaterial.values.length - 1 ? 8.0 : 0,
+              ),
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -1477,7 +1674,8 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                       _tileSizePreset = 10;
                       _tileWidth = 10.0;
                       _tileHeight = 10.0;
-                    } else if (type == TileMaterial.largeFormat && _tileSizePreset < 60) {
+                    } else if (type == TileMaterial.largeFormat &&
+                        _tileSizePreset < 60) {
                       _tileSizePreset = 60;
                       _tileWidth = 60.0;
                       _tileHeight = 60.0;
@@ -1495,7 +1693,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                     border: Border.all(
                       color: isSelected
                           ? accentColor
-                          : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
+                          : CalculatorColors.getTextSecondary(
+                              _isDark,
+                            ).withValues(alpha: 0.2),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -1508,12 +1708,16 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                         decoration: BoxDecoration(
                           color: isSelected
                               ? accentColor.withValues(alpha: 0.15)
-                              : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.1),
+                              : CalculatorColors.getTextSecondary(
+                                  _isDark,
+                                ).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           type.icon,
-                          color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
+                          color: isSelected
+                              ? accentColor
+                              : CalculatorColors.getTextSecondary(_isDark),
                           size: 24,
                         ),
                       ),
@@ -1535,24 +1739,31 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                             Text(
                               _loc.translate(type.subtitleKey),
                               style: CalculatorDesignSystem.bodySmall.copyWith(
-                                color: CalculatorColors.getTextSecondary(_isDark),
+                                color: CalculatorColors.getTextSecondary(
+                                  _isDark,
+                                ),
                               ),
                             ),
                             if (isSelected) ...[
                               const SizedBox(height: 4),
                               Text(
                                 '✓ ${_loc.translate(type.advantageKey)}',
-                                style: CalculatorDesignSystem.bodySmall.copyWith(
-                                  color: accentColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                style: CalculatorDesignSystem.bodySmall
+                                    .copyWith(
+                                      color: accentColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                               ),
                             ],
                           ],
                         ),
                       ),
                       if (isSelected)
-                        const Icon(Icons.check_circle, color: accentColor, size: 24),
+                        const Icon(
+                          Icons.check_circle,
+                          color: accentColor,
+                          size: 24,
+                        ),
                     ],
                   ),
                 ),
@@ -1569,8 +1780,8 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     final sizes = _material == TileMaterial.mosaic
         ? [10, 0]
         : _material == TileMaterial.largeFormat
-            ? [60, 80, 120, 0]
-            : [20, 30, 40, 60, 0];
+        ? [60, 80, 120, 0]
+        : [20, 30, 40, 60, 0];
 
     return _card(
       child: Column(
@@ -1589,7 +1800,13 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
             children: sizes.map((size) {
               final isSelected = _tileSizePreset == size;
               return ChoiceChip(
-                label: Text(size == 0 ? _loc.translate('tile.size.custom') : size == 120 ? '120×60' : '$size×$size'),
+                label: Text(
+                  size == 0
+                      ? _loc.translate('tile.size.custom')
+                      : size == 120
+                      ? '120×60'
+                      : '$size×$size',
+                ),
                 selected: isSelected,
                 onSelected: (selected) {
                   setState(() {
@@ -1609,11 +1826,17 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                 selectedColor: accentColor.withValues(alpha: 0.2),
                 backgroundColor: Colors.transparent,
                 side: BorderSide(
-                  color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.3),
+                  color: isSelected
+                      ? accentColor
+                      : CalculatorColors.getTextSecondary(
+                          _isDark,
+                        ).withValues(alpha: 0.3),
                   width: 2,
                 ),
                 labelStyle: TextStyle(
-                  color: isSelected ? accentColor : CalculatorColors.getTextPrimary(_isDark),
+                  color: isSelected
+                      ? accentColor
+                      : CalculatorColors.getTextPrimary(_isDark),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
               );
@@ -1677,6 +1900,105 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     );
   }
 
+  Widget _buildPackagingCard() {
+    const accentColor = CalculatorColors.interior;
+    return _card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _loc.translate('tile.packaging.title'),
+            style: CalculatorDesignSystem.titleMedium.copyWith(
+              color: CalculatorColors.getTextPrimary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _loc.translate('tile.packaging.hint'),
+            style: CalculatorDesignSystem.bodySmall.copyWith(
+              color: CalculatorColors.getTextSecondary(_isDark),
+            ),
+          ),
+          const SizedBox(height: 12),
+          ModeSelector(
+            options: [
+              _loc.translate('tile.packaging.by_area'),
+              _loc.translate('tile.packaging.by_label'),
+            ],
+            selectedIndex: _packagingFromLabel ? 1 : 0,
+            onSelect: (index) {
+              setState(() {
+                _packagingFromLabel = index == 1;
+                _update();
+              });
+            },
+            accentColor: accentColor,
+          ),
+          const SizedBox(height: 16),
+          if (_packagingFromLabel)
+            CalculatorSliderField(
+              label: _loc.translate('tile.packaging.tiles_per_box'),
+              value: _tilesPerPackage.toDouble(),
+              min: 1,
+              max: 500,
+              divisions: 499,
+              suffix: _loc.translate('common.pcs'),
+              accentColor: accentColor,
+              onChanged: (value) {
+                setState(() {
+                  _tilesPerPackage = value.round();
+                  _update();
+                });
+              },
+              decimalPlaces: 0,
+            )
+          else ...[
+            CalculatorSliderField(
+              label: _loc.translate('tile.packaging.pack_area'),
+              value: _packArea,
+              min: 0.1,
+              max: 20,
+              divisions: 199,
+              suffix: _loc.translate('common.sqm'),
+              accentColor: accentColor,
+              onChanged: (value) {
+                setState(() {
+                  _packArea = value;
+                  _update();
+                });
+              },
+              decimalPlaces: 1,
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.amber.withValues(alpha: _isDark ? 0.14 : 0.1),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.amber.withValues(alpha: 0.45)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.info_outline, color: Colors.amber, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _loc.translate('tile.packaging.estimate_warning'),
+                      style: CalculatorDesignSystem.bodySmall.copyWith(
+                        color: CalculatorColors.getTextPrimary(_isDark),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _buildLayoutPatternSelector() {
     const accentColor = CalculatorColors.interior;
     return _card(
@@ -1703,7 +2025,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
             final isSelected = _layout == pattern;
 
             return Padding(
-              padding: EdgeInsets.only(bottom: index < LayoutPattern.values.length - 1 ? 8.0 : 0),
+              padding: EdgeInsets.only(
+                bottom: index < LayoutPattern.values.length - 1 ? 8.0 : 0,
+              ),
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -1721,7 +2045,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                     border: Border.all(
                       color: isSelected
                           ? accentColor
-                          : CalculatorColors.getTextSecondary(_isDark).withValues(alpha: 0.2),
+                          : CalculatorColors.getTextSecondary(
+                              _isDark,
+                            ).withValues(alpha: 0.2),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -1730,7 +2056,9 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                     children: [
                       Icon(
                         pattern.icon,
-                        color: isSelected ? accentColor : CalculatorColors.getTextSecondary(_isDark),
+                        color: isSelected
+                            ? accentColor
+                            : CalculatorColors.getTextSecondary(_isDark),
                         size: 32,
                       ),
                       const SizedBox(width: 12),
@@ -1751,14 +2079,20 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
                             Text(
                               '${_loc.translate(pattern.descKey)} • ${_loc.translate('tile.layout.reserve').replaceFirst('{value}', '${_constants.getLayoutMargin(pattern)}')}',
                               style: CalculatorDesignSystem.bodySmall.copyWith(
-                                color: CalculatorColors.getTextSecondary(_isDark),
+                                color: CalculatorColors.getTextSecondary(
+                                  _isDark,
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
                       if (isSelected)
-                        const Icon(Icons.check_circle, color: accentColor, size: 24),
+                        const Icon(
+                          Icons.check_circle,
+                          color: accentColor,
+                          size: 24,
+                        ),
                     ],
                   ),
                 ),
@@ -1834,15 +2168,22 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
           _buildToggle(
             title: _loc.translate('tile.options.waterproofing'),
             subtitle: _roomType.needsWaterproofing
-                ? _loc.translate('tile.options.waterproofing_recommended').replaceFirst('{room}', _loc.translate(_roomType.nameKey).toLowerCase())
+                ? _loc
+                      .translate('tile.options.waterproofing_recommended')
+                      .replaceFirst(
+                        '{room}',
+                        _loc.translate(_roomType.nameKey).toLowerCase(),
+                      )
                 : _loc.translate('tile.options.waterproofing_desc'),
             value: _useWaterproofing || _roomType.needsWaterproofing,
-            onChanged: _roomType.needsWaterproofing ? null : (v) {
-              setState(() {
-                _useWaterproofing = v;
-                _update();
-              });
-            },
+            onChanged: _roomType.needsWaterproofing
+                ? null
+                : (v) {
+                    setState(() {
+                      _useWaterproofing = v;
+                      _update();
+                    });
+                  },
             accentColor: accentColor,
           ),
           const SizedBox(height: 12),
@@ -1909,31 +2250,46 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
       MaterialItem(
         name: _loc.translate('tile.materials.tiles'),
         value: '${_result.tilesNeeded} ${_loc.translate('common.pcs')}',
-        subtitle: '${_result.tilesArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+        subtitle:
+            '${_result.tilesArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
         icon: Icons.grid_on,
       ),
       MaterialItem(
         name: _loc.translate('tile.materials.boxes'),
         value: '${_result.boxesNeeded}',
-        subtitle: _loc.translate('tile.materials.boxes_unit'),
+        subtitle: _result.packagingFromLabel
+            ? _loc
+                  .translate('tile.packaging.result_label')
+                  .replaceFirst('{count}', '${_result.tilesPerPackage}')
+            : _loc
+                  .translate('tile.packaging.result_estimate')
+                  .replaceFirst('{area}', _result.packArea.toStringAsFixed(2)),
         icon: Icons.inventory_2,
       ),
       MaterialItem(
         name: _loc.translate('tile.materials.glue'),
-        value: '${_result.glueBags} ${_loc.translate('tile.materials.glue_bags')}',
+        value:
+            '${_result.glueBags} ${_loc.translate('tile.materials.glue_bags')}',
         subtitle: _result.wallGlueExtra > 0
             ? '${_result.totalGlueWeight.toStringAsFixed(0)} ${_loc.translate('common.kg')} (${_loc.translate('tile.materials.glue_wall_extra')})'
-            : _loc.translate('tile.materials.glue_per_bag').replaceFirst('{weight}', _result.totalGlueWeight.toStringAsFixed(0)),
+            : _loc
+                  .translate('tile.materials.glue_per_bag')
+                  .replaceFirst(
+                    '{weight}',
+                    _result.totalGlueWeight.toStringAsFixed(0),
+                  ),
         icon: Icons.shopping_bag,
       ),
       MaterialItem(
         name: _loc.translate('tile.materials.grout'),
-        value: '${_result.groutWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
+        value:
+            '${_result.groutWeight.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
         icon: Icons.gradient,
       ),
       MaterialItem(
         name: _loc.translate('tile.materials.primer'),
-        value: '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
+        value:
+            '${_result.primerLiters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
         icon: Icons.water_drop,
       ),
       MaterialItem(
@@ -1944,34 +2300,43 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     ];
 
     if (_result.useSVP && _result.svpCount != null) {
-      items.add(MaterialItem(
-        name: _loc.translate('tile.materials.svp'),
-        value: '${_result.svpCount} ${_loc.translate('tile.export.svp_unit')}',
-        subtitle: _loc.translate('tile.materials.svp_desc'),
-        icon: Icons.construction,
-      ));
+      items.add(
+        MaterialItem(
+          name: _loc.translate('tile.materials.svp'),
+          value:
+              '${_result.svpCount} ${_loc.translate('tile.export.svp_unit')}',
+          subtitle: _loc.translate('tile.materials.svp_desc'),
+          icon: Icons.construction,
+        ),
+      );
     }
 
     if (_result.useWaterproofing && _result.waterproofingWeight != null) {
       final wpSubtitle = _result.surfaceType == SurfaceType.floor
           ? _loc.translate('tile.materials.waterproofing_layers')
           : _result.surfaceType == SurfaceType.walls
-              ? _loc.translate('tile.materials.waterproofing_walls')
-              : _loc.translate('tile.materials.waterproofing_mixed');
-      items.add(MaterialItem(
-        name: _loc.translate('tile.materials.waterproofing'),
-        value: '${_result.waterproofingWeight!.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
-        subtitle: wpSubtitle,
-        icon: Icons.water,
-      ));
+          ? _loc.translate('tile.materials.waterproofing_walls')
+          : _loc.translate('tile.materials.waterproofing_mixed');
+      items.add(
+        MaterialItem(
+          name: _loc.translate('tile.materials.waterproofing'),
+          value:
+              '${_result.waterproofingWeight!.toStringAsFixed(1)} ${_loc.translate('common.kg')}',
+          subtitle: wpSubtitle,
+          icon: Icons.water,
+        ),
+      );
     }
 
     if (_result.useUnderlay && _result.underlayArea != null) {
-      items.add(MaterialItem(
-        name: _loc.translate('tile.materials.underlay'),
-        value: '${_result.underlayArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
-        icon: Icons.layers,
-      ));
+      items.add(
+        MaterialItem(
+          name: _loc.translate('tile.materials.underlay'),
+          value:
+              '${_result.underlayArea!.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+          icon: Icons.layers,
+        ),
+      );
     }
 
     return MaterialsCardModern(
@@ -2011,9 +2376,3 @@ class _TileCalculatorScreenState extends ConsumerState<TileCalculatorScreen>
     );
   }
 }
-
-
-
-
-
-

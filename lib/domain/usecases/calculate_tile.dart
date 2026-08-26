@@ -4,6 +4,7 @@ import '../generated/canonical_specs.g.dart';
 import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import './base_calculator.dart';
+import './canonical_adapter_utils.dart';
 import './calculator_usecase.dart';
 import './tile_canonical_adapter.dart';
 
@@ -57,7 +58,8 @@ class CalculateTile extends BaseCalculator {
     final boxesNeeded = (totals['packagesNeeded'] ?? 0).round();
     final glueWeight = totals['glueNeededKg'] ?? 0;
     final glueBags = glueWeight > 0
-        ? (glueWeight / _tileSpec.packagingRule<num>('glue_bag_kg').toDouble()).ceil()
+        ? (glueWeight / _tileSpec.packagingRule<num>('glue_bag_kg').toDouble())
+              .ceil()
         : 0;
     final averageTileSize = totals['averageTileSizeCm'] ?? 0;
     final svpCount = useSVP
@@ -119,6 +121,24 @@ class CalculateTile extends BaseCalculator {
       return rangeMessage('tileHeightCm', 1, 200, unit: 'см');
     }
 
+    final packagingMode = (normalized['packagingMode'] ?? 0).round();
+    if (packagingMode == 1) {
+      final tilesPerPackage =
+          normalized['tilesPerPackage'] ??
+          defaultFor(_tileSpec, 'tilesPerPackage', 16);
+      if (tilesPerPackage != tilesPerPackage.roundToDouble() ||
+          tilesPerPackage < 1 ||
+          tilesPerPackage > 500) {
+        return 'Количество плиток в коробке должно быть целым числом от 1 до 500';
+      }
+    } else {
+      final packArea =
+          normalized['packArea'] ?? defaultFor(_tileSpec, 'packArea', 1.44);
+      if (packArea < 0.1 || packArea > 20) {
+        return rangeMessage('packArea', 0.1, 20, unit: 'м²');
+      }
+    }
+
     return null;
   }
 
@@ -130,7 +150,10 @@ class CalculateTile extends BaseCalculator {
     final contract = calculateCanonical(inputs);
     final area = contract.totals['area'] ?? 0;
     if (area <= 0) {
-      throw CalculationException.invalidInput('tile', 'Площадь должна быть > 0');
+      throw CalculationException.invalidInput(
+        'tile',
+        'Площадь должна быть > 0',
+      );
     }
 
     final tilePrice = findPrice(priceList, [
@@ -166,10 +189,15 @@ class CalculateTile extends BaseCalculator {
         'effectiveWaterproofing':
             contract.totals['effectiveWaterproofing'] ?? 0,
         if (avgSize >
-            _tileSpec.warningRule<num>('large_tile_warning_threshold_cm').toDouble())
+            _tileSpec
+                .warningRule<num>('large_tile_warning_threshold_cm')
+                .toDouble())
           'warningLargeTile': 1.0,
         if (layoutPattern == 4 &&
-            area > _tileSpec.warningRule<num>('herringbone_large_area_m2').toDouble())
+            area >
+                _tileSpec
+                    .warningRule<num>('herringbone_large_area_m2')
+                    .toDouble())
           'warningHerringboneLargeArea': 1.0,
       },
       totalPrice: sumCosts([
