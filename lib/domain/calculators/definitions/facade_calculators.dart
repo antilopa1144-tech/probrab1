@@ -10,7 +10,7 @@ import '../../models/calculator_hint.dart';
 import '../calculator_constants.dart';
 import '../../usecases/canonical_bridge.dart';
 import '../../usecases/facade_brick_canonical_adapter.dart';
-import '../../usecases/facade_panels_canonical_adapter.dart';
+import '../../usecases/facade_panels_v3_adapter.dart';
 import '../../usecases/fence_canonical_adapter.dart';
 import '../../usecases/stairs_canonical_adapter.dart';
 import '../../usecases/terrace_canonical_adapter.dart';
@@ -233,7 +233,7 @@ final List<CalculatorDefinitionV2> facadeCalculators = [
         CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ispolzuyte_kachestvennye_krepleniya'),
         CalculatorHint(type: HintType.tip, messageKey: 'hint.facade.ostavlyayte_zazor_dlya_temperaturnogo'),
       ],
-      useCase: CanonicalBridgeUseCase(calculateCanonicalFacadePanels),
+      useCase: CanonicalBridgeUseCase(calculateCanonicalFacadePanelsV3),
       accentColor: kCalculatorAccentColor,
       complexity: 3,
       popularity: 10,

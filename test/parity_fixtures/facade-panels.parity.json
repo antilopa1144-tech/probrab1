@@ -1,67 +1,85 @@
 {
   "calculator_id": "facade-panels",
-  "formula_version": "facade-panels-canonical-v2",
-  "generated_at": "2026-08-19T07:37:47.811Z",
+  "formula_version": "facade-panels-canonical-v3",
+  "generated_at": "2026-08-26T22:58:28.355Z",
   "cases": [
     {
       "id": "defaults",
       "description": "Default inputs for facade-panels",
       "inputs": {
+        "inputMode": 1,
         "area": 100,
+        "houseLength": 10,
+        "houseWidth": 10,
+        "wallHeight": 3,
+        "openingsArea": 10,
         "panelType": 0,
-        "substructure": 0,
-        "insulationThickness": 0,
-        "withHorizontalRails": 0
+        "panelUsefulArea": 0.84,
+        "reservePercent": 10,
+        "needProfile": 1,
+        "profileStep": 0.4,
+        "profilePieceLength": 3,
+        "fastenersPerPanel": 0,
+        "needInsulation": 0,
+        "insulationPackArea": 5.76,
+        "externalCorners": 4,
+        "cornerPieceLength": 3,
+        "starterPieceLength": 3
       },
       "expected_totals": {
+        "inputMode": 1,
+        "houseLength": 10,
+        "houseWidth": 10,
+        "wallLength": 40,
+        "wallHeight": 3,
+        "openingsArea": 10,
+        "grossArea": 100,
+        "wallArea": 100,
         "area": 100,
         "panelType": 0,
-        "substructure": 0,
-        "insulationThickness": 0,
-        "panelArea": 3.6,
-        "panels": 31,
-        "brackets": 306,
-        "guides": 62,
-        "horizontalGuides": 0,
-        "withHorizontalRails": 0,
-        "fasteners": 261,
-        "anchors": 643,
-        "insPlates": 0,
-        "insDowels": 0,
-        "membrane": 0,
-        "primer": 2,
-        "sealant": 4,
-        "minExactNeed": 28.8672,
-        "recExactNeed": 32.86,
-        "maxExactNeed": 42.72296,
-        "minPurchase": 29,
-        "recPurchase": 33,
-        "maxPurchase": 43
+        "panelUsefulArea": 0.84,
+        "reservePercent": 10,
+        "panelsArea": 110.04,
+        "panelsCount": 131,
+        "panels": 131,
+        "profileLength": 300,
+        "profilePieces": 100,
+        "fasteners": 0,
+        "insulationArea": 0,
+        "insulationPacks": 0,
+        "insulationPurchaseArea": 0,
+        "cornersCount": 4,
+        "startersCount": 14,
+        "minExactNeed": 119.047619,
+        "recExactNeed": 130.952381,
+        "maxExactNeed": 136.904762,
+        "minPurchase": 120,
+        "recPurchase": 131,
+        "maxPurchase": 137
       },
-      "expected_materials_count": 7,
+      "expected_materials_count": 4,
       "expected_material_names": [
-        "Фиброцементные панели 1200×3000 мм (3,6 м²)",
-        "Кронштейны (Алюминиевая)",
-        "Направляющие вертикальные (3 м)",
-        "Фасадные заклёпки для фиброцементных панелей",
-        "Фасадные анкеры для кронштейнов",
-        "Грунтовка глубокого проникновения (2 × 10 л)",
-        "Герметик фасадный атмосферостойкий"
+        "Виниловый сайдинг",
+        "Профиль/рейка по 3 м",
+        "Наружные угловые элементы",
+        "Стартовые элементы"
       ],
-      "expected_warnings_count": 0,
-      "expected_warnings": [],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "Крепёж не добавлен: укажите расход из паспорта выбранной фасадной системы"
+      ],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 28.8672,
-          "purchase_quantity": 29
+          "exact_need": 119.047619,
+          "purchase_quantity": 120
         },
         "REC": {
-          "exact_need": 32.86,
-          "purchase_quantity": 33
+          "exact_need": 130.952381,
+          "purchase_quantity": 131
         },
         "MAX": {
-          "exact_need": 42.72296,
-          "purchase_quantity": 43
+          "exact_need": 136.904762,
+          "purchase_quantity": 137
         }
       }
     }

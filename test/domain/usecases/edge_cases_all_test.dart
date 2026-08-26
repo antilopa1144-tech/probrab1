@@ -30,7 +30,7 @@ import 'package:probrab_ai/domain/usecases/drywall_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/drywall_ceiling_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/facade_brick_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/facade_insulation_canonical_adapter.dart';
-import 'package:probrab_ai/domain/usecases/facade_panels_canonical_adapter.dart';
+import 'package:probrab_ai/domain/usecases/facade_panels_v3_adapter.dart';
 import 'package:probrab_ai/domain/usecases/fasteners_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/fence_canonical_adapter.dart';
 import 'package:probrab_ai/domain/usecases/foam_blocks_canonical_adapter.dart';
@@ -97,7 +97,7 @@ final Map<String, CalcFn> _adapters = {
   'drywall_ceiling': calculateCanonicalDrywallCeiling,
   'facade_brick': calculateCanonicalFacadeBrick,
   'facade_insulation': calculateCanonicalFacadeInsulation,
-  'facade_panels': calculateCanonicalFacadePanels,
+  'facade_panels': calculateCanonicalFacadePanelsV3,
   'fasteners': calculateCanonicalFasteners,
   'fence': calculateCanonicalFence,
   'foam_blocks': calculateCanonicalFoamBlocks,
