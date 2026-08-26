@@ -84,7 +84,16 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
   double _height = 2.7;
   double _windowsDoors = 3.0;
   int _rapport = 0;
+  int _patternShift = 0;
+  int _trimAllowanceCm = 10;
+  int _reservePercent = 0;
   int _reserveRolls = 0;
+  bool _deductOpeningsFromStrips = false;
+  double _pasteCoverageM2 = 30;
+  double _pastePackKg = 0.25;
+  double _primerRate = 0.15;
+  int _primerLayers = 1;
+  double _primerCanL = 5;
   WallpaperRollSize _rollSize = WallpaperRollSize.s053x10;
   WallpaperType _wallpaperType = WallpaperType.vinyl;
   double _customWidth = 1.06;
@@ -131,6 +140,15 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
     if (initial['rapport'] != null) {
       _rapport = initial['rapport']!.round().clamp(0, 100);
     }
+    _patternShift = (initial['patternShift'] ?? 0).round().clamp(0, 100);
+    _trimAllowanceCm = (initial['trimAllowanceCm'] ?? 10).round().clamp(0, 50);
+    _reservePercent = (initial['reservePercent'] ?? 0).round().clamp(0, 30);
+    _deductOpeningsFromStrips = (initial['openingDeductionMode'] ?? 0).round() == 1;
+    _pasteCoverageM2 = (initial['pasteCoverageM2'] ?? 30).clamp(1, 200);
+    _pastePackKg = (initial['pastePackKg'] ?? 0.25).clamp(0.05, 20);
+    _primerRate = (initial['primerRate'] ?? 0.15).clamp(0.01, 1);
+    _primerLayers = (initial['primerLayers'] ?? 1).round().clamp(1, 3);
+    _primerCanL = (initial['primerCanL'] ?? 5).clamp(0.5, 20);
     if (initial['reserveRolls'] != null) {
       _reserveRolls = initial['reserveRolls']!.round().clamp(0, 5);
     }
@@ -215,11 +233,20 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
       'wallHeight': _height,
       'openingsArea': _windowsDoors,
       'rapport': _rapport.toDouble(),
+      'patternShift': _patternShift.toDouble(),
+      'trimAllowanceCm': _trimAllowanceCm.toDouble(),
+      'reservePercent': _reservePercent.toDouble(),
+      'openingDeductionMode': _deductOpeningsFromStrips ? 1 : 0,
       'wallpaperType': _wallpaperType.canonicalId.toDouble(),
       'rollSize': roll['rollSize']!,
       'rollWidth': roll['rollWidth']!,
       'rollLength': roll['rollLength']!,
       'reserveRolls': _reserveRolls.toDouble(),
+      'pasteCoverageM2': _pasteCoverageM2,
+      'pastePackKg': _pastePackKg,
+      'primerRate': _primerRate,
+      'primerLayers': _primerLayers.toDouble(),
+      'primerCanL': _primerCanL,
       ...accuracyModeInput,
     };
   }
@@ -372,6 +399,8 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
         _buildRapportCard(),
         const SizedBox(height: 16),
         _buildDeductionsCard(),
+        const SizedBox(height: 16),
+        _buildPassportCard(),
         const SizedBox(height: 16),
         _buildMaterialsCard(),
         const SizedBox(height: 24),
@@ -694,6 +723,32 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
             },
             decimalPlaces: 0,
           ),
+          if (_rapport > 0) ...[
+            const SizedBox(height: 12),
+            CalculatorSliderField(
+              label: 'Смещение рисунка',
+              value: _patternShift.toDouble(),
+              min: 0,
+              max: 100,
+              divisions: 20,
+              suffix: _loc.translate('common.cm'),
+              accentColor: accentColor,
+              onChanged: (value) { setState(() { _patternShift = value.round(); _update(); }); },
+              decimalPlaces: 0,
+            ),
+          ],
+          const SizedBox(height: 12),
+          CalculatorSliderField(
+            label: 'Припуск на подрезку',
+            value: _trimAllowanceCm.toDouble(),
+            min: 0,
+            max: 50,
+            divisions: 10,
+            suffix: _loc.translate('common.cm'),
+            accentColor: accentColor,
+            onChanged: (value) { setState(() { _trimAllowanceCm = value.round(); _update(); }); },
+            decimalPlaces: 0,
+          ),
           const SizedBox(height: 16),
           Divider(color: CalculatorColors.getDivider(_isDark)),
           const SizedBox(height: 12),
@@ -709,6 +764,18 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
             style: CalculatorDesignSystem.bodySmall.copyWith(
               color: CalculatorColors.getTextSecondary(_isDark),
             ),
+          ),
+          const SizedBox(height: 8),
+          CalculatorSliderField(
+            label: 'Запас к расчётным рулонам',
+            value: _reservePercent.toDouble(),
+            min: 0,
+            max: 30,
+            divisions: 30,
+            suffix: '%',
+            accentColor: accentColor,
+            onChanged: (value) { setState(() { _reservePercent = value.round(); _update(); }); },
+            decimalPlaces: 0,
           ),
           const SizedBox(height: 8),
           CalculatorSliderField(
@@ -768,6 +835,38 @@ class _WallpaperCalculatorScreenState extends State<WallpaperCalculatorScreen>
             },
             decimalPlaces: 1,
           ),
+          const SizedBox(height: 8),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Уменьшать число полос на площадь проёмов'),
+            subtitle: const Text('Выключено — безопасный расчёт целых полотен по всему периметру'),
+            value: _deductOpeningsFromStrips,
+            activeTrackColor: accentColor,
+            onChanged: (value) { setState(() { _deductOpeningsFromStrips = value; _update(); }); },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPassportCard() {
+    const accentColor = CalculatorColors.interior;
+    return _card(
+      child: ExpansionTile(
+        tilePadding: EdgeInsets.zero,
+        childrenPadding: EdgeInsets.zero,
+        title: Text('Клей и грунтовка по этикетке', style: CalculatorDesignSystem.titleMedium.copyWith(color: CalculatorColors.getTextPrimary(_isDark))),
+        subtitle: Text('Откройте, чтобы уточнить покрытие и фасовки', style: CalculatorDesignSystem.bodySmall.copyWith(color: CalculatorColors.getTextSecondary(_isDark))),
+        children: [
+          CalculatorTextField(label: 'Покрытие упаковки клея', value: _pasteCoverageM2, onChanged: (v) { _pasteCoverageM2 = v; _update(); }, suffix: _loc.translate('common.sqm'), accentColor: accentColor, minValue: 1, maxValue: 200, decimalPlaces: 0),
+          const SizedBox(height: 12),
+          CalculatorTextField(label: 'Масса упаковки клея', value: _pastePackKg, onChanged: (v) { _pastePackKg = v; _update(); }, suffix: 'кг', accentColor: accentColor, minValue: 0.05, maxValue: 20, decimalPlaces: 2),
+          const SizedBox(height: 12),
+          CalculatorTextField(label: 'Расход грунтовки на слой', value: _primerRate, onChanged: (v) { _primerRate = v; _update(); }, suffix: 'л/м²', accentColor: accentColor, minValue: 0.01, maxValue: 1, decimalPlaces: 2),
+          const SizedBox(height: 12),
+          CalculatorTextField(label: 'Слоёв грунтовки', value: _primerLayers.toDouble(), onChanged: (v) { _primerLayers = v.round(); _update(); }, suffix: '', accentColor: accentColor, minValue: 1, maxValue: 3, decimalPlaces: 0),
+          const SizedBox(height: 12),
+          CalculatorTextField(label: 'Объём канистры грунтовки', value: _primerCanL, onChanged: (v) { _primerCanL = v; _update(); }, suffix: 'л', accentColor: accentColor, minValue: 0.5, maxValue: 20, decimalPlaces: 1),
         ],
       ),
     );

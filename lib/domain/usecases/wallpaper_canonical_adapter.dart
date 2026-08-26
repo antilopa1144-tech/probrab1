@@ -195,6 +195,9 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
   final rollWidth = _resolveRollWidth(spec, inputs);
   final rollLength = _resolveRollLength(spec, inputs);
   final rapport = _resolveRapportMeters(spec, inputs);
+  final patternShift = math.max(0, inputs['patternShift'] ?? defaultFor(spec, 'patternShift', 0)).toDouble() / 100;
+  final trimAllowance = math.max(0, inputs['trimAllowanceCm'] ?? defaultFor(spec, 'trimAllowanceCm', 10)).toDouble() / 100;
+  final openingDeductionMode = (inputs['openingDeductionMode'] ?? defaultFor(spec, 'openingDeductionMode', 0)).round() == 1 ? 1 : 0;
   final reservePercent = math
       .max(0, inputs['reservePercent'] ?? defaultFor(spec, 'reservePercent', 0))
       .toDouble();
@@ -203,8 +206,7 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
     (inputs['reserveRolls'] ?? defaultFor(spec, 'reserveRolls', 0)).round(),
   );
   final wallHeight = geometry['wallHeight']!;
-  final stripLengthWithTrim =
-      wallHeight + spec.materialRule<num>('trim_allowance_m').toDouble();
+  final stripLengthWithTrim = wallHeight + trimAllowance + (rapport > 0 ? patternShift : 0);
   final stripLength = rapport > 0
       ? (stripLengthWithTrim / rapport).ceil() * rapport
       : stripLengthWithTrim;
@@ -212,8 +214,11 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
       ? math.max(0, (rollLength / stripLength).floor())
       : 0;
   final netArea = geometry['netArea']!;
+  final stripBasis = openingDeductionMode == 1
+      ? netArea / wallHeight
+      : geometry['perimeter']!;
   final stripsNeeded = wallHeight > 0 && rollWidth > 0
-      ? (netArea / (rollWidth * wallHeight)).ceil()
+      ? (stripBasis / rollWidth).ceil()
       : 0;
   final accuracyMode = parseAccuracyMode(inputs);
   final baseExactRolls = stripsPerRoll > 0 ? stripsNeeded / stripsPerRoll : 0.0;
@@ -264,32 +269,17 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
   }
 
   final recScenario = scenarios['REC']!;
-  final pasteBaseNeeded =
-      netArea * (wallpaperType['paste_kg_per_m2'] as num).toDouble();
-  final pasteWithReserve =
-      pasteBaseNeeded *
-      spec.materialRule<num>('paste_reserve_factor').toDouble();
-  final pastePacks = pasteWithReserve > 0
-      ? math.max(
-          1,
-          (pasteWithReserve /
-                  spec.packagingRule<num>('paste_pack_kg').toDouble())
-              .ceil(),
-        )
-      : 0;
-  final primerBaseNeeded =
-      netArea * spec.materialRule<num>('primer_l_per_m2').toDouble();
-  final primerWithReserve =
-      primerBaseNeeded *
-      spec.materialRule<num>('primer_reserve_factor').toDouble();
-  final primerCans = primerWithReserve > 0
-      ? math.max(
-          1,
-          (primerWithReserve /
-                  spec.packagingRule<num>('primer_can_l').toDouble())
-              .ceil(),
-        )
-      : 0;
+  final pasteCoverageM2 = math.max(1, inputs['pasteCoverageM2'] ?? defaultFor(spec, 'pasteCoverageM2', 30)).toDouble();
+  final pastePackKg = math.max(0.05, inputs['pastePackKg'] ?? defaultFor(spec, 'pastePackKg', 0.25)).toDouble();
+  final pastePacks = netArea > 0 ? (netArea / pasteCoverageM2).ceil() : 0;
+  final pasteBaseNeeded = netArea / pasteCoverageM2 * pastePackKg;
+  final pasteWithReserve = pasteBaseNeeded;
+  final primerRate = math.max(0.01, inputs['primerRate'] ?? defaultFor(spec, 'primerRate', 0.15)).toDouble();
+  final primerLayers = math.max(1, (inputs['primerLayers'] ?? defaultFor(spec, 'primerLayers', 1)).round());
+  final primerCanL = math.max(0.5, inputs['primerCanL'] ?? defaultFor(spec, 'primerCanL', 5)).toDouble();
+  final primerBaseNeeded = netArea * primerRate * primerLayers;
+  final primerWithReserve = primerBaseNeeded;
+  final primerCans = primerWithReserve > 0 ? (primerWithReserve / primerCanL).ceil() : 0;
   final rollLabel =
       '${roundValue(rollWidth, 3)}×${roundValue(rollLength, 3)} м';
   final rapportLabel = rapport > 0
@@ -333,33 +323,33 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
       ),
       CanonicalMaterialResult(
         name:
-            'Клей обойный (${(wallpaperType['label'] as String).toLowerCase()}, ${spec.packagingRule<num>('paste_pack_kg').toDouble()} кг)',
+            'Клей обойный (${(wallpaperType['label'] as String).toLowerCase()}, ${roundValue(pastePackKg, 3)} кг)',
         quantity: roundValue(pasteBaseNeeded, 6),
         unit: 'кг',
         withReserve: roundValue(pasteWithReserve, 6),
         purchaseQty:
-            (pastePacks * spec.packagingRule<num>('paste_pack_kg').toDouble())
+            (pastePacks * pastePackKg)
                 .toDouble(),
         category: 'Клей',
         packageInfo: {
           'count': pastePacks,
-          'unitSize': spec.packagingRule<num>('paste_pack_kg').toDouble(),
+          'size': pastePackKg,
           'packageUnit': 'упаковок',
         },
       ),
       CanonicalMaterialResult(
         name:
-            'Грунтовка глубокого проникновения (${spec.packagingRule<num>('primer_can_l').toInt()} л)',
+            'Грунтовка глубокого проникновения (${roundValue(primerCanL, 3)} л)',
         quantity: roundValue(primerBaseNeeded, 6),
         unit: 'л',
         withReserve: roundValue(primerWithReserve, 6),
         purchaseQty:
-            (primerCans * spec.packagingRule<num>('primer_can_l').toDouble())
+            (primerCans * primerCanL)
                 .toDouble(),
         category: 'Грунтовка',
         packageInfo: {
           'count': primerCans,
-          'unitSize': spec.packagingRule<num>('primer_can_l').toDouble(),
+          'size': primerCanL,
           'packageUnit': 'канистр',
         },
       ),
@@ -426,6 +416,9 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
       'rollWidth': roundValue(rollWidth, 3),
       'rollLength': roundValue(rollLength, 3),
       'rapport': roundValue(rapport * 100, 3),
+      'patternShift': roundValue(patternShift * 100, 3),
+      'trimAllowanceCm': roundValue(trimAllowance * 100, 3),
+      'openingDeductionMode': openingDeductionMode.toDouble(),
       'wallpaperType': (wallpaperType['id'] as num).toInt().toDouble(),
       'reservePercent': roundValue(reservePercent, 3),
       'reserveRolls': reserveRolls.toDouble(),
@@ -437,17 +430,22 @@ CanonicalCalculatorContractResult calculateCanonicalWallpaper(
       'pasteBaseNeededKg': roundValue(pasteBaseNeeded, 6),
       'pasteNeededKg': roundValue(pasteWithReserve, 6),
       'pastePurchaseKg': roundValue(
-        pastePacks * spec.packagingRule<num>('paste_pack_kg').toDouble(),
+        pastePacks * pastePackKg,
         6,
       ),
       'pastePacks': pastePacks.toDouble(),
+      'pasteCoverageM2': pasteCoverageM2,
+      'pastePackKg': pastePackKg,
       'primerBaseNeededL': roundValue(primerBaseNeeded, 6),
       'primerNeededL': roundValue(primerWithReserve, 6),
       'primerPurchaseL': roundValue(
-        primerCans * spec.packagingRule<num>('primer_can_l').toDouble(),
+        primerCans * primerCanL,
         6,
       ),
       'primerCans': primerCans.toDouble(),
+      'primerRate': primerRate,
+      'primerLayers': primerLayers.toDouble(),
+      'primerCanL': primerCanL,
       'minExactNeedRolls': scenarios['MIN']!.exactNeed,
       'recExactNeedRolls': recScenario.exactNeed,
       'maxExactNeedRolls': scenarios['MAX']!.exactNeed,

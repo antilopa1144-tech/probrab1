@@ -9249,7 +9249,7 @@ const Map<String, dynamic> wallPanelsSpecData = {
 /// Generated from wallpaper-canonical.v1.json
 const Map<String, dynamic> wallpaperSpecData = {
   'calculator_id': 'wallpaper',
-  'formula_version': 'wallpaper-canonical-v3',
+  'formula_version': 'wallpaper-canonical-v4',
   'input_schema': [
     {
       'key': 'inputMode',
@@ -9328,6 +9328,12 @@ const Map<String, dynamic> wallpaperSpecData = {
       'max': 500,
     },
     {
+      'key': 'openingDeductionMode',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
+    {
       'key': 'doorsCount',
       'default_value': 0,
       'min': 0,
@@ -9361,6 +9367,20 @@ const Map<String, dynamic> wallpaperSpecData = {
       'max': 100,
     },
     {
+      'key': 'patternShift',
+      'unit': 'cm',
+      'default_value': 0,
+      'min': 0,
+      'max': 100,
+    },
+    {
+      'key': 'trimAllowanceCm',
+      'unit': 'cm',
+      'default_value': 10,
+      'min': 0,
+      'max': 50,
+    },
+    {
       'key': 'wallpaperType',
       'default_value': 1,
       'min': 1,
@@ -9377,6 +9397,40 @@ const Map<String, dynamic> wallpaperSpecData = {
       'default_value': 0,
       'min': 0,
       'max': 10,
+    },
+    {
+      'key': 'pasteCoverageM2',
+      'unit': 'm2',
+      'default_value': 30,
+      'min': 1,
+      'max': 200,
+    },
+    {
+      'key': 'pastePackKg',
+      'unit': 'kg',
+      'default_value': 0.25,
+      'min': 0.05,
+      'max': 20,
+    },
+    {
+      'key': 'primerRate',
+      'unit': 'l/m2',
+      'default_value': 0.15,
+      'min': 0.01,
+      'max': 1,
+    },
+    {
+      'key': 'primerLayers',
+      'default_value': 1,
+      'min': 1,
+      'max': 3,
+    },
+    {
+      'key': 'primerCanL',
+      'unit': 'l',
+      'default_value': 5,
+      'min': 0.5,
+      'max': 20,
     },
   ],
   'field_factors': {

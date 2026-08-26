@@ -75,12 +75,57 @@ void main() {
       expect(wallpaper.quantity, 9);
       expect(wallpaper.withReserve, 9);
       expect(wallpaper.purchaseQty, 9);
-      expect(paste.quantity, closeTo(0.189, 0.000001));
-      expect(paste.withReserve, closeTo(0.2079, 0.000001));
-      expect(paste.purchaseQty, 0.25);
+      expect(paste.quantity, closeTo(0.315, 0.000001));
+      expect(paste.withReserve, closeTo(0.315, 0.000001));
+      expect(paste.purchaseQty, 0.5);
       expect(primer.quantity, closeTo(5.67, 0.000001));
-      expect(primer.withReserve, closeTo(6.237, 0.000001));
+      expect(primer.withReserve, closeTo(5.67, 0.000001));
       expect(primer.purchaseQty, 10);
+    });
+
+    test('безопасный режим не вычитает проёмы из целых полос', () {
+      final safe = calculateCanonicalWallpaper({
+        'perimeter': 14,
+        'wallHeight': 2.7,
+        'openingsArea': 10,
+        'rollLength': 10.05,
+        'rollWidth': 0.53,
+      });
+      final optimistic = calculateCanonicalWallpaper({
+        'perimeter': 14,
+        'wallHeight': 2.7,
+        'openingsArea': 10,
+        'openingDeductionMode': 1,
+        'rollLength': 10.05,
+        'rollWidth': 0.53,
+      });
+
+      expect(safe.totals['stripsNeeded'], 27);
+      expect(optimistic.totals['stripsNeeded'], 20);
+      expect(safe.totals['rollsNeeded'], greaterThan(optimistic.totals['rollsNeeded']!));
+    });
+
+    test('смещение рисунка входит в раскрой до округления по раппорту', () {
+      final straight = calculateCanonicalWallpaper({
+        'perimeter': 14,
+        'wallHeight': 2.7,
+        'rapport': 64,
+        'patternShift': 0,
+        'rollLength': 10.05,
+        'rollWidth': 0.53,
+      });
+      final shifted = calculateCanonicalWallpaper({
+        'perimeter': 14,
+        'wallHeight': 2.7,
+        'rapport': 64,
+        'patternShift': 48,
+        'rollLength': 10.05,
+        'rollWidth': 0.53,
+      });
+
+      expect(straight.totals['stripLength'], closeTo(3.2, 0.001));
+      expect(shifted.totals['stripLength'], closeTo(3.84, 0.001));
+      expect(shifted.totals['rollsNeeded'], greaterThan(straight.totals['rollsNeeded']!));
     });
   });
 }
