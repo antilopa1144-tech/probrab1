@@ -2411,7 +2411,7 @@ const Map<String, dynamic> drywallCeilingSpecData = {
 /// Generated from electric-canonical.v1.json
 const Map<String, dynamic> electricSpecData = {
   'calculator_id': 'electric',
-  'formula_version': 'electric-canonical-v1',
+  'formula_version': 'electric-canonical-v2',
   'input_schema': [
     {
       'key': 'apartmentArea',
@@ -2454,12 +2454,7 @@ const Map<String, dynamic> electricSpecData = {
     },
   ],
   'field_factors': {
-    'enabled': [
-      'geometry_complexity',
-      'installation_method',
-      'worker_skill',
-      'waste_factor',
-    ],
+    'enabled': [],
   },
   'normative_formula': {
     'wiring_types': [
@@ -2499,9 +2494,13 @@ const Map<String, dynamic> electricSpecData = {
   },
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
+    'primary_measure': 'total_cable_length_m',
+    'min_reserve_percent': 5,
+    'rec_reserve_source': 'input.reserve',
+    'max_reserve_percent': 30,
+    'packaging': 'round_each_cable_section_before_sum',
   },
 };
-
 /// Generated from facade-brick-canonical.v1.json
 const Map<String, dynamic> facadeBrickSpecData = {
   'calculator_id': 'facade-brick',

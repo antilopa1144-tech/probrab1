@@ -1,7 +1,7 @@
 {
   "calculator_id": "electric",
-  "formula_version": "electric-canonical-v1",
-  "generated_at": "2026-08-19T07:37:47.785Z",
+  "formula_version": "electric-canonical-v2",
+  "generated_at": "2026-08-26T10:38:13.485Z",
   "cases": [
     {
       "id": "defaults",
@@ -39,12 +39,12 @@
         "socketBoxes": 52,
         "gypsumKg": 10,
         "gypsumBags": 2,
-        "minExactNeed": 4.56288,
-        "recExactNeed": 5.3,
-        "maxExactNeed": 7.57988,
-        "minPurchase": 5,
-        "recPurchase": 6,
-        "maxPurchase": 8
+        "minExactNeed": 219.88524,
+        "recExactNeed": 239.19024,
+        "maxExactNeed": 268.14774,
+        "minPurchase": 268,
+        "recPurchase": 268,
+        "maxPurchase": 318
       },
       "expected_materials_count": 14,
       "expected_material_names": [
@@ -71,16 +71,16 @@
       ],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 4.56288,
-          "purchase_quantity": 5
+          "exact_need": 219.88524,
+          "purchase_quantity": 268
         },
         "REC": {
-          "exact_need": 5.3,
-          "purchase_quantity": 6
+          "exact_need": 239.19024,
+          "purchase_quantity": 268
         },
         "MAX": {
-          "exact_need": 7.57988,
-          "purchase_quantity": 8
+          "exact_need": 268.14774,
+          "purchase_quantity": 318
         }
       }
     }

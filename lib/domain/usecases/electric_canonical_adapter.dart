@@ -5,13 +5,6 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-const Map<String, Map<String, double>> _factorTable = {
-  'geometry_complexity': {'MIN': 1.0, 'REC': 1.0, 'MAX': 1.17131},
-  'installation_method': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.08},
-  'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
-  'waste_factor': {'MIN': 0.97, 'REC': 1.06, 'MAX': 1.12},
-};
-
 const double _cableChannelPieceM = 2;
 const int _rcdModules = 2;
 const int _panelSpareModules = 2;
@@ -63,16 +56,16 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
   final wiringMultiplier = wiringType == 1
       ? spec.materialRule<num>('cable_open_wiring_multiplier').toDouble()
       : spec.materialRule<num>('cable_hidden_wiring_multiplier').toDouble();
-  final cable15length =
+  final cable15BaseLength =
       (apartmentArea * spec.materialRule<num>('cable_15_rate').toDouble() +
           lightingGroups * ceilingHeight) *
-      (1 + reserve / 100) *
       wiringMultiplier;
-  final cable25length =
+  final cable25BaseLength =
       (apartmentArea * spec.materialRule<num>('cable_25_rate').toDouble() +
           outletGroups * ceilingHeight * 1.5) *
-      (1 + reserve / 100) *
       wiringMultiplier;
+  final cable15length = cable15BaseLength * (1 + reserve / 100);
+  final cable25length = cable25BaseLength * (1 + reserve / 100);
   final cable6length = hasKitchen == 1
       ? (math.sqrt(apartmentArea) *
                     spec
@@ -112,6 +105,32 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
           .ceil();
   final gypsumKg = ((outletsCount + switchesCount) / 5).ceil();
   final gypsumBags = (gypsumKg / _gypsumBagKg).ceil();
+  final reserveField = spec.inputSchema.firstWhere(
+    (field) => field['key'] == 'reserve',
+    orElse: () => const <String, dynamic>{},
+  );
+  final scenarioReserve = <String, double>{
+    'MIN': (reserveField['min'] as num?)?.toDouble() ?? reserve,
+    'REC': reserve,
+    'MAX': (reserveField['max'] as num?)?.toDouble() ?? reserve,
+  };
+
+  ({double exactNeed, double purchaseQuantity}) calculateCableScenario(
+    double reservePercent,
+  ) {
+    final cable15 = cable15BaseLength * (1 + reservePercent / 100);
+    final cable25 = cable25BaseLength * (1 + reservePercent / 100);
+    final exactNeed = roundValue(cable15 + cable25 + cable6length, 6);
+    final spoolM = spec.packagingRule<num>('cable_spool_m').toDouble();
+    final purchaseQuantity =
+        (cable15 / spoolM).ceil() * spoolM +
+        (cable25 / spoolM).ceil() * spoolM +
+        (hasKitchen == 1 ? cable6length.ceil() : 0);
+    return (
+      exactNeed: exactNeed,
+      purchaseQuantity: purchaseQuantity.toDouble(),
+    );
+  }
 
   /* ─── materials ─── */
   final materials = <CanonicalMaterialResult>[
@@ -276,40 +295,35 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
   ]);
 
   /* ─── scenarios ─── */
-  final accuracyMode = parseAccuracyMode(inputs);
-  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
-  final basePrimary = ((cable15spools + cable25spools) * accuracyMult)
-      .ceilToDouble();
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(
-      spec.enabledFactors,
-      _factorTable,
-      scenarioName,
-    );
-    final exactNeed = roundValue(basePrimary * multiplier, 6);
-    final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
-    final purchaseQuantity = roundValue(packageCount.toDouble(), 6);
+    final reservePercent = scenarioReserve[scenarioName] ?? reserve;
+    final cableScenario = calculateCableScenario(reservePercent);
     scenarios[scenarioName] = CanonicalScenarioResult(
-      exactNeed: exactNeed,
-      purchaseQuantity: purchaseQuantity,
-      leftover: roundValue(purchaseQuantity - exactNeed, 6),
+      exactNeed: cableScenario.exactNeed,
+      purchaseQuantity: cableScenario.purchaseQuantity,
+      leftover: roundValue(
+        cableScenario.purchaseQuantity - cableScenario.exactNeed,
+        6,
+      ),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'wiringType:$wiringType',
-        'reserve:$reserve',
-        'packaging:electric-cable-spool',
+        'reserve:$reservePercent',
+        'scenario:separate-rounding-by-cable-section',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
-        'field_multiplier': roundValue(multiplier, 6),
+        'input_reserve_multiplier': roundValue(1 + reservePercent / 100, 6),
+        'stove_line_reserve_multiplier': hasKitchen == 1
+            ? spec.materialRule<num>('cable_6_reserve').toDouble()
+            : 1,
       },
-      buyPlan: CanonicalBuyPlan(
-        packageLabel: 'electric-cable-spool',
+      buyPlan: const CanonicalBuyPlan(
+        packageLabel: 'electric-cable-lines',
         packageSize: 1,
-        packagesCount: packageCount,
-        unit: 'бухт',
+        packagesCount: 0,
+        unit: 'м',
       ),
     );
   }
