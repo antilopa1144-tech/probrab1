@@ -1,7 +1,7 @@
 {
   "calculator_id": "heating",
-  "formula_version": "heating-canonical-v2",
-  "generated_at": "2026-08-19T07:37:47.887Z",
+  "formula_version": "heating-canonical-v3",
+  "generated_at": "2026-08-26T10:49:47.630Z",
   "cases": [
     {
       "id": "defaults",
@@ -25,6 +25,7 @@
         "totalPowerW": 8000,
         "totalPowerKW": 8,
         "wattPerUnit": 180,
+        "exactUnits": 44.444444,
         "totalUnits": 45,
         "radiatorCount": 4,
         "pipeSticks": 12,
@@ -32,12 +33,12 @@
         "brackets": 13,
         "thermoHeads": 4,
         "mayevskyValves": 4,
-        "minExactNeed": 41.904,
-        "recExactNeed": 47.7,
-        "maxExactNeed": 62.0172,
-        "minPurchase": 42,
-        "recPurchase": 48,
-        "maxPurchase": 63
+        "minExactNeed": 44.444444,
+        "recExactNeed": 44.444444,
+        "maxExactNeed": 44.444444,
+        "minPurchase": 45,
+        "recPurchase": 45,
+        "maxPurchase": 45
       },
       "expected_materials_count": 6,
       "expected_material_names": [
@@ -52,16 +53,16 @@
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 41.904,
-          "purchase_quantity": 42
+          "exact_need": 44.444444,
+          "purchase_quantity": 45
         },
         "REC": {
-          "exact_need": 47.7,
-          "purchase_quantity": 48
+          "exact_need": 44.444444,
+          "purchase_quantity": 45
         },
         "MAX": {
-          "exact_need": 62.0172,
-          "purchase_quantity": 63
+          "exact_need": 44.444444,
+          "purchase_quantity": 45
         }
       }
     }

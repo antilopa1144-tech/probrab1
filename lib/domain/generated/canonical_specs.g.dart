@@ -3839,7 +3839,7 @@ const Map<String, dynamic> gypsumBoardSpecData = {
 /// Generated from heating-canonical.v1.json
 const Map<String, dynamic> heatingSpecData = {
   'calculator_id': 'heating',
-  'formula_version': 'heating-canonical-v2',
+  'formula_version': 'heating-canonical-v3',
   'input_schema': [
     {
       'key': 'totalArea',
@@ -3881,11 +3881,7 @@ const Map<String, dynamic> heatingSpecData = {
     },
   ],
   'field_factors': {
-    'enabled': [
-      'geometry_complexity',
-      'worker_skill',
-      'waste_factor',
-    ],
+    'enabled': [],
   },
   'normative_formula': {
     'climate_zones': [
@@ -3930,13 +3926,13 @@ const Map<String, dynamic> heatingSpecData = {
       {
         'id': 2,
         'key': 'good_insulated',
-        'label': 'Хорошее утепление',
+        'label': 'Частный дом с хорошим утеплением',
         'coefficient': 1.1,
       },
       {
         'id': 3,
         'key': 'weak_insulated',
-        'label': 'Слабое утепление',
+        'label': 'Частный дом со слабым утеплением',
         'coefficient': 1.4,
       },
     ],
@@ -4002,10 +3998,12 @@ const Map<String, dynamic> heatingSpecData = {
     'gas_boiler_power_threshold_kw': 20,
   },
   'scenario_policy': {
-    'contract': 'min-rec-max-v1',
+    'contract': 'deterministic-heat-load-v1',
+    'exact_need': 'Расчётная мощность, делённая на паспортную мощность секции или прибора',
+    'purchase_quantity': 'Округление точной потребности вверх до целой секции или прибора',
+    'scenarios': 'MIN, REC и MAX совпадают: монтажные отходы и навык мастера не изменяют теплопотери здания',
   },
 };
-
 /// Generated from insulation-canonical.v1.json
 const Map<String, dynamic> insulationSpecData = {
   'calculator_id': 'insulation',

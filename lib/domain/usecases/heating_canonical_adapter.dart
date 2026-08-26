@@ -3,12 +3,6 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-const Map<String, Map<String, double>> _factorTable = {
-  'geometry_complexity': {'MIN': 1.0, 'REC': 1.0, 'MAX': 1.15},
-  'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
-  'waste_factor': {'MIN': 0.97, 'REC': 1.06, 'MAX': 1.12},
-};
-
 CanonicalCalculatorContractResult calculateCanonicalHeating(
   Map<String, double> inputs, {
   SpecReader? specOverride,
@@ -63,12 +57,13 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       : radiatorPowerBase is Map
       ? (radiatorPowerBase['$radiatorType'] as num?)?.toDouble() ?? 150
       : 150.0;
-  final totalUnits = (totalPowerW / wattPerUnit).ceil();
+  final exactUnits = totalPowerW / wattPerUnit;
+  final totalUnits = exactUnits.ceil();
   final radiatorCount = radiatorType <= 1 ? roomCount : totalUnits;
 
   /* ─── piping ─── */
   final pipeSticks =
-      (radiatorCount *
+      (roomCount *
               spec.materialRule<num>('pipe_rate').toDouble() *
               spec.materialRule<num>('pipe_reserve').toDouble() /
               spec.materialRule<num>('pp_pipe_stick_m').toDouble())
@@ -79,7 +74,7 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
               spec.materialRule<num>('fittings_reserve').toDouble())
           .ceil();
   final brackets =
-      (roomCount *
+      (radiatorCount *
               spec.materialRule<num>('brackets_per_room').toDouble() *
               spec.materialRule<num>('brackets_reserve').toDouble())
           .ceil();
@@ -94,17 +89,20 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
     3: 'Стальной панельный радиатор тип 22, 700 Вт',
   };
   final radiatorLabel = radiatorLabels[radiatorType] ?? 'Отопительный прибор';
+  final primaryUnit = radiatorType <= 1 ? 'секций' : 'шт';
+  final pipeStickM = spec.materialRule<num>('pp_pipe_stick_m').toDouble();
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
       name: radiatorLabel,
-      quantity: totalUnits.toDouble(),
-      unit: radiatorType <= 1 ? 'секций' : 'шт',
-      withReserve: totalUnits.toDouble(),
+      quantity: roundValue(exactUnits, 6),
+      unit: primaryUnit,
+      withReserve: roundValue(exactUnits, 6),
       purchaseQty: totalUnits.toDouble(),
       category: 'Отопление',
     ),
     CanonicalMaterialResult(
-      name: 'Армированная труба PP-R Ø25 мм, отрезок 4 м',
+      name:
+          'Армированная труба PP-R Ø25 мм, отрезок ${pipeStickM.toStringAsFixed(pipeStickM % 1 == 0 ? 0 : 1)} м',
       quantity: pipeSticks.toDouble(),
       unit: 'шт',
       withReserve: pipeSticks.toDouble(),
@@ -148,18 +146,10 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
   ];
 
   /* ─── scenarios ─── */
-  final accuracyMode = parseAccuracyMode(inputs);
-  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
-  final basePrimary = (totalUnits * accuracyMult).ceilToDouble();
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(
-      spec.enabledFactors,
-      _factorTable,
-      scenarioName,
-    );
-    final exactNeed = roundValue(basePrimary * multiplier, 6);
+    final exactNeed = roundValue(exactUnits, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
     final purchaseQuantity = roundValue(packageCount.toDouble(), 6);
     scenarios[scenarioName] = CanonicalScenarioResult(
@@ -171,17 +161,15 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
         'climateZone:$climateZone',
         'buildingType:$buildingType',
         'radiatorType:$radiatorType',
-        'packaging:radiator-unit',
+        'scenario_policy:deterministic_heat_load',
+        'packaging:отопительный прибор',
       ],
-      keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
-        'field_multiplier': roundValue(multiplier, 6),
-      },
+      keyFactors: {'field_multiplier': 1},
       buyPlan: CanonicalBuyPlan(
-        packageLabel: 'radiator-unit',
+        packageLabel: 'отопительный прибор',
         packageSize: 1,
         packagesCount: packageCount,
-        unit: 'шт',
+        unit: primaryUnit,
       ),
     );
   }
@@ -217,6 +205,7 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
       'totalPowerW': roundValue(totalPowerW, 1),
       'totalPowerKW': totalPowerKW,
       'wattPerUnit': wattPerUnit.toDouble(),
+      'exactUnits': roundValue(exactUnits, 6),
       'totalUnits': totalUnits.toDouble(),
       'radiatorCount': radiatorCount.toDouble(),
       'pipeSticks': pipeSticks.toDouble(),
