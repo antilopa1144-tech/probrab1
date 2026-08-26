@@ -31,9 +31,16 @@ void main() {
         'thickness': 200,
         'accuracyMode': 0,
       });
+      final concrete = result.materials.firstWhere(
+        (material) => material.name.startsWith('Товарный бетон'),
+      );
 
       expect(result.totals['concreteM3'], 12);
+      expect(result.scenarios['MIN']!.exactNeed, 12);
       expect(result.scenarios['REC']!.exactNeed, 12.72);
+      expect(concrete.quantity, 12);
+      expect(concrete.withReserve, result.scenarios['REC']!.exactNeed);
+      expect(concrete.purchaseQty, result.scenarios['REC']!.purchaseQuantity);
     });
 
     test('использует проектные толщины слоёв подготовки', () {

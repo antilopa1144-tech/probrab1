@@ -126,7 +126,12 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       _factorTable,
       scenarioName,
     );
-    final exactNeed = roundValue(concreteM3 * accuracyMult * multiplier, 6);
+    // Сценарий может только добавить запас к физическому объёму плиты.
+    // Даже MIN не должен опускаться ниже S × h.
+    final exactNeed = roundValue(
+      math.max(concreteM3, concreteM3 * accuracyMult * multiplier),
+      6,
+    );
     final package = _pickPackage(
       exactNeed,
       spec.packagingRule<num>('volume_step_m3').toDouble(),
@@ -177,8 +182,8 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       name: 'Товарный бетон — класс по проекту',
       quantity: roundValue(concreteM3, 3),
       unit: 'м³',
-      withReserve: roundValue(concreteM3, 3),
-      purchaseQty: ((concreteM3 * 10).ceil() / 10).toDouble(),
+      withReserve: roundValue(recScenario.exactNeed, 3),
+      purchaseQty: roundValue(recScenario.purchaseQuantity, 1),
       category: 'Основное',
     ),
     CanonicalMaterialResult(
