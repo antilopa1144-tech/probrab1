@@ -1,7 +1,7 @@
 {
   "calculator_id": "paint",
-  "formula_version": "paint-canonical-v1",
-  "generated_at": "2026-08-19T07:37:47.939Z",
+  "formula_version": "paint-canonical-v2",
+  "generated_at": "2026-08-26T22:00:33.292Z",
   "cases": [
     {
       "id": "defaults",
@@ -40,6 +40,7 @@
         "colorIntensity": 0,
         "coats": 2,
         "coverage": 10,
+        "reservePercent": 0,
         "canSize": 3,
         "lPerSqm": 0.2,
         "estimatedPerimeter": 17.889,
@@ -50,12 +51,12 @@
         "primerLiters": 6.6,
         "tapeMeters": 39.356,
         "tapeRolls": 1,
-        "minExactNeedL": 10.923535,
-        "recExactNeedL": 13.759351,
-        "maxExactNeedL": 22.52318,
-        "minPurchaseL": 12,
+        "minExactNeedL": 12.6,
+        "recExactNeedL": 12.6,
+        "maxExactNeedL": 14.49,
+        "minPurchaseL": 15,
         "recPurchaseL": 15,
-        "maxPurchaseL": 24
+        "maxPurchaseL": 15
       },
       "expected_materials_count": 10,
       "expected_material_names": [
@@ -74,16 +75,16 @@
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 10.923535,
-          "purchase_quantity": 12
+          "exact_need": 12.6,
+          "purchase_quantity": 15
         },
         "REC": {
-          "exact_need": 13.759351,
+          "exact_need": 12.6,
           "purchase_quantity": 15
         },
         "MAX": {
-          "exact_need": 22.52318,
-          "purchase_quantity": 24
+          "exact_need": 14.49,
+          "purchase_quantity": 15
         }
       }
     }

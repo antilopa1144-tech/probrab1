@@ -50,17 +50,40 @@ class _PaintScreenState extends State<PaintScreen> {
   // Данные типов поверхностей (геттер — использует _loc, доступен после build)
   List<List<Map<String, dynamic>>> get _surfaces => [
     [
-      {'name': _loc.translate('paint.surface.smooth'), 'subtitle': 'х1.0', 'factor': 1.0},
-      {'name': _loc.translate('paint.surface.wallpaper'), 'subtitle': 'х1.2', 'factor': 1.2},
-      {'name': _loc.translate('paint.surface.relief'), 'subtitle': 'х1.4', 'factor': 1.4},
+      {
+        'name': _loc.translate('paint.surface.smooth'),
+        'subtitle': 'х1.0',
+        'factor': 1.0,
+      },
+      {
+        'name': _loc.translate('paint.surface.wallpaper'),
+        'subtitle': 'х1.2',
+        'factor': 1.2,
+      },
+      {
+        'name': _loc.translate('paint.surface.relief'),
+        'subtitle': 'х1.4',
+        'factor': 1.4,
+      },
     ],
     [
-      {'name': _loc.translate('paint.surface.concrete'), 'subtitle': 'х1.0', 'factor': 1.0},
-      {'name': _loc.translate('paint.surface.brick'), 'subtitle': 'х1.15', 'factor': 1.15},
-      {'name': _loc.translate('paint.surface.bark_beetle'), 'subtitle': 'х1.4', 'factor': 1.4},
+      {
+        'name': _loc.translate('paint.surface.concrete'),
+        'subtitle': 'х1.0',
+        'factor': 1.0,
+      },
+      {
+        'name': _loc.translate('paint.surface.brick'),
+        'subtitle': 'х1.15',
+        'factor': 1.15,
+      },
+      {
+        'name': _loc.translate('paint.surface.bark_beetle'),
+        'subtitle': 'х1.4',
+        'factor': 1.4,
+      },
     ],
   ];
-
 
   void _onPaintTypeChanged(int newType) {
     setState(() {
@@ -73,7 +96,10 @@ class _PaintScreenState extends State<PaintScreen> {
   int _surfaceTypeId() {
     if (_paintType == 0) {
       const interiorMapping = [0, 4, 5];
-      return interiorMapping[_surfaceIndex.clamp(0, interiorMapping.length - 1)];
+      return interiorMapping[_surfaceIndex.clamp(
+        0,
+        interiorMapping.length - 1,
+      )];
     }
     const facadeMapping = [6, 7, 8];
     return facadeMapping[_surfaceIndex.clamp(0, facadeMapping.length - 1)];
@@ -91,6 +117,7 @@ class _PaintScreenState extends State<PaintScreen> {
       'coats': _layers.toDouble(),
       'coverage': _coverage,
       'canSize': _canonicalCanSize,
+      'accuracyMode': 1.0,
     };
 
     if (_inputMode == 0) {
@@ -115,7 +142,8 @@ class _PaintScreenState extends State<PaintScreen> {
     required String fallbackNamePart,
   }) {
     for (final material in contract.materials) {
-      if (material.category == category && material.name.contains(fallbackNamePart)) {
+      if (material.category == category &&
+          material.name.contains(fallbackNamePart)) {
         return material.purchaseQty?.toInt() ?? 0;
       }
     }
@@ -131,9 +159,12 @@ class _PaintScreenState extends State<PaintScreen> {
     final result = _calculateResult();
     final recScenario = result.scenarios['REC'];
     final netArea = result.totals['area'] ?? 0;
-    final liters = recScenario?.exactNeed ?? (result.totals['recExactNeedL'] ?? 0);
+    final liters =
+        recScenario?.exactNeed ?? (result.totals['recExactNeedL'] ?? 0);
     final cans = recScenario?.buyPlan.packagesCount ?? 0;
-    final canSize = recScenario?.buyPlan.packageSize ?? (result.totals['canSize'] ?? _canonicalCanSize);
+    final canSize =
+        recScenario?.buyPlan.packageSize ??
+        (result.totals['canSize'] ?? _canonicalCanSize);
     final tape = _findMaterialPurchaseQty(
       result,
       category: _paintMaterialCategoryConsumables,
@@ -146,16 +177,30 @@ class _PaintScreenState extends State<PaintScreen> {
     buffer.writeln('═' * 40);
     buffer.writeln();
 
-    buffer.writeln('${_loc.translate('paint.export.type')}: ${_paintType == 0 ? _loc.translate('paint.export.type_interior') : _loc.translate('paint.export.type_facade')}');
-    buffer.writeln('${_loc.translate('paint.export.surface')}: ${surface['name']} (${surface['subtitle']})');
-    buffer.writeln('${_loc.translate('paint.export.area')}: ${netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}');
+    buffer.writeln(
+      '${_loc.translate('paint.export.type')}: ${_paintType == 0 ? _loc.translate('paint.export.type_interior') : _loc.translate('paint.export.type_facade')}',
+    );
+    buffer.writeln(
+      '${_loc.translate('paint.export.surface')}: ${surface['name']} (${surface['subtitle']})',
+    );
+    buffer.writeln(
+      '${_loc.translate('paint.export.area')}: ${netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+    );
     buffer.writeln();
 
-    buffer.writeln('🎨 ${_loc.translate('paint.export.materials_title').toUpperCase()}:');
+    buffer.writeln(
+      '🎨 ${_loc.translate('paint.export.materials_title').toUpperCase()}:',
+    );
     buffer.writeln('─' * 40);
-    buffer.writeln('• ${_loc.translate('paint.export.paint')}: ${liters.toStringAsFixed(1)} ${_loc.translate('common.liters')} ($_layers ${_loc.translate('paint.layers_label')})');
-    buffer.writeln('• ${_loc.translate('paint.export.cans')}: $cans ${_loc.translate('common.pcs')} (${_loc.translate('paint.per')} ${canSize.toStringAsFixed(0)} ${_loc.translate('common.liters')})');
-    buffer.writeln('• ${_loc.translate('paint.export.tape')}: $tape ${_loc.translate('paint.packs')} (50 ${_loc.translate('common.meters')})');
+    buffer.writeln(
+      '• ${_loc.translate('paint.export.paint')}: ${liters.toStringAsFixed(1)} ${_loc.translate('common.liters')} ($_layers ${_loc.translate('paint.layers_label')})',
+    );
+    buffer.writeln(
+      '• ${_loc.translate('paint.export.cans')}: $cans ${_loc.translate('common.pcs')} (${_loc.translate('paint.per')} ${canSize.toStringAsFixed(0)} ${_loc.translate('common.liters')})',
+    );
+    buffer.writeln(
+      '• ${_loc.translate('paint.export.tape')}: $tape ${_loc.translate('paint.packs')} (50 ${_loc.translate('common.meters')})',
+    );
 
     buffer.writeln();
     buffer.writeln('═' * 40);
@@ -186,15 +231,20 @@ class _PaintScreenState extends State<PaintScreen> {
   Widget build(BuildContext context) {
     _isDark = Theme.of(context).brightness == Brightness.dark;
     _loc = AppLocalizations.of(context);
-    final accentColor = _paintType == 0 ? CalculatorColors.interior : CalculatorColors.facade;
+    final accentColor = _paintType == 0
+        ? CalculatorColors.interior
+        : CalculatorColors.facade;
 
     final calculation = _calculateResult();
     final recScenario = calculation.scenarios['REC'];
     final netArea = calculation.totals['area'] ?? 0;
     final surface = _surfaces[_paintType][_surfaceIndex];
     final factor = surface['factor'] as double;
-    final liters = recScenario?.exactNeed ?? (calculation.totals['recExactNeedL'] ?? 0);
-    final canSize = recScenario?.buyPlan.packageSize ?? (calculation.totals['canSize'] ?? _canonicalCanSize);
+    final liters =
+        recScenario?.exactNeed ?? (calculation.totals['recExactNeedL'] ?? 0);
+    final canSize =
+        recScenario?.buyPlan.packageSize ??
+        (calculation.totals['canSize'] ?? _canonicalCanSize);
     final cans = recScenario?.buyPlan.packagesCount ?? 0;
     final tape = _findMaterialPurchaseQty(
       calculation,
@@ -224,7 +274,8 @@ class _PaintScreenState extends State<PaintScreen> {
         results: [
           ResultItem(
             label: _loc.translate('paint.area').toUpperCase(),
-            value: '${netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+            value:
+                '${netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
             icon: Icons.straighten,
           ),
           ResultItem(
@@ -233,7 +284,8 @@ class _PaintScreenState extends State<PaintScreen> {
             icon: Icons.shopping_bag,
           ),
           ResultItem(
-            label: '${liters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
+            label:
+                '${liters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
             value: '$_layers ${_loc.translate('paint.layers_label')}',
             icon: Icons.layers,
           ),
@@ -305,8 +357,8 @@ class _PaintScreenState extends State<PaintScreen> {
                       onChanged: (v) => setState(() => _coverage = v),
                       suffix: _loc.translate('common.sqm_per_liter'),
                       accentColor: accentColor,
-                      minValue: 4,
-                      maxValue: 15,
+                      minValue: 5,
+                      maxValue: 20,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -314,7 +366,8 @@ class _PaintScreenState extends State<PaintScreen> {
                     child: CalculatorTextField(
                       label: _loc.translate('paint.layers'),
                       value: _layers.toDouble(),
-                      onChanged: (v) => setState(() => _layers = v.toInt().clamp(1, 5)),
+                      onChanged: (v) =>
+                          setState(() => _layers = v.toInt().clamp(1, 5)),
                       suffix: '',
                       accentColor: accentColor,
                       minValue: 1,
@@ -322,6 +375,13 @@ class _PaintScreenState extends State<PaintScreen> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Резерв обычного ремонта: 10% — применяется один раз после расчёта по укрывистости.',
+                style: CalculatorDesignSystem.bodySmall.copyWith(
+                  color: CalculatorColors.getTextSecondary(_isDark),
+                ),
               ),
               if (showWarning)
                 Padding(
@@ -335,12 +395,20 @@ class _PaintScreenState extends State<PaintScreen> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.warning_rounded, size: 20, color: Colors.orange[800]),
+                        Icon(
+                          Icons.warning_rounded,
+                          size: 20,
+                          color: Colors.orange[800],
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             _loc.translate('paint.increased_warning'),
-                            style: TextStyle(fontSize: 12, color: Colors.orange[900], fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.orange[900],
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],
@@ -357,20 +425,24 @@ class _PaintScreenState extends State<PaintScreen> {
           items: [
             MaterialItem(
               name: _loc.translate('paint.area'),
-              value: '${netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
+              value:
+                  '${netArea.toStringAsFixed(1)} ${_loc.translate('common.sqm')}',
               icon: Icons.straighten,
             ),
             MaterialItem(
               name: _loc.translate('paint.paint'),
-              value: '${liters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
+              value:
+                  '${liters.toStringAsFixed(1)} ${_loc.translate('common.liters')}',
               icon: Icons.format_paint,
-              subtitle: '$_layers ${_loc.translate('paint.layers_label')}, ×$factor',
+              subtitle:
+                  '$_layers ${_loc.translate('paint.layers_label')}, ×$factor',
             ),
             MaterialItem(
               name: _loc.translate('paint.cans'),
               value: '$cans ${_loc.translate('paint.packs')}',
               icon: Icons.shopping_bag,
-              subtitle: '${_loc.translate('paint.per')} ${canSize.toStringAsFixed(0)} ${_loc.translate('common.liters')}',
+              subtitle:
+                  '${_loc.translate('paint.per')} ${canSize.toStringAsFixed(0)} ${_loc.translate('common.liters')}',
             ),
             MaterialItem(
               name: _loc.translate('paint.tape'),
@@ -464,7 +536,10 @@ class _PaintScreenState extends State<PaintScreen> {
             accentColor: accentColor,
           ),
           const SizedBox(height: 16),
-          if (_inputMode == 0) ..._buildManualInputs(accentColor) else ..._buildRoomInputs(accentColor),
+          if (_inputMode == 0)
+            ..._buildManualInputs(accentColor)
+          else
+            ..._buildRoomInputs(accentColor),
         ],
       ),
     );
@@ -539,7 +614,9 @@ class _PaintScreenState extends State<PaintScreen> {
   }
 
   Widget _buildTipsCard() {
-    final accentColor = _paintType == 0 ? CalculatorColors.interior : CalculatorColors.facade;
+    final accentColor = _paintType == 0
+        ? CalculatorColors.interior
+        : CalculatorColors.facade;
     final tips = <String>[
       _loc.translate('hint.paint.primer_first'),
       _loc.translate('hint.paint.dry_between_layers'),
@@ -565,8 +642,3 @@ class _PaintScreenState extends State<PaintScreen> {
     );
   }
 }
-
-
-
-
-

@@ -1,19 +1,10 @@
 import 'dart:math' as math;
 
+import '../accuracy/accuracy_mode.dart';
 import '../generated/canonical_specs.g.dart';
 import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
-
-const Map<String, Map<String, double>> _factorTable = {
-  'surface_quality': {'MIN': 0.95, 'REC': 1.0, 'MAX': 1.08},
-  'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
-  'installation_method': {'MIN': 0.98, 'REC': 1.0, 'MAX': 1.1},
-  'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
-  'waste_factor': {'MIN': 1.0, 'REC': 1.06, 'MAX': 1.15},
-  'logistics_buffer': {'MIN': 1.0, 'REC': 1.02, 'MAX': 1.06},
-  'packaging_rounding': {'MIN': 1.0, 'REC': 1.01, 'MAX': 1.03},
-};
 
 bool hasCanonicalPaintInputs(Map<String, double> inputs) {
   final hasCanonicalAreaShape =
@@ -308,7 +299,22 @@ double _resolveCoverage(
 ) {
   final fallback = (paintType['id'] as num).toInt() == 1 ? 7.0 : 10.0;
   return (inputs['coverage'] ?? defaultFor(spec, 'coverage', fallback))
-      .clamp(4, 15)
+      .clamp(5, 20)
+      .toDouble();
+}
+
+double _resolveReservePercent(SpecReader spec, AccuracyMode accuracyMode) {
+  final policy =
+      spec.raw['scenario_policy'] as Map<String, dynamic>? ?? const {};
+  final configured =
+      policy['reserve_by_accuracy_mode_percent'] as Map<String, dynamic>?;
+  final fallback = switch (accuracyMode) {
+    AccuracyMode.basic => 0.0,
+    AccuracyMode.realistic => 10.0,
+    AccuracyMode.professional => 15.0,
+  };
+  return ((configured?[accuracyMode.name] as num?)?.toDouble() ?? fallback)
+      .clamp(0, 30)
       .toDouble();
 }
 
@@ -484,17 +490,25 @@ CanonicalCalculatorContractResult calculateCanonicalPaint(
       spec.materialRule<num>('ceiling_premium_factor').toDouble();
   final baseExactNeed = wallBaseExactNeed + ceilingBaseExactNeed;
   final accuracyMode = parseAccuracyMode(inputs);
-  final accuracyMult = accuracyPrimaryMultiplier('paint', accuracyMode);
+  final reservePercent = _resolveReservePercent(spec, accuracyMode);
+  final scenarioPolicy =
+      spec.raw['scenario_policy'] as Map<String, dynamic>? ?? const {};
+  final recommendedMaxReserve = math.max(
+    reservePercent,
+    (scenarioPolicy['recommended_max_reserve_percent'] as num? ?? 15)
+        .toDouble(),
+  );
   final packageSizes = _resolvePackageSizes(spec, inputs);
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(
-      spec.enabledFactors,
-      _factorTable,
-      scenarioName,
-    );
-    final exactNeed = roundValue(baseExactNeed * accuracyMult * multiplier, 6);
+    final scenarioReservePercent = scenarioName == 'MIN'
+        ? 0.0
+        : scenarioName == 'MAX'
+        ? recommendedMaxReserve
+        : reservePercent;
+    final reserveMultiplier = 1 + scenarioReservePercent / 100;
+    final exactNeed = roundValue(baseExactNeed * reserveMultiplier, 6);
     final package = _pickPackage(
       exactNeed,
       packageSizes,
@@ -509,11 +523,13 @@ CanonicalCalculatorContractResult calculateCanonicalPaint(
         'formula_version:${spec.formulaVersion}',
         'paint:${paintType['key'] as String}',
         'surface:${surface['key'] as String}',
+        'reserve_percent:$scenarioReservePercent',
+        'scenario_policy:single_explicit_paint_reserve',
         'packaging:${package['label']}',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
-        'field_multiplier': roundValue(multiplier, 6),
+        'reserve_percent': roundValue(scenarioReservePercent, 3),
+        'field_multiplier': roundValue(reserveMultiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: package['label'] as String,
@@ -614,6 +630,7 @@ CanonicalCalculatorContractResult calculateCanonicalPaint(
       'colorIntensity': (color['id'] as num).toInt().toDouble(),
       'coats': coats.toDouble(),
       'coverage': roundValue(coverage, 3),
+      'reservePercent': roundValue(reservePercent, 3),
       'canSize': recScenario.buyPlan.packageSize,
       'lPerSqm': roundValue(lPerSqm, 6),
       'estimatedPerimeter': roundValue(estimatedPerimeter, 3),

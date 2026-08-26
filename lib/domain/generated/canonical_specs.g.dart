@@ -5254,7 +5254,7 @@ const Map<String, dynamic> mdfPanelsSpecData = {
 /// Generated from paint-canonical.v1.json
 const Map<String, dynamic> paintSpecData = {
   'calculator_id': 'paint',
-  'formula_version': 'paint-canonical-v1',
+  'formula_version': 'paint-canonical-v2',
   'input_schema': [
     {
       'key': 'inputMode',
@@ -5373,8 +5373,8 @@ const Map<String, dynamic> paintSpecData = {
       'key': 'coverage',
       'unit': 'm2/l',
       'default_value': 10,
-      'min': 4,
-      'max': 15,
+      'min': 5,
+      'max': 20,
     },
     {
       'key': 'canSize',
@@ -5385,15 +5385,7 @@ const Map<String, dynamic> paintSpecData = {
     },
   ],
   'field_factors': {
-    'enabled': [
-      'surface_quality',
-      'geometry_complexity',
-      'installation_method',
-      'worker_skill',
-      'waste_factor',
-      'logistics_buffer',
-      'packaging_rounding',
-    ],
+    'enabled': [],
   },
   'normative_formula': {
     'paint_types': [
@@ -5585,6 +5577,17 @@ const Map<String, dynamic> paintSpecData = {
   },
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
+    'reserve_by_accuracy_mode_percent': {
+      'basic': 0,
+      'realistic': 10,
+      'professional': 15,
+      'custom': 10,
+    },
+    'recommended_max_reserve_percent': 15,
+    'MIN': 'Паспортная потребность с выбранными параметрами поверхности, без запаса',
+    'REC': 'Паспортная потребность с одним резервом выбранного режима точности',
+    'MAX': 'Паспортная потребность с резервом не меньше 15%',
+    'purchase_quantity': 'Округление каждого сценария до доступной фасовки',
   },
   'companion_materials': [
     {
@@ -5753,7 +5756,6 @@ const Map<String, dynamic> paintSpecData = {
     },
   ],
 };
-
 /// Generated from panels-3d-canonical.v1.json
 const Map<String, dynamic> panels3dSpecData = {
   'calculator_id': 'panels-3d',
