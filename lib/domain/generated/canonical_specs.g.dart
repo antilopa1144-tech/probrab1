@@ -1407,7 +1407,7 @@ const Map<String, dynamic> ceilingStretchSpecData = {
 /// Generated from concrete-canonical.v1.json
 const Map<String, dynamic> concreteSpecData = {
   'calculator_id': 'concrete',
-  'formula_version': 'concrete-canonical-v1',
+  'formula_version': 'concrete-canonical-v2',
   'input_schema': [
     {
       'key': 'inputMode',
@@ -1420,7 +1420,7 @@ const Map<String, dynamic> concreteSpecData = {
       'unit': 'm3',
       'default_value': 5,
       'min': 0.1,
-      'max': 500,
+      'max': 100,
     },
     {
       'key': 'concreteGrade',
@@ -1437,9 +1437,9 @@ const Map<String, dynamic> concreteSpecData = {
     {
       'key': 'reserve',
       'unit': '%',
-      'default_value': 10,
+      'default_value': 5,
       'min': 0,
-      'max': 50,
+      'max': 20,
     },
     {
       'key': 'area',
@@ -1463,11 +1463,7 @@ const Map<String, dynamic> concreteSpecData = {
     },
   ],
   'field_factors': {
-    'enabled': [
-      'geometry_complexity',
-      'worker_skill',
-      'waste_factor',
-    ],
+    'enabled': [],
   },
   'normative_formula': {
     'proportions': [
@@ -1550,6 +1546,11 @@ const Map<String, dynamic> concreteSpecData = {
   },
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
+    'recommended_max_reserve_percent': 10,
+    'MIN': 'Чистый геометрический объём без запаса',
+    'REC': 'Чистый объём с выбранным пользователем запасом',
+    'MAX': 'Чистый объём с запасом не меньше рекомендуемых 10%',
+    'purchase_quantity': 'Округление каждого сценария вверх с шагом заказа 0,1 м³',
   },
   'companion_materials': [
     {
@@ -1758,7 +1759,6 @@ const Map<String, dynamic> concreteSpecData = {
     },
   ],
 };
-
 /// Generated from decor-plaster-canonical.v1.json
 const Map<String, dynamic> decorPlasterSpecData = {
   'calculator_id': 'decor-plaster',

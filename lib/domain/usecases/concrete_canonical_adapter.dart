@@ -37,7 +37,7 @@ Map<String, double> normalizeLegacyConcreteInputs(Map<String, double> inputs) {
         .clamp(1, 7)
         .toDouble(),
     'manualMix': (inputs['manualMix'] ?? 0).round().clamp(0, 1).toDouble(),
-    'reserve': (inputs['reserve'] ?? 10).clamp(0, 50).toDouble(),
+    'reserve': (inputs['reserve'] ?? 5).clamp(0, 20).toDouble(),
     'area': math.max(0.1, inputs['area'] ?? 20).toDouble(),
     'thickness': (inputs['thickness'] ?? 200).clamp(50, 1000).toDouble(),
   };
@@ -121,8 +121,8 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
       (inputs['application'] ?? defaultFor(spec, 'application', 0))
           .round()
           .clamp(0, 2);
-  final reserve = (inputs['reserve'] ?? defaultFor(spec, 'reserve', 10))
-      .clamp(0.0, 50.0)
+  final reserve = (inputs['reserve'] ?? defaultFor(spec, 'reserve', 5))
+      .clamp(0.0, 20.0)
       .toDouble();
   final proportions = _resolveProportions(spec, concreteGrade);
   final gradeLabel = _gradeLabels[concreteGrade] ?? _gradeLabels[3]!;
@@ -133,6 +133,13 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
   final waterLPerM3 = (proportions['water_l'] as num).toDouble();
 
   final totalVolume = roundValue(sourceVolume * (1 + reserve / 100), 6);
+  final scenarioPolicy =
+      spec.raw['scenario_policy'] as Map<String, dynamic>? ?? const {};
+  final recommendedMaxReserve = math.max(
+    0.0,
+    (scenarioPolicy['recommended_max_reserve_percent'] as num? ?? 10)
+        .toDouble(),
+  );
 
   // Waterproofing
   final estimatedThickness = spec
@@ -195,17 +202,16 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
       .packagingRule<num>('volume_step_m3', 0.1)
       .toDouble();
   final unit = spec.packagingRule<String>('unit', 'м³');
-  final accuracyMode = parseAccuracyMode(inputs);
-  final accuracyMult = accuracyPrimaryMultiplier('concrete', accuracyMode);
   final scenarios = <String, CanonicalScenarioResult>{};
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(
-      spec.enabledFactors,
-      defaultFactorTable,
-      scenarioName,
-    );
-    final exactNeed = roundValue(totalVolume * accuracyMult * multiplier, 6);
+    final scenarioReserve = scenarioName == 'MIN'
+        ? 0.0
+        : scenarioName == 'MAX'
+        ? math.max(reserve, recommendedMaxReserve)
+        : reserve;
+    final reserveMultiplier = 1 + scenarioReserve / 100;
+    final exactNeed = roundValue(sourceVolume * reserveMultiplier, 6);
     final package = _pickPackage(exactNeed, volumeStepM3, unit);
 
     scenarios[scenarioName] = CanonicalScenarioResult(
@@ -216,15 +222,13 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
         'formula_version:${spec.formulaVersion}',
         'grade:$concreteGrade',
         'manual_mix:$manualMix',
+        'reserve_percent:$scenarioReserve',
+        'scenario_policy:explicit_concrete_reserve',
         'packaging:${package['label']}',
       ],
       keyFactors: {
-        ...buildKeyFactors(
-          spec.enabledFactors,
-          defaultFactorTable,
-          scenarioName,
-        ),
-        'field_multiplier': roundValue(multiplier, 6),
+        'reserve_percent': roundValue(scenarioReserve, 3),
+        'field_multiplier': roundValue(reserveMultiplier, 6),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: package['label'] as String,
@@ -260,15 +264,10 @@ CanonicalCalculatorContractResult calculateCanonicalConcrete(
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
       name: 'Бетон $gradeLabel',
-      quantity: recScenario.exactNeed,
+      quantity: sourceVolume,
       unit: 'м³',
-      withReserve: recScenario.purchaseQuantity,
+      withReserve: recScenario.exactNeed,
       purchaseQty: recScenario.purchaseQuantity,
-      packageInfo: {
-        'count': recScenario.buyPlan.packagesCount,
-        'size': volumeStepM3,
-        'packageUnit': 'порций',
-      },
       category: 'Основное',
     ),
   ];

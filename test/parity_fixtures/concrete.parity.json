@@ -1,7 +1,7 @@
 {
   "calculator_id": "concrete",
-  "formula_version": "concrete-canonical-v1",
-  "generated_at": "2026-08-19T07:37:47.729Z",
+  "formula_version": "concrete-canonical-v2",
+  "generated_at": "2026-08-26T11:39:04.627Z",
   "cases": [
     {
       "id": "defaults",
@@ -11,38 +11,38 @@
         "concreteVolume": 5,
         "concreteGrade": 3,
         "manualMix": 0,
-        "reserve": 10,
+        "reserve": 5,
         "area": 20,
         "thickness": 200,
         "application": 0
       },
       "expected_totals": {
         "sourceVolume": 5,
-        "totalVolume": 5.5,
+        "totalVolume": 5.25,
         "inputMode": 0,
         "concreteGrade": 3,
         "manualMix": 0,
         "application": 0,
-        "reserve": 10,
+        "reserve": 5,
         "gradeIndex": 3,
         "cementKgPerM3": 290,
         "sandM3PerM3": 0.5,
         "gravelM3PerM3": 0.82,
         "waterLPerM3": 190,
-        "topSurfaceArea": 27.5,
-        "perimeterEst": 20.976,
-        "formworkArea": 4.195,
+        "topSurfaceArea": 26.25,
+        "perimeterEst": 20.494,
+        "formworkArea": 4.099,
         "cementKg": 0,
         "cementBags": 0,
         "sandM3": 0,
         "gravelM3": 0,
         "waterL": 0,
-        "minExactNeedM3": 5.1216,
-        "recExactNeedM3": 5.83,
-        "maxExactNeedM3": 7.57988,
-        "minPurchaseM3": 5.2,
-        "recPurchaseM3": 5.9,
-        "maxPurchaseM3": 7.6
+        "minExactNeedM3": 5,
+        "recExactNeedM3": 5.25,
+        "maxExactNeedM3": 5.5,
+        "minPurchaseM3": 5,
+        "recPurchaseM3": 5.3,
+        "maxPurchaseM3": 5.5
       },
       "expected_materials_count": 8,
       "expected_material_names": [
@@ -59,16 +59,16 @@
       "expected_warnings": [],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 5.1216,
-          "purchase_quantity": 5.2
+          "exact_need": 5,
+          "purchase_quantity": 5
         },
         "REC": {
-          "exact_need": 5.83,
-          "purchase_quantity": 5.9
+          "exact_need": 5.25,
+          "purchase_quantity": 5.3
         },
         "MAX": {
-          "exact_need": 7.57988,
-          "purchase_quantity": 7.6
+          "exact_need": 5.5,
+          "purchase_quantity": 5.5
         }
       }
     }

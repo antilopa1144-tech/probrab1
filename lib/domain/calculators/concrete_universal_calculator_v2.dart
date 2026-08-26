@@ -23,10 +23,10 @@ const concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
       labelKey: 'input.concreteVolume',
       hintKey: 'input.concreteVolume.hint',
       unitType: UnitType.cubicMeters,
-      defaultValue: 1.0,
+      defaultValue: 5.0,
       required: true,
-      minValue: 0.01,
-      maxValue: 1000.0,
+      minValue: 0.1,
+      maxValue: 100.0,
     ),
     CalculatorField(
       key: 'concreteGrade',
@@ -61,6 +61,8 @@ const concreteUniversalCalculatorV2 = CalculatorDefinitionV2(
       unitType: UnitType.percent,
       defaultValue: 5.0,
       required: false,
+      minValue: 0.0,
+      maxValue: 20.0,
     ),
   ],
   beforeHints: [
