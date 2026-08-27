@@ -13,7 +13,6 @@ import '../usecases/calculate_ceiling_insulation_v2.dart';
 import '../usecases/calculate_concrete_universal.dart';
 import '../usecases/calculate_decor_plaster_v2.dart';
 import '../usecases/calculate_doors_install_v2.dart';
-import '../usecases/calculate_electrical_v2.dart';
 import '../usecases/calculate_fence_v2.dart';
 import '../usecases/calculate_gasblock_v2.dart';
 import '../usecases/calculate_gutters_v2.dart';
@@ -80,10 +79,11 @@ class CalculatorEngine {
       'ceilings_stretch': CalculateStretchCeilingV2(),
       'concrete_universal': CalculateConcreteUniversal(),
       'doors_install': CalculateDoorsInstallV2(),
-      'engineering_electrics': CalculateElectricalV2(),
       'engineering_ventilation': CalculateVentilationV2(),
       'exterior_brick': brick,
-      'exterior_facade_panels': const CanonicalBridgeUseCase(calculateCanonicalFacadePanelsV3),
+      'exterior_facade_panels': const CanonicalBridgeUseCase(
+        calculateCanonicalFacadePanelsV3,
+      ),
       'fence': CalculateFenceV2(),
       'floors_laminate': CalculateLaminate(),
       'floors_linoleum': CalculateLinoleumV2(),
@@ -112,7 +112,9 @@ class CalculatorEngine {
       'terrace': CalculateTerrace(),
       'walls_3d_panels': Calculate3dPanels(),
       'walls_decor_plaster': CalculateDecorPlasterV2(),
-      'walls_decor_stone': const CanonicalBridgeUseCase(calculateCanonicalDecorStone),
+      'walls_decor_stone': const CanonicalBridgeUseCase(
+        calculateCanonicalDecorStone,
+      ),
       'walls_mdf_panels': CalculateMdfPanelsV2(),
       'walls_pvc_panels': CalculatePvcPanelsV2(),
       'walls_wallpaper': CalculateWallpaper(),

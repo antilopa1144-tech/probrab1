@@ -106,20 +106,23 @@ void main() {
       },
     );
 
-    test('electric keeps the explicit reserve independent from accuracy mode', () {
-      final basic = calculateCanonicalElectric({'accuracyMode': 0});
-      final realistic = calculateCanonicalElectric({'accuracyMode': 1});
-      final professional = calculateCanonicalElectric({'accuracyMode': 2});
+    test(
+      'electric keeps the explicit reserve independent from accuracy mode',
+      () {
+        final basic = calculateCanonicalElectric({'accuracyMode': 0});
+        final realistic = calculateCanonicalElectric({'accuracyMode': 1});
+        final professional = calculateCanonicalElectric({'accuracyMode': 2});
 
-      for (final result in [basic, realistic, professional]) {
-        expect(result.scenarios['REC']!.exactNeed, 239.19024);
-        expect(result.scenarios['REC']!.purchaseQuantity, 268);
-        expect(
-          result.scenarios['REC']!.keyFactors['input_reserve_multiplier'],
-          1.15,
-        );
-      }
-    });
+        for (final result in [basic, realistic, professional]) {
+          expect(result.scenarios['REC']!.exactNeed, 239.19024);
+          expect(result.scenarios['REC']!.purchaseQuantity, 241);
+          expect(
+            result.scenarios['REC']!.keyFactors['input_reserve_multiplier'],
+            1.15,
+          );
+        }
+      },
+    );
 
     test('fastener bits use the accessories multiplier', () {
       double bitsForMode(double mode) =>

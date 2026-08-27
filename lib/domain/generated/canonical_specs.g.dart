@@ -1,6 +1,6 @@
 // GENERATED FILE — DO NOT EDIT MANUALLY
 // Source: configs/calculators/*-canonical.v1.json
-// Generated: 2026-08-19
+// Generated: 2026-08-27
 // Run: npx tsx scripts/sync-specs-to-dart.ts
 
 // ignore_for_file: prefer_single_quotes, lines_longer_than_80_chars
@@ -2523,10 +2523,11 @@ const Map<String, dynamic> drywallCeilingSpecData = {
     'contract': 'min-rec-max-v1',
   },
 };
+
 /// Generated from electric-canonical.v1.json
 const Map<String, dynamic> electricSpecData = {
   'calculator_id': 'electric',
-  'formula_version': 'electric-canonical-v2',
+  'formula_version': 'electric-canonical-v3',
   'input_schema': [
     {
       'key': 'apartmentArea',
@@ -2561,6 +2562,12 @@ const Map<String, dynamic> electricSpecData = {
       'max': 1,
     },
     {
+      'key': 'cablePurchaseMode',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
+    {
       'key': 'reserve',
       'unit': '%',
       'default_value': 15,
@@ -2584,6 +2591,18 @@ const Map<String, dynamic> electricSpecData = {
         'label': 'Открытая проводка',
       },
     ],
+    'purchase_modes': [
+      {
+        'id': 0,
+        'key': 'per_meter',
+        'label': 'Отрез по метрам',
+      },
+      {
+        'id': 1,
+        'key': 'spool_50m',
+        'label': 'Бухты по 50 м',
+      },
+    ],
   },
   'packaging_rules': {
     'cable_spool_m': 50,
@@ -2605,7 +2624,40 @@ const Map<String, dynamic> electricSpecData = {
     'ac_groups_divisor': 2,
   },
   'warnings_rules': {
-    'three_phase_area_threshold': 100,
+    'phase_selection_requires_load_data': true,
+  },
+  'evidence': {
+    'reviewed_at': '2026-08-27',
+    'standards': [
+      {
+        'code': 'СП 256.1325800.2016',
+        'scope': 'Проектирование и монтаж электроустановок жилых и общественных зданий',
+        'source': 'https://protect.gost.ru/sp/details/27f20b47-7456-496e-9e1d-8011ddb4a956',
+      },
+      {
+        'code': 'ГОСТ Р 50571.4.41-2022',
+        'scope': 'Защита от поражения электрическим током',
+        'source': 'https://protect.gost.ru/gost/details/ce4bedcf-0ab7-43a7-9f3e-cab5a14e6580',
+      },
+      {
+        'code': 'ГОСТ 31565-2012',
+        'scope': 'Требования пожарной безопасности к кабельным изделиям',
+        'source': 'https://protect.gost.ru/gost/details/1ec12685-51c3-482f-aa46-84d87e03a378',
+      },
+    ],
+    'project_assumptions': [
+      'cable_15_rate',
+      'cable_25_rate',
+      'cable_6_kitchen_factor',
+      'cable_6_reserve',
+      'cable_open_wiring_multiplier',
+      'conduit_ratio',
+      'outlets_per_m2',
+      'outlets_per_room',
+      'switches_base',
+      'socket_box_reserve',
+      'ac_groups_divisor',
+    ],
   },
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
@@ -2613,9 +2665,10 @@ const Map<String, dynamic> electricSpecData = {
     'min_reserve_percent': 5,
     'rec_reserve_source': 'input.reserve',
     'max_reserve_percent': 30,
-    'packaging': 'round_each_cable_section_before_sum',
+    'packaging': 'user_selects_per_meter_or_50m_spools; round_each_cable_section_before_sum',
   },
 };
+
 /// Generated from facade-brick-canonical.v1.json
 const Map<String, dynamic> facadeBrickSpecData = {
   'calculator_id': 'facade-brick',

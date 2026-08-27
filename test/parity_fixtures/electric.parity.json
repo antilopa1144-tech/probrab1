@@ -1,7 +1,7 @@
 {
   "calculator_id": "electric",
-  "formula_version": "electric-canonical-v2",
-  "generated_at": "2026-08-26T10:38:13.485Z",
+  "formula_version": "electric-canonical-v3",
+  "generated_at": "2026-08-27T08:03:26.223Z",
   "cases": [
     {
       "id": "defaults",
@@ -12,6 +12,7 @@
         "ceilingHeight": 2.7,
         "wiringType": 0,
         "hasKitchen": 1,
+        "cablePurchaseMode": 0,
         "reserve": 15
       },
       "expected_totals": {
@@ -20,6 +21,7 @@
         "ceilingHeight": 2.7,
         "wiringType": 0,
         "hasKitchen": 1,
+        "cablePurchaseMode": 0,
         "reserve": 15,
         "lightingGroups": 4,
         "outletGroups": 5,
@@ -33,8 +35,8 @@
         "conduitLength": 192,
         "outletsCount": 42,
         "switchesCount": 5,
-        "cable15spools": 2,
-        "cable25spools": 3,
+        "cable15spools": 0,
+        "cable25spools": 0,
         "conduitPacks": 4,
         "socketBoxes": 52,
         "gypsumKg": 10,
@@ -42,9 +44,9 @@
         "minExactNeed": 219.88524,
         "recExactNeed": 239.19024,
         "maxExactNeed": 268.14774,
-        "minPurchase": 268,
-        "recPurchase": 268,
-        "maxPurchase": 318
+        "minPurchase": 222,
+        "recPurchase": 241,
+        "maxPurchase": 270
       },
       "expected_materials_count": 14,
       "expected_material_names": [
@@ -63,24 +65,25 @@
         "Гофрированная ПВХ-труба для кабеля с протяжкой, ∅16–20 мм",
         "Гипс монтажный (алебастр), мешок 5 кг"
       ],
-      "expected_warnings_count": 3,
+      "expected_warnings_count": 4,
       "expected_warnings": [
+        "Однофазный или трёхфазный ввод выбирают по выделенной мощности, расчётным нагрузкам и техническим условиям — площадь сама по себе этого не определяет",
         "Электроплита: кабель 3×6 мм² и автомат 32 А — ориентир для однофазной линии; проверьте мощность по паспорту плиты",
-        "Все розетки в ванной и кухне — через устройство защитного отключения (УЗО) на 10–30 мА",
+        "Тип, количество, номиналы и уставки УЗО/дифавтоматов выбирают по проекту, схеме групп, системе заземления и условиям помещений",
         "Это предварительная ведомость. Сечения кабелей, номиналы защиты и схему щита должен проверить электропроектировщик"
       ],
       "expected_scenarios": {
         "MIN": {
           "exact_need": 219.88524,
-          "purchase_quantity": 268
+          "purchase_quantity": 222
         },
         "REC": {
           "exact_need": 239.19024,
-          "purchase_quantity": 268
+          "purchase_quantity": 241
         },
         "MAX": {
           "exact_need": 268.14774,
-          "purchase_quantity": 318
+          "purchase_quantity": 270
         }
       }
     }

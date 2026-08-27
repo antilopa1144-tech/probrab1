@@ -9,6 +9,7 @@ import '../../../helpers/test_helpers.dart';
 
 void main() {
   late CalculatorDefinitionV2 testDefinition;
+  late CalculatorDefinitionV2 electricDefinition;
 
   setUpAll(() {
     setupMocks();
@@ -18,6 +19,15 @@ void main() {
       throw StateError('gypsum_board calculator not found in registry');
     }
     testDefinition = realDefinition;
+    final realElectricDefinition = CalculatorRegistry.getById(
+      'engineering_electrics',
+    );
+    if (realElectricDefinition == null) {
+      throw StateError(
+        'engineering_electrics calculator not found in registry',
+      );
+    }
+    electricDefinition = realElectricDefinition;
   });
 
   group('ProCalculatorScreen', () {
@@ -25,9 +35,7 @@ void main() {
       setTestViewportSize(tester);
 
       await tester.pumpWidget(
-        createTestApp(
-          child: ProCalculatorScreen(definition: testDefinition),
-        ),
+        createTestApp(child: ProCalculatorScreen(definition: testDefinition)),
       );
       await tester.pump();
 
@@ -38,9 +46,7 @@ void main() {
       setTestViewportSize(tester);
 
       await tester.pumpWidget(
-        createTestApp(
-          child: ProCalculatorScreen(definition: testDefinition),
-        ),
+        createTestApp(child: ProCalculatorScreen(definition: testDefinition)),
       );
       await tester.pump();
 
@@ -51,9 +57,7 @@ void main() {
       setTestViewportSize(tester);
 
       await tester.pumpWidget(
-        createTestApp(
-          child: ProCalculatorScreen(definition: testDefinition),
-        ),
+        createTestApp(child: ProCalculatorScreen(definition: testDefinition)),
       );
       await tester.pumpAndSettle();
 
@@ -64,9 +68,7 @@ void main() {
       setTestViewportSize(tester);
 
       await tester.pumpWidget(
-        createTestApp(
-          child: ProCalculatorScreen(definition: testDefinition),
-        ),
+        createTestApp(child: ProCalculatorScreen(definition: testDefinition)),
       );
       await tester.pump();
 
@@ -77,30 +79,24 @@ void main() {
       setTestViewportSize(tester);
 
       await tester.pumpWidget(
-        createTestApp(
-          child: ProCalculatorScreen(definition: testDefinition),
-        ),
+        createTestApp(child: ProCalculatorScreen(definition: testDefinition)),
       );
       await tester.pump();
 
-      await tester.pumpWidget(
-        createTestApp(
-          child: const SizedBox.shrink(),
-        ),
-      );
+      await tester.pumpWidget(createTestApp(child: const SizedBox.shrink()));
 
       expect(find.byType(ProCalculatorScreen), findsNothing);
     });
   });
 
   group('ProCalculatorScreen slider+textfield', () {
-    testWidgets('slider fields show both Slider and CalculatorTextField', (tester) async {
+    testWidgets('slider fields show both Slider and CalculatorTextField', (
+      tester,
+    ) async {
       setTestViewportSize(tester);
 
       await tester.pumpWidget(
-        createTestApp(
-          child: ProCalculatorScreen(definition: testDefinition),
-        ),
+        createTestApp(child: ProCalculatorScreen(definition: testDefinition)),
       );
       await tester.pumpAndSettle();
 
@@ -113,9 +109,7 @@ void main() {
       setTestViewportSize(tester);
 
       await tester.pumpWidget(
-        createTestApp(
-          child: ProCalculatorScreen(definition: testDefinition),
-        ),
+        createTestApp(child: ProCalculatorScreen(definition: testDefinition)),
       );
       await tester.pumpAndSettle();
 
@@ -132,14 +126,46 @@ void main() {
       setTestViewportSize(tester);
 
       await tester.pumpWidget(
-        createTestApp(
-          child: ProCalculatorScreen(definition: testDefinition),
-        ),
+        createTestApp(child: ProCalculatorScreen(definition: testDefinition)),
       );
       await tester.pumpAndSettle();
 
       // The SegmentedButton toggle was removed — sliders and text fields are always shown together
       expect(find.byType(SegmentedButton<bool>), findsNothing);
+    });
+  });
+
+  group('ProCalculatorScreen canonical electric flow', () {
+    testWidgets('показывает v3 поля и переключает покупку метров на бухты', (
+      tester,
+    ) async {
+      setTestViewportSize(tester);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: ProCalculatorScreen(definition: electricDefinition),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Площадь квартиры / дома'), findsWidgets);
+      expect(find.text('Как продаётся кабель'), findsOneWidget);
+      expect(find.text('Отрез по метрам'), findsOneWidget);
+      expect(find.text('89 м'), findsOneWidget);
+      expect(find.text('134 м'), findsOneWidget);
+      expect(find.text('Важно'), findsOneWidget);
+      expect(
+        find.textContaining('площадь сама по себе этого не определяет'),
+        findsOneWidget,
+      );
+
+      final spoolMode = find.text('Бухты по 50 м');
+      await tester.ensureVisible(spoolMode);
+      await tester.tap(spoolMode);
+      await tester.pumpAndSettle();
+
+      expect(find.text('100 м'), findsOneWidget);
+      expect(find.text('150 м'), findsOneWidget);
     });
   });
 }

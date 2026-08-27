@@ -12,7 +12,6 @@ import 'package:probrab_ai/presentation/views/calculator/tile_adhesive_calculato
 import 'package:probrab_ai/presentation/views/calculator/gypsum_calculator_screen.dart';
 import 'package:probrab_ai/presentation/views/calculator/wallpaper_calculator_screen.dart';
 import 'package:probrab_ai/presentation/views/calculator/brick_calculator_screen.dart';
-import 'package:probrab_ai/presentation/views/calculator/electrical_calculator_screen.dart';
 import 'package:probrab_ai/presentation/views/calculator/tile_calculator_screen.dart';
 import 'package:probrab_ai/presentation/views/calculator/laminate_calculator_screen.dart';
 import 'package:probrab_ai/presentation/views/calculator/linoleum_calculator_screen.dart';
@@ -379,25 +378,27 @@ void main() {
   });
 
   group('CalculatorScreenRegistry - Инженерия', () {
-    test(
-      'build возвращает ElectricalCalculatorScreen для engineering_electrics',
-      () {
-        final definition = _createTestDefinition(id: 'engineering_electrics');
-        final result = CalculatorScreenRegistry.build(
-          'engineering_electrics',
-          definition,
-          null,
-        );
-        expect(result, isA<ElectricalCalculatorScreen>());
-      },
-    );
+    test('engineering_electrics использует canonical ProCalculatorScreen', () {
+      final definition = _createTestDefinition(id: 'engineering_electrics');
+      final inputs = {'roomsCount': 5.0};
+
+      expect(CalculatorScreenRegistry.hasCustomScreen(definition.id), isFalse);
+      expect(
+        CalculatorScreenRegistry.build(definition.id, definition, inputs),
+        isNull,
+      );
+      final result =
+          CalculatorScreenRegistry.buildWithFallback(definition, inputs)
+              as ProCalculatorScreen;
+      expect(result.definition, equals(definition));
+      expect(result.initialInputs, equals(inputs));
+    });
 
     test(
-      'hasCustomScreen возвращает true для всех инженерных калькуляторов',
+      'кастомный экран остаётся только у несинхронизированной вентиляции',
       () {
         final engineeringCalculators = [
           // 'engineering_heating' - удалён (дубль floors_warm)
-          'engineering_electrics',
           // 'engineering_plumbing' - удалён
           'engineering_ventilation',
         ];
@@ -411,20 +412,6 @@ void main() {
         }
       },
     );
-
-    test('передаёт параметры в ElectricalCalculatorScreen', () {
-      final definition = _createTestDefinition(id: 'engineering_electrics');
-      final inputs = {'rooms': 5.0};
-      final result =
-          CalculatorScreenRegistry.build(
-                'engineering_electrics',
-                definition,
-                inputs,
-              )
-              as ElectricalCalculatorScreen;
-      expect(result.definition, equals(definition));
-      expect(result.initialInputs, equals(inputs));
-    });
   });
 
   group('CalculatorScreenRegistry - Полнота покрытия', () {
@@ -461,7 +448,6 @@ void main() {
         'ceilings_insulation',
         'ceilings_cassette',
         'ceilings_rail',
-        'engineering_electrics',
         'engineering_ventilation',
         'terrace',
         'attic',
@@ -479,7 +465,7 @@ void main() {
       ];
 
       // Снижено до 45 после удаления legacy калькуляторов
-      expect(registeredIds.length, greaterThanOrEqualTo(45));
+      expect(registeredIds.length, greaterThanOrEqualTo(44));
 
       for (final id in registeredIds) {
         expect(
@@ -499,7 +485,7 @@ void main() {
         'partitions_brick', // Перегородки
         'floors_tile', // Полы
         'ceilings_stretch', // Потолки
-        'engineering_electrics', // Инженерия
+        'engineering_ventilation', // Инженерия
         'terrace', // Специальные помещения
         'doors_install', // Двери и окна
         'exterior_facade_panels', // Экстерьер

@@ -35,6 +35,10 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
   final hasKitchen = (inputs['hasKitchen'] ?? defaultFor(spec, 'hasKitchen', 1))
       .round()
       .clamp(0, 1);
+  final cablePurchaseMode =
+      (inputs['cablePurchaseMode'] ?? defaultFor(spec, 'cablePurchaseMode', 0))
+          .round()
+          .clamp(0, 1);
   final reserve = (inputs['reserve'] ?? defaultFor(spec, 'reserve', 15)).clamp(
     5.0,
     30.0,
@@ -89,15 +93,22 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       roomsCount + spec.materialRule<num>('switches_base').toDouble();
 
   /* ─── packaging ─── */
-  final cable15spools =
-      (cable15length / spec.materialRule<num>('cable_spool_m').toDouble())
-          .ceil();
-  final cable25spools =
-      (cable25length / spec.materialRule<num>('cable_spool_m').toDouble())
-          .ceil();
+  final cableSpoolM = spec.packagingRule<num>('cable_spool_m').toDouble();
+  final cable15spools = cablePurchaseMode == 1
+      ? (cable15length / cableSpoolM).ceil()
+      : 0;
+  final cable25spools = cablePurchaseMode == 1
+      ? (cable25length / cableSpoolM).ceil()
+      : 0;
+  final cable15Purchase = cablePurchaseMode == 1
+      ? cable15spools * cableSpoolM
+      : cable15length.ceilToDouble();
+  final cable25Purchase = cablePurchaseMode == 1
+      ? cable25spools * cableSpoolM
+      : cable25length.ceilToDouble();
   final conduitPackageSize = wiringType == 1
       ? _cableChannelPieceM
-      : spec.materialRule<num>('cable_spool_m').toDouble();
+      : cableSpoolM;
   final conduitPacks = (conduitLength / conduitPackageSize).ceil();
   final socketBoxes =
       ((outletsCount + switchesCount) *
@@ -121,10 +132,13 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
     final cable15 = cable15BaseLength * (1 + reservePercent / 100);
     final cable25 = cable25BaseLength * (1 + reservePercent / 100);
     final exactNeed = roundValue(cable15 + cable25 + cable6length, 6);
-    final spoolM = spec.packagingRule<num>('cable_spool_m').toDouble();
     final purchaseQuantity =
-        (cable15 / spoolM).ceil() * spoolM +
-        (cable25 / spoolM).ceil() * spoolM +
+        (cablePurchaseMode == 1
+            ? (cable15 / cableSpoolM).ceil() * cableSpoolM
+            : cable15.ceil()) +
+        (cablePurchaseMode == 1
+            ? (cable25 / cableSpoolM).ceil() * cableSpoolM
+            : cable25.ceil()) +
         (hasKitchen == 1 ? cable6length.ceil() : 0);
     return (
       exactNeed: exactNeed,
@@ -139,32 +153,30 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       quantity: roundValue(cable15length, 1),
       unit: 'м',
       withReserve: roundValue(cable15length, 1),
-      purchaseQty:
-          (cable15spools * spec.materialRule<num>('cable_spool_m').toDouble())
-              .round()
-              .toDouble(),
+      purchaseQty: cable15Purchase,
       category: 'Кабель',
-      packageInfo: {
-        'count': cable15spools,
-        'unitSize': spec.materialRule<num>('cable_spool_m').toDouble(),
-        'packageUnit': 'бухт',
-      },
+      packageInfo: cablePurchaseMode == 1
+          ? {
+              'count': cable15spools,
+              'unitSize': cableSpoolM,
+              'packageUnit': 'бухт',
+            }
+          : null,
     ),
     CanonicalMaterialResult(
       name: 'Медный кабель ВВГнг(А)-LS 3×2,5 мм²',
       quantity: roundValue(cable25length, 1),
       unit: 'м',
       withReserve: roundValue(cable25length, 1),
-      purchaseQty:
-          (cable25spools * spec.materialRule<num>('cable_spool_m').toDouble())
-              .round()
-              .toDouble(),
+      purchaseQty: cable25Purchase,
       category: 'Кабель',
-      packageInfo: {
-        'count': cable25spools,
-        'unitSize': spec.materialRule<num>('cable_spool_m').toDouble(),
-        'packageUnit': 'бухт',
-      },
+      packageInfo: cablePurchaseMode == 1
+          ? {
+              'count': cable25spools,
+              'unitSize': cableSpoolM,
+              'packageUnit': 'бухт',
+            }
+          : null,
     ),
   ];
 
@@ -311,6 +323,8 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
         'formula_version:${spec.formulaVersion}',
         'wiringType:$wiringType',
         'reserve:$reservePercent',
+        'purchase_mode:${cablePurchaseMode == 1 ? "spool_50m" : "per_meter"}',
+        'coefficients:project_assumptions_not_normative_limits',
         'scenario:separate-rounding-by-cable-section',
       ],
       keyFactors: {
@@ -319,10 +333,12 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
             ? spec.materialRule<num>('cable_6_reserve').toDouble()
             : 1,
       },
-      buyPlan: const CanonicalBuyPlan(
-        packageLabel: 'electric-cable-lines',
+      buyPlan: CanonicalBuyPlan(
+        packageLabel: cablePurchaseMode == 1
+            ? 'electric-cable-lines-mixed-packaging'
+            : 'electric-cable-lines-per-meter',
         packageSize: 1,
-        packagesCount: 0,
+        packagesCount: cableScenario.purchaseQuantity.round(),
         unit: 'м',
       ),
     );
@@ -332,10 +348,9 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
 
   /* ─── warnings ─── */
   final warnings = <String>[];
-  if (apartmentArea >
-      spec.warningRule<num>('three_phase_area_threshold').toDouble()) {
+  if (spec.warningRule<bool>('phase_selection_requires_load_data')) {
     warnings.add(
-      'Площадь более 100 м² — рассмотрите трёхфазный ввод 380 В; решение принимает проектировщик по выделенной мощности',
+      'Однофазный или трёхфазный ввод выбирают по выделенной мощности, расчётным нагрузкам и техническим условиям — площадь сама по себе этого не определяет',
     );
   }
   if (hasKitchen == 1) {
@@ -344,7 +359,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
     );
   }
   warnings.add(
-    'Все розетки в ванной и кухне — через устройство защитного отключения (УЗО) на 10–30 мА',
+    'Тип, количество, номиналы и уставки УЗО/дифавтоматов выбирают по проекту, схеме групп, системе заземления и условиям помещений',
   );
   warnings.add(
     'Это предварительная ведомость. Сечения кабелей, номиналы защиты и схему щита должен проверить электропроектировщик',
@@ -360,6 +375,7 @@ CanonicalCalculatorContractResult calculateCanonicalElectric(
       'ceilingHeight': roundValue(ceilingHeight, 3),
       'wiringType': wiringType.toDouble(),
       'hasKitchen': hasKitchen.toDouble(),
+      'cablePurchaseMode': cablePurchaseMode.toDouble(),
       'reserve': reserve,
       'lightingGroups': lightingGroups.toDouble(),
       'outletGroups': outletGroups.toDouble(),

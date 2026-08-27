@@ -13,7 +13,6 @@ import '../views/calculator/three_d_panels_calculator_screen.dart';
 import '../views/calculator/terrace_calculator_screen.dart';
 import '../views/calculator/wood_lining_calculator_screen.dart';
 import '../views/calculator/gasblock_calculator_screen.dart';
-import '../views/calculator/electrical_calculator_screen.dart';
 import '../views/calculator/primer_calculator_screen.dart';
 import '../views/calculator/laminate_calculator_screen.dart';
 import '../views/calculator/brick_calculator_screen.dart';
@@ -137,8 +136,8 @@ class CalculatorScreenRegistry {
 
     // Инженерия
     // engineering_heating удалён — дубль floors_warm
-    'engineering_electrics': (def, inputs) =>
-        ElectricalCalculatorScreen(definition: def, initialInputs: inputs),
+    // engineering_electrics использует общий canonical-экран, чтобы реальный
+    // пользовательский путь не обходил синхронизированный расчётный контракт.
     // engineering_plumbing удалён
     'engineering_ventilation': (_, _) => const VentilationCalculatorScreen(),
 

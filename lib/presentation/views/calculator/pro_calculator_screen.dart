@@ -20,12 +20,14 @@ class ProCalculatorState {
   final Map<String, double> inputs;
   final Map<String, double>? results;
   final List<CanonicalMaterialResult>? materials;
+  final List<String> notices;
   final bool hasError;
 
   const ProCalculatorState({
     required this.inputs,
     this.results,
     this.materials,
+    this.notices = const [],
     this.hasError = false,
   });
 
@@ -33,6 +35,7 @@ class ProCalculatorState {
     Map<String, double>? inputs,
     Map<String, double>? results,
     List<CanonicalMaterialResult>? materials,
+    List<String>? notices,
     bool? hasError,
     bool clearResults = false,
   }) {
@@ -40,6 +43,7 @@ class ProCalculatorState {
       inputs: inputs ?? this.inputs,
       results: clearResults ? null : (results ?? this.results),
       materials: clearResults ? null : (materials ?? this.materials),
+      notices: clearResults ? const [] : (notices ?? this.notices),
       hasError: hasError ?? this.hasError,
     );
   }
@@ -47,7 +51,7 @@ class ProCalculatorState {
 
 class ProCalculatorNotifier extends StateNotifier<ProCalculatorState> {
   ProCalculatorNotifier(this._ref, this.definition)
-      : super(const ProCalculatorState(inputs: {})) {
+    : super(const ProCalculatorState(inputs: {})) {
     _initDefaults();
   }
 
@@ -124,7 +128,8 @@ class ProCalculatorNotifier extends StateNotifier<ProCalculatorState> {
     final osbClass = (adjusted['osbClass'] ?? 3).round();
     final environment = (adjusted['environment'] ?? 1).round();
     final loadLevel = (adjusted['loadLevel'] ?? 1).round();
-    final requiresOsb3 = environment >= 2 ||
+    final requiresOsb3 =
+        environment >= 2 ||
         loadLevel == 2 ||
         constructionType == 3 ||
         constructionType == 6;
@@ -148,6 +153,7 @@ class ProCalculatorNotifier extends StateNotifier<ProCalculatorState> {
       state = state.copyWith(
         results: displayResults,
         materials: result.materials,
+        notices: result.norms,
         hasError: false,
       );
     } on CalculationException {
@@ -158,8 +164,8 @@ class ProCalculatorNotifier extends StateNotifier<ProCalculatorState> {
 
 final proCalculatorProvider = StateNotifierProvider.autoDispose
     .family<ProCalculatorNotifier, ProCalculatorState, CalculatorDefinitionV2>(
-  (ref, definition) => ProCalculatorNotifier(ref, definition),
-);
+      (ref, definition) => ProCalculatorNotifier(ref, definition),
+    );
 
 class _IconMatchRule {
   final IconData icon;
@@ -196,11 +202,14 @@ class _CalculatorIconMatcher {
     const _IconMatchRule(Icons.attach_money, ['price', 'стоимость']),
   ];
 
-  static IconData group(String rawKey) => _match(rawKey, _groupRules, Icons.folder);
+  static IconData group(String rawKey) =>
+      _match(rawKey, _groupRules, Icons.folder);
 
-  static IconData option(String rawKey) => _match(rawKey, _optionRules, Icons.check_circle);
+  static IconData option(String rawKey) =>
+      _match(rawKey, _optionRules, Icons.check_circle);
 
-  static IconData result(String rawKey) => _match(rawKey, _resultRules, Icons.check_circle);
+  static IconData result(String rawKey) =>
+      _match(rawKey, _resultRules, Icons.check_circle);
 
   static IconData _match(
     String rawKey,
@@ -217,13 +226,10 @@ class _CalculatorIconMatcher {
   }
 
   static String _normalize(String rawKey) {
-    return ' ${rawKey
-        .toLowerCase()
-        .replaceAll(RegExp(r'^(group|result|option)\.'), '')
-        .replaceAll(RegExp(r'[_\-.]'), ' ')
-        .replaceAll('ё', 'е')} ';
+    return ' ${rawKey.toLowerCase().replaceAll(RegExp(r'^(group|result|option)\.'), '').replaceAll(RegExp(r'[_\-.]'), ' ').replaceAll('ё', 'е')} ';
   }
 }
+
 /// Универсальный PRO калькулятор с темным дизайном.
 ///
 /// Автоматически генерирует UI на основе CalculatorDefinitionV2.
@@ -239,7 +245,8 @@ class ProCalculatorScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ProCalculatorScreen> createState() => _ProCalculatorScreenState();
+  ConsumerState<ProCalculatorScreen> createState() =>
+      _ProCalculatorScreenState();
 }
 
 class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
@@ -254,8 +261,9 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
   void initState() {
     super.initState();
     _memory = ref.read(calculatorMemoryProvider);
-    _latestInputs =
-        Map<String, double>.from(ref.read(proCalculatorProvider(widget.definition)).inputs);
+    _latestInputs = Map<String, double>.from(
+      ref.read(proCalculatorProvider(widget.definition)).inputs,
+    );
     _loadLastInputs();
   }
 
@@ -276,7 +284,9 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
   }
 
   void _applyInputs(Map<String, double> inputs) {
-    ref.read(proCalculatorProvider(widget.definition).notifier).applyInputs(inputs);
+    ref
+        .read(proCalculatorProvider(widget.definition).notifier)
+        .applyInputs(inputs);
   }
 
   @override
@@ -311,7 +321,9 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
       buffer.writeln(_loc.translate('share.results').toUpperCase());
       buffer.writeln('─' * 40);
       for (final entry in calcState.results!.entries) {
-        buffer.writeln('${_translateResultLabel(entry.key)}: ${entry.value.toStringAsFixed(2)}');
+        buffer.writeln(
+          '${_translateResultLabel(entry.key)}: ${entry.value.toStringAsFixed(2)}',
+        );
       }
     }
 
@@ -329,15 +341,21 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     _loc = AppLocalizations.of(context);
     final calcState = ref.watch(proCalculatorProvider(widget.definition));
     _latestInputs = Map<String, double>.from(calcState.inputs);
-    final accentColor = CalculatorColors.getColorByCategory(widget.definition.category.name);
+    final accentColor = CalculatorColors.getColorByCategory(
+      widget.definition.category.name,
+    );
     final beforeHints = widget.definition.getBeforeHints(calcState.inputs);
     final afterHints = calcState.results != null
         ? widget.definition.getAfterHints(calcState.inputs, calcState.results!)
         : const <CalculatorHint>[];
 
     // Convert hints to tips strings
-    final beforeTips = beforeHints.map((h) => h.message ?? _loc.translate(h.messageKey ?? '')).toList();
-    final afterTips = afterHints.map((h) => h.message ?? _loc.translate(h.messageKey ?? '')).toList();
+    final beforeTips = beforeHints
+        .map((h) => h.message ?? _loc.translate(h.messageKey ?? ''))
+        .toList();
+    final afterTips = afterHints
+        .map((h) => h.message ?? _loc.translate(h.messageKey ?? ''))
+        .toList();
 
     return CalculatorScaffold(
       title: _loc.translate(widget.definition.titleKey),
@@ -345,14 +363,17 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
       faqPrefix: 'faq.${widget.definition.id}',
       mikhalychDataCollector: () => calcState.inputs,
       actions: exportActions,
-      resultHeader: calcState.results != null ? _buildResultHeader(calcState.results, accentColor) : null,
+      resultHeader: calcState.results != null
+          ? _buildResultHeader(calcState.results, accentColor)
+          : null,
       children: [
         // Slider fields now always show both slider + text field inline
-        if (beforeTips.isNotEmpty) TipsCard(
-          tips: beforeTips,
-          accentColor: accentColor,
-          title: _loc.translate('common.tips'),
-        ),
+        if (beforeTips.isNotEmpty)
+          TipsCard(
+            tips: beforeTips,
+            accentColor: accentColor,
+            title: _loc.translate('common.tips'),
+          ),
         if (beforeTips.isNotEmpty) const SizedBox(height: 16),
         ..._buildInputFields(calcState.inputs),
         const SizedBox(height: 16),
@@ -364,28 +385,32 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
           ),
           const SizedBox(height: 16),
         ],
-        if (calcState.results != null) _buildDetailsCard(calcState.results, calcState.materials),
-        if (calcState.results != null && widget.definition.relatedLinks.isNotEmpty)
+        if (calcState.notices.isNotEmpty) ...[
+          _buildNoticesCard(calcState.notices),
+          const SizedBox(height: 16),
+        ],
+        if (calcState.results != null)
+          _buildDetailsCard(calcState.results, calcState.materials),
+        if (calcState.results != null &&
+            widget.definition.relatedLinks.isNotEmpty)
           RelatedCalculatorsSection(
             links: widget.definition.relatedLinks,
             results: calcState.results!,
             inputs: calcState.inputs,
           ),
         if (afterTips.isNotEmpty) const SizedBox(height: 16),
-        if (afterTips.isNotEmpty) TipsCard(
-          tips: afterTips,
-          accentColor: accentColor,
-          title: _loc.translate('common.tips'),
-        ),
+        if (afterTips.isNotEmpty)
+          TipsCard(
+            tips: afterTips,
+            accentColor: accentColor,
+            title: _loc.translate('common.tips'),
+          ),
         const SizedBox(height: 20),
       ],
     );
   }
 
-
-  List<Widget> _buildInputFields(
-    Map<String, double> inputs,
-  ) {
+  List<Widget> _buildInputFields(Map<String, double> inputs) {
     final visibleFields = widget.definition.getVisibleFields(inputs);
     final groupedFields = <String, List<CalculatorField>>{};
 
@@ -397,7 +422,9 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     }
 
     final widgets = <Widget>[];
-    final accentColor = CalculatorColors.getColorByCategory(widget.definition.category.name);
+    final accentColor = CalculatorColors.getColorByCategory(
+      widget.definition.category.name,
+    );
 
     for (final entry in groupedFields.entries) {
       // Используем InputGroup для групп с названием
@@ -407,17 +434,23 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
             title: _loc.translate('group.${entry.key}'),
             icon: _getIconForGroup(entry.key),
             accentColor: accentColor,
-            children: entry.value.map((field) => _buildField(field, inputs, accentColor)).toList(),
+            children: entry.value
+                .map((field) => _buildField(field, inputs, accentColor))
+                .toList(),
           ),
         );
       } else {
         // Для default группы используем простую белую карточку
-        widgets.add(_card(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: entry.value.map((field) => _buildField(field, inputs, accentColor)).toList(),
+        widgets.add(
+          _card(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: entry.value
+                  .map((field) => _buildField(field, inputs, accentColor))
+                  .toList(),
+            ),
           ),
-        ));
+        );
       }
       widgets.add(const SizedBox(height: 16));
     }
@@ -425,23 +458,32 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     return widgets;
   }
 
-  IconData _getIconForGroup(String groupKey) => _CalculatorIconMatcher.group(groupKey);
+  IconData _getIconForGroup(String groupKey) =>
+      _CalculatorIconMatcher.group(groupKey);
 
-  Widget _buildField(CalculatorField field, Map<String, double> inputs, Color accentColor) {
+  Widget _buildField(
+    CalculatorField field,
+    Map<String, double> inputs,
+    Color accentColor,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: switch (field.inputType) {
         FieldInputType.slider => _buildSliderField(field, inputs, accentColor),
         FieldInputType.select => _buildSelectField(field, inputs, accentColor),
-        FieldInputType.checkbox || FieldInputType.switch_ =>
-          _buildToggleField(field, inputs),
+        FieldInputType.checkbox ||
+        FieldInputType.switch_ => _buildToggleField(field, inputs),
         FieldInputType.radio => _buildRadioField(field, inputs, accentColor),
         _ => _buildNumberField(field, inputs, accentColor),
       },
     );
   }
 
-  Widget _buildSliderField(CalculatorField field, Map<String, double> inputs, Color accentColor) {
+  Widget _buildSliderField(
+    CalculatorField field,
+    Map<String, double> inputs,
+    Color accentColor,
+  ) {
     final value = inputs[field.key] ?? field.defaultValue;
     final min = field.minValue ?? 0;
     final max = field.maxValue ?? 100;
@@ -513,7 +555,9 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
               child: SliderTheme(
                 data: SliderTheme.of(context).copyWith(
                   activeTrackColor: accentColor,
-                  inactiveTrackColor: isDark ? Colors.grey[700] : Colors.grey[300],
+                  inactiveTrackColor: isDark
+                      ? Colors.grey[700]
+                      : Colors.grey[300],
                   thumbColor: accentColor,
                   overlayColor: accentColor.withValues(alpha: 0.2),
                 ),
@@ -574,7 +618,11 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     );
   }
 
-  Widget _buildSelectField(CalculatorField field, Map<String, double> inputs, Color accentColor) {
+  Widget _buildSelectField(
+    CalculatorField field,
+    Map<String, double> inputs,
+    Color accentColor,
+  ) {
     final value = inputs[field.key] ?? field.defaultValue;
     final options = field.options ?? [];
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -606,11 +654,15 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
             const SizedBox(height: 12),
           ],
           TypeSelectorGroup(
-            options: options.map((opt) => TypeSelectorOption(
-              icon: _getIconForOption(opt.labelKey),
-              title: _loc.translate(opt.labelKey),
-              subtitle: '',
-            )).toList(),
+            options: options
+                .map(
+                  (opt) => TypeSelectorOption(
+                    icon: _getIconForOption(opt.labelKey),
+                    title: _loc.translate(opt.labelKey),
+                    subtitle: '',
+                  ),
+                )
+                .toList(),
             selectedIndex: options.indexWhere((opt) => opt.value == value),
             onSelect: (index) => _updateValue(field.key, options[index].value),
             accentColor: accentColor,
@@ -647,7 +699,11 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
           decoration: BoxDecoration(
             color: CalculatorColors.getInputBackground(isDark),
             borderRadius: CalculatorDesignSystem.inputBorderRadius,
-            border: Border.all(color: isDark ? CalculatorColors.borderDefaultDark : Colors.grey[300]!),
+            border: Border.all(
+              color: isDark
+                  ? CalculatorColors.borderDefaultDark
+                  : Colors.grey[300]!,
+            ),
           ),
           child: DropdownButton<double>(
             value: value,
@@ -672,12 +728,15 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     );
   }
 
-  IconData _getIconForOption(String labelKey) => _CalculatorIconMatcher.option(labelKey);
+  IconData _getIconForOption(String labelKey) =>
+      _CalculatorIconMatcher.option(labelKey);
 
   Widget _buildToggleField(CalculatorField field, Map<String, double> inputs) {
     final value = inputs[field.key] ?? field.defaultValue;
     final isOn = value == 1.0;
-    final accentColor = CalculatorColors.getColorByCategory(widget.definition.category.name);
+    final accentColor = CalculatorColors.getColorByCategory(
+      widget.definition.category.name,
+    );
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
@@ -731,7 +790,11 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     );
   }
 
-  Widget _buildRadioField(CalculatorField field, Map<String, double> inputs, Color accentColor) {
+  Widget _buildRadioField(
+    CalculatorField field,
+    Map<String, double> inputs,
+    Color accentColor,
+  ) {
     final value = inputs[field.key] ?? field.defaultValue;
     final options = field.options ?? [];
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -761,11 +824,15 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
           const SizedBox(height: 12),
         ],
         TypeSelectorGroup(
-          options: options.map((opt) => TypeSelectorOption(
-            icon: _getIconForOption(opt.labelKey),
-            title: _loc.translate(opt.labelKey),
-            subtitle: '',
-          )).toList(),
+          options: options
+              .map(
+                (opt) => TypeSelectorOption(
+                  icon: _getIconForOption(opt.labelKey),
+                  title: _loc.translate(opt.labelKey),
+                  subtitle: '',
+                ),
+              )
+              .toList(),
           selectedIndex: options.indexWhere((opt) => opt.value == value),
           onSelect: (index) => _updateValue(field.key, options[index].value),
           accentColor: accentColor,
@@ -880,6 +947,55 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     );
   }
 
+  Widget _buildNoticesCard(List<String> notices) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final background = isDark
+        ? Colors.amber.withValues(alpha: 0.12)
+        : const Color(0xFFFFF8E1);
+    final border = isDark
+        ? Colors.amber.withValues(alpha: 0.45)
+        : const Color(0xFFFFD54F);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(CalculatorDesignSystem.spacingL),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: CalculatorDesignSystem.cardBorderRadius,
+        border: Border.all(color: border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: Colors.amber),
+              const SizedBox(width: 8),
+              Text(
+                'Важно',
+                style: CalculatorDesignSystem.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: CalculatorColors.getTextPrimary(isDark),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          for (final notice in notices) ...[
+            Text(
+              '• $notice',
+              style: CalculatorDesignSystem.bodySmall.copyWith(
+                color: CalculatorColors.getTextPrimary(isDark),
+                height: 1.4,
+              ),
+            ),
+            if (notice != notices.last) const SizedBox(height: 6),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _card({required Widget child}) {
     return Container(
       width: double.infinity,
@@ -889,6 +1005,3 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
     );
   }
 }
-
-
-
