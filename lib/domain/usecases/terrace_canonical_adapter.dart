@@ -7,29 +7,41 @@ import 'canonical_adapter_utils.dart';
 /* ─── spec types ─── */
 
 const Map<int, String> _boardTypeLabels = {
-  0: 'Древесно-полимерный композит (ДПК), 150 мм',
-  1: 'Лиственница 120 мм',
-  2: 'Сосна 90 мм',
-  3: 'Планкен 120 мм',
+  0: 'Террасная доска из ДПК',
+  1: 'Террасная доска из лиственницы',
+  2: 'Террасная доска из сосны',
+  3: 'Планкен для настила',
 };
 
 const Map<int, String> _treatmentLabels = {
-  0: 'Без обработки',
-  1: 'Масло',
-  2: 'Антисептик',
+  1: 'Масло для дерева',
+  2: 'Антисептик для дерева',
 };
 
 bool hasCanonicalTerraceInputs(Map<String, double> inputs) {
-  return inputs.containsKey('boardType') ||
+  final hasCanonicalDimensions =
+      inputs.containsKey('length') ||
+      inputs.containsKey('width') ||
+      inputs.containsKey('boardType') ||
       inputs.containsKey('lagStep') ||
       inputs.containsKey('boardLength');
+  final hasLegacyOnlyInputs =
+      inputs.containsKey('area') ||
+      inputs.containsKey('floorType') ||
+      inputs.containsKey('railing') ||
+      inputs.containsKey('roof') ||
+      inputs.containsKey('roofType');
+  return hasCanonicalDimensions || !hasLegacyOnlyInputs;
 }
 
 Map<String, double> normalizeLegacyTerraceInputs(Map<String, double> inputs) {
   final normalized = Map<String, double>.from(inputs);
-  normalized['length'] = (inputs['length'] ?? 5).toDouble();
-  normalized['width'] = (inputs['width'] ?? 3).toDouble();
-  normalized['boardType'] = (inputs['boardType'] ?? 0).toDouble();
+  final legacyArea = math.max(1.0, inputs['area'] ?? 15.0);
+  final legacySide = math.sqrt(legacyArea);
+  normalized['length'] = (inputs['length'] ?? legacySide).toDouble();
+  normalized['width'] = (inputs['width'] ?? legacySide).toDouble();
+  normalized['boardType'] =
+      (inputs['boardType'] ?? ((inputs['floorType'] ?? 1) - 1)).toDouble();
   normalized['boardLength'] = (inputs['boardLength'] ?? 3000).toDouble();
   normalized['lagStep'] = (inputs['lagStep'] ?? 400).toDouble();
   normalized['withTreatment'] = (inputs['withTreatment'] ?? 0).toDouble();
@@ -65,91 +77,161 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
           .round()
           .clamp(0, 3);
   final boardLength = math.max(
-    2000.0,
+    1000.0,
     math.min(
-      6000.0,
+      12000.0,
       (normalized['boardLength'] ?? defaultFor(spec, 'boardLength', 3000))
           .toDouble(),
     ),
   );
-  final lagStep = math.max(
-    300.0,
+  final boardWidthMm = math.max(
+    70.0,
     math.min(
-      600.0,
+      300.0,
+      (normalized['boardWidthMm'] ?? defaultFor(spec, 'boardWidthMm', 150))
+          .toDouble(),
+    ),
+  );
+  final gapMm = math.max(
+    0.0,
+    math.min(
+      20.0,
+      (normalized['gapMm'] ?? defaultFor(spec, 'gapMm', 5)).toDouble(),
+    ),
+  );
+  final offcutReuseMode =
+      (normalized['offcutReuseMode'] ?? defaultFor(spec, 'offcutReuseMode', 0))
+          .round() ==
+      1;
+  final boardReservePercent = math.max(
+    0.0,
+    (normalized['boardReservePercent'] ??
+            defaultFor(spec, 'boardReservePercent', 10))
+        .toDouble(),
+  );
+  final lagStep = math.max(
+    200.0,
+    math.min(
+      1000.0,
       (normalized['lagStep'] ?? defaultFor(spec, 'lagStep', 400)).toDouble(),
     ),
+  );
+  final lagLengthM = math.max(
+    1.0,
+    (normalized['lagLengthM'] ?? defaultFor(spec, 'lagLengthM', 3)).toDouble(),
+  );
+  final lagReservePercent = math.max(
+    0.0,
+    (normalized['lagReservePercent'] ??
+            defaultFor(spec, 'lagReservePercent', 5))
+        .toDouble(),
+  );
+  final clipsPerIntersection = math.max(
+    0.0,
+    (normalized['clipsPerIntersection'] ??
+            defaultFor(spec, 'clipsPerIntersection', 1))
+        .toDouble(),
+  );
+  final starterClipsPerRow = math.max(
+    0.0,
+    (normalized['starterClipsPerRow'] ??
+            defaultFor(spec, 'starterClipsPerRow', 2))
+        .toDouble(),
+  );
+  final clipPackCount = math.max(
+    1,
+    (normalized['clipPackCount'] ?? defaultFor(spec, 'clipPackCount', 100))
+        .round(),
+  );
+  final fastenersPerClip = math.max(
+    0.0,
+    (normalized['fastenersPerClip'] ?? defaultFor(spec, 'fastenersPerClip', 1))
+        .toDouble(),
+  );
+  final fastenerPackCount = math.max(
+    1,
+    (normalized['fastenerPackCount'] ??
+            defaultFor(spec, 'fastenerPackCount', 100))
+        .round(),
+  );
+  final fastenerReservePercent = math.max(
+    0.0,
+    (normalized['fastenerReservePercent'] ??
+            defaultFor(spec, 'fastenerReservePercent', 5))
+        .toDouble(),
   );
   final withTreatment =
       (normalized['withTreatment'] ?? defaultFor(spec, 'withTreatment', 0))
           .round()
           .clamp(0, 2);
-
-  // Geometry
-  final area = length * width;
-  final boardWidth =
-      (spec.materialRule<Map>('board_widths')['$boardType'] as num?)
-          ?.toDouble() ??
-      150;
-  final gap =
-      (spec.materialRule<Map>('board_gaps')['$boardType'] as num?)
-          ?.toDouble() ??
-      5;
-  final boardPitch = (boardWidth + gap) / 1000.0;
-  final rowCount = (width / boardPitch).ceil();
-  final boardsPerRow = (length / (boardLength / 1000.0)).ceil();
-  final totalBoards =
-      (rowCount *
-              boardsPerRow *
-              spec.materialRule<num>('board_reserve').toDouble())
-          .ceil();
-
-  // Lags
-  final lagRowCount = (length / (lagStep / 1000.0)).ceil() + 1;
-  final lagTotalLen =
-      lagRowCount * width * spec.materialRule<num>('lag_reserve').toDouble();
-  final lagPcs = (lagTotalLen / spec.materialRule<num>('lag_length').toDouble())
-      .ceil();
-
-  // Fasteners
-  final klaymerCount = lagRowCount * rowCount;
-  final screwPcs = (lagRowCount * rowCount * (boardType == 3 ? 2.0 : 1.2))
-      .ceil();
-  final screwKg = (screwPcs / 600 * 10).ceil() / 10; // 3.5×35 мм: 600 шт/кг
-
-  // Treatment
-  final treatmentLayers =
-      (spec.materialRule<Map>('treatment_layers')['$withTreatment'] as num?)
-          ?.toDouble() ??
-      0;
-  final treatmentL = roundValue(
-    area *
-        treatmentLayers *
-        spec.materialRule<num>('treatment_l_per_m2').toDouble() *
-        1.1,
-    2,
+  final treatmentRate = math.max(
+    0.01,
+    (normalized['treatmentRateLPerM2PerLayer'] ??
+            defaultFor(spec, 'treatmentRateLPerM2PerLayer', 0.1))
+        .toDouble(),
+  );
+  final treatmentLayers = math.max(
+    1,
+    (normalized['treatmentLayers'] ?? defaultFor(spec, 'treatmentLayers', 2))
+        .round(),
+  );
+  final treatmentCanL = math.max(
+    0.5,
+    (normalized['treatmentCanL'] ?? defaultFor(spec, 'treatmentCanL', 2.5))
+        .toDouble(),
+  );
+  final treatmentReservePercent = math.max(
+    0.0,
+    (normalized['treatmentReservePercent'] ??
+            defaultFor(spec, 'treatmentReservePercent', 10))
+        .toDouble(),
+  );
+  final withGeotextile =
+      (normalized['withGeotextile'] ?? defaultFor(spec, 'withGeotextile', 1))
+          .round() ==
+      1;
+  final geotextileRollM2 = math.max(
+    5.0,
+    (normalized['geotextileRollM2'] ?? defaultFor(spec, 'geotextileRollM2', 50))
+        .toDouble(),
+  );
+  final geotextileReservePercent = math.max(
+    0.0,
+    (normalized['geotextileReservePercent'] ??
+            defaultFor(spec, 'geotextileReservePercent', 5))
+        .toDouble(),
   );
 
-  // Geotextile
-  final geotextileRolls =
-      (area * 1.05 / spec.materialRule<num>('geotextile_roll').toDouble())
-          .ceil();
+  final area = length * width;
+  final boardLengthM = boardLength / 1000.0;
+  final boardPitch = (boardWidthMm + gapMm) / 1000.0;
+  final rowCount = ((width + gapMm / 1000.0) / boardPitch).ceil();
+  final boardsPerRow = (length / boardLengthM).ceil();
+  final safeBaseBoards = rowCount * boardsPerRow;
+  final sharedCutBaseBoards = rowCount * length / boardLengthM;
+  final baseBoardExact = offcutReuseMode
+      ? sharedCutBaseBoards
+      : safeBaseBoards.toDouble();
+  final baseBoardPurchase = baseBoardExact.ceil();
+  final totalBoardLinearM = rowCount * length;
+  final baseCutWasteM = math.max(
+    0.0,
+    baseBoardPurchase * boardLengthM - totalBoardLinearM,
+  );
+  final jointCount = math.max(0, baseBoardPurchase - rowCount);
 
-  // Scenarios
-  final basePrimary = totalBoards;
   const packageLabel = 'terrace-board';
   const packageUnit = 'шт';
-
-  final accuracyMode = parseAccuracyMode(inputs);
-  final accuracyMult = accuracyPrimaryMultiplier('flooring', accuracyMode);
-  final adjustedPrimary = (basePrimary * accuracyMult).ceilToDouble();
   final scenarios = <String, CanonicalScenarioResult>{};
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(
-      spec.enabledFactors,
-      defaultFactorTable,
-      scenarioName,
-    );
-    final exactNeed = roundValue(adjustedPrimary * multiplier, 6);
+    final reservePercent = scenarioName == 'MIN'
+        ? 0.0
+        : scenarioName == 'MAX'
+        ? boardReservePercent +
+              spec.materialRule<num>('max_extra_board_percent').toDouble()
+        : boardReservePercent;
+    final multiplier = 1 + reservePercent / 100.0;
+    final exactNeed = roundValue(baseBoardExact * multiplier, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
 
     scenarios[scenarioName] = CanonicalScenarioResult(
@@ -158,17 +240,13 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
       leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
-        'boardType:$boardType',
-        'lagStep:${lagStep.round()}',
-        'packaging:$packageLabel',
+        'board_type:$boardType',
+        'offcut_reuse_mode:${offcutReuseMode ? 1 : 0}',
+        'scenario_policy:explicit_board_reserve',
       ],
       keyFactors: {
-        ...buildKeyFactors(
-          spec.enabledFactors,
-          defaultFactorTable,
-          scenarioName,
-        ),
         'field_multiplier': roundValue(multiplier, 6),
+        'reserve_percent': roundValue(reservePercent, 3),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
@@ -180,76 +258,137 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
   }
 
   final recScenario = scenarios['REC']!;
+  final lagRowCount = (length / (lagStep / 1000.0)).ceil() + 1;
+  final lagBaseM = lagRowCount * width;
+  final lagWithReserveM = lagBaseM * (1 + lagReservePercent / 100.0);
+  final lagPcs = (lagWithReserveM / lagLengthM).ceil();
+  final clipBaseCount =
+      rowCount * lagRowCount * clipsPerIntersection +
+      rowCount * starterClipsPerRow;
+  final clipWithReserveCount =
+      clipBaseCount * (1 + fastenerReservePercent / 100.0);
+  final clipPacks = (clipWithReserveCount / clipPackCount).ceil();
+  final fastenerBaseCount = clipBaseCount * fastenersPerClip;
+  final fastenerWithReserveCount =
+      fastenerBaseCount * (1 + fastenerReservePercent / 100.0);
+  final fastenerPacks = (fastenerWithReserveCount / fastenerPackCount).ceil();
+  final treatmentBaseL = withTreatment > 0
+      ? area * treatmentRate * treatmentLayers
+      : 0.0;
+  final treatmentWithReserveL =
+      treatmentBaseL * (1 + treatmentReservePercent / 100.0);
+  final treatmentCans = treatmentWithReserveL > 0
+      ? (treatmentWithReserveL / treatmentCanL).ceil()
+      : 0;
+  final geotextileBaseM2 = withGeotextile ? area : 0.0;
+  final geotextileWithReserveM2 =
+      geotextileBaseM2 * (1 + geotextileReservePercent / 100.0);
+  final geotextileRolls = geotextileWithReserveM2 > 0
+      ? (geotextileWithReserveM2 / geotextileRollM2).ceil()
+      : 0;
 
-  // Warnings
   final warnings = <String>[];
+  if (jointCount > 0) {
+    warnings.add(
+      'В базовом раскрое получается $jointCount стыков досок: проверьте разбежку и дополнительные лаги под каждым стыком',
+    );
+  }
   if (boardType != 0 && withTreatment == 0) {
     warnings.add(
-      'Деревянная доска без обработки подвержена гниению — рекомендуется масло или антисептик',
+      'Для деревянной доски не выбрана обработка: проверьте заводскую защиту и требования производителя',
     );
   }
   if (area > spec.warningRule<num>('large_area_threshold_m2').toDouble()) {
     warnings.add(
-      'Для террас большой площади рекомендуется профессиональный монтаж',
+      'Для площади более 50 м² нужна отдельная схема раскладки, стыков и компенсационных зазоров',
     );
   }
 
-  // Materials
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: '${_boardTypeLabels[boardType]} (${boardLength.round()} мм)',
-      quantity: recScenario.exactNeed,
+      name:
+          '${_boardTypeLabels[boardType]} ${boardWidthMm.round()}×${boardLength.round()} мм',
+      quantity: roundValue(baseBoardExact, 6),
       unit: 'шт',
-      withReserve: recScenario.exactNeed.ceilToDouble(),
-      purchaseQty: recScenario.exactNeed.ceil().toDouble(),
+      withReserve: recScenario.exactNeed,
+      purchaseQty: recScenario.purchaseQuantity,
       category: 'Доска',
+      packageInfo: {
+        'count': recScenario.buyPlan.packagesCount,
+        'size': 1.0,
+        'packageUnit': 'досок',
+      },
     ),
     CanonicalMaterialResult(
-      name:
-          'Лаги 50×50 мм (${spec.materialRule<num>('lag_length').toDouble().round()} м)',
-      quantity: lagPcs.toDouble(),
+      name: 'Лаги выбранной системы (${roundValue(lagLengthM, 2)} м)',
+      quantity: roundValue(lagBaseM / lagLengthM, 6),
       unit: 'шт',
-      withReserve: lagPcs.toDouble(),
+      withReserve: roundValue(lagWithReserveM / lagLengthM, 6),
       purchaseQty: lagPcs.toDouble(),
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
-      name:
-          'Монтажные клипсы для доски из древесно-полимерного композита (ДПК)',
-      quantity: klaymerCount.toDouble(),
+      name: boardType == 0
+          ? 'Монтажные клипсы выбранной системы ДПК'
+          : 'Скрытый крепёж выбранной системы',
+      quantity: roundValue(clipBaseCount, 6),
       unit: 'шт',
-      withReserve: klaymerCount.toDouble(),
-      purchaseQty: klaymerCount.toDouble(),
+      withReserve: roundValue(clipWithReserveCount, 6),
+      purchaseQty: (clipPacks * clipPackCount).toDouble(),
       category: 'Крепёж',
+      packageInfo: {
+        'count': clipPacks,
+        'size': clipPackCount.toDouble(),
+        'packageUnit': 'упаковок',
+      },
     ),
     CanonicalMaterialResult(
-      name: 'Саморезы для скрытого крепежа 3,5×35 мм, нержавеющие A2',
-      quantity: screwKg,
-      unit: 'кг',
-      withReserve: screwKg,
-      purchaseQty: screwKg.ceil().toDouble(),
+      name: 'Саморезы для выбранных клипс и лаг',
+      quantity: roundValue(fastenerBaseCount, 6),
+      unit: 'шт',
+      withReserve: roundValue(fastenerWithReserveCount, 6),
+      purchaseQty: (fastenerPacks * fastenerPackCount).toDouble(),
       category: 'Крепёж',
-    ),
-    CanonicalMaterialResult(
-      name:
-          'Геотекстиль (${spec.materialRule<num>('geotextile_roll').toDouble().round()} м²)',
-      quantity: geotextileRolls.toDouble(),
-      unit: 'рулонов',
-      withReserve: geotextileRolls.toDouble(),
-      purchaseQty: geotextileRolls.toDouble(),
-      category: 'Подготовка',
+      packageInfo: {
+        'count': fastenerPacks,
+        'size': fastenerPackCount.toDouble(),
+        'packageUnit': 'упаковок',
+      },
     ),
   ];
 
-  if (treatmentLayers > 0) {
+  if (withGeotextile) {
     materials.add(
       CanonicalMaterialResult(
-        name: '${_treatmentLabels[withTreatment]} для дерева',
-        quantity: treatmentL,
+        name: 'Геотекстиль (${roundValue(geotextileRollM2, 2)} м²)',
+        quantity: roundValue(geotextileBaseM2, 6),
+        unit: 'м²',
+        withReserve: roundValue(geotextileWithReserveM2, 6),
+        purchaseQty: (geotextileRolls * geotextileRollM2).toDouble(),
+        category: 'Подготовка',
+        packageInfo: {
+          'count': geotextileRolls,
+          'size': geotextileRollM2,
+          'packageUnit': 'рулонов',
+        },
+      ),
+    );
+  }
+
+  if (withTreatment > 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: _treatmentLabels[withTreatment]!,
+        quantity: roundValue(treatmentBaseL, 6),
         unit: 'л',
-        withReserve: treatmentL,
-        purchaseQty: treatmentL.ceil().toDouble(),
+        withReserve: roundValue(treatmentWithReserveL, 6),
+        purchaseQty: treatmentCans * treatmentCanL,
         category: 'Защита',
+        packageInfo: {
+          'count': treatmentCans,
+          'size': treatmentCanL,
+          'packageUnit': 'банок',
+        },
       ),
     );
   }
@@ -264,20 +403,34 @@ CanonicalCalculatorContractResult calculateCanonicalTerrace(
       'area': roundValue(area, 3),
       'boardType': boardType.toDouble(),
       'boardLength': boardLength,
-      'lagStep': lagStep,
-      'withTreatment': withTreatment.toDouble(),
-      'boardWidth': boardWidth.toDouble(),
-      'gap': gap.toDouble(),
-      'boardPitch': roundValue(boardPitch, 4),
+      'boardWidth': boardWidthMm,
+      'gap': roundValue(gapMm, 3),
+      'boardPitch': roundValue(boardPitch, 6),
+      'offcutReuseMode': offcutReuseMode ? 1.0 : 0.0,
+      'boardReservePercent': roundValue(boardReservePercent, 3),
       'rowCount': rowCount.toDouble(),
       'boardsPerRow': boardsPerRow.toDouble(),
-      'totalBoards': totalBoards.toDouble(),
+      'safeBaseBoards': safeBaseBoards.toDouble(),
+      'baseBoardExact': roundValue(baseBoardExact, 6),
+      'baseBoardPurchase': baseBoardPurchase.toDouble(),
+      'totalBoards': recScenario.purchaseQuantity,
+      'totalBoardLinearM': roundValue(totalBoardLinearM, 6),
+      'baseCutWasteM': roundValue(baseCutWasteM, 6),
+      'jointCount': jointCount.toDouble(),
+      'lagStep': lagStep,
+      'lagLengthM': roundValue(lagLengthM, 3),
       'lagRowCount': lagRowCount.toDouble(),
-      'lagTotalLen': roundValue(lagTotalLen, 3),
+      'lagBaseM': roundValue(lagBaseM, 6),
+      'lagTotalLen': roundValue(lagWithReserveM, 6),
       'lagPcs': lagPcs.toDouble(),
-      'klaymerCount': klaymerCount.toDouble(),
-      'screwCount': screwKg,
-      'treatmentL': treatmentL,
+      'clipBaseCount': roundValue(clipBaseCount, 6),
+      'klaymerCount': (clipPacks * clipPackCount).toDouble(),
+      'clipPacks': clipPacks.toDouble(),
+      'fastenerBaseCount': roundValue(fastenerBaseCount, 6),
+      'screwCount': (fastenerPacks * fastenerPackCount).toDouble(),
+      'fastenerPacks': fastenerPacks.toDouble(),
+      'treatmentL': roundValue(treatmentWithReserveL, 6),
+      'treatmentCans': treatmentCans.toDouble(),
       'geotextileRolls': geotextileRolls.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,
       'recExactNeed': recScenario.exactNeed,

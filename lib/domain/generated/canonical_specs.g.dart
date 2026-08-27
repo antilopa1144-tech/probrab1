@@ -8570,7 +8570,7 @@ const Map<String, dynamic> stripFoundationSpecData = {
 /// Generated from terrace-canonical.v1.json
 const Map<String, dynamic> terraceSpecData = {
   'calculator_id': 'terrace',
-  'formula_version': 'terrace-canonical-v1',
+  'formula_version': 'terrace-canonical-v2',
   'input_schema': [
     {
       'key': 'length',
@@ -8596,15 +8596,95 @@ const Map<String, dynamic> terraceSpecData = {
       'key': 'boardLength',
       'unit': 'mm',
       'default_value': 3000,
-      'min': 2000,
-      'max': 6000,
+      'min': 1000,
+      'max': 12000,
+    },
+    {
+      'key': 'boardWidthMm',
+      'unit': 'mm',
+      'default_value': 150,
+      'min': 70,
+      'max': 300,
+    },
+    {
+      'key': 'gapMm',
+      'unit': 'mm',
+      'default_value': 5,
+      'min': 0,
+      'max': 20,
+    },
+    {
+      'key': 'offcutReuseMode',
+      'default_value': 0,
+      'min': 0,
+      'max': 1,
+    },
+    {
+      'key': 'boardReservePercent',
+      'unit': '%',
+      'default_value': 10,
+      'min': 0,
+      'max': 30,
     },
     {
       'key': 'lagStep',
       'unit': 'mm',
       'default_value': 400,
-      'min': 300,
-      'max': 600,
+      'min': 200,
+      'max': 1000,
+    },
+    {
+      'key': 'lagLengthM',
+      'unit': 'm',
+      'default_value': 3,
+      'min': 1,
+      'max': 12,
+    },
+    {
+      'key': 'lagReservePercent',
+      'unit': '%',
+      'default_value': 5,
+      'min': 0,
+      'max': 30,
+    },
+    {
+      'key': 'clipsPerIntersection',
+      'default_value': 1,
+      'min': 0,
+      'max': 4,
+    },
+    {
+      'key': 'starterClipsPerRow',
+      'default_value': 2,
+      'min': 0,
+      'max': 4,
+    },
+    {
+      'key': 'clipPackCount',
+      'unit': 'pcs',
+      'default_value': 100,
+      'min': 1,
+      'max': 1000,
+    },
+    {
+      'key': 'fastenersPerClip',
+      'default_value': 1,
+      'min': 0,
+      'max': 4,
+    },
+    {
+      'key': 'fastenerPackCount',
+      'unit': 'pcs',
+      'default_value': 100,
+      'min': 1,
+      'max': 5000,
+    },
+    {
+      'key': 'fastenerReservePercent',
+      'unit': '%',
+      'default_value': 5,
+      'min': 0,
+      'max': 30,
     },
     {
       'key': 'withTreatment',
@@ -8612,13 +8692,56 @@ const Map<String, dynamic> terraceSpecData = {
       'min': 0,
       'max': 2,
     },
+    {
+      'key': 'treatmentRateLPerM2PerLayer',
+      'unit': 'l/m2',
+      'default_value': 0.1,
+      'min': 0.01,
+      'max': 1,
+    },
+    {
+      'key': 'treatmentLayers',
+      'default_value': 2,
+      'min': 1,
+      'max': 4,
+    },
+    {
+      'key': 'treatmentCanL',
+      'unit': 'l',
+      'default_value': 2.5,
+      'min': 0.5,
+      'max': 20,
+    },
+    {
+      'key': 'treatmentReservePercent',
+      'unit': '%',
+      'default_value': 10,
+      'min': 0,
+      'max': 30,
+    },
+    {
+      'key': 'withGeotextile',
+      'default_value': 1,
+      'min': 0,
+      'max': 1,
+    },
+    {
+      'key': 'geotextileRollM2',
+      'unit': 'm2',
+      'default_value': 50,
+      'min': 5,
+      'max': 200,
+    },
+    {
+      'key': 'geotextileReservePercent',
+      'unit': '%',
+      'default_value': 5,
+      'min': 0,
+      'max': 30,
+    },
   ],
   'field_factors': {
-    'enabled': [
-      'geometry_complexity',
-      'worker_skill',
-      'waste_factor',
-    ],
+    'enabled': [],
   },
   'normative_formula': {
     'board_types': [
@@ -8645,29 +8768,7 @@ const Map<String, dynamic> terraceSpecData = {
     'package_size': 1,
   },
   'material_rules': {
-    'board_widths': {
-      '0': 150,
-      '1': 120,
-      '2': 90,
-      '3': 120,
-    },
-    'board_gaps': {
-      '0': 5,
-      '1': 5,
-      '2': 5,
-      '3': 0,
-    },
-    'lag_length': 3,
-    'treatment_l_per_m2': 0.15,
-    'treatment_layers': {
-      '0': 0,
-      '1': 2,
-      '2': 2,
-    },
-    'geotextile_roll': 50,
-    'board_reserve': 1.1,
-    'lag_reserve': 1.05,
-    'klaymer_count_per_lag_row': 1,
+    'max_extra_board_percent': 5,
   },
   'warnings_rules': {
     'large_area_threshold_m2': 50,
@@ -8676,7 +8777,6 @@ const Map<String, dynamic> terraceSpecData = {
     'contract': 'min-rec-max-v1',
   },
 };
-
 /// Generated from tile-adhesive-canonical.v1.json
 const Map<String, dynamic> tileAdhesiveSpecData = {
   'calculator_id': 'tile-adhesive',

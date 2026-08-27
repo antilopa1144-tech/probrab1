@@ -1,7 +1,7 @@
 {
   "calculator_id": "terrace",
-  "formula_version": "terrace-canonical-v1",
-  "generated_at": "2026-08-19T07:37:48.118Z",
+  "formula_version": "terrace-canonical-v2",
+  "generated_at": "2026-08-27T00:08:44.817Z",
   "cases": [
     {
       "id": "defaults",
@@ -11,8 +11,27 @@
         "width": 3,
         "boardType": 0,
         "boardLength": 3000,
+        "boardWidthMm": 150,
+        "gapMm": 5,
+        "offcutReuseMode": 0,
+        "boardReservePercent": 10,
         "lagStep": 400,
-        "withTreatment": 0
+        "lagLengthM": 3,
+        "lagReservePercent": 5,
+        "clipsPerIntersection": 1,
+        "starterClipsPerRow": 2,
+        "clipPackCount": 100,
+        "fastenersPerClip": 1,
+        "fastenerPackCount": 100,
+        "fastenerReservePercent": 5,
+        "withTreatment": 0,
+        "treatmentRateLPerM2PerLayer": 0.1,
+        "treatmentLayers": 2,
+        "treatmentCanL": 2.5,
+        "treatmentReservePercent": 10,
+        "withGeotextile": 1,
+        "geotextileRollM2": 50,
+        "geotextileReservePercent": 5
       },
       "expected_totals": {
         "length": 5,
@@ -20,50 +39,66 @@
         "area": 15,
         "boardType": 0,
         "boardLength": 3000,
-        "lagStep": 400,
-        "withTreatment": 0,
         "boardWidth": 150,
         "gap": 5,
         "boardPitch": 0.155,
+        "offcutReuseMode": 0,
+        "boardReservePercent": 10,
         "rowCount": 20,
         "boardsPerRow": 2,
+        "safeBaseBoards": 40,
+        "baseBoardExact": 40,
+        "baseBoardPurchase": 40,
         "totalBoards": 44,
+        "totalBoardLinearM": 100,
+        "baseCutWasteM": 20,
+        "jointCount": 20,
+        "lagStep": 400,
+        "lagLengthM": 3,
         "lagRowCount": 14,
+        "lagBaseM": 42,
         "lagTotalLen": 44.1,
         "lagPcs": 15,
-        "klaymerCount": 280,
-        "screwCount": 0.6,
+        "clipBaseCount": 320,
+        "klaymerCount": 400,
+        "clipPacks": 4,
+        "fastenerBaseCount": 320,
+        "screwCount": 400,
+        "fastenerPacks": 4,
         "treatmentL": 0,
+        "treatmentCans": 0,
         "geotextileRolls": 1,
-        "minExactNeed": 40.9728,
-        "recExactNeed": 46.64,
-        "maxExactNeed": 60.63904,
-        "minPurchase": 41,
-        "recPurchase": 47,
-        "maxPurchase": 61
+        "minExactNeed": 40,
+        "recExactNeed": 44,
+        "maxExactNeed": 46,
+        "minPurchase": 40,
+        "recPurchase": 44,
+        "maxPurchase": 46
       },
       "expected_materials_count": 5,
       "expected_material_names": [
-        "Древесно-полимерный композит (ДПК), 150 мм (3000 мм)",
-        "Лаги 50×50 мм (3 м)",
-        "Монтажные клипсы для доски из древесно-полимерного композита (ДПК)",
-        "Саморезы для скрытого крепежа 3,5×35 мм, нержавеющие A2",
+        "Террасная доска из ДПК 150×3000 мм",
+        "Лаги выбранной системы (3 м)",
+        "Монтажные клипсы выбранной системы ДПК",
+        "Саморезы для выбранных клипс и лаг",
         "Геотекстиль (50 м²)"
       ],
-      "expected_warnings_count": 0,
-      "expected_warnings": [],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "В базовом раскрое получается 20 стыков досок: проверьте разбежку и дополнительные лаги под каждым стыком"
+      ],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 40.9728,
-          "purchase_quantity": 41
+          "exact_need": 40,
+          "purchase_quantity": 40
         },
         "REC": {
-          "exact_need": 46.64,
-          "purchase_quantity": 47
+          "exact_need": 44,
+          "purchase_quantity": 44
         },
         "MAX": {
-          "exact_need": 60.63904,
-          "purchase_quantity": 61
+          "exact_need": 46,
+          "purchase_quantity": 46
         }
       }
     }
