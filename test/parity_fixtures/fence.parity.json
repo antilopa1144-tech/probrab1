@@ -1,7 +1,7 @@
 {
   "calculator_id": "fence",
-  "formula_version": "fence-canonical-v1",
-  "generated_at": "2026-08-19T07:37:47.827Z",
+  "formula_version": "fence-canonical-v2",
+  "generated_at": "2026-08-27T00:29:59.875Z",
   "cases": [
     {
       "id": "defaults",
@@ -12,7 +12,12 @@
         "fenceType": 0,
         "postStep": 2.5,
         "gatesCount": 1,
-        "wicketsCount": 1
+        "wicketsCount": 1,
+        "sheetWorkingWidthMm": 1150,
+        "coverReservePercent": 0,
+        "screwsPerSheet": 6,
+        "screwReservePercent": 5,
+        "screwPackCount": 200
       },
       "expected_totals": {
         "fenceLength": 50,
@@ -29,47 +34,52 @@
         "postLength": 2.9,
         "concrete": 0.69,
         "caps": 25,
+        "sheetWorkingWidthMm": 1150,
+        "sheetExactNeed": 39.130435,
+        "coverReservePercent": 0,
         "sheets": 40,
-        "screws": 280,
-        "screwPacks": 1.2,
+        "screwsPerSheet": 6,
+        "screws": 252,
+        "screwPacks": 2,
+        "screwsPurchase": 400,
         "primerCans": 3,
         "rolls": 0,
         "wireLength": 0,
         "slats": 0,
         "antisepticCans": 0,
-        "minExactNeed": 37.248,
-        "recExactNeed": 42.4,
-        "maxExactNeed": 55.1264,
-        "minPurchase": 38,
-        "recPurchase": 43,
-        "maxPurchase": 56
+        "minExactNeed": 39.130435,
+        "recExactNeed": 39.130435,
+        "maxExactNeed": 41.086957,
+        "minPurchase": 40,
+        "recPurchase": 40,
+        "maxPurchase": 42
       },
       "expected_materials_count": 7,
       "expected_material_names": [
-        "Столбы 60×60 мм (2.9 м)",
-        "Лаги 40×20 мм",
-        "Профнастил (2 м)",
-        "Саморезы кровельные",
+        "Столбы выбранной системы (2.9 м)",
+        "Поперечные лаги выбранной системы",
+        "Профнастил, рабочая ширина 1150 мм (2 м)",
+        "Саморезы для профлиста",
         "Грунт-спрей для срезов",
         "Бетон для столбов",
         "Заглушки для столбов"
       ],
       "expected_warnings_count": 1,
       "expected_warnings": [
-        "При наличии ворот рекомендуются усиленные столбы 80×80 или 100×100 мм"
+        "При наличии ворот нужны отдельный расчёт усиленных опор, фундамента и закладных"
       ],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 37.248,
-          "purchase_quantity": 38
+          "exact_need": 39.130435,
+          "purchase_quantity": 40
         },
         "REC": {
-          "exact_need": 42.4,
-          "purchase_quantity": 43
+          "exact_need": 39.130435,
+          "purchase_quantity": 40
         },
         "MAX": {
-          "exact_need": 55.1264,
-          "purchase_quantity": 56
+          "exact_need": 41.086957,
+          "purchase_quantity": 42
         }
       }
     }

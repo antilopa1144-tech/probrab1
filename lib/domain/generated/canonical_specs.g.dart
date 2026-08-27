@@ -3157,7 +3157,7 @@ const Map<String, dynamic> fastenersSpecData = {
 /// Generated from fence-canonical.v1.json
 const Map<String, dynamic> fenceSpecData = {
   'calculator_id': 'fence',
-  'formula_version': 'fence-canonical-v1',
+  'formula_version': 'fence-canonical-v2',
   'input_schema': [
     {
       'key': 'fenceLength',
@@ -3198,13 +3198,44 @@ const Map<String, dynamic> fenceSpecData = {
       'min': 0,
       'max': 5,
     },
+    {
+      'key': 'sheetWorkingWidthMm',
+      'unit': 'mm',
+      'default_value': 1150,
+      'min': 500,
+      'max': 1500,
+    },
+    {
+      'key': 'coverReservePercent',
+      'unit': '%',
+      'default_value': 0,
+      'min': 0,
+      'max': 30,
+    },
+    {
+      'key': 'screwsPerSheet',
+      'unit': 'pcs',
+      'default_value': 6,
+      'min': 0,
+      'max': 30,
+    },
+    {
+      'key': 'screwReservePercent',
+      'unit': '%',
+      'default_value': 5,
+      'min': 0,
+      'max': 30,
+    },
+    {
+      'key': 'screwPackCount',
+      'unit': 'pcs',
+      'default_value': 200,
+      'min': 1,
+      'max': 5000,
+    },
   ],
   'field_factors': {
-    'enabled': [
-      'geometry_complexity',
-      'worker_skill',
-      'waste_factor',
-    ],
+    'enabled': [],
   },
   'normative_formula': {
     'fence_types': [
@@ -3224,10 +3255,7 @@ const Map<String, dynamic> fenceSpecData = {
   },
   'material_rules': {
     'post_burial_m': 0.9,
-    'profnastil_useful_width': 1.15,
-    'profnastil_reserve': 1.02,
-    'profnastil_screws_per_sheet': 7,
-    'screws_pack': 200,
+    'max_extra_cover_percent': 5,
     'primer_spray_m_per_can': 20,
     'post_concrete_m3': 0.03,
     'caps_reserve': 1.05,
@@ -3235,7 +3263,6 @@ const Map<String, dynamic> fenceSpecData = {
     'tension_wire_reserve': 1.05,
     'slat_width': 0.1,
     'slat_gap': 0.03,
-    'slat_reserve': 1.05,
     'antiseptic_l_per_m2': 0.15,
     'antiseptic_can_l': 5,
     'gate_width': 4,
@@ -3248,7 +3275,6 @@ const Map<String, dynamic> fenceSpecData = {
     'contract': 'min-rec-max-v1',
   },
 };
-
 /// Generated from foam-blocks-canonical.v1.json
 const Map<String, dynamic> foamBlocksSpecData = {
   'calculator_id': 'foam-blocks',

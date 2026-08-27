@@ -4,9 +4,6 @@ import '../generated/canonical_specs.g.dart';
 import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
-/* ─── spec types ─── */
-
-
 
 const Map<int, String> _fenceTypeLabels = {
   0: 'Профнастил',
@@ -14,111 +11,175 @@ const Map<int, String> _fenceTypeLabels = {
   2: 'Деревянный штакетник',
 };
 
-
 bool hasCanonicalFenceInputs(Map<String, double> inputs) {
-  return inputs.containsKey('fenceType') ||
-      inputs.containsKey('postStep') ||
-      inputs.containsKey('fenceHeight');
+  final hasLegacyKeys =
+      inputs.containsKey('postSpacing') ||
+      inputs.containsKey('gates') ||
+      inputs.containsKey('wickets');
+  return !hasLegacyKeys;
 }
 
 Map<String, double> normalizeLegacyFenceInputs(Map<String, double> inputs) {
   final normalized = Map<String, double>.from(inputs);
+  final legacyFenceType = (inputs['fenceType'] ?? 0).round();
   normalized['fenceLength'] = (inputs['fenceLength'] ?? 50).toDouble();
   normalized['fenceHeight'] = (inputs['fenceHeight'] ?? 2).toDouble();
-  normalized['fenceType'] = (inputs['fenceType'] ?? 0).toDouble();
-  normalized['postStep'] = (inputs['postStep'] ?? 2.5).toDouble();
-  normalized['gatesCount'] = (inputs['gatesCount'] ?? 1).toDouble();
-  normalized['wicketsCount'] = (inputs['wicketsCount'] ?? 1).toDouble();
+  normalized['fenceType'] = switch (legacyFenceType) {
+    1 => 2,
+    2 => 1,
+    _ => 0,
+  };
+  normalized['postStep'] = (inputs['postStep'] ?? inputs['postSpacing'] ?? 2.5)
+      .toDouble();
+  normalized['gatesCount'] = (inputs['gatesCount'] ?? inputs['gates'] ?? 1)
+      .toDouble();
+  normalized['wicketsCount'] =
+      (inputs['wicketsCount'] ?? inputs['wickets'] ?? 1).toDouble();
   return normalized;
 }
-
 
 CanonicalCalculatorContractResult calculateCanonicalFence(
   Map<String, double> inputs, {
   SpecReader? specOverride,
 }) {
   final spec = specOverride ?? const SpecReader(fenceSpecData);
-
   final normalized = hasCanonicalFenceInputs(inputs)
       ? Map<String, double>.from(inputs)
       : normalizeLegacyFenceInputs(inputs);
 
-  final fenceLength = math.max(5.0, math.min(500.0, (normalized['fenceLength'] ?? defaultFor(spec, 'fenceLength', 50)).toDouble()));
-  final fenceHeight = math.max(1.0, math.min(3.0, (normalized['fenceHeight'] ?? defaultFor(spec, 'fenceHeight', 2)).toDouble()));
-  final fenceType = (normalized['fenceType'] ?? defaultFor(spec, 'fenceType', 0)).round().clamp(0, 2);
-  final postStep = math.max(2.0, math.min(3.0, (normalized['postStep'] ?? defaultFor(spec, 'postStep', 2.5)).toDouble()));
-  final gatesCount = (normalized['gatesCount'] ?? defaultFor(spec, 'gatesCount', 1)).round().clamp(0, 5);
-  final wicketsCount = (normalized['wicketsCount'] ?? defaultFor(spec, 'wicketsCount', 1)).round().clamp(0, 5);
+  final fenceLength = math.max(
+    5.0,
+    math.min(
+      500.0,
+      (normalized['fenceLength'] ?? defaultFor(spec, 'fenceLength', 50))
+          .toDouble(),
+    ),
+  );
+  final fenceHeight = math.max(
+    1.0,
+    math.min(
+      3.0,
+      (normalized['fenceHeight'] ?? defaultFor(spec, 'fenceHeight', 2))
+          .toDouble(),
+    ),
+  );
+  final fenceType =
+      (normalized['fenceType'] ?? defaultFor(spec, 'fenceType', 0))
+          .round()
+          .clamp(0, 2);
+  final postStep = math.max(
+    2.0,
+    math.min(
+      3.0,
+      (normalized['postStep'] ?? defaultFor(spec, 'postStep', 2.5)).toDouble(),
+    ),
+  );
+  final gatesCount =
+      (normalized['gatesCount'] ?? defaultFor(spec, 'gatesCount', 1))
+          .round()
+          .clamp(0, 5);
+  final wicketsCount =
+      (normalized['wicketsCount'] ?? defaultFor(spec, 'wicketsCount', 1))
+          .round()
+          .clamp(0, 5);
+  final sheetWorkingWidthMm = math.max(
+    500.0,
+    math.min(
+      1500.0,
+      (normalized['sheetWorkingWidthMm'] ??
+              defaultFor(spec, 'sheetWorkingWidthMm', 1150))
+          .toDouble(),
+    ),
+  );
+  final coverReservePercent = math.max(
+    0.0,
+    (normalized['coverReservePercent'] ??
+            defaultFor(spec, 'coverReservePercent', 0))
+        .toDouble(),
+  );
+  final screwsPerSheet = math.max(
+    0.0,
+    (normalized['screwsPerSheet'] ?? defaultFor(spec, 'screwsPerSheet', 6))
+        .toDouble(),
+  );
+  final screwReservePercent = math.max(
+    0.0,
+    (normalized['screwReservePercent'] ??
+            defaultFor(spec, 'screwReservePercent', 5))
+        .toDouble(),
+  );
+  final screwPackCount = math.max(
+    1,
+    (normalized['screwPackCount'] ?? defaultFor(spec, 'screwPackCount', 200))
+        .round(),
+  );
 
-  // Common geometry
-  final netLength = math.max(1.0, fenceLength - gatesCount * spec.materialRule<num>('gate_width').toDouble() - wicketsCount * spec.materialRule<num>('wicket_width').toDouble());
-  final postsCount = (netLength / postStep).ceil() + 1 + gatesCount * 2 + wicketsCount * 2;
+  final gateWidth = spec.materialRule<num>('gate_width').toDouble();
+  final wicketWidth = spec.materialRule<num>('wicket_width').toDouble();
+  final netLength = math.max(
+    1.0,
+    fenceLength - gatesCount * gateWidth - wicketsCount * wicketWidth,
+  );
+  final postsCount =
+      (netLength / postStep).ceil() + 1 + gatesCount * 2 + wicketsCount * 2;
   final lagsPerSpan = fenceHeight > 2 ? 3 : 2;
   final lagSpans = (netLength / postStep).ceil();
   final lagsCount = lagSpans * lagsPerSpan;
-  final postLength = roundValue(fenceHeight + spec.materialRule<num>('post_burial_m').toDouble(), 2);
+  final postLength = roundValue(
+    fenceHeight + spec.materialRule<num>('post_burial_m').toDouble(),
+    2,
+  );
+  final concrete = roundValue(
+    postsCount * spec.materialRule<num>('post_concrete_m3').toDouble(),
+    3,
+  );
+  final caps = (postsCount * spec.materialRule<num>('caps_reserve').toDouble())
+      .ceil();
 
-  // Concrete for posts
-  final concrete = roundValue(postsCount * spec.materialRule<num>('post_concrete_m3').toDouble(), 3);
-
-  // Caps for posts
-  final caps = (postsCount * spec.materialRule<num>('caps_reserve').toDouble()).ceil();
-
-  // Type-specific covering
-  var sheets = 0;
-  var screws = 0;
-  var screwPacks = 0;
-  var primerCans = 0;
-  var rolls = 0;
-  var wireLength = 0.0;
-  var slats = 0;
-  var antisepticCans = 0;
-
-  if (fenceType == 0) {
-    // Profnastil
-    sheets = (netLength / spec.materialRule<num>('profnastil_useful_width').toDouble() * spec.materialRule<num>('profnastil_reserve').toDouble()).ceil();
-    screws = (sheets * spec.materialRule<num>('profnastil_screws_per_sheet').toDouble()).ceil();
-    screwPacks = (screws / 250 * 10).ceil(); // кг (4.8×35: 250 шт/кг), *10 for rounding
-    primerCans = (fenceLength / spec.materialRule<num>('primer_spray_m_per_can').toDouble()).ceil();
-  } else if (fenceType == 1) {
-    // Rabica
-    rolls = (netLength / spec.materialRule<num>('rabica_roll_m').toDouble()).ceil();
-    wireLength = roundValue(netLength * lagsPerSpan * spec.materialRule<num>('tension_wire_reserve').toDouble(), 2);
-  } else {
-    // Wooden slats
-    slats = (netLength / (spec.materialRule<num>('slat_width').toDouble() + spec.materialRule<num>('slat_gap').toDouble()) * spec.materialRule<num>('slat_reserve').toDouble()).ceil();
-    antisepticCans = (netLength * fenceHeight * 2 * spec.materialRule<num>('antiseptic_l_per_m2').toDouble() / spec.materialRule<num>('antiseptic_can_l').toDouble()).ceil();
-  }
-
-  // Scenarios
-  final basePrimary = fenceType == 0 ? sheets : fenceType == 1 ? rolls : slats;
-  final packageLabel = fenceType == 0
-      ? 'profnastil-sheet'
-      : fenceType == 1
-          ? 'rabica-roll-10m'
-          : 'wooden-slat';
-  final packageUnit = fenceType == 0 ? 'шт' : fenceType == 1 ? 'рулонов' : 'шт';
+  final sheetWorkingWidthM = sheetWorkingWidthMm / 1000.0;
+  final sheetExactNeed = netLength / sheetWorkingWidthM;
+  final rabicaRollM = spec.materialRule<num>('rabica_roll_m').toDouble();
+  final rabicaExactNeed = netLength / rabicaRollM;
+  final slatPitch =
+      spec.materialRule<num>('slat_width').toDouble() +
+      spec.materialRule<num>('slat_gap').toDouble();
+  final slatExactNeed = netLength / slatPitch;
+  final baseCoverExact = switch (fenceType) {
+    0 => sheetExactNeed,
+    1 => rabicaExactNeed,
+    _ => slatExactNeed,
+  };
+  final packageLabel = switch (fenceType) {
+    0 => 'profnastil-sheet',
+    1 => 'rabica-roll',
+    _ => 'wooden-slat',
+  };
+  final packageUnit = fenceType == 1 ? 'рулонов' : 'шт';
 
   final scenarios = <String, CanonicalScenarioResult>{};
-final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(spec.enabledFactors, defaultFactorTable, scenarioName);
-    final exactNeed = roundValue(basePrimary * accuracyMult * multiplier, 6);
+    final reservePercent = scenarioName == 'MIN'
+        ? 0.0
+        : scenarioName == 'MAX'
+        ? coverReservePercent +
+              spec.materialRule<num>('max_extra_cover_percent').toDouble()
+        : coverReservePercent;
+    final scenarioMultiplierValue = 1 + reservePercent / 100.0;
+    final exactNeed = roundValue(baseCoverExact * scenarioMultiplierValue, 6);
     final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
-
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: packageCount.toDouble(),
       leftover: roundValue(packageCount - exactNeed, 6),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
-        'fenceType:$fenceType',
-        'postStep:${postStep.toStringAsFixed(1)}',
-        'packaging:$packageLabel',
+        'fence_type:$fenceType',
+        'working_width_mm:${sheetWorkingWidthMm.round()}',
+        'scenario_policy:explicit_cover_reserve',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, defaultFactorTable, scenarioName),
-        'field_multiplier': roundValue(multiplier, 6),
+        'field_multiplier': roundValue(scenarioMultiplierValue, 6),
+        'reserve_percent': roundValue(reservePercent, 3),
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: packageLabel,
@@ -130,17 +191,40 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   }
 
   final recScenario = scenarios['REC']!;
+  final sheets = fenceType == 0 ? recScenario.purchaseQuantity : 0.0;
+  final screwsBaseCount = fenceType == 0 ? sheets * screwsPerSheet : 0.0;
+  final screwsWithReserve = screwsBaseCount * (1 + screwReservePercent / 100.0);
+  final screwPacks = screwsWithReserve > 0
+      ? (screwsWithReserve / screwPackCount).ceil()
+      : 0;
+  final screwsPurchase = screwPacks * screwPackCount;
+  final primerCans = fenceType == 0
+      ? (fenceLength /
+                spec.materialRule<num>('primer_spray_m_per_can').toDouble())
+            .ceil()
+      : 0;
+  final rolls = fenceType == 1 ? recScenario.purchaseQuantity : 0.0;
+  final tensionWireReserve = spec
+      .materialRule<num>('tension_wire_reserve')
+      .toDouble();
+  final wireLength = fenceType == 1
+      ? netLength * lagsPerSpan * tensionWireReserve
+      : 0.0;
+  final slats = fenceType == 2 ? recScenario.purchaseQuantity : 0.0;
+  final antisepticCanL = spec.materialRule<num>('antiseptic_can_l').toDouble();
+  final antisepticBaseL = fenceType == 2
+      ? netLength *
+            fenceHeight *
+            2 *
+            spec.materialRule<num>('antiseptic_l_per_m2').toDouble()
+      : 0.0;
+  final antisepticCans = antisepticBaseL > 0
+      ? (antisepticBaseL / antisepticCanL).ceil()
+      : 0;
 
-  // Warnings
-  final warnings = <String>[];
-  if (gatesCount > spec.warningRule<num>('reinforced_post_gate_threshold').toDouble()) {
-    warnings.add('При наличии ворот рекомендуются усиленные столбы 80×80 или 100×100 мм');
-  }
-
-  // Materials
   final materials = <CanonicalMaterialResult>[
     CanonicalMaterialResult(
-      name: 'Столбы 60×60 мм ($postLength м)',
+      name: 'Столбы выбранной системы ($postLength м)',
       quantity: postsCount.toDouble(),
       unit: 'шт',
       withReserve: postsCount.toDouble(),
@@ -148,9 +232,9 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       category: 'Каркас',
     ),
     CanonicalMaterialResult(
-      name: 'Лаги 40×20 мм',
+      name: 'Поперечные лаги выбранной системы',
       quantity: lagsCount.toDouble(),
-      unit: 'шт',
+      unit: 'пролётов',
       withReserve: lagsCount.toDouble(),
       purchaseQty: lagsCount.toDouble(),
       category: 'Каркас',
@@ -158,23 +242,40 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
   ];
 
   if (fenceType == 0) {
-    materials.addAll([
+    materials.add(
       CanonicalMaterialResult(
-        name: '${_fenceTypeLabels[0]} ($fenceHeight м)',
-        quantity: recScenario.exactNeed,
+        name:
+            '${_fenceTypeLabels[0]}, рабочая ширина ${sheetWorkingWidthMm.round()} мм ($fenceHeight м)',
+        quantity: roundValue(sheetExactNeed, 6),
         unit: 'шт',
-        withReserve: recScenario.exactNeed.ceilToDouble(),
-        purchaseQty: recScenario.exactNeed.ceil().toDouble(),
+        withReserve: recScenario.exactNeed,
+        purchaseQty: recScenario.purchaseQuantity,
         category: 'Покрытие',
+        packageInfo: {
+          'count': recScenario.buyPlan.packagesCount,
+          'size': 1.0,
+          'packageUnit': 'листов',
+        },
       ),
-      CanonicalMaterialResult(
-        name: 'Саморезы кровельные',
-        quantity: screwPacks / 10,
-        unit: 'кг',
-        withReserve: screwPacks / 10,
-        purchaseQty: (screwPacks / 10).ceil().toDouble(),
-        category: 'Крепёж',
-      ),
+    );
+    if (screwsBaseCount > 0) {
+      materials.add(
+        CanonicalMaterialResult(
+          name: 'Саморезы для профлиста',
+          quantity: roundValue(screwsBaseCount, 6),
+          unit: 'шт',
+          withReserve: roundValue(screwsWithReserve, 6),
+          purchaseQty: screwsPurchase.toDouble(),
+          category: 'Крепёж',
+          packageInfo: {
+            'count': screwPacks,
+            'size': screwPackCount.toDouble(),
+            'packageUnit': 'упаковок',
+          },
+        ),
+      );
+    }
+    materials.add(
       CanonicalMaterialResult(
         name: 'Грунт-спрей для срезов',
         quantity: primerCans.toDouble(),
@@ -183,23 +284,28 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
         purchaseQty: primerCans.toDouble(),
         category: 'Защита',
       ),
-    ]);
+    );
   } else if (fenceType == 1) {
     materials.addAll([
       CanonicalMaterialResult(
-        name: '${_fenceTypeLabels[1]} ($fenceHeight м, рулон ${spec.materialRule<num>('rabica_roll_m').toDouble().round()} м)',
-        quantity: recScenario.exactNeed,
+        name: '${_fenceTypeLabels[1]} ($fenceHeight м, рулон $rabicaRollM м)',
+        quantity: roundValue(rabicaExactNeed, 6),
         unit: 'рулонов',
-        withReserve: recScenario.exactNeed.ceilToDouble(),
-        purchaseQty: recScenario.exactNeed.ceil().toDouble(),
+        withReserve: recScenario.exactNeed,
+        purchaseQty: recScenario.purchaseQuantity,
         category: 'Покрытие',
+        packageInfo: {
+          'count': recScenario.buyPlan.packagesCount,
+          'size': 1.0,
+          'packageUnit': 'рулонов',
+        },
       ),
       CanonicalMaterialResult(
         name: 'Проволока натяжная',
-        quantity: wireLength,
+        quantity: roundValue(wireLength / tensionWireReserve, 6),
         unit: 'м',
-        withReserve: wireLength,
-        purchaseQty: wireLength.ceil().toDouble(),
+        withReserve: roundValue(wireLength, 6),
+        purchaseQty: wireLength.ceilToDouble(),
         category: 'Крепёж',
       ),
     ]);
@@ -207,19 +313,29 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
     materials.addAll([
       CanonicalMaterialResult(
         name: '${_fenceTypeLabels[2]} ($fenceHeight м)',
-        quantity: recScenario.exactNeed,
+        quantity: roundValue(slatExactNeed, 6),
         unit: 'шт',
-        withReserve: recScenario.exactNeed.ceilToDouble(),
-        purchaseQty: recScenario.exactNeed.ceil().toDouble(),
+        withReserve: recScenario.exactNeed,
+        purchaseQty: recScenario.purchaseQuantity,
         category: 'Покрытие',
+        packageInfo: {
+          'count': recScenario.buyPlan.packagesCount,
+          'size': 1.0,
+          'packageUnit': 'штакетин',
+        },
       ),
       CanonicalMaterialResult(
-        name: 'Антисептик (${spec.materialRule<num>('antiseptic_can_l').toDouble().round()} л)',
-        quantity: antisepticCans.toDouble(),
-        unit: 'канистр',
-        withReserve: antisepticCans.toDouble(),
-        purchaseQty: antisepticCans.toDouble(),
+        name: 'Антисептик ($antisepticCanL л)',
+        quantity: roundValue(antisepticBaseL, 6),
+        unit: 'л',
+        withReserve: roundValue(antisepticBaseL, 6),
+        purchaseQty: antisepticCans * antisepticCanL,
         category: 'Защита',
+        packageInfo: {
+          'count': antisepticCans,
+          'size': antisepticCanL,
+          'packageUnit': 'канистр',
+        },
       ),
     ]);
   }
@@ -230,18 +346,25 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       quantity: concrete,
       unit: 'м³',
       withReserve: concrete,
-      purchaseQty: ((concrete * 10).ceil() / 10).toDouble(),
+      purchaseQty: (concrete * 10).ceil() / 10,
       category: 'Бетон',
     ),
     CanonicalMaterialResult(
       name: 'Заглушки для столбов',
-      quantity: caps.toDouble(),
+      quantity: postsCount.toDouble(),
       unit: 'шт',
       withReserve: caps.toDouble(),
       purchaseQty: caps.toDouble(),
       category: 'Каркас',
     ),
   ]);
+
+  final warnings = <String>[];
+  if (gatesCount > 0) {
+    warnings.add(
+      'При наличии ворот нужны отдельный расчёт усиленных опор, фундамента и закладных',
+    );
+  }
 
   return CanonicalCalculatorContractResult(
     canonicalSpecId: spec.calculatorId,
@@ -262,13 +385,18 @@ final accuracyMode = parseAccuracyMode(inputs);  final accuracyMult = accuracyPr
       'postLength': postLength,
       'concrete': concrete,
       'caps': caps.toDouble(),
-      'sheets': sheets.toDouble(),
-      'screws': screws.toDouble(),
-      'screwPacks': screwPacks / 10,
+      'sheetWorkingWidthMm': sheetWorkingWidthMm,
+      'sheetExactNeed': roundValue(sheetExactNeed, 6),
+      'coverReservePercent': roundValue(coverReservePercent, 3),
+      'sheets': sheets,
+      'screwsPerSheet': roundValue(screwsPerSheet, 3),
+      'screws': roundValue(screwsWithReserve, 6),
+      'screwPacks': screwPacks.toDouble(),
+      'screwsPurchase': screwsPurchase.toDouble(),
       'primerCans': primerCans.toDouble(),
-      'rolls': rolls.toDouble(),
-      'wireLength': wireLength,
-      'slats': slats.toDouble(),
+      'rolls': rolls,
+      'wireLength': roundValue(wireLength, 6),
+      'slats': slats,
       'antisepticCans': antisepticCans.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,
       'recExactNeed': recScenario.exactNeed,
