@@ -39,7 +39,6 @@ import '../views/calculator/fence_calculator_screen.dart';
 import '../views/calculator/stairs_calculator_screen.dart';
 // plumbing_calculator_screen.dart - удалён (engineering_plumbing не востребован)
 import '../views/calculator/ventilation_calculator_screen.dart';
-import '../views/calculator/basement_calculator_screen.dart';
 import '../views/calculator/blind_area_calculator_screen.dart';
 import '../views/calculator/gutters_calculator_screen.dart';
 import '../views/calculator/roofing_unified_calculator_screen.dart';
@@ -158,7 +157,8 @@ class CalculatorScreenRegistry {
     'stairs': (_, _) => const StairsCalculatorScreen(),
 
     // Фундамент
-    'foundation_basement': (_, _) => const BasementCalculatorScreen(),
+    'foundation_basement': (def, inputs) =>
+        ProCalculatorScreen(definition: def, initialInputs: inputs),
     'foundation_blind_area': (_, _) => const BlindAreaCalculatorScreen(),
     'foundation_strip': (def, inputs) =>
         ProCalculatorScreen(definition: def, initialInputs: inputs),

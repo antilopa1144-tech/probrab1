@@ -4,7 +4,6 @@ import '../calculators/calculator_registry.dart';
 import '../usecases/calculate_3d_panels.dart';
 import '../usecases/calculate_attic_v2.dart';
 import '../usecases/calculate_balcony_v2.dart';
-import '../usecases/calculate_basement_v2.dart';
 import '../usecases/calculate_bathroom_waterproof_v2.dart';
 import '../usecases/calculate_blind_area_v2.dart';
 import '../usecases/calculate_brick.dart';
@@ -44,6 +43,7 @@ import '../usecases/calculate_window_installation.dart';
 import '../usecases/calculate_wood_lining.dart';
 import '../usecases/calculator_usecase.dart';
 import '../usecases/canonical_bridge.dart';
+import '../usecases/basement_canonical_adapter.dart';
 import '../usecases/concrete_canonical_adapter.dart';
 import '../usecases/decor_stone_canonical_adapter.dart';
 import '../usecases/facade_panels_v3_adapter.dart';
@@ -96,7 +96,9 @@ class CalculatorEngine {
       'floors_tile': CalculateTile(),
       'floors_tile_grout': CalculateTileGrout(),
       'floors_warm': const WarmFloorUnifiedUseCase(),
-      'foundation_basement': CalculateBasementV2(),
+      'foundation_basement': const CanonicalBridgeUseCase(
+        calculateCanonicalBasement,
+      ),
       'foundation_blind_area': CalculateBlindAreaV2(),
       'foundation_rebar': const CanonicalBridgeUseCase(calculateCanonicalRebar),
       'foundation_strip': const CanonicalBridgeUseCase(

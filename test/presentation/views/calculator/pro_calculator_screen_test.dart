@@ -14,6 +14,7 @@ void main() {
   late CalculatorDefinitionV2 stripFoundationDefinition;
   late CalculatorDefinitionV2 rebarDefinition;
   late CalculatorDefinitionV2 slabFoundationDefinition;
+  late CalculatorDefinitionV2 basementDefinition;
 
   setUpAll(() {
     setupMocks();
@@ -58,6 +59,13 @@ void main() {
       throw StateError('foundation_slab calculator not found in registry');
     }
     slabFoundationDefinition = realSlabFoundationDefinition;
+    final realBasementDefinition = CalculatorRegistry.getById(
+      'foundation_basement',
+    );
+    if (realBasementDefinition == null) {
+      throw StateError('foundation_basement calculator not found in registry');
+    }
+    basementDefinition = realBasementDefinition;
   });
 
   group('ProCalculatorScreen', () {
@@ -346,6 +354,42 @@ void main() {
       expect(
         find.textContaining('Геотекстиль — тип', skipOffstage: false),
         findsNothing,
+      );
+    });
+  });
+
+  group('ProCalculatorScreen canonical basement flow', () {
+    testWidgets('показывает только проектные параметры и явные закупки', (
+      tester,
+    ) async {
+      setTestViewportSize(tester);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: ProCalculatorScreen(definition: basementDefinition),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Монолитные стены по проекту'), findsOneWidget);
+      expect(find.text('Плита пола по проекту'), findsOneWidget);
+      expect(find.text('Раздельные заказы бетона'), findsOneWidget);
+      expect(find.text('Арматура из ведомости'), findsOneWidget);
+      expect(find.text('Наружная длина контура стен'), findsOneWidget);
+      expect(find.text('Длина плиты пола'), findsOneWidget);
+      expect(find.text('Шаг заказа готовой смеси'), findsOneWidget);
+      expect(find.text('Арматура плиты из ведомости'), findsOneWidget);
+      expect(find.text('Площадь одного щита или листа'), findsNothing);
+      expect(find.text('Расход состава на цикл, кг/м²'), findsNothing);
+      expect(find.text('Площадь одной плиты утеплителя'), findsNothing);
+      expect(find.textContaining('Продух', skipOffstage: false), findsNothing);
+      expect(
+        find.textContaining('Дренаж, вентиляция', skipOffstage: false),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('не проектирует подвал', skipOffstage: false),
+        findsWidgets,
       );
     });
   });
