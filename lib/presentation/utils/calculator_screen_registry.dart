@@ -153,6 +153,8 @@ class CalculatorScreenRegistry {
 
     // Экстерьер
     'exterior_facade_panels': (_, _) => const FacadePanelsCalculatorScreen(),
+    'frame_house': (def, inputs) =>
+        ProCalculatorScreen(definition: def, initialInputs: inputs),
     'fence': (_, _) => const FenceCalculatorScreen(),
     'stairs': (_, _) => const StairsCalculatorScreen(),
 

@@ -47,6 +47,7 @@ import '../usecases/basement_canonical_adapter.dart';
 import '../usecases/concrete_canonical_adapter.dart';
 import '../usecases/decor_stone_canonical_adapter.dart';
 import '../usecases/facade_panels_v3_adapter.dart';
+import '../usecases/frame_house_canonical_adapter.dart';
 import '../usecases/rebar_canonical_adapter.dart';
 import '../usecases/strip_foundation_canonical_adapter.dart';
 
@@ -103,6 +104,9 @@ class CalculatorEngine {
       'foundation_rebar': const CanonicalBridgeUseCase(calculateCanonicalRebar),
       'foundation_strip': const CanonicalBridgeUseCase(
         calculateCanonicalStripFoundation,
+      ),
+      'frame_house': const CanonicalBridgeUseCase(
+        calculateCanonicalFrameHouse,
       ),
       'gypsum_board': CalculateGypsumV2(),
       'mixes_plaster': CalculatePlaster(),

@@ -10,6 +10,7 @@ import 'self_leveling_floor_calculator_v2.dart';
 import 'strip_foundation_calculator_v2.dart';
 import 'slab_foundation_calculator_v2.dart';
 import 'basement_calculator_v2.dart';
+import 'frame_house_calculator_v2.dart';
 import 'rebar_calculator_v2.dart';
 import 'unified_roofing_calculator_v2.dart';
 import 'warm_floor_calculator_v2.dart';
@@ -70,6 +71,9 @@ class CalculatorRegistry {
     slabFoundationCalculatorV2,
     basementCalculatorV2,
     rebarCalculatorV2,
+
+    // Каркасный дом — закупка только по проектной ведомости
+    frameHouseCalculatorV2,
 
     // Отделка стен
     paintUniversalCalculatorV2,

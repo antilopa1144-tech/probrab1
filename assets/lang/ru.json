@@ -1064,6 +1064,10 @@
       "title": "Монолитный подвал",
       "description": "Раздельные заказы бетона и материалы по проектной схеме"
     },
+    "frame_house": {
+      "title": "Каркасный дом по проекту",
+      "description": "Доски, листы, упаковки, рулоны и крепёж по проектной ведомости"
+    },
     "foundation_blind_area": {
       "title": "Отмостка",
       "description": "Расчёт материалов: Отмостка"
@@ -3726,6 +3730,15 @@
         }
       }
     },
+    "frame_house": {
+      "before": {
+        "project": "Калькулятор не проектирует несущую схему и состав стены: перенесите размеры, количества и фасовки из рабочей документации и выбранных товаров",
+        "area": "До готовой раскладки безопаснее использовать валовую площадь стен без вычета проёмов"
+      },
+      "after": {
+        "split_lumber": "Разные сечения, сорта и покупные длины пиломатериала считайте отдельными запусками"
+      }
+    },
     "roofing": {
       "type": {
         "metal_tile": "Металлочерепица",
@@ -3933,6 +3946,63 @@
     "mode.by_room": "По размерам комнаты",
     "mode.sliders": "Ползунки",
     "mode.manual": "Ввод вручную",
+    "frameHouse.wallLength": "Общая длина рассчитываемых стен",
+    "frameHouse.wallLength.hint": "Сумма длин стен одного принятого контура; несущую схему калькулятор не определяет",
+    "frameHouse.wallHeight": "Проектная высота стен",
+    "frameHouse.openingsArea": "Суммарная площадь проёмов",
+    "frameHouse.openingsArea.hint": "Усиления, перемычки, стойки и отходы вокруг проёмов должны быть учтены проектом или раскладкой",
+    "frameHouse.surfaceAreaBasis": "Площадь для материалов",
+    "frameHouse.surfaceAreaBasis.hint": "Чистую площадь выбирайте только если раскладка подтверждает использование обрезков",
+    "frameHouse.surfaceAreaBasis.gross": "Валовая — без вычета проёмов",
+    "frameHouse.surfaceAreaBasis.net": "Чистая — после вычета проёмов",
+    "frameHouse.framingProjectLengthM": "Длина одной позиции пиломатериала из ведомости",
+    "frameHouse.framingProjectLengthM.hint": "Сложите длины элементов только одного сечения и сорта; 0 — не добавлять позицию",
+    "frameHouse.framingReservePercent": "Запас этой позиции на раскрой",
+    "frameHouse.framingBoardLengthM": "Длина покупной доски",
+    "frameHouse.framingBoardLengthM.hint": "Округление по общему метражу не заменяет карту раскроя цельных элементов",
+    "frameHouse.outerSheathingEnabled": "Наружная листовая обшивка",
+    "frameHouse.outerSheathingEnabled.hint": "Тип, класс, толщину, ориентацию и схему стыков определяет проект",
+    "frameHouse.outerSheetAreaM2": "Площадь одного наружного листа",
+    "frameHouse.outerSheetAreaM2.hint": "3,125 м² — стартовый пример; введите фактический формат выбранного листа",
+    "frameHouse.outerSheathingLayers": "Слоёв наружной обшивки",
+    "frameHouse.outerSheathingReservePercent": "Запас наружной обшивки",
+    "frameHouse.innerSheathingEnabled": "Внутренняя листовая обшивка",
+    "frameHouse.innerSheetAreaM2": "Площадь одного внутреннего листа",
+    "frameHouse.innerSheetAreaM2.hint": "Введите фактическую площадь листа принятого материала",
+    "frameHouse.innerSheathingLayers": "Слоёв внутренней обшивки",
+    "frameHouse.innerSheathingReservePercent": "Запас внутренней обшивки",
+    "frameHouse.insulationEnabled": "Утеплитель",
+    "frameHouse.insulationPackageAreaM2": "Площадь утеплителя в одной упаковке",
+    "frameHouse.insulationPackageAreaM2.hint": "Возьмите с этикетки для выбранной толщины; 0 блокирует расчёт упаковок",
+    "frameHouse.insulationLayers": "Слоёв утеплителя по проекту",
+    "frameHouse.insulationReservePercent": "Запас утеплителя",
+    "frameHouse.vaporBarrierEnabled": "Пароизоляционный слой",
+    "frameHouse.vaporRollAreaM2": "Полезная площадь рулона пароизоляции",
+    "frameHouse.vaporRollAreaM2.hint": "Введите фактическую полезную площадь с учётом нахлёстов по инструкции",
+    "frameHouse.vaporLayers": "Слоёв пароизоляции по проекту",
+    "frameHouse.vaporReservePercent": "Запас пароизоляции",
+    "frameHouse.windBarrierEnabled": "Наружная защитная мембрана",
+    "frameHouse.windRollAreaM2": "Полезная площадь рулона наружной мембраны",
+    "frameHouse.windRollAreaM2.hint": "Введите фактическую полезную площадь выбранного рулона",
+    "frameHouse.windLayers": "Слоёв наружной мембраны по проекту",
+    "frameHouse.windReservePercent": "Запас наружной мембраны",
+    "frameHouse.tapeProjectM": "Длина стыков под системную ленту",
+    "frameHouse.tapeProjectM.hint": "Перенесите суммарную длину стыков и примыканий из раскладки мембран",
+    "frameHouse.tapeReservePercent": "Запас ленты",
+    "frameHouse.tapeRollLengthM": "Длина ленты в одном рулоне",
+    "frameHouse.tapeRollLengthM.hint": "Введите фактическую длину с этикетки",
+    "frameHouse.sheathingFastenersProjectPcs": "Крепёж обшивки по проекту",
+    "frameHouse.sheathingFastenersProjectPcs.hint": "Тип, длину, шаг и краевые расстояния берите из проектной схемы",
+    "frameHouse.sheathingFastenersReservePercent": "Запас крепежа обшивки",
+    "frameHouse.sheathingFastenersPackagePcs": "Крепежа обшивки в упаковке",
+    "frameHouse.sheathingFastenersPackagePcs.hint": "Введите количество из фактической упаковки",
+    "frameHouse.framingFastenersProjectPcs": "Крепёж соединений каркаса по проекту",
+    "frameHouse.framingFastenersProjectPcs.hint": "Гвозди, анкеры, пластины и другие узлы считайте отдельными позициями",
+    "frameHouse.framingFastenersReservePercent": "Запас крепежа каркаса",
+    "frameHouse.framingFastenersPackagePcs": "Крепежа каркаса в упаковке",
+    "frameHouse.framingFastenersPackagePcs.hint": "Введите количество из фактической упаковки",
+    "frameHouse.include.none": "Не включать",
+    "frameHouse.include.project": "Включить по проектной площади",
     "length": "Длина",
     "terrace.length": "Длина террасы",
     "terrace.width": "Ширина террасы",
@@ -4699,7 +4769,16 @@
     "basement_rebar": "Арматура из ведомости",
     "basement_formwork": "Опалубка стен",
     "basement_waterproofing": "Гидроизоляция по проекту",
-    "basement_insulation": "Утепление по проекту"
+    "basement_insulation": "Утепление по проекту",
+    "frame_house_area": "Площадь стен",
+    "frame_house_lumber": "Пиломатериал из проекта",
+    "frame_house_outer": "Наружная обшивка",
+    "frame_house_inner": "Внутренняя обшивка",
+    "frame_house_insulation": "Утеплитель",
+    "frame_house_vapor": "Пароизоляция",
+    "frame_house_wind": "Наружная мембрана",
+    "frame_house_tape": "Лента стыков",
+    "frame_house_fasteners": "Крепёж по проекту"
   },
   "subcategory": {
     "floors": "Полы",
