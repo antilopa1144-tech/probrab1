@@ -162,6 +162,8 @@ class CalculatorScreenRegistry {
     'foundation_blind_area': (_, _) => const BlindAreaCalculatorScreen(),
     'foundation_strip': (def, inputs) =>
         ProCalculatorScreen(definition: def, initialInputs: inputs),
+    'foundation_rebar': (def, inputs) =>
+        ProCalculatorScreen(definition: def, initialInputs: inputs),
 
     // Бетон
     'concrete_universal': (def, inputs) => ConcreteUniversalCalculatorScreen(

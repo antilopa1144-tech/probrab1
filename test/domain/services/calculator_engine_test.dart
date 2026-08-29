@@ -130,6 +130,20 @@ void main() {
       expect(result.values.keys.join(' '), isNot(contains('fbsBlocksCount')));
     });
 
+    test('rebar route uses the canonical v2 project purchase contract', () {
+      final definition = CalculatorRegistry.getById('foundation_rebar');
+      expect(definition, isNotNull);
+
+      final result = CalculatorEngine.calculate('foundation_rebar', const {});
+
+      expect(result.primaryTotals?['mainExactLengthM'], 1617.6);
+      expect(result.primaryTotals?['mainRods'], 153);
+      expect(result.materials?.first.packageInfo?['count'], 153);
+      expect(result.materials?.first.packageInfo?['size'], 11.7);
+      expect(result.norms.join(' '), contains('не назначает диаметр'));
+      expect(result.values.keys.join(' '), isNot(contains('fixators')));
+    });
+
     test('calculate smoke: attic with default-like inputs', () {
       final result = CalculatorEngine.calculate('attic', {
         'floorLength': 8.0,

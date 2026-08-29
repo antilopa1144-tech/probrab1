@@ -12,6 +12,7 @@ void main() {
   late CalculatorDefinitionV2 electricDefinition;
   late CalculatorDefinitionV2 concreteDefinition;
   late CalculatorDefinitionV2 stripFoundationDefinition;
+  late CalculatorDefinitionV2 rebarDefinition;
 
   setUpAll(() {
     setupMocks();
@@ -44,6 +45,11 @@ void main() {
       throw StateError('foundation_strip calculator not found in registry');
     }
     stripFoundationDefinition = realStripFoundationDefinition;
+    final realRebarDefinition = CalculatorRegistry.getById('foundation_rebar');
+    if (realRebarDefinition == null) {
+      throw StateError('foundation_rebar calculator not found in registry');
+    }
+    rebarDefinition = realRebarDefinition;
   });
 
   group('ProCalculatorScreen', () {
@@ -254,6 +260,46 @@ void main() {
       expect(find.textContaining('прутков', skipOffstage: false), findsWidgets);
       expect(find.textContaining('ФБС', skipOffstage: false), findsNothing);
       expect(find.textContaining('Песок', skipOffstage: false), findsNothing);
+    });
+  });
+
+  group('ProCalculatorScreen canonical rebar flow', () {
+    testWidgets('показывает проектную сетку и переключает её на каркас', (
+      tester,
+    ) async {
+      setTestViewportSize(tester);
+
+      await tester.pumpWidget(
+        createTestApp(child: ProCalculatorScreen(definition: rebarDefinition)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Схема из проекта'), findsWidgets);
+      expect(find.text('Сетка из проекта'), findsWidgets);
+      expect(find.text('Закупка арматуры'), findsWidgets);
+      expect(find.text('Вязальная проволока'), findsWidgets);
+      expect(find.text('Длина сетки'), findsOneWidget);
+      expect(
+        find.textContaining('153 прутка', skipOffstage: false),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Фиксатор', skipOffstage: false),
+        findsNothing,
+      );
+
+      final frameMode = find.text(
+        'Продольный каркас с хомутами',
+        skipOffstage: false,
+      );
+      await tester.ensureVisible(frameMode);
+      await tester.tap(frameMode);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Каркас из проекта'), findsWidgets);
+      expect(find.text('Суммарная длина каркаса'), findsOneWidget);
+      expect(find.text('Длина сетки'), findsNothing);
+      expect(find.textContaining('Хомуты', skipOffstage: false), findsWidgets);
     });
   });
 }

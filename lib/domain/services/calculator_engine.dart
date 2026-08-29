@@ -47,6 +47,7 @@ import '../usecases/canonical_bridge.dart';
 import '../usecases/concrete_canonical_adapter.dart';
 import '../usecases/decor_stone_canonical_adapter.dart';
 import '../usecases/facade_panels_v3_adapter.dart';
+import '../usecases/rebar_canonical_adapter.dart';
 import '../usecases/strip_foundation_canonical_adapter.dart';
 
 /// Единая точка расчёта для кастомных экранов и V2-каталога.
@@ -97,6 +98,7 @@ class CalculatorEngine {
       'floors_warm': const WarmFloorUnifiedUseCase(),
       'foundation_basement': CalculateBasementV2(),
       'foundation_blind_area': CalculateBlindAreaV2(),
+      'foundation_rebar': const CanonicalBridgeUseCase(calculateCanonicalRebar),
       'foundation_strip': const CanonicalBridgeUseCase(
         calculateCanonicalStripFoundation,
       ),
