@@ -1074,7 +1074,7 @@
     },
     "foundation_strip": {
       "title": "Ленточный фундамент",
-      "description": "Расчёт материалов: Ленточный фундамент"
+      "description": "Бетон, арматура в целых прутках и опалубка по размерам из проекта"
     },
     "concrete_universal": {
       "title": "Калькулятор бетона",
@@ -3702,14 +3702,14 @@
       },
       "strip": {
         "before": {
-          "cushion": "Песчано-гравийная подушка 15–20 см",
-          "formwork": "Опалубка должна быть ровной и жёсткой",
-          "preparation": "Подготовьте траншею и проверьте уровни"
+          "cushion": "Состав и толщину подготовки основания берите из проекта — калькулятор их не назначает",
+          "formwork": "Высоту щитов, запас доски и схему раскрепления задайте по фактической опалубке",
+          "preparation": "Размеры ленты и параметры каркаса должны быть назначены проектом по грунтам и нагрузкам"
         },
         "after": {
-          "curing": "Бетон набирает прочность 28 дней",
-          "large_volume": "Большие объёмы заливайте поэтапно",
-          "reinforcement": "Используйте арматурный каркас по проекту"
+          "curing": "Уход за бетоном и распалубливание выполняйте по ППР и фактической прочности",
+          "large_volume": "Для большого заказа заранее согласуйте подачу, подъезд и непрерывность бетонирования",
+          "reinforcement": "Итог в прутках — закупочная оценка; стыки, анкеровку и локальные усиления проверяют по проекту"
         }
       }
     },
@@ -4043,6 +4043,39 @@
     "concreteThickness": "Толщина слоя",
     "concreteThickness.hint": "Проектная толщина бетона в миллиметрах",
     "concreteReserve.hint": "Явный запас на геометрию опалубки и схему подачи",
+    "stripFoundation.perimeter": "Общая длина всех лент",
+    "stripFoundation.perimeter.hint": "Наружные и внутренние ленты по проекту",
+    "stripFoundation.width": "Ширина ленты",
+    "stripFoundation.width.hint": "Размер из конструктивного проекта",
+    "stripFoundation.depth": "Глубина ниже земли",
+    "stripFoundation.depth.hint": "Глубина заложения из проекта основания",
+    "stripFoundation.aboveGround": "Высота цоколя",
+    "stripFoundation.formworkHeight": "Высота щитов опалубки",
+    "stripFoundation.formworkHeight.hint": "Укажите фактическую высоту щитов: только цоколь или вся лента в траншее",
+    "stripFoundation.reserve": "Запас бетона",
+    "stripFoundation.reserve.hint": "Явный запас на отклонения геометрии; применяется один раз",
+    "stripFoundation.deliveryAllowanceM3": "Остаток в линии подачи",
+    "stripFoundation.deliveryAllowanceM3.hint": "Введите только значение, подтверждённое поставщиком или оператором насоса",
+    "stripFoundation.reinforcement": "Продольная арматура",
+    "stripFoundation.reinforcement.hint": "Калькулятор не подбирает каркас — выберите схему из проекта",
+    "stripFoundation.reinforcement.2x12": "2 нитки Ø12 мм",
+    "stripFoundation.reinforcement.4x12": "4 нитки Ø12 мм",
+    "stripFoundation.reinforcement.4x14": "4 нитки Ø14 мм",
+    "stripFoundation.reinforcement.6x12": "6 ниток Ø12 мм",
+    "stripFoundation.clampStepMm": "Шаг хомутов",
+    "stripFoundation.clampStepMm.hint": "Перенесите из проекта каркаса",
+    "stripFoundation.concreteCoverMm": "Защитный слой бетона",
+    "stripFoundation.concreteCoverMm.hint": "До наружной грани хомута; значение задаёт проект",
+    "stripFoundation.clampHookAllowanceMm": "Припуск на замыкание хомута",
+    "stripFoundation.clampHookAllowanceMm.hint": "Суммарный припуск на крюки или замыкание по детали проекта",
+    "stripFoundation.rebarReserve": "Запас арматуры на раскрой",
+    "stripFoundation.rebarReserve.hint": "Закупочный запас не заменяет расчёт нахлёстов и анкеровки",
+    "stripFoundation.rodLengthM": "Длина покупного прутка",
+    "stripFoundation.rodLengthM.hint": "Выберите фактическую длину у поставщика",
+    "stripFoundation.rodLengthM.6": "6 м",
+    "stripFoundation.rodLengthM.117": "11,7 м",
+    "stripFoundation.rodLengthM.12": "12 м",
+    "stripFoundation.formworkReserve": "Запас доски на раскрой",
     "readyMixOrderStepM3": "Шаг заказа готовой смеси",
     "readyMixOrderStepM3.hint": "Уточните минимальную партию и шаг у поставщика; при самостоятельном замесе поле не влияет на компоненты",
     "readyMixOrderStepM3.01": "0,1 м³",
@@ -4480,7 +4513,11 @@
     "advanced": "Дополнительно",
     "parameters": "Параметры",
     "tile": "Плитка",
-    "conditions": "Условия"
+    "conditions": "Условия",
+    "foundation_geometry": "Геометрия из проекта",
+    "concrete_order": "Заказ бетона",
+    "reinforcement": "Армирование из проекта",
+    "formwork": "Опалубка"
   },
   "subcategory": {
     "floors": "Полы",

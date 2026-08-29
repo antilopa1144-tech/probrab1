@@ -7,15 +7,18 @@ import './strip_foundation_canonical_adapter.dart';
 
 /// Калькулятор ленточного фундамента.
 ///
-/// Поддерживает legacy perimeter/area path и screen-level contract:
+/// Совместимый адаптер для старых perimeter/area и screen-level входов.
+/// Публичный каталог использует canonical v3 напрямую; здесь сохранены только
+/// безопасные выходные ключи для старых providers/истории.
+///
+/// Поддерживаемые legacy-входы:
 /// - houseLength / houseWidth
-/// - foundationType: 0=monolithic, 1=prefab, 2=shallow, 3=deep
-/// - needWaterproof / needInsulation
+/// - foundationType сохраняется в результате, но не меняет расчёт материалов
 /// - hasInternalWalls / internalWallsLength
 ///
 /// Legacy поля сохранены:
 /// - area / perimeter / concreteVolume / rebarWeight / formworkArea
-/// - waterproofingArea / sandVolume / gravelVolume / cementBags
+/// Неподтверждённые ФБС, подушка, гидроизоляция и утепление не рассчитываются.
 class CalculateStripFoundation extends BaseCalculator {
   @override
   String? validateInputs(Map<String, double> inputs) {
@@ -108,53 +111,31 @@ class CalculateStripFoundation extends BaseCalculator {
       minValue: 0,
       maxValue: 3,
     );
-    final needWaterproof =
-        getIntInput(inputs, 'needWaterproof', defaultValue: 1) != 0;
-    final needInsulation =
-        getIntInput(inputs, 'needInsulation', defaultValue: 0) != 0;
-
     final stripVolume = perimeter * width * height;
-
-    double concreteVolume = stripVolume * 1.05;
-    double rebarWeight = 0.0;
-    double formworkArea = 0.0;
-    int fbsBlocksCount = 0;
-    var longitudinalBars = 0;
-    var longitudinalLength = 0.0;
-
-    if (foundationType == 1) {
-      const fbsVolume = 2.4 * 0.6 * 0.58;
-      fbsBlocksCount = (stripVolume / fbsVolume).ceil();
-      concreteVolume = fbsBlocksCount * 0.02;
-    } else {
-      final canonical = calculateCanonicalStripFoundation({
-        'perimeter': perimeter,
-        'width': width * 1000,
-        'depth': height * 1000,
-        'aboveGround': 0,
-        'formworkHeight': height * 1000,
-        'reinforcement': 1,
-        'deliveryMethod': 0,
-        'accuracyMode': inputs['accuracyMode'] ?? 1,
-      });
-      concreteVolume = canonical.totals['recPurchaseM3']!;
-      rebarWeight =
-          canonical.totals['longWeightKg']! +
-          canonical.totals['clampWeightKg']!;
-      formworkArea = canonical.totals['formwork']!;
-      longitudinalBars = canonical.totals['threads']!.round();
-      longitudinalLength = canonical.totals['longLen']!;
-    }
-
-    final waterproofingArea = needWaterproof
-        ? perimeter * (width + height * 2) * 1.1
-        : 0.0;
-    final insulationArea = needInsulation ? outerPerimeter * height * 1.1 : 0.0;
-
-    final cushionArea = perimeter * (width + 0.2);
-    final sandVolume = cushionArea * 0.15;
-    final gravelVolume = cushionArea * 0.10;
-    final cementBags = (stripVolume * 6.6).ceil();
+    final canonical = calculateCanonicalStripFoundation({
+      'perimeter': perimeter,
+      'width': width * 1000,
+      'depth': height * 1000,
+      'aboveGround': 0,
+      'formworkHeight': height * 1000,
+      'reserve': inputs['reserve'] ?? 5,
+      'readyMixOrderStepM3': inputs['readyMixOrderStepM3'] ?? 0.1,
+      'deliveryAllowanceM3': inputs['deliveryAllowanceM3'] ?? 0,
+      'reinforcement': inputs['reinforcement'] ?? 1,
+      'clampStepMm': inputs['clampStepMm'] ?? 400,
+      'concreteCoverMm': inputs['concreteCoverMm'] ?? 50,
+      'clampHookAllowanceMm': inputs['clampHookAllowanceMm'] ?? 300,
+      'rebarReserve': inputs['rebarReserve'] ?? 12,
+      'rodLengthM': inputs['rodLengthM'] ?? 11.7,
+      'formworkReserve': inputs['formworkReserve'] ?? 10,
+    });
+    final concreteVolume = canonical.totals['recPurchaseM3']!;
+    final rebarWeight =
+        canonical.totals['longPurchaseWeightKg']! +
+        canonical.totals['clampPurchaseWeightKg']!;
+    final formworkArea = canonical.totals['formworkWithReserve']!;
+    final longitudinalBars = canonical.totals['threads']!.round();
+    final longitudinalLength = canonical.totals['longPurchaseLen']!;
     final concretePrice = findPrice(priceList, [
       'concrete_m300',
       'concrete_m250',
@@ -166,35 +147,11 @@ class CalculateStripFoundation extends BaseCalculator {
       'reinforcement',
     ]);
     final formworkPrice = findPrice(priceList, ['formwork', 'plywood']);
-    final waterproofingPrice = findPrice(priceList, [
-      'waterproofing',
-      'film_pe',
-      'bitumen',
-    ]);
-    final sandPrice = findPrice(priceList, ['sand', 'sand_construction']);
-    final gravelPrice = findPrice(priceList, ['gravel', 'crushed_stone']);
-    final fbsPrice = findPrice(priceList, [
-      'fbs',
-      'fbs_24_6_6',
-      'foundation_block',
-    ]);
-
-    final costs = foundationType == 1
-        ? [
-            calculateCost(fbsBlocksCount.toDouble(), fbsPrice?.price),
-            calculateCost(concreteVolume, concretePrice?.price),
-            calculateCost(sandVolume, sandPrice?.price),
-            calculateCost(gravelVolume, gravelPrice?.price),
-            calculateCost(waterproofingArea, waterproofingPrice?.price),
-          ]
-        : [
-            calculateCost(concreteVolume, concretePrice?.price),
-            calculateCost(rebarWeight, rebarPrice?.price),
-            calculateCost(formworkArea, formworkPrice?.price),
-            calculateCost(waterproofingArea, waterproofingPrice?.price),
-            calculateCost(sandVolume, sandPrice?.price),
-            calculateCost(gravelVolume, gravelPrice?.price),
-          ];
+    final costs = [
+      calculateCost(concreteVolume, concretePrice?.price),
+      calculateCost(rebarWeight, rebarPrice?.price),
+      calculateCost(formworkArea, formworkPrice?.price),
+    ];
 
     return createResult(
       values: {
@@ -214,12 +171,12 @@ class CalculateStripFoundation extends BaseCalculator {
         'longitudinalBars': longitudinalBars.toDouble(),
         'longitudinalLength': longitudinalLength,
         'formworkArea': formworkArea,
-        'waterproofingArea': waterproofingArea,
-        'insulationArea': insulationArea,
-        'sandVolume': sandVolume,
-        'gravelVolume': gravelVolume,
-        'cementBags': cementBags.toDouble(),
-        'fbsBlocksCount': fbsBlocksCount.toDouble(),
+        'waterproofingArea': 0,
+        'insulationArea': 0,
+        'sandVolume': 0,
+        'gravelVolume': 0,
+        'cementBags': 0,
+        'fbsBlocksCount': 0,
       },
       totalPrice: sumCosts(costs),
     );

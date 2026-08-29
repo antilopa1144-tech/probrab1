@@ -5,10 +5,6 @@ import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
 
-const Map<String, Map<String, double>> _factorTable = {
-  'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
-};
-
 Map<String, dynamic> _pickPackage(
   double exactNeed,
   double stepSize,
@@ -25,16 +21,20 @@ Map<String, dynamic> _pickPackage(
   };
 }
 
+double _allowedValue(SpecReader spec, String rule, double requested) {
+  final allowed = spec
+      .packagingRule<List>(rule)
+      .whereType<num>()
+      .map((value) => value.toDouble())
+      .toList(growable: false);
+  return allowed.contains(requested) ? requested : allowed.first;
+}
+
 CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
   Map<String, double> inputs, {
   SpecReader? specOverride,
 }) {
   final spec = specOverride ?? const SpecReader(stripFoundationSpecData);
-  final accuracyMode = parseAccuracyMode(inputs);
-  final accuracyMultiplier = accuracyPrimaryMultiplier(
-    'concrete',
-    accuracyMode,
-  );
 
   final perimeter = (inputs['perimeter'] ?? defaultFor(spec, 'perimeter', 40))
       .clamp(10, 200)
@@ -49,17 +49,57 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
       (inputs['aboveGround'] ?? defaultFor(spec, 'aboveGround', 300))
           .clamp(0, 600)
           .toDouble();
+  final formworkHeight =
+      (inputs['formworkHeight'] ?? defaultFor(spec, 'formworkHeight', 300))
+          .clamp(0, 2000)
+          .toDouble();
+  final reserve = (inputs['reserve'] ?? defaultFor(spec, 'reserve', 5))
+      .clamp(0, 20)
+      .toDouble();
+  final readyMixOrderStep = _allowedValue(
+    spec,
+    'allowed_ready_mix_order_steps_m3',
+    inputs['readyMixOrderStepM3'] ??
+        defaultFor(spec, 'readyMixOrderStepM3', 0.1),
+  );
+  final deliveryAllowance =
+      (inputs['deliveryAllowanceM3'] ??
+              defaultFor(spec, 'deliveryAllowanceM3', 0))
+          .clamp(0, 5)
+          .toDouble();
   final reinforcement =
       (inputs['reinforcement'] ?? defaultFor(spec, 'reinforcement', 1))
           .round()
           .clamp(0, 3);
-  final deliveryMethod =
-      (inputs['deliveryMethod'] ?? defaultFor(spec, 'deliveryMethod', 0))
-          .round()
-          .clamp(0, 2);
-  final formworkHeightMm = inputs.containsKey('formworkHeight')
-      ? inputs['formworkHeight']!.clamp(0, 2000).toDouble()
-      : aboveGround;
+  final clampStepM =
+      (inputs['clampStepMm'] ?? defaultFor(spec, 'clampStepMm', 400))
+          .clamp(100, 1000)
+          .toDouble() /
+      1000;
+  final concreteCoverM =
+      (inputs['concreteCoverMm'] ?? defaultFor(spec, 'concreteCoverMm', 50))
+          .clamp(20, 100)
+          .toDouble() /
+      1000;
+  final clampHookAllowanceM =
+      (inputs['clampHookAllowanceMm'] ??
+              defaultFor(spec, 'clampHookAllowanceMm', 300))
+          .clamp(0, 1000)
+          .toDouble() /
+      1000;
+  final rebarReserve =
+      (inputs['rebarReserve'] ?? defaultFor(spec, 'rebarReserve', 12))
+          .clamp(0, 30)
+          .toDouble();
+  final rodLength = _allowedValue(
+    spec,
+    'allowed_rod_lengths_m',
+    inputs['rodLengthM'] ?? defaultFor(spec, 'rodLengthM', 11.7),
+  );
+  final formworkReserve =
+      (inputs['formworkReserve'] ?? defaultFor(spec, 'formworkReserve', 10))
+          .clamp(0, 30)
+          .toDouble();
 
   final rebarDiameter =
       (spec.materialRule<Map>('rebar_diameters')['$reinforcement'] as num?)
@@ -70,43 +110,52 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
           ?.toDouble() ??
       4;
   final weightPerM =
-      (spec.materialRule<Map>('weight_per_m')['$rebarDiameter'] as num?)
+      (spec.materialRule<Map>('weight_per_m')[rebarDiameter.toInt().toString()]
+              as num?)
           ?.toDouble() ??
       0.888;
 
   final totalHeightM = (depth + aboveGround) / 1000;
   final volume = roundValue(perimeter * (width / 1000) * totalHeightM, 6);
-  final deliveryLossM3 =
-      (spec.materialRule<Map>('delivery_loss_m3')['$deliveryMethod'] as num?)
-          ?.toDouble() ??
-      0;
-  final baseOrderNeed = roundValue(volume + deliveryLossM3, 6);
-  final accuracyAdjustedVolume = roundValue(volume * accuracyMultiplier, 6);
 
-  final longitudinalLength = roundValue(
-    perimeter *
-        threads *
-        spec.materialRule<num>('longitudinal_reserve_factor').toDouble(),
+  final longitudinalExactLength = roundValue(perimeter * threads, 6);
+  final longitudinalPlanningLength = roundValue(
+    longitudinalExactLength * (1 + rebarReserve / 100),
     6,
   );
-  final longitudinalWeight = roundValue(longitudinalLength * weightPerM, 6);
-
-  final clampStep = spec.materialRule<num>('clamp_step_m').toDouble();
-  final clampCount = (perimeter / clampStep).ceil();
-  final cover = spec.materialRule<num>('concrete_cover_m').toDouble();
-  final clampWidth = math.max(0, width / 1000 - 2 * cover);
-  final clampHeight = math.max(0, totalHeightM - 2 * cover);
-  final clampPerimeter =
-      2 * (clampWidth + clampHeight) +
-      spec.materialRule<num>('clamp_hooks_m').toDouble();
-  final clampLength = roundValue(
-    clampCount *
-        clampPerimeter *
-        spec.materialRule<num>('clamp_length_reserve').toDouble(),
+  final longitudinalBars = (longitudinalPlanningLength / rodLength).ceil();
+  final longitudinalPurchaseLength = roundValue(
+    longitudinalBars * rodLength,
     6,
   );
+  final longitudinalWeight = roundValue(
+    longitudinalExactLength * weightPerM,
+    6,
+  );
+  final longitudinalPurchaseWeight = roundValue(
+    longitudinalPurchaseLength * weightPerM,
+    6,
+  );
+
+  final clampCount = (perimeter / clampStepM).ceil();
+  final clampWidth = math.max(0, width / 1000 - 2 * concreteCoverM);
+  final clampHeight = math.max(0, totalHeightM - 2 * concreteCoverM);
+  final clampPerimeter = 2 * (clampWidth + clampHeight) + clampHookAllowanceM;
+  final clampExactLength = roundValue(clampCount * clampPerimeter, 6);
+  final clampPlanningLength = roundValue(
+    clampExactLength * (1 + rebarReserve / 100),
+    6,
+  );
+  final clampBars = (clampPlanningLength / rodLength).ceil();
+  final clampPurchaseLength = roundValue(clampBars * rodLength, 6);
   final clampWeight = roundValue(
-    clampLength * spec.materialRule<num>('clamp_weight_kg_per_m').toDouble(),
+    clampExactLength *
+        spec.materialRule<num>('clamp_weight_kg_per_m').toDouble(),
+    6,
+  );
+  final clampPurchaseWeight = roundValue(
+    clampPurchaseLength *
+        spec.materialRule<num>('clamp_weight_kg_per_m').toDouble(),
     6,
   );
 
@@ -120,30 +169,41 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
     6,
   );
 
-  final formworkArea = roundValue(2 * perimeter * (formworkHeightMm / 1000), 6);
+  final formworkArea = roundValue(2 * perimeter * (formworkHeight / 1000), 6);
+  final formworkWithReserve = roundValue(
+    formworkArea * (1 + formworkReserve / 100),
+    6,
+  );
   final boardArea =
       spec.materialRule<num>('formwork_board_width_m').toDouble() *
       spec.materialRule<num>('formwork_board_length_m').toDouble();
+  final boardsExact = formworkArea > 0
+      ? roundValue(formworkArea / boardArea, 6)
+      : 0.0;
   final boards = formworkArea > 0
-      ? (formworkArea *
-                spec.materialRule<num>('formwork_board_reserve').toDouble() /
-                boardArea)
-            .ceil()
+      ? (formworkWithReserve / boardArea).ceil()
       : 0;
 
+  final scenarioPolicy =
+      spec.raw['scenario_policy'] as Map<String, dynamic>? ?? const {};
+  final recommendedMaxReserve =
+      (scenarioPolicy['recommended_max_reserve_percent'] as num?)?.toDouble() ??
+      10;
   final scenarios = <String, CanonicalScenarioResult>{};
   for (final scenarioName in scenarioNames) {
-    final fieldMultiplier = scenarioMultiplier(
-      spec.enabledFactors,
-      _factorTable,
-      scenarioName,
+    final scenarioReserve = scenarioName == 'MIN'
+        ? 0.0
+        : scenarioName == 'MAX'
+        ? math.max(reserve, recommendedMaxReserve)
+        : reserve;
+    final reserveMultiplier = 1 + scenarioReserve / 100;
+    final exactNeed = roundValue(
+      volume * reserveMultiplier + deliveryAllowance,
+      6,
     );
-    final scenarioNeed =
-        accuracyAdjustedVolume * fieldMultiplier + deliveryLossM3;
-    final exactNeed = roundValue(math.max(baseOrderNeed, scenarioNeed), 6);
     final package = _pickPackage(
       exactNeed,
-      spec.packagingRule<num>('volume_step_m3').toDouble(),
+      readyMixOrderStep,
       spec.packagingRule<String>('unit'),
     );
     scenarios[scenarioName] = CanonicalScenarioResult(
@@ -153,14 +213,17 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
       assumptions: [
         'formula_version:${spec.formulaVersion}',
         'reinforcement:$reinforcement',
-        'deliveryMethod:$deliveryMethod',
-        'delivery_loss_m3:$deliveryLossM3',
-        'longitudinal_reserve_factor:${spec.materialRule<num>('longitudinal_reserve_factor')}',
+        'reserve_percent:$scenarioReserve',
+        'delivery_allowance_m3:$deliveryAllowance',
+        'rebar_reserve_percent:$rebarReserve',
+        'rod_length_m:$rodLength',
+        'scenario_policy:explicit_foundation_inputs',
         'packaging:${package['label']}',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
-        'field_multiplier': roundValue(fieldMultiplier, 6),
+        'reserve_percent': roundValue(scenarioReserve, 3),
+        'field_multiplier': roundValue(reserveMultiplier, 6),
+        'ready_mix_order_step_m3': readyMixOrderStep,
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: package['label'] as String,
@@ -183,18 +246,28 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
     ),
     CanonicalMaterialResult(
       name: 'Рифлёная продольная арматура ∅${rebarDiameter.toInt()} мм',
-      quantity: roundValue(longitudinalWeight, 3),
-      unit: 'кг',
-      withReserve: longitudinalWeight.ceilToDouble(),
-      purchaseQty: longitudinalWeight.ceilToDouble(),
+      quantity: roundValue(longitudinalExactLength, 3),
+      unit: 'пог. м',
+      withReserve: roundValue(longitudinalPlanningLength, 3),
+      purchaseQty: roundValue(longitudinalPurchaseLength, 3),
+      packageInfo: {
+        'count': longitudinalBars,
+        'size': rodLength,
+        'packageUnit': 'прутков',
+      },
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
       name: 'Хомуты ∅${spec.materialRule<num>('clamp_diameter_mm').toInt()} мм',
-      quantity: roundValue(clampWeight, 3),
-      unit: 'кг',
-      withReserve: clampWeight.ceilToDouble(),
-      purchaseQty: clampWeight.ceilToDouble(),
+      quantity: roundValue(clampExactLength, 3),
+      unit: 'пог. м',
+      withReserve: roundValue(clampPlanningLength, 3),
+      purchaseQty: roundValue(clampPurchaseLength, 3),
+      packageInfo: {
+        'count': clampBars,
+        'size': rodLength,
+        'packageUnit': 'прутков',
+      },
       category: 'Армирование',
     ),
     CanonicalMaterialResult(
@@ -210,16 +283,20 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
         name: 'Опалубка — щиты из обрезной доски',
         quantity: roundValue(formworkArea, 3),
         unit: 'м²',
-        withReserve: roundValue(formworkArea, 3),
-        purchaseQty: formworkArea.ceilToDouble(),
+        withReserve: roundValue(formworkWithReserve, 3),
+        purchaseQty: roundValue(formworkWithReserve, 3),
         category: 'Опалубка',
       ),
     if (formworkArea > 0)
       CanonicalMaterialResult(
         name: 'Доска обрезная не менее 25×150×6000 мм',
-        quantity: boards.toDouble(),
+        quantity: roundValue(boardsExact, 3),
         unit: 'шт',
-        withReserve: boards.toDouble(),
+        withReserve: roundValue(
+          boardsExact *
+              (formworkArea > 0 ? formworkWithReserve / formworkArea : 1),
+          3,
+        ),
         purchaseQty: boards.toDouble(),
         category: 'Опалубка',
       ),
@@ -243,25 +320,41 @@ CanonicalCalculatorContractResult calculateCanonicalStripFoundation(
       'width': roundValue(width, 3),
       'depth': roundValue(depth, 3),
       'aboveGround': roundValue(aboveGround, 3),
+      'reserve': roundValue(reserve, 3),
+      'readyMixOrderStepM3': readyMixOrderStep,
       'reinforcement': reinforcement.toDouble(),
-      'deliveryMethod': deliveryMethod.toDouble(),
-      'deliveryLossM3': roundValue(deliveryLossM3, 3),
+      'deliveryAllowanceM3': roundValue(deliveryAllowance, 3),
       'totalH': roundValue(totalHeightM, 3),
       'vol': roundValue(volume, 3),
       'volReserve': roundValue(recScenario.exactNeed, 3),
       'rebarDiam': rebarDiameter,
       'threads': threads,
-      'longLen': roundValue(longitudinalLength, 3),
+      'longExactLen': roundValue(longitudinalExactLength, 3),
+      'longLen': roundValue(longitudinalPlanningLength, 3),
+      'longPurchaseLen': roundValue(longitudinalPurchaseLength, 3),
+      'longBars': longitudinalBars.toDouble(),
       'longWeightKg': roundValue(longitudinalWeight, 3),
+      'longPurchaseWeightKg': roundValue(longitudinalPurchaseWeight, 3),
       'clampCount': clampCount.toDouble(),
-      'clampLen': roundValue(clampLength, 3),
+      'clampStepMm': roundValue(clampStepM * 1000, 3),
+      'concreteCoverMm': roundValue(concreteCoverM * 1000, 3),
+      'clampHookAllowanceMm': roundValue(clampHookAllowanceM * 1000, 3),
+      'clampExactLen': roundValue(clampExactLength, 3),
+      'clampLen': roundValue(clampPlanningLength, 3),
+      'clampPurchaseLen': roundValue(clampPurchaseLength, 3),
+      'clampBars': clampBars.toDouble(),
       'clampWeightKg': roundValue(clampWeight, 3),
+      'clampPurchaseWeightKg': roundValue(clampPurchaseWeight, 3),
       'tieCount': tieCount.toDouble(),
       'wireLengthM': roundValue(wireLength, 3),
       'wireKg': roundValue(wireWeight, 3),
-      'formworkHeightMm': roundValue(formworkHeightMm, 3),
+      'formworkHeightMm': roundValue(formworkHeight, 3),
       'formwork': roundValue(formworkArea, 3),
+      'formworkWithReserve': roundValue(formworkWithReserve, 3),
+      'formworkReserve': roundValue(formworkReserve, 3),
       'boards': boards.toDouble(),
+      'rodLengthM': rodLength,
+      'rebarReserve': roundValue(rebarReserve, 3),
       'minExactNeedM3': scenarios['MIN']!.exactNeed,
       'recExactNeedM3': recScenario.exactNeed,
       'maxExactNeedM3': scenarios['MAX']!.exactNeed,

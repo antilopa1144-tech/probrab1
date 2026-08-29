@@ -1,7 +1,7 @@
 {
   "calculator_id": "strip-foundation",
-  "formula_version": "strip-foundation-canonical-v2",
-  "generated_at": "2026-08-19T07:37:48.110Z",
+  "formula_version": "strip-foundation-canonical-v3",
+  "generated_at": "2026-08-29T07:20:14.886Z",
   "cases": [
     {
       "id": "defaults",
@@ -11,39 +11,64 @@
         "width": 400,
         "depth": 700,
         "aboveGround": 300,
+        "formworkHeight": 300,
+        "reserve": 5,
+        "readyMixOrderStepM3": 0.1,
+        "deliveryAllowanceM3": 0,
         "reinforcement": 1,
-        "deliveryMethod": 0
+        "clampStepMm": 400,
+        "concreteCoverMm": 50,
+        "clampHookAllowanceMm": 300,
+        "rebarReserve": 12,
+        "rodLengthM": 11.7,
+        "formworkReserve": 10
       },
       "expected_totals": {
         "perimeter": 40,
         "width": 400,
         "depth": 700,
         "aboveGround": 300,
+        "reserve": 5,
+        "readyMixOrderStepM3": 0.1,
         "reinforcement": 1,
-        "deliveryMethod": 0,
-        "deliveryLossM3": 0,
+        "deliveryAllowanceM3": 0,
         "totalH": 1,
         "vol": 16,
-        "volReserve": 16,
+        "volReserve": 16.8,
         "rebarDiam": 12,
         "threads": 4,
+        "longExactLen": 160,
         "longLen": 179.2,
-        "longWeightKg": 159.13,
+        "longPurchaseLen": 187.2,
+        "longBars": 16,
+        "longWeightKg": 142.08,
+        "longPurchaseWeightKg": 166.234,
         "clampCount": 100,
-        "clampLen": 283.5,
-        "clampWeightKg": 111.983,
+        "clampStepMm": 400,
+        "concreteCoverMm": 50,
+        "clampHookAllowanceMm": 300,
+        "clampExactLen": 270,
+        "clampLen": 302.4,
+        "clampPurchaseLen": 304.2,
+        "clampBars": 26,
+        "clampWeightKg": 106.65,
+        "clampPurchaseWeightKg": 120.159,
         "tieCount": 400,
         "wireLengthM": 120,
         "wireKg": 0.72,
         "formworkHeightMm": 300,
         "formwork": 24,
+        "formworkWithReserve": 26.4,
+        "formworkReserve": 10,
         "boards": 30,
+        "rodLengthM": 11.7,
+        "rebarReserve": 12,
         "minExactNeedM3": 16,
-        "recExactNeedM3": 16,
-        "maxExactNeedM3": 17.92,
+        "recExactNeedM3": 16.8,
+        "maxExactNeedM3": 17.6,
         "minPurchaseM3": 16,
-        "recPurchaseM3": 16,
-        "maxPurchaseM3": 18
+        "recPurchaseM3": 16.8,
+        "maxPurchaseM3": 17.6
       },
       "expected_materials_count": 6,
       "expected_material_names": [
@@ -64,12 +89,12 @@
           "purchase_quantity": 16
         },
         "REC": {
-          "exact_need": 16,
-          "purchase_quantity": 16
+          "exact_need": 16.8,
+          "purchase_quantity": 16.8
         },
         "MAX": {
-          "exact_need": 17.92,
-          "purchase_quantity": 18
+          "exact_need": 17.6,
+          "purchase_quantity": 17.6
         }
       }
     }

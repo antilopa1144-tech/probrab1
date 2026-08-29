@@ -98,6 +98,38 @@ void main() {
       expect(result.values.keys.join(' '), isNot(contains('rebar')));
     });
 
+    test('strip foundation route uses the canonical v3 purchase contract', () {
+      final result = CalculatorEngine.calculate('foundation_strip', {
+        'perimeter': 40,
+        'width': 400,
+        'depth': 700,
+        'aboveGround': 300,
+        'formworkHeight': 300,
+        'reserve': 5,
+        'readyMixOrderStepM3': 0.5,
+        'deliveryAllowanceM3': 0.35,
+        'reinforcement': 1,
+        'clampStepMm': 400,
+        'concreteCoverMm': 50,
+        'clampHookAllowanceMm': 300,
+        'rebarReserve': 12,
+        'rodLengthM': 11.7,
+        'formworkReserve': 10,
+      });
+
+      expect(result.primaryTotals?['recExactNeedM3'], closeTo(17.15, 1e-9));
+      expect(result.primaryTotals?['recPurchaseM3'], 17.5);
+      expect(result.primaryTotals?['longBars'], 16);
+      expect(
+        result.materials
+            ?.firstWhere((material) => material.name.contains('продольная'))
+            .packageInfo?['count'],
+        16,
+      );
+      expect(result.values.keys.join(' '), isNot(contains('sandVolume')));
+      expect(result.values.keys.join(' '), isNot(contains('fbsBlocksCount')));
+    });
+
     test('calculate smoke: attic with default-like inputs', () {
       final result = CalculatorEngine.calculate('attic', {
         'floorLength': 8.0,

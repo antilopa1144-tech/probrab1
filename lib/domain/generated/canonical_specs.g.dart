@@ -8357,7 +8357,7 @@ const Map<String, dynamic> stairsSpecData = {
 /// Generated from strip-foundation-canonical.v1.json
 const Map<String, dynamic> stripFoundationSpecData = {
   'calculator_id': 'strip-foundation',
-  'formula_version': 'strip-foundation-canonical-v2',
+  'formula_version': 'strip-foundation-canonical-v3',
   'input_schema': [
     {
       'key': 'perimeter',
@@ -8388,27 +8388,101 @@ const Map<String, dynamic> stripFoundationSpecData = {
       'max': 600,
     },
     {
+      'key': 'formworkHeight',
+      'unit': 'mm',
+      'default_value': 300,
+      'min': 0,
+      'max': 2000,
+    },
+    {
+      'key': 'reserve',
+      'unit': '%',
+      'default_value': 5,
+      'min': 0,
+      'max': 20,
+    },
+    {
+      'key': 'readyMixOrderStepM3',
+      'unit': 'm3',
+      'default_value': 0.1,
+      'min': 0.1,
+      'max': 1,
+    },
+    {
+      'key': 'deliveryAllowanceM3',
+      'unit': 'm3',
+      'default_value': 0,
+      'min': 0,
+      'max': 5,
+    },
+    {
       'key': 'reinforcement',
       'default_value': 1,
       'min': 0,
       'max': 3,
     },
     {
-      'key': 'deliveryMethod',
-      'default_value': 0,
+      'key': 'clampStepMm',
+      'unit': 'mm',
+      'default_value': 400,
+      'min': 100,
+      'max': 1000,
+    },
+    {
+      'key': 'concreteCoverMm',
+      'unit': 'mm',
+      'default_value': 50,
+      'min': 20,
+      'max': 100,
+    },
+    {
+      'key': 'clampHookAllowanceMm',
+      'unit': 'mm',
+      'default_value': 300,
       'min': 0,
-      'max': 2,
+      'max': 1000,
+    },
+    {
+      'key': 'rebarReserve',
+      'unit': '%',
+      'default_value': 12,
+      'min': 0,
+      'max': 30,
+    },
+    {
+      'key': 'rodLengthM',
+      'unit': 'm',
+      'default_value': 11.7,
+      'min': 6,
+      'max': 12,
+    },
+    {
+      'key': 'formworkReserve',
+      'unit': '%',
+      'default_value': 10,
+      'min': 0,
+      'max': 30,
     },
   ],
   'field_factors': {
-    'enabled': [
-      'geometry_complexity',
-    ],
+    'enabled': [],
   },
-  'normative_formula': {},
+  'normative_formula': {
+    'volume': 'source_volume = perimeter * width * (depth + aboveGround)',
+    'reinforcement': 'purchase planning from project-defined scheme, spacing, cover and rod length',
+  },
   'packaging_rules': {
     'unit': 'м³',
-    'volume_step_m3': 0.1,
+    'allowed_ready_mix_order_steps_m3': [
+      0.1,
+      0.5,
+      1,
+    ],
+    'allowed_rod_lengths_m': [
+      6,
+      11.7,
+      12,
+    ],
   },
   'material_rules': {
     'rebar_diameters': {
@@ -8429,22 +8503,10 @@ const Map<String, dynamic> stripFoundationSpecData = {
     },
     'clamp_diameter_mm': 8,
     'clamp_weight_kg_per_m': 0.395,
-    'clamp_step_m': 0.4,
-    'concrete_cover_m': 0.05,
-    'clamp_hooks_m': 0.3,
-    'clamp_length_reserve': 1.05,
     'wire_length_per_tie_m': 0.3,
     'wire_weight_kg_per_m': 0.006,
-    'delivery_loss_m3': {
-      '0': 0,
-      '1': 0.5,
-      '2': 0,
-    },
-    'longitudinal_reserve_factor': 1.12,
-    'standard_rod_length_m': 11.7,
     'formwork_board_width_m': 0.15,
     'formwork_board_length_m': 6,
-    'formwork_board_reserve': 1.1,
   },
   'warnings_rules': {
     'shallow_depth_threshold_mm': 400,
@@ -8452,25 +8514,48 @@ const Map<String, dynamic> stripFoundationSpecData = {
   },
   'scenario_policy': {
     'contract': 'min-rec-max-v1',
+    'recommended_max_reserve_percent': 10,
+    'MIN': 'Чистый геометрический объём плюс явно заданный остаток в линии подачи',
+    'REC': 'Геометрия с выбранным запасом плюс остаток в линии подачи',
+    'MAX': 'Геометрия с запасом не меньше 10% плюс остаток в линии подачи',
+    'purchase_quantity': 'Округление вверх с выбранным шагом заказа готовой смеси',
   },
-  'normative_sources': [
-    {
-      'code': 'СП 22.13330.2016',
-      'title': 'Основания зданий и сооружений (актуализированная редакция)',
-      'section': 'Раздел 5 — проектирование оснований по инженерным изысканиям и расчётам',
-    },
-    {
-      'code': 'СП 63.13330.2018',
-      'title': 'Бетонные и железобетонные конструкции',
-      'section': 'Разделы 6 и 8 — материалы, расчёт и конструирование железобетонных элементов',
-    },
-  ],
-  'assumption_notes': [
-    'Калькулятор считает количество материалов только по уже назначенным размерам ленты и схеме армирования; несущую способность, ширину, глубину и армирование он не проектирует.',
-    'Потеря 0,5 м³ добавляется только при явно выбранном бетононасосе и не умножается повторно на технологические коэффициенты.',
-    'Продольная арматура включает 12% расчётного резерва на стыки, углы и раскрой; это закупочное допущение, а не расчёт анкеровки конкретного каркаса.',
-    'Опалубка считается по двум сторонам только надземной части ленты. Если щиты нужны в траншее, их высоту следует считать отдельно по проекту производства работ.',
-  ],
+  'evidence': {
+    'reviewed_at': '2026-08-29',
+    'standards': [
+      {
+        'code': 'СП 22.13330.2016',
+        'scope': 'Проектирование оснований по инженерным изысканиям, нагрузкам и расчёту деформаций',
+        'source': 'https://protect.gost.ru/sp/details/71e96332-a446-4a15-87a0-2db895479f61',
+      },
+      {
+        'code': 'СП 63.13330.2018',
+        'scope': 'Расчёт и конструирование бетонных и железобетонных элементов',
+        'source': 'https://protect.gost.ru/sp/details/8b67e228-0c9f-4a62-b562-964b3a58c667',
+      },
+      {
+        'code': 'ГОСТ 7473-2010',
+        'scope': 'Требования к готовым бетонным смесям',
+        'source': 'https://protect.gost.ru/gost/details/fd47b526-d233-40ef-a03b-70d7199e1a97',
+      },
+      {
+        'code': 'СП 70.13330.2012',
+        'scope': 'Производство и приёмка бетонных и железобетонных работ',
+        'source': 'https://protect.gost.ru/sp/details/2239acf1-711f-4f1f-aaa7-902fa06a8a60',
+      },
+    ],
+    'project_assumptions': [
+      'material_rules.rebar_diameters',
+      'material_rules.rebar_threads',
+      'material_rules.wire_length_per_tie_m',
+      'material_rules.wire_weight_kg_per_m',
+      'material_rules.formwork_board_width_m',
+      'material_rules.formwork_board_length_m',
+      'scenario_policy.recommended_max_reserve_percent',
+      'packaging_rules.allowed_ready_mix_order_steps_m3',
+      'packaging_rules.allowed_rod_lengths_m',
+    ],
+  },
 };
 
 /// Generated from terrace-canonical.v1.json

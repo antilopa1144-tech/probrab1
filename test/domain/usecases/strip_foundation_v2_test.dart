@@ -38,17 +38,22 @@ void main() {
         expect(
           result.values['rebarWeight'],
           closeTo(
-            canonical.totals['longWeightKg']! +
-                canonical.totals['clampWeightKg']!,
+            canonical.totals['longPurchaseWeightKg']! +
+                canonical.totals['clampPurchaseWeightKg']!,
             0.01,
           ),
         );
-        expect(result.values['formworkArea'], canonical.totals['formwork']);
+        expect(
+          result.values['formworkArea'],
+          canonical.totals['formworkWithReserve'],
+        );
         expect(result.values['longitudinalBars'], 4);
+        expect(result.values['fbsBlocksCount'], 0);
+        expect(result.values['sandVolume'], 0);
       },
     );
 
-    test('режим точности влияет на заказ бетона без двойного запаса', () {
+    test('режим точности не добавляет скрытый второй запас', () {
       Map<String, double> calculateForMode(double mode) =>
           calculator.calculate({
             'perimeter': 40,
@@ -56,39 +61,39 @@ void main() {
             'height': 1,
             'foundationType': 0,
             'accuracyMode': mode,
+            'reserve': 5,
           }, const []).values;
 
       final basic = calculateForMode(0);
       final professional = calculateForMode(2);
 
       expect(basic['stripVolume'], 16);
-      expect(basic['concreteVolume'], 16);
-      expect(professional['concreteVolume'], greaterThan(16));
-      expect(professional['concreteVolume'], lessThan(20));
+      expect(basic['concreteVolume'], 16.8);
+      expect(professional['concreteVolume'], 16.8);
     });
   });
 
-  group('calculateCanonicalStripFoundation v2', () {
-    test('самослив не получает скрытые 0,5 м³, насос получает', () {
-      final selfDischarge = calculateCanonicalStripFoundation({
+  group('calculateCanonicalStripFoundation v3', () {
+    test('не выдумывает потери насоса и учитывает только явный остаток', () {
+      final withoutAllowance = calculateCanonicalStripFoundation({
         'perimeter': 40,
         'width': 400,
         'depth': 700,
         'aboveGround': 300,
-        'deliveryMethod': 0,
-        'accuracyMode': 0,
+        'reserve': 0,
       });
-      final pump = calculateCanonicalStripFoundation({
+      final withAllowance = calculateCanonicalStripFoundation({
         'perimeter': 40,
         'width': 400,
         'depth': 700,
         'aboveGround': 300,
-        'deliveryMethod': 1,
-        'accuracyMode': 0,
+        'reserve': 0,
+        'deliveryAllowanceM3': 0.35,
       });
 
-      expect(selfDischarge.totals['recPurchaseM3'], 16);
-      expect(pump.totals['recPurchaseM3'], 16.5);
+      expect(withoutAllowance.totals['recPurchaseM3'], 16);
+      expect(withAllowance.totals['recExactNeedM3'], 16.35);
+      expect(withAllowance.totals['recPurchaseM3'], 16.4);
     });
 
     test('вязальная проволока считается по длине вязок', () {
@@ -103,6 +108,26 @@ void main() {
       expect(result.totals['tieCount'], 400);
       expect(result.totals['wireLengthM'], 120);
       expect(result.totals['wireKg'], 0.72);
+    });
+
+    test('округляет арматуру до целых прутков выбранной длины', () {
+      final result = calculateCanonicalStripFoundation({
+        'perimeter': 40,
+        'width': 400,
+        'depth': 700,
+        'aboveGround': 300,
+        'reinforcement': 2,
+        'rodLengthM': 11.7,
+      });
+
+      final longitudinal = result.materials.firstWhere(
+        (material) => material.name.contains('продольная'),
+      );
+      expect(result.totals['rebarDiam'], 14);
+      expect(result.totals['longBars'], 16);
+      expect(longitudinal.packageInfo?['count'], 16);
+      expect(longitudinal.purchaseQty, 187.2);
+      expect(result.totals['longPurchaseWeightKg'], closeTo(226.512, 1e-9));
     });
   });
 }

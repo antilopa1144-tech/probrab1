@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_localizations.dart';
 import '../../../domain/models/canonical_calculator_contract.dart';
+import '../../utils/material_formatter.dart';
 import 'result_card.dart';
 
 /// Карточка материалов из canonical-результата для ProCalculator и похожих экранов.
@@ -30,7 +31,9 @@ class CanonicalMaterialsCard extends StatelessWidget {
     if (c.contains('клей') || c.contains('затир') || c.contains('гермет')) {
       return Icons.shopping_bag_outlined;
     }
-    if (c.contains('грунт') || c.contains('гидро')) return Icons.water_drop_outlined;
+    if (c.contains('грунт') || c.contains('гидро')) {
+      return Icons.water_drop_outlined;
+    }
     if (c.contains('утеп') || c.contains('изол') || c.contains('мембран')) {
       return Icons.layers_outlined;
     }
@@ -45,13 +48,15 @@ class CanonicalMaterialsCard extends StatelessWidget {
     if (materials.isEmpty) return const SizedBox.shrink();
 
     final items = materials.map((material) {
-      final qty = material.purchaseQty ??
-          material.withReserve ??
-          material.quantity;
+      final formatted = formatMaterialForDisplay(material);
+      final subtitleParts = <String>[
+        if (formatted.packageSubtitle != null) formatted.packageSubtitle!,
+        if (material.category != null) material.category!,
+      ];
       return MaterialItem(
         name: material.name,
-        value: '${formatQuantity(qty)} ${material.unit}',
-        subtitle: material.category,
+        value: '${formatted.displayValue} ${formatted.displayUnit}',
+        subtitle: subtitleParts.isEmpty ? null : subtitleParts.join(' · '),
         icon: iconForCategory(material.category),
       );
     }).toList();

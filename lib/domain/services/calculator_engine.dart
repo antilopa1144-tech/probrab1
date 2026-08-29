@@ -32,7 +32,6 @@ import '../usecases/calculate_self_leveling_floor.dart';
 import '../usecases/calculate_slopes_v2.dart';
 import '../usecases/calculate_stairs_v2.dart';
 import '../usecases/calculate_stretch_ceiling_v2.dart';
-import '../usecases/calculate_strip_foundation.dart';
 import '../usecases/calculate_terrace.dart';
 import '../usecases/calculate_tile.dart';
 import '../usecases/calculate_tile_glue.dart';
@@ -48,6 +47,7 @@ import '../usecases/canonical_bridge.dart';
 import '../usecases/concrete_canonical_adapter.dart';
 import '../usecases/decor_stone_canonical_adapter.dart';
 import '../usecases/facade_panels_v3_adapter.dart';
+import '../usecases/strip_foundation_canonical_adapter.dart';
 
 /// Единая точка расчёта для кастомных экранов и V2-каталога.
 ///
@@ -97,7 +97,9 @@ class CalculatorEngine {
       'floors_warm': const WarmFloorUnifiedUseCase(),
       'foundation_basement': CalculateBasementV2(),
       'foundation_blind_area': CalculateBlindAreaV2(),
-      'foundation_strip': CalculateStripFoundation(),
+      'foundation_strip': const CanonicalBridgeUseCase(
+        calculateCanonicalStripFoundation,
+      ),
       'gypsum_board': CalculateGypsumV2(),
       'mixes_plaster': CalculatePlaster(),
       'mixes_primer': CalculatePrimer(),

@@ -41,7 +41,6 @@ import '../views/calculator/stairs_calculator_screen.dart';
 import '../views/calculator/ventilation_calculator_screen.dart';
 import '../views/calculator/basement_calculator_screen.dart';
 import '../views/calculator/blind_area_calculator_screen.dart';
-import '../views/calculator/strip_foundation_calculator_screen.dart';
 import '../views/calculator/gutters_calculator_screen.dart';
 import '../views/calculator/roofing_unified_calculator_screen.dart';
 import '../views/calculator/concrete_universal_calculator_screen.dart';
@@ -161,7 +160,8 @@ class CalculatorScreenRegistry {
     // Фундамент
     'foundation_basement': (_, _) => const BasementCalculatorScreen(),
     'foundation_blind_area': (_, _) => const BlindAreaCalculatorScreen(),
-    'foundation_strip': (_, _) => const StripFoundationCalculatorScreen(),
+    'foundation_strip': (def, inputs) =>
+        ProCalculatorScreen(definition: def, initialInputs: inputs),
 
     // Бетон
     'concrete_universal': (def, inputs) => ConcreteUniversalCalculatorScreen(

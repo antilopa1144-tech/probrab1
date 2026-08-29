@@ -11,6 +11,7 @@ void main() {
   late CalculatorDefinitionV2 testDefinition;
   late CalculatorDefinitionV2 electricDefinition;
   late CalculatorDefinitionV2 concreteDefinition;
+  late CalculatorDefinitionV2 stripFoundationDefinition;
 
   setUpAll(() {
     setupMocks();
@@ -36,6 +37,13 @@ void main() {
       throw StateError('concrete_universal calculator not found in registry');
     }
     concreteDefinition = realConcreteDefinition;
+    final realStripFoundationDefinition = CalculatorRegistry.getById(
+      'foundation_strip',
+    );
+    if (realStripFoundationDefinition == null) {
+      throw StateError('foundation_strip calculator not found in registry');
+    }
+    stripFoundationDefinition = realStripFoundationDefinition;
   });
 
   group('ProCalculatorScreen', () {
@@ -221,6 +229,31 @@ void main() {
         findsNothing,
       );
       expect(find.textContaining('Опалуб', skipOffstage: false), findsNothing);
+    });
+  });
+
+  group('ProCalculatorScreen canonical strip foundation flow', () {
+    testWidgets('показывает проектные параметры и покупку в прутках', (
+      tester,
+    ) async {
+      setTestViewportSize(tester);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: ProCalculatorScreen(definition: stripFoundationDefinition),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Геометрия из проекта'), findsOneWidget);
+      expect(find.text('Заказ бетона'), findsOneWidget);
+      expect(find.text('Армирование из проекта'), findsOneWidget);
+      expect(find.text('Общая длина всех лент'), findsOneWidget);
+      expect(find.text('Остаток в линии подачи'), findsOneWidget);
+      expect(find.text('Длина покупного прутка'), findsOneWidget);
+      expect(find.textContaining('прутков', skipOffstage: false), findsWidgets);
+      expect(find.textContaining('ФБС', skipOffstage: false), findsNothing);
+      expect(find.textContaining('Песок', skipOffstage: false), findsNothing);
     });
   });
 }
