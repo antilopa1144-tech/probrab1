@@ -1,20 +1,18 @@
-import 'dart:math' as math;
-
 import '../generated/canonical_specs.g.dart';
 import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
-// ─── Foundation Slab spec classes ───
 
-// ─── Factor table ───
+double _allowedValue(double value, List<dynamic> allowed, double fallback) {
+  return allowed.map((item) => (item as num).toDouble()).contains(value)
+      ? value
+      : fallback;
+}
 
-const Map<String, Map<String, double>> _factorTable = {
-  'geometry_complexity': {'MIN': 0.97, 'REC': 1.0, 'MAX': 1.12},
-  'worker_skill': {'MIN': 0.96, 'REC': 1.0, 'MAX': 1.07},
-  'waste_factor': {'MIN': 1.0, 'REC': 1.06, 'MAX': 1.15},
-};
-
-// ─── Helpers ───
+double _roundUpToStep(double value, double step) {
+  if (value <= 0) return 0;
+  return roundValue((value / step).ceil() * step, 6);
+}
 
 Map<String, dynamic> _pickPackage(
   double exactNeed,
@@ -23,17 +21,14 @@ Map<String, dynamic> _pickPackage(
 ) {
   final count = exactNeed > 0 ? (exactNeed / stepSize).ceil() : 0;
   final purchase = roundValue(count * stepSize, 6);
-  final leftover = roundValue(purchase - exactNeed, 6);
   return {
     'size': stepSize,
     'count': count,
     'purchase': purchase,
-    'leftover': leftover,
+    'leftover': roundValue(purchase - exactNeed, 6),
     'label': 'foundation-slab-$stepSize$unit',
   };
 }
-
-// ─── Main calculation ───
 
 CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
   Map<String, double> inputs, {
@@ -41,116 +36,183 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
 }) {
   final spec = specOverride ?? const SpecReader(foundationSlabSpecData);
 
-  final areaInput = math
-      .max(10, inputs['area'] ?? defaultFor(spec, 'area', 60))
-      .toDouble()
-      .clamp(10, 500)
+  final length = (inputs['length'] ?? defaultFor(spec, 'length', 10))
+      .clamp(1, 50)
+      .toDouble();
+  final width = (inputs['width'] ?? defaultFor(spec, 'width', 6))
+      .clamp(1, 50)
       .toDouble();
   final thickness = (inputs['thickness'] ?? defaultFor(spec, 'thickness', 200))
-      .clamp(150, 300)
+      .clamp(100, 500)
       .toDouble();
-  final rebarDiam = (inputs['rebarDiam'] ?? defaultFor(spec, 'rebarDiam', 12))
+  final concreteReservePercent =
+      (inputs['concreteReservePercent'] ??
+              defaultFor(spec, 'concreteReservePercent', 5))
+          .clamp(0, 20)
+          .toDouble();
+  final readyMixOrderStepM3 = _allowedValue(
+    inputs['readyMixOrderStepM3'] ??
+        defaultFor(spec, 'readyMixOrderStepM3', 0.1),
+    spec.packagingRule<List>('allowed_ready_mix_order_steps_m3'),
+    0.1,
+  );
+  final deliveryAllowanceM3 =
+      (inputs['deliveryAllowanceM3'] ??
+              defaultFor(spec, 'deliveryAllowanceM3', 0))
+          .clamp(0, 5)
+          .toDouble();
+  final gridLayers = (inputs['gridLayers'] ?? defaultFor(spec, 'gridLayers', 2))
       .round()
-      .clamp(10, 16);
+      .clamp(1, 2);
+  final rebarDiam = _allowedValue(
+    (inputs['rebarDiam'] ?? defaultFor(spec, 'rebarDiam', 12)).roundToDouble(),
+    spec.materialRule<List>('allowed_rebar_diameters_mm'),
+    12,
+  ).round();
   final rebarStep = (inputs['rebarStep'] ?? defaultFor(spec, 'rebarStep', 200))
-      .clamp(150, 250)
+      .clamp(100, 500)
       .toDouble();
+  final edgeCoverMm =
+      (inputs['edgeCoverMm'] ?? defaultFor(spec, 'edgeCoverMm', 50))
+          .clamp(0, 150)
+          .toDouble();
+  final rebarReservePercent =
+      (inputs['rebarReservePercent'] ??
+              defaultFor(spec, 'rebarReservePercent', 10))
+          .clamp(0, 30)
+          .toDouble();
+  final rodLengthM = _allowedValue(
+    inputs['rodLengthM'] ?? defaultFor(spec, 'rodLengthM', 11.7),
+    spec.packagingRule<List>('allowed_rod_lengths_m'),
+    11.7,
+  );
+  final tieSharePercent =
+      (inputs['tieSharePercent'] ?? defaultFor(spec, 'tieSharePercent', 100))
+          .clamp(0, 100)
+          .toDouble();
+  final wireLengthPerTieM =
+      (inputs['wireLengthPerTieM'] ??
+              defaultFor(spec, 'wireLengthPerTieM', 0.3))
+          .clamp(0.1, 1)
+          .toDouble();
+  final wireReservePercent =
+      (inputs['wireReservePercent'] ??
+              defaultFor(spec, 'wireReservePercent', 10))
+          .clamp(0, 50)
+          .toDouble();
+  final wirePackageKg = _allowedValue(
+    inputs['wirePackageKg'] ?? defaultFor(spec, 'wirePackageKg', 1),
+    spec.packagingRule<List>('allowed_wire_packages_kg'),
+    1,
+  );
+  final formworkHeightMm =
+      (inputs['formworkHeightMm'] ?? defaultFor(spec, 'formworkHeightMm', 200))
+          .clamp(0, 1000)
+          .toDouble();
+  final formworkReservePercent =
+      (inputs['formworkReservePercent'] ??
+              defaultFor(spec, 'formworkReservePercent', 10))
+          .clamp(0, 30)
+          .toDouble();
   final sandLayerMm =
       (inputs['sandLayerMm'] ?? defaultFor(spec, 'sandLayerMm', 100))
           .clamp(0, 500)
+          .toDouble();
+  final sandOrderExtraPercent =
+      (inputs['sandOrderExtraPercent'] ??
+              defaultFor(spec, 'sandOrderExtraPercent', 0))
+          .clamp(0, 50)
           .toDouble();
   final gravelLayerMm =
       (inputs['gravelLayerMm'] ?? defaultFor(spec, 'gravelLayerMm', 150))
           .clamp(0, 500)
           .toDouble();
+  final gravelOrderExtraPercent =
+      (inputs['gravelOrderExtraPercent'] ??
+              defaultFor(spec, 'gravelOrderExtraPercent', 0))
+          .clamp(0, 50)
+          .toDouble();
+  final aggregateOrderStepM3 = _allowedValue(
+    inputs['aggregateOrderStepM3'] ??
+        defaultFor(spec, 'aggregateOrderStepM3', 0.1),
+    spec.packagingRule<List>('allowed_aggregate_order_steps_m3'),
+    0.1,
+  );
+  final includeGeotextile =
+      (inputs['includeGeotextile'] ?? defaultFor(spec, 'includeGeotextile', 1))
+          .round() ==
+      1;
+  final geotextileReservePercent =
+      (inputs['geotextileReservePercent'] ??
+              defaultFor(spec, 'geotextileReservePercent', 20))
+          .clamp(0, 50)
+          .toDouble();
+  final geotextileRollAreaM2 =
+      (inputs['geotextileRollAreaM2'] ??
+              defaultFor(spec, 'geotextileRollAreaM2', 50))
+          .clamp(10, 500)
+          .toDouble();
   final insulationThickness =
       (inputs['insulationThickness'] ??
               defaultFor(spec, 'insulationThickness', 0))
-          .clamp(0, 150)
+          .clamp(0, 200)
+          .toDouble();
+  final insulationReservePercent =
+      (inputs['insulationReservePercent'] ??
+              defaultFor(spec, 'insulationReservePercent', 5))
+          .clamp(0, 30)
+          .toDouble();
+  final eppsBoardAreaM2 =
+      (inputs['eppsBoardAreaM2'] ?? defaultFor(spec, 'eppsBoardAreaM2', 0.72))
+          .clamp(0.2, 3)
           .toDouble();
 
-  final weightPerMeter =
-      (spec.materialRule<Map>('weight_per_meter')['$rebarDiam'] as num?)
-          ?.toDouble() ??
-      0.888;
-  final lengthInput = (inputs['length'] ?? 0).clamp(0, 50).toDouble();
-  final widthInput = (inputs['width'] ?? 0).clamp(0, 50).toDouble();
-  final useRect = lengthInput > 0 && widthInput > 0;
-  final length = useRect ? lengthInput : math.sqrt(areaInput);
-  final width = useRect ? widthInput : math.sqrt(areaInput);
-  final area = useRect ? roundValue(length * width, 6) : areaInput;
-  final side = math.sqrt(area);
-  final perimeter = useRect ? 2 * (length + width) : side * 4;
-  final concreteM3 = roundValue(area * (thickness / 1000), 6);
-  final stepM = rebarStep / 1000;
-  final barsAlongLength = (width / stepM).ceil() + 1;
-  final barsAlongWidth = (length / stepM).ceil() + 1;
-  final barsPerDir = barsAlongLength;
-  final totalBarLen = (barsAlongLength * length + barsAlongWidth * width) * 2;
-  final rebarKg = roundValue(totalBarLen * weightPerMeter, 6);
-  final wireKg = roundValue(
-    barsAlongLength *
-        barsAlongWidth *
-        2 *
-        spec.materialRule<num>('wire_length_per_joint_m').toDouble() *
-        spec.materialRule<num>('wire_mass_per_meter_kg').toDouble(),
-    6,
-  );
-  final formworkArea = roundValue(
-    perimeter *
-        (thickness / 1000) *
-        spec.materialRule<num>('formwork_reserve').toDouble(),
-    6,
-  );
-  final geotextile = roundValue(
-    area * spec.materialRule<num>('geotextile_reserve').toDouble(),
-    6,
-  );
-  final gravel = roundValue(area * (gravelLayerMm / 1000), 6);
-  final sand = roundValue(area * (sandLayerMm / 1000), 6);
-  final eppsPlates = insulationThickness > 0
-      ? (area *
-                spec.materialRule<num>('insulation_reserve').toDouble() /
-                spec.materialRule<num>('epps_plate_m2').toDouble())
-            .ceil()
-      : 0;
-
-  // Scenarios
+  final area = roundValue(length * width, 6);
+  final perimeter = roundValue(2 * (length + width), 6);
+  final concreteExactM3 = roundValue(area * thickness / 1000, 6);
+  final maxReserveFloor =
+      ((spec.raw['scenario_policy']
+                      as Map<String, dynamic>?)?['max_reserve_floor_percent']
+                  as num? ??
+              10)
+          .toDouble();
   final scenarios = <String, CanonicalScenarioResult>{};
-  final accuracyMode = parseAccuracyMode(inputs);
-  final accuracyMult = accuracyPrimaryMultiplier('generic', accuracyMode);
 
   for (final scenarioName in scenarioNames) {
-    final multiplier = scenarioMultiplier(
-      spec.enabledFactors,
-      _factorTable,
-      scenarioName,
-    );
-    // Сценарий может только добавить запас к физическому объёму плиты.
-    // Даже MIN не должен опускаться ниже S × h.
+    final reservePercent = switch (scenarioName) {
+      'MIN' => 0.0,
+      'MAX' =>
+        concreteReservePercent > maxReserveFloor
+            ? concreteReservePercent
+            : maxReserveFloor,
+      _ => concreteReservePercent,
+    };
     final exactNeed = roundValue(
-      math.max(concreteM3, concreteM3 * accuracyMult * multiplier),
+      concreteExactM3 * (1 + reservePercent / 100) + deliveryAllowanceM3,
       6,
     );
     final package = _pickPackage(
       exactNeed,
-      spec.packagingRule<num>('volume_step_m3').toDouble(),
+      readyMixOrderStepM3,
       spec.packagingRule<String>('unit'),
     );
-
     scenarios[scenarioName] = CanonicalScenarioResult(
       exactNeed: exactNeed,
       purchaseQuantity: package['purchase'] as double,
       leftover: package['leftover'] as double,
       assumptions: [
         'formula_version:${spec.formulaVersion}',
-        'rebarDiam:$rebarDiam',
-        'rebarStep:${rebarStep.toInt()}',
+        'reserve_percent:$reservePercent',
+        'delivery_allowance_m3:$deliveryAllowanceM3',
+        'grid_layers:$gridLayers',
+        'rebar_diameter_mm:$rebarDiam',
+        'rebar_step_mm:$rebarStep',
         'packaging:${package['label']}',
       ],
       keyFactors: {
-        ...buildKeyFactors(spec.enabledFactors, _factorTable, scenarioName),
-        'field_multiplier': roundValue(multiplier, 6),
+        'reserve_percent': reservePercent,
+        'field_multiplier': roundValue(1 + reservePercent / 100, 6),
+        'ready_mix_order_step_m3': readyMixOrderStepM3,
       },
       buyPlan: CanonicalBuyPlan(
         packageLabel: package['label'] as String,
@@ -161,92 +223,223 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
     );
   }
 
+  final clearLengthM = (length - 2 * edgeCoverMm / 1000)
+      .clamp(0, 50)
+      .toDouble();
+  final clearWidthM = (width - 2 * edgeCoverMm / 1000).clamp(0, 50).toDouble();
+  final rebarStepM = rebarStep / 1000;
+  final barsAlongLength = (clearWidthM / rebarStepM).ceil() + 1;
+  final barsAlongWidth = (clearLengthM / rebarStepM).ceil() + 1;
+  final exactRebarLengthM = roundValue(
+    gridLayers *
+        (barsAlongLength * clearLengthM + barsAlongWidth * clearWidthM),
+    6,
+  );
+  final planningRebarLengthM = roundValue(
+    exactRebarLengthM * (1 + rebarReservePercent / 100),
+    6,
+  );
+  final rebarRods = (planningRebarLengthM / rodLengthM).ceil();
+  final purchaseRebarLengthM = roundValue(rebarRods * rodLengthM, 6);
+  final weightPerMeter =
+      (spec.materialRule<Map>('weight_per_meter')['$rebarDiam'] as num?)
+          ?.toDouble() ??
+      0.888;
+  final exactRebarWeightKg = roundValue(exactRebarLengthM * weightPerMeter, 6);
+  final planningRebarWeightKg = roundValue(
+    planningRebarLengthM * weightPerMeter,
+    6,
+  );
+  final purchaseRebarWeightKg = roundValue(
+    purchaseRebarLengthM * weightPerMeter,
+    6,
+  );
+
+  final intersections = barsAlongLength * barsAlongWidth * gridLayers;
+  final tieCount = (intersections * tieSharePercent / 100).ceil();
+  final wireExactLengthM = roundValue(tieCount * wireLengthPerTieM, 6);
+  final wireExactKg = roundValue(
+    wireExactLengthM *
+        spec.materialRule<num>('wire_mass_per_meter_kg').toDouble(),
+    6,
+  );
+  final wirePlanningKg = roundValue(
+    wireExactKg * (1 + wireReservePercent / 100),
+    6,
+  );
+  final wirePackages = wirePlanningKg > 0
+      ? (wirePlanningKg / wirePackageKg).ceil()
+      : 0;
+  final wirePurchaseKg = roundValue(wirePackages * wirePackageKg, 6);
+
+  final formworkExactM2 = roundValue(perimeter * formworkHeightMm / 1000, 6);
+  final formworkPlanningM2 = roundValue(
+    formworkExactM2 * (1 + formworkReservePercent / 100),
+    6,
+  );
+  final geotextileExactM2 = includeGeotextile ? area : 0.0;
+  final geotextilePlanningM2 = roundValue(
+    geotextileExactM2 * (1 + geotextileReservePercent / 100),
+    6,
+  );
+  final geotextileRolls = geotextilePlanningM2 > 0
+      ? (geotextilePlanningM2 / geotextileRollAreaM2).ceil()
+      : 0;
+  final geotextilePurchaseM2 = roundValue(
+    geotextileRolls * geotextileRollAreaM2,
+    6,
+  );
+
+  final sandExactM3 = roundValue(area * sandLayerMm / 1000, 6);
+  final sandPlanningM3 = roundValue(
+    sandExactM3 * (1 + sandOrderExtraPercent / 100),
+    6,
+  );
+  final sandPurchaseM3 = _roundUpToStep(sandPlanningM3, aggregateOrderStepM3);
+  final gravelExactM3 = roundValue(area * gravelLayerMm / 1000, 6);
+  final gravelPlanningM3 = roundValue(
+    gravelExactM3 * (1 + gravelOrderExtraPercent / 100),
+    6,
+  );
+  final gravelPurchaseM3 = _roundUpToStep(
+    gravelPlanningM3,
+    aggregateOrderStepM3,
+  );
+
+  final eppsExactM2 = insulationThickness > 0 ? area : 0.0;
+  final eppsPlanningM2 = roundValue(
+    eppsExactM2 * (1 + insulationReservePercent / 100),
+    6,
+  );
+  final eppsBoards = eppsPlanningM2 > 0
+      ? (eppsPlanningM2 / eppsBoardAreaM2).ceil()
+      : 0;
+  final eppsPurchaseM2 = roundValue(eppsBoards * eppsBoardAreaM2, 6);
   final recScenario = scenarios['REC']!;
 
-  // Warnings
-  final warnings = <String>[];
+  final materials = <CanonicalMaterialResult>[
+    CanonicalMaterialResult(
+      name: 'Товарный бетон — класс по проекту',
+      quantity: roundValue(concreteExactM3, 3),
+      unit: 'м³',
+      withReserve: roundValue(recScenario.exactNeed, 3),
+      purchaseQty: roundValue(recScenario.purchaseQuantity, 3),
+      category: 'Основное',
+    ),
+    CanonicalMaterialResult(
+      name: 'Арматура сеток ∅$rebarDiam мм — класс по проекту',
+      quantity: roundValue(exactRebarLengthM, 3),
+      unit: 'пог. м',
+      withReserve: roundValue(planningRebarLengthM, 3),
+      purchaseQty: roundValue(purchaseRebarLengthM, 3),
+      packageInfo: {
+        'count': rebarRods,
+        'size': rodLengthM,
+        'packageUnit': 'прутков',
+      },
+      category: 'Армирование',
+    ),
+  ];
+
+  if (wireExactKg > 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Проволока вязальная отожжённая ∅1,2 мм',
+        quantity: roundValue(wireExactKg, 3),
+        unit: 'кг',
+        withReserve: roundValue(wirePlanningKg, 3),
+        purchaseQty: roundValue(wirePurchaseKg, 3),
+        packageInfo: {
+          'count': wirePackages,
+          'size': wirePackageKg,
+          'packageUnit': 'упаковок',
+        },
+        category: 'Армирование',
+      ),
+    );
+  }
+  if (formworkExactM2 > 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Опалубка — площадь щитов к подготовке',
+        quantity: roundValue(formworkExactM2, 3),
+        unit: 'м²',
+        withReserve: roundValue(formworkPlanningM2, 3),
+        purchaseQty: roundValue(formworkPlanningM2, 3),
+        category: 'Опалубка',
+      ),
+    );
+  }
+  if (geotextileExactM2 > 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Геотекстиль — тип и плотность по проекту',
+        quantity: roundValue(geotextileExactM2, 3),
+        unit: 'м²',
+        withReserve: roundValue(geotextilePlanningM2, 3),
+        purchaseQty: roundValue(geotextilePurchaseM2, 3),
+        packageInfo: {
+          'count': geotextileRolls,
+          'size': geotextileRollAreaM2,
+          'packageUnit': 'рулонов',
+        },
+        category: 'Подготовка',
+      ),
+    );
+  }
+  if (gravelExactM3 > 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Щебень для проектного слоя подготовки',
+        quantity: roundValue(gravelExactM3, 3),
+        unit: 'м³',
+        withReserve: roundValue(gravelPlanningM3, 3),
+        purchaseQty: roundValue(gravelPurchaseM3, 3),
+        category: 'Подготовка',
+      ),
+    );
+  }
+  if (sandExactM3 > 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Песок для проектного слоя подготовки',
+        quantity: roundValue(sandExactM3, 3),
+        unit: 'м³',
+        withReserve: roundValue(sandPlanningM3, 3),
+        purchaseQty: roundValue(sandPurchaseM3, 3),
+        category: 'Подготовка',
+      ),
+    );
+  }
+  if (insulationThickness > 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'ЭППС под плитой $insulationThickness мм — марка по проекту',
+        quantity: roundValue(eppsExactM2, 3),
+        unit: 'м²',
+        withReserve: roundValue(eppsPlanningM2, 3),
+        purchaseQty: roundValue(eppsPurchaseM2, 3),
+        packageInfo: {
+          'count': eppsBoards,
+          'size': eppsBoardAreaM2,
+          'packageUnit': 'плит',
+        },
+        category: 'Утепление',
+      ),
+    );
+  }
+
+  final warnings = <String>[
+    'Калькулятор считает материалы по готовым размерам и проектной схеме. Он не выбирает тип фундамента, толщину плиты, бетон, армирование или состав подготовки.',
+  ];
   if (thickness <= spec.warningRule<num>('thin_slab_threshold_mm').toDouble()) {
     warnings.add(
-      'Толщина плиты должна быть подтверждена расчётом конструктора по нагрузкам и основанию',
+      'Введена небольшая толщина плиты. Её допустимость подтверждает конструктор по нагрузкам, грунтам и расчётной схеме.',
     );
   }
   if (area > spec.warningRule<num>('large_area_threshold_m2').toDouble()) {
     warnings.add(
-      'Большая площадь плиты — рекомендуется профессиональный расчёт нагрузок',
-    );
-  }
-
-  // Materials
-  final materials = <CanonicalMaterialResult>[
-    CanonicalMaterialResult(
-      name: 'Товарный бетон — класс по проекту',
-      quantity: roundValue(concreteM3, 3),
-      unit: 'м³',
-      withReserve: roundValue(recScenario.exactNeed, 3),
-      purchaseQty: roundValue(recScenario.purchaseQuantity, 1),
-      category: 'Основное',
-    ),
-    CanonicalMaterialResult(
-      name: 'Арматура рифлёная ∅$rebarDiam мм для двух сеток',
-      quantity: roundValue(rebarKg, 3),
-      unit: 'кг',
-      withReserve: rebarKg.ceil().toDouble(),
-      purchaseQty: rebarKg.ceil().toDouble(),
-      category: 'Армирование',
-    ),
-    CanonicalMaterialResult(
-      name: 'Проволока вязальная отожжённая ∅1,2 мм',
-      quantity: roundValue(wireKg, 3),
-      unit: 'кг',
-      withReserve: wireKg.ceil().toDouble(),
-      purchaseQty: wireKg.ceil().toDouble(),
-      category: 'Армирование',
-    ),
-    CanonicalMaterialResult(
-      name: 'Опалубка — материал для щитов',
-      quantity: roundValue(formworkArea, 3),
-      unit: 'м²',
-      withReserve: formworkArea.ceil().toDouble(),
-      purchaseQty: formworkArea.ceil().toDouble(),
-      category: 'Опалубка',
-    ),
-    CanonicalMaterialResult(
-      name: 'Геотекстиль нетканый иглопробивной, 200–300 г/м²',
-      quantity: roundValue(geotextile, 3),
-      unit: 'м²',
-      withReserve: geotextile.ceil().toDouble(),
-      purchaseQty: geotextile.ceil().toDouble(),
-      category: 'Подготовка',
-    ),
-    CanonicalMaterialResult(
-      name: 'Щебень для подушки, фракция 20–40 мм',
-      quantity: roundValue(gravel, 3),
-      unit: 'м³',
-      withReserve: roundValue(gravel, 3),
-      purchaseQty: gravel.ceil().toDouble(),
-      category: 'Подготовка',
-    ),
-    CanonicalMaterialResult(
-      name: 'Песок для подушки, средней или крупной фракции',
-      quantity: roundValue(sand, 3),
-      unit: 'м³',
-      withReserve: roundValue(sand, 3),
-      purchaseQty: sand.ceil().toDouble(),
-      category: 'Подготовка',
-    ),
-  ];
-
-  if (insulationThickness > 0) {
-    materials.add(
-      CanonicalMaterialResult(
-        name:
-            'Экструдированный пенополистирол (ЭППС) для фундамента 1200×600×$insulationThickness мм',
-        quantity: eppsPlates.toDouble(),
-        unit: 'шт',
-        withReserve: eppsPlates.toDouble(),
-        purchaseQty: eppsPlates.toDouble(),
-        category: 'Утепление',
-      ),
+      'Большая площадь плиты: проверьте проектные швы, непрерывность бетонирования, подачу смеси и рабочую документацию.',
     );
   }
 
@@ -258,26 +451,64 @@ CanonicalCalculatorContractResult calculateCanonicalFoundationSlab(
       'area': roundValue(area, 3),
       'length': roundValue(length, 3),
       'width': roundValue(width, 3),
+      'perimeter': roundValue(perimeter, 3),
       'thickness': roundValue(thickness, 3),
+      'concreteM3': roundValue(concreteExactM3, 3),
+      'concreteReservePercent': roundValue(concreteReservePercent, 3),
+      'readyMixOrderStepM3': readyMixOrderStepM3,
+      'deliveryAllowanceM3': roundValue(deliveryAllowanceM3, 3),
+      'gridLayers': gridLayers.toDouble(),
       'rebarDiam': rebarDiam.toDouble(),
       'rebarStep': roundValue(rebarStep, 3),
-      'sandLayerMm': roundValue(sandLayerMm, 3),
-      'gravelLayerMm': roundValue(gravelLayerMm, 3),
-      'insulationThickness': roundValue(insulationThickness, 3),
-      'side': roundValue(side, 3),
-      'perimeter': roundValue(perimeter, 3),
-      'concreteM3': roundValue(concreteM3, 3),
-      'barsPerDir': barsPerDir.toDouble(),
+      'edgeCoverMm': roundValue(edgeCoverMm, 3),
       'barsAlongLength': barsAlongLength.toDouble(),
       'barsAlongWidth': barsAlongWidth.toDouble(),
-      'totalBarLen': roundValue(totalBarLen, 3),
-      'rebarKg': roundValue(rebarKg, 3),
-      'wireKg': roundValue(wireKg, 3),
-      'formworkArea': roundValue(formworkArea, 3),
-      'geotextile': roundValue(geotextile, 3),
-      'gravel': roundValue(gravel, 3),
-      'sand': roundValue(sand, 3),
-      'eppsPlates': eppsPlates.toDouble(),
+      'intersections': intersections.toDouble(),
+      'tieCount': tieCount.toDouble(),
+      'rebarReservePercent': roundValue(rebarReservePercent, 3),
+      'rodLengthM': rodLengthM,
+      'totalBarLen': roundValue(exactRebarLengthM, 3),
+      'rebarPlanningLengthM': roundValue(planningRebarLengthM, 3),
+      'rebarPurchaseLengthM': roundValue(purchaseRebarLengthM, 3),
+      'rebarRods': rebarRods.toDouble(),
+      'rebarKg': roundValue(exactRebarWeightKg, 3),
+      'rebarPlanningKg': roundValue(planningRebarWeightKg, 3),
+      'rebarPurchaseKg': roundValue(purchaseRebarWeightKg, 3),
+      'tieSharePercent': roundValue(tieSharePercent, 3),
+      'wireLengthPerTieM': roundValue(wireLengthPerTieM, 3),
+      'wireExactLengthM': roundValue(wireExactLengthM, 3),
+      'wireKg': roundValue(wireExactKg, 3),
+      'wirePlanningKg': roundValue(wirePlanningKg, 3),
+      'wirePurchaseKg': roundValue(wirePurchaseKg, 3),
+      'wirePackages': wirePackages.toDouble(),
+      'wirePackageKg': wirePackageKg,
+      'formworkHeightMm': roundValue(formworkHeightMm, 3),
+      'formworkArea': roundValue(formworkExactM2, 3),
+      'formworkPlanningArea': roundValue(formworkPlanningM2, 3),
+      'formworkReservePercent': roundValue(formworkReservePercent, 3),
+      'includeGeotextile': includeGeotextile ? 1 : 0,
+      'geotextile': roundValue(geotextileExactM2, 3),
+      'geotextilePlanningM2': roundValue(geotextilePlanningM2, 3),
+      'geotextilePurchaseM2': roundValue(geotextilePurchaseM2, 3),
+      'geotextileRolls': geotextileRolls.toDouble(),
+      'geotextileReservePercent': roundValue(geotextileReservePercent, 3),
+      'geotextileRollAreaM2': roundValue(geotextileRollAreaM2, 3),
+      'sandLayerMm': roundValue(sandLayerMm, 3),
+      'sand': roundValue(sandExactM3, 3),
+      'sandPlanningM3': roundValue(sandPlanningM3, 3),
+      'sandPurchaseM3': roundValue(sandPurchaseM3, 3),
+      'sandOrderExtraPercent': roundValue(sandOrderExtraPercent, 3),
+      'gravelLayerMm': roundValue(gravelLayerMm, 3),
+      'gravel': roundValue(gravelExactM3, 3),
+      'gravelPlanningM3': roundValue(gravelPlanningM3, 3),
+      'gravelPurchaseM3': roundValue(gravelPurchaseM3, 3),
+      'gravelOrderExtraPercent': roundValue(gravelOrderExtraPercent, 3),
+      'aggregateOrderStepM3': aggregateOrderStepM3,
+      'insulationThickness': roundValue(insulationThickness, 3),
+      'insulationReservePercent': roundValue(insulationReservePercent, 3),
+      'eppsBoardAreaM2': roundValue(eppsBoardAreaM2, 3),
+      'eppsPlates': eppsBoards.toDouble(),
+      'eppsPurchaseM2': roundValue(eppsPurchaseM2, 3),
       'minExactNeedM3': scenarios['MIN']!.exactNeed,
       'recExactNeedM3': recScenario.exactNeed,
       'maxExactNeedM3': scenarios['MAX']!.exactNeed,

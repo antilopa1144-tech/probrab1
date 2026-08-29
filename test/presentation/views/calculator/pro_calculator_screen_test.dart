@@ -13,6 +13,7 @@ void main() {
   late CalculatorDefinitionV2 concreteDefinition;
   late CalculatorDefinitionV2 stripFoundationDefinition;
   late CalculatorDefinitionV2 rebarDefinition;
+  late CalculatorDefinitionV2 slabFoundationDefinition;
 
   setUpAll(() {
     setupMocks();
@@ -50,6 +51,13 @@ void main() {
       throw StateError('foundation_rebar calculator not found in registry');
     }
     rebarDefinition = realRebarDefinition;
+    final realSlabFoundationDefinition = CalculatorRegistry.getById(
+      'foundation_slab',
+    );
+    if (realSlabFoundationDefinition == null) {
+      throw StateError('foundation_slab calculator not found in registry');
+    }
+    slabFoundationDefinition = realSlabFoundationDefinition;
   });
 
   group('ProCalculatorScreen', () {
@@ -300,6 +308,45 @@ void main() {
       expect(find.text('Суммарная длина каркаса'), findsOneWidget);
       expect(find.text('Длина сетки'), findsNothing);
       expect(find.textContaining('Хомуты', skipOffstage: false), findsWidgets);
+    });
+  });
+
+  group('ProCalculatorScreen canonical slab foundation flow', () {
+    testWidgets('показывает проектную схему, упаковки и отключаемые слои', (
+      tester,
+    ) async {
+      setTestViewportSize(tester);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: ProCalculatorScreen(definition: slabFoundationDefinition),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Геометрия из проекта'), findsOneWidget);
+      expect(find.text('Заказ бетона'), findsOneWidget);
+      expect(find.text('Армирование из проекта'), findsOneWidget);
+      expect(find.text('Закупка арматуры'), findsOneWidget);
+      expect(find.text('Подготовка основания'), findsOneWidget);
+      expect(find.text('Длина плиты по проекту'), findsOneWidget);
+      expect(find.text('Площадь одного рулона'), findsOneWidget);
+      expect(
+        find.textContaining('115 прутков', skipOffstage: false),
+        findsOneWidget,
+      );
+
+      final geotextileSwitch = find.byType(Switch);
+      expect(geotextileSwitch, findsOneWidget);
+      await tester.ensureVisible(geotextileSwitch);
+      await tester.tap(geotextileSwitch);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Площадь одного рулона'), findsNothing);
+      expect(
+        find.textContaining('Геотекстиль — тип', skipOffstage: false),
+        findsNothing,
+      );
     });
   });
 }
