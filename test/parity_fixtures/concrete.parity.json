@@ -1,7 +1,7 @@
 {
   "calculator_id": "concrete",
-  "formula_version": "concrete-canonical-v2",
-  "generated_at": "2026-08-26T11:39:04.627Z",
+  "formula_version": "concrete-canonical-v3",
+  "generated_at": "2026-08-29T06:32:47.015Z",
   "cases": [
     {
       "id": "defaults",
@@ -11,10 +11,10 @@
         "concreteVolume": 5,
         "concreteGrade": 3,
         "manualMix": 0,
+        "readyMixOrderStepM3": 0.1,
         "reserve": 5,
         "area": 20,
-        "thickness": 200,
-        "application": 0
+        "thickness": 200
       },
       "expected_totals": {
         "sourceVolume": 5,
@@ -22,16 +22,13 @@
         "inputMode": 0,
         "concreteGrade": 3,
         "manualMix": 0,
-        "application": 0,
+        "readyMixOrderStepM3": 0.1,
         "reserve": 5,
         "gradeIndex": 3,
         "cementKgPerM3": 290,
         "sandM3PerM3": 0.5,
         "gravelM3PerM3": 0.82,
         "waterLPerM3": 190,
-        "topSurfaceArea": 26.25,
-        "perimeterEst": 20.494,
-        "formworkArea": 4.099,
         "cementKg": 0,
         "cementBags": 0,
         "sandM3": 0,
@@ -44,16 +41,9 @@
         "recPurchaseM3": 5.3,
         "maxPurchaseM3": 5.5
       },
-      "expected_materials_count": 8,
+      "expected_materials_count": 1,
       "expected_material_names": [
-        "Бетон М200 (В15)",
-        "Арматура AIII Ø12 мм (70 кг/м³ для плиты)",
-        "Проволока вязальная 1.2 мм",
-        "Стульчики защитного слоя 30 мм",
-        "Опалубочная фанера 18 мм",
-        "Гвозди строительные 100 мм",
-        "Мастика гидроизоляционная битумная (20 кг)",
-        "Плёнка полиэтиленовая для укрытия (30 м²)"
+        "Бетон М200 (В15)"
       ],
       "expected_warnings_count": 0,
       "expected_warnings": [],

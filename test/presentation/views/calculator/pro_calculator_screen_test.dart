@@ -10,6 +10,7 @@ import '../../../helpers/test_helpers.dart';
 void main() {
   late CalculatorDefinitionV2 testDefinition;
   late CalculatorDefinitionV2 electricDefinition;
+  late CalculatorDefinitionV2 concreteDefinition;
 
   setUpAll(() {
     setupMocks();
@@ -28,6 +29,13 @@ void main() {
       );
     }
     electricDefinition = realElectricDefinition;
+    final realConcreteDefinition = CalculatorRegistry.getById(
+      'concrete_universal',
+    );
+    if (realConcreteDefinition == null) {
+      throw StateError('concrete_universal calculator not found in registry');
+    }
+    concreteDefinition = realConcreteDefinition;
   });
 
   group('ProCalculatorScreen', () {
@@ -166,6 +174,53 @@ void main() {
 
       expect(find.text('100 м'), findsOneWidget);
       expect(find.text('150 м'), findsOneWidget);
+    });
+  });
+
+  group('ProCalculatorScreen canonical concrete flow', () {
+    testWidgets('показывает v3 режимы и предупреждает о ручном составе', (
+      tester,
+    ) async {
+      setTestViewportSize(tester);
+
+      await tester.pumpWidget(
+        createTestApp(
+          child: ProCalculatorScreen(definition: concreteDefinition),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Как задать объём'), findsOneWidget);
+      expect(find.text('Знаю объём', skipOffstage: false), findsOneWidget);
+      expect(find.text('Объём бетона'), findsOneWidget);
+      expect(find.text('Шаг заказа готовой смеси'), findsOneWidget);
+      expect(find.text('В15 (М200)'), findsOneWidget);
+
+      final byArea = find.text('По площади и толщине', skipOffstage: false);
+      await tester.ensureVisible(byArea);
+      await tester.tap(byArea);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Площадь заливки'), findsOneWidget);
+      expect(find.text('Толщина слоя'), findsOneWidget);
+      expect(find.text('Объём бетона'), findsNothing);
+
+      final manualMix = find.byType(Switch);
+      expect(manualMix, findsOneWidget);
+      await tester.ensureVisible(manualMix);
+      await tester.tap(manualMix);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Важно'), findsOneWidget);
+      expect(
+        find.textContaining('не рецепт', skipOffstage: false),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Арматура', skipOffstage: false),
+        findsNothing,
+      );
+      expect(find.textContaining('Опалуб', skipOffstage: false), findsNothing);
     });
   });
 }

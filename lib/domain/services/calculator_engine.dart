@@ -10,7 +10,6 @@ import '../usecases/calculate_blind_area_v2.dart';
 import '../usecases/calculate_brick.dart';
 import '../usecases/calculate_cassette_ceiling_v2.dart';
 import '../usecases/calculate_ceiling_insulation_v2.dart';
-import '../usecases/calculate_concrete_universal.dart';
 import '../usecases/calculate_decor_plaster_v2.dart';
 import '../usecases/calculate_doors_install_v2.dart';
 import '../usecases/calculate_fence_v2.dart';
@@ -46,6 +45,7 @@ import '../usecases/calculate_window_installation.dart';
 import '../usecases/calculate_wood_lining.dart';
 import '../usecases/calculator_usecase.dart';
 import '../usecases/canonical_bridge.dart';
+import '../usecases/concrete_canonical_adapter.dart';
 import '../usecases/decor_stone_canonical_adapter.dart';
 import '../usecases/facade_panels_v3_adapter.dart';
 
@@ -77,7 +77,9 @@ class CalculatorEngine {
       'ceilings_insulation': CalculateCeilingInsulationV2(),
       'ceilings_rail': CalculateRailCeilingV2(),
       'ceilings_stretch': CalculateStretchCeilingV2(),
-      'concrete_universal': CalculateConcreteUniversal(),
+      'concrete_universal': const CanonicalBridgeUseCase(
+        calculateCanonicalConcrete,
+      ),
       'doors_install': CalculateDoorsInstallV2(),
       'engineering_ventilation': CalculateVentilationV2(),
       'exterior_brick': brick,

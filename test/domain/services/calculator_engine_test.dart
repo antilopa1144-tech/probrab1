@@ -78,6 +78,26 @@ void main() {
       );
     });
 
+    test('concrete screen engine uses the canonical v3 purchase contract', () {
+      final result = CalculatorEngine.calculate('concrete_universal', {
+        'inputMode': 0,
+        'concreteVolume': 1,
+        'concreteGrade': 3,
+        'manualMix': 1,
+        'readyMixOrderStepM3': 0.5,
+        'reserve': 5,
+      });
+
+      expect(result.primaryTotals?['recExactNeedM3'], closeTo(1.05, 1e-9));
+      expect(
+        result.materials?.map((material) => material.name),
+        containsAll(['Цемент М400 (50 кг)', 'Песок строительный', 'Щебень']),
+      );
+      expect(result.norms.join(' '), contains('не рецепт'));
+      expect(result.values.keys.join(' '), isNot(contains('formwork')));
+      expect(result.values.keys.join(' '), isNot(contains('rebar')));
+    });
+
     test('calculate smoke: attic with default-like inputs', () {
       final result = CalculatorEngine.calculate('attic', {
         'floorLength': 8.0,

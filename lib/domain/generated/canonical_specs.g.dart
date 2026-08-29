@@ -1,6 +1,6 @@
 // GENERATED FILE — DO NOT EDIT MANUALLY
 // Source: configs/calculators/*-canonical.v1.json
-// Generated: 2026-08-27
+// Generated: 2026-08-29
 // Run: npx tsx scripts/sync-specs-to-dart.ts
 
 // ignore_for_file: prefer_single_quotes, lines_longer_than_80_chars
@@ -1407,7 +1407,7 @@ const Map<String, dynamic> ceilingStretchSpecData = {
 /// Generated from concrete-canonical.v1.json
 const Map<String, dynamic> concreteSpecData = {
   'calculator_id': 'concrete',
-  'formula_version': 'concrete-canonical-v2',
+  'formula_version': 'concrete-canonical-v3',
   'input_schema': [
     {
       'key': 'inputMode',
@@ -1435,6 +1435,13 @@ const Map<String, dynamic> concreteSpecData = {
       'max': 1,
     },
     {
+      'key': 'readyMixOrderStepM3',
+      'unit': 'm3',
+      'default_value': 0.1,
+      'min': 0.1,
+      'max': 1,
+    },
+    {
       'key': 'reserve',
       'unit': '%',
       'default_value': 5,
@@ -1455,17 +1462,16 @@ const Map<String, dynamic> concreteSpecData = {
       'min': 50,
       'max': 1000,
     },
-    {
-      'key': 'application',
-      'default_value': 0,
-      'min': 0,
-      'max': 2,
-    },
   ],
   'field_factors': {
     'enabled': [],
   },
   'normative_formula': {
+    'volume': 'source_volume = concreteVolume OR area * thickness / 1000',
+  },
+  'planning_mix': {
+    'status': 'project_estimate_not_mix_design',
+    'cement_basis': 'Плановая таблица для цемента класса прочности 32,5 (традиционное обозначение М400)',
     'proportions': [
       {
         'grade': 1,
@@ -1527,18 +1533,13 @@ const Map<String, dynamic> concreteSpecData = {
   },
   'packaging_rules': {
     'unit': 'м³',
-    'volume_step_m3': 0.1,
+    'allowed_ready_mix_order_steps_m3': [
+      0.1,
+      0.5,
+      1,
+    ],
     'cement_bag_kg': 50,
-    'mastic_bucket_kg': 20,
-    'film_roll_m2': 30,
-  },
-  'material_rules': {
-    'waterproof_mastic_kg_per_m2': 1,
-    'waterproof_reserve_factor': 1.15,
-    'film_reserve_factor': 1.1,
-    'sand_reserve_factor': 1.05,
-    'gravel_reserve_factor': 1.05,
-    'estimated_slab_thickness_m': 0.2,
+    'aggregate_order_step_m3': 0.1,
   },
   'warnings_rules': {
     'small_volume_threshold_m3': 0.5,
@@ -1550,215 +1551,41 @@ const Map<String, dynamic> concreteSpecData = {
     'MIN': 'Чистый геометрический объём без запаса',
     'REC': 'Чистый объём с выбранным пользователем запасом',
     'MAX': 'Чистый объём с запасом не меньше рекомендуемых 10%',
-    'purchase_quantity': 'Округление каждого сценария вверх с шагом заказа 0,1 м³',
+    'purchase_quantity': 'Округление каждого сценария вверх с выбранным пользователем шагом заказа готовой смеси',
   },
-  'companion_materials': [
-    {
-      'key': 'rebar_slab',
-      'label': 'Арматура AIII Ø12 мм (70 кг/м³ для плиты)',
-      'category': 'Армирование',
-      'unit': 'кг',
-      'rationale': 'Армирование плиты/фундамента на грунте по СП 63.13330. Расход 60-80 кг/м³, среднее 70.',
-      'only_when': {
-        'type': 'input_eq',
-        'input_key': 'application',
-        'value': 0,
+  'evidence': {
+    'reviewed_at': '2026-08-27',
+    'standards': [
+      {
+        'code': 'ГОСТ 27006-2019',
+        'scope': 'Правила подбора и назначения состава тяжёлого и мелкозернистого бетона',
+        'source': 'https://protect.gost.ru/gost/details/69dff0a2-aff4-4552-85c8-6b7cd61315f2',
       },
-      'formula': {
-        'type': 'volume_consumption',
-        'totals_key': 'totalVolume',
-        'consumption_per_m3': 70,
-        'reserve_factor': 1.05,
+      {
+        'code': 'ГОСТ 7473-2010',
+        'scope': 'Действующие до 01.11.2026 требования к готовым бетонным смесям',
+        'source': 'https://protect.gost.ru/gost/details/fd47b526-d233-40ef-a03b-70d7199e1a97',
       },
-    },
-    {
-      'key': 'rebar_screed',
-      'label': 'Сетка кладочная 100×100×5 мм для стяжки',
-      'category': 'Армирование',
-      'unit': 'кг',
-      'rationale': 'Армирование стяжки сеткой 100×100×5. Эквивалентный расход ~25 кг/м³.',
-      'only_when': {
-        'type': 'input_eq',
-        'input_key': 'application',
-        'value': 1,
+      {
+        'code': 'ГОСТ 26633-2015',
+        'scope': 'Требования к тяжёлым и мелкозернистым бетонам',
+        'source': 'https://protect.gost.ru/gost/details/b9da3cd9-2fb4-4473-9553-3979ad6be453',
       },
-      'formula': {
-        'type': 'volume_consumption',
-        'totals_key': 'totalVolume',
-        'consumption_per_m3': 25,
-        'reserve_factor': 1.05,
+      {
+        'code': 'СП 70.13330.2012',
+        'scope': 'Производство и приёмка бетонных работ',
+        'source': 'https://protect.gost.ru/sp/details/2239acf1-711f-4f1f-aaa7-902fa06a8a60',
       },
-    },
-    {
-      'key': 'rebar_structure',
-      'label': 'Арматура AIII Ø12-16 мм (120 кг/м³ для конструктива)',
-      'category': 'Армирование',
-      'unit': 'кг',
-      'rationale': 'Для колонн, балок, перекрытий расход 100-150 кг/м³.',
-      'only_when': {
-        'type': 'input_eq',
-        'input_key': 'application',
-        'value': 2,
-      },
-      'formula': {
-        'type': 'volume_consumption',
-        'totals_key': 'totalVolume',
-        'consumption_per_m3': 120,
-        'reserve_factor': 1.05,
-      },
-    },
-    {
-      'key': 'binding_wire',
-      'label': 'Проволока вязальная 1.2 мм',
-      'category': 'Армирование',
-      'unit': 'кг',
-      'rationale': 'Для вязки арматурных каркасов. Не нужна для стяжки с готовой сеткой.',
-      'only_when': {
-        'type': 'or',
-        'any': [
-          {
-            'type': 'input_eq',
-            'input_key': 'application',
-            'value': 0,
-          },
-          {
-            'type': 'input_eq',
-            'input_key': 'application',
-            'value': 2,
-          },
-        ],
-      },
-      'formula': {
-        'type': 'volume_consumption',
-        'totals_key': 'totalVolume',
-        'consumption_per_m3': 0.5,
-        'reserve_factor': 1.1,
-      },
-    },
-    {
-      'key': 'rebar_chairs',
-      'label': 'Стульчики защитного слоя 30 мм',
-      'category': 'Армирование',
-      'unit': 'шт',
-      'rationale': 'Поддерживают защитный слой арматуры от опалубки/основания. 4 шт/м².',
-      'only_when': {
-        'type': 'or',
-        'any': [
-          {
-            'type': 'input_eq',
-            'input_key': 'application',
-            'value': 0,
-          },
-          {
-            'type': 'input_eq',
-            'input_key': 'application',
-            'value': 2,
-          },
-        ],
-      },
-      'formula': {
-        'type': 'area_consumption',
-        'totals_key': 'topSurfaceArea',
-        'consumption_per_m2': 4,
-        'reserve_factor': 1,
-      },
-    },
-    {
-      'key': 'formwork_panel',
-      'label': 'Опалубочная фанера 18 мм',
-      'category': 'Опалубка',
-      'unit': 'м²',
-      'rationale': 'Боковая опалубка по периметру. Расход = периметр × высота × 1.1 (подрезка).',
-      'only_when': {
-        'type': 'or',
-        'any': [
-          {
-            'type': 'input_eq',
-            'input_key': 'application',
-            'value': 0,
-          },
-          {
-            'type': 'input_eq',
-            'input_key': 'application',
-            'value': 2,
-          },
-        ],
-      },
-      'formula': {
-        'type': 'area_consumption',
-        'totals_key': 'formworkArea',
-        'consumption_per_m2': 1,
-        'reserve_factor': 1.1,
-      },
-    },
-    {
-      'key': 'formwork_nails',
-      'label': 'Гвозди строительные 100 мм',
-      'category': 'Опалубка',
-      'unit': 'кг',
-      'rationale': 'Сборка опалубки из досок/фанеры. ~0.3 кг на м² опалубки.',
-      'only_when': {
-        'type': 'or',
-        'any': [
-          {
-            'type': 'input_eq',
-            'input_key': 'application',
-            'value': 0,
-          },
-          {
-            'type': 'input_eq',
-            'input_key': 'application',
-            'value': 2,
-          },
-        ],
-      },
-      'formula': {
-        'type': 'area_consumption',
-        'totals_key': 'formworkArea',
-        'consumption_per_m2': 0.3,
-        'reserve_factor': 1.1,
-      },
-    },
-    {
-      'key': 'waterproof_mastic',
-      'label': 'Мастика гидроизоляционная битумная (20 кг)',
-      'category': 'Гидроизоляция',
-      'unit': 'кг',
-      'rationale': 'Обмазочная гидроизоляция боковин фундамента. Только для подземных конструкций.',
-      'only_when': {
-        'type': 'input_eq',
-        'input_key': 'application',
-        'value': 0,
-      },
-      'formula': {
-        'type': 'area_consumption',
-        'totals_key': 'waterproofArea',
-        'consumption_per_m2': 1,
-        'reserve_factor': 1.15,
-      },
-      'package': {
-        'size': 20,
-        'unit': 'вёдер',
-      },
-    },
-    {
-      'key': 'curing_film',
-      'label': 'Плёнка полиэтиленовая для укрытия (30 м²)',
-      'category': 'Уход за бетоном',
-      'unit': 'м²',
-      'rationale': 'Укрытие поверхности после заливки — предотвращает потерю влаги и трещины при твердении.',
-      'formula': {
-        'type': 'linear_overlap',
-        'totals_key': 'topSurfaceArea',
-        'overlap_factor': 1.1,
-      },
-      'package': {
-        'size': 30,
-        'unit': 'рулонов',
-      },
-    },
-  ],
+    ],
+    'project_assumptions': [
+      'planning_mix.proportions',
+      'scenario_policy.recommended_max_reserve_percent',
+      'packaging_rules.allowed_ready_mix_order_steps_m3',
+      'packaging_rules.aggregate_order_step_m3',
+    ],
+  },
 };
+
 /// Generated from decor-plaster-canonical.v1.json
 const Map<String, dynamic> decorPlasterSpecData = {
   'calculator_id': 'decor-plaster',

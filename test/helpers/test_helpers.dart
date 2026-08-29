@@ -86,12 +86,22 @@ String _getNestedValue(Map<String, dynamic> map, String key) {
   final parts = key.split('.');
   dynamic current = map;
 
-  for (final part in parts) {
-    if (current is Map<String, dynamic> && current.containsKey(part)) {
-      current = current[part];
-    } else {
+  for (var index = 0; index < parts.length; index++) {
+    if (current is! Map<String, dynamic>) {
       return key; // Return key if not found
     }
+
+    final literalRemainder = parts.sublist(index).join('.');
+    if (current.containsKey(literalRemainder)) {
+      current = current[literalRemainder];
+      break;
+    }
+
+    final part = parts[index];
+    if (!current.containsKey(part)) {
+      return key; // Return key if not found
+    }
+    current = current[part];
   }
 
   return current is String ? current : key;
