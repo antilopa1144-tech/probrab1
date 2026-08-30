@@ -129,6 +129,8 @@ class CalculatorScreenRegistry {
     'ceilings_insulation': (_, _) => const CeilingInsulationCalculatorScreen(),
     'ceilings_cassette': (_, _) => const CassetteCeilingCalculatorScreen(),
     'ceilings_rail': (_, _) => const RailCeilingCalculatorScreen(),
+    'drywall_ceiling': (def, inputs) =>
+        ProCalculatorScreen(definition: def, initialInputs: inputs),
 
     // Инженерия
     // engineering_heating удалён — дубль floors_warm

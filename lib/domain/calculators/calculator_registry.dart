@@ -14,6 +14,7 @@ import 'frame_house_calculator_v2.dart';
 import 'rebar_calculator_v2.dart';
 import 'unified_roofing_calculator_v2.dart';
 import 'stairs_calculator_v2.dart';
+import 'drywall_ceiling_calculator_v2.dart';
 import 'warm_floor_calculator_v2.dart';
 import 'parquet_calculator_v2.dart';
 import 'room_calculator_v2.dart';
@@ -95,6 +96,9 @@ class CalculatorRegistry {
 
     // Лестница — геометрия прямого марша и закупка по проектной ведомости
     stairsCalculatorV2,
+
+    // Потолок КНАУФ П 113 — официальная ведомость и реальные фасовки
+    drywallCeilingCalculatorV2,
 
     // Инженерные системы
     warmFloorCalculatorV2,

@@ -945,8 +945,8 @@
       "description": "Расчёт материалов: Кассетный"
     },
     "ceilings_gkl": {
-      "title": "Подвесной ГКЛ",
-      "description": "Расчёт материалов: Подвесной ГКЛ"
+      "title": "Потолок КНАУФ П 113",
+      "description": "Материалы П 113.1/П 113.2 по официальной ведомости и фасовкам"
     },
     "ceilings_insulation": {
       "title": "Утепление потолка",
@@ -3854,6 +3854,15 @@
         "split_positions": "Разные длины, сечения, материалы и типы крепежа считайте отдельными проектными позициями"
       }
     },
+    "drywallCeiling": {
+      "before": {
+        "system": "Расчёт относится только к одноуровневой системе КНАУФ П 113.1 или П 113.2 и не подходит для других схем потолка",
+        "project": "Точки крепления, допустимую нагрузку, светильники, люки, усиления и специальные швы проверяйте по рабочим чертежам и проекту"
+      },
+      "after": {
+        "packages": "Сверьте длины профилей, фасовки шурупов, рулонов и составов с выбранными товарами перед покупкой"
+      }
+    },
     "bathroom_tile": {
       "before": {
         "layout": "Сделайте раскладку плитки «на сухую» перед укладкой",
@@ -3962,6 +3971,36 @@
     "mode.by_room": "По размерам комнаты",
     "mode.sliders": "Ползунки",
     "mode.manual": "Ввод вручную",
+    "drywallCeiling.inputMode": "Как задать потолок",
+    "drywallCeiling.inputMode.hint": "Периметр нужен для ПН и лент; в режиме площади он вводится отдельно",
+    "drywallCeiling.inputMode.dimensions": "Длина и ширина",
+    "drywallCeiling.inputMode.area": "Площадь и периметр",
+    "drywallCeiling.length": "Длина помещения",
+    "drywallCeiling.width": "Ширина помещения",
+    "drywallCeiling.area": "Фактическая площадь потолка",
+    "drywallCeiling.perimeterM": "Суммарный периметр примыканий",
+    "drywallCeiling.perimeterM.hint": "Измерьте все участки примыкания ПН и системных лент к стенам",
+    "drywallCeiling.layers": "Вариант системы",
+    "drywallCeiling.layers.hint": "Выберите только по принятому проектному решению",
+    "drywallCeiling.layers.single": "П 113.1 — один слой 12,5 мм",
+    "drywallCeiling.layers.double": "П 113.2 — два слоя 12,5 мм",
+    "drywallCeiling.sheetWidthMm": "Ширина выбранной плиты",
+    "drywallCeiling.sheetLengthMm": "Длина выбранной плиты",
+    "drywallCeiling.sheetReservePercent": "Запас плит на раскрой",
+    "drywallCeiling.sheetReservePercent.hint": "Явный запас применяется один раз; MAX не добавляет скрытые проценты",
+    "drywallCeiling.profileLengthM": "Длина покупного профиля",
+    "drywallCeiling.profileLengthM.hint": "Одинаковая длина используется для ПП и ПН; нестандартные позиции считайте отдельно",
+    "drywallCeiling.profileReservePercent": "Запас профиля",
+    "drywallCeiling.fastenerReservePercent": "Запас штучных элементов",
+    "drywallCeiling.tnScrewPackCount": "Шурупов TN в упаковке",
+    "drywallCeiling.tnScrewPackCount.hint": "TN 25 и TN 35 показаны раздельно; укажите фасовку выбранного товара",
+    "drywallCeiling.lnScrewPackCount": "Шурупов LN в упаковке",
+    "drywallCeiling.jointTapeRollM": "Бумажной ленты в рулоне",
+    "drywallCeiling.sealingTapeRollM": "Уплотнительной ленты в рулоне",
+    "drywallCeiling.separatingTapeRollM": "Разделительной ленты в рулоне",
+    "drywallCeiling.puttyBagKg": "Фасовка шпаклёвки для стыков",
+    "drywallCeiling.primerCanL": "Объём канистры грунтовки",
+    "drywallCeiling.finishReservePercent": "Запас лент и составов",
     "frameHouse.wallLength": "Общая длина рассчитываемых стен",
     "frameHouse.wallLength.hint": "Сумма длин стен одного принятого контура; несущую схему калькулятор не определяет",
     "frameHouse.wallHeight": "Проектная высота стен",
@@ -4930,7 +4969,13 @@
     "stairs_stringers": "Несущие элементы по проекту",
     "stairs_concrete": "Монолитная лестница по проекту",
     "stairs_railing": "Ограждение по проекту",
-    "stairs_other": "Крепёж и площадки по проекту"
+    "stairs_other": "Крепёж и площадки по проекту",
+    "drywall_ceiling_geometry": "Геометрия потолка",
+    "drywall_ceiling_system": "Комплектная система",
+    "drywall_ceiling_sheets": "Гипсовые плиты",
+    "drywall_ceiling_profile": "Профили П 113",
+    "drywall_ceiling_fasteners": "Крепёж П 113",
+    "drywall_ceiling_finish": "Ленты и заделка швов"
   },
   "subcategory": {
     "floors": "Полы",
