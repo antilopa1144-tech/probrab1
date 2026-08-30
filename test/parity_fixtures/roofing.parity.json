@@ -1,64 +1,98 @@
 {
   "calculator_id": "roofing",
-  "formula_version": "roofing-canonical-v2",
-  "generated_at": "2026-08-19T07:37:48.027Z",
+  "formula_version": "roofing-canonical-v3",
+  "generated_at": "2026-08-29T23:58:15.841Z",
   "cases": [
     {
       "id": "defaults",
       "description": "Default inputs for roofing",
       "inputs": {
+        "roofAreaMode": 0,
+        "projectSlopeAreaM2": 100,
+        "planProjectionAreaM2": 80,
+        "slopeDeg": 30,
         "roofingType": 0,
-        "area": 80,
-        "slope": 30,
-        "ridgeLength": 8,
-        "sheetWidth": 1.18,
-        "sheetLength": 2.5,
-        "complexity": 0
+        "primaryCoverageM2": 1,
+        "primaryReservePercent": 10,
+        "ridgeProjectM": 0,
+        "ridgeReservePercent": 5,
+        "ridgeElementUsefulLengthM": 0,
+        "valleyProjectM": 0,
+        "valleyReservePercent": 10,
+        "valleyElementUsefulLengthM": 0,
+        "eavesProjectM": 0,
+        "eavesReservePercent": 5,
+        "eavesElementUsefulLengthM": 0,
+        "membraneProjectAreaM2": 0,
+        "membraneReservePercent": 15,
+        "membraneRollCoverageM2": 0,
+        "deckProjectAreaM2": 0,
+        "deckReservePercent": 10,
+        "deckSheetAreaM2": 0,
+        "battenProjectLengthM": 0,
+        "battenReservePercent": 5,
+        "battenBoardLengthM": 0,
+        "counterBattenProjectLengthM": 0,
+        "counterBattenReservePercent": 5,
+        "counterBattenBoardLengthM": 0,
+        "fastenersProjectPcs": 0,
+        "fastenersReservePercent": 5,
+        "fastenersPackagePcs": 0,
+        "snowGuardProjectM": 0,
+        "snowGuardReservePercent": 5,
+        "snowGuardSectionUsefulLengthM": 0,
+        "sealingTapeProjectM": 0,
+        "sealingTapeReservePercent": 10,
+        "sealingTapeRollLengthM": 0
       },
       "expected_totals": {
-        "roofingType": 0,
-        "area": 80,
-        "slope": 30,
-        "ridgeLength": 8,
-        "sheetWidth": 1.18,
-        "sheetLength": 2.5,
-        "complexity": 0,
+        "roofAreaMode": 0,
+        "projectSlopeAreaM2": 100,
+        "planProjectionAreaM2": 80,
+        "slopeDeg": 30,
         "slopeFactor": 1.154701,
-        "realArea": 92.376,
-        "perimeterEst": 35.777,
-        "complexityCoeff": 1.05,
-        "primaryQuantity": 38,
-        "minExactNeed": 35.3856,
-        "recExactNeed": 40.28,
-        "maxExactNeed": 52.37008,
-        "minPurchase": 36,
-        "recPurchase": 41,
-        "maxPurchase": 53
+        "selectedSlopeAreaM2": 100,
+        "roofingType": 0,
+        "primaryCoverageM2": 1,
+        "primaryUnits": 110,
+        "primaryPurchaseAreaM2": 110,
+        "ridgeElements": 0,
+        "valleyElements": 0,
+        "eavesElements": 0,
+        "membraneRolls": 0,
+        "deckSheets": 0,
+        "battenBoards": 0,
+        "counterBattenBoards": 0,
+        "fastenerPackages": 0,
+        "snowGuardSections": 0,
+        "sealingTapeRolls": 0,
+        "minExactNeed": 100,
+        "recExactNeed": 110,
+        "maxExactNeed": 115,
+        "minPurchase": 100,
+        "recPurchase": 110,
+        "maxPurchase": 115
       },
-      "expected_materials_count": 7,
+      "expected_materials_count": 1,
       "expected_material_names": [
-        "Металлочерепица (1.18×2.5 м)",
-        "Коньковая планка для металлочерепицы, длина 2 м",
-        "Снегозадержатели трубчатые, секции 3 м",
-        "Кровельные саморезы 4,8×35 мм с уплотнительной шайбой из EPDM-резины",
-        "Гидроизоляция кровельная — гидроветрозащитная мембрана, рулон 75 м²",
-        "Обрешётка — доска 25×100 мм, шаг 350 мм",
-        "Контробрешётка — брусок 50×50 мм"
+        "Металлочерепица — выбранный товар"
       ],
-      "expected_warnings_count": 0,
-      "expected_warnings": [],
+      "expected_warnings_count": 1,
+      "expected_warnings": [
+        "Это закупочный расчёт по принятому проекту: стропила, прогоны, обрешётка, кровельный пирог, нагрузки, водоотвод и снегозадержание здесь не проектируются"
+      ],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 35.3856,
-          "purchase_quantity": 36
+          "exact_need": 100,
+          "purchase_quantity": 100
         },
         "REC": {
-          "exact_need": 40.28,
-          "purchase_quantity": 41
+          "exact_need": 110,
+          "purchase_quantity": 110
         },
         "MAX": {
-          "exact_need": 52.37008,
-          "purchase_quantity": 53
+          "exact_need": 115,
+          "purchase_quantity": 115
         }
       }
     }

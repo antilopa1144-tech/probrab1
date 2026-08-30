@@ -41,7 +41,6 @@ import '../views/calculator/stairs_calculator_screen.dart';
 import '../views/calculator/ventilation_calculator_screen.dart';
 import '../views/calculator/blind_area_calculator_screen.dart';
 import '../views/calculator/gutters_calculator_screen.dart';
-import '../views/calculator/roofing_unified_calculator_screen.dart';
 import '../views/calculator/concrete_universal_calculator_screen.dart';
 import '../views/calculator/drainage_calculator_screen.dart';
 import '../views/calculator/greenhouse_calculator_screen.dart';
@@ -179,7 +178,7 @@ class CalculatorScreenRegistry {
     // Кровля
     'roofing_gutters': (_, _) => const GuttersCalculatorScreen(),
     'roofing_unified': (def, inputs) =>
-        RoofingUnifiedCalculatorScreen(definition: def, initialInputs: inputs),
+        ProCalculatorScreen(definition: def, initialInputs: inputs),
 
     // Участок и наружные системы
     'lawn': (_, _) => const LawnCalculatorScreen(),
