@@ -29,7 +29,6 @@ import '../usecases/calculate_room.dart';
 import '../usecases/calculate_screed_unified.dart';
 import '../usecases/calculate_self_leveling_floor.dart';
 import '../usecases/calculate_slopes_v2.dart';
-import '../usecases/calculate_stairs_v2.dart';
 import '../usecases/calculate_stretch_ceiling_v2.dart';
 import '../usecases/calculate_terrace.dart';
 import '../usecases/calculate_tile.dart';
@@ -49,6 +48,7 @@ import '../usecases/facade_panels_v3_adapter.dart';
 import '../usecases/frame_house_canonical_adapter.dart';
 import '../usecases/rebar_canonical_adapter.dart';
 import '../usecases/roofing_canonical_adapter.dart';
+import '../usecases/stairs_canonical_adapter.dart';
 import '../usecases/strip_foundation_canonical_adapter.dart';
 
 /// Единая точка расчёта для кастомных экранов и V2-каталога.
@@ -122,7 +122,7 @@ class CalculatorEngine {
       ),
       'room': CalculateRoom(),
       'slopes_finishing': CalculateSlopesV2(),
-      'stairs': CalculateStairsV2(),
+      'stairs': const CanonicalBridgeUseCase(calculateCanonicalStairs),
       'terrace': CalculateTerrace(),
       'walls_3d_panels': Calculate3dPanels(),
       'walls_decor_plaster': CalculateDecorPlasterV2(),

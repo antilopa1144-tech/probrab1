@@ -36,7 +36,6 @@ import '../views/calculator/windows_install_calculator_screen.dart';
 import '../views/calculator/facade_panels_calculator_screen.dart';
 import '../views/calculator/tile_grout_calculator_screen.dart';
 import '../views/calculator/fence_calculator_screen.dart';
-import '../views/calculator/stairs_calculator_screen.dart';
 // plumbing_calculator_screen.dart - удалён (engineering_plumbing не востребован)
 import '../views/calculator/ventilation_calculator_screen.dart';
 import '../views/calculator/blind_area_calculator_screen.dart';
@@ -155,7 +154,8 @@ class CalculatorScreenRegistry {
     'frame_house': (def, inputs) =>
         ProCalculatorScreen(definition: def, initialInputs: inputs),
     'fence': (_, _) => const FenceCalculatorScreen(),
-    'stairs': (_, _) => const StairsCalculatorScreen(),
+    'stairs': (def, inputs) =>
+        ProCalculatorScreen(definition: def, initialInputs: inputs),
 
     // Фундамент
     'foundation_basement': (def, inputs) =>

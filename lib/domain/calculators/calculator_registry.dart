@@ -13,6 +13,7 @@ import 'basement_calculator_v2.dart';
 import 'frame_house_calculator_v2.dart';
 import 'rebar_calculator_v2.dart';
 import 'unified_roofing_calculator_v2.dart';
+import 'stairs_calculator_v2.dart';
 import 'warm_floor_calculator_v2.dart';
 import 'parquet_calculator_v2.dart';
 import 'room_calculator_v2.dart';
@@ -91,6 +92,9 @@ class CalculatorRegistry {
 
     // Кровля
     unifiedRoofingCalculatorV2,
+
+    // Лестница — геометрия прямого марша и закупка по проектной ведомости
+    stairsCalculatorV2,
 
     // Инженерные системы
     warmFloorCalculatorV2,

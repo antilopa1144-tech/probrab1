@@ -1208,8 +1208,8 @@
       "description": "Расчёт пластиковых панелей"
     },
     "stairs": {
-      "title": "Лестница",
-      "description": "Расчёт материалов: Лестница"
+      "title": "Прямая лестница",
+      "description": "Геометрия одного марша и закупка материалов по проекту"
     },
     "terrace": {
       "title": "Терраса / Веранда",
@@ -3845,6 +3845,15 @@
         "common": "Всегда проверяйте геометрию крыши перед закупкой материалов"
       }
     },
+    "stairs": {
+      "before": {
+        "project": "Калькулятор показывает геометрию одного прямого марша, но не проектирует несущие элементы, узлы, площадки, армирование, анкеры и ограждения",
+        "headroom": "Оценка габарита прохода помогает заметить риск, но точное значение проверяют по проектному разрезу с чистовыми слоями"
+      },
+      "after": {
+        "split_positions": "Разные длины, сечения, материалы и типы крепежа считайте отдельными проектными позициями"
+      }
+    },
     "bathroom_tile": {
       "before": {
         "layout": "Сделайте раскладку плитки «на сухую» перед укладкой",
@@ -4071,6 +4080,67 @@
     "roofing.sealingTapeProjectM.hint": "Для стыков мембран и примыканий; 0 — не включать",
     "roofing.sealingTapeReservePercent": "Запас системной ленты",
     "roofing.sealingTapeRollLengthM": "Длина одного рулона ленты",
+    "stairs.geometryMode": "Как задано число подъёмов",
+    "stairs.geometryMode.hint": "Автоподбор нужен для эскиза; перед закупкой число подъёмов фиксируют по проекту и чистовым отметкам",
+    "stairs.geometryMode.target": "Подобрать по целевой высоте подступенка",
+    "stairs.geometryMode.project": "Ввести число подъёмов из проекта",
+    "stairs.floorRiseM": "Высота от чистого пола до чистого пола",
+    "stairs.floorRiseM.hint": "Учитывайте будущие покрытия обоих этажей, а не только черновую высоту",
+    "stairs.targetRiserHeightMm": "Целевая высота подступенка",
+    "stairs.targetRiserHeightMm.hint": "Калькулятор округлит число подъёмов и покажет фактическую высоту",
+    "stairs.projectRiserCount": "Число подъёмов по проекту",
+    "stairs.treadDepthMm": "Глубина проступи по линии хода",
+    "stairs.treadDepthMm.hint": "Для забежных ступеней и поворотов этот расчёт не применяется",
+    "stairs.topFloorActsAsTread": "Верхний пол заменяет последнюю проступь",
+    "stairs.topFloorActsAsTread.yes": "Да — проступей на одну меньше подъёмов",
+    "stairs.topFloorActsAsTread.no": "Нет — верхняя проступь отдельная",
+    "stairs.stairWidthM": "Ширина марша",
+    "stairs.stairWidthM.hint": "Не назначает число несущих элементов и ограждений",
+    "stairs.openingLengthM": "Длина проёма вдоль марша",
+    "stairs.openingLengthM.hint": "0 — не оценивать габарит прохода; точная проверка выполняется по разрезу",
+    "stairs.floorStructureThicknessM": "Толщина перекрытия с чистовыми слоями",
+    "stairs.floorStructureThicknessM.hint": "Оценка не учитывает балки, выступы, ограждение и локальные препятствия",
+    "stairs.includeTreadBlanks": "Добавить чистовые заготовки ступеней",
+    "stairs.includeTreadBlanks.hint": "Материал, толщину, опирание и несущую способность задаёт проект",
+    "stairs.includeTreadBlanks.yes": "Да — количество берётся из геометрии",
+    "stairs.includeTreadBlanks.no": "Нет — не включать в закупку",
+    "stairs.treadReservePercent": "Запас чистовых ступеней",
+    "stairs.treadsPerPackagePcs": "Ступеней в одной покупной упаковке",
+    "stairs.treadsPerPackagePcs.hint": "Для заказных одиночных деталей оставьте 1",
+    "stairs.riserProjectPcs": "Подступенки из проектной ведомости",
+    "stairs.riserProjectPcs.hint": "0 — открытая лестница или позиция не включается",
+    "stairs.riserReservePercent": "Запас подступенков",
+    "stairs.risersPerPackagePcs": "Подступенков в упаковке",
+    "stairs.stringerProjectPcs": "Косоуры или тетивы одной проектной позиции",
+    "stairs.stringerProjectPcs.hint": "Количество, сечение, материал и узлы переносите из проекта; разные позиции считайте отдельно",
+    "stairs.stringerBlankLengthM": "Длина одной проектной детали",
+    "stairs.stringerReservePercent": "Запас деталей на брак и раскрой",
+    "stairs.stringerStockLengthM": "Длина покупной заготовки",
+    "stairs.stringerStockLengthM.hint": "Если заготовка короче детали, калькулятор не предполагает составной элемент",
+    "stairs.concreteProjectM3": "Бетон из проектной ведомости",
+    "stairs.concreteProjectM3.hint": "Класс, армирование, опалубку и схему бетонирования задаёт проект",
+    "stairs.concreteReservePercent": "Запас бетона",
+    "stairs.concreteOrderStepM3": "Минимальный шаг заказа бетона",
+    "stairs.rebarProjectKg": "Масса арматуры по проекту",
+    "stairs.rebarProjectKg.hint": "Диаметры, классы, нахлёсты, анкеровку и защитный слой калькулятор не назначает",
+    "stairs.rebarReservePercent": "Запас арматуры",
+    "stairs.rebarPackageKg": "Закупочный шаг арматуры",
+    "stairs.handrailProjectM": "Длина поручня одной проектной позиции",
+    "stairs.handrailProjectM.hint": "Число сторон, высота, сечение, стыки и узлы должны быть определены проектом",
+    "stairs.handrailReservePercent": "Запас поручня",
+    "stairs.handrailStockLengthM": "Длина покупной заготовки поручня",
+    "stairs.railingInfillProjectPcs": "Стойки или элементы заполнения по проекту",
+    "stairs.railingInfillProjectPcs.hint": "Калькулятор не выводит шаг и безопасные просветы из длины марша",
+    "stairs.railingInfillReservePercent": "Запас элементов ограждения",
+    "stairs.railingInfillPackagePcs": "Элементов ограждения в упаковке",
+    "stairs.fastenersProjectPcs": "Крепёж и анкеры одной проектной позиции",
+    "stairs.fastenersProjectPcs.hint": "Тип, размер, материал, несущую способность и зоны крепления задаёт проект",
+    "stairs.fastenersReservePercent": "Запас крепежа",
+    "stairs.fastenersPackagePcs": "Крепежа в упаковке",
+    "stairs.landingFinishProjectM2": "Покрытие площадок из проектной ведомости",
+    "stairs.landingFinishProjectM2.hint": "Площадка не выводится из прямого марша автоматически",
+    "stairs.landingFinishReservePercent": "Запас покрытия площадок",
+    "stairs.landingFinishPackageM2": "Площадь покрытия в упаковке",
     "length": "Длина",
     "terrace.length": "Длина террасы",
     "terrace.width": "Ширина террасы",
@@ -4853,7 +4923,14 @@
     "roofing_membrane": "Мембрана и основание",
     "roofing_lumber": "Пиломатериал из проекта",
     "roofing_safety": "Крепёж и безопасность",
-    "roofing_tape": "Герметизация"
+    "roofing_tape": "Герметизация",
+    "stairs_geometry": "Геометрия одного марша",
+    "stairs_headroom": "Эскизная проверка прохода",
+    "stairs_treads": "Ступени и подступенки",
+    "stairs_stringers": "Несущие элементы по проекту",
+    "stairs_concrete": "Монолитная лестница по проекту",
+    "stairs_railing": "Ограждение по проекту",
+    "stairs_other": "Крепёж и площадки по проекту"
   },
   "subcategory": {
     "floors": "Полы",
