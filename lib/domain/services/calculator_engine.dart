@@ -46,6 +46,7 @@ import '../usecases/decor_stone_canonical_adapter.dart';
 import '../usecases/drywall_ceiling_canonical_adapter.dart';
 import '../usecases/facade_panels_v3_adapter.dart';
 import '../usecases/frame_house_canonical_adapter.dart';
+import '../usecases/heating_canonical_adapter.dart';
 import '../usecases/rebar_canonical_adapter.dart';
 import '../usecases/roofing_canonical_adapter.dart';
 import '../usecases/stairs_canonical_adapter.dart';
@@ -89,6 +90,9 @@ class CalculatorEngine {
       ),
       'engineering_ventilation': const CanonicalBridgeUseCase(
         calculateCanonicalVentilation,
+      ),
+      'engineering_heating': const CanonicalBridgeUseCase(
+        calculateCanonicalHeating,
       ),
       'exterior_brick': brick,
       'exterior_facade_panels': const CanonicalBridgeUseCase(

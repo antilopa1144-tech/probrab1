@@ -741,7 +741,12 @@ const List<WorkAreaDefinition> _houseAreas = [
             calculatorId: 'engineering_electrics',
           ),
           // engineering_plumbing удалён - калькулятор не востребован
-          // engineering_heating удалён — дубль floors_warm
+          WorkItemDefinition(
+            id: 'engineering_heating',
+            title: 'work.item.engineering_heating.title',
+            icon: Icons.heat_pump_outlined,
+            calculatorId: 'engineering_heating',
+          ),
           WorkItemDefinition(
             id: 'engineering_ventilation',
             title: 'work.item.engineering_ventilation.title',
@@ -756,14 +761,18 @@ const List<WorkAreaDefinition> _houseAreas = [
 
 // Унифицированный каталог: две категории (внутренняя/наружная),
 // кровля переносится в наружные, инженерка добавляется к внутренним.
-final WorkAreaDefinition _interiorArea =
-    _houseAreas.firstWhere((area) => area.id == 'interior');
-final WorkAreaDefinition _exteriorArea =
-    _houseAreas.firstWhere((area) => area.id == 'exterior');
-final WorkAreaDefinition _roofingArea =
-    _houseAreas.firstWhere((area) => area.id == 'roofing');
-final WorkAreaDefinition _engineeringArea =
-    _houseAreas.firstWhere((area) => area.id == 'engineering');
+final WorkAreaDefinition _interiorArea = _houseAreas.firstWhere(
+  (area) => area.id == 'interior',
+);
+final WorkAreaDefinition _exteriorArea = _houseAreas.firstWhere(
+  (area) => area.id == 'exterior',
+);
+final WorkAreaDefinition _roofingArea = _houseAreas.firstWhere(
+  (area) => area.id == 'roofing',
+);
+final WorkAreaDefinition _engineeringArea = _houseAreas.firstWhere(
+  (area) => area.id == 'engineering',
+);
 
 final List<WorkAreaDefinition> _mainAreas = [
   WorkAreaDefinition(
@@ -772,10 +781,7 @@ final List<WorkAreaDefinition> _mainAreas = [
     subtitle: _interiorArea.subtitle,
     icon: _interiorArea.icon,
     color: _interiorArea.color,
-    sections: [
-      ..._interiorArea.sections,
-      ..._engineeringArea.sections,
-    ],
+    sections: [..._interiorArea.sections, ..._engineeringArea.sections],
   ),
   WorkAreaDefinition(
     id: _exteriorArea.id,
@@ -783,10 +789,7 @@ final List<WorkAreaDefinition> _mainAreas = [
     subtitle: _exteriorArea.subtitle,
     icon: _exteriorArea.icon,
     color: _exteriorArea.color,
-    sections: [
-      ..._exteriorArea.sections,
-      ..._roofingArea.sections,
-    ],
+    sections: [..._exteriorArea.sections, ..._roofingArea.sections],
   ),
 ];
 

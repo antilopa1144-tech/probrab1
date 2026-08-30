@@ -132,7 +132,8 @@ class CalculatorScreenRegistry {
         ProCalculatorScreen(definition: def, initialInputs: inputs),
 
     // Инженерия
-    // engineering_heating удалён — дубль floors_warm
+    'engineering_heating': (def, inputs) =>
+        ProCalculatorScreen(definition: def, initialInputs: inputs),
     // engineering_electrics использует общий canonical-экран, чтобы реальный
     // пользовательский путь не обходил синхронизированный расчётный контракт.
     // engineering_plumbing удалён

@@ -981,8 +981,8 @@
       "description": "Предварительная ведомость кабеля и материалов по площади; не заменяет электропроект"
     },
     "engineering_heating": {
-      "title": "Отопление",
-      "description": "Расчёт материалов: Отопление"
+      "title": "Радиаторы отопления",
+      "description": "Подбор секций или приборов по нагрузке помещения и паспортной теплоотдаче"
     },
     "engineering_plumbing": {
       "title": "Сантехника",
@@ -1988,6 +1988,10 @@
     "requiredAirflow": "Расчётный расход, м³/ч",
     "actualVelocityMps": "Скорость в канале, м/с",
     "requiredRoundDiameterMm": "Эквивалентный диаметр, мм",
+    "heatLoadW": "Тепловая нагрузка, Вт",
+    "effectiveDeviceOutputW": "Мощность единицы, Вт",
+    "recPurchase": "К покупке",
+    "totalUnits": "К покупке",
     "anchorsNeeded": "Анкеров нужно",
     "angleLength": "Длина угла",
     "antisepticNeeded": "Антисептика нужно",
@@ -3234,6 +3238,11 @@
     "linear_meters": "м.п.",
     "meters": "м",
     "meters_per_second": "м/с",
+    "watts": "Вт",
+    "watts_per_square_meter": "Вт/м²",
+    "celsius": "°C",
+    "kelvin": "К",
+    "dimensionless": "",
     "centimeters": "см",
     "millimeters": "мм",
     "kilograms": "кг",
@@ -3687,6 +3696,11 @@
       "vozduhoobmen_minimum_3_m": "Воздухообмен: минимум 3 м³/ч на м².",
       "ustanavlivayte_reshetki_vverhu_dlya": "Устанавливайте решётки вверху для вытяжки, внизу для притока.",
       "proverte_tyagu_pered_montazhom": "Проверьте тягу перед монтажом вентиляторов."
+    },
+    "heating": {
+      "notHeatLossProject": "Калькулятор не проектирует отопление и не определяет теплопотери: перенесите готовую нагрузку одного помещения или задайте явное сметное допущение в Вт/м²",
+      "calculatePerRoom": "Подбирайте приборы для каждого помещения или независимо рассчитанной зоны отдельно",
+      "noHydraulics": "Расход теплоносителя, диаметры труб, потери давления, балансировка, котёл, автоматика и схема подключения требуют отдельного проекта"
     },
     "foundation": {
       "gidroizolyatsiya_po_vsey_ploschadi": "Гидроизоляция по всей площади контакта с грунтом.",
@@ -4445,6 +4459,44 @@
     "cablePurchasePerMeter": "Отрез по метрам",
     "cablePurchaseSpool50m": "Бухты по 50 м",
     "electricReserveHint": "На спуски к розеткам, петли в коробках и монтажные отклонения",
+    "heating.loadMode": "Исходная тепловая нагрузка",
+    "heating.loadMode.hint": "Для точного подбора считайте каждое помещение отдельно. Режим Вт/м² — только явная сметная оценка",
+    "heating.loadMode.project": "Готовая из проекта",
+    "heating.loadMode.preliminary": "Предварительно по Вт/м²",
+    "heating.designHeatLoadW": "Тепловая нагрузка помещения",
+    "heating.designHeatLoadW.hint": "Готовое значение из расчёта теплопотерь для одного помещения или зоны",
+    "heating.heatedAreaM2": "Площадь помещения",
+    "heating.specificHeatLoadWm2": "Удельная нагрузка из расчёта или допущения",
+    "heating.specificHeatLoadWm2.hint": "Не норматив по региону. Введите обоснованное значение для предварительной сметы",
+    "heating.deviceKind": "Что подбираем",
+    "heating.deviceKind.section": "Секции радиатора",
+    "heating.deviceKind.device": "Готовые приборы",
+    "heating.devicePowerMode": "Паспортная теплоотдача",
+    "heating.devicePowerMode.hint": "Прямой режим надёжнее: используйте таблицу изготовителя для рабочего режима",
+    "heating.devicePowerMode.design": "Уже для рабочего режима",
+    "heating.devicePowerMode.recalculate": "Пересчитать по ΔT и n",
+    "heating.deviceOutputAtDesignW": "Теплоотдача одной секции или прибора",
+    "heating.deviceOutputAtDesignW.hint": "Паспортное значение при температуре подачи, обратки и воздуха вашего проекта",
+    "heating.nominalDeviceOutputW": "Номинальная теплоотдача",
+    "heating.nominalDeviceOutputW.hint": "Значение из паспорта при указанном номинальном температурном напоре",
+    "heating.ratedDeltaTK": "Номинальный температурный напор ΔT",
+    "heating.ratedDeltaTK.hint": "Возьмите ΔT из паспорта выбранной модели",
+    "heating.supplyTempC": "Расчётная температура подачи",
+    "heating.returnTempC": "Расчётная температура обратки",
+    "heating.roomTempC": "Расчётная температура помещения",
+    "heating.temperatureExponent": "Паспортный показатель степени n",
+    "heating.temperatureExponent.hint": "Берите n из протокола испытаний или документации изготовителя",
+    "heating.designReservePercent": "Явный проектный запас мощности",
+    "heating.designReservePercent.hint": "По умолчанию скрытого запаса нет",
+    "heating.pipeLengthM": "Длина труб по схеме",
+    "heating.pipeLengthM.hint": "Введите длину из проекта или замера; материал и диаметр приложение не назначает",
+    "heating.pipeStockLengthM": "Длина покупного отрезка трубы",
+    "heating.pipeReservePercent": "Запас длины труб",
+    "heating.pipeReservePercent.hint": "Явный запас; скрытых надбавок нет",
+    "heating.fittingCount": "Фитинги по ведомости",
+    "heating.bracketCount": "Кронштейны по ведомости",
+    "heating.valveSetCount": "Комплекты арматуры по ведомости",
+    "heating.airVentCount": "Воздухоотводчики по ведомости",
     "ventilation.calculationMode": "Исходный расход воздуха",
     "ventilation.calculationMode.hint": "Жилой режим применим к помещениям с естественным проветриванием. Для других объектов используйте расход из проекта.",
     "ventilation.calculationMode.residential": "Предварительно для жилья",
@@ -4947,6 +4999,9 @@
     "ventilation_airflow": "Расход воздуха",
     "ventilation_duct": "Проверка воздуховода",
     "ventilation_purchase": "Закупка по ведомости",
+    "heating_load": "Тепловая нагрузка",
+    "heating_device": "Отопительный прибор",
+    "heating_purchase": "Закупка по ведомости",
     "sheet": "Листы",
     "application": "Применение",
     "material": "Материал",
@@ -5515,7 +5570,7 @@
         "title": "Сантехника"
       },
       "engineering_heating": {
-        "title": "Отопление"
+        "title": "Радиаторы отопления"
       },
       "engineering_ventilation": {
         "title": "Вентиляция"

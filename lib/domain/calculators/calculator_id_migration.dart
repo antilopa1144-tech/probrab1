@@ -17,8 +17,7 @@ class CalculatorIdMigration {
 
     // Old engineering IDs.
     'warm_floor': 'floors_warm',
-    'heating': 'floors_warm',
-    'engineering_heating': 'floors_warm',
+    'heating': 'engineering_heating',
 
     // Merged/removed calculators.
     'floors_screed': 'floors_screed_unified',
@@ -49,4 +48,3 @@ class CalculatorIdMigration {
     return result;
   }
 }
-

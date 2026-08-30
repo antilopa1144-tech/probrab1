@@ -394,6 +394,18 @@ void main() {
       expect(result.initialInputs, equals(inputs));
     });
 
+    test('engineering_heating использует canonical ProCalculatorScreen', () {
+      final definition = _createTestDefinition(id: 'engineering_heating');
+      final inputs = {'designHeatLoadW': 8000.0};
+
+      expect(CalculatorScreenRegistry.hasCustomScreen(definition.id), isTrue);
+      final result =
+          CalculatorScreenRegistry.build(definition.id, definition, inputs)
+              as ProCalculatorScreen;
+      expect(result.definition, equals(definition));
+      expect(result.initialInputs, equals(inputs));
+    });
+
     test(
       'engineering_ventilation использует canonical ProCalculatorScreen',
       () {
@@ -444,6 +456,7 @@ void main() {
         'ceilings_insulation',
         'ceilings_cassette',
         'ceilings_rail',
+        'engineering_heating',
         'engineering_ventilation',
         'terrace',
         'attic',

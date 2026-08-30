@@ -1,192 +1,347 @@
+import 'dart:math' as math;
+
 import '../generated/canonical_specs.g.dart';
 import '../generated/spec_reader.dart';
 import '../models/canonical_calculator_contract.dart';
 import 'canonical_adapter_utils.dart';
+
+double _clamp(double value, double min, double max) =>
+    math.max(min, math.min(max, value)).toDouble();
+
+int _whole(double value, int min, int max) =>
+    _clamp(value, min.toDouble(), max.toDouble()).round();
+
+String _compact(double value, [int decimals = 2]) {
+  final rounded = roundValue(value, decimals);
+  return rounded == rounded.roundToDouble()
+      ? rounded.toInt().toString()
+      : rounded.toString();
+}
+
+Map<String, double> normalizeLegacyHeatingInputs(Map<String, double> inputs) {
+  final normalized = Map<String, double>.from(inputs);
+  if (!inputs.containsKey('loadMode') &&
+      !inputs.containsKey('designHeatLoadW') &&
+      inputs.containsKey('totalArea')) {
+    normalized['loadMode'] = 1;
+    normalized['heatedAreaM2'] = inputs['totalArea']!;
+    normalized['specificHeatLoadWm2'] = 100;
+  }
+  return normalized;
+}
+
+void _addPieceMaterial(
+  List<CanonicalMaterialResult> materials,
+  String name,
+  int count,
+  String category,
+) {
+  if (count <= 0) return;
+  materials.add(
+    CanonicalMaterialResult(
+      name: name,
+      quantity: count.toDouble(),
+      unit: 'шт',
+      withReserve: count.toDouble(),
+      purchaseQty: count.toDouble(),
+      category: category,
+    ),
+  );
+}
 
 CanonicalCalculatorContractResult calculateCanonicalHeating(
   Map<String, double> inputs, {
   SpecReader? specOverride,
 }) {
   final spec = specOverride ?? const SpecReader(heatingSpecData);
+  final normalized = normalizeLegacyHeatingInputs(inputs);
 
-  final totalArea = (inputs['totalArea'] ?? defaultFor(spec, 'totalArea', 80))
-      .clamp(10.0, 500.0);
-  final ceilingHeightInput =
-      inputs['ceilingHeight'] ?? defaultFor(spec, 'ceilingHeight', 2.7);
-  final ceilingHeight =
-      (ceilingHeightInput > 10 ? ceilingHeightInput / 100 : ceilingHeightInput)
-          .clamp(2.5, 3.5);
-  final climateZone =
-      (inputs['climateZone'] ?? defaultFor(spec, 'climateZone', 1))
-          .round()
-          .clamp(0, 3);
-  final buildingType =
-      (inputs['buildingType'] ?? defaultFor(spec, 'buildingType', 1))
-          .round()
-          .clamp(0, 3);
-  final radiatorType =
-      (inputs['radiatorType'] ?? defaultFor(spec, 'radiatorType', 0))
-          .round()
-          .clamp(0, 3);
-  final roomCount = (inputs['roomCount'] ?? defaultFor(spec, 'roomCount', 4))
-      .round()
-      .clamp(1, 20);
+  final loadMode = _whole(
+    normalized['loadMode'] ?? defaultFor(spec, 'loadMode', 0),
+    0,
+    1,
+  );
+  final designHeatLoadW = _clamp(
+    normalized['designHeatLoadW'] ?? defaultFor(spec, 'designHeatLoadW', 8000),
+    100,
+    200000,
+  );
+  final heatedAreaM2 = _clamp(
+    normalized['heatedAreaM2'] ?? defaultFor(spec, 'heatedAreaM2', 80),
+    1,
+    2000,
+  );
+  final specificHeatLoadWm2 = _clamp(
+    normalized['specificHeatLoadWm2'] ??
+        defaultFor(spec, 'specificHeatLoadWm2', 100),
+    10,
+    500,
+  );
+  final deviceKind = _whole(
+    normalized['deviceKind'] ?? defaultFor(spec, 'deviceKind', 0),
+    0,
+    1,
+  );
+  final devicePowerMode = _whole(
+    normalized['devicePowerMode'] ?? defaultFor(spec, 'devicePowerMode', 0),
+    0,
+    1,
+  );
+  final deviceOutputAtDesignW = _clamp(
+    normalized['deviceOutputAtDesignW'] ??
+        defaultFor(spec, 'deviceOutputAtDesignW', 180),
+    10,
+    50000,
+  );
+  final nominalDeviceOutputW = _clamp(
+    normalized['nominalDeviceOutputW'] ??
+        defaultFor(spec, 'nominalDeviceOutputW', 180),
+    10,
+    50000,
+  );
+  final ratedDeltaTK = _clamp(
+    normalized['ratedDeltaTK'] ?? defaultFor(spec, 'ratedDeltaTK', 50),
+    10,
+    100,
+  );
+  final supplyTempC = _clamp(
+    normalized['supplyTempC'] ?? defaultFor(spec, 'supplyTempC', 75),
+    20,
+    120,
+  );
+  final returnTempC = _clamp(
+    normalized['returnTempC'] ?? defaultFor(spec, 'returnTempC', 65),
+    10,
+    110,
+  );
+  final roomTempC = _clamp(
+    normalized['roomTempC'] ?? defaultFor(spec, 'roomTempC', 20),
+    5,
+    35,
+  );
+  final temperatureExponent = _clamp(
+    normalized['temperatureExponent'] ??
+        defaultFor(spec, 'temperatureExponent', 1.3),
+    1,
+    2,
+  );
+  final designReservePercent = _clamp(
+    normalized['designReservePercent'] ??
+        defaultFor(spec, 'designReservePercent', 0),
+    0,
+    30,
+  );
+  final pipeLengthM = _clamp(
+    normalized['pipeLengthM'] ?? defaultFor(spec, 'pipeLengthM', 0),
+    0,
+    10000,
+  );
+  final pipeStockLengthM = _clamp(
+    normalized['pipeStockLengthM'] ?? defaultFor(spec, 'pipeStockLengthM', 4),
+    0.1,
+    100,
+  );
+  final pipeReservePercent = _clamp(
+    normalized['pipeReservePercent'] ??
+        defaultFor(spec, 'pipeReservePercent', 0),
+    0,
+    30,
+  );
+  final fittingCount = _whole(
+    normalized['fittingCount'] ?? defaultFor(spec, 'fittingCount', 0),
+    0,
+    10000,
+  );
+  final bracketCount = _whole(
+    normalized['bracketCount'] ?? defaultFor(spec, 'bracketCount', 0),
+    0,
+    10000,
+  );
+  final valveSetCount = _whole(
+    normalized['valveSetCount'] ?? defaultFor(spec, 'valveSetCount', 0),
+    0,
+    10000,
+  );
+  final airVentCount = _whole(
+    normalized['airVentCount'] ?? defaultFor(spec, 'airVentCount', 0),
+    0,
+    10000,
+  );
 
-  /* ─── power calculation ─── */
-  final heightM = ceilingHeight;
-  final heightCoeff = heightM / 2.7;
-  final powerPerM2Base = spec.materialRule('power_per_m2_base');
-  final powerPerM2 = powerPerM2Base is List
-      ? (powerPerM2Base[climateZone] as num?)?.toDouble() ?? 100
-      : powerPerM2Base is Map
-      ? (powerPerM2Base['$climateZone'] as num?)?.toDouble() ?? 100
-      : 100.0;
-  final buildingCoeffBase = spec.materialRule('building_coeff');
-  final buildingCoeff = buildingCoeffBase is List
-      ? (buildingCoeffBase[buildingType] as num?)?.toDouble() ?? 1.0
-      : buildingCoeffBase is Map
-      ? (buildingCoeffBase['$buildingType'] as num?)?.toDouble() ?? 1.0
-      : 1.0;
-  final totalPowerW = totalArea * powerPerM2 * buildingCoeff * heightCoeff;
-  final totalPowerKW = (totalPowerW / 100).round() / 10;
+  final preliminaryHeatLoadW = heatedAreaM2 * specificHeatLoadWm2;
+  final heatLoadW = loadMode == 0 ? designHeatLoadW : preliminaryHeatLoadW;
+  final meanWaterTempC = (supplyTempC + returnTempC) / 2;
+  final rawDesignDeltaTK = meanWaterTempC - roomTempC;
+  final designDeltaTK = math.max(1, rawDesignDeltaTK).toDouble();
+  final temperatureRatio = designDeltaTK / ratedDeltaTK;
+  final correctedDeviceOutputW =
+      nominalDeviceOutputW *
+      math.pow(temperatureRatio, temperatureExponent).toDouble();
+  final effectiveDeviceOutputW = devicePowerMode == 0
+      ? deviceOutputAtDesignW
+      : correctedDeviceOutputW;
 
-  /* ─── radiator calculation ─── */
-  final radiatorPowerBase = spec.materialRule('radiator_power');
-  final wattPerUnit = radiatorPowerBase is List
-      ? (radiatorPowerBase[radiatorType] as num?)?.toDouble() ?? 150
-      : radiatorPowerBase is Map
-      ? (radiatorPowerBase['$radiatorType'] as num?)?.toDouble() ?? 150
-      : 150.0;
-  final exactUnits = totalPowerW / wattPerUnit;
-  final totalUnits = exactUnits.ceil();
-  final radiatorCount = radiatorType <= 1 ? roomCount : totalUnits;
+  final heatLoadWithReserveW = heatLoadW * (1 + designReservePercent / 100);
+  final minExactUnits = heatLoadW / effectiveDeviceOutputW;
+  final recExactUnits = heatLoadWithReserveW / effectiveDeviceOutputW;
+  final minPurchaseUnits = minExactUnits.ceil();
+  final recPurchaseUnits = recExactUnits.ceil();
+  final primaryUnit = deviceKind == 0
+      ? spec.packagingRule<String>('section_unit')
+      : spec.packagingRule<String>('device_unit');
 
-  /* ─── piping ─── */
-  final pipeSticks =
-      (roomCount *
-              spec.materialRule<num>('pipe_rate').toDouble() *
-              spec.materialRule<num>('pipe_reserve').toDouble() /
-              spec.materialRule<num>('pp_pipe_stick_m').toDouble())
-          .ceil();
-  final fittings =
-      (radiatorCount *
-              spec.materialRule<num>('fittings_per_room').toDouble() *
-              spec.materialRule<num>('fittings_reserve').toDouble())
-          .ceil();
-  final brackets =
-      (radiatorCount *
-              spec.materialRule<num>('brackets_per_room').toDouble() *
-              spec.materialRule<num>('brackets_reserve').toDouble())
-          .ceil();
-  final thermoHeads = radiatorCount;
-  final mayevskyValves = radiatorCount;
-
-  /* ─── materials ─── */
-  const radiatorLabels = {
-    0: 'Биметаллический радиатор, секция 180 Вт',
-    1: 'Алюминиевый радиатор, секция 200 Вт',
-    2: 'Чугунный радиатор, 7 секций, 700 Вт',
-    3: 'Стальной панельный радиатор тип 22, 700 Вт',
-  };
-  final radiatorLabel = radiatorLabels[radiatorType] ?? 'Отопительный прибор';
-  final primaryUnit = radiatorType <= 1 ? 'секций' : 'шт';
-  final pipeStickM = spec.materialRule<num>('pp_pipe_stick_m').toDouble();
-  final materials = <CanonicalMaterialResult>[
-    CanonicalMaterialResult(
-      name: radiatorLabel,
-      quantity: roundValue(exactUnits, 6),
-      unit: primaryUnit,
-      withReserve: roundValue(exactUnits, 6),
-      purchaseQty: totalUnits.toDouble(),
-      category: 'Отопление',
-    ),
-    CanonicalMaterialResult(
-      name:
-          'Армированная труба PP-R Ø25 мм, отрезок ${pipeStickM.toStringAsFixed(pipeStickM % 1 == 0 ? 0 : 1)} м',
-      quantity: pipeSticks.toDouble(),
-      unit: 'шт',
-      withReserve: pipeSticks.toDouble(),
-      purchaseQty: pipeSticks.toDouble(),
-      category: 'Трубопровод',
-    ),
-    CanonicalMaterialResult(
-      name: 'Фитинги PP-R Ø25 мм для обвязки радиаторов',
-      quantity: fittings.toDouble(),
-      unit: 'шт',
-      withReserve: fittings.toDouble(),
-      purchaseQty: fittings.toDouble(),
-      category: 'Трубопровод',
-    ),
-    CanonicalMaterialResult(
-      name: radiatorType <= 1
-          ? 'Кронштейны для секционного радиатора'
-          : 'Кронштейны для выбранного отопительного прибора',
-      quantity: brackets.toDouble(),
-      unit: 'шт',
-      withReserve: brackets.toDouble(),
-      purchaseQty: brackets.toDouble(),
-      category: 'Монтаж',
-    ),
-    CanonicalMaterialResult(
-      name: 'Термостатический радиаторный клапан с термоголовкой',
-      quantity: thermoHeads.toDouble(),
-      unit: 'шт',
-      withReserve: thermoHeads.toDouble(),
-      purchaseQty: thermoHeads.toDouble(),
-      category: 'Регулировка',
-    ),
-    CanonicalMaterialResult(
-      name: 'Ручной воздухоотводчик (кран Маевского) 1/2″',
-      quantity: mayevskyValves.toDouble(),
-      unit: 'шт',
-      withReserve: mayevskyValves.toDouble(),
-      purchaseQty: mayevskyValves.toDouble(),
-      category: 'Арматура',
-    ),
-  ];
-
-  /* ─── scenarios ─── */
   final scenarios = <String, CanonicalScenarioResult>{};
-
   for (final scenarioName in scenarioNames) {
-    final exactNeed = roundValue(exactUnits, 6);
-    final packageCount = exactNeed > 0 ? exactNeed.ceil() : 0;
-    final purchaseQuantity = roundValue(packageCount.toDouble(), 6);
+    final usesReserve = scenarioName != 'MIN';
+    final exactNeed = usesReserve ? recExactUnits : minExactUnits;
+    final purchaseQuantity = usesReserve ? recPurchaseUnits : minPurchaseUnits;
     scenarios[scenarioName] = CanonicalScenarioResult(
-      exactNeed: exactNeed,
-      purchaseQuantity: purchaseQuantity,
-      leftover: roundValue(purchaseQuantity - exactNeed, 6),
+      exactNeed: roundValue(exactNeed, 6),
+      purchaseQuantity: purchaseQuantity.toDouble(),
+      leftover: roundValue(
+        math.max(0, purchaseQuantity - exactNeed).toDouble(),
+        6,
+      ),
       assumptions: [
         'formula_version:${spec.formulaVersion}',
-        'climateZone:$climateZone',
-        'buildingType:$buildingType',
-        'radiatorType:$radiatorType',
-        'scenario_policy:deterministic_heat_load',
-        'packaging:отопительный прибор',
+        'load_mode:$loadMode',
+        'device_kind:$deviceKind',
+        'device_power_mode:$devicePowerMode',
+        'room_or_independent_zone',
+        'no_hidden_reserve',
       ],
-      keyFactors: {'field_multiplier': 1},
+      keyFactors: {
+        'explicit_reserve_percent': usesReserve
+            ? roundValue(designReservePercent, 3)
+            : 0,
+        'field_multiplier': 1,
+      },
       buyPlan: CanonicalBuyPlan(
-        packageLabel: 'отопительный прибор',
+        packageLabel: deviceKind == 0 ? 'radiator-section' : 'heating-device',
         packageSize: 1,
-        packagesCount: packageCount,
+        packagesCount: purchaseQuantity,
         unit: primaryUnit,
       ),
     );
   }
 
-  final recScenario = scenarios['REC']!;
+  final materials = <CanonicalMaterialResult>[
+    CanonicalMaterialResult(
+      name: deviceKind == 0
+          ? 'Секции выбранного радиатора'
+          : 'Выбранный отопительный прибор',
+      quantity: roundValue(minExactUnits, 6),
+      unit: primaryUnit,
+      withReserve: roundValue(recExactUnits, 6),
+      purchaseQty: recPurchaseUnits.toDouble(),
+      category: 'Отопительные приборы',
+      packageInfo: {
+        'count': recPurchaseUnits,
+        'size': 1.0,
+        'packageUnit': primaryUnit,
+      },
+    ),
+  ];
 
-  /* ─── warnings ─── */
-  final warnings = <String>[];
-  if (totalPowerKW >
-      spec.warningRule<num>('gas_boiler_power_threshold_kw').toDouble()) {
-    warnings.add(
-      'Расчётная мощность выше 20 кВт. Тип и мощность источника тепла подбирают по расчёту теплопотерь и нагрузке горячего водоснабжения',
+  final pipeWithReserveM = pipeLengthM * (1 + pipeReservePercent / 100);
+  final pipeStockCount = pipeLengthM > 0
+      ? (pipeWithReserveM / pipeStockLengthM).ceil()
+      : 0;
+  final pipePurchaseLengthM = pipeStockCount * pipeStockLengthM;
+  if (pipeLengthM > 0) {
+    materials.add(
+      CanonicalMaterialResult(
+        name: 'Труба отопления по проектной ведомости',
+        quantity: roundValue(pipeLengthM, 6),
+        unit: 'м',
+        withReserve: roundValue(pipeWithReserveM, 6),
+        purchaseQty: roundValue(pipePurchaseLengthM, 6),
+        category: 'Трубопровод',
+        packageInfo: {
+          'count': pipeStockCount,
+          'size': roundValue(pipeStockLengthM, 6),
+          'packageUnit': spec.packagingRule<String>('pipe_unit'),
+        },
+      ),
     );
   }
-  if (buildingType == 3 && climateZone >= 2) {
+  _addPieceMaterial(
+    materials,
+    'Фитинги по проектной ведомости',
+    fittingCount,
+    'Трубопровод',
+  );
+  _addPieceMaterial(
+    materials,
+    'Кронштейны по паспорту и ведомости',
+    bracketCount,
+    'Монтаж',
+  );
+  _addPieceMaterial(
+    materials,
+    'Комплекты регулирующей и запорной арматуры',
+    valveSetCount,
+    'Арматура',
+  );
+  _addPieceMaterial(
+    materials,
+    'Воздухоотводчики по ведомости',
+    airVentCount,
+    'Арматура',
+  );
+
+  final warnings = <String>[
+    'Подбор выполняют для одного помещения или одной независимо рассчитанной зоны: общую мощность здания нельзя равномерно делить между комнатами.',
+    'Калькулятор не определяет теплопотери через ограждения, вентиляцию и инфильтрацию, а также не проверяет климатические исходные данные.',
+    'Гидравлический расчёт, расход теплоносителя, диаметры труб, потери давления, балансировка, источник тепла, автоматика и схема подключения не рассчитываются.',
+  ];
+  if (loadMode == 1) {
     warnings.add(
-      'Слабая изоляция + холодная зона \u2014 рекомендуется профессиональный теплотехнический расчёт',
+      'Режим Вт/м² — предварительная сметная оценка по явно введённой удельной нагрузке, а не нормативный расчёт теплопотерь.',
+    );
+  } else {
+    warnings.add(
+      'Тепловая нагрузка принята как готовое проектное значение и не проверена калькулятором.',
+    );
+  }
+  if (devicePowerMode == 0) {
+    warnings.add(
+      'Проверьте, что паспортная теплоотдача указана именно для расчётных температур подачи, обратки, помещения, расхода и схемы подключения.',
+    );
+  } else {
+    warnings.add(
+      'Показатель степени n и исходный температурный напор берут из протокола испытаний или документации конкретной модели.',
+    );
+    if (supplyTempC <= returnTempC || rawDesignDeltaTK <= 0) {
+      warnings.add(
+        'Температуры заданы некорректно: подача должна быть выше обратки, а средняя температура воды — выше температуры помещения.',
+      );
+    }
+    if (temperatureRatio <
+        spec.warningRule<num>('low_temperature_ratio').toDouble()) {
+      warnings.add(
+        'Расчётный температурный напор значительно ниже паспортного; теплоотдача прибора сильно уменьшится.',
+      );
+    }
+    if (temperatureRatio >
+        spec.warningRule<num>('high_temperature_ratio').toDouble()) {
+      warnings.add(
+        'Расчётный температурный напор заметно выше паспортного; проверьте допустимый режим прибора и системы.',
+      );
+    }
+  }
+  if (designReservePercent > 0) {
+    warnings.add(
+      'Применён только явно заданный запас мощности ${_compact(designReservePercent, 1)}%; дополнительного скрытого запаса нет.',
+    );
+  }
+  if (pipeLengthM == 0 &&
+      fittingCount == 0 &&
+      bracketCount == 0 &&
+      valveSetCount == 0 &&
+      airVentCount == 0) {
+    warnings.add(
+      'Сопутствующая закупка не рассчитана: внесите длину труб и штучные позиции из проектной ведомости.',
     );
   }
 
@@ -195,29 +350,48 @@ CanonicalCalculatorContractResult calculateCanonicalHeating(
     formulaVersion: spec.formulaVersion,
     materials: materials,
     totals: {
-      'totalArea': roundValue(totalArea, 3),
-      'ceilingHeight': roundValue(ceilingHeight, 3),
-      'climateZone': climateZone.toDouble(),
-      'buildingType': buildingType.toDouble(),
-      'radiatorType': radiatorType.toDouble(),
-      'roomCount': roomCount.toDouble(),
-      'heightCoeff': roundValue(heightCoeff, 4),
-      'totalPowerW': roundValue(totalPowerW, 1),
-      'totalPowerKW': totalPowerKW,
-      'wattPerUnit': wattPerUnit.toDouble(),
-      'exactUnits': roundValue(exactUnits, 6),
-      'totalUnits': totalUnits.toDouble(),
-      'radiatorCount': radiatorCount.toDouble(),
-      'pipeSticks': pipeSticks.toDouble(),
-      'fittings': fittings.toDouble(),
-      'brackets': brackets.toDouble(),
-      'thermoHeads': thermoHeads.toDouble(),
-      'mayevskyValves': mayevskyValves.toDouble(),
+      'heatLoadW': roundValue(heatLoadW, 1),
+      'effectiveDeviceOutputW': roundValue(effectiveDeviceOutputW, 3),
+      'recPurchase': scenarios['REC']!.purchaseQuantity,
+      'loadMode': loadMode.toDouble(),
+      'designHeatLoadW': roundValue(designHeatLoadW, 1),
+      'heatedAreaM2': roundValue(heatedAreaM2, 3),
+      'specificHeatLoadWm2': roundValue(specificHeatLoadWm2, 3),
+      'preliminaryHeatLoadW': roundValue(preliminaryHeatLoadW, 1),
+      'totalPowerW': roundValue(heatLoadW, 1),
+      'totalPowerKW': roundValue(heatLoadW / 1000, 3),
+      'heatLoadWithReserveW': roundValue(heatLoadWithReserveW, 1),
+      'deviceKind': deviceKind.toDouble(),
+      'devicePowerMode': devicePowerMode.toDouble(),
+      'deviceOutputAtDesignW': roundValue(deviceOutputAtDesignW, 3),
+      'nominalDeviceOutputW': roundValue(nominalDeviceOutputW, 3),
+      'ratedDeltaTK': roundValue(ratedDeltaTK, 3),
+      'supplyTempC': roundValue(supplyTempC, 3),
+      'returnTempC': roundValue(returnTempC, 3),
+      'roomTempC': roundValue(roomTempC, 3),
+      'meanWaterTempC': roundValue(meanWaterTempC, 3),
+      'designDeltaTK': roundValue(designDeltaTK, 3),
+      'temperatureRatio': roundValue(temperatureRatio, 6),
+      'temperatureExponent': roundValue(temperatureExponent, 3),
+      'correctedDeviceOutputW': roundValue(correctedDeviceOutputW, 3),
+      'wattPerUnit': roundValue(effectiveDeviceOutputW, 3),
+      'designReservePercent': roundValue(designReservePercent, 3),
+      'exactUnits': roundValue(recExactUnits, 6),
+      'totalUnits': recPurchaseUnits.toDouble(),
+      'radiatorCount': recPurchaseUnits.toDouble(),
+      'pipeLengthM': roundValue(pipeLengthM, 3),
+      'pipeWithReserveM': roundValue(pipeWithReserveM, 3),
+      'pipeStockLengthM': roundValue(pipeStockLengthM, 3),
+      'pipeSticks': pipeStockCount.toDouble(),
+      'pipePurchaseLengthM': roundValue(pipePurchaseLengthM, 3),
+      'fittings': fittingCount.toDouble(),
+      'brackets': bracketCount.toDouble(),
+      'thermoHeads': valveSetCount.toDouble(),
+      'mayevskyValves': airVentCount.toDouble(),
       'minExactNeed': scenarios['MIN']!.exactNeed,
-      'recExactNeed': recScenario.exactNeed,
+      'recExactNeed': scenarios['REC']!.exactNeed,
       'maxExactNeed': scenarios['MAX']!.exactNeed,
       'minPurchase': scenarios['MIN']!.purchaseQuantity,
-      'recPurchase': recScenario.purchaseQuantity,
       'maxPurchase': scenarios['MAX']!.purchaseQuantity,
     },
     warnings: warnings,

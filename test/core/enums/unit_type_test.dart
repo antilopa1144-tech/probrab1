@@ -60,6 +60,14 @@ void main() {
         expect(UnitType.metersPerSecond.symbol, equals('м/с'));
       });
 
+      test('returns correct symbols for heating units', () {
+        expect(UnitType.watts.symbol, equals('Вт'));
+        expect(UnitType.wattsPerSquareMeter.symbol, equals('Вт/м²'));
+        expect(UnitType.celsius.symbol, equals('°C'));
+        expect(UnitType.kelvin.symbol, equals('К'));
+        expect(UnitType.dimensionless.symbol, isEmpty);
+      });
+
       test('returns correct symbol for centimeters', () {
         expect(UnitType.centimeters.symbol, equals('см'));
       });
@@ -157,6 +165,20 @@ void main() {
         );
       });
 
+      test('returns correct keys for heating units', () {
+        expect(UnitType.watts.translationKey, equals('unit.watts'));
+        expect(
+          UnitType.wattsPerSquareMeter.translationKey,
+          equals('unit.watts_per_square_meter'),
+        );
+        expect(UnitType.celsius.translationKey, equals('unit.celsius'));
+        expect(UnitType.kelvin.translationKey, equals('unit.kelvin'));
+        expect(
+          UnitType.dimensionless.translationKey,
+          equals('unit.dimensionless'),
+        );
+      });
+
       test('returns correct key for centimeters', () {
         expect(UnitType.centimeters.translationKey, equals('unit.centimeters'));
       });
@@ -184,7 +206,7 @@ void main() {
 
     test('has all expected enum values', () {
       const values = UnitType.values;
-      expect(values.length, equals(22));
+      expect(values.length, equals(27));
       expect(values, contains(UnitType.squareMeters));
       expect(values, contains(UnitType.cubicMeters));
       expect(values, contains(UnitType.cubicMetersPerHour));
@@ -199,6 +221,11 @@ void main() {
       expect(values, contains(UnitType.sheets));
       expect(values, contains(UnitType.meters));
       expect(values, contains(UnitType.metersPerSecond));
+      expect(values, contains(UnitType.watts));
+      expect(values, contains(UnitType.wattsPerSquareMeter));
+      expect(values, contains(UnitType.celsius));
+      expect(values, contains(UnitType.kelvin));
+      expect(values, contains(UnitType.dimensionless));
       expect(values, contains(UnitType.centimeters));
       expect(values, contains(UnitType.millimeters));
       expect(values, contains(UnitType.percent));

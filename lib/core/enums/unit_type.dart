@@ -42,6 +42,21 @@ enum UnitType {
   /// Метры в секунду
   metersPerSecond,
 
+  /// Ватты
+  watts,
+
+  /// Ватты на квадратный метр
+  wattsPerSquareMeter,
+
+  /// Градусы Цельсия
+  celsius,
+
+  /// Кельвины и разность температур
+  kelvin,
+
+  /// Безразмерная величина
+  dimensionless,
+
   /// Сантиметры
   centimeters,
 
@@ -97,6 +112,16 @@ enum UnitType {
         return 'м';
       case UnitType.metersPerSecond:
         return 'м/с';
+      case UnitType.watts:
+        return 'Вт';
+      case UnitType.wattsPerSquareMeter:
+        return 'Вт/м²';
+      case UnitType.celsius:
+        return '°C';
+      case UnitType.kelvin:
+        return 'К';
+      case UnitType.dimensionless:
+        return '';
       case UnitType.centimeters:
         return 'см';
       case UnitType.millimeters:
@@ -147,6 +172,16 @@ enum UnitType {
         return 'unit.meters';
       case UnitType.metersPerSecond:
         return 'unit.meters_per_second';
+      case UnitType.watts:
+        return 'unit.watts';
+      case UnitType.wattsPerSquareMeter:
+        return 'unit.watts_per_square_meter';
+      case UnitType.celsius:
+        return 'unit.celsius';
+      case UnitType.kelvin:
+        return 'unit.kelvin';
+      case UnitType.dimensionless:
+        return 'unit.dimensionless';
       case UnitType.centimeters:
         return 'unit.centimeters';
       case UnitType.millimeters:

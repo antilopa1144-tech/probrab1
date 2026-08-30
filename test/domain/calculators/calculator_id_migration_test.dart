@@ -4,8 +4,14 @@ import 'package:probrab_ai/domain/calculators/calculator_id_migration.dart';
 void main() {
   group('CalculatorIdMigration', () {
     test('canonicalize maps known legacy IDs', () {
-      expect(CalculatorIdMigration.canonicalize('walls_paint'), 'paint_universal');
-      expect(CalculatorIdMigration.canonicalize('wall_paint'), 'paint_universal');
+      expect(
+        CalculatorIdMigration.canonicalize('walls_paint'),
+        'paint_universal',
+      );
+      expect(
+        CalculatorIdMigration.canonicalize('wall_paint'),
+        'paint_universal',
+      );
       expect(
         CalculatorIdMigration.canonicalize('calculator.stripTitle'),
         'foundation_strip',
@@ -26,17 +32,14 @@ void main() {
         CalculatorIdMigration.canonicalize('blind_area'),
         'foundation_blind_area',
       );
-      expect(
-        CalculatorIdMigration.canonicalize('warm_floor'),
-        'floors_warm',
-      );
+      expect(CalculatorIdMigration.canonicalize('warm_floor'), 'floors_warm');
       expect(
         CalculatorIdMigration.canonicalize('heating'),
-        'floors_warm',
+        'engineering_heating',
       );
       expect(
         CalculatorIdMigration.canonicalize('engineering_heating'),
-        'floors_warm',
+        'engineering_heating',
       );
       expect(
         CalculatorIdMigration.canonicalize('floors_screed'),
@@ -68,4 +71,3 @@ void main() {
     });
   });
 }
-
