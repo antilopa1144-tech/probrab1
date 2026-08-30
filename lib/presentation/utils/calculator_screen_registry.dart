@@ -37,7 +37,6 @@ import '../views/calculator/facade_panels_calculator_screen.dart';
 import '../views/calculator/tile_grout_calculator_screen.dart';
 import '../views/calculator/fence_calculator_screen.dart';
 // plumbing_calculator_screen.dart - удалён (engineering_plumbing не востребован)
-import '../views/calculator/ventilation_calculator_screen.dart';
 import '../views/calculator/blind_area_calculator_screen.dart';
 import '../views/calculator/gutters_calculator_screen.dart';
 import '../views/calculator/concrete_universal_calculator_screen.dart';
@@ -137,7 +136,8 @@ class CalculatorScreenRegistry {
     // engineering_electrics использует общий canonical-экран, чтобы реальный
     // пользовательский путь не обходил синхронизированный расчётный контракт.
     // engineering_plumbing удалён
-    'engineering_ventilation': (_, _) => const VentilationCalculatorScreen(),
+    'engineering_ventilation': (def, inputs) =>
+        ProCalculatorScreen(definition: def, initialInputs: inputs),
 
     // Специальные помещения
     'terrace': (def, inputs) =>

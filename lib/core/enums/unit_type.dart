@@ -6,6 +6,9 @@ enum UnitType {
   /// Кубические метры
   cubicMeters,
 
+  /// Кубические метры в час
+  cubicMetersPerHour,
+
   /// Погонные метры
   linearMeters,
 
@@ -35,6 +38,9 @@ enum UnitType {
 
   /// Метры
   meters,
+
+  /// Метры в секунду
+  metersPerSecond,
 
   /// Сантиметры
   centimeters,
@@ -67,6 +73,8 @@ enum UnitType {
         return 'м²';
       case UnitType.cubicMeters:
         return 'м³';
+      case UnitType.cubicMetersPerHour:
+        return 'м³/ч';
       case UnitType.linearMeters:
         return 'пог. м';
       case UnitType.pieces:
@@ -87,6 +95,8 @@ enum UnitType {
         return 'лист.';
       case UnitType.meters:
         return 'м';
+      case UnitType.metersPerSecond:
+        return 'м/с';
       case UnitType.centimeters:
         return 'см';
       case UnitType.millimeters:
@@ -113,6 +123,8 @@ enum UnitType {
         return 'unit.square_meters';
       case UnitType.cubicMeters:
         return 'unit.cubic_meters';
+      case UnitType.cubicMetersPerHour:
+        return 'unit.cubic_meters_per_hour';
       case UnitType.linearMeters:
         return 'unit.linear_meters';
       case UnitType.pieces:
@@ -133,6 +145,8 @@ enum UnitType {
         return 'unit.sheets';
       case UnitType.meters:
         return 'unit.meters';
+      case UnitType.metersPerSecond:
+        return 'unit.meters_per_second';
       case UnitType.centimeters:
         return 'unit.centimeters';
       case UnitType.millimeters:

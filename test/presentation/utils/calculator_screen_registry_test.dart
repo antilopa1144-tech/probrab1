@@ -395,21 +395,17 @@ void main() {
     });
 
     test(
-      'кастомный экран остаётся только у несинхронизированной вентиляции',
+      'engineering_ventilation использует canonical ProCalculatorScreen',
       () {
-        final engineeringCalculators = [
-          // 'engineering_heating' - удалён (дубль floors_warm)
-          // 'engineering_plumbing' - удалён
-          'engineering_ventilation',
-        ];
+        final definition = _createTestDefinition(id: 'engineering_ventilation');
+        final inputs = {'ductLengthM': 12.0};
 
-        for (final id in engineeringCalculators) {
-          expect(
-            CalculatorScreenRegistry.hasCustomScreen(id),
-            isTrue,
-            reason: 'Калькулятор $id должен быть зарегистрирован',
-          );
-        }
+        expect(CalculatorScreenRegistry.hasCustomScreen(definition.id), isTrue);
+        final result =
+            CalculatorScreenRegistry.build(definition.id, definition, inputs)
+                as ProCalculatorScreen;
+        expect(result.definition, equals(definition));
+        expect(result.initialInputs, equals(inputs));
       },
     );
   });

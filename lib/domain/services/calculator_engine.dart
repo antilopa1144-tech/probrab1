@@ -35,7 +35,6 @@ import '../usecases/calculate_tile.dart';
 import '../usecases/calculate_tile_glue.dart';
 import '../usecases/calculate_tile_grout.dart';
 import '../usecases/warm_floor_unified_usecase.dart';
-import '../usecases/calculate_ventilation_v2.dart';
 import '../usecases/calculate_wallpaper.dart';
 import '../usecases/calculate_window_installation.dart';
 import '../usecases/calculate_wood_lining.dart';
@@ -51,6 +50,7 @@ import '../usecases/rebar_canonical_adapter.dart';
 import '../usecases/roofing_canonical_adapter.dart';
 import '../usecases/stairs_canonical_adapter.dart';
 import '../usecases/strip_foundation_canonical_adapter.dart';
+import '../usecases/ventilation_canonical_adapter.dart';
 
 /// Единая точка расчёта для кастомных экранов и V2-каталога.
 ///
@@ -87,7 +87,9 @@ class CalculatorEngine {
       'drywall_ceiling': const CanonicalBridgeUseCase(
         calculateCanonicalDrywallCeiling,
       ),
-      'engineering_ventilation': CalculateVentilationV2(),
+      'engineering_ventilation': const CanonicalBridgeUseCase(
+        calculateCanonicalVentilation,
+      ),
       'exterior_brick': brick,
       'exterior_facade_panels': const CanonicalBridgeUseCase(
         calculateCanonicalFacadePanelsV3,

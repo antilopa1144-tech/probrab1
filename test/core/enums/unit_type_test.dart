@@ -12,6 +12,10 @@ void main() {
         expect(UnitType.cubicMeters.symbol, equals('м³'));
       });
 
+      test('returns correct symbol for cubicMetersPerHour', () {
+        expect(UnitType.cubicMetersPerHour.symbol, equals('м³/ч'));
+      });
+
       test('returns correct symbol for linearMeters', () {
         expect(UnitType.linearMeters.symbol, equals('пог. м'));
       });
@@ -52,6 +56,10 @@ void main() {
         expect(UnitType.meters.symbol, equals('м'));
       });
 
+      test('returns correct symbol for metersPerSecond', () {
+        expect(UnitType.metersPerSecond.symbol, equals('м/с'));
+      });
+
       test('returns correct symbol for centimeters', () {
         expect(UnitType.centimeters.symbol, equals('см'));
       });
@@ -79,15 +87,31 @@ void main() {
 
     group('translationKey', () {
       test('returns correct key for squareMeters', () {
-        expect(UnitType.squareMeters.translationKey, equals('unit.square_meters'));
+        expect(
+          UnitType.squareMeters.translationKey,
+          equals('unit.square_meters'),
+        );
       });
 
       test('returns correct key for cubicMeters', () {
-        expect(UnitType.cubicMeters.translationKey, equals('unit.cubic_meters'));
+        expect(
+          UnitType.cubicMeters.translationKey,
+          equals('unit.cubic_meters'),
+        );
+      });
+
+      test('returns correct key for cubicMetersPerHour', () {
+        expect(
+          UnitType.cubicMetersPerHour.translationKey,
+          equals('unit.cubic_meters_per_hour'),
+        );
       });
 
       test('returns correct key for linearMeters', () {
-        expect(UnitType.linearMeters.translationKey, equals('unit.linear_meters'));
+        expect(
+          UnitType.linearMeters.translationKey,
+          equals('unit.linear_meters'),
+        );
       });
 
       test('returns correct key for pieces', () {
@@ -126,6 +150,13 @@ void main() {
         expect(UnitType.meters.translationKey, equals('unit.meters'));
       });
 
+      test('returns correct key for metersPerSecond', () {
+        expect(
+          UnitType.metersPerSecond.translationKey,
+          equals('unit.meters_per_second'),
+        );
+      });
+
       test('returns correct key for centimeters', () {
         expect(UnitType.centimeters.translationKey, equals('unit.centimeters'));
       });
@@ -153,9 +184,10 @@ void main() {
 
     test('has all expected enum values', () {
       const values = UnitType.values;
-      expect(values.length, equals(20));
+      expect(values.length, equals(22));
       expect(values, contains(UnitType.squareMeters));
       expect(values, contains(UnitType.cubicMeters));
+      expect(values, contains(UnitType.cubicMetersPerHour));
       expect(values, contains(UnitType.linearMeters));
       expect(values, contains(UnitType.pieces));
       expect(values, contains(UnitType.liters));
@@ -166,6 +198,7 @@ void main() {
       expect(values, contains(UnitType.rolls));
       expect(values, contains(UnitType.sheets));
       expect(values, contains(UnitType.meters));
+      expect(values, contains(UnitType.metersPerSecond));
       expect(values, contains(UnitType.centimeters));
       expect(values, contains(UnitType.millimeters));
       expect(values, contains(UnitType.percent));
