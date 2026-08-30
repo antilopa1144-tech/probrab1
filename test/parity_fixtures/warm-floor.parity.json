@@ -1,66 +1,87 @@
 {
   "calculator_id": "warm-floor",
-  "formula_version": "warm-floor-canonical-v2",
-  "generated_at": "2026-08-19T07:37:48.172Z",
+  "formula_version": "warm-floor-canonical-v3",
+  "generated_at": "2026-08-30T03:14:14.022Z",
   "cases": [
     {
       "id": "defaults",
       "description": "Default inputs for warm-floor",
       "inputs": {
-        "roomArea": 10,
-        "furnitureArea": 2,
-        "heatingType": 0,
-        "powerDensity": 150
+        "roomAreaM2": 10,
+        "excludedAreaM2": 2,
+        "layoutAreaM2": 8,
+        "systemType": 0,
+        "kitCount": 1,
+        "kitCoverageAreaM2": 8,
+        "kitRatedPowerW": 1200,
+        "cableLengthPerKitM": 60,
+        "designHeatLoadW": 0,
+        "supplyVoltageV": 230,
+        "thermostatRatedCurrentA": 0,
+        "thermostatCount": 0,
+        "floorSensorCount": 0,
+        "sensorConduitLengthM": 0,
+        "sensorConduitStockLengthM": 1
       },
       "expected_totals": {
         "roomArea": 10,
-        "furnitureArea": 2,
+        "excludedAreaM2": 2,
+        "availableAreaM2": 8,
         "heatingArea": 8,
-        "heatingType": 0,
-        "powerDensity": 150,
+        "systemType": 0,
+        "kitCount": 1,
+        "kitCoverageAreaM2": 8,
+        "selectedCoverageAreaM2": 8,
+        "kitRatedPowerW": 1200,
         "totalPowerW": 1200,
         "totalPowerKW": 1.2,
-        "thermostat": 1,
-        "mats": 4,
+        "installedPowerDensityWm2": 150,
+        "supplyVoltageV": 230,
+        "circuitCurrentA": 5.217,
+        "thermostatRatedCurrentA": 0,
+        "thermostatLoadPercent": 0,
+        "thermostatCount": 0,
+        "floorSensorCount": 0,
+        "cableLengthPerKitM": 0,
         "cableLength": 0,
-        "mountingTapeRolls": 0,
-        "epsSheets": 0,
-        "screedBags": 0,
-        "pipeLength": 0,
-        "circuits": 0,
         "cableStepMm": 0,
-        "meshArea": 0,
-        "substrateRolls": 1,
-        "adhesiveBags": 2,
-        "minExactNeed": 3.7248,
-        "recExactNeed": 4.24,
-        "maxExactNeed": 5.51264,
-        "minPurchase": 4,
-        "recPurchase": 5,
-        "maxPurchase": 6
+        "designHeatLoadW": 0,
+        "designPowerMarginW": 0,
+        "sensorConduitLengthM": 0,
+        "sensorConduitStockLengthM": 1,
+        "conduitStockCount": 0,
+        "conduitPurchaseLengthM": 0,
+        "minExactNeed": 1,
+        "recExactNeed": 1,
+        "maxExactNeed": 1,
+        "minPurchase": 1,
+        "recPurchase": 1,
+        "maxPurchase": 1
       },
-      "expected_materials_count": 5,
+      "expected_materials_count": 1,
       "expected_material_names": [
-        "Нагревательный мат 150 Вт/м², комплект на 2 м²",
-        "Терморегулятор с выносным датчиком температуры пола",
-        "Гофротрубка Ø16 мм с заглушкой для датчика пола",
-        "Теплоизоляционная подложка, рулон 25 м²",
-        "Эластичный плиточный клей для тёплого пола, мешок 25 кг"
+        "Выбранный заводской комплект нагревательного мата"
       ],
-      "expected_warnings_count": 0,
-      "expected_warnings": [],
+      "expected_warnings_count": 5,
+      "expected_warnings": [
+        "Калькулятор проверяет выбранные заводские комплекты и раскладку, но не назначает мощность, кабель питания, автомат, коммутацию или способ управления.",
+        "Для цепи электрообогрева требуется защита УДТ с номинальным током срабатывания не более 30 мА; схему, заземление и уравнивание потенциалов проверяет проектировщик или электрик.",
+        "Сохраните план зон нагрева, свободных зон, соединений и номинальных мощностей рядом с документацией электроустановки.",
+        "Проектная тепловая нагрузка не введена: калькулятор не подтверждает, что система может быть основным отоплением.",
+        "Допустимый ток терморегулятора не введён — прямое подключение нагрузки не проверено."
+      ],
       "expected_scenarios": {
         "MIN": {
-          "exact_need": 3.7248,
-          "purchase_quantity": 4
+          "exact_need": 1,
+          "purchase_quantity": 1
         },
         "REC": {
-          "exact_need": 4.24,
-          "purchase_quantity": 5
+          "exact_need": 1,
+          "purchase_quantity": 1
         },
         "MAX": {
-          "exact_need": 5.51264,
-          "purchase_quantity": 6
+          "exact_need": 1,
+          "purchase_quantity": 1
         }
       }
     }

@@ -100,6 +100,12 @@ class CalculatorDefinitionV2 {
   /// Связанные калькуляторы (отображаются после результатов)
   final List<CalculatorLink> relatedLinks;
 
+  /// Приоритетные ключи для компактной шапки результата.
+  final List<String> primaryResultKeys;
+
+  /// Локализационные ключи подписей приоритетных результатов.
+  final Map<String, String> resultLabelKeys;
+
   const CalculatorDefinitionV2({
     required this.id,
     required this.titleKey,
@@ -118,6 +124,8 @@ class CalculatorDefinitionV2 {
     this.tags = const [],
     this.showToolsSection = true,
     this.relatedLinks = const [],
+    this.primaryResultKeys = const [],
+    this.resultLabelKeys = const {},
   });
 
   /// Кэш для результатов расчётов
@@ -249,6 +257,8 @@ class CalculatorDefinitionV2 {
     List<String>? tags,
     bool? showToolsSection,
     List<CalculatorLink>? relatedLinks,
+    List<String>? primaryResultKeys,
+    Map<String, String>? resultLabelKeys,
   }) {
     return CalculatorDefinitionV2(
       id: id ?? this.id,
@@ -268,6 +278,8 @@ class CalculatorDefinitionV2 {
       tags: tags ?? this.tags,
       showToolsSection: showToolsSection ?? this.showToolsSection,
       relatedLinks: relatedLinks ?? this.relatedLinks,
+      primaryResultKeys: primaryResultKeys ?? this.primaryResultKeys,
+      resultLabelKeys: resultLabelKeys ?? this.resultLabelKeys,
     );
   }
 }

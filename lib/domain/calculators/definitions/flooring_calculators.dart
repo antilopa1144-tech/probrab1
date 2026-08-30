@@ -15,7 +15,6 @@ import '../../usecases/parquet_canonical_adapter.dart';
 // calculate_screed.dart - не используется, калькулятор в screed_calculator_v2.dart
 import '../../usecases/self_leveling_canonical_adapter.dart';
 // calculate_tile.dart - не используется, калькулятор в tile_calculator_v2.dart
-import '../../usecases/warm_floor_unified_usecase.dart';
 import '../../usecases/tile_grout_canonical_adapter.dart';
 // calculate_carpet.dart - удалён (floors_carpet не востребован)
 // calculate_floor_insulation.dart - удалён (floors_insulation не востребован)
@@ -347,94 +346,6 @@ final List<CalculatorDefinitionV2> flooringCalculators = [
       ],
     ),
   // Дубликат floors_tile удалён - используется tile_calculator_v2.dart
-  const CalculatorDefinitionV2(
-      id: 'floors_warm',
-      titleKey: 'calculator.floors_warm.title',
-      descriptionKey: 'calculator.floors_warm.description',
-      category: CalculatorCategory.interior,
-      subCategoryKey: 'subcategory.floors',
-      fields: [
-        CalculatorField(
-          key: 'area',
-          labelKey: 'input.area',
-          unitType: UnitType.squareMeters,
-          inputType: FieldInputType.number,
-          defaultValue: 20.0,
-          minValue: 1.0,
-          maxValue: 200.0,
-          step: 0.5,
-          iconName: 'square_foot',
-          group: 'dimensions',
-          required: true,
-          order: 1,
-        ),
-        CalculatorField(
-          key: 'power',
-          labelKey: 'input.power',
-          hintKey: 'input.warmfloor_power.hint',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.number,
-          defaultValue: 150.0,
-          minValue: 80.0,
-          maxValue: 250.0,
-          step: 10.0,
-          iconName: 'bolt',
-          group: 'options',
-          required: true,
-          order: 2,
-        ),
-        CalculatorField(
-          key: 'type',
-          labelKey: 'input.type',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.number,
-          defaultValue: 2.0,
-          minValue: 1.0,
-          maxValue: 2.0,
-          iconName: 'category',
-          group: 'options',
-          required: true,
-          order: 3,
-        ),
-        CalculatorField(
-          key: 'thermostats',
-          labelKey: 'input.thermostats',
-          unitType: UnitType.pieces,
-          inputType: FieldInputType.number,
-          defaultValue: 1.0,
-          minValue: 1.0,
-          maxValue: 10.0,
-          step: 1.0,
-          iconName: 'thermostat',
-          group: 'options',
-          required: true,
-          order: 4,
-        ),
-      ],
-      beforeHints: [
-        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_ukladyvayte_pod_mebelyu'),
-        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_teploizolyatsiyu_dlya_povysheniya'),
-        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podklyuchenie_dolzhen_vypolnyat_kvalifitsirovannyy'),
-        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pered_ukladkoy_pokrytiya_proverte'),
-      ],
-      afterHints: [
-        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ne_ukladyvayte_pod_mebelyu'),
-        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.ispolzuyte_teploizolyatsiyu_dlya_povysheniya'),
-        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.podklyuchenie_dolzhen_vypolnyat_kvalifitsirovannyy'),
-        CalculatorHint(type: HintType.tip, messageKey: 'hint.flooring.pered_ukladkoy_pokrytiya_proverte'),
-      ],
-      useCase: WarmFloorUnifiedUseCase(),
-      accentColor: kCalculatorAccentColor,
-      complexity: 2,
-      popularity: 10,
-      tags: [
-        'tag.vnutrennyaya_otdelka',
-        'tag.poly',
-        'floors',
-        'warm',
-        'floors_warm',
-      ],
-    ),
   // floors_carpet удалён - ковролин не востребован
   // floors_insulation удалён - пенопласт/минвата не востребованы
 

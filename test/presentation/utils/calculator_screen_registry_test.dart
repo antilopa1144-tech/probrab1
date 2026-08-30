@@ -297,6 +297,21 @@ void main() {
   });
 
   group('CalculatorScreenRegistry - Полы', () {
+    test('floors_warm открывает общий canonical-экран', () {
+      final definition = _createTestDefinition(id: 'floors_warm');
+      final inputs = {'roomAreaM2': 12.0};
+      final result = CalculatorScreenRegistry.build(
+        'floors_warm',
+        definition,
+        inputs,
+      );
+
+      expect(result, isA<ProCalculatorScreen>());
+      final screen = result! as ProCalculatorScreen;
+      expect(screen.definition, definition);
+      expect(screen.initialInputs, inputs);
+    });
+
     test('build возвращает TileCalculatorScreen для floors_tile', () {
       final definition = _createTestDefinition(id: 'floors_tile');
       final result = CalculatorScreenRegistry.build(

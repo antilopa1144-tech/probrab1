@@ -48,6 +48,12 @@ enum UnitType {
   /// Ватты на квадратный метр
   wattsPerSquareMeter,
 
+  /// Вольты
+  volts,
+
+  /// Амперы
+  amperes,
+
   /// Градусы Цельсия
   celsius,
 
@@ -116,6 +122,10 @@ enum UnitType {
         return 'Вт';
       case UnitType.wattsPerSquareMeter:
         return 'Вт/м²';
+      case UnitType.volts:
+        return 'В';
+      case UnitType.amperes:
+        return 'А';
       case UnitType.celsius:
         return '°C';
       case UnitType.kelvin:
@@ -176,6 +186,10 @@ enum UnitType {
         return 'unit.watts';
       case UnitType.wattsPerSquareMeter:
         return 'unit.watts_per_square_meter';
+      case UnitType.volts:
+        return 'unit.volts';
+      case UnitType.amperes:
+        return 'unit.amperes';
       case UnitType.celsius:
         return 'unit.celsius';
       case UnitType.kelvin:

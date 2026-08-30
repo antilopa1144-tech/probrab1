@@ -8,7 +8,6 @@ import '../views/calculator/wallpaper_calculator_screen.dart';
 import '../views/calculator/self_leveling_floor_calculator_screen.dart';
 import '../views/calculator/tile_adhesive_calculator_screen.dart';
 import '../views/calculator/tile_calculator_screen.dart';
-import '../views/calculator/underfloor_heating_calculator_screen.dart';
 import '../views/calculator/three_d_panels_calculator_screen.dart';
 import '../views/calculator/terrace_calculator_screen.dart';
 import '../views/calculator/wood_lining_calculator_screen.dart';
@@ -118,10 +117,8 @@ class CalculatorScreenRegistry {
     'floors_screed': (_, _) => const ScreedUnifiedCalculatorScreen(),
     'dsp': (_, _) => const ScreedUnifiedCalculatorScreen(),
     'floors_tile_grout': (_, _) => const TileGroutCalculatorScreen(),
-    'floors_warm': (def, inputs) => UnderfloorHeatingCalculatorScreen(
-      definition: def,
-      initialInputs: inputs,
-    ),
+    'floors_warm': (def, inputs) =>
+        ProCalculatorScreen(definition: def, initialInputs: inputs),
 
     // Потолки
     'ceilings_stretch': (_, _) => const StretchCeilingCalculatorScreen(),

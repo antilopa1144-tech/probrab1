@@ -868,6 +868,12 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
   }
 
   List<String> _selectHeaderKeys(Map<String, double> results) {
+    final preferred = widget.definition.primaryResultKeys
+        .where((key) => (results[key] ?? 0) > 0)
+        .take(3)
+        .toList();
+    if (preferred.isNotEmpty) return preferred;
+
     final excluded = RegExp(
       r'^(min|max|rec)_|ExactNeed|Purchase$|_withReserve$|_purchaseQty$',
       caseSensitive: false,
@@ -922,6 +928,12 @@ class _ProCalculatorScreenState extends ConsumerState<ProCalculatorScreen>
   }
 
   String _translateResultLabel(String key) {
+    final customLabelKey = widget.definition.resultLabelKeys[key];
+    if (customLabelKey != null) {
+      final customLabel = _loc.translate(customLabelKey);
+      if (customLabel != customLabelKey) return customLabel;
+    }
+
     final resultKey = 'result.$key';
     final translated = _loc.translate(resultKey);
     if (translated == resultKey) {

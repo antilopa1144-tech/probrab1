@@ -63,6 +63,8 @@ void main() {
       test('returns correct symbols for heating units', () {
         expect(UnitType.watts.symbol, equals('Вт'));
         expect(UnitType.wattsPerSquareMeter.symbol, equals('Вт/м²'));
+        expect(UnitType.volts.symbol, equals('В'));
+        expect(UnitType.amperes.symbol, equals('А'));
         expect(UnitType.celsius.symbol, equals('°C'));
         expect(UnitType.kelvin.symbol, equals('К'));
         expect(UnitType.dimensionless.symbol, isEmpty);
@@ -171,6 +173,8 @@ void main() {
           UnitType.wattsPerSquareMeter.translationKey,
           equals('unit.watts_per_square_meter'),
         );
+        expect(UnitType.volts.translationKey, equals('unit.volts'));
+        expect(UnitType.amperes.translationKey, equals('unit.amperes'));
         expect(UnitType.celsius.translationKey, equals('unit.celsius'));
         expect(UnitType.kelvin.translationKey, equals('unit.kelvin'));
         expect(
@@ -206,7 +210,7 @@ void main() {
 
     test('has all expected enum values', () {
       const values = UnitType.values;
-      expect(values.length, equals(27));
+      expect(values.length, equals(29));
       expect(values, contains(UnitType.squareMeters));
       expect(values, contains(UnitType.cubicMeters));
       expect(values, contains(UnitType.cubicMetersPerHour));
@@ -223,6 +227,8 @@ void main() {
       expect(values, contains(UnitType.metersPerSecond));
       expect(values, contains(UnitType.watts));
       expect(values, contains(UnitType.wattsPerSquareMeter));
+      expect(values, contains(UnitType.volts));
+      expect(values, contains(UnitType.amperes));
       expect(values, contains(UnitType.celsius));
       expect(values, contains(UnitType.kelvin));
       expect(values, contains(UnitType.dimensionless));

@@ -1057,8 +1057,8 @@
       "description": "Расчёт плинтуса и крепежа"
     },
     "floors_warm": {
-      "title": "Тёплый пол",
-      "description": "Расчёт материалов: Тёплый пол"
+      "title": "Электрический тёплый пол",
+      "description": "Проверка заводского комплекта, раскладки, мощности и тока"
     },
     "foundation_basement": {
       "title": "Монолитный подвал",
@@ -1992,6 +1992,9 @@
     "effectiveDeviceOutputW": "Мощность единицы, Вт",
     "recPurchase": "К покупке",
     "totalUnits": "К покупке",
+    "warmFloorLayoutArea": "Площадь раскладки, м²",
+    "warmFloorInstalledPower": "Установленная мощность, Вт",
+    "warmFloorCircuitCurrent": "Расчётный ток, А",
     "anchorsNeeded": "Анкеров нужно",
     "angleLength": "Длина угла",
     "antisepticNeeded": "Антисептика нужно",
@@ -3240,6 +3243,8 @@
     "meters_per_second": "м/с",
     "watts": "Вт",
     "watts_per_square_meter": "Вт/м²",
+    "volts": "В",
+    "amperes": "А",
     "celsius": "°C",
     "kelvin": "К",
     "dimensionless": "",
@@ -3701,6 +3706,14 @@
       "notHeatLossProject": "Калькулятор не проектирует отопление и не определяет теплопотери: перенесите готовую нагрузку одного помещения или задайте явное сметное допущение в Вт/м²",
       "calculatePerRoom": "Подбирайте приборы для каждого помещения или независимо рассчитанной зоны отдельно",
       "noHydraulics": "Расход теплоносителя, диаметры труб, потери давления, балансировка, котёл, автоматика и схема подключения требуют отдельного проекта"
+    },
+    "warm_floor": {
+      "v3": {
+        "factoryKit": "Введите паспортные данные уже выбранного заводского комплекта: нагревательный кабель нельзя укорачивать, наращивать или укладывать с наложением",
+        "noHeatZones": "Зоны под встроенной мебелью и оборудованием исключите по фактическому плану раскладки",
+        "rcd": "Для цепи электрообогрева требуется УДТ с номинальным током срабатывания не более 30 мА",
+        "noElectricalDesign": "Приложение не подбирает питающий кабель, автомат, коммутацию, заземление и уравнивание потенциалов"
+      }
     },
     "foundation": {
       "gidroizolyatsiya_po_vsey_ploschadi": "Гидроизоляция по всей площади контакта с грунтом.",
@@ -4497,6 +4510,30 @@
     "heating.bracketCount": "Кронштейны по ведомости",
     "heating.valveSetCount": "Комплекты арматуры по ведомости",
     "heating.airVentCount": "Воздухоотводчики по ведомости",
+    "warm_floor.roomAreaM2": "Площадь помещения",
+    "warm_floor.excludedAreaM2": "Зоны без нагрева",
+    "warm_floor.excludedAreaM2.hint": "Встроенная мебель, оборудование и другие постоянно закрытые участки по плану",
+    "warm_floor.layoutAreaM2": "Фактическая площадь раскладки",
+    "warm_floor.layoutAreaM2.hint": "Площадь контуров из плана, а не автоматически весь свободный пол",
+    "warm_floor.systemType": "Электрическая система",
+    "warm_floor.systemType.mat": "Нагревательный мат",
+    "warm_floor.systemType.cable": "Заводской кабельный комплект",
+    "warm_floor.kitCount": "Количество выбранных комплектов",
+    "warm_floor.kitCount.hint": "Каждый комплект — заводское изделие с паспортной длиной и мощностью",
+    "warm_floor.kitCoverageAreaM2": "Площадь укладки одного комплекта",
+    "warm_floor.kitCoverageAreaM2.hint": "Возьмите из паспорта или готовой раскладки выбранного комплекта",
+    "warm_floor.kitRatedPowerW": "Паспортная мощность одного комплекта",
+    "warm_floor.cableLengthPerKitM": "Паспортная длина кабеля в комплекте",
+    "warm_floor.cableLengthPerKitM.hint": "Нагревательный кабель нельзя укорачивать или наращивать",
+    "warm_floor.designHeatLoadW": "Требуемая мощность из проекта",
+    "warm_floor.designHeatLoadW.hint": "0 — пригодность как основного отопления не проверяется",
+    "warm_floor.supplyVoltageV": "Расчётное напряжение питания",
+    "warm_floor.thermostatRatedCurrentA": "Допустимый ток терморегулятора",
+    "warm_floor.thermostatRatedCurrentA.hint": "Введите паспортный ток прямого выхода; 0 — проверка не выполняется",
+    "warm_floor.thermostatCount": "Терморегуляторы по ведомости",
+    "warm_floor.floorSensorCount": "Датчики пола по ведомости",
+    "warm_floor.sensorConduitLengthM": "Защитная трубка датчика по ведомости",
+    "warm_floor.sensorConduitStockLengthM": "Длина покупного отрезка трубки",
     "ventilation.calculationMode": "Исходный расход воздуха",
     "ventilation.calculationMode.hint": "Жилой режим применим к помещениям с естественным проветриванием. Для других объектов используйте расход из проекта.",
     "ventilation.calculationMode.residential": "Предварительно для жилья",
@@ -5002,6 +5039,10 @@
     "heating_load": "Тепловая нагрузка",
     "heating_device": "Отопительный прибор",
     "heating_purchase": "Закупка по ведомости",
+    "warm_floor_layout": "План раскладки",
+    "warm_floor_product": "Паспорт выбранного комплекта",
+    "warm_floor_electric": "Электрическая проверка",
+    "warm_floor_purchase": "Закупка по ведомости",
     "sheet": "Листы",
     "application": "Применение",
     "material": "Материал",
